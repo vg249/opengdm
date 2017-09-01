@@ -163,13 +163,13 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 // } // setList()
                 DataSetCheckListBoxComponent.prototype.ngOnInit = function () {
                     if (this.experimentId != null) {
-                        this.nameIdRequestParamsDataset.setEntityFilterValue(this.experimentId);
+                        this.nameIdRequestParamsDataset.setFkEntityFilterValue(this.experimentId);
                     }
                 };
                 DataSetCheckListBoxComponent.prototype.ngOnChanges = function (changes) {
                     if (changes['experimentId']) {
                         this.experimentId = changes['experimentId'].currentValue;
-                        this.nameIdRequestParamsDataset.setEntityFilterValue(this.experimentId);
+                        this.nameIdRequestParamsDataset.setFkEntityFilterValue(this.experimentId);
                         //this.setList();
                     }
                 };

@@ -57,7 +57,7 @@ export class FileItemEffects {
     //                                         .setChecked(false)
     //                                         .setRequired(false)
     //                                         .setParentEntityType(payload.nameIdRequestParams.getRefTargetEntityType())
-    //                                         .setParentItemId(payload.nameIdRequestParams.getEntityFilterValue());
+    //                                         .setParentItemId(payload.nameIdRequestParams.getFkEntityFilterValue());
     //
     //                                 //fileItems.push(currentFileItem);
     //                                 observer.next(currentFileItem);
@@ -119,7 +119,7 @@ export class FileItemEffects {
                                         .setChecked(false)
                                         .setRequired(false)
                                         .setParentEntityType(nameIdRequestParams.getRefTargetEntityType())
-                                        .setParentItemId(nameIdRequestParams.getEntityFilterValue());
+                                        .setParentItemId(nameIdRequestParams.getFkEntityFilterValue());
 
                                 fileItems.push(currentFileItem);
 

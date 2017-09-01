@@ -361,11 +361,10 @@ export const getProjectsForSelectedPi = createSelector(getFileItems, getFilters,
 
     if (filters[NameIdFilterParamTypes.PROJECTS_BY_CONTACT]) {
 
-        let contactId: string = filters[NameIdFilterParamTypes.PROJECTS_BY_CONTACT].getEntityFilterValue();
+        let contactId: string = filters[NameIdFilterParamTypes.PROJECTS_BY_CONTACT].getFkEntityFilterValue();
         returnVal = fileItems.filter(e =>
             ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
             && ( e.getEntityType() === EntityType.Projects)
-            && ( e.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
             && (e.getParentItemId() === contactId ))
             .map(fi => fi);
     }
@@ -380,7 +379,7 @@ export const getExperimentsForSelectedProject = createSelector(getFileItems, get
 
     if (filters[NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT]) {
 
-        let projectId: string = filters[NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT].getEntityFilterValue();
+        let projectId: string = filters[NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT].getFkEntityFilterValue();
         returnVal = fileItems.filter(e =>
             ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
             && ( e.getEntityType() === EntityType.Experiments)
@@ -398,7 +397,7 @@ export const getDatasetsForSelectedExperiment = createSelector(getFileItems, get
 
     if (filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT]) {
 
-        let experimentId: string = filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT].getEntityFilterValue();
+        let experimentId: string = filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT].getFkEntityFilterValue();
         returnVal = fileItems.filter(e =>
             ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
             && ( e.getEntityType() === EntityType.DataSets )

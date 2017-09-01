@@ -219,14 +219,11 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this.clearButtonStyle = this.submitButtonStyleDefault;
                     this.store.dispatch(new treeNodeAction.InitAction());
                     //unfiltered requests
-                    this.nameIdRequestParamsContactsPi = name_id_request_params_1.NameIdRequestParams
-                        .build(type_nameid_filter_params_1.NameIdFilterParamTypes.CONTACT_PI, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Contacts)
-                        .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR);
                     this.nameIdRequestParamsDatasetType = name_id_request_params_1.NameIdRequestParams
                         .build(type_nameid_filter_params_1.NameIdFilterParamTypes.CV_DATATYPE, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.CvTerms)
                         .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE)
                         .setEntityFilter(type_entity_filter_1.EntityFilter.BYTYPENAME)
-                        .setEntityFilterValue(cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.DATASET_TYPE))
+                        .setFkEntityFilterValue(cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.DATASET_TYPE))
                         .setMameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A);
                     this.nameIdRequestParamsMapsets = name_id_request_params_1.NameIdRequestParams
                         .build(type_nameid_filter_params_1.NameIdFilterParamTypes.MAPSETS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Mapsets)
@@ -234,20 +231,26 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this.nameIdRequestParamsPlatforms = name_id_request_params_1.NameIdRequestParams
                         .build(type_nameid_filter_params_1.NameIdFilterParamTypes.PLATFORMS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Platforms);
                     //filtered requests
-                    this.nameIdRequestParamsProject = name_id_request_params_1.NameIdRequestParams
-                        .build(type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS_BY_CONTACT, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Projects)
-                        .setEntityFilter(type_entity_filter_1.EntityFilter.BYTYPEID)
-                        .setRefTargetEntityType(type_entity_1.EntityType.Contacts)
-                        .setMameIdLabelType(this.reinitProjectList ? name_id_label_type_1.NameIdLabelType.ALL : name_id_label_type_1.NameIdLabelType.UNKNOWN);
-                    this.nameIdRequestParamsExperiments = name_id_request_params_1.NameIdRequestParams
-                        .build(type_nameid_filter_params_1.NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Experiments)
-                        .setRefTargetEntityType(type_entity_1.EntityType.Projects)
-                        .setEntityFilter(type_entity_filter_1.EntityFilter.BYTYPEID);
-                    this.nameIdRequestParamsDataset = name_id_request_params_1.NameIdRequestParams
-                        .build(type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.DataSets)
-                        .setRefTargetEntityType(type_entity_1.EntityType.Experiments)
-                        .setEntityFilter(type_entity_filter_1.EntityFilter.BYTYPEID)
-                        .setRefTargetEntityType(type_entity_1.EntityType.Experiments);
+                    this.nameIdRequestParamsContactsPi = name_id_request_params_1.NameIdRequestParams
+                        .build(type_nameid_filter_params_1.NameIdFilterParamTypes.CONTACT_PI, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Contacts)
+                        .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
+                        .setChildNameIdRequestParams([this.nameIdRequestParamsProject = name_id_request_params_1.NameIdRequestParams
+                            .build(type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS_BY_CONTACT, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Projects)
+                            .setEntityFilter(type_entity_filter_1.EntityFilter.BYTYPEID)
+                            .setMameIdLabelType(this.reinitProjectList ? name_id_label_type_1.NameIdLabelType.ALL : name_id_label_type_1.NameIdLabelType.UNKNOWN)
+                            .setParentNameIdRequestParams(this.nameIdRequestParamsContactsPi)
+                            .setChildNameIdRequestParams([this.nameIdRequestParamsExperiments = name_id_request_params_1.NameIdRequestParams
+                                .build(type_nameid_filter_params_1.NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Experiments)
+                                .setEntityFilter(type_entity_filter_1.EntityFilter.BYTYPEID)
+                                .setParentNameIdRequestParams(this.nameIdRequestParamsProject)
+                                .setChildNameIdRequestParams([
+                                this.nameIdRequestParamsDataset = name_id_request_params_1.NameIdRequestParams
+                                    .build(type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.DataSets)
+                                    .setEntityFilter(type_entity_filter_1.EntityFilter.BYTYPEID)
+                                    .setParentNameIdRequestParams(this.nameIdRequestParamsExperiments)
+                            ])
+                        ])
+                    ]);
                 }
                 ExtractorRoot.prototype.initializeServerConfigs = function () {
                     var _this = this;
@@ -420,7 +423,8 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 };
                 ExtractorRoot.prototype.handleContactForPiSelected = function (arg) {
                     this.selectedContactIdForPi = arg.id;
-                    this.nameIdRequestParamsProject.setEntityFilterValue(this.selectedContactIdForPi);
+                    this.nameIdRequestParamsContactsPi.setSelectedItemId(this.selectedContactIdForPi);
+                    this.nameIdRequestParamsProject.setFkEntityFilterValue(this.selectedContactIdForPi);
                     this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType, this.nameIdRequestParamsExperiments);
                     //console.log("selected contact itemId:" + arg);
                 };
@@ -439,15 +443,17 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     //console.log("selected contact itemId:" + arg);
                 };
                 ExtractorRoot.prototype.handleProjectSelected = function (arg) {
-                    this.selectedProjectId = arg;
+                    this.selectedProjectId = arg.id;
                     this.displayExperimentDetail = false;
                     this.displayDataSetDetail = false;
-                    this.nameIdRequestParamsExperiments.setEntityFilterValue(this.selectedProjectId);
+                    this.nameIdRequestParamsProject.setSelectedItemId(this.selectedProjectId);
+                    this.nameIdRequestParamsExperiments.setFkEntityFilterValue(this.selectedProjectId);
                     this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType, this.nameIdRequestParamsExperiments);
                 };
                 ExtractorRoot.prototype.handleExperimentSelected = function (arg) {
                     this.selectedExperimentId = arg.id;
-                    this.nameIdRequestParamsDataset.setEntityFilterValue(this.selectedExperimentId);
+                    this.nameIdRequestParamsExperiments.setSelectedItemId(this.selectedExperimentId);
+                    this.nameIdRequestParamsDataset.setFkEntityFilterValue(this.selectedExperimentId);
                     this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType, this.nameIdRequestParamsDataset);
                     // this.store.dispatch(new fileItemAction.SetEntityFilter({
                     //     gobiiExtractFilterType: this.gobiiExtractFilterType,

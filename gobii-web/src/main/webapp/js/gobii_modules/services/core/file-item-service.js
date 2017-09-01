@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-entity", "../../views/entity-labels", "../../model/file-model-node", "../../model/cv-filter-type", "../../model/gobii-file-item", "../../model/dto-header-status-message", "../../model/type-process", "./name-id-service", "../../store/actions/fileitem-action", "@ngrx/store", "../../model/name-id-label-type"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-entity", "../../views/entity-labels", "../../model/file-model-node", "../../model/cv-filter-type", "../../model/gobii-file-item", "../../model/dto-header-status-message", "../../model/type-process", "./name-id-service", "../../store/actions/fileitem-action", "@ngrx/store", "../../model/name-id-label-type", "../../model/type-entity-filter"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_entity_1, entity_labels_1, file_model_node_1, cv_filter_type_1, gobii_file_item_1, dto_header_status_message_1, type_process_1, name_id_service_1, fileItemActions, store_1, name_id_label_type_1, FileItemService;
+    var core_1, type_entity_1, entity_labels_1, file_model_node_1, cv_filter_type_1, gobii_file_item_1, dto_header_status_message_1, type_process_1, name_id_service_1, fileItemActions, store_1, name_id_label_type_1, type_entity_filter_1, FileItemService;
     return {
         setters: [
             function (core_1_1) {
@@ -48,6 +48,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
             },
             function (name_id_label_type_1_1) {
                 name_id_label_type_1 = name_id_label_type_1_1;
+            },
+            function (type_entity_filter_1_1) {
+                type_entity_filter_1 = type_entity_filter_1_1;
             }
         ],
         execute: function () {
@@ -71,8 +74,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                     .setItemName(n.name)
                                     .setChecked(false)
                                     .setRequired(false)
-                                    .setParentEntityType(nameIdRequestParams.getRefTargetEntityType())
-                                    .setParentItemId(nameIdRequestParams.getEntityFilterValue());
+                                    .setParentItemId(nameIdRequestParams.getFkEntityFilterValue());
                                 fileItems_1.push(currentFileItem);
                             });
                             if (nameIdRequestParams.getMameIdLabelType() != name_id_label_type_1.NameIdLabelType.UNKNOWN) {
@@ -118,7 +120,25 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                 nameIdRequestParams: nameIdRequestParams,
                             });
                             _this.store.dispatch(loadAction);
-                        }
+                            // if there are children, we will load their data as well
+                            if (nameIdRequestParams
+                                .getChildNameIdRequestParams()
+                                .filter(function (rqp) { return rqp.getEntityFilter() === type_entity_filter_1.EntityFilter.BYTYPEID; })
+                                .length > 0) {
+                                var parentId_1 = nameIdRequestParams.getSelectedItemId();
+                                if (!parentId_1) {
+                                    parentId_1 = fileItems_1[0].getItemId();
+                                }
+                                nameIdRequestParams
+                                    .getChildNameIdRequestParams()
+                                    .forEach(function (rqp) {
+                                    if (rqp.getEntityFilter() === type_entity_filter_1.EntityFilter.BYTYPEID) {
+                                        rqp.setFkEntityFilterValue(parentId_1);
+                                        _this.loadNameIdsToFileItems(gobiiExtractFilterType, rqp);
+                                    }
+                                });
+                            }
+                        } // if any nameids were retrieved
                     }, function (responseHeader) {
                         //this.handleHeaderStatus(responseHeader);
                         console.log(responseHeader);

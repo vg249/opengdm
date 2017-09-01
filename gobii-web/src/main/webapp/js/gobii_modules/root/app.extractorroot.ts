@@ -374,11 +374,6 @@ export class ExtractorRoot implements OnInit {
 
 
         //unfiltered requests
-        this.nameIdRequestParamsContactsPi = NameIdRequestParams
-            .build(NameIdFilterParamTypes.CONTACT_PI,
-                GobiiExtractFilterType.WHOLE_DATASET,
-                EntityType.Contacts)
-            .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR);
 
         this.nameIdRequestParamsDatasetType = NameIdRequestParams
             .build(NameIdFilterParamTypes.CV_DATATYPE,
@@ -386,7 +381,7 @@ export class ExtractorRoot implements OnInit {
                 EntityType.CvTerms)
             .setCvFilterType(CvFilterType.DATASET_TYPE)
             .setEntityFilter(EntityFilter.BYTYPENAME)
-            .setEntityFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE))
+            .setFkEntityFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE))
             .setMameIdLabelType(NameIdLabelType.SELECT_A);
 
 
@@ -402,28 +397,34 @@ export class ExtractorRoot implements OnInit {
                 EntityType.Platforms);
 
         //filtered requests
-        this.nameIdRequestParamsProject = NameIdRequestParams
-            .build(NameIdFilterParamTypes.PROJECTS_BY_CONTACT,
+        this.nameIdRequestParamsContactsPi = NameIdRequestParams
+            .build(NameIdFilterParamTypes.CONTACT_PI,
                 GobiiExtractFilterType.WHOLE_DATASET,
-                EntityType.Projects)
-            .setEntityFilter(EntityFilter.BYTYPEID)
-            .setRefTargetEntityType(EntityType.Contacts)
-            .setMameIdLabelType(this.reinitProjectList ? NameIdLabelType.ALL : NameIdLabelType.UNKNOWN);
-
-        this.nameIdRequestParamsExperiments = NameIdRequestParams
-            .build(NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT,
-                GobiiExtractFilterType.WHOLE_DATASET,
-                EntityType.Experiments)
-            .setRefTargetEntityType(EntityType.Projects)
-            .setEntityFilter(EntityFilter.BYTYPEID);
-
-        this.nameIdRequestParamsDataset = NameIdRequestParams
-            .build(NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT,
-                GobiiExtractFilterType.WHOLE_DATASET,
-                EntityType.DataSets)
-            .setRefTargetEntityType(EntityType.Experiments)
-            .setEntityFilter(EntityFilter.BYTYPEID)
-            .setRefTargetEntityType(EntityType.Experiments);
+                EntityType.Contacts)
+            .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
+            .setChildNameIdRequestParams([this.nameIdRequestParamsProject = NameIdRequestParams
+                .build(NameIdFilterParamTypes.PROJECTS_BY_CONTACT,
+                    GobiiExtractFilterType.WHOLE_DATASET,
+                    EntityType.Projects)
+                .setEntityFilter(EntityFilter.BYTYPEID)
+                .setMameIdLabelType(this.reinitProjectList ? NameIdLabelType.ALL : NameIdLabelType.UNKNOWN)
+                .setParentNameIdRequestParams(this.nameIdRequestParamsContactsPi)
+                .setChildNameIdRequestParams([this.nameIdRequestParamsExperiments = NameIdRequestParams
+                    .build(NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT,
+                        GobiiExtractFilterType.WHOLE_DATASET,
+                        EntityType.Experiments)
+                    .setEntityFilter(EntityFilter.BYTYPEID)
+                    .setParentNameIdRequestParams(this.nameIdRequestParamsProject)
+                    .setChildNameIdRequestParams([
+                        this.nameIdRequestParamsDataset = NameIdRequestParams
+                            .build(NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT,
+                                GobiiExtractFilterType.WHOLE_DATASET,
+                                EntityType.DataSets)
+                            .setEntityFilter(EntityFilter.BYTYPEID)
+                            .setParentNameIdRequestParams(this.nameIdRequestParamsExperiments)
+                    ])
+                ])
+            ]);
     }
 
 
@@ -693,10 +694,12 @@ export class ExtractorRoot implements OnInit {
 // ********************************************** PI USER SELECTION
     public selectedContactIdForPi: string;
 
-    private handleContactForPiSelected(arg) {
+    public handleContactForPiSelected(arg) {
+
         this.selectedContactIdForPi = arg.id;
 
-        this.nameIdRequestParamsProject.setEntityFilterValue(this.selectedContactIdForPi);
+        this.nameIdRequestParamsContactsPi.setSelectedItemId(this.selectedContactIdForPi);
+        this.nameIdRequestParamsProject.setFkEntityFilterValue(this.selectedContactIdForPi);
         this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
             this.nameIdRequestParamsExperiments);
 
@@ -733,10 +736,12 @@ export class ExtractorRoot implements OnInit {
 
     public handleProjectSelected(arg) {
 
-        this.selectedProjectId = arg;
+        this.selectedProjectId = arg.id;
         this.displayExperimentDetail = false;
         this.displayDataSetDetail = false;
-        this.nameIdRequestParamsExperiments.setEntityFilterValue(this.selectedProjectId);
+
+        this.nameIdRequestParamsProject.setSelectedItemId(this.selectedProjectId);
+        this.nameIdRequestParamsExperiments.setFkEntityFilterValue(this.selectedProjectId);
         this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
             this.nameIdRequestParamsExperiments);
     }
@@ -750,9 +755,10 @@ export class ExtractorRoot implements OnInit {
     public selectedExperimentId: string;
     private selectedExperimentDetailId: string;
 
-    private handleExperimentSelected(arg: NameId) {
+    public handleExperimentSelected(arg: NameId) {
         this.selectedExperimentId = arg.id;
-        this.nameIdRequestParamsDataset.setEntityFilterValue(this.selectedExperimentId);
+        this.nameIdRequestParamsExperiments.setSelectedItemId(this.selectedExperimentId);
+        this.nameIdRequestParamsDataset.setFkEntityFilterValue(this.selectedExperimentId);
         this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
             this.nameIdRequestParamsDataset)
         // this.store.dispatch(new fileItemAction.SetEntityFilter({

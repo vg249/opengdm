@@ -61,18 +61,18 @@ System.register(["@angular/core", "../../model/name-id", "./dto-request.service"
                     var foo = "bar";
                     var returnVal = false;
                     if (nameIdRequestParams.getEntityFilter() === type_entity_filter_1.EntityFilter.NONE) {
-                        nameIdRequestParams.setEntityFilterValue(null);
+                        nameIdRequestParams.setFkEntityFilterValue(null);
                         returnVal = true;
                     }
                     else if (nameIdRequestParams.getEntityFilter() === type_entity_filter_1.EntityFilter.BYTYPEID) {
                         //for filter BYTYPEID we must have a filter value specified by parent
-                        returnVal = (nameIdRequestParams.getEntityFilterValue() != null);
+                        returnVal = (nameIdRequestParams.getFkEntityFilterValue() != null);
                     }
                     else if (nameIdRequestParams.getEntityFilter() === type_entity_filter_1.EntityFilter.BYTYPENAME) {
                         //for filter BYTYPENAME we divine the typename algorityhmically for now
                         var entityFilterValue = this.getEntityFilterValue(nameIdRequestParams);
                         if (entityFilterValue) {
-                            nameIdRequestParams.setEntityFilterValue(entityFilterValue);
+                            nameIdRequestParams.setFkEntityFilterValue(entityFilterValue);
                             returnVal = true;
                         }
                     }
@@ -81,7 +81,7 @@ System.register(["@angular/core", "../../model/name-id", "./dto-request.service"
                 NameIdService.prototype.get = function (nameIdRequestParams) {
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
-                        _this._dtoRequestService.get(new dto_request_item_nameids_1.DtoRequestItemNameIds(nameIdRequestParams.getEntityType(), nameIdRequestParams.getEntityFilter() === type_entity_filter_1.EntityFilter.NONE ? null : nameIdRequestParams.getEntityFilter(), nameIdRequestParams.getEntityFilterValue()))
+                        _this._dtoRequestService.get(new dto_request_item_nameids_1.DtoRequestItemNameIds(nameIdRequestParams.getEntityType(), nameIdRequestParams.getEntityFilter() === type_entity_filter_1.EntityFilter.NONE ? null : nameIdRequestParams.getEntityFilter(), nameIdRequestParams.getFkEntityFilterValue()))
                             .subscribe(function (nameIds) {
                             var nameIdsToReturn = null;
                             if (nameIds && (nameIds.length > 0)) {

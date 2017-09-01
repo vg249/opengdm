@@ -270,11 +270,10 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
             exports_1("getProjectsForSelectedPi", getProjectsForSelectedPi = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
                 var returnVal = [];
                 if (filters[type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS_BY_CONTACT]) {
-                    var contactId_1 = filters[type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS_BY_CONTACT].getEntityFilterValue();
+                    var contactId_1 = filters[type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS_BY_CONTACT].getFkEntityFilterValue();
                     returnVal = fileItems.filter(function (e) {
                         return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY)
                             && (e.getEntityType() === type_entity_1.EntityType.Projects)
-                            && (e.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
                             && (e.getParentItemId() === contactId_1);
                     })
                         .map(function (fi) { return fi; });
@@ -284,7 +283,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
             exports_1("getExperimentsForSelectedProject", getExperimentsForSelectedProject = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
                 var returnVal = [];
                 if (filters[type_nameid_filter_params_1.NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT]) {
-                    var projectId_1 = filters[type_nameid_filter_params_1.NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT].getEntityFilterValue();
+                    var projectId_1 = filters[type_nameid_filter_params_1.NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT].getFkEntityFilterValue();
                     returnVal = fileItems.filter(function (e) {
                         return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY)
                             && (e.getEntityType() === type_entity_1.EntityType.Experiments)
@@ -297,7 +296,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
             exports_1("getDatasetsForSelectedExperiment", getDatasetsForSelectedExperiment = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
                 var returnVal = [];
                 if (filters[type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT]) {
-                    var experimentId_1 = filters[type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT].getEntityFilterValue();
+                    var experimentId_1 = filters[type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT].getFkEntityFilterValue();
                     returnVal = fileItems.filter(function (e) {
                         return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY)
                             && (e.getEntityType() === type_entity_1.EntityType.DataSets)

@@ -69,7 +69,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                 //                                         .setChecked(false)
                 //                                         .setRequired(false)
                 //                                         .setParentEntityType(payload.nameIdRequestParams.getRefTargetEntityType())
-                //                                         .setParentItemId(payload.nameIdRequestParams.getEntityFilterValue());
+                //                                         .setParentItemId(payload.nameIdRequestParams.getFkEntityFilterValue());
                 //
                 //                                 //fileItems.push(currentFileItem);
                 //                                 observer.next(currentFileItem);
@@ -147,7 +147,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                                                     .setChecked(false)
                                                     .setRequired(false)
                                                     .setParentEntityType(nameIdRequestParams.getRefTargetEntityType())
-                                                    .setParentItemId(nameIdRequestParams.getEntityFilterValue());
+                                                    .setParentItemId(nameIdRequestParams.getFkEntityFilterValue());
             
                                             fileItems.push(currentFileItem);
             

@@ -43,21 +43,21 @@ export class NameIdService {
 
         if (nameIdRequestParams.getEntityFilter() === EntityFilter.NONE) {
 
-            nameIdRequestParams.setEntityFilterValue(null);
+            nameIdRequestParams.setFkEntityFilterValue(null);
             returnVal = true;
 
         } else if (nameIdRequestParams.getEntityFilter() === EntityFilter.BYTYPEID) {
 
             //for filter BYTYPEID we must have a filter value specified by parent
 
-            returnVal = (nameIdRequestParams.getEntityFilterValue() != null);
+            returnVal = (nameIdRequestParams.getFkEntityFilterValue() != null);
 
         } else if (nameIdRequestParams.getEntityFilter() === EntityFilter.BYTYPENAME) {
 
             //for filter BYTYPENAME we divine the typename algorityhmically for now
             let entityFilterValue: string = this.getEntityFilterValue(nameIdRequestParams);
             if (entityFilterValue) {
-                nameIdRequestParams.setEntityFilterValue(entityFilterValue);
+                nameIdRequestParams.setFkEntityFilterValue(entityFilterValue);
                 returnVal = true;
             }
         }
@@ -73,7 +73,7 @@ export class NameIdService {
                 this._dtoRequestService.get(new DtoRequestItemNameIds(
                     nameIdRequestParams.getEntityType(),
                     nameIdRequestParams.getEntityFilter() === EntityFilter.NONE ? null : nameIdRequestParams.getEntityFilter(),
-                    nameIdRequestParams.getEntityFilterValue()))
+                    nameIdRequestParams.getFkEntityFilterValue()))
                     .subscribe(nameIds => {
                         let nameIdsToReturn: NameId[] = null;
                         if (nameIds && ( nameIds.length > 0 )) {

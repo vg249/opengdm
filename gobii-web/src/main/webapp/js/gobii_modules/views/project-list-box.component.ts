@@ -130,7 +130,7 @@ export class ProjectListBoxComponent implements OnInit, OnChanges {
         if (changes['primaryInvestigatorId'] && changes['primaryInvestigatorId'].currentValue) {
             this.primaryInvestigatorId = changes['primaryInvestigatorId'].currentValue;
 
-            this.nameIdRequestParamsProject.setEntityFilterValue(this.primaryInvestigatorId);
+            this.nameIdRequestParamsProject.setFkEntityFilterValue(this.primaryInvestigatorId);
             this.nameIdRequestParamsProject.setMameIdLabelType(this.reinitProjectList ? NameIdLabelType.ALL : NameIdLabelType.UNKNOWN);
             // this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
             //     this.nameIdRequestParamsProject);

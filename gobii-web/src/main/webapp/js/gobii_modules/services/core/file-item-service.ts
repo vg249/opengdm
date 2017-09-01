@@ -17,6 +17,7 @@ import * as fromRoot from '../../store/reducers';
 import {Store} from "@ngrx/store";
 import {NameIdLabelType} from "../../model/name-id-label-type";
 import {NameId} from "../../model/name-id";
+import {EntityFilter} from "../../model/type-entity-filter";
 
 @Injectable()
 export class FileItemService {
@@ -25,6 +26,7 @@ export class FileItemService {
                 private store: Store<fromRoot.State>,) {
 
     }
+
 
     public loadNameIdsToFileItems(gobiiExtractFilterType: GobiiExtractFilterType,
                                   nameIdRequestParams: NameIdRequestParams) {
@@ -47,8 +49,7 @@ export class FileItemService {
                                     .setItemName(n.name)
                                     .setChecked(false)
                                     .setRequired(false)
-                                    .setParentEntityType(nameIdRequestParams.getRefTargetEntityType())
-                                    .setParentItemId(nameIdRequestParams.getEntityFilterValue());
+                                    .setParentItemId(nameIdRequestParams.getFkEntityFilterValue());
 
 
                             fileItems.push(currentFileItem);
@@ -112,7 +113,30 @@ export class FileItemService {
                         );
                         this.store.dispatch(loadAction)
 
-                    }
+
+                        // if there are children, we will load their data as well
+
+                        if (nameIdRequestParams
+                                .getChildNameIdRequestParams()
+                                .filter(rqp => rqp.getEntityFilter() === EntityFilter.BYTYPEID)
+                                .length > 0) {
+
+                            let parentId: string = nameIdRequestParams.getSelectedItemId();
+                            if (!parentId) {
+                                parentId = fileItems[0].getItemId();
+                            }
+
+                            nameIdRequestParams
+                                .getChildNameIdRequestParams()
+                                .forEach(rqp => {
+                                    if (rqp.getEntityFilter() === EntityFilter.BYTYPEID) {
+                                        rqp.setFkEntityFilterValue(parentId);
+                                        this.loadNameIdsToFileItems(gobiiExtractFilterType, rqp);
+                                    }
+                                });
+                        }
+
+                    } // if any nameids were retrieved
                 },
                 responseHeader => {
                     //this.handleHeaderStatus(responseHeader);
@@ -140,7 +164,7 @@ export class FileItemService {
         // however, this is a very minimal use case. Do _not_ use state directly beyond this kind of a
         // simple synchronous item retrieval.
         this.store.take(1).subscribe(state => {
-            returnVal = state.fileItems.fileItems.find( fi => fi.getFileItemUniqueId() === fileItemUniqueId );
+            returnVal = state.fileItems.fileItems.find(fi => fi.getFileItemUniqueId() === fileItemUniqueId);
         });
 
 
