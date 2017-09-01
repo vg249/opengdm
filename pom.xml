@@ -13,6 +13,9 @@
 
     <properties>
 
+        <!-- Gobii Version -->
+        <gobii.version>1.2.0-DEV</gobii.version>
+
         <!-- Spring Version -->
         <spring.version>4.2.2.RELEASE</spring.version>
 
@@ -32,7 +35,6 @@
 
         <!-- HTTP Client -->
         <httpclient.version>4.4</httpclient.version>
-
     </properties>
 
     <modules>
@@ -50,6 +52,51 @@
 
     <dependencyManagement>
         <dependencies>
+
+            <!--                GOBII Versions                    -->
+            <dependency>
+                <groupId>org.gobiiproject</groupId>
+                <artifactId>gobii-model</artifactId>
+                <version>${gobii.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.gobiiproject</groupId>
+                <artifactId>gobii-dao</artifactId>
+                <version>${gobii.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.gobiiproject</groupId>
+                <artifactId>gobii-dtomapping</artifactId>
+                <version>${gobii.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.gobiiproject</groupId>
+                <artifactId>gobii-domain</artifactId>
+                <version>${gobii.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.gobiiproject</groupId>
+                <artifactId>gobii-api-model</artifactId>
+                <version>${gobii.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.gobiiproject</groupId>
+                <artifactId>gobii-client</artifactId>
+                <version>${gobii.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.gobiiproject</groupId>
+                <artifactId>gobii-brapi</artifactId>
+                <version>${gobii.version}</version>
+            </dependency>
+            <!--                                                  -->
+
             <!-- JUNIT dependency -->
             <dependency>
                 <groupId>junit</groupId>

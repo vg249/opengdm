@@ -27,7 +27,6 @@
         <dependency>
             <groupId>org.gobiiproject</groupId>
             <artifactId>gobii-model</artifactId>
-            <version>1.2.0-DEV</version>
         </dependency>
 
         <!-- Jackson JSON Processor -->

@@ -22,6 +22,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
+        <!-- Web -->
+        <jsp.version>2.2</jsp.version>
+        <jstl.version>1.2</jstl.version>
+        <servlet.version>2.5</servlet.version>
+
         <!-- java-script related -->
         <grunt-plugin-version>1.5.1</grunt-plugin-version>
 
@@ -34,25 +39,21 @@
         <dependency>
             <groupId>org.gobiiproject</groupId>
             <artifactId>gobii-api-model</artifactId>
-            <version>1.2.0-DEV</version>
         </dependency>
 
         <dependency>
             <groupId>org.gobiiproject</groupId>
             <artifactId>gobii-brapi</artifactId>
-            <version>1.2.0-DEV</version>
         </dependency>
 
         <dependency>
             <groupId>org.gobiiproject</groupId>
             <artifactId>gobii-model</artifactId>
-            <version>1.2.0-DEV</version>
         </dependency>
 
         <dependency>
             <groupId>org.gobiiproject</groupId>
             <artifactId>gobii-domain</artifactId>
-            <version>1.2.0-DEV</version>
 
             <!--
             **** Ideally we would want to prevent the transitive dependency of gobii-domain on gobii-dao from bringing
@@ -189,7 +190,6 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
-            <version>${httpcore.version}</version>
         </dependency>
 
         <dependency>
