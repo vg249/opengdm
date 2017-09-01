@@ -22,15 +22,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-
-        <!-- Liquibase properties -->
-        <liquibase.version>3.3.2</liquibase.version>
-
         <!-- Web -->
         <jsp.version>2.2</jsp.version>
         <jstl.version>1.2</jstl.version>
         <servlet.version>2.5</servlet.version>
-
 
         <!-- Test -->
 
@@ -40,6 +35,9 @@
         <!-- DBCP -->
         <dbpc.version>1.4</dbpc.version>
         <opencsv-version>2.3</opencsv-version>
+
+        <!-- java-script related -->
+        <grunt-plugin-version>1.5.1</grunt-plugin-version>
 
     </properties>
 
@@ -182,22 +180,10 @@
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.1-api</artifactId>
-            <version>${hibernate.javax.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>${hibernate.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.jboss.logging</groupId>
-                    <artifactId>jboss-logging</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jboss.logging</groupId>
-                    <artifactId>jboss-logging-annotations</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- Test Artifacts -->
@@ -245,9 +231,7 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <version>${liquibase.version}</version>
         </dependency>
-
 
         <!-- DBCP -->
         <dependency>
@@ -286,7 +270,6 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>${postgres.version}</version>
         </dependency>
 
         <!-- UPLOADS -->

@@ -27,19 +27,6 @@
         <httpclient.version>4.4</httpclient.version>
         <httpcore.version>4.4</httpcore.version>
 
-        <!-- Hibernate / JPA -->
-        <hibernate.version>4.3.10.Final</hibernate.version>
-        <hibernate.javax.version>1.0.0.Final</hibernate.javax.version>
-        <maven-hibernate-plugin.version>2.2</maven-hibernate-plugin.version>
-
-        <!-- Hibernate / JPA -->
-        <postgres.version>9.4-1200-jdbc41</postgres.version>
-        <cglib.version>3.1</cglib.version>
-
-        <!-- java-script related -->
-        <grunt-plugin-version>1.5.1</grunt-plugin-version>
-        <replacer-plugin-version>1.5.2</replacer-plugin-version>
-
         <!-- THe javax version here must match the javax version that
          jersey is using. The javax media type definitions are used not only in
          gobii-client but also in gobii api model. if the javax version is
@@ -273,6 +260,41 @@
                 <groupId>org.codehaus.jackson</groupId>
                 <artifactId>jackson-mapper-asl</artifactId>
                 <version>1.9.13</version>
+            </dependency>
+
+            <!-- Postgres -->
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>9.4-1200-jdbc41</version>
+            </dependency>
+            <!-- Liquibase -->
+            <dependency>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-core</artifactId>
+                <version>3.3.2</version>
+            </dependency>
+
+            <!-- Hibernate -->
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-entitymanager</artifactId>
+                <version>4.3.10.Final</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.jboss.logging</groupId>
+                        <artifactId>jboss-logging</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jboss.logging</groupId>
+                        <artifactId>jboss-logging-annotations</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate.javax.persistence</groupId>
+                <artifactId>hibernate-jpa-2.1-api</artifactId>
+                <version>1.0.0.Final</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
