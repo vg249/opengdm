@@ -27,15 +27,13 @@
         <httpclient.version>4.4</httpclient.version>
         <httpcore.version>4.4</httpcore.version>
 
-        <!-- THe javax version here must match the javax version that
-         jersey is using. The javax media type definitions are used not only in
-         gobii-client but also in gobii api model. if the javax version is
-         not right, the jetty/jersey server used in unit unit test will not
-         lot with a class not found error
-        -->
+        <!-- THe javax version here must match the javax version that jersey is using.
+        The javax media type definitions are used not only in gobii-client but also in
+        gobii api model. if the javax version is not right, the jetty/jersey server
+        used in unit unit test will not lot with a class not found error-->
         <jetty-version>9.4.5.v20170502</jetty-version>
         <jersey-version>2.26-b03</jersey-version>
-        <javax.version>2.1-m05</javax.version>
+
     </properties>
 
     <modules>
@@ -295,6 +293,68 @@
                 <groupId>org.hibernate.javax.persistence</groupId>
                 <artifactId>hibernate-jpa-2.1-api</artifactId>
                 <version>1.0.0.Final</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.ws.rs</groupId>
+                <artifactId>javax.ws.rs-api</artifactId>
+                <version>2.1-m05</version>
+            </dependency>
+
+            <!-- jetty and Jersey-->
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-server</artifactId>
+                <version>${jetty-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-servlet</artifactId>
+                <version>${jetty-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.glassfish.jersey.core</groupId>
+                <artifactId>jersey-server</artifactId>
+                <version>${jersey-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.glassfish.jersey.containers</groupId>
+                <artifactId>jersey-container-servlet-core</artifactId>
+                <version>${jersey-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.glassfish.jersey.media</groupId>
+                <artifactId>jersey-media-json-jackson</artifactId>
+                <version>${jersey-version}</version>
+            </dependency>
+
+            <!-- Tomcat -->
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-servlet-api</artifactId>
+                <version>7.0.30</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- DBCP -->
+            <dependency>
+                <groupId>commons-dbcp</groupId>
+                <artifactId>commons-dbcp</artifactId>
+                <version>1.4</version>
+            </dependency>
+            <!-- CSV Processor -->
+            <dependency>
+                <groupId>net.sf.opencsv</groupId>
+                <artifactId>opencsv</artifactId>
+                <version>2.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.logging</groupId>
+                <artifactId>jboss-logging</artifactId>
+                <version>3.1.1.GA</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
