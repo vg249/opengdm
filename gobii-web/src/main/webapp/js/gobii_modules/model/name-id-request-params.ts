@@ -75,7 +75,7 @@ export class NameIdRequestParams {
         return this._selectedItemId;
     }
 
-    setSelectedItemId(id:string): NameIdRequestParams {
+    setSelectedItemId(id: string): NameIdRequestParams {
         this._selectedItemId = id;
         return this;
     }
@@ -113,7 +113,7 @@ export class NameIdRequestParams {
     }
 
 
-    setMameIdLabelType(nameIdLabelType: NameIdLabelType) {
+    setNameIdLabelType(nameIdLabelType: NameIdLabelType) {
         this._nameIdLabelType = nameIdLabelType;
         return this;
     }
@@ -131,12 +131,12 @@ export class NameIdRequestParams {
         return this._extractorItemType;
     }
 
-    setParentNameIdRequestParams(nameIdRequestParams:NameIdRequestParams):NameIdRequestParams {
+    setParentNameIdRequestParams(nameIdRequestParams: NameIdRequestParams): NameIdRequestParams {
         this._parentNameIdRequestParams = nameIdRequestParams;
         return this;
     }
 
-    getParentNameIdRequestParams():NameIdRequestParams {
+    getParentNameIdRequestParams(): NameIdRequestParams {
         return this;
     }
 

@@ -63,8 +63,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     var _this = this;
                     this.nameIdService.get(nameIdRequestParams)
                         .subscribe(function (nameIds) {
+                        var fileItems = [];
                         if (nameIds && (nameIds.length > 0)) {
-                            var fileItems_1 = [];
                             nameIds.forEach(function (n) {
                                 var currentFileItem = gobii_file_item_1.GobiiFileItem.build(gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
                                     .setExtractorItemType(file_model_node_1.ExtractorItemType.ENTITY)
@@ -75,8 +75,10 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                     .setChecked(false)
                                     .setRequired(false)
                                     .setParentItemId(nameIdRequestParams.getFkEntityFilterValue());
-                                fileItems_1.push(currentFileItem);
+                                fileItems.push(currentFileItem);
                             });
+                            var temp = "foo";
+                            temp = "bar";
                             if (nameIdRequestParams.getMameIdLabelType() != name_id_label_type_1.NameIdLabelType.UNKNOWN) {
                                 var entityName = "";
                                 if (nameIdRequestParams.getCvFilterType() !== cv_filter_type_1.CvFilterType.UNKNOWN) {
@@ -111,38 +113,51 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                     .setCvFilterType(nameIdRequestParams.getCvFilterType())
                                     .setExtractorItemType(file_model_node_1.ExtractorItemType.LABEL)
                                     .setItemName(label)
+                                    .setParentItemId(nameIdRequestParams.getFkEntityFilterValue())
                                     .setItemId("0");
-                                fileItems_1.unshift(labelFileItem);
+                                fileItems.unshift(labelFileItem);
                                 //.selectedFileItemId = "0";
                             }
-                            var loadAction = new fileItemActions.LoadFilteredItemsAction({
-                                gobiiFileItems: fileItems_1,
-                                nameIdRequestParams: nameIdRequestParams,
-                            });
-                            _this.store.dispatch(loadAction);
-                            // if there are children, we will load their data as well
-                            if (nameIdRequestParams
-                                .getChildNameIdRequestParams()
-                                .filter(function (rqp) { return rqp.getEntityFilter() === type_entity_filter_1.EntityFilter.BYTYPEID; })
-                                .length > 0) {
-                                var parentId_1 = nameIdRequestParams.getSelectedItemId();
-                                if (!parentId_1) {
-                                    parentId_1 = fileItems_1[0].getItemId();
-                                }
-                                nameIdRequestParams
-                                    .getChildNameIdRequestParams()
-                                    .forEach(function (rqp) {
-                                    if (rqp.getEntityFilter() === type_entity_filter_1.EntityFilter.BYTYPEID) {
-                                        rqp.setFkEntityFilterValue(parentId_1);
-                                        _this.loadNameIdsToFileItems(gobiiExtractFilterType, rqp);
-                                    }
-                                });
+                        }
+                        else {
+                            var noneFileItem = gobii_file_item_1.GobiiFileItem
+                                .build(gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                                .setExtractorItemType(file_model_node_1.ExtractorItemType.ENTITY)
+                                .setEntityType(nameIdRequestParams.getEntityType())
+                                .setItemId("0")
+                                .setItemName("<none>")
+                                .setParentItemId(nameIdRequestParams.getFkEntityFilterValue());
+                            fileItems.push(noneFileItem);
+                        } // if/else any nameids were retrieved
+                        var loadAction = new fileItemActions.LoadFilteredItemsAction({
+                            gobiiFileItems: fileItems,
+                            nameIdRequestParams: nameIdRequestParams,
+                        });
+                        _this.store.dispatch(loadAction);
+                        // if there are children, we will load their data as well
+                        if (nameIdRequestParams
+                            .getChildNameIdRequestParams()
+                            .filter(function (rqp) { return rqp.getEntityFilter() === type_entity_filter_1.EntityFilter.BYTYPEID; })
+                            .length > 0) {
+                            var parentId_1 = nameIdRequestParams.getSelectedItemId();
+                            if (!parentId_1) {
+                                parentId_1 = fileItems[0].getItemId();
                             }
-                        } // if any nameids were retrieved
-                    }, function (responseHeader) {
+                            nameIdRequestParams
+                                .getChildNameIdRequestParams()
+                                .forEach(function (rqp) {
+                                if (rqp.getEntityFilter() === type_entity_filter_1.EntityFilter.BYTYPEID) {
+                                    rqp.setFkEntityFilterValue(parentId_1);
+                                    _this.loadNameIdsToFileItems(gobiiExtractFilterType, rqp);
+                                }
+                            });
+                        }
+                    }, // Observer=>next
+                    function (// Observer=>next
+                        responseHeader) {
                         //this.handleHeaderStatus(responseHeader);
                         console.log(responseHeader);
-                    });
+                    }); // subscribe
                 };
                 // private getState(store: Store<fromRoot.State>): fromRoot.State {
                 //

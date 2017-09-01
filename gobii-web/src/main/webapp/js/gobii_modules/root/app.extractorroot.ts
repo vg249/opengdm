@@ -382,14 +382,14 @@ export class ExtractorRoot implements OnInit {
             .setCvFilterType(CvFilterType.DATASET_TYPE)
             .setEntityFilter(EntityFilter.BYTYPENAME)
             .setFkEntityFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE))
-            .setMameIdLabelType(NameIdLabelType.SELECT_A);
+            .setNameIdLabelType(NameIdLabelType.SELECT_A);
 
 
         this.nameIdRequestParamsMapsets = NameIdRequestParams
             .build(NameIdFilterParamTypes.MAPSETS,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.Mapsets)
-            .setMameIdLabelType(NameIdLabelType.NO);
+            .setNameIdLabelType(NameIdLabelType.NO);
 
         this.nameIdRequestParamsPlatforms = NameIdRequestParams
             .build(NameIdFilterParamTypes.PLATFORMS,
@@ -407,7 +407,7 @@ export class ExtractorRoot implements OnInit {
                     GobiiExtractFilterType.WHOLE_DATASET,
                     EntityType.Projects)
                 .setEntityFilter(EntityFilter.BYTYPEID)
-                .setMameIdLabelType(this.reinitProjectList ? NameIdLabelType.ALL : NameIdLabelType.UNKNOWN)
+//                .setNameIdLabelType(NameIdLabelType.ALL )
                 .setParentNameIdRequestParams(this.nameIdRequestParamsContactsPi)
                 .setChildNameIdRequestParams([this.nameIdRequestParamsExperiments = NameIdRequestParams
                     .build(NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT,
@@ -609,7 +609,7 @@ export class ExtractorRoot implements OnInit {
         if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
             this.doPrincipleInvestigatorTreeNotifications = false;
-            this.nameIdRequestParamsContactsPi.setMameIdLabelType(NameIdLabelType.UNKNOWN);
+            this.nameIdRequestParamsContactsPi.setNameIdLabelType(NameIdLabelType.UNKNOWN);
             this.displaySelectorPi = true;
             this.displaySelectorProject = true;
             this.displaySelectorExperiment = true;
@@ -629,7 +629,7 @@ export class ExtractorRoot implements OnInit {
 
             this.displaySelectorPi = true;
             this.doPrincipleInvestigatorTreeNotifications = true;
-            this.nameIdRequestParamsContactsPi.setMameIdLabelType(NameIdLabelType.ALL);
+            this.nameIdRequestParamsContactsPi.setNameIdLabelType(NameIdLabelType.ALL);
             this.displaySelectorProject = true;
             this.displaySelectorDataType = true;
             this.displaySelectorPlatform = true;
@@ -652,7 +652,7 @@ export class ExtractorRoot implements OnInit {
 
             this.displaySelectorPi = false;
             this.doPrincipleInvestigatorTreeNotifications = false;
-            this.nameIdRequestParamsContactsPi.setMameIdLabelType(NameIdLabelType.UNKNOWN);
+            this.nameIdRequestParamsContactsPi.setNameIdLabelType(NameIdLabelType.UNKNOWN);
             this.displaySelectorProject = false;
             this.displaySelectorExperiment = false;
             this.displayAvailableDatasets = false;
@@ -701,7 +701,7 @@ export class ExtractorRoot implements OnInit {
         this.nameIdRequestParamsContactsPi.setSelectedItemId(this.selectedContactIdForPi);
         this.nameIdRequestParamsProject.setFkEntityFilterValue(this.selectedContactIdForPi);
         this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
-            this.nameIdRequestParamsExperiments);
+            this.nameIdRequestParamsProject);
 
         //console.log("selected contact itemId:" + arg);
     }
@@ -710,7 +710,7 @@ export class ExtractorRoot implements OnInit {
 // ********************************************** HAPMAP SELECTION
     private selectedExtractFormat: GobiiExtractFormat = GobiiExtractFormat.HAPMAP;
 
-    private handleFormatSelected(arg: GobiiExtractFormat) {
+    public handleFormatSelected(arg: GobiiExtractFormat) {
 
         this.selectedExtractFormat = arg;
 
@@ -757,6 +757,7 @@ export class ExtractorRoot implements OnInit {
 
     public handleExperimentSelected(arg: NameId) {
         this.selectedExperimentId = arg.id;
+
         this.nameIdRequestParamsExperiments.setSelectedItemId(this.selectedExperimentId);
         this.nameIdRequestParamsDataset.setFkEntityFilterValue(this.selectedExperimentId);
         this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,

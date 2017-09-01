@@ -89,7 +89,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                     this.nameIdRequestParamsProject = name_id_request_params_1.NameIdRequestParams
                         .build(type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Projects)
                         .setEntityFilter(type_entity_filter_1.EntityFilter.BYTYPEID)
-                        .setMameIdLabelType(this.reinitProjectList ? name_id_label_type_1.NameIdLabelType.ALL : name_id_label_type_1.NameIdLabelType.UNKNOWN);
+                        .setNameIdLabelType(this.reinitProjectList ? name_id_label_type_1.NameIdLabelType.ALL : name_id_label_type_1.NameIdLabelType.UNKNOWN);
                     var foo = "foo";
                     if (changes['gobiiExtractFilterType'] && changes['gobiiExtractFilterType'].currentValue) {
                         if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
@@ -99,7 +99,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                     if (changes['primaryInvestigatorId'] && changes['primaryInvestigatorId'].currentValue) {
                         this.primaryInvestigatorId = changes['primaryInvestigatorId'].currentValue;
                         this.nameIdRequestParamsProject.setFkEntityFilterValue(this.primaryInvestigatorId);
-                        this.nameIdRequestParamsProject.setMameIdLabelType(this.reinitProjectList ? name_id_label_type_1.NameIdLabelType.ALL : name_id_label_type_1.NameIdLabelType.UNKNOWN);
+                        this.nameIdRequestParamsProject.setNameIdLabelType(this.reinitProjectList ? name_id_label_type_1.NameIdLabelType.ALL : name_id_label_type_1.NameIdLabelType.UNKNOWN);
                         // this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
                         //     this.nameIdRequestParamsProject);
                     }

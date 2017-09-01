@@ -224,10 +224,10 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE)
                         .setEntityFilter(type_entity_filter_1.EntityFilter.BYTYPENAME)
                         .setFkEntityFilterValue(cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.DATASET_TYPE))
-                        .setMameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A);
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A);
                     this.nameIdRequestParamsMapsets = name_id_request_params_1.NameIdRequestParams
                         .build(type_nameid_filter_params_1.NameIdFilterParamTypes.MAPSETS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Mapsets)
-                        .setMameIdLabelType(name_id_label_type_1.NameIdLabelType.NO);
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.NO);
                     this.nameIdRequestParamsPlatforms = name_id_request_params_1.NameIdRequestParams
                         .build(type_nameid_filter_params_1.NameIdFilterParamTypes.PLATFORMS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Platforms);
                     //filtered requests
@@ -237,7 +237,6 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         .setChildNameIdRequestParams([this.nameIdRequestParamsProject = name_id_request_params_1.NameIdRequestParams
                             .build(type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS_BY_CONTACT, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Projects)
                             .setEntityFilter(type_entity_filter_1.EntityFilter.BYTYPEID)
-                            .setMameIdLabelType(this.reinitProjectList ? name_id_label_type_1.NameIdLabelType.ALL : name_id_label_type_1.NameIdLabelType.UNKNOWN)
                             .setParentNameIdRequestParams(this.nameIdRequestParamsContactsPi)
                             .setChildNameIdRequestParams([this.nameIdRequestParamsExperiments = name_id_request_params_1.NameIdRequestParams
                                 .build(type_nameid_filter_params_1.NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Experiments)
@@ -368,7 +367,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     //        let extractorFilterItemType: GobiiFileItem = GobiiFileItem.bui(this.gobiiExtractFilterType)
                     if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
                         this.doPrincipleInvestigatorTreeNotifications = false;
-                        this.nameIdRequestParamsContactsPi.setMameIdLabelType(name_id_label_type_1.NameIdLabelType.UNKNOWN);
+                        this.nameIdRequestParamsContactsPi.setNameIdLabelType(name_id_label_type_1.NameIdLabelType.UNKNOWN);
                         this.displaySelectorPi = true;
                         this.displaySelectorProject = true;
                         this.displaySelectorExperiment = true;
@@ -384,7 +383,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         //            this.initializePlatforms();
                         this.displaySelectorPi = true;
                         this.doPrincipleInvestigatorTreeNotifications = true;
-                        this.nameIdRequestParamsContactsPi.setMameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL);
+                        this.nameIdRequestParamsContactsPi.setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL);
                         this.displaySelectorProject = true;
                         this.displaySelectorDataType = true;
                         this.displaySelectorPlatform = true;
@@ -402,7 +401,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         this.displaySampleMarkerBox = true;
                         this.displaySelectorPi = false;
                         this.doPrincipleInvestigatorTreeNotifications = false;
-                        this.nameIdRequestParamsContactsPi.setMameIdLabelType(name_id_label_type_1.NameIdLabelType.UNKNOWN);
+                        this.nameIdRequestParamsContactsPi.setNameIdLabelType(name_id_label_type_1.NameIdLabelType.UNKNOWN);
                         this.displaySelectorProject = false;
                         this.displaySelectorExperiment = false;
                         this.displayAvailableDatasets = false;
@@ -425,7 +424,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this.selectedContactIdForPi = arg.id;
                     this.nameIdRequestParamsContactsPi.setSelectedItemId(this.selectedContactIdForPi);
                     this.nameIdRequestParamsProject.setFkEntityFilterValue(this.selectedContactIdForPi);
-                    this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType, this.nameIdRequestParamsExperiments);
+                    this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType, this.nameIdRequestParamsProject);
                     //console.log("selected contact itemId:" + arg);
                 };
                 ExtractorRoot.prototype.handleFormatSelected = function (arg) {

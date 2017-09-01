@@ -115,7 +115,7 @@ export class ProjectListBoxComponent implements OnInit, OnChanges {
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.Projects)
             .setEntityFilter(EntityFilter.BYTYPEID)
-            .setMameIdLabelType(this.reinitProjectList ? NameIdLabelType.ALL : NameIdLabelType.UNKNOWN);
+            .setNameIdLabelType(this.reinitProjectList ? NameIdLabelType.ALL : NameIdLabelType.UNKNOWN);
 
         let foo: string = "foo";
 
@@ -131,7 +131,7 @@ export class ProjectListBoxComponent implements OnInit, OnChanges {
             this.primaryInvestigatorId = changes['primaryInvestigatorId'].currentValue;
 
             this.nameIdRequestParamsProject.setFkEntityFilterValue(this.primaryInvestigatorId);
-            this.nameIdRequestParamsProject.setMameIdLabelType(this.reinitProjectList ? NameIdLabelType.ALL : NameIdLabelType.UNKNOWN);
+            this.nameIdRequestParamsProject.setNameIdLabelType(this.reinitProjectList ? NameIdLabelType.ALL : NameIdLabelType.UNKNOWN);
             // this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
             //     this.nameIdRequestParamsProject);
 

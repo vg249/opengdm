@@ -75,12 +75,13 @@ export class NameIdService {
                     nameIdRequestParams.getEntityFilter() === EntityFilter.NONE ? null : nameIdRequestParams.getEntityFilter(),
                     nameIdRequestParams.getFkEntityFilterValue()))
                     .subscribe(nameIds => {
-                        let nameIdsToReturn: NameId[] = null;
+                        let nameIdsToReturn: NameId[] = [];
                         if (nameIds && ( nameIds.length > 0 )) {
                             nameIdsToReturn = nameIds;
-                        } else {
-                            nameIdsToReturn = [new NameId("0", "<none>", nameIdRequestParams.getEntityType())];
                         }
+                        // else {
+                        //     nameIdsToReturn = [new NameId("0", "<none>", nameIdRequestParams.getEntityType())];
+                        // }
 
                         observer.next(nameIdsToReturn);
                         observer.complete();

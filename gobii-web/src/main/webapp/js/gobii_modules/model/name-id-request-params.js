@@ -105,7 +105,7 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
                 NameIdRequestParams.prototype.getQueryName = function () {
                     return this._queryName;
                 };
-                NameIdRequestParams.prototype.setMameIdLabelType = function (nameIdLabelType) {
+                NameIdRequestParams.prototype.setNameIdLabelType = function (nameIdLabelType) {
                     this._nameIdLabelType = nameIdLabelType;
                     return this;
                 };
