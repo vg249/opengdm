@@ -2,8 +2,14 @@ package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.StatusService;
+import org.gobiiproject.gobiidtomapping.DtoMapStatus;
 import org.gobiiproject.gobiimodel.headerlesscontainer.StatusDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,12 +19,18 @@ import java.util.List;
  */
 public class StatusServiceImpl implements StatusService {
 
+    Logger LOGGER = LoggerFactory.getLogger(StatusServiceImpl.class);
+
+    @Autowired
+    private DtoMapStatus dtoMapStatus = null;
+
+
     @Override
     public StatusDTO createStatus(StatusDTO statusDTO) throws GobiiDomainException {
 
         StatusDTO returnVal;
 
-        returnVal = statusDTO;
+        returnVal = dtoMapStatus.createStatus(statusDTO);
 
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
@@ -28,14 +40,45 @@ public class StatusServiceImpl implements StatusService {
     }
 
     @Override
-    public StatusDTO replaceStatus(Integer statusId, StatusDTO statusDTO) throws GobiiDomainException {
+    public StatusDTO replaceStatus(Integer jobId, StatusDTO statusDTO) throws GobiiDomainException {
 
         StatusDTO returnVal;
 
-        returnVal = statusDTO;
-        returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-        returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+        if (null == statusDTO.getJobId() || statusDTO.getJobId().equals(jobId)) {
 
+            StatusDTO existingStatusDTO = dtoMapStatus.getStatusDetails(jobId);
+
+            if (null != existingStatusDTO.getJobId() && existingStatusDTO.getJobId().equals(jobId)) {
+
+                returnVal = dtoMapStatus.replaceStatus(jobId, statusDTO);
+                returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+                returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+
+            } else {
+
+                throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
+                        GobiiValidationStatusType.BAD_REQUEST,
+                        "The jobId specified in the dto ("
+                                + statusDTO.getJobId()
+                                + ") does not match the jobId passed as a parameter "
+                                + "("
+                                + jobId
+                                + ")");
+
+            }
+
+        } else {
+
+            throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
+                    GobiiValidationStatusType.BAD_REQUEST,
+                    "The jobId specified in the dto ("
+                            + statusDTO.getJobId()
+                            + ") does not match the jobId passed as a parameter "
+                            + "("
+                            + jobId
+                            + ")");
+
+        }
 
         return returnVal;
     }
@@ -43,19 +86,9 @@ public class StatusServiceImpl implements StatusService {
     @Override
     public List<StatusDTO> getStatuses() throws GobiiDomainException {
 
-        List<StatusDTO> returnVal = new ArrayList<>();
+        List<StatusDTO> returnVal;
 
-        for (int i = 0; i<5; i++) {
-
-            StatusDTO newStatusDto = new StatusDTO();
-            newStatusDto.setJobId(i);
-            newStatusDto.setDataset(i);
-            newStatusDto.setMessages("dummy_" + i);
-            newStatusDto.setProcessStatus(StatusDTO.CV_PROGRESSSTATUS_COMPLETED);
-            newStatusDto.setLoadType(StatusDTO.CV_LOADTYPE_MARKER);
-            newStatusDto.setExtractType(StatusDTO.CV_EXTRACTTYPE_HAPMAP);
-            returnVal.add(newStatusDto);
-        }
+        returnVal = dtoMapStatus.getStatuses();
 
         for (StatusDTO currentStatusDTO : returnVal) {
 
@@ -63,27 +96,35 @@ public class StatusServiceImpl implements StatusService {
             currentStatusDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
         }
 
+        if (null == returnVal) {
+
+            returnVal = new ArrayList<>();
+
+        }
+
         return returnVal;
 
     }
 
     @Override
-    public StatusDTO getStatusById(Integer statusId) throws GobiiDomainException {
+    public StatusDTO getStatusByJobId(Integer jobId) throws GobiiDomainException {
 
         StatusDTO returnVal;
 
-        StatusDTO newStatusDto = new StatusDTO();
-        newStatusDto.setJobId(statusId);
-        newStatusDto.setDataset(1);
-        newStatusDto.setMessages("dummy");
-        newStatusDto.setProcessStatus(StatusDTO.CV_PROGRESSSTATUS_COMPLETED);
-        newStatusDto.setLoadType(StatusDTO.CV_LOADTYPE_MARKER);
-        newStatusDto.setExtractType(StatusDTO.CV_EXTRACTTYPE_HAPMAP);
-
-        returnVal = newStatusDto;
+        returnVal = dtoMapStatus.getStatusDetails(jobId);
 
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+
+
+        if (null == returnVal) {
+            throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
+                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                    "The specified jobId ("
+                            + jobId
+                            + ") does not match an existing job");
+
+        }
 
         return returnVal;
 

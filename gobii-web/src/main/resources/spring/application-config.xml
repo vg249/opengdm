@@ -334,6 +334,8 @@
 
     <!-- **** Status Beans *************************************** -->
     <bean id="StatusService" class="org.gobiiproject.gobidomain.services.impl.StatusServiceImpl"/>
+    <bean id="dtoMapStatus" class="org.gobiiproject.gobiidtomapping.impl.DtoMapStatusImpl"/>
+    <bean id="rsStatusDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsStatusDaoImpl"/>
 
     <bean id="dtoListQueryColl"
           class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl">

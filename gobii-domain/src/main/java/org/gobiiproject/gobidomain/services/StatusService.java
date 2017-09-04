@@ -11,8 +11,8 @@ import java.util.List;
 public interface StatusService {
 
     StatusDTO createStatus(StatusDTO statusDTO) throws GobiiDomainException;
-    StatusDTO replaceStatus(Integer statusId, StatusDTO statusDTO) throws GobiiDomainException;
+    StatusDTO replaceStatus(Integer jobId, StatusDTO statusDTO) throws GobiiDomainException;
     List<StatusDTO> getStatuses() throws GobiiDomainException;
-    StatusDTO getStatusById(Integer statusId) throws GobiiDomainException;
+    StatusDTO getStatusByJobId(Integer jobId) throws GobiiDomainException;
 
 }

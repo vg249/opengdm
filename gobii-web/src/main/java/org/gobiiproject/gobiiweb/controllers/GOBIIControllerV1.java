@@ -3662,7 +3662,7 @@ public class GOBIIControllerV1 {
         PayloadEnvelope<StatusDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            StatusDTO statusDTO = statusService.getStatusById(statusId);
+            StatusDTO statusDTO = statusService.getStatusByJobId(statusId);
 
             PayloadWriter<StatusDTO> payloadWriter = new PayloadWriter<>(request, response,
                     StatusDTO.class);

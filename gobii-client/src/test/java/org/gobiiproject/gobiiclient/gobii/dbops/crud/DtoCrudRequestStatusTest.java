@@ -8,8 +8,8 @@ import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
-import org.gobiiproject.gobiiclient.gobii.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
+import org.gobiiproject.gobiimodel.headerlesscontainer.CvDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.StatusDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.*;
@@ -34,31 +34,101 @@ public class DtoCrudRequestStatusTest implements DtoCrudRequestTest {
 
     @Test
     @Override
-    public void get() throws Exception {
-
-        Integer statusId = 1;
-
-        RestUri restUriStatus = GobiiClientContext.getInstance(null, false)
-                .getUriFactory()
-                .resourceByUriIdParam(GobiiServiceRequestId.URL_STATUS);
-        restUriStatus.setParamValue("id", statusId.toString());
-        GobiiEnvelopeRestResource<StatusDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriStatus);
-        PayloadEnvelope<StatusDTO> resultEnvelope = gobiiEnvelopeRestResource.get(StatusDTO.class);
-
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
-        StatusDTO statusDTOResponse = resultEnvelope.getPayload().getData().get(0);
-
-        Assert.assertNotEquals(statusDTOResponse, null);
-        Assert.assertTrue(statusDTOResponse.getJobId() > 0);
-
-    }
-
-    @Test
-    @Override
     public void create() throws Exception {
 
-        StatusDTO newStatusDto = TestDtoFactory
-                    .makePopulatedStatusDTO();
+        // make dummy statusDTO
+        StatusDTO newStatusDto = new StatusDTO();
+
+        // get cv ID for job_type group
+        RestUri restUriForCv = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_CV);
+        restUriForCv.setParamValue("id", StatusDTO.CVGROUP_JOBTYPE);
+
+        GobiiEnvelopeRestResource<CvDTO> restResourceForCV = new GobiiEnvelopeRestResource<>(restUriForCv);
+        PayloadEnvelope<CvDTO> resultEnvelopeForCV = restResourceForCV.get(CvDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForCV.getHeader()));
+        List<CvDTO> cvDTOList = resultEnvelopeForCV.getPayload().getData();
+        Assert.assertNotNull(cvDTOList);
+        Assert.assertTrue(cvDTOList.size() >= 0);
+
+        Integer typeId = null;
+
+        for (CvDTO currentCvDTO : cvDTOList) {
+
+            if (currentCvDTO.getTerm().toLowerCase().equals(StatusDTO.CV_JOBTYPE_LOAD)){
+                typeId = currentCvDTO.getCvId();
+                break;
+            }
+
+        }
+
+        Assert.assertNotNull(typeId);
+
+        newStatusDto.setTypeId(typeId);
+
+        // get cv ID for payload_type group
+        restUriForCv = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_CV);
+        restUriForCv.setParamValue("id", StatusDTO.CVGROUP_PAYLOADTYPE);
+
+        restResourceForCV = new GobiiEnvelopeRestResource<>(restUriForCv);
+        resultEnvelopeForCV = restResourceForCV.get(CvDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForCV.getHeader()));
+        cvDTOList = resultEnvelopeForCV.getPayload().getData();
+        Assert.assertNotNull(cvDTOList);
+        Assert.assertTrue(cvDTOList.size() >= 0);
+
+        Integer payloadTypeId = null;
+
+        for (CvDTO currentCvDTO : cvDTOList) {
+
+            if (currentCvDTO.getTerm().toLowerCase().equals(StatusDTO.CV_PAYLOADTYPE_SAMPLES)){
+                payloadTypeId = currentCvDTO.getCvId();
+                break;
+            }
+
+        }
+
+        Assert.assertNotNull(payloadTypeId);
+
+        newStatusDto.setPayloadTypeId(payloadTypeId);
+
+        // get cv ID for job_status group
+        restUriForCv = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_CV);
+        restUriForCv.setParamValue("id", StatusDTO.CVGROUP_JOBSTATUS);
+
+        restResourceForCV = new GobiiEnvelopeRestResource<>(restUriForCv);
+        resultEnvelopeForCV = restResourceForCV.get(CvDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForCV.getHeader()));
+        cvDTOList = resultEnvelopeForCV.getPayload().getData();
+        Assert.assertNotNull(cvDTOList);
+        Assert.assertTrue(cvDTOList.size() >= 0);
+
+        Integer statusId = null;
+
+        for (CvDTO currentCvDTO : cvDTOList) {
+
+            if (currentCvDTO.getTerm().toLowerCase().equals(StatusDTO.CV_PROGRESSSTATUS_PENDING)){
+                statusId = currentCvDTO.getCvId();
+                break;
+            }
+
+        }
+
+        Assert.assertNotNull(statusId);
+
+        newStatusDto.setStatus(statusId);
+        newStatusDto.setMessage("dummy message");
+        newStatusDto.setSubmittedBy(1);
+
+
 
         RestUri statusUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -79,33 +149,77 @@ public class DtoCrudRequestStatusTest implements DtoCrudRequestTest {
 
     @Test
     @Override
+    public void get() throws Exception {
+
+        RestUri restUriStatusForAll = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_STATUS);
+        GobiiEnvelopeRestResource<StatusDTO> gobiiEnvelopeRestResourceForAll = new GobiiEnvelopeRestResource<>(restUriStatusForAll);
+        PayloadEnvelope<StatusDTO> resultEnvelopeForAll = gobiiEnvelopeRestResourceForAll
+                .get(StatusDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForAll.getHeader()));
+        List<StatusDTO> statusDTOList = resultEnvelopeForAll.getPayload().getData();
+        Assert.assertNotNull(statusDTOList);
+        Assert.assertTrue(statusDTOList.size() > 0);
+        Assert.assertNotNull(statusDTOList.get(0).getJobId());
+
+        Integer statusId = statusDTOList.get(0).getJobId();
+
+        RestUri restUriStatus = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_STATUS);
+        restUriStatus.setParamValue("id", statusId.toString());
+        GobiiEnvelopeRestResource<StatusDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriStatus);
+        PayloadEnvelope<StatusDTO> resultEnvelope = gobiiEnvelopeRestResource.get(StatusDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        StatusDTO statusDTOResponse = resultEnvelope.getPayload().getData().get(0);
+
+        Assert.assertNotEquals(statusDTOResponse, null);
+        Assert.assertTrue(statusDTOResponse.getJobId() > 0);
+
+    }
+
+
+    @Test
+    @Override
     public void update() throws Exception {
 
-        Integer statusId = 1;
+        RestUri restUriStatusForAll = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_STATUS);
+        GobiiEnvelopeRestResource<StatusDTO> gobiiEnvelopeRestResourceForAll = new GobiiEnvelopeRestResource<>(restUriStatusForAll);
+        PayloadEnvelope<StatusDTO> resultEnvelopeForAll = gobiiEnvelopeRestResourceForAll
+                .get(StatusDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForAll.getHeader()));
+        List<StatusDTO> statusDTOList = resultEnvelopeForAll.getPayload().getData();
+        Assert.assertNotNull(statusDTOList);
+        Assert.assertTrue(statusDTOList.size() > 0);
+        Assert.assertNotNull(statusDTOList.get(0).getJobId());
+
+        StatusDTO statusDTOReceived = statusDTOList.get(0);
+        Integer statusId = statusDTOReceived.getJobId();
+
+        String newMessage = "new message";
+        statusDTOReceived.setMessage(newMessage);
 
         RestUri restUriStatusForGetById = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceByUriIdParam(GobiiServiceRequestId.URL_STATUS);
         restUriStatusForGetById.setParamValue("id", statusId.toString());
         GobiiEnvelopeRestResource<StatusDTO> gobiiEnvelopeRestResourceGetById = new GobiiEnvelopeRestResource<>(restUriStatusForGetById);
-        PayloadEnvelope<StatusDTO> resultEnvelope = gobiiEnvelopeRestResourceGetById
-                .get(StatusDTO.class);
-
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
-        StatusDTO statusDTOReceived = resultEnvelope.getPayload().getData().get(0);
-
-        String newMessage = "new message";
-        statusDTOReceived.setMessages(newMessage);
 
         PayloadEnvelope<StatusDTO> postRequestEnvelope = new PayloadEnvelope<>(statusDTOReceived, GobiiProcessType.UPDATE);
-        resultEnvelope = gobiiEnvelopeRestResourceGetById
+        PayloadEnvelope<StatusDTO> resultEnvelope = gobiiEnvelopeRestResourceGetById
                 .put(StatusDTO.class, postRequestEnvelope);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
 
         StatusDTO statusDtoRetrieved = resultEnvelope.getPayload().getData().get(0);
 
-        Assert.assertTrue(statusDtoRetrieved.getMessages().equals(newMessage));
+        Assert.assertTrue(statusDtoRetrieved.getMessage().equals(newMessage));
     }
 
     @Test
@@ -123,7 +237,7 @@ public class DtoCrudRequestStatusTest implements DtoCrudRequestTest {
         List<StatusDTO> statusDTOList = resultEnvelope.getPayload().getData();
         Assert.assertNotNull(statusDTOList);
         Assert.assertTrue(statusDTOList.size() > 0);
-        Assert.assertNotNull(statusDTOList.get(0).getProcessStatus());
+        Assert.assertNotNull(statusDTOList.get(0).getStatus());
 
         LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
         Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == statusDTOList.size());
