@@ -50,7 +50,7 @@ public class IUPACmatrixToBi {
                     buffOut.newLine();
                     continue;
                 }
-                String[] iNucl = iLine.split(fSep);
+                String[] iNucl = iLine.split(fSep,-1);//lim -1 causes blanks at the end and beginning to be registered
                 String[] oNucl;
                 oNucl = new String[(iNucl.length)];
                 for (int i = 0; i < iNucl.length; i++) {
@@ -58,9 +58,12 @@ public class IUPACmatrixToBi {
                         oNucl[i] = Character.toString(iNucl[i].charAt(0)) + Character.toString(iNucl[i].charAt(iNucl[i].length()-1));
                     }
                     else{
-                        oNucl[i] = hash.get(iNucl[i].toUpperCase()).toString();
-                        if(oNucl[i].equals(null)){
+                        NucIupacCodes code =hash.get(iNucl[i].toUpperCase());
+                        if(code == null){
                             oNucl[i] = iNucl[i] + iNucl[i]; // takes care of "+" or "-" in the input. Converts to "++" and "--" respectively
+                        }
+                        else {
+                            oNucl[i] = code.name();
                         }
                     }
                 }
