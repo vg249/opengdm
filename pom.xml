@@ -13,72 +13,28 @@
 
     <properties>
 
+        <!-- Gobii Version -->
+        <gobii.version>1.2.0-DEV</gobii.version>
 
+        <!-- Spring Version -->
+        <spring.version>4.2.2.RELEASE</spring.version>
 
-        <!-- JACKSON -->
-        <jackson-version>2.5.1</jackson-version>
-        <jackson-mapper-version>1.9.13</jackson-mapper-version>
-        <jackson-xml-version>0.6.2</jackson-xml-version>
-
-        <!-- Spring -->
-        <spring-framework.version>4.2.2.RELEASE</spring-framework.version>
-
-        <!-- Spring Secuirty-->
+        <!-- Spring Secuirty -->
         <spring-security.version>4.2.2.RELEASE</spring-security.version>
-        <spring-ldap>2.3.1.RELEASE</spring-ldap>
 
         <!-- Logging -->
         <logback.version>1.1.3</logback.version>
         <slf4j.version>1.7.5</slf4j.version>
-        <!--<slf4j.version>1.5.6</slf4j.version>-->
+
+        <!-- THe javax version here must match the javax version that jersey is using.
+        The javax media type definitions are used not only in gobii-client but also in
+        gobii api model. if the javax version is not right, the jetty/jersey server
+        used in unit unit test will not lot with a class not found error-->
+        <jetty-version>9.4.5.v20170502</jetty-version>
+        <jersey-version>2.26-b03</jersey-version>
 
         <!-- HTTP Client -->
         <httpclient.version>4.4</httpclient.version>
-        <httpcore.version>4.4</httpcore.version>
-
-
-        <!-- JSON -->
-        <gson.version>2.6.2</gson.version>
-
-        <!-- JUNIT -->
-        <junit.version>4.11</junit.version>
-
-        <!-- Hibernate / JPA -->
-        <hibernate.version>4.3.10.Final</hibernate.version>
-        <hibernate.javax.version>1.0.0.Final</hibernate.javax.version>
-        <maven-hibernate-plugin.version>2.2</maven-hibernate-plugin.version>
-
-        <!-- Hibernate / JPA -->
-        <postgres.version>9.4-1200-jdbc41</postgres.version>
-        <cglib.version>3.1</cglib.version>
-
-        <!-- java-script related -->
-        <grunt-plugin-version>1.5.1</grunt-plugin-version>
-        <replacer-plugin-version>1.5.2</replacer-plugin-version>
-
-        <!-- Apachee commons -->
-        <commons-lang-version>2.6</commons-lang-version>
-        <commons-cli-version>1.3.1</commons-cli-version>
-        <commons-io-version>1.3.2</commons-io-version>
-
-        <!-- Javax Mail -->
-        <javax-mail-version>1.4</javax-mail-version>
-
-		<!-- Mockito & PowerMock -->
-		<mockito-all>1.10.19</mockito-all>
-		<hamcrest-library>1.3</hamcrest-library>
-		<powermock-api-mockito>1.6.4</powermock-api-mockito>
-		<powermock-module-junit4>1.6.4</powermock-module-junit4>
-
-		<!-- THe javax version here must match the javax version that
-         jersey is using. The javax media type definitions are used not only in
-         gobii-client but also in gobii api model. if the javax version is
-         not right, the jetty/jersey server used in unit unit test will not
-         lot with a class not found error
-        -->
-        <jetty-version>9.4.5.v20170502</jetty-version>
-        <jersey-version>2.26-b03</jersey-version>
-		<javax.version>2.1-m05</javax.version>
     </properties>
 
     <modules>
@@ -94,6 +50,392 @@
 
     </modules>
 
+    <dependencyManagement>
+        <dependencies>
+
+            <!--                GOBII Versions                    -->
+            <dependency>
+                <groupId>org.gobiiproject</groupId>
+                <artifactId>gobii-model</artifactId>
+                <version>${gobii.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.gobiiproject</groupId>
+                <artifactId>gobii-dao</artifactId>
+                <version>${gobii.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.gobiiproject</groupId>
+                <artifactId>gobii-dtomapping</artifactId>
+                <version>${gobii.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.gobiiproject</groupId>
+                <artifactId>gobii-domain</artifactId>
+                <version>${gobii.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.gobiiproject</groupId>
+                <artifactId>gobii-api-model</artifactId>
+                <version>${gobii.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.gobiiproject</groupId>
+                <artifactId>gobii-client</artifactId>
+                <version>${gobii.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.gobiiproject</groupId>
+                <artifactId>gobii-brapi</artifactId>
+                <version>${gobii.version}</version>
+            </dependency>
+            <!--                                                  -->
+
+            <!-- JUNIT dependency -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.11</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- Mockito & PowerMock -->
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-all</artifactId>
+                <version>1.10.19</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-library</artifactId>
+                <version>1.3</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-api-mockito</artifactId>
+                <version>1.6.4</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-module-junit4</artifactId>
+                <version>1.6.4</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- Logging with SLF4J & LogBack -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+            <!-- Apache commons -->
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>2.6</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.4</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-cli</groupId>
+                <artifactId>commons-cli</artifactId>
+                <version>1.3.1</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-fileupload</groupId>
+                <artifactId>commons-fileupload</artifactId>
+                <version>1.3.1</version>
+            </dependency>
+
+            <!-- Mail API -->
+            <dependency>
+                <groupId>com.sun.mail</groupId>
+                <artifactId>javax.mail</artifactId>
+                <version>1.5.6</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.mail</groupId>
+                <artifactId>mail</artifactId>
+                <version>1.4.3</version>
+            </dependency>
+
+            <!-- Spring -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <!-- Spring and Transactions -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-tx</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <!--Spring ORM support-->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-orm</artifactId>
+                <version>${spring.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.jboss.logging</groupId>
+                        <artifactId>jboss-logging</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jboss.logging</groupId>
+                        <artifactId>jboss-logging-annotations</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <!-- Spring WEB -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <!-- Spring MVC -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <!-- Spring Test Artifacts -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${spring.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- Spring Security -->
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-core</artifactId>
+                <version>4.2.2.RELEASE</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-config</artifactId>
+                <version>4.2.2.RELEASE</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-taglibs</artifactId>
+                <version>4.2.2.RELEASE</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-ldap</artifactId>
+                <version>4.2.2.RELEASE</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-web</artifactId>
+                <version>4.2.2.RELEASE</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-crypto</artifactId>
+                <version>4.2.2.RELEASE</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.ldap</groupId>
+                <artifactId>spring-ldap-core</artifactId>
+                <version>2.3.1.RELEASE</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>2.6.2</version>
+            </dependency>
+
+            <!-- XML serialization -->
+            <dependency>
+                <groupId>org.simpleframework</groupId>
+                <artifactId>simple-xml</artifactId>
+                <version>2.7.1</version>
+            </dependency>
+
+            <!-- Jackson JSON Processor -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.5.1</version>
+            </dependency>
+            <!-- Jackson JSON Mapper -->
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-mapper-asl</artifactId>
+                <version>1.9.13</version>
+            </dependency>
+
+            <!-- Postgres -->
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>9.4-1200-jdbc41</version>
+            </dependency>
+            <!-- Liquibase -->
+            <dependency>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-core</artifactId>
+                <version>3.3.2</version>
+            </dependency>
+
+            <!-- Hibernate -->
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-entitymanager</artifactId>
+                <version>4.3.10.Final</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.jboss.logging</groupId>
+                        <artifactId>jboss-logging</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jboss.logging</groupId>
+                        <artifactId>jboss-logging-annotations</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate.javax.persistence</groupId>
+                <artifactId>hibernate-jpa-2.1-api</artifactId>
+                <version>1.0.0.Final</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.ws.rs</groupId>
+                <artifactId>javax.ws.rs-api</artifactId>
+                <version>2.1-m05</version>
+            </dependency>
+
+            <!-- jetty and Jersey-->
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-server</artifactId>
+                <version>${jetty-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-servlet</artifactId>
+                <version>${jetty-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jersey.core</groupId>
+                <artifactId>jersey-server</artifactId>
+                <version>${jersey-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jersey.containers</groupId>
+                <artifactId>jersey-container-servlet-core</artifactId>
+                <version>${jersey-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jersey.media</groupId>
+                <artifactId>jersey-media-json-jackson</artifactId>
+                <version>${jersey-version}</version>
+            </dependency>
+
+            <!-- Tomcat -->
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-servlet-api</artifactId>
+                <version>7.0.30</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- DBCP -->
+            <dependency>
+                <groupId>commons-dbcp</groupId>
+                <artifactId>commons-dbcp</artifactId>
+                <version>1.4</version>
+            </dependency>
+
+            <!-- CSV Processor -->
+            <dependency>
+                <groupId>net.sf.opencsv</groupId>
+                <artifactId>opencsv</artifactId>
+                <version>2.3</version>
+            </dependency>
+
+            <!-- JBoss -->
+            <dependency>
+                <groupId>org.jboss.logging</groupId>
+                <artifactId>jboss-logging</artifactId>
+                <version>3.1.1.GA</version>
+            </dependency>
+
+            <!-- HTTP Client -->
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${httpclient.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient-cache</artifactId>
+                <version>${httpclient.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpmime</artifactId>
+                <version>${httpclient.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>fluent-hc</artifactId>
+                <version>${httpclient.version}</version>
+            </dependency>
+
+            <!-- HTTP Core -->
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>4.4</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
 
