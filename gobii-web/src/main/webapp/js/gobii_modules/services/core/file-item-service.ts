@@ -87,7 +87,7 @@ export class FileItemService {
         this.nameIdRequestParams.set(nameIdRequestParamsExperiments.getQueryName(),nameIdRequestParamsExperiments);
         this.nameIdRequestParams.set(nameIdRequestParamsDatasets.getQueryName(),nameIdRequestParamsDatasets);
 
-        //build the tree graph
+        //build the parent-child request params graph
         nameIdRequestParamsContactsPi
             .setChildNameIdRequestParams(
                 [nameIdRequestParamsProject
