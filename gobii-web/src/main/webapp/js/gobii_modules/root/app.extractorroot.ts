@@ -666,22 +666,26 @@ export class ExtractorRoot implements OnInit {
 
         this.initializeSubmissionContact();
 
-        this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
-            this.nameIdRequestParamsContactsPi);
+        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
+            NameIdFilterParamTypes.CONTACT_PI,
+            null);
 
-        // this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
+        // this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
         //     this.nameIdRequestParamsExperiments);
 
-        this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
-            this.nameIdRequestParamsMapsets);
+        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
+            NameIdFilterParamTypes.MAPSETS,
+            null);
 
-        this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
-            this.nameIdRequestParamsDatasetType);
+        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
+            NameIdFilterParamTypes.CV_DATATYPE,
+            null);
 
-        this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
-            this.nameIdRequestParamsPlatforms);
+        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
+            NameIdFilterParamTypes.PLATFORMS,
+            null);
 
-        // this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
+        // this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
         //     this.nameIdRequestParamsDataset);
 
         //changing modes will have nuked the submit as item in the tree, so we need to re-event (sic.) it:
@@ -700,8 +704,9 @@ export class ExtractorRoot implements OnInit {
 
         this.nameIdRequestParamsContactsPi.setSelectedItemId(this.selectedContactIdForPi);
         this.nameIdRequestParamsProject.setFkEntityFilterValue(this.selectedContactIdForPi);
-        this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
-            this.nameIdRequestParamsProject);
+        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
+            NameIdFilterParamTypes.PROJECTS_BY_CONTACT,
+            this.selectedContactIdForPi);
 
         //console.log("selected contact itemId:" + arg);
     }
@@ -742,8 +747,9 @@ export class ExtractorRoot implements OnInit {
 
         this.nameIdRequestParamsProject.setSelectedItemId(this.selectedProjectId);
         this.nameIdRequestParamsExperiments.setFkEntityFilterValue(this.selectedProjectId);
-        this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
-            this.nameIdRequestParamsExperiments);
+        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
+            NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT,
+            this.selectedProjectId);
     }
 
 
@@ -760,8 +766,9 @@ export class ExtractorRoot implements OnInit {
 
         this.nameIdRequestParamsExperiments.setSelectedItemId(this.selectedExperimentId);
         this.nameIdRequestParamsDataset.setFkEntityFilterValue(this.selectedExperimentId);
-        this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
-            this.nameIdRequestParamsDataset)
+        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
+            NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT,
+            this.selectedExperimentId)
         // this.store.dispatch(new fileItemAction.SetEntityFilter({
         //     gobiiExtractFilterType: this.gobiiExtractFilterType,
         //     nameIdRequestParams: this.nameIdRequestParamsDataset

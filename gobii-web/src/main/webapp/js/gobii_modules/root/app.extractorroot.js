@@ -410,13 +410,13 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         this.reinitProjectList = false;
                     }
                     this.initializeSubmissionContact();
-                    this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType, this.nameIdRequestParamsContactsPi);
-                    // this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
+                    this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.CONTACT_PI, null);
+                    // this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
                     //     this.nameIdRequestParamsExperiments);
-                    this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType, this.nameIdRequestParamsMapsets);
-                    this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType, this.nameIdRequestParamsDatasetType);
-                    this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType, this.nameIdRequestParamsPlatforms);
-                    // this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
+                    this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.MAPSETS, null);
+                    this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.CV_DATATYPE, null);
+                    this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.PLATFORMS, null);
+                    // this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
                     //     this.nameIdRequestParamsDataset);
                     //changing modes will have nuked the submit as item in the tree, so we need to re-event (sic.) it:
                 };
@@ -424,7 +424,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this.selectedContactIdForPi = arg.id;
                     this.nameIdRequestParamsContactsPi.setSelectedItemId(this.selectedContactIdForPi);
                     this.nameIdRequestParamsProject.setFkEntityFilterValue(this.selectedContactIdForPi);
-                    this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType, this.nameIdRequestParamsProject);
+                    this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS_BY_CONTACT, this.selectedContactIdForPi);
                     //console.log("selected contact itemId:" + arg);
                 };
                 ExtractorRoot.prototype.handleFormatSelected = function (arg) {
@@ -447,13 +447,13 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this.displayDataSetDetail = false;
                     this.nameIdRequestParamsProject.setSelectedItemId(this.selectedProjectId);
                     this.nameIdRequestParamsExperiments.setFkEntityFilterValue(this.selectedProjectId);
-                    this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType, this.nameIdRequestParamsExperiments);
+                    this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT, this.selectedProjectId);
                 };
                 ExtractorRoot.prototype.handleExperimentSelected = function (arg) {
                     this.selectedExperimentId = arg.id;
                     this.nameIdRequestParamsExperiments.setSelectedItemId(this.selectedExperimentId);
                     this.nameIdRequestParamsDataset.setFkEntityFilterValue(this.selectedExperimentId);
-                    this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType, this.nameIdRequestParamsDataset);
+                    this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT, this.selectedExperimentId);
                     // this.store.dispatch(new fileItemAction.SetEntityFilter({
                     //     gobiiExtractFilterType: this.gobiiExtractFilterType,
                     //     nameIdRequestParams: this.nameIdRequestParamsDataset
