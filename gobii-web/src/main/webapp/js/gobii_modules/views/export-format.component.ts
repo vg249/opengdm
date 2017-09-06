@@ -110,7 +110,7 @@ export class ExportFormatComponent implements OnInit, OnChanges {
     public onFormatSelected: EventEmitter<GobiiExtractFormat> = new EventEmitter();
     public onError: EventEmitter<Header> = new EventEmitter();
 
-    private handleFormatSelected(arg) {
+    public handleFormatSelected(arg) {
         if (arg.srcElement.checked) {
 
             let radioValue: string = arg.srcElement.value;

@@ -21,7 +21,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                 returnVal = {
                     fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected,
                     fileItems: state.fileItems.concat(newGobiiFileItems),
-                    filters: {}
+                    filters: state.filters
                 };
                 break;
             } // LOAD
@@ -68,7 +68,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                 returnVal = {
                     fileItems: state.fileItems,
                     fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected.concat(selectedUniqueItemIds),
-                    filters: {} // spread syntax
+                    filters: state.filters
                 };
                 break;
             } // SELECT_FOR_EXTRACT
@@ -82,7 +82,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                 returnVal = {
                     fileItems: state.fileItems,
                     fileItemUniqueIdsSelected: newSelectedUniqueItemIds,
-                    filters: {}
+                    filters: state.filters
                 };
                 break;
             }

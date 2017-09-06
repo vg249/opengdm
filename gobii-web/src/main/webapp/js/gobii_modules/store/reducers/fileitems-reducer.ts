@@ -51,7 +51,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             returnVal = {
                 fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected,
                 fileItems: [...state.fileItems, ...newGobiiFileItems],
-                filters: {}
+                filters: state.filters
             };
 
             break;
@@ -109,7 +109,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             returnVal = {
                 fileItems: state.fileItems,
                 fileItemUniqueIdsSelected: [...state.fileItemUniqueIdsSelected, ...selectedUniqueItemIds],
-                filters: {} // spread syntax
+                filters: state.filters
             };
 
             break;
@@ -128,7 +128,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             returnVal = {
                 fileItems: state.fileItems,
                 fileItemUniqueIdsSelected: newSelectedUniqueItemIds,
-                filters: {}
+                filters: state.filters
             };
 
             break;
