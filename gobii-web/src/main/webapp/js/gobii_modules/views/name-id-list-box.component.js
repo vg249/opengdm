@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/name-id", "../model/type-extractor-filter", "../services/core/name-id-service", "@ngrx/store", "../store/actions/fileitem-action", "../services/core/file-item-service", "../model/type-process"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/name-id", "../model/type-extractor-filter", "../services/core/name-id-service", "@ngrx/store", "../store/actions/fileitem-action", "../services/core/file-item-service", "../model/type-process", "../model/file-model-node"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-extractor-f
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, name_id_1, type_extractor_filter_1, name_id_service_1, store_1, fileAction, file_item_service_1, type_process_1, NameIdListBoxComponent;
+    var core_1, name_id_1, type_extractor_filter_1, name_id_service_1, store_1, fileAction, file_item_service_1, type_process_1, file_model_node_1, NameIdListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -36,6 +36,9 @@ System.register(["@angular/core", "../model/name-id", "../model/type-extractor-f
             },
             function (type_process_1_1) {
                 type_process_1 = type_process_1_1;
+            },
+            function (file_model_node_1_1) {
+                file_model_node_1 = file_model_node_1_1;
             }
         ],
         execute: function () {
@@ -52,6 +55,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-extractor-f
                     this.doTreeNotifications = true;
                     this.onNameIdSelected = new core_1.EventEmitter();
                     this.onError = new core_1.EventEmitter();
+                    this.previousSelectedItemId = null;
                     this.differ = differs.find({}).create(null);
                     //      this.fileItems$ = store.select(fromRoot.getAllFileItems);
                     //       this.fileItems$ = store.select(fromRoot.getMapsets);
@@ -65,11 +69,16 @@ System.register(["@angular/core", "../model/name-id", "../model/type-extractor-f
                 NameIdListBoxComponent.prototype.handleFileItemSelected = function (arg) {
                     var currentFileItemUniqueId = arg.currentTarget.value;
                     var selectedFileItem = this.fileItemService.getFIleItemForUniqueFileItemId(currentFileItemUniqueId);
-                    if (selectedFileItem.getProcessType() !== type_process_1.ProcessType.DUMMY) {
+                    if ((selectedFileItem.getProcessType() !== type_process_1.ProcessType.DUMMY)
+                        && (selectedFileItem.getExtractorItemType() !== file_model_node_1.ExtractorItemType.LABEL)) {
+                        this.previousSelectedItemId = currentFileItemUniqueId;
                         this.store.dispatch(new fileAction.SelectForExtractAction(selectedFileItem));
                     }
                     else {
-                        this.store.dispatch(new fileAction.DeSelectForExtractAction(selectedFileItem));
+                        if (this.previousSelectedItemId) {
+                            var previousItem = this.fileItemService.getFIleItemForUniqueFileItemId(this.previousSelectedItemId);
+                            this.store.dispatch(new fileAction.DeSelectForExtractAction(previousItem));
+                        }
                     }
                     this.onNameIdSelected
                         .emit(new name_id_1.NameId(selectedFileItem.getItemId(), selectedFileItem.getItemName(), selectedFileItem.getEntityType()));

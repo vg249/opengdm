@@ -267,6 +267,7 @@ export class TreeStructureService {
 
         let returnVal: GobiiTreeNode = GobiiTreeNode
             .build(gobiiFileItem.getGobiiExtractFilterType(), gobiiFileItem.getExtractorItemType())
+            .setFileItemId(gobiiFileItem.getFileItemUniqueId())
             .setEntityType(gobiiFileItem.getEntityType())
             .setEntitySubType(gobiiFileItem.getEntitySubType())
             .setCvFilterType(gobiiFileItem.getCvFilterType());

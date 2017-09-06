@@ -48,6 +48,24 @@ function placeNodeInTree(nodeToPlace: GobiiTreeNode, treeNodes: GobiiTreeNode[],
     return returnVal;
 }
 
+function findTreeNodeByFIleItemId(treeNodes: GobiiTreeNode[], fileItemUniqueId: string): GobiiTreeNode {
+
+    let returnVal: GobiiTreeNode = null;
+
+    //use an oldfashioned for loop because the lambda based semantics don't have a break;
+    for (let idx: number = 0; (idx < treeNodes.length) && !returnVal; idx++) {
+
+        let currentTreeNode:GobiiTreeNode = treeNodes[idx];
+        if( currentTreeNode.getFileItemId() === fileItemUniqueId  ) {
+            returnVal = currentTreeNode;
+        } else {
+            returnVal = findTreeNodeByFIleItemId(currentTreeNode.getChildren(),fileItemUniqueId);
+        }
+    }
+
+    return returnVal;
+}
+
 export function gobiiTreeNodesReducer(state: State = initialState, action: gobiiTreeNodeAction.All): State {
 
     let returnVal: State = state;
@@ -110,6 +128,28 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
 
         } // SELECT_FOR_EXTRACT
 
+        case gobiiTreeNodeAction.DEACTIVATE: {
+
+            const gobiiFileItemUniqueId = action.payload;
+
+            const gobiiTreeNodeToDeActivate: GobiiTreeNode = findTreeNodeByFIleItemId(state
+                .gobiiTreeNodes
+                .filter(tn => tn.getGobiiExtractFilterType() === state.gobiiExtractFilterType),
+                gobiiFileItemUniqueId);
+
+            let newAcxtiveNodeState = state.gobiiTreeNodesActive
+                .filter(gtn => gtn !== gobiiTreeNodeToDeActivate.getId());
+
+            returnVal = {
+                gobiiExtractFilterType: state.gobiiExtractFilterType,
+                gobiiTreeNodesActive: newAcxtiveNodeState,
+                gobiiTreeNodes: state.gobiiTreeNodes
+            };
+
+            break;
+
+        } // SELECT_FOR_EXTRACT
+
         case gobiiTreeNodeAction.SELECT_EXTRACT_TYPE: {
 
             returnVal = {
@@ -140,7 +180,7 @@ export const getSelected = createSelector(getGobiiTreeNodes, getIdsOfActivated, 
 
         gobiiTreeNodes
             .forEach(function find(gtn) {
-                if( selectedUniqueIds.filter(id => id === gtn.getId()).length > 0 ) {
+                if (selectedUniqueIds.filter(id => id === gtn.getId()).length > 0) {
                     returnVal.push(gtn);
                 }
                 gtn.getChildren().forEach(find);

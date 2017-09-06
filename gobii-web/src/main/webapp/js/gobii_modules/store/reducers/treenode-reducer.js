@@ -26,6 +26,20 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
         }
         return returnVal;
     }
+    function findTreeNodeByFIleItemId(treeNodes, fileItemUniqueId) {
+        var returnVal = null;
+        //use an oldfashioned for loop because the lambda based semantics don't have a break;
+        for (var idx = 0; (idx < treeNodes.length) && !returnVal; idx++) {
+            var currentTreeNode = treeNodes[idx];
+            if (currentTreeNode.getFileItemId() === fileItemUniqueId) {
+                returnVal = currentTreeNode;
+            }
+            else {
+                returnVal = findTreeNodeByFIleItemId(currentTreeNode.getChildren(), fileItemUniqueId);
+            }
+        }
+        return returnVal;
+    }
     function gobiiTreeNodesReducer(state, action) {
         if (state === void 0) { state = initialState; }
         var returnVal = state;
@@ -67,6 +81,20 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
                 returnVal = {
                     gobiiExtractFilterType: state.gobiiExtractFilterType,
                     gobiiTreeNodesActive: state.gobiiTreeNodesActive.concat([gobiiTreeNodeToActivate.getId()]),
+                    gobiiTreeNodes: state.gobiiTreeNodes
+                };
+                break;
+            } // SELECT_FOR_EXTRACT
+            case gobiiTreeNodeAction.DEACTIVATE: {
+                var gobiiFileItemUniqueId = action.payload;
+                var gobiiTreeNodeToDeActivate_1 = findTreeNodeByFIleItemId(state
+                    .gobiiTreeNodes
+                    .filter(function (tn) { return tn.getGobiiExtractFilterType() === state.gobiiExtractFilterType; }), gobiiFileItemUniqueId);
+                var newAcxtiveNodeState = state.gobiiTreeNodesActive
+                    .filter(function (gtn) { return gtn !== gobiiTreeNodeToDeActivate_1.getId(); });
+                returnVal = {
+                    gobiiExtractFilterType: state.gobiiExtractFilterType,
+                    gobiiTreeNodesActive: newAcxtiveNodeState,
                     gobiiTreeNodes: state.gobiiTreeNodes
                 };
                 break;

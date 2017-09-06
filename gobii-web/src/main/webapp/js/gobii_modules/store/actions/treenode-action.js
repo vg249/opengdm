@@ -1,7 +1,7 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var INIT, LOAD_TREE_NODE, PLACE_TREE_NODE, ACTIVATE, SELECT_EXTRACT_TYPE, InitAction, LoadTreeNodeAction, PlaceTreeNodeAction, ActivateForExtractAction, SelectExtractType;
+    var INIT, LOAD_TREE_NODE, PLACE_TREE_NODE, ACTIVATE, DEACTIVATE, SELECT_EXTRACT_TYPE, InitAction, LoadTreeNodeAction, PlaceTreeNodeAction, ActivateForExtractAction, DeActivateFromExtractAction, SelectExtractType;
     return {
         setters: [],
         execute: function () {
@@ -9,6 +9,7 @@ System.register([], function (exports_1, context_1) {
             exports_1("LOAD_TREE_NODE", LOAD_TREE_NODE = '[GobiiTreeNode] Load Tree Nodes');
             exports_1("PLACE_TREE_NODE", PLACE_TREE_NODE = '[GobiiTreeNode] Add Tree Node');
             exports_1("ACTIVATE", ACTIVATE = '[GobiiTreeNode] Activate');
+            exports_1("DEACTIVATE", DEACTIVATE = '[GobiiTreeNode] Deactivate');
             exports_1("SELECT_EXTRACT_TYPE", SELECT_EXTRACT_TYPE = '[GobiiTreeNode] Select Extract Type');
             InitAction = (function () {
                 function InitAction() {
@@ -48,6 +49,15 @@ System.register([], function (exports_1, context_1) {
                 return ActivateForExtractAction;
             }());
             exports_1("ActivateForExtractAction", ActivateForExtractAction);
+            DeActivateFromExtractAction = (function () {
+                //fileitemuniqueid
+                function DeActivateFromExtractAction(payload) {
+                    this.payload = payload;
+                    this.type = DEACTIVATE;
+                }
+                return DeActivateFromExtractAction;
+            }());
+            exports_1("DeActivateFromExtractAction", DeActivateFromExtractAction);
             SelectExtractType = (function () {
                 function SelectExtractType(payload) {
                     this.payload = payload;

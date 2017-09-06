@@ -35,8 +35,7 @@ export class FileItemEffects {
     deSelectFromExtract$ = this.actions$
         .ofType(fileItemActions.DESELECT_FOR_EXTRACT)
         .map((action: fileItemActions.SelectForExtractAction) => {
-                let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(action.payload);
-                return new treeNodeActions.PlaceTreeNodeAction(treeNode);
+                return new treeNodeActions.DeActivateFromExtractAction(action.payload.getFileItemUniqueId());
             }
         );
 

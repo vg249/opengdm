@@ -263,6 +263,7 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
                 TreeStructureService.prototype.makeTreeNodeFromFileItem = function (gobiiFileItem) {
                     var returnVal = GobiiTreeNode_1.GobiiTreeNode
                         .build(gobiiFileItem.getGobiiExtractFilterType(), gobiiFileItem.getExtractorItemType())
+                        .setFileItemId(gobiiFileItem.getFileItemUniqueId())
                         .setEntityType(gobiiFileItem.getEntityType())
                         .setEntitySubType(gobiiFileItem.getEntitySubType())
                         .setCvFilterType(gobiiFileItem.getCvFilterType());

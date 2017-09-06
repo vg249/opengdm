@@ -11,6 +11,7 @@ import * as fileAction from '../store/actions/fileitem-action';
 import {Observable} from "rxjs/Observable";
 import {FileItemService} from "../services/core/file-item-service";
 import {ProcessType} from "../model/type-process";
+import {ExtractorItemType} from "../model/file-model-node";
 
 
 @Component({
@@ -77,15 +78,23 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
     }
 
 
+    previousSelectedItemId:string = null;
     public handleFileItemSelected(arg) {
 
         let currentFileItemUniqueId:string = arg.currentTarget.value;
         let selectedFileItem: GobiiFileItem = this.fileItemService.getFIleItemForUniqueFileItemId(currentFileItemUniqueId);
 
-        if(selectedFileItem.getProcessType() !== ProcessType.DUMMY ) {
+        if(( selectedFileItem.getProcessType() !== ProcessType.DUMMY )
+        && (selectedFileItem.getExtractorItemType() !== ExtractorItemType.LABEL) ) {
+
+            this.previousSelectedItemId = currentFileItemUniqueId;
             this.store.dispatch(new fileAction.SelectForExtractAction(selectedFileItem));
+
         } else {
-            this.store.dispatch(new fileAction.DeSelectForExtractAction(selectedFileItem));
+            if( this.previousSelectedItemId ) {
+                let previousItem: GobiiFileItem = this.fileItemService.getFIleItemForUniqueFileItemId(this.previousSelectedItemId);
+                this.store.dispatch(new fileAction.DeSelectForExtractAction(previousItem));
+            }
         }
 
         this.onNameIdSelected

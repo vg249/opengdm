@@ -6,6 +6,7 @@ export const INIT = '[GobiiTreeNode] Init';
 export const LOAD_TREE_NODE = '[GobiiTreeNode] Load Tree Nodes';
 export const PLACE_TREE_NODE = '[GobiiTreeNode] Add Tree Node';
 export const ACTIVATE = '[GobiiTreeNode] Activate';
+export const DEACTIVATE = '[GobiiTreeNode] Deactivate';
 export const SELECT_EXTRACT_TYPE = '[GobiiTreeNode] Select Extract Type';
 
 
@@ -37,10 +38,19 @@ export class PlaceTreeNodeAction implements Action {
     }
 }
 
+
+
 export class ActivateForExtractAction implements Action {
     readonly type = ACTIVATE;
 
     constructor(public payload: GobiiTreeNode) {
+    }
+}
+
+export class DeActivateFromExtractAction implements Action {
+    readonly type = DEACTIVATE;
+    //fileitemuniqueid
+    constructor(public payload: string) {
     }
 }
 
@@ -60,6 +70,7 @@ export type All
     = LoadTreeNodeAction
     | PlaceTreeNodeAction
     | ActivateForExtractAction
+    | DeActivateFromExtractAction
     | SelectExtractType
     | InitAction;
 

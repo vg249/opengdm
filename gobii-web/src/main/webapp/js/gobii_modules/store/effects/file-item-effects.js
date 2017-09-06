@@ -100,8 +100,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                     this.deSelectFromExtract$ = this.actions$
                         .ofType(fileItemActions.DESELECT_FOR_EXTRACT)
                         .map(function (action) {
-                        var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(action.payload);
-                        return new treeNodeActions.PlaceTreeNodeAction(treeNode);
+                        return new treeNodeActions.DeActivateFromExtractAction(action.payload.getFileItemUniqueId());
                     });
                 }
                 __decorate([
