@@ -212,7 +212,7 @@ export class FileItemService {
                     } else {
 
                         let noneFileItem: GobiiFileItem = GobiiFileItem
-                            .build(gobiiExtractFilterType, ProcessType.CREATE)
+                            .build(gobiiExtractFilterType, ProcessType.DUMMY)
                             .setExtractorItemType(ExtractorItemType.ENTITY)
                             .setEntityType(nameIdRequestParamsToLoad.getEntityType())
                             .setItemId("0")

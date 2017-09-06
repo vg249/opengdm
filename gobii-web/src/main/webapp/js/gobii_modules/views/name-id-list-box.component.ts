@@ -10,6 +10,7 @@ import * as fromRoot from '../store/reducers';
 import * as fileAction from '../store/actions/fileitem-action';
 import {Observable} from "rxjs/Observable";
 import {FileItemService} from "../services/core/file-item-service";
+import {ProcessType} from "../model/type-process";
 
 
 @Component({
@@ -81,7 +82,11 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
         let currentFileItemUniqueId:string = arg.currentTarget.value;
         let selectedFileItem: GobiiFileItem = this.fileItemService.getFIleItemForUniqueFileItemId(currentFileItemUniqueId);
 
-        this.store.dispatch(new fileAction.SelectForExtractAction(selectedFileItem));
+        if(selectedFileItem.getProcessType() !== ProcessType.DUMMY ) {
+            this.store.dispatch(new fileAction.SelectForExtractAction(selectedFileItem));
+        } else {
+            this.store.dispatch(new fileAction.DeSelectForExtractAction(selectedFileItem));
+        }
 
         this.onNameIdSelected
             .emit(new NameId(selectedFileItem.getItemId(),

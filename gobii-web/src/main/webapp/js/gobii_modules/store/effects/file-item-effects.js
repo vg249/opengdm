@@ -91,8 +91,14 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                     this.actions$ = actions$;
                     this.treeStructureService = treeStructureService;
                     this.router = router;
-                    this.loadFileItems$ = this.actions$
+                    this.selectForExtract$ = this.actions$
                         .ofType(fileItemActions.SELECT_FOR_EXTRACT)
+                        .map(function (action) {
+                        var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(action.payload);
+                        return new treeNodeActions.PlaceTreeNodeAction(treeNode);
+                    });
+                    this.deSelectFromExtract$ = this.actions$
+                        .ofType(fileItemActions.DESELECT_FOR_EXTRACT)
                         .map(function (action) {
                         var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(action.payload);
                         return new treeNodeActions.PlaceTreeNodeAction(treeNode);
@@ -101,7 +107,11 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                 __decorate([
                     effects_1.Effect(),
                     __metadata("design:type", Object)
-                ], FileItemEffects.prototype, "loadFileItems$", void 0);
+                ], FileItemEffects.prototype, "selectForExtract$", void 0);
+                __decorate([
+                    effects_1.Effect(),
+                    __metadata("design:type", Object)
+                ], FileItemEffects.prototype, "deSelectFromExtract$", void 0);
                 FileItemEffects = __decorate([
                     core_1.Injectable(),
                     __metadata("design:paramtypes", [effects_1.Actions,

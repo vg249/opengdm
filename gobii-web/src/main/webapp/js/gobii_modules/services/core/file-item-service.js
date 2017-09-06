@@ -184,7 +184,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                         }
                         else {
                             var noneFileItem = gobii_file_item_1.GobiiFileItem
-                                .build(gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                                .build(gobiiExtractFilterType, type_process_1.ProcessType.DUMMY)
                                 .setExtractorItemType(file_model_node_1.ExtractorItemType.ENTITY)
                                 .setEntityType(nameIdRequestParamsToLoad.getEntityType())
                                 .setItemId("0")

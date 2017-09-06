@@ -22,8 +22,18 @@ import {SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID} from "../actions/fileitem-action";
 export class FileItemEffects {
 
     @Effect()
-    loadFileItems$ = this.actions$
+    selectForExtract$ = this.actions$
         .ofType(fileItemActions.SELECT_FOR_EXTRACT)
+        .map((action: fileItemActions.SelectForExtractAction) => {
+                let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(action.payload);
+                return new treeNodeActions.PlaceTreeNodeAction(treeNode);
+            }
+        );
+
+
+    @Effect()
+    deSelectFromExtract$ = this.actions$
+        .ofType(fileItemActions.DESELECT_FOR_EXTRACT)
         .map((action: fileItemActions.SelectForExtractAction) => {
                 let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(action.payload);
                 return new treeNodeActions.PlaceTreeNodeAction(treeNode);

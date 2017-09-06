@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/name-id", "../model/type-extractor-filter", "../services/core/name-id-service", "@ngrx/store", "../store/actions/fileitem-action", "../services/core/file-item-service"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/name-id", "../model/type-extractor-filter", "../services/core/name-id-service", "@ngrx/store", "../store/actions/fileitem-action", "../services/core/file-item-service", "../model/type-process"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-extractor-f
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, name_id_1, type_extractor_filter_1, name_id_service_1, store_1, fileAction, file_item_service_1, NameIdListBoxComponent;
+    var core_1, name_id_1, type_extractor_filter_1, name_id_service_1, store_1, fileAction, file_item_service_1, type_process_1, NameIdListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -33,6 +33,9 @@ System.register(["@angular/core", "../model/name-id", "../model/type-extractor-f
             },
             function (file_item_service_1_1) {
                 file_item_service_1 = file_item_service_1_1;
+            },
+            function (type_process_1_1) {
+                type_process_1 = type_process_1_1;
             }
         ],
         execute: function () {
@@ -62,7 +65,12 @@ System.register(["@angular/core", "../model/name-id", "../model/type-extractor-f
                 NameIdListBoxComponent.prototype.handleFileItemSelected = function (arg) {
                     var currentFileItemUniqueId = arg.currentTarget.value;
                     var selectedFileItem = this.fileItemService.getFIleItemForUniqueFileItemId(currentFileItemUniqueId);
-                    this.store.dispatch(new fileAction.SelectForExtractAction(selectedFileItem));
+                    if (selectedFileItem.getProcessType() !== type_process_1.ProcessType.DUMMY) {
+                        this.store.dispatch(new fileAction.SelectForExtractAction(selectedFileItem));
+                    }
+                    else {
+                        this.store.dispatch(new fileAction.DeSelectForExtractAction(selectedFileItem));
+                    }
                     this.onNameIdSelected
                         .emit(new name_id_1.NameId(selectedFileItem.getItemId(), selectedFileItem.getItemName(), selectedFileItem.getEntityType()));
                     // if (this.currentSelection.getItemId() !== "0") {
