@@ -320,13 +320,9 @@ export class ExtractorRoot implements OnInit {
 
     // *** You cannot use an Enum directly as a template type parameter, so we need
     //     to assign them to properties
-    public nameIdRequestParamsContactsPi: NameIdRequestParams;
-    public nameIdRequestParamsExperiments: NameIdRequestParams;
     public nameIdRequestParamsMapsets: NameIdRequestParams;
     public nameIdRequestParamsDatasetType: NameIdRequestParams;
     public nameIdRequestParamsPlatforms: NameIdRequestParams;
-    public nameIdRequestParamsDataset: NameIdRequestParams;
-    public nameIdRequestParamsProject: NameIdRequestParams;
     // ************************************************************************
 
     // unfiltered
