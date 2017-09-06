@@ -16,7 +16,7 @@ import {NameIdFilterParamTypes} from "../../model/type-nameid-filter-params";
 export interface State {
     fileItemUniqueIdsSelected: string[];
     fileItems: GobiiFileItem[] ;
-    filters: { [id: string]: NameIdRequestParams };
+    filters: { [id: string]: string };
 };
 
 export const initialState: State = {
@@ -59,7 +59,8 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
         case gobiiFileItemAction.LOAD_FILTERED_ITEMS: {
             const gobiiFileItemsPayload = action.payload.gobiiFileItems;
-            const nameIdRequestParamsPayload = action.payload.nameIdRequestParams;
+            const filterId = action.payload.filterId.toString();
+            const filterValue = action.payload.filterValue;
 
             const newGobiiFileItems = gobiiFileItemsPayload.filter(newItem =>
                 state
@@ -76,7 +77,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             );
 
             let newFilterState = Object.assign({}, state.filters);
-            newFilterState[nameIdRequestParamsPayload.getQueryName()] = nameIdRequestParamsPayload;
+            newFilterState[filterId] = filterValue;
 
 
             returnVal = {
@@ -135,9 +136,11 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
         case gobiiFileItemAction.SET_ENTITY_FILTER: {
 
-            const nameIdRequestParamsPayload: NameIdRequestParams = action.payload.nameIdRequestParams;
+            const filterId = action.payload.filterId.toString();
+            const filterValue = action.payload.filterValue;
+
             let newFilterState = Object.assign({}, state.filters);
-            newFilterState[nameIdRequestParamsPayload.getQueryName()] = nameIdRequestParamsPayload;
+            newFilterState[filterId] = filterValue;
 
 
             returnVal = {
@@ -215,7 +218,6 @@ export const getAll = createSelector(getFileItems, getUniqueIds, (entities, ids)
 // entity type is parameterized -- it is not global state
 
 
-
 export const getContacts = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
     return fileItems.filter(e =>
@@ -244,8 +246,6 @@ export const getFirstProject = createSelector(getProjects, (projects) => {
 });
 
 
-
-
 export const getExperiments = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
     return fileItems.filter(e =>
@@ -258,7 +258,6 @@ export const getExperiments = createSelector(getFileItems, getUniqueIds, (fileIt
 export const getFirstExperiment = createSelector(getExperiments, (experiments) => {
     return experiments[0];
 });
-
 
 
 export const getDatasets = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
@@ -276,7 +275,6 @@ export const getFirstDataset = createSelector(getDatasets, (datasets) => {
 });
 
 
-
 export const getCvTerms = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
     return fileItems.filter(e =>
@@ -289,7 +287,6 @@ export const getCvTerms = createSelector(getFileItems, getUniqueIds, (fileItems,
 export const getFirstCvTerm = createSelector(getCvTerms, (cvterms) => {
     return cvterms[0];
 });
-
 
 
 export const getMapsets = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
@@ -307,8 +304,6 @@ export const getFirstmapset = createSelector(getMapsets, (mapsets) => {
 });
 
 
-
-
 export const getPlatforms = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
     return fileItems.filter(e =>
@@ -323,8 +318,6 @@ export const getFirstPlatform = createSelector(getCvTerms, (platforms) => {
 });
 
 
-
-
 export const getMarkerGroups = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
     return fileItems.filter(e =>
@@ -337,7 +330,6 @@ export const getMarkerGroups = createSelector(getFileItems, getUniqueIds, (fileI
 export const getFirstMarkerGroup = createSelector(getCvTerms, (markergroups) => {
     return markergroups[0];
 });
-
 
 
 /// ****************** SYNCHRONOUS METHODS
@@ -361,7 +353,7 @@ export const getProjectsForSelectedPi = createSelector(getFileItems, getFilters,
 
     if (filters[NameIdFilterParamTypes.PROJECTS_BY_CONTACT]) {
 
-        let contactId: string = filters[NameIdFilterParamTypes.PROJECTS_BY_CONTACT].getFkEntityFilterValue();
+        let contactId: string = filters[NameIdFilterParamTypes.PROJECTS_BY_CONTACT];
         returnVal = fileItems.filter(e =>
             ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
             && ( e.getEntityType() === EntityType.Projects)
@@ -379,7 +371,7 @@ export const getExperimentsForSelectedProject = createSelector(getFileItems, get
 
     if (filters[NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT]) {
 
-        let projectId: string = filters[NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT].getFkEntityFilterValue();
+        let projectId: string = filters[NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT];
         returnVal = fileItems.filter(e =>
             ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
             && ( e.getEntityType() === EntityType.Experiments)
@@ -397,7 +389,7 @@ export const getDatasetsForSelectedExperiment = createSelector(getFileItems, get
 
     if (filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT]) {
 
-        let experimentId: string = filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT].getFkEntityFilterValue();
+        let experimentId: string = filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT];
         returnVal = fileItems.filter(e =>
             ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
             && ( e.getEntityType() === EntityType.DataSets )

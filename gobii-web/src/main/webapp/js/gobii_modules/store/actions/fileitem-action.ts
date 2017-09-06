@@ -2,6 +2,7 @@ import {Action} from '@ngrx/store';
 import {GobiiFileItem} from "../../model/gobii-file-item";
 import {NameIdRequestParams} from "../../model/name-id-request-params";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
+import {NameIdFilterParamTypes} from "../../model/type-nameid-filter-params";
 
 export const LOAD = '[GobiiFileItem] Load';
 export const SELECT_FOR_EXTRACT = '[GobiiFileItem] Select';
@@ -30,7 +31,9 @@ export class LoadFilteredItemsAction implements Action {
 
     constructor(public payload: {
         gobiiFileItems: GobiiFileItem[],
-        nameIdRequestParams: NameIdRequestParams
+        filterId: NameIdFilterParamTypes,
+        filterValue: string
+
     }) {
     }
 }
@@ -54,7 +57,8 @@ export class SetEntityFilter implements Action {
 
     constructor(public payload: {
         gobiiExtractFilterType: GobiiExtractFilterType,
-        nameIdRequestParams: NameIdRequestParams
+        filterId: NameIdFilterParamTypes,
+        filterValue: string
     }) {
     }
 }

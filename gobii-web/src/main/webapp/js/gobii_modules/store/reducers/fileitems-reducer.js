@@ -27,7 +27,8 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
             } // LOAD
             case gobiiFileItemAction.LOAD_FILTERED_ITEMS: {
                 var gobiiFileItemsPayload = action.payload.gobiiFileItems;
-                var nameIdRequestParamsPayload = action.payload.nameIdRequestParams;
+                var filterId = action.payload.filterId.toString();
+                var filterValue = action.payload.filterValue;
                 var newGobiiFileItems = gobiiFileItemsPayload.filter(function (newItem) {
                     return state
                         .fileItems
@@ -40,7 +41,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                     }).length === 0;
                 });
                 var newFilterState = Object.assign({}, state.filters);
-                newFilterState[nameIdRequestParamsPayload.getQueryName()] = nameIdRequestParamsPayload;
+                newFilterState[filterId] = filterValue;
                 returnVal = {
                     fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected,
                     fileItems: state.fileItems.concat(newGobiiFileItems),
@@ -86,9 +87,10 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                 break;
             }
             case gobiiFileItemAction.SET_ENTITY_FILTER: {
-                var nameIdRequestParamsPayload = action.payload.nameIdRequestParams;
+                var filterId = action.payload.filterId.toString();
+                var filterValue = action.payload.filterValue;
                 var newFilterState = Object.assign({}, state.filters);
-                newFilterState[nameIdRequestParamsPayload.getQueryName()] = nameIdRequestParamsPayload;
+                newFilterState[filterId] = filterValue;
                 returnVal = {
                     fileItems: state.fileItems,
                     fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected,
@@ -270,7 +272,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
             exports_1("getProjectsForSelectedPi", getProjectsForSelectedPi = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
                 var returnVal = [];
                 if (filters[type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS_BY_CONTACT]) {
-                    var contactId_1 = filters[type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS_BY_CONTACT].getFkEntityFilterValue();
+                    var contactId_1 = filters[type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS_BY_CONTACT];
                     returnVal = fileItems.filter(function (e) {
                         return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY)
                             && (e.getEntityType() === type_entity_1.EntityType.Projects)
@@ -283,7 +285,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
             exports_1("getExperimentsForSelectedProject", getExperimentsForSelectedProject = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
                 var returnVal = [];
                 if (filters[type_nameid_filter_params_1.NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT]) {
-                    var projectId_1 = filters[type_nameid_filter_params_1.NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT].getFkEntityFilterValue();
+                    var projectId_1 = filters[type_nameid_filter_params_1.NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT];
                     returnVal = fileItems.filter(function (e) {
                         return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY)
                             && (e.getEntityType() === type_entity_1.EntityType.Experiments)
@@ -296,7 +298,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
             exports_1("getDatasetsForSelectedExperiment", getDatasetsForSelectedExperiment = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
                 var returnVal = [];
                 if (filters[type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT]) {
-                    var experimentId_1 = filters[type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT].getFkEntityFilterValue();
+                    var experimentId_1 = filters[type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT];
                     returnVal = fileItems.filter(function (e) {
                         return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY)
                             && (e.getEntityType() === type_entity_1.EntityType.DataSets)

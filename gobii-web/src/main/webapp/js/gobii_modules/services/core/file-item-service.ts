@@ -216,7 +216,8 @@ export class FileItemService {
                     let loadAction: fileItemActions.LoadFilteredItemsAction = new fileItemActions.LoadFilteredItemsAction(
                         {
                             gobiiFileItems: fileItems,
-                            nameIdRequestParams: nameIdRequestParamsToLoad,
+                            filterId: nameIdRequestParamsToLoad.getQueryName(),
+                            filterValue: nameIdRequestParamsToLoad.getFkEntityFilterValue()
                         }
                     );
 

@@ -98,7 +98,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     this.nameIdRequestParams.set(nameIdRequestParamsProject.getQueryName(), nameIdRequestParamsProject);
                     this.nameIdRequestParams.set(nameIdRequestParamsExperiments.getQueryName(), nameIdRequestParamsExperiments);
                     this.nameIdRequestParams.set(nameIdRequestParamsDatasets.getQueryName(), nameIdRequestParamsDatasets);
-                    //build the tree graph
+                    //build the parent-child request params graph
                     nameIdRequestParamsContactsPi
                         .setChildNameIdRequestParams([nameIdRequestParamsProject
                             .setParentNameIdRequestParams(nameIdRequestParamsContactsPi)
@@ -187,7 +187,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                         } // if/else any nameids were retrieved
                         var loadAction = new fileItemActions.LoadFilteredItemsAction({
                             gobiiFileItems: fileItems,
-                            nameIdRequestParams: nameIdRequestParamsToLoad,
+                            filterId: nameIdRequestParamsToLoad.getQueryName(),
+                            filterValue: nameIdRequestParamsToLoad.getFkEntityFilterValue()
                         });
                         _this.store.dispatch(loadAction);
                         // if there are children, we will load their data as well
