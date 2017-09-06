@@ -90,7 +90,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-extractor-f
                         // });
                         if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
                             //this.notificationSent = false;
-                            this.nameIdRequestParams.setGobiiExtractFilterType(this.gobiiExtractFilterType);
+                            //this.nameIdRequestParams.setGobiiExtractFilterType(this.gobiiExtractFilterType);
                             // let scope$ = this;
                             // this._fileModelTreeService
                             //     .fileItemNotifications()

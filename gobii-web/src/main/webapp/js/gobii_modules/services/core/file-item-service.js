@@ -68,6 +68,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     this.nameIdService = nameIdService;
                     this.store = store;
                     this.nameIdRequestParams = new Map();
+                    // For non-hierarchically filtered request params, we just create them simply
+                    // as we add them to the flat map
                     this.nameIdRequestParams.set(type_nameid_filter_params_1.NameIdFilterParamTypes.CV_DATATYPE, name_id_request_params_1.NameIdRequestParams
                         .build(type_nameid_filter_params_1.NameIdFilterParamTypes.CV_DATATYPE, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.CvTerms)
                         .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE)
@@ -79,8 +81,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.NO));
                     this.nameIdRequestParams.set(type_nameid_filter_params_1.NameIdFilterParamTypes.PLATFORMS, name_id_request_params_1.NameIdRequestParams
                         .build(type_nameid_filter_params_1.NameIdFilterParamTypes.PLATFORMS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Platforms));
-                    //filtered requests
-                    //first set up each request individually
+                    //for hierarchical items, we need to crate the nameid requests separately from the
+                    //flat map: they _will_ need to be in the flat map; however, they all need to be
+                    //useed to set up the filtering hierarchy
                     var nameIdRequestParamsContactsPi = name_id_request_params_1.NameIdRequestParams
                         .build(type_nameid_filter_params_1.NameIdFilterParamTypes.CONTACT_PI, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Contacts)
                         .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR);
@@ -110,6 +113,10 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                         ])
                     ]);
                 } // constructor
+                FileItemService.prototype.setItemLabelType = function (gobiiExtractFilterType, nameIdFilterParamTypes, nameIdLabelType) {
+                    var nameIdRequestParamsFromType = this.nameIdRequestParams.get(nameIdFilterParamTypes);
+                    nameIdRequestParamsFromType.setNameIdLabelType(nameIdLabelType);
+                };
                 FileItemService.prototype.loadWithFilterParams = function (gobiiExtractFilterType, nameIdFilterParamTypes, filterValue) {
                     var nameIdRequestParamsFromType = this.nameIdRequestParams.get(nameIdFilterParamTypes);
                     this.loadNameIdsToFileItems(gobiiExtractFilterType, nameIdRequestParamsFromType, filterValue);

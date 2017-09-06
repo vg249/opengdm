@@ -129,7 +129,7 @@ System.register(["@angular/core", "../model/type-process", "../model/type-extrac
                         && (changes['gobiiExtractFilterType'].currentValue != null)
                         && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
                         if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
-                            this.nameIdRequestParams.setGobiiExtractFilterType(this.gobiiExtractFilterType);
+                            //this.nameIdRequestParams.setGobiiExtractFilterType(this.gobiiExtractFilterType);
                             this.resetList();
                             // this.resetList();
                             // this._fileModelTreeService

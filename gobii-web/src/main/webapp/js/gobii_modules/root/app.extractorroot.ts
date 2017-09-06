@@ -125,7 +125,6 @@ import {Observable} from "rxjs/Observable";
                                     <name-id-list-box
                                             [fileItems$]="fileItemsContactsPI$"
                                             [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                            [nameIdRequestParams]="nameIdRequestParamsContactsPi"
                                             [notifyOnInit]="!doPrincipleInvestigatorTreeNotifications"
                                             [doTreeNotifications]="doPrincipleInvestigatorTreeNotifications"
                                             (onNameIdSelected)="handleContactForPiSelected($event)"
@@ -143,7 +142,6 @@ import {Observable} from "rxjs/Observable";
                                             [gobiiExtractFilterType]="gobiiExtractFilterType"
                                             [notifyOnInit]="true"
                                             [doTreeNotifications]="reinitProjectList"
-                                            [nameIdRequestParams]="nameIdRequestParamsProject"
                                             (onNameIdSelected)="handleProjectSelected($event)"
                                             (onError)="handleHeaderStatusMessage($event)">
                                     </name-id-list-box>
@@ -172,7 +170,6 @@ import {Observable} from "rxjs/Observable";
                                             [gobiiExtractFilterType]="gobiiExtractFilterType"
                                             [notifyOnInit]="true"
                                             [doTreeNotifications]="false"
-                                            [nameIdRequestParams]="nameIdRequestParamsExperiments"
                                             (onNameIdSelected)="handleExperimentSelected($event)"
                                             (onError)="handleHeaderStatusMessage($event)">
                                     </name-id-list-box>
@@ -199,7 +196,6 @@ import {Observable} from "rxjs/Observable";
                                     <checklist-box
                                             [gobiiFileItems$]="fileItemsDatasets$"
                                             [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                            [nameIdRequestParams]="nameIdRequestParamsDataset"
                                             [retainHistory]="true"
                                             (onError)="handleHeaderStatusMessage($event)">
                                     </checklist-box>
@@ -397,34 +393,7 @@ export class ExtractorRoot implements OnInit {
                 EntityType.Platforms);
 
         //filtered requests
-        this.nameIdRequestParamsContactsPi = NameIdRequestParams
-            .build(NameIdFilterParamTypes.CONTACT_PI,
-                GobiiExtractFilterType.WHOLE_DATASET,
-                EntityType.Contacts)
-            .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
-            .setChildNameIdRequestParams([this.nameIdRequestParamsProject = NameIdRequestParams
-                .build(NameIdFilterParamTypes.PROJECTS_BY_CONTACT,
-                    GobiiExtractFilterType.WHOLE_DATASET,
-                    EntityType.Projects)
-                .setEntityFilter(EntityFilter.BYTYPEID)
-//                .setNameIdLabelType(NameIdLabelType.ALL )
-                .setParentNameIdRequestParams(this.nameIdRequestParamsContactsPi)
-                .setChildNameIdRequestParams([this.nameIdRequestParamsExperiments = NameIdRequestParams
-                    .build(NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT,
-                        GobiiExtractFilterType.WHOLE_DATASET,
-                        EntityType.Experiments)
-                    .setEntityFilter(EntityFilter.BYTYPEID)
-                    .setParentNameIdRequestParams(this.nameIdRequestParamsProject)
-                    .setChildNameIdRequestParams([
-                        this.nameIdRequestParamsDataset = NameIdRequestParams
-                            .build(NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT,
-                                GobiiExtractFilterType.WHOLE_DATASET,
-                                EntityType.DataSets)
-                            .setEntityFilter(EntityFilter.BYTYPEID)
-                            .setParentNameIdRequestParams(this.nameIdRequestParamsExperiments)
-                    ])
-                ])
-            ]);
+
     }
 
 
@@ -609,7 +578,9 @@ export class ExtractorRoot implements OnInit {
         if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
             this.doPrincipleInvestigatorTreeNotifications = false;
-            this.nameIdRequestParamsContactsPi.setNameIdLabelType(NameIdLabelType.UNKNOWN);
+            this.fileItemService.setItemLabelType(this.gobiiExtractFilterType,
+                NameIdFilterParamTypes.CONTACT_PI,
+                NameIdLabelType.UNKNOWN);
             this.displaySelectorPi = true;
             this.displaySelectorProject = true;
             this.displaySelectorExperiment = true;
@@ -629,7 +600,10 @@ export class ExtractorRoot implements OnInit {
 
             this.displaySelectorPi = true;
             this.doPrincipleInvestigatorTreeNotifications = true;
-            this.nameIdRequestParamsContactsPi.setNameIdLabelType(NameIdLabelType.ALL);
+            this.fileItemService.setItemLabelType(this.gobiiExtractFilterType,
+                NameIdFilterParamTypes.CONTACT_PI,
+                NameIdLabelType.ALL);
+
             this.displaySelectorProject = true;
             this.displaySelectorDataType = true;
             this.displaySelectorPlatform = true;
@@ -652,7 +626,9 @@ export class ExtractorRoot implements OnInit {
 
             this.displaySelectorPi = false;
             this.doPrincipleInvestigatorTreeNotifications = false;
-            this.nameIdRequestParamsContactsPi.setNameIdLabelType(NameIdLabelType.UNKNOWN);
+            this.fileItemService.setItemLabelType(this.gobiiExtractFilterType,
+                NameIdFilterParamTypes.CONTACT_PI,
+                NameIdLabelType.UNKNOWN);
             this.displaySelectorProject = false;
             this.displaySelectorExperiment = false;
             this.displayAvailableDatasets = false;
@@ -702,8 +678,6 @@ export class ExtractorRoot implements OnInit {
 
         this.selectedContactIdForPi = arg.id;
 
-        this.nameIdRequestParamsContactsPi.setSelectedItemId(this.selectedContactIdForPi);
-        this.nameIdRequestParamsProject.setFkEntityFilterValue(this.selectedContactIdForPi);
         this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
             NameIdFilterParamTypes.PROJECTS_BY_CONTACT,
             this.selectedContactIdForPi);
@@ -745,8 +719,6 @@ export class ExtractorRoot implements OnInit {
         this.displayExperimentDetail = false;
         this.displayDataSetDetail = false;
 
-        this.nameIdRequestParamsProject.setSelectedItemId(this.selectedProjectId);
-        this.nameIdRequestParamsExperiments.setFkEntityFilterValue(this.selectedProjectId);
         this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
             NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT,
             this.selectedProjectId);
@@ -764,9 +736,7 @@ export class ExtractorRoot implements OnInit {
     public handleExperimentSelected(arg: NameId) {
         this.selectedExperimentId = arg.id;
 
-        this.nameIdRequestParamsExperiments.setSelectedItemId(this.selectedExperimentId);
-        this.nameIdRequestParamsDataset.setFkEntityFilterValue(this.selectedExperimentId);
-        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
+                    this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
             NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT,
             this.selectedExperimentId)
         // this.store.dispatch(new fileItemAction.SetEntityFilter({

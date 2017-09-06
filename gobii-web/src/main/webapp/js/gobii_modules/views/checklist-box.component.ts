@@ -174,7 +174,7 @@ export class CheckListBoxComponent implements OnInit, OnChanges, DoCheck {
             if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
 
 
-                this.nameIdRequestParams.setGobiiExtractFilterType(this.gobiiExtractFilterType);
+                //this.nameIdRequestParams.setGobiiExtractFilterType(this.gobiiExtractFilterType);
                 this.resetList();
                 // this.resetList();
                 // this._fileModelTreeService

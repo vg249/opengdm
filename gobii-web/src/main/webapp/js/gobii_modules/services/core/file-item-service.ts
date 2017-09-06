@@ -29,7 +29,8 @@ export class FileItemService {
     constructor(private nameIdService: NameIdService,
                 private store: Store<fromRoot.State>,) {
 
-
+        // For non-hierarchically filtered request params, we just create them simply
+        // as we add them to the flat map
         this.nameIdRequestParams.set(NameIdFilterParamTypes.CV_DATATYPE,
             NameIdRequestParams
                 .build(NameIdFilterParamTypes.CV_DATATYPE,
@@ -55,8 +56,9 @@ export class FileItemService {
                     GobiiExtractFilterType.WHOLE_DATASET,
                     EntityType.Platforms));
 
-        //filtered requests
-        //first set up each request individually
+        //for hierarchical items, we need to crate the nameid requests separately from the
+        //flat map: they _will_ need to be in the flat map; however, they all need to be
+        //useed to set up the filtering hierarchy
         let nameIdRequestParamsContactsPi: NameIdRequestParams = NameIdRequestParams
             .build(NameIdFilterParamTypes.CONTACT_PI,
                 GobiiExtractFilterType.WHOLE_DATASET,
@@ -102,6 +104,14 @@ export class FileItemService {
 
     } // constructor
 
+
+    public setItemLabelType(gobiiExtractFilterType: GobiiExtractFilterType,
+                                nameIdFilterParamTypes: NameIdFilterParamTypes,
+                                nameIdLabelType: NameIdLabelType) {
+
+        let nameIdRequestParamsFromType: NameIdRequestParams = this.nameIdRequestParams.get(nameIdFilterParamTypes);
+        nameIdRequestParamsFromType.setNameIdLabelType(nameIdLabelType);
+    }
 
     public loadWithFilterParams(gobiiExtractFilterType: GobiiExtractFilterType,
                                 nameIdFilterParamTypes: NameIdFilterParamTypes,

@@ -125,7 +125,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 
                 //this.notificationSent = false;
 
-                this.nameIdRequestParams.setGobiiExtractFilterType(this.gobiiExtractFilterType);
+                //this.nameIdRequestParams.setGobiiExtractFilterType(this.gobiiExtractFilterType);
 
                 // let scope$ = this;
                 // this._fileModelTreeService
