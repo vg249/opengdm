@@ -16,6 +16,7 @@ import {ExtractorItemType} from "../../model/file-model-node";
 import {GobiiFileItem} from "../../model/gobii-file-item";
 import {ProcessType} from "../../model/type-process";
 import {Observable} from "rxjs/Observable";
+import {SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID} from "../actions/fileitem-action";
 
 @Injectable()
 export class FileItemEffects {
@@ -28,6 +29,10 @@ export class FileItemEffects {
                 return new treeNodeActions.PlaceTreeNodeAction(treeNode);
             }
         );
+
+
+
+
 
     // @Effect()
     // setEntityFilter$ = this.actions$
@@ -81,7 +86,6 @@ export class FileItemEffects {
 
     constructor(private actions$: Actions,
                 private treeStructureService: TreeStructureService,
-                private nameIdService: NameIdService,
                 private router: Router) {
     }
 

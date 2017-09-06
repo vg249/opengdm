@@ -62,7 +62,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-extractor-f
                 NameIdListBoxComponent.prototype.handleFileItemSelected = function (arg) {
                     var currentFileItemUniqueId = arg.currentTarget.value;
                     var selectedFileItem = this.fileItemService.getFIleItemForUniqueFileItemId(currentFileItemUniqueId);
-                    this.store.dispatch(new fileAction.SelectByFileItemUniqueId(currentFileItemUniqueId));
+                    this.store.dispatch(new fileAction.SelectForExtractAction(selectedFileItem));
                     this.onNameIdSelected
                         .emit(new name_id_1.NameId(selectedFileItem.getItemId(), selectedFileItem.getItemName(), selectedFileItem.getEntityType()));
                     // if (this.currentSelection.getItemId() !== "0") {

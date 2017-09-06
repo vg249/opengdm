@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/operator/switchMap", "rxjs/add/observable/of", "../actions/fileitem-action", "../actions/treenode-action", "../../services/core/tree-structure-service", "../../services/core/name-id-service"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/operator/switchMap", "rxjs/add/observable/of", "../actions/fileitem-action", "../actions/treenode-action", "../../services/core/tree-structure-service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, router_1, effects_1, fileItemActions, treeNodeActions, tree_structure_service_1, name_id_service_1, FileItemEffects;
+    var core_1, router_1, effects_1, fileItemActions, treeNodeActions, tree_structure_service_1, FileItemEffects;
     return {
         setters: [
             function (core_1_1) {
@@ -34,9 +34,6 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
             },
             function (tree_structure_service_1_1) {
                 tree_structure_service_1 = tree_structure_service_1_1;
-            },
-            function (name_id_service_1_1) {
-                name_id_service_1 = name_id_service_1_1;
             }
         ],
         execute: function () {
@@ -89,11 +86,10 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                 //
                 //
                 //     }); //switch map
-                function FileItemEffects(actions$, treeStructureService, nameIdService, router) {
+                function FileItemEffects(actions$, treeStructureService, router) {
                     var _this = this;
                     this.actions$ = actions$;
                     this.treeStructureService = treeStructureService;
-                    this.nameIdService = nameIdService;
                     this.router = router;
                     this.loadFileItems$ = this.actions$
                         .ofType(fileItemActions.SELECT_FOR_EXTRACT)
@@ -110,7 +106,6 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                     core_1.Injectable(),
                     __metadata("design:paramtypes", [effects_1.Actions,
                         tree_structure_service_1.TreeStructureService,
-                        name_id_service_1.NameIdService,
                         router_1.Router])
                 ], FileItemEffects);
                 return FileItemEffects;

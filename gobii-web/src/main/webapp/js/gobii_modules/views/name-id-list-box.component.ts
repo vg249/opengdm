@@ -81,7 +81,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
         let currentFileItemUniqueId:string = arg.currentTarget.value;
         let selectedFileItem: GobiiFileItem = this.fileItemService.getFIleItemForUniqueFileItemId(currentFileItemUniqueId);
 
-        this.store.dispatch(new fileAction.SelectByFileItemUniqueId(currentFileItemUniqueId));
+        this.store.dispatch(new fileAction.SelectForExtractAction(selectedFileItem));
 
         this.onNameIdSelected
             .emit(new NameId(selectedFileItem.getItemId(),
