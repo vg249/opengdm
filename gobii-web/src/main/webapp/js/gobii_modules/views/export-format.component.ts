@@ -21,21 +21,24 @@ import {Store} from "@ngrx/store";
     inputs: ['gobiiExtractFilterType'],
     //directives: [RADIO_GROUP_DIRECTIVES]
 //  directives: [Alert]
-    template: `<form>
-                            <label class="the-legend">Select Format:&nbsp;</label>
-                            <BR><input type="radio" (change)="handleFormatSelected($event)" [(ngModel)]="fileFormat" name="fileFormat" value="HAPMAP" checked="checked">
-                            <label  for="HAPMAP" class="the-legend">Hapmap</label>
-                            <BR><input type="radio" (change)="handleFormatSelected($event)" [(ngModel)]="fileFormat" name="fileFormat" value="FLAPJACK">
-                            <label for="FLAPJACK" class="the-legend">Flapjack</label>
-                            <BR><input type="radio" (change)="handleFormatSelected($event)" [(ngModel)]="fileFormat" name="fileFormat" value="META_DATA_ONLY">
-                            <label  for="META_DATA_ONLY" class="the-legend">{{metaDataExtractname}}</label>
-                </form>` // end template
+    template: `
+        <form>
+            <label class="the-legend">Select Format:&nbsp;</label>
+            <BR><input type="radio" (change)="handleFormatSelected($event)" [(ngModel)]="fileFormat" name="fileFormat"
+                       value="HAPMAP" checked="checked">
+            <label for="HAPMAP" class="the-legend">Hapmap</label>
+            <BR><input type="radio" (change)="handleFormatSelected($event)" [(ngModel)]="fileFormat" name="fileFormat"
+                       value="FLAPJACK">
+            <label for="FLAPJACK" class="the-legend">Flapjack</label>
+            <BR><input type="radio" (change)="handleFormatSelected($event)" [(ngModel)]="fileFormat" name="fileFormat"
+                       value="META_DATA_ONLY">
+            <label for="META_DATA_ONLY" class="the-legend">{{metaDataExtractname}}</label>
+        </form>` // end template
 })
 
 export class ExportFormatComponent implements OnInit, OnChanges {
 
-    constructor(private _fileModelTreeService: FileModelTreeService,
-                private store: Store<fromRoot.State>) {
+    constructor(private store: Store<fromRoot.State>) {
     } // ctor
 
     // private nameIdList: NameId[];
@@ -140,7 +143,6 @@ export class ExportFormatComponent implements OnInit, OnChanges {
         this.store.dispatch(new fileItemAction.SelectForExtractAction(formatItem));
 
 
-
         // this._fileModelTreeService.put(formatItem)
         //     .subscribe(
         //         null,
@@ -153,18 +155,18 @@ export class ExportFormatComponent implements OnInit, OnChanges {
 
     public metaDataExtractname: string;
 
-    ngOnChanges(changes: {[propName: string]: SimpleChange}) {
+    ngOnChanges(changes: { [propName: string]: SimpleChange }) {
 
-        this._fileModelTreeService
-            .fileItemNotifications()
-            .subscribe(fileItem => {
-
-                if (fileItem.getProcessType() === ProcessType.NOTIFY &&
-                    ((fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY)
-                    || (fileItem.getExtractorItemType() === ExtractorItemType.CLEAR_TREE) )) {
-                    this.setDefault();
-                }
-            });
+        // this._fileModelTreeService
+        //     .fileItemNotifications()
+        //     .subscribe(fileItem => {
+        //
+        //         if (fileItem.getProcessType() === ProcessType.NOTIFY &&
+        //             ((fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY)
+        //             || (fileItem.getExtractorItemType() === ExtractorItemType.CLEAR_TREE) )) {
+        //             this.setDefault();
+        //         }
+        //     });
 
         if (changes['gobiiExtractFilterType']
             && ( changes['gobiiExtractFilterType'].currentValue != null )

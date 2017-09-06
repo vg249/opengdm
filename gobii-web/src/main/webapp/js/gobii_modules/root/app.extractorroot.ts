@@ -88,7 +88,6 @@ import {Observable} from "rxjs/Observable";
                                             <name-id-list-box
                                                     [fileItems$]="fileItemsMapsets$"
                                                     [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                                    [nameIdRequestParams]="nameIdRequestParamsMapsets"
                                                     (onError)="handleHeaderStatusMessage($event)">
                                             </name-id-list-box>
                                         </td>
@@ -320,7 +319,6 @@ export class ExtractorRoot implements OnInit {
 
     // *** You cannot use an Enum directly as a template type parameter, so we need
     //     to assign them to properties
-    public nameIdRequestParamsMapsets: NameIdRequestParams;
     public nameIdRequestParamsDatasetType: NameIdRequestParams;
     public nameIdRequestParamsPlatforms: NameIdRequestParams;
     // ************************************************************************
@@ -377,11 +375,6 @@ export class ExtractorRoot implements OnInit {
             .setNameIdLabelType(NameIdLabelType.SELECT_A);
 
 
-        this.nameIdRequestParamsMapsets = NameIdRequestParams
-            .build(NameIdFilterParamTypes.MAPSETS,
-                GobiiExtractFilterType.WHOLE_DATASET,
-                EntityType.Mapsets)
-            .setNameIdLabelType(NameIdLabelType.NO);
 
         this.nameIdRequestParamsPlatforms = NameIdRequestParams
             .build(NameIdFilterParamTypes.PLATFORMS,
