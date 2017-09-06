@@ -90,6 +90,7 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
                 var gobiiTreeNodeToDeActivate_1 = findTreeNodeByFIleItemId(state
                     .gobiiTreeNodes
                     .filter(function (tn) { return tn.getGobiiExtractFilterType() === state.gobiiExtractFilterType; }), gobiiFileItemUniqueId);
+                gobiiTreeNodeToDeActivate_1.resetLabel();
                 var newAcxtiveNodeState = state.gobiiTreeNodesActive
                     .filter(function (gtn) { return gtn !== gobiiTreeNodeToDeActivate_1.getId(); });
                 returnVal = {

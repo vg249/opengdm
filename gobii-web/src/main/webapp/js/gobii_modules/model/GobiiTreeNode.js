@@ -104,6 +104,16 @@ System.register(["./type-entity", "./cv-filter-type", "./file-model-node", "./gu
                     this.label = value;
                     return this;
                 };
+                GobiiTreeNode.prototype.getGenericLabel = function () {
+                    return this.genericLabel;
+                };
+                GobiiTreeNode.prototype.setGenericLabel = function (value) {
+                    this.genericLabel = value;
+                    return this;
+                };
+                GobiiTreeNode.prototype.resetLabel = function () {
+                    this.label = this.genericLabel;
+                };
                 GobiiTreeNode.prototype.getData = function () {
                     return this.data;
                 };

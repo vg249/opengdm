@@ -85,6 +85,7 @@ export class GobiiTreeNode implements TreeNode {
 
 //UI properties
     private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
+    public genericLabel: string;
     public label: string;
     public data: any;
     public icon: any;
@@ -139,6 +140,20 @@ export class GobiiTreeNode implements TreeNode {
         this.label = value;
         return this;
     }
+
+    getGenericLabel(): string {
+        return this.genericLabel
+    }
+
+    setGenericLabel(value: string): GobiiTreeNode {
+        this.genericLabel = value;
+        return this;
+    }
+
+    resetLabel() {
+        this.label = this.genericLabel;
+    }
+
 
     getData(): any {
         return this.data;

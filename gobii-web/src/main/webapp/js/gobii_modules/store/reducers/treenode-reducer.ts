@@ -137,6 +137,8 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
                 .filter(tn => tn.getGobiiExtractFilterType() === state.gobiiExtractFilterType),
                 gobiiFileItemUniqueId);
 
+            gobiiTreeNodeToDeActivate.resetLabel();
+
             let newAcxtiveNodeState = state.gobiiTreeNodesActive
                 .filter(gtn => gtn !== gobiiTreeNodeToDeActivate.getId());
 

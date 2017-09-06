@@ -21,6 +21,10 @@ import {SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID} from "../actions/fileitem-action";
 @Injectable()
 export class FileItemEffects {
 
+    // this effect acts on the content of the tree nodes (e.g., their names and icons so forth)
+    // and then dispatches them to the tree node reducer. The tree node reducer holds the nodes
+    // in state. Thus, the hierarchical arrangement of nodes is managed by the reducer in
+    // accordance with how the nodes are defined by the tree service.
     @Effect()
     selectForExtract$ = this.actions$
         .ofType(fileItemActions.SELECT_FOR_EXTRACT)

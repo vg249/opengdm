@@ -18,16 +18,16 @@ export class TreeStructureService {
         let returnVal: GobiiTreeNode[] = [
 
             GobiiTreeNode.build(gobiiExtractFilterType, ExtractorItemType.JOB_ID)
-                .setLabel(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.JOB_ID]),
+                .setGenericLabel(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.JOB_ID]),
             GobiiTreeNode.build(gobiiExtractFilterType, ExtractorItemType.ENTITY)
                 .setEntityType(EntityType.Contacts)
                 .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
-                .setLabel(Labels.instance().entityNodeLabels[EntitySubType.CONTACT_SUBMITED_BY]),
+                .setGenericLabel(Labels.instance().entityNodeLabels[EntitySubType.CONTACT_SUBMITED_BY]),
             GobiiTreeNode.build(gobiiExtractFilterType, ExtractorItemType.EXPORT_FORMAT)
-                .setLabel(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.EXPORT_FORMAT]),
+                .setGenericLabel(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.EXPORT_FORMAT]),
             GobiiTreeNode.build(gobiiExtractFilterType, ExtractorItemType.ENTITY)
                 .setEntityType(EntityType.Mapsets)
-                .setLabel(Labels.instance().entityNodeLabels[EntityType.Mapsets]),
+                .setGenericLabel(Labels.instance().entityNodeLabels[EntityType.Mapsets]),
         ]
 
         return returnVal;
@@ -60,7 +60,7 @@ export class TreeStructureService {
                 .setEntityType(EntityType.Platforms),
             GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.TREE_STRUCTURE)
                 .setContainerType(ContainerType.STRUCTURE)
-                .setLabel("Samples Criteria")
+                .setGenericLabel("Samples Criteria")
                 .setExpanded(true)
                 .setChildren([
                     GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.ENTITY)
@@ -82,7 +82,7 @@ export class TreeStructureService {
                 .setCvFilterType(CvFilterType.DATASET_TYPE),
             GobiiTreeNode.build(GobiiExtractFilterType.BY_MARKER, ExtractorItemType.TREE_STRUCTURE)
                 .setContainerType(ContainerType.STRUCTURE)
-                .setLabel("Markers Criteria")
+                .setGenericLabel("Markers Criteria")
                 .setExpanded(true)
                 .setChildren([
                     GobiiTreeNode.build(GobiiExtractFilterType.BY_MARKER, ExtractorItemType.ENTITY)
@@ -131,6 +131,7 @@ export class TreeStructureService {
             labelValue = Labels.instance().treeExtractorTypeLabels[gobiiTreeNode.getItemType()];
         }
 
+        gobiiTreeNode.setGenericLabel(labelValue);
         gobiiTreeNode.setLabel(labelValue);
 
     }
