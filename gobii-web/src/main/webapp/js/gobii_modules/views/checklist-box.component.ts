@@ -11,6 +11,7 @@ import * as fromRoot from '../store/reducers';
 import * as fileAction from '../store/actions/fileitem-action';
 import {Store} from "@ngrx/store";
 import {Observable} from "rxjs/Observable";
+import {FileItemService} from "../services/core/file-item-service";
 
 
 @Component({
@@ -28,7 +29,7 @@ import {Observable} from "rxjs/Observable";
                     <input type="checkbox"
                            (click)=handleItemChecked($event)
                            [checked]="gobiiFileItem.getChecked()"
-                           value={{gobiiFileItem.getItemId()}}
+                           value={{gobiiFileItem.getFileItemUniqueId()}}
                     name="{{gobiiFileItem.getItemName()}}">&nbsp;{{gobiiFileItem.getItemName()}}
                 </div>
             </div>
@@ -42,7 +43,7 @@ export class CheckListBoxComponent implements OnInit, OnChanges, DoCheck {
     differ: any;
 
     constructor(private store: Store<fromRoot.State>,
-                //                private _fileModelTreeService: FileModelTreeService,
+                private fileItemService:FileItemService,
                 private differs: KeyValueDiffers) {
 
         this.differ = differs.find({}).create(null);
@@ -63,17 +64,18 @@ export class CheckListBoxComponent implements OnInit, OnChanges, DoCheck {
 
     public handleItemChecked(arg) {
 
-        let itemToChange: GobiiFileItem = arg;
+        let currentFileItemUniqueId:string = arg.currentTarget.value;
+        let selectedFileItem: GobiiFileItem = this.fileItemService.getFIleItemForUniqueFileItemId(currentFileItemUniqueId);
 
         //let indexOfItemToChange:number = this.gobiiFileItems.indexOf(arg.currentTarget.name);
-        itemToChange.setProcessType(arg.currentTarget.checked ? ProcessType.CREATE : ProcessType.DELETE);
-        itemToChange.setChecked(arg.currentTarget.checked);
+        selectedFileItem.setProcessType(arg.currentTarget.checked ? ProcessType.CREATE : ProcessType.DELETE);
+        selectedFileItem.setChecked(arg.currentTarget.checked);
 
 
-        if (itemToChange.getChecked()) {
-            this.store.dispatch(new fileAction.SelectForExtractAction(itemToChange));
+        if (selectedFileItem.getChecked()) {
+            this.store.dispatch(new fileAction.SelectForExtractAction(selectedFileItem));
         } else {
-            this.store.dispatch(new fileAction.DeSelectForExtractAction(itemToChange));
+            this.store.dispatch(new fileAction.DeSelectForExtractAction(selectedFileItem));
         }
 
     } // handleItemChecked()

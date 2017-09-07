@@ -15,8 +15,10 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
                     treeNodes[idx] = nodeToPlace;
                 }
                 else if (currentTreenode.getContainerType() === GobiiTreeNode_1.ContainerType.DATA) {
-                    nodeToPlace.parent = nodeToPlace;
-                    nodeToPlace.getChildren().push(nodeToPlace);
+                    var containerNode = treeNodes[idx];
+                    nodeToPlace.parent = containerNode;
+                    containerNode.getChildren().push(nodeToPlace);
+                    containerNode.expanded = true;
                 }
                 returnVal = true;
             }

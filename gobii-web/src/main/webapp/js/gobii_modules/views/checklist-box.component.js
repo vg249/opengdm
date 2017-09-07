@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/type-process", "../model/type-extractor-filter", "../store/actions/fileitem-action", "@ngrx/store"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/type-process", "../model/type-extractor-filter", "../store/actions/fileitem-action", "@ngrx/store", "../services/core/file-item-service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/type-process", "../model/type-extrac
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_process_1, type_extractor_filter_1, fileAction, store_1, CheckListBoxComponent;
+    var core_1, type_process_1, type_extractor_filter_1, fileAction, store_1, file_item_service_1, CheckListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -27,14 +27,16 @@ System.register(["@angular/core", "../model/type-process", "../model/type-extrac
             },
             function (store_1_1) {
                 store_1 = store_1_1;
+            },
+            function (file_item_service_1_1) {
+                file_item_service_1 = file_item_service_1_1;
             }
         ],
         execute: function () {
             CheckListBoxComponent = (function () {
-                function CheckListBoxComponent(store, 
-                    //                private _fileModelTreeService: FileModelTreeService,
-                    differs) {
+                function CheckListBoxComponent(store, fileItemService, differs) {
                     this.store = store;
+                    this.fileItemService = fileItemService;
                     this.differs = differs;
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.onError = new core_1.EventEmitter();
@@ -42,15 +44,16 @@ System.register(["@angular/core", "../model/type-process", "../model/type-extrac
                     //this.gobiiFileItems$ = this.store.select(fromRoot.getDatasetsByExperiment);
                 } // ctor
                 CheckListBoxComponent.prototype.handleItemChecked = function (arg) {
-                    var itemToChange = arg;
+                    var currentFileItemUniqueId = arg.currentTarget.value;
+                    var selectedFileItem = this.fileItemService.getFIleItemForUniqueFileItemId(currentFileItemUniqueId);
                     //let indexOfItemToChange:number = this.gobiiFileItems.indexOf(arg.currentTarget.name);
-                    itemToChange.setProcessType(arg.currentTarget.checked ? type_process_1.ProcessType.CREATE : type_process_1.ProcessType.DELETE);
-                    itemToChange.setChecked(arg.currentTarget.checked);
-                    if (itemToChange.getChecked()) {
-                        this.store.dispatch(new fileAction.SelectForExtractAction(itemToChange));
+                    selectedFileItem.setProcessType(arg.currentTarget.checked ? type_process_1.ProcessType.CREATE : type_process_1.ProcessType.DELETE);
+                    selectedFileItem.setChecked(arg.currentTarget.checked);
+                    if (selectedFileItem.getChecked()) {
+                        this.store.dispatch(new fileAction.SelectForExtractAction(selectedFileItem));
                     }
                     else {
-                        this.store.dispatch(new fileAction.DeSelectForExtractAction(itemToChange));
+                        this.store.dispatch(new fileAction.DeSelectForExtractAction(selectedFileItem));
                     }
                 }; // handleItemChecked()
                 CheckListBoxComponent.prototype.handleItemSelected = function (arg) {
@@ -159,9 +162,10 @@ System.register(["@angular/core", "../model/type-process", "../model/type-extrac
                             'nameIdRequestParams',
                             'retainHistory'],
                         outputs: ['onError'],
-                        template: "\n        <form>\n            <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                <div *ngFor=\"let gobiiFileItem of gobiiFileItems$ | async\"\n                     (click)=handleItemSelected($event)>\n                    <input type=\"checkbox\"\n                           (click)=handleItemChecked($event)\n                           [checked]=\"gobiiFileItem.getChecked()\"\n                           value={{gobiiFileItem.getItemId()}}\n                    name=\"{{gobiiFileItem.getItemName()}}\">&nbsp;{{gobiiFileItem.getItemName()}}\n                </div>\n            </div>\n        </form>" // end template
+                        template: "\n        <form>\n            <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                <div *ngFor=\"let gobiiFileItem of gobiiFileItems$ | async\"\n                     (click)=handleItemSelected($event)>\n                    <input type=\"checkbox\"\n                           (click)=handleItemChecked($event)\n                           [checked]=\"gobiiFileItem.getChecked()\"\n                           value={{gobiiFileItem.getFileItemUniqueId()}}\n                    name=\"{{gobiiFileItem.getItemName()}}\">&nbsp;{{gobiiFileItem.getItemName()}}\n                </div>\n            </div>\n        </form>" // end template
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
+                        file_item_service_1.FileItemService,
                         core_1.KeyValueDiffers])
                 ], CheckListBoxComponent);
                 return CheckListBoxComponent;

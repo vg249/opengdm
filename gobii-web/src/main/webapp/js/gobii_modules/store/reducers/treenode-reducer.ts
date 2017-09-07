@@ -34,8 +34,10 @@ function placeNodeInTree(nodeToPlace: GobiiTreeNode, treeNodes: GobiiTreeNode[],
             if (currentTreenode.getContainerType() === ContainerType.NONE) {
                 treeNodes[idx] = nodeToPlace;
             } else if (currentTreenode.getContainerType() === ContainerType.DATA) {
-                nodeToPlace.parent = nodeToPlace;
-                nodeToPlace.getChildren().push(nodeToPlace);
+                let containerNode:GobiiTreeNode = treeNodes[idx];
+                nodeToPlace.parent = containerNode;
+                containerNode.getChildren().push(nodeToPlace);
+                containerNode.expanded = true;
             }
 
             returnVal = true;

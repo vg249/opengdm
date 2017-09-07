@@ -89,14 +89,6 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             break;
         } // LOAD_FILTERED_ITEMS
 
-        // Technically, and according to the ngrx/store example app,
-        // it should be possible for different actions to have a different
-        // payload type, such that it's possible for a payload to be a single
-        // GobiiFileItem rather than an array of. However, I cannot get this
-        // to compile properly. See this issue I submitted:
-        // https://github.com/ngrx/platform/issues/255
-        // For now in the interest of making progress I am using
-        // an array type for all action payloads
         case gobiiFileItemAction.SELECT_FOR_EXTRACT: {
 
             const gobiiFileItemPayload: GobiiFileItem = action.payload;
