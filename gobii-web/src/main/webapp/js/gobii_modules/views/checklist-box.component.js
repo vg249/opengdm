@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/type-process", "../model/type-extractor-filter", "../store/actions/fileitem-action", "@ngrx/store", "../services/core/file-item-service"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/type-extractor-filter", "../store/actions/fileitem-action", "@ngrx/store", "../services/core/file-item-service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,14 +10,11 @@ System.register(["@angular/core", "../model/type-process", "../model/type-extrac
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_process_1, type_extractor_filter_1, fileAction, store_1, file_item_service_1, CheckListBoxComponent;
+    var core_1, type_extractor_filter_1, fileAction, store_1, file_item_service_1, CheckListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
-            },
-            function (type_process_1_1) {
-                type_process_1 = type_process_1_1;
             },
             function (type_extractor_filter_1_1) {
                 type_extractor_filter_1 = type_extractor_filter_1_1;
@@ -47,13 +44,13 @@ System.register(["@angular/core", "../model/type-process", "../model/type-extrac
                     var currentFileItemUniqueId = arg.currentTarget.value;
                     var selectedFileItem = this.fileItemService.getFIleItemForUniqueFileItemId(currentFileItemUniqueId);
                     //let indexOfItemToChange:number = this.gobiiFileItems.indexOf(arg.currentTarget.name);
-                    selectedFileItem.setProcessType(arg.currentTarget.checked ? type_process_1.ProcessType.CREATE : type_process_1.ProcessType.DELETE);
-                    selectedFileItem.setChecked(arg.currentTarget.checked);
-                    if (selectedFileItem.getChecked()) {
-                        this.store.dispatch(new fileAction.SelectForExtractAction(selectedFileItem));
+                    // selectedFileItem.setProcessType(arg.currentTarget.checked ? ProcessType.CREATE : ProcessType.DELETE);
+                    // selectedFileItem.setChecked(arg.currentTarget.checked);
+                    if (arg.currentTarget.checked) {
+                        this.store.dispatch(new fileAction.SelectByFileItemUniqueId(currentFileItemUniqueId));
                     }
                     else {
-                        this.store.dispatch(new fileAction.DeSelectForExtractAction(selectedFileItem));
+                        this.store.dispatch(new fileAction.DeSelectByFileItemUniqueId(currentFileItemUniqueId));
                     }
                 }; // handleItemChecked()
                 CheckListBoxComponent.prototype.handleItemSelected = function (arg) {

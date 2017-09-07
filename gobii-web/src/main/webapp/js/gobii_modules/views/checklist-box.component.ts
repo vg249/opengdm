@@ -68,14 +68,14 @@ export class CheckListBoxComponent implements OnInit, OnChanges, DoCheck {
         let selectedFileItem: GobiiFileItem = this.fileItemService.getFIleItemForUniqueFileItemId(currentFileItemUniqueId);
 
         //let indexOfItemToChange:number = this.gobiiFileItems.indexOf(arg.currentTarget.name);
-        selectedFileItem.setProcessType(arg.currentTarget.checked ? ProcessType.CREATE : ProcessType.DELETE);
-        selectedFileItem.setChecked(arg.currentTarget.checked);
+        // selectedFileItem.setProcessType(arg.currentTarget.checked ? ProcessType.CREATE : ProcessType.DELETE);
+        // selectedFileItem.setChecked(arg.currentTarget.checked);
 
 
-        if (selectedFileItem.getChecked()) {
-            this.store.dispatch(new fileAction.SelectForExtractAction(selectedFileItem));
+        if (arg.currentTarget.checked) {
+            this.store.dispatch(new fileAction.SelectByFileItemUniqueId(currentFileItemUniqueId));
         } else {
-            this.store.dispatch(new fileAction.DeSelectForExtractAction(selectedFileItem));
+            this.store.dispatch(new fileAction.DeSelectByFileItemUniqueId(currentFileItemUniqueId));
         }
 
     } // handleItemChecked()

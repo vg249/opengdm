@@ -54,7 +54,7 @@ System.register(["rxjs/add/operator/catch", "rxjs/add/operator/do", "rxjs/add/op
                     this.placeNodeInTree$ = this.actions$
                         .ofType(treeNodeActions.PLACE_TREE_NODE)
                         .map(function (action) {
-                        return new treeNodeActions.ActivateForExtractAction(action.payload);
+                        return new treeNodeActions.ActivateForExtractAction(action.payload.getFileItemId());
                     });
                 }
                 __decorate([

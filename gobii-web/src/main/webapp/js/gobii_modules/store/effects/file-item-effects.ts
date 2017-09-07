@@ -38,8 +38,16 @@ export class FileItemEffects {
     @Effect()
     deSelectFromExtract$ = this.actions$
         .ofType(fileItemActions.DESELECT_FOR_EXTRACT)
-        .map((action: fileItemActions.SelectForExtractAction) => {
+        .map((action: fileItemActions.DeSelectForExtractAction) => {
                 return new treeNodeActions.DeActivateFromExtractAction(action.payload.getFileItemUniqueId());
+            }
+        );
+
+    @Effect()
+    deSelectFromExtractById$ = this.actions$
+        .ofType(fileItemActions.DESELECT_FOR_EXTRACT_BY_FILE_ITEM_ID)
+        .map((action: fileItemActions.DeSelectByFileItemUniqueId) => {
+                return new treeNodeActions.DeActivateFromExtractAction(action.payload);
             }
         );
 

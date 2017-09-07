@@ -79,26 +79,36 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
                 break;
             } // LOAD_TREE_NODE
             case gobiiTreeNodeAction.ACTIVATE: {
-                var gobiiTreeNodeToActivate = action.payload;
+                var fileItemUniqueId = action.payload;
                 returnVal = {
                     gobiiExtractFilterType: state.gobiiExtractFilterType,
-                    gobiiTreeNodesActive: state.gobiiTreeNodesActive.concat([gobiiTreeNodeToActivate.getId()]),
+                    gobiiTreeNodesActive: state.gobiiTreeNodesActive.concat([fileItemUniqueId]),
                     gobiiTreeNodes: state.gobiiTreeNodes
                 };
                 break;
             } // SELECT_FOR_EXTRACT
             case gobiiTreeNodeAction.DEACTIVATE: {
                 var gobiiFileItemUniqueId = action.payload;
-                var gobiiTreeNodeToDeActivate_1 = findTreeNodeByFIleItemId(state
-                    .gobiiTreeNodes
+                var newTreeNodes = state.gobiiTreeNodes.slice();
+                var gobiiTreeNodeToDeActivate_1 = findTreeNodeByFIleItemId(newTreeNodes
                     .filter(function (tn) { return tn.getGobiiExtractFilterType() === state.gobiiExtractFilterType; }), gobiiFileItemUniqueId);
-                gobiiTreeNodeToDeActivate_1.resetLabel();
+                var containerType = gobiiTreeNodeToDeActivate_1.parent ?
+                    gobiiTreeNodeToDeActivate_1.parent.getContainerType() :
+                    GobiiTreeNode_1.ContainerType.NONE;
+                if (containerType === GobiiTreeNode_1.ContainerType.NONE
+                    || containerType === GobiiTreeNode_1.ContainerType.STRUCTURE) {
+                    gobiiTreeNodeToDeActivate_1.resetLabel();
+                }
+                else {
+                    var children = gobiiTreeNodeToDeActivate_1.parent.getChildren();
+                    children.splice(children.indexOf(gobiiTreeNodeToDeActivate_1, 1));
+                }
                 var newAcxtiveNodeState = state.gobiiTreeNodesActive
                     .filter(function (gtn) { return gtn !== gobiiTreeNodeToDeActivate_1.getId(); });
                 returnVal = {
                     gobiiExtractFilterType: state.gobiiExtractFilterType,
                     gobiiTreeNodesActive: newAcxtiveNodeState,
-                    gobiiTreeNodes: state.gobiiTreeNodes
+                    gobiiTreeNodes: newTreeNodes
                 };
                 break;
             } // SELECT_FOR_EXTRACT

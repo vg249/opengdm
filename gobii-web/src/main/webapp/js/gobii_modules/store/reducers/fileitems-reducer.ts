@@ -25,6 +25,44 @@ export const initialState: State = {
     filters: {}
 };
 
+function selectForExtraction(state: State, gobiiFileItem: GobiiFileItem): State {
+
+    gobiiFileItem.setChecked(true);
+
+    const selectedUniqueItemIds = state
+        .fileItems
+        .filter(fileItem =>
+            gobiiFileItem.getFileItemUniqueId() !== fileItem.getFileItemUniqueId())
+        .map(selectedFileItem => selectedFileItem.getFileItemUniqueId());
+
+    let returnVal: State = {
+        fileItems: state.fileItems,
+        fileItemUniqueIdsSelected: [...state.fileItemUniqueIdsSelected, ...selectedUniqueItemIds],
+        filters: state.filters
+    };
+
+    return returnVal;
+}
+
+function deSelectForExtraction(state: State, gobiiFileItem: GobiiFileItem): State {
+
+    gobiiFileItem.setChecked(false);
+    const newSelectedUniqueItemIds = state
+        .fileItemUniqueIdsSelected
+        .filter(selectedId =>
+            gobiiFileItem.getFileItemUniqueId() != selectedId
+        );
+
+    let returnVal:State = {
+        fileItems: state.fileItems,
+        fileItemUniqueIdsSelected: newSelectedUniqueItemIds,
+        filters: state.filters
+    };
+
+    return returnVal;
+
+}
+
 export function fileItemsReducer(state: State = initialState, action: gobiiFileItemAction.All): State {
 
     let returnVal: State = state;
@@ -92,36 +130,46 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
         case gobiiFileItemAction.SELECT_FOR_EXTRACT: {
 
             const gobiiFileItemPayload: GobiiFileItem = action.payload;
-            const selectedUniqueItemIds = state
-                .fileItems
-                .filter(fileItem =>
-                    gobiiFileItemPayload.getFileItemUniqueId() !== fileItem.getFileItemUniqueId())
-                .map(selectedFileItem => selectedFileItem.getFileItemUniqueId());
 
-            returnVal = {
-                fileItems: state.fileItems,
-                fileItemUniqueIdsSelected: [...state.fileItemUniqueIdsSelected, ...selectedUniqueItemIds],
-                filters: state.filters
-            };
+            returnVal = selectForExtraction(state, gobiiFileItemPayload);
+            // gobiiFileItemPayload.setChecked(true);
+            //
+            // const selectedUniqueItemIds = state
+            //     .fileItems
+            //     .filter(fileItem =>
+            //         gobiiFileItemPayload.getFileItemUniqueId() !== fileItem.getFileItemUniqueId())
+            //     .map(selectedFileItem => selectedFileItem.getFileItemUniqueId());
+            //
+            // returnVal = {
+            //     fileItems: state.fileItems,
+            //     fileItemUniqueIdsSelected: [...state.fileItemUniqueIdsSelected, ...selectedUniqueItemIds],
+            //     filters: state.filters
+            // };
 
             break;
         } // SELECT_FOR_EXTRACT
 
         case gobiiFileItemAction.DESELECT_FOR_EXTRACT: {
 
-            const gobiiFileItemPayload: GobiiFileItem = action.payload;
-            const newSelectedUniqueItemIds = state
-                .fileItemUniqueIdsSelected
-                .filter(selectedId =>
-                    gobiiFileItemPayload.getFileItemUniqueId() != selectedId
-                );
 
 
-            returnVal = {
-                fileItems: state.fileItems,
-                fileItemUniqueIdsSelected: newSelectedUniqueItemIds,
-                filters: state.filters
-            };
+            let gobiiFileItemPayload: GobiiFileItem = action.payload;
+            returnVal = deSelectForExtraction(state,gobiiFileItemPayload);
+
+
+            // gobiiFileItemPayload.setChecked(false);
+            // const newSelectedUniqueItemIds = state
+            //     .fileItemUniqueIdsSelected
+            //     .filter(selectedId =>
+            //         gobiiFileItemPayload.getFileItemUniqueId() != selectedId
+            //     );
+            //
+            //
+            // returnVal = {
+            //     fileItems: state.fileItems,
+            //     fileItemUniqueIdsSelected: newSelectedUniqueItemIds,
+            //     filters: state.filters
+            // };
 
             break;
         }
@@ -148,30 +196,62 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
         case gobiiFileItemAction.SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID: {
 
             const fileItemUniqueIdPayload: string = action.payload;
+            let gobiiFileItem: GobiiFileItem = state
+                .fileItems
+                .find(fi => fi.getFileItemUniqueId() === fileItemUniqueIdPayload);
 
-            let newUniqueId: string[] = [];
-            if (!state
-                    .fileItemUniqueIdsSelected
-                    .find(i => i === fileItemUniqueIdPayload)) {
-                if (state
-                        .fileItems
-                        .find(fi => fi.getFileItemUniqueId() === fileItemUniqueIdPayload)) {
-                    newUniqueId.push(fileItemUniqueIdPayload);
-                }
-            }
+            returnVal = selectForExtraction(state, gobiiFileItem);
 
 
-            returnVal = {
-                fileItems: state.fileItems,
-                fileItemUniqueIdsSelected: [...state.fileItemUniqueIdsSelected, ...newUniqueId],
-                filters: state.filters
-            };
+            // let newUniqueId: string[] = [];
+            // if (!state
+            //         .fileItemUniqueIdsSelected
+            //         .find(i => i === fileItemUniqueIdPayload)) {
+            //     if (state
+            //             .fileItems
+            //             .find(fi => fi.getFileItemUniqueId() === fileItemUniqueIdPayload)) {
+            //         newUniqueId.push(fileItemUniqueIdPayload);
+            //     }
+            // }
+            //
+            //
+            // returnVal = {
+            //     fileItems: state.fileItems,
+            //     fileItemUniqueIdsSelected: [...state.fileItemUniqueIdsSelected, ...newUniqueId],
+            //     filters: state.filters
+            // };
 
             break;
 
         } //
 
+        case gobiiFileItemAction.DESELECT_FOR_EXTRACT_BY_FILE_ITEM_ID: {
 
+            const fileItemUniqueIdPayload: string = action.payload;
+
+            let gobiiFileItemPayload: GobiiFileItem = state
+                .fileItems
+                .find(fi => fi.getFileItemUniqueId() === fileItemUniqueIdPayload);
+
+            returnVal = deSelectForExtraction(state,gobiiFileItemPayload);
+
+
+            //
+            //     gobiiFileItemPayload.setChecked(false);
+            // const newSelectedUniqueItemIds = state
+            //     .fileItemUniqueIdsSelected
+            //     .filter(selectedId =>
+            //         gobiiFileItemPayload.getFileItemUniqueId() != selectedId
+            //     );
+            //
+            // returnVal = {
+            //     fileItems: state.fileItems,
+            //     fileItemUniqueIdsSelected: newSelectedUniqueItemIds,
+            //     filters: state.filters
+            // };
+
+            break;
+        }
     }
 
     return returnVal;

@@ -106,6 +106,11 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                         .map(function (action) {
                         return new treeNodeActions.DeActivateFromExtractAction(action.payload.getFileItemUniqueId());
                     });
+                    this.deSelectFromExtractById$ = this.actions$
+                        .ofType(fileItemActions.DESELECT_FOR_EXTRACT_BY_FILE_ITEM_ID)
+                        .map(function (action) {
+                        return new treeNodeActions.DeActivateFromExtractAction(action.payload);
+                    });
                 }
                 __decorate([
                     effects_1.Effect(),
@@ -115,6 +120,10 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                     effects_1.Effect(),
                     __metadata("design:type", Object)
                 ], FileItemEffects.prototype, "deSelectFromExtract$", void 0);
+                __decorate([
+                    effects_1.Effect(),
+                    __metadata("design:type", Object)
+                ], FileItemEffects.prototype, "deSelectFromExtractById$", void 0);
                 FileItemEffects = __decorate([
                     core_1.Injectable(),
                     __metadata("design:paramtypes", [effects_1.Actions,

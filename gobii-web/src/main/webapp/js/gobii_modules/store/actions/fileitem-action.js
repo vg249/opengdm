@@ -1,13 +1,14 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var LOAD, SELECT_FOR_EXTRACT, SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID, DESELECT_FOR_EXTRACT, SET_ENTITY_FILTER, LOAD_FILTERED_ITEMS, LoadAction, LoadFilteredItemsAction, DeSelectForExtractAction, SelectForExtractAction, SetEntityFilter, SelectByFileItemUniqueId;
+    var LOAD, SELECT_FOR_EXTRACT, SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID, DESELECT_FOR_EXTRACT_BY_FILE_ITEM_ID, DESELECT_FOR_EXTRACT, SET_ENTITY_FILTER, LOAD_FILTERED_ITEMS, LoadAction, LoadFilteredItemsAction, DeSelectForExtractAction, SelectForExtractAction, SetEntityFilter, SelectByFileItemUniqueId, DeSelectByFileItemUniqueId;
     return {
         setters: [],
         execute: function () {
             exports_1("LOAD", LOAD = '[GobiiFileItem] Load');
             exports_1("SELECT_FOR_EXTRACT", SELECT_FOR_EXTRACT = '[GobiiFileItem] Select');
             exports_1("SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID", SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID = '[GobiiFileItem] Select File Item Id');
+            exports_1("DESELECT_FOR_EXTRACT_BY_FILE_ITEM_ID", DESELECT_FOR_EXTRACT_BY_FILE_ITEM_ID = 'GobiiFileItem] Deselect File Item Id');
             exports_1("DESELECT_FOR_EXTRACT", DESELECT_FOR_EXTRACT = '[GobiiFileItem] DeSelect');
             exports_1("SET_ENTITY_FILTER", SET_ENTITY_FILTER = '[GobiiFileItem] SetEntityFilter');
             exports_1("LOAD_FILTERED_ITEMS", LOAD_FILTERED_ITEMS = '[GobiiFileItem] LoadFilteredItems');
@@ -66,6 +67,14 @@ System.register([], function (exports_1, context_1) {
                 return SelectByFileItemUniqueId;
             }());
             exports_1("SelectByFileItemUniqueId", SelectByFileItemUniqueId);
+            DeSelectByFileItemUniqueId = (function () {
+                function DeSelectByFileItemUniqueId(payload) {
+                    this.payload = payload;
+                    this.type = DESELECT_FOR_EXTRACT_BY_FILE_ITEM_ID;
+                }
+                return DeSelectByFileItemUniqueId;
+            }());
+            exports_1("DeSelectByFileItemUniqueId", DeSelectByFileItemUniqueId);
         }
     };
 });

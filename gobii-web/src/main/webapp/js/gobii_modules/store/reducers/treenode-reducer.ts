@@ -34,7 +34,7 @@ function placeNodeInTree(nodeToPlace: GobiiTreeNode, treeNodes: GobiiTreeNode[],
             if (currentTreenode.getContainerType() === ContainerType.NONE) {
                 treeNodes[idx] = nodeToPlace;
             } else if (currentTreenode.getContainerType() === ContainerType.DATA) {
-                let containerNode:GobiiTreeNode = treeNodes[idx];
+                let containerNode: GobiiTreeNode = treeNodes[idx];
                 nodeToPlace.parent = containerNode;
                 containerNode.getChildren().push(nodeToPlace);
                 containerNode.expanded = true;
@@ -57,11 +57,11 @@ function findTreeNodeByFIleItemId(treeNodes: GobiiTreeNode[], fileItemUniqueId: 
     //use an oldfashioned for loop because the lambda based semantics don't have a break;
     for (let idx: number = 0; (idx < treeNodes.length) && !returnVal; idx++) {
 
-        let currentTreeNode:GobiiTreeNode = treeNodes[idx];
-        if( currentTreeNode.getFileItemId() === fileItemUniqueId  ) {
+        let currentTreeNode: GobiiTreeNode = treeNodes[idx];
+        if (currentTreeNode.getFileItemId() === fileItemUniqueId) {
             returnVal = currentTreeNode;
         } else {
-            returnVal = findTreeNodeByFIleItemId(currentTreeNode.getChildren(),fileItemUniqueId);
+            returnVal = findTreeNodeByFIleItemId(currentTreeNode.getChildren(), fileItemUniqueId);
         }
     }
 
@@ -118,11 +118,12 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
 
         case gobiiTreeNodeAction.ACTIVATE: {
 
-            const gobiiTreeNodeToActivate: GobiiTreeNode = action.payload;
+            const fileItemUniqueId: string = action.payload;
+
 
             returnVal = {
                 gobiiExtractFilterType: state.gobiiExtractFilterType,
-                gobiiTreeNodesActive: [...state.gobiiTreeNodesActive, ...[gobiiTreeNodeToActivate.getId()]],
+                gobiiTreeNodesActive: [...state.gobiiTreeNodesActive, ...[fileItemUniqueId]],
                 gobiiTreeNodes: state.gobiiTreeNodes
             };
 
@@ -133,13 +134,25 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
         case gobiiTreeNodeAction.DEACTIVATE: {
 
             const gobiiFileItemUniqueId = action.payload;
+            const newTreeNodes = state.gobiiTreeNodes.slice();
 
-            const gobiiTreeNodeToDeActivate: GobiiTreeNode = findTreeNodeByFIleItemId(state
-                .gobiiTreeNodes
-                .filter(tn => tn.getGobiiExtractFilterType() === state.gobiiExtractFilterType),
+            const gobiiTreeNodeToDeActivate: GobiiTreeNode = findTreeNodeByFIleItemId(newTreeNodes
+                    .filter(tn => tn.getGobiiExtractFilterType() === state.gobiiExtractFilterType),
                 gobiiFileItemUniqueId);
 
-            gobiiTreeNodeToDeActivate.resetLabel();
+
+            let containerType: ContainerType = gobiiTreeNodeToDeActivate.parent ?
+                gobiiTreeNodeToDeActivate.parent.getContainerType() :
+                ContainerType.NONE;
+
+            if (containerType === ContainerType.NONE
+                || containerType === ContainerType.STRUCTURE) {
+                gobiiTreeNodeToDeActivate.resetLabel();
+            } else {
+                let children:GobiiTreeNode[] = gobiiTreeNodeToDeActivate.parent.getChildren();
+                children.splice(children.indexOf(gobiiTreeNodeToDeActivate,1));
+            }
+
 
             let newAcxtiveNodeState = state.gobiiTreeNodesActive
                 .filter(gtn => gtn !== gobiiTreeNodeToDeActivate.getId());
@@ -147,7 +160,7 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
             returnVal = {
                 gobiiExtractFilterType: state.gobiiExtractFilterType,
                 gobiiTreeNodesActive: newAcxtiveNodeState,
-                gobiiTreeNodes: state.gobiiTreeNodes
+                gobiiTreeNodes: newTreeNodes
             };
 
             break;

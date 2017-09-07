@@ -7,6 +7,7 @@ import {NameIdFilterParamTypes} from "../../model/type-nameid-filter-params";
 export const LOAD = '[GobiiFileItem] Load';
 export const SELECT_FOR_EXTRACT = '[GobiiFileItem] Select';
 export const SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID = '[GobiiFileItem] Select File Item Id';
+export const DESELECT_FOR_EXTRACT_BY_FILE_ITEM_ID = 'GobiiFileItem] Deselect File Item Id';
 export const DESELECT_FOR_EXTRACT = '[GobiiFileItem] DeSelect';
 export const SET_ENTITY_FILTER = '[GobiiFileItem] SetEntityFilter';
 export const LOAD_FILTERED_ITEMS = '[GobiiFileItem] LoadFilteredItems';
@@ -70,6 +71,14 @@ export class SelectByFileItemUniqueId implements Action {
     }
 }
 
+export class DeSelectByFileItemUniqueId implements Action {
+    readonly type = DESELECT_FOR_EXTRACT_BY_FILE_ITEM_ID;
+
+    constructor(public payload: string) {
+    }
+}
+
+
 /**
  * Export a type alias of all actions in this action group
  * so that reducers can easily compose action types
@@ -80,5 +89,6 @@ export type All
     | SelectForExtractAction
     | DeSelectForExtractAction
     | SetEntityFilter
-    | SelectByFileItemUniqueId;
+    | SelectByFileItemUniqueId
+    | DeSelectByFileItemUniqueId;
 
