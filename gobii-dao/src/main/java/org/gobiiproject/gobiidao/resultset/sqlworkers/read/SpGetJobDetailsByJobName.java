@@ -24,16 +24,20 @@ public class SpGetJobDetailsByJobName implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String sql = "select job_id\n" +
-                "job_id,\n" +
+        String sql = "select\n" +
+                "j.job_id,\n" +
                 "type.term as type_id,\n" +
                 "payloadtype.term as payload_type_id,\n" +
                 "status.term as status,\n" +
                 "j.message,\n" +
                 "j.submitted_by,\n" +
                 "j.submitted_date,\n" +
-                "j.name\n"+
-                "from job j,\n" +
+                "j.name,\n" +
+                "d.dataset_id\n"+
+                "from job j\n" +
+                "left JOIN\n" +
+                "dataset d\n" +
+                "on d.job_id = j.job_id,\n" +
                 "cv type,\n" +
                 "cv payloadtype,\n" +
                 "cv status\n" +

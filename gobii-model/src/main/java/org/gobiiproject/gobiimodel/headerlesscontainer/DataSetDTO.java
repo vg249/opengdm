@@ -42,6 +42,7 @@ public class DataSetDTO extends  DTOBase{
     private Date modifiedDate;
     private Integer statusId;
     private Integer typeId;
+    private Integer jobId;
     private List<Integer> analysesIds = new ArrayList<>();
   //  private List<AnalysisDTO> analyses = new ArrayList<>();
     private List<Integer> scores = new ArrayList<>();
@@ -220,4 +221,10 @@ public class DataSetDTO extends  DTOBase{
     public void setTypeId(Integer typeId) {
         this.typeId = typeId;
     }
+
+    @GobiiEntityParam(paramName = "jobId")
+    public Integer getJobId() { return jobId; }
+
+    @GobiiEntityColumn(columnName = "job_id")
+    public void setJobId(Integer jobId) { this.jobId = jobId; }
 }

@@ -8,6 +8,7 @@ import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
+import org.gobiiproject.gobiiclient.gobii.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.entity.PropNameId;
 import org.gobiiproject.gobiimodel.headerlesscontainer.CvDTO;
@@ -39,14 +40,7 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
     public void create() throws Exception {
 
         // make dummy statusDTO
-        JobDTO newJobDto = new JobDTO();
-        String uniqueStemString = UUID.randomUUID().toString();
-        newJobDto.setJobName(uniqueStemString + ": job");
-        newJobDto.setType(JobDTO.CV_JOBTYPE_LOAD);
-        newJobDto.setPayloadType(JobDTO.CV_PAYLOADTYPE_SAMPLES);
-        newJobDto.setStatus(JobDTO.CV_PROGRESSSTATUS_INPROGRESS);
-        newJobDto.setMessage("dummy message");
-        newJobDto.setSubmittedBy(1);
+        JobDTO newJobDto = TestDtoFactory.makePopulateJobDTO();
 
         RestUri statusUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -62,6 +56,38 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
 
         Assert.assertNotEquals(jobDTOResponse, null);
         Assert.assertTrue(jobDTOResponse.getJobId() > 0);
+
+    }
+
+    /* This unit test should test the creation of a matrix job with dataset ID is not specified
+    *  The exception should be tested in this function
+    * */
+    @Test
+    public void createFailMatrixJob() throws Exception {
+
+        JobDTO newJobDto = TestDtoFactory.makePopulateJobDTO();
+
+        newJobDto.setPayloadType(JobDTO.CV_PAYLOADTYPE_MATRIX);
+
+        RestUri jobUri = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_JOB);
+        GobiiEnvelopeRestResource<JobDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(jobUri);
+        PayloadEnvelope<JobDTO> payloadEnvelope = new PayloadEnvelope<>(newJobDto, GobiiProcessType.CREATE);
+        PayloadEnvelope<JobDTO> resultEnvelope = gobiiEnvelopeRestResource
+                .post(JobDTO.class, payloadEnvelope);
+
+        System.out.print(resultEnvelope.getHeader().getStatus().getStatusMessages().get(0).getMessage());
+        Assert.assertTrue("The error message should contain 'Missing dataset ID for job'",
+                resultEnvelope.getHeader()
+                    .getStatus()
+                    .getStatusMessages()
+                    .stream()
+                    .filter(m -> m.getMessage().contains("Missing dataset ID for job"))
+                    .count()
+                    > 0);
+
+        Assert.assertTrue(resultEnvelope.getPayload().getData().size() == 0);
 
     }
 

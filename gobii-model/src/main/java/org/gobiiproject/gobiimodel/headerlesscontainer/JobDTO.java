@@ -58,6 +58,7 @@ public class JobDTO extends DTOBase {
     private String message;
     private Integer submittedBy;
     private Date submittedDate;
+    private Integer datasetId;
 
     @GobiiEntityParam(paramName = "jobId")
     public Integer getJobId() { return jobId; }
@@ -106,5 +107,11 @@ public class JobDTO extends DTOBase {
 
     @GobiiEntityColumn(columnName = "submitted_date")
     public void setSubmittedDate(Date submittedDate) { this.submittedDate = submittedDate; }
+
+    @GobiiEntityParam(paramName = "datasetId")
+    public Integer getDatasetId() { return datasetId; }
+
+    @GobiiEntityColumn(columnName = "dataset_id")
+    public void setDatasetId(Integer datasetId) { this.datasetId = datasetId; }
 
 }

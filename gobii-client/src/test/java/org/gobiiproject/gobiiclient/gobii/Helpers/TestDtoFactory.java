@@ -376,4 +376,19 @@ public class TestDtoFactory {
         return returnVal;
 
     }
+
+    public static JobDTO makePopulateJobDTO() throws Exception {
+
+        JobDTO newJobDto = new JobDTO();
+        String uniqueStemString = UUID.randomUUID().toString();
+        newJobDto.setJobName(uniqueStemString + ": job");
+        newJobDto.setType(JobDTO.CV_JOBTYPE_LOAD);
+        newJobDto.setPayloadType(JobDTO.CV_PAYLOADTYPE_SAMPLES);
+        newJobDto.setStatus(JobDTO.CV_PROGRESSSTATUS_INPROGRESS);
+        newJobDto.setMessage("dummy message");
+        newJobDto.setSubmittedBy(1);
+
+        return newJobDto;
+
+    }
 }

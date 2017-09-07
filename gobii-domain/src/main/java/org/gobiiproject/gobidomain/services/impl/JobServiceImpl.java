@@ -2,7 +2,9 @@ package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.JobService;
+import org.gobiiproject.gobiidtomapping.DtoMapDataSet;
 import org.gobiiproject.gobiidtomapping.DtoMapJob;
+import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -24,13 +26,37 @@ public class JobServiceImpl implements JobService {
     @Autowired
     private DtoMapJob dtoMapJob = null;
 
+    @Autowired
+    private DtoMapDataSet dtoMapDataSet = null;
 
     @Override
     public JobDTO createJob(JobDTO jobDTO) throws GobiiDomainException {
 
         JobDTO returnVal;
 
+        // check if the payload type of the job being submitted is a matrix
+        // if it is a matrix, the datasetId of the JobDTO should not be empty
+
+        if (jobDTO.getPayloadType().equals(JobDTO.CV_PAYLOADTYPE_MATRIX) && (null == jobDTO.getDatasetId())) {
+
+            throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
+                    GobiiValidationStatusType.BAD_REQUEST,
+                    "Missing dataset ID for job: " +
+                            jobDTO.getJobName() + " with payload type matrix.");
+
+        }
+
         returnVal = dtoMapJob.createJob(jobDTO);
+
+        if (jobDTO.getPayloadType().equals(JobDTO.CV_PAYLOADTYPE_MATRIX)) {
+
+            // get DatasetDTO
+
+            DataSetDTO dataSetDTO = dtoMapDataSet.getDataSetDetails(jobDTO.getDatasetId());
+            dataSetDTO.setJobId(jobDTO.getJobId());
+            dataSetDTO = dtoMapDataSet.replaceDataSet(dataSetDTO.getDataSetId(), dataSetDTO);
+
+        }
 
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
@@ -58,9 +84,9 @@ public class JobServiceImpl implements JobService {
 
                 throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
                         GobiiValidationStatusType.BAD_REQUEST,
-                        "The jobId specified in the dto ("
-                                + jobDTO.getJobId()
-                                + ") does not match the jobId passed as a parameter "
+                        "The job name specified in the dto ("
+                                + jobDTO.getJobName()
+                                + ") does not match the job name passed as a parameter "
                                 + "("
                                 + jobName
                                 + ")");
