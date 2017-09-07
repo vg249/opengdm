@@ -1,11 +1,11 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
-import org.gobiiproject.gobiidao.resultset.access.RsStatusDao;
+import org.gobiiproject.gobiidao.resultset.access.RsJobDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
-import org.gobiiproject.gobiidtomapping.DtoMapStatus;
+import org.gobiiproject.gobiidtomapping.DtoMapJob;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.headerlesscontainer.StatusDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
@@ -21,28 +21,28 @@ import java.util.Map;
 /**
  * Created by VCalaminos on 9/4/2017.
  */
-public class DtoMapStatusImpl implements DtoMapStatus{
+public class DtoMapJobImpl implements DtoMapJob {
 
-    Logger LOGGER = LoggerFactory.getLogger(DtoMapStatusImpl.class);
+    Logger LOGGER = LoggerFactory.getLogger(DtoMapJobImpl.class);
 
     @Autowired
-    private RsStatusDao rsStatusDao;
+    private RsJobDao rsJobDao;
 
     @Override
-    public List<StatusDTO> getStatuses() throws GobiiDtoMappingException {
+    public List<JobDTO> getJobs() throws GobiiDtoMappingException {
 
-        List<StatusDTO> returnVal = new ArrayList<>();
+        List<JobDTO> returnVal = new ArrayList<>();
 
         try {
 
-            ResultSet resultSet = rsStatusDao.getStatuses();
+            ResultSet resultSet = rsJobDao.getJobs();
 
             while (resultSet.next()) {
 
-                StatusDTO currentStatusDTO = new StatusDTO();
-                ResultColumnApplicator.applyColumnValues(resultSet, currentStatusDTO);
+                JobDTO currentJobDTO = new JobDTO();
+                ResultColumnApplicator.applyColumnValues(resultSet, currentJobDTO);
 
-                returnVal.add(currentStatusDTO);
+                returnVal.add(currentJobDTO);
 
             }
 
@@ -57,12 +57,12 @@ public class DtoMapStatusImpl implements DtoMapStatus{
     }
 
     @Override
-    public StatusDTO getStatusDetails(Integer jobId) throws GobiiDtoMappingException {
+    public JobDTO getJobDetails(String jobName) throws GobiiDtoMappingException {
 
-        StatusDTO returnVal = new StatusDTO();
+        JobDTO returnVal = new JobDTO();
 
 
-        ResultSet resultSet = rsStatusDao.getStatusDetailsForJobId(jobId);
+        ResultSet resultSet = rsJobDao.getJobDetailsForJobName(jobName);
 
         boolean retrievedOneRecord = false;
 
@@ -74,7 +74,7 @@ public class DtoMapStatusImpl implements DtoMapStatus{
 
                     throw (new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.VALIDATION_NOT_UNIQUE,
-                            "There are more than one job records for job id: " + jobId));
+                            "There are more than one job records for job id: " + jobName));
                 }
 
                 retrievedOneRecord = true;
@@ -94,12 +94,12 @@ public class DtoMapStatusImpl implements DtoMapStatus{
     }
 
     @Override
-    public StatusDTO createStatus(StatusDTO statusDTO) throws GobiiDtoMappingException {
+    public JobDTO createJob(JobDTO jobDTO) throws GobiiDtoMappingException {
 
-        StatusDTO returnVal = statusDTO;
+        JobDTO returnVal = jobDTO;
 
         Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
-        Integer jobId = rsStatusDao.createStatus(parameters);
+        Integer jobId = rsJobDao.createJobWithCvTerms(parameters);
         returnVal.setJobId(jobId);
 
         return returnVal;
@@ -107,13 +107,13 @@ public class DtoMapStatusImpl implements DtoMapStatus{
     }
 
     @Override
-    public StatusDTO replaceStatus(Integer jobId, StatusDTO statusDTO) throws GobiiDtoMappingException {
+    public JobDTO replaceJob(String jobName, JobDTO jobDTO) throws GobiiDtoMappingException {
 
-        StatusDTO returnVal = statusDTO;
+        JobDTO returnVal = jobDTO;
 
         Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
-        parameters.put("jobId", jobId);
-        rsStatusDao.updateStatus(parameters);
+        parameters.put("jobName", jobName);
+        rsJobDao.updateJobWithCvTerms(parameters);
 
         return returnVal;
 

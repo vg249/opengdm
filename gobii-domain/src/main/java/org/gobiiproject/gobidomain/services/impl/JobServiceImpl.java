@@ -1,9 +1,9 @@
 package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobidomain.services.StatusService;
-import org.gobiiproject.gobiidtomapping.DtoMapStatus;
-import org.gobiiproject.gobiimodel.headerlesscontainer.StatusDTO;
+import org.gobiiproject.gobidomain.services.JobService;
+import org.gobiiproject.gobiidtomapping.DtoMapJob;
+import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -17,20 +17,20 @@ import java.util.List;
 /**
  * Created by VCalaminos on 8/30/2017.
  */
-public class StatusServiceImpl implements StatusService {
+public class JobServiceImpl implements JobService {
 
-    Logger LOGGER = LoggerFactory.getLogger(StatusServiceImpl.class);
+    Logger LOGGER = LoggerFactory.getLogger(JobServiceImpl.class);
 
     @Autowired
-    private DtoMapStatus dtoMapStatus = null;
+    private DtoMapJob dtoMapJob = null;
 
 
     @Override
-    public StatusDTO createStatus(StatusDTO statusDTO) throws GobiiDomainException {
+    public JobDTO createJob(JobDTO jobDTO) throws GobiiDomainException {
 
-        StatusDTO returnVal;
+        JobDTO returnVal;
 
-        returnVal = dtoMapStatus.createStatus(statusDTO);
+        returnVal = dtoMapJob.createJob(jobDTO);
 
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
@@ -40,17 +40,17 @@ public class StatusServiceImpl implements StatusService {
     }
 
     @Override
-    public StatusDTO replaceStatus(Integer jobId, StatusDTO statusDTO) throws GobiiDomainException {
+    public JobDTO replaceJob(String jobName, JobDTO jobDTO) throws GobiiDomainException {
 
-        StatusDTO returnVal;
+        JobDTO returnVal;
 
-        if (null == statusDTO.getJobId() || statusDTO.getJobId().equals(jobId)) {
+        if (null == jobDTO.getJobName() || jobDTO.getJobName().equals(jobName)) {
 
-            StatusDTO existingStatusDTO = dtoMapStatus.getStatusDetails(jobId);
+            JobDTO existingJobDTO = dtoMapJob.getJobDetails(jobName);
 
-            if (null != existingStatusDTO.getJobId() && existingStatusDTO.getJobId().equals(jobId)) {
+            if (null != existingJobDTO.getJobName() && existingJobDTO.getJobName().equals(jobName)) {
 
-                returnVal = dtoMapStatus.replaceStatus(jobId, statusDTO);
+                returnVal = dtoMapJob.replaceJob(jobName, jobDTO);
                 returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
                 returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
@@ -59,10 +59,10 @@ public class StatusServiceImpl implements StatusService {
                 throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
                         GobiiValidationStatusType.BAD_REQUEST,
                         "The jobId specified in the dto ("
-                                + statusDTO.getJobId()
+                                + jobDTO.getJobId()
                                 + ") does not match the jobId passed as a parameter "
                                 + "("
-                                + jobId
+                                + jobName
                                 + ")");
 
             }
@@ -72,10 +72,10 @@ public class StatusServiceImpl implements StatusService {
             throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
                     GobiiValidationStatusType.BAD_REQUEST,
                     "The jobId specified in the dto ("
-                            + statusDTO.getJobId()
+                            + jobDTO.getJobId()
                             + ") does not match the jobId passed as a parameter "
                             + "("
-                            + jobId
+                            + jobName
                             + ")");
 
         }
@@ -84,16 +84,16 @@ public class StatusServiceImpl implements StatusService {
     }
 
     @Override
-    public List<StatusDTO> getStatuses() throws GobiiDomainException {
+    public List<JobDTO> getJobs() throws GobiiDomainException {
 
-        List<StatusDTO> returnVal;
+        List<JobDTO> returnVal;
 
-        returnVal = dtoMapStatus.getStatuses();
+        returnVal = dtoMapJob.getJobs();
 
-        for (StatusDTO currentStatusDTO : returnVal) {
+        for (JobDTO currentJobDTO : returnVal) {
 
-            currentStatusDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
-            currentStatusDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+            currentJobDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
+            currentJobDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
         }
 
         if (null == returnVal) {
@@ -107,11 +107,11 @@ public class StatusServiceImpl implements StatusService {
     }
 
     @Override
-    public StatusDTO getStatusByJobId(Integer jobId) throws GobiiDomainException {
+    public JobDTO getJobByJobName(String jobName) throws GobiiDomainException {
 
-        StatusDTO returnVal;
+        JobDTO returnVal;
 
-        returnVal = dtoMapStatus.getStatusDetails(jobId);
+        returnVal = dtoMapJob.getJobDetails(jobName);
 
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
@@ -121,7 +121,7 @@ public class StatusServiceImpl implements StatusService {
             throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
                     GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
                     "The specified jobId ("
-                            + jobId
+                            + jobName
                             + ") does not match an existing job");
 
         }

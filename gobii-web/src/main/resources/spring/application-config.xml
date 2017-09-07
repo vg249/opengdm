@@ -332,10 +332,10 @@
     <bean id="ProtocolService" class="org.gobiiproject.gobidomain.services.impl.ProtocolServiceImpl"/>
 
 
-    <!-- **** Status Beans *************************************** -->
-    <bean id="StatusService" class="org.gobiiproject.gobidomain.services.impl.StatusServiceImpl"/>
-    <bean id="dtoMapStatus" class="org.gobiiproject.gobiidtomapping.impl.DtoMapStatusImpl"/>
-    <bean id="rsStatusDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsStatusDaoImpl"/>
+    <!-- **** Job Beans *************************************** -->
+    <bean id="JobService" class="org.gobiiproject.gobidomain.services.impl.JobServiceImpl"/>
+    <bean id="dtoMapJob" class="org.gobiiproject.gobiidtomapping.impl.DtoMapJobImpl"/>
+    <bean id="rsJobDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsJobDaoImpl"/>
 
     <bean id="dtoListQueryColl"
           class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl">

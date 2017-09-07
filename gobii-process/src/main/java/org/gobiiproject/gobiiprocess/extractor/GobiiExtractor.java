@@ -15,26 +15,20 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.commons.cli.*;
 import org.apache.http.HttpStatus;
-import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
-import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.GenericClientContext;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
-import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
-import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.ServerBase;
 import org.gobiiproject.gobiimodel.config.ServerConfigKDC;
-import org.gobiiproject.gobiimodel.dto.instructions.GobiiFilePropNameId;
-import org.gobiiproject.gobiimodel.headerlesscontainer.QCInstructionsDTO;
+import org.gobiiproject.gobiimodel.entity.PropNameId;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.*;
 import org.gobiiproject.gobiimodel.utils.email.MailInterface;
 import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.HDF5Interface;
-import org.gobiiproject.gobiiprocess.extractor.ExtractorGlobalConfigs;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
 import org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformer;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
@@ -237,7 +231,7 @@ public class GobiiExtractor {
 					//Dataset can be null
 					Integer datasetId = null;
 					String datasetName = "null";
-					GobiiFilePropNameId datasetPropNameId = extract.getDataSet();
+					PropNameId datasetPropNameId = extract.getDataSet();
 					if (datasetPropNameId != null) {
 						datasetId = datasetPropNameId.getId();
 						datasetName = datasetPropNameId.getName();
@@ -319,8 +313,8 @@ public class GobiiExtractor {
 
 							String PITerm, projectTerm;
 							PITerm = projectTerm = "";
-							GobiiFilePropNameId PI = extract.getPrincipleInvestigator();
-							GobiiFilePropNameId project = extract.getProject();
+							PropNameId PI = extract.getPrincipleInvestigator();
+							PropNameId project = extract.getProject();
 							if (PI != null) {
 								PITerm = " --piId " + PI.getId();
 							}
@@ -500,8 +494,8 @@ public class GobiiExtractor {
 	 * Convert a list of gobiiFilePropNameIds to a list of IDs.
 	 * @return list of IDs
 	 */
-	private static List toIdList(List<GobiiFilePropNameId> propertyList) {
-		return subPropertyList(propertyList, GobiiFilePropNameId::getId);
+	private static List toIdList(List<PropNameId> propertyList) {
+		return subPropertyList(propertyList, PropNameId::getId);
 	}
 
 	/**
@@ -510,7 +504,7 @@ public class GobiiExtractor {
 	 * @param func what to do
 	 * @return something? usually.
 	 */
-	private static List subPropertyList(List<GobiiFilePropNameId> propertyList,Function<GobiiFilePropNameId,Object> func){
+	private static List subPropertyList(List<PropNameId> propertyList, Function<PropNameId,Object> func){
 		return propertyList.stream().map(func).collect(Collectors.toList());
 	}
 

@@ -1,9 +1,8 @@
 package org.gobiiproject.gobiimodel.utils.email;
 
-import org.gobiiproject.gobiimodel.dto.instructions.GobiiFilePropNameId;
+import org.gobiiproject.gobiimodel.entity.PropNameId;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -80,7 +79,7 @@ public class DigesterMessage extends MailMessage {
         identifiers.add(new HTMLTableEntity(type,name,id));
         return this;
     }
-    public DigesterMessage addIdentifier(String type, GobiiFilePropNameId identifier){
+    public DigesterMessage addIdentifier(String type, PropNameId identifier){
         if(identifier==null)return this;//Don't add a null ID to the table
         return addIdentifier(type,identifier.getName(),identifier.getId()+"");
     }

@@ -7,7 +7,7 @@ import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
-import org.gobiiproject.gobiimodel.dto.instructions.GobiiFilePropNameId;
+import org.gobiiproject.gobiimodel.entity.PropNameId;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
@@ -41,7 +41,7 @@ public class BrapiResponseMapAlleleMatrixSearch {
         GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
         gobiiDataSetExtract.setGobiiFileType(GobiiFileType.FLAPJACK);
         gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
-        gobiiDataSetExtract.setDataSet(new GobiiFilePropNameId(dataSetId, null));
+        gobiiDataSetExtract.setDataSet(new PropNameId(dataSetId, null));
         gobiiExtractorInstruction.getDataSetExtracts().add(gobiiDataSetExtract);
         gobiiExtractorInstruction.setContactId(1);
         extractorInstructionFilesDTO.getGobiiExtractorInstructions().add(gobiiExtractorInstruction);

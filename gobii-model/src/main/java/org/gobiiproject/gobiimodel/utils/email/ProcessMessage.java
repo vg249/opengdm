@@ -1,13 +1,12 @@
 package org.gobiiproject.gobiimodel.utils.email;
 
 
-import org.gobiiproject.gobiimodel.dto.instructions.GobiiFilePropNameId;
+import org.gobiiproject.gobiimodel.entity.PropNameId;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.gobiiproject.gobiimodel.utils.HelperFunctions.getDurationReadable;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.sizeToReadable;
 
 /*
@@ -116,7 +115,7 @@ public class ProcessMessage extends MailMessage {
          return this;
     }
     
-    public ProcessMessage addIdentifier(String type, GobiiFilePropNameId identifier){
+    public ProcessMessage addIdentifier(String type, PropNameId identifier){
         if(identifier==null)return this;//Don't add a null ID to the table
         return addIdentifier(type,identifier.getName(),identifier.getId()+"");
     }
@@ -133,7 +132,7 @@ public class ProcessMessage extends MailMessage {
         return this;
     }
 
-    public ProcessMessage addEntity(String type, GobiiFilePropNameId entity){
+    public ProcessMessage addEntity(String type, PropNameId entity){
         if(entity==null)return this;//Don't add a null ID to the table
         return addEntity(type,entity.getName()+"");
     }
