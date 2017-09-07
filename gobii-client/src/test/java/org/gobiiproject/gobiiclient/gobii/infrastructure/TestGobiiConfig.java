@@ -109,6 +109,73 @@ public class TestGobiiConfig {
     }
 
     @Test
+    public void testSetEmailServerWithEncryption() throws Exception {
+
+        String testFileFqpn = makeTestFileFqpn("setemailoptions");
+
+
+
+        //first turn on encypt/decrypt
+        String commandLineToWriteDecryptionOption = makeCommandline("-wfqpn "
+                + testFileFqpn
+                + " -e true");
+        boolean commandlineToWriteEncryptionOptionSucceded = HelperFunctions.tryExec(commandLineToWriteDecryptionOption, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandLineToWriteDecryptionOption, commandlineToWriteEncryptionOptionSucceded);
+
+
+        String emailUserPlain = "arbitraryUserId01";
+        String emailUserEncrypted = "MMmn4rz4WqjfWew2+kkwss/PfLIeQf2jIyY8XvKh8So=";
+
+        String emailPasswordPlain = "arbitraryPassword01";
+        String emailPasswordEncrypted = "vxI/Bh2/YLytBxLpA5ZBrPY/wHrxcSBuIQxcw9sULbg=";
+
+        String host = "host_" + UUID.randomUUID().toString();
+        String type = "type_" + UUID.randomUUID().toString();
+        String hash = "hash_" + UUID.randomUUID().toString();
+        Integer port = 25;
+
+        String commandLine = makeCommandline("-a -wfqpn "
+                + testFileFqpn
+                + " -stE "
+                + " -soH "
+                + host
+                + " -soN "
+                + port.toString()
+                + " -soU "
+                + emailUserEncrypted
+                + " -soP "
+                + emailPasswordEncrypted
+                + " -stT "
+                + type
+                + " -stH "
+                + hash);
+
+        boolean succeeded = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandLine, succeeded);
+
+
+        ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
+
+        Assert.assertTrue("The host name does not match",
+                configSettings.getEmailSvrDomain().equals(host));
+
+        Assert.assertTrue("The port does not match",
+                configSettings.getEmailServerPort().equals(port));
+
+        Assert.assertTrue("The retrieved user does not match the input user",
+                configSettings.getEmailSvrUser().equals(emailUserPlain));
+
+        Assert.assertTrue("The retrieved password does not match the input password",
+                configSettings.getEmailSvrPassword().equals(emailPasswordPlain));
+
+        Assert.assertTrue("The email type does not match",
+                configSettings.getEmailSvrType().equals(type));
+
+        Assert.assertTrue("The hash type does not match",
+                configSettings.getEmailSvrHashType().equals(hash));
+
+    }
+
     public void testSetEmailServer() throws Exception {
 
         String testFileFqpn = makeTestFileFqpn("setemailoptions");
@@ -161,7 +228,6 @@ public class TestGobiiConfig {
                 configSettings.getEmailSvrHashType().equals(hash));
 
     }
-
 
     @Test
     public void testSetAuthenticationlServer() throws Exception {

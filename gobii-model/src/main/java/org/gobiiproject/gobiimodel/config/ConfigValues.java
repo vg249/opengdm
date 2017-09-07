@@ -261,7 +261,20 @@ class ConfigValues {
     }
 
     public String getEmailSvrUser() {
-        return emailSvrUser;
+
+        String returnVal;
+
+        if (this.isDecrypt) {
+
+            returnVal = Decrypter.decrypt(this.emailSvrUser, null);
+
+        } else {
+
+            returnVal = this.emailSvrUser;
+
+        }
+
+        return returnVal;
     }
 
     public void setEmailSvrUser(String emailSvrUser) {
@@ -277,7 +290,21 @@ class ConfigValues {
     }
 
     public String getEmailSvrPassword() {
-        return emailSvrPassword;
+
+        String returnVal;
+
+        if (this.isDecrypt) {
+
+            returnVal = Decrypter.decrypt(this.emailSvrPassword, null);
+
+        } else {
+
+            returnVal = this.emailSvrPassword;
+
+        }
+
+        return returnVal;
+
     }
 
     public void setEmailSvrPassword(String emailSvrPassword) {
