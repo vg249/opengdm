@@ -26,37 +26,13 @@ public class JobServiceImpl implements JobService {
     @Autowired
     private DtoMapJob dtoMapJob = null;
 
-    @Autowired
-    private DtoMapDataSet dtoMapDataSet = null;
-
     @Override
     public JobDTO createJob(JobDTO jobDTO) throws GobiiDomainException {
 
         JobDTO returnVal;
 
-        // check if the payload type of the job being submitted is a matrix
-        // if it is a matrix, the datasetId of the JobDTO should not be empty
-
-        if (jobDTO.getPayloadType().equals(JobDTO.CV_PAYLOADTYPE_MATRIX) && (null == jobDTO.getDatasetId())) {
-
-            throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
-                    GobiiValidationStatusType.BAD_REQUEST,
-                    "Missing dataset ID for job: " +
-                            jobDTO.getJobName() + " with payload type matrix.");
-
-        }
 
         returnVal = dtoMapJob.createJob(jobDTO);
-
-        if (jobDTO.getPayloadType().equals(JobDTO.CV_PAYLOADTYPE_MATRIX)) {
-
-            // get DatasetDTO
-
-            DataSetDTO dataSetDTO = dtoMapDataSet.getDataSetDetails(jobDTO.getDatasetId());
-            dataSetDTO.setJobId(jobDTO.getJobId());
-            dataSetDTO = dtoMapDataSet.replaceDataSet(dataSetDTO.getDataSetId(), dataSetDTO);
-
-        }
 
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
@@ -72,7 +48,7 @@ public class JobServiceImpl implements JobService {
 
         if (null == jobDTO.getJobName() || jobDTO.getJobName().equals(jobName)) {
 
-            JobDTO existingJobDTO = dtoMapJob.getJobDetails(jobName);
+            JobDTO existingJobDTO = dtoMapJob.getJobDetailsByJobName(jobName);
 
             if (null != existingJobDTO.getJobName() && existingJobDTO.getJobName().equals(jobName)) {
 
@@ -137,7 +113,7 @@ public class JobServiceImpl implements JobService {
 
         JobDTO returnVal;
 
-        returnVal = dtoMapJob.getJobDetails(jobName);
+        returnVal = dtoMapJob.getJobDetailsByJobName(jobName);
 
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);

@@ -10,7 +10,7 @@ import java.util.List;
 public interface DtoMapJob {
 
     List<JobDTO> getJobs() throws GobiiDtoMappingException;
-    JobDTO getJobDetails(String jobName) throws GobiiDtoMappingException;
+    JobDTO getJobDetailsByJobName(String jobName) throws GobiiDtoMappingException;
     JobDTO createJob(JobDTO jobDTO) throws GobiiDtoMappingException;
     JobDTO replaceJob(String jobName, JobDTO jobDTO) throws GobiiDtoMappingException;
 

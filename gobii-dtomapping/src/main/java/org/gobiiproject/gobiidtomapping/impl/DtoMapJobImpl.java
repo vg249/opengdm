@@ -3,8 +3,10 @@ package org.gobiiproject.gobiidtomapping.impl;
 import org.gobiiproject.gobiidao.resultset.access.RsJobDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
+import org.gobiiproject.gobiidtomapping.DtoMapDataSet;
 import org.gobiiproject.gobiidtomapping.DtoMapJob;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
+import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -27,6 +29,9 @@ public class DtoMapJobImpl implements DtoMapJob {
 
     @Autowired
     private RsJobDao rsJobDao;
+    @Autowired
+    private DtoMapDataSet dtoMapDataSet = null;
+
 
     @Override
     public List<JobDTO> getJobs() throws GobiiDtoMappingException {
@@ -57,7 +62,7 @@ public class DtoMapJobImpl implements DtoMapJob {
     }
 
     @Override
-    public JobDTO getJobDetails(String jobName) throws GobiiDtoMappingException {
+    public JobDTO getJobDetailsByJobName(String jobName) throws GobiiDtoMappingException {
 
         JobDTO returnVal = new JobDTO();
 
@@ -98,9 +103,32 @@ public class DtoMapJobImpl implements DtoMapJob {
 
         JobDTO returnVal = jobDTO;
 
+        // check if the payload type of the job being submitted is a matrix
+        // if it is a matrix, the datasetId of the JobDTO should not be empty
+
+        if (jobDTO.getPayloadType().equals(JobDTO.CV_PAYLOADTYPE_MATRIX) && (null == jobDTO.getDatasetId())) {
+
+            throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
+                    GobiiValidationStatusType.BAD_REQUEST,
+                    "Missing dataset ID for job: " +
+                            jobDTO.getJobName() + " with payload type matrix.");
+
+        }
+
         Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
         Integer jobId = rsJobDao.createJobWithCvTerms(parameters);
         returnVal.setJobId(jobId);
+
+        if (jobDTO.getPayloadType().equals(JobDTO.CV_PAYLOADTYPE_MATRIX)) {
+
+            // get DatasetDTO
+
+            DataSetDTO dataSetDTO = dtoMapDataSet.getDataSetDetails(jobDTO.getDatasetId());
+            dataSetDTO.setJobId(jobDTO.getJobId());
+            dataSetDTO = dtoMapDataSet.replaceDataSet(dataSetDTO.getDataSetId(), dataSetDTO);
+
+        }
+
 
         return returnVal;
 
