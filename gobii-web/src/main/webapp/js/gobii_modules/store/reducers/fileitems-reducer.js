@@ -220,7 +220,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                 });
             }));
             exports_1("getAll", getAll = reselect_1.createSelector(getFileItems, getUniqueIds, function (entities, ids) {
-                return ids.map(function (id) { return entities[id]; });
+                return entities;
             }));
             // ideally, the redux way of selecting data would be for the selection to be based
             // on which entity is "selected" The problem is that we have controlls in which the

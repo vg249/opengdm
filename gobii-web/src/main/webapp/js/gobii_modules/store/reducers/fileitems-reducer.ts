@@ -282,7 +282,7 @@ export const getSelected = createSelector(getFileItems, getSelectedUniqueIds, (f
 });
 
 export const getAll = createSelector(getFileItems, getUniqueIds, (entities, ids) => {
-    return ids.map(id => entities[id]);
+    return entities;
 });
 
 // ideally, the redux way of selecting data would be for the selection to be based

@@ -8,6 +8,8 @@ import * as fileItemActions from '../actions/fileitem-action'
 import * as treeNodeActions from '../actions/treenode-action'
 import {TreeStructureService} from "../../services/core/tree-structure-service";
 import {GobiiTreeNode} from "../../model/GobiiTreeNode";
+import * as fromRoot from '../reducers';
+
 import {NameIdService} from "../../services/core/name-id-service";
 import {NameIdRequestParams} from "../../model/name-id-request-params";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
@@ -17,6 +19,7 @@ import {GobiiFileItem} from "../../model/gobii-file-item";
 import {ProcessType} from "../../model/type-process";
 import {Observable} from "rxjs/Observable";
 import {SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID} from "../actions/fileitem-action";
+import {Store} from "@ngrx/store";
 
 @Injectable()
 export class FileItemEffects {
@@ -32,6 +35,32 @@ export class FileItemEffects {
                 let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(action.payload);
                 return new treeNodeActions.PlaceTreeNodeAction(treeNode);
             }
+        );
+
+    @Effect()
+    selectForExtractByFileItemId$ = this.actions$
+        .ofType(fileItemActions.SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID)
+        .switchMap((action: fileItemActions.SelectByFileItemUniqueId) => {
+
+
+                //************************************************
+
+                return Observable.create(observer => {
+
+                    let fileItemUniqueId: String = action.payload;
+                    this.store.select(fromRoot.getAllFileItems)
+                        .subscribe(all => {
+                            let fileItem: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === fileItemUniqueId);
+                            let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(fileItem);
+                            observer.next(treeNode);
+                            observer.complete();
+                        })
+
+                }).map(gfi => {
+                    return new treeNodeActions.PlaceTreeNodeAction(gfi)
+                })
+                //************************************************
+            } //switchMap()
         );
 
 
@@ -50,9 +79,6 @@ export class FileItemEffects {
                 return new treeNodeActions.DeActivateFromExtractAction(action.payload);
             }
         );
-
-
-
 
 
     // @Effect()
@@ -107,6 +133,7 @@ export class FileItemEffects {
 
     constructor(private actions$: Actions,
                 private treeStructureService: TreeStructureService,
+                private store: Store<fromRoot.State>,
                 private router: Router) {
     }
 

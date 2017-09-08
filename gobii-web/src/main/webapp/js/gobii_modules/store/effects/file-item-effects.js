@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/operator/switchMap", "rxjs/add/observable/of", "../actions/fileitem-action", "../actions/treenode-action", "../../services/core/tree-structure-service"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/operator/switchMap", "rxjs/add/observable/of", "../actions/fileitem-action", "../actions/treenode-action", "../../services/core/tree-structure-service", "../reducers", "rxjs/Observable", "@ngrx/store"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, router_1, effects_1, fileItemActions, treeNodeActions, tree_structure_service_1, FileItemEffects;
+    var core_1, router_1, effects_1, fileItemActions, treeNodeActions, tree_structure_service_1, fromRoot, Observable_1, store_1, FileItemEffects;
     return {
         setters: [
             function (core_1_1) {
@@ -34,6 +34,15 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
             },
             function (tree_structure_service_1_1) {
                 tree_structure_service_1 = tree_structure_service_1_1;
+            },
+            function (fromRoot_1) {
+                fromRoot = fromRoot_1;
+            },
+            function (Observable_1_1) {
+                Observable_1 = Observable_1_1;
+            },
+            function (store_1_1) {
+                store_1 = store_1_1;
             }
         ],
         execute: function () {
@@ -86,10 +95,11 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                 //
                 //
                 //     }); //switch map
-                function FileItemEffects(actions$, treeStructureService, router) {
+                function FileItemEffects(actions$, treeStructureService, store, router) {
                     var _this = this;
                     this.actions$ = actions$;
                     this.treeStructureService = treeStructureService;
+                    this.store = store;
                     this.router = router;
                     // this effect acts on the content of the tree nodes (e.g., their names and icons so forth)
                     // and then dispatches them to the tree node reducer. The tree node reducer holds the nodes
@@ -101,6 +111,25 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                         var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(action.payload);
                         return new treeNodeActions.PlaceTreeNodeAction(treeNode);
                     });
+                    this.selectForExtractByFileItemId$ = this.actions$
+                        .ofType(fileItemActions.SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID)
+                        .switchMap(function (action) {
+                        //************************************************
+                        return Observable_1.Observable.create(function (observer) {
+                            var fileItemUniqueId = action.payload;
+                            _this.store.select(fromRoot.getAllFileItems)
+                                .subscribe(function (all) {
+                                var fileItem = all.find(function (fi) { return fi.getFileItemUniqueId() === fileItemUniqueId; });
+                                var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(fileItem);
+                                observer.next(treeNode);
+                                observer.complete();
+                            });
+                        }).map(function (gfi) {
+                            return new treeNodeActions.PlaceTreeNodeAction(gfi);
+                        });
+                        //************************************************
+                    } //switchMap()
+                    );
                     this.deSelectFromExtract$ = this.actions$
                         .ofType(fileItemActions.DESELECT_FOR_EXTRACT)
                         .map(function (action) {
@@ -119,6 +148,10 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                 __decorate([
                     effects_1.Effect(),
                     __metadata("design:type", Object)
+                ], FileItemEffects.prototype, "selectForExtractByFileItemId$", void 0);
+                __decorate([
+                    effects_1.Effect(),
+                    __metadata("design:type", Object)
                 ], FileItemEffects.prototype, "deSelectFromExtract$", void 0);
                 __decorate([
                     effects_1.Effect(),
@@ -128,6 +161,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                     core_1.Injectable(),
                     __metadata("design:paramtypes", [effects_1.Actions,
                         tree_structure_service_1.TreeStructureService,
+                        store_1.Store,
                         router_1.Router])
                 ], FileItemEffects);
                 return FileItemEffects;
