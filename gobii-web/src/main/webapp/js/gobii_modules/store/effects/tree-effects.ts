@@ -24,7 +24,7 @@ export class TreeEffects {
     placeNodeInTree$ = this.actions$
         .ofType(treeNodeActions.PLACE_TREE_NODE)
         .map((action: treeNodeActions.PlaceTreeNodeAction) =>
-            new treeNodeActions.ActivateForExtractAction(action.payload.getFileItemId())
+            new treeNodeActions.ActivateForExtractAction(action.payload.getId())
         );
 
 
