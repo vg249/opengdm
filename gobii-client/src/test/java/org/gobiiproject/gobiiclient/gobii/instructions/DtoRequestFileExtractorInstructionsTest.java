@@ -10,7 +10,7 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiTestConfiguration;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.dto.instructions.GobiiFilePropNameId;
+import org.gobiiproject.gobiimodel.entity.PropNameId;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
@@ -22,7 +22,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -78,7 +77,7 @@ public class DtoRequestFileExtractorInstructionsTest {
         GobiiFileType DataSetExtractOneFileType = GobiiFileType.HAPMAP;
         gobiiDataSetExtractOne.setGobiiFileType(DataSetExtractOneFileType);
         String dataSetExtractOneName = "1my_foo_Dataset1";
-        gobiiDataSetExtractOne.setDataSet(new GobiiFilePropNameId(1,dataSetExtractOneName));
+        gobiiDataSetExtractOne.setDataSet(new PropNameId(1,dataSetExtractOneName));
         gobiiDataSetExtractOne.setAccolate(true);
 
 
@@ -89,7 +88,7 @@ public class DtoRequestFileExtractorInstructionsTest {
         gobiiDataSetExtractTwo.setGobiiFileType(DataSetExtractFileTypeTwo);
         String DataSetExtractNameTwo = "1my_foo_Dataset2";
         gobiiDataSetExtractTwo.setAccolate(true);
-        gobiiDataSetExtractTwo.setDataSet(new GobiiFilePropNameId(2,DataSetExtractNameTwo));
+        gobiiDataSetExtractTwo.setDataSet(new PropNameId(2,DataSetExtractNameTwo));
 
 
         gobiiExtractorInstructionOne.getDataSetExtracts().add(gobiiDataSetExtractOne);
@@ -113,14 +112,14 @@ public class DtoRequestFileExtractorInstructionsTest {
         gobiiDataSetExtractOne.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
         gobiiDataSetExtractOne.setAccolate(true);
         gobiiDataSetExtractOne.setGobiiFileType(DataSetExtractOneFileType);
-        gobiiDataSetExtractOne.setDataSet(new GobiiFilePropNameId(1,"my_foo_2Dataset"));
+        gobiiDataSetExtractOne.setDataSet(new PropNameId(1,"my_foo_2Dataset"));
 
         // column two
         gobiiDataSetExtractTwo = new GobiiDataSetExtract();
         gobiiDataSetExtractTwo.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
         gobiiDataSetExtractTwo.setAccolate(true);
         gobiiDataSetExtractTwo.setGobiiFileType(DataSetExtractFileTypeTwo);
-        gobiiDataSetExtractTwo.setDataSet(new GobiiFilePropNameId(2,"my_foo_2Dataset2"));
+        gobiiDataSetExtractTwo.setDataSet(new PropNameId(2,"my_foo_2Dataset2"));
 
         gobiiExtractorInstructionTwo.getDataSetExtracts().add(gobiiDataSetExtractOne);
         gobiiExtractorInstructionTwo.getDataSetExtracts().add(gobiiDataSetExtractTwo);

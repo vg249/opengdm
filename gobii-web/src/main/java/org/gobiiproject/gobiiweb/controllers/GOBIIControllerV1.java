@@ -6,7 +6,6 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
@@ -20,7 +19,6 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.*;
 import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
-import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
@@ -48,15 +46,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.InputStream;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -142,7 +137,7 @@ public class GOBIIControllerV1 {
     private FilesService fileService = null;
 
     @Autowired
-    private StatusService statusService = null;
+    private JobService jobService = null;
 
     @RequestMapping(value = "/ping", method = RequestMethod.POST)
     @ResponseBody
@@ -3539,29 +3534,29 @@ public class GOBIIControllerV1 {
 
     }
 
-    /*** STATUS METHODS ***/
+    /*** JOB METHODS ***/
 
-    @RequestMapping(value = "/status", method = RequestMethod.POST)
+    @RequestMapping(value = "/jobs", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<StatusDTO> createStatus(@RequestBody PayloadEnvelope<StatusDTO> payloadEnvelope,
-                                                       HttpServletRequest request,
-                                                       HttpServletResponse response) {
+    public PayloadEnvelope<JobDTO> createJob(@RequestBody PayloadEnvelope<JobDTO> payloadEnvelope,
+                                                HttpServletRequest request,
+                                                HttpServletResponse response) {
 
-        PayloadEnvelope<StatusDTO> returnVal = new PayloadEnvelope<>();
+        PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            PayloadReader<StatusDTO> payloadReader = new PayloadReader<>(StatusDTO.class);
-            StatusDTO statusDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+            PayloadReader<JobDTO> payloadReader = new PayloadReader<>(JobDTO.class);
+            JobDTO jobDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
 
-            StatusDTO statusDTONew = statusService.createStatus(statusDTOToCreate);
+            JobDTO jobDTONew = jobService.createJob(jobDTOToCreate);
 
-            PayloadWriter<StatusDTO> payloadWriter = new PayloadWriter<>(request, response,
-                    StatusDTO.class);
+            PayloadWriter<JobDTO> payloadWriter = new PayloadWriter<>(request, response,
+                    JobDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
-                            GobiiServiceRequestId.URL_STATUS),
-                    statusDTONew);
+                            GobiiServiceRequestId.URL_JOB),
+                    jobDTONew);
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -3580,24 +3575,24 @@ public class GOBIIControllerV1 {
     }
 
 
-    @RequestMapping(value = "/status", method = RequestMethod.GET)
+    @RequestMapping(value = "/jobs", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<StatusDTO> getStatus(HttpServletRequest request,
-                                                HttpServletResponse response) {
+    public PayloadEnvelope<JobDTO> getStatus(HttpServletRequest request,
+                                             HttpServletResponse response) {
 
-        PayloadEnvelope<StatusDTO> returnVal = new PayloadEnvelope<>();
+        PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
 
         try {
 
-            List<StatusDTO> statusDTOs = statusService.getStatuses();
+            List<JobDTO> jobDTOS = jobService.getJobs();
 
-            PayloadWriter<StatusDTO> payloadWriter = new PayloadWriter<>(request, response,
-                    StatusDTO.class);
+            PayloadWriter<JobDTO> payloadWriter = new PayloadWriter<>(request, response,
+                    JobDTO.class);
 
             payloadWriter.writeList(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
-                            GobiiServiceRequestId.URL_STATUS),
-                    statusDTOs);
+                            GobiiServiceRequestId.URL_JOB),
+                    jobDTOS);
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -3613,29 +3608,29 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
-    @RequestMapping(value = "/status/{statusId:[\\d]+}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/jobs/{jobName}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<StatusDTO> replaceStatus(@RequestBody PayloadEnvelope<StatusDTO> payloadEnvelope,
-                                                            @PathVariable Integer statusId,
-                                                            HttpServletRequest request,
-                                                            HttpServletResponse response) {
+    public PayloadEnvelope<JobDTO> replaceStatus(@RequestBody PayloadEnvelope<JobDTO> payloadEnvelope,
+                                                 @PathVariable String jobName,
+                                                 HttpServletRequest request,
+                                                 HttpServletResponse response) {
 
-        PayloadEnvelope<StatusDTO> returnVal = new PayloadEnvelope<>();
+        PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
 
         try {
 
-            PayloadReader<StatusDTO> payloadReader = new PayloadReader<>(StatusDTO.class);
-            StatusDTO statusDTOToReplace = payloadReader.extractSingleItem(payloadEnvelope);
+            PayloadReader<JobDTO> payloadReader = new PayloadReader<>(JobDTO.class);
+            JobDTO jobDTOToReplace = payloadReader.extractSingleItem(payloadEnvelope);
 
-            StatusDTO statusDTOReplaced = statusService.replaceStatus(statusId, statusDTOToReplace);
+            JobDTO jobDTOReplaced = jobService.replaceJob(jobName, jobDTOToReplace);
 
-            PayloadWriter<StatusDTO> payloadWriter = new PayloadWriter<>(request, response,
-                    StatusDTO.class);
+            PayloadWriter<JobDTO> payloadWriter = new PayloadWriter<>(request, response,
+                    JobDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
-                            GobiiServiceRequestId.URL_STATUS),
-                    statusDTOReplaced);
+                            GobiiServiceRequestId.URL_JOB),
+                    jobDTOReplaced);
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -3653,24 +3648,24 @@ public class GOBIIControllerV1 {
 
     }
 
-    @RequestMapping(value = "/status/{statusId:[\\d]+}", method = RequestMethod.GET)
+    @RequestMapping(value = "/jobs/{jobName}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<StatusDTO> getStatusById(@PathVariable Integer statusId,
-                                                             HttpServletRequest request,
-                                                             HttpServletResponse response) {
+    public PayloadEnvelope<JobDTO> getStatusById(@PathVariable String jobName,
+                                                 HttpServletRequest request,
+                                                 HttpServletResponse response) {
 
-        PayloadEnvelope<StatusDTO> returnVal = new PayloadEnvelope<>();
+        PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            StatusDTO statusDTO = statusService.getStatusById(statusId);
+            JobDTO jobDTO = jobService.getJobByJobName(jobName);
 
-            PayloadWriter<StatusDTO> payloadWriter = new PayloadWriter<>(request, response,
-                    StatusDTO.class);
+            PayloadWriter<JobDTO> payloadWriter = new PayloadWriter<>(request, response,
+                    JobDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
-                            GobiiServiceRequestId.URL_STATUS),
-                    statusDTO);
+                            GobiiServiceRequestId.URL_JOB),
+                    jobDTO);
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);

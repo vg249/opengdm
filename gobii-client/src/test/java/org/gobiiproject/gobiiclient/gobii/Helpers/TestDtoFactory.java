@@ -377,19 +377,18 @@ public class TestDtoFactory {
 
     }
 
-    public static StatusDTO makePopulatedStatusDTO() throws Exception {
+    public static JobDTO makePopulateJobDTO() throws Exception {
 
-        StatusDTO returnVal = new StatusDTO();
+        JobDTO newJobDto = new JobDTO();
+        String uniqueStemString = UUID.randomUUID().toString();
+        newJobDto.setJobName(uniqueStemString + ": job");
+        newJobDto.setType(JobDTO.CV_JOBTYPE_LOAD);
+        newJobDto.setPayloadType(JobDTO.CV_PAYLOADTYPE_SAMPLES);
+        newJobDto.setStatus(JobDTO.CV_PROGRESSSTATUS_INPROGRESS);
+        newJobDto.setMessage("dummy message");
+        newJobDto.setSubmittedBy(1);
 
-        returnVal.setJobId(1);
-        returnVal.setDataset(1);
-        returnVal.setMessages("dummy");
-        returnVal.setProcessStatus(StatusDTO.CV_PROGRESSSTATUS_STARTED);
-        returnVal.setLoadType(StatusDTO.CV_LOADTYPE_SAMPLE);
-        returnVal.setExtractType(StatusDTO.CV_EXTRACTTYPE_HAPMAP);
-
-        return returnVal;
-
+        return newJobDto;
 
     }
 }

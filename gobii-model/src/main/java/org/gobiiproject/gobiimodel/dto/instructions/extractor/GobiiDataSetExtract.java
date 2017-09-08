@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiimodel.dto.instructions.extractor;
 
-import org.gobiiproject.gobiimodel.dto.instructions.GobiiFilePropNameId;
+import org.gobiiproject.gobiimodel.entity.PropNameId;
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.types.GobiiJobStatus;
@@ -29,13 +29,13 @@ public class GobiiDataSetExtract {
     private List<String> markerList = new ArrayList<>();
     private List<String> sampleList = new ArrayList<>();
     private String listFileName;
-    private GobiiFilePropNameId gobiiDatasetType = new GobiiFilePropNameId();
-    private GobiiFilePropNameId principleInvestigator = new GobiiFilePropNameId();
-    private GobiiFilePropNameId project = new GobiiFilePropNameId();
-    private GobiiFilePropNameId dataSet = new GobiiFilePropNameId();
-    private List<GobiiFilePropNameId> platforms = new ArrayList<>();
+    private PropNameId gobiiDatasetType = new PropNameId();
+    private PropNameId principleInvestigator = new PropNameId();
+    private PropNameId project = new PropNameId();
+    private PropNameId dataSet = new PropNameId();
+    private List<PropNameId> platforms = new ArrayList<>();
     private GobiiSampleListType gobiiSampleListType;
-    private List<GobiiFilePropNameId> markerGroups = new ArrayList<>();
+    private List<PropNameId> markerGroups = new ArrayList<>();
 
 
     public GobiiExtractFilterType getGobiiExtractFilterType() {
@@ -78,19 +78,19 @@ public class GobiiDataSetExtract {
         this.gobiiSampleListType = gobiiSampleListType;
     }
 
-    public GobiiFilePropNameId getGobiiDatasetType() {
+    public PropNameId getGobiiDatasetType() {
         return gobiiDatasetType;
     }
 
-    public void setGobiiDatasetType(GobiiFilePropNameId gobiiDatasetType) {
+    public void setGobiiDatasetType(PropNameId gobiiDatasetType) {
         this.gobiiDatasetType = gobiiDatasetType;
     }
 
-    public List<GobiiFilePropNameId> getPlatforms() {
+    public List<PropNameId> getPlatforms() {
         return platforms;
     }
 
-    public void setPlatforms(List<GobiiFilePropNameId> platforms) {
+    public void setPlatforms(List<PropNameId> platforms) {
         this.platforms = platforms;
     }
 
@@ -127,35 +127,35 @@ public class GobiiDataSetExtract {
     }
 
 
-    public GobiiFilePropNameId getPrincipleInvestigator() {
+    public PropNameId getPrincipleInvestigator() {
         return principleInvestigator;
     }
 
-    public void setPrincipleInvestigator(GobiiFilePropNameId principleInvestigator) {
+    public void setPrincipleInvestigator(PropNameId principleInvestigator) {
         this.principleInvestigator = principleInvestigator;
     }
 
-    public GobiiFilePropNameId getProject() {
+    public PropNameId getProject() {
         return project;
     }
 
-    public void setProject(GobiiFilePropNameId project) {
+    public void setProject(PropNameId project) {
         this.project = project;
     }
 
-    public GobiiFilePropNameId getDataSet() {
+    public PropNameId getDataSet() {
         return dataSet;
     }
 
-    public void setDataSet(GobiiFilePropNameId dataSet) {
+    public void setDataSet(PropNameId dataSet) {
         this.dataSet = dataSet;
     }
 
-    public List<GobiiFilePropNameId> getMarkerGroups() {
+    public List<PropNameId> getMarkerGroups() {
         return markerGroups;
     }
 
-    public void setMarkerGroups(List<GobiiFilePropNameId> markerGroups) {
+    public void setMarkerGroups(List<PropNameId> markerGroups) {
         this.markerGroups = markerGroups;
     }
 }

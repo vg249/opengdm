@@ -44,7 +44,8 @@ public class SpGetDatasetDetailsByDataSetId implements Work {
                 "\tds.modified_by,\n" +
                 "\tds.modified_date,\n" +
                 "\tds.status, \n" +
-                "\tds.type_id \n" +
+                "\tds.type_id, \n" +
+                "\tds.job_id \n" +
                 "from dataset ds \n" +
                 "where dataset_id=?";
 

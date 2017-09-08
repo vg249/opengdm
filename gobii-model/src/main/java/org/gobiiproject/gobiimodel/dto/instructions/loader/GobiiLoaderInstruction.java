@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiimodel.dto.instructions.loader;
 
 
-import org.gobiiproject.gobiimodel.dto.instructions.GobiiFilePropNameId;
+import org.gobiiproject.gobiimodel.entity.PropNameId;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,12 +32,12 @@ public class GobiiLoaderInstruction {
 
     private boolean qcCheck;
 
-    private GobiiFilePropNameId project = new GobiiFilePropNameId();
-    private GobiiFilePropNameId platform = new GobiiFilePropNameId();
-    private GobiiFilePropNameId dataSet = new GobiiFilePropNameId();
-    private GobiiFilePropNameId datasetType = new GobiiFilePropNameId();
-    private GobiiFilePropNameId Experiment = new GobiiFilePropNameId();
-    private GobiiFilePropNameId mapset = new GobiiFilePropNameId();
+    private PropNameId project = new PropNameId();
+    private PropNameId platform = new PropNameId();
+    private PropNameId dataSet = new PropNameId();
+    private PropNameId datasetType = new PropNameId();
+    private PropNameId Experiment = new PropNameId();
+    private PropNameId mapset = new PropNameId();
 
     public GobiiFile getGobiiFile() {
         return gobiiFile;
@@ -120,51 +120,51 @@ public class GobiiLoaderInstruction {
         this.qcCheck = qcCheck;
     }
 
-    public GobiiFilePropNameId getProject() {
+    public PropNameId getProject() {
         return project;
     }
 
-    public void setProject(GobiiFilePropNameId project) {
+    public void setProject(PropNameId project) {
         this.project = project;
     }
 
-    public GobiiFilePropNameId getPlatform() {
+    public PropNameId getPlatform() {
         return platform;
     }
 
-    public void setPlatform(GobiiFilePropNameId platform) {
+    public void setPlatform(PropNameId platform) {
         this.platform = platform;
     }
 
-    public GobiiFilePropNameId getDataSet() {
+    public PropNameId getDataSet() {
         return dataSet;
     }
 
-    public void setDataSet(GobiiFilePropNameId dataSet) {
+    public void setDataSet(PropNameId dataSet) {
         this.dataSet = dataSet;
     }
 
-    public GobiiFilePropNameId getDatasetType() {
+    public PropNameId getDatasetType() {
         return datasetType;
     }
 
-    public void setDatasetType(GobiiFilePropNameId datasetType) {
+    public void setDatasetType(PropNameId datasetType) {
         this.datasetType = datasetType;
     }
 
-    public GobiiFilePropNameId getExperiment() {
+    public PropNameId getExperiment() {
         return Experiment;
     }
 
-    public void setExperiment(GobiiFilePropNameId experiment) {
+    public void setExperiment(PropNameId experiment) {
         Experiment = experiment;
     }
 
-    public GobiiFilePropNameId getMapset() {
+    public PropNameId getMapset() {
         return mapset;
     }
 
-    public void setMapset(GobiiFilePropNameId mapset) {
+    public void setMapset(PropNameId mapset) {
         this.mapset = mapset;
     }
 }
