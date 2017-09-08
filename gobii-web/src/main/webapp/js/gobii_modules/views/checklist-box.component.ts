@@ -65,12 +65,6 @@ export class CheckListBoxComponent implements OnInit, OnChanges, DoCheck {
     public handleItemChecked(arg) {
 
         let currentFileItemUniqueId:string = arg.currentTarget.value;
-        let selectedFileItem: GobiiFileItem = this.fileItemService.getFIleItemForUniqueFileItemId(currentFileItemUniqueId);
-
-        //let indexOfItemToChange:number = this.gobiiFileItems.indexOf(arg.currentTarget.name);
-        // selectedFileItem.setProcessType(arg.currentTarget.checked ? ProcessType.CREATE : ProcessType.DELETE);
-        // selectedFileItem.setChecked(arg.currentTarget.checked);
-
 
         if (arg.currentTarget.checked) {
             this.store.dispatch(new fileAction.SelectByFileItemUniqueId(currentFileItemUniqueId));
@@ -82,7 +76,7 @@ export class CheckListBoxComponent implements OnInit, OnChanges, DoCheck {
 
     private handleItemSelected(arg) {
 
-        arg.currentTarget.style = "background-color:#b3d9ff";
+//        arg.currentTarget.style = "background-color:#b3d9ff";
 
     }
 

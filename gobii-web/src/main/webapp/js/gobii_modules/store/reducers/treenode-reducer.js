@@ -101,7 +101,7 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
                 }
                 else {
                     var children = gobiiTreeNodeToDeActivate_1.parent.getChildren();
-                    children.splice(children.indexOf(gobiiTreeNodeToDeActivate_1, 1));
+                    children.splice(children.indexOf(gobiiTreeNodeToDeActivate_1, 0), 1);
                 }
                 var newAcxtiveNodeState = state.gobiiTreeNodesActive
                     .filter(function (gtn) { return gtn !== gobiiTreeNodeToDeActivate_1.getId(); });

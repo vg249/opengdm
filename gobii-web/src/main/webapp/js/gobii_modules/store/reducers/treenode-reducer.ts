@@ -150,7 +150,7 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
                 gobiiTreeNodeToDeActivate.resetLabel();
             } else {
                 let children:GobiiTreeNode[] = gobiiTreeNodeToDeActivate.parent.getChildren();
-                children.splice(children.indexOf(gobiiTreeNodeToDeActivate,1));
+                children.splice(children.indexOf(gobiiTreeNodeToDeActivate,0),1);
             }
 
 

@@ -42,10 +42,6 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../store/ac
                 } // ctor
                 CheckListBoxComponent.prototype.handleItemChecked = function (arg) {
                     var currentFileItemUniqueId = arg.currentTarget.value;
-                    var selectedFileItem = this.fileItemService.getFIleItemForUniqueFileItemId(currentFileItemUniqueId);
-                    //let indexOfItemToChange:number = this.gobiiFileItems.indexOf(arg.currentTarget.name);
-                    // selectedFileItem.setProcessType(arg.currentTarget.checked ? ProcessType.CREATE : ProcessType.DELETE);
-                    // selectedFileItem.setChecked(arg.currentTarget.checked);
                     if (arg.currentTarget.checked) {
                         this.store.dispatch(new fileAction.SelectByFileItemUniqueId(currentFileItemUniqueId));
                     }
@@ -54,7 +50,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../store/ac
                     }
                 }; // handleItemChecked()
                 CheckListBoxComponent.prototype.handleItemSelected = function (arg) {
-                    arg.currentTarget.style = "background-color:#b3d9ff";
+                    //        arg.currentTarget.style = "background-color:#b3d9ff";
                 };
                 CheckListBoxComponent.prototype.handleHeaderStatus = function (headerStatusMessage) {
                     this.onError.emit(headerStatusMessage);
