@@ -113,7 +113,7 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
         RestUri restUriStatus = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceByUriIdParam(GobiiServiceRequestId.URL_JOB);
-        restUriStatus.setParamValue("id", jobName);
+        restUriStatus.setParamValue("jobName", jobName);
         GobiiEnvelopeRestResource<JobDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriStatus);
         PayloadEnvelope<JobDTO> resultEnvelope = gobiiEnvelopeRestResource.get(JobDTO.class);
 
@@ -152,7 +152,7 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
         RestUri restUriStatusForGetById = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceByUriIdParam(GobiiServiceRequestId.URL_JOB);
-        restUriStatusForGetById.setParamValue("id", jobName);
+        restUriStatusForGetById.setParamValue("jobName", jobName);
         GobiiEnvelopeRestResource<JobDTO> gobiiEnvelopeRestResourceGetById = new GobiiEnvelopeRestResource<>(restUriStatusForGetById);
 
         PayloadEnvelope<JobDTO> postRequestEnvelope = new PayloadEnvelope<>(jobDTOReceived, GobiiProcessType.UPDATE);

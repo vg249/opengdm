@@ -10,6 +10,7 @@ import org.gobiiproject.gobiidtomapping.DtoMapAnalysis;
 import org.gobiiproject.gobiidtomapping.DtoMapDataSet;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,5 +137,24 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
         return returnVal;
     }
 
+    @Override
+    public JobDTO getJobDetailsByDatasetId(Integer datasetId) throws GobiiDtoMappingException {
+
+        JobDTO returnVal = new JobDTO();
+
+        ResultSet resultSet = rsDataSetDao.getJobDetailsByDatasetId(datasetId);
+        try {
+        if (resultSet.next()) {
+
+            ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
+        }
+
+        } catch(SQLException e) {
+            throw new GobiiDtoMappingException(e);
+        }
+        return returnVal;
+
+
+    }
 
 }

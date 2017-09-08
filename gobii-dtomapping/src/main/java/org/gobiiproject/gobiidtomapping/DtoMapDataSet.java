@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiidtomapping;
 
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
 
 import java.util.List;
 
@@ -19,4 +20,5 @@ public interface DtoMapDataSet {
 
     DataSetDTO replaceDataSet(Integer projectId, DataSetDTO dataSetDTO) throws GobiiDtoMappingException;
 
+    JobDTO getJobDetailsByDatasetId(Integer datasetId);
 }
