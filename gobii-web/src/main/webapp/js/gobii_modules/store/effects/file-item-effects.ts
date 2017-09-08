@@ -42,6 +42,9 @@ export class FileItemEffects {
         .ofType(fileItemActions.SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID)
         .switchMap((action: fileItemActions.SelectByFileItemUniqueId) => {
 
+                // this is scary. The store is the single source of truth. The only way to get the fileItem for
+                // the fileitem id is to get it from the store, and for that to work here, we need to wrap the
+                // select in an Observable.
                 return Observable.create(observer => {
 
                     let fileItemUniqueId: String = action.payload;

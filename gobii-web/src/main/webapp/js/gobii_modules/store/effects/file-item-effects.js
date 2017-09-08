@@ -114,6 +114,9 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                     this.selectForExtractByFileItemId$ = this.actions$
                         .ofType(fileItemActions.SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID)
                         .switchMap(function (action) {
+                        // this is scary. The store is the single source of truth. The only way to get the fileItem for
+                        // the fileitem id is to get it from the store, and for that to work here, we need to wrap the
+                        // select in an Observable.
                         return Observable_1.Observable.create(function (observer) {
                             var fileItemUniqueId = action.payload;
                             _this.store.select(fromRoot.getAllFileItems)
