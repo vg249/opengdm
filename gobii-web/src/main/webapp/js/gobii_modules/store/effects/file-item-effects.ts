@@ -42,9 +42,6 @@ export class FileItemEffects {
         .ofType(fileItemActions.SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID)
         .switchMap((action: fileItemActions.SelectByFileItemUniqueId) => {
 
-
-                //************************************************
-
                 return Observable.create(observer => {
 
                     let fileItemUniqueId: String = action.payload;
@@ -59,7 +56,7 @@ export class FileItemEffects {
                 }).map(gfi => {
                     return new treeNodeActions.PlaceTreeNodeAction(gfi)
                 })
-                //************************************************
+
             } //switchMap()
         );
 

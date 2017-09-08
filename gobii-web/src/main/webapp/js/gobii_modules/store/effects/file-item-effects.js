@@ -114,7 +114,6 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                     this.selectForExtractByFileItemId$ = this.actions$
                         .ofType(fileItemActions.SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID)
                         .switchMap(function (action) {
-                        //************************************************
                         return Observable_1.Observable.create(function (observer) {
                             var fileItemUniqueId = action.payload;
                             _this.store.select(fromRoot.getAllFileItems)
@@ -127,7 +126,6 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                         }).map(function (gfi) {
                             return new treeNodeActions.PlaceTreeNodeAction(gfi);
                         });
-                        //************************************************
                     } //switchMap()
                     );
                     this.deSelectFromExtract$ = this.actions$
