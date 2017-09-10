@@ -82,25 +82,35 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
     public handleFileItemSelected(arg) {
 
         let currentFileItemUniqueId:string = arg.currentTarget.value;
-        let selectedFileItem: GobiiFileItem = this.fileItemService.getFIleItemForUniqueFileItemId(currentFileItemUniqueId);
 
-        if(( selectedFileItem.getProcessType() !== ProcessType.DUMMY )
-        && (selectedFileItem.getExtractorItemType() !== ExtractorItemType.LABEL) ) {
+        this.store.select(fromRoot.getAllFileItems)
+            .subscribe(all => {
+                let selectedFileItem: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === currentFileItemUniqueId);
+                if(( selectedFileItem.getProcessType() !== ProcessType.DUMMY )
+                    && (selectedFileItem.getExtractorItemType() !== ExtractorItemType.LABEL) ) {
 
-            this.previousSelectedItemId = currentFileItemUniqueId;
-            this.store.dispatch(new fileAction.SelectForExtractAction(selectedFileItem));
+                    this.previousSelectedItemId = currentFileItemUniqueId;
+                    this.store.dispatch(new fileAction.SelectForExtractAction(selectedFileItem));
 
-        } else {
-            if( this.previousSelectedItemId ) {
-                let previousItem: GobiiFileItem = this.fileItemService.getFIleItemForUniqueFileItemId(this.previousSelectedItemId);
-                this.store.dispatch(new fileAction.DeSelectForExtractAction(previousItem));
-            }
-        }
+                    this.onNameIdSelected
+                        .emit(new NameId(selectedFileItem.getItemId(),
+                            selectedFileItem.getItemName(),
+                            selectedFileItem.getEntityType()));
 
-        this.onNameIdSelected
-            .emit(new NameId(selectedFileItem.getItemId(),
-                selectedFileItem.getItemName(),
-                selectedFileItem.getEntityType()));
+                } else {
+                    if( this.previousSelectedItemId ) {
+
+                        let previousItem: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === this.previousSelectedItemId);
+                        this.store.dispatch(new fileAction.DeSelectForExtractAction(previousItem));
+
+                        this.onNameIdSelected
+                            .emit(new NameId(previousItem.getItemId(),
+                                previousItem.getItemName(),
+                                previousItem.getEntityType()));
+                    }
+                }
+            }).unsubscribe(); //unsubscribe or else this subscribe() keeps the state collection locked and the app freezes really badly
+
 
         // if (this.currentSelection.getItemId() !== "0") {
         //     this.currentSelection.setProcessType(ProcessType.DELETE);

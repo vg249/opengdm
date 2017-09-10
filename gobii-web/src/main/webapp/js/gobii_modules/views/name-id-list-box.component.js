@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/name-id", "../model/type-extractor-filter", "../services/core/name-id-service", "@ngrx/store", "../store/actions/fileitem-action", "../services/core/file-item-service", "../model/type-process", "../model/file-model-node"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/name-id", "../model/type-extractor-filter", "../services/core/name-id-service", "@ngrx/store", "../store/reducers", "../store/actions/fileitem-action", "../services/core/file-item-service", "../model/type-process", "../model/file-model-node"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-extractor-f
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, name_id_1, type_extractor_filter_1, name_id_service_1, store_1, fileAction, file_item_service_1, type_process_1, file_model_node_1, NameIdListBoxComponent;
+    var core_1, name_id_1, type_extractor_filter_1, name_id_service_1, store_1, fromRoot, fileAction, file_item_service_1, type_process_1, file_model_node_1, NameIdListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -27,6 +27,9 @@ System.register(["@angular/core", "../model/name-id", "../model/type-extractor-f
             },
             function (store_1_1) {
                 store_1 = store_1_1;
+            },
+            function (fromRoot_1) {
+                fromRoot = fromRoot_1;
             },
             function (fileAction_1) {
                 fileAction = fileAction_1;
@@ -67,21 +70,27 @@ System.register(["@angular/core", "../model/name-id", "../model/type-extractor-f
                     this.onError.emit(headerStatusMessage);
                 };
                 NameIdListBoxComponent.prototype.handleFileItemSelected = function (arg) {
+                    var _this = this;
                     var currentFileItemUniqueId = arg.currentTarget.value;
-                    var selectedFileItem = this.fileItemService.getFIleItemForUniqueFileItemId(currentFileItemUniqueId);
-                    if ((selectedFileItem.getProcessType() !== type_process_1.ProcessType.DUMMY)
-                        && (selectedFileItem.getExtractorItemType() !== file_model_node_1.ExtractorItemType.LABEL)) {
-                        this.previousSelectedItemId = currentFileItemUniqueId;
-                        this.store.dispatch(new fileAction.SelectForExtractAction(selectedFileItem));
-                    }
-                    else {
-                        if (this.previousSelectedItemId) {
-                            var previousItem = this.fileItemService.getFIleItemForUniqueFileItemId(this.previousSelectedItemId);
-                            this.store.dispatch(new fileAction.DeSelectForExtractAction(previousItem));
+                    this.store.select(fromRoot.getAllFileItems)
+                        .subscribe(function (all) {
+                        var selectedFileItem = all.find(function (fi) { return fi.getFileItemUniqueId() === currentFileItemUniqueId; });
+                        if ((selectedFileItem.getProcessType() !== type_process_1.ProcessType.DUMMY)
+                            && (selectedFileItem.getExtractorItemType() !== file_model_node_1.ExtractorItemType.LABEL)) {
+                            _this.previousSelectedItemId = currentFileItemUniqueId;
+                            _this.store.dispatch(new fileAction.SelectForExtractAction(selectedFileItem));
+                            _this.onNameIdSelected
+                                .emit(new name_id_1.NameId(selectedFileItem.getItemId(), selectedFileItem.getItemName(), selectedFileItem.getEntityType()));
                         }
-                    }
-                    this.onNameIdSelected
-                        .emit(new name_id_1.NameId(selectedFileItem.getItemId(), selectedFileItem.getItemName(), selectedFileItem.getEntityType()));
+                        else {
+                            if (_this.previousSelectedItemId) {
+                                var previousItem = all.find(function (fi) { return fi.getFileItemUniqueId() === _this.previousSelectedItemId; });
+                                _this.store.dispatch(new fileAction.DeSelectForExtractAction(previousItem));
+                                _this.onNameIdSelected
+                                    .emit(new name_id_1.NameId(previousItem.getItemId(), previousItem.getItemName(), previousItem.getEntityType()));
+                            }
+                        }
+                    }).unsubscribe(); //unsubscribe or else this subscribe() keeps the state collection locked and the app freezes really badly
                     // if (this.currentSelection.getItemId() !== "0") {
                     //     this.currentSelection.setProcessType(ProcessType.DELETE);
                     //     this.updateTreeService(this.currentSelection);
