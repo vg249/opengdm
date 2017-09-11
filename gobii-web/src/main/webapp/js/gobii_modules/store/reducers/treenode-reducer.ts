@@ -91,7 +91,7 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
             returnVal = {
                 gobiiExtractFilterType: state.gobiiExtractFilterType,
                 gobiiTreeNodesActive: state.gobiiTreeNodesActive,
-                gobiiTreeNodes: [...state.gobiiTreeNodes, ...newGobiigobiiTreeItems]
+                gobiiTreeNodes: gobiigobiiTreeItemsPayload
             };
 
             break;

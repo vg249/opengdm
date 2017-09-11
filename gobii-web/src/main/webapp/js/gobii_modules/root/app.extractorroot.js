@@ -122,6 +122,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
         execute: function () {
             ExtractorRoot = (function () {
                 function ExtractorRoot(_dtoRequestServiceExtractorFile, _dtoRequestServiceNameIds, _dtoRequestServiceContact, _authenticationService, _dtoRequestServiceServerConfigs, _fileModelTreeService, store, fileItemService) {
+                    //unfiltered requests
                     this._dtoRequestServiceExtractorFile = _dtoRequestServiceExtractorFile;
                     this._dtoRequestServiceNameIds = _dtoRequestServiceNameIds;
                     this._dtoRequestServiceContact = _dtoRequestServiceContact;
@@ -217,8 +218,6 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this.buttonStyleSubmitNotReady = "btn btn-warning";
                     this.submitButtonStyle = this.buttonStyleSubmitNotReady;
                     this.clearButtonStyle = this.submitButtonStyleDefault;
-                    this.store.dispatch(new treeNodeAction.InitAction());
-                    //unfiltered requests
                     this.nameIdRequestParamsDatasetType = name_id_request_params_1.FileItemParams
                         .build(type_nameid_filter_params_1.NameIdFilterParamTypes.CV_DATATYPE, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.CvTerms)
                         .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE)
@@ -242,7 +241,8 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                                     .filter(function (c) {
                                     return c.crop === serverCrop_1;
                                 })[0];
-                            scope$.initializeSubmissionContact();
+                            _this.handleExportTypeSelected(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET);
+                            //                    scope$.initializeSubmissionContact();
                             scope$.currentStatus = "GOBII Server " + gobiiVersion;
                             scope$.handleAddMessage("Connected to crop config: " + scope$.selectedServerConfig.crop);
                         }
@@ -310,7 +310,9 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 ExtractorRoot.prototype.handleExportTypeSelected = function (arg) {
                     var _this = this;
                     var foo = "foo";
+                    this.store.dispatch(new treeNodeAction.InitAction());
                     this.store.dispatch(new treeNodeAction.SelectExtractType(arg));
+                    // RESET FORMAT TO DEFAULT
                     var jobId = file_name_1.FileName.makeUniqueFileId();
                     this.store.dispatch(new fileItemAction.SelectForExtractAction(gobii_file_item_1.GobiiFileItem.build(arg, type_process_1.ProcessType.CREATE)
                         .setExtractorItemType(file_model_node_1.ExtractorItemType.JOB_ID)
@@ -501,12 +503,21 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     var foo = "foo";
                 };
                 ExtractorRoot.prototype.handleClearTree = function () {
-                    var _this = this;
-                    this._fileModelTreeService.put(gobii_file_item_1.GobiiFileItem
-                        .build(this.gobiiExtractFilterType, type_process_1.ProcessType.NOTIFY)
-                        .setExtractorItemType(file_model_node_1.ExtractorItemType.CLEAR_TREE)).subscribe(null, function (headerResponse) {
-                        _this.handleResponseHeader(headerResponse);
-                    });
+                    this.handleExportTypeSelected(this.gobiiExtractFilterType);
+                    var formatItem = gobii_file_item_1.GobiiFileItem
+                        .build(this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)
+                        .setExtractorItemType(file_model_node_1.ExtractorItemType.EXPORT_FORMAT)
+                        .setItemId(type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat.HAPMAP])
+                        .setItemName(type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat.HAPMAP]]);
+                    this.store.dispatch(new fileItemAction.SelectForExtractAction(formatItem));
+                    // this._fileModelTreeService.put(GobiiFileItem
+                    //     .build(this.gobiiExtractFilterType, ProcessType.NOTIFY)
+                    //     .setExtractorItemType(ExtractorItemType.CLEAR_TREE)).subscribe(
+                    //     null,
+                    //     headerResponse => {
+                    //         this.handleResponseHeader(headerResponse)
+                    //     }
+                    // );
                 };
                 // In theory this method should be unnecessary because there should not be any duplicates;
                 // however, in testing, it was discovered that there can be duplicate datasets and
@@ -737,7 +748,6 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     //     });
                     //
                     this.initializeServerConfigs();
-                    this.handleExportTypeSelected(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET);
                     this.store.select(fromRoot.getSelectedFileItems)
                         .subscribe(function (all) {
                         if (_this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {

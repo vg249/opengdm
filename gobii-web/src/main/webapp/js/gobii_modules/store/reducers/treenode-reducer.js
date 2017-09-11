@@ -61,7 +61,7 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
                 returnVal = {
                     gobiiExtractFilterType: state.gobiiExtractFilterType,
                     gobiiTreeNodesActive: state.gobiiTreeNodesActive,
-                    gobiiTreeNodes: state.gobiiTreeNodes.concat(newGobiigobiiTreeItems)
+                    gobiiTreeNodes: gobiigobiiTreeItemsPayload
                 };
                 break;
             } // LOAD_TREE_NODE

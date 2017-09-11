@@ -347,7 +347,6 @@ export class ExtractorRoot implements OnInit {
                 private fileItemService: FileItemService) {
 
 
-        this.store.dispatch(new treeNodeAction.InitAction());
 
 
         //unfiltered requests
@@ -397,8 +396,8 @@ export class ExtractorRoot implements OnInit {
                                     return c.crop === serverCrop;
                                 }
                             )[0];
-
-                    scope$.initializeSubmissionContact();
+                    this.handleExportTypeSelected(GobiiExtractFilterType.WHOLE_DATASET);
+//                    scope$.initializeSubmissionContact();
                     scope$.currentStatus = "GOBII Server " + gobiiVersion;
                     scope$.handleAddMessage("Connected to crop config: " + scope$.selectedServerConfig.crop);
 
@@ -502,8 +501,12 @@ export class ExtractorRoot implements OnInit {
     private handleExportTypeSelected(arg: GobiiExtractFilterType) {
 
         let foo: string = "foo";
+        this.store.dispatch(new treeNodeAction.InitAction());
 
         this.store.dispatch(new treeNodeAction.SelectExtractType(arg));
+
+        // RESET FORMAT TO DEFAULT
+
 
         let jobId: string = FileName.makeUniqueFileId();
         this.store.dispatch(new fileItemAction.SelectForExtractAction(
@@ -878,15 +881,23 @@ export class ExtractorRoot implements OnInit {
     }
 
     private handleClearTree() {
+        this.handleExportTypeSelected(this.gobiiExtractFilterType);
 
-        this._fileModelTreeService.put(GobiiFileItem
-            .build(this.gobiiExtractFilterType, ProcessType.NOTIFY)
-            .setExtractorItemType(ExtractorItemType.CLEAR_TREE)).subscribe(
-            null,
-            headerResponse => {
-                this.handleResponseHeader(headerResponse)
-            }
-        );
+        let formatItem: GobiiFileItem = GobiiFileItem
+            .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
+            .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
+            .setItemId(GobiiExtractFormat[GobiiExtractFormat.HAPMAP])
+            .setItemName(GobiiExtractFormat[GobiiExtractFormat[GobiiExtractFormat.HAPMAP]]);
+        this.store.dispatch(new fileItemAction.SelectForExtractAction(formatItem));
+
+        // this._fileModelTreeService.put(GobiiFileItem
+        //     .build(this.gobiiExtractFilterType, ProcessType.NOTIFY)
+        //     .setExtractorItemType(ExtractorItemType.CLEAR_TREE)).subscribe(
+        //     null,
+        //     headerResponse => {
+        //         this.handleResponseHeader(headerResponse)
+        //     }
+        // );
     }
 
     // In theory this method should be unnecessary because there should not be any duplicates;
@@ -1257,7 +1268,6 @@ export class ExtractorRoot implements OnInit {
         //     });
         //
         this.initializeServerConfigs();
-        this.handleExportTypeSelected(GobiiExtractFilterType.WHOLE_DATASET);
 
 
         this.store.select(fromRoot.getSelectedFileItems)
