@@ -3,7 +3,7 @@ import {ProcessType} from "../model/type-process";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {CvFilterType} from "../model/cv-filter-type";
-import {NameIdRequestParams} from "../model/name-id-request-params";
+import {FileItemParams} from "../model/name-id-request-params";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import {NameIdService} from "../services/core/name-id-service";
 import {ExtractorItemType} from "../model/file-model-node";
@@ -55,7 +55,7 @@ export class CheckListBoxComponent implements OnInit, OnChanges, DoCheck {
 
 
     private retainHistory: boolean;
-    private nameIdRequestParams: NameIdRequestParams;
+    private nameIdRequestParams: FileItemParams;
     private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
     private onError: EventEmitter<HeaderStatusMessage> = new EventEmitter();
 

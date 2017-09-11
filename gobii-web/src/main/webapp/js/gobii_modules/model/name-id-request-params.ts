@@ -9,7 +9,7 @@ import {ExtractorItemType} from "./file-model-node";
  * Created by Phil on 3/9/2017.
  */
 
-export class NameIdRequestParams {
+export class FileItemParams {
 
     private constructor(private _queryName: string = null,
                         private _entityType: EntityType = EntityType.UNKNOWN,
@@ -21,15 +21,15 @@ export class NameIdRequestParams {
                         private _gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN,
                         private _nameIdLabelType: NameIdLabelType,
                         private _extractorItemType: ExtractorItemType,
-                        private _parentNameIdRequestParams: NameIdRequestParams,
-                        private _childNameIdRequestParams: NameIdRequestParams[]) {
+                        private _parentNameIdRequestParams: FileItemParams,
+                        private _childNameIdRequestParams: FileItemParams[]) {
 
     }
 
     public static build(queryName: string,
                         gobiiExtractFilterType: GobiiExtractFilterType,
-                        entityType: EntityType): NameIdRequestParams {
-        return ( new NameIdRequestParams(queryName,
+                        entityType: EntityType): FileItemParams {
+        return ( new FileItemParams(queryName,
             entityType,
             EntityFilter.NONE,
             null,
@@ -48,7 +48,7 @@ export class NameIdRequestParams {
         return this._entityType;
     }
 
-    setEntityType(value: EntityType): NameIdRequestParams {
+    setEntityType(value: EntityType): FileItemParams {
         this._entityType = value;
         return this;
     }
@@ -57,7 +57,7 @@ export class NameIdRequestParams {
         return this._entityFilter;
     }
 
-    setEntityFilter(value: EntityFilter): NameIdRequestParams {
+    setEntityFilter(value: EntityFilter): FileItemParams {
         this._entityFilter = value;
         return this;
     }
@@ -66,7 +66,7 @@ export class NameIdRequestParams {
         return this._fkEntityFilterValue;
     }
 
-    setFkEntityFilterValue(value: string): NameIdRequestParams {
+    setFkEntityFilterValue(value: string): FileItemParams {
         this._fkEntityFilterValue = value;
         return this;
     }
@@ -75,7 +75,7 @@ export class NameIdRequestParams {
         return this._selectedItemId;
     }
 
-    setSelectedItemId(id: string): NameIdRequestParams {
+    setSelectedItemId(id: string): FileItemParams {
         this._selectedItemId = id;
         return this;
     }
@@ -84,7 +84,7 @@ export class NameIdRequestParams {
         return this._entitySubType;
     }
 
-    setEntitySubType(value: EntitySubType): NameIdRequestParams {
+    setEntitySubType(value: EntitySubType): FileItemParams {
         this._entitySubType = value;
         return this;
     }
@@ -93,7 +93,7 @@ export class NameIdRequestParams {
         return this._cvFilterType;
     }
 
-    setCvFilterType(value: CvFilterType): NameIdRequestParams {
+    setCvFilterType(value: CvFilterType): FileItemParams {
         this._cvFilterType = value;
         return this;
     }
@@ -102,7 +102,7 @@ export class NameIdRequestParams {
         return this._gobiiExtractFilterType;
     }
 
-    setGobiiExtractFilterType(value: GobiiExtractFilterType): NameIdRequestParams {
+    setGobiiExtractFilterType(value: GobiiExtractFilterType): FileItemParams {
         this._gobiiExtractFilterType = value;
         return this;
     }
@@ -131,20 +131,20 @@ export class NameIdRequestParams {
         return this._extractorItemType;
     }
 
-    setParentNameIdRequestParams(nameIdRequestParams: NameIdRequestParams): NameIdRequestParams {
+    setParentNameIdRequestParams(nameIdRequestParams: FileItemParams): FileItemParams {
         this._parentNameIdRequestParams = nameIdRequestParams;
         return this;
     }
 
-    getParentNameIdRequestParams(): NameIdRequestParams {
+    getParentNameIdRequestParams(): FileItemParams {
         return this;
     }
 
-    getChildNameIdRequestParams(): NameIdRequestParams[] {
+    getChildNameIdRequestParams(): FileItemParams[] {
         return this._childNameIdRequestParams;
     }
 
-    setChildNameIdRequestParams(childNameIdRequestParams: NameIdRequestParams[]): NameIdRequestParams {
+    setChildNameIdRequestParams(childNameIdRequestParams: FileItemParams[]): FileItemParams {
         this._childNameIdRequestParams = childNameIdRequestParams;
         return this;
     }

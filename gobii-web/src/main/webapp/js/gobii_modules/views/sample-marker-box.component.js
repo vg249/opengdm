@@ -62,7 +62,7 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                     this.onSampleMarkerError = new core_1.EventEmitter();
                     this.onMarkerSamplesCompleted = new core_1.EventEmitter();
                     this.currentFileItems = [];
-                    this.nameIdRequestParamsMarkerGroups = name_id_request_params_1.NameIdRequestParams
+                    this.nameIdRequestParamsMarkerGroups = name_id_request_params_1.FileItemParams
                         .build(type_nameid_filter_params_1.NameIdFilterParamTypes.MARKER_GROUPS, this.gobiiExtractFilterType, type_entity_1.EntityType.MarkerGroups);
                 }
                 // private handleUserSelected(arg) {

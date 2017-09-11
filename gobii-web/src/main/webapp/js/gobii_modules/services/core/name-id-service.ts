@@ -4,7 +4,7 @@ import {DtoRequestService} from "./dto-request.service";
 import {EntityFilter} from "../../model/type-entity-filter";
 import {CvFilterType, CvFilters} from "../../model/cv-filter-type";
 import {EntityType, EntitySubType} from "../../model/type-entity";
-import {NameIdRequestParams} from "../../model/name-id-request-params";
+import {FileItemParams} from "../../model/name-id-request-params";
 import {Observable} from 'rxjs/Observable';
 import {DtoRequestItemNameIds} from "../app/dto-request-item-nameids";
 /**
@@ -18,7 +18,7 @@ export class NameIdService {
 
     } // ctor
 
-    private getEntityFilterValue(nameIdRequestParams: NameIdRequestParams): string {
+    private getEntityFilterValue(nameIdRequestParams: FileItemParams): string {
 
         let returnVal: string = null;
 
@@ -35,7 +35,7 @@ export class NameIdService {
         return returnVal;
     }
 
-    public validateRequest(nameIdRequestParams: NameIdRequestParams): boolean {
+    public validateRequest(nameIdRequestParams: FileItemParams): boolean {
 
         let foo:string = "bar";
 
@@ -66,7 +66,7 @@ export class NameIdService {
     }
 
 
-    public get(nameIdRequestParams: NameIdRequestParams): Observable < NameId[] > {
+    public get(nameIdRequestParams: FileItemParams): Observable < NameId[] > {
 
         return Observable.create(observer => {
 

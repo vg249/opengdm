@@ -3,7 +3,7 @@ import {NameId} from "../model/name-id";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {NameIdService} from "../services/core/name-id-service";
-import {NameIdRequestParams} from "../model/name-id-request-params";
+import {FileItemParams} from "../model/name-id-request-params";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import {Store} from "@ngrx/store";
 import * as fromRoot from '../store/reducers';

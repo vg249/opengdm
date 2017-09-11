@@ -11,7 +11,7 @@ import {GobiiTreeNode} from "../../model/GobiiTreeNode";
 import * as fromRoot from '../reducers';
 
 import {NameIdService} from "../../services/core/name-id-service";
-import {NameIdRequestParams} from "../../model/name-id-request-params";
+import {FileItemParams} from "../../model/name-id-request-params";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 import {CvFilterType} from "../../model/cv-filter-type";
 import {ExtractorItemType} from "../../model/file-model-node";

@@ -10,7 +10,7 @@ import {HeaderStatusMessage} from "../../model/dto-header-status-message";
 import {GobiiExtractFormat} from "../../model/type-extract-format";
 import {ProcessType} from "../../model/type-process";
 import {NameIdService} from "./name-id-service";
-import {NameIdRequestParams} from "../../model/name-id-request-params";
+import {FileItemParams} from "../../model/name-id-request-params";
 import * as fileItemActions from '../../store/actions/fileitem-action'
 import * as fromRoot from '../../store/reducers';
 

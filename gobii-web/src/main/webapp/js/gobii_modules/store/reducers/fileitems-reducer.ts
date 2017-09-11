@@ -3,7 +3,7 @@ import {GobiiFileItem} from "../../model/gobii-file-item";
 import * as gobiiFileItemAction from "../actions/fileitem-action";
 import {ExtractorItemType} from "../../model/file-model-node";
 import {EntitySubType, EntityType} from "../../model/type-entity";
-import {NameIdRequestParams} from "../../model/name-id-request-params";
+import {FileItemParams} from "../../model/name-id-request-params";
 import {NameIdFilterParamTypes} from "../../model/type-nameid-filter-params";
 import {ProcessType} from "../../model/type-process";
 

@@ -219,13 +219,13 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this.clearButtonStyle = this.submitButtonStyleDefault;
                     this.store.dispatch(new treeNodeAction.InitAction());
                     //unfiltered requests
-                    this.nameIdRequestParamsDatasetType = name_id_request_params_1.NameIdRequestParams
+                    this.nameIdRequestParamsDatasetType = name_id_request_params_1.FileItemParams
                         .build(type_nameid_filter_params_1.NameIdFilterParamTypes.CV_DATATYPE, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.CvTerms)
                         .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE)
                         .setEntityFilter(type_entity_filter_1.EntityFilter.BYTYPENAME)
                         .setFkEntityFilterValue(cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.DATASET_TYPE))
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A);
-                    this.nameIdRequestParamsPlatforms = name_id_request_params_1.NameIdRequestParams
+                    this.nameIdRequestParamsPlatforms = name_id_request_params_1.FileItemParams
                         .build(type_nameid_filter_params_1.NameIdFilterParamTypes.PLATFORMS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Platforms);
                     //filtered requests
                 }

@@ -7,7 +7,7 @@ import {GobiiFileItem} from "../model/gobii-file-item";
 import {ProcessType} from "../model/type-process";
 import {ExtractorItemType} from "../model/file-model-node";
 import {Labels} from "./entity-labels";
-import {NameIdRequestParams} from "../model/name-id-request-params";
+import {FileItemParams} from "../model/name-id-request-params";
 import {EntityType} from "../model/type-entity";
 import {NameIdFilterParamTypes} from "../model/type-nameid-filter-params";
 
@@ -89,10 +89,10 @@ import {NameIdFilterParamTypes} from "../model/type-nameid-filter-params";
 
 export class SampleMarkerBoxComponent implements OnInit, OnChanges {
 
-    public nameIdRequestParamsMarkerGroups: NameIdRequestParams;
+    public nameIdRequestParamsMarkerGroups: FileItemParams;
     public constructor(private _fileModelTreeService: FileModelTreeService) {
 
-        this.nameIdRequestParamsMarkerGroups= NameIdRequestParams
+        this.nameIdRequestParamsMarkerGroups= FileItemParams
             .build(NameIdFilterParamTypes.MARKER_GROUPS,
                 this.gobiiExtractFilterType,
                 EntityType.MarkerGroups);

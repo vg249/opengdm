@@ -10,7 +10,7 @@ import {HeaderStatusMessage} from "../../model/dto-header-status-message";
 import {GobiiExtractFormat} from "../../model/type-extract-format";
 import {ProcessType} from "../../model/type-process";
 import {NameIdService} from "./name-id-service";
-import {NameIdRequestParams} from "../../model/name-id-request-params";
+import {FileItemParams} from "../../model/name-id-request-params";
 import * as fileItemActions from '../../store/actions/fileitem-action'
 import * as fromRoot from '../../store/reducers';
 
@@ -23,8 +23,8 @@ import {NameIdFilterParamTypes} from "../../model/type-nameid-filter-params";
 @Injectable()
 export class FileItemService {
 
-    nameIdRequestParams: Map<NameIdFilterParamTypes, NameIdRequestParams> =
-        new Map<NameIdFilterParamTypes, NameIdRequestParams>();
+    nameIdRequestParams: Map<NameIdFilterParamTypes, FileItemParams> =
+        new Map<NameIdFilterParamTypes, FileItemParams>();
 
     constructor(private nameIdService: NameIdService,
                 private store: Store<fromRoot.State>,) {
@@ -32,7 +32,7 @@ export class FileItemService {
         // For non-hierarchically filtered request params, we just create them simply
         // as we add them to the flat map
         this.nameIdRequestParams.set(NameIdFilterParamTypes.CV_DATATYPE,
-            NameIdRequestParams
+            FileItemParams
                 .build(NameIdFilterParamTypes.CV_DATATYPE,
                     GobiiExtractFilterType.WHOLE_DATASET,
                     EntityType.CvTerms)
@@ -44,14 +44,14 @@ export class FileItemService {
 
 
         this.nameIdRequestParams.set(NameIdFilterParamTypes.MAPSETS,
-            NameIdRequestParams
+            FileItemParams
                 .build(NameIdFilterParamTypes.MAPSETS,
                     GobiiExtractFilterType.WHOLE_DATASET,
                     EntityType.Mapsets)
                 .setNameIdLabelType(NameIdLabelType.NO));
 
         this.nameIdRequestParams.set(NameIdFilterParamTypes.PLATFORMS,
-            NameIdRequestParams
+            FileItemParams
                 .build(NameIdFilterParamTypes.PLATFORMS,
                     GobiiExtractFilterType.WHOLE_DATASET,
                     EntityType.Platforms));
@@ -59,25 +59,25 @@ export class FileItemService {
         //for hierarchical items, we need to crate the nameid requests separately from the
         //flat map: they _will_ need to be in the flat map; however, they all need to be
         //useed to set up the filtering hierarchy
-        let nameIdRequestParamsContactsPi: NameIdRequestParams = NameIdRequestParams
+        let nameIdRequestParamsContactsPi: FileItemParams = FileItemParams
             .build(NameIdFilterParamTypes.CONTACT_PI,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.Contacts)
             .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR);
 
-        let nameIdRequestParamsProject: NameIdRequestParams = NameIdRequestParams
+        let nameIdRequestParamsProject: FileItemParams = FileItemParams
             .build(NameIdFilterParamTypes.PROJECTS_BY_CONTACT,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.Projects)
             .setEntityFilter(EntityFilter.BYTYPEID);
 
-        let nameIdRequestParamsExperiments: NameIdRequestParams = NameIdRequestParams
+        let nameIdRequestParamsExperiments: FileItemParams = FileItemParams
             .build(NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.Experiments)
             .setEntityFilter(EntityFilter.BYTYPEID);
 
-        let nameIdRequestParamsDatasets: NameIdRequestParams = NameIdRequestParams
+        let nameIdRequestParamsDatasets: FileItemParams = FileItemParams
             .build(NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.DataSets)
@@ -109,7 +109,7 @@ export class FileItemService {
                                 nameIdFilterParamTypes: NameIdFilterParamTypes,
                                 nameIdLabelType: NameIdLabelType) {
 
-        let nameIdRequestParamsFromType: NameIdRequestParams = this.nameIdRequestParams.get(nameIdFilterParamTypes);
+        let nameIdRequestParamsFromType: FileItemParams = this.nameIdRequestParams.get(nameIdFilterParamTypes);
         nameIdRequestParamsFromType.setNameIdLabelType(nameIdLabelType);
     }
 
@@ -117,7 +117,7 @@ export class FileItemService {
                                 nameIdFilterParamTypes: NameIdFilterParamTypes,
                                 filterValue: string) {
 
-        let nameIdRequestParamsFromType: NameIdRequestParams = this.nameIdRequestParams.get(nameIdFilterParamTypes);
+        let nameIdRequestParamsFromType: FileItemParams = this.nameIdRequestParams.get(nameIdFilterParamTypes);
 
         this.loadNameIdsToFileItems(gobiiExtractFilterType,
             nameIdRequestParamsFromType,
@@ -126,7 +126,7 @@ export class FileItemService {
 
 
     private loadNameIdsToFileItems(gobiiExtractFilterType: GobiiExtractFilterType,
-                                   nameIdRequestParamsToLoad: NameIdRequestParams,
+                                   nameIdRequestParamsToLoad: FileItemParams,
                                    filterValue: string) {
 
         nameIdRequestParamsToLoad.setFkEntityFilterValue(filterValue);

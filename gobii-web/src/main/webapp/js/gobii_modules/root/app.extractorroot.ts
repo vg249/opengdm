@@ -22,7 +22,7 @@ import {GobiiExtractFormat} from "../model/type-extract-format";
 import {FileModelState} from "../model/file-model-tree-event";
 import {Header} from "../model/payload/header";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
-import {NameIdRequestParams} from "../model/name-id-request-params";
+import {FileItemParams} from "../model/name-id-request-params";
 import {FileName} from "../model/file_name";
 import {Labels} from "../views/entity-labels";
 import {TreeStatusNotification} from "../model/tree-status-notification";
@@ -306,8 +306,8 @@ export class ExtractorRoot implements OnInit {
 
     // *** You cannot use an Enum directly as a template type parameter, so we need
     //     to assign them to properties
-    public nameIdRequestParamsDatasetType: NameIdRequestParams;
-    public nameIdRequestParamsPlatforms: NameIdRequestParams;
+    public nameIdRequestParamsDatasetType: FileItemParams;
+    public nameIdRequestParamsPlatforms: FileItemParams;
     // ************************************************************************
 
     // unfiltered
@@ -352,7 +352,7 @@ export class ExtractorRoot implements OnInit {
 
         //unfiltered requests
 
-        this.nameIdRequestParamsDatasetType = NameIdRequestParams
+        this.nameIdRequestParamsDatasetType = FileItemParams
             .build(NameIdFilterParamTypes.CV_DATATYPE,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.CvTerms)
@@ -363,7 +363,7 @@ export class ExtractorRoot implements OnInit {
 
 
 
-        this.nameIdRequestParamsPlatforms = NameIdRequestParams
+        this.nameIdRequestParamsPlatforms = FileItemParams
             .build(NameIdFilterParamTypes.PLATFORMS,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.Platforms);
