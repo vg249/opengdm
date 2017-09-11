@@ -1200,7 +1200,7 @@ public class GOBIIControllerV1 {
         try {
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-            JobDTO jobDTO = dataSetService.getJobDetailsByDatasetId(datasetId);
+            JobDTO jobDTO = dataSetService.getJobDetailsByDatasetId(Integer.parseInt(datasetId));
 
             PayloadWriter<JobDTO> payloadWriter = new PayloadWriter<>(request, response,
                     JobDTO.class);
