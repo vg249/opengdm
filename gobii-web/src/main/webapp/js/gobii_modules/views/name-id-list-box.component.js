@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/name-id", "../model/type-extractor-filter", "../services/core/name-id-service", "@ngrx/store", "../store/reducers", "../store/actions/fileitem-action", "../services/core/file-item-service", "../model/type-process", "../model/file-model-node"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/name-id", "@ngrx/store", "../store/reducers", "../store/actions/fileitem-action", "../model/type-process", "../model/file-model-node"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-extractor-f
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, name_id_1, type_extractor_filter_1, name_id_service_1, store_1, fromRoot, fileAction, file_item_service_1, type_process_1, file_model_node_1, NameIdListBoxComponent;
+    var core_1, name_id_1, store_1, fromRoot, fileAction, type_process_1, file_model_node_1, NameIdListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -18,12 +18,6 @@ System.register(["@angular/core", "../model/name-id", "../model/type-extractor-f
             },
             function (name_id_1_1) {
                 name_id_1 = name_id_1_1;
-            },
-            function (type_extractor_filter_1_1) {
-                type_extractor_filter_1 = type_extractor_filter_1_1;
-            },
-            function (name_id_service_1_1) {
-                name_id_service_1 = name_id_service_1_1;
             },
             function (store_1_1) {
                 store_1 = store_1_1;
@@ -34,9 +28,6 @@ System.register(["@angular/core", "../model/name-id", "../model/type-extractor-f
             function (fileAction_1) {
                 fileAction = fileAction_1;
             },
-            function (file_item_service_1_1) {
-                file_item_service_1 = file_item_service_1_1;
-            },
             function (type_process_1_1) {
                 type_process_1 = type_process_1_1;
             },
@@ -46,24 +37,14 @@ System.register(["@angular/core", "../model/name-id", "../model/type-extractor-f
         ],
         execute: function () {
             NameIdListBoxComponent = (function () {
-                function NameIdListBoxComponent(store, _nameIdService, fileItemService, 
-                    //                private _fileModelTreeService: FileModelTreeService,
-                    differs) {
+                function NameIdListBoxComponent(store, differs) {
                     this.store = store;
-                    this._nameIdService = _nameIdService;
-                    this.fileItemService = fileItemService;
                     this.differs = differs;
-                    this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
-                    this.notifyOnInit = false;
-                    this.doTreeNotifications = true;
                     this.onNameIdSelected = new core_1.EventEmitter();
                     this.onError = new core_1.EventEmitter();
                     this.previousSelectedItemId = null;
                     this.differ = differs.find({}).create(null);
-                    //      this.fileItems$ = store.select(fromRoot.getAllFileItems);
-                    //       this.fileItems$ = store.select(fromRoot.getMapsets);
                 } // ctor
-                // private notificationSent = false;
                 NameIdListBoxComponent.prototype.ngOnInit = function () {
                 };
                 NameIdListBoxComponent.prototype.handleHeaderStatus = function (headerStatusMessage) {
@@ -91,80 +72,18 @@ System.register(["@angular/core", "../model/name-id", "../model/type-extractor-f
                             }
                         }
                     }).unsubscribe(); //unsubscribe or else this subscribe() keeps the state collection locked and the app freezes really badly
-                    // if (this.currentSelection.getItemId() !== "0") {
-                    //     this.currentSelection.setProcessType(ProcessType.DELETE);
-                    //     this.updateTreeService(this.currentSelection);
-                    // }
-                    //        let gobiiFileItem: GobiiFileItem = this.fileItemList[arg.srcElement.selectedIndex]
-                    //         let gobiiFileItem: GobiiFileItem = this.fileItemList.find(fi => {
-                    //             return fi.getItemId() === this.selectedFileItemId
-                    //         });
-                    //
-                    //         if (gobiiFileItem.getItemId() != "0") {
-                    //             gobiiFileItem.setProcessType(ProcessType.UPDATE);
-                    //             this.updateTreeService(gobiiFileItem);
-                    //         }
-                    //
-                    //         this.currentSelection = gobiiFileItem;
                 };
                 NameIdListBoxComponent.prototype.ngOnChanges = function (changes) {
-                    if (changes['gobiiExtractFilterType']
-                        && (changes['gobiiExtractFilterType'].currentValue != null)
-                        && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
-                        // this.fileItems$.subscribe(null, null, () => {
-                        //
-                        // });
-                        if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
-                            //this.notificationSent = false;
-                            //this.nameIdRequestParams.setGobiiExtractFilterType(this.gobiiExtractFilterType);
-                            // let scope$ = this;
-                            // this._fileModelTreeService
-                            //     .fileItemNotifications()
-                            //     .subscribe(fileItem => {
-                            //         if (fileItem.getProcessType() === ProcessType.NOTIFY
-                            //             && fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
-                            //
-                            //             scope$.initializeFileItems();
-                            //
-                            //
-                            //         }
-                            //     });
-                        } // if we have a new filter type
-                    } // if filter type changed
-                    if (changes['nameIdRequestParams']
-                        && (changes['nameIdRequestParams'].currentValue != null)
-                        && (changes['nameIdRequestParams'].currentValue != undefined)) {
-                    }
                 }; // ngonChanges
-                // angular change detection does not do deep comparison of objects that are
-                // template properties. So we need to do some specialized change detection
-                // references:
-                //   https://juristr.com/blog/2016/04/angular2-change-detection/
-                //   https://angular.io/docs/ts/latest/api/core/index/DoCheck-class.html
-                //   http://blog.angular-university.io/how-does-angular-2-change-detection-really-work/
-                //   https://blog.thoughtram.io/angular/2016/02/22/angular-2-change-detection-explained.html#what-causes-change
-                NameIdListBoxComponent.prototype.ngDoCheck = function () {
-                    var changes = this.differ.diff(this.nameIdRequestParams);
-                    if (changes) {
-                        if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
-                            //this.initializeFileItems();
-                        }
-                    }
-                };
                 NameIdListBoxComponent = __decorate([
                     core_1.Component({
                         selector: 'name-id-list-box',
                         inputs: ['fileItems$',
-                            'gobiiExtractFilterType',
-                            'notifyOnInit',
-                            'nameIdRequestParams',
-                            'doTreeNotifications'],
+                        ],
                         outputs: ['onNameIdSelected', 'onError'],
                         template: "<select (change)=\"handleFileItemSelected($event)\">\n        <option *ngFor=\"let fileItem of fileItems$ | async\"\n                [value]=\"fileItem.getFileItemUniqueId()\">{{fileItem.getItemName()}}\n        </option>\n    </select>\n    " // end template
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
-                        name_id_service_1.NameIdService,
-                        file_item_service_1.FileItemService,
                         core_1.KeyValueDiffers])
                 ], NameIdListBoxComponent);
                 return NameIdListBoxComponent;

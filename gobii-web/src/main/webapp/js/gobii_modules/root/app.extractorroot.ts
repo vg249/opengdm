@@ -87,7 +87,6 @@ import {Observable} from "rxjs/Observable";
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             <name-id-list-box
                                                     [fileItems$]="fileItemsMapsets$"
-                                                    [gobiiExtractFilterType]="gobiiExtractFilterType"
                                                     (onError)="handleHeaderStatusMessage($event)">
                                             </name-id-list-box>
                                         </td>
@@ -123,9 +122,6 @@ import {Observable} from "rxjs/Observable";
                                     <label class="the-label">Principle Investigator:</label><BR>
                                     <name-id-list-box
                                             [fileItems$]="fileItemsContactsPI$"
-                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                            [notifyOnInit]="!doPrincipleInvestigatorTreeNotifications"
-                                            [doTreeNotifications]="doPrincipleInvestigatorTreeNotifications"
                                             (onNameIdSelected)="handleContactForPiSelected($event)"
                                             (onError)="handleHeaderStatusMessage($event)">
                                     </name-id-list-box>
@@ -138,9 +134,6 @@ import {Observable} from "rxjs/Observable";
                                     <label class="the-label">Project:</label><BR>
                                     <name-id-list-box
                                             [fileItems$]="fileItemsProjects$"
-                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                            [notifyOnInit]="true"
-                                            [doTreeNotifications]="reinitProjectList"
                                             (onNameIdSelected)="handleProjectSelected($event)"
                                             (onError)="handleHeaderStatusMessage($event)">
                                     </name-id-list-box>
@@ -152,9 +145,6 @@ import {Observable} from "rxjs/Observable";
                                     <label class="the-label">Dataset Types:</label><BR>
                                     <name-id-list-box
                                             [fileItems$]="fileItemsDatasetTypes$"
-                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                            [notifyOnInit]="false"
-                                            [nameIdRequestParams]="nameIdRequestParamsDatasetType"
                                             (onError)="handleHeaderStatusMessage($event)">
                                     </name-id-list-box>
                                 </div>
@@ -166,9 +156,6 @@ import {Observable} from "rxjs/Observable";
                                     <label class="the-label">Experiment:</label><BR>
                                     <name-id-list-box
                                             [fileItems$]="fileItemsExperiments$"
-                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                            [notifyOnInit]="true"
-                                            [doTreeNotifications]="false"
                                             (onNameIdSelected)="handleExperimentSelected($event)"
                                             (onError)="handleHeaderStatusMessage($event)">
                                     </name-id-list-box>

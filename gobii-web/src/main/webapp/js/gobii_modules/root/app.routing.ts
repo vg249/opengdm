@@ -6,7 +6,6 @@ import { Routes, RouterModule } from '@angular/router';
 import {ExtractorRoot} from "./app.extractorroot";
 import {LoginComponent} from "../views/login.component";
 import {AuthGuard} from "../services/core/auth.guard";
-import {ProjectListBoxComponent} from "../views/project-list-box.component";
 
 const appRoutes: Routes = [
     { path: '', component: ExtractorRoot, canActivate: [AuthGuard] },

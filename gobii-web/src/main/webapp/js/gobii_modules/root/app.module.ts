@@ -4,7 +4,6 @@ import {HttpModule} from "@angular/http";
 import {BrowserModule} from "@angular/platform-browser";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {ExportFormatComponent} from "../views/export-format.component";
-import {ProjectListBoxComponent} from "../views/project-list-box.component";
 import {StatusDisplayComponent} from "../views/status-display-box.component";
 import {CropsListBoxComponent} from "../views/crops-list-box.component";
 import {ExportTypeComponent} from "../views/export-type.component";
@@ -60,7 +59,6 @@ import {FileItemService} from "../services/core/file-item-service";
         ExtractorRoot,
         LoginComponent,
         ExportFormatComponent,
-        ProjectListBoxComponent,
         StatusDisplayComponent,
         CropsListBoxComponent,
         ExportTypeComponent,
