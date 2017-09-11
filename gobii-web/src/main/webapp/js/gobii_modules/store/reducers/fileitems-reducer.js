@@ -1,4 +1,4 @@
-System.register(["reselect", "../actions/fileitem-action", "../../model/file-model-node", "../../model/type-entity", "../../model/type-nameid-filter-params"], function (exports_1, context_1) {
+System.register(["reselect", "../actions/fileitem-action", "../../model/file-model-node", "../../model/type-entity", "../../model/type-nameid-filter-params", "../../model/type-process"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     function selectForExtraction(state, gobiiFileItem) {
@@ -176,7 +176,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
         return returnVal;
     }
     exports_1("fileItemsReducer", fileItemsReducer);
-    var reselect_1, gobiiFileItemAction, file_model_node_1, type_entity_1, type_nameid_filter_params_1, initialState, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getContacts, getFirstContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTerms, getFirstCvTerm, getMapsets, getFirstmapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment;
+    var reselect_1, gobiiFileItemAction, file_model_node_1, type_entity_1, type_nameid_filter_params_1, type_process_1, initialState, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getContacts, getFirstContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTerms, getFirstCvTerm, getMapsets, getFirstmapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment;
     return {
         setters: [
             function (reselect_1_1) {
@@ -193,6 +193,9 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
             },
             function (type_nameid_filter_params_1_1) {
                 type_nameid_filter_params_1 = type_nameid_filter_params_1_1;
+            },
+            function (type_process_1_1) {
+                type_process_1 = type_process_1_1;
             }
         ],
         execute: function () {
@@ -331,9 +334,18 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                     returnVal = fileItems.filter(function (e) {
                         return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY)
                             && (e.getEntityType() === type_entity_1.EntityType.Projects)
-                            && (e.getParentItemId() === contactId_1);
+                            && (e.getParentItemId() === contactId_1)
+                            && e.getProcessType() !== type_process_1.ProcessType.DUMMY;
                     })
                         .map(function (fi) { return fi; });
+                    if (returnVal.length <= 0) {
+                        returnVal = fileItems.filter(function (e) {
+                            return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY)
+                                && (e.getEntityType() === type_entity_1.EntityType.Projects)
+                                && e.getProcessType() === type_process_1.ProcessType.DUMMY;
+                        })
+                            .map(function (fi) { return fi; });
+                    }
                 }
                 return returnVal;
             }));
@@ -344,9 +356,18 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                     returnVal = fileItems.filter(function (e) {
                         return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY)
                             && (e.getEntityType() === type_entity_1.EntityType.Experiments)
-                            && (e.getParentItemId() === projectId_1);
+                            && (e.getParentItemId() === projectId_1)
+                            && e.getProcessType() !== type_process_1.ProcessType.DUMMY;
                     })
                         .map(function (fi) { return fi; });
+                    if (returnVal.length <= 0) {
+                        returnVal = fileItems.filter(function (e) {
+                            return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY)
+                                && (e.getEntityType() === type_entity_1.EntityType.Experiments)
+                                && e.getProcessType() === type_process_1.ProcessType.DUMMY;
+                        })
+                            .map(function (fi) { return fi; });
+                    }
                 }
                 return returnVal;
             }));
@@ -355,11 +376,20 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                 if (filters[type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT]) {
                     var experimentId_1 = filters[type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT];
                     returnVal = fileItems.filter(function (e) {
-                        return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY)
-                            && (e.getEntityType() === type_entity_1.EntityType.DataSets)
-                            && (e.getParentItemId() === experimentId_1);
+                        return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY
+                            && e.getEntityType() === type_entity_1.EntityType.DataSets
+                            && e.getParentItemId() === experimentId_1
+                            && e.getProcessType() !== type_process_1.ProcessType.DUMMY);
                     })
                         .map(function (fi) { return fi; });
+                    if (returnVal.length <= 0) {
+                        returnVal = fileItems.filter(function (e) {
+                            return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY
+                                && e.getEntityType() === type_entity_1.EntityType.DataSets
+                                && e.getProcessType() === type_process_1.ProcessType.DUMMY);
+                        })
+                            .map(function (fi) { return fi; });
+                    }
                 }
                 return returnVal;
             }));
