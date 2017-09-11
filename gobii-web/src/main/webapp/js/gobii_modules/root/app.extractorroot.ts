@@ -1249,15 +1249,36 @@ export class ExtractorRoot implements OnInit {
 
     ngOnInit(): any {
 
-        this._fileModelTreeService
-            .treeStateNotifications()
-            .subscribe(ts => {
-
-                this.handleTreeStatusChanged(ts);
-            });
-
+        // this._fileModelTreeService
+        //     .treeStateNotifications()
+        //     .subscribe(ts => {
+        //
+        //         this.handleTreeStatusChanged(ts);
+        //     });
+        //
         this.initializeServerConfigs();
         this.handleExportTypeSelected(GobiiExtractFilterType.WHOLE_DATASET);
+
+
+        this.store.select(fromRoot.getSelectedFileItems)
+            .subscribe(all => {
+
+                if (this.gobiiExtractFilterType=== GobiiExtractFilterType.WHOLE_DATASET) {
+
+                    let submistReady:boolean =
+                        all
+                            .filter(fi =>
+                                fi.getGobiiExtractFilterType() === this.gobiiExtractFilterType
+                                && fi.getExtractorItemType() === ExtractorItemType.ENTITY
+                                && fi.getEntityType() === EntityType.DataSets
+                            )
+                            .length > 0;
+
+                    submistReady ? this.submitButtonStyle = this.buttonStyleSubmitReady : this.submitButtonStyle = this.buttonStyleSubmitNotReady;
+
+                }
+
+            })
 
     } // ngOnInit()
 

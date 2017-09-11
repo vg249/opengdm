@@ -3,29 +3,27 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
     var __moduleName = context_1 && context_1.id;
     function selectForExtraction(state, gobiiFileItem) {
         gobiiFileItem.setChecked(true);
-        var selectedUniqueItemIds = state
-            .fileItems
-            .filter(function (fileItem) {
-            return gobiiFileItem.getFileItemUniqueId() !== fileItem.getFileItemUniqueId();
-        })
-            .map(function (selectedFileItem) { return selectedFileItem.getFileItemUniqueId(); });
+        var newSelectedUniqueIdsState = state.fileItemUniqueIdsSelected.slice();
+        if (!newSelectedUniqueIdsState.find(function (id) { return id === gobiiFileItem.getFileItemUniqueId(); })) {
+            newSelectedUniqueIdsState.push(gobiiFileItem.getFileItemUniqueId());
+        }
         var returnVal = {
             fileItems: state.fileItems,
-            fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected.concat(selectedUniqueItemIds),
+            fileItemUniqueIdsSelected: newSelectedUniqueIdsState,
             filters: state.filters
         };
         return returnVal;
     }
     function deSelectForExtraction(state, gobiiFileItem) {
         gobiiFileItem.setChecked(false);
-        var newSelectedUniqueItemIds = state
-            .fileItemUniqueIdsSelected
-            .filter(function (selectedId) {
-            return gobiiFileItem.getFileItemUniqueId() != selectedId;
-        });
+        var newSelectedUniqueIdsState = state.fileItemUniqueIdsSelected.slice();
+        var idx = newSelectedUniqueIdsState.findIndex(function (id) { return id === gobiiFileItem.getFileItemUniqueId(); });
+        if (idx) {
+            newSelectedUniqueIdsState.splice(idx, 1);
+        }
         var returnVal = {
             fileItems: state.fileItems,
-            fileItemUniqueIdsSelected: newSelectedUniqueItemIds,
+            fileItemUniqueIdsSelected: newSelectedUniqueIdsState,
             filters: state.filters
         };
         return returnVal;
@@ -218,8 +216,11 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
             exports_1("getSelectedUniqueIds", getSelectedUniqueIds = function (state) { return state.fileItemUniqueIdsSelected; });
             exports_1("getFilters", getFilters = function (state) { return state.filters; });
             exports_1("getSelected", getSelected = reselect_1.createSelector(getFileItems, getSelectedUniqueIds, function (fileItems, selectedUniqueIds) {
-                return fileItems.filter(function (fileItem) {
-                    selectedUniqueIds.filter(function (uniqueId) { return fileItem.getFileItemUniqueId() === uniqueId; });
+                return fileItems
+                    .filter(function (fileItem) {
+                    return selectedUniqueIds
+                        .filter(function (uniqueId) { return fileItem.getFileItemUniqueId() === uniqueId; })
+                        .length > 0;
                 });
             }));
             exports_1("getAll", getAll = reselect_1.createSelector(getFileItems, getUniqueIds, function (entities, ids) {

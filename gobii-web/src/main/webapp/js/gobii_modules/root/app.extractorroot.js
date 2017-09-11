@@ -729,13 +729,28 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 };
                 ExtractorRoot.prototype.ngOnInit = function () {
                     var _this = this;
-                    this._fileModelTreeService
-                        .treeStateNotifications()
-                        .subscribe(function (ts) {
-                        _this.handleTreeStatusChanged(ts);
-                    });
+                    // this._fileModelTreeService
+                    //     .treeStateNotifications()
+                    //     .subscribe(ts => {
+                    //
+                    //         this.handleTreeStatusChanged(ts);
+                    //     });
+                    //
                     this.initializeServerConfigs();
                     this.handleExportTypeSelected(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET);
+                    this.store.select(fromRoot.getSelectedFileItems)
+                        .subscribe(function (all) {
+                        if (_this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
+                            var submistReady = all
+                                .filter(function (fi) {
+                                return fi.getGobiiExtractFilterType() === _this.gobiiExtractFilterType
+                                    && fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY
+                                    && fi.getEntityType() === type_entity_1.EntityType.DataSets;
+                            })
+                                .length > 0;
+                            submistReady ? _this.submitButtonStyle = _this.buttonStyleSubmitReady : _this.submitButtonStyle = _this.buttonStyleSubmitNotReady;
+                        }
+                    });
                 }; // ngOnInit()
                 ExtractorRoot = __decorate([
                     core_1.Component({

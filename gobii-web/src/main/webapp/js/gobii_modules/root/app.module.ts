@@ -38,6 +38,7 @@ import {TreeEffects} from "../store/effects/tree-effects";
 import {TreeStructureService} from "../services/core/tree-structure-service";
 import {FileItemEffects} from "../store/effects/file-item-effects";
 import {FileItemService} from "../services/core/file-item-service";
+import {InstructionSubmissionService} from "../services/core/instruction-submission-service";
 
 
 @NgModule({
@@ -82,6 +83,7 @@ import {FileItemService} from "../services/core/file-item-service";
         NameIdService,
         TreeStructureService,
         FileItemService,
+        InstructionSubmissionService,
         {provide: APP_BASE_HREF, useValue: './'}],
     bootstrap: [AppComponent]
 })
