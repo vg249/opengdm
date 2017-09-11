@@ -1190,7 +1190,7 @@ public class GOBIIControllerV1 {
 
     }
 
-    @RequestMapping(value = "/datasets/{datasetId}/job", method = RequestMethod.GET)
+    @RequestMapping(value = "/datasets/{datasetId}/jobs", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<JobDTO> getJobDetailsByDatasetId(@PathVariable("datasetId") String datasetId,
                                                               HttpServletRequest request,
