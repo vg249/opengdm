@@ -13,5 +13,6 @@ public interface DtoMapJob {
     JobDTO getJobDetailsByJobName(String jobName) throws GobiiDtoMappingException;
     JobDTO createJob(JobDTO jobDTO) throws GobiiDtoMappingException;
     JobDTO replaceJob(String jobName, JobDTO jobDTO) throws GobiiDtoMappingException;
+    JobDTO getJobDetailsByDatasetId(Integer datasetId);
 
 }

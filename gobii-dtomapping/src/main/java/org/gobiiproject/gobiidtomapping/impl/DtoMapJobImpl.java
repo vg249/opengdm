@@ -147,4 +147,24 @@ public class DtoMapJobImpl implements DtoMapJob {
 
     }
 
+    @Override
+    public JobDTO getJobDetailsByDatasetId(Integer datasetId) throws GobiiDtoMappingException {
+
+        JobDTO returnVal = new JobDTO();
+
+        ResultSet resultSet = rsJobDao.getJobDetailsByDatasetId(datasetId);
+        try {
+            if (resultSet.next()) {
+
+                ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
+            }
+
+        } catch(SQLException e) {
+            throw new GobiiDtoMappingException(e);
+        }
+        return returnVal;
+
+
+    }
+
 }

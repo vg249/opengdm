@@ -20,5 +20,4 @@ public interface DtoMapDataSet {
 
     DataSetDTO replaceDataSet(Integer projectId, DataSetDTO dataSetDTO) throws GobiiDtoMappingException;
 
-    JobDTO getJobDetailsByDatasetId(Integer datasetId);
 }

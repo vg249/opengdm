@@ -3,6 +3,7 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.DataSetService;
 import org.gobiiproject.gobiidtomapping.DtoMapDataSet;
+import org.gobiiproject.gobiidtomapping.DtoMapJob;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
@@ -26,6 +27,9 @@ public class DataSetServiceImpl implements DataSetService {
 
     @Autowired
     DtoMapDataSet dtoMapDataSet = null;
+
+    @Autowired
+    DtoMapJob dtoMapJob = null;
 
     @Override
     public List<DataSetDTO> getDataSets() throws GobiiDomainException {
@@ -190,7 +194,7 @@ public class DataSetServiceImpl implements DataSetService {
 
         JobDTO returnVal;
 
-        returnVal = dtoMapDataSet.getJobDetailsByDatasetId(datasetId);
+        returnVal = dtoMapJob.getJobDetailsByDatasetId(datasetId);
 
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);

@@ -86,32 +86,6 @@ public class RsDataSetDaoImpl implements RsDataSetDao {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public ResultSet getJobDetailsByDatasetId(Integer dataSetId) throws GobiiDaoException {
-
-        ResultSet returnVal = null;
-
-        try {
-
-            Map<String, Object> parameters = new HashMap<>();
-            parameters.put("dataSetId", dataSetId);
-            SpGetJobDetailsByDataSetId spGetJobDetailsByDataSetId = new SpGetJobDetailsByDataSetId(parameters);
-
-            storedProcExec.doWithConnection(spGetJobDetailsByDataSetId);
-
-            returnVal = spGetJobDetailsByDataSetId.getResultSet();
-
-        } catch (SQLGrammarException e) {
-
-            LOGGER.error("Error retrieving dataset details", e.getSQL(), e.getSQLException());
-            throw (new GobiiDaoException(e.getSQLException()));
-
-        }
-
-        return returnVal;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    @Override
     public Integer createDataset(Map<String, Object> parameters) throws GobiiDaoException {
 
         Integer returnVal = null;

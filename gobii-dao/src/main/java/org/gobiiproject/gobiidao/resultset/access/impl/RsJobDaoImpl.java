@@ -6,6 +6,7 @@ import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsJobByCvTerms;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdJobByCvTerms;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetJobDetailsByDataSetId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetJobDetailsByJobName;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetJobs;
 import org.hibernate.exception.SQLGrammarException;
@@ -122,6 +123,32 @@ public class RsJobDaoImpl implements RsJobDao {
         }
 
 
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public ResultSet getJobDetailsByDatasetId(Integer dataSetId) throws GobiiDaoException {
+
+        ResultSet returnVal = null;
+
+        try {
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("dataSetId", dataSetId);
+            SpGetJobDetailsByDataSetId spGetJobDetailsByDataSetId = new SpGetJobDetailsByDataSetId(parameters);
+
+            storedProcExec.doWithConnection(spGetJobDetailsByDataSetId);
+
+            returnVal = spGetJobDetailsByDataSetId.getResultSet();
+
+        } catch (SQLGrammarException e) {
+
+            LOGGER.error("Error retrieving dataset details", e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
+
+        }
+
+        return returnVal;
     }
 
 }
