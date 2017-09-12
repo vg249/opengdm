@@ -115,7 +115,7 @@ export class FileItemEffects {
     //                                         .setCvFilterType(CvFilterType.UNKNOWN)
     //                                         .setItemId(n.id)
     //                                         .setItemName(n.name)
-    //                                         .setChecked(false)
+    //                                         .setSelected(false)
     //                                         .setRequired(false)
     //                                         .setParentEntityType(payload.nameIdRequestParams.getRefTargetEntityType())
     //                                         .setParentItemId(payload.nameIdRequestParams.getFkEntityFilterValue());
@@ -177,7 +177,7 @@ export class FileItemEffects {
                                         .setCvFilterType(CvFilterType.UNKNOWN)
                                         .setItemId(n.id)
                                         .setItemName(n.name)
-                                        .setChecked(false)
+                                        .setSelected(false)
                                         .setRequired(false)
                                         .setParentEntityType(nameIdRequestParams.getRefTargetEntityType())
                                         .setParentItemId(nameIdRequestParams.getFkEntityFilterValue());

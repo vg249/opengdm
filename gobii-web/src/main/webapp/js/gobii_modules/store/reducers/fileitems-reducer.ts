@@ -28,7 +28,7 @@ export const initialState: State = {
 
 function selectForExtraction(state: State, gobiiFileItem: GobiiFileItem): State {
 
-    gobiiFileItem.setChecked(true);
+    gobiiFileItem.setSelected(true);
 
     let newSelectedUniqueIdsState: string[] = state.fileItemUniqueIdsSelected.slice();
 
@@ -48,7 +48,7 @@ function selectForExtraction(state: State, gobiiFileItem: GobiiFileItem): State 
 
 function deSelectForExtraction(state: State, gobiiFileItem: GobiiFileItem): State {
 
-    gobiiFileItem.setChecked(false);
+    gobiiFileItem.setSelected(false);
     let newSelectedUniqueIdsState: string[] = state.fileItemUniqueIdsSelected.slice();
 
     let idx: number = newSelectedUniqueIdsState.findIndex(id => id === gobiiFileItem.getFileItemUniqueId())
@@ -135,7 +135,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             const gobiiFileItemPayload: GobiiFileItem = action.payload;
 
             returnVal = selectForExtraction(state, gobiiFileItemPayload);
-            // gobiiFileItemPayload.setChecked(true);
+            // gobiiFileItemPayload.setSelected(true);
             //
             // const selectedUniqueItemIds = state
             //     .fileItems
@@ -159,7 +159,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             returnVal = deSelectForExtraction(state, gobiiFileItemPayload);
 
 
-            // gobiiFileItemPayload.setChecked(false);
+            // gobiiFileItemPayload.setSelected(false);
             // const newSelectedUniqueItemIds = state
             //     .fileItemUniqueIdsSelected
             //     .filter(selectedId =>
@@ -232,7 +232,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
                 newFIleItemState
                     .filter(fi => fi.getGobiiExtractFilterType() === action.payload);
 
-            itemsToDeselect.forEach(fi => fi.setChecked(false));
+            itemsToDeselect.forEach(fi => fi.setSelected(false));
 
             let newSelectedItems: string[] = state.fileItemUniqueIdsSelected
                 .filter(id => !itemsToDeselect

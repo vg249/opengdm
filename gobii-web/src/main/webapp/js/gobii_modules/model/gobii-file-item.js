@@ -28,7 +28,7 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
         ],
         execute: function () {
             GobiiFileItem = (function () {
-                function GobiiFileItem(_gobiiExtractFilterType, _processType, _extractorItemType, _entityType, _entitySubType, _cvFilterType, _itemId, _itemName, _checked, _required, _gobiiEventOrigin, _parentItemId, _parentEntityType) {
+                function GobiiFileItem(_gobiiExtractFilterType, _processType, _extractorItemType, _entityType, _entitySubType, _cvFilterType, _itemId, _itemName, _selected, _required, _gobiiEventOrigin, _parentItemId, _parentEntityType) {
                     this._gobiiExtractFilterType = _gobiiExtractFilterType;
                     this._processType = _processType;
                     this._extractorItemType = _extractorItemType;
@@ -37,7 +37,7 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
                     this._cvFilterType = _cvFilterType;
                     this._itemId = _itemId;
                     this._itemName = _itemName;
-                    this._checked = _checked;
+                    this._selected = _selected;
                     this._required = _required;
                     this._gobiiEventOrigin = _gobiiEventOrigin;
                     this._parentItemId = _parentItemId;
@@ -50,7 +50,7 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
                     this._cvFilterType = _cvFilterType;
                     this._itemId = _itemId;
                     this._itemName = _itemName;
-                    this._checked = _checked;
+                    this._selected = _selected;
                     this._required = _required;
                     this._gobiiEventOrigin = _gobiiEventOrigin;
                     this._parentItemId = _parentItemId;
@@ -169,11 +169,11 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
                     this._itemName = value;
                     return this;
                 };
-                GobiiFileItem.prototype.getChecked = function () {
-                    return this._checked;
+                GobiiFileItem.prototype.getSelected = function () {
+                    return this._selected;
                 };
-                GobiiFileItem.prototype.setChecked = function (value) {
-                    this._checked = value;
+                GobiiFileItem.prototype.setSelected = function (value) {
+                    this._selected = value;
                     return this;
                 };
                 GobiiFileItem.prototype.getRequired = function () {

@@ -72,7 +72,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                 //                                         .setCvFilterType(CvFilterType.UNKNOWN)
                 //                                         .setItemId(n.id)
                 //                                         .setItemName(n.name)
-                //                                         .setChecked(false)
+                //                                         .setSelected(false)
                 //                                         .setRequired(false)
                 //                                         .setParentEntityType(payload.nameIdRequestParams.getRefTargetEntityType())
                 //                                         .setParentItemId(payload.nameIdRequestParams.getFkEntityFilterValue());
@@ -205,7 +205,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                                                     .setCvFilterType(CvFilterType.UNKNOWN)
                                                     .setItemId(n.id)
                                                     .setItemName(n.name)
-                                                    .setChecked(false)
+                                                    .setSelected(false)
                                                     .setRequired(false)
                                                     .setParentEntityType(nameIdRequestParams.getRefTargetEntityType())
                                                     .setParentItemId(nameIdRequestParams.getFkEntityFilterValue());

@@ -135,7 +135,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                     .setCvFilterType(cv_filter_type_1.CvFilterType.UNKNOWN)
                                     .setItemId(n.id)
                                     .setItemName(n.name)
-                                    .setChecked(false)
+                                    .setSelected(false)
                                     .setRequired(false)
                                     .setParentItemId(nameIdRequestParamsToLoad.getFkEntityFilterValue());
                                 fileItems.push(currentFileItem);

@@ -2,7 +2,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
     "use strict";
     var __moduleName = context_1 && context_1.id;
     function selectForExtraction(state, gobiiFileItem) {
-        gobiiFileItem.setChecked(true);
+        gobiiFileItem.setSelected(true);
         var newSelectedUniqueIdsState = state.fileItemUniqueIdsSelected.slice();
         if (!newSelectedUniqueIdsState.find(function (id) { return id === gobiiFileItem.getFileItemUniqueId(); })) {
             newSelectedUniqueIdsState.push(gobiiFileItem.getFileItemUniqueId());
@@ -15,7 +15,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
         return returnVal;
     }
     function deSelectForExtraction(state, gobiiFileItem) {
-        gobiiFileItem.setChecked(false);
+        gobiiFileItem.setSelected(false);
         var newSelectedUniqueIdsState = state.fileItemUniqueIdsSelected.slice();
         var idx = newSelectedUniqueIdsState.findIndex(function (id) { return id === gobiiFileItem.getFileItemUniqueId(); });
         if (idx) {
@@ -79,7 +79,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
             case gobiiFileItemAction.SELECT_FOR_EXTRACT: {
                 var gobiiFileItemPayload = action.payload;
                 returnVal = selectForExtraction(state, gobiiFileItemPayload);
-                // gobiiFileItemPayload.setChecked(true);
+                // gobiiFileItemPayload.setSelected(true);
                 //
                 // const selectedUniqueItemIds = state
                 //     .fileItems
@@ -97,7 +97,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
             case gobiiFileItemAction.DESELECT_FOR_EXTRACT: {
                 var gobiiFileItemPayload = action.payload;
                 returnVal = deSelectForExtraction(state, gobiiFileItemPayload);
-                // gobiiFileItemPayload.setChecked(false);
+                // gobiiFileItemPayload.setSelected(false);
                 // const newSelectedUniqueItemIds = state
                 //     .fileItemUniqueIdsSelected
                 //     .filter(selectedId =>
@@ -145,7 +145,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                 var newFIleItemState = state.fileItems.slice();
                 var itemsToDeselect_1 = newFIleItemState
                     .filter(function (fi) { return fi.getGobiiExtractFilterType() === action.payload; });
-                itemsToDeselect_1.forEach(function (fi) { return fi.setChecked(false); });
+                itemsToDeselect_1.forEach(function (fi) { return fi.setSelected(false); });
                 var newSelectedItems = state.fileItemUniqueIdsSelected
                     .filter(function (id) { return !itemsToDeselect_1
                     .find(function (fi) { return fi.getFileItemUniqueId() === id; }); });

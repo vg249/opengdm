@@ -28,7 +28,7 @@ import {FileItemService} from "../services/core/file-item-service";
                      (click)=handleItemSelected($event)>
                     <input type="checkbox"
                            (click)=handleItemChecked($event)
-                           [checked]="gobiiFileItem.getChecked()"
+                           [checked]="gobiiFileItem.getSelected()"
                            value={{gobiiFileItem.getFileItemUniqueId()}}
                     name="{{gobiiFileItem.getItemName()}}">&nbsp;{{gobiiFileItem.getItemName()}}
                 </div>
@@ -105,7 +105,7 @@ export class CheckListBoxComponent implements OnInit, OnChanges, DoCheck {
         //                             .setCvFilterType(CvFilterType.UNKNOWN)
         //                             .setItemId(n.id)
         //                             .setItemName(n.name)
-        //                             .setChecked(false)
+        //                             .setSelected(false)
         //                             .setRequired(false);
         //
         //
@@ -140,7 +140,7 @@ export class CheckListBoxComponent implements OnInit, OnChanges, DoCheck {
         //                 //let indexOfItemToChange:number = this.gobiiFileItems.indexOf(arg.currentTarget.name);
         //                 if (itemToChange) {
         //                     itemToChange.setProcessType(eventedFileItem.getProcessType());
-        //                     itemToChange.setChecked(eventedFileItem.getChecked());
+        //                     itemToChange.setSelected(eventedFileItem.getSelected());
         //                     this.updateCheckedItemHistory(itemToChange);
         //                 }
         //             }

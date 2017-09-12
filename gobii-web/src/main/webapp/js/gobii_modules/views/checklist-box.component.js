@@ -72,7 +72,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../store/ac
                     //                             .setCvFilterType(CvFilterType.UNKNOWN)
                     //                             .setItemId(n.id)
                     //                             .setItemName(n.name)
-                    //                             .setChecked(false)
+                    //                             .setSelected(false)
                     //                             .setRequired(false);
                     //
                     //
@@ -103,7 +103,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../store/ac
                     //                 //let indexOfItemToChange:number = this.gobiiFileItems.indexOf(arg.currentTarget.name);
                     //                 if (itemToChange) {
                     //                     itemToChange.setProcessType(eventedFileItem.getProcessType());
-                    //                     itemToChange.setChecked(eventedFileItem.getChecked());
+                    //                     itemToChange.setSelected(eventedFileItem.getSelected());
                     //                     this.updateCheckedItemHistory(itemToChange);
                     //                 }
                     //             }
@@ -155,7 +155,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../store/ac
                             'nameIdRequestParams',
                             'retainHistory'],
                         outputs: ['onError'],
-                        template: "\n        <form>\n            <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                <div *ngFor=\"let gobiiFileItem of gobiiFileItems$ | async\"\n                     (click)=handleItemSelected($event)>\n                    <input type=\"checkbox\"\n                           (click)=handleItemChecked($event)\n                           [checked]=\"gobiiFileItem.getChecked()\"\n                           value={{gobiiFileItem.getFileItemUniqueId()}}\n                    name=\"{{gobiiFileItem.getItemName()}}\">&nbsp;{{gobiiFileItem.getItemName()}}\n                </div>\n            </div>\n        </form>" // end template
+                        template: "\n        <form>\n            <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                <div *ngFor=\"let gobiiFileItem of gobiiFileItems$ | async\"\n                     (click)=handleItemSelected($event)>\n                    <input type=\"checkbox\"\n                           (click)=handleItemChecked($event)\n                           [checked]=\"gobiiFileItem.getSelected()\"\n                           value={{gobiiFileItem.getFileItemUniqueId()}}\n                    name=\"{{gobiiFileItem.getItemName()}}\">&nbsp;{{gobiiFileItem.getItemName()}}\n                </div>\n            </div>\n        </form>" // end template
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
                         file_item_service_1.FileItemService,

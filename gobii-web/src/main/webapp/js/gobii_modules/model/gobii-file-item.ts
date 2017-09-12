@@ -19,7 +19,7 @@ export class GobiiFileItem {
                         private _cvFilterType: CvFilterType,
                         private _itemId: string,
                         private _itemName: string,
-                        private _checked: boolean,
+                        private _selected: boolean,
                         private _required: boolean,
                         private _gobiiEventOrigin: GobiiUIEventOrigin,
                         private _parentItemId: string,
@@ -33,7 +33,7 @@ export class GobiiFileItem {
         this._cvFilterType = _cvFilterType;
         this._itemId = _itemId;
         this._itemName = _itemName;
-        this._checked = _checked;
+        this._selected = _selected;
         this._required = _required;
         this._gobiiEventOrigin = _gobiiEventOrigin;
         this._parentItemId = _parentItemId;
@@ -199,12 +199,12 @@ export class GobiiFileItem {
         return this;
     }
 
-    getChecked(): boolean {
-        return this._checked;
+    getSelected(): boolean {
+        return this._selected;
     }
 
-    setChecked(value: boolean): GobiiFileItem {
-        this._checked = value;
+    setSelected(value: boolean): GobiiFileItem {
+        this._selected = value;
         return this;
     }
 
