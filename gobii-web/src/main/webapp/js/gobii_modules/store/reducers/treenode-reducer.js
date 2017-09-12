@@ -118,6 +118,21 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
                     gobiiTreeNodesActive: state.gobiiTreeNodesActive,
                     gobiiTreeNodes: state.gobiiTreeNodes
                 };
+                break;
+            }
+            case gobiiTreeNodeAction.CLEAR_ALL: {
+                var newSelectedNodes = state
+                    .gobiiTreeNodesActive
+                    .filter(function (id) { return state
+                    .gobiiTreeNodes
+                    .find(function (gtn) { return gtn.getFileItemId() === id
+                    && gtn.getGobiiExtractFilterType() != action.payload; }); });
+                returnVal = {
+                    gobiiExtractFilterType: state.gobiiExtractFilterType,
+                    gobiiTreeNodesActive: newSelectedNodes,
+                    gobiiTreeNodes: state.gobiiTreeNodes
+                };
+                break;
             }
         }
         return returnVal;

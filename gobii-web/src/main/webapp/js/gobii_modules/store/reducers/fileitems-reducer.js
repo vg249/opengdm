@@ -130,23 +130,6 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                     .fileItems
                     .find(function (fi) { return fi.getFileItemUniqueId() === fileItemUniqueIdPayload_1; });
                 returnVal = selectForExtraction(state, gobiiFileItem);
-                // let newUniqueId: string[] = [];
-                // if (!state
-                //         .fileItemUniqueIdsSelected
-                //         .find(i => i === fileItemUniqueIdPayload)) {
-                //     if (state
-                //             .fileItems
-                //             .find(fi => fi.getFileItemUniqueId() === fileItemUniqueIdPayload)) {
-                //         newUniqueId.push(fileItemUniqueIdPayload);
-                //     }
-                // }
-                //
-                //
-                // returnVal = {
-                //     fileItems: state.fileItems,
-                //     fileItemUniqueIdsSelected: [...state.fileItemUniqueIdsSelected, ...newUniqueId],
-                //     filters: state.filters
-                // };
                 break;
             } //
             case gobiiFileItemAction.DESELECT_FOR_EXTRACT_BY_FILE_ITEM_ID: {
@@ -155,19 +138,22 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                     .fileItems
                     .find(function (fi) { return fi.getFileItemUniqueId() === fileItemUniqueIdPayload_2; });
                 returnVal = deSelectForExtraction(state, gobiiFileItemPayload);
-                //
-                //     gobiiFileItemPayload.setChecked(false);
-                // const newSelectedUniqueItemIds = state
-                //     .fileItemUniqueIdsSelected
-                //     .filter(selectedId =>
-                //         gobiiFileItemPayload.getFileItemUniqueId() != selectedId
-                //     );
-                //
-                // returnVal = {
-                //     fileItems: state.fileItems,
-                //     fileItemUniqueIdsSelected: newSelectedUniqueItemIds,
-                //     filters: state.filters
-                // };
+                break;
+            }
+            case gobiiFileItemAction.DESELECT_ALL: {
+                // only those not of the same extract filter type should remain selected
+                var newFIleItemState = state.fileItems.slice();
+                var itemsToDeselect_1 = newFIleItemState
+                    .filter(function (fi) { return fi.getGobiiExtractFilterType() === action.payload; });
+                itemsToDeselect_1.forEach(function (fi) { return fi.setChecked(false); });
+                var newSelectedItems = state.fileItemUniqueIdsSelected
+                    .filter(function (id) { return !itemsToDeselect_1
+                    .find(function (fi) { return fi.getFileItemUniqueId() === id; }); });
+                returnVal = {
+                    fileItems: newFIleItemState,
+                    fileItemUniqueIdsSelected: newSelectedItems,
+                    filters: state.filters
+                };
                 break;
             }
         }

@@ -11,7 +11,7 @@ export const DESELECT_FOR_EXTRACT_BY_FILE_ITEM_ID = 'GobiiFileItem] Deselect Fil
 export const DESELECT_FOR_EXTRACT = '[GobiiFileItem] DeSelect';
 export const SET_ENTITY_FILTER = '[GobiiFileItem] SetEntityFilter';
 export const LOAD_FILTERED_ITEMS = '[GobiiFileItem] LoadFilteredItems';
-
+export const DESELECT_ALL = '[GobiiFileItem] DeslectAll';
 
 /**
  * Every action is comprised of at least a type and an optional
@@ -78,6 +78,13 @@ export class DeSelectByFileItemUniqueId implements Action {
     }
 }
 
+export class DeSelectAll implements Action {
+    readonly type = DESELECT_ALL;
+
+    constructor(public payload: GobiiExtractFilterType) {
+    }
+}
+
 
 /**
  * Export a type alias of all actions in this action group
@@ -90,5 +97,6 @@ export type All
     | DeSelectForExtractAction
     | SetEntityFilter
     | SelectByFileItemUniqueId
-    | DeSelectByFileItemUniqueId;
+    | DeSelectByFileItemUniqueId
+    | DeSelectAll;
 

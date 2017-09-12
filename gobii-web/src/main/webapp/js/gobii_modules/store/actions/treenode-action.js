@@ -1,7 +1,7 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var INIT, LOAD_TREE_NODE, PLACE_TREE_NODE, ACTIVATE, DEACTIVATE, SELECT_EXTRACT_TYPE, InitAction, LoadTreeNodeAction, PlaceTreeNodeAction, ActivateForExtractAction, DeActivateFromExtractAction, SelectExtractType;
+    var INIT, LOAD_TREE_NODE, PLACE_TREE_NODE, ACTIVATE, DEACTIVATE, SELECT_EXTRACT_TYPE, CLEAR_ALL, InitAction, LoadTreeNodeAction, PlaceTreeNodeAction, ActivateForExtractAction, DeActivateFromExtractAction, ClearAll, SelectExtractType;
     return {
         setters: [],
         execute: function () {
@@ -11,6 +11,7 @@ System.register([], function (exports_1, context_1) {
             exports_1("ACTIVATE", ACTIVATE = '[GobiiTreeNode] Activate');
             exports_1("DEACTIVATE", DEACTIVATE = '[GobiiTreeNode] Deactivate');
             exports_1("SELECT_EXTRACT_TYPE", SELECT_EXTRACT_TYPE = '[GobiiTreeNode] Select Extract Type');
+            exports_1("CLEAR_ALL", CLEAR_ALL = '[GobiiTreeNode] Clear All');
             InitAction = (function () {
                 function InitAction() {
                     this.type = INIT;
@@ -58,6 +59,14 @@ System.register([], function (exports_1, context_1) {
                 return DeActivateFromExtractAction;
             }());
             exports_1("DeActivateFromExtractAction", DeActivateFromExtractAction);
+            ClearAll = (function () {
+                function ClearAll(payload) {
+                    this.payload = payload;
+                    this.type = CLEAR_ALL;
+                }
+                return ClearAll;
+            }());
+            exports_1("ClearAll", ClearAll);
             SelectExtractType = (function () {
                 function SelectExtractType(payload) {
                     this.payload = payload;

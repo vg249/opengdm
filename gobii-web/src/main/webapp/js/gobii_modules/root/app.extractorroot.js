@@ -318,6 +318,12 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         .setExtractorItemType(file_model_node_1.ExtractorItemType.JOB_ID)
                         .setItemId(jobId)
                         .setItemName(jobId)));
+                    var formatItem = gobii_file_item_1.GobiiFileItem
+                        .build(this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)
+                        .setExtractorItemType(file_model_node_1.ExtractorItemType.EXPORT_FORMAT)
+                        .setItemId(type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat.HAPMAP])
+                        .setItemName(type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat.HAPMAP]]);
+                    this.store.dispatch(new fileItemAction.SelectForExtractAction(formatItem));
                     this._fileModelTreeService
                         .fileItemNotifications()
                         .subscribe(function (fileItem) {
@@ -503,21 +509,10 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     var foo = "foo";
                 };
                 ExtractorRoot.prototype.handleClearTree = function () {
+                    //empty deselect selected items and clear the tree
+                    this.store.dispatch(new fileItemAction.DeSelectAll(this.gobiiExtractFilterType));
+                    //re-populate the tree
                     this.handleExportTypeSelected(this.gobiiExtractFilterType);
-                    var formatItem = gobii_file_item_1.GobiiFileItem
-                        .build(this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)
-                        .setExtractorItemType(file_model_node_1.ExtractorItemType.EXPORT_FORMAT)
-                        .setItemId(type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat.HAPMAP])
-                        .setItemName(type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat.HAPMAP]]);
-                    this.store.dispatch(new fileItemAction.SelectForExtractAction(formatItem));
-                    // this._fileModelTreeService.put(GobiiFileItem
-                    //     .build(this.gobiiExtractFilterType, ProcessType.NOTIFY)
-                    //     .setExtractorItemType(ExtractorItemType.CLEAR_TREE)).subscribe(
-                    //     null,
-                    //     headerResponse => {
-                    //         this.handleResponseHeader(headerResponse)
-                    //     }
-                    // );
                 };
                 // In theory this method should be unnecessary because there should not be any duplicates;
                 // however, in testing, it was discovered that there can be duplicate datasets and

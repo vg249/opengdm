@@ -1,7 +1,7 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var LOAD, SELECT_FOR_EXTRACT, SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID, DESELECT_FOR_EXTRACT_BY_FILE_ITEM_ID, DESELECT_FOR_EXTRACT, SET_ENTITY_FILTER, LOAD_FILTERED_ITEMS, LoadAction, LoadFilteredItemsAction, DeSelectForExtractAction, SelectForExtractAction, SetEntityFilter, SelectByFileItemUniqueId, DeSelectByFileItemUniqueId;
+    var LOAD, SELECT_FOR_EXTRACT, SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID, DESELECT_FOR_EXTRACT_BY_FILE_ITEM_ID, DESELECT_FOR_EXTRACT, SET_ENTITY_FILTER, LOAD_FILTERED_ITEMS, DESELECT_ALL, LoadAction, LoadFilteredItemsAction, DeSelectForExtractAction, SelectForExtractAction, SetEntityFilter, SelectByFileItemUniqueId, DeSelectByFileItemUniqueId, DeSelectAll;
     return {
         setters: [],
         execute: function () {
@@ -12,6 +12,7 @@ System.register([], function (exports_1, context_1) {
             exports_1("DESELECT_FOR_EXTRACT", DESELECT_FOR_EXTRACT = '[GobiiFileItem] DeSelect');
             exports_1("SET_ENTITY_FILTER", SET_ENTITY_FILTER = '[GobiiFileItem] SetEntityFilter');
             exports_1("LOAD_FILTERED_ITEMS", LOAD_FILTERED_ITEMS = '[GobiiFileItem] LoadFilteredItems');
+            exports_1("DESELECT_ALL", DESELECT_ALL = '[GobiiFileItem] DeslectAll');
             /**
              * Every action is comprised of at least a type and an optional
              * payload. Expressing actions as classes enables powerful
@@ -75,6 +76,14 @@ System.register([], function (exports_1, context_1) {
                 return DeSelectByFileItemUniqueId;
             }());
             exports_1("DeSelectByFileItemUniqueId", DeSelectByFileItemUniqueId);
+            DeSelectAll = (function () {
+                function DeSelectAll(payload) {
+                    this.payload = payload;
+                    this.type = DESELECT_ALL;
+                }
+                return DeSelectAll;
+            }());
+            exports_1("DeSelectAll", DeSelectAll);
         }
     };
 });

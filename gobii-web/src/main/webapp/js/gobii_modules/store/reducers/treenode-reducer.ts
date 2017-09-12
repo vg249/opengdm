@@ -112,6 +112,7 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
                     gobiiTreeNodes: newTreeNodes
                 };
             }
+
             break;
         } // LOAD_TREE_NODE
 
@@ -149,8 +150,8 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
                 || containerType === ContainerType.STRUCTURE) {
                 gobiiTreeNodeToDeActivate.resetLabel();
             } else {
-                let children:GobiiTreeNode[] = gobiiTreeNodeToDeActivate.parent.getChildren();
-                children.splice(children.indexOf(gobiiTreeNodeToDeActivate,0),1);
+                let children: GobiiTreeNode[] = gobiiTreeNodeToDeActivate.parent.getChildren();
+                children.splice(children.indexOf(gobiiTreeNodeToDeActivate, 0), 1);
             }
 
 
@@ -175,8 +176,28 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
                 gobiiTreeNodes: state.gobiiTreeNodes
             };
 
+            break;
+
         }
 
+        case gobiiTreeNodeAction.CLEAR_ALL: {
+
+            let newSelectedNodes =
+                state
+                    .gobiiTreeNodesActive
+                    .filter(id => state
+                        .gobiiTreeNodes
+                        .find(gtn => gtn.getFileItemId() === id
+                            && gtn.getGobiiExtractFilterType() != action.payload));
+
+            returnVal = {
+                gobiiExtractFilterType: state.gobiiExtractFilterType,
+                gobiiTreeNodesActive: newSelectedNodes,
+                gobiiTreeNodes: state.gobiiTreeNodes
+            };
+
+            break;
+        }
     }
 
     return returnVal;

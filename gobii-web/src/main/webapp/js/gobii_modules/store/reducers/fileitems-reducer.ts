@@ -51,9 +51,9 @@ function deSelectForExtraction(state: State, gobiiFileItem: GobiiFileItem): Stat
     gobiiFileItem.setChecked(false);
     let newSelectedUniqueIdsState: string[] = state.fileItemUniqueIdsSelected.slice();
 
-    let idx:number = newSelectedUniqueIdsState.findIndex( id => id === gobiiFileItem.getFileItemUniqueId())
+    let idx: number = newSelectedUniqueIdsState.findIndex(id => id === gobiiFileItem.getFileItemUniqueId())
     if (idx) {
-        newSelectedUniqueIdsState.splice(idx,1);
+        newSelectedUniqueIdsState.splice(idx, 1);
     }
 
     let returnVal: State = {
@@ -204,25 +204,6 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
             returnVal = selectForExtraction(state, gobiiFileItem);
 
-
-            // let newUniqueId: string[] = [];
-            // if (!state
-            //         .fileItemUniqueIdsSelected
-            //         .find(i => i === fileItemUniqueIdPayload)) {
-            //     if (state
-            //             .fileItems
-            //             .find(fi => fi.getFileItemUniqueId() === fileItemUniqueIdPayload)) {
-            //         newUniqueId.push(fileItemUniqueIdPayload);
-            //     }
-            // }
-            //
-            //
-            // returnVal = {
-            //     fileItems: state.fileItems,
-            //     fileItemUniqueIdsSelected: [...state.fileItemUniqueIdsSelected, ...newUniqueId],
-            //     filters: state.filters
-            // };
-
             break;
 
         } //
@@ -237,20 +218,31 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
             returnVal = deSelectForExtraction(state, gobiiFileItemPayload);
 
+            break;
 
-            //
-            //     gobiiFileItemPayload.setChecked(false);
-            // const newSelectedUniqueItemIds = state
-            //     .fileItemUniqueIdsSelected
-            //     .filter(selectedId =>
-            //         gobiiFileItemPayload.getFileItemUniqueId() != selectedId
-            //     );
-            //
-            // returnVal = {
-            //     fileItems: state.fileItems,
-            //     fileItemUniqueIdsSelected: newSelectedUniqueItemIds,
-            //     filters: state.filters
-            // };
+        }
+
+        case gobiiFileItemAction.DESELECT_ALL: {
+
+            // only those not of the same extract filter type should remain selected
+
+            let newFIleItemState = state.fileItems.slice();
+
+            let itemsToDeselect: GobiiFileItem[] =
+                newFIleItemState
+                    .filter(fi => fi.getGobiiExtractFilterType() === action.payload);
+
+            itemsToDeselect.forEach(fi => fi.setChecked(false));
+
+            let newSelectedItems: string[] = state.fileItemUniqueIdsSelected
+                .filter(id => !itemsToDeselect
+                    .find(fi => fi.getFileItemUniqueId() === id));
+
+            returnVal = {
+                fileItems: newFIleItemState,
+                fileItemUniqueIdsSelected: newSelectedItems,
+                filters: state.filters
+            };
 
             break;
         }

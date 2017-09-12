@@ -1,6 +1,7 @@
 import {Action} from '@ngrx/store';
 import {GobiiTreeNode} from "../../model/GobiiTreeNode";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
+import {ClearTextStream} from "tls";
 
 export const INIT = '[GobiiTreeNode] Init';
 export const LOAD_TREE_NODE = '[GobiiTreeNode] Load Tree Nodes';
@@ -8,6 +9,7 @@ export const PLACE_TREE_NODE = '[GobiiTreeNode] Add Tree Node';
 export const ACTIVATE = '[GobiiTreeNode] Activate';
 export const DEACTIVATE = '[GobiiTreeNode] Deactivate';
 export const SELECT_EXTRACT_TYPE = '[GobiiTreeNode] Select Extract Type';
+export const CLEAR_ALL = '[GobiiTreeNode] Clear All';
 
 
 export class InitAction implements Action {
@@ -54,6 +56,13 @@ export class DeActivateFromExtractAction implements Action {
     }
 }
 
+export class ClearAll implements Action {
+    readonly type = CLEAR_ALL;
+
+    constructor(public payload: GobiiExtractFilterType) {
+    }
+}
+
 export class SelectExtractType implements Action {
     readonly type = SELECT_EXTRACT_TYPE;
 
@@ -72,5 +81,6 @@ export type All
     | ActivateForExtractAction
     | DeActivateFromExtractAction
     | SelectExtractType
-    | InitAction;
+    | InitAction
+    | ClearAll;
 

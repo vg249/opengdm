@@ -81,6 +81,15 @@ export class FileItemEffects {
         );
 
 
+    @Effect()
+    deselectAll$ = this.actions$
+        .ofType(fileItemActions.DESELECT_ALL)
+        .map((action: fileItemActions.DeSelectAll) => {
+                return new treeNodeActions.ClearAll(action.payload);
+            }
+        );
+
+
     // @Effect()
     // setEntityFilter$ = this.actions$
     //     .ofType(fileItemActions.SET_ENTITY_FILTER)
