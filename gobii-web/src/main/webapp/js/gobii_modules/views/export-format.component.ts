@@ -45,6 +45,22 @@ export class ExportFormatComponent implements OnInit, OnChanges {
     // private selectedNameId: string = null;
     ngOnInit() {
 
+        this.updateTreeService(GobiiExtractFormat.HAPMAP);
+
+        this.store
+            .select(fromRoot.getSelectedFileItems)
+            .subscribe( all  => {
+
+                let extractFormatItem:GobiiFileItem  = all
+                    .find(fi => fi.getExtractorItemType() === ExtractorItemType.EXPORT_FORMAT);
+
+                if( extractFormatItem ) {
+                    this.fileFormat = extractFormatItem.getItemName();
+                } else {
+                    this.fileFormat = GobiiExtractFormat[GobiiExtractFormat.HAPMAP];
+                }
+            });
+
         // in the current version, this doesn't work: each component in the page
         // is initialized once at a time. Thus, even though the tree is being built
         // built in the tree component's constructor, nginit() here still is triggered

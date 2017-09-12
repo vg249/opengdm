@@ -6,6 +6,7 @@ import {EntitySubType, EntityType} from "../../model/type-entity";
 import {FileItemParams} from "../../model/name-id-request-params";
 import {NameIdFilterParamTypes} from "../../model/type-nameid-filter-params";
 import {ProcessType} from "../../model/type-process";
+import {getForSelectedFilter} from "./treenode-reducer";
 
 
 /***
@@ -270,12 +271,14 @@ export const getSelectedUniqueIds = (state: State) => state.fileItemUniqueIdsSel
 export const getFilters = (state: State) => state.filters;
 
 export const getSelected = createSelector(getFileItems, getSelectedUniqueIds, (fileItems, selectedUniqueIds) => {
-    return fileItems
+
+   let returnVal:GobiiFileItem[] = fileItems
         .filter(fileItem =>
             selectedUniqueIds
-                .filter(uniqueId => fileItem.getFileItemUniqueId() === uniqueId)
-                .length > 0
+                .find(uniqueId => fileItem.getFileItemUniqueId() === uniqueId)
         );
+
+   return returnVal;
 });
 
 export const getAll = createSelector(getFileItems, getUniqueIds, (entities, ids) => {

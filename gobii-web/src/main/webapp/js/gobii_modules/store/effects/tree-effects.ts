@@ -9,14 +9,17 @@ import {Effect, Actions} from '@ngrx/effects';
 import {of} from 'rxjs/observable/of';
 import {TreeStructureService} from '../../services/core/tree-structure-service';
 import * as treeNodeActions from '../actions/treenode-action'
+import {GobiiTreeNode} from "../../model/GobiiTreeNode";
 
 @Injectable()
 export class TreeEffects {
     @Effect()
     initTreeNodes$ = this.actions$
         .ofType(treeNodeActions.INIT)
-        .map((action: treeNodeActions.InitAction) =>
-            new treeNodeActions.LoadTreeNodeAction(this.treeStructureService.getInitialTree())
+        .map((action: treeNodeActions.InitAction) => {
+                let initialTreeNodes: GobiiTreeNode[] = this.treeStructureService.getInitialTree();
+                return new treeNodeActions.LoadTreeNodeAction(initialTreeNodes);
+            }
         );
 
 
@@ -26,7 +29,6 @@ export class TreeEffects {
         .map((action: treeNodeActions.PlaceTreeNodeAction) =>
             new treeNodeActions.ActivateForExtractAction(action.payload.getId())
         );
-
 
 
     constructor(private actions$: Actions,

@@ -516,14 +516,6 @@ export class ExtractorRoot implements OnInit {
                 .setItemName(jobId)
         ));
 
-        let formatItem: GobiiFileItem = GobiiFileItem
-            .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
-            .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
-            .setItemId(GobiiExtractFormat[GobiiExtractFormat.HAPMAP])
-            .setItemName(GobiiExtractFormat[GobiiExtractFormat[GobiiExtractFormat.HAPMAP]]);
-        this.store.dispatch(new fileItemAction.SelectForExtractAction(formatItem));
-
-
         this._fileModelTreeService
             .fileItemNotifications()
             .subscribe(fileItem => {
@@ -896,6 +888,12 @@ export class ExtractorRoot implements OnInit {
         //re-populate the tree
         this.handleExportTypeSelected(this.gobiiExtractFilterType);
 
+        let formatItem: GobiiFileItem = GobiiFileItem
+            .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
+            .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
+            .setItemId(GobiiExtractFormat[GobiiExtractFormat.HAPMAP])
+            .setItemName(GobiiExtractFormat[GobiiExtractFormat[GobiiExtractFormat.HAPMAP]]);
+        this.store.dispatch(new fileItemAction.SelectForExtractAction(formatItem));
 
     }
 

@@ -39,6 +39,7 @@ import {combineReducers} from '@ngrx/store';
  */
 import * as fromFileItems from './fileitems-reducer';
 import * as fromGobiiTreeNodes from './treenode-reducer';
+import {GobiiFileItem} from "../../model/gobii-file-item";
 // import * as fromCollection from './collection';
 // import * as fromLayout from './layout';
 

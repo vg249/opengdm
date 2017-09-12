@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/type-extract-format", "../model/gobii-file-item", "../model/type-process", "../model/file-model-node", "../model/type-extractor-filter", "../store/actions/fileitem-action", "@ngrx/store"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/type-extract-format", "../model/gobii-file-item", "../model/type-process", "../model/file-model-node", "../model/type-extractor-filter", "../store/reducers", "../store/actions/fileitem-action", "@ngrx/store"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/type-extract-format", "../model/gobi
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_extract_format_1, gobii_file_item_1, type_process_1, file_model_node_1, type_extractor_filter_1, fileItemAction, store_1, ExportFormatComponent;
+    var core_1, type_extract_format_1, gobii_file_item_1, type_process_1, file_model_node_1, type_extractor_filter_1, fromRoot, fileItemAction, store_1, ExportFormatComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -31,6 +31,9 @@ System.register(["@angular/core", "../model/type-extract-format", "../model/gobi
             function (type_extractor_filter_1_1) {
                 type_extractor_filter_1 = type_extractor_filter_1_1;
             },
+            function (fromRoot_1) {
+                fromRoot = fromRoot_1;
+            },
             function (fileItemAction_1) {
                 fileItemAction = fileItemAction_1;
             },
@@ -50,6 +53,20 @@ System.register(["@angular/core", "../model/type-extract-format", "../model/gobi
                 // private nameIdList: NameId[];
                 // private selectedNameId: string = null;
                 ExportFormatComponent.prototype.ngOnInit = function () {
+                    var _this = this;
+                    this.updateTreeService(type_extract_format_1.GobiiExtractFormat.HAPMAP);
+                    this.store
+                        .select(fromRoot.getSelectedFileItems)
+                        .subscribe(function (all) {
+                        var extractFormatItem = all
+                            .find(function (fi) { return fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.EXPORT_FORMAT; });
+                        if (extractFormatItem) {
+                            _this.fileFormat = extractFormatItem.getItemName();
+                        }
+                        else {
+                            _this.fileFormat = type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat.HAPMAP];
+                        }
+                    });
                     // in the current version, this doesn't work: each component in the page
                     // is initialized once at a time. Thus, even though the tree is being built
                     // built in the tree component's constructor, nginit() here still is triggered

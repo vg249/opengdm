@@ -202,12 +202,12 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
             exports_1("getSelectedUniqueIds", getSelectedUniqueIds = function (state) { return state.fileItemUniqueIdsSelected; });
             exports_1("getFilters", getFilters = function (state) { return state.filters; });
             exports_1("getSelected", getSelected = reselect_1.createSelector(getFileItems, getSelectedUniqueIds, function (fileItems, selectedUniqueIds) {
-                return fileItems
+                var returnVal = fileItems
                     .filter(function (fileItem) {
                     return selectedUniqueIds
-                        .filter(function (uniqueId) { return fileItem.getFileItemUniqueId() === uniqueId; })
-                        .length > 0;
+                        .find(function (uniqueId) { return fileItem.getFileItemUniqueId() === uniqueId; });
                 });
+                return returnVal;
             }));
             exports_1("getAll", getAll = reselect_1.createSelector(getFileItems, getUniqueIds, function (entities, ids) {
                 return entities;
