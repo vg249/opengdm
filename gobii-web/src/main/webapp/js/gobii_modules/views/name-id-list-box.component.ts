@@ -17,11 +17,12 @@ import {ExtractorItemType} from "../model/file-model-node";
 @Component({
     selector: 'name-id-list-box',
     inputs: ['fileItems$',
-],
+    ],
     outputs: ['onNameIdSelected', 'onError'],
     template: `<select (change)="handleFileItemSelected($event)">
         <option *ngFor="let fileItem of fileItems$ | async"
-                [value]="fileItem.getFileItemUniqueId()">{{fileItem.getItemName()}}
+                [value]="fileItem.getFileItemUniqueId()"
+                [selected]="fileItem.getSelected()">{{fileItem.getItemName()}}
         </option>
     </select>
     ` // end template
@@ -40,7 +41,6 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
     //private uniqueId:string;
 
     differ: any;
-
 
 
     constructor(private store: Store<fromRoot.State>,
@@ -62,16 +62,17 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
     }
 
 
-    previousSelectedItemId:string = null;
+    previousSelectedItemId: string = null;
+
     public handleFileItemSelected(arg) {
 
-        let currentFileItemUniqueId:string = arg.currentTarget.value;
+        let currentFileItemUniqueId: string = arg.currentTarget.value;
 
         this.store.select(fromRoot.getAllFileItems)
             .subscribe(all => {
                 let selectedFileItem: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === currentFileItemUniqueId);
-                if(( selectedFileItem.getProcessType() !== ProcessType.DUMMY )
-                    && (selectedFileItem.getExtractorItemType() !== ExtractorItemType.LABEL) ) {
+                if (( selectedFileItem.getProcessType() !== ProcessType.DUMMY )
+                    && (selectedFileItem.getExtractorItemType() !== ExtractorItemType.LABEL)) {
 
                     this.previousSelectedItemId = currentFileItemUniqueId;
                     this.store.dispatch(new fileAction.SelectForExtractAction(selectedFileItem));
@@ -82,7 +83,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
                             selectedFileItem.getEntityType()));
 
                 } else {
-                    if( this.previousSelectedItemId ) {
+                    if (this.previousSelectedItemId) {
 
                         let previousItem: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === this.previousSelectedItemId);
                         this.store.dispatch(new fileAction.DeSelectForExtractAction(previousItem));
@@ -101,7 +102,6 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
     ngOnChanges(changes: { [propName: string]: SimpleChange }) {
 
     } // ngonChanges
-
 
 
 } // class

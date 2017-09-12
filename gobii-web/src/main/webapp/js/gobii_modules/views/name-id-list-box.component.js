@@ -81,7 +81,7 @@ System.register(["@angular/core", "../model/name-id", "@ngrx/store", "../store/r
                         inputs: ['fileItems$',
                         ],
                         outputs: ['onNameIdSelected', 'onError'],
-                        template: "<select (change)=\"handleFileItemSelected($event)\">\n        <option *ngFor=\"let fileItem of fileItems$ | async\"\n                [value]=\"fileItem.getFileItemUniqueId()\">{{fileItem.getItemName()}}\n        </option>\n    </select>\n    " // end template
+                        template: "<select (change)=\"handleFileItemSelected($event)\">\n        <option *ngFor=\"let fileItem of fileItems$ | async\"\n                [value]=\"fileItem.getFileItemUniqueId()\"\n                [selected]=\"fileItem.getSelected()\">{{fileItem.getItemName()}}\n        </option>\n    </select>\n    " // end template
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
                         core_1.KeyValueDiffers])
