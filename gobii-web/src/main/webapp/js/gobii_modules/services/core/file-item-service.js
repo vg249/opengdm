@@ -192,7 +192,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                 .setParentItemId(nameIdRequestParamsToLoad.getFkEntityFilterValue());
                             fileItems.push(noneFileItem);
                         } // if/else any nameids were retrieved
-                        var loadAction = new fileItemActions.LoadFilteredItemsAction({
+                        var loadAction = new fileItemActions.LoadFileItemsAction({
                             gobiiFileItems: fileItems,
                             filterId: nameIdRequestParamsToLoad.getQueryName(),
                             filterValue: nameIdRequestParamsToLoad.getFkEntityFilterValue()

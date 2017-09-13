@@ -4,14 +4,13 @@ import {FileItemParams} from "../../model/name-id-request-params";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 import {NameIdFilterParamTypes} from "../../model/type-nameid-filter-params";
 
-export const LOAD = '[GobiiFileItem] Load';
-export const SELECT_FOR_EXTRACT = '[GobiiFileItem] Select';
-export const SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID = '[GobiiFileItem] Select File Item Id';
-export const DESELECT_FOR_EXTRACT_BY_FILE_ITEM_ID = 'GobiiFileItem] Deselect File Item Id';
-export const DESELECT_FOR_EXTRACT = '[GobiiFileItem] DeSelect';
-export const SET_ENTITY_FILTER = '[GobiiFileItem] SetEntityFilter';
-export const LOAD_FILTERED_ITEMS = '[GobiiFileItem] LoadFilteredItems';
-export const DESELECT_ALL = '[GobiiFileItem] DeslectAll';
+export const ADD_TO_EXTRACT = '[GobiiFileItem] Add to Extract';
+export const ADD_TO_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Add to Extract by ID';
+export const REMOVE_FROM_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Remove from Extract by ID';
+export const REMOVE_FROM_EXTRACT = '[GobiiFileItem] Remove from Extract';
+export const SET_FILTER_VALUE = '[GobiiFileItem] Set Filter Value';
+export const LOAD_FILE_ITEMS = '[GobiiFileItem] Load File Items';
+export const REMOVE_ALL_FROM_EXTRACT = '[GobiiFileItem] Remove all from Extract';
 
 /**
  * Every action is comprised of at least a type and an optional
@@ -20,15 +19,8 @@ export const DESELECT_ALL = '[GobiiFileItem] DeslectAll';
  *
  * See Discriminated Unions: https://www.typescriptlang.org/docs/handbook/advanced-types.html#discriminated-unions
  */
-export class LoadAction implements Action {
-    readonly type = LOAD;
-
-    constructor(public payload: GobiiFileItem[]) {
-    }
-}
-
-export class LoadFilteredItemsAction implements Action {
-    readonly type = LOAD_FILTERED_ITEMS;
+export class LoadFileItemsAction implements Action {
+    readonly type = LOAD_FILE_ITEMS;
 
     constructor(public payload: {
         gobiiFileItems: GobiiFileItem[],
@@ -39,22 +31,22 @@ export class LoadFilteredItemsAction implements Action {
     }
 }
 
-export class DeSelectForExtractAction implements Action {
-    readonly type = DESELECT_FOR_EXTRACT;
+export class RemoveFromExtractAction implements Action {
+    readonly type = REMOVE_FROM_EXTRACT;
 
     constructor(public payload: GobiiFileItem) {
     }
 }
 
-export class SelectForExtractAction implements Action {
-    readonly type = SELECT_FOR_EXTRACT;
+export class AddToExtractAction implements Action {
+    readonly type = ADD_TO_EXTRACT;
 
     constructor(public payload: GobiiFileItem) {
     }
 }
 
-export class SetEntityFilter implements Action {
-    readonly type = SET_ENTITY_FILTER;
+export class SetFilterValueAction implements Action {
+    readonly type = SET_FILTER_VALUE;
 
     constructor(public payload: {
         gobiiExtractFilterType: GobiiExtractFilterType,
@@ -64,22 +56,22 @@ export class SetEntityFilter implements Action {
     }
 }
 
-export class SelectByFileItemUniqueId implements Action {
-    readonly type = SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID;
+export class AddToExtractByItemIdAction implements Action {
+    readonly type = ADD_TO_EXTRACT_BY_ITEM_ID;
 
     constructor(public payload: string) {
     }
 }
 
-export class DeSelectByFileItemUniqueId implements Action {
-    readonly type = DESELECT_FOR_EXTRACT_BY_FILE_ITEM_ID;
+export class RemoveFromExractByItemIdAction implements Action {
+    readonly type = REMOVE_FROM_EXTRACT_BY_ITEM_ID;
 
     constructor(public payload: string) {
     }
 }
 
-export class DeSelectAll implements Action {
-    readonly type = DESELECT_ALL;
+export class RemoveAllFromExtractAction implements Action {
+    readonly type = REMOVE_ALL_FROM_EXTRACT;
 
     constructor(public payload: GobiiExtractFilterType) {
     }
@@ -91,12 +83,11 @@ export class DeSelectAll implements Action {
  * so that reducers can easily compose action types
  */
 export type All
-    = LoadAction
-    | LoadFilteredItemsAction
-    | SelectForExtractAction
-    | DeSelectForExtractAction
-    | SetEntityFilter
-    | SelectByFileItemUniqueId
-    | DeSelectByFileItemUniqueId
-    | DeSelectAll;
+    = LoadFileItemsAction
+    | AddToExtractAction
+    | RemoveFromExtractAction
+    | SetFilterValueAction
+    | AddToExtractByItemIdAction
+    | RemoveFromExractByItemIdAction
+    | RemoveAllFromExtractAction;
 

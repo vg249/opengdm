@@ -156,7 +156,7 @@ export class ExportFormatComponent implements OnInit, OnChanges {
             .setItemName(GobiiExtractFormat[GobiiExtractFormat[arg]]);
 
 
-        this.store.dispatch(new fileItemAction.SelectForExtractAction(formatItem));
+        this.store.dispatch(new fileItemAction.AddToExtractAction(formatItem));
 
 
         // this._fileModelTreeService.put(formatItem)

@@ -223,7 +223,7 @@ export class FileItemService {
 
                     }// if/else any nameids were retrieved
 
-                    let loadAction: fileItemActions.LoadFilteredItemsAction = new fileItemActions.LoadFilteredItemsAction(
+                    let loadAction: fileItemActions.LoadFileItemsAction = new fileItemActions.LoadFileItemsAction(
                         {
                             gobiiFileItems: fileItems,
                             filterId: nameIdRequestParamsToLoad.getQueryName(),

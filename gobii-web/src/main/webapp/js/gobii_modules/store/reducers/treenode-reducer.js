@@ -86,7 +86,7 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
                     gobiiTreeNodes: state.gobiiTreeNodes
                 };
                 break;
-            } // SELECT_FOR_EXTRACT
+            } // ADD_TO_EXTRACT
             case gobiiTreeNodeAction.DEACTIVATE: {
                 var gobiiFileItemUniqueId = action.payload;
                 var newTreeNodes = state.gobiiTreeNodes.slice();
@@ -111,7 +111,7 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
                     gobiiTreeNodes: newTreeNodes
                 };
                 break;
-            } // SELECT_FOR_EXTRACT
+            } // ADD_TO_EXTRACT
             case gobiiTreeNodeAction.SELECT_EXTRACT_TYPE: {
                 returnVal = {
                     gobiiExtractFilterType: action.payload,

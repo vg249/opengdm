@@ -43,10 +43,10 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../store/ac
                 CheckListBoxComponent.prototype.handleItemChecked = function (arg) {
                     var currentFileItemUniqueId = arg.currentTarget.value;
                     if (arg.currentTarget.checked) {
-                        this.store.dispatch(new fileAction.SelectByFileItemUniqueId(currentFileItemUniqueId));
+                        this.store.dispatch(new fileAction.AddToExtractByItemIdAction(currentFileItemUniqueId));
                     }
                     else {
-                        this.store.dispatch(new fileAction.DeSelectByFileItemUniqueId(currentFileItemUniqueId));
+                        this.store.dispatch(new fileAction.RemoveFromExractByItemIdAction(currentFileItemUniqueId));
                     }
                 }; // handleItemChecked()
                 CheckListBoxComponent.prototype.handleItemSelected = function (arg) {

@@ -135,7 +135,7 @@ System.register(["@angular/core", "../model/type-extract-format", "../model/gobi
                         .setExtractorItemType(file_model_node_1.ExtractorItemType.EXPORT_FORMAT)
                         .setItemId(type_extract_format_1.GobiiExtractFormat[arg])
                         .setItemName(type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat[arg]]);
-                    this.store.dispatch(new fileItemAction.SelectForExtractAction(formatItem));
+                    this.store.dispatch(new fileItemAction.AddToExtractAction(formatItem));
                     // this._fileModelTreeService.put(formatItem)
                     //     .subscribe(
                     //         null,

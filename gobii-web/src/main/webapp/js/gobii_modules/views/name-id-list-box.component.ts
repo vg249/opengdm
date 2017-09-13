@@ -75,7 +75,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
                     && (selectedFileItem.getExtractorItemType() !== ExtractorItemType.LABEL)) {
 
                     this.previousSelectedItemId = currentFileItemUniqueId;
-                    this.store.dispatch(new fileAction.SelectForExtractAction(selectedFileItem));
+                    this.store.dispatch(new fileAction.AddToExtractAction(selectedFileItem));
 
                     this.onNameIdSelected
                         .emit(new NameId(selectedFileItem.getItemId(),
@@ -86,7 +86,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
                     if (this.previousSelectedItemId) {
 
                         let previousItem: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === this.previousSelectedItemId);
-                        this.store.dispatch(new fileAction.DeSelectForExtractAction(previousItem));
+                        this.store.dispatch(new fileAction.RemoveFromExtractAction(previousItem));
 
                         this.onNameIdSelected
                             .emit(new NameId(previousItem.getItemId(),

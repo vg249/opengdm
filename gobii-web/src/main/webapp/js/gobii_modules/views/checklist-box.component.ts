@@ -67,9 +67,9 @@ export class CheckListBoxComponent implements OnInit, OnChanges, DoCheck {
         let currentFileItemUniqueId:string = arg.currentTarget.value;
 
         if (arg.currentTarget.checked) {
-            this.store.dispatch(new fileAction.SelectByFileItemUniqueId(currentFileItemUniqueId));
+            this.store.dispatch(new fileAction.AddToExtractByItemIdAction(currentFileItemUniqueId));
         } else {
-            this.store.dispatch(new fileAction.DeSelectByFileItemUniqueId(currentFileItemUniqueId));
+            this.store.dispatch(new fileAction.RemoveFromExractByItemIdAction(currentFileItemUniqueId));
         }
 
     } // handleItemChecked()

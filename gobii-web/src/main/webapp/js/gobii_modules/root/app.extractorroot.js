@@ -261,7 +261,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     scope$._dtoRequestServiceContact.get(new dto_request_item_contact_1.DtoRequestItemContact(dto_request_item_contact_1.ContactSearchType.BY_USERNAME, this.loggedInUser)).subscribe(function (contact) {
                         if (contact && contact.contactId && contact.contactId > 0) {
                             //loggedInUser
-                            _this.store.dispatch(new fileItemAction.SelectForExtractAction(gobii_file_item_1.GobiiFileItem.build(scope$.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                            _this.store.dispatch(new fileItemAction.AddToExtractAction(gobii_file_item_1.GobiiFileItem.build(scope$.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
                                 .setEntityType(type_entity_1.EntityType.Contacts)
                                 .setEntitySubType(type_entity_1.EntitySubType.CONTACT_SUBMITED_BY)
                                 .setCvFilterType(cv_filter_type_1.CvFilterType.UNKNOWN)
@@ -314,7 +314,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this.store.dispatch(new treeNodeAction.SelectExtractType(arg));
                     // RESET FORMAT TO DEFAULT
                     var jobId = file_name_1.FileName.makeUniqueFileId();
-                    this.store.dispatch(new fileItemAction.SelectForExtractAction(gobii_file_item_1.GobiiFileItem.build(arg, type_process_1.ProcessType.CREATE)
+                    this.store.dispatch(new fileItemAction.AddToExtractAction(gobii_file_item_1.GobiiFileItem.build(arg, type_process_1.ProcessType.CREATE)
                         .setExtractorItemType(file_model_node_1.ExtractorItemType.JOB_ID)
                         .setItemId(jobId)
                         .setItemName(jobId)));
@@ -428,7 +428,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 ExtractorRoot.prototype.handleExperimentSelected = function (arg) {
                     this.selectedExperimentId = arg.id;
                     this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT, this.selectedExperimentId);
-                    // this.store.dispatch(new fileItemAction.SetEntityFilter({
+                    // this.store.dispatch(new fileItemAction.SetFilterValueAction({
                     //     gobiiExtractFilterType: this.gobiiExtractFilterType,
                     //     nameIdRequestParams: this.nameIdRequestParamsDataset
                     // }));
@@ -504,7 +504,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 };
                 ExtractorRoot.prototype.handleClearTree = function () {
                     //empty deselect selected items and clear the tree
-                    this.store.dispatch(new fileItemAction.DeSelectAll(this.gobiiExtractFilterType));
+                    this.store.dispatch(new fileItemAction.RemoveAllFromExtractAction(this.gobiiExtractFilterType));
                     //re-populate the tree
                     this.handleExportTypeSelected(this.gobiiExtractFilterType);
                     var formatItem = gobii_file_item_1.GobiiFileItem
@@ -512,7 +512,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         .setExtractorItemType(file_model_node_1.ExtractorItemType.EXPORT_FORMAT)
                         .setItemId(type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat.HAPMAP])
                         .setItemName(type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat.HAPMAP]]);
-                    this.store.dispatch(new fileItemAction.SelectForExtractAction(formatItem));
+                    this.store.dispatch(new fileItemAction.AddToExtractAction(formatItem));
                 };
                 // In theory this method should be unnecessary because there should not be any duplicates;
                 // however, in testing, it was discovered that there can be duplicate datasets and

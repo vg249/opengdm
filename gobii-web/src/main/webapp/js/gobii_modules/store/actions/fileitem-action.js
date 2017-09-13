@@ -1,18 +1,17 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var LOAD, SELECT_FOR_EXTRACT, SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID, DESELECT_FOR_EXTRACT_BY_FILE_ITEM_ID, DESELECT_FOR_EXTRACT, SET_ENTITY_FILTER, LOAD_FILTERED_ITEMS, DESELECT_ALL, LoadAction, LoadFilteredItemsAction, DeSelectForExtractAction, SelectForExtractAction, SetEntityFilter, SelectByFileItemUniqueId, DeSelectByFileItemUniqueId, DeSelectAll;
+    var ADD_TO_EXTRACT, ADD_TO_EXTRACT_BY_ITEM_ID, REMOVE_FROM_EXTRACT_BY_ITEM_ID, REMOVE_FROM_EXTRACT, SET_FILTER_VALUE, LOAD_FILE_ITEMS, REMOVE_ALL_FROM_EXTRACT, LoadFileItemsAction, RemoveFromExtractAction, AddToExtractAction, SetFilterValueAction, AddToExtractByItemIdAction, RemoveFromExractByItemIdAction, RemoveAllFromExtractAction;
     return {
         setters: [],
         execute: function () {
-            exports_1("LOAD", LOAD = '[GobiiFileItem] Load');
-            exports_1("SELECT_FOR_EXTRACT", SELECT_FOR_EXTRACT = '[GobiiFileItem] Select');
-            exports_1("SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID", SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID = '[GobiiFileItem] Select File Item Id');
-            exports_1("DESELECT_FOR_EXTRACT_BY_FILE_ITEM_ID", DESELECT_FOR_EXTRACT_BY_FILE_ITEM_ID = 'GobiiFileItem] Deselect File Item Id');
-            exports_1("DESELECT_FOR_EXTRACT", DESELECT_FOR_EXTRACT = '[GobiiFileItem] DeSelect');
-            exports_1("SET_ENTITY_FILTER", SET_ENTITY_FILTER = '[GobiiFileItem] SetEntityFilter');
-            exports_1("LOAD_FILTERED_ITEMS", LOAD_FILTERED_ITEMS = '[GobiiFileItem] LoadFilteredItems');
-            exports_1("DESELECT_ALL", DESELECT_ALL = '[GobiiFileItem] DeslectAll');
+            exports_1("ADD_TO_EXTRACT", ADD_TO_EXTRACT = '[GobiiFileItem] Add to Extract');
+            exports_1("ADD_TO_EXTRACT_BY_ITEM_ID", ADD_TO_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Add to Extract by ID');
+            exports_1("REMOVE_FROM_EXTRACT_BY_ITEM_ID", REMOVE_FROM_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Remove from Extract by ID');
+            exports_1("REMOVE_FROM_EXTRACT", REMOVE_FROM_EXTRACT = '[GobiiFileItem] Remove from Extract');
+            exports_1("SET_FILTER_VALUE", SET_FILTER_VALUE = '[GobiiFileItem] Set Filter Value');
+            exports_1("LOAD_FILE_ITEMS", LOAD_FILE_ITEMS = '[GobiiFileItem] Load File Items');
+            exports_1("REMOVE_ALL_FROM_EXTRACT", REMOVE_ALL_FROM_EXTRACT = '[GobiiFileItem] Remove all from Extract');
             /**
              * Every action is comprised of at least a type and an optional
              * payload. Expressing actions as classes enables powerful
@@ -20,70 +19,62 @@ System.register([], function (exports_1, context_1) {
              *
              * See Discriminated Unions: https://www.typescriptlang.org/docs/handbook/advanced-types.html#discriminated-unions
              */
-            LoadAction = (function () {
-                function LoadAction(payload) {
+            LoadFileItemsAction = (function () {
+                function LoadFileItemsAction(payload) {
                     this.payload = payload;
-                    this.type = LOAD;
+                    this.type = LOAD_FILE_ITEMS;
                 }
-                return LoadAction;
+                return LoadFileItemsAction;
             }());
-            exports_1("LoadAction", LoadAction);
-            LoadFilteredItemsAction = (function () {
-                function LoadFilteredItemsAction(payload) {
+            exports_1("LoadFileItemsAction", LoadFileItemsAction);
+            RemoveFromExtractAction = (function () {
+                function RemoveFromExtractAction(payload) {
                     this.payload = payload;
-                    this.type = LOAD_FILTERED_ITEMS;
+                    this.type = REMOVE_FROM_EXTRACT;
                 }
-                return LoadFilteredItemsAction;
+                return RemoveFromExtractAction;
             }());
-            exports_1("LoadFilteredItemsAction", LoadFilteredItemsAction);
-            DeSelectForExtractAction = (function () {
-                function DeSelectForExtractAction(payload) {
+            exports_1("RemoveFromExtractAction", RemoveFromExtractAction);
+            AddToExtractAction = (function () {
+                function AddToExtractAction(payload) {
                     this.payload = payload;
-                    this.type = DESELECT_FOR_EXTRACT;
+                    this.type = ADD_TO_EXTRACT;
                 }
-                return DeSelectForExtractAction;
+                return AddToExtractAction;
             }());
-            exports_1("DeSelectForExtractAction", DeSelectForExtractAction);
-            SelectForExtractAction = (function () {
-                function SelectForExtractAction(payload) {
+            exports_1("AddToExtractAction", AddToExtractAction);
+            SetFilterValueAction = (function () {
+                function SetFilterValueAction(payload) {
                     this.payload = payload;
-                    this.type = SELECT_FOR_EXTRACT;
+                    this.type = SET_FILTER_VALUE;
                 }
-                return SelectForExtractAction;
+                return SetFilterValueAction;
             }());
-            exports_1("SelectForExtractAction", SelectForExtractAction);
-            SetEntityFilter = (function () {
-                function SetEntityFilter(payload) {
+            exports_1("SetFilterValueAction", SetFilterValueAction);
+            AddToExtractByItemIdAction = (function () {
+                function AddToExtractByItemIdAction(payload) {
                     this.payload = payload;
-                    this.type = SET_ENTITY_FILTER;
+                    this.type = ADD_TO_EXTRACT_BY_ITEM_ID;
                 }
-                return SetEntityFilter;
+                return AddToExtractByItemIdAction;
             }());
-            exports_1("SetEntityFilter", SetEntityFilter);
-            SelectByFileItemUniqueId = (function () {
-                function SelectByFileItemUniqueId(payload) {
+            exports_1("AddToExtractByItemIdAction", AddToExtractByItemIdAction);
+            RemoveFromExractByItemIdAction = (function () {
+                function RemoveFromExractByItemIdAction(payload) {
                     this.payload = payload;
-                    this.type = SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID;
+                    this.type = REMOVE_FROM_EXTRACT_BY_ITEM_ID;
                 }
-                return SelectByFileItemUniqueId;
+                return RemoveFromExractByItemIdAction;
             }());
-            exports_1("SelectByFileItemUniqueId", SelectByFileItemUniqueId);
-            DeSelectByFileItemUniqueId = (function () {
-                function DeSelectByFileItemUniqueId(payload) {
+            exports_1("RemoveFromExractByItemIdAction", RemoveFromExractByItemIdAction);
+            RemoveAllFromExtractAction = (function () {
+                function RemoveAllFromExtractAction(payload) {
                     this.payload = payload;
-                    this.type = DESELECT_FOR_EXTRACT_BY_FILE_ITEM_ID;
+                    this.type = REMOVE_ALL_FROM_EXTRACT;
                 }
-                return DeSelectByFileItemUniqueId;
+                return RemoveAllFromExtractAction;
             }());
-            exports_1("DeSelectByFileItemUniqueId", DeSelectByFileItemUniqueId);
-            DeSelectAll = (function () {
-                function DeSelectAll(payload) {
-                    this.payload = payload;
-                    this.type = DESELECT_ALL;
-                }
-                return DeSelectAll;
-            }());
-            exports_1("DeSelectAll", DeSelectAll);
+            exports_1("RemoveAllFromExtractAction", RemoveAllFromExtractAction);
         }
     };
 });

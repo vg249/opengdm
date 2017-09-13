@@ -49,8 +49,8 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
             FileItemEffects = (function () {
                 // @Effect()
                 // setEntityFilter$ = this.actions$
-                //     .ofType(fileItemActions.SET_ENTITY_FILTER)
-                //     .switchMap((action: fileItemActions.SetEntityFilter)  => {
+                //     .ofType(fileItemActions.SET_FILTER_VALUE)
+                //     .switchMap((action: fileItemActions.SetFilterValueAction)  => {
                 //
                 //         let payload = action.payload;
                 //
@@ -106,13 +106,13 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                     // in state. Thus, the hierarchical arrangement of nodes is managed by the reducer in
                     // accordance with how the nodes are defined by the tree service.
                     this.selectForExtract$ = this.actions$
-                        .ofType(fileItemActions.SELECT_FOR_EXTRACT)
+                        .ofType(fileItemActions.ADD_TO_EXTRACT)
                         .map(function (action) {
                         var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(action.payload);
                         return new treeNodeActions.PlaceTreeNodeAction(treeNode);
                     });
                     this.selectForExtractByFileItemId$ = this.actions$
-                        .ofType(fileItemActions.SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID)
+                        .ofType(fileItemActions.ADD_TO_EXTRACT_BY_ITEM_ID)
                         .switchMap(function (action) {
                         // this is scary. The store is the single source of truth. The only way to get the fileItem for
                         // the fileitem id is to get it from the store, and for that to work here, we need to wrap the
@@ -132,17 +132,17 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                     } //switchMap()
                     );
                     this.deSelectFromExtract$ = this.actions$
-                        .ofType(fileItemActions.DESELECT_FOR_EXTRACT)
+                        .ofType(fileItemActions.REMOVE_FROM_EXTRACT)
                         .map(function (action) {
                         return new treeNodeActions.DeActivateFromExtractAction(action.payload.getFileItemUniqueId());
                     });
                     this.deSelectFromExtractById$ = this.actions$
-                        .ofType(fileItemActions.DESELECT_FOR_EXTRACT_BY_FILE_ITEM_ID)
+                        .ofType(fileItemActions.REMOVE_FROM_EXTRACT_BY_ITEM_ID)
                         .map(function (action) {
                         return new treeNodeActions.DeActivateFromExtractAction(action.payload);
                     });
                     this.deselectAll$ = this.actions$
-                        .ofType(fileItemActions.DESELECT_ALL)
+                        .ofType(fileItemActions.REMOVE_ALL_FROM_EXTRACT)
                         .map(function (action) {
                         return new treeNodeActions.ClearAll(action.payload);
                     });
@@ -182,8 +182,8 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
             
                 @Effect()
                 setEntityFilter$ = this.actions$
-                    .ofType(fileItemActions.SET_ENTITY_FILTER)
-                    .map((action: fileItemActions.SetEntityFilter) => {
+                    .ofType(fileItemActions.SET_FILTER_VALUE)
+                    .map((action: fileItemActions.SetFilterValueAction) => {
             
                         }
                     );

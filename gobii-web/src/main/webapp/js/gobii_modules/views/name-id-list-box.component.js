@@ -59,14 +59,14 @@ System.register(["@angular/core", "../model/name-id", "@ngrx/store", "../store/r
                         if ((selectedFileItem.getProcessType() !== type_process_1.ProcessType.DUMMY)
                             && (selectedFileItem.getExtractorItemType() !== file_model_node_1.ExtractorItemType.LABEL)) {
                             _this.previousSelectedItemId = currentFileItemUniqueId;
-                            _this.store.dispatch(new fileAction.SelectForExtractAction(selectedFileItem));
+                            _this.store.dispatch(new fileAction.AddToExtractAction(selectedFileItem));
                             _this.onNameIdSelected
                                 .emit(new name_id_1.NameId(selectedFileItem.getItemId(), selectedFileItem.getItemName(), selectedFileItem.getEntityType()));
                         }
                         else {
                             if (_this.previousSelectedItemId) {
                                 var previousItem = all.find(function (fi) { return fi.getFileItemUniqueId() === _this.previousSelectedItemId; });
-                                _this.store.dispatch(new fileAction.DeSelectForExtractAction(previousItem));
+                                _this.store.dispatch(new fileAction.RemoveFromExtractAction(previousItem));
                                 _this.onNameIdSelected
                                     .emit(new name_id_1.NameId(previousItem.getItemId(), previousItem.getItemName(), previousItem.getEntityType()));
                             }

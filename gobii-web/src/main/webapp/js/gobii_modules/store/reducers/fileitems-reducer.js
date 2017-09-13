@@ -1,29 +1,29 @@
 System.register(["reselect", "../actions/fileitem-action", "../../model/file-model-node", "../../model/type-entity", "../../model/type-nameid-filter-params", "../../model/type-process"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    function selectForExtraction(state, gobiiFileItem) {
+    function addToExtractItems(state, gobiiFileItem) {
         gobiiFileItem.setSelected(true);
-        var newSelectedUniqueIdsState = state.fileItemUniqueIdsSelected.slice();
+        var newSelectedUniqueIdsState = state.uniqueIdsOfExtractFileItems.slice();
         if (!newSelectedUniqueIdsState.find(function (id) { return id === gobiiFileItem.getFileItemUniqueId(); })) {
             newSelectedUniqueIdsState.push(gobiiFileItem.getFileItemUniqueId());
         }
         var returnVal = {
-            fileItems: state.fileItems,
-            fileItemUniqueIdsSelected: newSelectedUniqueIdsState,
+            allFileItems: state.allFileItems,
+            uniqueIdsOfExtractFileItems: newSelectedUniqueIdsState,
             filters: state.filters
         };
         return returnVal;
     }
-    function deSelectForExtraction(state, gobiiFileItem) {
+    function removeFromExtractItems(state, gobiiFileItem) {
         gobiiFileItem.setSelected(false);
-        var newSelectedUniqueIdsState = state.fileItemUniqueIdsSelected.slice();
+        var newSelectedUniqueIdsState = state.uniqueIdsOfExtractFileItems.slice();
         var idx = newSelectedUniqueIdsState.findIndex(function (id) { return id === gobiiFileItem.getFileItemUniqueId(); });
         if (idx) {
             newSelectedUniqueIdsState.splice(idx, 1);
         }
         var returnVal = {
-            fileItems: state.fileItems,
-            fileItemUniqueIdsSelected: newSelectedUniqueIdsState,
+            allFileItems: state.allFileItems,
+            uniqueIdsOfExtractFileItems: newSelectedUniqueIdsState,
             filters: state.filters
         };
         return returnVal;
@@ -32,33 +32,13 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
         if (state === void 0) { state = initialState; }
         var returnVal = state;
         switch (action.type) {
-            case gobiiFileItemAction.LOAD: {
-                var gobiiFileItemsPayload = action.payload;
-                var newGobiiFileItems = gobiiFileItemsPayload.filter(function (newItem) {
-                    return state
-                        .fileItems
-                        .filter(function (stateItem) {
-                        return (stateItem.getExtractorItemType() === newItem.getExtractorItemType() &&
-                            stateItem.getEntityType() === newItem.getEntityType() &&
-                            stateItem.getEntitySubType() === newItem.getEntitySubType() &&
-                            stateItem.getCvFilterType() === newItem.getCvFilterType() &&
-                            stateItem.getItemId() === newItem.getItemId());
-                    }).length === 0;
-                });
-                returnVal = {
-                    fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected,
-                    fileItems: state.fileItems.concat(newGobiiFileItems),
-                    filters: state.filters
-                };
-                break;
-            } // LOAD
-            case gobiiFileItemAction.LOAD_FILTERED_ITEMS: {
+            case gobiiFileItemAction.LOAD_FILE_ITEMS: {
                 var gobiiFileItemsPayload = action.payload.gobiiFileItems;
                 var filterId = action.payload.filterId.toString();
                 var filterValue = action.payload.filterValue;
                 var newGobiiFileItems = gobiiFileItemsPayload.filter(function (newItem) {
                     return state
-                        .fileItems
+                        .allFileItems
                         .filter(function (stateItem) {
                         return (stateItem.getExtractorItemType() === newItem.getExtractorItemType() &&
                             stateItem.getEntityType() === newItem.getEntityType() &&
@@ -70,92 +50,66 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                 var newFilterState = Object.assign({}, state.filters);
                 newFilterState[filterId] = filterValue;
                 returnVal = {
-                    fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected,
-                    fileItems: state.fileItems.concat(newGobiiFileItems),
+                    uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
+                    allFileItems: state.allFileItems.concat(newGobiiFileItems),
                     filters: newFilterState
                 };
                 break;
-            } // LOAD_FILTERED_ITEMS
-            case gobiiFileItemAction.SELECT_FOR_EXTRACT: {
+            } // LOAD_FILE_ITEMS
+            case gobiiFileItemAction.ADD_TO_EXTRACT: {
                 var gobiiFileItemPayload = action.payload;
-                returnVal = selectForExtraction(state, gobiiFileItemPayload);
-                // gobiiFileItemPayload.setSelected(true);
-                //
-                // const selectedUniqueItemIds = state
-                //     .fileItems
-                //     .filter(fileItem =>
-                //         gobiiFileItemPayload.getFileItemUniqueId() !== fileItem.getFileItemUniqueId())
-                //     .map(selectedFileItem => selectedFileItem.getFileItemUniqueId());
-                //
-                // returnVal = {
-                //     fileItems: state.fileItems,
-                //     fileItemUniqueIdsSelected: [...state.fileItemUniqueIdsSelected, ...selectedUniqueItemIds],
-                //     filters: state.filters
-                // };
+                returnVal = addToExtractItems(state, gobiiFileItemPayload);
                 break;
-            } // SELECT_FOR_EXTRACT
-            case gobiiFileItemAction.DESELECT_FOR_EXTRACT: {
+            } // ADD_TO_EXTRACT
+            case gobiiFileItemAction.ADD_TO_EXTRACT_BY_ITEM_ID: {
+                var fileItemUniqueIdPayload_1 = action.payload;
+                var gobiiFileItem = state
+                    .allFileItems
+                    .find(function (fi) { return fi.getFileItemUniqueId() === fileItemUniqueIdPayload_1; });
+                returnVal = addToExtractItems(state, gobiiFileItem);
+                break;
+            } //
+            case gobiiFileItemAction.REMOVE_FROM_EXTRACT: {
                 var gobiiFileItemPayload = action.payload;
-                returnVal = deSelectForExtraction(state, gobiiFileItemPayload);
-                // gobiiFileItemPayload.setSelected(false);
-                // const newSelectedUniqueItemIds = state
-                //     .fileItemUniqueIdsSelected
-                //     .filter(selectedId =>
-                //         gobiiFileItemPayload.getFileItemUniqueId() != selectedId
-                //     );
-                //
-                //
-                // returnVal = {
-                //     fileItems: state.fileItems,
-                //     fileItemUniqueIdsSelected: newSelectedUniqueItemIds,
-                //     filters: state.filters
-                // };
+                returnVal = removeFromExtractItems(state, gobiiFileItemPayload);
                 break;
             }
-            case gobiiFileItemAction.SET_ENTITY_FILTER: {
+            case gobiiFileItemAction.REMOVE_FROM_EXTRACT_BY_ITEM_ID: {
+                var fileItemUniqueIdPayload_2 = action.payload;
+                var gobiiFileItemPayload = state
+                    .allFileItems
+                    .find(function (fi) { return fi.getFileItemUniqueId() === fileItemUniqueIdPayload_2; });
+                returnVal = removeFromExtractItems(state, gobiiFileItemPayload);
+                break;
+            }
+            case gobiiFileItemAction.REMOVE_ALL_FROM_EXTRACT: {
+                // only those not of the same extract filter type should remain selected
+                var newFIleItemState = state.allFileItems.slice();
+                var itemsToDeselect_1 = newFIleItemState
+                    .filter(function (fi) { return fi.getGobiiExtractFilterType() === action.payload; });
+                itemsToDeselect_1.forEach(function (fi) { return fi.setSelected(false); });
+                var newSelectedItems = state.uniqueIdsOfExtractFileItems
+                    .filter(function (id) { return !itemsToDeselect_1
+                    .find(function (fi) { return fi.getFileItemUniqueId() === id; }); });
+                returnVal = {
+                    allFileItems: newFIleItemState,
+                    uniqueIdsOfExtractFileItems: newSelectedItems,
+                    filters: state.filters
+                };
+                break;
+            }
+            case gobiiFileItemAction.SET_FILTER_VALUE: {
                 var filterId = action.payload.filterId.toString();
                 var filterValue = action.payload.filterValue;
                 var newFilterState = Object.assign({}, state.filters);
                 newFilterState[filterId] = filterValue;
                 returnVal = {
-                    fileItems: state.fileItems,
-                    fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected,
+                    allFileItems: state.allFileItems,
+                    uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
                     filters: newFilterState
                 };
                 break;
             } //
-            case gobiiFileItemAction.SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID: {
-                var fileItemUniqueIdPayload_1 = action.payload;
-                var gobiiFileItem = state
-                    .fileItems
-                    .find(function (fi) { return fi.getFileItemUniqueId() === fileItemUniqueIdPayload_1; });
-                returnVal = selectForExtraction(state, gobiiFileItem);
-                break;
-            } //
-            case gobiiFileItemAction.DESELECT_FOR_EXTRACT_BY_FILE_ITEM_ID: {
-                var fileItemUniqueIdPayload_2 = action.payload;
-                var gobiiFileItemPayload = state
-                    .fileItems
-                    .find(function (fi) { return fi.getFileItemUniqueId() === fileItemUniqueIdPayload_2; });
-                returnVal = deSelectForExtraction(state, gobiiFileItemPayload);
-                break;
-            }
-            case gobiiFileItemAction.DESELECT_ALL: {
-                // only those not of the same extract filter type should remain selected
-                var newFIleItemState = state.fileItems.slice();
-                var itemsToDeselect_1 = newFIleItemState
-                    .filter(function (fi) { return fi.getGobiiExtractFilterType() === action.payload; });
-                itemsToDeselect_1.forEach(function (fi) { return fi.setSelected(false); });
-                var newSelectedItems = state.fileItemUniqueIdsSelected
-                    .filter(function (id) { return !itemsToDeselect_1
-                    .find(function (fi) { return fi.getFileItemUniqueId() === id; }); });
-                returnVal = {
-                    fileItems: newFIleItemState,
-                    fileItemUniqueIdsSelected: newSelectedItems,
-                    filters: state.filters
-                };
-                break;
-            }
         }
         return returnVal;
     }
@@ -185,8 +139,8 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
         execute: function () {
             ;
             exports_1("initialState", initialState = {
-                fileItemUniqueIdsSelected: [],
-                fileItems: [],
+                uniqueIdsOfExtractFileItems: [],
+                allFileItems: [],
                 filters: {}
             });
             /**
@@ -197,9 +151,9 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
              * focused so they can be combined and composed to fit each particular
              * use-case.
              */
-            exports_1("getFileItems", getFileItems = function (state) { return state.fileItems; });
-            exports_1("getUniqueIds", getUniqueIds = function (state) { return state.fileItems.map(function (fileItem) { return fileItem.getFileItemUniqueId(); }); });
-            exports_1("getSelectedUniqueIds", getSelectedUniqueIds = function (state) { return state.fileItemUniqueIdsSelected; });
+            exports_1("getFileItems", getFileItems = function (state) { return state.allFileItems; });
+            exports_1("getUniqueIds", getUniqueIds = function (state) { return state.allFileItems.map(function (fileItem) { return fileItem.getFileItemUniqueId(); }); });
+            exports_1("getSelectedUniqueIds", getSelectedUniqueIds = function (state) { return state.uniqueIdsOfExtractFileItems; });
             exports_1("getFilters", getFilters = function (state) { return state.filters; });
             exports_1("getSelected", getSelected = reselect_1.createSelector(getFileItems, getSelectedUniqueIds, function (fileItems, selectedUniqueIds) {
                 var returnVal = fileItems

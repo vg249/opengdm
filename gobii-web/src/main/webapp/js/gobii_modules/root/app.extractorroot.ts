@@ -425,7 +425,7 @@ export class ExtractorRoot implements OnInit {
                 if (contact && contact.contactId && contact.contactId > 0) {
 
                     //loggedInUser
-                    this.store.dispatch(new fileItemAction.SelectForExtractAction(
+                    this.store.dispatch(new fileItemAction.AddToExtractAction(
                         GobiiFileItem.build(scope$.gobiiExtractFilterType, ProcessType.CREATE)
                             .setEntityType(EntityType.Contacts)
                             .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
@@ -509,7 +509,7 @@ export class ExtractorRoot implements OnInit {
 
 
         let jobId: string = FileName.makeUniqueFileId();
-        this.store.dispatch(new fileItemAction.SelectForExtractAction(
+        this.store.dispatch(new fileItemAction.AddToExtractAction(
             GobiiFileItem.build(arg, ProcessType.CREATE)
                 .setExtractorItemType(ExtractorItemType.JOB_ID)
                 .setItemId(jobId)
@@ -718,7 +718,7 @@ export class ExtractorRoot implements OnInit {
                     this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
             NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT,
             this.selectedExperimentId)
-        // this.store.dispatch(new fileItemAction.SetEntityFilter({
+        // this.store.dispatch(new fileItemAction.SetFilterValueAction({
         //     gobiiExtractFilterType: this.gobiiExtractFilterType,
         //     nameIdRequestParams: this.nameIdRequestParamsDataset
         // }));
@@ -883,7 +883,7 @@ export class ExtractorRoot implements OnInit {
     private handleClearTree() {
 
         //empty deselect selected items and clear the tree
-        this.store.dispatch(new fileItemAction.DeSelectAll(this.gobiiExtractFilterType));
+        this.store.dispatch(new fileItemAction.RemoveAllFromExtractAction(this.gobiiExtractFilterType));
 
         //re-populate the tree
         this.handleExportTypeSelected(this.gobiiExtractFilterType);
@@ -893,7 +893,7 @@ export class ExtractorRoot implements OnInit {
             .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
             .setItemId(GobiiExtractFormat[GobiiExtractFormat.HAPMAP])
             .setItemName(GobiiExtractFormat[GobiiExtractFormat[GobiiExtractFormat.HAPMAP]]);
-        this.store.dispatch(new fileItemAction.SelectForExtractAction(formatItem));
+        this.store.dispatch(new fileItemAction.AddToExtractAction(formatItem));
 
     }
 

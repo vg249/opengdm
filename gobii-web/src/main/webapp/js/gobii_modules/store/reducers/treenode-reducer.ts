@@ -130,7 +130,7 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
 
             break;
 
-        } // SELECT_FOR_EXTRACT
+        } // ADD_TO_EXTRACT
 
         case gobiiTreeNodeAction.DEACTIVATE: {
 
@@ -166,7 +166,7 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
 
             break;
 
-        } // SELECT_FOR_EXTRACT
+        } // ADD_TO_EXTRACT
 
         case gobiiTreeNodeAction.SELECT_EXTRACT_TYPE: {
 
