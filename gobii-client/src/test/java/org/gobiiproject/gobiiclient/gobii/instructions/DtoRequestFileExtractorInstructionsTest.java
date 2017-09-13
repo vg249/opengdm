@@ -233,8 +233,8 @@ public class DtoRequestFileExtractorInstructionsTest {
 
         RestUri restUriExtractorInstructionsForGetByFilename = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceByUriIdParam(GobiiServiceRequestId.URL_FILE_EXTRACTOR_STATUS);
-        restUriExtractorInstructionsForGetByFilename.setParamValue("id", extractorInstructionFilesDTOFromSecondRetrieval.getInstructionFileName());
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_FILE_EXTRACTOR_JOBS);
+        restUriExtractorInstructionsForGetByFilename.setParamValue("jobName", extractorInstructionFilesDTOFromSecondRetrieval.getInstructionFileName());
         GobiiEnvelopeRestResource<ExtractorInstructionFilesDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriExtractorInstructionsForGetByFilename);
         PayloadEnvelope<ExtractorInstructionFilesDTO> resultEnvelopeForGetStatusByFileName = gobiiEnvelopeRestResourceForGetById
                 .get(ExtractorInstructionFilesDTO.class);

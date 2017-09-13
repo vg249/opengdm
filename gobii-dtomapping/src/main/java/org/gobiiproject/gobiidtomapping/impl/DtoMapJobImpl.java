@@ -16,9 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Created by VCalaminos on 9/4/2017.
@@ -99,7 +100,7 @@ public class DtoMapJobImpl implements DtoMapJob {
     }
 
     @Override
-    public JobDTO createJob(JobDTO jobDTO) throws GobiiDtoMappingException {
+    public JobDTO createJob(JobDTO jobDTO) throws GobiiDtoMappingException, ParseException {
 
         JobDTO returnVal = jobDTO;
 
@@ -124,8 +125,15 @@ public class DtoMapJobImpl implements DtoMapJob {
             // get DatasetDTO
 
             DataSetDTO dataSetDTO = dtoMapDataSet.getDataSetDetails(jobDTO.getDatasetId());
+
+            String createdDate = dataSetDTO.getCreatedDate().toString();
+            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            Date newCreatedDate = formatter.parse(createdDate);
+
+            dataSetDTO.setCreatedDate(newCreatedDate);
             dataSetDTO.setJobId(jobDTO.getJobId());
-            dataSetDTO = dtoMapDataSet.replaceDataSet(dataSetDTO.getDataSetId(), dataSetDTO);
+            dataSetDTO.setModifiedDate(new Date());
+            dtoMapDataSet.replaceDataSet(jobDTO.getDatasetId(), dataSetDTO);
 
         }
 
@@ -144,6 +152,26 @@ public class DtoMapJobImpl implements DtoMapJob {
         rsJobDao.updateJobWithCvTerms(parameters);
 
         return returnVal;
+
+    }
+
+    @Override
+    public JobDTO getJobDetailsByDatasetId(Integer datasetId) throws GobiiDtoMappingException {
+
+        JobDTO returnVal = new JobDTO();
+
+        ResultSet resultSet = rsJobDao.getJobDetailsByDatasetId(datasetId);
+        try {
+            if (resultSet.next()) {
+
+                ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
+            }
+
+        } catch(SQLException e) {
+            throw new GobiiDtoMappingException(e);
+        }
+        return returnVal;
+
 
     }
 

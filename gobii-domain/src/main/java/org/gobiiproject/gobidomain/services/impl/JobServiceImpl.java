@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class JobServiceImpl implements JobService {
     private DtoMapJob dtoMapJob = null;
 
     @Override
-    public JobDTO createJob(JobDTO jobDTO) throws GobiiDomainException {
+    public JobDTO createJob(JobDTO jobDTO) throws GobiiDomainException, ParseException{
 
         JobDTO returnVal;
 

@@ -18,4 +18,6 @@ public interface RsJobDao {
 
     void updateJobWithCvTerms(Map<String, Object> parameters) throws GobiiDaoException;
 
+    ResultSet getJobDetailsByDatasetId(Integer datasetId) throws GobiiDaoException;
+
 }

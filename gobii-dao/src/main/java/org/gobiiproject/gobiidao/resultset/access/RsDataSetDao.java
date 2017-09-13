@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiidao.resultset.access;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
 
 import java.sql.ResultSet;
 import java.util.Map;
@@ -16,4 +17,6 @@ public interface RsDataSetDao {
     void updateDataSet(Map<String,Object> parameters) throws GobiiDaoException;
 	ResultSet getDatasetNames() throws GobiiDaoException;
 	ResultSet getDataSetsByTypeId(Integer typeId) throws GobiiDaoException;
+
+
 }
