@@ -45,6 +45,14 @@ export class AddToExtractAction implements Action {
     }
 }
 
+export class AddToExtractByItemIdAction implements Action {
+    readonly type = ADD_TO_EXTRACT_BY_ITEM_ID;
+
+    constructor(public payload: string) {
+    }
+}
+
+
 export class SetFilterValueAction implements Action {
     readonly type = SET_FILTER_VALUE;
 
@@ -56,12 +64,6 @@ export class SetFilterValueAction implements Action {
     }
 }
 
-export class AddToExtractByItemIdAction implements Action {
-    readonly type = ADD_TO_EXTRACT_BY_ITEM_ID;
-
-    constructor(public payload: string) {
-    }
-}
 
 export class RemoveFromExractByItemIdAction implements Action {
     readonly type = REMOVE_FROM_EXTRACT_BY_ITEM_ID;

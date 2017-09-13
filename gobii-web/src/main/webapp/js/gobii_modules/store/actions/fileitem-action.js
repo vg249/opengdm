@@ -1,7 +1,7 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var ADD_TO_EXTRACT, ADD_TO_EXTRACT_BY_ITEM_ID, REMOVE_FROM_EXTRACT_BY_ITEM_ID, REMOVE_FROM_EXTRACT, SET_FILTER_VALUE, LOAD_FILE_ITEMS, REMOVE_ALL_FROM_EXTRACT, LoadFileItemsAction, RemoveFromExtractAction, AddToExtractAction, SetFilterValueAction, AddToExtractByItemIdAction, RemoveFromExractByItemIdAction, RemoveAllFromExtractAction;
+    var ADD_TO_EXTRACT, ADD_TO_EXTRACT_BY_ITEM_ID, REMOVE_FROM_EXTRACT_BY_ITEM_ID, REMOVE_FROM_EXTRACT, SET_FILTER_VALUE, LOAD_FILE_ITEMS, REMOVE_ALL_FROM_EXTRACT, LoadFileItemsAction, RemoveFromExtractAction, AddToExtractAction, AddToExtractByItemIdAction, SetFilterValueAction, RemoveFromExractByItemIdAction, RemoveAllFromExtractAction;
     return {
         setters: [],
         execute: function () {
@@ -43,14 +43,6 @@ System.register([], function (exports_1, context_1) {
                 return AddToExtractAction;
             }());
             exports_1("AddToExtractAction", AddToExtractAction);
-            SetFilterValueAction = (function () {
-                function SetFilterValueAction(payload) {
-                    this.payload = payload;
-                    this.type = SET_FILTER_VALUE;
-                }
-                return SetFilterValueAction;
-            }());
-            exports_1("SetFilterValueAction", SetFilterValueAction);
             AddToExtractByItemIdAction = (function () {
                 function AddToExtractByItemIdAction(payload) {
                     this.payload = payload;
@@ -59,6 +51,14 @@ System.register([], function (exports_1, context_1) {
                 return AddToExtractByItemIdAction;
             }());
             exports_1("AddToExtractByItemIdAction", AddToExtractByItemIdAction);
+            SetFilterValueAction = (function () {
+                function SetFilterValueAction(payload) {
+                    this.payload = payload;
+                    this.type = SET_FILTER_VALUE;
+                }
+                return SetFilterValueAction;
+            }());
+            exports_1("SetFilterValueAction", SetFilterValueAction);
             RemoveFromExractByItemIdAction = (function () {
                 function RemoveFromExractByItemIdAction(payload) {
                     this.payload = payload;
