@@ -2,6 +2,7 @@ package org.gobiiproject.gobiidtomapping;
 
 import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -11,7 +12,7 @@ public interface DtoMapJob {
 
     List<JobDTO> getJobs() throws GobiiDtoMappingException;
     JobDTO getJobDetailsByJobName(String jobName) throws GobiiDtoMappingException;
-    JobDTO createJob(JobDTO jobDTO) throws GobiiDtoMappingException;
+    JobDTO createJob(JobDTO jobDTO) throws GobiiDtoMappingException, ParseException;
     JobDTO replaceJob(String jobName, JobDTO jobDTO) throws GobiiDtoMappingException;
     JobDTO getJobDetailsByDatasetId(Integer datasetId);
 

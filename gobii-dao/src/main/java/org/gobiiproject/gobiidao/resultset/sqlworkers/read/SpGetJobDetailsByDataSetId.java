@@ -29,12 +29,26 @@ public class SpGetJobDetailsByDataSetId implements Work {
     public void execute(Connection dbConnection) throws SQLException {
 
         String sql = "select" +
-                " j.*, d.dataset_id" +
+                " j.job_id, " +
+                " type.term as type_id," +
+                " payloadtype.term as payload_type_id," +
+                " status.term as status," +
+                " j.message," +
+                " j.submitted_by," +
+                " j.submitted_date," +
+                " j.name," +
+                " d.dataset_id" +
                 " from" +
                 " dataset d," +
-                " job j" +
+                " job j," +
+                " cv type," +
+                " cv payloadtype," +
+                " cv status" +
                 " where" +
-                " d.job_id = j.job_id" +
+                " j.type_id = type.cv_id" +
+                " and j.payload_type_id = payloadtype.cv_id" +
+                " and j.status = status.cv_id" +
+                " and d.job_id = j.job_id" +
                 " and d.dataset_id = ?";
 
         PreparedStatement preparedStatement = dbConnection.prepareCall(sql);

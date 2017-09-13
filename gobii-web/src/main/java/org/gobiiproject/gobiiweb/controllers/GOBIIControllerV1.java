@@ -1205,12 +1205,10 @@ public class GOBIIControllerV1 {
             PayloadWriter<JobDTO> payloadWriter = new PayloadWriter<>(request, response,
                     JobDTO.class);
 
-            payloadWriter.writeSingleItemForId(returnVal,
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
-                            GobiiServiceRequestId.URL_JOB)
-                            .addUriParam("jobName"),
-                    jobDTO,
-                    jobDTO.getJobName());
+                            GobiiServiceRequestId.URL_JOB),
+                    jobDTO);
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
