@@ -497,11 +497,13 @@ export class ExtractorRoot implements OnInit {
 
     private handleExportTypeSelected(arg: GobiiExtractFilterType) {
 
-        let foo: string = "foo";
 
-        this.store.dispatch(new fileItemAction.RemoveAllFromExtractAction(this.gobiiExtractFilterType));
-
+        //
+        this.store.dispatch(new fileItemAction.RemoveAllFromExtractAction(arg));
         this.store.dispatch(new fileItemAction.SetExtractType({gobiiExtractFilterType: arg}));
+
+        // this will trigger onchange events in child components
+        this.gobiiExtractFilterType = arg;
 
         // RESET FORMAT TO DEFAULT
 
@@ -554,7 +556,6 @@ export class ExtractorRoot implements OnInit {
                 }
             });
 
-        this.gobiiExtractFilterType = arg;
 
 //        let extractorFilterItemType: GobiiFileItem = GobiiFileItem.bui(this.gobiiExtractFilterType)
 

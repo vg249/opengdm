@@ -201,7 +201,7 @@ export class ExportFormatComponent implements OnInit, OnChanges {
                     this.metaDataExtractname = "Sample" + labelSuffix;
                 }
 
-                this.setDefault();
+                this.setDefault(); // dispatches new format
 
             } // if we have a new filter type
 

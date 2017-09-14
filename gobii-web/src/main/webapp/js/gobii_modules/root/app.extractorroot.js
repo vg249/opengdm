@@ -305,9 +305,11 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 }; // handleServerSelected()
                 ExtractorRoot.prototype.handleExportTypeSelected = function (arg) {
                     var _this = this;
-                    var foo = "foo";
-                    this.store.dispatch(new fileItemAction.RemoveAllFromExtractAction(this.gobiiExtractFilterType));
+                    //
+                    this.store.dispatch(new fileItemAction.RemoveAllFromExtractAction(arg));
                     this.store.dispatch(new fileItemAction.SetExtractType({ gobiiExtractFilterType: arg }));
+                    // this will trigger onchange events in child components
+                    this.gobiiExtractFilterType = arg;
                     // RESET FORMAT TO DEFAULT
                     // let formatItem: GobiiFileItem = GobiiFileItem
                     //     .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
@@ -345,7 +347,6 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                             });
                         }
                     });
-                    this.gobiiExtractFilterType = arg;
                     //        let extractorFilterItemType: GobiiFileItem = GobiiFileItem.bui(this.gobiiExtractFilterType)
                     if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
                         this.doPrincipleInvestigatorTreeNotifications = false;

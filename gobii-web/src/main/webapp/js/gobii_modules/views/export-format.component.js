@@ -171,7 +171,7 @@ System.register(["@angular/core", "../model/type-extract-format", "../model/gobi
                             else if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
                                 this.metaDataExtractname = "Sample" + labelSuffix;
                             }
-                            this.setDefault();
+                            this.setDefault(); // dispatches new format
                         } // if we have a new filter type
                     } // if filter type changed
                 }; // ngonChanges
