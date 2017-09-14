@@ -507,12 +507,12 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this.store.dispatch(new fileItemAction.RemoveAllFromExtractAction(this.gobiiExtractFilterType));
                     //re-populate the tree
                     this.handleExportTypeSelected(this.gobiiExtractFilterType);
-                    var formatItem = gobii_file_item_1.GobiiFileItem
-                        .build(this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)
-                        .setExtractorItemType(file_model_node_1.ExtractorItemType.EXPORT_FORMAT)
-                        .setItemId(type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat.HAPMAP])
-                        .setItemName(type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat.HAPMAP]]);
-                    this.store.dispatch(new fileItemAction.AddToExtractAction(formatItem));
+                    // let formatItem: GobiiFileItem = GobiiFileItem
+                    //     .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
+                    //     .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
+                    //     .setItemId(GobiiExtractFormat[GobiiExtractFormat.HAPMAP])
+                    //     .setItemName(GobiiExtractFormat[GobiiExtractFormat[GobiiExtractFormat.HAPMAP]]);
+                    // this.fileItemService.locaFileItem(formatItem,true);
                 };
                 // In theory this method should be unnecessary because there should not be any duplicates;
                 // however, in testing, it was discovered that there can be duplicate datasets and
