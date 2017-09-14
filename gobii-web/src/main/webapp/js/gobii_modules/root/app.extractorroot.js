@@ -268,7 +268,6 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                                 .setExtractorItemType(file_model_node_1.ExtractorItemType.ENTITY)
                                 .setItemName(contact.email)
                                 .setItemId(contact.contactId.toLocaleString()), true);
-                            // //loggedInUser
                             // scope$._fileModelTreeService.put(
                             //     GobiiFileItem.build(scope$.gobiiExtractFilterType, ProcessType.CREATE)
                             //         .setEntityType(EntityType.Contacts)
@@ -310,9 +309,15 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 ExtractorRoot.prototype.handleExportTypeSelected = function (arg) {
                     var _this = this;
                     var foo = "foo";
-                    this.store.dispatch(new treeNodeAction.InitAction());
+                    this.store.dispatch(new fileItemAction.RemoveAllFromExtractAction(this.gobiiExtractFilterType));
                     this.store.dispatch(new treeNodeAction.SelectExtractType(arg));
                     // RESET FORMAT TO DEFAULT
+                    // let formatItem: GobiiFileItem = GobiiFileItem
+                    //     .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
+                    //     .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
+                    //     .setItemId(GobiiExtractFormat[GobiiExtractFormat.HAPMAP])
+                    //     .setItemName(GobiiExtractFormat[GobiiExtractFormat[GobiiExtractFormat.HAPMAP]]);
+                    // this.fileItemService.locaFileItem(formatItem,true);
                     var jobId = file_name_1.FileName.makeUniqueFileId();
                     this.fileItemService.locaFileItem(gobii_file_item_1.GobiiFileItem.build(arg, type_process_1.ProcessType.CREATE)
                         .setExtractorItemType(file_model_node_1.ExtractorItemType.JOB_ID)
@@ -503,16 +508,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     var foo = "foo";
                 };
                 ExtractorRoot.prototype.handleClearTree = function () {
-                    //empty deselect selected items and clear the tree
-                    this.store.dispatch(new fileItemAction.RemoveAllFromExtractAction(this.gobiiExtractFilterType));
-                    //re-populate the tree
                     this.handleExportTypeSelected(this.gobiiExtractFilterType);
-                    // let formatItem: GobiiFileItem = GobiiFileItem
-                    //     .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
-                    //     .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
-                    //     .setItemId(GobiiExtractFormat[GobiiExtractFormat.HAPMAP])
-                    //     .setItemName(GobiiExtractFormat[GobiiExtractFormat[GobiiExtractFormat.HAPMAP]]);
-                    // this.fileItemService.locaFileItem(formatItem,true);
                 };
                 // In theory this method should be unnecessary because there should not be any duplicates;
                 // however, in testing, it was discovered that there can be duplicate datasets and

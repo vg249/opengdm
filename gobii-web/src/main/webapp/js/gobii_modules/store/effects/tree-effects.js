@@ -57,6 +57,11 @@ System.register(["rxjs/add/operator/catch", "rxjs/add/operator/do", "rxjs/add/op
                         .map(function (action) {
                         return new treeNodeActions.ActivateForExtractAction(action.payload.getId());
                     });
+                    this.clearAll$ = this.actions$
+                        .ofType(treeNodeActions.CLEAR_ALL)
+                        .map(function (action) {
+                        return new treeNodeActions.InitAction();
+                    });
                 }
                 __decorate([
                     effects_1.Effect(),
@@ -66,6 +71,10 @@ System.register(["rxjs/add/operator/catch", "rxjs/add/operator/do", "rxjs/add/op
                     effects_1.Effect(),
                     __metadata("design:type", Object)
                 ], TreeEffects.prototype, "placeNodeInTree$", void 0);
+                __decorate([
+                    effects_1.Effect(),
+                    __metadata("design:type", Object)
+                ], TreeEffects.prototype, "clearAll$", void 0);
                 TreeEffects = __decorate([
                     core_1.Injectable(),
                     __metadata("design:paramtypes", [effects_1.Actions,

@@ -10,6 +10,7 @@ import {of} from 'rxjs/observable/of';
 import {TreeStructureService} from '../../services/core/tree-structure-service';
 import * as treeNodeActions from '../actions/treenode-action'
 import {GobiiTreeNode} from "../../model/GobiiTreeNode";
+import * as fileItemAction from '../actions/fileitem-action';
 
 @Injectable()
 export class TreeEffects {
@@ -28,6 +29,13 @@ export class TreeEffects {
         .ofType(treeNodeActions.PLACE_TREE_NODE)
         .map((action: treeNodeActions.PlaceTreeNodeAction) =>
             new treeNodeActions.ActivateForExtractAction(action.payload.getId())
+        );
+
+    @Effect()
+    clearAll$ = this.actions$
+        .ofType(treeNodeActions.CLEAR_ALL)
+        .map((action: treeNodeActions.ClearAll) =>
+            new treeNodeActions.InitAction()
         );
 
 
