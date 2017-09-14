@@ -1,7 +1,7 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var ADD_TO_EXTRACT, ADD_TO_EXTRACT_BY_ITEM_ID, REMOVE_FROM_EXTRACT_BY_ITEM_ID, REMOVE_FROM_EXTRACT, SET_FILTER_VALUE, LOAD_FILE_ITEM_LIST, LOAD_FILE_ITEM, REMOVE_ALL_FROM_EXTRACT, LoadFileItemListAction, LoadFileItemtAction, RemoveFromExtractAction, AddToExtractAction, AddToExtractByItemIdAction, SetFilterValueAction, RemoveFromExractByItemIdAction, RemoveAllFromExtractAction;
+    var ADD_TO_EXTRACT, ADD_TO_EXTRACT_BY_ITEM_ID, REMOVE_FROM_EXTRACT_BY_ITEM_ID, REMOVE_FROM_EXTRACT, SET_FILTER_VALUE, SET_EXTRACT_TYPE, LOAD_FILE_ITEM_LIST, LOAD_FILE_ITEM, REMOVE_ALL_FROM_EXTRACT, LoadFileItemListAction, LoadFileItemtAction, RemoveFromExtractAction, AddToExtractAction, AddToExtractByItemIdAction, SetFilterValueAction, SetExtractType, RemoveFromExractByItemIdAction, RemoveAllFromExtractAction;
     return {
         setters: [],
         execute: function () {
@@ -10,6 +10,7 @@ System.register([], function (exports_1, context_1) {
             exports_1("REMOVE_FROM_EXTRACT_BY_ITEM_ID", REMOVE_FROM_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Remove from Extract by ID');
             exports_1("REMOVE_FROM_EXTRACT", REMOVE_FROM_EXTRACT = '[GobiiFileItem] Remove from Extract');
             exports_1("SET_FILTER_VALUE", SET_FILTER_VALUE = '[GobiiFileItem] Set Filter Value');
+            exports_1("SET_EXTRACT_TYPE", SET_EXTRACT_TYPE = '[GobiiFileItem] Set ExtractType');
             exports_1("LOAD_FILE_ITEM_LIST", LOAD_FILE_ITEM_LIST = '[GobiiFileItem] Load File Item lIST');
             exports_1("LOAD_FILE_ITEM", LOAD_FILE_ITEM = '[GobiiFileItem] Load File Item');
             exports_1("REMOVE_ALL_FROM_EXTRACT", REMOVE_ALL_FROM_EXTRACT = '[GobiiFileItem] Remove all from Extract');
@@ -68,6 +69,14 @@ System.register([], function (exports_1, context_1) {
                 return SetFilterValueAction;
             }());
             exports_1("SetFilterValueAction", SetFilterValueAction);
+            SetExtractType = (function () {
+                function SetExtractType(payload) {
+                    this.payload = payload;
+                    this.type = SET_EXTRACT_TYPE;
+                }
+                return SetExtractType;
+            }());
+            exports_1("SetExtractType", SetExtractType);
             RemoveFromExractByItemIdAction = (function () {
                 function RemoveFromExractByItemIdAction(payload) {
                     this.payload = payload;

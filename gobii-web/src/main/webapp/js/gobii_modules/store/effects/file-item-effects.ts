@@ -98,6 +98,16 @@ export class FileItemEffects {
                 }
             }
         );
+
+    @Effect()
+    setExtractType = this.actions$
+        .ofType(fileItemActions.SET_EXTRACT_TYPE)
+        .map((action: fileItemActions.SetExtractType) => {
+                return new treeNodeActions.SelectExtractType(action.payload.gobiiExtractFilterType);
+            }
+        );
+
+
     // @Effect()
     // setEntityFilter$ = this.actions$
     //     .ofType(fileItemActions.SET_FILTER_VALUE)

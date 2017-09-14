@@ -153,6 +153,11 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                             return new fileItemActions.AddToExtractAction(action.payload.gobiiFileItem);
                         }
                     });
+                    this.setExtractType = this.actions$
+                        .ofType(fileItemActions.SET_EXTRACT_TYPE)
+                        .map(function (action) {
+                        return new treeNodeActions.SelectExtractType(action.payload.gobiiExtractFilterType);
+                    });
                 }
                 __decorate([
                     effects_1.Effect(),
@@ -178,6 +183,10 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                     effects_1.Effect(),
                     __metadata("design:type", Object)
                 ], FileItemEffects.prototype, "loadFileItem", void 0);
+                __decorate([
+                    effects_1.Effect(),
+                    __metadata("design:type", Object)
+                ], FileItemEffects.prototype, "setExtractType", void 0);
                 FileItemEffects = __decorate([
                     core_1.Injectable(),
                     __metadata("design:paramtypes", [effects_1.Actions,

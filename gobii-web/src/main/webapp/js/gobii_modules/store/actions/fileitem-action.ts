@@ -9,6 +9,7 @@ export const ADD_TO_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Add to Extract by ID';
 export const REMOVE_FROM_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Remove from Extract by ID';
 export const REMOVE_FROM_EXTRACT = '[GobiiFileItem] Remove from Extract';
 export const SET_FILTER_VALUE = '[GobiiFileItem] Set Filter Value';
+export const SET_EXTRACT_TYPE = '[GobiiFileItem] Set ExtractType';
 export const LOAD_FILE_ITEM_LIST = '[GobiiFileItem] Load File Item lIST';
 export const LOAD_FILE_ITEM = '[GobiiFileItem] Load File Item';
 export const REMOVE_ALL_FROM_EXTRACT = '[GobiiFileItem] Remove all from Extract';
@@ -75,6 +76,14 @@ export class SetFilterValueAction implements Action {
     }
 }
 
+export class SetExtractType implements Action {
+    readonly type = SET_EXTRACT_TYPE;
+
+    constructor(public payload: {
+        gobiiExtractFilterType: GobiiExtractFilterType}) {
+    }
+}
+
 
 export class RemoveFromExractByItemIdAction implements Action {
     readonly type = REMOVE_FROM_EXTRACT_BY_ITEM_ID;
@@ -103,5 +112,6 @@ export type All
     | AddToExtractByItemIdAction
     | RemoveFromExractByItemIdAction
     | RemoveAllFromExtractAction
-    | LoadFileItemtAction;
+    | LoadFileItemtAction
+    | SetExtractType;
 

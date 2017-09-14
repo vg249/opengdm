@@ -501,7 +501,7 @@ export class ExtractorRoot implements OnInit {
 
         this.store.dispatch(new fileItemAction.RemoveAllFromExtractAction(this.gobiiExtractFilterType));
 
-        this.store.dispatch(new treeNodeAction.SelectExtractType(arg));
+        this.store.dispatch(new fileItemAction.SetExtractType({gobiiExtractFilterType: arg}));
 
         // RESET FORMAT TO DEFAULT
 

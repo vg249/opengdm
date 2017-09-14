@@ -18,14 +18,14 @@ import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
  * will be handled each in their own fileItemsReducer.
  */
 export interface State {
-    gobiiExtractFilterType:GobiiExtractFilterType,
+    gobiiExtractFilterType: GobiiExtractFilterType,
     uniqueIdsOfExtractFileItems: string[];
     allFileItems: GobiiFileItem[] ;
     filters: { [id: string]: string };
 };
 
 export const initialState: State = {
-    gobiiExtractFilterType:GobiiExtractFilterType.UNKNOWN,
+    gobiiExtractFilterType: GobiiExtractFilterType.UNKNOWN,
     uniqueIdsOfExtractFileItems: [],
     allFileItems: [],
     filters: {}
@@ -126,8 +126,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             break;
         } // LOAD_FILE_ITEM_LIST
 
-        case
-        gobiiFileItemAction.LOAD_FILE_ITEM_LIST: {
+        case gobiiFileItemAction.LOAD_FILE_ITEM_LIST: {
             const gobiiFileItemsPayload = action.payload.gobiiFileItems;
             const filterId = action.payload.filterId.toString();
             const filterValue = action.payload.filterValue;
@@ -160,9 +159,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             break;
         } // LOAD_FILE_ITEM_LIST
 
-        case
-        gobiiFileItemAction.ADD_TO_EXTRACT
-        : {
+        case gobiiFileItemAction.ADD_TO_EXTRACT: {
 
             const gobiiFileItemPayload: GobiiFileItem = action.payload;
 
@@ -171,9 +168,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             break;
         } // ADD_TO_EXTRACT
 
-        case
-        gobiiFileItemAction.ADD_TO_EXTRACT_BY_ITEM_ID
-        : {
+        case gobiiFileItemAction.ADD_TO_EXTRACT_BY_ITEM_ID: {
 
             const fileItemUniqueIdPayload: string = action.payload;
             let gobiiFileItem: GobiiFileItem = state
@@ -186,9 +181,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
         } //
 
-        case
-        gobiiFileItemAction.REMOVE_FROM_EXTRACT
-        : {
+        case gobiiFileItemAction.REMOVE_FROM_EXTRACT: {
 
             let gobiiFileItemPayload: GobiiFileItem = action.payload;
             returnVal = removeFromExtractItems(state, gobiiFileItemPayload);
@@ -197,9 +190,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
         }
 
 
-        case
-        gobiiFileItemAction.REMOVE_FROM_EXTRACT_BY_ITEM_ID
-        : {
+        case gobiiFileItemAction.REMOVE_FROM_EXTRACT_BY_ITEM_ID: {
 
             const fileItemUniqueIdPayload: string = action.payload;
 
@@ -213,9 +204,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
         }
 
-        case
-        gobiiFileItemAction.REMOVE_ALL_FROM_EXTRACT
-        : {
+        case gobiiFileItemAction.REMOVE_ALL_FROM_EXTRACT: {
 
             // only those not of the same extract filter type should remain selected
 
@@ -241,29 +230,40 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             break;
         }
 
-        case
-        gobiiFileItemAction.SET_FILTER_VALUE
-        : {
+        case gobiiFileItemAction.SET_FILTER_VALUE: {
 
             const filterId = action.payload.filterId.toString();
             const filterValue = action.payload.filterValue;
+            const gobiiExtractFilterType = action.payload.gobiiExtractFilterType;
 
             let newFilterState = Object.assign({}, state.filters);
             newFilterState[filterId] = filterValue;
 
 
             returnVal = {
-                gobiiExtractFilterType: state.gobiiExtractFilterType,
+                gobiiExtractFilterType: gobiiExtractFilterType,
                 allFileItems: state.allFileItems,
                 uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
                 filters: newFilterState
             };
 
             break;
+        }
+
+        case gobiiFileItemAction.SET_EXTRACT_TYPE: {
+
+            const gobiiExtractFilterType = action.payload.gobiiExtractFilterType;
+
+            returnVal = {
+                gobiiExtractFilterType: gobiiExtractFilterType,
+                allFileItems: state.allFileItems,
+                uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
+                filters: state.filters
+            };
+
+            break;
 
         } //
-
-
     }
 
     return returnVal;
