@@ -23,12 +23,14 @@ import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.ServerBase;
 import org.gobiiproject.gobiimodel.config.ServerConfigKDC;
 import org.gobiiproject.gobiimodel.entity.PropNameId;
+import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.*;
 import org.gobiiproject.gobiimodel.utils.email.MailInterface;
 import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.HDF5Interface;
+import org.gobiiproject.gobiiprocess.JobStatus;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
 import org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformer;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
@@ -145,6 +147,17 @@ public class GobiiExtractor {
 			return;
 		}
 
+		String firstCrop = list.get(0).getGobiiCropType();
+		//Job Id is the 'name' part of the job file  /asd/de/name.json
+		String filename=new File(instructionFile).getName();
+		String jobId = filename.substring(0,filename.lastIndexOf('.'));
+		JobStatus jobStatus=null;
+		try {
+			jobStatus = new JobStatus(configuration, firstCrop, jobId);
+		} catch(Exception e){
+			ErrorLogger.logError("GobiiFileReader", "Error Checking Status",e);
+		}
+		jobStatus.set(JobDTO.CV_PROGRESSSTATUS_INPROGRESS,"Beginning Extract");
 		for (GobiiExtractorInstruction inst : list) {
 			String crop = inst.getGobiiCropType();
 			String extractType="";
@@ -181,7 +194,7 @@ public class GobiiExtractor {
 				} else {
 					mapId = mapIds.get(0);
 				}
-
+				jobStatus.set(JobDTO.CV_PROGRESSSTATUS_METADATAEXTRACT,"Extracting Metadata");
 				for (GobiiDataSetExtract extract : inst.getDataSetExtracts()) {
 
 					String jobName = getJobName(crop, extract);
@@ -384,6 +397,7 @@ public class GobiiExtractor {
 					String tempFolder = extractDir;
 					String genoFile = null;
 					if (!extract.getGobiiFileType().equals(GobiiFileType.META_DATA)) {
+						jobStatus.set(JobDTO.CV_PROGRESSSTATUS_FINALASSEMBLY,"Assembling Output Matrix");
 						GobiiFileType fileType = extract.getGobiiFileType();
 						boolean markerFast = (fileType == GobiiFileType.HAPMAP);
 
@@ -416,6 +430,7 @@ public class GobiiExtractor {
 						}
 					}
 					GobiiFileType fileType=extract.getGobiiFileType();
+					jobStatus.set(JobDTO.CV_PROGRESSSTATUS_FINALASSEMBLY,"Assembling Output Files");
 					if(checkFileExistence(genoFile) || (fileType == GobiiFileType.META_DATA)) {
 						switch (fileType) {
 							case FLAPJACK:
@@ -434,6 +449,7 @@ public class GobiiExtractor {
 								getCounts(success, pm, markerFile, sampleFile);
 								pm.setBody(jobName,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
 								mailInterface.send(pm);
+								jobStatus.set(JobDTO.CV_PROGRESSSTATUS_COMPLETED,"Extract Completed 8uccessfully");
 								break;
 							case HAPMAP:
 								String hapmapOutFile = extractDir + "Dataset.hmp.txt";
@@ -444,20 +460,24 @@ public class GobiiExtractor {
 								getCounts(success, pm, markerFile, sampleFile);
 								pm.setBody(jobName,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
 								mailInterface.send(pm);
+								jobStatus.set(JobDTO.CV_PROGRESSSTATUS_COMPLETED,"Extract Completed 8uccessfully");
 								break;
 							case META_DATA:
 								pm.setBody(jobName,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
 								mailInterface.send(pm);
+								jobStatus.set(JobDTO.CV_PROGRESSSTATUS_COMPLETED,"Extract Completed 8uccessfully");
 								break;
 							default:
 								ErrorLogger.logError("Extractor", "Unknown Extract Type " + extract.getGobiiFileType());
 								pm.setBody(jobName,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
                                 mailInterface.send(pm);
-                        }
+								jobStatus.setError("Extract Unsuccessful");
+						}
                     } else { //We had no genotype file, so we aborted
                         ErrorLogger.logError("GobiiExtractor", "No genetic data extracted. Extract failed.");
                         pm.setBody(jobName, extractType, SimpleTimer.stop("Extract"), ErrorLogger.getFirstErrorReason(), ErrorLogger.success(), ErrorLogger.getAllErrorStringsHTML());
                         mailInterface.send(pm);
+						jobStatus.setError("Extract Unsuccessful");
                     }
 
                     //Clean Temporary Files
@@ -473,7 +493,9 @@ public class GobiiExtractor {
 					if (inst.isQcCheck()) {//QC - Subsection #1 of 1
 						ErrorLogger.logInfo("Extractor", "qcCheck detected");
 						ErrorLogger.logInfo("Extractor", "Entering into the QC Subsection #1 of 1...");
+						jobStatus.set(JobDTO.CV_PROGRESSSTATUS_QCPROCESSING,"Processing QC Job");
 						performQC(configuration, inst, crop, datasetId, extractDir, mailInterface, extractType);
+						jobStatus.set(JobDTO.CV_PROGRESSSTATUS_COMPLETED,"QC Job Complete");
 					}
 				}
 				HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
@@ -485,7 +507,8 @@ public class GobiiExtractor {
 							"I'm sorry, but your extract failed for reasons beyond your control.\n"+
 							"I'm going to dump a message of the error here so a programmer can determine why.\n\n\n"+
 							org.apache.commons.lang.exception.ExceptionUtils.getStackTrace(e), null, false, null, configuration, inst.getContactEmail());
-				}
+				jobStatus.setError(e.getMessage());
+			}
 		}
 	}
 

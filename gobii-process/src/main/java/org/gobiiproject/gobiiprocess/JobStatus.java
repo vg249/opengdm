@@ -8,12 +8,15 @@ import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.headerlesscontainer.StatusDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
 import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 
+import java.util.*;
+
 import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.logError;
+
 
 /**
  * Encapsulate calling and updating status.
@@ -30,7 +33,23 @@ public class JobStatus {
      */
     GobiiUriFactory uriFactory;
     String jobId;
-    StatusDTO lastStatus;
+	JobDTO lastStatus;
+	/**List of valid statuses. Update as appropriate. Stops 'random argument' assignment, even though Progress Status
+	 * has been stringly typed.
+	 */
+	private static Set<String> acceptedStatuses=new HashSet<>(Arrays.asList(
+			JobDTO.CV_PROGRESSSTATUS_ABORTED,
+			JobDTO.CV_PROGRESSSTATUS_COMPLETED,
+			JobDTO.CV_PROGRESSSTATUS_DIGEST,
+			JobDTO.CV_PROGRESSSTATUS_INPROGRESS,
+			JobDTO.CV_PROGRESSSTATUS_MATRIXLOAD,
+			JobDTO.CV_PROGRESSSTATUS_METADATALOAD,
+			JobDTO.CV_PROGRESSSTATUS_TRANSFORMATION,
+			JobDTO.CV_PROGRESSSTATUS_VALIDATION,
+			JobDTO.CV_PROGRESSSTATUS_FAILED,
+			JobDTO.CV_PROGRESSSTATUS_METADATAEXTRACT,
+			JobDTO.CV_PROGRESSSTATUS_FINALASSEMBLY
+	));
     public JobStatus(ConfigSettings config, String cropName, String jobId) throws Exception {
 		this.jobId=jobId;
 		// set up authentication and so forth
@@ -39,16 +58,19 @@ public class JobStatus {
 		uriFactory = context.getUriFactory();
     }
 
-    public void set(Integer status,String message){
+    public void set(String status,String message){
+    	if(status==null || !acceptedStatuses.contains(status)){
+    		ErrorLogger.logError("JobStatus","Invalid status passed to set: "+status+"\nMessage: "+message,new Exception());//passing a new exception throws a stack trace in there
+		}
             try{
                 RestUri restUri=uriFactory
-                        .resourceByUriIdParam(GobiiServiceRequestId.URL_STATUS);
+                        .resourceByUriIdParam(GobiiServiceRequestId.URL_JOB);
                 restUri.setParamValue("id", jobId);
-            GobiiEnvelopeRestResource<StatusDTO> gobiiEnvelopeRestResourceForDatasets = new GobiiEnvelopeRestResource<>(restUri);
-            PayloadEnvelope<StatusDTO> resultEnvelope = gobiiEnvelopeRestResourceForDatasets
-                    .get(StatusDTO.class);
+            GobiiEnvelopeRestResource<JobDTO> gobiiEnvelopeRestResourceForDatasets = new GobiiEnvelopeRestResource<>(restUri);
+            PayloadEnvelope<JobDTO> resultEnvelope = gobiiEnvelopeRestResourceForDatasets
+                    .get(JobDTO.class);
 
-            StatusDTO dataSetResponse;
+				JobDTO dataSetResponse;
             if (!resultEnvelope.getHeader().getStatus().isSucceeded()) {
                 System.out.println();
                 logError("Digester", "Data set response response errors");
@@ -57,14 +79,13 @@ public class JobStatus {
                 }
                 return;
             } else {
-                dataSetResponse = resultEnvelope.getPayload().getData().get(0);
-            }
-
-                dataSetResponse.setMessages(message);
-                dataSetResponse.setProcessStatus(status);
+				dataSetResponse = resultEnvelope.getPayload().getData().get(0);
+			}
+                dataSetResponse.setMessage(message);
+                dataSetResponse.setStatus(status);
 
                 resultEnvelope = gobiiEnvelopeRestResourceForDatasets
-                        .put(StatusDTO.class, new PayloadEnvelope<>(dataSetResponse, GobiiProcessType.UPDATE));
+                        .put(JobDTO.class, new PayloadEnvelope<>(dataSetResponse, GobiiProcessType.UPDATE));
 
             // if you didn't succeed, do not pass go, but do log errors to your log file
             if (!resultEnvelope.getHeader().getStatus().isSucceeded()) {
@@ -87,10 +108,10 @@ public class JobStatus {
     public void setError(String message){
         String errorMessage="";
         if(lastStatus!=null){
-            errorMessage="Status: " + lastStatus.getProcessStatus()+" - " + lastStatus.getMessages() + " | \n";
+            errorMessage="Status: " + lastStatus.getStatus()+" - " + lastStatus.getMessage() + " | \n";
         }
         errorMessage += message + " : " + ErrorLogger.getFirstErrorReason();
         Integer errorStatus=-1;
-        set(StatusDTO.CV_PROGRESSSTATUS_FAILED,errorMessage);
+        set(JobDTO.CV_PROGRESSSTATUS_FAILED,errorMessage);
     }
 }
