@@ -8,6 +8,7 @@ import {NameIdFilterParamTypes} from "../../model/type-nameid-filter-params";
 import {ProcessType} from "../../model/type-process";
 import {getForSelectedFilter} from "./treenode-reducer";
 import {Labels} from "../../views/entity-labels";
+import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 
 
 /***
@@ -17,12 +18,14 @@ import {Labels} from "../../views/entity-labels";
  * will be handled each in their own fileItemsReducer.
  */
 export interface State {
+    gobiiExtractFilterType:GobiiExtractFilterType,
     uniqueIdsOfExtractFileItems: string[];
     allFileItems: GobiiFileItem[] ;
     filters: { [id: string]: string };
 };
 
 export const initialState: State = {
+    gobiiExtractFilterType:GobiiExtractFilterType.UNKNOWN,
     uniqueIdsOfExtractFileItems: [],
     allFileItems: [],
     filters: {}
@@ -46,6 +49,7 @@ function addToExtractItems(state: State, gobiiFileItem: GobiiFileItem): State {
 
 
     let returnVal: State = {
+        gobiiExtractFilterType: state.gobiiExtractFilterType,
         allFileItems: state.allFileItems,
         uniqueIdsOfExtractFileItems: newSelectedUniqueIdsState,
         filters: state.filters
@@ -65,6 +69,7 @@ function removeFromExtractItems(state: State, gobiiFileItem: GobiiFileItem): Sta
     }
 
     let returnVal: State = {
+        gobiiExtractFilterType: state.gobiiExtractFilterType,
         allFileItems: state.allFileItems,
         uniqueIdsOfExtractFileItems: newSelectedUniqueIdsState,
         filters: state.filters
@@ -112,6 +117,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             }
 
             returnVal = {
+                gobiiExtractFilterType: state.gobiiExtractFilterType,
                 uniqueIdsOfExtractFileItems: newSelectedFileItemUniqueIdsState,
                 allFileItems: newFileItemsItemsState,
                 filters: state.filters
@@ -145,6 +151,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
 
             returnVal = {
+                gobiiExtractFilterType: state.gobiiExtractFilterType,
                 uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
                 allFileItems: [...state.allFileItems, ...newGobiiFileItems],
                 filters: newFilterState
@@ -225,6 +232,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
                     .find(fi => fi.getFileItemUniqueId() === id));
 
             returnVal = {
+                gobiiExtractFilterType: state.gobiiExtractFilterType,
                 allFileItems: newFIleItemState,
                 uniqueIdsOfExtractFileItems: newSelectedItems,
                 filters: state.filters
@@ -245,6 +253,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
 
             returnVal = {
+                gobiiExtractFilterType: state.gobiiExtractFilterType,
                 allFileItems: state.allFileItems,
                 uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
                 filters: newFilterState

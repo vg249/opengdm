@@ -1,4 +1,4 @@
-System.register(["reselect", "../actions/fileitem-action", "../../model/file-model-node", "../../model/type-entity", "../../model/type-nameid-filter-params", "../../model/type-process", "../../views/entity-labels"], function (exports_1, context_1) {
+System.register(["reselect", "../actions/fileitem-action", "../../model/file-model-node", "../../model/type-entity", "../../model/type-nameid-filter-params", "../../model/type-process", "../../views/entity-labels", "../../model/type-extractor-filter"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     function addToExtractItems(state, gobiiFileItem) {
@@ -11,6 +11,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
             newSelectedUniqueIdsState.push(gobiiFileItem.getFileItemUniqueId());
         }
         var returnVal = {
+            gobiiExtractFilterType: state.gobiiExtractFilterType,
             allFileItems: state.allFileItems,
             uniqueIdsOfExtractFileItems: newSelectedUniqueIdsState,
             filters: state.filters
@@ -25,6 +26,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
             newSelectedUniqueIdsState.splice(idx, 1);
         }
         var returnVal = {
+            gobiiExtractFilterType: state.gobiiExtractFilterType,
             allFileItems: state.allFileItems,
             uniqueIdsOfExtractFileItems: newSelectedUniqueIdsState,
             filters: state.filters
@@ -56,6 +58,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                     newFileItemsItemsState.push(gobiiFileItemPayloadItem_1);
                 }
                 returnVal = {
+                    gobiiExtractFilterType: state.gobiiExtractFilterType,
                     uniqueIdsOfExtractFileItems: newSelectedFileItemUniqueIdsState,
                     allFileItems: newFileItemsItemsState,
                     filters: state.filters
@@ -81,6 +84,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                     var newFilterState = Object.assign({}, state.filters);
                     newFilterState[filterId] = filterValue;
                     returnVal = {
+                        gobiiExtractFilterType: state.gobiiExtractFilterType,
                         uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
                         allFileItems: state.allFileItems.concat(newGobiiFileItems),
                         filters: newFilterState
@@ -128,6 +132,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                         .filter(function (id) { return !itemsToDeselect_1
                         .find(function (fi) { return fi.getFileItemUniqueId() === id; }); });
                     returnVal = {
+                        gobiiExtractFilterType: state.gobiiExtractFilterType,
                         allFileItems: newFIleItemState,
                         uniqueIdsOfExtractFileItems: newSelectedItems,
                         filters: state.filters
@@ -141,6 +146,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                     var newFilterState = Object.assign({}, state.filters);
                     newFilterState[filterId] = filterValue;
                     returnVal = {
+                        gobiiExtractFilterType: state.gobiiExtractFilterType,
                         allFileItems: state.allFileItems,
                         uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
                         filters: newFilterState
@@ -151,7 +157,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
         return returnVal;
     }
     exports_1("fileItemsReducer", fileItemsReducer);
-    var reselect_1, gobiiFileItemAction, file_model_node_1, type_entity_1, type_nameid_filter_params_1, type_process_1, entity_labels_1, initialState, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getContacts, getFirstContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTerms, getFirstCvTerm, getMapsets, getFirstmapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment;
+    var reselect_1, gobiiFileItemAction, file_model_node_1, type_entity_1, type_nameid_filter_params_1, type_process_1, entity_labels_1, type_extractor_filter_1, initialState, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getContacts, getFirstContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTerms, getFirstCvTerm, getMapsets, getFirstmapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment;
     return {
         setters: [
             function (reselect_1_1) {
@@ -174,11 +180,15 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
             },
             function (entity_labels_1_1) {
                 entity_labels_1 = entity_labels_1_1;
+            },
+            function (type_extractor_filter_1_1) {
+                type_extractor_filter_1 = type_extractor_filter_1_1;
             }
         ],
         execute: function () {
             ;
             exports_1("initialState", initialState = {
+                gobiiExtractFilterType: type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN,
                 uniqueIdsOfExtractFileItems: [],
                 allFileItems: [],
                 filters: {}
