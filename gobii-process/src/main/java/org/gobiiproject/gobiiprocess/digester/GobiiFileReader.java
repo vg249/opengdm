@@ -29,6 +29,7 @@ import org.gobiiproject.gobiimodel.utils.email.*;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.GobiiConfig;
 import org.gobiiproject.gobiiprocess.HDF5Interface;
+import org.gobiiproject.gobiiprocess.JobStatus;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.*;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderV2;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestMatrix;
@@ -152,26 +153,22 @@ public class GobiiFileReader {
 			return;
 		}
 
-		// Instruction file Validation
-		InstructionFileValidator instructionFileValidator = new InstructionFileValidator(list);
-		instructionFileValidator.processInstructionFile();
-		String validationStatus = instructionFileValidator.validateMarkerUpload();
-		if(validationStatus != null){
-			ErrorLogger.logError("Marker validation failed.", validationStatus);
-		}
-
-		validationStatus = instructionFileValidator.validateSampleUpload();
-		if(validationStatus != null){
-			ErrorLogger.logError("Sample validation failed.",validationStatus);
-		}
-
-		validationStatus = instructionFileValidator.validate();
-		if(validationStatus != null){
-			ErrorLogger.logError("Validation failed.", validationStatus );
-		}
 
 		GobiiLoaderInstruction zero=list.iterator().next();
 		Integer dataSetId=zero.getDataSetId();
+
+		String crop=zero.getGobiiCropType();
+		if(crop==null) crop=divineCrop(instructionFile);
+
+		//Job Id is the 'name' part of the job file  /asd/de/name.json
+		String filename=new File(propertiesFile).getName();
+		String jobId = filename.substring(0,filename.lastIndexOf('.'));
+		JobStatus jobStatus=null;
+		try {
+			jobStatus = new JobStatus(configuration, crop, jobId);
+		} catch(Exception e){
+			ErrorLogger.logError("GobiiFileReader", "Error Checking Status",e);
+		}
 
 		pm.addIdentifier("Project",zero.getProject());
 		pm.addIdentifier("Platform",zero.getPlatform());
@@ -189,8 +186,6 @@ public class GobiiFileReader {
 		pm.addPath("destination directory",dstDir.getAbsolutePath());//Convert to directory
 		pm.addPath("input directory",zero.getGobiiFile().getSource());
 
-		String crop=zero.getGobiiCropType();
-		if(crop==null) crop=divineCrop(instructionFile);
 		Path cropPath = Paths.get(rootDir+"crops/"+crop.toLowerCase());
 		if (!(Files.exists(cropPath) &&
 			  Files.isDirectory(cropPath))) {
@@ -211,6 +206,28 @@ public class GobiiFileReader {
 		if(HDF5Interface.getPathToHDF5Files() ==null) HDF5Interface.setPathToHDF5Files(cropPath.toString()+"/hdf5/");
 
 		String errorPath=getLogName(zero, gobiiCropConfig,crop);
+
+
+		// Instruction file Validation
+		InstructionFileValidator instructionFileValidator = new InstructionFileValidator(list);
+		instructionFileValidator.processInstructionFile();
+		String validationStatus = instructionFileValidator.validateMarkerUpload();
+		if(validationStatus != null){
+			ErrorLogger.logError("Marker validation failed.", validationStatus);
+		}
+
+		validationStatus = instructionFileValidator.validateSampleUpload();
+		if(validationStatus != null){
+			ErrorLogger.logError("Sample validation failed.",validationStatus);
+		}
+
+		validationStatus = instructionFileValidator.validate();
+		if(validationStatus != null){
+			ErrorLogger.logError("Validation failed.", validationStatus );
+		}
+
+
+
 
 		//TODO: HACK - Job's name is
 		String jobName = getJobName(crop,list);
