@@ -9,7 +9,8 @@ export const ADD_TO_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Add to Extract by ID';
 export const REMOVE_FROM_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Remove from Extract by ID';
 export const REMOVE_FROM_EXTRACT = '[GobiiFileItem] Remove from Extract';
 export const SET_FILTER_VALUE = '[GobiiFileItem] Set Filter Value';
-export const LOAD_FILE_ITEMS = '[GobiiFileItem] Load File Items';
+export const LOAD_FILE_ITEM_LIST = '[GobiiFileItem] Load File Item lIST';
+export const LOAD_FILE_ITEM = '[GobiiFileItem] Load File Item';
 export const REMOVE_ALL_FROM_EXTRACT = '[GobiiFileItem] Remove all from Extract';
 
 /**
@@ -19,14 +20,24 @@ export const REMOVE_ALL_FROM_EXTRACT = '[GobiiFileItem] Remove all from Extract'
  *
  * See Discriminated Unions: https://www.typescriptlang.org/docs/handbook/advanced-types.html#discriminated-unions
  */
-export class LoadFileItemsAction implements Action {
-    readonly type = LOAD_FILE_ITEMS;
+export class LoadFileItemListAction implements Action {
+    readonly type = LOAD_FILE_ITEM_LIST;
 
     constructor(public payload: {
         gobiiFileItems: GobiiFileItem[],
         filterId: NameIdFilterParamTypes,
         filterValue: string
 
+    }) {
+    }
+}
+
+export class LoadFileItemtAction implements Action {
+    readonly type = LOAD_FILE_ITEM;
+
+    constructor(public payload: {
+        gobiiFileItem: GobiiFileItem,
+        selectForExtract: boolean
     }) {
     }
 }
@@ -85,11 +96,12 @@ export class RemoveAllFromExtractAction implements Action {
  * so that reducers can easily compose action types
  */
 export type All
-    = LoadFileItemsAction
+    = LoadFileItemListAction
     | AddToExtractAction
     | RemoveFromExtractAction
     | SetFilterValueAction
     | AddToExtractByItemIdAction
     | RemoveFromExractByItemIdAction
-    | RemoveAllFromExtractAction;
+    | RemoveAllFromExtractAction
+    | LoadFileItemtAction;
 

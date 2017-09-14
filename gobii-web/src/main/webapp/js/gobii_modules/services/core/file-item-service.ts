@@ -125,6 +125,21 @@ export class FileItemService {
     }
 
 
+    public locaFileItem(gobiiFileItem:GobiiFileItem, selectForExtract: boolean) {
+
+
+        let loadAction: fileItemActions.LoadFileItemtAction = new fileItemActions.LoadFileItemtAction(
+            {
+                gobiiFileItem: gobiiFileItem,
+                selectForExtract: selectForExtract
+            }
+        );
+
+
+        this.store.dispatch(loadAction);
+
+    }
+
     private loadNameIdsToFileItems(gobiiExtractFilterType: GobiiExtractFilterType,
                                    nameIdRequestParamsToLoad: FileItemParams,
                                    filterValue: string) {
@@ -223,7 +238,7 @@ export class FileItemService {
 
                     }// if/else any nameids were retrieved
 
-                    let loadAction: fileItemActions.LoadFileItemsAction = new fileItemActions.LoadFileItemsAction(
+                    let loadAction: fileItemActions.LoadFileItemListAction = new fileItemActions.LoadFileItemListAction(
                         {
                             gobiiFileItems: fileItems,
                             filterId: nameIdRequestParamsToLoad.getQueryName(),

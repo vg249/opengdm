@@ -7,6 +7,7 @@ import {FileItemParams} from "../../model/name-id-request-params";
 import {NameIdFilterParamTypes} from "../../model/type-nameid-filter-params";
 import {ProcessType} from "../../model/type-process";
 import {getForSelectedFilter} from "./treenode-reducer";
+import {Labels} from "../../views/entity-labels";
 
 
 /***
@@ -28,6 +29,12 @@ export const initialState: State = {
 };
 
 function addToExtractItems(state: State, gobiiFileItem: GobiiFileItem): State {
+
+
+    if (!state.allFileItems.find(fi => fi.getFileItemUniqueId() === gobiiFileItem.getFileItemUniqueId())) {
+
+        console.log("Item is not in the collection: " + gobiiFileItem.getItemName() + " of type " + Labels.instance().treeExtractorTypeLabels[gobiiFileItem.getExtractorItemType()]);
+    }
 
     gobiiFileItem.setSelected(true);
 
@@ -67,13 +74,54 @@ function removeFromExtractItems(state: State, gobiiFileItem: GobiiFileItem): Sta
 
 }
 
+
 export function fileItemsReducer(state: State = initialState, action: gobiiFileItemAction.All): State {
 
     let returnVal: State = state;
 
     switch (action.type) {
 
-        case gobiiFileItemAction.LOAD_FILE_ITEMS: {
+
+        case gobiiFileItemAction.LOAD_FILE_ITEM: {
+            const gobiiFileItemPayloadItem = action.payload.gobiiFileItem;
+
+            let newFileItemsItemsState: GobiiFileItem[] = state.allFileItems.slice();
+            const newSelectedFileItemUniqueIdsState: string[] = state.uniqueIdsOfExtractFileItems.slice();
+
+
+            let existingItem: GobiiFileItem = newFileItemsItemsState.find(stateItem =>
+                stateItem.equals(gobiiFileItemPayloadItem)
+            );
+
+            if (existingItem) {
+
+                let existingSelectedUniqueId: string = newSelectedFileItemUniqueIdsState
+                    .find(id => id === existingItem.getFileItemUniqueId());
+
+                if (existingSelectedUniqueId) {
+                    newSelectedFileItemUniqueIdsState.splice(newSelectedFileItemUniqueIdsState.indexOf(existingSelectedUniqueId), 1);
+                    newSelectedFileItemUniqueIdsState.push(gobiiFileItemPayloadItem.getFileItemUniqueId());
+                }
+
+                newFileItemsItemsState = newFileItemsItemsState.filter(fi => fi.getFileItemUniqueId() != existingItem.getFileItemUniqueId());
+                newFileItemsItemsState.push(gobiiFileItemPayloadItem)
+
+
+            } else {
+                newFileItemsItemsState.push(gobiiFileItemPayloadItem);
+            }
+
+            returnVal = {
+                uniqueIdsOfExtractFileItems: newSelectedFileItemUniqueIdsState,
+                allFileItems: newFileItemsItemsState,
+                filters: state.filters
+            };
+
+            break;
+        } // LOAD_FILE_ITEM_LIST
+
+        case
+        gobiiFileItemAction.LOAD_FILE_ITEM_LIST: {
             const gobiiFileItemsPayload = action.payload.gobiiFileItems;
             const filterId = action.payload.filterId.toString();
             const filterValue = action.payload.filterValue;
@@ -103,9 +151,11 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             };
 
             break;
-        } // LOAD_FILE_ITEMS
+        } // LOAD_FILE_ITEM_LIST
 
-        case gobiiFileItemAction.ADD_TO_EXTRACT: {
+        case
+        gobiiFileItemAction.ADD_TO_EXTRACT
+        : {
 
             const gobiiFileItemPayload: GobiiFileItem = action.payload;
 
@@ -114,7 +164,9 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             break;
         } // ADD_TO_EXTRACT
 
-        case gobiiFileItemAction.ADD_TO_EXTRACT_BY_ITEM_ID: {
+        case
+        gobiiFileItemAction.ADD_TO_EXTRACT_BY_ITEM_ID
+        : {
 
             const fileItemUniqueIdPayload: string = action.payload;
             let gobiiFileItem: GobiiFileItem = state
@@ -127,7 +179,9 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
         } //
 
-        case gobiiFileItemAction.REMOVE_FROM_EXTRACT: {
+        case
+        gobiiFileItemAction.REMOVE_FROM_EXTRACT
+        : {
 
             let gobiiFileItemPayload: GobiiFileItem = action.payload;
             returnVal = removeFromExtractItems(state, gobiiFileItemPayload);
@@ -136,7 +190,9 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
         }
 
 
-        case gobiiFileItemAction.REMOVE_FROM_EXTRACT_BY_ITEM_ID: {
+        case
+        gobiiFileItemAction.REMOVE_FROM_EXTRACT_BY_ITEM_ID
+        : {
 
             const fileItemUniqueIdPayload: string = action.payload;
 
@@ -150,7 +206,9 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
         }
 
-        case gobiiFileItemAction.REMOVE_ALL_FROM_EXTRACT: {
+        case
+        gobiiFileItemAction.REMOVE_ALL_FROM_EXTRACT
+        : {
 
             // only those not of the same extract filter type should remain selected
 
@@ -175,7 +233,9 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             break;
         }
 
-        case gobiiFileItemAction.SET_FILTER_VALUE: {
+        case
+        gobiiFileItemAction.SET_FILTER_VALUE
+        : {
 
             const filterId = action.payload.filterId.toString();
             const filterValue = action.payload.filterValue;
@@ -220,13 +280,13 @@ export const getFilters = (state: State) => state.filters;
 
 export const getSelected = createSelector(getFileItems, getSelectedUniqueIds, (fileItems, selectedUniqueIds) => {
 
-   let returnVal:GobiiFileItem[] = fileItems
+    let returnVal: GobiiFileItem[] = fileItems
         .filter(fileItem =>
             selectedUniqueIds
                 .find(uniqueId => fileItem.getFileItemUniqueId() === uniqueId)
         );
 
-   return returnVal;
+    return returnVal;
 });
 
 export const getAll = createSelector(getFileItems, getUniqueIds, (entities, ids) => {

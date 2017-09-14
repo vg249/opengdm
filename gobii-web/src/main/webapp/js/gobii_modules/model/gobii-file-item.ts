@@ -86,6 +86,17 @@ export class GobiiFileItem {
         return returnVal;
     }
 
+
+    public equals(gobiiFileItemToCompare: GobiiFileItem) {
+        return (
+            this.getExtractorItemType() === gobiiFileItemToCompare.getExtractorItemType() &&
+            this.getEntityType() === gobiiFileItemToCompare.getEntityType() &&
+            this.getEntitySubType() === gobiiFileItemToCompare.getEntitySubType() &&
+            this.getCvFilterType() === gobiiFileItemToCompare.getCvFilterType() &&
+            this.getItemId() === gobiiFileItemToCompare.getItemId()
+        );
+    }
+
     setFileItemUniqueId(fileItemUniqueId: string): GobiiFileItem {
         this._fileItemUniqueId = fileItemUniqueId;
         return this;
@@ -230,7 +241,7 @@ export class GobiiFileItem {
         return this._parentItemId;
     }
 
-    setParentItemId(parentIteIid:string):GobiiFileItem{
+    setParentItemId(parentIteIid: string): GobiiFileItem {
         this._parentItemId = parentIteIid;
         return this;
     }
@@ -239,7 +250,7 @@ export class GobiiFileItem {
         return this._parentEntityType;
     }
 
-    setParentEntityType(parentIteIid:EntityType ):GobiiFileItem{
+    setParentEntityType(parentIteIid: EntityType): GobiiFileItem {
         this._parentEntityType = parentIteIid;
         return this;
     }

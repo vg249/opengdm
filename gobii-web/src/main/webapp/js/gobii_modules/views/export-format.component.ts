@@ -13,6 +13,7 @@ import {EntityType} from "../model/type-entity";
 import * as fromRoot from '../store/reducers';
 import * as fileItemAction from '../store/actions/fileitem-action';
 import {Store} from "@ngrx/store";
+import {FileItemService} from "../services/core/file-item-service";
 
 
 @Component({
@@ -38,7 +39,8 @@ import {Store} from "@ngrx/store";
 
 export class ExportFormatComponent implements OnInit, OnChanges {
 
-    constructor(private store: Store<fromRoot.State>) {
+    constructor(private store: Store<fromRoot.State>,
+                private fileItemService:FileItemService) {
     } // ctor
 
     // private nameIdList: NameId[];
@@ -49,12 +51,12 @@ export class ExportFormatComponent implements OnInit, OnChanges {
 
         this.store
             .select(fromRoot.getSelectedFileItems)
-            .subscribe( all  => {
+            .subscribe(all => {
 
-                let extractFormatItem:GobiiFileItem  = all
+                let extractFormatItem: GobiiFileItem = all
                     .find(fi => fi.getExtractorItemType() === ExtractorItemType.EXPORT_FORMAT);
 
-                if( extractFormatItem ) {
+                if (extractFormatItem) {
                     this.fileFormat = extractFormatItem.getItemName();
                 } else {
                     this.fileFormat = GobiiExtractFormat[GobiiExtractFormat.HAPMAP];
@@ -156,8 +158,7 @@ export class ExportFormatComponent implements OnInit, OnChanges {
             .setItemName(GobiiExtractFormat[GobiiExtractFormat[arg]]);
 
 
-        this.store.dispatch(new fileItemAction.AddToExtractAction(formatItem));
-
+        this.fileItemService.locaFileItem(formatItem,true);
 
         // this._fileModelTreeService.put(formatItem)
         //     .subscribe(

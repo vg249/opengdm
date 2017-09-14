@@ -121,6 +121,13 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     var nameIdRequestParamsFromType = this.nameIdRequestParams.get(nameIdFilterParamTypes);
                     this.loadNameIdsToFileItems(gobiiExtractFilterType, nameIdRequestParamsFromType, filterValue);
                 };
+                FileItemService.prototype.locaFileItem = function (gobiiFileItem, selectForExtract) {
+                    var loadAction = new fileItemActions.LoadFileItemtAction({
+                        gobiiFileItem: gobiiFileItem,
+                        selectForExtract: selectForExtract
+                    });
+                    this.store.dispatch(loadAction);
+                };
                 FileItemService.prototype.loadNameIdsToFileItems = function (gobiiExtractFilterType, nameIdRequestParamsToLoad, filterValue) {
                     var _this = this;
                     nameIdRequestParamsToLoad.setFkEntityFilterValue(filterValue);
@@ -192,7 +199,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                 .setParentItemId(nameIdRequestParamsToLoad.getFkEntityFilterValue());
                             fileItems.push(noneFileItem);
                         } // if/else any nameids were retrieved
-                        var loadAction = new fileItemActions.LoadFileItemsAction({
+                        var loadAction = new fileItemActions.LoadFileItemListAction({
                             gobiiFileItems: fileItems,
                             filterId: nameIdRequestParamsToLoad.getQueryName(),
                             filterValue: nameIdRequestParamsToLoad.getFkEntityFilterValue()

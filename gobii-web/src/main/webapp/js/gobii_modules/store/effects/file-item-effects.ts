@@ -89,7 +89,15 @@ export class FileItemEffects {
             }
         );
 
-
+    @Effect()
+    loadFileItem = this.actions$
+        .ofType(fileItemActions.LOAD_FILE_ITEM)
+        .map((action: fileItemActions.LoadFileItemtAction) => {
+                if (action.payload.selectForExtract) {
+                    return new fileItemActions.AddToExtractAction(action.payload.gobiiFileItem);
+                }
+            }
+        );
     // @Effect()
     // setEntityFilter$ = this.actions$
     //     .ofType(fileItemActions.SET_FILTER_VALUE)

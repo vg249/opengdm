@@ -1,7 +1,7 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var ADD_TO_EXTRACT, ADD_TO_EXTRACT_BY_ITEM_ID, REMOVE_FROM_EXTRACT_BY_ITEM_ID, REMOVE_FROM_EXTRACT, SET_FILTER_VALUE, LOAD_FILE_ITEMS, REMOVE_ALL_FROM_EXTRACT, LoadFileItemsAction, RemoveFromExtractAction, AddToExtractAction, AddToExtractByItemIdAction, SetFilterValueAction, RemoveFromExractByItemIdAction, RemoveAllFromExtractAction;
+    var ADD_TO_EXTRACT, ADD_TO_EXTRACT_BY_ITEM_ID, REMOVE_FROM_EXTRACT_BY_ITEM_ID, REMOVE_FROM_EXTRACT, SET_FILTER_VALUE, LOAD_FILE_ITEM_LIST, LOAD_FILE_ITEM, REMOVE_ALL_FROM_EXTRACT, LoadFileItemListAction, LoadFileItemtAction, RemoveFromExtractAction, AddToExtractAction, AddToExtractByItemIdAction, SetFilterValueAction, RemoveFromExractByItemIdAction, RemoveAllFromExtractAction;
     return {
         setters: [],
         execute: function () {
@@ -10,7 +10,8 @@ System.register([], function (exports_1, context_1) {
             exports_1("REMOVE_FROM_EXTRACT_BY_ITEM_ID", REMOVE_FROM_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Remove from Extract by ID');
             exports_1("REMOVE_FROM_EXTRACT", REMOVE_FROM_EXTRACT = '[GobiiFileItem] Remove from Extract');
             exports_1("SET_FILTER_VALUE", SET_FILTER_VALUE = '[GobiiFileItem] Set Filter Value');
-            exports_1("LOAD_FILE_ITEMS", LOAD_FILE_ITEMS = '[GobiiFileItem] Load File Items');
+            exports_1("LOAD_FILE_ITEM_LIST", LOAD_FILE_ITEM_LIST = '[GobiiFileItem] Load File Item lIST');
+            exports_1("LOAD_FILE_ITEM", LOAD_FILE_ITEM = '[GobiiFileItem] Load File Item');
             exports_1("REMOVE_ALL_FROM_EXTRACT", REMOVE_ALL_FROM_EXTRACT = '[GobiiFileItem] Remove all from Extract');
             /**
              * Every action is comprised of at least a type and an optional
@@ -19,14 +20,22 @@ System.register([], function (exports_1, context_1) {
              *
              * See Discriminated Unions: https://www.typescriptlang.org/docs/handbook/advanced-types.html#discriminated-unions
              */
-            LoadFileItemsAction = (function () {
-                function LoadFileItemsAction(payload) {
+            LoadFileItemListAction = (function () {
+                function LoadFileItemListAction(payload) {
                     this.payload = payload;
-                    this.type = LOAD_FILE_ITEMS;
+                    this.type = LOAD_FILE_ITEM_LIST;
                 }
-                return LoadFileItemsAction;
+                return LoadFileItemListAction;
             }());
-            exports_1("LoadFileItemsAction", LoadFileItemsAction);
+            exports_1("LoadFileItemListAction", LoadFileItemListAction);
+            LoadFileItemtAction = (function () {
+                function LoadFileItemtAction(payload) {
+                    this.payload = payload;
+                    this.type = LOAD_FILE_ITEM;
+                }
+                return LoadFileItemtAction;
+            }());
+            exports_1("LoadFileItemtAction", LoadFileItemtAction);
             RemoveFromExtractAction = (function () {
                 function RemoveFromExtractAction(payload) {
                     this.payload = payload;

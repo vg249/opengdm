@@ -76,6 +76,13 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
                     var returnVal = new GobiiFileItem(gobiiExtractFilterType, processType, file_model_node_1.ExtractorItemType.UNKNOWN, type_entity_1.EntityType.UNKNOWN, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null, null, null, null, type_event_origin_1.GobiiUIEventOrigin.UNKNOWN, null, type_entity_1.EntityType.UNKNOWN);
                     return returnVal;
                 };
+                GobiiFileItem.prototype.equals = function (gobiiFileItemToCompare) {
+                    return (this.getExtractorItemType() === gobiiFileItemToCompare.getExtractorItemType() &&
+                        this.getEntityType() === gobiiFileItemToCompare.getEntityType() &&
+                        this.getEntitySubType() === gobiiFileItemToCompare.getEntitySubType() &&
+                        this.getCvFilterType() === gobiiFileItemToCompare.getCvFilterType() &&
+                        this.getItemId() === gobiiFileItemToCompare.getItemId());
+                };
                 GobiiFileItem.prototype.setFileItemUniqueId = function (fileItemUniqueId) {
                     this._fileItemUniqueId = fileItemUniqueId;
                     return this;

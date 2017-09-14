@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/type-extract-format", "../model/gobii-file-item", "../model/type-process", "../model/file-model-node", "../model/type-extractor-filter", "../store/reducers", "../store/actions/fileitem-action", "@ngrx/store"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/type-extract-format", "../model/gobii-file-item", "../model/type-process", "../model/file-model-node", "../model/type-extractor-filter", "../store/reducers", "@ngrx/store", "../services/core/file-item-service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/type-extract-format", "../model/gobi
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_extract_format_1, gobii_file_item_1, type_process_1, file_model_node_1, type_extractor_filter_1, fromRoot, fileItemAction, store_1, ExportFormatComponent;
+    var core_1, type_extract_format_1, gobii_file_item_1, type_process_1, file_model_node_1, type_extractor_filter_1, fromRoot, store_1, file_item_service_1, ExportFormatComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -34,17 +34,18 @@ System.register(["@angular/core", "../model/type-extract-format", "../model/gobi
             function (fromRoot_1) {
                 fromRoot = fromRoot_1;
             },
-            function (fileItemAction_1) {
-                fileItemAction = fileItemAction_1;
-            },
             function (store_1_1) {
                 store_1 = store_1_1;
+            },
+            function (file_item_service_1_1) {
+                file_item_service_1 = file_item_service_1_1;
             }
         ],
         execute: function () {
             ExportFormatComponent = (function () {
-                function ExportFormatComponent(store) {
+                function ExportFormatComponent(store, fileItemService) {
                     this.store = store;
+                    this.fileItemService = fileItemService;
                     this.fileFormat = "HAPMAP";
                     this.onFormatSelected = new core_1.EventEmitter();
                     this.onError = new core_1.EventEmitter();
@@ -135,7 +136,7 @@ System.register(["@angular/core", "../model/type-extract-format", "../model/gobi
                         .setExtractorItemType(file_model_node_1.ExtractorItemType.EXPORT_FORMAT)
                         .setItemId(type_extract_format_1.GobiiExtractFormat[arg])
                         .setItemName(type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat[arg]]);
-                    this.store.dispatch(new fileItemAction.AddToExtractAction(formatItem));
+                    this.fileItemService.locaFileItem(formatItem, true);
                     // this._fileModelTreeService.put(formatItem)
                     //     .subscribe(
                     //         null,
@@ -183,7 +184,8 @@ System.register(["@angular/core", "../model/type-extract-format", "../model/gobi
                         //  directives: [Alert]
                         template: "\n        <form>\n            <label class=\"the-legend\">Select Format:&nbsp;</label>\n            <BR><input type=\"radio\" (change)=\"handleFormatSelected($event)\" [(ngModel)]=\"fileFormat\" name=\"fileFormat\"\n                       value=\"HAPMAP\" checked=\"checked\">\n            <label for=\"HAPMAP\" class=\"the-legend\">Hapmap</label>\n            <BR><input type=\"radio\" (change)=\"handleFormatSelected($event)\" [(ngModel)]=\"fileFormat\" name=\"fileFormat\"\n                       value=\"FLAPJACK\">\n            <label for=\"FLAPJACK\" class=\"the-legend\">Flapjack</label>\n            <BR><input type=\"radio\" (change)=\"handleFormatSelected($event)\" [(ngModel)]=\"fileFormat\" name=\"fileFormat\"\n                       value=\"META_DATA_ONLY\">\n            <label for=\"META_DATA_ONLY\" class=\"the-legend\">{{metaDataExtractname}}</label>\n        </form>" // end template
                     }),
-                    __metadata("design:paramtypes", [store_1.Store])
+                    __metadata("design:paramtypes", [store_1.Store,
+                        file_item_service_1.FileItemService])
                 ], ExportFormatComponent);
                 return ExportFormatComponent;
             }());
