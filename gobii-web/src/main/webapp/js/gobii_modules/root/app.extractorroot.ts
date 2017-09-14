@@ -425,15 +425,14 @@ export class ExtractorRoot implements OnInit {
                 if (contact && contact.contactId && contact.contactId > 0) {
 
                     //loggedInUser
-                    this.store.dispatch(new fileItemAction.AddToExtractAction(
-                        GobiiFileItem.build(scope$.gobiiExtractFilterType, ProcessType.CREATE)
-                            .setEntityType(EntityType.Contacts)
-                            .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
-                            .setCvFilterType(CvFilterType.UNKNOWN)
-                            .setExtractorItemType(ExtractorItemType.ENTITY)
-                            .setItemName(contact.email)
-                            .setItemId(contact.contactId.toLocaleString())
-                    ));
+                    this.fileItemService.locaFileItem(GobiiFileItem.build(scope$.gobiiExtractFilterType, ProcessType.CREATE)
+                        .setEntityType(EntityType.Contacts)
+                        .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
+                        .setCvFilterType(CvFilterType.UNKNOWN)
+                        .setExtractorItemType(ExtractorItemType.ENTITY)
+                        .setItemName(contact.email)
+                        .setItemId(contact.contactId.toLocaleString()),
+                            true);
 
 
                     // //loggedInUser
@@ -509,12 +508,10 @@ export class ExtractorRoot implements OnInit {
 
 
         let jobId: string = FileName.makeUniqueFileId();
-        this.store.dispatch(new fileItemAction.AddToExtractAction(
-            GobiiFileItem.build(arg, ProcessType.CREATE)
-                .setExtractorItemType(ExtractorItemType.JOB_ID)
-                .setItemId(jobId)
-                .setItemName(jobId)
-        ));
+        this.fileItemService.locaFileItem(GobiiFileItem.build(arg, ProcessType.CREATE)
+            .setExtractorItemType(ExtractorItemType.JOB_ID)
+            .setItemId(jobId)
+            .setItemName(jobId),true)
 
         this._fileModelTreeService
             .fileItemNotifications()

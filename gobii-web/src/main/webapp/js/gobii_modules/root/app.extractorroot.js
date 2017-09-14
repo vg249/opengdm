@@ -261,13 +261,13 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     scope$._dtoRequestServiceContact.get(new dto_request_item_contact_1.DtoRequestItemContact(dto_request_item_contact_1.ContactSearchType.BY_USERNAME, this.loggedInUser)).subscribe(function (contact) {
                         if (contact && contact.contactId && contact.contactId > 0) {
                             //loggedInUser
-                            _this.store.dispatch(new fileItemAction.AddToExtractAction(gobii_file_item_1.GobiiFileItem.build(scope$.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                            _this.fileItemService.locaFileItem(gobii_file_item_1.GobiiFileItem.build(scope$.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
                                 .setEntityType(type_entity_1.EntityType.Contacts)
                                 .setEntitySubType(type_entity_1.EntitySubType.CONTACT_SUBMITED_BY)
                                 .setCvFilterType(cv_filter_type_1.CvFilterType.UNKNOWN)
                                 .setExtractorItemType(file_model_node_1.ExtractorItemType.ENTITY)
                                 .setItemName(contact.email)
-                                .setItemId(contact.contactId.toLocaleString())));
+                                .setItemId(contact.contactId.toLocaleString()), true);
                             // //loggedInUser
                             // scope$._fileModelTreeService.put(
                             //     GobiiFileItem.build(scope$.gobiiExtractFilterType, ProcessType.CREATE)
@@ -314,10 +314,10 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this.store.dispatch(new treeNodeAction.SelectExtractType(arg));
                     // RESET FORMAT TO DEFAULT
                     var jobId = file_name_1.FileName.makeUniqueFileId();
-                    this.store.dispatch(new fileItemAction.AddToExtractAction(gobii_file_item_1.GobiiFileItem.build(arg, type_process_1.ProcessType.CREATE)
+                    this.fileItemService.locaFileItem(gobii_file_item_1.GobiiFileItem.build(arg, type_process_1.ProcessType.CREATE)
                         .setExtractorItemType(file_model_node_1.ExtractorItemType.JOB_ID)
                         .setItemId(jobId)
-                        .setItemName(jobId)));
+                        .setItemName(jobId), true);
                     this._fileModelTreeService
                         .fileItemNotifications()
                         .subscribe(function (fileItem) {
