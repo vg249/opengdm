@@ -310,13 +310,12 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this.store.dispatch(new fileItemAction.SetExtractType({ gobiiExtractFilterType: arg }));
                     // this will trigger onchange events in child components
                     this.gobiiExtractFilterType = arg;
-                    // RESET FORMAT TO DEFAULT
-                    // let formatItem: GobiiFileItem = GobiiFileItem
-                    //     .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
-                    //     .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
-                    //     .setItemId(GobiiExtractFormat[GobiiExtractFormat.HAPMAP])
-                    //     .setItemName(GobiiExtractFormat[GobiiExtractFormat[GobiiExtractFormat.HAPMAP]]);
-                    // this.fileItemService.locaFileItem(formatItem,true);
+                    var formatItem = gobii_file_item_1.GobiiFileItem
+                        .build(this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)
+                        .setExtractorItemType(file_model_node_1.ExtractorItemType.EXPORT_FORMAT)
+                        .setItemId(type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat.HAPMAP])
+                        .setItemName(type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat.HAPMAP]]);
+                    this.fileItemService.locaFileItem(formatItem, true);
                     var jobId = file_name_1.FileName.makeUniqueFileId();
                     this.fileItemService.locaFileItem(gobii_file_item_1.GobiiFileItem.build(arg, type_process_1.ProcessType.CREATE)
                         .setExtractorItemType(file_model_node_1.ExtractorItemType.JOB_ID)

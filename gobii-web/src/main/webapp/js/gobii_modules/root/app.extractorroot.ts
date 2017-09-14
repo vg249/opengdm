@@ -505,15 +505,14 @@ export class ExtractorRoot implements OnInit {
         // this will trigger onchange events in child components
         this.gobiiExtractFilterType = arg;
 
-        // RESET FORMAT TO DEFAULT
 
-        // let formatItem: GobiiFileItem = GobiiFileItem
-        //     .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
-        //     .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
-        //     .setItemId(GobiiExtractFormat[GobiiExtractFormat.HAPMAP])
-        //     .setItemName(GobiiExtractFormat[GobiiExtractFormat[GobiiExtractFormat.HAPMAP]]);
-        // this.fileItemService.locaFileItem(formatItem,true);
 
+        let formatItem: GobiiFileItem = GobiiFileItem
+            .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
+            .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
+            .setItemId(GobiiExtractFormat[GobiiExtractFormat.HAPMAP])
+            .setItemName(GobiiExtractFormat[GobiiExtractFormat[GobiiExtractFormat.HAPMAP]]);
+        this.fileItemService.locaFileItem(formatItem,true);
 
 
         let jobId: string = FileName.makeUniqueFileId();
@@ -521,6 +520,8 @@ export class ExtractorRoot implements OnInit {
             .setExtractorItemType(ExtractorItemType.JOB_ID)
             .setItemId(jobId)
             .setItemName(jobId),true)
+
+
 
         this._fileModelTreeService
             .fileItemNotifications()
@@ -624,7 +625,10 @@ export class ExtractorRoot implements OnInit {
 
         }
 
+
         this.initializeSubmissionContact();
+
+
 
         this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
             NameIdFilterParamTypes.CONTACT_PI,
