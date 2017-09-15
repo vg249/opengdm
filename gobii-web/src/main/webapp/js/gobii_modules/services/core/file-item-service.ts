@@ -125,7 +125,7 @@ export class FileItemService {
     }
 
 
-    public locaFileItem(gobiiFileItem:GobiiFileItem, selectForExtract: boolean) {
+    public locadFileItem(gobiiFileItem:GobiiFileItem, selectForExtract: boolean) {
 
 
         let loadAction: fileItemActions.LoadFileItemtAction = new fileItemActions.LoadFileItemtAction(

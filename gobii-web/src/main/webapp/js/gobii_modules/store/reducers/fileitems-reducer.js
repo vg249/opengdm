@@ -161,7 +161,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
         return returnVal;
     }
     exports_1("fileItemsReducer", fileItemsReducer);
-    var reselect_1, gobiiFileItemAction, file_model_node_1, type_entity_1, type_nameid_filter_params_1, type_process_1, entity_labels_1, type_extractor_filter_1, initialState, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getContacts, getFirstContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTerms, getFirstCvTerm, getMapsets, getFirstmapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment;
+    var reselect_1, gobiiFileItemAction, file_model_node_1, type_entity_1, type_nameid_filter_params_1, type_process_1, entity_labels_1, type_extractor_filter_1, initialState, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getContacts, getFirstContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTerms, getFirstCvTerm, getMapsets, getFirstmapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment, getSelectedFileFormat;
     return {
         setters: [
             function (reselect_1_1) {
@@ -385,6 +385,16 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                         })
                             .map(function (fi) { return fi; });
                     }
+                }
+                return returnVal;
+            }));
+            exports_1("getSelectedFileFormat", getSelectedFileFormat = reselect_1.createSelector(getFileItems, getSelectedUniqueIds, function (fileItems, selectedUniqueIds) {
+                var returnVal = "HAPMAP";
+                var formatItem = fileItems
+                    .find(function (fi) { return fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.EXPORT_FORMAT
+                    && undefined !== selectedUniqueIds.find(function (id) { return id === fi.getFileItemUniqueId(); }); });
+                if (formatItem) {
+                    returnVal = formatItem.getItemId();
                 }
                 return returnVal;
             }));

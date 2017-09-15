@@ -79,6 +79,7 @@ import {Observable} from "rxjs/Observable";
                                     <tr>
                                         <td colspan="2">
                                             <export-format
+                                                    [fileFormat$]="selectedExtractFormat$"
                                                     [gobiiExtractFilterType]="gobiiExtractFilterType"
                                                     (onFormatSelected)="handleFormatSelected($event)">
                                             </export-format>
@@ -321,6 +322,8 @@ export class ExtractorRoot implements OnInit {
     fileItemsExperiments$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getExperimentsByProject);
     fileItemsDatasets$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getDatasetsByExperiment);
 
+    selectedExtractFormat$: Observable<string> = this.store.select(fromRoot.getSelectedFileFormat);
+
 
     // ************************************************************************
 
@@ -347,6 +350,23 @@ export class ExtractorRoot implements OnInit {
                 private fileItemService: FileItemService) {
 
 
+        // this.store
+        //     .select(fromRoot.getSelectedFileItems)
+        //     .subscribe(all => {
+        //
+        //         let extractFormatItem: GobiiFileItem = all
+        //             .find(fi => fi.getExtractorItemType() === ExtractorItemType.EXPORT_FORMAT);
+        //
+        //         if (extractFormatItem) {
+        //             this.selectedExtractFormat = extractFormatItem.getItemId();
+        //         }
+        //         // else {
+        //         //     this.fileFormat = GobiiExtractFormat[GobiiExtractFormat.META_DATA_ONLY];
+        //         // }
+        //
+        //         console.log(this.selectedExtractFormat);
+        //     });
+        //
 
 
         //unfiltered requests
@@ -425,7 +445,7 @@ export class ExtractorRoot implements OnInit {
                 if (contact && contact.contactId && contact.contactId > 0) {
 
                     //loggedInUser
-                    this.fileItemService.locaFileItem(GobiiFileItem.build(scope$.gobiiExtractFilterType, ProcessType.CREATE)
+                    this.fileItemService.locadFileItem(GobiiFileItem.build(scope$.gobiiExtractFilterType, ProcessType.CREATE)
                         .setEntityType(EntityType.Contacts)
                         .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
                         .setCvFilterType(CvFilterType.UNKNOWN)
@@ -512,11 +532,11 @@ export class ExtractorRoot implements OnInit {
             .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
             .setItemId(GobiiExtractFormat[GobiiExtractFormat.HAPMAP])
             .setItemName(GobiiExtractFormat[GobiiExtractFormat[GobiiExtractFormat.HAPMAP]]);
-        this.fileItemService.locaFileItem(formatItem,true);
+        this.fileItemService.locadFileItem(formatItem,true);
 
 
         let jobId: string = FileName.makeUniqueFileId();
-        this.fileItemService.locaFileItem(GobiiFileItem.build(arg, ProcessType.CREATE)
+        this.fileItemService.locadFileItem(GobiiFileItem.build(arg, ProcessType.CREATE)
             .setExtractorItemType(ExtractorItemType.JOB_ID)
             .setItemId(jobId)
             .setItemName(jobId),true)
@@ -675,24 +695,24 @@ export class ExtractorRoot implements OnInit {
 
 // ********************************************************************
 // ********************************************** HAPMAP SELECTION
-    private selectedExtractFormat: GobiiExtractFormat = GobiiExtractFormat.HAPMAP;
+    public selectedExtractFormat: string = GobiiExtractFormat[GobiiExtractFormat.HAPMAP];
 
-    public handleFormatSelected(arg: GobiiExtractFormat) {
+    public handleFormatSelected(arg: string) {
 
-        this.selectedExtractFormat = arg;
+//        this.selectedExtractFormat = arg;
 
-        let extractFilterTypeFileItem: GobiiFileItem = GobiiFileItem
-            .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
-            .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
-            .setItemId(GobiiExtractFormat[arg])
-            .setItemName(GobiiExtractFormat[GobiiExtractFormat[arg]]);
-
-        this._fileModelTreeService.put(extractFilterTypeFileItem)
-            .subscribe(
-                null,
-                headerResponse => {
-                    this.handleResponseHeader(headerResponse)
-                });
+        // let extractFilterTypeFileItem: GobiiFileItem = GobiiFileItem
+        //     .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
+        //     .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
+        //     .setItemId(GobiiExtractFormat[arg])
+        //     .setItemName(GobiiExtractFormat[GobiiExtractFormat[arg]]);
+        //
+        // this._fileModelTreeService.put(extractFilterTypeFileItem)
+        //     .subscribe(
+        //         null,
+        //         headerResponse => {
+        //             this.handleResponseHeader(headerResponse)
+        //         });
 
         //console.log("selected contact itemId:" + arg);
     }

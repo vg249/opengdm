@@ -1,7 +1,7 @@
 System.register(["reselect", "@ngrx/store", "ngrx-store-freeze", "./fileitems-reducer", "./treenode-reducer"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var reselect_1, store_1, ngrx_store_freeze_1, store_2, fromFileItems, fromGobiiTreeNodes, reducers, developmentReducer, productionReducer, getFileItemsState, getAllFileItems, getFileItems, getSelectedFileItems, getSelectedUniqueIds, getUniqueIds, getContacts, getFirstContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTerms, getFirstCvTerm, getMapsets, getFirstMapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getProjectsByPI, getExperimentsByProject, getDatasetsByExperiment, getSelectedPiContacts, getGobiiTreeNodesState, getAllGobiiTreeNodes, getGobiiTreeNodesForExtractFilter, getSelectedGobiiTreeNodes, getSelectedGobiiTreeNodeIds, getIdsOfActivatedGobiiTreeNodes;
+    var reselect_1, store_1, ngrx_store_freeze_1, store_2, fromFileItems, fromGobiiTreeNodes, reducers, developmentReducer, productionReducer, getFileItemsState, getAllFileItems, getFileItems, getSelectedFileItems, getSelectedUniqueIds, getUniqueIds, getContacts, getFirstContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTerms, getFirstCvTerm, getMapsets, getFirstMapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getProjectsByPI, getExperimentsByProject, getDatasetsByExperiment, getSelectedPiContacts, getSelectedFileFormat, getGobiiTreeNodesState, getAllGobiiTreeNodes, getGobiiTreeNodesForExtractFilter, getSelectedGobiiTreeNodes, getSelectedGobiiTreeNodeIds, getIdsOfActivatedGobiiTreeNodes;
     return {
         setters: [
             function (reselect_1_1) {
@@ -100,6 +100,7 @@ System.register(["reselect", "@ngrx/store", "ngrx-store-freeze", "./fileitems-re
             exports_1("getExperimentsByProject", getExperimentsByProject = reselect_1.createSelector(getFileItemsState, fromFileItems.getExperimentsForSelectedProject));
             exports_1("getDatasetsByExperiment", getDatasetsByExperiment = reselect_1.createSelector(getFileItemsState, fromFileItems.getDatasetsForSelectedExperiment));
             exports_1("getSelectedPiContacts", getSelectedPiContacts = reselect_1.createSelector(getFileItemsState, fromFileItems.getSelectedPiContacts));
+            exports_1("getSelectedFileFormat", getSelectedFileFormat = reselect_1.createSelector(getFileItemsState, fromFileItems.getSelectedFileFormat));
             exports_1("getGobiiTreeNodesState", getGobiiTreeNodesState = function (state) { return state.gobiiTreeNodes; });
             exports_1("getAllGobiiTreeNodes", getAllGobiiTreeNodes = reselect_1.createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getAll));
             exports_1("getGobiiTreeNodesForExtractFilter", getGobiiTreeNodesForExtractFilter = reselect_1.createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getForSelectedFilter));

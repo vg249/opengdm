@@ -46,6 +46,7 @@ System.register(["@angular/core", "../model/name-id", "@ngrx/store", "../store/r
                     this.differ = differs.find({}).create(null);
                 } // ctor
                 NameIdListBoxComponent.prototype.ngOnInit = function () {
+                    //   this.fileItems$.subscribe( items => console.log("Items count: " + items.length));
                 };
                 NameIdListBoxComponent.prototype.handleHeaderStatus = function (headerStatusMessage) {
                     this.onError.emit(headerStatusMessage);
@@ -78,8 +79,7 @@ System.register(["@angular/core", "../model/name-id", "@ngrx/store", "../store/r
                 NameIdListBoxComponent = __decorate([
                     core_1.Component({
                         selector: 'name-id-list-box',
-                        inputs: ['fileItems$',
-                        ],
+                        inputs: ['fileItems$'],
                         outputs: ['onNameIdSelected', 'onError'],
                         template: "<select (change)=\"handleFileItemSelected($event)\">\n        <option *ngFor=\"let fileItem of fileItems$ | async\"\n                [value]=\"fileItem.getFileItemUniqueId()\"\n                [selected]=\"fileItem.getSelected()\">{{fileItem.getItemName()}}\n        </option>\n    </select>\n    " // end template
                     }),

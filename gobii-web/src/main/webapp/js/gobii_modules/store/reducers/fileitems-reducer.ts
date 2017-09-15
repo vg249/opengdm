@@ -520,6 +520,22 @@ export const getDatasetsForSelectedExperiment = createSelector(getFileItems, get
     return returnVal;
 });
 
+export const getSelectedFileFormat = createSelector(getFileItems, getSelectedUniqueIds, (fileItems, selectedUniqueIds) => {
+
+    let returnVal:string = "HAPMAP";
+
+    let formatItem: GobiiFileItem = fileItems
+        .find(fi => fi.getExtractorItemType() === ExtractorItemType.EXPORT_FORMAT
+            && undefined !== selectedUniqueIds.find(id => id === fi.getFileItemUniqueId()));
+
+    if( formatItem) {
+        returnVal = formatItem.getItemId();
+    }
+
+    return returnVal;
+
+});
+
 
 
 

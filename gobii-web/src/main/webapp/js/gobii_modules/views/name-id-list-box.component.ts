@@ -16,8 +16,7 @@ import {ExtractorItemType} from "../model/file-model-node";
 
 @Component({
     selector: 'name-id-list-box',
-    inputs: ['fileItems$',
-    ],
+    inputs: ['fileItems$'],
     outputs: ['onNameIdSelected', 'onError'],
     template: `<select (change)="handleFileItemSelected($event)">
         <option *ngFor="let fileItem of fileItems$ | async"
@@ -53,6 +52,8 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
 
 
     ngOnInit(): any {
+
+     //   this.fileItems$.subscribe( items => console.log("Items count: " + items.length));
 
     }
 

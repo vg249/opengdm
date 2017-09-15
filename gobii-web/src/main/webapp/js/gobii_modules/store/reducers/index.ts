@@ -153,7 +153,7 @@ export const getProjectsByPI = createSelector(getFileItemsState, fromFileItems.g
 export const getExperimentsByProject = createSelector(getFileItemsState, fromFileItems.getExperimentsForSelectedProject);
 export const getDatasetsByExperiment = createSelector(getFileItemsState, fromFileItems.getDatasetsForSelectedExperiment);
 export const getSelectedPiContacts = createSelector(getFileItemsState, fromFileItems.getSelectedPiContacts);
-
+export const getSelectedFileFormat = createSelector(getFileItemsState, fromFileItems.getSelectedFileFormat);
 
 export const getGobiiTreeNodesState = (state: State) => state.gobiiTreeNodes;
 export const getAllGobiiTreeNodes = createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getAll);
@@ -161,6 +161,8 @@ export const getGobiiTreeNodesForExtractFilter = createSelector(getGobiiTreeNode
 export const getSelectedGobiiTreeNodes = createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getSelected);
 export const getSelectedGobiiTreeNodeIds = createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getGobiiTreeItemIds);
 export const getIdsOfActivatedGobiiTreeNodes = createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getIdsOfActivated);
+
+
 
 /**
  * Just like with the books selectors, we also have to compose the search

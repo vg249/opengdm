@@ -121,7 +121,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     var nameIdRequestParamsFromType = this.nameIdRequestParams.get(nameIdFilterParamTypes);
                     this.loadNameIdsToFileItems(gobiiExtractFilterType, nameIdRequestParamsFromType, filterValue);
                 };
-                FileItemService.prototype.locaFileItem = function (gobiiFileItem, selectForExtract) {
+                FileItemService.prototype.locadFileItem = function (gobiiFileItem, selectForExtract) {
                     var loadAction = new fileItemActions.LoadFileItemtAction({
                         gobiiFileItem: gobiiFileItem,
                         selectForExtract: selectForExtract

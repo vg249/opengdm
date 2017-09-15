@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/type-extract-format", "../model/gobii-file-item", "../model/type-process", "../model/file-model-node", "../model/type-extractor-filter", "../store/reducers", "@ngrx/store", "../services/core/file-item-service"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/type-extract-format", "../model/gobii-file-item", "../model/type-process", "../model/file-model-node", "../model/type-extractor-filter", "@ngrx/store", "../services/core/file-item-service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/type-extract-format", "../model/gobi
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_extract_format_1, gobii_file_item_1, type_process_1, file_model_node_1, type_extractor_filter_1, fromRoot, store_1, file_item_service_1, ExportFormatComponent;
+    var core_1, type_extract_format_1, gobii_file_item_1, type_process_1, file_model_node_1, type_extractor_filter_1, store_1, file_item_service_1, ExportFormatComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -31,9 +31,6 @@ System.register(["@angular/core", "../model/type-extract-format", "../model/gobi
             function (type_extractor_filter_1_1) {
                 type_extractor_filter_1 = type_extractor_filter_1_1;
             },
-            function (fromRoot_1) {
-                fromRoot = fromRoot_1;
-            },
             function (store_1_1) {
                 store_1 = store_1_1;
             },
@@ -46,28 +43,14 @@ System.register(["@angular/core", "../model/type-extract-format", "../model/gobi
                 function ExportFormatComponent(store, fileItemService) {
                     this.store = store;
                     this.fileItemService = fileItemService;
-                    this.fileFormat = "HAPMAP";
                     this.onFormatSelected = new core_1.EventEmitter();
                     this.onError = new core_1.EventEmitter();
-                    this.selectedExtractFormat = type_extract_format_1.GobiiExtractFormat.HAPMAP;
                 } // ctor
                 // private nameIdList: NameId[];
                 // private selectedNameId: string = null;
                 ExportFormatComponent.prototype.ngOnInit = function () {
-                    var _this = this;
-                    this.updateTreeService(type_extract_format_1.GobiiExtractFormat.HAPMAP);
-                    this.store
-                        .select(fromRoot.getSelectedFileItems)
-                        .subscribe(function (all) {
-                        var extractFormatItem = all
-                            .find(function (fi) { return fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.EXPORT_FORMAT; });
-                        if (extractFormatItem) {
-                            _this.fileFormat = extractFormatItem.getItemName();
-                        }
-                        else {
-                            _this.fileFormat = type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat.HAPMAP];
-                        }
-                    });
+                    this.fileFormat$.subscribe(function (format) { return console.log(format); });
+                    //        this.updateTreeService(GobiiExtractFormat.HAPMAP);
                     // in the current version, this doesn't work: each component in the page
                     // is initialized once at a time. Thus, even though the tree is being built
                     // built in the tree component's constructor, nginit() here still is triggered
@@ -114,29 +97,22 @@ System.register(["@angular/core", "../model/type-extract-format", "../model/gobi
                     //this.setDefault();
                 };
                 ExportFormatComponent.prototype.setDefault = function () {
-                    this.updateTreeService(type_extract_format_1.GobiiExtractFormat.HAPMAP);
-                    this.fileFormat = "HAPMAP";
+                    //this.updateTreeService(GobiiExtractFormat.HAPMAP);
+                    //this.fileFormat = "FLAPJACK";
                 };
                 ExportFormatComponent.prototype.handleResponseHeader = function (header) {
                     this.onError.emit(header);
                 };
                 ExportFormatComponent.prototype.handleFormatSelected = function (arg) {
-                    if (arg.srcElement.checked) {
-                        var radioValue = arg.srcElement.value;
-                        this.selectedExtractFormat = type_extract_format_1.GobiiExtractFormat[radioValue];
-                        this.updateTreeService(this.selectedExtractFormat);
-                    }
-                    var foo = arg;
-                    //this.onContactSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
+                    this.updateTreeService(arg);
                 };
                 ExportFormatComponent.prototype.updateTreeService = function (arg) {
-                    this.selectedExtractFormat = arg;
                     var formatItem = gobii_file_item_1.GobiiFileItem
                         .build(this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)
                         .setExtractorItemType(file_model_node_1.ExtractorItemType.EXPORT_FORMAT)
-                        .setItemId(type_extract_format_1.GobiiExtractFormat[arg])
+                        .setItemId(arg)
                         .setItemName(type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat[arg]]);
-                    this.fileItemService.locaFileItem(formatItem, true);
+                    this.fileItemService.locadFileItem(formatItem, true);
                     // this._fileModelTreeService.put(formatItem)
                     //     .subscribe(
                     //         null,
@@ -171,18 +147,29 @@ System.register(["@angular/core", "../model/type-extract-format", "../model/gobi
                             else if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
                                 this.metaDataExtractname = "Sample" + labelSuffix;
                             }
-                            this.setDefault(); // dispatches new format
+                            //                this.setDefault(); // dispatches new format
                         } // if we have a new filter type
                     } // if filter type changed
+                    // if (changes['fileFormat$']
+                    //     && ( changes['fileFormat$'].currentValue != null )
+                    //     && ( changes['fileFormat$'].currentValue != undefined )) {
+                    //
+                    //     if (changes['fileFormat$'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
+                    //
+                    //         console.log("Asynch:" + this.fileFormat$)
+                    //
+                    //     }
+                    // }
                 }; // ngonChanges
                 ExportFormatComponent = __decorate([
                     core_1.Component({
                         selector: 'export-format',
                         outputs: ['onFormatSelected', 'onError'],
-                        inputs: ['gobiiExtractFilterType'],
+                        inputs: ['fileFormat$',
+                            'gobiiExtractFilterType'],
                         //directives: [RADIO_GROUP_DIRECTIVES]
                         //  directives: [Alert]
-                        template: "\n        <form>\n            <label class=\"the-legend\">Select Format:&nbsp;</label>\n            <BR><input type=\"radio\" (change)=\"handleFormatSelected($event)\" [(ngModel)]=\"fileFormat\" name=\"fileFormat\"\n                       value=\"HAPMAP\" checked=\"checked\">\n            <label for=\"HAPMAP\" class=\"the-legend\">Hapmap</label>\n            <BR><input type=\"radio\" (change)=\"handleFormatSelected($event)\" [(ngModel)]=\"fileFormat\" name=\"fileFormat\"\n                       value=\"FLAPJACK\">\n            <label for=\"FLAPJACK\" class=\"the-legend\">Flapjack</label>\n            <BR><input type=\"radio\" (change)=\"handleFormatSelected($event)\" [(ngModel)]=\"fileFormat\" name=\"fileFormat\"\n                       value=\"META_DATA_ONLY\">\n            <label for=\"META_DATA_ONLY\" class=\"the-legend\">{{metaDataExtractname}}</label>\n        </form>" // end template
+                        template: "\n        <form>\n            <label class=\"the-legend\">Select Format:&nbsp;</label>\n            <BR><input type=\"radio\"\n                       (ngModelChange)=\"handleFormatSelected($event)\"\n                       [ngModel]=\"fileFormat$  | async\"\n                       name=\"fileFormat\"\n                       value=\"HAPMAP\">\n            <label for=\"HAPMAP\" class=\"the-legend\">Hapmap</label>\n            <BR><input type=\"radio\"\n                       (ngModelChange)=\"handleFormatSelected($event)\"\n                       [ngModel]=\"fileFormat$  | async\"\n                       name=\"fileFormat\"\n                       value=\"FLAPJACK\">\n            <label for=\"FLAPJACK\" class=\"the-legend\">Flapjack</label>\n            <BR><input type=\"radio\"\n                       (ngModelChange)=\"handleFormatSelected($event)\"\n                       [ngModel]=\"fileFormat$  | async\"\n                       name=\"fileFormat\"\n                       value=\"META_DATA_ONLY\">\n            <label for=\"META_DATA_ONLY\" class=\"the-legend\">{{metaDataExtractname}}</label>\n        </form>" // end template
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
                         file_item_service_1.FileItemService])
