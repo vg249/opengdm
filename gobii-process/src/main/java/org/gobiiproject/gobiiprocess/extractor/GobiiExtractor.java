@@ -150,10 +150,10 @@ public class GobiiExtractor {
 		String firstCrop = list.get(0).getGobiiCropType();
 		//Job Id is the 'name' part of the job file  /asd/de/name.json
 		String filename=new File(instructionFile).getName();
-		String jobId = filename.substring(0,filename.lastIndexOf('.'));
+		String jobFileName = filename.substring(0,filename.lastIndexOf('.'));
 		JobStatus jobStatus=null;
 		try {
-			jobStatus = new JobStatus(configuration, firstCrop, jobId);
+			jobStatus = new JobStatus(configuration, firstCrop, jobFileName);
 		} catch(Exception e){
 			ErrorLogger.logError("GobiiFileReader", "Error Checking Status",e);
 		}
@@ -197,7 +197,7 @@ public class GobiiExtractor {
 				jobStatus.set(JobDTO.CV_PROGRESSSTATUS_METADATAEXTRACT,"Extracting Metadata");
 				for (GobiiDataSetExtract extract : inst.getDataSetExtracts()) {
 
-					String jobName = getJobName(crop, extract);
+					String jobReadableIdentifier = getJobReadableIdentifier(crop, extract);
 					String jobUser=inst.getContactEmail();
 					pm.setUser(jobUser);
 
@@ -447,7 +447,7 @@ public class GobiiExtractor {
 								ErrorLogger.logDebug("GobiiExtractor","Executing FlapJack Genotype file Generation");
 								success &= FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, tempFolder, genoOutFile,errorFile);
 								getCounts(success, pm, markerFile, sampleFile);
-								pm.setBody(jobName,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
+								pm.setBody(jobReadableIdentifier,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
 								mailInterface.send(pm);
 								jobStatus.set(JobDTO.CV_PROGRESSSTATUS_COMPLETED,"Extract Completed 8uccessfully");
 								break;
@@ -458,26 +458,26 @@ public class GobiiExtractor {
 								ErrorLogger.logDebug("GobiiExtractor", "Executing Hapmap Generation");
 								success &= hapmapTransformer.generateFile(markerFile, sampleFile, extendedMarkerFile, genoFile, hapmapOutFile, errorFile);
 								getCounts(success, pm, markerFile, sampleFile);
-								pm.setBody(jobName,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
+								pm.setBody(jobReadableIdentifier,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
 								mailInterface.send(pm);
 								jobStatus.set(JobDTO.CV_PROGRESSSTATUS_COMPLETED,"Extract Completed 8uccessfully");
 								break;
 							case META_DATA:
-								pm.setBody(jobName,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
+								pm.setBody(jobReadableIdentifier,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
 								mailInterface.send(pm);
-								jobStatus.set(JobDTO.CV_PROGRESSSTATUS_COMPLETED,"Extract Completed 8uccessfully");
+								jobStatus.set(JobDTO.CV_PROGRESSSTATUS_COMPLETED,"Successful Data Extract");
 								break;
 							default:
 								ErrorLogger.logError("Extractor", "Unknown Extract Type " + extract.getGobiiFileType());
-								pm.setBody(jobName,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
+								pm.setBody(jobReadableIdentifier,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
                                 mailInterface.send(pm);
-								jobStatus.setError("Extract Unsuccessful");
+								jobStatus.setError("Unsuccessful Data Extract");
 						}
                     } else { //We had no genotype file, so we aborted
                         ErrorLogger.logError("GobiiExtractor", "No genetic data extracted. Extract failed.");
-                        pm.setBody(jobName, extractType, SimpleTimer.stop("Extract"), ErrorLogger.getFirstErrorReason(), ErrorLogger.success(), ErrorLogger.getAllErrorStringsHTML());
+                        pm.setBody(jobReadableIdentifier, extractType, SimpleTimer.stop("Extract"), ErrorLogger.getFirstErrorReason(), ErrorLogger.success(), ErrorLogger.getAllErrorStringsHTML());
                         mailInterface.send(pm);
-						jobStatus.setError("Extract Unsuccessful");
+						jobStatus.setError("Unsuccessful Data Extract");
                     }
 
                     //Clean Temporary Files
@@ -501,11 +501,11 @@ public class GobiiExtractor {
 				HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
 			}catch(Exception e){
 				//TODO - make better email here
-					ErrorLogger.logError("GobiiExtractor","Uncaught fatal error found in program. Contact a programmer.",e);
+					ErrorLogger.logError("GobiiExtractor","Uncaught fatal error found in program.",e);
 					HelperFunctions.sendEmail("Hi.\n\n"+
 
 							"I'm sorry, but your extract failed for reasons beyond your control.\n"+
-							"I'm going to dump a message of the error here so a programmer can determine why.\n\n\n"+
+							"I'm going to dump a message of the error here.\n\n\n"+
 							org.apache.commons.lang.exception.ExceptionUtils.getStackTrace(e), null, false, null, configuration, inst.getContactEmail());
 				jobStatus.setError(e.getMessage());
 			}
@@ -584,32 +584,6 @@ public class GobiiExtractor {
 		ErrorLogger.logInfo("QC", "KDC Context Path: " + configuration.getKDCConfig().getContextPath());
 		ErrorLogger.logInfo("QC", "KDC Port: " + configuration.getKDCConfig().getPort());
 		ErrorLogger.logInfo("QC", "KDC Active: " + configuration.getKDCConfig().isActive());
-//		QCInstructionsDTO qcInstructionsDTOToSend = new QCInstructionsDTO();
-//		qcInstructionsDTOToSend.setContactId(inst.getContactId());
-//		qcInstructionsDTOToSend.setDataFileDirectory(configuration.getProcessingPath(crop, GobiiFileProcessDir.QC_OUTPUT));
-//		qcInstructionsDTOToSend.setDataFileName(new StringBuilder("qc_").append(DateUtils.makeDateIdString()).toString());
-//		qcInstructionsDTOToSend.setDatasetId(datasetId);
-//		// To create the QC instructions file for the Gobii web services independently of any QC status
-//		qcInstructionsDTOToSend.setGobiiJobStatus(GobiiJobStatus.COMPLETED);
-//		// According to Liz, there are several quality files so this method is no longer necessary
-//		qcInstructionsDTOToSend.setQualityFileName("");
-//		GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, crop, GobiiAutoLoginType.USER_RUN_AS);
-//		if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
-//            ErrorLogger.logError("QC", "Unable to log in with user: " + GobiiAutoLoginType.USER_RUN_AS.toString());
-//            return;
-//        }
-//        else {
-//			String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
-//			gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
-//			PayloadEnvelope<QCInstructionsDTO> payloadEnvelope = new PayloadEnvelope<>(qcInstructionsDTOToSend, GobiiProcessType.CREATE);
-//			GobiiEnvelopeRestResource<QCInstructionsDTO> restResourceForPost = new GobiiEnvelopeRestResource<>(gobiiUriFactory
-//					.resourceColl(GobiiServiceRequestId.URL_FILE_QC_INSTRUCTIONS));
-//			PayloadEnvelope<QCInstructionsDTO> qcInstructionFileDTOResponseEnvelope = restResourceForPost.post(QCInstructionsDTO.class,	payloadEnvelope);
-//			if (qcInstructionFileDTOResponseEnvelope != null) {
-//            	ErrorLogger.logInfo("QC", "QC Instructions Request Sent");
-//        	} else {
-//            	ErrorLogger.logError("QC", "Error Sending QC Instructions Request");
-//        	}
 			ServerBase serverBase = new ServerBase(configuration.getKDCConfig().getHost(),
 					configuration.getKDCConfig().getContextPath(),
 					configuration.getKDCConfig().getPort(),
@@ -810,7 +784,7 @@ public class GobiiExtractor {
      * @param extract
      * @return
      */
-	private static String getJobName(String cropName, GobiiDataSetExtract extract) {
+	private static String getJobReadableIdentifier(String cropName, GobiiDataSetExtract extract) {
 		//@Siva get confirmation on lowercase crop name?
 		cropName=cropName.charAt(0)+cropName.substring(1).toLowerCase();
 		String jobName="[GOBII - Extractor]: " + cropName + " - extraction of \"" + extract.getGobiiFileType() + "\"";

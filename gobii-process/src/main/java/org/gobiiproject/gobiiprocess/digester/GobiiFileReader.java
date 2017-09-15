@@ -163,10 +163,10 @@ public class GobiiFileReader {
 
 		//Job Id is the 'name' part of the job file  /asd/de/name.json
 		String filename=new File(instructionFile).getName();
-		String jobId = filename.substring(0,filename.lastIndexOf('.'));
+		String jobFileName = filename.substring(0,filename.lastIndexOf('.'));
 		JobStatus jobStatus=null;
 		try {
-			jobStatus = new JobStatus(configuration, crop, jobId);
+			jobStatus = new JobStatus(configuration, crop, jobFileName);
 		} catch(Exception e){
 			ErrorLogger.logError("GobiiFileReader", "Error Checking Status",e);
 		}
@@ -232,7 +232,7 @@ public class GobiiFileReader {
 
 
 		//TODO: HACK - Job's name is
-		String jobName = getJobName(crop,list);
+		String jobName = getJobReadableIdentifier(crop,list);
         String jobUser = zero.getContactEmail();
 		pm.setUser(jobUser);
 
@@ -475,23 +475,23 @@ public class GobiiFileReader {
                 rmIfExist(variantFile.getPath());
             }
             if (success && ErrorLogger.success()) {
-                ErrorLogger.logInfo("Digester", "Successfully Uploaded files");
+                ErrorLogger.logInfo("Digester", "Successful Data Upload");
                 if(sendQc){
 					sendQCExtract(configuration, crop);
 					jobStatus.set(JobDTO.CV_PROGRESSSTATUS_QCPROCESSING,"Processing QC Job");
 				}
                 else{
-                	jobStatus.set(JobDTO.CV_PROGRESSSTATUS_COMPLETED,"Successfully Uploaded Files");
+                	jobStatus.set(JobDTO.CV_PROGRESSSTATUS_COMPLETED,"Successful Data Load");
 				}
 
             } else { //endIf(success)
-                ErrorLogger.logWarning("Digester", "Unsuccessfully Uploaded files");
+                ErrorLogger.logWarning("Digester", "Unsuccessful Upload");
 				sendQc=false;//Files failed = bad.
 				jobStatus.setError("Unsuccessfully Uploaded Files");
             }
         }//endif Digest section
 		else{
-			ErrorLogger.logWarning("Digester","Unsuccessfully Generated files");
+			ErrorLogger.logWarning("Digester","Aborted - Unsuccessfully Generated Files");
 			jobStatus.setError("Unsuccessfully Generated Files - No Data Upload");
 		}
 
@@ -686,7 +686,7 @@ public class GobiiFileReader {
      * @param list     List of instructions to read from
      * @return a human readable name for the job
      */
-    private static String getJobName(String cropName, List<GobiiLoaderInstruction> list) {
+    private static String getJobReadableIdentifier(String cropName, List<GobiiLoaderInstruction> list) {
         cropName = cropName.charAt(0) + cropName.substring(1).toLowerCase();// MAIZE -> Maize
         String jobName = "[GOBII - Loader]: " + cropName + " - digest of \"" + getSourceFileName(list.get(0).getGobiiFile()) + "\"";
         return jobName;

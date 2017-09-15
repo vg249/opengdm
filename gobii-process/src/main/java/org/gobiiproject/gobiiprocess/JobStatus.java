@@ -29,10 +29,10 @@ public class JobStatus {
      * Creates a new job object based on information about the job already in progress.
      * @param config
      * @param cropName
-     * @param jobId the name of the instruction file, minus the .json suffix
+     * @param jobName the name of the instruction file, minus the .json suffix
      */
     GobiiUriFactory uriFactory;
-    String jobId;
+    String jobName;
 	JobDTO lastStatus;
 	/**List of valid statuses. Update as appropriate. Stops 'random argument' assignment, even though Progress Status
 	 * has been stringly typed.
@@ -50,8 +50,8 @@ public class JobStatus {
 			JobDTO.CV_PROGRESSSTATUS_METADATAEXTRACT,
 			JobDTO.CV_PROGRESSSTATUS_FINALASSEMBLY
 	));
-    public JobStatus(ConfigSettings config, String cropName, String jobId) throws Exception {
-		this.jobId=jobId;
+    public JobStatus(ConfigSettings config, String cropName, String jobName) throws Exception {
+		this.jobName=jobName;
 		// set up authentication and so forth
 		// you'll need to get the current from the instruction file
 		GobiiClientContext context = GobiiClientContext.getInstance(config, cropName, GobiiAutoLoginType.USER_RUN_AS);
@@ -65,9 +65,9 @@ public class JobStatus {
             try{
                 RestUri restUri=uriFactory
                         .resourceByUriIdParam(GobiiServiceRequestId.URL_JOB);
-                restUri.setParamValue("id", jobId);
-            GobiiEnvelopeRestResource<JobDTO> gobiiEnvelopeRestResourceForDatasets = new GobiiEnvelopeRestResource<>(restUri);
-            PayloadEnvelope<JobDTO> resultEnvelope = gobiiEnvelopeRestResourceForDatasets
+                restUri.setParamValue("id", jobName);
+            GobiiEnvelopeRestResource<JobDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
+            PayloadEnvelope<JobDTO> resultEnvelope = gobiiEnvelopeRestResource
                     .get(JobDTO.class);
 
 				JobDTO dataSetResponse;
@@ -84,9 +84,11 @@ public class JobStatus {
                 dataSetResponse.setMessage(message);
                 dataSetResponse.setStatus(status);
 
-                resultEnvelope = gobiiEnvelopeRestResourceForDatasets
+                resultEnvelope = gobiiEnvelopeRestResource
                         .put(JobDTO.class, new PayloadEnvelope<>(dataSetResponse, GobiiProcessType.UPDATE));
 
+                //Set 'lastStatus' to the current status
+				lastStatus=dataSetResponse;
             // if you didn't succeed, do not pass go, but do log errors to your log file
             if (!resultEnvelope.getHeader().getStatus().isSucceeded()) {
                 logError("Digester", "Data set response response errors");
