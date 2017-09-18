@@ -32,7 +32,6 @@ public class JobServiceImpl implements JobService {
 
         JobDTO returnVal;
 
-
         returnVal = dtoMapJob.createJob(jobDTO);
 
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);

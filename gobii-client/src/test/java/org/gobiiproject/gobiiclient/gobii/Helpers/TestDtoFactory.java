@@ -387,6 +387,7 @@ public class TestDtoFactory {
         newJobDto.setStatus(JobDTO.CV_PROGRESSSTATUS_INPROGRESS);
         newJobDto.setMessage("dummy message");
         newJobDto.setSubmittedBy(1);
+        newJobDto.setSubmittedDate(new Date());
 
         return newJobDto;
 
