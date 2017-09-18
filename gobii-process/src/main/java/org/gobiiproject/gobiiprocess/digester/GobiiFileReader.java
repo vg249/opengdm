@@ -417,7 +417,7 @@ public class GobiiFileReader {
 
 		}
 
-		if(success){
+		if(success && ErrorLogger.success()){
 			jobStatus.set(JobDTO.CV_PROGRESSSTATUS_METADATALOAD,"Loading Metadata");
 			errorPath=getLogName(zero, gobiiCropConfig, crop, "IFLs");
 			String pathToIFL=loaderScriptPath+"postgres/gobii_ifl/gobii_ifl.py";
