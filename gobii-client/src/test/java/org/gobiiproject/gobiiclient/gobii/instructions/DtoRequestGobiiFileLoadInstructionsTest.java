@@ -18,6 +18,7 @@ import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestDataSetTest;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
@@ -256,6 +257,26 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                         .getName().equals(instructionOneColumnOneName)
         );
 
+        // ************** VERIFY THAT A JOB RECORD WAS CREATED FOR OUR INSTRUCTION
+        String jobName = loaderInstructionFilesDTOretrieveResponse.getInstructionFileName();
+        RestUri restUriForJob = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_JOB)
+                .addUriParam("jobName", jobName);
+        GobiiEnvelopeRestResource<JobDTO> gobiiEnvelopeRestResourceForJob = new GobiiEnvelopeRestResource<>(restUriForJob);
+        PayloadEnvelope<JobDTO> resultEnvelopeForJob = gobiiEnvelopeRestResourceForJob
+                .get(JobDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForJob.getHeader()));
+
+        Assert.assertTrue("No job record was created for job " + jobName,
+                resultEnvelopeForJob.getPayload().getData().size() == 1);
+
+        JobDTO submittedJobDto = resultEnvelopeForJob.getPayload().getData().get(0);
+        Assert.assertTrue("The job name of the retrieved DTO for the submitted job does not match the requested job name" + jobName,
+                submittedJobDto.getJobName().equals(jobName));
+
+
         // ************** VERIFY THAT WE CAN MEANINGFULLY TEST FOR NON EXISTENT DIRECTORIES
         String newInstructionFileName = "testapp_" + DateUtils.makeDateIdString();
         loaderInstructionFilesDTOToSend.setInstructionFileName(newInstructionFileName);
@@ -381,7 +402,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
     }
 
     @Test
-    public void testInvalidExperimentForDataset () throws Exception {
+    public void testInvalidExperimentForDataset() throws Exception {
 
         LoaderInstructionFilesDTO loaderInstructionFilesDTOToSend = new LoaderInstructionFilesDTO();
 
@@ -400,7 +421,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         String instructionOneTableName = "test_table1";
 
         //get existing dataset
-        Integer dataSetId =  (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS));
+        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS));
 
         RestUri datasetsUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -459,7 +480,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<LoaderInstructionFilesDTO> gobiiEnvelopeRestResourceForInstruction = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.gobiiUriFactory
-                                .resourceColl(GobiiServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
+                .resourceColl(GobiiServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
 
         PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResourceForInstruction.post(LoaderInstructionFilesDTO.class,
                 payloadEnvelope);
@@ -468,16 +489,16 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         Assert.assertTrue("The error message should say that the experiment is invalid for the given dataset",
                 loaderInstructionFileDTOResponseEnvelope.getHeader()
-                .getStatus()
-                .getStatusMessages()
-                .stream()
-                .filter(m -> m.getMessage().toLowerCase().contains("the specified experiment in the dataset is incorrect"))
-                .count()
-                > 0);
+                        .getStatus()
+                        .getStatusMessages()
+                        .stream()
+                        .filter(m -> m.getMessage().toLowerCase().contains("the specified experiment in the dataset is incorrect"))
+                        .count()
+                        > 0);
     }
 
     @Test
-    public void testInvalidProjectForExperiment () throws Exception {
+    public void testInvalidProjectForExperiment() throws Exception {
 
 
         LoaderInstructionFilesDTO loaderInstructionFilesDTOToSend = new LoaderInstructionFilesDTO();
@@ -490,14 +511,14 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         String digesterOutputDirectory =
                 GobiiClientContext.getInstance(null, false)
-                    .getFileLocationOfCurrenCrop(GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES);
+                        .getFileLocationOfCurrenCrop(GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES);
 
         loaderInstructionFilesDTOToSend.setInstructionFileName(instructionFileName);
 
         String gobiiCropType = GobiiClientContext.getInstance(null, false).getCurrentClientCropType();
 
         //get existing dataset
-        Integer dataSetId =  (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS));
+        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS));
 
         RestUri datasetsUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -572,7 +593,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<LoaderInstructionFilesDTO> gobiiEnvelopeRestResourceForInstruction = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.gobiiUriFactory
-                                .resourceColl(GobiiServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
+                .resourceColl(GobiiServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
 
         PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResourceForInstruction.post(LoaderInstructionFilesDTO.class,
                 payloadEnvelope);
@@ -581,13 +602,13 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
 
         Assert.assertTrue("The error message should say that the project is invalid for the given experiment",
-            loaderInstructionFileDTOResponseEnvelope.getHeader()
-                    .getStatus()
-                    .getStatusMessages()
-                    .stream()
-                    .filter(m -> m.getMessage().toLowerCase().contains("the specified project in the experiment is incorrect"))
-                    .count()
-                    > 0);
+                loaderInstructionFileDTOResponseEnvelope.getHeader()
+                        .getStatus()
+                        .getStatusMessages()
+                        .stream()
+                        .filter(m -> m.getMessage().toLowerCase().contains("the specified project in the experiment is incorrect"))
+                        .count()
+                        > 0);
 
     }
 
@@ -611,7 +632,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         String instructionThreeTableName = "test_table3";
 
         //get existing dataset
-        Integer dataSetId =  (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS));
+        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS));
 
         RestUri datasetsUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -678,19 +699,19 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         Assert.assertNotEquals(null, loaderInstructionFileDTOResponseEnvelope);
 
         Assert.assertTrue("The error message should say that the data type is invalid for the given dataset",
-            loaderInstructionFileDTOResponseEnvelope.getHeader()
-                    .getStatus()
-                    .getStatusMessages()
-                    .stream()
-                    .filter(m -> m.getMessage().toLowerCase().contains("the specified data type in the dataset is incorrect"))
-                    .count()
-                    > 0);
+                loaderInstructionFileDTOResponseEnvelope.getHeader()
+                        .getStatus()
+                        .getStatusMessages()
+                        .stream()
+                        .filter(m -> m.getMessage().toLowerCase().contains("the specified data type in the dataset is incorrect"))
+                        .count()
+                        > 0);
 
 
     }
 
     @Test
-    public void testInvalidPlatformForExperiment () throws Exception {
+    public void testInvalidPlatformForExperiment() throws Exception {
 
 
         LoaderInstructionFilesDTO loaderInstructionFilesDTOToSend = new LoaderInstructionFilesDTO();
@@ -710,7 +731,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         String gobiiCropType = GobiiClientContext.getInstance(null, false).getCurrentClientCropType();
 
         //get existing dataset
-        Integer dataSetId =  (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS));
+        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS));
 
         RestUri datasetsUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -806,13 +827,13 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
 
         Assert.assertTrue("The error message should say that the platform is invalid for the given experiment",
-            loaderInstructionFileDTOResponseEnvelope.getHeader()
-                    .getStatus()
-                    .getStatusMessages()
-                    .stream()
-                    .filter(m -> m.getMessage().toLowerCase().contains("the specified platform in the experiment is incorrect"))
-                    .count()
-                    > 0);
+                loaderInstructionFileDTOResponseEnvelope.getHeader()
+                        .getStatus()
+                        .getStatusMessages()
+                        .stream()
+                        .filter(m -> m.getMessage().toLowerCase().contains("the specified platform in the experiment is incorrect"))
+                        .count()
+                        > 0);
 
     }
 
