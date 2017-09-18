@@ -14,7 +14,9 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkColl;
+import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
+import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestContactTest;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestDataSetTest;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
@@ -66,13 +68,16 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         loaderInstructionFilesDTOToSend.setInstructionFileName(instructionFileName);
 
         String instructionOneTableName = "foo_table";
-        Integer instructionOneDataSetId = 112;
+        Integer instructionOneDataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS);
+        Integer instructionOneContactId = (new GlobalPkColl<DtoCrudRequestContactTest>()).getAPkVal(DtoCrudRequestContactTest.class, GobiiEntityNameType.CONTACTS);
         String gobiiCropType = GobiiClientContext.getInstance(null, false).getCurrentClientCropType();
 
         GobiiLoaderInstruction gobiiLoaderInstructionOne = new GobiiLoaderInstruction();
         gobiiLoaderInstructionOne.setTable(instructionOneTableName);
         gobiiLoaderInstructionOne.setDataSetId(instructionOneDataSetId);
+        gobiiLoaderInstructionOne.setContactId(instructionOneContactId);
         gobiiLoaderInstructionOne.setGobiiCropType(gobiiCropType);
+        gobiiLoaderInstructionOne.setTable("matrix"); // need this for job record creation test
 
 
         // column one
