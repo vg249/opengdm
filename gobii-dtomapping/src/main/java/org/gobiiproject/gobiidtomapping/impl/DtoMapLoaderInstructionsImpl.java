@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.filesystem.access.InstructionFileAccess;
 import org.gobiiproject.gobiidtomapping.*;
@@ -17,7 +18,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Phil on 4/12/2016.
@@ -42,6 +45,9 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
     @Autowired
     DtoMapProtocol dtoMapProtocol;
+
+    @Autowired
+    private DtoMapJob dtoMapJob = null;
 
     private InstructionFileAccess<List<GobiiLoaderInstruction>> instructionFileAccess = new InstructionFileAccess<>(GobiiLoaderInstruction.class);
 
@@ -244,8 +250,99 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
             } // iterate instructions/files
 
-            instructionFileAccess.writeInstructions(instructionFileFqpn,
-                    returnVal.getGobiiLoaderInstructions());
+
+            Boolean isMatrixLoad = loaderInstructionFilesDTO
+                    .getGobiiLoaderInstructions()
+                    .stream()
+                    .filter(lfi -> StringUtils.isNotEmpty(lfi.getTable()) && lfi.getTable().equals("matrix"))
+                    .collect(Collectors.toList())
+                    .size() > 0;
+
+            if (isMatrixLoad) {
+
+                Integer dataSetId = null;
+                for (int idx = 0;
+                     dataSetId == null &&
+                             idx < loaderInstructionFilesDTO
+                                     .getGobiiLoaderInstructions().size();
+                     idx++) {
+
+                    GobiiLoaderInstruction currentInstruction = loaderInstructionFilesDTO
+                            .getGobiiLoaderInstructions().get(idx);
+
+
+                    if( currentInstruction.getDataSetId() != null ) {
+                        dataSetId = currentInstruction.getDataSetId();
+                    } else {
+                        if(currentInstruction.getDataSet() != null && currentInstruction.getDataSet().getId()!= null ) {
+                            dataSetId = currentInstruction.getDataSetId();
+                        }
+                    }
+                }
+
+
+                Integer contactid = null;
+                for (int idx = 0;
+                     contactid == null &&
+                             idx < loaderInstructionFilesDTO
+                                     .getGobiiLoaderInstructions().size();
+                     idx++) {
+
+                    GobiiLoaderInstruction currentInstruction = loaderInstructionFilesDTO
+                            .getGobiiLoaderInstructions().get(idx);
+
+
+                    if( currentInstruction.getContactId() != null ) {
+                        contactid = currentInstruction.getContactId();
+                    }
+                }
+
+
+
+                if( dataSetId != null && contactid != null ) {
+
+
+                    //check for duplicate job name and provide meaningful error message
+                    JobDTO jobDTOExisting = dtoMapJob.getJobDetailsByJobName(loaderInstructionFilesDTO.getInstructionFileName());
+                    if( jobDTOExisting.getJobId() == null || jobDTOExisting.getJobId() <= 0 ) {
+
+
+                        JobDTO jobDTONew = new JobDTO();
+
+
+                        jobDTONew.setJobName(loaderInstructionFilesDTO.getInstructionFileName());
+                        jobDTONew.setDatasetId(dataSetId);
+                        jobDTONew.setSubmittedBy(contactid);
+                        jobDTONew.setMessage("Instruction file written by web services");
+                        jobDTONew.setStatus(JobDTO.CV_PROGRESSSTATUS_PENDING);
+                        jobDTONew.setPayloadType(JobDTO.CV_PAYLOADTYPE_MATRIX);
+                        jobDTONew.setType(JobDTO.CV_JOBTYPE_LOAD);
+                        jobDTONew.setSubmittedDate(new Date());
+
+                        dtoMapJob.createJob(jobDTONew);
+
+                        instructionFileAccess.writeInstructions(instructionFileFqpn,
+                                returnVal.getGobiiLoaderInstructions());
+
+                    } else {
+
+                        throw new GobiiException("The specified job already exists: " + loaderInstructionFilesDTO.getInstructionFileName() );
+                        
+                    }// if-else a job with that name already exists
+                } else {
+
+                    String message = "Some required values are missing from the matrix load for job " + loaderInstructionFilesDTO.getInstructionFileName() + ": ";
+                    if( dataSetId == null ) {
+                        message += "datasetId; ";
+                    }
+
+                    if( contactid == null ) {
+                        message += " contactId;";
+                    }
+                    throw new GobiiException(message);
+                }
+            }
+
 
 
         } catch (GobiiException e) {

@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.gobiiproject.gobiidao.resultset.access.RsJobDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
@@ -116,27 +117,38 @@ public class DtoMapJobImpl implements DtoMapJob {
 
         }
 
+
         Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
         Integer jobId = rsJobDao.createJobWithCvTerms(parameters);
         returnVal.setJobId(jobId);
 
-        if (jobDTO.getPayloadType().equals(JobDTO.CV_PAYLOADTYPE_MATRIX)) {
+        if (returnVal.getPayloadType().equals(JobDTO.CV_PAYLOADTYPE_MATRIX)) {
 
             // get DatasetDTO
 
             DataSetDTO dataSetDTO = dtoMapDataSet.getDataSetDetails(jobDTO.getDatasetId());
 
-            String createdDate = dataSetDTO.getCreatedDate().toString();
-            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            Date newCreatedDate = formatter.parse(createdDate);
+            String[] datePattern = {"yyyy-MM-dd"};
 
-            dataSetDTO.setCreatedDate(newCreatedDate);
+            Date parsedDate;
+
+            try {
+
+                parsedDate = DateUtils.parseDateStrictly(dataSetDTO.getCreatedDate().toString(), datePattern);
+
+            } catch (Exception e) {
+
+                throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.NONE,
+                        "Something went wrong with setting the createDate of the datasetDTO");
+            }
+
+            dataSetDTO.setCreatedDate(parsedDate);
+            dataSetDTO.setModifiedDate(jobDTO.getSubmittedDate()    );
             dataSetDTO.setJobId(jobDTO.getJobId());
-            dataSetDTO.setModifiedDate(new Date());
-            dtoMapDataSet.replaceDataSet(jobDTO.getDatasetId(), dataSetDTO);
+            dtoMapDataSet.replaceDataSet(returnVal.getDatasetId(), dataSetDTO);
 
         }
-
 
         return returnVal;
 
