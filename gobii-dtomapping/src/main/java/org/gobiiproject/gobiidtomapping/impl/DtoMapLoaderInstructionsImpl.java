@@ -293,7 +293,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
 
                     if( currentInstruction.getContactId() != null ) {
-                        contactid = currentInstruction.getDataSetId();
+                        contactid = currentInstruction.getContactId();
                     }
                 }
 
