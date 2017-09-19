@@ -18,6 +18,7 @@ import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestContactTest;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestDataSetTest;
+import org.gobiiproject.gobiimodel.CvNames.JobPayloadType;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
@@ -134,51 +135,8 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         // INSTRUCTION ONE END
         // **********************************************************************
+//The primary instruction does not have a payload type
 
-
-        // **********************************************************************
-        // INSTRUCTION TWO BEGIN
-        GobiiLoaderInstruction gobiiLoaderInstructionTwo = new GobiiLoaderInstruction();
-
-        gobiiLoaderInstructionTwo.setTable("bar_table");
-
-        // column one
-        gobiiFileColumnOne = new GobiiFileColumn();
-        gobiiFileColumnOne.setCCoord(1);
-        gobiiFileColumnOne.setRCoord(1);
-        gobiiFileColumnOne.setGobiiColumnType(GobiiColumnType.VCF_MARKER);
-        gobiiFileColumnOne.setFilterFrom(".*");
-        gobiiFileColumnOne.setFilterTo(".*");
-        gobiiFileColumnOne.setName("my_foobar");
-
-        // column two
-        gobiiFileColumnTwo = new GobiiFileColumn();
-        gobiiFileColumnTwo.setCCoord(1);
-        gobiiFileColumnTwo.setRCoord((1));
-        gobiiFileColumnTwo.setGobiiColumnType(GobiiColumnType.CSV_COLUMN);
-        gobiiFileColumnTwo.setFilterFrom(".*");
-        gobiiFileColumnTwo.setFilterTo(".*");
-        gobiiFileColumnTwo.setName("my_barfoo");
-
-        gobiiLoaderInstructionTwo.getGobiiFileColumns().add(gobiiFileColumnTwo);
-        gobiiLoaderInstructionTwo.getGobiiFileColumns().add(gobiiFileColumnTwo);
-
-        // GobiiFile Config
-        gobiiLoaderInstructionTwo.getGobiiFile().setDelimiter(",");
-        gobiiLoaderInstructionTwo.getGobiiFile().setSource("c://your-bar-dir");
-        gobiiLoaderInstructionTwo.getGobiiFile().setDestination("c://mybardir");
-        gobiiLoaderInstructionTwo.getGobiiFile().setGobiiFileType(GobiiFileType.VCF);
-        gobiiLoaderInstructionTwo.getGobiiFile().setSource(digesterInputDirectory + "file_two_dir");
-        gobiiLoaderInstructionTwo.getGobiiFile().setDestination(digesterOutputDirectory + "file_two_dir");
-
-        // VCF Parameters
-        gobiiLoaderInstructionTwo.getVcfParameters().setMaf(1.1f);
-        gobiiLoaderInstructionTwo.getVcfParameters().setMinDp(1.1f);
-        gobiiLoaderInstructionTwo.getVcfParameters().setMinQ(1.1f);
-        gobiiLoaderInstructionTwo.getVcfParameters().setRemoveIndels(true);
-        gobiiLoaderInstructionTwo.getVcfParameters().setToIupac(true);
-
-        loaderInstructionFilesDTOToSend.getGobiiLoaderInstructions().add(gobiiLoaderInstructionTwo);
 
         PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<LoaderInstructionFilesDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.gobiiUriFactory.resourceColl(GobiiServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
@@ -186,8 +144,27 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 payloadEnvelope);
 
 
+        // first one should have failed due to lack of a payload type
         Assert.assertNotEquals(null, loaderInstructionFileDTOResponseEnvelope);
+
+        Assert.assertTrue("There should have been a missing payload type error",
+                loaderInstructionFileDTOResponseEnvelope
+                .getHeader()
+                .getStatus()
+                .getStatusMessages()
+                .stream()
+                .filter(m -> m.getMessage().toLowerCase().contains("primary instruction does not have a payload type"))
+                .count() > 0);
+
+        loaderInstructionFilesDTOToSend.getGobiiLoaderInstructions().get(0).setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX);
+        loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResource.post(LoaderInstructionFilesDTO.class,
+                payloadEnvelope);
+
+        //now it should succeed
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(loaderInstructionFileDTOResponseEnvelope.getHeader()));
+
+
+
 
 
         LoaderInstructionFilesDTO loaderInstructionFileDTOResponse = loaderInstructionFileDTOResponseEnvelope.getPayload().getData().get(0);
@@ -211,27 +188,19 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         LoaderInstructionFilesDTO loaderInstructionFilesDTOretrieveResponse = resultEnvelope.getPayload().getData().get(0);
 
-//        LoaderInstructionFilesDTO loaderInstructionFilesDTOretrieve = new LoaderInstructionFilesDTO();
-//        loaderInstructionFilesDTOretrieve
-//                .setInstructionFileName(loaderInstructionFileDTOResponseEnvelope.getPayload().getData().get(0).getInstructionFileName());
-//
-//        RestUri restUriLoader = DtoRequestGobiiFileLoadInstructionsTest
-//                .gobiiUriFactory.loaderInstructionsByInstructionFileName();
-//        restUriLoader.setParamValue("instructionFileName", loaderInstructionFilesDTOretrieve.getInstructionFileName());
-//        gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriLoader);
-//        PayloadEnvelope<LoaderInstructionFilesDTO> resultEnvelope = gobiiEnvelopeRestResource
-//                .get(LoaderInstructionFilesDTO.class);
-//
-//        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
-//        LoaderInstructionFilesDTO loaderInstructionFilesDTOretrieveResponse = resultEnvelope.getPayload().getData().get(0);
         Assert.assertNotNull(loaderInstructionFilesDTOretrieveResponse.getGobiiLoaderInstructions());
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(loaderInstructionFileDTOResponseEnvelope.getHeader()));
 
         Assert.assertTrue(
-                2 == loaderInstructionFilesDTOretrieveResponse
+                1 == loaderInstructionFilesDTOretrieveResponse
                         .getGobiiLoaderInstructions()
                         .size()
+        );
+
+        Assert.assertNotNull(
+                loaderInstructionFilesDTOretrieveResponse
+                        .getPrimaryLoaderInstruction()
         );
 
 
@@ -240,16 +209,6 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                         .getGobiiLoaderInstructions()
                         .get(0)
                         .getDataSetId().equals(instructionOneDataSetId)
-        );
-
-
-        // we only set it on one, but the server should have set it for the second one
-        Assert.assertTrue(2 ==
-                loaderInstructionFilesDTOretrieveResponse
-                        .getGobiiLoaderInstructions()
-                        .stream()
-                        .filter(i -> i.getGobiiCropType().equals(gobiiCropType))
-                        .count()
         );
 
 

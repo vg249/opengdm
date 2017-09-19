@@ -11,6 +11,7 @@ import java.util.List;
 public class LoaderInstructionFilesDTO extends DTOBase {
 
 
+    private GobiiLoaderInstruction primaryLoaderInstruction = new GobiiLoaderInstruction();
     private List<GobiiLoaderInstruction> gobiiLoaderInstructions = new ArrayList<>();
     private String instructionFileName = null;
 
@@ -23,6 +24,14 @@ public class LoaderInstructionFilesDTO extends DTOBase {
     @Override
     public void setId(Integer id) {
         ;
+    }
+
+    public GobiiLoaderInstruction getPrimaryLoaderInstruction() {
+        return primaryLoaderInstruction;
+    }
+
+    public void setPrimaryLoaderInstruction(GobiiLoaderInstruction primaryLoaderInstruction) {
+        this.primaryLoaderInstruction = primaryLoaderInstruction;
     }
 
     public List<GobiiLoaderInstruction> getGobiiLoaderInstructions() {
@@ -40,5 +49,7 @@ public class LoaderInstructionFilesDTO extends DTOBase {
     public void setInstructionFileName(String instructionFileName) {
         this.instructionFileName = instructionFileName;
     }
+
+
 
 }

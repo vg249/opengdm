@@ -85,7 +85,11 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
         }
 
 
+
         try {
+
+
+
             ConfigSettings configSettings = new ConfigSettings();
 
 
@@ -100,121 +104,132 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                     + INSTRUCTION_FILE_EXT;
 
 
-            for (Integer currentFileIdx = 0;
-                 currentFileIdx < loaderInstructionFilesDTO.getGobiiLoaderInstructions().size();
-                 currentFileIdx++) {
+            GobiiLoaderInstruction primaryLoaderInstruction = loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0);
+            primaryLoaderInstruction.setTableNames(
+                    loaderInstructionFilesDTO
+                            .getGobiiLoaderInstructions()
+                            .stream()
+                            .filter(gfi -> StringUtils.isNotEmpty(gfi.getTable()))
+                            .map(gfi -> gfi.getTable())
+                            .collect(Collectors.toList())
+            );
+            loaderInstructionFilesDTO.setPrimaryLoaderInstruction(primaryLoaderInstruction);
 
-                GobiiLoaderInstruction currentLoaderInstruction =
-                        loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(currentFileIdx);
+
+            if(primaryLoaderInstruction.getJobPayloadType() == null ) {
+                throw new Exception("The primary instruction does not have a payload type");
+            }
 
 
-                if (LineUtils.isNullOrEmpty(currentLoaderInstruction.getGobiiCropType())) {
-                    currentLoaderInstruction.setGobiiCropType(cropType);
-                }
+//            for (Integer currentFileIdx = 0;
+//                 currentFileIdx < loaderInstructionFilesDTO.getGobiiLoaderInstructions().size();
+//                 currentFileIdx++) {
+//
+//                primaryLoaderInstruction =
+//                        loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(currentFileIdx);
 
-                GobiiFile currentGobiiFile = currentLoaderInstruction.getGobiiFile();
 
-                // check that we have all required values
-                if (LineUtils.isNullOrEmpty(currentGobiiFile.getSource())) {
+            if (LineUtils.isNullOrEmpty(primaryLoaderInstruction.getGobiiCropType())) {
+                primaryLoaderInstruction.setGobiiCropType(cropType);
+            }
+
+            GobiiFile currentGobiiFile = primaryLoaderInstruction.getGobiiFile();
+
+            // check that we have all required values
+            if (LineUtils.isNullOrEmpty(currentGobiiFile.getSource())) {
+                throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
+                        GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
+                        "The file associated with instruction is missing the source file path"
+                );
+            }
+
+            if (LineUtils.isNullOrEmpty(currentGobiiFile.getDestination())) {
+                throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
+                        GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
+                        "The file associated with instruction  is missing the destination file path"
+                );
+            }
+
+            if (currentGobiiFile.isRequireDirectoriesToExist()) {
+
+                if (!instructionFileAccess.doesPathExist(currentGobiiFile.getSource())) {
                     throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
-                            GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
-                            "The file associated with instruction at index "
-                                    + currentFileIdx.toString()
-                                    + " is missing the source file path"
-                    );
+                            GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                            "require-to-exist was set to true, but the source file path does not exist: "
+                                    + currentGobiiFile.getSource());
+
                 }
 
-                if (LineUtils.isNullOrEmpty(currentGobiiFile.getDestination())) {
+                if (!instructionFileAccess.doesPathExist(currentGobiiFile.getDestination())) {
                     throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
-                            GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
-                            "The file associated with instruction at index "
-                                    + currentFileIdx.toString()
-                                    + " is missing the destination file path"
-                    );
+                            GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                            "require-to-exist was set to true, but the source file path does not exist: "
+                                    + currentGobiiFile.getSource());
                 }
 
-                if (currentGobiiFile.isRequireDirectoriesToExist()) {
+            }
 
-                    if (!instructionFileAccess.doesPathExist(currentGobiiFile.getSource())) {
-                        throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
-                                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                                "require-to-exist was set to true, but the source file path does not exist: "
-                                        + currentGobiiFile.getSource());
 
+            // if so, proceed with processing
+
+            //validate loader instruction
+
+            // check if the dataset is referenced by the specified experiment
+            if (primaryLoaderInstruction.getDataSet().getId() != null) {
+
+                DataSetDTO dataSetDTO = dtoMapDataSet.getDataSetDetails(primaryLoaderInstruction.getDataSet().getId());
+
+                // check if the experiment is referenced by the specified project
+                if (primaryLoaderInstruction.getExperiment().getId() != null) {
+
+                    if (!dataSetDTO.getExperimentId().equals(primaryLoaderInstruction.getExperiment().getId())) {
+
+                        throw new GobiiDtoMappingException("The specified experiment in the dataset is incorrect");
                     }
 
-                    if (!instructionFileAccess.doesPathExist(currentGobiiFile.getDestination())) {
-                        throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
-                                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                                "require-to-exist was set to true, but the source file path does not exist: "
-                                        + currentGobiiFile.getSource());
-                    }
+                    ExperimentDTO experimentDTO = dtoMapExperiment.getExperimentDetails(primaryLoaderInstruction.getExperiment().getId());
 
-                }
+                    if (!experimentDTO.getProjectId().equals(primaryLoaderInstruction.getProject().getId())) {
 
-
-                // if so, proceed with processing
-
-                //validate loader instruction
-
-                // check if the dataset is referenced by the specified experiment
-                if (currentLoaderInstruction.getDataSet().getId() != null) {
-
-                    DataSetDTO dataSetDTO = dtoMapDataSet.getDataSetDetails(currentLoaderInstruction.getDataSet().getId());
-
-                    // check if the experiment is referenced by the specified project
-                    if (currentLoaderInstruction.getExperiment().getId() != null) {
-
-                        if (!dataSetDTO.getExperimentId().equals(currentLoaderInstruction.getExperiment().getId())) {
-
-                            throw new GobiiDtoMappingException("The specified experiment in the dataset is incorrect");
-                        }
-
-                        ExperimentDTO experimentDTO = dtoMapExperiment.getExperimentDetails(currentLoaderInstruction.getExperiment().getId());
-
-                        if (!experimentDTO.getProjectId().equals(currentLoaderInstruction.getProject().getId())) {
-
-                            throw new GobiiDtoMappingException("The specified project in the experiment is incorrect");
-
-                        }
-
-                    }
-
-                    // check if the datatype is referenced by the dataset
-                    if (currentLoaderInstruction.getDatasetType().getId() != null) {
-
-                        if (!dataSetDTO.getTypeId().equals(currentLoaderInstruction.getDatasetType().getId())) {
-
-                            throw new GobiiDtoMappingException("The specified data type in the dataset is incorrect");
-
-                        }
+                        throw new GobiiDtoMappingException("The specified project in the experiment is incorrect");
 
                     }
 
                 }
 
+                // check if the datatype is referenced by the dataset
+                if (primaryLoaderInstruction.getDatasetType().getId() != null) {
 
-                if (currentLoaderInstruction.getPlatform().getId() != null) {
+                    if (!dataSetDTO.getTypeId().equals(primaryLoaderInstruction.getDatasetType().getId())) {
 
-                    ExperimentDTO experimentDTO = dtoMapExperiment.getExperimentDetails(currentLoaderInstruction.getExperiment().getId());
+                        throw new GobiiDtoMappingException("The specified data type in the dataset is incorrect");
 
-                    if (experimentDTO.getVendorProtocolId() != null) {
+                    }
 
-                        VendorProtocolDTO vendorProtocolDTO = dtoMapProtocol.getVendorProtocolByVendorProtocolId(experimentDTO.getVendorProtocolId());
+                }
 
-                        if (vendorProtocolDTO.getProtocolId() != null) {
+            }
 
-                            ProtocolDTO protocolDTO = dtoMapProtocol.getProtocolDetails(vendorProtocolDTO.getProtocolId());
 
-                            if (protocolDTO.getPlatformId() != null) {
+            if (primaryLoaderInstruction.getPlatform().getId() != null) {
 
-                                Integer loaderPlatformId = currentLoaderInstruction.getPlatform().getId();
+                ExperimentDTO experimentDTO = dtoMapExperiment.getExperimentDetails(primaryLoaderInstruction.getExperiment().getId());
 
-                                if (!loaderPlatformId.equals(protocolDTO.getPlatformId())) {
+                if (experimentDTO.getVendorProtocolId() != null) {
 
-                                    throw new GobiiDtoMappingException("The specified platform in the experiment is incorrect");
+                    VendorProtocolDTO vendorProtocolDTO = dtoMapProtocol.getVendorProtocolByVendorProtocolId(experimentDTO.getVendorProtocolId());
 
-                                }
+                    if (vendorProtocolDTO.getProtocolId() != null) {
+
+                        ProtocolDTO protocolDTO = dtoMapProtocol.getProtocolDetails(vendorProtocolDTO.getProtocolId());
+
+                        if (protocolDTO.getPlatformId() != null) {
+
+                            Integer loaderPlatformId = primaryLoaderInstruction.getPlatform().getId();
+
+                            if (!loaderPlatformId.equals(protocolDTO.getPlatformId())) {
+
+                                throw new GobiiDtoMappingException("The specified platform in the experiment is incorrect");
 
                             }
 
@@ -222,130 +237,91 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
                     }
 
-
                 }
 
+            }
 
-                // "source file" is the data file the user may have already uploaded
-                if (currentGobiiFile.isCreateSource()) {
+
+            // "source file" is the data file the user may have already uploaded
+            if (currentGobiiFile.isCreateSource()) {
+
+                createDirectories(instructionFileDirectory,
+                        currentGobiiFile);
+
+            } else {
+
+                // it's supposed to exist, so we check
+                if (instructionFileAccess.doesPathExist(currentGobiiFile.getSource())) {
 
                     createDirectories(instructionFileDirectory,
                             currentGobiiFile);
-
-
                 } else {
+                    throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
+                            GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                            "The load file was specified to exist, but does not exist: "
+                                    + currentGobiiFile.getSource());
 
-                    // it's supposed to exist, so we check
-                    if (instructionFileAccess.doesPathExist(currentGobiiFile.getSource())) {
+                } // if-else the source file exists
 
-                        createDirectories(instructionFileDirectory,
-                                currentGobiiFile);
-                    } else {
-                        throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
-                                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                                "The load file was specified to exist, but does not exist: "
-                                        + currentGobiiFile.getSource());
-
-                    } // if-else the source file exists
-
-                } // if-else we're creating a source file
+            } // if-else we're creating a source file
 
 
-            } // iterate instructions/files
+//            } // iterate instructions/files
 
 
-            Boolean isMatrixLoad = loaderInstructionFilesDTO
-                    .getGobiiLoaderInstructions()
-                    .stream()
-                    .filter(lfi -> StringUtils.isNotEmpty(lfi.getTable()) && lfi.getTable().equals("matrix"))
-                    .collect(Collectors.toList())
-                    .size() > 0;
-
-            if (isMatrixLoad) {
-
-                Integer dataSetId = null;
-                for (int idx = 0;
-                     dataSetId == null &&
-                             idx < loaderInstructionFilesDTO
-                                     .getGobiiLoaderInstructions().size();
-                     idx++) {
-
-                    GobiiLoaderInstruction currentInstruction = loaderInstructionFilesDTO
-                            .getGobiiLoaderInstructions().get(idx);
-
-
-                    if( currentInstruction.getDataSetId() != null ) {
-                        dataSetId = currentInstruction.getDataSetId();
-                    } else {
-                        if(currentInstruction.getDataSet() != null && currentInstruction.getDataSet().getId()!= null ) {
-                            dataSetId = currentInstruction.getDataSetId();
-                        }
-                    }
-                }
-
-
-                Integer contactid = null;
-                for (int idx = 0;
-                     contactid == null &&
-                             idx < loaderInstructionFilesDTO
-                                     .getGobiiLoaderInstructions().size();
-                     idx++) {
-
-                    GobiiLoaderInstruction currentInstruction = loaderInstructionFilesDTO
-                            .getGobiiLoaderInstructions().get(idx);
-
-
-                    if( currentInstruction.getContactId() != null ) {
-                        contactid = currentInstruction.getContactId();
-                    }
-                }
-
-
-
-                if( dataSetId != null && contactid != null ) {
-
-
-                    //check for duplicate job name and provide meaningful error message
-                    JobDTO jobDTOExisting = dtoMapJob.getJobDetailsByJobName(loaderInstructionFilesDTO.getInstructionFileName());
-                    if( jobDTOExisting.getJobId() == null || jobDTOExisting.getJobId() <= 0 ) {
-
-
-                        JobDTO jobDTONew = new JobDTO();
-
-
-                        jobDTONew.setJobName(loaderInstructionFilesDTO.getInstructionFileName());
-                        jobDTONew.setDatasetId(dataSetId);
-                        jobDTONew.setSubmittedBy(contactid);
-                        jobDTONew.setMessage("Instruction file written by web services");
-                        jobDTONew.setStatus(JobProgressStatusType.CV_PROGRESSSTATUS_PENDING.getCvName());
-                        jobDTONew.setPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX.getCvName());
-                        jobDTONew.setType(JobType.CV_JOBTYPE_LOAD.getCvName());
-                        jobDTONew.setSubmittedDate(new Date());
-
-                        dtoMapJob.createJob(jobDTONew);
-
-                        instructionFileAccess.writeInstructions(instructionFileFqpn,
-                                returnVal.getGobiiLoaderInstructions());
-
-                    } else {
-
-                        throw new GobiiException("The specified job already exists: " + loaderInstructionFilesDTO.getInstructionFileName() );
-                        
-                    }// if-else a job with that name already exists
-                } else {
-
-                    String message = "Some required values are missing from the matrix load for job " + loaderInstructionFilesDTO.getInstructionFileName() + ": ";
-                    if( dataSetId == null ) {
-                        message += "datasetId; ";
-                    }
-
-                    if( contactid == null ) {
-                        message += " contactId;";
-                    }
-                    throw new GobiiException(message);
+            // NOW CREATE THE JOB RECORD *********************************************************
+            Integer dataSetId = null;
+            if (primaryLoaderInstruction.getDataSetId() != null) {
+                dataSetId = primaryLoaderInstruction.getDataSetId();
+            } else {
+                if (primaryLoaderInstruction.getDataSet() != null && primaryLoaderInstruction.getDataSet().getId() != null) {
+                    dataSetId = primaryLoaderInstruction.getDataSetId();
                 }
             }
 
+
+            Integer contactId = primaryLoaderInstruction.getContactId();
+
+            if (contactId != null || contactId > 0) {
+
+                if (JobPayloadType.CV_PAYLOADTYPE_MATRIX.equals(primaryLoaderInstruction.getJobPayloadType())
+                                && (dataSetId != null && dataSetId > 0)) {
+                } else {
+                    throw new GobiiException("The specified job has payload type MATRIX, but no dataset ID: " + loaderInstructionFilesDTO.getInstructionFileName());
+                }
+
+
+                //check for duplicate job name and provide meaningful error message
+                JobDTO jobDTOExisting = dtoMapJob.getJobDetailsByJobName(loaderInstructionFilesDTO.getInstructionFileName());
+                if (jobDTOExisting.getJobId() == null || jobDTOExisting.getJobId() <= 0) {
+
+                    JobDTO jobDTONew = new JobDTO();
+
+                    jobDTONew.setJobName(loaderInstructionFilesDTO.getInstructionFileName());
+                    jobDTONew.setDatasetId(dataSetId);
+                    jobDTONew.setSubmittedBy(contactId);
+                    jobDTONew.setMessage("Instruction file written by web services");
+                    jobDTONew.setStatus(JobProgressStatusType.CV_PROGRESSSTATUS_PENDING.getCvName());
+                    jobDTONew.setPayloadType(primaryLoaderInstruction.getJobPayloadType().getCvName());
+                    jobDTONew.setType(JobType.CV_JOBTYPE_LOAD.getCvName());
+                    jobDTONew.setSubmittedDate(new Date());
+
+                    dtoMapJob.createJob(jobDTONew);
+
+                    instructionFileAccess.writeInstructions(instructionFileFqpn,
+                            returnVal.getGobiiLoaderInstructions());
+
+                } else {
+
+                    throw new GobiiException("The specified job already exists: " + loaderInstructionFilesDTO.getInstructionFileName());
+
+                }// if-else a job with that name already exists
+
+            } else {
+
+                throw new GobiiException("The specified job does not have a contact ID: " + loaderInstructionFilesDTO.getInstructionFileName());
+
+            } //if-else we have a contact id
 
 
         } catch (GobiiException e) {

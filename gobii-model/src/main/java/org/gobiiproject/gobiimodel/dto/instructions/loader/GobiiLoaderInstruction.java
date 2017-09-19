@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiimodel.dto.instructions.loader;
 
 
+import org.gobiiproject.gobiimodel.CvNames.JobPayloadType;
 import org.gobiiproject.gobiimodel.entity.PropNameId;
 
 import java.util.ArrayList;
@@ -13,6 +14,14 @@ import java.util.List;
  */
 public class GobiiLoaderInstruction {
 
+
+
+
+    //Tables collection
+    List<String> tableNames = new ArrayList<>();
+
+    //Type of load
+    private JobPayloadType jobPayloadType;
     //File location information (Each table can come from a separate file)
     private GobiiFile gobiiFile = new GobiiFile();
     //Name of this table. Used as filename for loading, and to determine what database table it goes to.
@@ -47,6 +56,22 @@ public class GobiiLoaderInstruction {
 
         this.gobiiFile = gobiiFile;
         return this;
+    }
+
+    public List<String> getTableNames() {
+        return tableNames;
+    }
+
+    public void setTableNames(List<String> tableNames) {
+        this.tableNames = tableNames;
+    }
+
+    public JobPayloadType getJobPayloadType() {
+        return jobPayloadType;
+    }
+
+    public void setJobPayloadType(JobPayloadType jobPayloadType) {
+        this.jobPayloadType = jobPayloadType;
     }
 
     public String getTable() {
