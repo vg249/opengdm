@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiimodel.headerlesscontainer;
 
+import org.gobiiproject.gobiimodel.CvNames.JobType;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 import org.gobiiproject.gobiimodel.entity.PropNameId;
@@ -18,6 +19,7 @@ public class JobDTO extends DTOBase {
 
     @Override
     public void setId(Integer id) { this.jobId = id; }
+
 
 
     // The values must correspond to the CV term seed values, which 
@@ -45,10 +47,6 @@ public class JobDTO extends DTOBase {
     public static final String CV_PAYLOADTYPE_MARKERSAMPLES = "marker_samples";
     public static final String CV_PAYLOADTYPE_ALLMETA = "all_meta";
 
-    public static final String CVGROUP_JOBTYPE = "job_type";
-    public static final String CV_JOBTYPE_LOAD = "load";
-    public static final String CV_JOBTYPE_EXTRACT = "extract";
-    public static final String CV_JOBTYPE_ANALYSIS = "analysis";
 
     private Integer jobId;
     private String jobName;
@@ -59,6 +57,16 @@ public class JobDTO extends DTOBase {
     private Integer submittedBy;
     private Date submittedDate;
     private Integer datasetId;
+
+    private JobType jobType;
+
+    public JobType getJobType() {
+        return jobType;
+    }
+
+    public void setJobType(JobType jobType) {
+        this.jobType = jobType;
+    }
 
     @GobiiEntityParam(paramName = "jobId")
     public Integer getJobId() { return jobId; }
