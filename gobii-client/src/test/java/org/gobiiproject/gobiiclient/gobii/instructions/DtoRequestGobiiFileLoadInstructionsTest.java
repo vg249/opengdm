@@ -338,14 +338,14 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResource.post(LoaderInstructionFilesDTO.class,
                 payloadEnvelope);
 
-//        Assert.assertTrue("At least one error message should contain 'already exists'",
-//                loaderInstructionFileDTOResponseEnvelope.getHeader()
-//                        .getStatus()
-//                        .getStatusMessages()
-//                        .stream()
-//                        .filter(m -> m.getMessage().toLowerCase().contains("already exists"))
-//                        .count()
-//                        > 0);
+        Assert.assertTrue("At least one error message should contain 'already exists'",
+                loaderInstructionFileDTOResponseEnvelope.getHeader()
+                        .getStatus()
+                        .getStatusMessages()
+                        .stream()
+                        .filter(m -> m.getMessage().toLowerCase().contains("already exists"))
+                        .count()
+                        > 0);
 
 
         // ************** VERIFY THAT WE ERROR ON USER INPUT FILE THAT SHOULD EXISTS BUT DOESN'T EXIST

@@ -302,19 +302,33 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                 if( dataSetId != null && contactid != null ) {
 
 
-                    JobDTO jobDTO = new JobDTO();
+                    //check for duplicate job name and provide meaningful error message
+                    JobDTO jobDTOExisting = dtoMapJob.getJobDetailsByJobName(loaderInstructionFilesDTO.getInstructionFileName());
+                    if( jobDTOExisting.getJobId() == null || jobDTOExisting.getJobId() <= 0 ) {
 
 
-                    jobDTO.setJobName(loaderInstructionFilesDTO.getInstructionFileName());
-                    jobDTO.setDatasetId(dataSetId);
-                    jobDTO.setSubmittedBy(contactid);
-                    jobDTO.setMessage("Instruction file written by web services");
-                    jobDTO.setStatus(JobDTO.CV_PROGRESSSTATUS_PENDING);
-                    jobDTO.setPayloadType(JobDTO.CV_PAYLOADTYPE_MATRIX);
-                    jobDTO.setType(JobDTO.CV_JOBTYPE_LOAD);
-                    jobDTO.setSubmittedDate(new Date());
+                        JobDTO jobDTONew = new JobDTO();
 
-                    dtoMapJob.createJob(jobDTO);
+
+                        jobDTONew.setJobName(loaderInstructionFilesDTO.getInstructionFileName());
+                        jobDTONew.setDatasetId(dataSetId);
+                        jobDTONew.setSubmittedBy(contactid);
+                        jobDTONew.setMessage("Instruction file written by web services");
+                        jobDTONew.setStatus(JobDTO.CV_PROGRESSSTATUS_PENDING);
+                        jobDTONew.setPayloadType(JobDTO.CV_PAYLOADTYPE_MATRIX);
+                        jobDTONew.setType(JobDTO.CV_JOBTYPE_LOAD);
+                        jobDTONew.setSubmittedDate(new Date());
+
+                        dtoMapJob.createJob(jobDTONew);
+
+                        instructionFileAccess.writeInstructions(instructionFileFqpn,
+                                returnVal.getGobiiLoaderInstructions());
+
+                    } else {
+
+                        throw new GobiiException("The specified job already exists: " + loaderInstructionFilesDTO.getInstructionFileName() );
+                        
+                    }// if-else a job with that name already exists
                 } else {
 
                     String message = "Some required values are missing from the matrix load for job " + loaderInstructionFilesDTO.getInstructionFileName() + ": ";
@@ -329,8 +343,6 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                 }
             }
 
-            instructionFileAccess.writeInstructions(instructionFileFqpn,
-                    returnVal.getGobiiLoaderInstructions());
 
 
         } catch (GobiiException e) {
