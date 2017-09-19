@@ -17,6 +17,7 @@ import org.gobiiproject.gobiimodel.config.*;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.*;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
@@ -29,6 +30,7 @@ import org.gobiiproject.gobiimodel.utils.email.*;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.GobiiConfig;
 import org.gobiiproject.gobiiprocess.HDF5Interface;
+import org.gobiiproject.gobiiprocess.JobStatus;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.*;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderV2;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestMatrix;
@@ -152,26 +154,22 @@ public class GobiiFileReader {
 			return;
 		}
 
-		// Instruction file Validation
-		InstructionFileValidator instructionFileValidator = new InstructionFileValidator(list);
-		instructionFileValidator.processInstructionFile();
-		String validationStatus = instructionFileValidator.validateMarkerUpload();
-		if(validationStatus != null){
-			ErrorLogger.logError("Marker validation failed.", validationStatus);
-		}
-
-		validationStatus = instructionFileValidator.validateSampleUpload();
-		if(validationStatus != null){
-			ErrorLogger.logError("Sample validation failed.",validationStatus);
-		}
-
-		validationStatus = instructionFileValidator.validate();
-		if(validationStatus != null){
-			ErrorLogger.logError("Validation failed.", validationStatus );
-		}
 
 		GobiiLoaderInstruction zero=list.iterator().next();
 		Integer dataSetId=zero.getDataSetId();
+
+		String crop=zero.getGobiiCropType();
+		if(crop==null) crop=divineCrop(instructionFile);
+
+		//Job Id is the 'name' part of the job file  /asd/de/name.json
+		String filename=new File(instructionFile).getName();
+		String jobFileName = filename.substring(0,filename.lastIndexOf('.'));
+		JobStatus jobStatus=null;
+		try {
+			jobStatus = new JobStatus(configuration, crop, jobFileName);
+		} catch(Exception e){
+			ErrorLogger.logError("GobiiFileReader", "Error Checking Status",e);
+		}
 
 		pm.addIdentifier("Project",zero.getProject());
 		pm.addIdentifier("Platform",zero.getPlatform());
@@ -180,7 +178,7 @@ public class GobiiFileReader {
 		pm.addIdentifier("Mapset",zero.getMapset());
 		pm.addIdentifier("Dataset Type",zero.getDatasetType());
 
-
+		jobStatus.set(JobDTO.CV_PROGRESSSTATUS_INPROGRESS,"Beginning Digest");
 		String dstFilePath= getDestinationFile(zero);//Intermediate 'file'
 		File dstDir=new File(dstFilePath);
 		if(!dstDir.isDirectory()){ //Note: if dstDir is a non-existant
@@ -189,8 +187,6 @@ public class GobiiFileReader {
 		pm.addPath("destination directory",dstDir.getAbsolutePath());//Convert to directory
 		pm.addPath("input directory",zero.getGobiiFile().getSource());
 
-		String crop=zero.getGobiiCropType();
-		if(crop==null) crop=divineCrop(instructionFile);
 		Path cropPath = Paths.get(rootDir+"crops/"+crop.toLowerCase());
 		if (!(Files.exists(cropPath) &&
 			  Files.isDirectory(cropPath))) {
@@ -212,8 +208,31 @@ public class GobiiFileReader {
 
 		String errorPath=getLogName(zero, gobiiCropConfig,crop);
 
+
+		jobStatus.set(JobDTO.CV_PROGRESSSTATUS_VALIDATION,"Beginning Validation");
+		// Instruction file Validation
+		InstructionFileValidator instructionFileValidator = new InstructionFileValidator(list);
+		instructionFileValidator.processInstructionFile();
+		String validationStatus = instructionFileValidator.validateMarkerUpload();
+		if(validationStatus != null){
+			ErrorLogger.logError("Marker validation failed.", validationStatus);
+		}
+
+		validationStatus = instructionFileValidator.validateSampleUpload();
+		if(validationStatus != null){
+			ErrorLogger.logError("Sample validation failed.",validationStatus);
+		}
+
+		validationStatus = instructionFileValidator.validate();
+		if(validationStatus != null){
+			ErrorLogger.logError("Validation failed.", validationStatus );
+		}
+
+
+
+
 		//TODO: HACK - Job's name is
-		String jobName = getJobName(crop,list);
+		String jobName = getJobReadableIdentifier(crop,list);
         String jobUser = zero.getContactEmail();
 		pm.setUser(jobUser);
 
@@ -237,6 +256,7 @@ public class GobiiFileReader {
 //			qcExtractInstruction = createQCExtractInstruction(zero, crop);
 //		}
 
+		jobStatus.set(JobDTO.CV_PROGRESSSTATUS_DIGEST,"Beginning file digest");
 		//Pre-processing - make sure all files exist, find the cannonical dataset id
 		for(GobiiLoaderInstruction inst:list) {
 			if (inst == null) {
@@ -284,6 +304,7 @@ public class GobiiFileReader {
 				break;
 		}
 
+		jobStatus.set(JobDTO.CV_PROGRESSSTATUS_VALIDATION,"Database Validation");
 		//Database Validation
 		DatabaseQuerier querier=new DatabaseQuerier(gobiiCropConfig.getCropDbConfig(GobiiDbType.POSTGRESQL));
 
@@ -326,6 +347,7 @@ public class GobiiFileReader {
 			String fromFile = getDestinationFile(inst);
 			SequenceInPlaceTransform intermediateFile=new SequenceInPlaceTransform(fromFile,errorPath);
 			if (dst != null && inst.getTable().equals(VARIANT_CALL_TABNAME)) {
+				jobStatus.set(JobDTO.CV_PROGRESSSTATUS_TRANSFORMATION,"Data Matrix Transformation");
 				errorPath = getLogName(inst, gobiiCropConfig, crop, "Matrix_Processing"); //Temporary Error File Name
 				boolean transformStripsHeader = false;
 				MobileTransform mainTransform=null;
@@ -363,7 +385,7 @@ public class GobiiFileReader {
 					intermediateFile.transform(MobileTransform.getTransposeMatrix(getDestinationFile(inst)));
 				}
 			}
-
+			jobStatus.set(JobDTO.CV_PROGRESSSTATUS_TRANSFORMATION,"Metadata Transformation");
 			String instructionName = inst.getTable();
 			loaderInstructionMap.put(instructionName, new File(getDestinationFile(inst)));
 			loaderInstructionList.add(instructionName);//TODO Hack - for ordering
@@ -378,6 +400,7 @@ public class GobiiFileReader {
 
 			//DONE WITH TRANSFORMS
 
+			jobStatus.set(JobDTO.CV_PROGRESSSTATUS_VALIDATION,"Matrix Validation");
 			if(loaderInstructionMap.containsKey(VARIANT_CALL_TABNAME)) {
 				boolean valid=DigestMatrix.validatematrix(loaderInstructionMap.get(VARIANT_CALL_TABNAME), zero.getDatasetType().getName().toString());
 				if (!valid) {
@@ -394,8 +417,8 @@ public class GobiiFileReader {
 
 		}
 
-		if(success){
-
+		if(success && ErrorLogger.success()){
+			jobStatus.set(JobDTO.CV_PROGRESSSTATUS_METADATALOAD,"Loading Metadata");
 			errorPath=getLogName(zero, gobiiCropConfig, crop, "IFLs");
 			String pathToIFL=loaderScriptPath+"postgres/gobii_ifl/gobii_ifl.py";
 			String connectionString=" -c "+HelperFunctions.getPostgresConnectionString(gobiiCropConfig);
@@ -443,26 +466,33 @@ public class GobiiFileReader {
 				logError("Digester","Data Set ID is null for variant call");
 			}
 			if((variantFile!=null)&&dataSetId!=null){ //Create an HDF5 and a Monet
+				jobStatus.set(JobDTO.CV_PROGRESSSTATUS_MATRIXLOAD,"Matrix Upload");
 				if(enableMonet) {//Turned off by default
 					uploadToMonet(dataSetId, gobiiCropConfig, errorPath, variantFile, markerFileLoc, sampleFileLoc);
 				}
 
                 HDF5Interface.createHDF5FromDataset(pm, dst, configuration, dataSetId, crop, errorPath, variantFilename, variantFile);
                 rmIfExist(variantFile.getPath());
-
-                if (sendQc) {//QC - Subsection #3 of 3
-                    sendQCExtract(configuration, crop);
-                }
             }
             if (success && ErrorLogger.success()) {
-                ErrorLogger.logInfo("Digester", "Successfully Uploaded files");
-            } else {
-                ErrorLogger.logWarning("Digester", "Unsuccessfully Uploaded files");
+                ErrorLogger.logInfo("Digester", "Successful Data Upload");
+                if(sendQc){
+					sendQCExtract(configuration, crop);
+					jobStatus.set(JobDTO.CV_PROGRESSSTATUS_QCPROCESSING,"Processing QC Job");
+				}
+                else{
+                	jobStatus.set(JobDTO.CV_PROGRESSSTATUS_COMPLETED,"Successful Data Load");
+				}
+
+            } else { //endIf(success)
+                ErrorLogger.logWarning("Digester", "Unsuccessful Upload");
 				sendQc=false;//Files failed = bad.
+				jobStatus.setError("Unsuccessfully Uploaded Files");
             }
-        }//endif(success)
+        }//endif Digest section
 		else{
-			ErrorLogger.logWarning("Digester","Unsuccessfully Generated files");
+			ErrorLogger.logWarning("Digester","Aborted - Unsuccessfully Generated Files");
+			jobStatus.setError("Unsuccessfully Generated Files - No Data Upload");
 		}
 
 		try{
@@ -656,7 +686,7 @@ public class GobiiFileReader {
      * @param list     List of instructions to read from
      * @return a human readable name for the job
      */
-    private static String getJobName(String cropName, List<GobiiLoaderInstruction> list) {
+    private static String getJobReadableIdentifier(String cropName, List<GobiiLoaderInstruction> list) {
         cropName = cropName.charAt(0) + cropName.substring(1).toLowerCase();// MAIZE -> Maize
         String jobName = "[GOBII - Loader]: " + cropName + " - digest of \"" + getSourceFileName(list.get(0).getGobiiFile()) + "\"";
         return jobName;
