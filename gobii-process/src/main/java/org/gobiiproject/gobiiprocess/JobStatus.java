@@ -7,6 +7,7 @@ import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
+import org.gobiiproject.gobiimodel.CvNames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
 import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
@@ -39,17 +40,17 @@ public class JobStatus {
 	 * has been stringly typed.
 	 */
 	private static Set<String> acceptedStatuses=new HashSet<>(Arrays.asList(
-			JobDTO.CV_PROGRESSSTATUS_ABORTED,
-			JobDTO.CV_PROGRESSSTATUS_COMPLETED,
-			JobDTO.CV_PROGRESSSTATUS_DIGEST,
-			JobDTO.CV_PROGRESSSTATUS_INPROGRESS,
-			JobDTO.CV_PROGRESSSTATUS_MATRIXLOAD,
-			JobDTO.CV_PROGRESSSTATUS_METADATALOAD,
-			JobDTO.CV_PROGRESSSTATUS_TRANSFORMATION,
-			JobDTO.CV_PROGRESSSTATUS_VALIDATION,
-			JobDTO.CV_PROGRESSSTATUS_FAILED,
-			JobDTO.CV_PROGRESSSTATUS_METADATAEXTRACT,
-			JobDTO.CV_PROGRESSSTATUS_FINALASSEMBLY
+			JobProgressStatusType.CV_PROGRESSSTATUS_ABORTED.getCvName(),
+			JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(),
+			JobProgressStatusType.CV_PROGRESSSTATUS_DIGEST.getCvName(),
+			JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS.getCvName(),
+			JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD.getCvName(),
+			JobProgressStatusType.CV_PROGRESSSTATUS_METADATALOAD.getCvName(),
+			JobProgressStatusType.CV_PROGRESSSTATUS_TRANSFORMATION.getCvName(),
+			JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION.getCvName(),
+			JobProgressStatusType.CV_PROGRESSSTATUS_FAILED.getCvName(),
+			JobProgressStatusType.CV_PROGRESSSTATUS_METADATAEXTRACT.getCvName(),
+			JobProgressStatusType.CV_PROGRESSSTATUS_FINALASSEMBLY.getCvName()
 	));
     public JobStatus(ConfigSettings config, String cropName, String jobName) throws Exception {
 		this.jobName=jobName;
@@ -120,6 +121,6 @@ public class JobStatus {
             errorMessage="Status: " + lastStatus.getStatus()+" - " + lastStatus.getMessage() + " | \n";
         }
         errorMessage += message + " : " + ErrorLogger.getFirstErrorReason();
-        set(JobDTO.CV_PROGRESSSTATUS_FAILED,errorMessage);
+        set(JobProgressStatusType.CV_PROGRESSSTATUS_FAILED.getCvName(),errorMessage);
     }
 }

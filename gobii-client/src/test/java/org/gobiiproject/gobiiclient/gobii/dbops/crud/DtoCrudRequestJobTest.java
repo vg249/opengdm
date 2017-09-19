@@ -12,7 +12,7 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.entity.PropNameId;
+import org.gobiiproject.gobiimodel.CvNames.JobPayloadType;
 import org.gobiiproject.gobiimodel.headerlesscontainer.*;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
@@ -21,7 +21,6 @@ import org.junit.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by VCalaminos on 8/25/2017.
@@ -70,7 +69,7 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
 
         JobDTO newJobDto = TestDtoFactory.makePopulateJobDTO();
 
-        newJobDto.setPayloadType(JobDTO.CV_PAYLOADTYPE_MATRIX);
+        newJobDto.setPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX.getCvName());
 
         RestUri jobUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -305,7 +304,7 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
 
         JobDTO newJobDto = TestDtoFactory.makePopulateJobDTO();
 
-        newJobDto.setPayloadType(JobDTO.CV_PAYLOADTYPE_MATRIX);
+        newJobDto.setPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX.getCvName());
         newJobDto.setDatasetId(newDataSetDtoResponse.getDataSetId());
 
         RestUri jobUri = GobiiClientContext.getInstance(null, false)

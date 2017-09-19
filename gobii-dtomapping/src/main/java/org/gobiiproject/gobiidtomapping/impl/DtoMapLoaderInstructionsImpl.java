@@ -4,6 +4,8 @@ import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.filesystem.access.InstructionFileAccess;
 import org.gobiiproject.gobiidtomapping.*;
+import org.gobiiproject.gobiimodel.CvNames.JobPayloadType;
+import org.gobiiproject.gobiimodel.CvNames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.CvNames.JobType;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -315,8 +317,8 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                         jobDTONew.setDatasetId(dataSetId);
                         jobDTONew.setSubmittedBy(contactid);
                         jobDTONew.setMessage("Instruction file written by web services");
-                        jobDTONew.setStatus(JobDTO.CV_PROGRESSSTATUS_PENDING);
-                        jobDTONew.setPayloadType(JobDTO.CV_PAYLOADTYPE_MATRIX);
+                        jobDTONew.setStatus(JobProgressStatusType.CV_PROGRESSSTATUS_PENDING.getCvName());
+                        jobDTONew.setPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX.getCvName());
                         jobDTONew.setType(JobType.CV_JOBTYPE_LOAD.getCvName());
                         jobDTONew.setSubmittedDate(new Date());
 

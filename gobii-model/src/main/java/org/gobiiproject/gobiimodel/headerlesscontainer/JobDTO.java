@@ -20,34 +20,6 @@ public class JobDTO extends DTOBase {
     @Override
     public void setId(Integer id) { this.jobId = id; }
 
-
-
-    // The values must correspond to the CV term seed values, which 
-    // are also hard-coded
-    public static final String CVGROUP_JOBSTATUS = "job_status";
-    public static final String CV_PROGRESSSTATUS_PENDING = "pending";
-    public static final String CV_PROGRESSSTATUS_INPROGRESS = "in_progress";
-    public static final String CV_PROGRESSSTATUS_COMPLETED = "completed";
-    public static final String CV_PROGRESSSTATUS_FAILED = "failed";
-    public static final String CV_PROGRESSSTATUS_VALIDATION = "validation";
-    public static final String CV_PROGRESSSTATUS_DIGEST = "digest";
-    public static final String CV_PROGRESSSTATUS_TRANSFORMATION = "transformation";
-    public static final String CV_PROGRESSSTATUS_METADATALOAD = "metadata_load";
-    public static final String CV_PROGRESSSTATUS_MATRIXLOAD = "matrix_load";
-    public static final String CV_PROGRESSSTATUS_ABORTED = "aborted";
-    public static final String CV_PROGRESSSTATUS_METADATAEXTRACT = "metadata_extract";
-    public static final String CV_PROGRESSSTATUS_FINALASSEMBLY = "final_assembly";
-    public static final String CV_PROGRESSSTATUS_QCPROCESSING = "qc_processing";
-    public static final String CV_PROGRESSSTATUS_NOSTATUS = "no_status";
-
-    public static final String CVGROUP_PAYLOADTYPE = "payload_type";
-    public static final String CV_PAYLOADTYPE_SAMPLES = "samples";
-    public static final String CV_PAYLOADTYPE_MARKERS = "markers";
-    public static final String CV_PAYLOADTYPE_MATRIX = "matrix";
-    public static final String CV_PAYLOADTYPE_MARKERSAMPLES = "marker_samples";
-    public static final String CV_PAYLOADTYPE_ALLMETA = "all_meta";
-
-
     private Integer jobId;
     private String jobName;
     private String type;
@@ -57,16 +29,6 @@ public class JobDTO extends DTOBase {
     private Integer submittedBy;
     private Date submittedDate;
     private Integer datasetId;
-
-    private JobType jobType;
-
-    public JobType getJobType() {
-        return jobType;
-    }
-
-    public void setJobType(JobType jobType) {
-        this.jobType = jobType;
-    }
 
     @GobiiEntityParam(paramName = "jobId")
     public Integer getJobId() { return jobId; }

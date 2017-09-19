@@ -7,7 +7,9 @@ package org.gobiiproject.gobiimodel.CvNames;
 
 public enum CvGroup {
 
-    CVGROUP_JOBTYPE("job_type");
+    CVGROUP_JOBTYPE("job_type"),
+    CVGROUP_PAYLOADTYPE("payload_type"),
+    CVGROUP_JOBSTATUS("job_status");
 
     private String cvGroupName;
 
