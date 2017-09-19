@@ -402,7 +402,7 @@ public class GobiiFileReader {
 
 			jobStatus.set(JobDTO.CV_PROGRESSSTATUS_VALIDATION,"Matrix Validation");
 			if(loaderInstructionMap.containsKey(VARIANT_CALL_TABNAME)) {
-				boolean valid=DigestMatrix.validatematrix(loaderInstructionMap.get(VARIANT_CALL_TABNAME), zero.getDatasetType().getName().toString());
+				boolean valid=DigestMatrix.validatematrix(loaderInstructionMap.get(VARIANT_CALL_TABNAME), zero.getDatasetType().getName());
 				if (!valid) {
 					ErrorLogger.logError("Validate Dataset Matrix", "Matrix validation Failed.");
 					success=false;

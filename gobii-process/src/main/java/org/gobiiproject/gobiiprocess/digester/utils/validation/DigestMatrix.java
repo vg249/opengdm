@@ -89,7 +89,7 @@ public class DigestMatrix {
             case VCF:
                 return null;
             default:
-                ErrorLogger.logError("Validate Dataset Matrix","ERROR: Invalid dataset type");
+                ErrorLogger.logError("Validate Dataset Matrix","Invalid dataset type " + dataSetType);
                 break;
         }
         for (String base: rowList) {
