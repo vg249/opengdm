@@ -1,10 +1,14 @@
 package org.gobiiproject.gobiimodel.dto.instructions.loader;
 
 
+import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
 import org.gobiiproject.gobiimodel.entity.PropNameId;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A loader instruction containing all the details nessisary to create a digest file.
@@ -13,6 +17,15 @@ import java.util.List;
  */
 public class GobiiLoaderInstruction {
 
+
+
+
+    //Tables collection
+    //linked hash map preserves the insertion order
+    Map<String,List<GobiiFileColumn>> columnsByTableName = new LinkedHashMap<>();
+
+    //Type of load
+    private JobPayloadType jobPayloadType;
     //File location information (Each table can come from a separate file)
     private GobiiFile gobiiFile = new GobiiFile();
     //Name of this table. Used as filename for loading, and to determine what database table it goes to.
@@ -39,6 +52,15 @@ public class GobiiLoaderInstruction {
     private PropNameId Experiment = new PropNameId();
     private PropNameId mapset = new PropNameId();
 
+
+    public Map<String, List<GobiiFileColumn>> getColumnsByTableName() {
+        return columnsByTableName;
+    }
+
+    public void setColumnsByTableName(Map<String, List<GobiiFileColumn>> columnsByTableName) {
+        this.columnsByTableName = columnsByTableName;
+    }
+
     public GobiiFile getGobiiFile() {
         return gobiiFile;
     }
@@ -47,6 +69,15 @@ public class GobiiLoaderInstruction {
 
         this.gobiiFile = gobiiFile;
         return this;
+    }
+
+
+    public JobPayloadType getJobPayloadType() {
+        return jobPayloadType;
+    }
+
+    public void setJobPayloadType(JobPayloadType jobPayloadType) {
+        this.jobPayloadType = jobPayloadType;
     }
 
     public String getTable() {

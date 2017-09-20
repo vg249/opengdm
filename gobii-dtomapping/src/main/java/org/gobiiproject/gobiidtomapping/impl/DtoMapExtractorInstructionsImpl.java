@@ -4,13 +4,18 @@ import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.filesystem.access.InstructionFileAccess;
 import org.gobiiproject.gobiidtomapping.DtoMapContact;
 import org.gobiiproject.gobiidtomapping.DtoMapExtractorInstructions;
+import org.gobiiproject.gobiidtomapping.DtoMapJob;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
+import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
+import org.gobiiproject.gobiimodel.cvnames.JobType;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
+import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
@@ -23,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -38,6 +44,11 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
     @Autowired
     DtoMapContact dtoMapContact;
+
+    @Autowired
+    private DtoMapJob dtoMapJob = null;
+
+
     private InstructionFileAccess<GobiiExtractorInstruction> instructionFileAccess = new InstructionFileAccess<>(GobiiExtractorInstruction.class);
 
 
@@ -86,6 +97,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     + INSTRUCTION_FILE_EXT;
 
 
+            Integer contactId = null;
             for (GobiiExtractorInstruction currentExtractorInstruction :
                     extractorInstructionFilesDTO.getGobiiExtractorInstructions()) {
 
@@ -105,6 +117,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
                     ContactDTO contactDTO = dtoMapContact.getContactDetails(currentExtractorInstruction.getContactId());
 
+                    contactId = contactDTO.getContactId();
 
                     if (!LineUtils.isNullOrEmpty(contactDTO.getEmail())) {
 
@@ -205,10 +218,10 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
                     String extractionFileDestinationPath;
 
-                    if(!currentExtractorInstruction.isQcCheck()) {
+                    if (!currentExtractorInstruction.isQcCheck()) {
                         extractionFileDestinationPath = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.EXTRACTOR_OUTPUT);
                     } else {
-                        extractionFileDestinationPath = configSettings.getProcessingPath(cropType,GobiiFileProcessDir.QC_OUTPUT);
+                        extractionFileDestinationPath = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.QC_OUTPUT);
                     }
 
                     extractorFileDestinationLocation = this.makeDestinationDirectoryName(currentExtractorInstruction.getContactEmail(),
@@ -229,19 +242,100 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     } else {
                         instructionFileAccess.verifyDirectoryPermissions(extractorFileDestinationLocation);
                     }
-                    
+
                     currentGobiiDataSetExtract.setExtractDestinationDirectory(extractorFileDestinationLocation);
 
                 }
             } // iterate instructions/files
 
             if (!instructionFileAccess.doesPathExist(instructionFileFqpn)) {
+
                 InstructionFileAccess<List<GobiiExtractorInstruction>> instructionFileAccess = new InstructionFileAccess<>(GobiiExtractorInstruction.class);
 
+
+                // write job record
                 if (instructionFileAccess.writeInstructions(instructionFileFqpn,
                         returnVal.getGobiiExtractorInstructions())) {
 
+
                     returnVal.setJobId(extractorInstructionFilesDTO.getInstructionFileName());
+
+
+                    JobDTO jobDTOExisting = dtoMapJob.getJobDetailsByJobName(extractorInstructionFilesDTO.getInstructionFileName());
+                    if (jobDTOExisting.getJobId() == null || jobDTOExisting.getJobId() <= 0) {
+
+
+                        JobPayloadType jobPayloadType;
+                        boolean thereAreSamples = false;
+                        if (extractorInstructionFilesDTO
+                                .getGobiiExtractorInstructions()
+                                .stream()
+                                .filter(gei -> gei.getDataSetExtracts()
+                                        .stream()
+                                        .filter(dse -> dse.getSampleList() != null && dse.getSampleList().size() > 0).count() > 0)
+                                .count() > 0
+                                ) {
+                            thereAreSamples = true;
+                        }
+
+                        boolean thereAreMarkers = false;
+                        if (extractorInstructionFilesDTO
+                                .getGobiiExtractorInstructions()
+                                .stream()
+                                .filter(gei -> gei.getDataSetExtracts()
+                                        .stream()
+                                        .filter(dse -> dse.getMarkerList() != null && dse.getMarkerList().size() > 0).count() > 0)
+                                .count() > 0
+                                ) {
+                            thereAreMarkers = true;
+                        }
+
+
+                        boolean thereAreDatasets = false;
+                        if (extractorInstructionFilesDTO
+                                .getGobiiExtractorInstructions()
+                                .stream()
+                                .filter(gei -> gei.getDataSetExtracts()
+                                        .stream()
+                                        .filter(dse -> dse.getDataSet() != null && dse.getDataSet().getId() > 0).count() > 0)
+                                .count() > 0
+                                ) {
+                            thereAreDatasets = true;
+                        }
+
+                        if (thereAreSamples && !thereAreMarkers) {
+                            jobPayloadType = JobPayloadType.CV_PAYLOADTYPE_SAMPLES;
+                        } else if (!thereAreSamples && thereAreMarkers) {
+                            jobPayloadType = JobPayloadType.CV_PAYLOADTYPE_MARKERS;
+                        } else if (thereAreSamples && thereAreMarkers) {
+                            jobPayloadType = JobPayloadType.CV_PAYLOADTYPE_MARKERSAMPLES;
+                        } else if (thereAreSamples && thereAreMarkers) {
+                            jobPayloadType = JobPayloadType.CV_PAYLOADTYPE_MARKERSAMPLES;
+                        } else if (thereAreDatasets) {
+                            jobPayloadType = JobPayloadType.CV_PAYLOADTYPE_MATRIX;
+                        } else {
+                            throw new GobiiException("The instructions for job "
+                                    + extractorInstructionFilesDTO.getInstructionFileName()
+                                    + " does not have any samples, markers, or datasets specified");
+                        }
+
+                        JobDTO jobDTONew = new JobDTO();
+
+                        jobDTONew.setJobName(extractorInstructionFilesDTO.getInstructionFileName());
+                        jobDTONew.setSubmittedBy(contactId);
+                        jobDTONew.setMessage("Instruction file written by web services");
+                        jobDTONew.setStatus(JobProgressStatusType.CV_PROGRESSSTATUS_PENDING.getCvName());
+                        jobDTONew.setType(JobType.CV_JOBTYPE_EXTRACT.getCvName());
+                        jobDTONew.setPayloadType(jobPayloadType.getCvName());
+                        jobDTONew.setSubmittedDate(new Date());
+
+                        dtoMapJob.createJob(jobDTONew);
+                    } else {
+
+                        throw new GobiiException("The specified extractor job already exists: " + extractorInstructionFilesDTO.getInstructionFileName());
+
+                    }// if-else a job with that name already exists
+
                 }
             } else {
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
@@ -323,7 +417,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
                 returnVal.setGobiiExtractorInstructions(gobiiExtractorInstructionsWithStatus);
 
-            }  else {
+            } else {
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
                         "The specified instruction file does not exist: " +
@@ -439,7 +533,8 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
                         String currentExtractFile = extractDestinationDirectory + "/" + currentFileName;
 
-                        if (instructionFileAccess.doesPathExist(currentExtractFile)) dataSetExtract.setGobiiJobStatus(gobiiJobStatus);
+                        if (instructionFileAccess.doesPathExist(currentExtractFile))
+                            dataSetExtract.setGobiiJobStatus(gobiiJobStatus);
 
                         else dataSetExtract.setGobiiJobStatus(statusFailed);
                     }

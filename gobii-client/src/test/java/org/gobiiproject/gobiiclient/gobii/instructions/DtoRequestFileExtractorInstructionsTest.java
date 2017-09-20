@@ -14,6 +14,7 @@ import org.gobiiproject.gobiimodel.entity.PropNameId;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
+import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.junit.AfterClass;
@@ -89,6 +90,8 @@ public class DtoRequestFileExtractorInstructionsTest {
         gobiiDataSetExtractTwo.setGobiiFileType(DataSetExtractFileTypeTwo);
         String DataSetExtractNameTwo = "1my_foo_Dataset2";
         gobiiDataSetExtractTwo.setAccolate(true);
+        //gobiiDataSetExtractTwo.getMarkerList().add("m1");
+        //gobiiDataSetExtractTwo.getSampleList().add("s1");
         gobiiDataSetExtractTwo.setDataSet(new PropNameId(2,DataSetExtractNameTwo));
 
 
@@ -177,6 +180,26 @@ public class DtoRequestFileExtractorInstructionsTest {
                         .equals(dataSetExtractOneName)
         );
 
+        // ************** VERIFY THAT A JOB RECORD WAS CREATED FOR OUR INSTRUCTION
+        String jobName = extractorInstructionFilesDTOretrieveResponse.getInstructionFileName();
+        RestUri restUriForJob = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_JOB)
+                .addUriParam("jobName", jobName);
+        GobiiEnvelopeRestResource<JobDTO> gobiiEnvelopeRestResourceForJob = new GobiiEnvelopeRestResource<>(restUriForJob);
+        PayloadEnvelope<JobDTO> resultEnvelopeForJob = gobiiEnvelopeRestResourceForJob
+                .get(JobDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForJob.getHeader()));
+
+        Assert.assertTrue("No job record was created for job " + jobName,
+                resultEnvelopeForJob.getPayload().getData().size() == 1);
+
+        JobDTO submittedJobDto = resultEnvelopeForJob.getPayload().getData().get(0);
+        Assert.assertTrue("The job name of the retrieved DTO for the submitted job does not match the requested job name" + jobName,
+                submittedJobDto.getJobName().equals(jobName));
+
+
 
         // Test link we got from GET
         linkCollection = resultEnvelope.getPayload().getLinkCollection();
@@ -233,8 +256,8 @@ public class DtoRequestFileExtractorInstructionsTest {
 
         RestUri restUriExtractorInstructionsForGetByFilename = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceByUriIdParam(GobiiServiceRequestId.URL_FILE_EXTRACTOR_JOBS);
-        restUriExtractorInstructionsForGetByFilename.setParamValue("jobName", extractorInstructionFilesDTOFromSecondRetrieval.getInstructionFileName());
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_FILE_EXTRACTOR_INSTRUCTIONS)
+                .setParamValue("id",extractorInstructionFilesDTOFromSecondRetrieval.getInstructionFileName());
         GobiiEnvelopeRestResource<ExtractorInstructionFilesDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriExtractorInstructionsForGetByFilename);
         PayloadEnvelope<ExtractorInstructionFilesDTO> resultEnvelopeForGetStatusByFileName = gobiiEnvelopeRestResourceForGetById
                 .get(ExtractorInstructionFilesDTO.class);

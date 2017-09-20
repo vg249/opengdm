@@ -1,6 +1,9 @@
 package org.gobiiproject.gobiiclient.gobii.Helpers;
 
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.*;
+import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
+import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
+import org.gobiiproject.gobiimodel.cvnames.JobType;
 import org.gobiiproject.gobiimodel.headerlesscontainer.*;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
@@ -382,9 +385,9 @@ public class TestDtoFactory {
         JobDTO newJobDto = new JobDTO();
         String uniqueStemString = UUID.randomUUID().toString();
         newJobDto.setJobName(uniqueStemString + ": job");
-        newJobDto.setType(JobDTO.CV_JOBTYPE_LOAD);
-        newJobDto.setPayloadType(JobDTO.CV_PAYLOADTYPE_SAMPLES);
-        newJobDto.setStatus(JobDTO.CV_PROGRESSSTATUS_INPROGRESS);
+        newJobDto.setType(JobType.CV_JOBTYPE_LOAD.getCvName());
+        newJobDto.setPayloadType(JobPayloadType.CV_PAYLOADTYPE_SAMPLES.getCvName());
+        newJobDto.setStatus(JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS.getCvName());
         newJobDto.setMessage("dummy message");
         newJobDto.setSubmittedBy(1);
         newJobDto.setSubmittedDate(new Date());

@@ -7,6 +7,8 @@ import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.DtoMapDataSet;
 import org.gobiiproject.gobiidtomapping.DtoMapJob;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
+import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
+import org.gobiiproject.gobiimodel.cvnames.JobType;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -17,9 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -108,7 +108,7 @@ public class DtoMapJobImpl implements DtoMapJob {
         // check if the payload type of the job being submitted is a matrix
         // if it is a matrix, the datasetId of the JobDTO should not be empty
 
-        if (jobDTO.getPayloadType().equals(JobDTO.CV_PAYLOADTYPE_MATRIX) && (null == jobDTO.getDatasetId())) {
+        if (jobDTO.getPayloadType().equals(JobPayloadType.CV_PAYLOADTYPE_MATRIX) && (null == jobDTO.getDatasetId())) {
 
             throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
                     GobiiValidationStatusType.BAD_REQUEST,
@@ -122,7 +122,8 @@ public class DtoMapJobImpl implements DtoMapJob {
         Integer jobId = rsJobDao.createJobWithCvTerms(parameters);
         returnVal.setJobId(jobId);
 
-        if (returnVal.getPayloadType().equals(JobDTO.CV_PAYLOADTYPE_MATRIX)) {
+        if (returnVal.getType().equals(JobType.CV_JOBTYPE_LOAD)
+                && returnVal.getPayloadType().equals(JobPayloadType.CV_PAYLOADTYPE_MATRIX.getCvName())) {
 
             // get DatasetDTO
 
@@ -144,7 +145,7 @@ public class DtoMapJobImpl implements DtoMapJob {
             }
 
             dataSetDTO.setCreatedDate(parsedDate);
-            dataSetDTO.setModifiedDate(jobDTO.getSubmittedDate()    );
+            dataSetDTO.setModifiedDate(jobDTO.getSubmittedDate());
             dataSetDTO.setJobId(jobDTO.getJobId());
             dtoMapDataSet.replaceDataSet(returnVal.getDatasetId(), dataSetDTO);
 
@@ -179,7 +180,7 @@ public class DtoMapJobImpl implements DtoMapJob {
                 ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
             }
 
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             throw new GobiiDtoMappingException(e);
         }
         return returnVal;
