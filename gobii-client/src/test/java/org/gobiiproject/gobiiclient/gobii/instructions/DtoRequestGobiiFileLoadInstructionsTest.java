@@ -252,26 +252,26 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         Assert.assertTrue("The number of remapped tables does not match the number of tables sent",
                 loaderInstructionFilesDTOToSend.getGobiiLoaderInstructions().size() ==
-                        loaderInstructionFileDTOResponse.getPrimaryLoaderInstruction().getColumnsByTableName().size()
-        );
+                        loaderInstructionFileDTOResponse.getGobiiLoaderInstructions().get(0).getColumnsByTableName().size());
+        
 
         //verify remaping
         for (GobiiLoaderInstruction currentLoaderInstructionSent : loaderInstructionFilesDTOToSend.getGobiiLoaderInstructions()) {
 
             Assert.assertTrue("A table is missing from the table mapping: " + currentLoaderInstructionSent.getTable(),
                     loaderInstructionFileDTOResponse
-                            .getPrimaryLoaderInstruction()
+                            .getGobiiLoaderInstructions().get(0)
                             .getColumnsByTableName().containsKey(currentLoaderInstructionSent.getTable()));
 
             Assert.assertTrue("The number of columns for the table does not match: " + currentLoaderInstructionSent.getTable(),
                     loaderInstructionFileDTOResponse
-                            .getPrimaryLoaderInstruction()
+                            .getGobiiLoaderInstructions().get(0)
                             .getColumnsByTableName().get(currentLoaderInstructionSent.getTable()).size() ==
                             currentLoaderInstructionSent.getGobiiFileColumns().size());
 
             Assert.assertTrue("The number of columns for the table does not match: " + currentLoaderInstructionSent.getTable(),
                     loaderInstructionFileDTOResponse
-                            .getPrimaryLoaderInstruction()
+                            .getGobiiLoaderInstructions().get(0)
                             .getColumnsByTableName().containsKey(currentLoaderInstructionSent.getTable()));
 
 
@@ -283,7 +283,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                                 + currentLoaderInstructionSent.getTable()
                                 + " does not exist in the remapped instruction",
                         loaderInstructionFileDTOResponse
-                                .getPrimaryLoaderInstruction()
+                                .getGobiiLoaderInstructions().get(0)
                                 .getColumnsByTableName().get(currentLoaderInstructionSent.getTable())
                                 .stream()
                                 .filter(gfc -> gfc.getName().equals(currentFileColumnSent.getName())).count() > 0);
@@ -316,7 +316,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         Assert.assertNotNull(
                 loaderInstructionFilesDTOretrieveResponse
-                        .getPrimaryLoaderInstruction()
+                        .getGobiiLoaderInstructions().get(0)
         );
 
 

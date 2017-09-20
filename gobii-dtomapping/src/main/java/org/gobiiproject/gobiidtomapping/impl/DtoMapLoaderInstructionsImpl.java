@@ -110,7 +110,6 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                             .filter(gfi -> StringUtils.isNotEmpty(gfi.getTable()))
                             .collect(Collectors.toMap(GobiiLoaderInstruction::getTable, GobiiLoaderInstruction::getGobiiFileColumns))
             );
-            loaderInstructionFilesDTO.setPrimaryLoaderInstruction(primaryLoaderInstruction);
 
 
             if (primaryLoaderInstruction.getJobPayloadType() == null) {

@@ -26,14 +26,6 @@ public class LoaderInstructionFilesDTO extends DTOBase {
         ;
     }
 
-    public GobiiLoaderInstruction getPrimaryLoaderInstruction() {
-        return primaryLoaderInstruction;
-    }
-
-    public void setPrimaryLoaderInstruction(GobiiLoaderInstruction primaryLoaderInstruction) {
-        this.primaryLoaderInstruction = primaryLoaderInstruction;
-    }
-
     public List<GobiiLoaderInstruction> getGobiiLoaderInstructions() {
         return gobiiLoaderInstructions;
     }
