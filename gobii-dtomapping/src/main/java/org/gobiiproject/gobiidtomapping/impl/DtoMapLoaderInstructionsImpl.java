@@ -102,7 +102,20 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                     + INSTRUCTION_FILE_EXT;
 
 
+
             GobiiLoaderInstruction primaryLoaderInstruction = loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0);
+
+
+            for (GobiiLoaderInstruction currentInstruction : loaderInstructionFilesDTO
+                    .getGobiiLoaderInstructions()) {
+
+                if (StringUtils.isNotEmpty(currentInstruction.getTable())) {
+                    primaryLoaderInstruction.getColumnsByTableName().put(currentInstruction.getTable(),currentInstruction.getGobiiFileColumns());
+                }
+            }
+
+
+
             primaryLoaderInstruction.setColumnsByTableName(
                     loaderInstructionFilesDTO
                             .getGobiiLoaderInstructions()
@@ -276,7 +289,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                     }
                 }
 
-                if(dataSetId == null || dataSetId <= 0 ) {
+                if (dataSetId == null || dataSetId <= 0) {
                     throw new GobiiException("The specified job has payload type MATRIX, but no dataset ID: " + loaderInstructionFilesDTO.getInstructionFileName());
                 }
 

@@ -238,8 +238,15 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
             if (!instructionFileAccess.doesPathExist(instructionFileFqpn)) {
                 InstructionFileAccess<List<GobiiExtractorInstruction>> instructionFileAccess = new InstructionFileAccess<>(GobiiExtractorInstruction.class);
 
+
+                // write job record
+
+
+
+
                 if (instructionFileAccess.writeInstructions(instructionFileFqpn,
                         returnVal.getGobiiExtractorInstructions())) {
+
 
                     returnVal.setJobId(extractorInstructionFilesDTO.getInstructionFileName());
                 }

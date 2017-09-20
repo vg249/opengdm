@@ -6,6 +6,7 @@ import org.gobiiproject.gobiimodel.entity.PropNameId;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +21,8 @@ public class GobiiLoaderInstruction {
 
 
     //Tables collection
-    Map<String,List<GobiiFileColumn>> columnsByTableName = new HashMap<>();
+    //linked hash map preserves the insertion order
+    Map<String,List<GobiiFileColumn>> columnsByTableName = new LinkedHashMap<>();
 
     //Type of load
     private JobPayloadType jobPayloadType;
