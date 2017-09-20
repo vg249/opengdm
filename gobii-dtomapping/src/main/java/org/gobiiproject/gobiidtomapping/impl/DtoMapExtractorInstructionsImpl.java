@@ -272,7 +272,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                                 .stream()
                                 .filter(gei -> gei.getDataSetExtracts()
                                         .stream()
-                                        .filter(dse -> dse.getSampleList().size() > 0).count() > 0)
+                                        .filter(dse -> dse.getSampleList() != null && dse.getSampleList().size() > 0).count() > 0)
                                 .count() > 0
                                 ) {
                             thereAreSamples = true;
@@ -284,7 +284,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                                 .stream()
                                 .filter(gei -> gei.getDataSetExtracts()
                                         .stream()
-                                        .filter(dse -> dse.getMarkerList().size() > 0).count() > 0)
+                                        .filter(dse -> dse.getMarkerList() != null && dse.getMarkerList().size() > 0).count() > 0)
                                 .count() > 0
                                 ) {
                             thereAreMarkers = true;
