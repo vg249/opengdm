@@ -7,7 +7,7 @@ import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
-import org.gobiiproject.gobiimodel.CvNames.JobProgressStatusType;
+import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
 import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
@@ -17,7 +17,6 @@ import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import java.util.*;
 
 import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.logError;
-import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.logWarning;
 
 
 /**

@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiimodel.dto.instructions.loader;
 
 
-import org.gobiiproject.gobiimodel.CvNames.JobPayloadType;
+import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
 import org.gobiiproject.gobiimodel.entity.PropNameId;
 
 import java.util.ArrayList;

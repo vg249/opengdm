@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.CvNames;
+package org.gobiiproject.gobiimodel.cvnames;
 
 /**
  * Created by Phil on 5/13/2016.

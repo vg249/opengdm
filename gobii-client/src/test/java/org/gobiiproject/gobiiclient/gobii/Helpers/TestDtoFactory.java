@@ -1,9 +1,9 @@
 package org.gobiiproject.gobiiclient.gobii.Helpers;
 
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.*;
-import org.gobiiproject.gobiimodel.CvNames.JobPayloadType;
-import org.gobiiproject.gobiimodel.CvNames.JobProgressStatusType;
-import org.gobiiproject.gobiimodel.CvNames.JobType;
+import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
+import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
+import org.gobiiproject.gobiimodel.cvnames.JobType;
 import org.gobiiproject.gobiimodel.headerlesscontainer.*;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
