@@ -5,7 +5,9 @@ import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
 import org.gobiiproject.gobiimodel.entity.PropNameId;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A loader instruction containing all the details nessisary to create a digest file.
@@ -18,7 +20,7 @@ public class GobiiLoaderInstruction {
 
 
     //Tables collection
-    List<String> tableNames = new ArrayList<>();
+    Map<String,List<GobiiFileColumn>> columnsByTableName = new HashMap<>();
 
     //Type of load
     private JobPayloadType jobPayloadType;
@@ -48,6 +50,15 @@ public class GobiiLoaderInstruction {
     private PropNameId Experiment = new PropNameId();
     private PropNameId mapset = new PropNameId();
 
+
+    public Map<String, List<GobiiFileColumn>> getColumnsByTableName() {
+        return columnsByTableName;
+    }
+
+    public void setColumnsByTableName(Map<String, List<GobiiFileColumn>> columnsByTableName) {
+        this.columnsByTableName = columnsByTableName;
+    }
+
     public GobiiFile getGobiiFile() {
         return gobiiFile;
     }
@@ -58,13 +69,6 @@ public class GobiiLoaderInstruction {
         return this;
     }
 
-    public List<String> getTableNames() {
-        return tableNames;
-    }
-
-    public void setTableNames(List<String> tableNames) {
-        this.tableNames = tableNames;
-    }
 
     public JobPayloadType getJobPayloadType() {
         return jobPayloadType;

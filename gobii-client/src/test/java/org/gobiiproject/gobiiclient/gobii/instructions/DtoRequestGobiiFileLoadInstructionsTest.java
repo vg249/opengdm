@@ -30,6 +30,9 @@ import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.junit.*;
 
+import java.util.List;
+import java.util.Map;
+
 public class DtoRequestGobiiFileLoadInstructionsTest {
 
     private static GobiiUriFactory gobiiUriFactory;
@@ -135,6 +138,81 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         // INSTRUCTION ONE END
         // **********************************************************************
 
+        /*** InstructionTwo START - Test for wrong projectId for given experiment. Valid experimentId will be used here ***/
+        //get existing dataset
+        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS));
+
+        RestUri datasetsUri = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_DATASETS);
+        datasetsUri.setParamValue("id", dataSetId.toString());
+
+        GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceDataSet = new GobiiEnvelopeRestResource<>(datasetsUri);
+        PayloadEnvelope<DataSetDTO> resultEnvelopeDataSet = gobiiEnvelopeRestResourceDataSet.get(DataSetDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeDataSet.getHeader()));
+        DataSetDTO dataSetDTOResponse = resultEnvelopeDataSet.getPayload().getData().get(0);
+
+        Integer experimentId = dataSetDTOResponse.getExperimentId();
+
+
+        GobiiLoaderInstruction gobiiLoaderInstructionTwo = new GobiiLoaderInstruction();
+
+        String instructionTwoTableName = "test_table2";
+
+        //get experimentDTO
+        RestUri experimentsUri = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_EXPERIMENTS);
+        experimentsUri.setParamValue("id", experimentId.toString());
+
+        GobiiEnvelopeRestResource<ExperimentDTO> gobiiEnvelopeRestResourceExperiment = new GobiiEnvelopeRestResource<>(experimentsUri);
+        PayloadEnvelope<ExperimentDTO> resultEnvelopeExperiment = gobiiEnvelopeRestResourceExperiment.get(ExperimentDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeExperiment.getHeader()));
+        ExperimentDTO experimentDTOResponse = resultEnvelopeExperiment.getPayload().getData().get(0);
+
+        Integer projectId = experimentDTOResponse.getProjectId();
+
+        // invalid projectId
+        Integer invalidProjectId = projectId + 1;
+
+        gobiiLoaderInstructionTwo.setTable(instructionTwoTableName);
+        gobiiLoaderInstructionTwo.setDataSetId(dataSetId);
+        gobiiLoaderInstructionTwo.getDataSet().setId(dataSetId);
+        gobiiLoaderInstructionTwo.getDataSet().setName(dataSetDTOResponse.getName());
+        gobiiLoaderInstructionTwo.setGobiiCropType(gobiiCropType);
+        gobiiLoaderInstructionTwo.getExperiment().setId(experimentId);
+        gobiiLoaderInstructionTwo.getExperiment().setName(experimentDTOResponse.getExperimentName());
+        gobiiLoaderInstructionTwo.getProject().setId(invalidProjectId);
+
+        // column one
+        String instructionTwoColumnOneName = "test2_column_one";
+        DataSetType dataSetTypeTwoColumnOne = DataSetType.IUPAC;
+        GobiiFileColumn gobiiFileTwoColumnOne = new GobiiFileColumn()
+                .setGobiiColumnType(GobiiColumnType.CONSTANT)
+                .setConstantValue("test2")
+                .setName(instructionTwoColumnOneName)
+                .setDataSetType(dataSetTypeTwoColumnOne)
+                .setDataSetOrientationType(DataSetOrientationType.MARKER_FAST);
+
+        gobiiLoaderInstructionTwo.getGobiiFileColumns().add(gobiiFileTwoColumnOne);
+
+        // gobiifile config
+        String testSourceTwoDirName = digesterInputDirectory + "file_two_dir";
+        String testDestinationTwoDirName = digesterOutputDirectory + "file_two_dir";
+        gobiiLoaderInstructionTwo.getGobiiFile().setDelimiter(",")
+                .setSource("c://your-dr")
+                .setDestination("c://mydir")
+                .setGobiiFileType(GobiiFileType.GENERIC)
+                .setSource(testSourceTwoDirName)
+                .setDestination(testDestinationTwoDirName);
+
+        loaderInstructionFilesDTOToSend.getGobiiLoaderInstructions()
+                .add(gobiiLoaderInstructionTwo);
+
+        /***** InstructionTwo END *****/
+
         //The primary instruction does not have a payload type
         PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<LoaderInstructionFilesDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.gobiiUriFactory.resourceColl(GobiiServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
@@ -147,12 +225,12 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         Assert.assertTrue("There should have been a missing payload type error",
                 loaderInstructionFileDTOResponseEnvelope
-                .getHeader()
-                .getStatus()
-                .getStatusMessages()
-                .stream()
-                .filter(m -> m.getMessage().toLowerCase().contains("primary instruction does not have a payload type"))
-                .count() > 0);
+                        .getHeader()
+                        .getStatus()
+                        .getStatusMessages()
+                        .stream()
+                        .filter(m -> m.getMessage().toLowerCase().contains("primary instruction does not have a payload type"))
+                        .count() > 0);
 
         JobPayloadType payloadTypeToTest = JobPayloadType.CV_PAYLOADTYPE_MATRIX;
         loaderInstructionFilesDTOToSend.getGobiiLoaderInstructions().get(0).setJobPayloadType(payloadTypeToTest);
@@ -162,10 +240,6 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         //now it should succeed
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(loaderInstructionFileDTOResponseEnvelope.getHeader()));
 
-
-
-
-
         LoaderInstructionFilesDTO loaderInstructionFileDTOResponse = loaderInstructionFileDTOResponseEnvelope.getPayload().getData().get(0);
         Assert.assertNotEquals(null, loaderInstructionFileDTOResponse);
 
@@ -173,6 +247,49 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         Assert.assertNotNull(loaderInstructionFileDTOResponseEnvelope.getPayload().getLinkCollection());
         Assert.assertNotNull(loaderInstructionFileDTOResponseEnvelope.getPayload().getLinkCollection().getLinksPerDataItem());
 //        Assert.assertNotNull(loaderInstructionFileDTOResponseEnvelope.getPayload().getLinkCollection().getLinksPerDataItem().get(0));
+
+
+
+        Assert.assertTrue("The number of remapped tables does not match the number of tables sent",
+                loaderInstructionFilesDTOToSend.getGobiiLoaderInstructions().size() ==
+                        loaderInstructionFileDTOResponse.getPrimaryLoaderInstruction().getColumnsByTableName().size()
+        );
+
+        //verify remaping
+        for (GobiiLoaderInstruction currentLoaderInstructionSent : loaderInstructionFilesDTOToSend.getGobiiLoaderInstructions()) {
+
+            Assert.assertTrue("A table is missing from the table mapping: " + currentLoaderInstructionSent.getTable(),
+                    loaderInstructionFileDTOResponse
+                            .getPrimaryLoaderInstruction()
+                            .getColumnsByTableName().containsKey(currentLoaderInstructionSent.getTable()));
+
+            Assert.assertTrue("The number of columns for the table does not match: " + currentLoaderInstructionSent.getTable(),
+                    loaderInstructionFileDTOResponse
+                            .getPrimaryLoaderInstruction()
+                            .getColumnsByTableName().get(currentLoaderInstructionSent.getTable()).size() ==
+                            currentLoaderInstructionSent.getGobiiFileColumns().size());
+
+            Assert.assertTrue("The number of columns for the table does not match: " + currentLoaderInstructionSent.getTable(),
+                    loaderInstructionFileDTOResponse
+                            .getPrimaryLoaderInstruction()
+                            .getColumnsByTableName().containsKey(currentLoaderInstructionSent.getTable()));
+
+
+            for (GobiiFileColumn currentFileColumnSent : currentLoaderInstructionSent.getGobiiFileColumns()) {
+
+                Assert.assertTrue("File column "
+                                + currentFileColumnSent.getName()
+                                + "of table "
+                                + currentLoaderInstructionSent.getTable()
+                                + " does not exist in the remapped instruction",
+                        loaderInstructionFileDTOResponse
+                                .getPrimaryLoaderInstruction()
+                                .getColumnsByTableName().get(currentLoaderInstructionSent.getTable())
+                                .stream()
+                                .filter(gfc -> gfc.getName().equals(currentFileColumnSent.getName())).count() > 0);
+            }
+
+        }
 
         // ************** NOW RETRIFVE THE FILE WE JUST CREATED AND MAKE SURE IT'S REALLY THERE USING THE HATEOS LINKS
 
@@ -192,7 +309,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(loaderInstructionFileDTOResponseEnvelope.getHeader()));
 
         Assert.assertTrue(
-                1 == loaderInstructionFilesDTOretrieveResponse
+                2 == loaderInstructionFilesDTOretrieveResponse
                         .getGobiiLoaderInstructions()
                         .size()
         );

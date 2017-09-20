@@ -103,13 +103,12 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
 
             GobiiLoaderInstruction primaryLoaderInstruction = loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0);
-            primaryLoaderInstruction.setTableNames(
+            primaryLoaderInstruction.setColumnsByTableName(
                     loaderInstructionFilesDTO
                             .getGobiiLoaderInstructions()
                             .stream()
                             .filter(gfi -> StringUtils.isNotEmpty(gfi.getTable()))
-                            .map(gfi -> gfi.getTable())
-                            .collect(Collectors.toList())
+                            .collect(Collectors.toMap(GobiiLoaderInstruction::getTable, GobiiLoaderInstruction::getGobiiFileColumns))
             );
             loaderInstructionFilesDTO.setPrimaryLoaderInstruction(primaryLoaderInstruction);
 
