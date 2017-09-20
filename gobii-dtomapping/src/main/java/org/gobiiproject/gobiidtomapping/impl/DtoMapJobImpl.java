@@ -8,6 +8,7 @@ import org.gobiiproject.gobiidtomapping.DtoMapDataSet;
 import org.gobiiproject.gobiidtomapping.DtoMapJob;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
+import org.gobiiproject.gobiimodel.cvnames.JobType;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -121,7 +122,8 @@ public class DtoMapJobImpl implements DtoMapJob {
         Integer jobId = rsJobDao.createJobWithCvTerms(parameters);
         returnVal.setJobId(jobId);
 
-        if (returnVal.getPayloadType().equals(JobPayloadType.CV_PAYLOADTYPE_MATRIX.getCvName())) {
+        if (returnVal.getType().equals(JobType.CV_JOBTYPE_LOAD)
+                && returnVal.getPayloadType().equals(JobPayloadType.CV_PAYLOADTYPE_MATRIX.getCvName())) {
 
             // get DatasetDTO
 
@@ -143,7 +145,7 @@ public class DtoMapJobImpl implements DtoMapJob {
             }
 
             dataSetDTO.setCreatedDate(parsedDate);
-            dataSetDTO.setModifiedDate(jobDTO.getSubmittedDate()    );
+            dataSetDTO.setModifiedDate(jobDTO.getSubmittedDate());
             dataSetDTO.setJobId(jobDTO.getJobId());
             dtoMapDataSet.replaceDataSet(returnVal.getDatasetId(), dataSetDTO);
 
@@ -178,7 +180,7 @@ public class DtoMapJobImpl implements DtoMapJob {
                 ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
             }
 
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             throw new GobiiDtoMappingException(e);
         }
         return returnVal;

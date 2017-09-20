@@ -323,7 +323,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
                 } else {
 
-                    throw new GobiiException("The specified job already exists: " + loaderInstructionFilesDTO.getInstructionFileName());
+                    throw new GobiiException("The specified loader job already exists: " + loaderInstructionFilesDTO.getInstructionFileName());
 
                 }// if-else a job with that name already exists
 

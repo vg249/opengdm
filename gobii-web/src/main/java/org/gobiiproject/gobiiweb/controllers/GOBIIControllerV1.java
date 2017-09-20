@@ -1449,6 +1449,7 @@ public class GOBIIControllerV1 {
         return (returnVal);
 
     }
+
     @RequestMapping(value = "/instructions/loader/jobs/{jobName}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<JobDTO> getLoaderInstructionStatus(@PathVariable("jobName") String jobName,
@@ -1510,9 +1511,46 @@ public class GOBIIControllerV1 {
 
             payloadWriter.writeSingleItemForId(returnVal,
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
-                            GobiiServiceRequestId.URL_FILE_EXTRACTOR_JOBS),
+                            GobiiServiceRequestId.URL_FILE_EXTRACTOR_INSTRUCTIONS),
                     extractorInstructionFilesDTONew,
                     extractorInstructionFilesDTONew.getJobId());
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+
+    @RequestMapping(value = "/instructions/extractor/{instructionFileName}", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<ExtractorInstructionFilesDTO> getExtractorInstruction(@PathVariable("instructionFileName") String instructionFileName,
+                                                                           HttpServletRequest request,
+                                                                           HttpServletResponse response) {
+
+        PayloadEnvelope<ExtractorInstructionFilesDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            ExtractorInstructionFilesDTO extractorInstructionFilesDTO = extractorInstructionFilesService.getStatus(cropType, instructionFileName);
+
+            PayloadWriter<ExtractorInstructionFilesDTO> payloadWriter = new PayloadWriter<>(request, response,
+                    ExtractorInstructionFilesDTO.class);
+
+            payloadWriter.writeSingleItemForId(returnVal,
+                    GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
+                            GobiiServiceRequestId.URL_FILE_EXTRACTOR_INSTRUCTIONS),
+                    extractorInstructionFilesDTO,
+                    extractorInstructionFilesDTO.getInstructionFileName());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
