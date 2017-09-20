@@ -85,9 +85,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
         }
 
 
-
         try {
-
 
 
             ConfigSettings configSettings = new ConfigSettings();
@@ -116,7 +114,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
             loaderInstructionFilesDTO.setPrimaryLoaderInstruction(primaryLoaderInstruction);
 
 
-            if(primaryLoaderInstruction.getJobPayloadType() == null ) {
+            if (primaryLoaderInstruction.getJobPayloadType() == null) {
                 throw new Exception("The primary instruction does not have a payload type");
             }
 
@@ -271,24 +269,25 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
             // NOW CREATE THE JOB RECORD *********************************************************
             Integer dataSetId = null;
-            if (primaryLoaderInstruction.getDataSetId() != null) {
-                dataSetId = primaryLoaderInstruction.getDataSetId();
-            } else {
-                if (primaryLoaderInstruction.getDataSet() != null && primaryLoaderInstruction.getDataSet().getId() != null) {
+            if (JobPayloadType.CV_PAYLOADTYPE_MATRIX.equals(primaryLoaderInstruction.getJobPayloadType())) {
+                if (primaryLoaderInstruction.getDataSetId() != null) {
                     dataSetId = primaryLoaderInstruction.getDataSetId();
+                } else {
+                    if (primaryLoaderInstruction.getDataSet() != null && primaryLoaderInstruction.getDataSet().getId() != null) {
+                        dataSetId = primaryLoaderInstruction.getDataSetId();
+                    }
                 }
+
+                if(dataSetId == null || dataSetId <= 0 ) {
+                    throw new GobiiException("The specified job has payload type MATRIX, but no dataset ID: " + loaderInstructionFilesDTO.getInstructionFileName());
+                }
+
             }
 
 
             Integer contactId = primaryLoaderInstruction.getContactId();
 
             if (contactId != null || contactId > 0) {
-
-                if (JobPayloadType.CV_PAYLOADTYPE_MATRIX.equals(primaryLoaderInstruction.getJobPayloadType())
-                                && (dataSetId != null && dataSetId > 0)) {
-                } else {
-                    throw new GobiiException("The specified job has payload type MATRIX, but no dataset ID: " + loaderInstructionFilesDTO.getInstructionFileName());
-                }
 
 
                 //check for duplicate job name and provide meaningful error message

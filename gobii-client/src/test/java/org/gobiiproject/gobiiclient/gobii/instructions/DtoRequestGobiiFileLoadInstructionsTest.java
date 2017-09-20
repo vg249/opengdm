@@ -135,9 +135,8 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         // INSTRUCTION ONE END
         // **********************************************************************
-//The primary instruction does not have a payload type
 
-
+        //The primary instruction does not have a payload type
         PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<LoaderInstructionFilesDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.gobiiUriFactory.resourceColl(GobiiServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
         PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResource.post(LoaderInstructionFilesDTO.class,
@@ -156,7 +155,8 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 .filter(m -> m.getMessage().toLowerCase().contains("primary instruction does not have a payload type"))
                 .count() > 0);
 
-        loaderInstructionFilesDTOToSend.getGobiiLoaderInstructions().get(0).setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX);
+        JobPayloadType payloadTypeToTest = JobPayloadType.CV_PAYLOADTYPE_MATRIX;
+        loaderInstructionFilesDTOToSend.getGobiiLoaderInstructions().get(0).setJobPayloadType(payloadTypeToTest);
         loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResource.post(LoaderInstructionFilesDTO.class,
                 payloadEnvelope);
 
@@ -239,6 +239,9 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         JobDTO submittedJobDto = resultEnvelopeForJob.getPayload().getData().get(0);
         Assert.assertTrue("The job name of the retrieved DTO for the submitted job does not match the requested job name" + jobName,
                 submittedJobDto.getJobName().equals(jobName));
+
+        Assert.assertTrue("The instruction file's payload type " + payloadTypeToTest.getCvName() + "does not match the retrievedtype " + submittedJobDto.getPayloadType(),
+                submittedJobDto.getPayloadType().equals(payloadTypeToTest.getCvName()));
 
 
         // ************** VERIFY THAT WE CAN MEANINGFULLY TEST FOR NON EXISTENT DIRECTORIES
