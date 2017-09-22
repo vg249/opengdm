@@ -1,7 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration>
+<!-- Logging levels: TRACE, DEBUG, INFO, WARN and ERROR -->
+<!-- Configuration file is checked for changes every 1 min -->
+<configuration scan="true">
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+        <resetJUL>true</resetJUL>
+    </contextListener>
+
+    <!-- To enable JMX Management -->
+    <jmxConfigurator/>
+
     <property name="log-dir" value="../logs"/>
-    <!-- Send debug messages to System.out -->
+    <timestamp key="timestamp" datePattern="yyyyMMdd'T'HHmmss"/>
+
+    <!--                       Appender's used                               -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%-5level %logger{0} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <!-- By default, encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
         <encoder>
@@ -9,21 +26,52 @@
         </encoder>
     </appender>
 
-
-    <timestamp key="timestamp" datePattern="yyyyMMdd'T'HHmmss"/>
-
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
         <file>${log-dir}/process-${timestamp}.log</file>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="GOBII_PROCESS_FILE" class="ch.qos.logback.core.FileAppender">
+        <file>process-${timestamp}.log</file>
 
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n</pattern>
         </encoder>
     </appender>
 
+    <!--                              Logger                                    -->
+    <!-- By adding additivity="false" only the appenders defined in the logger are used. Transitive addition of appenders is disabled. -->
+    <logger name="org.springframework.web" level="ERROR" additivity="false">
+        <appender-ref ref="console"/>
+    </logger>
+
+    <logger name="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" level="ERROR"
+            additivity="false">
+        <appender-ref ref="console"/>
+    </logger>
+
+    <logger name="org.springframework.web.servlet.mvc.method.annotation" level="ERROR" additivity="false">
+        <appender-ref ref="console"/>
+    </logger>
+
+    <logger name="org.springframework.web.method.HandlerMethod" level="ERROR" additivity="false">
+        <appender-ref ref="console"/>
+    </logger>
+
+    <logger name="org.gobiiproject.gobiiprocess" level="ERROR" additivity="false">
+        <appender-ref ref="GOBII_PROCESS_FILE"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger name="org.gobiiproject.gobiiclient" level="ERROR" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
     <!-- In investigating GSD-269, it is believed gobii-model is overwriting gobii-processes logback.xml.
     Temporarily reducing log level to ERROR as a stopgap measure. -->
     <root level="ERROR">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
     </root>
 </configuration>
