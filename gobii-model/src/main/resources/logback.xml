@@ -13,7 +13,7 @@
     <timestamp key="timestamp" datePattern="yyyyMMdd'T'HHmmss"/>
 
     <!--                       Appender's used                               -->
-    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%-5level %logger{0} - %msg%n</pattern>
         </encoder>
@@ -44,30 +44,68 @@
     <!--                              Logger                                    -->
     <!-- By adding additivity="false" only the appenders defined in the logger are used. Transitive addition of appenders is disabled. -->
     <logger name="org.springframework.web" level="ERROR" additivity="false">
-        <appender-ref ref="console"/>
+        <appender-ref ref="CONSOLE"/>
     </logger>
 
     <logger name="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" level="ERROR"
             additivity="false">
-        <appender-ref ref="console"/>
+        <appender-ref ref="CONSOLE"/>
     </logger>
 
     <logger name="org.springframework.web.servlet.mvc.method.annotation" level="ERROR" additivity="false">
-        <appender-ref ref="console"/>
+        <appender-ref ref="CONSOLE"/>
     </logger>
 
     <logger name="org.springframework.web.method.HandlerMethod" level="ERROR" additivity="false">
-        <appender-ref ref="console"/>
+        <appender-ref ref="CONSOLE"/>
     </logger>
 
-    <logger name="org.gobiiproject.gobiiprocess" level="ERROR" additivity="false">
+    <!-- Loggers for all the 9 modules of GOBII.
+         If any other package apart from these(dependencies) look for a logger,
+         as there is nothing defined for them they will go with root logger which is set to ERROR level.-->
+    <logger name="org.gobiiproject.gobiimodel" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger name="org.gobiiproject.gobiiprocess" level="DEBUG" additivity="false">
         <appender-ref ref="GOBII_PROCESS_FILE"/>
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <logger name="org.gobiiproject.gobiiclient" level="ERROR" additivity="false">
+    <logger name="org.gobiiproject.gobiiclient" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
+
+    <logger name="org.gobiiproject.gobiiweb" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <logger name="org.gobiiproject.gobiiapimodel" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger name="org.gobiiproject.gobiibrapi" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger name="org.gobiiproject.gobiidao" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger name="org.gobiiproject.gobidomain" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger name="org.gobiiproject.gobiidtomapping" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
     <!-- In investigating GSD-269, it is believed gobii-model is overwriting gobii-processes logback.xml.
     Temporarily reducing log level to ERROR as a stopgap measure. -->
     <root level="ERROR">
