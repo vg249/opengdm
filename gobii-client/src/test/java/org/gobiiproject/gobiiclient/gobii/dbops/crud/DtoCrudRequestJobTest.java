@@ -64,7 +64,7 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
     /* This unit test should test the creation of a matrix job with dataset ID is not specified
     *  The exception should be tested in this function
     * */
-    @Test
+    @Ignore
     public void createFailMatrixJob() throws Exception {
 
         JobDTO newJobDto = TestDtoFactory.makePopulateJobDTO();
@@ -217,7 +217,7 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
 
     }
 
-    @Test
+    @Ignore
     public void getJobByDataSetId() throws Exception {
 
         // create analysis for new dataset for this test
