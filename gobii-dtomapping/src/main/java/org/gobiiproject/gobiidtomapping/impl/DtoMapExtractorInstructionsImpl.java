@@ -303,6 +303,14 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                             thereAreDatasets = true;
                         }
 
+                        boolean thereAreMarkerGroups = extractorInstructionFilesDTO
+                                .getGobiiExtractorInstructions()
+                                .stream()
+                                .filter(gei -> gei.getDataSetExtracts()
+                                        .stream()
+                                        .filter(dse -> dse.getMarkerGroups() != null && dse.getMarkerGroups().size() > 0).count() > 0)
+                                .count() > 0;
+
                         if (thereAreSamples && !thereAreMarkers) {
                             jobPayloadType = JobPayloadType.CV_PAYLOADTYPE_SAMPLES;
                         } else if (!thereAreSamples && thereAreMarkers) {
@@ -313,10 +321,13 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                             jobPayloadType = JobPayloadType.CV_PAYLOADTYPE_MARKERSAMPLES;
                         } else if (thereAreDatasets) {
                             jobPayloadType = JobPayloadType.CV_PAYLOADTYPE_MATRIX;
+                        } else if (thereAreMarkerGroups)
+                        {
+                            jobPayloadType = JobPayloadType.CV_PAYLOADTYPE_MARKERS;
                         } else {
                             throw new GobiiException("The instructions for job "
                                     + extractorInstructionFilesDTO.getInstructionFileName()
-                                    + " does not have any samples, markers, or datasets specified");
+                                    + " does not have any samples, markers, datasets, or marker groups specified");
                         }
 
                         JobDTO jobDTONew = new JobDTO();
