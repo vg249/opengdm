@@ -280,9 +280,16 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
 
                 if (nonExistingMarkers.size() > 0) {
 
+
+                    StringBuilder nonExistentMarkerDetails = new StringBuilder();
+                    nonExistingMarkers.forEach( markerDTO -> {
+                        nonExistentMarkerDetails.append(markerDTO.getPlatformName() + "." +  markerDTO.getMarkerName() + ", ");
+                    });
+
+
                     throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.NONEXISTENT_FK_ENTITY,
-                            "Some markers don't exist.");
+                            nonExistingMarkers.size() + " markers don't exist: " + nonExistentMarkerDetails.toString());
 
                 }
 
