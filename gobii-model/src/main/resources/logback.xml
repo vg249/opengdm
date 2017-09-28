@@ -15,6 +15,7 @@
     <jmxConfigurator/>
 
     <property name="log-dir" value="../logs"/>
+    <property name="loggerLevel" value="DEBUG"/>
     <property scope="context" resource="application.properties"/>
     <timestamp key="timestamp" datePattern="yyyyMMdd'T'HHmmss"/>
 
@@ -37,35 +38,35 @@
             <appender name="FILE" class="ch.qos.logback.core.FileAppender">
                 <file>${log-dir}/process-${timestamp}.log</file>
                 <encoder>
-                    <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n</pattern>
+                    <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} %class{36}.%M %L - %msg%n</pattern>
                 </encoder>
             </appender>
-            <logger name="org.gobiiproject.gobiimodel" level="DEBUG" additivity="false">
+            <logger name="org.gobiiproject.gobiimodel" level="${loggerLevel}" additivity="false">
                 <appender-ref ref="FILE"/>
                 <appender-ref ref="STDOUT"/>
             </logger>
 
-            <logger name="org.gobiiproject.gobiiapimodel" level="DEBUG" additivity="false">
+            <logger name="org.gobiiproject.gobiiapimodel" level="${loggerLevel}" additivity="false">
                 <appender-ref ref="FILE"/>
                 <appender-ref ref="STDOUT"/>
             </logger>
 
-            <logger name="org.gobiiproject.gobiibrapi" level="DEBUG" additivity="false">
+            <logger name="org.gobiiproject.gobiibrapi" level="${loggerLevel}" additivity="false">
                 <appender-ref ref="FILE"/>
                 <appender-ref ref="STDOUT"/>
             </logger>
 
-            <logger name="org.gobiiproject.gobiidao" level="DEBUG" additivity="false">
+            <logger name="org.gobiiproject.gobiidao" level="${loggerLevel}" additivity="false">
                 <appender-ref ref="FILE"/>
                 <appender-ref ref="STDOUT"/>
             </logger>
 
-            <logger name="org.gobiiproject.gobidomain" level="DEBUG" additivity="false">
+            <logger name="org.gobiiproject.gobidomain" level="${loggerLevel}" additivity="false">
                 <appender-ref ref="FILE"/>
                 <appender-ref ref="STDOUT"/>
             </logger>
 
-            <logger name="org.gobiiproject.gobiidtomapping" level="DEBUG" additivity="false">
+            <logger name="org.gobiiproject.gobiidtomapping" level="${loggerLevel}" additivity="false">
                 <appender-ref ref="FILE"/>
                 <appender-ref ref="STDOUT"/>
             </logger>
@@ -79,51 +80,50 @@
                 <file>process-${timestamp}.log</file>
 
                 <encoder>
-                    <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n</pattern>
+                    <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} %class{36}.%M %L - %msg%n</pattern>
                 </encoder>
             </appender>
 
-            <logger name="org.gobiiproject.gobiiprocess" level="DEBUG" additivity="false">
+            <logger name="org.gobiiproject.gobiiprocess" level="${loggerLevel}" additivity="false">
                 <appender-ref ref="GOBII_PROCESS_FILE"/>
                 <appender-ref ref="STDOUT"/>
             </logger>
         </then>
     </if>
 
-    <logger name="org.gobiiproject.gobiimodel" level="DEBUG" additivity="false">
+    <logger name="org.gobiiproject.gobiimodel" level="${loggerLevel}" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <logger name="org.gobiiproject.gobiiapimodel" level="DEBUG" additivity="false">
+    <logger name="org.gobiiproject.gobiiapimodel" level="${loggerLevel}" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <logger name="org.gobiiproject.gobiibrapi" level="DEBUG" additivity="false">
+    <logger name="org.gobiiproject.gobiibrapi" level="${loggerLevel}" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <logger name="org.gobiiproject.gobiidao" level="DEBUG" additivity="false">
+    <logger name="org.gobiiproject.gobiidao" level="${loggerLevel}" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <logger name="org.gobiiproject.gobidomain" level="DEBUG" additivity="false">
+    <logger name="org.gobiiproject.gobidomain" level="${loggerLevel}" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <logger name="org.gobiiproject.gobiidtomapping" level="DEBUG" additivity="false">
+    <logger name="org.gobiiproject.gobiidtomapping" level="${loggerLevel}" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
 
-
-    <logger name="org.gobiiproject.gobiiprocess" level="DEBUG" additivity="false">
+    <logger name="org.gobiiproject.gobiiprocess" level="${loggerLevel}" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <logger name="org.gobiiproject.gobiiclient" level="DEBUG" additivity="false">
+    <logger name="org.gobiiproject.gobiiclient" level="${loggerLevel}" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <logger name="org.gobiiproject.gobiiweb" level="DEBUG" additivity="false">
+    <logger name="org.gobiiproject.gobiiweb" level="${loggerLevel}" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
 
