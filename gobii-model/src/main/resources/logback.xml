@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Logging levels: TRACE, DEBUG, INFO, WARN and ERROR -->
+<!-- logger.properties file has the variable to control the logger and appender configuration.
+     The file which is closer in its path will always take precedence.
+     EX: If logger.properties is defined in web and model then the one in web takes preference.
+     Hence every module will have a file even if it is dummy. -->
+<!-- If logger with same name is defined multiple times, first definition is picked -->
 <!-- Configuration file is checked for changes every 1 min -->
 <configuration scan="true">
     <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
@@ -10,66 +15,107 @@
     <jmxConfigurator/>
 
     <property name="log-dir" value="../logs"/>
+    <property scope="context" resource="application.properties"/>
     <timestamp key="timestamp" datePattern="yyyyMMdd'T'HHmmss"/>
 
-    <!--                       Appender's used                               -->
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%-5level %logger{0} - %msg%n</pattern>
-        </encoder>
-    </appender>
+    <!--                      Default Console Appender                            -->
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <!-- By default, encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n</pattern>
+            <!-- %M: Method Name %L: Line Number -->
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} %class{36}.%M %L - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>${log-dir}/process-${timestamp}.log</file>
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n</pattern>
-        </encoder>
-    </appender>
-
-    <appender name="GOBII_PROCESS_FILE" class="ch.qos.logback.core.FileAppender">
-        <file>process-${timestamp}.log</file>
-
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n</pattern>
-        </encoder>
-    </appender>
-
-    <!--                              Logger                                    -->
-    <!-- By adding additivity="false" only the appenders defined in the logger are used. Transitive addition of appenders is disabled. -->
-    <logger name="org.springframework.web" level="ERROR" additivity="false">
-        <appender-ref ref="CONSOLE"/>
-    </logger>
-
-    <logger name="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" level="ERROR"
-            additivity="false">
-        <appender-ref ref="CONSOLE"/>
-    </logger>
-
-    <logger name="org.springframework.web.servlet.mvc.method.annotation" level="ERROR" additivity="false">
-        <appender-ref ref="CONSOLE"/>
-    </logger>
-
-    <logger name="org.springframework.web.method.HandlerMethod" level="ERROR" additivity="false">
-        <appender-ref ref="CONSOLE"/>
-    </logger>
 
     <!-- Loggers for all the 9 modules of GOBII.
          If any other package apart from these(dependencies) look for a logger,
          as there is nothing defined for them they will go with root logger which is set to ERROR level.-->
+    <if condition='property("module").equals("model")'>
+        <then>
+            <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+                <file>${log-dir}/process-${timestamp}.log</file>
+                <encoder>
+                    <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n</pattern>
+                </encoder>
+            </appender>
+            <logger name="org.gobiiproject.gobiimodel" level="DEBUG" additivity="false">
+                <appender-ref ref="FILE"/>
+                <appender-ref ref="STDOUT"/>
+            </logger>
+
+            <logger name="org.gobiiproject.gobiiapimodel" level="DEBUG" additivity="false">
+                <appender-ref ref="FILE"/>
+                <appender-ref ref="STDOUT"/>
+            </logger>
+
+            <logger name="org.gobiiproject.gobiibrapi" level="DEBUG" additivity="false">
+                <appender-ref ref="FILE"/>
+                <appender-ref ref="STDOUT"/>
+            </logger>
+
+            <logger name="org.gobiiproject.gobiidao" level="DEBUG" additivity="false">
+                <appender-ref ref="FILE"/>
+                <appender-ref ref="STDOUT"/>
+            </logger>
+
+            <logger name="org.gobiiproject.gobidomain" level="DEBUG" additivity="false">
+                <appender-ref ref="FILE"/>
+                <appender-ref ref="STDOUT"/>
+            </logger>
+
+            <logger name="org.gobiiproject.gobiidtomapping" level="DEBUG" additivity="false">
+                <appender-ref ref="FILE"/>
+                <appender-ref ref="STDOUT"/>
+            </logger>
+
+        </then>
+    </if>
+
+    <if condition='property("module").equals("process")'>
+        <then>
+            <appender name="GOBII_PROCESS_FILE" class="ch.qos.logback.core.FileAppender">
+                <file>process-${timestamp}.log</file>
+
+                <encoder>
+                    <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n</pattern>
+                </encoder>
+            </appender>
+
+            <logger name="org.gobiiproject.gobiiprocess" level="DEBUG" additivity="false">
+                <appender-ref ref="GOBII_PROCESS_FILE"/>
+                <appender-ref ref="STDOUT"/>
+            </logger>
+        </then>
+    </if>
+
     <logger name="org.gobiiproject.gobiimodel" level="DEBUG" additivity="false">
-        <appender-ref ref="FILE"/>
         <appender-ref ref="STDOUT"/>
     </logger>
 
+    <logger name="org.gobiiproject.gobiiapimodel" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger name="org.gobiiproject.gobiibrapi" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger name="org.gobiiproject.gobiidao" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger name="org.gobiiproject.gobidomain" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger name="org.gobiiproject.gobiidtomapping" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+
     <logger name="org.gobiiproject.gobiiprocess" level="DEBUG" additivity="false">
-        <appender-ref ref="GOBII_PROCESS_FILE"/>
         <appender-ref ref="STDOUT"/>
     </logger>
 
@@ -78,38 +124,22 @@
     </logger>
 
     <logger name="org.gobiiproject.gobiiweb" level="DEBUG" additivity="false">
-        <appender-ref ref="CONSOLE"/>
-    </logger>
-
-    <logger name="org.gobiiproject.gobiiapimodel" level="DEBUG" additivity="false">
-        <appender-ref ref="FILE"/>
-        <appender-ref ref="STDOUT"/>
-    </logger>
-
-    <logger name="org.gobiiproject.gobiibrapi" level="DEBUG" additivity="false">
-        <appender-ref ref="FILE"/>
-        <appender-ref ref="STDOUT"/>
-    </logger>
-
-    <logger name="org.gobiiproject.gobiidao" level="DEBUG" additivity="false">
-        <appender-ref ref="FILE"/>
-        <appender-ref ref="STDOUT"/>
-    </logger>
-
-    <logger name="org.gobiiproject.gobidomain" level="DEBUG" additivity="false">
-        <appender-ref ref="FILE"/>
-        <appender-ref ref="STDOUT"/>
-    </logger>
-
-    <logger name="org.gobiiproject.gobiidtomapping" level="DEBUG" additivity="false">
-        <appender-ref ref="FILE"/>
         <appender-ref ref="STDOUT"/>
     </logger>
 
     <!-- In investigating GSD-269, it is believed gobii-model is overwriting gobii-processes logback.xml.
     Temporarily reducing log level to ERROR as a stopgap measure. -->
     <root level="ERROR">
-        <appender-ref ref="FILE"/>
         <appender-ref ref="STDOUT"/>
+        <if condition='property("module").equals("model")'>
+            <then>
+                <appender-ref ref="FILE"/>
+            </then>
+        </if>
+        <if condition='property("module").equals("process")'>
+            <then>
+                <appender-ref ref="GOBII_PROCESS_FILE"/>
+            </then>
+        </if>
     </root>
 </configuration>
