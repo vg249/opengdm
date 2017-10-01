@@ -52,7 +52,7 @@ import {Observable} from "rxjs/Observable";
  * This is precisely the issue that was reported. My versions match those of the test project so I don't
  * know why this is happening. I will try to reproduce the issue in the test project as a good citizen.
  * In the meantime, we need to stick to returning actual state objects rather than scalar primtive values
- * from it. 
+ * from it.
  */
 export class ExportFormatComponent implements OnInit, OnChanges {
 
