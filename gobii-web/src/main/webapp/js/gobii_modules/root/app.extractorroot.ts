@@ -856,32 +856,32 @@ export class ExtractorRoot implements OnInit {
     public submitButtonStyle = this.buttonStyleSubmitNotReady;
     public clearButtonStyle = this.submitButtonStyleDefault;
 
-    private handleTreeStatusChanged(treeStatusNotification: TreeStatusNotification) {
-
-        if (treeStatusNotification.gobiiExractFilterType === this.gobiiExtractFilterType) {
-            this.treeStatusNotification = treeStatusNotification;
-            this.setSubmitButtonState();
-        } // does the filter type match
-    }
+    // private handleTreeStatusChanged(treeStatusNotification: TreeStatusNotification) {
+    //
+    //     if (treeStatusNotification.gobiiExractFilterType === this.gobiiExtractFilterType) {
+    //         this.treeStatusNotification = treeStatusNotification;
+    //         this.setSubmitButtonState();
+    //     } // does the filter type match
+    // }
 
 
     private setSubmitButtonState(): boolean {
 
         let returnVal: boolean = false;
 
-        if (this.treeStatusNotification.fileModelState == FileModelState.SUBMISSION_READY) {
-            this.submitButtonStyle = this.buttonStyleSubmitReady;
-            returnVal = true;
-        } else {
-            this.submitButtonStyle = this.buttonStyleSubmitNotReady;
-            returnVal = false;
-
-        }
+        // if (this.treeStatusNotification.fileModelState == FileModelState.SUBMISSION_READY) {
+        //     this.submitButtonStyle = this.buttonStyleSubmitReady;
+        //     returnVal = true;
+        // } else {
+        //     this.submitButtonStyle = this.buttonStyleSubmitNotReady;
+        //     returnVal = false;
+        //
+        // }
 
         return returnVal;
     }
 
-    private handleOnMouseOverSubmit(arg, isEnter) {
+    public handleOnMouseOverSubmit(arg, isEnter) {
 
         // this.criteriaInvalid = true;
 
@@ -889,22 +889,22 @@ export class ExtractorRoot implements OnInit {
 
             this.setSubmitButtonState()
 
-            this.treeStatusNotification.modelTreeValidationErrors.forEach(mtv => {
-
-                let currentMessage: string;
-
-                if (mtv.fileModelNode.getItemType() === ExtractorItemType.ENTITY) {
-                    currentMessage = mtv.fileModelNode.getEntityName();
-
-                } else {
-                    currentMessage = Labels.instance().treeExtractorTypeLabels[mtv.fileModelNode.getItemType()];
-                }
-
-                currentMessage += ": " + mtv.message;
-
-                this.handleAddMessage(currentMessage);
-
-            });
+            // this.treeStatusNotification.modelTreeValidationErrors.forEach(mtv => {
+            //
+            //     let currentMessage: string;
+            //
+            //     if (mtv.fileModelNode.getItemType() === ExtractorItemType.ENTITY) {
+            //         currentMessage = mtv.fileModelNode.getEntityName();
+            //
+            //     } else {
+            //         currentMessage = Labels.instance().treeExtractorTypeLabels[mtv.fileModelNode.getItemType()];
+            //     }
+            //
+            //     currentMessage += ": " + mtv.message;
+            //
+            //     this.handleAddMessage(currentMessage);
+            //
+            // });
         }
 
 

@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../services/core/dto-request.service", "../model/extractor-instructions/data-set-extract", "../model/type-process", "../model/gobii-file-item", "../model/server-config", "../model/type-entity", "../model/name-id", "../model/type-gobii-file", "../model/extractor-instructions/dto-extractor-instruction-files", "../model/extractor-instructions/gobii-extractor-instruction", "../services/app/dto-request-item-extractor-submission", "../services/app/dto-request-item-serverconfigs", "../model/type-entity-filter", "../model/type-extractor-filter", "../model/type-extractor-sample-list", "../model/cv-filter-type", "../services/core/file-model-tree-service", "../model/file-model-node", "../model/type-extract-format", "../model/file-model-tree-event", "../model/dto-header-status-message", "../model/name-id-request-params", "../model/file_name", "../views/entity-labels", "../services/app/dto-request-item-contact", "../services/core/authentication.service", "../model/name-id-label-type", "../model/type-status-level", "@ngrx/store", "../store/reducers", "../store/actions/fileitem-action", "../model/type-nameid-filter-params", "../services/core/file-item-service"], function (exports_1, context_1) {
+System.register(["@angular/core", "../services/core/dto-request.service", "../model/extractor-instructions/data-set-extract", "../model/type-process", "../model/gobii-file-item", "../model/server-config", "../model/type-entity", "../model/name-id", "../model/type-gobii-file", "../model/extractor-instructions/dto-extractor-instruction-files", "../model/extractor-instructions/gobii-extractor-instruction", "../services/app/dto-request-item-extractor-submission", "../services/app/dto-request-item-serverconfigs", "../model/type-entity-filter", "../model/type-extractor-filter", "../model/type-extractor-sample-list", "../model/cv-filter-type", "../services/core/file-model-tree-service", "../model/file-model-node", "../model/type-extract-format", "../model/dto-header-status-message", "../model/name-id-request-params", "../model/file_name", "../services/app/dto-request-item-contact", "../services/core/authentication.service", "../model/name-id-label-type", "../model/type-status-level", "@ngrx/store", "../store/reducers", "../store/actions/fileitem-action", "../model/type-nameid-filter-params", "../services/core/file-item-service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, dto_request_service_1, data_set_extract_1, type_process_1, gobii_file_item_1, server_config_1, type_entity_1, name_id_1, type_gobii_file_1, dto_extractor_instruction_files_1, gobii_extractor_instruction_1, dto_request_item_extractor_submission_1, dto_request_item_serverconfigs_1, type_entity_filter_1, type_extractor_filter_1, type_extractor_sample_list_1, cv_filter_type_1, file_model_tree_service_1, file_model_node_1, type_extract_format_1, file_model_tree_event_1, dto_header_status_message_1, name_id_request_params_1, file_name_1, entity_labels_1, dto_request_item_contact_1, authentication_service_1, name_id_label_type_1, type_status_level_1, store_1, fromRoot, fileItemAction, type_nameid_filter_params_1, file_item_service_1, ExtractorRoot;
+    var core_1, dto_request_service_1, data_set_extract_1, type_process_1, gobii_file_item_1, server_config_1, type_entity_1, name_id_1, type_gobii_file_1, dto_extractor_instruction_files_1, gobii_extractor_instruction_1, dto_request_item_extractor_submission_1, dto_request_item_serverconfigs_1, type_entity_filter_1, type_extractor_filter_1, type_extractor_sample_list_1, cv_filter_type_1, file_model_tree_service_1, file_model_node_1, type_extract_format_1, dto_header_status_message_1, name_id_request_params_1, file_name_1, dto_request_item_contact_1, authentication_service_1, name_id_label_type_1, type_status_level_1, store_1, fromRoot, fileItemAction, type_nameid_filter_params_1, file_item_service_1, ExtractorRoot;
     return {
         setters: [
             function (core_1_1) {
@@ -73,9 +73,6 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
             function (type_extract_format_1_1) {
                 type_extract_format_1 = type_extract_format_1_1;
             },
-            function (file_model_tree_event_1_1) {
-                file_model_tree_event_1 = file_model_tree_event_1_1;
-            },
             function (dto_header_status_message_1_1) {
                 dto_header_status_message_1 = dto_header_status_message_1_1;
             },
@@ -84,9 +81,6 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
             },
             function (file_name_1_1) {
                 file_name_1 = file_name_1_1;
-            },
-            function (entity_labels_1_1) {
-                entity_labels_1 = entity_labels_1_1;
             },
             function (dto_request_item_contact_1_1) {
                 dto_request_item_contact_1 = dto_request_item_contact_1_1;
@@ -496,40 +490,45 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 ExtractorRoot.prototype.handleStatusTreeReady = function (headerStatusMessage) {
                     //this.handleFormatSelected(GobiiExtractFormat.HAPMAP);
                 };
-                ExtractorRoot.prototype.handleTreeStatusChanged = function (treeStatusNotification) {
-                    if (treeStatusNotification.gobiiExractFilterType === this.gobiiExtractFilterType) {
-                        this.treeStatusNotification = treeStatusNotification;
-                        this.setSubmitButtonState();
-                    } // does the filter type match
-                };
+                // private handleTreeStatusChanged(treeStatusNotification: TreeStatusNotification) {
+                //
+                //     if (treeStatusNotification.gobiiExractFilterType === this.gobiiExtractFilterType) {
+                //         this.treeStatusNotification = treeStatusNotification;
+                //         this.setSubmitButtonState();
+                //     } // does the filter type match
+                // }
                 ExtractorRoot.prototype.setSubmitButtonState = function () {
                     var returnVal = false;
-                    if (this.treeStatusNotification.fileModelState == file_model_tree_event_1.FileModelState.SUBMISSION_READY) {
-                        this.submitButtonStyle = this.buttonStyleSubmitReady;
-                        returnVal = true;
-                    }
-                    else {
-                        this.submitButtonStyle = this.buttonStyleSubmitNotReady;
-                        returnVal = false;
-                    }
+                    // if (this.treeStatusNotification.fileModelState == FileModelState.SUBMISSION_READY) {
+                    //     this.submitButtonStyle = this.buttonStyleSubmitReady;
+                    //     returnVal = true;
+                    // } else {
+                    //     this.submitButtonStyle = this.buttonStyleSubmitNotReady;
+                    //     returnVal = false;
+                    //
+                    // }
                     return returnVal;
                 };
                 ExtractorRoot.prototype.handleOnMouseOverSubmit = function (arg, isEnter) {
                     // this.criteriaInvalid = true;
-                    var _this = this;
                     if (isEnter) {
                         this.setSubmitButtonState();
-                        this.treeStatusNotification.modelTreeValidationErrors.forEach(function (mtv) {
-                            var currentMessage;
-                            if (mtv.fileModelNode.getItemType() === file_model_node_1.ExtractorItemType.ENTITY) {
-                                currentMessage = mtv.fileModelNode.getEntityName();
-                            }
-                            else {
-                                currentMessage = entity_labels_1.Labels.instance().treeExtractorTypeLabels[mtv.fileModelNode.getItemType()];
-                            }
-                            currentMessage += ": " + mtv.message;
-                            _this.handleAddMessage(currentMessage);
-                        });
+                        // this.treeStatusNotification.modelTreeValidationErrors.forEach(mtv => {
+                        //
+                        //     let currentMessage: string;
+                        //
+                        //     if (mtv.fileModelNode.getItemType() === ExtractorItemType.ENTITY) {
+                        //         currentMessage = mtv.fileModelNode.getEntityName();
+                        //
+                        //     } else {
+                        //         currentMessage = Labels.instance().treeExtractorTypeLabels[mtv.fileModelNode.getItemType()];
+                        //     }
+                        //
+                        //     currentMessage += ": " + mtv.message;
+                        //
+                        //     this.handleAddMessage(currentMessage);
+                        //
+                        // });
                     }
                     // else {
                     //     this.submitButtonStyle = this.submitButtonStyleDefault;
