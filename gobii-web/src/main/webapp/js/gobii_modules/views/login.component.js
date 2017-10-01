@@ -43,7 +43,7 @@ System.register(["@angular/core", "@angular/router", "../services/core/authentic
                     this.loading = true;
                     //        this.router.navigate(['project']);
                     this.loading = false;
-                    this.authenticationService.authenticate(this.model.username, this.model.password)
+                    this.authenticationService.authenticate(this.model.username.trim(), this.model.password.trim())
                         .subscribe(function (dtoHeaderAuth) {
                         if (dtoHeaderAuth.getToken() != null) {
                             //                        this.router.navigate([this.returnUrl]);

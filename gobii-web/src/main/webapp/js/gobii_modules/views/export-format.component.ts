@@ -14,8 +14,7 @@ import {Observable} from "rxjs/Observable";
 @Component({
     selector: 'export-format',
     outputs: ['onFormatSelected', 'onError'],
-    inputs: ['fileFormat$'
-        , 'gobiiExtractFilterType'],
+    inputs: ['gobiiExtractFilterType'],
     //directives: [RADIO_GROUP_DIRECTIVES]
 //  directives: [Alert]
     template: `
@@ -54,7 +53,9 @@ export class ExportFormatComponent implements OnInit, OnChanges {
     // private selectedNameId: string = null;
     ngOnInit() {
 
-        this.fileFormat$.subscribe( format => console.log(format));
+        this.fileFormat$.subscribe(
+            format => console.log("new extract format: " + format)
+        );
 
 
 //        this.updateTreeService(GobiiExtractFormat.HAPMAP);
@@ -122,6 +123,7 @@ export class ExportFormatComponent implements OnInit, OnChanges {
     }
 
 
+    @Input()
     public fileFormat$: Observable<string>;
 
     public gobiiExtractFilterType: GobiiExtractFilterType;

@@ -52,8 +52,9 @@ import {InstructionSubmissionService} from "../services/core/instruction-submiss
         BrowserAnimationsModule,
         StoreModule.forRoot(reducers),
         EffectsModule.forRoot([TreeEffects,FileItemEffects]),
-        !environmentSettings.production ? StoreDevtoolsModule.instrument() : [],
-        StoreDevtoolsModule.instrument(),
+        StoreDevtoolsModule.instrument({
+            maxAge: 25 //  Retains last 25 states
+        })
     ],
     declarations: [
         AppComponent,

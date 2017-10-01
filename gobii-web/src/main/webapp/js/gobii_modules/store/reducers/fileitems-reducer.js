@@ -390,12 +390,13 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
             }));
             exports_1("getSelectedFileFormat", getSelectedFileFormat = reselect_1.createSelector(getFileItems, getSelectedUniqueIds, function (fileItems, selectedUniqueIds) {
                 var returnVal = "HAPMAP";
-                var formatItem = fileItems
-                    .find(function (fi) { return fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.EXPORT_FORMAT
-                    && undefined !== selectedUniqueIds.find(function (id) { return id === fi.getFileItemUniqueId(); }); });
-                if (formatItem) {
-                    returnVal = formatItem.getItemId();
-                }
+                // let formatItem: GobiiFileItem = fileItems
+                //     .find(fi => fi.getExtractorItemType() === ExtractorItemType.EXPORT_FORMAT
+                //         && undefined !== selectedUniqueIds.find(id => id === fi.getFileItemUniqueId()));
+                //
+                // if( formatItem) {
+                //     returnVal = formatItem.getItemId();
+                // }
                 return returnVal;
             }));
         }

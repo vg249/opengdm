@@ -350,6 +350,16 @@ export class ExtractorRoot implements OnInit {
                 private fileItemService: FileItemService) {
 
 
+        this.selectedExtractFormat$.subscribe(
+            format => console.log("new extract format @ root: " + format)
+        );
+
+        this.fileItemsProjects$.subscribe( items => {
+            console.log("Project item count: " + items.length)
+        });
+
+
+
         // this.store
         //     .select(fromRoot.getSelectedFileItems)
         //     .subscribe(all => {
@@ -527,13 +537,6 @@ export class ExtractorRoot implements OnInit {
 
 
 
-        let formatItem: GobiiFileItem = GobiiFileItem
-            .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
-            .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
-            .setItemId(GobiiExtractFormat[GobiiExtractFormat.HAPMAP])
-            .setItemName(GobiiExtractFormat[GobiiExtractFormat[GobiiExtractFormat.HAPMAP]]);
-        this.fileItemService.locadFileItem(formatItem,true);
-
 
         let jobId: string = FileName.makeUniqueFileId();
         this.fileItemService.locadFileItem(GobiiFileItem.build(arg, ProcessType.CREATE)
@@ -543,42 +546,42 @@ export class ExtractorRoot implements OnInit {
 
 
 
-        this._fileModelTreeService
-            .fileItemNotifications()
-            .subscribe(fileItem => {
-                if (fileItem.getProcessType() === ProcessType.NOTIFY
-                    && fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
-
-                    let jobId: string = FileName.makeUniqueFileId();
-
-                    this._fileModelTreeService
-                        .put(GobiiFileItem
-                            .build(arg, ProcessType.CREATE)
-                            .setExtractorItemType(ExtractorItemType.JOB_ID)
-                            .setItemId(jobId)
-                            .setItemName(jobId))
-                        .subscribe(
-                            fmte => {
-                                this._fileModelTreeService
-                                    .getTreeState(this.gobiiExtractFilterType)
-                                    .subscribe(
-                                        ts => {
-                                            this.handleTreeStatusChanged(ts)
-                                        },
-                                        hsm => {
-                                            this.handleHeaderStatusMessage(hsm)
-                                        }
-                                    )
-                            },
-                            headerStatusMessage => {
-                                this.handleHeaderStatusMessage(headerStatusMessage)
-                            }
-                        );
-                }
-            });
-
-
-//        let extractorFilterItemType: GobiiFileItem = GobiiFileItem.bui(this.gobiiExtractFilterType)
+//         this._fileModelTreeService
+//             .fileItemNotifications()
+//             .subscribe(fileItem => {
+//                 if (fileItem.getProcessType() === ProcessType.NOTIFY
+//                     && fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
+//
+//                     let jobId: string = FileName.makeUniqueFileId();
+//
+//                     this._fileModelTreeService
+//                         .put(GobiiFileItem
+//                             .build(arg, ProcessType.CREATE)
+//                             .setExtractorItemType(ExtractorItemType.JOB_ID)
+//                             .setItemId(jobId)
+//                             .setItemName(jobId))
+//                         .subscribe(
+//                             fmte => {
+//                                 this._fileModelTreeService
+//                                     .getTreeState(this.gobiiExtractFilterType)
+//                                     .subscribe(
+//                                         ts => {
+//                                             this.handleTreeStatusChanged(ts)
+//                                         },
+//                                         hsm => {
+//                                             this.handleHeaderStatusMessage(hsm)
+//                                         }
+//                                     )
+//                             },
+//                             headerStatusMessage => {
+//                                 this.handleHeaderStatusMessage(headerStatusMessage)
+//                             }
+//                         );
+//                 }
+//             });
+//
+//
+// //        let extractorFilterItemType: GobiiFileItem = GobiiFileItem.bui(this.gobiiExtractFilterType)
 
         if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
@@ -673,6 +676,12 @@ export class ExtractorRoot implements OnInit {
         //     this.nameIdRequestParamsDataset);
 
         //changing modes will have nuked the submit as item in the tree, so we need to re-event (sic.) it:
+        let formatItem: GobiiFileItem = GobiiFileItem
+            .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
+            .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
+            .setItemId(GobiiExtractFormat[GobiiExtractFormat.HAPMAP])
+            .setItemName(GobiiExtractFormat[GobiiExtractFormat[GobiiExtractFormat.HAPMAP]]);
+        this.fileItemService.locadFileItem(formatItem,true);
 
 
     }
@@ -912,6 +921,7 @@ export class ExtractorRoot implements OnInit {
     private handleClearTree() {
 
         this.handleExportTypeSelected(this.gobiiExtractFilterType);
+
 
 
     }
@@ -1275,6 +1285,7 @@ export class ExtractorRoot implements OnInit {
     }
 
     ngOnInit(): any {
+
 
         // this._fileModelTreeService
         //     .treeStateNotifications()
