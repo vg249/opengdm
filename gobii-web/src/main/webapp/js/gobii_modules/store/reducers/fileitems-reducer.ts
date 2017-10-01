@@ -9,6 +9,7 @@ import {ProcessType} from "../../model/type-process";
 import {getForSelectedFilter} from "./treenode-reducer";
 import {Labels} from "../../views/entity-labels";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
+import {GobiiExtractFormat} from "../../model/type-extract-format";
 
 
 /***
@@ -522,15 +523,20 @@ export const getDatasetsForSelectedExperiment = createSelector(getFileItems, get
 
 export const getSelectedFileFormat = createSelector(getFileItems, getSelectedUniqueIds, (fileItems, selectedUniqueIds) => {
 
-    let returnVal = "HAPMAP";
+    // default
+    let returnVal = GobiiFileItem
+        .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
+        .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
+        .setItemId(GobiiExtractFormat[GobiiExtractFormat.HAPMAP])
+        .setItemName(GobiiExtractFormat[GobiiExtractFormat[GobiiExtractFormat.HAPMAP]]);
 
-    // let formatItem: GobiiFileItem = fileItems
-    //     .find(fi => fi.getExtractorItemType() === ExtractorItemType.EXPORT_FORMAT
-    //         && undefined !== selectedUniqueIds.find(id => id === fi.getFileItemUniqueId()));
-    //
-    // if( formatItem) {
-    //     returnVal = formatItem.getItemId();
-    // }
+    let formatItem: GobiiFileItem = fileItems
+        .find(fi => fi.getExtractorItemType() === ExtractorItemType.EXPORT_FORMAT
+            && undefined !== selectedUniqueIds.find(id => id === fi.getFileItemUniqueId()));
+
+    if( formatItem) {
+        returnVal = formatItem;
+    }
 
     return returnVal;
 

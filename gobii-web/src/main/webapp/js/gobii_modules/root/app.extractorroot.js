@@ -189,7 +189,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this.buttonStyleSubmitNotReady = "btn btn-warning";
                     this.submitButtonStyle = this.buttonStyleSubmitNotReady;
                     this.clearButtonStyle = this.submitButtonStyleDefault;
-                    this.selectedExtractFormat$.subscribe(function (format) { return console.log("new extract format @ root: " + format); });
+                    this.selectedExtractFormat$.subscribe(function (format) { return console.log("new extract format @ root: " + format.getItemId()); });
                     this.fileItemsProjects$.subscribe(function (items) {
                         console.log("Project item count: " + items.length);
                     });

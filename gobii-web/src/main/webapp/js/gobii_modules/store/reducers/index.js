@@ -1,15 +1,13 @@
-System.register(["reselect", "@ngrx/store", "ngrx-store-freeze", "./fileitems-reducer", "./treenode-reducer"], function (exports_1, context_1) {
+System.register(["@ngrx/store", "ngrx-store-freeze", "./fileitems-reducer", "./treenode-reducer"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var reselect_1, store_1, ngrx_store_freeze_1, store_2, fromFileItems, fromGobiiTreeNodes, reducers, developmentReducer, productionReducer, getFileItemsState, getAllFileItems, getFileItems, getSelectedFileItems, getSelectedUniqueIds, getUniqueIds, getContacts, getFirstContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTerms, getFirstCvTerm, getMapsets, getFirstMapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getProjectsByPI, getExperimentsByProject, getDatasetsByExperiment, getSelectedPiContacts, getSelectedFileFormat, getGobiiTreeNodesState, getAllGobiiTreeNodes, getGobiiTreeNodesForExtractFilter, getSelectedGobiiTreeNodes, getSelectedGobiiTreeNodeIds, getIdsOfActivatedGobiiTreeNodes;
+    var store_1, store_2, ngrx_store_freeze_1, store_3, fromFileItems, fromGobiiTreeNodes, reducers, developmentReducer, productionReducer, getFileItemsState, getAllFileItems, getFileItems, getSelectedFileItems, getSelectedUniqueIds, getUniqueIds, getContacts, getFirstContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTerms, getFirstCvTerm, getMapsets, getFirstMapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getProjectsByPI, getExperimentsByProject, getDatasetsByExperiment, getSelectedPiContacts, getSelectedFileFormat, getGobiiTreeNodesState, getAllGobiiTreeNodes, getGobiiTreeNodesForExtractFilter, getSelectedGobiiTreeNodes, getSelectedGobiiTreeNodeIds, getIdsOfActivatedGobiiTreeNodes;
     return {
         setters: [
-            function (reselect_1_1) {
-                reselect_1 = reselect_1_1;
-            },
             function (store_1_1) {
                 store_1 = store_1_1;
                 store_2 = store_1_1;
+                store_3 = store_1_1;
             },
             function (ngrx_store_freeze_1_1) {
                 ngrx_store_freeze_1 = ngrx_store_freeze_1_1;
@@ -40,8 +38,8 @@ System.register(["reselect", "@ngrx/store", "ngrx-store-freeze", "./fileitems-re
             //     // layout: fromLayout.fileItemsReducer,
             //     // router: fromRouter.routerReducer,
             // };
-            developmentReducer = store_1.compose(ngrx_store_freeze_1.storeFreeze, store_2.combineReducers)(reducers);
-            productionReducer = store_2.combineReducers(reducers);
+            developmentReducer = store_2.compose(ngrx_store_freeze_1.storeFreeze, store_3.combineReducers)(reducers);
+            productionReducer = store_3.combineReducers(reducers);
             // export function reducer(state: any, action: any) {
             //     if (environmentSettings.production) {
             //         return productionReducer(state, action);
@@ -75,38 +73,38 @@ System.register(["reselect", "@ngrx/store", "ngrx-store-freeze", "./fileitems-re
              * The created selectors can also be composed together to select different
              * pieces of state.
              */
-            exports_1("getAllFileItems", getAllFileItems = reselect_1.createSelector(getFileItemsState, fromFileItems.getAll));
-            exports_1("getFileItems", getFileItems = reselect_1.createSelector(getFileItemsState, fromFileItems.getFileItems));
-            exports_1("getSelectedFileItems", getSelectedFileItems = reselect_1.createSelector(getFileItemsState, fromFileItems.getSelected));
-            exports_1("getSelectedUniqueIds", getSelectedUniqueIds = reselect_1.createSelector(getFileItemsState, fromFileItems.getSelectedUniqueIds));
-            exports_1("getUniqueIds", getUniqueIds = reselect_1.createSelector(getFileItemsState, fromFileItems.getUniqueIds));
-            exports_1("getContacts", getContacts = reselect_1.createSelector(getFileItemsState, fromFileItems.getContacts));
-            exports_1("getFirstContact", getFirstContact = reselect_1.createSelector(getFileItemsState, fromFileItems.getFirstContact));
-            exports_1("getProjects", getProjects = reselect_1.createSelector(getFileItemsState, fromFileItems.getProjects));
-            exports_1("getFirstProject", getFirstProject = reselect_1.createSelector(getFileItemsState, fromFileItems.getFirstProject));
-            exports_1("getExperiments", getExperiments = reselect_1.createSelector(getFileItemsState, fromFileItems.getExperiments));
-            exports_1("getFirstExperiment", getFirstExperiment = reselect_1.createSelector(getFileItemsState, fromFileItems.getFirstExperiment));
-            exports_1("getDatasets", getDatasets = reselect_1.createSelector(getFileItemsState, fromFileItems.getDatasets));
-            exports_1("getFirstDataset", getFirstDataset = reselect_1.createSelector(getFileItemsState, fromFileItems.getFirstDataset));
-            exports_1("getCvTerms", getCvTerms = reselect_1.createSelector(getFileItemsState, fromFileItems.getCvTerms));
-            exports_1("getFirstCvTerm", getFirstCvTerm = reselect_1.createSelector(getFileItemsState, fromFileItems.getFirstCvTerm));
-            exports_1("getMapsets", getMapsets = reselect_1.createSelector(getFileItemsState, fromFileItems.getMapsets));
-            exports_1("getFirstMapset", getFirstMapset = reselect_1.createSelector(getFileItemsState, fromFileItems.getFirstmapset));
-            exports_1("getPlatforms", getPlatforms = reselect_1.createSelector(getFileItemsState, fromFileItems.getPlatforms));
-            exports_1("getFirstPlatform", getFirstPlatform = reselect_1.createSelector(getFileItemsState, fromFileItems.getFirstPlatform));
-            exports_1("getMarkerGroups", getMarkerGroups = reselect_1.createSelector(getFileItemsState, fromFileItems.getMarkerGroups));
-            exports_1("getFirstMarkerGroup", getFirstMarkerGroup = reselect_1.createSelector(getFileItemsState, fromFileItems.getFirstMarkerGroup));
-            exports_1("getProjectsByPI", getProjectsByPI = reselect_1.createSelector(getFileItemsState, fromFileItems.getProjectsForSelectedPi));
-            exports_1("getExperimentsByProject", getExperimentsByProject = reselect_1.createSelector(getFileItemsState, fromFileItems.getExperimentsForSelectedProject));
-            exports_1("getDatasetsByExperiment", getDatasetsByExperiment = reselect_1.createSelector(getFileItemsState, fromFileItems.getDatasetsForSelectedExperiment));
-            exports_1("getSelectedPiContacts", getSelectedPiContacts = reselect_1.createSelector(getFileItemsState, fromFileItems.getSelectedPiContacts));
-            exports_1("getSelectedFileFormat", getSelectedFileFormat = reselect_1.createSelector(getFileItemsState, fromFileItems.getSelectedFileFormat));
+            exports_1("getAllFileItems", getAllFileItems = store_1.createSelector(getFileItemsState, fromFileItems.getAll));
+            exports_1("getFileItems", getFileItems = store_1.createSelector(getFileItemsState, fromFileItems.getFileItems));
+            exports_1("getSelectedFileItems", getSelectedFileItems = store_1.createSelector(getFileItemsState, fromFileItems.getSelected));
+            exports_1("getSelectedUniqueIds", getSelectedUniqueIds = store_1.createSelector(getFileItemsState, fromFileItems.getSelectedUniqueIds));
+            exports_1("getUniqueIds", getUniqueIds = store_1.createSelector(getFileItemsState, fromFileItems.getUniqueIds));
+            exports_1("getContacts", getContacts = store_1.createSelector(getFileItemsState, fromFileItems.getContacts));
+            exports_1("getFirstContact", getFirstContact = store_1.createSelector(getFileItemsState, fromFileItems.getFirstContact));
+            exports_1("getProjects", getProjects = store_1.createSelector(getFileItemsState, fromFileItems.getProjects));
+            exports_1("getFirstProject", getFirstProject = store_1.createSelector(getFileItemsState, fromFileItems.getFirstProject));
+            exports_1("getExperiments", getExperiments = store_1.createSelector(getFileItemsState, fromFileItems.getExperiments));
+            exports_1("getFirstExperiment", getFirstExperiment = store_1.createSelector(getFileItemsState, fromFileItems.getFirstExperiment));
+            exports_1("getDatasets", getDatasets = store_1.createSelector(getFileItemsState, fromFileItems.getDatasets));
+            exports_1("getFirstDataset", getFirstDataset = store_1.createSelector(getFileItemsState, fromFileItems.getFirstDataset));
+            exports_1("getCvTerms", getCvTerms = store_1.createSelector(getFileItemsState, fromFileItems.getCvTerms));
+            exports_1("getFirstCvTerm", getFirstCvTerm = store_1.createSelector(getFileItemsState, fromFileItems.getFirstCvTerm));
+            exports_1("getMapsets", getMapsets = store_1.createSelector(getFileItemsState, fromFileItems.getMapsets));
+            exports_1("getFirstMapset", getFirstMapset = store_1.createSelector(getFileItemsState, fromFileItems.getFirstmapset));
+            exports_1("getPlatforms", getPlatforms = store_1.createSelector(getFileItemsState, fromFileItems.getPlatforms));
+            exports_1("getFirstPlatform", getFirstPlatform = store_1.createSelector(getFileItemsState, fromFileItems.getFirstPlatform));
+            exports_1("getMarkerGroups", getMarkerGroups = store_1.createSelector(getFileItemsState, fromFileItems.getMarkerGroups));
+            exports_1("getFirstMarkerGroup", getFirstMarkerGroup = store_1.createSelector(getFileItemsState, fromFileItems.getFirstMarkerGroup));
+            exports_1("getProjectsByPI", getProjectsByPI = store_1.createSelector(getFileItemsState, fromFileItems.getProjectsForSelectedPi));
+            exports_1("getExperimentsByProject", getExperimentsByProject = store_1.createSelector(getFileItemsState, fromFileItems.getExperimentsForSelectedProject));
+            exports_1("getDatasetsByExperiment", getDatasetsByExperiment = store_1.createSelector(getFileItemsState, fromFileItems.getDatasetsForSelectedExperiment));
+            exports_1("getSelectedPiContacts", getSelectedPiContacts = store_1.createSelector(getFileItemsState, fromFileItems.getSelectedPiContacts));
+            exports_1("getSelectedFileFormat", getSelectedFileFormat = store_1.createSelector(getFileItemsState, fromFileItems.getSelectedFileFormat));
             exports_1("getGobiiTreeNodesState", getGobiiTreeNodesState = function (state) { return state.gobiiTreeNodes; });
-            exports_1("getAllGobiiTreeNodes", getAllGobiiTreeNodes = reselect_1.createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getAll));
-            exports_1("getGobiiTreeNodesForExtractFilter", getGobiiTreeNodesForExtractFilter = reselect_1.createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getForSelectedFilter));
-            exports_1("getSelectedGobiiTreeNodes", getSelectedGobiiTreeNodes = reselect_1.createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getSelected));
-            exports_1("getSelectedGobiiTreeNodeIds", getSelectedGobiiTreeNodeIds = reselect_1.createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getGobiiTreeItemIds));
-            exports_1("getIdsOfActivatedGobiiTreeNodes", getIdsOfActivatedGobiiTreeNodes = reselect_1.createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getIdsOfActivated));
+            exports_1("getAllGobiiTreeNodes", getAllGobiiTreeNodes = store_1.createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getAll));
+            exports_1("getGobiiTreeNodesForExtractFilter", getGobiiTreeNodesForExtractFilter = store_1.createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getForSelectedFilter));
+            exports_1("getSelectedGobiiTreeNodes", getSelectedGobiiTreeNodes = store_1.createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getSelected));
+            exports_1("getSelectedGobiiTreeNodeIds", getSelectedGobiiTreeNodeIds = store_1.createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getGobiiTreeItemIds));
+            exports_1("getIdsOfActivatedGobiiTreeNodes", getIdsOfActivatedGobiiTreeNodes = store_1.createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getIdsOfActivated));
             /**
              * Just like with the books selectors, we also have to compose the search
              * fileItemsReducer's and collection fileItemsReducer's selectors.

@@ -272,6 +272,14 @@ export class FileItemService {
                             });
                     }
 
+                    // let formatItem: GobiiFileItem = GobiiFileItem
+                    //     .build(gobiiExtractFilterType, ProcessType.UPDATE)
+                    //     .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
+                    //     .setItemId(GobiiExtractFormat[GobiiExtractFormat.HAPMAP])
+                    //     .setItemName(GobiiExtractFormat[GobiiExtractFormat[GobiiExtractFormat.HAPMAP]]);
+                    // this.locadFileItem(formatItem,true);
+
+
                 }, // Observer=>next
                 responseHeader => {
                     //this.handleHeaderStatus(responseHeader);

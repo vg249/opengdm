@@ -31,13 +31,15 @@ import {ContactSearchType, DtoRequestItemContact} from "../services/app/dto-requ
 import {AuthenticationService} from "../services/core/authentication.service";
 import {NameIdLabelType} from "../model/name-id-label-type";
 import {StatusLevel} from "../model/type-status-level";
-import {Store} from "@ngrx/store";
+import {createSelector, Store} from "@ngrx/store";
 import * as fromRoot from '../store/reducers';
+import * as fromFileItems from '../store/reducers/fileitems-reducer';
 import * as fileItemAction from '../store/actions/fileitem-action';
 import * as treeNodeAction from '../store/actions/treenode-action';
 import {NameIdFilterParamTypes} from "../model/type-nameid-filter-params";
 import {FileItemService} from "../services/core/file-item-service";
 import {Observable} from "rxjs/Observable";
+import {getFileItemsState} from "../store/reducers/index";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -322,8 +324,8 @@ export class ExtractorRoot implements OnInit {
     fileItemsExperiments$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getExperimentsByProject);
     fileItemsDatasets$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getDatasetsByExperiment);
 
-    selectedExtractFormat$: Observable<string> = this.store.select(fromRoot.getSelectedFileFormat);
-
+    selectedExtractFormat$: Observable<GobiiFileItem> = this.store.select(fromRoot.getSelectedFileFormat);
+//    selectedExtractFormat$: Observable<string> = createSelector(getFileItemsState, fromFileItems.getSelectedFileFormat);
 
     // ************************************************************************
 
@@ -349,7 +351,7 @@ export class ExtractorRoot implements OnInit {
 
 
         this.selectedExtractFormat$.subscribe(
-            format => console.log("new extract format @ root: " + format)
+            format => console.log("new extract format @ root: " + format.getItemId())
         );
 
         this.fileItemsProjects$.subscribe( items => {

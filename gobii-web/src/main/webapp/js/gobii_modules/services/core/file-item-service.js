@@ -223,6 +223,12 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                 }
                             });
                         }
+                        // let formatItem: GobiiFileItem = GobiiFileItem
+                        //     .build(gobiiExtractFilterType, ProcessType.UPDATE)
+                        //     .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
+                        //     .setItemId(GobiiExtractFormat[GobiiExtractFormat.HAPMAP])
+                        //     .setItemName(GobiiExtractFormat[GobiiExtractFormat[GobiiExtractFormat.HAPMAP]]);
+                        // this.locadFileItem(formatItem,true);
                     }, // Observer=>next
                     function (// Observer=>next
                         responseHeader) {
