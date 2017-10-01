@@ -18,7 +18,7 @@ export class StatusDisplayComponent implements OnInit, OnChanges {
 
 
     // useg
-    private messages:string[] = [];
+    public messages:string[] = [];
     constructor() {
     } // ctor
 

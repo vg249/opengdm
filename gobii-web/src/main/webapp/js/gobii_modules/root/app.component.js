@@ -18,15 +18,15 @@ System.register(["@angular/core"], function (exports_1, context_1) {
             AppComponent = (function () {
                 function AppComponent() {
                 }
+                AppComponent = __decorate([
+                    core_1.Component({
+                        //moduleId: module.id,
+                        selector: 'app',
+                        template: "<router-outlet></router-outlet>"
+                    })
+                ], AppComponent);
                 return AppComponent;
             }());
-            AppComponent = __decorate([
-                core_1.Component({
-                    //moduleId: module.id,
-                    selector: 'app',
-                    template: "<router-outlet></router-outlet>"
-                })
-            ], AppComponent);
             exports_1("AppComponent", AppComponent);
         }
     };

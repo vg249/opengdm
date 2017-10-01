@@ -65,12 +65,12 @@ System.register(["@angular/core", "../../model/name-id", "../../model/type-entit
                     return returnVal;
                     //return [new NameId(1, 'foo'), new NameId(2, 'bar')];
                 };
+                DtoRequestItemNameIds = __decorate([
+                    core_1.Injectable(),
+                    __metadata("design:paramtypes", [Number, Number, String])
+                ], DtoRequestItemNameIds);
                 return DtoRequestItemNameIds;
-            }()); // DtoRequestItemNameIds() 
-            DtoRequestItemNameIds = __decorate([
-                core_1.Injectable(),
-                __metadata("design:paramtypes", [Number, Number, String])
-            ], DtoRequestItemNameIds);
+            }());
             exports_1("DtoRequestItemNameIds", DtoRequestItemNameIds);
         }
     };

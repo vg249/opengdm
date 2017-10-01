@@ -66,12 +66,12 @@ System.register(["@angular/core", "../../model/type-process"], function (exports
                     return returnVal;
                     //return [new NameId(1, 'foo'), new NameId(2, 'bar')];
                 };
+                DtoRequestItemExperiment = __decorate([
+                    core_1.Injectable(),
+                    __metadata("design:paramtypes", [Number])
+                ], DtoRequestItemExperiment);
                 return DtoRequestItemExperiment;
-            }()); // DtoRequestItemNameIds() 
-            DtoRequestItemExperiment = __decorate([
-                core_1.Injectable(),
-                __metadata("design:paramtypes", [Number])
-            ], DtoRequestItemExperiment);
+            }());
             exports_1("DtoRequestItemExperiment", DtoRequestItemExperiment);
         }
     };

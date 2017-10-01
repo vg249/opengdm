@@ -54,7 +54,7 @@ export class LoginComponent implements OnInit {
         this.loading = true;
 //        this.router.navigate(['project']);
         this.loading = false;
-        this.authenticationService.authenticate(this.model.username, this.model.password)
+        this.authenticationService.authenticate(this.model.username.trim(), this.model.password.trim())
             .subscribe(
                 dtoHeaderAuth => {
 

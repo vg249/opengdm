@@ -1,15 +1,14 @@
-import {Component, OnInit, EventEmitter, OnChanges, SimpleChange} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, SimpleChange} from '@angular/core';
 import {GobiiExtractFormat} from "../model/type-extract-format";
-import {FileModelTreeService} from "../services/core/file-model-tree-service";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import {ProcessType} from "../model/type-process";
 import {ExtractorItemType} from "../model/file-model-node";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {Header} from "../model/payload/header";
-import {NameId} from "../model/name-id";
-import {DtoRequestService} from "../services/core/dto-request.service";
-import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
-import {EntityType} from "../model/type-entity";
+import * as fromRoot from '../store/reducers';
+import {Store} from "@ngrx/store";
+import {FileItemService} from "../services/core/file-item-service";
+import {Observable} from "rxjs/Observable";
 
 
 @Component({
@@ -18,25 +17,48 @@ import {EntityType} from "../model/type-entity";
     inputs: ['gobiiExtractFilterType'],
     //directives: [RADIO_GROUP_DIRECTIVES]
 //  directives: [Alert]
-    template: `<form>
-                            <label class="the-legend">Select Format:&nbsp;</label>
-                            <BR><input type="radio" (change)="handleFormatSelected($event)" [(ngModel)]="fileFormat" name="fileFormat" value="HAPMAP" checked="checked">
-                            <label  for="HAPMAP" class="the-legend">Hapmap</label>
-                            <BR><input type="radio" (change)="handleFormatSelected($event)" [(ngModel)]="fileFormat" name="fileFormat" value="FLAPJACK">
-                            <label for="FLAPJACK" class="the-legend">Flapjack</label>
-                            <BR><input type="radio" (change)="handleFormatSelected($event)" [(ngModel)]="fileFormat" name="fileFormat" value="META_DATA_ONLY">
-                            <label  for="META_DATA_ONLY" class="the-legend">{{metaDataExtractname}}</label>
-                </form>` // end template
+    template: `
+        <form>
+            <label class="the-legend">Select Format:&nbsp;</label>
+            <BR><input type="radio"
+                       (ngModelChange)="handleFormatSelected($event)"
+                       [ngModel]="fileFormat$  | async"
+                       name="fileFormat"
+                       value="HAPMAP">
+            <label for="HAPMAP" class="the-legend">Hapmap</label>
+            <BR><input type="radio"
+                       (ngModelChange)="handleFormatSelected($event)"
+                       [ngModel]="fileFormat$  | async"
+                       name="fileFormat"
+                       value="FLAPJACK">
+            <label for="FLAPJACK" class="the-legend">Flapjack</label>
+            <BR><input type="radio"
+                       (ngModelChange)="handleFormatSelected($event)"
+                       [ngModel]="fileFormat$  | async"
+                       name="fileFormat"
+                       value="META_DATA_ONLY">
+            <label for="META_DATA_ONLY" class="the-legend">{{metaDataExtractname}}</label>
+        </form>` // end template
 })
 
 export class ExportFormatComponent implements OnInit, OnChanges {
 
-    constructor(private _fileModelTreeService: FileModelTreeService) {
+    constructor(private store: Store<fromRoot.State>,
+                private fileItemService: FileItemService) {
+
+
     } // ctor
 
     // private nameIdList: NameId[];
     // private selectedNameId: string = null;
     ngOnInit() {
+
+        this.fileFormat$.subscribe(
+            format => console.log("new extract format: " + format)
+        );
+
+
+//        this.updateTreeService(GobiiExtractFormat.HAPMAP);
 
         // in the current version, this doesn't work: each component in the page
         // is initialized once at a time. Thus, even though the tree is being built
@@ -90,8 +112,8 @@ export class ExportFormatComponent implements OnInit, OnChanges {
     }
 
     private setDefault() {
-        this.updateTreeService(GobiiExtractFormat.HAPMAP);
-        this.fileFormat = "HAPMAP";
+        //this.updateTreeService(GobiiExtractFormat.HAPMAP);
+        //this.fileFormat = "FLAPJACK";
 
     }
 
@@ -101,61 +123,54 @@ export class ExportFormatComponent implements OnInit, OnChanges {
     }
 
 
-    private fileFormat: string = "HAPMAP";
-    private gobiiExtractFilterType: GobiiExtractFilterType;
-    private onFormatSelected: EventEmitter<GobiiExtractFormat> = new EventEmitter();
-    private onError: EventEmitter<Header> = new EventEmitter();
+    @Input()
+    public fileFormat$: Observable<string>;
 
-    private handleFormatSelected(arg) {
-        if (arg.srcElement.checked) {
+    public gobiiExtractFilterType: GobiiExtractFilterType;
+    public onFormatSelected: EventEmitter<GobiiExtractFormat> = new EventEmitter();
+    public onError: EventEmitter<Header> = new EventEmitter();
 
-            let radioValue: string = arg.srcElement.value;
-            this.selectedExtractFormat = GobiiExtractFormat[radioValue];
+    public handleFormatSelected(arg) {
 
-            this.updateTreeService(this.selectedExtractFormat);
-
-        }
-        let foo = arg;
-        //this.onContactSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
+        this.updateTreeService(arg);
     }
 
-    private selectedExtractFormat: GobiiExtractFormat = GobiiExtractFormat.HAPMAP;
-
-    private updateTreeService(arg: GobiiExtractFormat) {
-
-        this.selectedExtractFormat = arg;
+    private updateTreeService(arg: string) {
 
 
-        let extractFilterTypeFileItem: GobiiFileItem = GobiiFileItem
+        let formatItem: GobiiFileItem = GobiiFileItem
             .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
             .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
-            .setItemId(GobiiExtractFormat[arg])
+            .setItemId(arg)
             .setItemName(GobiiExtractFormat[GobiiExtractFormat[arg]]);
 
-        this._fileModelTreeService.put(extractFilterTypeFileItem)
-            .subscribe(
-                null,
-                headerResponse => {
-                    this.handleResponseHeader(headerResponse)
-                });
 
+        this.fileItemService.locadFileItem(formatItem, true);
+
+        // this._fileModelTreeService.put(formatItem)
+        //     .subscribe(
+        //         null,
+        //         headerResponse => {
+        //             this.handleResponseHeader(headerResponse)
+        //         });
+        //
         //console.log("selected contact itemId:" + arg);
     }
 
-    private metaDataExtractname: string;
+    public metaDataExtractname: string;
 
-    ngOnChanges(changes: {[propName: string]: SimpleChange}) {
+    ngOnChanges(changes: { [propName: string]: SimpleChange }) {
 
-        this._fileModelTreeService
-            .fileItemNotifications()
-            .subscribe(fileItem => {
-
-                if (fileItem.getProcessType() === ProcessType.NOTIFY &&
-                    ((fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY)
-                    || (fileItem.getExtractorItemType() === ExtractorItemType.CLEAR_TREE) )) {
-                    this.setDefault();
-                }
-            });
+        // this._fileModelTreeService
+        //     .fileItemNotifications()
+        //     .subscribe(fileItem => {
+        //
+        //         if (fileItem.getProcessType() === ProcessType.NOTIFY &&
+        //             ((fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY)
+        //             || (fileItem.getExtractorItemType() === ExtractorItemType.CLEAR_TREE) )) {
+        //             this.setDefault();
+        //         }
+        //     });
 
         if (changes['gobiiExtractFilterType']
             && ( changes['gobiiExtractFilterType'].currentValue != null )
@@ -173,11 +188,21 @@ export class ExportFormatComponent implements OnInit, OnChanges {
                     this.metaDataExtractname = "Sample" + labelSuffix;
                 }
 
-                this.setDefault();
+//                this.setDefault(); // dispatches new format
 
             } // if we have a new filter type
 
         } // if filter type changed
+        // if (changes['fileFormat$']
+        //     && ( changes['fileFormat$'].currentValue != null )
+        //     && ( changes['fileFormat$'].currentValue != undefined )) {
+        //
+        //     if (changes['fileFormat$'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
+        //
+        //         console.log("Asynch:" + this.fileFormat$)
+        //
+        //     }
+        // }
 
     } // ngonChanges
 
