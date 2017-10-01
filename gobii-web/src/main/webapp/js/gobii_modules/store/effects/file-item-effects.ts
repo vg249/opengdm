@@ -24,6 +24,47 @@ import {Store} from "@ngrx/store";
 @Injectable()
 export class FileItemEffects {
 
+    /**
+     * The canonical use case for effects is when you want to add the results of an asynchronous
+     * operation to the store. In Angular/Redux speak, it is said that doing so in a reducer
+     * would be adding a side effect. I think of this as meaning that if you have an asynch operation,
+     * you are not guaranteeing that when the reducer function returns, the state will be as you believe
+     * it should be based on the action you submitted -- not until the subscribe's callback gets called
+     * in any case. So, the idea is that the effects are like extensions to the reducer, such that actions
+     * get seen here as well as in the reducer. Thus, if you have an action that is handled _only_ by an
+     * effect, the effect can subscribe, for example, to an http request and once all the data have been
+     * retrieved, then the effect will do an old fashioned dispatch where the action is handled directly
+     * by the reducer.
+     * The effects in this project look a little different. First of call, the FileItemSErvice class does what
+     * you would normally do in an effect -- does an asynchronous call to web services and, upon fulfillment
+     * of the subscription, adds the items to the store. The only article I can find that deals with this issue head on is
+     * https://medium.com/@flashMasterJim/the-basics-of-ngrx-effects-effect-and-async-middleware-for-ngrx-store-in-angular-2-f25587493329
+     * by Jim Lunch. He says "You might be thinking, “What if you have the smart component just communicate with
+     * another service that calls for async data, and then when that call comes back the service dispatches an event to
+     * the store with the returned data as a payload?”, and in a way you’d be right!" So, am I right, or not? Only
+     * time will tell: so far,this seems to be working ok.
+     * Now, secondly, it turns out that you actually can handle an action in both an effect _and_ a reducer.
+     * Based on experimentation and googling, I found that the effect should get called _after_ the
+     * reducer, and this is by the design. In other words, another type of side effect is where you want to
+     * do something as a result of adding something to state, but would violate the reducer contract by doing
+     * so in the reducer. I use this pattern all over the palce. For example, when I set a file item to be
+     * in the extract, I want the tree state to change along with it. This may be a design flaw -- making
+     * file items more complex by combining them with the TreeNode type would have the payoff of being able to
+     * maintain one state. I suspect that in the future we will want the clean separation, and in any case, this
+     * is how it is for now. I think in a sense that this pattern fits with the canonical use case because really,
+     * we want to do something to the tree, but the thing we want to do to it depends on the result of an asynchronous
+     * action -- that of adding stuff to the file item store. I asked Gerald sans about this second usage
+     * at the Angular Summit and he didn't seem to get my question: he said unequivocally that the only
+     * purpose for efffects is what I describe. But I suspect that if I showed him what I am trying to do
+     * he would agree. Again, I am quite sure that what I am doing here is an intended use pattern (there
+     * was even an ngrx/pltform issue to ensure that an action in an effect is called after the same action
+     * in a reducer.
+     *
+     *
+     * @type {Observable<PlaceTreeNodeAction>}
+     */
+
+
     // this effect acts on the content of the tree nodes (e.g., their names and icons so forth)
     // and then dispatches them to the tree node reducer. The tree node reducer holds the nodes
     // in state. Thus, the hierarchical arrangement of nodes is managed by the reducer in
