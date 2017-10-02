@@ -74,17 +74,17 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/file-m
                     this.store = store;
                     this.dtoRequestServiceExtractorFile = dtoRequestServiceExtractorFile;
                 }
-                InstructionSubmissionService.prototype.submitReady = function (scope$) {
+                InstructionSubmissionService.prototype.submitReady = function (gobiiExtractFilterType) {
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
                         _this.store.select(fromRoot.getSelectedFileItems)
                             .subscribe(function (all) {
                             var submistReady = false;
-                            if (scope$.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
+                            if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
                                 submistReady =
                                     all
                                         .filter(function (fi) {
-                                        return fi.getGobiiExtractFilterType() === scope$.gobiiExtractFilterType
+                                        return fi.getGobiiExtractFilterType() === gobiiExtractFilterType
                                             && fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY
                                             && fi.getEntityType() === type_entity_1.EntityType.DataSets;
                                     })
@@ -96,69 +96,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/file-m
                     } //observer lambda
                     ); // Observable.crate
                 }; // function()
-                // In theory this method should be unnecessary because there should not be any duplicates;
-                // however, in testing, it was discovered that there can be duplicate datasets and
-                // duplicate platforms. I suspect that the root cause of this issue is the checkbox component:
-                // because it keeps a history of selected items, it may be reposting existing items in a way that
-                // is not detected by the file item service. In particular, it strikes me that if an item is added
-                // in one extract type (e.g., by data set), and then selected again in another (by samples), there
-                // could be duplicate items in the tree service, because it is specific to extract filter type.
-                // TreeService::getFileItems() should be filtering correctly, but perhaps it's not. In any case,
-                // at this point in the release cycle, it is too late to to do the trouble shooting to figure this out,
-                // because I am unable to reproduce the issue in my local testing. This method at leaset reports
-                // warnings to the effect that the problem exists, but results in an extract that is free of duplicates.
-                // Technically, sample and marker list item duplicates should be eliminated in the list item control,
-                // but it is also too late for that.
-                InstructionSubmissionService.prototype.eliminateDuplicateEntities = function (extractorItemType, entityType, fileItems) {
-                    return fileItems;
-                    // let returnVal: GobiiFileItem[] = [];
-                    //
-                    // if (fileItems
-                    //         .filter(fi => {
-                    //             return fi.getExtractorItemType() === extractorItemType
-                    //                 && fi.getEntityType() === entityType
-                    //         })
-                    //         .length == fileItems.length) {
-                    //
-                    //     fileItems.forEach(ifi => {
-                    //
-                    //         if (returnVal.filter(rfi => {
-                    //                 return rfi.getItemId() === ifi.getItemId()
-                    //             }).length === 0) {
-                    //
-                    //             returnVal.push(ifi);
-                    //         } else {
-                    //             let message: string = "A duplicate ";
-                    //             message += ExtractorItemType[extractorItemType];
-                    //             message += " (" + EntityType[entityType] + ") ";
-                    //             message += "item was found; ";
-                    //             if (ifi.getItemName()) {
-                    //                 message += "name: " + ifi.getItemName() + "; "
-                    //             }
-                    //
-                    //             if (ifi.getItemId()) {
-                    //                 message += "id: " + ifi.getItemId();
-                    //             }
-                    //
-                    //             // this.handleHeaderStatusMessage(new HeaderStatusMessage(message,
-                    //             //     StatusLevel.WARNING,
-                    //             //     null));
-                    //         }
-                    //     });
-                    //
-                    // } else {
-                    //
-                    //     // this.handleHeaderStatusMessage(new HeaderStatusMessage(
-                    //     //     "The elimination array contains mixed entities",
-                    //     //     StatusLevel.WARNING,
-                    //     //     null));
-                    //
-                    // }
-                    //
-                    //
-                    // return returnVal;
-                };
-                InstructionSubmissionService.prototype.submit = function (scope$) {
+                InstructionSubmissionService.prototype.submit = function (gobiiExtractFilterType) {
                     var _this = this;
                     var gobiiExtractorInstructions = [];
                     var gobiiDataSetExtracts = [];
@@ -202,7 +140,6 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/file-m
                             .filter(function (item) {
                             return item.getEntityType() === type_entity_1.EntityType.Mapsets;
                         });
-                        mapsetFileItems = _this.eliminateDuplicateEntities(file_model_node_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.Mapsets, mapsetFileItems);
                         mapsetIds = mapsetFileItems
                             .map(function (item) {
                             return Number(item.getItemId());
@@ -244,14 +181,12 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/file-m
                         var platformFileItems = fileItems.filter(function (item) {
                             return item.getEntityType() === type_entity_1.EntityType.Platforms;
                         });
-                        platformFileItems = _this.eliminateDuplicateEntities(file_model_node_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.Platforms, platformFileItems);
                         var platforms = platformFileItems.map(function (item) {
                             return new name_id_1.NameId(item.getItemId(), item.getItemName(), type_entity_1.EntityType.Platforms);
                         });
                         var markerGroupItems = fileItems.filter(function (item) {
                             return item.getEntityType() === type_entity_1.EntityType.MarkerGroups;
                         });
-                        markerGroupItems = _this.eliminateDuplicateEntities(file_model_node_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.MarkerGroups, markerGroupItems);
                         var markerGroups = markerGroupItems.map(function (item) {
                             return new name_id_1.NameId(item.getItemId(), item.getItemName(), type_entity_1.EntityType.MarkerGroups);
                         });
@@ -260,7 +195,6 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/file-m
                             .filter(function (fi) {
                             return fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM;
                         });
-                        markerListItems = _this.eliminateDuplicateEntities(file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM, type_entity_1.EntityType.UNKNOWN, markerListItems);
                         var markerList = markerListItems
                             .map(function (mi) {
                             return mi.getItemId();
@@ -270,7 +204,6 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/file-m
                             .filter(function (fi) {
                             return fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM;
                         });
-                        sampleListItems = _this.eliminateDuplicateEntities(file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM, type_entity_1.EntityType.UNKNOWN, sampleListItems);
                         var sampleList = sampleListItems
                             .map(function (mi) {
                             return mi.getItemId();
@@ -281,25 +214,24 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/file-m
                         if (sampleListTypeFileItem != null) {
                             sampleListType = type_extractor_sample_list_1.GobiiSampleListType[sampleListTypeFileItem.getItemId()];
                         }
-                        if (scope$.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
+                        if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
                             var dataSetItems = fileItems
                                 .filter(function (item) {
                                 return item.getEntityType() === type_entity_1.EntityType.DataSets;
                             });
-                            dataSetItems = _this.eliminateDuplicateEntities(file_model_node_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.DataSets, dataSetItems);
                             dataSetItems.forEach(function (datsetFileItem) {
                                 var dataSet = new name_id_1.NameId(datsetFileItem.getItemId(), datsetFileItem.getItemName(), type_entity_1.EntityType.CvTerms);
-                                gobiiDataSetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(gobiiFileType, false, null, scope$.gobiiExtractFilterType, null, null, markerFileName, null, datasetType, platforms, null, null, dataSet, null));
+                                gobiiDataSetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(gobiiFileType, false, null, gobiiExtractFilterType, null, null, markerFileName, null, datasetType, platforms, null, null, dataSet, null));
                             });
                         }
-                        else if (scope$.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
-                            gobiiDataSetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(gobiiFileType, false, null, scope$.gobiiExtractFilterType, markerList, null, markerFileName, null, datasetType, platforms, null, null, null, markerGroups));
+                        else if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
+                            gobiiDataSetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(gobiiFileType, false, null, gobiiExtractFilterType, markerList, null, markerFileName, null, datasetType, platforms, null, null, null, markerGroups));
                         }
-                        else if (scope$.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
-                            gobiiDataSetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(gobiiFileType, false, null, scope$.gobiiExtractFilterType, null, sampleList, sampleFileName, sampleListType, datasetType, platforms, principleInvestigator, project, null, null));
+                        else if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
+                            gobiiDataSetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(gobiiFileType, false, null, gobiiExtractFilterType, null, sampleList, sampleFileName, sampleListType, datasetType, platforms, principleInvestigator, project, null, null));
                         }
                         else {
-                            _this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + type_extractor_filter_1.GobiiExtractFilterType[scope$.gobiiExtractFilterType]));
+                            _this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]));
                         }
                     });
                     gobiiExtractorInstructions.push(new gobii_extractor_instruction_1.GobiiExtractorInstruction(gobiiDataSetExtracts, submitterContactid, null, mapsetIds));

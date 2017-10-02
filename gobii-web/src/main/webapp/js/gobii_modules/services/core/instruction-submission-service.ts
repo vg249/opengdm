@@ -38,8 +38,9 @@ export class InstructionSubmissionService {
                 private dtoRequestServiceExtractorFile: DtoRequestService<ExtractorInstructionFilesDTO>,) {
     }
 
+    
 
-    public submitReady(scope$): Observable<boolean> {
+    public submitReady(gobiiExtractFilterType:GobiiExtractFilterType): Observable<boolean> {
 
 
         return Observable.create(observer => {
@@ -49,12 +50,12 @@ export class InstructionSubmissionService {
 
                             let submistReady: boolean = false;
 
-                            if (scope$.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
+                            if (gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
                                 submistReady =
                                     all
                                         .filter(fi =>
-                                            fi.getGobiiExtractFilterType() === scope$.gobiiExtractFilterType
+                                            fi.getGobiiExtractFilterType() === gobiiExtractFilterType
                                             && fi.getExtractorItemType() === ExtractorItemType.ENTITY
                                             && fi.getEntityType() === EntityType.DataSets
                                         )
@@ -73,75 +74,7 @@ export class InstructionSubmissionService {
 
     } // function()
 
-
-    // In theory this method should be unnecessary because there should not be any duplicates;
-    // however, in testing, it was discovered that there can be duplicate datasets and
-    // duplicate platforms. I suspect that the root cause of this issue is the checkbox component:
-    // because it keeps a history of selected items, it may be reposting existing items in a way that
-    // is not detected by the file item service. In particular, it strikes me that if an item is added
-    // in one extract type (e.g., by data set), and then selected again in another (by samples), there
-    // could be duplicate items in the tree service, because it is specific to extract filter type.
-    // TreeService::getFileItems() should be filtering correctly, but perhaps it's not. In any case,
-    // at this point in the release cycle, it is too late to to do the trouble shooting to figure this out,
-    // because I am unable to reproduce the issue in my local testing. This method at leaset reports
-    // warnings to the effect that the problem exists, but results in an extract that is free of duplicates.
-    // Technically, sample and marker list item duplicates should be eliminated in the list item control,
-    // but it is also too late for that.
-    private eliminateDuplicateEntities(extractorItemType: ExtractorItemType,
-                                       entityType: EntityType,
-                                       fileItems: GobiiFileItem[]): GobiiFileItem[] {
-
-        return fileItems;
-
-        // let returnVal: GobiiFileItem[] = [];
-        //
-        // if (fileItems
-        //         .filter(fi => {
-        //             return fi.getExtractorItemType() === extractorItemType
-        //                 && fi.getEntityType() === entityType
-        //         })
-        //         .length == fileItems.length) {
-        //
-        //     fileItems.forEach(ifi => {
-        //
-        //         if (returnVal.filter(rfi => {
-        //                 return rfi.getItemId() === ifi.getItemId()
-        //             }).length === 0) {
-        //
-        //             returnVal.push(ifi);
-        //         } else {
-        //             let message: string = "A duplicate ";
-        //             message += ExtractorItemType[extractorItemType];
-        //             message += " (" + EntityType[entityType] + ") ";
-        //             message += "item was found; ";
-        //             if (ifi.getItemName()) {
-        //                 message += "name: " + ifi.getItemName() + "; "
-        //             }
-        //
-        //             if (ifi.getItemId()) {
-        //                 message += "id: " + ifi.getItemId();
-        //             }
-        //
-        //             // this.handleHeaderStatusMessage(new HeaderStatusMessage(message,
-        //             //     StatusLevel.WARNING,
-        //             //     null));
-        //         }
-        //     });
-        //
-        // } else {
-        //
-        //     // this.handleHeaderStatusMessage(new HeaderStatusMessage(
-        //     //     "The elimination array contains mixed entities",
-        //     //     StatusLevel.WARNING,
-        //     //     null));
-        //
-        // }
-        //
-        //
-        // return returnVal;
-    }
-
-    public submit(scope$) {
+    public submit(gobiiExtractFilterType:GobiiExtractFilterType) {
         let gobiiExtractorInstructions: GobiiExtractorInstruction[] = [];
         let gobiiDataSetExtracts: GobiiDataSetExtract[] = [];
         let mapsetIds: number[] = [];
@@ -196,9 +129,6 @@ export class InstructionSubmissionService {
                         .filter(item => {
                             return item.getEntityType() === EntityType.Mapsets
                         });
-                    mapsetFileItems = this.eliminateDuplicateEntities(ExtractorItemType.ENTITY,
-                        EntityType.Mapsets,
-                        mapsetFileItems);
                     mapsetIds = mapsetFileItems
                         .map(item => {
                             return Number(item.getItemId())
@@ -252,10 +182,6 @@ export class InstructionSubmissionService {
                         return item.getEntityType() === EntityType.Platforms
                     });
 
-                    platformFileItems = this.eliminateDuplicateEntities(ExtractorItemType.ENTITY,
-                        EntityType.Platforms,
-                        platformFileItems);
-
                     let platforms: NameId[] = platformFileItems.map(item => {
                         return new NameId(item.getItemId(), item.getItemName(), EntityType.Platforms)
                     });
@@ -263,10 +189,6 @@ export class InstructionSubmissionService {
                     let markerGroupItems: GobiiFileItem[] = fileItems.filter(item => {
                         return item.getEntityType() === EntityType.MarkerGroups
                     });
-
-                    markerGroupItems = this.eliminateDuplicateEntities(ExtractorItemType.ENTITY,
-                        EntityType.MarkerGroups,
-                        markerGroupItems);
 
                     let markerGroups: NameId[] = markerGroupItems.map(item => {
                         return new NameId(item.getItemId(), item.getItemName(), EntityType.MarkerGroups)
@@ -279,9 +201,6 @@ export class InstructionSubmissionService {
                                 return fi.getExtractorItemType() === ExtractorItemType.MARKER_LIST_ITEM
                             });
 
-                    markerListItems = this.eliminateDuplicateEntities(ExtractorItemType.MARKER_LIST_ITEM,
-                        EntityType.UNKNOWN,
-                        markerListItems);
                     let markerList: string[] = markerListItems
                         .map(mi => {
                             return mi.getItemId()
@@ -295,9 +214,6 @@ export class InstructionSubmissionService {
                                 return fi.getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_ITEM
                             });
 
-                    sampleListItems = this.eliminateDuplicateEntities(ExtractorItemType.SAMPLE_LIST_ITEM,
-                        EntityType.UNKNOWN,
-                        sampleListItems);
                     let sampleList: string[] = sampleListItems
                         .map(mi => {
                             return mi.getItemId()
@@ -312,16 +228,13 @@ export class InstructionSubmissionService {
                         sampleListType = GobiiSampleListType[sampleListTypeFileItem.getItemId()];
                     }
 
-                    if (scope$.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
+                    if (gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
                         let dataSetItems: GobiiFileItem[] = fileItems
                             .filter(item => {
                                 return item.getEntityType() === EntityType.DataSets
                             });
 
-                        dataSetItems = this.eliminateDuplicateEntities(ExtractorItemType.ENTITY,
-                            EntityType.DataSets,
-                            dataSetItems);
 
                         dataSetItems.forEach(datsetFileItem => {
 
@@ -332,7 +245,7 @@ export class InstructionSubmissionService {
                             gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
                                 false,
                                 null,
-                                scope$.gobiiExtractFilterType,
+                                gobiiExtractFilterType,
                                 null,
                                 null,
                                 markerFileName,
@@ -344,11 +257,11 @@ export class InstructionSubmissionService {
                                 dataSet,
                                 null));
                         });
-                    } else if (scope$.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
+                    } else if (gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
                         gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
                             false,
                             null,
-                            scope$.gobiiExtractFilterType,
+                            gobiiExtractFilterType,
                             markerList,
                             null,
                             markerFileName,
@@ -359,11 +272,11 @@ export class InstructionSubmissionService {
                             null,
                             null,
                             markerGroups));
-                    } else if (scope$.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
+                    } else if (gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
                         gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
                             false,
                             null,
-                            scope$.gobiiExtractFilterType,
+                            gobiiExtractFilterType,
                             null,
                             sampleList,
                             sampleFileName,
@@ -375,7 +288,7 @@ export class InstructionSubmissionService {
                             null,
                             null));
                     } else {
-                        this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + GobiiExtractFilterType[scope$.gobiiExtractFilterType]));
+                        this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + GobiiExtractFilterType[gobiiExtractFilterType]));
                     }
                 }
             );
