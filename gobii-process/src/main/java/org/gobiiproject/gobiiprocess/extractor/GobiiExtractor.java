@@ -629,14 +629,6 @@ public class GobiiExtractor {
                 } else {
                     Long qcJobID = jsonPayload.get("jobId").getAsLong();
                     ErrorLogger.logInfo("QC", "New QC job id: " + qcJobID);
-                    ProcessMessage qcStartPm = new ProcessMessage();
-                    qcStartPm.setUser(inst.getContactEmail());
-						qcStartPm.setSubject(new StringBuilder("new QC Job #").append(qcJobID).toString());
-						qcStartPm.addIdentifier("QC Job Identifier", String.valueOf(qcJobID), String.valueOf(qcJobID));
-						qcStartPm.addIdentifier("Dataset Identifier", String.valueOf(datasetId), String.valueOf(qcJobID));
-						qcStartPm.addPath("Output Extraction/QC Directory", extractDir);
-						mailInterface.newMessage();
-						mailInterface.send(qcStartPm);
 						RestUri restUriGetQCJobStatus = new RestUri("/",
 								configuration.getKDCConfig().getContextPath(),
 								configuration.getKDCConfig().getPath(ServerConfigKDC.KDCResource.QC_STATUS_));
@@ -676,7 +668,7 @@ public class GobiiExtractor {
 
 						ProcessMessage qcStatusPm = new ProcessMessage();
 						qcStatusPm.setUser(inst.getContactEmail());
-						qcStartPm.setSubject(new StringBuilder("QC Job #").append(qcJobID).append(" status").toString());
+						qcStatusPm.setSubject(new StringBuilder("QC Job #").append(qcJobID).append(" status").toString());
 						qcStatusPm.addIdentifier("QC Job Identifier", String.valueOf(qcJobID), String.valueOf(qcJobID));
 						qcStatusPm.addIdentifier("Dataset Identifier", String.valueOf(datasetId), String.valueOf(qcJobID));
 
@@ -758,7 +750,6 @@ public class GobiiExtractor {
 							}
 							qcStatusPm.setBody(new StringBuilder("[GOBII - QC]: job #").append(qcJobID).toString(), extractType, qcDuration, ErrorLogger.getFirstErrorReason(), false, ErrorLogger.getAllErrorStringsHTML());
 						}
-						mailInterface.newMessage();
 						mailInterface.send(qcStatusPm);
 
 						//purge data
