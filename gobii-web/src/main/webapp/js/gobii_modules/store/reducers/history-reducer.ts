@@ -29,8 +29,10 @@ export function historyReducer(state: State = initialState, action: gobiiHistory
 
         case gobiiHistoryAction.ADD_STATUS: {
 
+            let newHeaderStatusMessage:HeaderStatusMessage = action.payload;
+
             let newState = state.statusMessages.slice()
-            newState.push(action.payload);
+            newState.push(newHeaderStatusMessage);
             returnVal = {
                 statusMessages: newState,
                 jobSubmissions: state.jobSubmissions
@@ -62,10 +64,12 @@ export const getJobSubmissions = (state: State) => state.jobSubmissions;
 export const getStatusMessages = createSelector(getStatuses, (statusMessages) => {
 
     // default
-    let returnVal:string[];
+    let returnVal: string[];
 
     returnVal = statusMessages
-        .map(hsm => hsm.message);
+        .map(hsm => {
+            return hsm.message
+        });
 
     return returnVal;
 

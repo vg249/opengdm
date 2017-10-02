@@ -35,7 +35,7 @@ import {createSelector, Store} from "@ngrx/store";
 import * as fromRoot from '../store/reducers';
 import * as fromFileItems from '../store/reducers/fileitems-reducer';
 import * as fileItemAction from '../store/actions/fileitem-action';
-import * as treeNodeAction from '../store/actions/treenode-action';
+import * as historyAction from '../store/actions/history-action';
 import {NameIdFilterParamTypes} from "../model/type-nameid-filter-params";
 import {FileItemService} from "../services/core/file-item-service";
 import {Observable} from "rxjs/Observable";
@@ -278,7 +278,7 @@ import {InstructionSubmissionService} from "../services/core/instruction-submiss
                                     <h3 class="panel-title">Status Messages</h3>
                                 </div>
                                 <div class="panel-body">
-                                    <status-display [messages]="messages"></status-display>
+                                    <status-display [messages$]="messages$"></status-display>
                                     <BR>
                                     <button type="clear"
                                             class="btn btn-primary"
@@ -328,6 +328,9 @@ export class ExtractorRoot implements OnInit {
     selectedExtractFormat$: Observable<GobiiFileItem> = this.store.select(fromRoot.getSelectedFileFormat);
 //    selectedExtractFormat$: Observable<string> = createSelector(getFileItemsState, fromFileItems.getSelectedFileFormat);
 
+
+    public messages$: Observable<string[]> = this.store.select(fromRoot.getStatusMessages);
+
     // ************************************************************************
 
     public treeFileItemEvent: GobiiFileItem;
@@ -340,7 +343,6 @@ export class ExtractorRoot implements OnInit {
     public loggedInUser: string = null;
 
 
-    public messages: string[] = [];
 
 
     constructor(
@@ -797,7 +799,7 @@ export class ExtractorRoot implements OnInit {
 //                 }
 //             },
 //             dtoHeaderResponse => {
-//                 dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Retrieving PlatformTypes: "
+//                 dtoHeaderResponse.statusMessages.forEach(m => scope$.messages$.push("Retrieving PlatformTypes: "
 //                     + m.message))
 //             });
 //     }
@@ -808,11 +810,12 @@ export class ExtractorRoot implements OnInit {
     private dataSetIdToUncheck: number;
 
     private handleAddMessage(arg) {
-        this.messages.unshift(arg);
+        this.store.dispatch(new historyAction.AddStatusAction(new HeaderStatusMessage(arg,StatusLevel.OK,undefined)))
+//        this.messages$.unshift(arg);
     }
 
     private handleClearMessages() {
-        this.messages = [];
+        this.store.dispatch(new historyAction.ClearStatusesAction())
     }
 
     public handleHeaderStatusMessage(statusMessage: HeaderStatusMessage) {

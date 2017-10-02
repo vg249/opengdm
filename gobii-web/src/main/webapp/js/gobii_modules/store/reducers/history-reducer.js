@@ -6,8 +6,9 @@ System.register(["reselect", "../actions/history-action"], function (exports_1, 
         var returnVal = state;
         switch (action.type) {
             case gobiiHistoryAction.ADD_STATUS: {
+                var newHeaderStatusMessage = action.payload;
                 var newState = state.statusMessages.slice();
-                newState.push(action.payload);
+                newState.push(newHeaderStatusMessage);
                 returnVal = {
                     statusMessages: newState,
                     jobSubmissions: state.jobSubmissions
@@ -47,7 +48,9 @@ System.register(["reselect", "../actions/history-action"], function (exports_1, 
                 // default
                 var returnVal;
                 returnVal = statusMessages
-                    .map(function (hsm) { return hsm.message; });
+                    .map(function (hsm) {
+                    return hsm.message;
+                });
                 return returnVal;
             }));
             exports_1("getLastMessage", getLastMessage = reselect_1.createSelector(getStatuses, function (statusMessages) {
