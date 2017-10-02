@@ -28,7 +28,6 @@ public class MailInterface {
 	private String user;
 	private String password;
 	private String protocol;
-	private MailMessage message = new MailMessage();
 	
 	
 	public MailInterface(ConfigSettings config){
@@ -58,10 +57,7 @@ public class MailInterface {
 	public String getProtocol(){
 		return protocol;
 	}
-	
-	public MailMessage newMessage(){
-		return this.message;
-	}
+
 	
 	public void send(MailMessage message) throws Exception{
 		if(message.getUser()==null || message.getUser().equals(""))return;
