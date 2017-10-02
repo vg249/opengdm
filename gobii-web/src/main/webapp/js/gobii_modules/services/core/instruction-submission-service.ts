@@ -291,7 +291,7 @@ export class InstructionSubmissionService {
                         this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + GobiiExtractFilterType[gobiiExtractFilterType]));
                     }
                 }
-            );
+            ).unsubscribe();
 
 
         gobiiExtractorInstructions.push(
