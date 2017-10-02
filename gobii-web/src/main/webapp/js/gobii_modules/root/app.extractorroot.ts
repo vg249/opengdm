@@ -40,6 +40,7 @@ import {NameIdFilterParamTypes} from "../model/type-nameid-filter-params";
 import {FileItemService} from "../services/core/file-item-service";
 import {Observable} from "rxjs/Observable";
 import {getFileItemsState} from "../store/reducers/index";
+import {InstructionSubmissionService} from "../services/core/instruction-submission-service";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -347,17 +348,17 @@ export class ExtractorRoot implements OnInit {
                 private _authenticationService: AuthenticationService,
                 private _dtoRequestServiceServerConfigs: DtoRequestService<ServerConfig[]>,
                 private store: Store<fromRoot.State>,
-                private fileItemService: FileItemService) {
+                private fileItemService: FileItemService,
+                private instructionSubmissionService: InstructionSubmissionService) {
 
 
         this.selectedExtractFormat$.subscribe(
             format => console.log("new extract format @ root: " + format.getItemId())
         );
 
-        this.fileItemsProjects$.subscribe( items => {
+        this.fileItemsProjects$.subscribe(items => {
             console.log("Project item count: " + items.length)
         });
-
 
 
         // this.store
@@ -389,7 +390,6 @@ export class ExtractorRoot implements OnInit {
             .setEntityFilter(EntityFilter.BYTYPENAME)
             .setFkEntityFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE))
             .setNameIdLabelType(NameIdLabelType.SELECT_A);
-
 
 
         this.nameIdRequestParamsPlatforms = FileItemParams
@@ -456,13 +456,13 @@ export class ExtractorRoot implements OnInit {
 
                     //loggedInUser
                     this.fileItemService.locadFileItem(GobiiFileItem.build(scope$.gobiiExtractFilterType, ProcessType.CREATE)
-                        .setEntityType(EntityType.Contacts)
-                        .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
-                        .setCvFilterType(CvFilterType.UNKNOWN)
-                        .setExtractorItemType(ExtractorItemType.ENTITY)
-                        .setItemName(contact.email)
-                        .setItemId(contact.contactId.toLocaleString()),
-                            true);
+                            .setEntityType(EntityType.Contacts)
+                            .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
+                            .setCvFilterType(CvFilterType.UNKNOWN)
+                            .setExtractorItemType(ExtractorItemType.ENTITY)
+                            .setItemName(contact.email)
+                            .setItemId(contact.contactId.toLocaleString()),
+                        true);
 
                     // scope$._fileModelTreeService.put(
                     //     GobiiFileItem.build(scope$.gobiiExtractFilterType, ProcessType.CREATE)
@@ -536,14 +536,11 @@ export class ExtractorRoot implements OnInit {
         this.gobiiExtractFilterType = arg;
 
 
-
-
         let jobId: string = FileName.makeUniqueFileId();
         this.fileItemService.locadFileItem(GobiiFileItem.build(arg, ProcessType.CREATE)
             .setExtractorItemType(ExtractorItemType.JOB_ID)
             .setItemId(jobId)
-            .setItemName(jobId),true)
-
+            .setItemName(jobId), true)
 
 
 //         this._fileModelTreeService
@@ -652,7 +649,6 @@ export class ExtractorRoot implements OnInit {
         this.initializeSubmissionContact();
 
 
-
         this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
             NameIdFilterParamTypes.CONTACT_PI,
             null);
@@ -681,7 +677,7 @@ export class ExtractorRoot implements OnInit {
             .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
             .setItemId(GobiiExtractFormat[GobiiExtractFormat.HAPMAP])
             .setItemName(GobiiExtractFormat[GobiiExtractFormat[GobiiExtractFormat.HAPMAP]]);
-        this.fileItemService.locadFileItem(formatItem,true);
+        this.fileItemService.locadFileItem(formatItem, true);
 
 
     }
@@ -753,7 +749,7 @@ export class ExtractorRoot implements OnInit {
     public handleExperimentSelected(arg: NameId) {
         this.selectedExperimentId = arg.id;
 
-                    this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
+        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
             NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT,
             this.selectedExperimentId)
         // this.store.dispatch(new fileItemAction.SetFilterValueAction({
@@ -921,7 +917,6 @@ export class ExtractorRoot implements OnInit {
     private handleClearTree() {
 
         this.handleExportTypeSelected(this.gobiiExtractFilterType);
-
 
 
     }
@@ -1298,25 +1293,29 @@ export class ExtractorRoot implements OnInit {
         this.initializeServerConfigs();
 
 
-        this.store.select(fromRoot.getSelectedFileItems)
-            .subscribe(all => {
-
-                if (this.gobiiExtractFilterType=== GobiiExtractFilterType.WHOLE_DATASET) {
-
-                    let submistReady:boolean =
-                        all
-                            .filter(fi =>
-                                fi.getGobiiExtractFilterType() === this.gobiiExtractFilterType
-                                && fi.getExtractorItemType() === ExtractorItemType.ENTITY
-                                && fi.getEntityType() === EntityType.DataSets
-                            )
-                            .length > 0;
-
-                    submistReady ? this.submitButtonStyle = this.buttonStyleSubmitReady : this.submitButtonStyle = this.buttonStyleSubmitNotReady;
-
-                }
-
+        this.instructionSubmissionService.submitReady(this)
+            .subscribe(submistReady => {
+                submistReady ? this.submitButtonStyle = this.buttonStyleSubmitReady : this.submitButtonStyle = this.buttonStyleSubmitNotReady;
             })
+        // this.store.select(fromRoot.getSelectedFileItems)
+        //     .subscribe(all => {
+        //
+        //         if (this.gobiiExtractFilterType=== GobiiExtractFilterType.WHOLE_DATASET) {
+        //
+        //             let submistReady:boolean =
+        //                 all
+        //                     .filter(fi =>
+        //                         fi.getGobiiExtractFilterType() === this.gobiiExtractFilterType
+        //                         && fi.getExtractorItemType() === ExtractorItemType.ENTITY
+        //                         && fi.getEntityType() === EntityType.DataSets
+        //                     )
+        //                     .length > 0;
+        //
+        //             submistReady ? this.submitButtonStyle = this.buttonStyleSubmitReady : this.submitButtonStyle = this.buttonStyleSubmitNotReady;
+        //
+        //         }
+        //
+        //     })
 
     } // ngOnInit()
 

@@ -211,6 +211,10 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
              * queries into said database. Remember to keep your selectors small and
              * focused so they can be combined and composed to fit each particular
              * use-case.
+             *
+             * WARNING: as of 4.0.2, ngrx/platform  issue # 208: https://github.com/ngrx/platform/issues/208
+             * has _not_ been resulved. So selectors _must_ return non-primtive objects. See my comment
+             * in export-format-component.ts
              */
             exports_1("getFileItems", getFileItems = function (state) { return state.allFileItems; });
             exports_1("getUniqueIds", getUniqueIds = function (state) { return state.allFileItems.map(function (fileItem) { return fileItem.getFileItemUniqueId(); }); });

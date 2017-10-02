@@ -176,7 +176,21 @@ System.register(["@angular/core", "../model/type-extract-format", "../model/gobi
                         //directives: [RADIO_GROUP_DIRECTIVES]
                         //  directives: [Alert]
                         template: "\n        <form>\n            <label class=\"the-legend\">Select Format:&nbsp;</label>\n            <BR><input type=\"radio\"\n                       (ngModelChange)=\"handleFormatSelected($event)\"\n                       [ngModel]=\"(fileFormat$  | async).getItemId()\"\n                       name=\"fileFormat\"\n                       value=\"HAPMAP\">\n            <label for=\"HAPMAP\" class=\"the-legend\">Hapmap</label>\n            <BR><input type=\"radio\"\n                       (ngModelChange)=\"handleFormatSelected($event)\"\n                       [ngModel]=\"(fileFormat$  | async).getItemId()\"\n                       name=\"fileFormat\"\n                       value=\"FLAPJACK\">\n            <label for=\"FLAPJACK\" class=\"the-legend\">Flapjack</label>\n            <BR><input type=\"radio\"\n                       (ngModelChange)=\"handleFormatSelected($event)\"\n                       [ngModel]=\"(fileFormat$  | async).getItemId()\"\n                       name=\"fileFormat\"\n                       value=\"META_DATA_ONLY\">\n            <label for=\"META_DATA_ONLY\" class=\"the-legend\">{{metaDataExtractname}}</label>\n        </form>" // end template
-                    }),
+                    })
+                    /**
+                     * In the template you will notice some slight of hand to get the property value of the
+                     * GobiiFileItem for ngModel. In my original implementation, the selector from the reducer
+                     * returned a scalar string value. From that selector I would get the initial state value
+                     * but not subsequent values, even though the select itself was executing under the debugger.
+                     * I spent many hours trying to track this issue down and even created the reproduce-radio
+                     * project to try to isolate the issue. But it seemed to be working. Then I found ngrx/platform
+                     * issue # 208: https://github.com/ngrx/platform/issues/208
+                     * This is precisely the issue that was reported. My versions match those of the test project so I don't
+                     * know why this is happening. I will try to reproduce the issue in the test project as a good citizen.
+                     * In the meantime, we need to stick to returning actual state objects rather than scalar primtive values
+                     * from it.
+                     */
+                    ,
                     __metadata("design:paramtypes", [store_1.Store,
                         file_item_service_1.FileItemService])
                 ], ExportFormatComponent);

@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../services/core/dto-request.service", "../model/type-process", "../model/gobii-file-item", "../model/server-config", "../model/type-entity", "../model/extractor-instructions/dto-extractor-instruction-files", "../model/extractor-instructions/gobii-extractor-instruction", "../services/app/dto-request-item-serverconfigs", "../model/type-entity-filter", "../model/type-extractor-filter", "../model/cv-filter-type", "../model/file-model-node", "../model/type-extract-format", "../model/dto-header-status-message", "../model/name-id-request-params", "../model/file_name", "../services/app/dto-request-item-contact", "../services/core/authentication.service", "../model/name-id-label-type", "../model/type-status-level", "@ngrx/store", "../store/reducers", "../store/actions/fileitem-action", "../model/type-nameid-filter-params", "../services/core/file-item-service"], function (exports_1, context_1) {
+System.register(["@angular/core", "../services/core/dto-request.service", "../model/type-process", "../model/gobii-file-item", "../model/server-config", "../model/type-entity", "../model/extractor-instructions/dto-extractor-instruction-files", "../model/extractor-instructions/gobii-extractor-instruction", "../services/app/dto-request-item-serverconfigs", "../model/type-entity-filter", "../model/type-extractor-filter", "../model/cv-filter-type", "../model/file-model-node", "../model/type-extract-format", "../model/dto-header-status-message", "../model/name-id-request-params", "../model/file_name", "../services/app/dto-request-item-contact", "../services/core/authentication.service", "../model/name-id-label-type", "../model/type-status-level", "@ngrx/store", "../store/reducers", "../store/actions/fileitem-action", "../model/type-nameid-filter-params", "../services/core/file-item-service", "../services/core/instruction-submission-service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, dto_request_service_1, type_process_1, gobii_file_item_1, server_config_1, type_entity_1, dto_extractor_instruction_files_1, gobii_extractor_instruction_1, dto_request_item_serverconfigs_1, type_entity_filter_1, type_extractor_filter_1, cv_filter_type_1, file_model_node_1, type_extract_format_1, dto_header_status_message_1, name_id_request_params_1, file_name_1, dto_request_item_contact_1, authentication_service_1, name_id_label_type_1, type_status_level_1, store_1, fromRoot, fileItemAction, type_nameid_filter_params_1, file_item_service_1, ExtractorRoot;
+    var core_1, dto_request_service_1, type_process_1, gobii_file_item_1, server_config_1, type_entity_1, dto_extractor_instruction_files_1, gobii_extractor_instruction_1, dto_request_item_serverconfigs_1, type_entity_filter_1, type_extractor_filter_1, cv_filter_type_1, file_model_node_1, type_extract_format_1, dto_header_status_message_1, name_id_request_params_1, file_name_1, dto_request_item_contact_1, authentication_service_1, name_id_label_type_1, type_status_level_1, store_1, fromRoot, fileItemAction, type_nameid_filter_params_1, file_item_service_1, instruction_submission_service_1, ExtractorRoot;
     return {
         setters: [
             function (core_1_1) {
@@ -90,17 +90,21 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
             },
             function (file_item_service_1_1) {
                 file_item_service_1 = file_item_service_1_1;
+            },
+            function (instruction_submission_service_1_1) {
+                instruction_submission_service_1 = instruction_submission_service_1_1;
             }
         ],
         execute: function () {
             ExtractorRoot = (function () {
-                function ExtractorRoot(_dtoRequestServiceExtractorFile, _dtoRequestServiceContact, _authenticationService, _dtoRequestServiceServerConfigs, store, fileItemService) {
+                function ExtractorRoot(_dtoRequestServiceExtractorFile, _dtoRequestServiceContact, _authenticationService, _dtoRequestServiceServerConfigs, store, fileItemService, instructionSubmissionService) {
                     this._dtoRequestServiceExtractorFile = _dtoRequestServiceExtractorFile;
                     this._dtoRequestServiceContact = _dtoRequestServiceContact;
                     this._authenticationService = _authenticationService;
                     this._dtoRequestServiceServerConfigs = _dtoRequestServiceServerConfigs;
                     this.store = store;
                     this.fileItemService = fileItemService;
+                    this.instructionSubmissionService = instructionSubmissionService;
                     this.title = 'Gobii Web';
                     // ************************************************************************
                     // unfiltered
@@ -848,19 +852,29 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     //     });
                     //
                     this.initializeServerConfigs();
-                    this.store.select(fromRoot.getSelectedFileItems)
-                        .subscribe(function (all) {
-                        if (_this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
-                            var submistReady = all
-                                .filter(function (fi) {
-                                return fi.getGobiiExtractFilterType() === _this.gobiiExtractFilterType
-                                    && fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY
-                                    && fi.getEntityType() === type_entity_1.EntityType.DataSets;
-                            })
-                                .length > 0;
-                            submistReady ? _this.submitButtonStyle = _this.buttonStyleSubmitReady : _this.submitButtonStyle = _this.buttonStyleSubmitNotReady;
-                        }
+                    this.instructionSubmissionService.submitReady(this)
+                        .subscribe(function (submistReady) {
+                        submistReady ? _this.submitButtonStyle = _this.buttonStyleSubmitReady : _this.submitButtonStyle = _this.buttonStyleSubmitNotReady;
                     });
+                    // this.store.select(fromRoot.getSelectedFileItems)
+                    //     .subscribe(all => {
+                    //
+                    //         if (this.gobiiExtractFilterType=== GobiiExtractFilterType.WHOLE_DATASET) {
+                    //
+                    //             let submistReady:boolean =
+                    //                 all
+                    //                     .filter(fi =>
+                    //                         fi.getGobiiExtractFilterType() === this.gobiiExtractFilterType
+                    //                         && fi.getExtractorItemType() === ExtractorItemType.ENTITY
+                    //                         && fi.getEntityType() === EntityType.DataSets
+                    //                     )
+                    //                     .length > 0;
+                    //
+                    //             submistReady ? this.submitButtonStyle = this.buttonStyleSubmitReady : this.submitButtonStyle = this.buttonStyleSubmitNotReady;
+                    //
+                    //         }
+                    //
+                    //     })
                 }; // ngOnInit()
                 ExtractorRoot = __decorate([
                     core_1.Component({
@@ -874,7 +888,8 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         authentication_service_1.AuthenticationService,
                         dto_request_service_1.DtoRequestService,
                         store_1.Store,
-                        file_item_service_1.FileItemService])
+                        file_item_service_1.FileItemService,
+                        instruction_submission_service_1.InstructionSubmissionService])
                 ], ExtractorRoot);
                 return ExtractorRoot;
             }());

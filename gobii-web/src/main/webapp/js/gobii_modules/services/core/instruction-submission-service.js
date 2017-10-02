@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-entity", "../../model/file-model-node", "../../model/type-extractor-filter", "../../store/reducers", "@ngrx/store"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-entity", "../../model/file-model-node", "../../model/type-extractor-filter", "../../store/reducers", "@ngrx/store", "rxjs/Observable"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/file-m
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_entity_1, file_model_node_1, type_extractor_filter_1, fromRoot, store_1, InstructionSubmissionService;
+    var core_1, type_entity_1, file_model_node_1, type_extractor_filter_1, fromRoot, store_1, Observable_1, InstructionSubmissionService;
     return {
         setters: [
             function (core_1_1) {
@@ -30,6 +30,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/file-m
             },
             function (store_1_1) {
                 store_1 = store_1_1;
+            },
+            function (Observable_1_1) {
+                Observable_1 = Observable_1_1;
             }
         ],
         execute: function () {
@@ -37,23 +40,28 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/file-m
                 function InstructionSubmissionService(store) {
                     this.store = store;
                 }
-                InstructionSubmissionService.prototype.isSubmissionReady = function (gobiiExtractFilterType) {
-                    var returnVal = false;
-                    this.store.select(fromRoot.getSelectedFileItems)
-                        .subscribe(function (all) {
-                        if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
-                            returnVal =
-                                all
-                                    .filter(function (fi) {
-                                    return fi.getGobiiExtractFilterType() === gobiiExtractFilterType
-                                        && fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY
-                                        && fi.getEntityType() === type_entity_1.EntityType.DataSets;
-                                })
-                                    .length > 0;
-                        }
-                    }).unsubscribe();
-                    return returnVal;
-                };
+                InstructionSubmissionService.prototype.submitReady = function (scope$) {
+                    var _this = this;
+                    return Observable_1.Observable.create(function (observer) {
+                        _this.store.select(fromRoot.getSelectedFileItems)
+                            .subscribe(function (all) {
+                            var submistReady = false;
+                            if (scope$.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
+                                submistReady =
+                                    all
+                                        .filter(function (fi) {
+                                        return fi.getGobiiExtractFilterType() === scope$.gobiiExtractFilterType
+                                            && fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY
+                                            && fi.getEntityType() === type_entity_1.EntityType.DataSets;
+                                    })
+                                        .length > 0;
+                            } // if-else on extract type
+                            var temp = "foo";
+                            observer.next(submistReady);
+                        }); // inner subscribe
+                    } //observer lambda
+                    ); // Observable.crate
+                }; // function()
                 InstructionSubmissionService = __decorate([
                     core_1.Injectable(),
                     __metadata("design:paramtypes", [store_1.Store])

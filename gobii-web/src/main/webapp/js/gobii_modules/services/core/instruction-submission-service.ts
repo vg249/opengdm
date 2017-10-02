@@ -19,6 +19,7 @@ import {NameIdLabelType} from "../../model/name-id-label-type";
 import {NameId} from "../../model/name-id";
 import {EntityFilter} from "../../model/type-entity-filter";
 import {NameIdFilterParamTypes} from "../../model/type-nameid-filter-params";
+import {Observable} from "rxjs/Observable";
 
 @Injectable()
 export class InstructionSubmissionService {
@@ -27,30 +28,57 @@ export class InstructionSubmissionService {
     }
 
 
-    public isSubmissionReady(gobiiExtractFilterType: GobiiExtractFilterType): boolean {
-
-        let returnVal: boolean = false;
+    public submitReady(scope$): Observable<boolean> {
 
 
-        this.store.select(fromRoot.getSelectedFileItems)
-            .subscribe(all => {
-
-                if (gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
-
-                    returnVal =
-                        all
-                            .filter(fi =>
-                                fi.getGobiiExtractFilterType() === gobiiExtractFilterType
-                                && fi.getExtractorItemType() === ExtractorItemType.ENTITY
-                                && fi.getEntityType() === EntityType.DataSets
-                            )
-                            .length > 0;
-                }
-
-            }).unsubscribe();
+        return Observable.create(observer => {
+                this.store.select(fromRoot.getSelectedFileItems)
+                    .subscribe(all => {
 
 
-        return returnVal;
-    }
+                            let submistReady: boolean = false;
 
+                            if (scope$.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
+
+                                submistReady =
+                                    all
+                                        .filter(fi =>
+                                            fi.getGobiiExtractFilterType() === scope$.gobiiExtractFilterType
+                                            && fi.getExtractorItemType() === ExtractorItemType.ENTITY
+                                            && fi.getEntityType() === EntityType.DataSets
+                                        )
+                                        .length > 0;
+
+
+                            } // if-else on extract type
+
+                        let temp = "foo";
+                            observer.next(submistReady);
+
+                        }
+                    ) // inner subscribe
+            } //observer lambda
+        ); // Observable.crate
+
+    } // function()
+
+
+    // public submitReady(gobiiFileItems:GobiiFileItem[], gobiiExtractFilterType:GobiiExtractFilterType) {
+    //
+    //     let returnVal:boolean = false;
+    //
+    //     if (gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
+    //
+    //         let returnVal  =
+    //             gobiiFileItems
+    //                 .filter(fi =>
+    //                     fi.getGobiiExtractFilterType() === this.gobiiExtractFilterType
+    //                     && fi.getExtractorItemType() === ExtractorItemType.ENTITY
+    //                     && fi.getEntityType() === EntityType.DataSets
+    //                 )
+    //                 .length > 0;
+    //     }
+    //
+    //     return returnVal;
+    // }
 }
