@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../services/core/dto-request.service", "../model/type-process", "../model/gobii-file-item", "../model/server-config", "../model/type-entity", "../model/extractor-instructions/dto-extractor-instruction-files", "../model/extractor-instructions/gobii-extractor-instruction", "../services/app/dto-request-item-serverconfigs", "../model/type-entity-filter", "../model/type-extractor-filter", "../model/cv-filter-type", "../model/file-model-node", "../model/type-extract-format", "../model/dto-header-status-message", "../model/name-id-request-params", "../model/file_name", "../services/app/dto-request-item-contact", "../services/core/authentication.service", "../model/name-id-label-type", "../model/type-status-level", "@ngrx/store", "../store/reducers", "../store/actions/fileitem-action", "../model/type-nameid-filter-params", "../services/core/file-item-service", "../services/core/instruction-submission-service"], function (exports_1, context_1) {
+System.register(["@angular/core", "../services/core/dto-request.service", "../model/type-process", "../model/gobii-file-item", "../model/server-config", "../model/type-entity", "../services/app/dto-request-item-serverconfigs", "../model/type-entity-filter", "../model/type-extractor-filter", "../model/cv-filter-type", "../model/file-model-node", "../model/type-extract-format", "../model/name-id-request-params", "../model/file_name", "../services/app/dto-request-item-contact", "../services/core/authentication.service", "../model/name-id-label-type", "../model/type-status-level", "@ngrx/store", "../store/reducers", "../store/actions/fileitem-action", "../model/type-nameid-filter-params", "../services/core/file-item-service", "../services/core/instruction-submission-service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, dto_request_service_1, type_process_1, gobii_file_item_1, server_config_1, type_entity_1, dto_extractor_instruction_files_1, gobii_extractor_instruction_1, dto_request_item_serverconfigs_1, type_entity_filter_1, type_extractor_filter_1, cv_filter_type_1, file_model_node_1, type_extract_format_1, dto_header_status_message_1, name_id_request_params_1, file_name_1, dto_request_item_contact_1, authentication_service_1, name_id_label_type_1, type_status_level_1, store_1, fromRoot, fileItemAction, type_nameid_filter_params_1, file_item_service_1, instruction_submission_service_1, ExtractorRoot;
+    var core_1, dto_request_service_1, type_process_1, gobii_file_item_1, server_config_1, type_entity_1, dto_request_item_serverconfigs_1, type_entity_filter_1, type_extractor_filter_1, cv_filter_type_1, file_model_node_1, type_extract_format_1, name_id_request_params_1, file_name_1, dto_request_item_contact_1, authentication_service_1, name_id_label_type_1, type_status_level_1, store_1, fromRoot, fileItemAction, type_nameid_filter_params_1, file_item_service_1, instruction_submission_service_1, ExtractorRoot;
     return {
         setters: [
             function (core_1_1) {
@@ -31,12 +31,6 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
             function (type_entity_1_1) {
                 type_entity_1 = type_entity_1_1;
             },
-            function (dto_extractor_instruction_files_1_1) {
-                dto_extractor_instruction_files_1 = dto_extractor_instruction_files_1_1;
-            },
-            function (gobii_extractor_instruction_1_1) {
-                gobii_extractor_instruction_1 = gobii_extractor_instruction_1_1;
-            },
             function (dto_request_item_serverconfigs_1_1) {
                 dto_request_item_serverconfigs_1 = dto_request_item_serverconfigs_1_1;
             },
@@ -54,9 +48,6 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
             },
             function (type_extract_format_1_1) {
                 type_extract_format_1 = type_extract_format_1_1;
-            },
-            function (dto_header_status_message_1_1) {
-                dto_header_status_message_1 = dto_header_status_message_1_1;
             },
             function (name_id_request_params_1_1) {
                 name_id_request_params_1 = name_id_request_params_1_1;
@@ -97,8 +88,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
         ],
         execute: function () {
             ExtractorRoot = (function () {
-                function ExtractorRoot(_dtoRequestServiceExtractorFile, _dtoRequestServiceContact, _authenticationService, _dtoRequestServiceServerConfigs, store, fileItemService, instructionSubmissionService) {
-                    this._dtoRequestServiceExtractorFile = _dtoRequestServiceExtractorFile;
+                function ExtractorRoot(_dtoRequestServiceContact, _authenticationService, _dtoRequestServiceServerConfigs, store, fileItemService, instructionSubmissionService) {
                     this._dtoRequestServiceContact = _dtoRequestServiceContact;
                     this._authenticationService = _authenticationService;
                     this._dtoRequestServiceServerConfigs = _dtoRequestServiceServerConfigs;
@@ -523,358 +513,304 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 ExtractorRoot.prototype.handleClearTree = function () {
                     this.handleExportTypeSelected(this.gobiiExtractFilterType);
                 };
-                // In theory this method should be unnecessary because there should not be any duplicates;
-                // however, in testing, it was discovered that there can be duplicate datasets and
-                // duplicate platforms. I suspect that the root cause of this issue is the checkbox component:
-                // because it keeps a history of selected items, it may be reposting existing items in a way that
-                // is not detected by the file item service. In particular, it strikes me that if an item is added
-                // in one extract type (e.g., by data set), and then selected again in another (by samples), there
-                // could be duplicate items in the tree service, because it is specific to extract filter type.
-                // TreeService::getFileItems() should be filtering correctly, but perhaps it's not. In any case,
-                // at this point in the release cycle, it is too late to to do the trouble shooting to figure this out,
-                // because I am unable to reproduce the issue in my local testing. This method at leaset reports
-                // warnings to the effect that the problem exists, but results in an extract that is free of duplicates.
-                // Technically, sample and marker list item duplicates should be eliminated in the list item control,
-                // but it is also too late for that.
-                ExtractorRoot.prototype.eliminateDuplicateEntities = function (extractorItemType, entityType, fileItems) {
-                    var _this = this;
-                    var returnVal = [];
-                    if (fileItems
-                        .filter(function (fi) {
-                        return fi.getExtractorItemType() === extractorItemType
-                            && fi.getEntityType() === entityType;
-                    })
-                        .length == fileItems.length) {
-                        fileItems.forEach(function (ifi) {
-                            if (returnVal.filter(function (rfi) {
-                                return rfi.getItemId() === ifi.getItemId();
-                            }).length === 0) {
-                                returnVal.push(ifi);
-                            }
-                            else {
-                                var message = "A duplicate ";
-                                message += file_model_node_1.ExtractorItemType[extractorItemType];
-                                message += " (" + type_entity_1.EntityType[entityType] + ") ";
-                                message += "item was found; ";
-                                if (ifi.getItemName()) {
-                                    message += "name: " + ifi.getItemName() + "; ";
-                                }
-                                if (ifi.getItemId()) {
-                                    message += "id: " + ifi.getItemId();
-                                }
-                                _this.handleHeaderStatusMessage(new dto_header_status_message_1.HeaderStatusMessage(message, type_status_level_1.StatusLevel.WARNING, null));
-                            }
-                        });
-                    }
-                    else {
-                        this.handleHeaderStatusMessage(new dto_header_status_message_1.HeaderStatusMessage("The elimination array contains mixed entities", type_status_level_1.StatusLevel.WARNING, null));
-                    }
-                    return returnVal;
-                };
                 ExtractorRoot.prototype.handleExtractSubmission = function () {
-                    if (this.setSubmitButtonState()) {
-                        var scope$ = this;
-                        var gobiiExtractorInstructions = [];
-                        var gobiiDataSetExtracts = [];
-                        var mapsetIds = [];
-                        var submitterContactid = null;
-                        var jobId = null;
-                        var markerFileName = null;
-                        var sampleFileName = null;
-                        var sampleListType = void 0;
-                        // scope$._fileModelTreeService.getFileItems(scope$.gobiiExtractFilterType).subscribe(
-                        //     fileItems => {
-                        //
-                        //         // ******** JOB ID
-                        //         let fileItemJobId: GobiiFileItem = fileItems.find(item => {
-                        //             return item.getExtractorItemType() === ExtractorItemType.JOB_ID
-                        //         });
-                        //
-                        //         if (fileItemJobId != null) {
-                        //             jobId = fileItemJobId.getItemId();
-                        //         }
-                        //
-                        //         // ******** MARKER FILE
-                        //         let fileItemMarkerFile: GobiiFileItem = fileItems.find(item => {
-                        //             return item.getExtractorItemType() === ExtractorItemType.MARKER_FILE
-                        //         });
-                        //
-                        //         if (fileItemMarkerFile != null) {
-                        //             markerFileName = fileItemMarkerFile.getItemId();
-                        //         }
-                        //
-                        //         // ******** SAMPLE FILE
-                        //         let fileItemSampleFile: GobiiFileItem = fileItems.find(item => {
-                        //             return item.getExtractorItemType() === ExtractorItemType.SAMPLE_FILE
-                        //         });
-                        //
-                        //         if (fileItemSampleFile != null) {
-                        //             sampleFileName = fileItemSampleFile.getItemId();
-                        //         }
-                        //
-                        //         // ******** SUBMITTER CONTACT
-                        //         let submitterFileItem: GobiiFileItem = fileItems.find(item => {
-                        //             return (item.getEntityType() === EntityType.Contacts)
-                        //                 && (item.getEntitySubType() === EntitySubType.CONTACT_SUBMITED_BY)
-                        //         });
-                        //
-                        //         submitterContactid = Number(submitterFileItem.getItemId());
-                        //
-                        //
-                        //         // ******** MAPSET IDs
-                        //         let mapsetFileItems: GobiiFileItem[] = fileItems
-                        //             .filter(item => {
-                        //                 return item.getEntityType() === EntityType.Mapsets
-                        //             });
-                        //         mapsetFileItems = this.eliminateDuplicateEntities(ExtractorItemType.ENTITY,
-                        //             EntityType.Mapsets,
-                        //             mapsetFileItems);
-                        //         mapsetIds = mapsetFileItems
-                        //             .map(item => {
-                        //                 return Number(item.getItemId())
-                        //             });
-                        //
-                        //         // ******** EXPORT FORMAT
-                        //         let exportFileItem: GobiiFileItem = fileItems.find(item => {
-                        //             return item.getExtractorItemType() === ExtractorItemType.EXPORT_FORMAT
-                        //         });
-                        //
-                        //         // these probably should be just one enum
-                        //         let gobiiFileType: GobiiFileType = null;
-                        //         let extractFormat: GobiiExtractFormat = GobiiExtractFormat[exportFileItem.getItemId()];
-                        //         if (extractFormat === GobiiExtractFormat.FLAPJACK) {
-                        //             gobiiFileType = GobiiFileType.FLAPJACK;
-                        //         } else if (extractFormat === GobiiExtractFormat.HAPMAP) {
-                        //             gobiiFileType = GobiiFileType.HAPMAP;
-                        //         } else if (extractFormat === GobiiExtractFormat.META_DATA_ONLY) {
-                        //             gobiiFileType = GobiiFileType.META_DATA;
-                        //         }
-                        //
-                        //
-                        //         // ******** DATA SET TYPE
-                        //         let dataTypeFileItem: GobiiFileItem = fileItems.find(item => {
-                        //             return item.getEntityType() === EntityType.CvTerms
-                        //                 && item.getCvFilterType() === CvFilterType.DATASET_TYPE
-                        //         });
-                        //         let datasetType: NameId = dataTypeFileItem != null ? new NameId(dataTypeFileItem.getItemId(),
-                        //             dataTypeFileItem.getItemName(), EntityType.CvTerms) : null;
-                        //
-                        //
-                        //         // ******** PRINCIPLE INVESTIGATOR CONCEPT
-                        //         let principleInvestigatorFileItem: GobiiFileItem = fileItems.find(item => {
-                        //             return item.getEntityType() === EntityType.Contacts
-                        //                 && item.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR
-                        //         });
-                        //         let principleInvestigator: NameId = principleInvestigatorFileItem != null ? new NameId(principleInvestigatorFileItem.getItemId(),
-                        //             principleInvestigatorFileItem.getItemName(), EntityType.Contacts) : null;
-                        //
-                        //
-                        //         // ******** PROJECT
-                        //         let projectFileItem: GobiiFileItem = fileItems.find(item => {
-                        //             return item.getEntityType() === EntityType.Projects
-                        //         });
-                        //         let project: NameId = projectFileItem != null ? new NameId(projectFileItem.getItemId(),
-                        //             projectFileItem.getItemName(), EntityType.Projects) : null;
-                        //
-                        //
-                        //         // ******** PLATFORMS
-                        //         let platformFileItems: GobiiFileItem[] = fileItems.filter(item => {
-                        //             return item.getEntityType() === EntityType.Platforms
-                        //         });
-                        //
-                        //         platformFileItems = this.eliminateDuplicateEntities(ExtractorItemType.ENTITY,
-                        //             EntityType.Platforms,
-                        //             platformFileItems);
-                        //
-                        //         let platforms: NameId[] = platformFileItems.map(item => {
-                        //             return new NameId(item.getItemId(), item.getItemName(), EntityType.Platforms)
-                        //         });
-                        //
-                        //         let markerGroupItems: GobiiFileItem[] = fileItems.filter(item => {
-                        //             return item.getEntityType() === EntityType.MarkerGroups
-                        //         });
-                        //
-                        //         markerGroupItems = this.eliminateDuplicateEntities(ExtractorItemType.ENTITY,
-                        //             EntityType.MarkerGroups,
-                        //             markerGroupItems);
-                        //
-                        //         let markerGroups: NameId[] = markerGroupItems.map(item => {
-                        //             return new NameId(item.getItemId(), item.getItemName(), EntityType.MarkerGroups)
-                        //         });
-                        //
-                        //         // ******** MARKERS
-                        //         let markerListItems: GobiiFileItem[] =
-                        //             fileItems
-                        //                 .filter(fi => {
-                        //                     return fi.getExtractorItemType() === ExtractorItemType.MARKER_LIST_ITEM
-                        //                 });
-                        //
-                        //         markerListItems = this.eliminateDuplicateEntities(ExtractorItemType.MARKER_LIST_ITEM,
-                        //             EntityType.UNKNOWN,
-                        //             markerListItems);
-                        //         let markerList: string[] = markerListItems
-                        //             .map(mi => {
-                        //                 return mi.getItemId()
-                        //             });
-                        //
-                        //
-                        //         // ******** SAMPLES
-                        //         let sampleListItems: GobiiFileItem[] =
-                        //             fileItems
-                        //                 .filter(fi => {
-                        //                     return fi.getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_ITEM
-                        //                 });
-                        //
-                        //         sampleListItems = this.eliminateDuplicateEntities(ExtractorItemType.SAMPLE_LIST_ITEM,
-                        //             EntityType.UNKNOWN,
-                        //             sampleListItems);
-                        //         let sampleList: string[] = sampleListItems
-                        //             .map(mi => {
-                        //                 return mi.getItemId()
-                        //             });
-                        //
-                        //
-                        //         let sampleListTypeFileItem: GobiiFileItem = fileItems.find(item => {
-                        //             return item.getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_TYPE;
-                        //         });
-                        //
-                        //         if (sampleListTypeFileItem != null) {
-                        //             sampleListType = GobiiSampleListType[sampleListTypeFileItem.getItemId()];
-                        //         }
-                        //
-                        //         if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
-                        //
-                        //             let dataSetItems: GobiiFileItem[] = fileItems
-                        //                 .filter(item => {
-                        //                     return item.getEntityType() === EntityType.DataSets
-                        //                 });
-                        //
-                        //             dataSetItems = this.eliminateDuplicateEntities(ExtractorItemType.ENTITY,
-                        //                 EntityType.DataSets,
-                        //                 dataSetItems);
-                        //
-                        //             dataSetItems.forEach(datsetFileItem => {
-                        //
-                        //                 let dataSet: NameId = new NameId(datsetFileItem.getItemId(),
-                        //                     datsetFileItem.getItemName(), EntityType.CvTerms);
-                        //
-                        //
-                        //                 gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
-                        //                     false,
-                        //                     null,
-                        //                     this.gobiiExtractFilterType,
-                        //                     null,
-                        //                     null,
-                        //                     markerFileName,
-                        //                     null,
-                        //                     datasetType,
-                        //                     platforms,
-                        //                     null,
-                        //                     null,
-                        //                     dataSet,
-                        //                     null));
-                        //             });
-                        //         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
-                        //             gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
-                        //                 false,
-                        //                 null,
-                        //                 this.gobiiExtractFilterType,
-                        //                 markerList,
-                        //                 null,
-                        //                 markerFileName,
-                        //                 null,
-                        //                 datasetType,
-                        //                 platforms,
-                        //                 null,
-                        //                 null,
-                        //                 null,
-                        //                 markerGroups));
-                        //         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
-                        //             gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
-                        //                 false,
-                        //                 null,
-                        //                 this.gobiiExtractFilterType,
-                        //                 null,
-                        //                 sampleList,
-                        //                 sampleFileName,
-                        //                 sampleListType,
-                        //                 datasetType,
-                        //                 platforms,
-                        //                 principleInvestigator,
-                        //                 project,
-                        //                 null,
-                        //                 null));
-                        //         } else {
-                        //             this.handleAddMessage("Unhandled extract filter type: " + GobiiExtractFilterType[this.gobiiExtractFilterType]);
-                        //         }
-                        //     }
-                        // );
-                        gobiiExtractorInstructions.push(new gobii_extractor_instruction_1.GobiiExtractorInstruction(gobiiDataSetExtracts, submitterContactid, null, mapsetIds));
-                        var fileName = jobId;
-                        var extractorInstructionFilesDTORequest = new dto_extractor_instruction_files_1.ExtractorInstructionFilesDTO(gobiiExtractorInstructions, fileName);
-                        var extractorInstructionFilesDTOResponse = null;
-                        // this._dtoRequestServiceExtractorFile.post(new DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))
-                        //     .subscribe(extractorInstructionFilesDTO => {
-                        //             extractorInstructionFilesDTOResponse = extractorInstructionFilesDTO;
-                        //             scope$.handleAddMessage("Extractor instruction file created on server: "
-                        //                 + extractorInstructionFilesDTOResponse.getInstructionFileName());
-                        //
-                        //             let newJobId: string = FileName.makeUniqueFileId();
-                        //             this._fileModelTreeService
-                        //                 .put(GobiiFileItem
-                        //                     .build(this.gobiiExtractFilterType, ProcessType.CREATE)
-                        //                     .setExtractorItemType(ExtractorItemType.JOB_ID)
-                        //                     .setItemId(newJobId)
-                        //                     .setItemName(newJobId))
-                        //                 .subscribe(
-                        //                     e => {
-                        //
-                        //                         this.handleClearTree();
-                        //                     },
-                        //                     headerStatusMessage => {
-                        //                         this.handleHeaderStatusMessage(headerStatusMessage)
-                        //                     }
-                        //                 );
-                        //         },
-                        //         headerResponse => {
-                        //
-                        //             scope$.handleResponseHeader(headerResponse);
-                        //         });
-                    } // if submission state is READY
+                    this.instructionSubmissionService.submit(this);
+                    // if (this.setSubmitButtonState()) {
+                    //
+                    //     let scope$ = this;
+                    //
+                    //     let gobiiExtractorInstructions: GobiiExtractorInstruction[] = [];
+                    //     let gobiiDataSetExtracts: GobiiDataSetExtract[] = [];
+                    //     let mapsetIds: number[] = [];
+                    //     let submitterContactid: number = null;
+                    //     let jobId: string = null;
+                    //     let markerFileName: string = null;
+                    //     let sampleFileName: string = null;
+                    //     let sampleListType: GobiiSampleListType;
+                    //
+                    //     // scope$._fileModelTreeService.getFileItems(scope$.gobiiExtractFilterType).subscribe(
+                    //     //     fileItems => {
+                    //     //
+                    //     //         // ******** JOB ID
+                    //     //         let fileItemJobId: GobiiFileItem = fileItems.find(item => {
+                    //     //             return item.getExtractorItemType() === ExtractorItemType.JOB_ID
+                    //     //         });
+                    //     //
+                    //     //         if (fileItemJobId != null) {
+                    //     //             jobId = fileItemJobId.getItemId();
+                    //     //         }
+                    //     //
+                    //     //         // ******** MARKER FILE
+                    //     //         let fileItemMarkerFile: GobiiFileItem = fileItems.find(item => {
+                    //     //             return item.getExtractorItemType() === ExtractorItemType.MARKER_FILE
+                    //     //         });
+                    //     //
+                    //     //         if (fileItemMarkerFile != null) {
+                    //     //             markerFileName = fileItemMarkerFile.getItemId();
+                    //     //         }
+                    //     //
+                    //     //         // ******** SAMPLE FILE
+                    //     //         let fileItemSampleFile: GobiiFileItem = fileItems.find(item => {
+                    //     //             return item.getExtractorItemType() === ExtractorItemType.SAMPLE_FILE
+                    //     //         });
+                    //     //
+                    //     //         if (fileItemSampleFile != null) {
+                    //     //             sampleFileName = fileItemSampleFile.getItemId();
+                    //     //         }
+                    //     //
+                    //     //         // ******** SUBMITTER CONTACT
+                    //     //         let submitterFileItem: GobiiFileItem = fileItems.find(item => {
+                    //     //             return (item.getEntityType() === EntityType.Contacts)
+                    //     //                 && (item.getEntitySubType() === EntitySubType.CONTACT_SUBMITED_BY)
+                    //     //         });
+                    //     //
+                    //     //         submitterContactid = Number(submitterFileItem.getItemId());
+                    //     //
+                    //     //
+                    //     //         // ******** MAPSET IDs
+                    //     //         let mapsetFileItems: GobiiFileItem[] = fileItems
+                    //     //             .filter(item => {
+                    //     //                 return item.getEntityType() === EntityType.Mapsets
+                    //     //             });
+                    //     //         mapsetFileItems = this.eliminateDuplicateEntities(ExtractorItemType.ENTITY,
+                    //     //             EntityType.Mapsets,
+                    //     //             mapsetFileItems);
+                    //     //         mapsetIds = mapsetFileItems
+                    //     //             .map(item => {
+                    //     //                 return Number(item.getItemId())
+                    //     //             });
+                    //     //
+                    //     //         // ******** EXPORT FORMAT
+                    //     //         let exportFileItem: GobiiFileItem = fileItems.find(item => {
+                    //     //             return item.getExtractorItemType() === ExtractorItemType.EXPORT_FORMAT
+                    //     //         });
+                    //     //
+                    //     //         // these probably should be just one enum
+                    //     //         let gobiiFileType: GobiiFileType = null;
+                    //     //         let extractFormat: GobiiExtractFormat = GobiiExtractFormat[exportFileItem.getItemId()];
+                    //     //         if (extractFormat === GobiiExtractFormat.FLAPJACK) {
+                    //     //             gobiiFileType = GobiiFileType.FLAPJACK;
+                    //     //         } else if (extractFormat === GobiiExtractFormat.HAPMAP) {
+                    //     //             gobiiFileType = GobiiFileType.HAPMAP;
+                    //     //         } else if (extractFormat === GobiiExtractFormat.META_DATA_ONLY) {
+                    //     //             gobiiFileType = GobiiFileType.META_DATA;
+                    //     //         }
+                    //     //
+                    //     //
+                    //     //         // ******** DATA SET TYPE
+                    //     //         let dataTypeFileItem: GobiiFileItem = fileItems.find(item => {
+                    //     //             return item.getEntityType() === EntityType.CvTerms
+                    //     //                 && item.getCvFilterType() === CvFilterType.DATASET_TYPE
+                    //     //         });
+                    //     //         let datasetType: NameId = dataTypeFileItem != null ? new NameId(dataTypeFileItem.getItemId(),
+                    //     //             dataTypeFileItem.getItemName(), EntityType.CvTerms) : null;
+                    //     //
+                    //     //
+                    //     //         // ******** PRINCIPLE INVESTIGATOR CONCEPT
+                    //     //         let principleInvestigatorFileItem: GobiiFileItem = fileItems.find(item => {
+                    //     //             return item.getEntityType() === EntityType.Contacts
+                    //     //                 && item.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR
+                    //     //         });
+                    //     //         let principleInvestigator: NameId = principleInvestigatorFileItem != null ? new NameId(principleInvestigatorFileItem.getItemId(),
+                    //     //             principleInvestigatorFileItem.getItemName(), EntityType.Contacts) : null;
+                    //     //
+                    //     //
+                    //     //         // ******** PROJECT
+                    //     //         let projectFileItem: GobiiFileItem = fileItems.find(item => {
+                    //     //             return item.getEntityType() === EntityType.Projects
+                    //     //         });
+                    //     //         let project: NameId = projectFileItem != null ? new NameId(projectFileItem.getItemId(),
+                    //     //             projectFileItem.getItemName(), EntityType.Projects) : null;
+                    //     //
+                    //     //
+                    //     //         // ******** PLATFORMS
+                    //     //         let platformFileItems: GobiiFileItem[] = fileItems.filter(item => {
+                    //     //             return item.getEntityType() === EntityType.Platforms
+                    //     //         });
+                    //     //
+                    //     //         platformFileItems = this.eliminateDuplicateEntities(ExtractorItemType.ENTITY,
+                    //     //             EntityType.Platforms,
+                    //     //             platformFileItems);
+                    //     //
+                    //     //         let platforms: NameId[] = platformFileItems.map(item => {
+                    //     //             return new NameId(item.getItemId(), item.getItemName(), EntityType.Platforms)
+                    //     //         });
+                    //     //
+                    //     //         let markerGroupItems: GobiiFileItem[] = fileItems.filter(item => {
+                    //     //             return item.getEntityType() === EntityType.MarkerGroups
+                    //     //         });
+                    //     //
+                    //     //         markerGroupItems = this.eliminateDuplicateEntities(ExtractorItemType.ENTITY,
+                    //     //             EntityType.MarkerGroups,
+                    //     //             markerGroupItems);
+                    //     //
+                    //     //         let markerGroups: NameId[] = markerGroupItems.map(item => {
+                    //     //             return new NameId(item.getItemId(), item.getItemName(), EntityType.MarkerGroups)
+                    //     //         });
+                    //     //
+                    //     //         // ******** MARKERS
+                    //     //         let markerListItems: GobiiFileItem[] =
+                    //     //             fileItems
+                    //     //                 .filter(fi => {
+                    //     //                     return fi.getExtractorItemType() === ExtractorItemType.MARKER_LIST_ITEM
+                    //     //                 });
+                    //     //
+                    //     //         markerListItems = this.eliminateDuplicateEntities(ExtractorItemType.MARKER_LIST_ITEM,
+                    //     //             EntityType.UNKNOWN,
+                    //     //             markerListItems);
+                    //     //         let markerList: string[] = markerListItems
+                    //     //             .map(mi => {
+                    //     //                 return mi.getItemId()
+                    //     //             });
+                    //     //
+                    //     //
+                    //     //         // ******** SAMPLES
+                    //     //         let sampleListItems: GobiiFileItem[] =
+                    //     //             fileItems
+                    //     //                 .filter(fi => {
+                    //     //                     return fi.getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_ITEM
+                    //     //                 });
+                    //     //
+                    //     //         sampleListItems = this.eliminateDuplicateEntities(ExtractorItemType.SAMPLE_LIST_ITEM,
+                    //     //             EntityType.UNKNOWN,
+                    //     //             sampleListItems);
+                    //     //         let sampleList: string[] = sampleListItems
+                    //     //             .map(mi => {
+                    //     //                 return mi.getItemId()
+                    //     //             });
+                    //     //
+                    //     //
+                    //     //         let sampleListTypeFileItem: GobiiFileItem = fileItems.find(item => {
+                    //     //             return item.getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_TYPE;
+                    //     //         });
+                    //     //
+                    //     //         if (sampleListTypeFileItem != null) {
+                    //     //             sampleListType = GobiiSampleListType[sampleListTypeFileItem.getItemId()];
+                    //     //         }
+                    //     //
+                    //     //         if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
+                    //     //
+                    //     //             let dataSetItems: GobiiFileItem[] = fileItems
+                    //     //                 .filter(item => {
+                    //     //                     return item.getEntityType() === EntityType.DataSets
+                    //     //                 });
+                    //     //
+                    //     //             dataSetItems = this.eliminateDuplicateEntities(ExtractorItemType.ENTITY,
+                    //     //                 EntityType.DataSets,
+                    //     //                 dataSetItems);
+                    //     //
+                    //     //             dataSetItems.forEach(datsetFileItem => {
+                    //     //
+                    //     //                 let dataSet: NameId = new NameId(datsetFileItem.getItemId(),
+                    //     //                     datsetFileItem.getItemName(), EntityType.CvTerms);
+                    //     //
+                    //     //
+                    //     //                 gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
+                    //     //                     false,
+                    //     //                     null,
+                    //     //                     this.gobiiExtractFilterType,
+                    //     //                     null,
+                    //     //                     null,
+                    //     //                     markerFileName,
+                    //     //                     null,
+                    //     //                     datasetType,
+                    //     //                     platforms,
+                    //     //                     null,
+                    //     //                     null,
+                    //     //                     dataSet,
+                    //     //                     null));
+                    //     //             });
+                    //     //         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
+                    //     //             gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
+                    //     //                 false,
+                    //     //                 null,
+                    //     //                 this.gobiiExtractFilterType,
+                    //     //                 markerList,
+                    //     //                 null,
+                    //     //                 markerFileName,
+                    //     //                 null,
+                    //     //                 datasetType,
+                    //     //                 platforms,
+                    //     //                 null,
+                    //     //                 null,
+                    //     //                 null,
+                    //     //                 markerGroups));
+                    //     //         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
+                    //     //             gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
+                    //     //                 false,
+                    //     //                 null,
+                    //     //                 this.gobiiExtractFilterType,
+                    //     //                 null,
+                    //     //                 sampleList,
+                    //     //                 sampleFileName,
+                    //     //                 sampleListType,
+                    //     //                 datasetType,
+                    //     //                 platforms,
+                    //     //                 principleInvestigator,
+                    //     //                 project,
+                    //     //                 null,
+                    //     //                 null));
+                    //     //         } else {
+                    //     //             this.handleAddMessage("Unhandled extract filter type: " + GobiiExtractFilterType[this.gobiiExtractFilterType]);
+                    //     //         }
+                    //     //     }
+                    //     // );
+                    //
+                    //
+                    //     gobiiExtractorInstructions.push(
+                    //         new GobiiExtractorInstruction(
+                    //             gobiiDataSetExtracts,
+                    //             submitterContactid,
+                    //             null,
+                    //             mapsetIds)
+                    //     );
+                    //
+                    //
+                    //     let fileName: string = jobId;
+                    //
+                    //     let extractorInstructionFilesDTORequest: ExtractorInstructionFilesDTO =
+                    //         new ExtractorInstructionFilesDTO(gobiiExtractorInstructions,
+                    //             fileName);
+                    //
+                    //     let extractorInstructionFilesDTOResponse: ExtractorInstructionFilesDTO = null;
+                    //
+                    //     // this._dtoRequestServiceExtractorFile.post(new DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))
+                    //     //     .subscribe(extractorInstructionFilesDTO => {
+                    //     //             extractorInstructionFilesDTOResponse = extractorInstructionFilesDTO;
+                    //     //             scope$.handleAddMessage("Extractor instruction file created on server: "
+                    //     //                 + extractorInstructionFilesDTOResponse.getInstructionFileName());
+                    //     //
+                    //     //             let newJobId: string = FileName.makeUniqueFileId();
+                    //     //             this._fileModelTreeService
+                    //     //                 .put(GobiiFileItem
+                    //     //                     .build(this.gobiiExtractFilterType, ProcessType.CREATE)
+                    //     //                     .setExtractorItemType(ExtractorItemType.JOB_ID)
+                    //     //                     .setItemId(newJobId)
+                    //     //                     .setItemName(newJobId))
+                    //     //                 .subscribe(
+                    //     //                     e => {
+                    //     //
+                    //     //                         this.handleClearTree();
+                    //     //                     },
+                    //     //                     headerStatusMessage => {
+                    //     //                         this.handleHeaderStatusMessage(headerStatusMessage)
+                    //     //                     }
+                    //     //                 );
+                    //     //         },
+                    //     //         headerResponse => {
+                    //     //
+                    //     //             scope$.handleResponseHeader(headerResponse);
+                    //     //         });
+                    //
+                    // } // if submission state is READY
                 };
                 ExtractorRoot.prototype.ngOnInit = function () {
                     var _this = this;
-                    // this._fileModelTreeService
-                    //     .treeStateNotifications()
-                    //     .subscribe(ts => {
-                    //
-                    //         this.handleTreeStatusChanged(ts);
-                    //     });
-                    //
                     this.initializeServerConfigs();
                     this.instructionSubmissionService.submitReady(this)
                         .subscribe(function (submistReady) {
                         submistReady ? _this.submitButtonStyle = _this.buttonStyleSubmitReady : _this.submitButtonStyle = _this.buttonStyleSubmitNotReady;
                     });
-                    // this.store.select(fromRoot.getSelectedFileItems)
-                    //     .subscribe(all => {
-                    //
-                    //         if (this.gobiiExtractFilterType=== GobiiExtractFilterType.WHOLE_DATASET) {
-                    //
-                    //             let submistReady:boolean =
-                    //                 all
-                    //                     .filter(fi =>
-                    //                         fi.getGobiiExtractFilterType() === this.gobiiExtractFilterType
-                    //                         && fi.getExtractorItemType() === ExtractorItemType.ENTITY
-                    //                         && fi.getEntityType() === EntityType.DataSets
-                    //                     )
-                    //                     .length > 0;
-                    //
-                    //             submistReady ? this.submitButtonStyle = this.buttonStyleSubmitReady : this.submitButtonStyle = this.buttonStyleSubmitNotReady;
-                    //
-                    //         }
-                    //
-                    //     })
                 }; // ngOnInit()
                 ExtractorRoot = __decorate([
                     core_1.Component({
@@ -884,7 +820,6 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     }) // @Component
                     ,
                     __metadata("design:paramtypes", [dto_request_service_1.DtoRequestService,
-                        dto_request_service_1.DtoRequestService,
                         authentication_service_1.AuthenticationService,
                         dto_request_service_1.DtoRequestService,
                         store_1.Store,
