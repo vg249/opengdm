@@ -3,6 +3,7 @@ export enum StatusLevel
 VALIDATION,
 WARNING,
 INFO,
-OK}
+OK,
+UNKNOWN}
 
 

@@ -2,6 +2,7 @@ import {createSelector} from 'reselect';
 import {GobiiFileItem} from "../../model/gobii-file-item";
 import * as gobiiHistoryAction from "../actions/history-action";
 import {HeaderStatusMessage} from "../../model/dto-header-status-message";
+import {StatusLevel} from "../../model/type-status-level";
 
 
 /***
@@ -37,8 +38,8 @@ export function historyReducer(state: State = initialState, action: gobiiHistory
                 statusMessages: newState,
                 jobSubmissions: state.jobSubmissions
             };
-
             break;
+
         } // ADD_STATUS
 
         case gobiiHistoryAction.CLEAR_STATUS: {
@@ -47,9 +48,24 @@ export function historyReducer(state: State = initialState, action: gobiiHistory
                 statusMessages: [],
                 jobSubmissions: state.jobSubmissions
             };
+            break;
+
+        } // ADD_STATUS
+
+        case gobiiHistoryAction.ADD_STATUS_MESSAGE: {
+            let newHeaderStatusMessage:HeaderStatusMessage = new HeaderStatusMessage(
+                action.payload,StatusLevel.UNKNOWN,"");
+
+            let newState = state.statusMessages.slice()
+            newState.push(newHeaderStatusMessage);
+            returnVal = {
+                statusMessages: newState,
+                jobSubmissions: state.jobSubmissions
+            };
 
             break;
-        } // ADD_STATUS
+        }
+
 
     } // switch()
 

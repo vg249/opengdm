@@ -1,4 +1,4 @@
-System.register(["reselect", "../actions/history-action"], function (exports_1, context_1) {
+System.register(["reselect", "../actions/history-action", "../../model/dto-header-status-message", "../../model/type-status-level"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     function historyReducer(state, action) {
@@ -22,11 +22,21 @@ System.register(["reselect", "../actions/history-action"], function (exports_1, 
                 };
                 break;
             } // ADD_STATUS
+            case gobiiHistoryAction.ADD_STATUS_MESSAGE: {
+                var newHeaderStatusMessage = new dto_header_status_message_1.HeaderStatusMessage(action.payload, type_status_level_1.StatusLevel.UNKNOWN, "");
+                var newState = state.statusMessages.slice();
+                newState.push(newHeaderStatusMessage);
+                returnVal = {
+                    statusMessages: newState,
+                    jobSubmissions: state.jobSubmissions
+                };
+                break;
+            }
         } // switch()
         return returnVal;
     }
     exports_1("historyReducer", historyReducer);
-    var reselect_1, gobiiHistoryAction, initialState, getStatuses, getJobSubmissions, getStatusMessages, getLastMessage;
+    var reselect_1, gobiiHistoryAction, dto_header_status_message_1, type_status_level_1, initialState, getStatuses, getJobSubmissions, getStatusMessages, getLastMessage;
     return {
         setters: [
             function (reselect_1_1) {
@@ -34,6 +44,12 @@ System.register(["reselect", "../actions/history-action"], function (exports_1, 
             },
             function (gobiiHistoryAction_1) {
                 gobiiHistoryAction = gobiiHistoryAction_1;
+            },
+            function (dto_header_status_message_1_1) {
+                dto_header_status_message_1 = dto_header_status_message_1_1;
+            },
+            function (type_status_level_1_1) {
+                type_status_level_1 = type_status_level_1_1;
             }
         ],
         execute: function () {

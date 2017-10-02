@@ -6,6 +6,7 @@ import {NameIdFilterParamTypes} from "../../model/type-nameid-filter-params";
 import {HeaderStatusMessage} from "../../model/dto-header-status-message";
 
 export const ADD_STATUS = '[GobiiStatusMessage] Add Status';
+export const ADD_STATUS_MESSAGE = '[GobiiStatusMessage] Add Status Message';
 export const CLEAR_STATUS = '[GobiiStatusMessage] Clear Status';
 
 /**
@@ -19,6 +20,13 @@ export class AddStatusAction implements Action {
     readonly type = ADD_STATUS;
 
     constructor(public payload: HeaderStatusMessage) {
+    }
+}
+
+export class AddStatusMessageAction implements Action {
+    readonly type = ADD_STATUS_MESSAGE;
+
+    constructor(public payload: string) {
     }
 }
 
@@ -36,5 +44,6 @@ export class ClearStatusesAction implements Action {
  */
 export type All
     = AddStatusAction |
-    ClearStatusesAction;
+    AddStatusMessageAction |
+    ClearStatusesAction ;
 
