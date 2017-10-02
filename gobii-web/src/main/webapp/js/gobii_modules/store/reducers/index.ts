@@ -1,5 +1,5 @@
 //import {createSelector} from 'reselect';
-import {ActionReducer, ActionReducerMap,createSelector} from '@ngrx/store';
+import {ActionReducer, ActionReducerMap, createSelector} from '@ngrx/store';
 //import * as fromRouter from '@ngrx/router-store';
 import {environmentSettings} from '../../environments/environment';
 
@@ -39,6 +39,7 @@ import {combineReducers} from '@ngrx/store';
  */
 import * as fromFileItems from './fileitems-reducer';
 import * as fromGobiiTreeNodes from './treenode-reducer';
+import * as fromHistory from './history-reducer';
 import {GobiiFileItem} from "../../model/gobii-file-item";
 // import * as fromCollection from './collection';
 // import * as fromLayout from './layout';
@@ -51,6 +52,8 @@ import {GobiiFileItem} from "../../model/gobii-file-item";
 export interface State {
     fileItems: fromFileItems.State;
     gobiiTreeNodes: fromGobiiTreeNodes.State;
+    history: fromHistory.State;
+
     // collection: fromCollection.State;
     // layout: fromLayout.State;
     // router: fromRouter.RouterState;
@@ -60,6 +63,7 @@ export interface State {
 export const reducers: ActionReducerMap<State> = {
     fileItems: fromFileItems.fileItemsReducer,
     gobiiTreeNodes: fromGobiiTreeNodes.gobiiTreeNodesReducer,
+    history: fromHistory.historyReducer
 };
 
 
@@ -162,6 +166,9 @@ export const getSelectedGobiiTreeNodes = createSelector(getGobiiTreeNodesState, 
 export const getSelectedGobiiTreeNodeIds = createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getGobiiTreeItemIds);
 export const getIdsOfActivatedGobiiTreeNodes = createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getIdsOfActivated);
 
+export const gobiiHistoryState = (state: State) => state.history;
+export const getSetatusMessages = createSelector(gobiiHistoryState, fromHistory.getStatusMessages);
+export const getLasetStatusMessage = createSelector(gobiiHistoryState, fromHistory.getLastMessage);
 
 
 /**
