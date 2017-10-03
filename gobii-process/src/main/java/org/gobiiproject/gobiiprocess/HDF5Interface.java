@@ -251,14 +251,14 @@ StringBuilder genoFileString=new StringBuilder();
     }
 
     /**
-     * Converts a string of 1,2,-1,4,5,6,-1,2 (Arbitrary -1's and NOT -1's into a comma delimited set of lines from 1-N
-     * excluding positions where a -1 exists, ONE BASED.
+     * Converts a string of 1,2,-1,4,5,6,-1,2 (Arbitrary -1's and NOT -1's into a comma delimited set of l
+     * excluding positions where a -1 esists.
      *
      * Note: Since input is zero-based list anyway, I probably could have removed the -1's and added 1 to every entry. This seemed derpier.
      *
      * Examples:
-     * 0,1,2,-1,4,5 -> 1,2,3,5,6
-     * 7,-1,7,-1,7,-1 -> 1,3,5
+     * 0,1,2,-1,4,5 -> 0,1,2,4,5
+     * 7,-1,7,-1,7,-1 -> 7,7,7
      * @param sampleList Input string
      * @return Output string (see above)
      */
@@ -276,7 +276,7 @@ StringBuilder genoFileString=new StringBuilder();
                 ErrorLogger.logDebug("GobiiExtractor NFE",e.toString());
             }
             if( val != -1){
-                cutString.append(i+",");
+                cutString.append(val+",");
             }
             i++;
         }
