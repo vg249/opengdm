@@ -12,6 +12,7 @@ System.register([], function (exports_1, context_1) {
                 ProcessType[ProcessType["UPDATE"] = 3] = "UPDATE";
                 ProcessType[ProcessType["DELETE"] = 4] = "DELETE";
                 ProcessType[ProcessType["NOTIFY"] = 5] = "NOTIFY";
+                ProcessType[ProcessType["DUMMY"] = 6] = "DUMMY";
             })(ProcessType || (ProcessType = {}));
             exports_1("ProcessType", ProcessType);
             ;

@@ -1,7 +1,7 @@
-System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", "./type-extractor-filter", "./name-id-label-type"], function (exports_1, context_1) {
+System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", "./type-extractor-filter", "./name-id-label-type", "./file-model-node"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var type_entity_filter_1, type_entity_1, cv_filter_type_1, type_extractor_filter_1, name_id_label_type_1, NameIdRequestParams;
+    var type_entity_filter_1, type_entity_1, cv_filter_type_1, type_extractor_filter_1, name_id_label_type_1, file_model_node_1, FileItemParams;
     return {
         setters: [
             function (type_entity_filter_1_1) {
@@ -18,88 +18,124 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
             },
             function (name_id_label_type_1_1) {
                 name_id_label_type_1 = name_id_label_type_1_1;
+            },
+            function (file_model_node_1_1) {
+                file_model_node_1 = file_model_node_1_1;
             }
         ],
         execute: function () {
             /**
              * Created by Phil on 3/9/2017.
              */
-            NameIdRequestParams = (function () {
-                function NameIdRequestParams(_queryName, _entityType, _entityFilter, _entityFilterValue, _entitySubType, _cvFilterType, _gobiiExtractFilterType, _nameIdLabelType) {
+            FileItemParams = (function () {
+                function FileItemParams(_queryName, _entityType, _entityFilter, _fkEntityFilterValue, _selectedItemId, _entitySubType, _cvFilterType, _gobiiExtractFilterType, _nameIdLabelType, _extractorItemType, _parentNameIdRequestParams, _childNameIdRequestParams) {
                     if (_queryName === void 0) { _queryName = null; }
                     if (_entityType === void 0) { _entityType = type_entity_1.EntityType.UNKNOWN; }
                     if (_entityFilter === void 0) { _entityFilter = type_entity_filter_1.EntityFilter.NONE; }
-                    if (_entityFilterValue === void 0) { _entityFilterValue = null; }
+                    if (_fkEntityFilterValue === void 0) { _fkEntityFilterValue = null; }
+                    if (_selectedItemId === void 0) { _selectedItemId = null; }
                     if (_entitySubType === void 0) { _entitySubType = type_entity_1.EntitySubType.UNKNOWN; }
                     if (_cvFilterType === void 0) { _cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN; }
                     if (_gobiiExtractFilterType === void 0) { _gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN; }
                     this._queryName = _queryName;
                     this._entityType = _entityType;
                     this._entityFilter = _entityFilter;
-                    this._entityFilterValue = _entityFilterValue;
+                    this._fkEntityFilterValue = _fkEntityFilterValue;
+                    this._selectedItemId = _selectedItemId;
                     this._entitySubType = _entitySubType;
                     this._cvFilterType = _cvFilterType;
                     this._gobiiExtractFilterType = _gobiiExtractFilterType;
                     this._nameIdLabelType = _nameIdLabelType;
+                    this._extractorItemType = _extractorItemType;
+                    this._parentNameIdRequestParams = _parentNameIdRequestParams;
+                    this._childNameIdRequestParams = _childNameIdRequestParams;
                 }
-                NameIdRequestParams.build = function (queryName, gobiiExtractFilterType, entityType) {
-                    return (new NameIdRequestParams(queryName, entityType, type_entity_filter_1.EntityFilter.NONE, null, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, gobiiExtractFilterType, name_id_label_type_1.NameIdLabelType.UNKNOWN));
+                FileItemParams.build = function (queryName, gobiiExtractFilterType, entityType) {
+                    return (new FileItemParams(queryName, entityType, type_entity_filter_1.EntityFilter.NONE, null, null, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, gobiiExtractFilterType, name_id_label_type_1.NameIdLabelType.UNKNOWN, file_model_node_1.ExtractorItemType.ENTITY, null, []));
                 };
-                NameIdRequestParams.prototype.getEntityType = function () {
+                FileItemParams.prototype.getEntityType = function () {
                     return this._entityType;
                 };
-                NameIdRequestParams.prototype.setEntityType = function (value) {
+                FileItemParams.prototype.setEntityType = function (value) {
                     this._entityType = value;
                     return this;
                 };
-                NameIdRequestParams.prototype.getEntityFilter = function () {
+                FileItemParams.prototype.getEntityFilter = function () {
                     return this._entityFilter;
                 };
-                NameIdRequestParams.prototype.setEntityFilter = function (value) {
+                FileItemParams.prototype.setEntityFilter = function (value) {
                     this._entityFilter = value;
                     return this;
                 };
-                NameIdRequestParams.prototype.getEntityFilterValue = function () {
-                    return this._entityFilterValue;
+                FileItemParams.prototype.getFkEntityFilterValue = function () {
+                    return this._fkEntityFilterValue;
                 };
-                NameIdRequestParams.prototype.setEntityFilterValue = function (value) {
-                    this._entityFilterValue = value;
+                FileItemParams.prototype.setFkEntityFilterValue = function (value) {
+                    this._fkEntityFilterValue = value;
                     return this;
                 };
-                NameIdRequestParams.prototype.getEntitySubType = function () {
+                FileItemParams.prototype.getSelectedItemId = function () {
+                    return this._selectedItemId;
+                };
+                FileItemParams.prototype.setSelectedItemId = function (id) {
+                    this._selectedItemId = id;
+                    return this;
+                };
+                FileItemParams.prototype.getEntitySubType = function () {
                     return this._entitySubType;
                 };
-                NameIdRequestParams.prototype.setEntitySubType = function (value) {
+                FileItemParams.prototype.setEntitySubType = function (value) {
                     this._entitySubType = value;
                     return this;
                 };
-                NameIdRequestParams.prototype.getCvFilterType = function () {
+                FileItemParams.prototype.getCvFilterType = function () {
                     return this._cvFilterType;
                 };
-                NameIdRequestParams.prototype.setCvFilterType = function (value) {
+                FileItemParams.prototype.setCvFilterType = function (value) {
                     this._cvFilterType = value;
                     return this;
                 };
-                NameIdRequestParams.prototype.getGobiiExtractFilterType = function () {
+                FileItemParams.prototype.getGobiiExtractFilterType = function () {
                     return this._gobiiExtractFilterType;
                 };
-                NameIdRequestParams.prototype.setGobiiExtractFilterType = function (value) {
+                FileItemParams.prototype.setGobiiExtractFilterType = function (value) {
                     this._gobiiExtractFilterType = value;
                     return this;
                 };
-                NameIdRequestParams.prototype.getQueryName = function () {
+                FileItemParams.prototype.getQueryName = function () {
                     return this._queryName;
                 };
-                NameIdRequestParams.prototype.setMameIdLabelType = function (nameIdLabelType) {
+                FileItemParams.prototype.setNameIdLabelType = function (nameIdLabelType) {
                     this._nameIdLabelType = nameIdLabelType;
                     return this;
                 };
-                NameIdRequestParams.prototype.getMameIdLabelType = function () {
+                FileItemParams.prototype.getMameIdLabelType = function () {
                     return this._nameIdLabelType;
                 };
-                return NameIdRequestParams;
+                FileItemParams.prototype.setExtractorItemType = function (extractorItemType) {
+                    this._extractorItemType = extractorItemType;
+                    return this;
+                };
+                FileItemParams.prototype.getExtractorItemType = function () {
+                    return this._extractorItemType;
+                };
+                FileItemParams.prototype.setParentNameIdRequestParams = function (nameIdRequestParams) {
+                    this._parentNameIdRequestParams = nameIdRequestParams;
+                    return this;
+                };
+                FileItemParams.prototype.getParentNameIdRequestParams = function () {
+                    return this;
+                };
+                FileItemParams.prototype.getChildNameIdRequestParams = function () {
+                    return this._childNameIdRequestParams;
+                };
+                FileItemParams.prototype.setChildNameIdRequestParams = function (childNameIdRequestParams) {
+                    this._childNameIdRequestParams = childNameIdRequestParams;
+                    return this;
+                };
+                return FileItemParams;
             }());
-            exports_1("NameIdRequestParams", NameIdRequestParams);
+            exports_1("FileItemParams", FileItemParams);
         }
     };
 });

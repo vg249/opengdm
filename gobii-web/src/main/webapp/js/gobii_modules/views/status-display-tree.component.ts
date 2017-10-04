@@ -18,6 +18,11 @@ import {Labels} from "./entity-labels";
 import {Header} from "../model/payload/header";
 import {GobiiUIEventOrigin} from "../model/type-event-origin";
 import {StatusLevel} from "../model/type-status-level";
+import * as fromRoot from '../store/reducers';
+import * as fileItemAction from '../store/actions/fileitem-action';
+import * as treeNodeAction from '../store/actions/treenode-action';
+import {Store} from "@ngrx/store";
+import {Observable} from "rxjs/Observable";
 
 
 //Documentation of p-tree: http://www.primefaces.org/primeng/#/tree
@@ -26,23 +31,38 @@ import {StatusLevel} from "../model/type-status-level";
     selector: 'status-display-tree',
     inputs: ['fileItemEventChange', 'gobiiExtractFilterTypeEvent'],
     outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage', 'onTreeReady'],
-    template: ` 
-                    <p-tree [value]="gobiiTreeNodes" 
-                    selectionMode="checkbox" 
-                    propagateSelectionUp="false"
-                    propagateSelectionDown="false"
-                    [(selection)]="selectedGobiiNodes"
-                    (onNodeUnselect)="nodeUnselect($event)"
-                    (onNodeSelect)="nodeSelect($event)"
-                    (onNodeExpand)="nodeExpand($event)"
-                    (onNodeCollapse)="nodeCollapse($event)"
-                    [style]="{'width':'100%'}"
-                    styleClass="criteria-tree"></p-tree>
-                    <!--<p-tree [value]="demoTreeNodes" selectionMode="checkbox" [(selection)]="selectedDemoNodes"></p-tree>-->
-                    <!--<div>Selected Nodes: <span *ngFor="let file of selectedFiles2">{{file.label}} </span></div>-->
-`
+    template: `
+        <p-tree [value]="gobiiTreeNodesFromStore$ | async"
+                selectionMode="checkbox"
+                propagateSelectionUp="false"
+                propagateSelectionDown="false"
+                [selection]="gobiiSelectedNodesFromStore$ | async"
+                (onNodeUnselect)="nodeUnselect($event)"
+                (onNodeSelect)="nodeSelect($event)"
+                (onNodeExpand)="nodeExpand($event)"
+                (onNodeCollapse)="nodeCollapse($event)"
+                [style]="{'width':'100%'}"
+                styleClass="criteria-tree"></p-tree>
+        <!--<p-tree [value]="demoTreeNodes" selectionMode="checkbox" [(selection)]="selectedDemoNodes"></p-tree>-->
+        <!--<div>Selected Nodes: <span *ngFor="let file of selectedFiles2">{{file.label}} </span></div>-->
+    `
 })
 export class StatusDisplayTreeComponent implements OnInit, OnChanges {
+
+
+    treeNodesByExtractionType: Map<GobiiExtractFilterType, Array<GobiiTreeNode>> = null;
+
+    private initTreeNodes() {
+
+        if (this.treeNodesByExtractionType === null) {
+            this.treeNodesByExtractionType = new Map<GobiiExtractFilterType, Array<GobiiTreeNode>>();
+
+            // **** FOR ALL EXTRACTION TYPES **********************************************************************
+            // **** THESE ARE ALL ROOT LEVEL NODES
+
+        }
+    }
+
 
     private containerCollapseThreshold = 10;
     private onAddMessage: EventEmitter<HeaderStatusMessage> = new EventEmitter();
@@ -54,7 +74,29 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     }
 
-    constructor(private _fileModelTreeService: FileModelTreeService) {
+    gobiiTreeNodesFromStore$: Observable<GobiiTreeNode[]>;
+    gobiiSelectedNodesFromStore$: Observable<GobiiTreeNode[]>;
+
+    constructor(private _fileModelTreeService: FileModelTreeService,
+                private store: Store<fromRoot.State>) {
+
+        this.gobiiTreeNodesFromStore$ = store
+            .select(fromRoot.getGobiiTreeNodesForExtractFilter);
+
+        // this.gobiiTreeNodesFromStore$
+        //     .subscribe( n => {
+        //         console.log( "new tree nodes" + n);
+        //     });
+
+
+        this.gobiiSelectedNodesFromStore$ = store
+            .select(fromRoot.getSelectedGobiiTreeNodes);
+
+        // this.gobiiSelectedNodesFromStore$
+        //     .subscribe( n => {
+        //         console.log( "new selected nodes" + n);
+        //     });
+
 
         // has to be in ctor because if you put it in ngOnInit(), there can be ngOnChange events
         // before ngOnInit() is called.
@@ -146,7 +188,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         let itemsToRemove: GobiiFileItem[] = [];
 
-        this.gobiiTreeNodes.forEach(fin => {
+        this.gobiiTreeNodes$.forEach(fin => {
 
             let childItemsToRemove: GobiiFileItem[] = this.findRemovableFileItems(fin);
             itemsToRemove.push.apply(itemsToRemove, childItemsToRemove);
@@ -187,7 +229,8 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     selectedDemoNodes: TreeNode[] = [];
 
 
-    gobiiTreeNodes: GobiiTreeNode[] = [];
+//    gobiiTreeNodes$: Observable<GobiiTreeNode[]>;
+    gobiiTreeNodes$: GobiiTreeNode[];
     selectedGobiiNodes: GobiiTreeNode[] = [];
 
     experimentId: string;
@@ -202,6 +245,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         // yes this is a bit of a kludge; version 4 of PrimeNG will add a selectable proeprty
         // to TreeNode which will enable us to approch selectability of nodes in general in
         // a more systematic and elegant way
+
 
 
         let selectedGobiiTreeNode: GobiiTreeNode = event.node;
@@ -265,10 +309,10 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                 let currentTreeNode: GobiiTreeNode = gobiiTreeNode.children[idx];
                 thereAreSelectedChildren = this.selectedGobiiNodes.find(fi => {
 
-                        return fi
-                            && fi.fileItemId
-                            && (fi.fileItemId === currentTreeNode.fileItemId)
-                    }) != undefined;
+                    return fi
+                        && fi.fileItemId
+                        && (fi.fileItemId === currentTreeNode.fileItemId)
+                }) != undefined;
             }
 
             if (thereAreSelectedChildren) {
@@ -392,13 +436,13 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     }
 
     expandAll() {
-        this.gobiiTreeNodes.forEach(node => {
+        this.gobiiTreeNodes$.forEach(node => {
             this.expandRecursive(node, true);
         });
     }
 
     collapseAll() {
-        this.gobiiTreeNodes.forEach(node => {
+        this.gobiiTreeNodes$.forEach(node => {
             this.expandRecursive(node, false);
         });
     }
@@ -476,9 +520,9 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         } else if (entityType === EntityType.MarkerGroups) {
 
             // if (isParent) {
-                treeNode.icon = "fa-pencil";
-                treeNode.expandedIcon = "fa-pencil";
-                treeNode.collapsedIcon = "fa-pencil";
+            treeNode.icon = "fa-pencil";
+            treeNode.expandedIcon = "fa-pencil";
+            treeNode.collapsedIcon = "fa-pencil";
             // } else {
             //     treeNode.icon = "fa-map-marker";
             //     treeNode.expandedIcon = "fa-map-marker";
@@ -632,7 +676,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
             if (fileModelTreeEvent.fileModelNode.getCategoryType() === ExtractorCategoryType.LEAF) {
 
-                let gobiiTreeNodeToBeRemoved: GobiiTreeNode = this.findTreeNodebyFileItemUniqueId(this.gobiiTreeNodes, fileModelTreeEvent.fileItem.getFileItemUniqueId());
+                let gobiiTreeNodeToBeRemoved: GobiiTreeNode = this.findTreeNodebyFileItemUniqueId(this.gobiiTreeNodes$, fileModelTreeEvent.fileItem.getFileItemUniqueId());
 
                 if (gobiiTreeNodeToBeRemoved !== null) {
 
@@ -647,7 +691,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             } else if (fileModelTreeEvent.fileModelNode.getCategoryType() === ExtractorCategoryType.CONTAINER) {
 
                 // there should not be a file item associated with the model because it's a container -- the file items are just for the children
-                let parentTreeNode: GobiiTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
+                let parentTreeNode: GobiiTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes$, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
                 if (parentTreeNode != null) {
 
 
@@ -684,7 +728,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
             if (fileModelTreeEvent.fileModelNode.getCategoryType() === ExtractorCategoryType.LEAF) {
 
-                let gobiiTreeLeafNodeTobeMutated: GobiiTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
+                let gobiiTreeLeafNodeTobeMutated: GobiiTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes$, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
 
                 if (gobiiTreeLeafNodeTobeMutated != null) {
 
@@ -729,7 +773,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             } else if (fileModelTreeEvent.fileModelNode.getCategoryType() === ExtractorCategoryType.CONTAINER) {
 
                 // there should not be a file item associated with the model because it's a container -- the file items are just for the children
-                let parentTreeNode: GobiiTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
+                let parentTreeNode: GobiiTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes$, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
                 if (parentTreeNode != null) {
 
                     let existingFileModelItem: GobiiFileItem = fileModelTreeEvent
@@ -742,7 +786,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                     if (existingFileModelItem !== null) {
 
 
-                        let existingGobiiTreeNodeChild: GobiiTreeNode = this.findTreeNodebyFileItemUniqueId(this.gobiiTreeNodes, existingFileModelItem.getFileItemUniqueId());
+                        let existingGobiiTreeNodeChild: GobiiTreeNode = this.findTreeNodebyFileItemUniqueId(this.gobiiTreeNodes$, existingFileModelItem.getFileItemUniqueId());
 
                         if (existingGobiiTreeNodeChild === null) {
 
@@ -804,7 +848,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         this.treeIsInitialized = false;
 
-        this.gobiiTreeNodes = [];
+        this.gobiiTreeNodes$ = [];
 
         let fileModelNodes: FileModelNode[] = []
         this._fileModelTreeService.getFileModel(gobiiExtractorFilterType).subscribe(
@@ -818,7 +862,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
                 let currentTreeNode: GobiiTreeNode = this.makeTreeNodeFromTemplate(null, currentFirstLevelFileModelNode);
                 if (currentTreeNode != null) {
-                    this.gobiiTreeNodes.push(currentTreeNode);
+                    this.gobiiTreeNodes$.push(currentTreeNode);
                 }
             }
         );
@@ -897,7 +941,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             ); // iterate child model node
         } else {
             this.handleAddStatusMessage(new
-                HeaderStatusMessage("Unable to make tree node for file model of type " + Labels.instance().treeExtractorTypeLabels[fileModelNode.getItemType()], null, null));
+            HeaderStatusMessage("Unable to make tree node for file model of type " + Labels.instance().treeExtractorTypeLabels[fileModelNode.getItemType()], null, null));
         }// if we created a tree node
 
         return returnVal;
@@ -910,8 +954,8 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
 
-    onItemChecked: EventEmitter < GobiiFileItem > = new EventEmitter();
-    onItemSelected: EventEmitter < GobiiFileItem > = new EventEmitter();
+    onItemChecked: EventEmitter<GobiiFileItem> = new EventEmitter();
+    onItemSelected: EventEmitter<GobiiFileItem> = new EventEmitter();
 
 
     ngOnChanges(changes: {

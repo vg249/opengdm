@@ -79,6 +79,23 @@
                     format: 'register',
                     defaultExtension: 'js'
                 },
+                'js/gobii_modules/store/reducers': {
+                    format: 'register',
+                    defaultExtension: 'js',
+                    main: 'index.js'
+                },
+                'js/gobii_modules/store/actions': {
+                    format: 'register',
+                    defaultExtension: 'js'
+                },
+                'js/gobii_modules/store/effects': {
+                    format: 'register',
+                    defaultExtension: 'js'
+                },
+                'js/gobii_modules/environments': {
+                    format: 'register',
+                    defaultExtension: 'js'
+                },
                 'rxjs': {defaultExtension: 'js'},
                 'ng2-uploader': {main: './ng2-uploader.js', defaultExtension: 'js'},
                 'ng2-file-upload': {
@@ -87,6 +104,38 @@
                 },
                 primeng: {
                     defaultExtension: 'js'
+                },
+                '@ngrx/store': {
+                    defaultExtension: 'js',
+                    main:'bundles/store.umd.js'
+                },
+                '@ngrx/db': {
+                    defaultExtension: 'js',
+                    main:'bundles/db.umd.js'
+                },
+                '@ngrx/effects': {
+                    defaultExtension: 'js',
+                    main:'bundles/effects.umd.js'
+                },
+                '@ngrx/router-store': {
+                    defaultExtension: 'js',
+                    main:'bundles/router-store.umd.js'
+                },
+                '@ngrx/store-devtools': {
+                    defaultExtension: 'js',
+                    main:'bundles/store-devtools.umd.js'
+                },
+                'reselect': {
+                    defaultExtension: 'js',
+                    main:'dist/reselect.js'
+                },
+                'ngrx-store-freeze': {
+                    defaultExtension: 'js',
+                    main:'dist/index.js'
+                },
+                'deep-freeze-strict': {
+                    defaultExtension: 'js',
+                    main:'index.js'
                 }
             },
             map: {
@@ -104,6 +153,14 @@
                 'ng2-uploader': 'js/node_modules/ng2-uploader',
                 'ng2-file-upload': 'js/node_modules/ng2-file-upload',
                 'primeng': 'js/node_modules/primeng',
+                '@ngrx/db': 'js/node_modules/@ngrx/db',
+                '@ngrx/effects': 'js/node_modules/@ngrx/effects',
+                '@ngrx/router-store': 'js/node_modules/@ngrx/router-store',
+                '@ngrx/store': 'js/node_modules/@ngrx/store',
+                '@ngrx/store-devtools': 'js/node_modules/@ngrx/store-devtools',
+                'deep-freeze-strict': 'js/node_modules/deep-freeze-strict',
+                'ngrx-store-freeze': 'js/node_modules/ngrx-store-freeze',
+                'reselect': 'js/node_modules/reselect',
             }
         });
         System.import('js/gobii_modules/root/main').then(null, console.error.bind(console));

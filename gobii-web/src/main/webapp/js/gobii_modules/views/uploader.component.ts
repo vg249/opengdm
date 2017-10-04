@@ -159,7 +159,7 @@ export class UploaderComponent implements OnInit {
 
     private onUploaderError: EventEmitter<HeaderStatusMessage> = new EventEmitter();
     private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
-    private uploadComplete = false;
+    public uploadComplete = false;
 
     constructor(private _authenticationService: AuthenticationService,
                 private _fileModelTreeService: FileModelTreeService) {

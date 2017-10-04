@@ -253,6 +253,7 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                             this.subjectTreeStateNotifications.next(new tree_status_notification_1.TreeStatusNotification(type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN, file_model_tree_event_1.FileModelState.READY, null));
                         }
                         else {
+                            //raise major warning.
                         }
                     }
                     return this.fileModelNodeTree.get(gobiiExtractFilterType);
@@ -436,6 +437,10 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                         }
                     }
                     else {
+                        // this.reportMessage("The node of category  "
+                        //     + fileModelNode.getCategoryType()
+                        //     + " for checkbox event " + fileItemEvent.itemName
+                        //     + " could not be placed in the tree ");
                     }
                 }; //
                 FileModelTreeService.prototype.removeFromModel = function (fileModelNode, fileItem) {
@@ -456,6 +461,10 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                         returnVal = (fileModelNode.getFileItems().splice(idxOfItemToRemove, 1)).length > 0;
                     }
                     else {
+                        // this.reportMessage("The node of category  "
+                        //     + fileModelNode.getCategoryType()
+                        //     + " for checkbox event " + fileItemEvent.itemName
+                        //     + " could not be placed in the tree ");
                     }
                     return returnVal;
                 };
@@ -534,12 +543,12 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                         observer.complete();
                     });
                 };
+                FileModelTreeService = __decorate([
+                    core_1.Injectable(),
+                    __metadata("design:paramtypes", [])
+                ], FileModelTreeService);
                 return FileModelTreeService;
             }());
-            FileModelTreeService = __decorate([
-                core_1.Injectable(),
-                __metadata("design:paramtypes", [])
-            ], FileModelTreeService);
             exports_1("FileModelTreeService", FileModelTreeService);
         }
     };

@@ -32,15 +32,15 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                     this.onTextboxDataComplete.emit(items);
                     this.textValue = '';
                 };
+                TextAreaComponent = __decorate([
+                    core_1.Component({
+                        selector: 'text-area',
+                        outputs: ['onTextboxDataComplete', 'onTextboxClicked'],
+                        template: "\n        <textarea ref-textarea \n        [(ngModel)]=\"textValue\" rows=\"4\" style=\"width: 100%;\"\n        (click)=\"handleTextboxClicked($event)\"></textarea><br/>\n        <button (click)=\"handleTextboxDataComplete(textarea.value)\">Add To Extract</button>\n        <button (click)=\"textValue=''\">Clear</button>\n        \n         <!--<h2>Log <button (click)=\"log=''\">Clear</button></h2>-->\n        <!--<pre>{{log}}</pre>-->\n"
+                    })
+                ], TextAreaComponent);
                 return TextAreaComponent;
             }());
-            TextAreaComponent = __decorate([
-                core_1.Component({
-                    selector: 'text-area',
-                    outputs: ['onTextboxDataComplete', 'onTextboxClicked'],
-                    template: "\n        <textarea ref-textarea \n        [(ngModel)]=\"textValue\" rows=\"4\" style=\"width: 100%;\"\n        (click)=\"handleTextboxClicked($event)\"></textarea><br/>\n        <button (click)=\"handleTextboxDataComplete(textarea.value)\">Add To Extract</button>\n        <button (click)=\"textValue=''\">Clear</button>\n        \n         <!--<h2>Log <button (click)=\"log=''\">Clear</button></h2>-->\n        <!--<pre>{{log}}</pre>-->\n"
-                })
-            ], TextAreaComponent);
             exports_1("TextAreaComponent", TextAreaComponent);
         }
     };

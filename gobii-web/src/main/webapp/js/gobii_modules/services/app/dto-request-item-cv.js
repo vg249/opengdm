@@ -48,12 +48,12 @@ System.register(["@angular/core", "../../model/type-process", "../../model/cv"],
                     return returnVal;
                     //return [new NameId(1, 'foo'), new NameId(2, 'bar')];
                 };
+                DtoRequestItemCv = __decorate([
+                    core_1.Injectable(),
+                    __metadata("design:paramtypes", [Number])
+                ], DtoRequestItemCv);
                 return DtoRequestItemCv;
-            }()); // DtoRequestItemNameIds() 
-            DtoRequestItemCv = __decorate([
-                core_1.Injectable(),
-                __metadata("design:paramtypes", [Number])
-            ], DtoRequestItemCv);
+            }());
             exports_1("DtoRequestItemCv", DtoRequestItemCv);
         }
     };

@@ -46,12 +46,12 @@ System.register(["@angular/core", "../../model/type-process", "../../model/extra
                     var returnVal = dto_extractor_instruction_files_1.ExtractorInstructionFilesDTO.fromJson(json.payload.data[0]);
                     return returnVal;
                 };
+                DtoRequestItemExtractorSubmission = __decorate([
+                    core_1.Injectable(),
+                    __metadata("design:paramtypes", [dto_extractor_instruction_files_1.ExtractorInstructionFilesDTO])
+                ], DtoRequestItemExtractorSubmission);
                 return DtoRequestItemExtractorSubmission;
-            }()); // DtoRequestItemNameIds()
-            DtoRequestItemExtractorSubmission = __decorate([
-                core_1.Injectable(),
-                __metadata("design:paramtypes", [dto_extractor_instruction_files_1.ExtractorInstructionFilesDTO])
-            ], DtoRequestItemExtractorSubmission);
+            }());
             exports_1("DtoRequestItemExtractorSubmission", DtoRequestItemExtractorSubmission);
         }
     };

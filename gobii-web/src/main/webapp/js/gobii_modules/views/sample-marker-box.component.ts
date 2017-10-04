@@ -7,8 +7,9 @@ import {GobiiFileItem} from "../model/gobii-file-item";
 import {ProcessType} from "../model/type-process";
 import {ExtractorItemType} from "../model/file-model-node";
 import {Labels} from "./entity-labels";
-import {NameIdRequestParams} from "../model/name-id-request-params";
+import {FileItemParams} from "../model/name-id-request-params";
 import {EntityType} from "../model/type-entity";
+import {NameIdFilterParamTypes} from "../model/type-nameid-filter-params";
 
 @Component({
     selector: 'sample-marker-box',
@@ -61,8 +62,7 @@ import {EntityType} from "../model/type-entity";
                             <checklist-box
                                 [nameIdRequestParams] = "nameIdRequestParamsMarkerGroups"
                                 [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                                [retainHistory] = "false"
-                                (onAddStatusMessage) = "handleHeaderStatusMessage($event)">
+                                [retainHistory] = "false">
                             </checklist-box>
                     </div> 
                     
@@ -89,33 +89,32 @@ import {EntityType} from "../model/type-entity";
 
 export class SampleMarkerBoxComponent implements OnInit, OnChanges {
 
-    private nameIdRequestParamsMarkerGroups: NameIdRequestParams;
+    public nameIdRequestParamsMarkerGroups: FileItemParams;
     public constructor(private _fileModelTreeService: FileModelTreeService) {
 
-        this.nameIdRequestParamsMarkerGroups= NameIdRequestParams
-            .build("Marker Groups",
+        this.nameIdRequestParamsMarkerGroups= FileItemParams
+            .build(NameIdFilterParamTypes.MARKER_GROUPS,
                 this.gobiiExtractFilterType,
                 EntityType.MarkerGroups);
-
     }
 
-    private maxListItems: number = 200;
-    private displayMaxItemsExceeded: boolean = false;
-    private maxExceededTypeLabel: string;
+    public maxListItems: number = 200;
+    public displayMaxItemsExceeded: boolean = false;
+    public maxExceededTypeLabel: string;
 
-    private displayChoicePrompt: boolean = false;
-    private selectedListType: string = "itemFile";
+    public displayChoicePrompt: boolean = false;
+    public selectedListType: string = "itemFile";
 
-    private displayUploader: boolean = true;
-    private displayListBox: boolean = false;
-    private displayMarkerGroupRadio: boolean = false;
+    public displayUploader: boolean = true;
+    public displayListBox: boolean = false;
+    public displayMarkerGroupRadio: boolean = false;
 
-    private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
-    private onSampleMarkerError: EventEmitter<HeaderStatusMessage> = new EventEmitter();
-    private onMarkerSamplesCompleted: EventEmitter<SampleMarkerList> = new EventEmitter();
+    public gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
+    public onSampleMarkerError: EventEmitter<HeaderStatusMessage> = new EventEmitter();
+    public onMarkerSamplesCompleted: EventEmitter<SampleMarkerList> = new EventEmitter();
 
-    private extractTypeLabelExisting: string;
-    private extractTypeLabelProposed: string;
+    public extractTypeLabelExisting: string;
+    public extractTypeLabelProposed: string;
 
 
 
