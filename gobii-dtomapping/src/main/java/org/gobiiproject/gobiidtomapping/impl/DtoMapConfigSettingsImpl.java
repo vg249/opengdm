@@ -27,14 +27,14 @@ public class DtoMapConfigSettingsImpl implements DtoMapConfigSettings {
 
 
     @Override
-    public ConfigSettingsDTO readSettings() throws GobiiException{
+    public ConfigSettingsDTO readSettings() throws GobiiException {
 
         ConfigSettingsDTO returnVal = new ConfigSettingsDTO();
 
         try {
             ConfigSettings configSettings = new ConfigSettings();
 
-             returnVal.setServerCapabilities(configSettings.getServerCapabilities());
+            returnVal.setServerCapabilities(configSettings.getServerCapabilities());
 
             for (GobiiCropConfig currentGobiiCropConfig : configSettings.getActiveCropConfigs()) {
 
@@ -46,16 +46,10 @@ public class DtoMapConfigSettingsImpl implements DtoMapConfigSettings {
                         configSettings.getProcessingPath(currentGobiiCropConfig.getGobiiCropType(),
                                 GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES),
                         configSettings.getProcessingPath(currentGobiiCropConfig.getGobiiCropType(),
-                                GobiiFileProcessDir.RAW_USER_FILES)
-                        );
+                                GobiiFileProcessDir.RAW_USER_FILES),
+                        configSettings.getFileNoticePath(currentGobiiCropConfig.getGobiiCropType(), GobiiFileNoticeType.CONFIDENTIALITY)
+                );
 
-
-                String confidentialityNoticeFqpn = configSettings.getFileNoticePath(currentGobiiCropConfig.getGobiiCropType(), GobiiFileNoticeType.CONFIDENTIALITY);
-                File file = new File(confidentialityNoticeFqpn);
-                if( file.exists() ){
-                    byte[] encoded = Files.readAllBytes(Paths.get(confidentialityNoticeFqpn));
-                    currentServerConfig.setConfidentialityNotice( new String(encoded, StandardCharsets.UTF_8));
-                }
 
                 returnVal.getServerConfigs().put(currentGobiiCropConfig.getGobiiCropType(),
                         currentServerConfig);

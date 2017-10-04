@@ -1,9 +1,14 @@
 package org.gobiiproject.gobiimodel.config;
 
 
+import org.gobiiproject.gobiimodel.types.GobiiFileNoticeType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.simpleframework.xml.Element;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,7 +28,8 @@ public class ServerConfig {
                         String extractorInstructionsDir,
                         String loaderInstructionsDir,
                         String intermediateFilesDir,
-                        String rawUserFilesDir) {
+                        String rawUserFilesDir,
+                        String confidentialityNoticeFqpn) throws Exception {
 
         this.port = gobiiCropConfig.getPort();
         this.domain = gobiiCropConfig.getHost();
@@ -41,6 +47,13 @@ public class ServerConfig {
 
         fileLocations
                 .put(GobiiFileProcessDir.RAW_USER_FILES, rawUserFilesDir);
+
+
+        File file = new File(confidentialityNoticeFqpn);
+        if( file.exists() ){
+            byte[] encoded = Files.readAllBytes(Paths.get(confidentialityNoticeFqpn));
+            this.setConfidentialityNotice( new String(encoded, StandardCharsets.UTF_8));
+        }
 
     }
 

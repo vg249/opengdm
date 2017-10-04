@@ -8,6 +8,7 @@ import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.HttpCore;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
+import org.gobiiproject.gobiimodel.types.GobiiFileNoticeType;
 import org.gobiiproject.gobiimodel.types.RestMethodTypes;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
@@ -134,7 +135,9 @@ public final class GobiiClientContext {
                         configSettings.getProcessingPath(currentGobiiCropConfig.getGobiiCropType(),
                                 GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES),
                         configSettings.getProcessingPath(currentGobiiCropConfig.getGobiiCropType(),
-                                GobiiFileProcessDir.RAW_USER_FILES)
+                                GobiiFileProcessDir.RAW_USER_FILES),
+                        configSettings.getFileNoticePath(currentGobiiCropConfig.getGobiiCropType(), GobiiFileNoticeType.CONFIDENTIALITY)
+
                 );
 
                 gobiiClientContext.serverConfigs.put(currentGobiiCropConfig.getGobiiCropType(),
