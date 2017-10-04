@@ -49,24 +49,73 @@ public class DtoNoticeFilesTestTest {
     public void testGetFileFromServer() throws Exception {
 
 
+        //*************************************************************
+        // ****************** Prove that file is not there
         ClassLoader classLoader = getClass().getClassLoader();
         String confidentialityFileName = "confidentiality.txt";
+        RestUri restUriDelete = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .file(GobiiFileProcessDir.NOTICES, confidentialityFileName);
+
+        HttpMethodResult httpMethodResultDeleteNonExistent = GobiiClientContext.getInstance(null, false)
+                .getHttp()
+                .delete(restUriDelete);
+        Assert.assertTrue("Expected "
+                        + HttpStatus.SC_NOT_ACCEPTABLE
+                        + " got: "
+                        + httpMethodResultDeleteNonExistent.getResponseCode()
+                        + ": "
+                        + httpMethodResultDeleteNonExistent.getReasonPhrase() + ": " + httpMethodResultDeleteNonExistent.getPlainPayload(),
+                httpMethodResultDeleteNonExistent.getResponseCode() == HttpStatus.SC_NOT_ACCEPTABLE);
+
+
+        //*************************************************************
+        // NOW UPLOAD THE FILE
         File defaultConfidentialityNotice = new File(classLoader.getResource(confidentialityFileName).getFile());
 
         RestUri restUriUpload = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .file(GobiiFileProcessDir.NOTICES, confidentialityFileName);
 
-        HttpMethodResult httpMethodResult = GobiiClientContext.getInstance(null, false)
+        HttpMethodResult httpMethodResultUpload = GobiiClientContext.getInstance(null, false)
                 .getHttp()
                 .upload(restUriUpload, defaultConfidentialityNotice);
         Assert.assertTrue("Expected "
                         + HttpStatus.SC_OK
                         + " got: "
-                        + httpMethodResult.getResponseCode()
+                        + httpMethodResultUpload.getResponseCode()
                         + ": "
-                        + httpMethodResult.getReasonPhrase() + ": " + httpMethodResult.getPlainPayload(),
-                httpMethodResult.getResponseCode() == HttpStatus.SC_OK);
+                        + httpMethodResultUpload.getReasonPhrase() + ": " + httpMethodResultUpload.getPlainPayload(),
+                httpMethodResultUpload.getResponseCode() == HttpStatus.SC_OK);
+
+
+        //*************************************************************
+        // ****************** Prove that file is there implicitly (i.e., delete succeeds)
+        HttpMethodResult httpMethodResultDeleteExistent = GobiiClientContext.getInstance(null, false)
+                .getHttp()
+                .delete(restUriDelete);
+        Assert.assertTrue("Expected "
+                        + HttpStatus.SC_OK
+                        + " got: "
+                        + httpMethodResultDeleteExistent.getResponseCode()
+                        + ": "
+                        + httpMethodResultDeleteExistent.getReasonPhrase() + ": " + httpMethodResultDeleteExistent.getPlainPayload(),
+                httpMethodResultDeleteExistent.getResponseCode() == HttpStatus.SC_OK);
+
+
+        //*************************************************************
+        // ****************** Prove that file was deleted (i.e., delete fails)
+        HttpMethodResult httpMethodResultDeleteExistentThatWasDeleted = GobiiClientContext.getInstance(null, false)
+                .getHttp()
+                .delete(restUriDelete);
+        Assert.assertTrue("Expected "
+                        + HttpStatus.SC_NOT_ACCEPTABLE
+                        + " got: "
+                        + httpMethodResultDeleteExistentThatWasDeleted.getResponseCode()
+                        + ": "
+                        + httpMethodResultDeleteExistentThatWasDeleted.getReasonPhrase() + ": " + httpMethodResultDeleteExistentThatWasDeleted.getPlainPayload(),
+                httpMethodResultDeleteExistentThatWasDeleted.getResponseCode() == HttpStatus.SC_NOT_ACCEPTABLE);
+
 
     }
 

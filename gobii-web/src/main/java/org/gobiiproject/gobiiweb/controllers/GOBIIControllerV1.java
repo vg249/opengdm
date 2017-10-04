@@ -3615,6 +3615,55 @@ public class GOBIIControllerV1 {
         return "";
     }
 
+    /***
+     * Uplaod an arbitary file to the specified destination
+     * @param destinationType
+     * @param fileName
+     * @param file
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/files/{destinationType}",
+            method = RequestMethod.DELETE
+            ,produces = MediaType.TEXT_PLAIN_VALUE
+    )
+    public
+    @ResponseBody
+    String deleteFile(@PathVariable("destinationType") String destinationType,
+                      @RequestParam("fileName") String fileName,
+                      HttpServletRequest request,
+                      HttpServletResponse response) throws Exception {
+
+        //String fileName= file.getName();
+
+
+        //we aren't using jobId here yet. For some destination types it will be required
+        //for example, if we wanted to put files into the extractor/output directory, we would need
+        //to use the jobid. But we don't suppor that use case yet.
+        String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+        GobiiFileProcessDir gobiiFileProcessDir = GobiiFileProcessDir.valueOf(destinationType);
+
+        try {
+            this.fileService
+                    .deleteFileFromProcessDir(
+                            cropType,
+                            fileName,
+                            gobiiFileProcessDir);
+
+        } catch (Exception e) {
+            ControllerUtils.writeRawResponse(response,
+                    HttpServletResponse.SC_NOT_ACCEPTABLE,
+                    e.getMessage());
+            LOGGER.error("Error deleting file", e);
+        }
+
+
+        // this method has to return _something_ in order for a content-type to be set in the response (this makes
+        // our client framework happy)
+        return "";
+    }
 
     /***
      * Upload the specified file for a specific job to the specified directory

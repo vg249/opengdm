@@ -98,6 +98,20 @@ public class FileServiceImpl implements FilesService {
 //        }
     }
 
+    @Override
+    public void deleteFileFromProcessDir(String cropType,
+                                  String fileName,
+                                  GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
+
+        ConfigSettings configSettings = new ConfigSettings();
+        String path = configSettings.getProcessingPath(cropType, gobiiFileProcessDir);
+        String fqpn = instructionFileAccess.makeFileName(path, fileName);
+        instructionFileAccess.deleteFile(fqpn);
+
+
+    }
+
+
 
     @Override
     public void writeJobFileForCrop(String cropType,

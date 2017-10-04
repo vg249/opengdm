@@ -20,6 +20,10 @@ public interface FilesService {
                              GobiiFileProcessDir gobiiFileProcessDir,
                              byte[] byteArray) throws GobiiException, Exception;
 
+    void deleteFileFromProcessDir(String cropType,
+                                  String fileName,
+                                  GobiiFileProcessDir gobiiFileProcessDir) throws Exception;
+
     void writeFileToProcessDir(String cropType,
                                String fileName,
                                GobiiFileProcessDir gobiiFileProcessDir,
