@@ -194,11 +194,12 @@ public class DtoNoticeFilesTestTest {
                 serverConfigHasNotice.getConfidentialityNotice().isEmpty());
 
 
-        byte[] encoded = Files.readAllBytes(Paths.get(defaultConfidentialityNoticeToUpload.getPath()));
-        String uploadedContent =  new String(encoded, StandardCharsets.UTF_8);
+        StringBuilder lines = new StringBuilder();
+        Files.readAllLines(Paths.get(defaultConfidentialityNoticeToUpload.getPath())).forEach(fileLine -> lines.append(fileLine));
+        String uploadedContent = lines.toString();
 
         Assert.assertEquals("The uplaoded file content differs from the one in the serverConfig",
-                uploadedContent,serverConfigHasNotice.getConfidentialityNotice());
+                uploadedContent, serverConfigHasNotice.getConfidentialityNotice());
 
         //*************************************************************
         // ****************** Remove the file we uplaoded

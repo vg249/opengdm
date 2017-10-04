@@ -13,11 +13,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- This class encapsualtes the configuration properties that are returned to web clients via
- web services. For most intents and purposes, it is superfluous. However, for security purposes
- we use it to prevent sensitive configuration data from being sent through web services: it forces
- careful decisions to be made by the author of the web service that returns this data to the web
- client.
+ * This class encapsualtes the configuration properties that are returned to web clients via
+ * web services. For most intents and purposes, it is superfluous. However, for security purposes
+ * we use it to prevent sensitive configuration data from being sent through web services: it forces
+ * careful decisions to be made by the author of the web service that returns this data to the web
+ * client.
  */
 public class ServerConfig {
 
@@ -50,9 +50,10 @@ public class ServerConfig {
 
 
         File file = new File(confidentialityNoticeFqpn);
-        if( file.exists() ){
-            byte[] encoded = Files.readAllBytes(Paths.get(confidentialityNoticeFqpn));
-            this.setConfidentialityNotice( new String(encoded, StandardCharsets.UTF_8));
+        if (file.exists()) {
+            StringBuilder lines = new StringBuilder();
+            Files.readAllLines(Paths.get(confidentialityNoticeFqpn)).forEach(fileLine -> lines.append(fileLine));
+            this.setConfidentialityNotice(lines.toString());
         }
 
     }
@@ -118,6 +119,7 @@ public class ServerConfig {
     public String getConfidentialityNotice() {
         return this.confidentialityNotice;
     }
+
     public void setConfidentialityNotice(String confidentialityNotice) {
         this.confidentialityNotice = confidentialityNotice;
     }
