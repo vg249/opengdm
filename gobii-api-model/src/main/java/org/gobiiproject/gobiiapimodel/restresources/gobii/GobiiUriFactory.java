@@ -20,7 +20,7 @@ public class GobiiUriFactory {
 
     public GobiiUriFactory(String domain, Integer port, String cropContextRoot, GobiiControllerType gobiiControllerType) {
 
-        this(cropContextRoot,gobiiControllerType);
+        this(cropContextRoot, gobiiControllerType);
         this.domain = domain;
         this.port = port;
     }
@@ -171,8 +171,23 @@ public class GobiiUriFactory {
 
     } //
 
-    public RestUri file(String jobId,
-                        GobiiFileProcessDir gobiiFileProcessDir,
+    public RestUri fileForJob(String jobId,
+                              GobiiFileProcessDir gobiiFileProcessDir,
+                              String fileName) throws Exception {
+
+        RestUri returnVal = new RestUri(this.domain,
+                this.port,
+                this.cropContextRoot,
+                this.gobiiControllerType.getControllerPath(),
+                GobiiServiceRequestId.URL_FILES.getResourcePath())
+                .addUriParam("gobiiJobId", jobId)
+                .addUriParam("destinationType", gobiiFileProcessDir.toString())
+                .addQueryParam("fileName", fileName);
+
+        return returnVal;
+    }
+
+    public RestUri file(GobiiFileProcessDir gobiiFileProcessDir,
                         String fileName) throws Exception {
 
         RestUri returnVal = new RestUri(this.domain,
@@ -180,9 +195,8 @@ public class GobiiUriFactory {
                 this.cropContextRoot,
                 this.gobiiControllerType.getControllerPath(),
                 GobiiServiceRequestId.URL_FILES.getResourcePath())
-                .addUriParam("gobiiJobId",jobId)
-                .addUriParam("destinationType",gobiiFileProcessDir.toString())
-                .addQueryParam("fileName",fileName);
+                .addUriParam("destinationType", gobiiFileProcessDir.toString())
+                .addQueryParam("fileName", fileName);
 
         return returnVal;
     }

@@ -34,10 +34,12 @@ export class DtoRequestItemServerConfigs implements DtoRequestItem<ServerConfig[
             let currentDomain:string = serverConfigs[crop].domain;
             let currentContextRoot:string = serverConfigs[crop].contextRoot;
             let currentPort:number = Number(serverConfigs[crop].port);
+            let currentConfidentialityNotice:string = serverConfigs[crop].confidentialityNotice;
             returnVal.push(new ServerConfig(currentCrop,
                 currentDomain,
                 currentContextRoot,
-                currentPort));
+                currentPort,
+                currentConfidentialityNotice));
         });
 
         return returnVal;

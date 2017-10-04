@@ -81,7 +81,10 @@ export class DtoRequestService<T> {
     }
 
 
-    public get(dtoRequestItem: DtoRequestItem<T>): Observable < T > {
+
+
+
+    public get(dtoRequestItem: DtoRequestItem<T>, authenticate:boolean = true): Observable < T > {
 
         let scope$ = this;
         return Observable.create(observer => {
@@ -89,7 +92,7 @@ export class DtoRequestService<T> {
             let token: string = this._authenticationService
                 .getToken();
 
-            if (token) {
+            if(token || !authenticate ) {
 
                 let headers = HttpValues.makeTokenHeaders(token, scope$._authenticationService.getGobiiCropType());
 

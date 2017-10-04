@@ -1,18 +1,23 @@
 package org.gobiiproject.gobiimodel.config;
 
 
+import org.gobiiproject.gobiimodel.types.GobiiFileNoticeType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.simpleframework.xml.Element;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- This class encapsualtes the configuration properties that are returned to web clients via
- web services. For most intents and purposes, it is superfluous. However, for security purposes
- we use it to prevent sensitive configuration data from being sent through web services: it forces
- careful decisions to be made by the author of the web service that returns this data to the web
- client.
+ * This class encapsualtes the configuration properties that are returned to web clients via
+ * web services. For most intents and purposes, it is superfluous. However, for security purposes
+ * we use it to prevent sensitive configuration data from being sent through web services: it forces
+ * careful decisions to be made by the author of the web service that returns this data to the web
+ * client.
  */
 public class ServerConfig {
 
@@ -23,7 +28,8 @@ public class ServerConfig {
                         String extractorInstructionsDir,
                         String loaderInstructionsDir,
                         String intermediateFilesDir,
-                        String rawUserFilesDir) {
+                        String rawUserFilesDir,
+                        String confidentialityNoticeFqpn) throws Exception {
 
         this.port = gobiiCropConfig.getPort();
         this.domain = gobiiCropConfig.getHost();
@@ -42,6 +48,14 @@ public class ServerConfig {
         fileLocations
                 .put(GobiiFileProcessDir.RAW_USER_FILES, rawUserFilesDir);
 
+
+        File file = new File(confidentialityNoticeFqpn);
+        if (file.exists()) {
+            StringBuilder lines = new StringBuilder();
+            Files.readAllLines(Paths.get(confidentialityNoticeFqpn)).forEach(fileLine -> lines.append(fileLine));
+            this.setConfidentialityNotice(lines.toString());
+        }
+
     }
 
     @Element(required = false)
@@ -55,6 +69,9 @@ public class ServerConfig {
 
     @Element(required = false)
     private String gobiiCropType;
+
+    @Element(required = false)
+    private String confidentialityNotice;
 
     @Element
     private Map<GobiiFileProcessDir, String> fileLocations = new HashMap<>();
@@ -98,4 +115,14 @@ public class ServerConfig {
     public void setFileLocations(Map<GobiiFileProcessDir, String> fileLocations) {
         this.fileLocations = fileLocations;
     }
+
+    public String getConfidentialityNotice() {
+        return this.confidentialityNotice;
+    }
+
+    public void setConfidentialityNotice(String confidentialityNotice) {
+        this.confidentialityNotice = confidentialityNotice;
+    }
+
+
 }

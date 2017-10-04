@@ -91,13 +91,14 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
                         }
                     }); // observable
                 };
-                DtoRequestService.prototype.get = function (dtoRequestItem) {
+                DtoRequestService.prototype.get = function (dtoRequestItem, authenticate) {
                     var _this = this;
+                    if (authenticate === void 0) { authenticate = true; }
                     var scope$ = this;
                     return Observable_1.Observable.create(function (observer) {
                         var token = _this._authenticationService
                             .getToken();
-                        if (token) {
+                        if (token || !authenticate) {
                             var headers = http_values_1.HttpValues.makeTokenHeaders(token, scope$._authenticationService.getGobiiCropType());
                             _this._http
                                 .get(dtoRequestItem.getUrl(), { headers: headers })

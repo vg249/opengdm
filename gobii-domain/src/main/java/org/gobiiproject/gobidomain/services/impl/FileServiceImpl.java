@@ -11,9 +11,12 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFiles
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.types.SystemUsers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.File;
 
@@ -71,22 +74,62 @@ public class FileServiceImpl implements FilesService {
 
 
     @Override
-    public void writeFile(String cropType,
-                          String jobId,
-                          String fileName,
-                          GobiiFileProcessDir gobiiFileProcessDir,
-                          byte[] byteArray) throws GobiiException, Exception {
+    public void writeFileToProcessDir(String cropType,
+                                      String fileName,
+                                      GobiiFileProcessDir gobiiFileProcessDir,
+                                      byte[] byteArray) throws Exception {
 
-        String path = this.getFilePath(cropType, jobId, gobiiFileProcessDir);
+
+        // our goal here would be to prevent anyone but a test system-defined user from writing
+        // arbitrary files to the server. We would  need to do this more systematically when we
+        // implement a real authoriization mechanism; however, the authentication object comes
+        // out null here. For now it's ok because at least a user has to be authenticated to
+        // get access to this service.
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String currentPrincipalName = authentication.getName();
+//        if( currentPrincipalName != "USER_READER" ) {
+        ConfigSettings configSettings = new ConfigSettings();
+
+        String path = configSettings.getProcessingPath(cropType, gobiiFileProcessDir);
         String fqpn = instructionFileAccess.makeFileName(path, fileName);
-        instructionFileAccess.writeFile(fqpn,byteArray);
+        instructionFileAccess.writeFile(fqpn, byteArray);
+//        } else {
+//           throw new GobiiDomainException("Unauthorized access");
+//        }
     }
 
     @Override
-    public File readFile(String cropType,
-                         String gobiiJobId,
-                         String fileName,
-                         GobiiFileProcessDir gobiiFileProcessDir) throws GobiiException, Exception {
+    public void deleteFileFromProcessDir(String cropType,
+                                  String fileName,
+                                  GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
+
+        ConfigSettings configSettings = new ConfigSettings();
+        String path = configSettings.getProcessingPath(cropType, gobiiFileProcessDir);
+        String fqpn = instructionFileAccess.makeFileName(path, fileName);
+        instructionFileAccess.deleteFile(fqpn);
+
+
+    }
+
+
+
+    @Override
+    public void writeJobFileForCrop(String cropType,
+                                    String jobId,
+                                    String fileName,
+                                    GobiiFileProcessDir gobiiFileProcessDir,
+                                    byte[] byteArray) throws GobiiException, Exception {
+
+        String path = this.getFilePath(cropType, jobId, gobiiFileProcessDir);
+        String fqpn = instructionFileAccess.makeFileName(path, fileName);
+        instructionFileAccess.writeFile(fqpn, byteArray);
+    }
+
+    @Override
+    public File readCropFileForJob(String cropType,
+                                   String gobiiJobId,
+                                   String fileName,
+                                   GobiiFileProcessDir gobiiFileProcessDir) throws GobiiException, Exception {
 
         File returnVal;
 

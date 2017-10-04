@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
+import org.gobiiproject.gobiimodel.types.GobiiFileNoticeType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.ServerCapabilityType;
 import org.slf4j.Logger;
@@ -92,18 +93,18 @@ public class ConfigSettings {
      * However, that would have resulted in reduntant values.
      * @return
      */
-    public Map<ServerCapabilityType,Boolean> getServerCapabilities() {
+    public Map<ServerCapabilityType, Boolean> getServerCapabilities() {
 
-        Map<ServerCapabilityType,Boolean> returnVal = new HashMap<>();
+        Map<ServerCapabilityType, Boolean> returnVal = new HashMap<>();
 
-        if( this.configValues.getKDCConfig() != null ) {
+        if (this.configValues.getKDCConfig() != null) {
             returnVal.put(ServerCapabilityType.KDC, this.configValues.getKDCConfig().isActive());
         } else {
             returnVal.put(ServerCapabilityType.KDC, false);
         }
 
         // for now we are not controlling this value though configuraiton
-        returnVal.put(ServerCapabilityType.BRAPI,true);
+        returnVal.put(ServerCapabilityType.BRAPI, true);
 
         return returnVal;
     }
@@ -115,6 +116,11 @@ public class ConfigSettings {
 
     public String getProcessingPath(String cropType, GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
         return this.configValues.getProcessingPath(cropType, gobiiFileProcessDir);
+    }
+
+    public String getFileNoticePath(String cropType, GobiiFileNoticeType gobiiFileNoticeType) throws Exception {
+
+        return this.configValues.getFileNoticePath(cropType, gobiiFileNoticeType);
     }
 
     public void setCrop(String gobiiCropType,
