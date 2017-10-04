@@ -52,6 +52,7 @@ import java.io.FileInputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.security.Principal;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -1193,8 +1194,8 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/datasets/{datasetId}/jobs", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<JobDTO> getJobDetailsByDatasetId(@PathVariable("datasetId") String datasetId,
-                                                              HttpServletRequest request,
-                                                              HttpServletResponse response) {
+                                                            HttpServletRequest request,
+                                                            HttpServletResponse response) {
 
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1224,6 +1225,7 @@ public class GOBIIControllerV1 {
         return (returnVal);
 
     }
+
     // *********************************************
     // *************************** DISPLAY METHODS
     // *********************************************
@@ -1453,8 +1455,8 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/instructions/loader/jobs/{jobName}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<JobDTO> getLoaderInstructionStatus(@PathVariable("jobName") String jobName,
-                                                                 HttpServletRequest request,
-                                                                 HttpServletResponse response) {
+                                                              HttpServletRequest request,
+                                                              HttpServletResponse response) {
 
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1534,8 +1536,8 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/instructions/extractor/{instructionFileName}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ExtractorInstructionFilesDTO> getExtractorInstruction(@PathVariable("instructionFileName") String instructionFileName,
-                                                                           HttpServletRequest request,
-                                                                           HttpServletResponse response) {
+                                                                                 HttpServletRequest request,
+                                                                                 HttpServletResponse response) {
 
         PayloadEnvelope<ExtractorInstructionFilesDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1570,8 +1572,8 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/instructions/extractor/jobs/{jobName}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<JobDTO> getExtractorInstructionStatus(@PathVariable("jobName") String jobName,
-                                                                                       HttpServletRequest request,
-                                                                                       HttpServletResponse response) {
+                                                                 HttpServletRequest request,
+                                                                 HttpServletResponse response) {
 
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -3546,17 +3548,96 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** FILE UPLOAD/DOWNLOAD
     // *********************************************
+
+    /***
+     * Uplaod an arbitary file to the specified destination
+     * @param destinationType
+     * @param fileName
+     * @param file
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/files/{destinationType}",
+            method = RequestMethod.POST)
+    public
+    @ResponseBody
+    String uploadFile(@PathVariable("destinationType") String destinationType,
+                      @RequestParam("fileName") String fileName,
+                      @RequestParam("file") MultipartFile file,
+                      HttpServletRequest request,
+                      HttpServletResponse response) throws Exception {
+
+        //String fileName= file.getName();
+
+
+        //we aren't using jobId here yet. For some destination types it will be required
+        //for example, if we wanted to put files into the extractor/output directory, we would need
+        //to use the jobid. But we don't suppor that use case yet.
+
+        Enumeration<String> headers = request.getHeaders("Content-Disposition");
+
+        if (!file.isEmpty()) {
+            try {
+
+                String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
+                byte[] byteArray = file.getBytes();
+                GobiiFileProcessDir gobiiFileProcessDir = GobiiFileProcessDir.valueOf(destinationType);
+
+                this.fileService
+                        .writeFileToProcessDir(
+                                cropType,
+                                fileName,
+                                gobiiFileProcessDir,
+                                byteArray);
+
+            } catch (Exception e) {
+                ControllerUtils.writeRawResponse(response,
+                        HttpServletResponse.SC_NOT_ACCEPTABLE,
+                        e.getMessage());
+                LOGGER.error("Error uploading file", e);
+            }
+
+        } else {
+
+            String message = "You failed to upload because the file was empty.";
+            ControllerUtils.writeRawResponse(response,
+                    HttpServletResponse.SC_NOT_ACCEPTABLE,
+                    message);
+            LOGGER.error("Error uploading file", message);
+
+        }
+
+        // this method has to return _something_ in order for a content-type to be set in the response (this makes
+        // our client framework happy)
+        return "";
+    }
+
+
+    /***
+     * Upload the specified file for a specific job to the specified directory
+     * @param gobiiJobId
+     * @param destinationType
+     * @param fileName
+     * @param file
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/files/{gobiiJobId}/{destinationType}",
             params = {"fileName"},
             method = RequestMethod.POST)
     public
     @ResponseBody
-    String uploadFileHandler(@PathVariable("gobiiJobId") String gobiiJobId,
-                             @PathVariable("destinationType") String destinationType,
-                             @RequestParam("fileName") String fileName,
-                             @RequestParam("file") MultipartFile file,
-                             HttpServletRequest request,
-                             HttpServletResponse response) throws Exception{
+    String uploadJobFile(@PathVariable("gobiiJobId") String gobiiJobId,
+                         @PathVariable("destinationType") String destinationType,
+                         @RequestParam("fileName") String fileName,
+                         @RequestParam("file") MultipartFile file,
+                         HttpServletRequest request,
+                         HttpServletResponse response) throws Exception {
 
         String name = file.getName();
 
@@ -3576,7 +3657,7 @@ public class GOBIIControllerV1 {
                 GobiiFileProcessDir gobiiFileProcessDir = GobiiFileProcessDir.valueOf(destinationType);
 
                 this.fileService
-                        .writeFile(cropType,
+                        .writeJobFileForCrop(cropType,
                                 gobiiJobId,
                                 fileName,
                                 gobiiFileProcessDir,
@@ -3586,7 +3667,7 @@ public class GOBIIControllerV1 {
                 ControllerUtils.writeRawResponse(response,
                         HttpServletResponse.SC_NOT_ACCEPTABLE,
                         e.getMessage());
-                LOGGER.error("Error uploading file",e);
+                LOGGER.error("Error uploading file", e);
             }
 
         } else {
@@ -3595,7 +3676,7 @@ public class GOBIIControllerV1 {
             ControllerUtils.writeRawResponse(response,
                     HttpServletResponse.SC_NOT_ACCEPTABLE,
                     message);
-            LOGGER.error("Error uploading file",message);
+            LOGGER.error("Error uploading file", message);
 
         }
 
@@ -3606,18 +3687,18 @@ public class GOBIIControllerV1 {
 
     @RequestMapping(value = "/files/{gobiiJobId}/{destinationType}",
             method = RequestMethod.GET)
-    public ResponseEntity<InputStreamResource> downloadFileHandler(@PathVariable("gobiiJobId") String gobiiJobId,
-                                                                   @PathVariable("destinationType") String destinationType,
-                                                                   @RequestParam("fileName") String fileName,
-                                                                   HttpServletRequest request,
-                                                                   HttpServletResponse response) throws Exception {
+    public ResponseEntity<InputStreamResource> downloadJobFile(@PathVariable("gobiiJobId") String gobiiJobId,
+                                                               @PathVariable("destinationType") String destinationType,
+                                                               @RequestParam("fileName") String fileName,
+                                                               HttpServletRequest request,
+                                                               HttpServletResponse response) throws Exception {
 
         ResponseEntity<InputStreamResource> returnVal = null;
         try {
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
             GobiiFileProcessDir gobiiFileProcessDir = GobiiFileProcessDir.valueOf(destinationType.toUpperCase());
-            File file = this.fileService.readFile(cropType, gobiiJobId, fileName, gobiiFileProcessDir);
+            File file = this.fileService.readCropFileForJob(cropType, gobiiJobId, fileName, gobiiFileProcessDir);
 
             HttpHeaders respHeaders = new HttpHeaders();
             respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
@@ -3640,13 +3721,14 @@ public class GOBIIControllerV1 {
 
     }
 
+
     /*** JOB METHODS ***/
 
     @RequestMapping(value = "/jobs", method = RequestMethod.POST)
     @ResponseBody
     public PayloadEnvelope<JobDTO> createJob(@RequestBody PayloadEnvelope<JobDTO> payloadEnvelope,
-                                                HttpServletRequest request,
-                                                HttpServletResponse response) {
+                                             HttpServletRequest request,
+                                             HttpServletResponse response) {
 
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
         try {

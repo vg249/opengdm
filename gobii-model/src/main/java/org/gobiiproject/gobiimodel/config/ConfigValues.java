@@ -2,6 +2,7 @@ package org.gobiiproject.gobiimodel.config;
 
 import org.gobiiproject.gobiimodel.security.Decrypter;
 import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
+import org.gobiiproject.gobiimodel.types.GobiiFileNoticeType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.simpleframework.xml.Element;
@@ -28,7 +29,7 @@ class ConfigValues {
     @Element(required = false)
     private TestExecConfig testExecConfig = new TestExecConfig();
 
-    @Element(required=false)
+    @Element(required = false)
     private ServerConfigKDC serverConfigKDC = new ServerConfigKDC();
 
 
@@ -51,6 +52,14 @@ class ConfigValues {
         put(GobiiFileProcessDir.EXTRACTOR_DONE, "extractor/done/");
         put(GobiiFileProcessDir.EXTRACTOR_OUTPUT, "extractor/output/");
         put(GobiiFileProcessDir.QC_OUTPUT, "loader/qc/");
+        put(GobiiFileProcessDir.NOTICES, "notices/");
+
+    }};
+
+    @ElementMap(required = false)
+    private Map<GobiiFileNoticeType, String> noticeFileNames = new EnumMap<GobiiFileNoticeType, String>(GobiiFileNoticeType.class) {{
+
+        put(GobiiFileNoticeType.CONFIDENTIALITY, "confidentiality.txt");
 
     }};
 
@@ -161,6 +170,14 @@ class ConfigValues {
 
         return returnVal;
     } //
+
+    public String getFileNoticePath(String cropType, GobiiFileNoticeType gobiiFileNoticeType) throws Exception {
+
+        String returnVal = this.getProcessingPath(cropType, GobiiFileProcessDir.NOTICES)
+                + this.noticeFileNames.get(gobiiFileNoticeType);
+
+        return returnVal;
+    }
 
     public List<GobiiCropConfig> getActiveCropConfigs() throws Exception {
 

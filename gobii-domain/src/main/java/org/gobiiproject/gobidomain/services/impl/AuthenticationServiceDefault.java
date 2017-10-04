@@ -63,6 +63,7 @@ public class AuthenticationServiceDefault implements AuthenticationService {
 
                 UserDetails userContext = (UserDetails) authentication.getPrincipal();
                 returnVal = tokenManager.createNewToken(userContext);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
 
         } catch (AuthenticationException e) {
