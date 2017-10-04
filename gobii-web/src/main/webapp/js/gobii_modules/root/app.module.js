@@ -120,6 +120,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/http", "@angular/p
                         forms_1.FormsModule,
                         forms_1.ReactiveFormsModule,
                         primeng_1.TreeModule,
+                        primeng_1.CheckboxModule,
                         primeng_1.SharedModule,
                         app_routing_1.routing,
                         animations_1.BrowserAnimationsModule],

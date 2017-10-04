@@ -45,7 +45,8 @@ System.register(["@angular/core", "../../model/type-process", "../../model/serve
                         var currentDomain = serverConfigs[crop].domain;
                         var currentContextRoot = serverConfigs[crop].contextRoot;
                         var currentPort = Number(serverConfigs[crop].port);
-                        returnVal.push(new server_config_1.ServerConfig(currentCrop, currentDomain, currentContextRoot, currentPort));
+                        var currentConfidentialityNotice = serverConfigs[crop].confidentialityNotice;
+                        returnVal.push(new server_config_1.ServerConfig(currentCrop, currentDomain, currentContextRoot, currentPort, currentConfidentialityNotice));
                     });
                     return returnVal;
                     //return [new NameId(1, 'foo'), new NameId(2, 'bar')];

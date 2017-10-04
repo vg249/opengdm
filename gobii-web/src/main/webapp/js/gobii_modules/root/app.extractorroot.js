@@ -223,7 +223,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                             scope$.handleAddMessage("Connected to crop config: " + scope$.selectedServerConfig.crop);
                         }
                         else {
-                            scope$.serverConfigList = [new server_config_1.ServerConfig("<ERROR NO SERVERS>", "<ERROR>", "<ERROR>", 0)];
+                            scope$.serverConfigList = [new server_config_1.ServerConfig("<ERROR NO SERVERS>", "<ERROR>", "<ERROR>", 0, "")];
                         }
                     }, function (dtoHeaderResponse) {
                         dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.handleAddMessage("Retrieving server configs: "
