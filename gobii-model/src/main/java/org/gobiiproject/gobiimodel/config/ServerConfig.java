@@ -56,6 +56,9 @@ public class ServerConfig {
     @Element(required = false)
     private String gobiiCropType;
 
+    @Element(required = false)
+    private String confidentialityNotice;
+
     @Element
     private Map<GobiiFileProcessDir, String> fileLocations = new HashMap<>();
 
@@ -98,4 +101,13 @@ public class ServerConfig {
     public void setFileLocations(Map<GobiiFileProcessDir, String> fileLocations) {
         this.fileLocations = fileLocations;
     }
+
+    public String getConfidentialityNotice() {
+        return this.confidentialityNotice;
+    }
+    public void setConfidentialityNotice(String confidentialityNotice) {
+        this.confidentialityNotice = confidentialityNotice;
+    }
+
+
 }

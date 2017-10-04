@@ -43,4 +43,5 @@ public class ConfigSettingsDTO extends DTOBase {
     public void setServerCapabilities(Map<ServerCapabilityType, Boolean> serverCapabilities) {
         this.serverCapabilities = serverCapabilities;
     }
+
 }
