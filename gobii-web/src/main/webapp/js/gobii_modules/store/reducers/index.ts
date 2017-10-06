@@ -158,6 +158,8 @@ export const getExperimentsByProject = createSelector(getFileItemsState, fromFil
 export const getDatasetsByExperiment = createSelector(getFileItemsState, fromFileItems.getDatasetsForSelectedExperiment);
 export const getSelectedPiContacts = createSelector(getFileItemsState, fromFileItems.getSelectedPiContacts);
 export const getSelectedFileFormat = createSelector(getFileItemsState, fromFileItems.getSelectedFileFormat);
+export const getJobId = createSelector(getFileItemsState, fromFileItems.getJobId);
+export const getUploadFiles = createSelector(getFileItemsState, fromFileItems.getUploadFiles);
 
 export const getGobiiTreeNodesState = (state: State) => state.gobiiTreeNodes;
 export const getAllGobiiTreeNodes = createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getAll);

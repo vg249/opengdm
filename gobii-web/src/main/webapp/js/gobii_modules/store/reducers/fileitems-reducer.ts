@@ -538,7 +538,7 @@ export const getSelectedFileFormat = createSelector(getFileItems, getSelectedUni
         .find(fi => fi.getExtractorItemType() === ExtractorItemType.EXPORT_FORMAT
             && undefined !== selectedUniqueIds.find(id => id === fi.getFileItemUniqueId()));
 
-    if( formatItem) {
+    if (formatItem) {
         returnVal = formatItem;
     }
 
@@ -546,6 +546,39 @@ export const getSelectedFileFormat = createSelector(getFileItems, getSelectedUni
 
 });
 
+export const getJobId = createSelector(getFileItems, getSelectedUniqueIds, (fileItems, selectedUniqueIds) => {
+
+    // default
+    let returnVal = GobiiFileItem
+        .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
+        .setExtractorItemType(ExtractorItemType.JOB_ID)
+        .setItemId("UNSET")
+        .setItemName("UNSET");
+
+    let jobIdItem: GobiiFileItem = fileItems
+        .find(fi => (fi.getExtractorItemType() === ExtractorItemType.JOB_ID)
+            && (selectedUniqueIds.indexOf(fi.getFileItemUniqueId()) > -1 ));
+
+    if (jobIdItem) {
+        returnVal = jobIdItem;
+    }
+
+    return returnVal;
+
+});
+
+
+export const getUploadFiles = createSelector(getFileItems, getSelectedUniqueIds, (fileItems, selectedUniqueIds) => {
+
+    // default
+    let returnVal:GobiiFileItem[] = fileItems
+        .filter( fi => fi.getExtractorItemType() === ExtractorItemType.MARKER_FILE
+            || fi.getExtractorItemType() === ExtractorItemType.SAMPLE_FILE );
+
+
+    return returnVal;
+
+});
 
 
 

@@ -162,7 +162,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
         return returnVal;
     }
     exports_1("fileItemsReducer", fileItemsReducer);
-    var _this, reselect_1, gobii_file_item_1, gobiiFileItemAction, file_model_node_1, type_entity_1, type_nameid_filter_params_1, type_process_1, entity_labels_1, type_extractor_filter_1, type_extract_format_1, initialState, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getContacts, getFirstContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTerms, getFirstCvTerm, getMapsets, getFirstmapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment, getSelectedFileFormat;
+    var _this, reselect_1, gobii_file_item_1, gobiiFileItemAction, file_model_node_1, type_entity_1, type_nameid_filter_params_1, type_process_1, entity_labels_1, type_extractor_filter_1, type_extract_format_1, initialState, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getContacts, getFirstContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTerms, getFirstCvTerm, getMapsets, getFirstmapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment, getSelectedFileFormat, getJobId, getUploadFiles;
     return {
         setters: [
             function (reselect_1_1) {
@@ -412,6 +412,28 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 if (formatItem) {
                     returnVal = formatItem;
                 }
+                return returnVal;
+            }));
+            exports_1("getJobId", getJobId = reselect_1.createSelector(getFileItems, getSelectedUniqueIds, function (fileItems, selectedUniqueIds) {
+                // default
+                var returnVal = gobii_file_item_1.GobiiFileItem
+                    .build(_this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)
+                    .setExtractorItemType(file_model_node_1.ExtractorItemType.JOB_ID)
+                    .setItemId("UNSET")
+                    .setItemName("UNSET");
+                var jobIdItem = fileItems
+                    .find(function (fi) { return (fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.JOB_ID)
+                    && (selectedUniqueIds.indexOf(fi.getFileItemUniqueId()) > -1); });
+                if (jobIdItem) {
+                    returnVal = jobIdItem;
+                }
+                return returnVal;
+            }));
+            exports_1("getUploadFiles", getUploadFiles = reselect_1.createSelector(getFileItems, getSelectedUniqueIds, function (fileItems, selectedUniqueIds) {
+                // default
+                var returnVal = fileItems
+                    .filter(function (fi) { return fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_FILE
+                    || fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_FILE; });
                 return returnVal;
             }));
         }
