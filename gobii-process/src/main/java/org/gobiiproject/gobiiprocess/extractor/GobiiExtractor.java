@@ -616,6 +616,14 @@ public class GobiiExtractor {
                 } else {
                     Long qcJobID = jsonPayload.get("jobId").getAsLong();
                     ErrorLogger.logInfo("QC", "New QC job id: " + qcJobID);
+					ProcessMessage qcStartPm = new ProcessMessage();
+					qcStartPm.setUser(inst.getContactEmail());
+					qcStartPm.setSubject(new StringBuilder("new QC Job #").append(qcJobID).toString());
+					qcStartPm.addIdentifier("QC Job Identifier", String.valueOf(qcJobID), String.valueOf(qcJobID));
+					qcStartPm.addIdentifier("Dataset Identifier", String.valueOf(datasetId), String.valueOf(qcJobID));
+					qcStartPm.addPath("Output Extraction/QC Directory", extractDir);
+					qcStartPm.setBody("new QC Job #"+qcJobID,"QC",0,"",true,"");
+					mailInterface.send(qcStartPm);
 						RestUri restUriGetQCJobStatus = new RestUri("/",
 								configuration.getKDCConfig().getContextPath(),
 								configuration.getKDCConfig().getPath(ServerConfigKDC.KDCResource.QC_STATUS_));
