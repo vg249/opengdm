@@ -60,7 +60,7 @@ export class TreeStructureService {
                 .setEntityType(EntityType.Platforms),
             GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.TREE_STRUCTURE)
                 .setContainerType(ContainerType.STRUCTURE)
-                .setGenericLabel("Samples Criteria")
+                .setLabel("Samples Criteria")
                 .setExpanded(true)
                 .setChildren([
                     GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.ENTITY)
@@ -82,7 +82,7 @@ export class TreeStructureService {
                 .setCvFilterType(CvFilterType.DATASET_TYPE),
             GobiiTreeNode.build(GobiiExtractFilterType.BY_MARKER, ExtractorItemType.TREE_STRUCTURE)
                 .setContainerType(ContainerType.STRUCTURE)
-                .setGenericLabel("Markers Criteria")
+                .setLabel("Markers Criteria")
                 .setExpanded(true)
                 .setChildren([
                     GobiiTreeNode.build(GobiiExtractFilterType.BY_MARKER, ExtractorItemType.ENTITY)

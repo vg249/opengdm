@@ -78,7 +78,7 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
                             .setEntityType(type_entity_1.EntityType.Platforms),
                         GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, file_model_node_1.ExtractorItemType.TREE_STRUCTURE)
                             .setContainerType(GobiiTreeNode_1.ContainerType.STRUCTURE)
-                            .setGenericLabel("Samples Criteria")
+                            .setLabel("Samples Criteria")
                             .setExpanded(true)
                             .setChildren([
                             GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, file_model_node_1.ExtractorItemType.ENTITY)
@@ -97,7 +97,7 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
                             .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE),
                         GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, file_model_node_1.ExtractorItemType.TREE_STRUCTURE)
                             .setContainerType(GobiiTreeNode_1.ContainerType.STRUCTURE)
-                            .setGenericLabel("Markers Criteria")
+                            .setLabel("Markers Criteria")
                             .setExpanded(true)
                             .setChildren([
                             GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, file_model_node_1.ExtractorItemType.ENTITY)
