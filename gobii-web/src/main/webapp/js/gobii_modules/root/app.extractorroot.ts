@@ -421,6 +421,9 @@ export class ExtractorRoot implements OnInit {
             ContactSearchType.BY_USERNAME,
             this.loggedInUser)).subscribe(contact => {
 
+
+                let foo:string= "foo";
+
                 if (contact && contact.contactId && contact.contactId > 0) {
 
                     //loggedInUser

@@ -55,9 +55,33 @@
         <url-pattern>/</url-pattern>
     </servlet-mapping>
 
+    <!--<listener>-->
+        <!--<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>-->
+    <!--</listener>-->
+
+    <!--<listener>-->
+        <!--<listener-class>org.springframework.web.context.request.RequestContextHolder</listener-class>-->
+    <!--</listener>-->
+
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
+
+
+    <!-- if you don't specify the servlet-name in the filter mappings,
+     the order of filters is not respected. In order to  the current request
+     for the datasource selector, the currentRequest filter must be executed first,
+     before we get to the springSecurityFilterChain-->
+    <filter>
+        <filter-name>currentRequestFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>currentRequestFilter</filter-name>
+        <servlet-name>mvc-dispatcher</servlet-name>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+    </filter-mapping>
 
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
@@ -65,9 +89,11 @@
     </filter>
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
-        <url-pattern>/*</url-pattern>
+        <servlet-name>mvc-dispatcher</servlet-name>
+        <!--<url-pattern>/*</url-pattern>-->
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
+
 
 </web-app>

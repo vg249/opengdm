@@ -63,7 +63,7 @@ export class AuthenticationService {
                             let dtoHeaderAuth: DtoHeaderAuth = DtoHeaderAuth
                                 .fromJSON(json);
                             if (dtoHeaderAuth.getToken()) {
-                                scope$.userName = userName;
+                                scope$.userName = userName.trim();
                                 scope$.setToken(dtoHeaderAuth.getToken())
                                 scope$.setGobiiCropType(dtoHeaderAuth.getGobiiCropType());
                                 observer.next(dtoHeaderAuth);
