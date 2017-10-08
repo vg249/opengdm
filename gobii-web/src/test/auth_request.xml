@@ -1,0 +1,45 @@
+<RestClientRequest>
+  <option name="biscuits">
+    <list />
+  </option>
+  <option name="httpMethod" value="POST" />
+  <option name="urlBase" value="http://localhost:8484" />
+  <option name="urlPath" value="/gobii-test//gobii/v1/auth" />
+  <option name="headers">
+    <list>
+      <KeyValuePair>
+        <option name="key" value="Accept" />
+        <option name="value" value="application/json" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="Content-Type" />
+        <option name="value" value="application/json" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="Origin" />
+        <option name="value" value="http://localhost:8484" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="Referer" />
+        <option name="value" value="http://localhost:8484/gobii-test/login" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="X-Password" />
+        <option name="value" value="reader" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="X-Username" />
+        <option name="value" value="USER_READER" />
+      </KeyValuePair>
+    </list>
+  </option>
+  <option name="parameters">
+    <list />
+  </option>
+  <option name="parametersEnabled" value="true" />
+  <option name="haveTextToSend" value="true" />
+  <option name="haveFileToSend" value="false" />
+  <option name="isFileUpload" value="false" />
+  <option name="textToSend" value="nothing" />
+  <option name="filesToSend" value="" />
+</RestClientRequest>
