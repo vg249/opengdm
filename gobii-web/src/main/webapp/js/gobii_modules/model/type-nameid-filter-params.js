@@ -13,6 +13,7 @@ System.register([], function (exports_1, context_1) {
                 // are treated in the components and services
                 function NameIdFilterParamTypes() {
                 }
+                NameIdFilterParamTypes.UNKNOWN = "UNKNOWN";
                 NameIdFilterParamTypes.CONTACT_PI = "Contact-PI";
                 NameIdFilterParamTypes.EXPERIMENTS = "Experiments";
                 NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT = "Experiments-by-project";

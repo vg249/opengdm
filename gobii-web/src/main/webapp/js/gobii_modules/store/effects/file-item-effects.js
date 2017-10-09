@@ -174,10 +174,18 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                             _this.store.select(fromRoot.getAllFileItems)
                                 .subscribe(function (all) {
                                 var fileItem = all.find(function (fi) { return fi.getFileItemUniqueId() === fileItemUniqueId; });
+                                var nameIdFilterParamType = type_nameid_filter_params_1.NameIdFilterParamTypes.UNKNOWN;
+                                var filterValue = fileItem.getItemId();
                                 if (fileItem.getEntityType() === type_entity_1.EntityType.Contacts
                                     && (fileItem.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)) {
-                                    var selectedContactIdForPi = fileItem.getItemId();
-                                    _this.fileItemService.loadWithFilterParams(action.payload.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS_BY_CONTACT, selectedContactIdForPi);
+                                    nameIdFilterParamType = type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS_BY_CONTACT;
+                                }
+                                else {
+                                    nameIdFilterParamType = type_nameid_filter_params_1.NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT;
+                                }
+                                if (nameIdFilterParamType !== type_nameid_filter_params_1.NameIdFilterParamTypes.UNKNOWN
+                                    && filterValue != null) {
+                                    _this.fileItemService.loadWithFilterParams(action.payload.gobiiExtractFilterType, nameIdFilterParamType, filterValue);
                                 }
                                 var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(fileItem);
                                 observer.next(treeNode);

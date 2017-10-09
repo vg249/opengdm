@@ -97,14 +97,23 @@ export class FileItemEffects {
                         .subscribe(all => {
                                 let fileItem: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === fileItemUniqueId);
 
-                                if(fileItem.getEntityType() === EntityType.Contacts
-                                && (fileItem.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR )) {
+                                let nameIdFilterParamType: NameIdFilterParamTypes = NameIdFilterParamTypes.UNKNOWN;
+                                let filterValue: string = fileItem.getItemId();
 
-                                    let selectedContactIdForPi: string = fileItem.getItemId();
-                                    this.fileItemService.loadWithFilterParams(action.payload.gobiiExtractFilterType,
-                                        NameIdFilterParamTypes.PROJECTS_BY_CONTACT,
-                                        selectedContactIdForPi);
+                                if (fileItem.getEntityType() === EntityType.Contacts
+                                    && (fileItem.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR )) {
+                                    nameIdFilterParamType = NameIdFilterParamTypes.PROJECTS_BY_CONTACT;
+                                } else {
+                                    nameIdFilterParamType = NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT;
                                 }
+
+                                if (nameIdFilterParamType !== NameIdFilterParamTypes.UNKNOWN
+                                    && filterValue != null) {
+                                    this.fileItemService.loadWithFilterParams(action.payload.gobiiExtractFilterType,
+                                        nameIdFilterParamType,
+                                        filterValue);
+                                }
+
 
                                 let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(fileItem);
                                 observer.next(treeNode);

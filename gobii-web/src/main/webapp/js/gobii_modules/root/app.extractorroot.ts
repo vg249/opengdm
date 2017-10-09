@@ -90,8 +90,7 @@ import {InstructionSubmissionService} from "../services/core/instruction-submiss
                                         <td style="vertical-align: top;">
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             <name-id-list-box
-                                                    [fileItems$]="fileItemsMapsets$"
-                                                    (onError)="handleHeaderStatusMessage($event)">
+                                                    [fileItems$]="fileItemsMapsets$">
                                             </name-id-list-box>
                                         </td>
                                     </tr>
@@ -136,9 +135,7 @@ import {InstructionSubmissionService} from "../services/core/instruction-submiss
                                     <BR>
                                     <label class="the-label">Project:</label><BR>
                                     <name-id-list-box
-                                            [fileItems$]="fileItemsProjects$"
-                                            (onNameIdSelected)="handleProjectSelected($event)"
-                                            (onError)="handleHeaderStatusMessage($event)">
+                                            [fileItems$]="fileItemsProjects$">
                                     </name-id-list-box>
                                 </div>
 
@@ -702,18 +699,6 @@ export class ExtractorRoot implements OnInit {
 // ********************************************** PROJECT ID
     private selectedProjectId: string;
 
-    public handleProjectSelected(arg) {
-
-        this.selectedProjectId = arg.id;
-        this.displayExperimentDetail = false;
-        this.displayDataSetDetail = false;
-
-        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
-            NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT,
-            this.selectedProjectId);
-    }
-
-
 // ********************************************************************
 // ********************************************** EXPERIMENT ID
     private displayExperimentDetail: boolean = false;
@@ -906,22 +891,6 @@ export class ExtractorRoot implements OnInit {
     }
 
     ngOnInit(): any {
-
-        // this.store.select(fromRoot.getSelectedPiContacts)
-        //     .subscribe(
-        //         contacts => {
-        //             if (contacts && contacts.length > 0) {
-        //                 let selectedPiContact: GobiiFileItem = contacts[0]; // we assume there is only one
-        //                 this.selectedContactIdForPi = selectedPiContact.getItemId();
-        //                 this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
-        //                     NameIdFilterParamTypes.PROJECTS_BY_CONTACT,
-        //                     this.selectedContactIdForPi);
-        //             }
-        //         },
-        //         error => {
-        //             this.store.dispatch(new historyAction.AddStatusMessageAction(error))
-        //         }
-        //     );
 
         this.initializeServerConfigs();
 
