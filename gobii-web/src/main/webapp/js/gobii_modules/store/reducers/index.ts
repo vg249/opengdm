@@ -131,6 +131,7 @@ export const getUniqueIds = createSelector(getFileItemsState, fromFileItems.getU
 export const getContacts = createSelector(getFileItemsState, fromFileItems.getContacts);
 export const getFirstContact = createSelector(getFileItemsState, fromFileItems.getFirstContact);
 
+
 export const getProjects = createSelector(getFileItemsState, fromFileItems.getProjects);
 export const getFirstProject = createSelector(getFileItemsState, fromFileItems.getFirstProject);
 

@@ -83,10 +83,11 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
                             .setChildren([
                             GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, file_model_node_1.ExtractorItemType.ENTITY)
                                 .setEntityType(type_entity_1.EntityType.Contacts)
-                                .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR),
+                                .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
+                                .setContainerType(GobiiTreeNode_1.ContainerType.NONE),
                             GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, file_model_node_1.ExtractorItemType.ENTITY)
                                 .setEntityType(type_entity_1.EntityType.Projects)
-                                .setContainerType(GobiiTreeNode_1.ContainerType.DATA),
+                                .setContainerType(GobiiTreeNode_1.ContainerType.NONE),
                             GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, file_model_node_1.ExtractorItemType.SAMPLE_FILE),
                             GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, file_model_node_1.ExtractorItemType.SAMPLE_LIST_TYPE)
                                 .setContainerType(GobiiTreeNode_1.ContainerType.DATA),

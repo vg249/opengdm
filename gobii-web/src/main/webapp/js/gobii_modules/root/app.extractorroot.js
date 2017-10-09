@@ -190,28 +190,6 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this.buttonStyleSubmitNotReady = "btn btn-warning";
                     this.submitButtonStyle = this.buttonStyleSubmitNotReady;
                     this.clearButtonStyle = this.submitButtonStyleDefault;
-                    this.selectedExtractFormat$.subscribe(function (format) { return console.log("new extract format @ root: " + format.getItemId()); });
-                    this.fileItemsProjects$.subscribe(function (items) {
-                        console.log("Project item count: " + items.length);
-                    });
-                    // this.store
-                    //     .select(fromRoot.getSelectedFileItems)
-                    //     .subscribe(all => {
-                    //
-                    //         let extractFormatItem: GobiiFileItem = all
-                    //             .find(fi => fi.getExtractorItemType() === ExtractorItemType.EXPORT_FORMAT);
-                    //
-                    //         if (extractFormatItem) {
-                    //             this.selectedExtractFormat = extractFormatItem.getItemId();
-                    //         }
-                    //         // else {
-                    //         //     this.fileFormat = GobiiExtractFormat[GobiiExtractFormat.META_DATA_ONLY];
-                    //         // }
-                    //
-                    //         console.log(this.selectedExtractFormat);
-                    //     });
-                    //
-                    //unfiltered requests
                     this.nameIdRequestParamsDatasetType = name_id_request_params_1.FileItemParams
                         .build(type_nameid_filter_params_1.NameIdFilterParamTypes.CV_DATATYPE, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.CvTerms)
                         .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE)

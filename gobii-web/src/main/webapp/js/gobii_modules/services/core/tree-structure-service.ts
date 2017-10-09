@@ -65,10 +65,11 @@ export class TreeStructureService {
                 .setChildren([
                     GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.ENTITY)
                         .setEntityType(EntityType.Contacts)
-                        .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR),
+                        .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
+                        .setContainerType(ContainerType.NONE),
                     GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.ENTITY)
                         .setEntityType(EntityType.Projects)
-                        .setContainerType(ContainerType.DATA),
+                        .setContainerType(ContainerType.NONE),
                     GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.SAMPLE_FILE),
                     GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.SAMPLE_LIST_TYPE)
                         .setContainerType(ContainerType.DATA),

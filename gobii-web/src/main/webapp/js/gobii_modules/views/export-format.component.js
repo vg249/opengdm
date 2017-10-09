@@ -52,8 +52,6 @@ System.register(["@angular/core", "../model/type-extract-format", "../model/gobi
                 // private nameIdList: NameId[];
                 // private selectedNameId: string = null;
                 ExportFormatComponent.prototype.ngOnInit = function () {
-                    this.fileFormat$.subscribe(function (format) { return console.log("new extract format: " + format.getItemId()); });
-                    //        this.updateTreeService(GobiiExtractFormat.HAPMAP);
                     // in the current version, this doesn't work: each component in the page
                     // is initialized once at a time. Thus, even though the tree is being built
                     // built in the tree component's constructor, nginit() here still is triggered

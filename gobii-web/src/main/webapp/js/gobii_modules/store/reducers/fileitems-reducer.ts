@@ -326,6 +326,9 @@ export const getFirstContact = createSelector(getContacts, (contacts) => {
     return contacts[0];
 });
 
+
+
+
 export const getProjects = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
     return fileItems.filter(e =>
@@ -571,9 +574,9 @@ export const getJobId = createSelector(getFileItems, getSelectedUniqueIds, (file
 export const getUploadFiles = createSelector(getFileItems, getSelectedUniqueIds, (fileItems, selectedUniqueIds) => {
 
     // default
-    let returnVal:GobiiFileItem[] = fileItems
-        .filter( fi => fi.getExtractorItemType() === ExtractorItemType.MARKER_FILE
-            || fi.getExtractorItemType() === ExtractorItemType.SAMPLE_FILE );
+    let returnVal: GobiiFileItem[] = fileItems
+        .filter(fi => fi.getExtractorItemType() === ExtractorItemType.MARKER_FILE
+            || fi.getExtractorItemType() === ExtractorItemType.SAMPLE_FILE);
 
 
     return returnVal;

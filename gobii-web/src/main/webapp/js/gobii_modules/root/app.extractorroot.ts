@@ -354,36 +354,6 @@ export class ExtractorRoot implements OnInit {
                 private instructionSubmissionService: InstructionSubmissionService) {
 
 
-        this.selectedExtractFormat$.subscribe(
-            format => console.log("new extract format @ root: " + format.getItemId())
-        );
-
-        this.fileItemsProjects$.subscribe(items => {
-            console.log("Project item count: " + items.length)
-        });
-
-
-        // this.store
-        //     .select(fromRoot.getSelectedFileItems)
-        //     .subscribe(all => {
-        //
-        //         let extractFormatItem: GobiiFileItem = all
-        //             .find(fi => fi.getExtractorItemType() === ExtractorItemType.EXPORT_FORMAT);
-        //
-        //         if (extractFormatItem) {
-        //             this.selectedExtractFormat = extractFormatItem.getItemId();
-        //         }
-        //         // else {
-        //         //     this.fileFormat = GobiiExtractFormat[GobiiExtractFormat.META_DATA_ONLY];
-        //         // }
-        //
-        //         console.log(this.selectedExtractFormat);
-        //     });
-        //
-
-
-        //unfiltered requests
-
         this.nameIdRequestParamsDatasetType = FileItemParams
             .build(NameIdFilterParamTypes.CV_DATATYPE,
                 GobiiExtractFilterType.WHOLE_DATASET,
