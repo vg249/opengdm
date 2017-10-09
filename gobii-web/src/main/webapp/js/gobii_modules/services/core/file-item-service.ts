@@ -160,6 +160,7 @@ export class FileItemService {
                                     ProcessType.CREATE)
                                     .setExtractorItemType(ExtractorItemType.ENTITY)
                                     .setEntityType(nameIdRequestParamsToLoad.getEntityType())
+                                    .setEntitySubType(nameIdRequestParamsToLoad.getEntitySubType())
                                     .setCvFilterType(CvFilterType.UNKNOWN)
                                     .setItemId(n.id)
                                     .setItemName(n.name)

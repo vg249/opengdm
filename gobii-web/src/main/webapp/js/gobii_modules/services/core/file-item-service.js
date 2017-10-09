@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-entity", "../../views/entity-labels", "../../model/file-model-node", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/gobii-file-item", "../../model/dto-header-status-message", "../../model/type-process", "./name-id-service", "../../model/name-id-request-params", "../../store/actions/fileitem-action", "@ngrx/store", "../../model/name-id-label-type", "../../model/type-entity-filter", "../../model/type-nameid-filter-params"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-entity", "../../views/entity-labels", "../../model/file-model-node", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/gobii-file-item", "../../model/dto-header-status-message", "../../model/type-process", "./name-id-service", "../../model/name-id-request-params", "../../store/actions/history-action", "../../store/actions/fileitem-action", "@ngrx/store", "../../model/name-id-label-type", "../../model/type-entity-filter", "../../model/type-nameid-filter-params"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_entity_1, entity_labels_1, file_model_node_1, type_extractor_filter_1, cv_filter_type_1, gobii_file_item_1, dto_header_status_message_1, type_process_1, name_id_service_1, name_id_request_params_1, fileItemActions, store_1, name_id_label_type_1, type_entity_filter_1, type_nameid_filter_params_1, FileItemService;
+    var core_1, type_entity_1, entity_labels_1, file_model_node_1, type_extractor_filter_1, cv_filter_type_1, gobii_file_item_1, dto_header_status_message_1, type_process_1, name_id_service_1, name_id_request_params_1, historyAction, fileItemActions, store_1, name_id_label_type_1, type_entity_filter_1, type_nameid_filter_params_1, FileItemService;
     return {
         setters: [
             function (core_1_1) {
@@ -45,6 +45,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
             },
             function (name_id_request_params_1_1) {
                 name_id_request_params_1 = name_id_request_params_1_1;
+            },
+            function (historyAction_1) {
+                historyAction = historyAction_1;
             },
             function (fileItemActions_1) {
                 fileItemActions = fileItemActions_1;
@@ -139,6 +142,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                 var currentFileItem = gobii_file_item_1.GobiiFileItem.build(gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
                                     .setExtractorItemType(file_model_node_1.ExtractorItemType.ENTITY)
                                     .setEntityType(nameIdRequestParamsToLoad.getEntityType())
+                                    .setEntitySubType(nameIdRequestParamsToLoad.getEntitySubType())
                                     .setCvFilterType(cv_filter_type_1.CvFilterType.UNKNOWN)
                                     .setItemId(n.id)
                                     .setItemName(n.name)
@@ -173,8 +177,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                         label = "No " + entityName;
                                         break;
                                     default:
-                                        console.log(new dto_header_status_message_1.HeaderStatusMessage("Unknown label type "
-                                            + name_id_label_type_1.NameIdLabelType[nameIdRequestParamsToLoad.getMameIdLabelType()], null, null));
+                                        _this.store.dispatch(new historyAction.AddStatusAction(new dto_header_status_message_1.HeaderStatusMessage("Unknown label type "
+                                            + name_id_label_type_1.NameIdLabelType[nameIdRequestParamsToLoad.getMameIdLabelType()], null, null)));
                                 }
                                 var labelFileItem = gobii_file_item_1.GobiiFileItem
                                     .build(gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
@@ -232,8 +236,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     }, // Observer=>next
                     function (// Observer=>next
                         responseHeader) {
-                        //this.handleHeaderStatus(responseHeader);
-                        console.log(responseHeader);
+                        _this.store.dispatch(new historyAction.AddStatusAction(responseHeader));
                     }); // subscribe
                 };
                 FileItemService = __decorate([

@@ -315,7 +315,7 @@ export class ExtractorRoot implements OnInit {
     // ************************************************************************
 
     // unfiltered
-    fileItemsContactsPI$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getContacts);
+    fileItemsContactsPI$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getPiContacts);
     fileItemsMapsets$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getMapsets);
     fileItemsDatasetTypes$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getCvTerms);
     fileItemsPlatforms: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getPlatforms);
@@ -438,6 +438,8 @@ export class ExtractorRoot implements OnInit {
                             .setItemName(contact.email)
                             .setItemId(contact.contactId.toLocaleString()),
                         true);
+
+            //        this.handleContactForPiSelected(new NameId(contact.contactId.toString(),contact.userName,EntityType.Contacts));
 
                     // scope$._fileModelTreeService.put(
                     //     GobiiFileItem.build(scope$.gobiiExtractFilterType, ProcessType.CREATE)
@@ -632,7 +634,6 @@ export class ExtractorRoot implements OnInit {
         this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
             NameIdFilterParamTypes.CONTACT_PI,
             null);
-
         // this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
         //     this.nameIdRequestParamsExperiments);
 
@@ -670,7 +671,6 @@ export class ExtractorRoot implements OnInit {
     public handleContactForPiSelected(arg) {
 
         this.selectedContactIdForPi = arg.id;
-
         this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
             NameIdFilterParamTypes.PROJECTS_BY_CONTACT,
             this.selectedContactIdForPi);

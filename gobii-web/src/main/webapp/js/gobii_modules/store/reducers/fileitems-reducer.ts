@@ -312,21 +312,22 @@ export const getAll = createSelector(getFileItems, getUniqueIds, (entities, ids)
 // entity type is parameterized -- it is not global state
 
 
-export const getContacts = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+export const getPiContacts = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
-    return fileItems.filter(e =>
-        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+    let returnVal: GobiiFileItem[] = fileItems.filter(e =>
+        (  e.getExtractorItemType() === ExtractorItemType.ENTITY
             || e.getExtractorItemType() === ExtractorItemType.LABEL )
-        && e.getEntityType() === EntityType.Contacts)
+        && e.getEntityType() === EntityType.Contacts
+        && e.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
         .map(fi => fi);
+
+    return returnVal;
 });
 
 
-export const getFirstContact = createSelector(getContacts, (contacts) => {
+export const getFirstPiContact = createSelector(getPiContacts, (contacts) => {
     return contacts[0];
 });
-
-
 
 
 export const getProjects = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {

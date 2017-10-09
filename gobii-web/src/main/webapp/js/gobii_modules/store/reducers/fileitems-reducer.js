@@ -162,7 +162,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
         return returnVal;
     }
     exports_1("fileItemsReducer", fileItemsReducer);
-    var _this, reselect_1, gobii_file_item_1, gobiiFileItemAction, file_model_node_1, type_entity_1, type_nameid_filter_params_1, type_process_1, entity_labels_1, type_extractor_filter_1, type_extract_format_1, initialState, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getContacts, getFirstContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTerms, getFirstCvTerm, getMapsets, getFirstmapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment, getSelectedFileFormat, getJobId, getUploadFiles;
+    var _this, reselect_1, gobii_file_item_1, gobiiFileItemAction, file_model_node_1, type_entity_1, type_nameid_filter_params_1, type_process_1, entity_labels_1, type_extractor_filter_1, type_extract_format_1, initialState, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getPiContacts, getFirstPiContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTerms, getFirstCvTerm, getMapsets, getFirstmapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment, getSelectedFileFormat, getJobId, getUploadFiles;
     return {
         setters: [
             function (reselect_1_1) {
@@ -234,15 +234,17 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             // ideally, the redux way of selecting data would be for the selection to be based
             // on which entity is "selected" The problem is that we have controlls in which the
             // entity type is parameterized -- it is not global state
-            exports_1("getContacts", getContacts = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
-                return fileItems.filter(function (e) {
+            exports_1("getPiContacts", getPiContacts = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
+                var returnVal = fileItems.filter(function (e) {
                     return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY
                         || e.getExtractorItemType() === file_model_node_1.ExtractorItemType.LABEL)
-                        && e.getEntityType() === type_entity_1.EntityType.Contacts;
+                        && e.getEntityType() === type_entity_1.EntityType.Contacts
+                        && e.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR;
                 })
                     .map(function (fi) { return fi; });
+                return returnVal;
             }));
-            exports_1("getFirstContact", getFirstContact = reselect_1.createSelector(getContacts, function (contacts) {
+            exports_1("getFirstPiContact", getFirstPiContact = reselect_1.createSelector(getPiContacts, function (contacts) {
                 return contacts[0];
             }));
             exports_1("getProjects", getProjects = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {

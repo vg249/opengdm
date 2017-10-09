@@ -1,7 +1,7 @@
 System.register(["@ngrx/store", "ngrx-store-freeze", "./fileitems-reducer", "./treenode-reducer", "./history-reducer"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var store_1, store_2, ngrx_store_freeze_1, store_3, fromFileItems, fromGobiiTreeNodes, fromHistory, reducers, developmentReducer, productionReducer, getFileItemsState, getAllFileItems, getFileItems, getSelectedFileItems, getSelectedUniqueIds, getUniqueIds, getContacts, getFirstContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTerms, getFirstCvTerm, getMapsets, getFirstMapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getProjectsByPI, getExperimentsByProject, getDatasetsByExperiment, getSelectedPiContacts, getSelectedFileFormat, getJobId, getUploadFiles, getGobiiTreeNodesState, getAllGobiiTreeNodes, getGobiiTreeNodesForExtractFilter, getSelectedGobiiTreeNodes, getSelectedGobiiTreeNodeIds, getIdsOfActivatedGobiiTreeNodes, gobiiHistoryState, getStatusMessages, getLasetStatusMessage;
+    var store_1, store_2, ngrx_store_freeze_1, store_3, fromFileItems, fromGobiiTreeNodes, fromHistory, reducers, developmentReducer, productionReducer, getFileItemsState, getAllFileItems, getFileItems, getSelectedFileItems, getSelectedUniqueIds, getUniqueIds, getPiContacts, getFirstPiContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTerms, getFirstCvTerm, getMapsets, getFirstMapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getProjectsByPI, getExperimentsByProject, getDatasetsByExperiment, getSelectedPiContacts, getSelectedFileFormat, getJobId, getUploadFiles, getGobiiTreeNodesState, getAllGobiiTreeNodes, getGobiiTreeNodesForExtractFilter, getSelectedGobiiTreeNodes, getSelectedGobiiTreeNodeIds, getIdsOfActivatedGobiiTreeNodes, gobiiHistoryState, getStatusMessages, getLasetStatusMessage;
     return {
         setters: [
             function (store_1_1) {
@@ -82,8 +82,8 @@ System.register(["@ngrx/store", "ngrx-store-freeze", "./fileitems-reducer", "./t
             exports_1("getSelectedFileItems", getSelectedFileItems = store_1.createSelector(getFileItemsState, fromFileItems.getSelected));
             exports_1("getSelectedUniqueIds", getSelectedUniqueIds = store_1.createSelector(getFileItemsState, fromFileItems.getSelectedUniqueIds));
             exports_1("getUniqueIds", getUniqueIds = store_1.createSelector(getFileItemsState, fromFileItems.getUniqueIds));
-            exports_1("getContacts", getContacts = store_1.createSelector(getFileItemsState, fromFileItems.getContacts));
-            exports_1("getFirstContact", getFirstContact = store_1.createSelector(getFileItemsState, fromFileItems.getFirstContact));
+            exports_1("getPiContacts", getPiContacts = store_1.createSelector(getFileItemsState, fromFileItems.getPiContacts));
+            exports_1("getFirstPiContact", getFirstPiContact = store_1.createSelector(getFileItemsState, fromFileItems.getFirstPiContact));
             exports_1("getProjects", getProjects = store_1.createSelector(getFileItemsState, fromFileItems.getProjects));
             exports_1("getFirstProject", getFirstProject = store_1.createSelector(getFileItemsState, fromFileItems.getFirstProject));
             exports_1("getExperiments", getExperiments = store_1.createSelector(getFileItemsState, fromFileItems.getExperiments));

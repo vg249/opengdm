@@ -104,7 +104,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this.title = 'Gobii Web';
                     // ************************************************************************
                     // unfiltered
-                    this.fileItemsContactsPI$ = this.store.select(fromRoot.getContacts);
+                    this.fileItemsContactsPI$ = this.store.select(fromRoot.getPiContacts);
                     this.fileItemsMapsets$ = this.store.select(fromRoot.getMapsets);
                     this.fileItemsDatasetTypes$ = this.store.select(fromRoot.getCvTerms);
                     this.fileItemsPlatforms = this.store.select(fromRoot.getPlatforms);
@@ -241,6 +241,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                                 .setExtractorItemType(file_model_node_1.ExtractorItemType.ENTITY)
                                 .setItemName(contact.email)
                                 .setItemId(contact.contactId.toLocaleString()), true);
+                            //        this.handleContactForPiSelected(new NameId(contact.contactId.toString(),contact.userName,EntityType.Contacts));
                             // scope$._fileModelTreeService.put(
                             //     GobiiFileItem.build(scope$.gobiiExtractFilterType, ProcessType.CREATE)
                             //         .setEntityType(EntityType.Contacts)

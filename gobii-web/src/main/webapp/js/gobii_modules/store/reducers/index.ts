@@ -128,8 +128,8 @@ export const getSelectedUniqueIds = createSelector(getFileItemsState, fromFileIt
 export const getUniqueIds = createSelector(getFileItemsState, fromFileItems.getUniqueIds);
 
 
-export const getContacts = createSelector(getFileItemsState, fromFileItems.getContacts);
-export const getFirstContact = createSelector(getFileItemsState, fromFileItems.getFirstContact);
+export const getPiContacts = createSelector(getFileItemsState, fromFileItems.getPiContacts);
+export const getFirstPiContact = createSelector(getFileItemsState, fromFileItems.getFirstPiContact);
 
 
 export const getProjects = createSelector(getFileItemsState, fromFileItems.getProjects);
