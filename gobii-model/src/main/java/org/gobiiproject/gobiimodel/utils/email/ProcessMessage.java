@@ -19,6 +19,7 @@ public class ProcessMessage extends MailMessage {
     private String entityLine;
     private String identifierLine;
     private String pathsLine;
+    private String confidentialyMessage;
     File fPath;
     private String color;
     final String redColor = "#E74C3C";
@@ -78,6 +79,7 @@ public class ProcessMessage extends MailMessage {
         if(tableLine!=null)body.append(tableLine+line);
         if(pathsLine!=null)body.append(pathsLine+line);
         if(longError!=null)body.append(longError);
+        if(confidentialyMessage!=null)body.append(confidentialyMessage);
         body.append("</html>");
         this.setBody(body.toString());
         return this;
@@ -178,6 +180,10 @@ public class ProcessMessage extends MailMessage {
         return this;
     }
 
+    public ProcessMessage addConfidentialityMessage(String confidentialyMessage){
+        this.confidentialyMessage=confidentialyMessage;
+        return this;
+    }
 
 }
 
