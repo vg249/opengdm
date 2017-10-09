@@ -79,7 +79,7 @@ public class ProcessMessage extends MailMessage {
         if(tableLine!=null)body.append(tableLine+line);
         if(pathsLine!=null)body.append(pathsLine+line);
         if(longError!=null)body.append(longError);
-        if(confidentialyMessage!=null)body.append(confidentialyMessage);
+        if(confidentialyMessage!=null)body.append("<br/><b>"+confidentialyMessage+"</b>");
         body.append("</html>");
         this.setBody(body.toString());
         return this;
