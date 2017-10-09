@@ -432,7 +432,7 @@ public class GobiiExtractor {
 					GobiiFileType fileType=extract.getGobiiFileType();
 
 					String confidentialityMessage="";
-					String confidentialityLoc=configuration.getFileNoticePath(configuration.getCurrentGobiiCropType(),GobiiFileNoticeType.CONFIDENTIALITY);
+					String confidentialityLoc=configuration.getFileNoticePath(crop,GobiiFileNoticeType.CONFIDENTIALITY);
 					File confidentialityFile=new File(confidentialityLoc);
 					if(confidentialityFile.exists()){
 						StringBuilder sb=new StringBuilder();
