@@ -166,27 +166,33 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                     this.replaceInExtract$ = this.actions$
                         .ofType(fileItemActions.REPLACE_IN_EXTRACT_BY_ITEM_ID)
                         .switchMap(function (action) {
-                        // this is scary. The store is the single source of truth. The only way to get the fileItem for
-                        // the fileitem id is to get it from the store, and for that to work here, we need to wrap the
-                        // select in an Observable.
+                        //  This action is triggered by the ubiguitous NameIdListBoxComponent
+                        // as such, there are business behaviors that must be implemented here.
+                        // you cannot trigger an ASYNCH requrest such as loadWithFilterParams() from within
+                        // the subscribe of a reducer.select(): if you do, you end up with an infinite loop
                         return Observable_1.Observable.create(function (observer) {
                             var fileItemUniqueId = action.payload.itemIdToReplaceItWith;
                             _this.store.select(fromRoot.getAllFileItems)
                                 .subscribe(function (all) {
                                 var fileItem = all.find(function (fi) { return fi.getFileItemUniqueId() === fileItemUniqueId; });
+                                // RUN FILTERED QUERY TO GET CHILD ITEMS WHEN NECESSARY
                                 var nameIdFilterParamType = type_nameid_filter_params_1.NameIdFilterParamTypes.UNKNOWN;
                                 var filterValue = fileItem.getItemId();
                                 if (fileItem.getEntityType() === type_entity_1.EntityType.Contacts
                                     && (fileItem.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)) {
                                     nameIdFilterParamType = type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS_BY_CONTACT;
                                 }
-                                else {
+                                else if (fileItem.getEntityType() === type_entity_1.EntityType.Projects) {
                                     nameIdFilterParamType = type_nameid_filter_params_1.NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT;
+                                }
+                                else if (fileItem.getEntityType() === type_entity_1.EntityType.Experiments) {
+                                    nameIdFilterParamType = type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT;
                                 }
                                 if (nameIdFilterParamType !== type_nameid_filter_params_1.NameIdFilterParamTypes.UNKNOWN
                                     && filterValue != null) {
                                     _this.fileItemService.loadWithFilterParams(action.payload.gobiiExtractFilterType, nameIdFilterParamType, filterValue);
                                 }
+                                // LOAD THE CORRESPONDING TREE NODE FOR THE SELECTED ITEM
                                 var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(fileItem);
                                 observer.next(treeNode);
                                 observer.complete();

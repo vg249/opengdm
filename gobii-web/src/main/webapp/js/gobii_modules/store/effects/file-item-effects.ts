@@ -87,9 +87,10 @@ export class FileItemEffects {
         .ofType(fileItemActions.REPLACE_IN_EXTRACT_BY_ITEM_ID)
         .switchMap((action: fileItemActions.ReplaceInExtractByItemIdAction) => {
 
-                // this is scary. The store is the single source of truth. The only way to get the fileItem for
-                // the fileitem id is to get it from the store, and for that to work here, we need to wrap the
-                // select in an Observable.
+                //  This action is triggered by the ubiguitous NameIdListBoxComponent
+                // as such, there are business behaviors that must be implemented here.
+                // you cannot trigger an ASYNCH requrest such as loadWithFilterParams() from within
+                // the subscribe of a reducer.select(): if you do, you end up with an infinite loop
                 return Observable.create(observer => {
 
                     let fileItemUniqueId: String = action.payload.itemIdToReplaceItWith;
@@ -97,14 +98,17 @@ export class FileItemEffects {
                         .subscribe(all => {
                                 let fileItem: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === fileItemUniqueId);
 
+                                // RUN FILTERED QUERY TO GET CHILD ITEMS WHEN NECESSARY
                                 let nameIdFilterParamType: NameIdFilterParamTypes = NameIdFilterParamTypes.UNKNOWN;
                                 let filterValue: string = fileItem.getItemId();
 
                                 if (fileItem.getEntityType() === EntityType.Contacts
                                     && (fileItem.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR )) {
                                     nameIdFilterParamType = NameIdFilterParamTypes.PROJECTS_BY_CONTACT;
-                                } else {
+                                } else if (fileItem.getEntityType() === EntityType.Projects)  {
                                     nameIdFilterParamType = NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT;
+                                } else if (fileItem.getEntityType() === EntityType.Experiments)  {
+                                    nameIdFilterParamType = NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT;
                                 }
 
                                 if (nameIdFilterParamType !== NameIdFilterParamTypes.UNKNOWN
@@ -115,6 +119,7 @@ export class FileItemEffects {
                                 }
 
 
+                                // LOAD THE CORRESPONDING TREE NODE FOR THE SELECTED ITEM
                                 let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(fileItem);
                                 observer.next(treeNode);
                                 observer.complete();

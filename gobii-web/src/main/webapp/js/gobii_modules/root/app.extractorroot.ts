@@ -144,8 +144,7 @@ import {InstructionSubmissionService} from "../services/core/instruction-submiss
                                     <BR>
                                     <label class="the-label">Dataset Types:</label><BR>
                                     <name-id-list-box
-                                            [fileItems$]="fileItemsDatasetTypes$"
-                                            (onError)="handleHeaderStatusMessage($event)">
+                                            [fileItems$]="fileItemsDatasetTypes$">
                                     </name-id-list-box>
                                 </div>
 
@@ -155,9 +154,7 @@ import {InstructionSubmissionService} from "../services/core/instruction-submiss
                                     <BR>
                                     <label class="the-label">Experiment:</label><BR>
                                     <name-id-list-box
-                                            [fileItems$]="fileItemsExperiments$"
-                                            (onNameIdSelected)="handleExperimentSelected($event)"
-                                            (onError)="handleHeaderStatusMessage($event)">
+                                            [fileItems$]="fileItemsExperiments$">
                                     </name-id-list-box>
 
                                 </div>
@@ -707,21 +704,6 @@ export class ExtractorRoot implements OnInit {
     public selectedExperimentId: string;
     private selectedExperimentDetailId: string;
 
-    public handleExperimentSelected(arg: NameId) {
-        this.selectedExperimentId = arg.id;
-
-        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
-            NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT,
-            this.selectedExperimentId)
-        // this.store.dispatch(new fileItemAction.SetFilterValueAction({
-        //     gobiiExtractFilterType: this.gobiiExtractFilterType,
-        //     nameIdRequestParams: this.nameIdRequestParamsDataset
-        // }));
-        this.selectedExperimentDetailId = arg.id;
-        this.displayExperimentDetail = true;
-
-        //console.log("selected contact itemId:" + arg);
-    }
 
 
 // ********************************************************************
