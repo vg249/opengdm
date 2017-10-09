@@ -11,6 +11,7 @@ import {GobiiExtractFormat} from "../../model/type-extract-format";
 import {ProcessType} from "../../model/type-process";
 import {NameIdService} from "./name-id-service";
 import {FileItemParams} from "../../model/name-id-request-params";
+import * as historyAction from '../../store/actions/history-action';
 import * as fileItemActions from '../../store/actions/fileitem-action'
 import * as fromRoot from '../../store/reducers';
 
@@ -203,8 +204,9 @@ export class FileItemService {
                                     break;
 
                                 default:
-                                    console.log(new HeaderStatusMessage("Unknown label type "
-                                        + NameIdLabelType[nameIdRequestParamsToLoad.getMameIdLabelType()], null, null))
+                                    this.store.dispatch(new historyAction.AddStatusAction(new HeaderStatusMessage("Unknown label type "
+                                        + NameIdLabelType[nameIdRequestParamsToLoad.getMameIdLabelType()], null, null)));
+
                             }
 
 
@@ -282,8 +284,7 @@ export class FileItemService {
 
                 }, // Observer=>next
                 responseHeader => {
-                    //this.handleHeaderStatus(responseHeader);
-                    console.log(responseHeader);
+                    this.store.dispatch(new historyAction.AddStatusAction(responseHeader));
                 }); // subscribe
     }
 
