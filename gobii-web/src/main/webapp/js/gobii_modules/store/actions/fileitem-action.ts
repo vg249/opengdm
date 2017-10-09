@@ -69,6 +69,7 @@ export class ReplaceInExtractByItemIdAction implements Action {
     readonly type = REPLACE_IN_EXTRACT_BY_ITEM_ID;
 
     constructor(public payload: {
+        gobiiExtractFilterType: GobiiExtractFilterType,
         itemIdCurrentlyInExtract: string,
         itemIdToReplaceItWith: string
 

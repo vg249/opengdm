@@ -125,9 +125,8 @@ import {InstructionSubmissionService} from "../services/core/instruction-submiss
                                 <div *ngIf="displaySelectorPi">
                                     <label class="the-label">Principle Investigator:</label><BR>
                                     <name-id-list-box
-                                            [fileItems$]="fileItemsContactsPI$"
-                                            (onNameIdSelected)="handleContactForPiSelected($event)"
-                                            (onError)="handleHeaderStatusMessage($event)">
+                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                            [fileItems$]="fileItemsContactsPI$">
                                     </name-id-list-box>
 
                                 </div>
@@ -343,10 +342,7 @@ export class ExtractorRoot implements OnInit {
     public loggedInUser: string = null;
 
 
-
-
-    constructor(
-                private _dtoRequestServiceContact: DtoRequestService<Contact>,
+    constructor(private _dtoRequestServiceContact: DtoRequestService<Contact>,
                 private _authenticationService: AuthenticationService,
                 private _dtoRequestServiceServerConfigs: DtoRequestService<ServerConfig[]>,
                 private store: Store<fromRoot.State>,
@@ -404,7 +400,7 @@ export class ExtractorRoot implements OnInit {
                     scope$.handleAddMessage("Connected to crop config: " + scope$.selectedServerConfig.crop);
 
                 } else {
-                    scope$.serverConfigList = [new ServerConfig("<ERROR NO SERVERS>", "<ERROR>", "<ERROR>", 0,"")];
+                    scope$.serverConfigList = [new ServerConfig("<ERROR NO SERVERS>", "<ERROR>", "<ERROR>", 0, "")];
                 }
             },
             dtoHeaderResponse => {
@@ -425,7 +421,7 @@ export class ExtractorRoot implements OnInit {
             this.loggedInUser)).subscribe(contact => {
 
 
-                let foo:string= "foo";
+                let foo: string = "foo";
 
                 if (contact && contact.contactId && contact.contactId > 0) {
 
@@ -439,7 +435,7 @@ export class ExtractorRoot implements OnInit {
                             .setItemId(contact.contactId.toLocaleString()),
                         true);
 
-            //        this.handleContactForPiSelected(new NameId(contact.contactId.toString(),contact.userName,EntityType.Contacts));
+                    //        this.handleContactForPiSelected(new NameId(contact.contactId.toString(),contact.userName,EntityType.Contacts));
 
                     // scope$._fileModelTreeService.put(
                     //     GobiiFileItem.build(scope$.gobiiExtractFilterType, ProcessType.CREATE)
@@ -668,15 +664,15 @@ export class ExtractorRoot implements OnInit {
 // ********************************************** PI USER SELECTION
     public selectedContactIdForPi: string;
 
-    public handleContactForPiSelected(arg) {
-
-        this.selectedContactIdForPi = arg.id;
-        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
-            NameIdFilterParamTypes.PROJECTS_BY_CONTACT,
-            this.selectedContactIdForPi);
-
-        //console.log("selected contact itemId:" + arg);
-    }
+    // public handleContactForPiSelected(arg) {
+    //
+    //     this.selectedContactIdForPi = arg.id;
+    //     this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
+    //         NameIdFilterParamTypes.PROJECTS_BY_CONTACT,
+    //         this.selectedContactIdForPi);
+    //
+    //     //console.log("selected contact itemId:" + arg);
+    // }
 
 // ********************************************************************
 // ********************************************** HAPMAP SELECTION
@@ -788,7 +784,7 @@ export class ExtractorRoot implements OnInit {
     private dataSetIdToUncheck: number;
 
     private handleAddMessage(arg) {
-        this.store.dispatch(new historyAction.AddStatusAction(new HeaderStatusMessage(arg,StatusLevel.OK,undefined)))
+        this.store.dispatch(new historyAction.AddStatusAction(new HeaderStatusMessage(arg, StatusLevel.OK, undefined)))
 //        this.messages$.unshift(arg);
     }
 
@@ -903,7 +899,6 @@ export class ExtractorRoot implements OnInit {
     }
 
 
-
     private handleExtractSubmission() {
 
         this.instructionSubmissionService.submit(this.gobiiExtractFilterType);
@@ -912,6 +907,21 @@ export class ExtractorRoot implements OnInit {
 
     ngOnInit(): any {
 
+        // this.store.select(fromRoot.getSelectedPiContacts)
+        //     .subscribe(
+        //         contacts => {
+        //             if (contacts && contacts.length > 0) {
+        //                 let selectedPiContact: GobiiFileItem = contacts[0]; // we assume there is only one
+        //                 this.selectedContactIdForPi = selectedPiContact.getItemId();
+        //                 this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
+        //                     NameIdFilterParamTypes.PROJECTS_BY_CONTACT,
+        //                     this.selectedContactIdForPi);
+        //             }
+        //         },
+        //         error => {
+        //             this.store.dispatch(new historyAction.AddStatusMessageAction(error))
+        //         }
+        //     );
 
         this.initializeServerConfigs();
 

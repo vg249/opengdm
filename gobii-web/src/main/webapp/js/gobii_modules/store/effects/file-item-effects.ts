@@ -9,6 +9,7 @@ import * as treeNodeActions from '../actions/treenode-action'
 import {TreeStructureService} from "../../services/core/tree-structure-service";
 import {GobiiTreeNode} from "../../model/GobiiTreeNode";
 import * as fromRoot from '../reducers';
+import * as historyAction from '../../store/actions/history-action';
 
 import {NameIdService} from "../../services/core/name-id-service";
 import {FileItemParams} from "../../model/name-id-request-params";
@@ -20,6 +21,9 @@ import {ProcessType} from "../../model/type-process";
 import {Observable} from "rxjs/Observable";
 import {ADD_TO_EXTRACT_BY_ITEM_ID} from "../actions/fileitem-action";
 import {Store} from "@ngrx/store";
+import {FileItemService} from "../../services/core/file-item-service";
+import {NameIdFilterParamTypes} from "../../model/type-nameid-filter-params";
+import {EntitySubType, EntityType} from "../../model/type-entity";
 
 @Injectable()
 export class FileItemEffects {
@@ -65,10 +69,10 @@ export class FileItemEffects {
      */
 
 
-    // this effect acts on the content of the tree nodes (e.g., their names and icons so forth)
-    // and then dispatches them to the tree node reducer. The tree node reducer holds the nodes
-    // in state. Thus, the hierarchical arrangement of nodes is managed by the reducer in
-    // accordance with how the nodes are defined by the tree service.
+        // this effect acts on the content of the tree nodes (e.g., their names and icons so forth)
+        // and then dispatches them to the tree node reducer. The tree node reducer holds the nodes
+        // in state. Thus, the hierarchical arrangement of nodes is managed by the reducer in
+        // accordance with how the nodes are defined by the tree service.
     @Effect()
     selectForExtract$ = this.actions$
         .ofType(fileItemActions.ADD_TO_EXTRACT)
@@ -91,11 +95,24 @@ export class FileItemEffects {
                     let fileItemUniqueId: String = action.payload.itemIdToReplaceItWith;
                     this.store.select(fromRoot.getAllFileItems)
                         .subscribe(all => {
-                            let fileItem: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === fileItemUniqueId);
-                            let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(fileItem);
-                            observer.next(treeNode);
-                            observer.complete();
-                        }).unsubscribe();
+                                let fileItem: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === fileItemUniqueId);
+
+                                if(fileItem.getEntityType() === EntityType.Contacts
+                                && (fileItem.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR )) {
+
+                                    let selectedContactIdForPi: string = fileItem.getItemId();
+                                    this.fileItemService.loadWithFilterParams(action.payload.gobiiExtractFilterType,
+                                        NameIdFilterParamTypes.PROJECTS_BY_CONTACT,
+                                        selectedContactIdForPi);
+                                }
+
+                                let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(fileItem);
+                                observer.next(treeNode);
+                                observer.complete();
+                            },
+                            error => {
+                                this.store.dispatch(new historyAction.AddStatusMessageAction(error))
+                            }).unsubscribe();
 
                 }).map(gfi => {
                     return new treeNodeActions.PlaceTreeNodeAction(gfi)
@@ -117,11 +134,14 @@ export class FileItemEffects {
                     let fileItemUniqueId: String = action.payload;
                     this.store.select(fromRoot.getAllFileItems)
                         .subscribe(all => {
-                            let fileItem: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === fileItemUniqueId);
-                            let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(fileItem);
-                            observer.next(treeNode);
-                            observer.complete();
-                        }).unsubscribe();
+                                let fileItem: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === fileItemUniqueId);
+                                let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(fileItem);
+                                observer.next(treeNode);
+                                observer.complete();
+                            },
+                            error => {
+                                this.store.dispatch(new historyAction.AddStatusMessageAction(error))
+                            }).unsubscribe();
 
                 }).map(gfi => {
                     return new treeNodeActions.PlaceTreeNodeAction(gfi)
@@ -227,6 +247,7 @@ export class FileItemEffects {
 
     constructor(private actions$: Actions,
                 private treeStructureService: TreeStructureService,
+                private fileItemService: FileItemService,
                 private store: Store<fromRoot.State>,
                 private router: Router) {
     }

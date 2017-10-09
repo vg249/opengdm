@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-action"], function (exports_1, context_1) {
+System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-action", "../store/actions/history-action"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, store_1, fileAction, NameIdListBoxComponent;
+    var core_1, store_1, fileAction, historyAction, NameIdListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -21,6 +21,9 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
             },
             function (fileAction_1) {
                 fileAction = fileAction_1;
+            },
+            function (historyAction_1) {
+                historyAction = historyAction_1;
             }
         ],
         execute: function () {
@@ -28,8 +31,10 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
                 function NameIdListBoxComponent(store, differs) {
                     this.store = store;
                     this.differs = differs;
-                    this.onNameIdSelected = new core_1.EventEmitter();
-                    this.onError = new core_1.EventEmitter();
+                    // private handleHeaderStatus(headerStatusMessage: HeaderStatusMessage) {
+                    //
+                    //     this.onError.emit(headerStatusMessage);
+                    // }
                     this.previousSelectedItemId = null;
                     this.differ = differs.find({}).create(null);
                 } // ctor
@@ -42,10 +47,9 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
                         if (items && items.length > 0) {
                             _this.previousSelectedItemId = items[0].getFileItemUniqueId();
                         }
+                    }, function (error) {
+                        _this.store.dispatch(new historyAction.AddStatusMessageAction(error));
                     });
-                };
-                NameIdListBoxComponent.prototype.handleHeaderStatus = function (headerStatusMessage) {
-                    this.onError.emit(headerStatusMessage);
                 };
                 NameIdListBoxComponent.prototype.handleFileItemSelected = function (arg) {
                     var currentFileItemUniqueId = arg.currentTarget.value;
@@ -69,6 +73,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
                     //
                     // }
                     this.store.dispatch(new fileAction.ReplaceInExtractByItemIdAction({
+                        gobiiExtractFilterType: this.gobiiExtractFilterType,
                         itemIdCurrentlyInExtract: this.previousSelectedItemId,
                         itemIdToReplaceItWith: currentFileItemUniqueId
                     }));
@@ -80,8 +85,8 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
                 NameIdListBoxComponent = __decorate([
                     core_1.Component({
                         selector: 'name-id-list-box',
-                        inputs: ['fileItems$'],
-                        outputs: ['onNameIdSelected', 'onError'],
+                        inputs: ['fileItems$', 'gobiiExtractFilterType'],
+                        outputs: [],
                         template: "<select (change)=\"handleFileItemSelected($event)\">\n        <option *ngFor=\"let fileItem of fileItems$ | async\"\n                [value]=\"fileItem.getFileItemUniqueId()\"\n                [selected]=\"fileItem.getSelected()\">{{fileItem.getItemName()}}\n        </option>\n    </select>\n    " // end template
                     }),
                     __metadata("design:paramtypes", [store_1.Store,

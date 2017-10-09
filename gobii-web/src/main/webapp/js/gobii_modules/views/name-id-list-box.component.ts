@@ -8,6 +8,7 @@ import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import {Store} from "@ngrx/store";
 import * as fromRoot from '../store/reducers';
 import * as fileAction from '../store/actions/fileitem-action';
+import * as historyAction from '../store/actions/history-action';
 import {Observable} from "rxjs/Observable";
 import {FileItemService} from "../services/core/file-item-service";
 import {ProcessType} from "../model/type-process";
@@ -16,8 +17,8 @@ import {ExtractorItemType} from "../model/file-model-node";
 
 @Component({
     selector: 'name-id-list-box',
-    inputs: ['fileItems$'],
-    outputs: ['onNameIdSelected', 'onError'],
+    inputs: ['fileItems$','gobiiExtractFilterType'],
+    outputs: [],
     template: `<select (change)="handleFileItemSelected($event)">
         <option *ngFor="let fileItem of fileItems$ | async"
                 [value]="fileItem.getFileItemUniqueId()"
@@ -34,13 +35,14 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
 
     // keep all of these until we change the interface
     public fileItems$: Observable<GobiiFileItem[]>;
-    public onNameIdSelected: EventEmitter<NameId> = new EventEmitter();
-    public onError: EventEmitter<HeaderStatusMessage> = new EventEmitter();
+    //public onNameIdSelected: EventEmitter<NameId> = new EventEmitter();
+    //public onError: EventEmitter<HeaderStatusMessage> = new EventEmitter();
 
     //private uniqueId:string;
 
     differ: any;
 
+    private gobiiExtractFilterType: GobiiExtractFilterType;
 
     constructor(private store: Store<fromRoot.State>,
                 private differs: KeyValueDiffers) {
@@ -57,17 +59,20 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
         this
             .fileItems$
             .subscribe(items => {
-                if (items && items.length > 0) {
-                    this.previousSelectedItemId = items[0].getFileItemUniqueId()
-                }
-            });
+                    if (items && items.length > 0) {
+                        this.previousSelectedItemId = items[0].getFileItemUniqueId()
+                    }
+                },
+                error => {
+                    this.store.dispatch(new historyAction.AddStatusMessageAction(error))
+                });
 
     }
 
-    private handleHeaderStatus(headerStatusMessage: HeaderStatusMessage) {
-
-        this.onError.emit(headerStatusMessage);
-    }
+    // private handleHeaderStatus(headerStatusMessage: HeaderStatusMessage) {
+    //
+    //     this.onError.emit(headerStatusMessage);
+    // }
 
 
     previousSelectedItemId: string = null;
@@ -100,6 +105,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
         // }
 
         this.store.dispatch(new fileAction.ReplaceInExtractByItemIdAction({
+            gobiiExtractFilterType: this.gobiiExtractFilterType,
             itemIdCurrentlyInExtract: this.previousSelectedItemId,
             itemIdToReplaceItWith: currentFileItemUniqueId
         }));

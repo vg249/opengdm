@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/operator/switchMap", "rxjs/add/observable/of", "../actions/fileitem-action", "../actions/treenode-action", "../../services/core/tree-structure-service", "../reducers", "rxjs/Observable", "@ngrx/store"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/operator/switchMap", "rxjs/add/observable/of", "../actions/fileitem-action", "../actions/treenode-action", "../../services/core/tree-structure-service", "../reducers", "../../store/actions/history-action", "rxjs/Observable", "@ngrx/store", "../../services/core/file-item-service", "../../model/type-nameid-filter-params", "../../model/type-entity"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, router_1, effects_1, fileItemActions, treeNodeActions, tree_structure_service_1, fromRoot, Observable_1, store_1, FileItemEffects;
+    var core_1, router_1, effects_1, fileItemActions, treeNodeActions, tree_structure_service_1, fromRoot, historyAction, Observable_1, store_1, file_item_service_1, type_nameid_filter_params_1, type_entity_1, FileItemEffects;
     return {
         setters: [
             function (core_1_1) {
@@ -38,11 +38,23 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
             function (fromRoot_1) {
                 fromRoot = fromRoot_1;
             },
+            function (historyAction_1) {
+                historyAction = historyAction_1;
+            },
             function (Observable_1_1) {
                 Observable_1 = Observable_1_1;
             },
             function (store_1_1) {
                 store_1 = store_1_1;
+            },
+            function (file_item_service_1_1) {
+                file_item_service_1 = file_item_service_1_1;
+            },
+            function (type_nameid_filter_params_1_1) {
+                type_nameid_filter_params_1 = type_nameid_filter_params_1_1;
+            },
+            function (type_entity_1_1) {
+                type_entity_1 = type_entity_1_1;
             }
         ],
         execute: function () {
@@ -95,10 +107,11 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                 //
                 //
                 //     }); //switch map
-                function FileItemEffects(actions$, treeStructureService, store, router) {
+                function FileItemEffects(actions$, treeStructureService, fileItemService, store, router) {
                     var _this = this;
                     this.actions$ = actions$;
                     this.treeStructureService = treeStructureService;
+                    this.fileItemService = fileItemService;
                     this.store = store;
                     this.router = router;
                     /**
@@ -161,9 +174,16 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                             _this.store.select(fromRoot.getAllFileItems)
                                 .subscribe(function (all) {
                                 var fileItem = all.find(function (fi) { return fi.getFileItemUniqueId() === fileItemUniqueId; });
+                                if (fileItem.getEntityType() === type_entity_1.EntityType.Contacts
+                                    && (fileItem.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)) {
+                                    var selectedContactIdForPi = fileItem.getItemId();
+                                    _this.fileItemService.loadWithFilterParams(action.payload.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS_BY_CONTACT, selectedContactIdForPi);
+                                }
                                 var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(fileItem);
                                 observer.next(treeNode);
                                 observer.complete();
+                            }, function (error) {
+                                _this.store.dispatch(new historyAction.AddStatusMessageAction(error));
                             }).unsubscribe();
                         }).map(function (gfi) {
                             return new treeNodeActions.PlaceTreeNodeAction(gfi);
@@ -184,6 +204,8 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                                 var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(fileItem);
                                 observer.next(treeNode);
                                 observer.complete();
+                            }, function (error) {
+                                _this.store.dispatch(new historyAction.AddStatusMessageAction(error));
                             }).unsubscribe();
                         }).map(function (gfi) {
                             return new treeNodeActions.PlaceTreeNodeAction(gfi);
@@ -254,6 +276,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                     core_1.Injectable(),
                     __metadata("design:paramtypes", [effects_1.Actions,
                         tree_structure_service_1.TreeStructureService,
+                        file_item_service_1.FileItemService,
                         store_1.Store,
                         router_1.Router])
                 ], FileItemEffects);
