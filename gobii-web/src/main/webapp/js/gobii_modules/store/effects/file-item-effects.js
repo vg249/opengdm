@@ -150,6 +150,26 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                         var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(action.payload);
                         return new treeNodeActions.PlaceTreeNodeAction(treeNode);
                     });
+                    this.replaceInExtract$ = this.actions$
+                        .ofType(fileItemActions.REPLACE_IN_EXTRACT_BY_ITEM_ID)
+                        .switchMap(function (action) {
+                        // this is scary. The store is the single source of truth. The only way to get the fileItem for
+                        // the fileitem id is to get it from the store, and for that to work here, we need to wrap the
+                        // select in an Observable.
+                        return Observable_1.Observable.create(function (observer) {
+                            var fileItemUniqueId = action.payload.itemIdToReplaceItWith;
+                            _this.store.select(fromRoot.getAllFileItems)
+                                .subscribe(function (all) {
+                                var fileItem = all.find(function (fi) { return fi.getFileItemUniqueId() === fileItemUniqueId; });
+                                var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(fileItem);
+                                observer.next(treeNode);
+                                observer.complete();
+                            }).unsubscribe();
+                        }).map(function (gfi) {
+                            return new treeNodeActions.PlaceTreeNodeAction(gfi);
+                        });
+                    } //switchMap()
+                    );
                     this.selectForExtractByFileItemId$ = this.actions$
                         .ofType(fileItemActions.ADD_TO_EXTRACT_BY_ITEM_ID)
                         .switchMap(function (action) {
@@ -164,7 +184,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                                 var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(fileItem);
                                 observer.next(treeNode);
                                 observer.complete();
-                            });
+                            }).unsubscribe();
                         }).map(function (gfi) {
                             return new treeNodeActions.PlaceTreeNodeAction(gfi);
                         });
@@ -202,6 +222,10 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                     effects_1.Effect(),
                     __metadata("design:type", Object)
                 ], FileItemEffects.prototype, "selectForExtract$", void 0);
+                __decorate([
+                    effects_1.Effect(),
+                    __metadata("design:type", Object)
+                ], FileItemEffects.prototype, "replaceInExtract$", void 0);
                 __decorate([
                     effects_1.Effect(),
                     __metadata("design:type", Object)

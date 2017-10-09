@@ -6,6 +6,7 @@ import {NameIdFilterParamTypes} from "../../model/type-nameid-filter-params";
 
 export const ADD_TO_EXTRACT = '[GobiiFileItem] Add to Extract';
 export const ADD_TO_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Add to Extract by ID';
+export const REPLACE_IN_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Replace In Extract by ID';
 export const REMOVE_FROM_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Remove from Extract by ID';
 export const REMOVE_FROM_EXTRACT = '[GobiiFileItem] Remove from Extract';
 export const SET_FILTER_VALUE = '[GobiiFileItem] Set Filter Value';
@@ -64,6 +65,16 @@ export class AddToExtractByItemIdAction implements Action {
     }
 }
 
+export class ReplaceInExtractByItemIdAction implements Action {
+    readonly type = REPLACE_IN_EXTRACT_BY_ITEM_ID;
+
+    constructor(public payload: {
+        itemIdCurrentlyInExtract: string,
+        itemIdToReplaceItWith: string
+
+    }) {
+    }
+}
 
 export class SetFilterValueAction implements Action {
     readonly type = SET_FILTER_VALUE;
@@ -80,7 +91,8 @@ export class SetExtractType implements Action {
     readonly type = SET_EXTRACT_TYPE;
 
     constructor(public payload: {
-        gobiiExtractFilterType: GobiiExtractFilterType}) {
+        gobiiExtractFilterType: GobiiExtractFilterType
+    }) {
     }
 }
 
@@ -113,5 +125,6 @@ export type All
     | RemoveFromExractByItemIdAction
     | RemoveAllFromExtractAction
     | LoadFileItemtAction
-    | SetExtractType;
+    | SetExtractType
+    | ReplaceInExtractByItemIdAction;
 

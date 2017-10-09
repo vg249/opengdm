@@ -79,6 +79,32 @@ export class FileItemEffects {
         );
 
     @Effect()
+    replaceInExtract$ = this.actions$
+        .ofType(fileItemActions.REPLACE_IN_EXTRACT_BY_ITEM_ID)
+        .switchMap((action: fileItemActions.ReplaceInExtractByItemIdAction) => {
+
+                // this is scary. The store is the single source of truth. The only way to get the fileItem for
+                // the fileitem id is to get it from the store, and for that to work here, we need to wrap the
+                // select in an Observable.
+                return Observable.create(observer => {
+
+                    let fileItemUniqueId: String = action.payload.itemIdToReplaceItWith;
+                    this.store.select(fromRoot.getAllFileItems)
+                        .subscribe(all => {
+                            let fileItem: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === fileItemUniqueId);
+                            let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(fileItem);
+                            observer.next(treeNode);
+                            observer.complete();
+                        }).unsubscribe();
+
+                }).map(gfi => {
+                    return new treeNodeActions.PlaceTreeNodeAction(gfi)
+                })
+
+            } //switchMap()
+        );
+
+    @Effect()
     selectForExtractByFileItemId$ = this.actions$
         .ofType(fileItemActions.ADD_TO_EXTRACT_BY_ITEM_ID)
         .switchMap((action: fileItemActions.AddToExtractByItemIdAction) => {
@@ -95,7 +121,7 @@ export class FileItemEffects {
                             let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(fileItem);
                             observer.next(treeNode);
                             observer.complete();
-                        })
+                        }).unsubscribe();
 
                 }).map(gfi => {
                     return new treeNodeActions.PlaceTreeNodeAction(gfi)

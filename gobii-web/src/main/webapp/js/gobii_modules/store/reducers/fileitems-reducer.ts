@@ -137,6 +137,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
                     .allFileItems
                     .filter(stateItem =>
                         (
+                            stateItem.getGobiiExtractFilterType() === newItem.getGobiiExtractFilterType() &&
                             stateItem.getExtractorItemType() === newItem.getExtractorItemType() &&
                             stateItem.getEntityType() === newItem.getEntityType() &&
                             stateItem.getEntitySubType() === newItem.getEntitySubType() &&
@@ -181,6 +182,22 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             break;
 
         } //
+
+        case gobiiFileItemAction.REPLACE_IN_EXTRACT_BY_ITEM_ID : {
+
+            let itemCurrentlyInExtract: GobiiFileItem = state
+                .allFileItems
+                .find(fi => fi.getFileItemUniqueId() === action.payload.itemIdCurrentlyInExtract);
+
+            let itemToReplaceItWith: GobiiFileItem = state
+                .allFileItems
+                .find(fi => fi.getFileItemUniqueId() === action.payload.itemIdToReplaceItWith);
+
+            let stateAfterRemove: State = removeFromExtractItems(state, itemCurrentlyInExtract);
+            returnVal = addToExtractItems(stateAfterRemove, itemToReplaceItWith);
+
+            break;
+        }
 
         case gobiiFileItemAction.REMOVE_FROM_EXTRACT: {
 
@@ -284,7 +301,11 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
  * in export-format-component.ts
  */
 
-export const getFileItems = (state: State) => state.allFileItems;
+export const getGobiiExtractFilterType = (state: State) => state.gobiiExtractFilterType;
+
+export const getFileItems = (state: State) => state.allFileItems.filter(fi =>
+    fi.getGobiiExtractFilterType() === state.gobiiExtractFilterType
+);
 
 export const getUniqueIds = (state: State) => state.allFileItems.map(fileItem => fileItem.getFileItemUniqueId());
 

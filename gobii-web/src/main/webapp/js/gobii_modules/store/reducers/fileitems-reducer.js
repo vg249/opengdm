@@ -74,7 +74,8 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                     return state
                         .allFileItems
                         .filter(function (stateItem) {
-                        return (stateItem.getExtractorItemType() === newItem.getExtractorItemType() &&
+                        return (stateItem.getGobiiExtractFilterType() === newItem.getGobiiExtractFilterType() &&
+                            stateItem.getExtractorItemType() === newItem.getExtractorItemType() &&
                             stateItem.getEntityType() === newItem.getEntityType() &&
                             stateItem.getEntitySubType() === newItem.getEntitySubType() &&
                             stateItem.getCvFilterType() === newItem.getCvFilterType() &&
@@ -104,6 +105,17 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 returnVal = addToExtractItems(state, gobiiFileItem);
                 break;
             } //
+            case gobiiFileItemAction.REPLACE_IN_EXTRACT_BY_ITEM_ID: {
+                var itemCurrentlyInExtract = state
+                    .allFileItems
+                    .find(function (fi) { return fi.getFileItemUniqueId() === action.payload.itemIdCurrentlyInExtract; });
+                var itemToReplaceItWith = state
+                    .allFileItems
+                    .find(function (fi) { return fi.getFileItemUniqueId() === action.payload.itemIdToReplaceItWith; });
+                var stateAfterRemove = removeFromExtractItems(state, itemCurrentlyInExtract);
+                returnVal = addToExtractItems(stateAfterRemove, itemToReplaceItWith);
+                break;
+            }
             case gobiiFileItemAction.REMOVE_FROM_EXTRACT: {
                 var gobiiFileItemPayload = action.payload;
                 returnVal = removeFromExtractItems(state, gobiiFileItemPayload);
@@ -162,7 +174,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
         return returnVal;
     }
     exports_1("fileItemsReducer", fileItemsReducer);
-    var _this, reselect_1, gobii_file_item_1, gobiiFileItemAction, file_model_node_1, type_entity_1, type_nameid_filter_params_1, type_process_1, entity_labels_1, type_extractor_filter_1, type_extract_format_1, initialState, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getPiContacts, getFirstPiContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTerms, getFirstCvTerm, getMapsets, getFirstmapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment, getSelectedFileFormat, getJobId, getUploadFiles;
+    var _this, reselect_1, gobii_file_item_1, gobiiFileItemAction, file_model_node_1, type_entity_1, type_nameid_filter_params_1, type_process_1, entity_labels_1, type_extractor_filter_1, type_extract_format_1, initialState, getGobiiExtractFilterType, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getPiContacts, getFirstPiContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTerms, getFirstCvTerm, getMapsets, getFirstmapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment, getSelectedFileFormat, getJobId, getUploadFiles;
     return {
         setters: [
             function (reselect_1_1) {
@@ -216,7 +228,10 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
              * has _not_ been resulved. So selectors _must_ return non-primtive objects. See my comment
              * in export-format-component.ts
              */
-            exports_1("getFileItems", getFileItems = function (state) { return state.allFileItems; });
+            exports_1("getGobiiExtractFilterType", getGobiiExtractFilterType = function (state) { return state.gobiiExtractFilterType; });
+            exports_1("getFileItems", getFileItems = function (state) { return state.allFileItems.filter(function (fi) {
+                return fi.getGobiiExtractFilterType() === state.gobiiExtractFilterType;
+            }); });
             exports_1("getUniqueIds", getUniqueIds = function (state) { return state.allFileItems.map(function (fileItem) { return fileItem.getFileItemUniqueId(); }); });
             exports_1("getSelectedUniqueIds", getSelectedUniqueIds = function (state) { return state.uniqueIdsOfExtractFileItems; });
             exports_1("getFilters", getFilters = function (state) { return state.filters; });

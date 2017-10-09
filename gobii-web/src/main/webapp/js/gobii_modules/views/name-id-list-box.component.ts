@@ -53,7 +53,14 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
 
     ngOnInit(): any {
 
-     //   this.fileItems$.subscribe( items => console.log("Items count: " + items.length));
+        //   this.fileItems$.subscribe( items => console.log("Items count: " + items.length));
+        this
+            .fileItems$
+            .subscribe(items => {
+                if (items && items.length > 0) {
+                    this.previousSelectedItemId = items[0].getFileItemUniqueId()
+                }
+            });
 
     }
 
@@ -69,33 +76,38 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
 
         let currentFileItemUniqueId: string = arg.currentTarget.value;
 
-        this.store.select(fromRoot.getAllFileItems)
-            .subscribe(all => {
-                let selectedFileItem: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === currentFileItemUniqueId);
-                if (( selectedFileItem.getProcessType() !== ProcessType.DUMMY )
-                    && (selectedFileItem.getExtractorItemType() !== ExtractorItemType.LABEL)) {
+        // this.store.select(fromRoot.getAllFileItems)
+        //     .subscribe(all => {
+        //         let selectedFileItem: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === currentFileItemUniqueId);
+        //
+        if (this.previousSelectedItemId) {
 
-                    this.previousSelectedItemId = currentFileItemUniqueId;
-                    this.store.dispatch(new fileAction.AddToExtractAction(selectedFileItem));
+            //let previousItem: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === this.previousSelectedItemId);
+            // this.store.dispatch(new fileAction.RemoveFromExtractAction(previousItem));
 
-                    this.onNameIdSelected
-                        .emit(new NameId(selectedFileItem.getItemId(),
-                            selectedFileItem.getItemName(),
-                            selectedFileItem.getEntityType()));
+        }
 
-                } else {
-                    if (this.previousSelectedItemId) {
+        // if (( selectedFileItem.getProcessType() !== ProcessType.DUMMY )
+        //     && (selectedFileItem.getExtractorItemType() !== ExtractorItemType.LABEL)) {
+        //
+        //     //this.store.dispatch(new fileAction.AddToExtractAction(selectedFileItem));
+        //
+        //     this.onNameIdSelected
+        //         .emit(new NameId(selectedFileItem.getItemId(),
+        //             selectedFileItem.getItemName(),
+        //             selectedFileItem.getEntityType()));
+        //
+        // }
 
-                        let previousItem: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === this.previousSelectedItemId);
-                        this.store.dispatch(new fileAction.RemoveFromExtractAction(previousItem));
+        this.store.dispatch(new fileAction.ReplaceInExtractByItemIdAction({
+            itemIdCurrentlyInExtract: this.previousSelectedItemId,
+            itemIdToReplaceItWith: currentFileItemUniqueId
+        }));
 
-                        this.onNameIdSelected
-                            .emit(new NameId(previousItem.getItemId(),
-                                previousItem.getItemName(),
-                                previousItem.getEntityType()));
-                    }
-                }
-            }).unsubscribe(); //unsubscribe or else this subscribe() keeps the state collection locked and the app freezes really badly
+
+        this.previousSelectedItemId = currentFileItemUniqueId;
+
+//            }).unsubscribe(); //unsubscribe or else this subscribe() keeps the state collection locked and the app freezes really badly
 
     }
 
