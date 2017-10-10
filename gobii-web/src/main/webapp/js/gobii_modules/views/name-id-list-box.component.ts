@@ -41,7 +41,7 @@ export class NameIdListBoxComponent  {
         this
             .fileItems$
             .subscribe(items => {
-                    if (items && items.length > 0) {
+                    if (this.previousSelectedItemId === null && items && items.length > 0) {
                         this.previousSelectedItemId = items[0].getFileItemUniqueId()
                     }
                 },
@@ -60,15 +60,16 @@ export class NameIdListBoxComponent  {
         }
 
 
-        let currentFileItemUniqueId: string = arg.currentTarget.value;
+        let newFileItemUniqueId: string = arg.currentTarget.value;
+        let previousFileItemUniqueId: string = this.previousSelectedItemId;
 
         this.store.dispatch(new fileAction.ReplaceInExtractByItemIdAction({
             gobiiExtractFilterType: this.gobiiExtractFilterType,
-            itemIdCurrentlyInExtract: this.previousSelectedItemId,
-            itemIdToReplaceItWith: currentFileItemUniqueId
+            itemIdCurrentlyInExtract: previousFileItemUniqueId,
+            itemIdToReplaceItWith: newFileItemUniqueId
         }));
 
-        this.previousSelectedItemId = currentFileItemUniqueId;
+        this.previousSelectedItemId = newFileItemUniqueId;
 
     }
 

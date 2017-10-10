@@ -37,7 +37,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
                     this
                         .fileItems$
                         .subscribe(function (items) {
-                        if (items && items.length > 0) {
+                        if (_this.previousSelectedItemId === null && items && items.length > 0) {
                             _this.previousSelectedItemId = items[0].getFileItemUniqueId();
                         }
                     }, function (error) {
@@ -48,13 +48,14 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
                     if (!this.gobiiExtractFilterType) {
                         this.store.dispatch(new historyAction.AddStatusMessageAction("The gobiiExtractFilterType property is not set"));
                     }
-                    var currentFileItemUniqueId = arg.currentTarget.value;
+                    var newFileItemUniqueId = arg.currentTarget.value;
+                    var previousFileItemUniqueId = this.previousSelectedItemId;
                     this.store.dispatch(new fileAction.ReplaceInExtractByItemIdAction({
                         gobiiExtractFilterType: this.gobiiExtractFilterType,
-                        itemIdCurrentlyInExtract: this.previousSelectedItemId,
-                        itemIdToReplaceItWith: currentFileItemUniqueId
+                        itemIdCurrentlyInExtract: previousFileItemUniqueId,
+                        itemIdToReplaceItWith: newFileItemUniqueId
                     }));
-                    this.previousSelectedItemId = currentFileItemUniqueId;
+                    this.previousSelectedItemId = newFileItemUniqueId;
                 };
                 NameIdListBoxComponent = __decorate([
                     core_1.Component({

@@ -94,38 +94,41 @@ export class FileItemEffects {
                 // the subscribe of a reducer.select(): if you do, you end up with an infinite loop
                 return Observable.create(observer => {
 
-                    let fileItemUniqueId: String = action.payload.itemIdToReplaceItWith;
+                    let fileItemToReplaceWithUniqueId: string = action.payload.itemIdToReplaceItWith;
+                    let fileItemCurrentlyInExtractUniqueId: string = action.payload.itemIdCurrentlyInExtract;
                     this.store.select(fromRoot.getAllFileItems)
                         .subscribe(all => {
-                                let fileItem: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === fileItemUniqueId);
+                                let fileItemToReplaceWith: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === fileItemToReplaceWithUniqueId);
 
                                 // RUN FILTERED QUERY TO GET CHILD ITEMS WHEN NECESSARY
                                 let nameIdFilterParamType: NameIdFilterParamTypes = NameIdFilterParamTypes.UNKNOWN;
-                                let filterValue: string = fileItem.getItemId();
+                                let filterValue: string = fileItemToReplaceWith.getItemId();
 
-                                if (fileItem.getEntityType() === EntityType.Contacts
-                                    && (fileItem.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR )) {
+                                if (fileItemToReplaceWith.getEntityType() === EntityType.Contacts
+                                    && (fileItemToReplaceWith.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR )) {
                                     nameIdFilterParamType = NameIdFilterParamTypes.PROJECTS_BY_CONTACT;
-                                } else if (fileItem.getEntityType() === EntityType.Projects) {
+                                } else if (fileItemToReplaceWith.getEntityType() === EntityType.Projects) {
                                     nameIdFilterParamType = NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT;
-                                } else if (fileItem.getEntityType() === EntityType.Experiments) {
+                                } else if (fileItemToReplaceWith.getEntityType() === EntityType.Experiments) {
                                     nameIdFilterParamType = NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT;
                                 }
 
                                 if (nameIdFilterParamType !== NameIdFilterParamTypes.UNKNOWN
                                     && filterValue != null) {
 
-                                    let gobiiFileItemsToLoad: GobiiFileItem[];
-
                                     this.fileItemService.makeFileLoadActions(action.payload.gobiiExtractFilterType,
                                         nameIdFilterParamType,
                                         filterValue).subscribe(loadFileItemListAction => {
 
-                                            let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(fileItem);
-                                            observer.next(new treeNodeActions.PlaceTreeNodeAction(treeNode));
+                                            if (fileItemToReplaceWith.getExtractorItemType() != ExtractorItemType.LABEL) {
+                                                let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(fileItemToReplaceWith);
+                                                observer.next(new treeNodeActions.PlaceTreeNodeAction(treeNode));
+
+                                            } else {
+                                                observer.next(new fileItemActions.RemoveFromExractByItemIdAction(fileItemCurrentlyInExtractUniqueId));
+                                            }
 
                                             observer.next(loadFileItemListAction);
-
 
 
                                         },

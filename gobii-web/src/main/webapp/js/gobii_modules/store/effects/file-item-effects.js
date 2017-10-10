@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/operator/switchMap", "rxjs/add/observable/of", "../actions/fileitem-action", "../actions/treenode-action", "../../services/core/tree-structure-service", "../reducers", "../../store/actions/history-action", "rxjs/Observable", "@ngrx/store", "../../services/core/file-item-service", "../../model/type-nameid-filter-params", "../../model/type-entity", "rxjs/add/operator/mergeMap"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/operator/switchMap", "rxjs/add/observable/of", "../actions/fileitem-action", "../actions/treenode-action", "../../services/core/tree-structure-service", "../reducers", "../../store/actions/history-action", "../../model/file-model-node", "rxjs/Observable", "@ngrx/store", "../../services/core/file-item-service", "../../model/type-nameid-filter-params", "../../model/type-entity", "rxjs/add/operator/mergeMap"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, router_1, effects_1, fileItemActions, treeNodeActions, tree_structure_service_1, fromRoot, historyAction, Observable_1, store_1, file_item_service_1, type_nameid_filter_params_1, type_entity_1, FileItemEffects;
+    var core_1, router_1, effects_1, fileItemActions, treeNodeActions, tree_structure_service_1, fromRoot, historyAction, file_model_node_1, Observable_1, store_1, file_item_service_1, type_nameid_filter_params_1, type_entity_1, FileItemEffects;
     return {
         setters: [
             function (core_1_1) {
@@ -40,6 +40,9 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
             },
             function (historyAction_1) {
                 historyAction = historyAction_1;
+            },
+            function (file_model_node_1_1) {
+                file_model_node_1 = file_model_node_1_1;
             },
             function (Observable_1_1) {
                 Observable_1 = Observable_1_1;
@@ -173,29 +176,34 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                         // you cannot trigger an ASYNCH requrest such as loadWithFilterParams() from within
                         // the subscribe of a reducer.select(): if you do, you end up with an infinite loop
                         return Observable_1.Observable.create(function (observer) {
-                            var fileItemUniqueId = action.payload.itemIdToReplaceItWith;
+                            var fileItemToReplaceWithUniqueId = action.payload.itemIdToReplaceItWith;
+                            var fileItemCurrentlyInExtractUniqueId = action.payload.itemIdCurrentlyInExtract;
                             _this.store.select(fromRoot.getAllFileItems)
                                 .subscribe(function (all) {
-                                var fileItem = all.find(function (fi) { return fi.getFileItemUniqueId() === fileItemUniqueId; });
+                                var fileItemToReplaceWith = all.find(function (fi) { return fi.getFileItemUniqueId() === fileItemToReplaceWithUniqueId; });
                                 // RUN FILTERED QUERY TO GET CHILD ITEMS WHEN NECESSARY
                                 var nameIdFilterParamType = type_nameid_filter_params_1.NameIdFilterParamTypes.UNKNOWN;
-                                var filterValue = fileItem.getItemId();
-                                if (fileItem.getEntityType() === type_entity_1.EntityType.Contacts
-                                    && (fileItem.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)) {
+                                var filterValue = fileItemToReplaceWith.getItemId();
+                                if (fileItemToReplaceWith.getEntityType() === type_entity_1.EntityType.Contacts
+                                    && (fileItemToReplaceWith.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)) {
                                     nameIdFilterParamType = type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS_BY_CONTACT;
                                 }
-                                else if (fileItem.getEntityType() === type_entity_1.EntityType.Projects) {
+                                else if (fileItemToReplaceWith.getEntityType() === type_entity_1.EntityType.Projects) {
                                     nameIdFilterParamType = type_nameid_filter_params_1.NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT;
                                 }
-                                else if (fileItem.getEntityType() === type_entity_1.EntityType.Experiments) {
+                                else if (fileItemToReplaceWith.getEntityType() === type_entity_1.EntityType.Experiments) {
                                     nameIdFilterParamType = type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT;
                                 }
                                 if (nameIdFilterParamType !== type_nameid_filter_params_1.NameIdFilterParamTypes.UNKNOWN
                                     && filterValue != null) {
-                                    var gobiiFileItemsToLoad = void 0;
                                     _this.fileItemService.makeFileLoadActions(action.payload.gobiiExtractFilterType, nameIdFilterParamType, filterValue).subscribe(function (loadFileItemListAction) {
-                                        var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(fileItem);
-                                        observer.next(new treeNodeActions.PlaceTreeNodeAction(treeNode));
+                                        if (fileItemToReplaceWith.getExtractorItemType() != file_model_node_1.ExtractorItemType.LABEL) {
+                                            var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(fileItemToReplaceWith);
+                                            observer.next(new treeNodeActions.PlaceTreeNodeAction(treeNode));
+                                        }
+                                        else {
+                                            observer.next(new fileItemActions.RemoveFromExractByItemIdAction(fileItemCurrentlyInExtractUniqueId));
+                                        }
                                         observer.next(loadFileItemListAction);
                                     }, function (error) {
                                         _this.store.dispatch(new historyAction.AddStatusMessageAction(error));
