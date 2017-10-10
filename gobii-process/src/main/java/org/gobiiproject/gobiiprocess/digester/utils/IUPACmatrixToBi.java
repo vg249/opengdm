@@ -63,7 +63,7 @@ public class IUPACmatrixToBi {
                             oNucl[i] = iNucl[i] + iNucl[i]; // takes care of "+" or "-" in the input. Converts to "++" and "--" respectively
                         }
                         else {
-                            oNucl[i] = code.name();
+                            oNucl[i] = code.getName();
                         }
                     }
                 }
@@ -99,5 +99,6 @@ public class IUPACmatrixToBi {
         hash.put("K",TG);
         hash.put("Y",TC);
         hash.put("S",GC);
+        hash.put("0",plusminus);
     }
 }
