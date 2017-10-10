@@ -28,19 +28,12 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
         ],
         execute: function () {
             NameIdListBoxComponent = (function () {
-                function NameIdListBoxComponent(store, differs) {
+                function NameIdListBoxComponent(store) {
                     this.store = store;
-                    this.differs = differs;
-                    // private handleHeaderStatus(headerStatusMessage: HeaderStatusMessage) {
-                    //
-                    //     this.onError.emit(headerStatusMessage);
-                    // }
                     this.previousSelectedItemId = null;
-                    this.differ = differs.find({}).create(null);
                 } // ctor
                 NameIdListBoxComponent.prototype.ngOnInit = function () {
                     var _this = this;
-                    //   this.fileItems$.subscribe( items => console.log("Items count: " + items.length));
                     this
                         .fileItems$
                         .subscribe(function (items) {
@@ -52,36 +45,17 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
                     });
                 };
                 NameIdListBoxComponent.prototype.handleFileItemSelected = function (arg) {
-                    var currentFileItemUniqueId = arg.currentTarget.value;
-                    // this.store.select(fromRoot.getAllFileItems)
-                    //     .subscribe(all => {
-                    //         let selectedFileItem: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === currentFileItemUniqueId);
-                    //
-                    if (this.previousSelectedItemId) {
-                        //let previousItem: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === this.previousSelectedItemId);
-                        // this.store.dispatch(new fileAction.RemoveFromExtractAction(previousItem));
+                    if (!this.gobiiExtractFilterType) {
+                        this.store.dispatch(new historyAction.AddStatusMessageAction("The gobiiExtractFilterType property is not set"));
                     }
-                    // if (( selectedFileItem.getProcessType() !== ProcessType.DUMMY )
-                    //     && (selectedFileItem.getExtractorItemType() !== ExtractorItemType.LABEL)) {
-                    //
-                    //     //this.store.dispatch(new fileAction.AddToExtractAction(selectedFileItem));
-                    //
-                    //     this.onNameIdSelected
-                    //         .emit(new NameId(selectedFileItem.getItemId(),
-                    //             selectedFileItem.getItemName(),
-                    //             selectedFileItem.getEntityType()));
-                    //
-                    // }
+                    var currentFileItemUniqueId = arg.currentTarget.value;
                     this.store.dispatch(new fileAction.ReplaceInExtractByItemIdAction({
                         gobiiExtractFilterType: this.gobiiExtractFilterType,
                         itemIdCurrentlyInExtract: this.previousSelectedItemId,
                         itemIdToReplaceItWith: currentFileItemUniqueId
                     }));
                     this.previousSelectedItemId = currentFileItemUniqueId;
-                    //            }).unsubscribe(); //unsubscribe or else this subscribe() keeps the state collection locked and the app freezes really badly
                 };
-                NameIdListBoxComponent.prototype.ngOnChanges = function (changes) {
-                }; // ngonChanges
                 NameIdListBoxComponent = __decorate([
                     core_1.Component({
                         selector: 'name-id-list-box',
@@ -89,8 +63,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
                         outputs: [],
                         template: "<select (change)=\"handleFileItemSelected($event)\">\n        <option *ngFor=\"let fileItem of fileItems$ | async\"\n                [value]=\"fileItem.getFileItemUniqueId()\"\n                [selected]=\"fileItem.getSelected()\">{{fileItem.getItemName()}}\n        </option>\n    </select>\n    " // end template
                     }),
-                    __metadata("design:paramtypes", [store_1.Store,
-                        core_1.KeyValueDiffers])
+                    __metadata("design:paramtypes", [store_1.Store])
                 ], NameIdListBoxComponent);
                 return NameIdListBoxComponent;
             }());
