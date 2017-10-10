@@ -38,8 +38,9 @@ export class FileItemService {
         this.nameIdRequestParams.set(NameIdFilterParamTypes.CV_DATATYPE,
             FileItemParams
                 .build(NameIdFilterParamTypes.CV_DATATYPE,
-                    GobiiExtractFilterType.WHOLE_DATASET,
+                    GobiiExtractFilterType.BY_SAMPLE,
                     EntityType.CvTerms)
+                .setDynamicFilterValue(false)
                 .setCvFilterType(CvFilterType.DATASET_TYPE)
                 .setEntityFilter(EntityFilter.BYTYPENAME)
                 .setFkEntityFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE))
@@ -148,7 +149,9 @@ export class FileItemService {
                                    nameIdRequestParamsToLoad: FileItemParams,
                                    filterValue: string) {
 
-        nameIdRequestParamsToLoad.setFkEntityFilterValue(filterValue);
+        if( nameIdRequestParamsToLoad.getDynamicFilterValue() ) {
+            nameIdRequestParamsToLoad.setFkEntityFilterValue(filterValue);
+        }
 
         this.nameIdService.get(nameIdRequestParamsToLoad)
             .subscribe(nameIds => {
@@ -164,7 +167,7 @@ export class FileItemService {
                                     .setExtractorItemType(ExtractorItemType.ENTITY)
                                     .setEntityType(nameIdRequestParamsToLoad.getEntityType())
                                     .setEntitySubType(nameIdRequestParamsToLoad.getEntitySubType())
-                                    .setCvFilterType(CvFilterType.UNKNOWN)
+                                    .setCvFilterType(nameIdRequestParamsToLoad.getCvFilterType())
                                     .setItemId(n.id)
                                     .setItemName(n.name)
                                     .setSelected(false)
@@ -285,6 +288,10 @@ export class FileItemService {
     }
 
 
+
+    // these next two functions are redundant with respect to the other ones that load nameids
+    // the refactoring path is for the loadWithParams() methods to be deprecated and moved into
+    // effects  so that all fo these things will use effects.
     public makeFileLoadActions(gobiiExtractFilterType: GobiiExtractFilterType,
                                 nameIdFilterParamTypes: NameIdFilterParamTypes,
                                 filterValue: string): Observable<fileItemActions.LoadFileItemListAction[]> {
@@ -298,6 +305,7 @@ export class FileItemService {
 
 
 
+
     private recurseFileItems(gobiiExtractFilterType: GobiiExtractFilterType,
                              nameIdRequestParamsToLoad: FileItemParams,
                              filterValue: string): Observable<fileItemActions.LoadFileItemListAction[]> {
@@ -305,6 +313,9 @@ export class FileItemService {
 
         return Observable.create(observer => {
 
+            if( nameIdRequestParamsToLoad.getDynamicFilterValue() ) {
+                nameIdRequestParamsToLoad.setFkEntityFilterValue(filterValue);
+            }
 
             nameIdRequestParamsToLoad.setFkEntityFilterValue(filterValue);
 
@@ -322,7 +333,7 @@ export class FileItemService {
                                         .setExtractorItemType(ExtractorItemType.ENTITY)
                                         .setEntityType(nameIdRequestParamsToLoad.getEntityType())
                                         .setEntitySubType(nameIdRequestParamsToLoad.getEntitySubType())
-                                        .setCvFilterType(CvFilterType.UNKNOWN)
+                                        .setCvFilterType(nameIdRequestParamsToLoad.getCvFilterType())
                                         .setItemId(n.id)
                                         .setItemName(n.name)
                                         .setSelected(false)

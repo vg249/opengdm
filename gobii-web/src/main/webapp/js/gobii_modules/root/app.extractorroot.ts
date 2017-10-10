@@ -7,39 +7,29 @@ import {GobiiFileItem} from "../model/gobii-file-item";
 import {ServerConfig} from "../model/server-config";
 import {EntitySubType, EntityType} from "../model/type-entity";
 import {NameId} from "../model/name-id";
-import {GobiiFileType} from "../model/type-gobii-file";
-import {ExtractorInstructionFilesDTO} from "../model/extractor-instructions/dto-extractor-instruction-files";
-import {GobiiExtractorInstruction} from "../model/extractor-instructions/gobii-extractor-instruction";
-import {DtoRequestItemExtractorSubmission} from "../services/app/dto-request-item-extractor-submission";
 import {DtoRequestItemServerConfigs} from "../services/app/dto-request-item-serverconfigs";
 import {EntityFilter} from "../model/type-entity-filter";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
-import {GobiiSampleListType} from "../model/type-extractor-sample-list";
 import {CvFilters, CvFilterType} from "../model/cv-filter-type";
-import {FileModelTreeService} from "../services/core/file-model-tree-service";
 import {ExtractorItemType} from "../model/file-model-node";
 import {GobiiExtractFormat} from "../model/type-extract-format";
-import {FileModelState} from "../model/file-model-tree-event";
 import {Header} from "../model/payload/header";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import {FileItemParams} from "../model/name-id-request-params";
 import {FileName} from "../model/file_name";
-import {Labels} from "../views/entity-labels";
 import {TreeStatusNotification} from "../model/tree-status-notification";
 import {Contact} from "../model/contact";
 import {ContactSearchType, DtoRequestItemContact} from "../services/app/dto-request-item-contact";
 import {AuthenticationService} from "../services/core/authentication.service";
 import {NameIdLabelType} from "../model/name-id-label-type";
 import {StatusLevel} from "../model/type-status-level";
-import {createSelector, Store} from "@ngrx/store";
+import {Store} from "@ngrx/store";
 import * as fromRoot from '../store/reducers';
-import * as fromFileItems from '../store/reducers/fileitems-reducer';
 import * as fileItemAction from '../store/actions/fileitem-action';
 import * as historyAction from '../store/actions/history-action';
 import {NameIdFilterParamTypes} from "../model/type-nameid-filter-params";
 import {FileItemService} from "../services/core/file-item-service";
 import {Observable} from "rxjs/Observable";
-import {getFileItemsState} from "../store/reducers/index";
 import {InstructionSubmissionService} from "../services/core/instruction-submission-service";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
@@ -314,7 +304,7 @@ export class ExtractorRoot implements OnInit {
     // unfiltered
     fileItemsContactsPI$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getPiContacts);
     fileItemsMapsets$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getMapsets);
-    fileItemsDatasetTypes$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getCvTerms);
+    fileItemsDatasetTypes$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getCvTermsDataType);
     fileItemsPlatforms: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getPlatforms);
 
     // filtered
@@ -346,24 +336,6 @@ export class ExtractorRoot implements OnInit {
                 private store: Store<fromRoot.State>,
                 private fileItemService: FileItemService,
                 private instructionSubmissionService: InstructionSubmissionService) {
-
-
-        this.nameIdRequestParamsDatasetType = FileItemParams
-            .build(NameIdFilterParamTypes.CV_DATATYPE,
-                GobiiExtractFilterType.WHOLE_DATASET,
-                EntityType.CvTerms)
-            .setCvFilterType(CvFilterType.DATASET_TYPE)
-            .setEntityFilter(EntityFilter.BYTYPENAME)
-            .setFkEntityFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE))
-            .setNameIdLabelType(NameIdLabelType.SELECT_A);
-
-
-        this.nameIdRequestParamsPlatforms = FileItemParams
-            .build(NameIdFilterParamTypes.PLATFORMS,
-                GobiiExtractFilterType.WHOLE_DATASET,
-                EntityType.Platforms);
-
-        //filtered requests
 
     }
 

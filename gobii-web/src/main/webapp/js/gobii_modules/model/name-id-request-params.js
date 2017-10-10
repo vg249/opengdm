@@ -28,7 +28,7 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
              * Created by Phil on 3/9/2017.
              */
             FileItemParams = (function () {
-                function FileItemParams(_queryName, _entityType, _entityFilter, _fkEntityFilterValue, _selectedItemId, _entitySubType, _cvFilterType, _gobiiExtractFilterType, _nameIdLabelType, _extractorItemType, _parentNameIdRequestParams, _childNameIdRequestParams) {
+                function FileItemParams(_queryName, _entityType, _entityFilter, _fkEntityFilterValue, _selectedItemId, _entitySubType, _cvFilterType, _gobiiExtractFilterType, _nameIdLabelType, _extractorItemType, _parentNameIdRequestParams, _childNameIdRequestParams, _dynamicFilterValue) {
                     if (_queryName === void 0) { _queryName = null; }
                     if (_entityType === void 0) { _entityType = type_entity_1.EntityType.UNKNOWN; }
                     if (_entityFilter === void 0) { _entityFilter = type_entity_filter_1.EntityFilter.NONE; }
@@ -49,9 +49,10 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
                     this._extractorItemType = _extractorItemType;
                     this._parentNameIdRequestParams = _parentNameIdRequestParams;
                     this._childNameIdRequestParams = _childNameIdRequestParams;
+                    this._dynamicFilterValue = _dynamicFilterValue;
                 }
                 FileItemParams.build = function (queryName, gobiiExtractFilterType, entityType) {
-                    return (new FileItemParams(queryName, entityType, type_entity_filter_1.EntityFilter.NONE, null, null, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, gobiiExtractFilterType, name_id_label_type_1.NameIdLabelType.UNKNOWN, file_model_node_1.ExtractorItemType.ENTITY, null, []));
+                    return (new FileItemParams(queryName, entityType, type_entity_filter_1.EntityFilter.NONE, null, null, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, gobiiExtractFilterType, name_id_label_type_1.NameIdLabelType.UNKNOWN, file_model_node_1.ExtractorItemType.ENTITY, null, [], true));
                 };
                 FileItemParams.prototype.getEntityType = function () {
                     return this._entityType;
@@ -132,6 +133,13 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
                 FileItemParams.prototype.setChildNameIdRequestParams = function (childNameIdRequestParams) {
                     this._childNameIdRequestParams = childNameIdRequestParams;
                     return this;
+                };
+                FileItemParams.prototype.setDynamicFilterValue = function (dynamicFilterValue) {
+                    this._dynamicFilterValue = dynamicFilterValue;
+                    return this;
+                };
+                FileItemParams.prototype.getDynamicFilterValue = function () {
+                    return this._dynamicFilterValue;
                 };
                 return FileItemParams;
             }());

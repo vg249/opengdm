@@ -10,6 +10,7 @@ import {getForSelectedFilter} from "./treenode-reducer";
 import {Labels} from "../../views/entity-labels";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 import {GobiiExtractFormat} from "../../model/type-extract-format";
+import {CvFilterType} from "../../model/cv-filter-type";
 
 
 /***
@@ -394,16 +395,19 @@ export const getFirstDataset = createSelector(getDatasets, (datasets) => {
 });
 
 
-export const getCvTerms = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+export const getCvTermsDataType = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
-    return fileItems.filter(e =>
+    let returnVal: GobiiFileItem[] = fileItems.filter(e =>
         ( e.getExtractorItemType() === ExtractorItemType.ENTITY
             || e.getExtractorItemType() === ExtractorItemType.LABEL )
-        && e.getEntityType() === EntityType.CvTerms)
+        && e.getEntityType() === EntityType.CvTerms
+        && e.getCvFilterType() === CvFilterType.DATASET_TYPE)
         .map(fi => fi);
+
+    return returnVal;
 });
 
-export const getFirstCvTerm = createSelector(getCvTerms, (cvterms) => {
+export const getFirstCvTerm = createSelector(getCvTermsDataType, (cvterms) => {
     return cvterms[0];
 });
 
@@ -432,7 +436,7 @@ export const getPlatforms = createSelector(getFileItems, getUniqueIds, (fileItem
         .map(fi => fi);
 });
 
-export const getFirstPlatform = createSelector(getCvTerms, (platforms) => {
+export const getFirstPlatform = createSelector(getCvTermsDataType, (platforms) => {
     return platforms[0];
 });
 
@@ -446,7 +450,7 @@ export const getMarkerGroups = createSelector(getFileItems, getUniqueIds, (fileI
         .map(fi => fi);
 });
 
-export const getFirstMarkerGroup = createSelector(getCvTerms, (markergroups) => {
+export const getFirstMarkerGroup = createSelector(getCvTermsDataType, (markergroups) => {
     return markergroups[0];
 });
 

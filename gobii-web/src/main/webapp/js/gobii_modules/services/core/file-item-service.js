@@ -79,7 +79,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     // For non-hierarchically filtered request params, we just create them simply
                     // as we add them to the flat map
                     this.nameIdRequestParams.set(type_nameid_filter_params_1.NameIdFilterParamTypes.CV_DATATYPE, name_id_request_params_1.FileItemParams
-                        .build(type_nameid_filter_params_1.NameIdFilterParamTypes.CV_DATATYPE, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.CvTerms)
+                        .build(type_nameid_filter_params_1.NameIdFilterParamTypes.CV_DATATYPE, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.CvTerms)
+                        .setDynamicFilterValue(false)
                         .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE)
                         .setEntityFilter(type_entity_filter_1.EntityFilter.BYTYPENAME)
                         .setFkEntityFilterValue(cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.DATASET_TYPE))
@@ -138,7 +139,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                 };
                 FileItemService.prototype.loadNameIdsToFileItems = function (gobiiExtractFilterType, nameIdRequestParamsToLoad, filterValue) {
                     var _this = this;
-                    nameIdRequestParamsToLoad.setFkEntityFilterValue(filterValue);
+                    if (nameIdRequestParamsToLoad.getDynamicFilterValue()) {
+                        nameIdRequestParamsToLoad.setFkEntityFilterValue(filterValue);
+                    }
                     this.nameIdService.get(nameIdRequestParamsToLoad)
                         .subscribe(function (nameIds) {
                         var fileItems = [];
@@ -148,7 +151,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                     .setExtractorItemType(file_model_node_1.ExtractorItemType.ENTITY)
                                     .setEntityType(nameIdRequestParamsToLoad.getEntityType())
                                     .setEntitySubType(nameIdRequestParamsToLoad.getEntitySubType())
-                                    .setCvFilterType(cv_filter_type_1.CvFilterType.UNKNOWN)
+                                    .setCvFilterType(nameIdRequestParamsToLoad.getCvFilterType())
                                     .setItemId(n.id)
                                     .setItemName(n.name)
                                     .setSelected(false)
@@ -238,6 +241,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                         _this.store.dispatch(new historyAction.AddStatusAction(responseHeader));
                     }); // subscribe
                 };
+                // these next two functions are redundant with respect to the other ones that load nameids
+                // the refactoring path is for the loadWithParams() methods to be deprecated and moved into
+                // effects  so that all fo these things will use effects.
                 FileItemService.prototype.makeFileLoadActions = function (gobiiExtractFilterType, nameIdFilterParamTypes, filterValue) {
                     var nameIdRequestParamsFromType = this.nameIdRequestParams.get(nameIdFilterParamTypes);
                     return this.recurseFileItems(gobiiExtractFilterType, nameIdRequestParamsFromType, filterValue);
@@ -245,6 +251,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                 FileItemService.prototype.recurseFileItems = function (gobiiExtractFilterType, nameIdRequestParamsToLoad, filterValue) {
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
+                        if (nameIdRequestParamsToLoad.getDynamicFilterValue()) {
+                            nameIdRequestParamsToLoad.setFkEntityFilterValue(filterValue);
+                        }
                         nameIdRequestParamsToLoad.setFkEntityFilterValue(filterValue);
                         _this.nameIdService.get(nameIdRequestParamsToLoad)
                             .subscribe(function (nameIds) {
@@ -255,7 +264,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                         .setExtractorItemType(file_model_node_1.ExtractorItemType.ENTITY)
                                         .setEntityType(nameIdRequestParamsToLoad.getEntityType())
                                         .setEntitySubType(nameIdRequestParamsToLoad.getEntitySubType())
-                                        .setCvFilterType(cv_filter_type_1.CvFilterType.UNKNOWN)
+                                        .setCvFilterType(nameIdRequestParamsToLoad.getCvFilterType())
                                         .setItemId(n.id)
                                         .setItemName(n.name)
                                         .setSelected(false)

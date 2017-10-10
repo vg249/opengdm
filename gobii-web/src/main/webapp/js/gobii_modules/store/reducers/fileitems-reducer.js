@@ -1,4 +1,4 @@
-System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem-action", "../../model/file-model-node", "../../model/type-entity", "../../model/type-nameid-filter-params", "../../model/type-process", "../../views/entity-labels", "../../model/type-extractor-filter", "../../model/type-extract-format"], function (exports_1, context_1) {
+System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem-action", "../../model/file-model-node", "../../model/type-entity", "../../model/type-nameid-filter-params", "../../model/type-process", "../../views/entity-labels", "../../model/type-extractor-filter", "../../model/type-extract-format", "../../model/cv-filter-type"], function (exports_1, context_1) {
     "use strict";
     _this = this;
     var __moduleName = context_1 && context_1.id;
@@ -174,7 +174,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
         return returnVal;
     }
     exports_1("fileItemsReducer", fileItemsReducer);
-    var _this, reselect_1, gobii_file_item_1, gobiiFileItemAction, file_model_node_1, type_entity_1, type_nameid_filter_params_1, type_process_1, entity_labels_1, type_extractor_filter_1, type_extract_format_1, initialState, getGobiiExtractFilterType, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getPiContacts, getFirstPiContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTerms, getFirstCvTerm, getMapsets, getFirstmapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment, getSelectedFileFormat, getJobId, getUploadFiles;
+    var _this, reselect_1, gobii_file_item_1, gobiiFileItemAction, file_model_node_1, type_entity_1, type_nameid_filter_params_1, type_process_1, entity_labels_1, type_extractor_filter_1, type_extract_format_1, cv_filter_type_1, initialState, getGobiiExtractFilterType, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getPiContacts, getFirstPiContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTermsDataType, getFirstCvTerm, getMapsets, getFirstmapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment, getSelectedFileFormat, getJobId, getUploadFiles;
     return {
         setters: [
             function (reselect_1_1) {
@@ -206,6 +206,9 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             },
             function (type_extract_format_1_1) {
                 type_extract_format_1 = type_extract_format_1_1;
+            },
+            function (cv_filter_type_1_1) {
+                cv_filter_type_1 = cv_filter_type_1_1;
             }
         ],
         execute: function () {
@@ -295,15 +298,17 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             exports_1("getFirstDataset", getFirstDataset = reselect_1.createSelector(getDatasets, function (datasets) {
                 return datasets[0];
             }));
-            exports_1("getCvTerms", getCvTerms = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
-                return fileItems.filter(function (e) {
+            exports_1("getCvTermsDataType", getCvTermsDataType = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
+                var returnVal = fileItems.filter(function (e) {
                     return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY
                         || e.getExtractorItemType() === file_model_node_1.ExtractorItemType.LABEL)
-                        && e.getEntityType() === type_entity_1.EntityType.CvTerms;
+                        && e.getEntityType() === type_entity_1.EntityType.CvTerms
+                        && e.getCvFilterType() === cv_filter_type_1.CvFilterType.DATASET_TYPE;
                 })
                     .map(function (fi) { return fi; });
+                return returnVal;
             }));
-            exports_1("getFirstCvTerm", getFirstCvTerm = reselect_1.createSelector(getCvTerms, function (cvterms) {
+            exports_1("getFirstCvTerm", getFirstCvTerm = reselect_1.createSelector(getCvTermsDataType, function (cvterms) {
                 return cvterms[0];
             }));
             exports_1("getMapsets", getMapsets = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
@@ -325,7 +330,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 })
                     .map(function (fi) { return fi; });
             }));
-            exports_1("getFirstPlatform", getFirstPlatform = reselect_1.createSelector(getCvTerms, function (platforms) {
+            exports_1("getFirstPlatform", getFirstPlatform = reselect_1.createSelector(getCvTermsDataType, function (platforms) {
                 return platforms[0];
             }));
             exports_1("getMarkerGroups", getMarkerGroups = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
@@ -336,7 +341,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 })
                     .map(function (fi) { return fi; });
             }));
-            exports_1("getFirstMarkerGroup", getFirstMarkerGroup = reselect_1.createSelector(getCvTerms, function (markergroups) {
+            exports_1("getFirstMarkerGroup", getFirstMarkerGroup = reselect_1.createSelector(getCvTermsDataType, function (markergroups) {
                 return markergroups[0];
             }));
             /// ****************** SYNCHRONOUS METHODS

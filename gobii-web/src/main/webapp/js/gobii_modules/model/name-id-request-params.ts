@@ -22,7 +22,8 @@ export class FileItemParams {
                         private _nameIdLabelType: NameIdLabelType,
                         private _extractorItemType: ExtractorItemType,
                         private _parentNameIdRequestParams: FileItemParams,
-                        private _childNameIdRequestParams: FileItemParams[]) {
+                        private _childNameIdRequestParams: FileItemParams[],
+                        private _dynamicFilterValue:boolean) {
 
     }
 
@@ -40,7 +41,8 @@ export class FileItemParams {
             NameIdLabelType.UNKNOWN,
             ExtractorItemType.ENTITY,
             null,
-            []));
+            [],
+            true));
     }
 
 
@@ -147,6 +149,15 @@ export class FileItemParams {
     setChildNameIdRequestParams(childNameIdRequestParams: FileItemParams[]): FileItemParams {
         this._childNameIdRequestParams = childNameIdRequestParams;
         return this;
+    }
+
+    setDynamicFilterValue(dynamicFilterValue:boolean): FileItemParams {
+        this._dynamicFilterValue = dynamicFilterValue;
+        return this;
+    }
+
+    getDynamicFilterValue(): boolean {
+        return this._dynamicFilterValue;
     }
 
 

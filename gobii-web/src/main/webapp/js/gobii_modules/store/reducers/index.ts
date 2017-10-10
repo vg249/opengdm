@@ -141,7 +141,7 @@ export const getFirstExperiment = createSelector(getFileItemsState, fromFileItem
 export const getDatasets = createSelector(getFileItemsState, fromFileItems.getDatasets);
 export const getFirstDataset = createSelector(getFileItemsState, fromFileItems.getFirstDataset);
 
-export const getCvTerms = createSelector(getFileItemsState, fromFileItems.getCvTerms);
+export const getCvTermsDataType = createSelector(getFileItemsState, fromFileItems.getCvTermsDataType);
 export const getFirstCvTerm = createSelector(getFileItemsState, fromFileItems.getFirstCvTerm);
 
 export const getMapsets = createSelector(getFileItemsState, fromFileItems.getMapsets);
