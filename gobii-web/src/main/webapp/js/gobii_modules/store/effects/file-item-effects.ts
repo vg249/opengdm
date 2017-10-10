@@ -113,20 +113,11 @@ export class FileItemEffects {
                                     nameIdFilterParamType = NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT;
                                 }
 
-                                if (nameIdFilterParamType !== NameIdFilterParamTypes.UNKNOWN
-                                    && filterValue != null) {
+                                if ((nameIdFilterParamType !== NameIdFilterParamTypes.UNKNOWN && filterValue != null)) {
 
                                     this.fileItemService.makeFileLoadActions(action.payload.gobiiExtractFilterType,
                                         nameIdFilterParamType,
                                         filterValue).subscribe(loadFileItemListAction => {
-
-                                            if (fileItemToReplaceWith.getExtractorItemType() != ExtractorItemType.LABEL) {
-                                                let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(fileItemToReplaceWith);
-                                                observer.next(new treeNodeActions.PlaceTreeNodeAction(treeNode));
-
-                                            } else {
-                                                observer.next(new fileItemActions.RemoveFromExractByItemIdAction(fileItemCurrentlyInExtractUniqueId));
-                                            }
 
                                             observer.next(loadFileItemListAction);
 
@@ -140,7 +131,16 @@ export class FileItemEffects {
 
                                     // LOAD THE CORRESPONDING TREE NODE FOR THE SELECTED ITEM
 
+                                } // if we had a filter to dispatch
+
+                                if (fileItemToReplaceWith.getExtractorItemType() != ExtractorItemType.LABEL) {
+                                    let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(fileItemToReplaceWith);
+                                    observer.next(new treeNodeActions.PlaceTreeNodeAction(treeNode));
+
+                                } else {
+                                    observer.next(new fileItemActions.RemoveFromExractByItemIdAction(fileItemCurrentlyInExtractUniqueId));
                                 }
+
                             },
                             error => {
                                 this.store.dispatch(new historyAction.AddStatusMessageAction(error))

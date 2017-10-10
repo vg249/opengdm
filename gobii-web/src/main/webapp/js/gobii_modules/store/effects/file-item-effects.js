@@ -194,21 +194,20 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                                 else if (fileItemToReplaceWith.getEntityType() === type_entity_1.EntityType.Experiments) {
                                     nameIdFilterParamType = type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT;
                                 }
-                                if (nameIdFilterParamType !== type_nameid_filter_params_1.NameIdFilterParamTypes.UNKNOWN
-                                    && filterValue != null) {
+                                if ((nameIdFilterParamType !== type_nameid_filter_params_1.NameIdFilterParamTypes.UNKNOWN && filterValue != null)) {
                                     _this.fileItemService.makeFileLoadActions(action.payload.gobiiExtractFilterType, nameIdFilterParamType, filterValue).subscribe(function (loadFileItemListAction) {
-                                        if (fileItemToReplaceWith.getExtractorItemType() != file_model_node_1.ExtractorItemType.LABEL) {
-                                            var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(fileItemToReplaceWith);
-                                            observer.next(new treeNodeActions.PlaceTreeNodeAction(treeNode));
-                                        }
-                                        else {
-                                            observer.next(new fileItemActions.RemoveFromExractByItemIdAction(fileItemCurrentlyInExtractUniqueId));
-                                        }
                                         observer.next(loadFileItemListAction);
                                     }, function (error) {
                                         _this.store.dispatch(new historyAction.AddStatusMessageAction(error));
                                     });
                                     // LOAD THE CORRESPONDING TREE NODE FOR THE SELECTED ITEM
+                                }
+                                if (fileItemToReplaceWith.getExtractorItemType() != file_model_node_1.ExtractorItemType.LABEL) {
+                                    var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(fileItemToReplaceWith);
+                                    observer.next(new treeNodeActions.PlaceTreeNodeAction(treeNode));
+                                }
+                                else {
+                                    observer.next(new fileItemActions.RemoveFromExractByItemIdAction(fileItemCurrentlyInExtractUniqueId));
                                 }
                             }, function (error) {
                                 _this.store.dispatch(new historyAction.AddStatusMessageAction(error));
