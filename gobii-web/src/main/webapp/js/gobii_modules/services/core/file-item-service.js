@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-entity", "../../views/entity-labels", "../../model/file-model-node", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/gobii-file-item", "../../model/dto-header-status-message", "../../model/type-process", "./name-id-service", "../../model/name-id-request-params", "../../store/actions/history-action", "../../store/actions/fileitem-action", "@ngrx/store", "../../model/name-id-label-type", "../../model/type-entity-filter", "../../model/type-nameid-filter-params"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-entity", "../../views/entity-labels", "../../model/file-model-node", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/gobii-file-item", "../../model/dto-header-status-message", "../../model/type-process", "./name-id-service", "../../model/name-id-request-params", "../../store/actions/history-action", "../../store/actions/fileitem-action", "@ngrx/store", "../../model/name-id-label-type", "../../model/type-entity-filter", "../../model/type-nameid-filter-params", "rxjs/Observable", "rxjs/add/operator/expand"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_entity_1, entity_labels_1, file_model_node_1, type_extractor_filter_1, cv_filter_type_1, gobii_file_item_1, dto_header_status_message_1, type_process_1, name_id_service_1, name_id_request_params_1, historyAction, fileItemActions, store_1, name_id_label_type_1, type_entity_filter_1, type_nameid_filter_params_1, FileItemService;
+    var core_1, type_entity_1, entity_labels_1, file_model_node_1, type_extractor_filter_1, cv_filter_type_1, gobii_file_item_1, dto_header_status_message_1, type_process_1, name_id_service_1, name_id_request_params_1, historyAction, fileItemActions, store_1, name_id_label_type_1, type_entity_filter_1, type_nameid_filter_params_1, Observable_1, FileItemService;
     return {
         setters: [
             function (core_1_1) {
@@ -63,6 +63,11 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
             },
             function (type_nameid_filter_params_1_1) {
                 type_nameid_filter_params_1 = type_nameid_filter_params_1_1;
+            },
+            function (Observable_1_1) {
+                Observable_1 = Observable_1_1;
+            },
+            function (_1) {
             }
         ],
         execute: function () {
@@ -227,18 +232,122 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                 }
                             });
                         }
-                        // let formatItem: GobiiFileItem = GobiiFileItem
-                        //     .build(gobiiExtractFilterType, ProcessType.UPDATE)
-                        //     .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
-                        //     .setItemId(GobiiExtractFormat[GobiiExtractFormat.HAPMAP])
-                        //     .setItemName(GobiiExtractFormat[GobiiExtractFormat[GobiiExtractFormat.HAPMAP]]);
-                        // this.locadFileItem(formatItem,true);
                     }, // Observer=>next
                     function (// Observer=>next
                         responseHeader) {
                         _this.store.dispatch(new historyAction.AddStatusAction(responseHeader));
                     }); // subscribe
                 };
+                FileItemService.prototype.makeFileLoadActions = function (gobiiExtractFilterType, nameIdFilterParamTypes, filterValue) {
+                    var nameIdRequestParamsFromType = this.nameIdRequestParams.get(nameIdFilterParamTypes);
+                    return this.recurseFileItems(gobiiExtractFilterType, nameIdRequestParamsFromType, filterValue);
+                };
+                FileItemService.prototype.recurseFileItems = function (gobiiExtractFilterType, nameIdRequestParamsToLoad, filterValue) {
+                    var _this = this;
+                    return Observable_1.Observable.create(function (observer) {
+                        nameIdRequestParamsToLoad.setFkEntityFilterValue(filterValue);
+                        _this.nameIdService.get(nameIdRequestParamsToLoad)
+                            .subscribe(function (nameIds) {
+                            var fileItems = [];
+                            if (nameIds && (nameIds.length > 0)) {
+                                nameIds.forEach(function (n) {
+                                    var currentFileItem = gobii_file_item_1.GobiiFileItem.build(gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                                        .setExtractorItemType(file_model_node_1.ExtractorItemType.ENTITY)
+                                        .setEntityType(nameIdRequestParamsToLoad.getEntityType())
+                                        .setEntitySubType(nameIdRequestParamsToLoad.getEntitySubType())
+                                        .setCvFilterType(cv_filter_type_1.CvFilterType.UNKNOWN)
+                                        .setItemId(n.id)
+                                        .setItemName(n.name)
+                                        .setSelected(false)
+                                        .setRequired(false)
+                                        .setParentItemId(nameIdRequestParamsToLoad.getFkEntityFilterValue());
+                                    fileItems.push(currentFileItem);
+                                });
+                                var temp = "foo";
+                                temp = "bar";
+                                if (nameIdRequestParamsToLoad.getMameIdLabelType() != name_id_label_type_1.NameIdLabelType.UNKNOWN) {
+                                    var entityName = "";
+                                    if (nameIdRequestParamsToLoad.getCvFilterType() !== cv_filter_type_1.CvFilterType.UNKNOWN) {
+                                        entityName += entity_labels_1.Labels.instance().cvFilterNodeLabels[nameIdRequestParamsToLoad.getCvFilterType()];
+                                    }
+                                    else if (nameIdRequestParamsToLoad.getEntitySubType() !== type_entity_1.EntitySubType.UNKNOWN) {
+                                        entityName += entity_labels_1.Labels.instance().entitySubtypeNodeLabels[nameIdRequestParamsToLoad.getEntitySubType()];
+                                    }
+                                    else {
+                                        entityName += entity_labels_1.Labels.instance().entityNodeLabels[nameIdRequestParamsToLoad.getEntityType()];
+                                    }
+                                    var label = "";
+                                    switch (nameIdRequestParamsToLoad.getMameIdLabelType()) {
+                                        case name_id_label_type_1.NameIdLabelType.SELECT_A:
+                                            label = "Select a " + entityName;
+                                            break;
+                                        // we require that these entity labels all be in the singular
+                                        case name_id_label_type_1.NameIdLabelType.ALL:
+                                            label = "All " + entityName + "s";
+                                            break;
+                                        case name_id_label_type_1.NameIdLabelType.NO:
+                                            label = "No " + entityName;
+                                            break;
+                                        default:
+                                            _this.store.dispatch(new historyAction.AddStatusAction(new dto_header_status_message_1.HeaderStatusMessage("Unknown label type "
+                                                + name_id_label_type_1.NameIdLabelType[nameIdRequestParamsToLoad.getMameIdLabelType()], null, null)));
+                                    }
+                                    var labelFileItem = gobii_file_item_1.GobiiFileItem
+                                        .build(gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                                        .setEntityType(nameIdRequestParamsToLoad.getEntityType())
+                                        .setEntitySubType(nameIdRequestParamsToLoad.getEntitySubType())
+                                        .setCvFilterType(nameIdRequestParamsToLoad.getCvFilterType())
+                                        .setExtractorItemType(file_model_node_1.ExtractorItemType.LABEL)
+                                        .setItemName(label)
+                                        .setParentItemId(nameIdRequestParamsToLoad.getFkEntityFilterValue())
+                                        .setItemId("0");
+                                    fileItems.unshift(labelFileItem);
+                                    //.selectedFileItemId = "0";
+                                }
+                            }
+                            else {
+                                var noneFileItem = gobii_file_item_1.GobiiFileItem
+                                    .build(gobiiExtractFilterType, type_process_1.ProcessType.DUMMY)
+                                    .setExtractorItemType(file_model_node_1.ExtractorItemType.ENTITY)
+                                    .setEntityType(nameIdRequestParamsToLoad.getEntityType())
+                                    .setItemId("0")
+                                    .setItemName("<none>")
+                                    .setParentItemId(nameIdRequestParamsToLoad.getFkEntityFilterValue());
+                                fileItems.push(noneFileItem);
+                            } // if/else any nameids were retrieved
+                            var loadAction = new fileItemActions.LoadFileItemListAction({
+                                gobiiFileItems: fileItems,
+                                filterId: nameIdRequestParamsToLoad.getQueryName(),
+                                filterValue: nameIdRequestParamsToLoad.getFkEntityFilterValue()
+                            });
+                            observer.next(loadAction);
+                            // if there are children, we will load their data as well
+                            if (nameIdRequestParamsToLoad
+                                .getChildNameIdRequestParams()
+                                .filter(function (rqp) { return rqp.getEntityFilter() === type_entity_filter_1.EntityFilter.BYTYPEID; })
+                                .length > 0) {
+                                var parentId_2 = nameIdRequestParamsToLoad.getSelectedItemId();
+                                if (!parentId_2) {
+                                    parentId_2 = fileItems[0].getItemId();
+                                }
+                                nameIdRequestParamsToLoad
+                                    .getChildNameIdRequestParams()
+                                    .forEach(function (rqp) {
+                                    if (rqp.getEntityFilter() === type_entity_filter_1.EntityFilter.BYTYPEID) {
+                                        rqp.setFkEntityFilterValue(parentId_2);
+                                        _this.recurseFileItems(gobiiExtractFilterType, rqp, parentId_2)
+                                            .subscribe(function (fileItems) { return observer.next(fileItems); });
+                                    }
+                                });
+                            }
+                            var bar = "bar";
+                        }, // Observer=>next
+                        function (// Observer=>next
+                            responseHeader) {
+                            _this.store.dispatch(new historyAction.AddStatusAction(responseHeader));
+                        }); // subscribe
+                    }); //return Observer.create
+                }; // make file items from query
                 FileItemService = __decorate([
                     core_1.Injectable(),
                     __metadata("design:paramtypes", [name_id_service_1.NameIdService,

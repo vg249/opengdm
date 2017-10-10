@@ -90,6 +90,7 @@ import {InstructionSubmissionService} from "../services/core/instruction-submiss
                                         <td style="vertical-align: top;">
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             <name-id-list-box
+                                                    [gobiiExtractFilterType]="gobiiExtractFilterType"
                                                     [fileItems$]="fileItemsMapsets$">
                                             </name-id-list-box>
                                         </td>
@@ -135,6 +136,7 @@ import {InstructionSubmissionService} from "../services/core/instruction-submiss
                                     <BR>
                                     <label class="the-label">Project:</label><BR>
                                     <name-id-list-box
+                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
                                             [fileItems$]="fileItemsProjects$">
                                     </name-id-list-box>
                                 </div>
@@ -144,6 +146,7 @@ import {InstructionSubmissionService} from "../services/core/instruction-submiss
                                     <BR>
                                     <label class="the-label">Dataset Types:</label><BR>
                                     <name-id-list-box
+                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
                                             [fileItems$]="fileItemsDatasetTypes$">
                                     </name-id-list-box>
                                 </div>
@@ -154,6 +157,7 @@ import {InstructionSubmissionService} from "../services/core/instruction-submiss
                                     <BR>
                                     <label class="the-label">Experiment:</label><BR>
                                     <name-id-list-box
+                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
                                             [fileItems$]="fileItemsExperiments$">
                                     </name-id-list-box>
 

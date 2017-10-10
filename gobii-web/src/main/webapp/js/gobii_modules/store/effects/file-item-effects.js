@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/operator/switchMap", "rxjs/add/observable/of", "../actions/fileitem-action", "../actions/treenode-action", "../../services/core/tree-structure-service", "../reducers", "../../store/actions/history-action", "rxjs/Observable", "@ngrx/store", "../../services/core/file-item-service", "../../model/type-nameid-filter-params", "../../model/type-entity"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/operator/switchMap", "rxjs/add/observable/of", "../actions/fileitem-action", "../actions/treenode-action", "../../services/core/tree-structure-service", "../reducers", "../../store/actions/history-action", "rxjs/Observable", "@ngrx/store", "../../services/core/file-item-service", "../../model/type-nameid-filter-params", "../../model/type-entity", "rxjs/add/operator/mergeMap"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -55,6 +55,8 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
             },
             function (type_entity_1_1) {
                 type_entity_1 = type_entity_1_1;
+            },
+            function (_3) {
             }
         ],
         execute: function () {
@@ -190,17 +192,29 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                                 }
                                 if (nameIdFilterParamType !== type_nameid_filter_params_1.NameIdFilterParamTypes.UNKNOWN
                                     && filterValue != null) {
-                                    _this.fileItemService.loadWithFilterParams(action.payload.gobiiExtractFilterType, nameIdFilterParamType, filterValue);
+                                    var gobiiFileItemsToLoad = void 0;
+                                    _this.fileItemService.makeFileLoadActions(action.payload.gobiiExtractFilterType, nameIdFilterParamType, filterValue).subscribe(function (loadFileItemListAction) {
+                                        var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(fileItem);
+                                        observer.next(new treeNodeActions.PlaceTreeNodeAction(treeNode));
+                                        observer.next(loadFileItemListAction);
+                                    }, function (error) {
+                                        _this.store.dispatch(new historyAction.AddStatusMessageAction(error));
+                                    });
+                                    // LOAD THE CORRESPONDING TREE NODE FOR THE SELECTED ITEM
                                 }
-                                // LOAD THE CORRESPONDING TREE NODE FOR THE SELECTED ITEM
-                                var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(fileItem);
-                                observer.next(treeNode);
-                                observer.complete();
                             }, function (error) {
                                 _this.store.dispatch(new historyAction.AddStatusMessageAction(error));
-                            }).unsubscribe();
-                        }).map(function (gfi) {
-                            return new treeNodeActions.PlaceTreeNodeAction(gfi);
+                            }).unsubscribe(); // fromRoot.getAllFileItems()
+                        }).mergeMap(function (actions) {
+                            // I think that if the loadWithFilterParams() returned an observable, such that it was
+                            // "finished" after everything was dispatched, this would work. Or something like it
+                            // something like this might work: https://github.com/Reactive-Extensions/RxJS/blob/master/doc/api/core/operators/expand.md
+                            // In other words, loadWithFilterParams has to really return an observable of an array of GobiiFileItems,
+                            // such that the load action would actually be done _here_
+                            // we need to police every other place where loadWithFilterParams is used (if anywhere):
+                            // those will have to drive effects, as well.
+                            // the call to
+                            return Observable_1.Observable.of(actions);
                         });
                     } //switchMap()
                     );
