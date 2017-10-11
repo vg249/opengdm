@@ -107,17 +107,17 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/file-m
                                         && fi.getEntityType() === type_entity_1.EntityType.Contacts
                                         && fi.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR;
                                 }).length > 0;
-                                var datasetTypeIsPResent = all.filter(function (fi) {
+                                var datasetTypeIsPresent = all.filter(function (fi) {
                                     return fi.getGobiiExtractFilterType() === gobiiExtractFilterType
                                         && (fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY)
                                         && fi.getEntityType() === type_entity_1.EntityType.CvTerms
                                         && fi.getCvFilterType() === cv_filter_type_1.CvFilterType.DATASET_TYPE;
                                 }).length > 0;
                                 submistReady =
-                                    samplesArePresent
-                                        && projectIsPresent
-                                        && pIIsPresent
-                                        && datasetTypeIsPResent;
+                                    (samplesArePresent
+                                        || projectIsPresent
+                                        || pIIsPresent)
+                                        && datasetTypeIsPresent;
                             }
                             else if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
                                 var markersArePresent = all.filter(function (fi) {
@@ -125,28 +125,27 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/file-m
                                         && ((fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM)
                                             || fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_FILE);
                                 }).length > 0;
-                                var projectIsPresent = all.filter(function (fi) {
+                                var markerGroupIsPresent = all.filter(function (fi) {
                                     return fi.getGobiiExtractFilterType() === gobiiExtractFilterType
                                         && (fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY)
-                                        && fi.getEntityType() === type_entity_1.EntityType.Projects;
+                                        && fi.getEntityType() === type_entity_1.EntityType.MarkerGroups;
                                 }).length > 0;
-                                var pIIsPresent = all.filter(function (fi) {
+                                var platformIsPresent = all.filter(function (fi) {
                                     return fi.getGobiiExtractFilterType() === gobiiExtractFilterType
                                         && (fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY)
-                                        && fi.getEntityType() === type_entity_1.EntityType.Contacts
-                                        && fi.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR;
+                                        && fi.getEntityType() === type_entity_1.EntityType.Platforms;
                                 }).length > 0;
-                                var datasetTypeIsPResent = all.filter(function (fi) {
+                                var datasetTypeIsPresent = all.filter(function (fi) {
                                     return fi.getGobiiExtractFilterType() === gobiiExtractFilterType
                                         && (fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY)
                                         && fi.getEntityType() === type_entity_1.EntityType.CvTerms
                                         && fi.getCvFilterType() === cv_filter_type_1.CvFilterType.DATASET_TYPE;
                                 }).length > 0;
                                 submistReady =
-                                    markersArePresent
-                                        && projectIsPresent
-                                        && pIIsPresent
-                                        && datasetTypeIsPResent;
+                                    (markersArePresent
+                                        || markerGroupIsPresent
+                                        || platformIsPresent)
+                                        && datasetTypeIsPresent;
                             }
                             else {
                                 _this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]));

@@ -82,7 +82,7 @@ export class InstructionSubmissionService {
                                     && fi.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR
                                 ).length > 0;
 
-                                let datasetTypeIsPResent: boolean = all.filter(fi =>
+                                let datasetTypeIsPresent: boolean = all.filter(fi =>
                                     fi.getGobiiExtractFilterType() === gobiiExtractFilterType
                                     && ( fi.getExtractorItemType() === ExtractorItemType.ENTITY )
                                     && fi.getEntityType() === EntityType.CvTerms
@@ -91,10 +91,10 @@ export class InstructionSubmissionService {
 
 
                                 submistReady =
-                                    samplesArePresent
-                                    && projectIsPresent
-                                    && pIIsPresent
-                                    && datasetTypeIsPResent;
+                                    ( samplesArePresent
+                                        || projectIsPresent
+                                        || pIIsPresent )
+                                    && datasetTypeIsPresent;
 
 
                             } else if (gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
@@ -105,20 +105,19 @@ export class InstructionSubmissionService {
                                     || fi.getExtractorItemType() === ExtractorItemType.SAMPLE_FILE )
                                 ).length > 0;
 
-                                let projectIsPresent: boolean = all.filter(fi =>
+                                let markerGroupIsPresent: boolean = all.filter(fi =>
                                     fi.getGobiiExtractFilterType() === gobiiExtractFilterType
                                     && ( fi.getExtractorItemType() === ExtractorItemType.ENTITY )
-                                    && fi.getEntityType() === EntityType.Projects
+                                    && fi.getEntityType() === EntityType.MarkerGroups
                                 ).length > 0;
 
-                                let pIIsPresent: boolean = all.filter(fi =>
+                                let platformIsPresent: boolean = all.filter(fi =>
                                     fi.getGobiiExtractFilterType() === gobiiExtractFilterType
                                     && ( fi.getExtractorItemType() === ExtractorItemType.ENTITY )
-                                    && fi.getEntityType() === EntityType.Contacts
-                                    && fi.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR
+                                    && fi.getEntityType() === EntityType.Platforms
                                 ).length > 0;
 
-                                let datasetTypeIsPResent: boolean = all.filter(fi =>
+                                let datasetTypeIsPresent: boolean = all.filter(fi =>
                                     fi.getGobiiExtractFilterType() === gobiiExtractFilterType
                                     && ( fi.getExtractorItemType() === ExtractorItemType.ENTITY )
                                     && fi.getEntityType() === EntityType.CvTerms
@@ -127,10 +126,10 @@ export class InstructionSubmissionService {
 
 
                                 submistReady =
-                                    markersArePresent
-                                    && projectIsPresent
-                                    && pIIsPresent
-                                    && datasetTypeIsPResent;
+                                    ( markersArePresent
+                                        || markerGroupIsPresent
+                                        || platformIsPresent )
+                                    && datasetTypeIsPresent;
 
                             } else {
 

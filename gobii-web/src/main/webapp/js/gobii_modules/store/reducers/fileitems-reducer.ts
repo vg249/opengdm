@@ -66,8 +66,10 @@ function removeFromExtractItems(state: State, gobiiFileItem: GobiiFileItem): Sta
     gobiiFileItem.setSelected(false);
     let newSelectedUniqueIdsState: string[] = state.uniqueIdsOfExtractFileItems.slice();
 
+    // if we don't find it, we don't raise an error: the intent was to remove, but it just wasn't there,
+    // so the state when this function exits is as expected
     let idx: number = newSelectedUniqueIdsState.findIndex(id => id === gobiiFileItem.getFileItemUniqueId())
-    if (idx) {
+    if (idx > -1) {
         newSelectedUniqueIdsState.splice(idx, 1);
     }
 
