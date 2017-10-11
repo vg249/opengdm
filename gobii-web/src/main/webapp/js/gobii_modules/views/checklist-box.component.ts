@@ -38,7 +38,7 @@ import {FileItemService} from "../services/core/file-item-service";
 })
 
 
-export class CheckListBoxComponent implements OnInit, OnChanges, DoCheck {
+export class CheckListBoxComponent  {
 
     differ: any;
 
@@ -48,8 +48,6 @@ export class CheckListBoxComponent implements OnInit, OnChanges, DoCheck {
 
         this.differ = differs.find({}).create(null);
 
-
-        //this.gobiiFileItems$ = this.store.select(fromRoot.getDatasetsByExperiment);
 
     } // ctor
 
@@ -86,118 +84,5 @@ export class CheckListBoxComponent implements OnInit, OnChanges, DoCheck {
         this.onError.emit(headerStatusMessage);
     }
 
-
-    public setList(): void {
-
-        // this._nameIdService.get(this.nameIdRequestParams)
-        //     .subscribe(nameIds => {
-        //             if (nameIds && ( nameIds.length > 0 )) {
-        //
-        //                 let fileItems: GobiiFileItem[] = [];
-        //
-        //                 nameIds.forEach(n => {
-        //                     let currentFileItem: GobiiFileItem =
-        //                         GobiiFileItem.build(
-        //                             this.gobiiExtractFilterType,
-        //                             ProcessType.CREATE)
-        //                             .setExtractorItemType(ExtractorItemType.ENTITY)
-        //                             .setEntityType(this.nameIdRequestParams.getEntityType())
-        //                             .setCvFilterType(CvFilterType.UNKNOWN)
-        //                             .setItemId(n.id)
-        //                             .setItemName(n.name)
-        //                             .setSelected(false)
-        //                             .setRequired(false);
-        //
-        //
-        //                     fileItems.push(currentFileItem);
-        //                 });
-        //
-        //                 let loadAction: fileAction.LoadAction = new fileAction.LoadAction(fileItems);
-        //                 this.store.dispatch(loadAction)
-        //
-        //             }
-        //         },
-        //         responseHeader => {
-        //             this.handleHeaderStatus(responseHeader);
-        //         });
-
-    } // setList()
-
-
-    ngOnInit(): any {
-
-        // this._fileModelTreeService
-        //     .fileItemNotifications()
-        //     .subscribe(eventedFileItem => {
-        //
-        //             if (eventedFileItem) {
-        //                 let itemToChange: GobiiFileItem =
-        //                     this.gobiiFileItems.find(e => {
-        //                         return e.getEntityType() == eventedFileItem.getEntityType()
-        //                             && e.getItemName() == eventedFileItem.getItemName()
-        //                     });
-        //
-        //                 //let indexOfItemToChange:number = this.gobiiFileItems.indexOf(arg.currentTarget.name);
-        //                 if (itemToChange) {
-        //                     itemToChange.setProcessType(eventedFileItem.getProcessType());
-        //                     itemToChange.setSelected(eventedFileItem.getSelected());
-        //                     this.updateCheckedItemHistory(itemToChange);
-        //                 }
-        //             }
-        //         },
-        //         responseHeader => {
-        //             this.handleHeaderStatus(responseHeader);
-        //         });
-
-        // if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
-        //     this.setList()
-        // }
-    }
-
-    private resetList() {
-        // if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
-        //     this.setList();
-        // }
-    }
-
-    ngOnChanges(changes: { [propName: string]: SimpleChange }) {
-
-
-        if (changes['gobiiExtractFilterType']
-            && ( changes['gobiiExtractFilterType'].currentValue != null )
-            && ( changes['gobiiExtractFilterType'].currentValue != undefined )) {
-
-            if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
-
-
-                //this.nameIdRequestParams.setGobiiExtractFilterType(this.gobiiExtractFilterType);
-                this.resetList();
-                // this.resetList();
-                // this._fileModelTreeService
-                //     .fileItemNotifications()
-                //     .subscribe(fileItem => {
-                //         if (fileItem.getProcessType() === ProcessType.NOTIFY
-                //             && fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
-                //
-                //             this.resetList();
-                //
-                //         }
-                //     });
-
-            } // if we have a new filter type
-
-        } // if filter type changed
-
-    }
-
-    ngDoCheck(): void {
-
-        var changes = this.differ.diff(this.nameIdRequestParams);
-
-        if (changes) {
-
-            this.resetList();
-        }
-    }
 
 }

@@ -201,7 +201,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                                         _this.store.dispatch(new historyAction.AddStatusMessageAction(error));
                                     });
                                     // LOAD THE CORRESPONDING TREE NODE FOR THE SELECTED ITEM
-                                }
+                                } // if we had a filter to dispatch
                                 if (fileItemToReplaceWith.getExtractorItemType() != file_model_node_1.ExtractorItemType.LABEL) {
                                     var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(fileItemToReplaceWith);
                                     observer.next(new treeNodeActions.PlaceTreeNodeAction(treeNode));

@@ -38,7 +38,6 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../store/ac
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.onError = new core_1.EventEmitter();
                     this.differ = differs.find({}).create(null);
-                    //this.gobiiFileItems$ = this.store.select(fromRoot.getDatasetsByExperiment);
                 } // ctor
                 CheckListBoxComponent.prototype.handleItemChecked = function (arg) {
                     var currentFileItemUniqueId = arg.currentTarget.value;
@@ -54,98 +53,6 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../store/ac
                 };
                 CheckListBoxComponent.prototype.handleHeaderStatus = function (headerStatusMessage) {
                     this.onError.emit(headerStatusMessage);
-                };
-                CheckListBoxComponent.prototype.setList = function () {
-                    // this._nameIdService.get(this.nameIdRequestParams)
-                    //     .subscribe(nameIds => {
-                    //             if (nameIds && ( nameIds.length > 0 )) {
-                    //
-                    //                 let fileItems: GobiiFileItem[] = [];
-                    //
-                    //                 nameIds.forEach(n => {
-                    //                     let currentFileItem: GobiiFileItem =
-                    //                         GobiiFileItem.build(
-                    //                             this.gobiiExtractFilterType,
-                    //                             ProcessType.CREATE)
-                    //                             .setExtractorItemType(ExtractorItemType.ENTITY)
-                    //                             .setEntityType(this.nameIdRequestParams.getEntityType())
-                    //                             .setCvFilterType(CvFilterType.UNKNOWN)
-                    //                             .setItemId(n.id)
-                    //                             .setItemName(n.name)
-                    //                             .setSelected(false)
-                    //                             .setRequired(false);
-                    //
-                    //
-                    //                     fileItems.push(currentFileItem);
-                    //                 });
-                    //
-                    //                 let loadAction: fileAction.LoadAction = new fileAction.LoadAction(fileItems);
-                    //                 this.store.dispatch(loadAction)
-                    //
-                    //             }
-                    //         },
-                    //         responseHeader => {
-                    //             this.handleHeaderStatus(responseHeader);
-                    //         });
-                }; // setList()
-                CheckListBoxComponent.prototype.ngOnInit = function () {
-                    // this._fileModelTreeService
-                    //     .fileItemNotifications()
-                    //     .subscribe(eventedFileItem => {
-                    //
-                    //             if (eventedFileItem) {
-                    //                 let itemToChange: GobiiFileItem =
-                    //                     this.gobiiFileItems.find(e => {
-                    //                         return e.getEntityType() == eventedFileItem.getEntityType()
-                    //                             && e.getItemName() == eventedFileItem.getItemName()
-                    //                     });
-                    //
-                    //                 //let indexOfItemToChange:number = this.gobiiFileItems.indexOf(arg.currentTarget.name);
-                    //                 if (itemToChange) {
-                    //                     itemToChange.setProcessType(eventedFileItem.getProcessType());
-                    //                     itemToChange.setSelected(eventedFileItem.getSelected());
-                    //                     this.updateCheckedItemHistory(itemToChange);
-                    //                 }
-                    //             }
-                    //         },
-                    //         responseHeader => {
-                    //             this.handleHeaderStatus(responseHeader);
-                    //         });
-                    // if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
-                    //     this.setList()
-                    // }
-                };
-                CheckListBoxComponent.prototype.resetList = function () {
-                    // if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
-                    //     this.setList();
-                    // }
-                };
-                CheckListBoxComponent.prototype.ngOnChanges = function (changes) {
-                    if (changes['gobiiExtractFilterType']
-                        && (changes['gobiiExtractFilterType'].currentValue != null)
-                        && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
-                        if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
-                            //this.nameIdRequestParams.setGobiiExtractFilterType(this.gobiiExtractFilterType);
-                            this.resetList();
-                            // this.resetList();
-                            // this._fileModelTreeService
-                            //     .fileItemNotifications()
-                            //     .subscribe(fileItem => {
-                            //         if (fileItem.getProcessType() === ProcessType.NOTIFY
-                            //             && fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
-                            //
-                            //             this.resetList();
-                            //
-                            //         }
-                            //     });
-                        } // if we have a new filter type
-                    } // if filter type changed
-                };
-                CheckListBoxComponent.prototype.ngDoCheck = function () {
-                    var changes = this.differ.diff(this.nameIdRequestParams);
-                    if (changes) {
-                        this.resetList();
-                    }
                 };
                 CheckListBoxComponent = __decorate([
                     core_1.Component({
