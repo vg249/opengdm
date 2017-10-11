@@ -38,9 +38,8 @@ export class InstructionSubmissionService {
                 private dtoRequestServiceExtractorFile: DtoRequestService<ExtractorInstructionFilesDTO>,) {
     }
 
-    
 
-    public submitReady(gobiiExtractFilterType:GobiiExtractFilterType): Observable<boolean> {
+    public submitReady(gobiiExtractFilterType: GobiiExtractFilterType): Observable<boolean> {
 
 
         return Observable.create(observer => {
@@ -62,7 +61,82 @@ export class InstructionSubmissionService {
                                         .length > 0;
 
 
-                            } // if-else on extract type
+                            } else if (gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
+
+                                let samplesArePresent: boolean = all.filter(fi =>
+                                    fi.getGobiiExtractFilterType() === gobiiExtractFilterType
+                                    && (( fi.getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_ITEM )
+                                    || fi.getExtractorItemType() === ExtractorItemType.SAMPLE_FILE )
+                                ).length > 0;
+
+                                let projectIsPresent: boolean = all.filter(fi =>
+                                    fi.getGobiiExtractFilterType() === gobiiExtractFilterType
+                                    && ( fi.getExtractorItemType() === ExtractorItemType.ENTITY )
+                                    && fi.getEntityType() === EntityType.Projects
+                                ).length > 0;
+
+                                let pIIsPresent: boolean = all.filter(fi =>
+                                    fi.getGobiiExtractFilterType() === gobiiExtractFilterType
+                                    && ( fi.getExtractorItemType() === ExtractorItemType.ENTITY )
+                                    && fi.getEntityType() === EntityType.Contacts
+                                    && fi.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR
+                                ).length > 0;
+
+                                let datasetTypeIsPResent: boolean = all.filter(fi =>
+                                    fi.getGobiiExtractFilterType() === gobiiExtractFilterType
+                                    && ( fi.getExtractorItemType() === ExtractorItemType.ENTITY )
+                                    && fi.getEntityType() === EntityType.CvTerms
+                                    && fi.getCvFilterType() === CvFilterType.DATASET_TYPE
+                                ).length > 0;
+
+
+                                submistReady =
+                                    samplesArePresent
+                                    && projectIsPresent
+                                    && pIIsPresent
+                                    && datasetTypeIsPResent;
+
+
+                            } else if (gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
+
+                                let markersArePresent: boolean = all.filter(fi =>
+                                    fi.getGobiiExtractFilterType() === gobiiExtractFilterType
+                                    && (( fi.getExtractorItemType() === ExtractorItemType.MARKER_LIST_ITEM )
+                                    || fi.getExtractorItemType() === ExtractorItemType.SAMPLE_FILE )
+                                ).length > 0;
+
+                                let projectIsPresent: boolean = all.filter(fi =>
+                                    fi.getGobiiExtractFilterType() === gobiiExtractFilterType
+                                    && ( fi.getExtractorItemType() === ExtractorItemType.ENTITY )
+                                    && fi.getEntityType() === EntityType.Projects
+                                ).length > 0;
+
+                                let pIIsPresent: boolean = all.filter(fi =>
+                                    fi.getGobiiExtractFilterType() === gobiiExtractFilterType
+                                    && ( fi.getExtractorItemType() === ExtractorItemType.ENTITY )
+                                    && fi.getEntityType() === EntityType.Contacts
+                                    && fi.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR
+                                ).length > 0;
+
+                                let datasetTypeIsPResent: boolean = all.filter(fi =>
+                                    fi.getGobiiExtractFilterType() === gobiiExtractFilterType
+                                    && ( fi.getExtractorItemType() === ExtractorItemType.ENTITY )
+                                    && fi.getEntityType() === EntityType.CvTerms
+                                    && fi.getCvFilterType() === CvFilterType.DATASET_TYPE
+                                ).length > 0;
+
+
+                                submistReady =
+                                    markersArePresent
+                                    && projectIsPresent
+                                    && pIIsPresent
+                                    && datasetTypeIsPResent;
+
+                            } else {
+
+                                this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + GobiiExtractFilterType[gobiiExtractFilterType]));
+
+                            }
 
                             let temp = "foo";
                             observer.next(submistReady);
@@ -74,7 +148,7 @@ export class InstructionSubmissionService {
 
     } // function()
 
-    public submit(gobiiExtractFilterType:GobiiExtractFilterType) {
+    public submit(gobiiExtractFilterType: GobiiExtractFilterType) {
         let gobiiExtractorInstructions: GobiiExtractorInstruction[] = [];
         let gobiiDataSetExtracts: GobiiDataSetExtract[] = [];
         let mapsetIds: number[] = [];
