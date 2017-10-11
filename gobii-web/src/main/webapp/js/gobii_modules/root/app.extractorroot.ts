@@ -159,10 +159,10 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                     <BR>
                                     <label class="the-label">Platforms:</label><BR>
                                     <checklist-box
-                                            [nameIdRequestParams]="nameIdRequestParamsPlatforms"
+                                            [gobiiFileItems$]="fileItemsPlatforms$"
                                             [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                            [retainHistory]="false"
-                                            (onAddStatusMessage)="handleHeaderStatusMessage($event)">
+                                            [retainHistory]="true"
+                                            (onError)="handleHeaderStatusMessage($event)">
                                     </checklist-box>
                                 </div>
 
@@ -306,7 +306,7 @@ export class ExtractorRoot implements OnInit {
     fileItemsContactsPI$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getPiContacts);
     fileItemsMapsets$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getMapsets);
     fileItemsDatasetTypes$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getCvTermsDataType);
-    fileItemsPlatforms: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getPlatforms);
+    fileItemsPlatforms$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getPlatforms);
 
     // filtered
     fileItemsProjects$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getProjectsByPI);

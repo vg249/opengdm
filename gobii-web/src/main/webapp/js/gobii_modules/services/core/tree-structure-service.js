@@ -75,7 +75,8 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
                             .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE),
                         GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, file_model_node_1.ExtractorItemType.SAMPLE_LIST_TYPE),
                         GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, file_model_node_1.ExtractorItemType.ENTITY)
-                            .setEntityType(type_entity_1.EntityType.Platforms),
+                            .setEntityType(type_entity_1.EntityType.Platforms)
+                            .setContainerType(GobiiTreeNode_1.ContainerType.DATA),
                         GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, file_model_node_1.ExtractorItemType.TREE_STRUCTURE)
                             .setContainerType(GobiiTreeNode_1.ContainerType.STRUCTURE)
                             .setLabel("Samples Criteria")

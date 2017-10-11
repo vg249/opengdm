@@ -57,7 +57,8 @@ export class TreeStructureService {
                 .setCvFilterType(CvFilterType.DATASET_TYPE),
             GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.SAMPLE_LIST_TYPE),
             GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.ENTITY)
-                .setEntityType(EntityType.Platforms),
+                .setEntityType(EntityType.Platforms)
+                .setContainerType(ContainerType.DATA),
             GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.TREE_STRUCTURE)
                 .setContainerType(ContainerType.STRUCTURE)
                 .setLabel("Samples Criteria")
