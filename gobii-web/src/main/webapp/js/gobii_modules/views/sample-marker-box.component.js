@@ -179,7 +179,7 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                         this.currentFileItems.forEach(function (currentFileItem) {
                             currentFileItem.setProcessType(type_process_1.ProcessType.DELETE);
                             _this.fileItemService
-                                .loadFileItem(currentFileItem, true);
+                                .unloadFileItemFromExtract(currentFileItem);
                         });
                     }
                     else {

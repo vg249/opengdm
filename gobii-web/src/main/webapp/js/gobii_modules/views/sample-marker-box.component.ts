@@ -277,7 +277,7 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
 
                 currentFileItem.setProcessType(ProcessType.DELETE);
                 this.fileItemService
-                    .loadFileItem(currentFileItem,true);
+                    .unloadFileItemFromExtract(currentFileItem);
             });
         } else {
             // we leave things as they are; however, because the user clicked a radio button,

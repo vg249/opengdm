@@ -145,6 +145,15 @@ export class FileItemService {
 
     }
 
+    public unloadFileItemFromExtract(gobiiFileItem: GobiiFileItem) {
+
+
+        let loadAction: fileItemActions.RemoveFromExtractAction = new fileItemActions.RemoveFromExtractAction(gobiiFileItem);
+
+        this.store.dispatch(loadAction);
+
+    }
+
     private loadNameIdsToFileItems(gobiiExtractFilterType: GobiiExtractFilterType,
                                    nameIdRequestParamsToLoad: FileItemParams,
                                    filterValue: string) {

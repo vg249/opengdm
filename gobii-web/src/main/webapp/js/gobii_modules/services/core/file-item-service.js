@@ -137,6 +137,10 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     });
                     this.store.dispatch(loadAction);
                 };
+                FileItemService.prototype.unloadFileItemFromExtract = function (gobiiFileItem) {
+                    var loadAction = new fileItemActions.RemoveFromExtractAction(gobiiFileItem);
+                    this.store.dispatch(loadAction);
+                };
                 FileItemService.prototype.loadNameIdsToFileItems = function (gobiiExtractFilterType, nameIdRequestParamsToLoad, filterValue) {
                     var _this = this;
                     if (nameIdRequestParamsToLoad.getDynamicFilterValue()) {
