@@ -10,89 +10,104 @@ import {Labels} from "./entity-labels";
 import {FileItemParams} from "../model/name-id-request-params";
 import {EntityType} from "../model/type-entity";
 import {NameIdFilterParamTypes} from "../model/type-nameid-filter-params";
+import * as fromRoot from '../store/reducers';
+import * as fileItemAction from '../store/actions/fileitem-action';
+import * as historyAction from '../store/actions/history-action';
+import {FileItemService} from "../services/core/file-item-service";
+import {Store} from "@ngrx/store";
+
 
 @Component({
     selector: 'sample-marker-box',
     inputs: ['gobiiExtractFilterType'],
     outputs: ['onSampleMarkerError'],
-    template: `<div class="container-fluid">
-            
-                <div class="row">
+    template: `
+        <div class="container-fluid">
 
-                            <input type="radio" 
-                                (click)="handleOnClickBrowse($event)" 
-                                name="listType" 
-                                value="itemFile"
-                                [(ngModel)]="selectedListType">
-                          <label class="the-legend">File&nbsp;</label>
-                          <input type="radio" 
-                                (click)="handleTextBoxChanged($event)" 
-                                name="listType" 
-                                value="itemArray"
-                                [(ngModel)]="selectedListType">
-                          <label class="the-legend">List&nbsp;</label>
-                              <input *ngIf="displayMarkerGroupRadio" 
-                                    type="radio" 
-                                    (click)="handleMarkerGroupChanged($event)" 
-                                    name="listType" 
-                                    value="markerGroupsType"
-                                    [(ngModel)]="selectedListType">
-                              <label *ngIf="displayMarkerGroupRadio" 
-                                class="the-legend">Marker Groups&nbsp;</label>
+            <div class="row">
 
-                 </div>
-                 
-                <div class="row">
-                
-                    <div *ngIf="displayUploader" class="col-md-8">
-                        <uploader
-                        [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                        (onUploaderError)="handleStatusHeaderMessage($event)"></uploader>
-                    </div> 
-                    
-                    <div *ngIf="displayListBox" class="col-md-8">
-                        <text-area
-                        (onTextboxDataComplete)="handleTextBoxDataSubmitted($event)"></text-area>
-                    </div> 
-                    <div *ngIf="displayListBox" class="col-md-4">
-                          <p class="text-warning">{{maxListItems}} maximum</p>
-                    </div> 
-                    
-                    <div *ngIf="selectedListType == 'markerGroupsType'" class="col-md-8">
-                            <checklist-box
-                                [nameIdRequestParams] = "nameIdRequestParamsMarkerGroups"
-                                [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                                [retainHistory] = "false">
-                            </checklist-box>
-                    </div> 
-                    
-                 </div>
-                
-                 <div>
-                    <p-dialog header="{{extractTypeLabelExisting}} Already Selelected" [(visible)]="displayChoicePrompt" modal="modal" width="300" height="300" responsive="true">
-                        <p>A {{extractTypeLabelExisting}} is already selected. Do you want to remove it and specify a {{extractTypeLabelProposed}} instead?</p>
-                            <p-footer>
-                                <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-                                    <button type="button" pButton icon="fa-close" (click)="handleUserChoice(false)" label="No"></button>
-                                    <button type="button" pButton icon="fa-check" (click)="handleUserChoice(true)" label="Yes"></button>
-                                </div>
-                            </p-footer>
-                    </p-dialog>
-                  </div>
-                  <div>
-                    <p-dialog header="Maximum {{maxExceededTypeLabel}} Items Exceeded" [(visible)]="displayMaxItemsExceeded" modal="modal" width="300" height="300" responsive="true">
-                        <p>You attempted to paste more than {{maxListItems}} {{maxExceededTypeLabel}} items; Please reduce the size of the list</p>
-                    </p-dialog>
-                  </div>`
+                <input type="radio"
+                       (click)="handleOnClickBrowse($event)"
+                       name="listType"
+                       value="itemFile"
+                       [(ngModel)]="selectedListType">
+                <label class="the-legend">File&nbsp;</label>
+                <input type="radio"
+                       (click)="handleTextBoxChanged($event)"
+                       name="listType"
+                       value="itemArray"
+                       [(ngModel)]="selectedListType">
+                <label class="the-legend">List&nbsp;</label>
+                <input *ngIf="displayMarkerGroupRadio"
+                       type="radio"
+                       (click)="handleMarkerGroupChanged($event)"
+                       name="listType"
+                       value="markerGroupsType"
+                       [(ngModel)]="selectedListType">
+                <label *ngIf="displayMarkerGroupRadio"
+                       class="the-legend">Marker Groups&nbsp;</label>
+
+            </div>
+
+            <div class="row">
+
+                <div *ngIf="displayUploader" class="col-md-8">
+                    <uploader
+                            [gobiiExtractFilterType]="gobiiExtractFilterType"
+                            (onUploaderError)="handleStatusHeaderMessage($event)"></uploader>
+                </div>
+
+                <div *ngIf="displayListBox" class="col-md-8">
+                    <text-area
+                            (onTextboxDataComplete)="handleTextBoxDataSubmitted($event)"></text-area>
+                </div>
+                <div *ngIf="displayListBox" class="col-md-4">
+                    <p class="text-warning">{{maxListItems}} maximum</p>
+                </div>
+
+                <div *ngIf="selectedListType == 'markerGroupsType'" class="col-md-8">
+                    <checklist-box
+                            [nameIdRequestParams]="nameIdRequestParamsMarkerGroups"
+                            [gobiiExtractFilterType]="gobiiExtractFilterType"
+                            [retainHistory]="false">
+                    </checklist-box>
+                </div>
+
+            </div>
+
+            <div>
+                <p-dialog header="{{extractTypeLabelExisting}} Already Selelected" [(visible)]="displayChoicePrompt"
+                          modal="modal" width="300" height="300" responsive="true">
+                    <p>A {{extractTypeLabelExisting}} is already selected. Do you want to remove it and specify a {{extractTypeLabelProposed}}
+                        instead?</p>
+                    <p-footer>
+                        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+                            <button type="button" pButton icon="fa-close" (click)="handleUserChoice(false)"
+                                    label="No"></button>
+                            <button type="button" pButton icon="fa-check" (click)="handleUserChoice(true)"
+                                    label="Yes"></button>
+                        </div>
+                    </p-footer>
+                </p-dialog>
+            </div>
+            <div>
+                <p-dialog header="Maximum {{maxExceededTypeLabel}} Items Exceeded" [(visible)]="displayMaxItemsExceeded"
+                          modal="modal" width="300" height="300" responsive="true">
+                    <p>You attempted to paste more than {{maxListItems}} {{maxExceededTypeLabel}} items; Please reduce
+                        the size of the list</p>
+                </p-dialog>
+            </div>`
 
 })
 
 export class SampleMarkerBoxComponent implements OnInit, OnChanges {
 
     public nameIdRequestParamsMarkerGroups: FileItemParams;
-    public constructor(private _fileModelTreeService: FileModelTreeService) {
 
-        this.nameIdRequestParamsMarkerGroups= FileItemParams
+    public constructor(private store: Store<fromRoot.State>,
+                       private fileItemService: FileItemService) {
+
+        this.nameIdRequestParamsMarkerGroups = FileItemParams
             .build(NameIdFilterParamTypes.MARKER_GROUPS,
                 this.gobiiExtractFilterType,
                 EntityType.MarkerGroups);
@@ -117,7 +132,6 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
     public extractTypeLabelProposed: string;
 
 
-
     // private handleUserSelected(arg) {
     //     this.onUserSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
     // }
@@ -126,7 +140,7 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
     //
     // } // ctor
 
-    private handleTextBoxDataSubmitted(items: string[]) {
+    public handleTextBoxDataSubmitted(items: string[]) {
 
         if (items.length <= this.maxListItems) {
 
@@ -138,14 +152,11 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
 
                 if (listItem && listItem !== "") {
 
-                    this._fileModelTreeService
-                        .put(GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
+                    this.fileItemService
+                        .loadFileItem(GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
                             .setExtractorItemType(listItemType)
                             .setItemId(listItem)
-                            .setItemName(listItem))
-                        .subscribe(null, headerStatusMessage => {
-                            this.handleStatusHeaderMessage(headerStatusMessage)
-                        });
+                            .setItemName(listItem),true);
                 }
             });
 
@@ -158,7 +169,7 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
             } else {
                 this.handleStatusHeaderMessage(new HeaderStatusMessage("This control does not handle the currently selected item type: "
                     + GobiiExtractFilterType[this.gobiiExtractFilterType]
-                    ,null,null))
+                    , null, null))
             }
 
             this.displayMaxItemsExceeded = true;
@@ -172,8 +183,8 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
 
         let returnVal: boolean = false;
 
-        this._fileModelTreeService.getFileItems(this.gobiiExtractFilterType).subscribe(
-            fileItems => {
+        this.store.select(fromRoot.getAllFileItems)
+            .subscribe(fileItems => {
 
                 let extractorItemTypeListToFind: ExtractorItemType = ExtractorItemType.UNKNOWN;
                 let extractorItemTypeFileToFind: ExtractorItemType = ExtractorItemType.UNKNOWN;
@@ -188,7 +199,7 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
 
                 this.currentFileItems = fileItems.filter(item => {
                     return ( ( item.getExtractorItemType() === extractorItemTypeListToFind ) ||
-                    (item.getExtractorItemType() === extractorItemTypeFileToFind) )
+                        (item.getExtractorItemType() === extractorItemTypeFileToFind) )
                 });
 
                 if (this.currentFileItems.length > 0) {
@@ -225,7 +236,7 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
             hsm => {
                 this.handleStatusHeaderMessage(hsm)
             }
-        );
+        ).unsubscribe();
 
         // if (event.currentTarget.defaultValue === "itemArray") {
         //
@@ -265,13 +276,8 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
             this.currentFileItems.forEach(currentFileItem => {
 
                 currentFileItem.setProcessType(ProcessType.DELETE);
-                this._fileModelTreeService
-                    .put(currentFileItem)
-                    .subscribe(fmte => {
-
-                    }, headerStatusMessage => {
-                        this.handleStatusHeaderMessage(headerStatusMessage)
-                    });
+                this.fileItemService
+                    .loadFileItem(currentFileItem,true);
             });
         } else {
             // we leave things as they are; however, because the user clicked a radio button,
@@ -336,7 +342,6 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
     }
 
 
-
     ngOnInit(): any {
 
 //        this.extractTypeLabel = Labels.instance().extractorFilterTypeLabels[this.gobiiExtractFilterType];
@@ -344,7 +349,7 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
     }
 
 
-    ngOnChanges(changes: {[propName: string]: SimpleChange}) {
+    ngOnChanges(changes: { [propName: string]: SimpleChange }) {
 
         if (changes['gobiiExtractFilterType']
             && ( changes['gobiiExtractFilterType'].currentValue != null )
@@ -354,7 +359,7 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
 
                 //this.notificationSent = false;
 
-                if( this.gobiiExtractFilterType == GobiiExtractFilterType.BY_MARKER ) {
+                if (this.gobiiExtractFilterType == GobiiExtractFilterType.BY_MARKER) {
                     this.displayMarkerGroupRadio = true;
                 } else {
                     this.displayMarkerGroupRadio = false

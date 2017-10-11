@@ -1,22 +1,14 @@
-import {Component, OnInit, SimpleChange, EventEmitter, ViewChild} from "@angular/core";
-import {
-    FileSelectDirective,
-    FileDropDirective,
-    FileUploader, FileUploaderOptions, Headers, FileItem
-} from 'ng2-file-upload';
+import {Component, EventEmitter, OnInit, ViewChild} from "@angular/core";
+import {FileItem, FileUploader, FileUploaderOptions, Headers} from 'ng2-file-upload';
 import {AuthenticationService} from "../services/core/authentication.service";
 import {HeaderNames} from "../model/header-names";
-import {Header} from "../model/payload/header";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import {FileName} from "../model/file_name";
-import {FileModelTreeService} from "../services/core/file-model-tree-service";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {ProcessType} from "../model/type-process";
 import {ExtractorItemType} from "../model/file-model-node";
-import {GobiiUIEventOrigin} from "../model/type-event-origin";
 import {Store} from "@ngrx/store";
-import {Observer} from "rxjs/Observer";
 import * as fromRoot from '../store/reducers';
 import {Observable} from "rxjs/Observable";
 import {FileItemService} from "../services/core/file-item-service";
@@ -245,7 +237,7 @@ export class UploaderComponent implements OnInit {
                                 this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER ?
                                     ExtractorItemType.MARKER_FILE : ExtractorItemType.SAMPLE_FILE;
 
-                            this.fileItemService.locadFileItem(GobiiFileItem
+                            this.fileItemService.loadFileItem(GobiiFileItem
                                 .build(this.gobiiExtractFilterType, ProcessType.CREATE)
                                 .setExtractorItemType(listItemType)
                                 .setItemId(item.file.name)

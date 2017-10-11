@@ -45,7 +45,7 @@ export class ExportTypeComponent implements OnInit {
 
     ngOnInit() {
 
-        //this.handleExportTypeSelected(GobiiExtractFilterType.WHOLE_DATASET);
+        //this.handleSampleTypeSelected(GobiiExtractFilterType.WHOLE_DATASET);
     }
 
 }

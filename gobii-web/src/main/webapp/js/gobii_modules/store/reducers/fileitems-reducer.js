@@ -1,4 +1,4 @@
-System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem-action", "../../model/file-model-node", "../../model/type-entity", "../../model/type-nameid-filter-params", "../../model/type-process", "../../views/entity-labels", "../../model/type-extractor-filter", "../../model/type-extract-format", "../../model/cv-filter-type"], function (exports_1, context_1) {
+System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem-action", "../../model/file-model-node", "../../model/type-entity", "../../model/type-nameid-filter-params", "../../model/type-process", "../../views/entity-labels", "../../model/type-extractor-filter", "../../model/type-extract-format", "../../model/cv-filter-type", "../../model/type-extractor-sample-list"], function (exports_1, context_1) {
     "use strict";
     _this = this;
     var __moduleName = context_1 && context_1.id;
@@ -174,7 +174,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
         return returnVal;
     }
     exports_1("fileItemsReducer", fileItemsReducer);
-    var _this, reselect_1, gobii_file_item_1, gobiiFileItemAction, file_model_node_1, type_entity_1, type_nameid_filter_params_1, type_process_1, entity_labels_1, type_extractor_filter_1, type_extract_format_1, cv_filter_type_1, initialState, getGobiiExtractFilterType, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getPiContacts, getFirstPiContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTermsDataType, getFirstCvTerm, getMapsets, getFirstmapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment, getSelectedFileFormat, getJobId, getUploadFiles;
+    var _this, reselect_1, gobii_file_item_1, gobiiFileItemAction, file_model_node_1, type_entity_1, type_nameid_filter_params_1, type_process_1, entity_labels_1, type_extractor_filter_1, type_extract_format_1, cv_filter_type_1, type_extractor_sample_list_1, initialState, getGobiiExtractFilterType, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getPiContacts, getFirstPiContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTermsDataType, getFirstCvTerm, getMapsets, getFirstmapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment, getSelectedFileFormat, getSelectedSampleType, getJobId, getUploadFiles;
     return {
         setters: [
             function (reselect_1_1) {
@@ -209,6 +209,9 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             },
             function (cv_filter_type_1_1) {
                 cv_filter_type_1 = cv_filter_type_1_1;
+            },
+            function (type_extractor_sample_list_1_1) {
+                type_extractor_sample_list_1 = type_extractor_sample_list_1_1;
             }
         ],
         execute: function () {
@@ -430,6 +433,20 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                     .setItemName(type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat.HAPMAP]]);
                 var formatItem = fileItems
                     .find(function (fi) { return fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.EXPORT_FORMAT
+                    && undefined !== selectedUniqueIds.find(function (id) { return id === fi.getFileItemUniqueId(); }); });
+                if (formatItem) {
+                    returnVal = formatItem;
+                }
+                return returnVal;
+            }));
+            exports_1("getSelectedSampleType", getSelectedSampleType = reselect_1.createSelector(getFileItems, getSelectedUniqueIds, function (fileItems, selectedUniqueIds) {
+                // default
+                var returnVal = gobii_file_item_1.GobiiFileItem.build(_this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                    .setExtractorItemType(file_model_node_1.ExtractorItemType.SAMPLE_LIST_TYPE)
+                    .setItemName(type_extractor_sample_list_1.GobiiSampleListType[type_extractor_sample_list_1.GobiiSampleListType.GERMPLASM_NAME])
+                    .setItemId(type_extractor_sample_list_1.GobiiSampleListType[type_extractor_sample_list_1.GobiiSampleListType.GERMPLASM_NAME]);
+                var formatItem = fileItems
+                    .find(function (fi) { return fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_LIST_TYPE
                     && undefined !== selectedUniqueIds.find(function (id) { return id === fi.getFileItemUniqueId(); }); });
                 if (formatItem) {
                     returnVal = formatItem;

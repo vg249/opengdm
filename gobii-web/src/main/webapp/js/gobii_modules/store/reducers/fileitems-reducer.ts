@@ -11,6 +11,7 @@ import {Labels} from "../../views/entity-labels";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 import {GobiiExtractFormat} from "../../model/type-extract-format";
 import {CvFilterType} from "../../model/cv-filter-type";
+import {GobiiSampleListType} from "../../model/type-extractor-sample-list";
 
 
 /***
@@ -565,6 +566,26 @@ export const getSelectedFileFormat = createSelector(getFileItems, getSelectedUni
 
     let formatItem: GobiiFileItem = fileItems
         .find(fi => fi.getExtractorItemType() === ExtractorItemType.EXPORT_FORMAT
+            && undefined !== selectedUniqueIds.find(id => id === fi.getFileItemUniqueId()));
+
+    if (formatItem) {
+        returnVal = formatItem;
+    }
+
+    return returnVal;
+
+});
+
+export const getSelectedSampleType = createSelector(getFileItems, getSelectedUniqueIds, (fileItems, selectedUniqueIds) => {
+
+    // default
+    let returnVal = GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
+        .setExtractorItemType(ExtractorItemType.SAMPLE_LIST_TYPE)
+        .setItemName(GobiiSampleListType[GobiiSampleListType.GERMPLASM_NAME])
+        .setItemId(GobiiSampleListType[GobiiSampleListType.GERMPLASM_NAME]);
+
+    let formatItem: GobiiFileItem = fileItems
+        .find(fi => fi.getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_TYPE
             && undefined !== selectedUniqueIds.find(id => id === fi.getFileItemUniqueId()));
 
     if (formatItem) {

@@ -159,6 +159,7 @@ export const getExperimentsByProject = createSelector(getFileItemsState, fromFil
 export const getDatasetsByExperiment = createSelector(getFileItemsState, fromFileItems.getDatasetsForSelectedExperiment);
 export const getSelectedPiContacts = createSelector(getFileItemsState, fromFileItems.getSelectedPiContacts);
 export const getSelectedFileFormat = createSelector(getFileItemsState, fromFileItems.getSelectedFileFormat);
+export const getSelectedSampleType = createSelector(getFileItemsState, fromFileItems.getSelectedSampleType);
 export const getJobId = createSelector(getFileItemsState, fromFileItems.getJobId);
 export const getUploadFiles = createSelector(getFileItemsState, fromFileItems.getUploadFiles);
 

@@ -1,7 +1,7 @@
 System.register(["@ngrx/store", "ngrx-store-freeze", "./fileitems-reducer", "./treenode-reducer", "./history-reducer"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var store_1, store_2, ngrx_store_freeze_1, store_3, fromFileItems, fromGobiiTreeNodes, fromHistory, reducers, developmentReducer, productionReducer, getFileItemsState, getAllFileItems, getFileItems, getSelectedFileItems, getSelectedUniqueIds, getUniqueIds, getPiContacts, getFirstPiContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTermsDataType, getFirstCvTerm, getMapsets, getFirstMapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getProjectsByPI, getExperimentsByProject, getDatasetsByExperiment, getSelectedPiContacts, getSelectedFileFormat, getJobId, getUploadFiles, getGobiiTreeNodesState, getAllGobiiTreeNodes, getGobiiTreeNodesForExtractFilter, getSelectedGobiiTreeNodes, getSelectedGobiiTreeNodeIds, getIdsOfActivatedGobiiTreeNodes, gobiiHistoryState, getStatusMessages, getLasetStatusMessage;
+    var store_1, store_2, ngrx_store_freeze_1, store_3, fromFileItems, fromGobiiTreeNodes, fromHistory, reducers, developmentReducer, productionReducer, getFileItemsState, getAllFileItems, getFileItems, getSelectedFileItems, getSelectedUniqueIds, getUniqueIds, getPiContacts, getFirstPiContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTermsDataType, getFirstCvTerm, getMapsets, getFirstMapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getProjectsByPI, getExperimentsByProject, getDatasetsByExperiment, getSelectedPiContacts, getSelectedFileFormat, getSelectedSampleType, getJobId, getUploadFiles, getGobiiTreeNodesState, getAllGobiiTreeNodes, getGobiiTreeNodesForExtractFilter, getSelectedGobiiTreeNodes, getSelectedGobiiTreeNodeIds, getIdsOfActivatedGobiiTreeNodes, gobiiHistoryState, getStatusMessages, getLasetStatusMessage;
     return {
         setters: [
             function (store_1_1) {
@@ -103,6 +103,7 @@ System.register(["@ngrx/store", "ngrx-store-freeze", "./fileitems-reducer", "./t
             exports_1("getDatasetsByExperiment", getDatasetsByExperiment = store_1.createSelector(getFileItemsState, fromFileItems.getDatasetsForSelectedExperiment));
             exports_1("getSelectedPiContacts", getSelectedPiContacts = store_1.createSelector(getFileItemsState, fromFileItems.getSelectedPiContacts));
             exports_1("getSelectedFileFormat", getSelectedFileFormat = store_1.createSelector(getFileItemsState, fromFileItems.getSelectedFileFormat));
+            exports_1("getSelectedSampleType", getSelectedSampleType = store_1.createSelector(getFileItemsState, fromFileItems.getSelectedSampleType));
             exports_1("getJobId", getJobId = store_1.createSelector(getFileItemsState, fromFileItems.getJobId));
             exports_1("getUploadFiles", getUploadFiles = store_1.createSelector(getFileItemsState, fromFileItems.getUploadFiles));
             exports_1("getGobiiTreeNodesState", getGobiiTreeNodesState = function (state) { return state.gobiiTreeNodes; });

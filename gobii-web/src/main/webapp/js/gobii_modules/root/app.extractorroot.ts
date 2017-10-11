@@ -31,6 +31,7 @@ import {NameIdFilterParamTypes} from "../model/type-nameid-filter-params";
 import {FileItemService} from "../services/core/file-item-service";
 import {Observable} from "rxjs/Observable";
 import {InstructionSubmissionService} from "../services/core/instruction-submission-service";
+import {GobiiSampleListType} from "../model/type-extractor-sample-list";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -396,7 +397,7 @@ export class ExtractorRoot implements OnInit {
                 if (contact && contact.contactId && contact.contactId > 0) {
 
                     //loggedInUser
-                    this.fileItemService.locadFileItem(GobiiFileItem.build(scope$.gobiiExtractFilterType, ProcessType.CREATE)
+                    this.fileItemService.loadFileItem(GobiiFileItem.build(scope$.gobiiExtractFilterType, ProcessType.CREATE)
                             .setEntityType(EntityType.Contacts)
                             .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
                             .setCvFilterType(CvFilterType.UNKNOWN)
@@ -485,7 +486,7 @@ export class ExtractorRoot implements OnInit {
 
 
         let jobId: string = FileName.makeUniqueFileId();
-        this.fileItemService.locadFileItem(GobiiFileItem.build(arg, ProcessType.CREATE)
+        this.fileItemService.loadFileItem(GobiiFileItem.build(arg, ProcessType.CREATE)
             .setExtractorItemType(ExtractorItemType.JOB_ID)
             .setItemId(jobId)
             .setItemName(jobId), true)
@@ -624,7 +625,15 @@ export class ExtractorRoot implements OnInit {
             .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
             .setItemId(GobiiExtractFormat[GobiiExtractFormat.HAPMAP])
             .setItemName(GobiiExtractFormat[GobiiExtractFormat[GobiiExtractFormat.HAPMAP]]);
-        this.fileItemService.locadFileItem(formatItem, true);
+        this.fileItemService.loadFileItem(formatItem, true);
+
+
+        this.fileItemService
+            .loadFileItem(GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
+                    .setExtractorItemType(ExtractorItemType.SAMPLE_LIST_TYPE)
+                    .setItemName(GobiiSampleListType[GobiiSampleListType.GERMPLASM_NAME])
+                    .setItemId(GobiiSampleListType[GobiiSampleListType.GERMPLASM_NAME]),
+                true);
 
 
     }
