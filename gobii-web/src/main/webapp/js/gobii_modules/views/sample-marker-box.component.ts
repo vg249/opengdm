@@ -15,6 +15,7 @@ import * as fileItemAction from '../store/actions/fileitem-action';
 import * as historyAction from '../store/actions/history-action';
 import {FileItemService} from "../services/core/file-item-service";
 import {Store} from "@ngrx/store";
+import {Observable} from "rxjs/Observable";
 
 
 @Component({
@@ -67,9 +68,9 @@ import {Store} from "@ngrx/store";
 
                 <div *ngIf="selectedListType == 'markerGroupsType'" class="col-md-8">
                     <checklist-box
-                            [nameIdRequestParams]="nameIdRequestParamsMarkerGroups"
+                            [gobiiFileItems$]="fileItemsMarkerGroups$"
                             [gobiiExtractFilterType]="gobiiExtractFilterType"
-                            [retainHistory]="false">
+                            [retainHistory]="true">
                     </checklist-box>
                 </div>
 
@@ -102,16 +103,12 @@ import {Store} from "@ngrx/store";
 
 export class SampleMarkerBoxComponent implements OnInit, OnChanges {
 
-    public nameIdRequestParamsMarkerGroups: FileItemParams;
-
     public constructor(private store: Store<fromRoot.State>,
                        private fileItemService: FileItemService) {
 
-        this.nameIdRequestParamsMarkerGroups = FileItemParams
-            .build(NameIdFilterParamTypes.MARKER_GROUPS,
-                this.gobiiExtractFilterType,
-                EntityType.MarkerGroups);
     }
+
+    fileItemsMarkerGroups$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getMarkerGroups);
 
     public maxListItems: number = 200;
     public displayMaxItemsExceeded: boolean = false;
@@ -126,7 +123,6 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
 
     public gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
     public onSampleMarkerError: EventEmitter<HeaderStatusMessage> = new EventEmitter();
-    public onMarkerSamplesCompleted: EventEmitter<SampleMarkerList> = new EventEmitter();
 
     public extractTypeLabelExisting: string;
     public extractTypeLabelProposed: string;
@@ -344,7 +340,11 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
 
     ngOnInit(): any {
 
-//        this.extractTypeLabel = Labels.instance().extractorFilterTypeLabels[this.gobiiExtractFilterType];
+        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
+            NameIdFilterParamTypes.MARKER_GROUPS,
+            null);
+
+
         return null;
     }
 

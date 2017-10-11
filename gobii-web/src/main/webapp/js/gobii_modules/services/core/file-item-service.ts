@@ -61,6 +61,12 @@ export class FileItemService {
                     GobiiExtractFilterType.WHOLE_DATASET,
                     EntityType.Platforms));
 
+        this.nameIdRequestParams.set(NameIdFilterParamTypes.MARKER_GROUPS,
+            FileItemParams
+            .build(NameIdFilterParamTypes.MARKER_GROUPS,
+                GobiiExtractFilterType.BY_MARKER,
+                EntityType.MarkerGroups));
+
         //for hierarchical items, we need to crate the nameid requests separately from the
         //flat map: they _will_ need to be in the flat map; however, they all need to be
         //useed to set up the filtering hierarchy

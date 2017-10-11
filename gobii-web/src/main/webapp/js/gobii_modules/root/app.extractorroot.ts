@@ -161,8 +161,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                     <checklist-box
                                             [gobiiFileItems$]="fileItemsPlatforms$"
                                             [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                            [retainHistory]="true"
-                                            (onError)="handleHeaderStatusMessage($event)">
+                                            [retainHistory]="true">
                                     </checklist-box>
                                 </div>
 
