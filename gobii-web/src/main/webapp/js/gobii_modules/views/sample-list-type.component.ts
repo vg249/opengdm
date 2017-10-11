@@ -23,19 +23,19 @@ import {TreeStructureService} from "../services/core/tree-structure-service";
     template: `
         <form>
             <label class="the-legend">List Item Type:&nbsp;</label>
-            <BR><BR><input type="radio"
+            <BR><input type="radio"
                        (ngModelChange)="handleSampleTypeSelected($event)"
                        [ngModel]="(sampleListType$ | async).getItemId()"
                        name="listType"
                        value="GERMPLASM_NAME">
             <label for="GERMPLASM_NAME" class="the-legend">Germplasm Name</label>
-            <BR><BR><input type="radio"
+            <BR><input type="radio"
                        (ngModelChange)="handleSampleTypeSelected($event)"
                        [ngModel]="(sampleListType$ | async).getItemId()"
                        name="listType"
                        value="EXTERNAL_CODE">
             <label for="EXTERNAL_CODE" class="the-legend">External Code</label>
-            <BR><BR><input type="radio"
+            <BR><input type="radio"
                        (ngModelChange)="handleSampleTypeSelected($event)"
                        [ngModel]="(sampleListType$ | async).getItemId()"
                        name="listType"

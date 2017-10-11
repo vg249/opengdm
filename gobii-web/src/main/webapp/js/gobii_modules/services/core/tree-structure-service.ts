@@ -71,7 +71,7 @@ export class TreeStructureService {
                         .setEntityType(EntityType.Projects)
                         .setContainerType(ContainerType.NONE),
                     GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.SAMPLE_FILE),
-                    GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.SAMPLE_LIST_TYPE)
+                    GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.SAMPLE_LIST_ITEM)
                         .setContainerType(ContainerType.DATA),
                 ]),
 

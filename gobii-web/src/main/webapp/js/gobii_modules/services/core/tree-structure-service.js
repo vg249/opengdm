@@ -89,7 +89,7 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
                                 .setEntityType(type_entity_1.EntityType.Projects)
                                 .setContainerType(GobiiTreeNode_1.ContainerType.NONE),
                             GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, file_model_node_1.ExtractorItemType.SAMPLE_FILE),
-                            GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, file_model_node_1.ExtractorItemType.SAMPLE_LIST_TYPE)
+                            GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM)
                                 .setContainerType(GobiiTreeNode_1.ContainerType.DATA),
                         ])
                     ], this.makeCommonNodes(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER), [
