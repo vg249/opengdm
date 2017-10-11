@@ -49,7 +49,8 @@ public class JobStatus {
 			JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION.getCvName(),
 			JobProgressStatusType.CV_PROGRESSSTATUS_FAILED.getCvName(),
 			JobProgressStatusType.CV_PROGRESSSTATUS_METADATAEXTRACT.getCvName(),
-			JobProgressStatusType.CV_PROGRESSSTATUS_FINALASSEMBLY.getCvName()
+			JobProgressStatusType.CV_PROGRESSSTATUS_FINALASSEMBLY.getCvName(),
+			JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING.getCvName()
 	));
     public JobStatus(ConfigSettings config, String cropName, String jobName) throws Exception {
 		this.jobName=jobName;
