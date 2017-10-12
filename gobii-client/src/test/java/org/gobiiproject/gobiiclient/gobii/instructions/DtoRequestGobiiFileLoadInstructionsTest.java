@@ -33,6 +33,7 @@ import org.junit.*;
 import java.util.List;
 import java.util.Map;
 
+
 public class DtoRequestGobiiFileLoadInstructionsTest {
 
     private static GobiiUriFactory gobiiUriFactory;
@@ -483,7 +484,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
     }
 
-    @Test
+    @Ignore
     public void testInvalidExperimentForDataset() throws Exception {
 
         LoaderInstructionFilesDTO loaderInstructionFilesDTOToSend = new LoaderInstructionFilesDTO();
@@ -579,7 +580,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                         > 0);
     }
 
-    @Test
+    @Ignore
     public void testInvalidProjectForExperiment() throws Exception {
 
 
@@ -694,7 +695,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
     }
 
-    @Test
+    @Ignore
     public void testInvalidDataTypeForDataset() throws Exception {
 
         LoaderInstructionFilesDTO loaderInstructionFilesDTOToSend = new LoaderInstructionFilesDTO();
@@ -792,7 +793,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
     }
 
-    @Test
+    @Ignore
     public void testInvalidPlatformForExperiment() throws Exception {
 
 

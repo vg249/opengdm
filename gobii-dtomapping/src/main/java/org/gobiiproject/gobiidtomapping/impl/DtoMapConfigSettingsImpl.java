@@ -7,10 +7,16 @@ import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
+import org.gobiiproject.gobiimodel.types.GobiiFileNoticeType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.ServerCapabilityType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * Created by Phil on 6/10/2016.
@@ -21,14 +27,14 @@ public class DtoMapConfigSettingsImpl implements DtoMapConfigSettings {
 
 
     @Override
-    public ConfigSettingsDTO readSettings() throws GobiiException{
+    public ConfigSettingsDTO readSettings() throws GobiiException {
 
         ConfigSettingsDTO returnVal = new ConfigSettingsDTO();
 
         try {
             ConfigSettings configSettings = new ConfigSettings();
 
-             returnVal.setServerCapabilities(configSettings.getServerCapabilities());
+            returnVal.setServerCapabilities(configSettings.getServerCapabilities());
 
             for (GobiiCropConfig currentGobiiCropConfig : configSettings.getActiveCropConfigs()) {
 
@@ -40,8 +46,10 @@ public class DtoMapConfigSettingsImpl implements DtoMapConfigSettings {
                         configSettings.getProcessingPath(currentGobiiCropConfig.getGobiiCropType(),
                                 GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES),
                         configSettings.getProcessingPath(currentGobiiCropConfig.getGobiiCropType(),
-                                GobiiFileProcessDir.RAW_USER_FILES)
-                        );
+                                GobiiFileProcessDir.RAW_USER_FILES),
+                        configSettings.getFileNoticePath(currentGobiiCropConfig.getGobiiCropType(), GobiiFileNoticeType.CONFIDENTIALITY)
+                );
+
 
                 returnVal.getServerConfigs().put(currentGobiiCropConfig.getGobiiCropType(),
                         currentServerConfig);

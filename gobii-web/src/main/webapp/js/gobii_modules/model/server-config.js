@@ -6,14 +6,16 @@ System.register([], function (exports_1, context_1) {
         setters: [],
         execute: function () {
             ServerConfig = (function () {
-                function ServerConfig(crop, domain, contextRoot, port) {
+                function ServerConfig(crop, domain, contextRoot, port, confidentialityNotice) {
                     this.crop = crop;
                     this.domain = domain;
                     this.contextRoot = contextRoot;
                     this.port = port;
+                    this.confidentialityNotice = confidentialityNotice;
                     this.crop = crop;
                     this.domain = domain;
                     this.port = port;
+                    this.confidentialityNotice = confidentialityNotice;
                 }
                 return ServerConfig;
             }());

@@ -223,7 +223,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                             scope$.handleAddMessage("Connected to crop config: " + scope$.selectedServerConfig.crop);
                         }
                         else {
-                            scope$.serverConfigList = [new server_config_1.ServerConfig("<ERROR NO SERVERS>", "<ERROR>", "<ERROR>", 0)];
+                            scope$.serverConfigList = [new server_config_1.ServerConfig("<ERROR NO SERVERS>", "<ERROR>", "<ERROR>", 0, "")];
                         }
                     }, function (dtoHeaderResponse) {
                         dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.handleAddMessage("Retrieving server configs: "
@@ -235,6 +235,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this.loggedInUser = this._authenticationService.getUserName();
                     var scope$ = this;
                     scope$._dtoRequestServiceContact.get(new dto_request_item_contact_1.DtoRequestItemContact(dto_request_item_contact_1.ContactSearchType.BY_USERNAME, this.loggedInUser)).subscribe(function (contact) {
+                        var foo = "foo";
                         if (contact && contact.contactId && contact.contactId > 0) {
                             //loggedInUser
                             scope$._fileModelTreeService.put(gobii_file_item_1.GobiiFileItem.build(scope$.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)

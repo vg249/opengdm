@@ -14,14 +14,25 @@ import java.io.File;
  */
 public interface FilesService {
 
-    void writeFile(String cropType,
-                   String jobId,
-                   String fileName,
-                   GobiiFileProcessDir gobiiFileProcessDir,
-                   byte[] byteArray) throws GobiiException, Exception;
+    void writeJobFileForCrop(String cropType,
+                             String jobId,
+                             String fileName,
+                             GobiiFileProcessDir gobiiFileProcessDir,
+                             byte[] byteArray) throws GobiiException, Exception;
 
-    File readFile(String cropType,
-                  String gobiiJobId,
-                  String fileName,
-                  GobiiFileProcessDir gobiiFileProcessDir) throws GobiiException, Exception;
+    void deleteFileFromProcessDir(String cropType,
+                                  String fileName,
+                                  GobiiFileProcessDir gobiiFileProcessDir) throws Exception;
+
+    void writeFileToProcessDir(String cropType,
+                               String fileName,
+                               GobiiFileProcessDir gobiiFileProcessDir,
+                               byte[] byteArray) throws Exception;
+
+    File readCropFileForJob(String cropType,
+                            String gobiiJobId,
+                            String fileName,
+                            GobiiFileProcessDir gobiiFileProcessDir) throws GobiiException, Exception;
+
+
 }

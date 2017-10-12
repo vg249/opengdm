@@ -1,29 +1,50 @@
 import {Component, OnInit} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
 import {AuthenticationService} from "../services/core/authentication.service";
+import {ServerConfig} from "../model/server-config";
+import {DtoRequestService} from "../services/core/dto-request.service";
+import {DtoRequestItemServerConfigs} from "../services/app/dto-request-item-serverconfigs";
+import {LocationStrategy} from "@angular/common";
 
 @Component({
 //    moduleId: module.id,
-    template: `<div class="container">
-    <div class="col-md-6 col-md-offset-3">
-    <h2>GOBII Login</h2>
-    <form name="form" (ngSubmit)="f.form.valid && login()" #f="ngForm" novalidate>
-                <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !username.valid }">
-                    <label for="username">Username</label>
-                    <input type="text" class="form-control" name="username" [(ngModel)]="model.username" #username="ngModel" required />
-                    <div *ngIf="f.submitted && !username.valid" class="help-block">Username is required</div>
+    template: `
+        <BR>
+        <BR>
+        <BR>
+        <BR>
+        <BR>
+        <div class="container">
+            <div class="col-md-6 col-md-offset-3">
+                <div *ngIf="confidentialityNotice">
+                    <h3 class="text-warning">{{confidentialityNotice}}</h3>
+                    <p-checkbox label="Agree To Terms"
+                                [(ngModel)]="userAgreed" 
+                                binary="true"
+                                (onChange)="onTermAgreeCheck(event$)"
+                    ></p-checkbox>
                 </div>
-                <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !password.valid }">
-                    <label for="password">Password</label>
-                    <input type="password" class="form-control" name="password" [(ngModel)]="model.password" #password="ngModel" required />
-                    <div *ngIf="f.submitted && !password.valid" class="help-block">Password is required</div>
-                </div>
-                <div class="form-group">
-                    <button [disabled]="loading" class="btn btn-primary">Login</button>
-                    <img *ngIf="loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
-                </div>
-            </form>
-            <span>{{message}}</span>
+                <h2>GOBII Login</h2>
+                <form name="form" (ngSubmit)="f.form.valid && login()" #f="ngForm" novalidate>
+                    <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !username.valid }">
+                        <label for="username">Username</label>
+                        <input [disabled]="inputDisabled" type="text" class="form-control" name="username" [(ngModel)]="model.username"
+                               #username="ngModel" required/>
+                        <div *ngIf="f.submitted && !username.valid" class="help-block">Username is required</div>
+                    </div>
+                    <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !password.valid }">
+                        <label for="password">Password</label>
+                        <input [disabled]="inputDisabled" type="password" class="form-control" name="password" [(ngModel)]="model.password"
+                               #password="ngModel" required/>
+                        <div *ngIf="f.submitted && !password.valid" class="help-block">Password is required</div>
+                    </div>
+                    <div class="form-group">
+                        <button [disabled]="inputDisabled" class="btn btn-primary">Login</button>
+                        <img *ngIf="loading"
+                             src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA=="/>
+                    </div>
+                </form>
+                <span>{{message}}</span>
             </div>
         </div>`
 })
@@ -36,10 +57,15 @@ export class LoginComponent implements OnInit {
     loading = false;
     returnUrl: string;
     message: string;
+    confidentialityNotice: string;
+    userAgreed:boolean = false;
+    inputDisabled:boolean = true;
 
     constructor(private route: ActivatedRoute,
                 private router: Router,
-                private authenticationService: AuthenticationService) {
+                private locationStrategy: LocationStrategy,
+                private authenticationService: AuthenticationService,
+                private dtoRequestServiceServerConfigs: DtoRequestService<ServerConfig[]>,) {
     }
 
     ngOnInit() {
@@ -48,6 +74,41 @@ export class LoginComponent implements OnInit {
 
         // get return url from route parameters or default to '/'
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '';
+
+
+        this.dtoRequestServiceServerConfigs
+            .get(new DtoRequestItemServerConfigs(), false)
+            .subscribe(serverConfigs => {
+
+                    let foo: string = "foo";
+
+                    if (serverConfigs && ( serverConfigs.length > 0 )) {
+
+                        let path: string = this.locationStrategy.path();
+                        let cropServerConfig: ServerConfig =
+                            serverConfigs
+                                .find(c => {
+                                        return path.indexOf(c.contextRoot) > -1
+                                    }
+                                );
+
+                        if (cropServerConfig) {
+                            this.confidentialityNotice = cropServerConfig.confidentialityNotice;
+                            if(this.confidentialityNotice) {
+                                this.inputDisabled = true;
+                            }  else {
+                                this.inputDisabled = false;
+                            }
+                        }
+
+                    }
+                }
+            )
+    }
+
+    public onTermAgreeCheck(event$) {
+
+        this.inputDisabled = !this.userAgreed;
     }
 
     login() {
@@ -58,13 +119,13 @@ export class LoginComponent implements OnInit {
             .subscribe(
                 dtoHeaderAuth => {
 
-                    if(dtoHeaderAuth.getToken() != null ) {
+                    if (dtoHeaderAuth.getToken() != null) {
 //                        this.router.navigate([this.returnUrl]);
                         this.router.navigate(['']);
                     }
                 },
                 error => {
-                   this.message = error;
+                    this.message = error;
                     this.loading = false;
                 });
 

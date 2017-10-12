@@ -401,7 +401,7 @@ export class ExtractorRoot implements OnInit {
                     scope$.handleAddMessage("Connected to crop config: " + scope$.selectedServerConfig.crop);
 
                 } else {
-                    scope$.serverConfigList = [new ServerConfig("<ERROR NO SERVERS>", "<ERROR>", "<ERROR>", 0)];
+                    scope$.serverConfigList = [new ServerConfig("<ERROR NO SERVERS>", "<ERROR>", "<ERROR>", 0,"")];
                 }
             },
             dtoHeaderResponse => {
@@ -420,6 +420,9 @@ export class ExtractorRoot implements OnInit {
         scope$._dtoRequestServiceContact.get(new DtoRequestItemContact(
             ContactSearchType.BY_USERNAME,
             this.loggedInUser)).subscribe(contact => {
+
+
+                let foo:string= "foo";
 
                 if (contact && contact.contactId && contact.contactId > 0) {
 

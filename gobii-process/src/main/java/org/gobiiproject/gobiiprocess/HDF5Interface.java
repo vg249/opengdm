@@ -251,14 +251,14 @@ StringBuilder genoFileString=new StringBuilder();
     }
 
     /**
-     * Converts a string of 1,2,-1,4,5,6,-1,2 (Arbitrary -1's and NOT -1's into a comma delimited set of lines from 1-N
-     * excluding positions where a -1 exists, ONE BASED.
+     * Converts a string of 1,2,-1,4,5,6,-1,2 (Arbitrary -1's and NOT -1's into a comma delimited set
+     * excluding positions where a -1 esists of one higher than the input value.
      *
-     * Note: Since input is zero-based list anyway, I probably could have removed the -1's and added 1 to every entry. This seemed derpier.
+     * Note: Since input is zero-based list, and the output to SED/CUT is one based, all numbers are incremented here.
      *
      * Examples:
      * 0,1,2,-1,4,5 -> 1,2,3,5,6
-     * 7,-1,7,-1,7,-1 -> 1,3,5
+     * 7,-1,7,-1,7,-1 -> 8,8,8
      * @param sampleList Input string
      * @return Output string (see above)
      */
@@ -276,7 +276,7 @@ StringBuilder genoFileString=new StringBuilder();
                 ErrorLogger.logDebug("GobiiExtractor NFE",e.toString());
             }
             if( val != -1){
-                cutString.append(i+",");
+                cutString.append((val+1)+",");
             }
             i++;
         }

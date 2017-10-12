@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 
@@ -231,10 +232,21 @@ public class InstructionFileAccess<T> {
                           byte[] byteArray) throws Exception {
 
 
-        ConfigSettings configSettings = new ConfigSettings();
 
         this.writePlainFile(fqpn, byteArray);
 
+    }
+
+    public void deleteFile(String fqpn) throws Exception {
+
+        File file = new File(fqpn);
+        if( file.exists() ) {
+            if ( ! file.delete() ) {
+                throw new GobiiException("Unable to delete file: " + file.getName());
+            }
+        } else {
+            throw new GobiiException("The specified file does not exist: " + file.getName());
+        }
     }
 
     public File readFile(String fqpn) throws Exception {

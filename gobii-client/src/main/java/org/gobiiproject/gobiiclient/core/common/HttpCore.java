@@ -429,6 +429,11 @@ public class HttpCore {
 
     public HttpMethodResult delete(RestUri restUri) throws Exception {
 
+        //removing these headers makes this work for deleting a file. But it
+        //may not work for other types of delete. We will see what happens when
+        //we actually use the delete for DTOs (where we need JSON)
+        restUri.getHttpHeaders().remove(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE);
+        restUri.getHttpHeaders().remove(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT);
         return this.submitHttpMethod(new HttpDelete(), restUri);
     }
 

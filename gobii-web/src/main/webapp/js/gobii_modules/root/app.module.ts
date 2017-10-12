@@ -19,7 +19,7 @@ import {AuthenticationService} from "../services/core/authentication.service";
 import {TextAreaComponent} from "../views/text-area.component";
 import {UploaderComponent} from "../views/uploader.component";
 import {SampleListTypeComponent} from "../views/sample-list-type.component";
-import {TreeModule, SharedModule, TreeNode, Dialog} from 'primeng/primeng';
+import {TreeModule, SharedModule, TreeNode, Dialog,CheckboxModule} from 'primeng/primeng';
 import {StatusDisplayTreeComponent} from "../views/status-display-tree.component";
 import {FileModelTreeService} from "../services/core/file-model-tree-service";
 import {NameIdListBoxComponent} from "../views/name-id-list-box.component";
@@ -39,6 +39,7 @@ import {Button} from "primeng/components/button/button";
         FormsModule,
         ReactiveFormsModule,
         TreeModule,
+        CheckboxModule,
         SharedModule,
         routing,
         BrowserAnimationsModule],

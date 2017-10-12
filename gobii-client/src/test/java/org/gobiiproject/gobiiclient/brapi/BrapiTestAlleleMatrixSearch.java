@@ -6,12 +6,9 @@ import org.apache.http.HttpStatus;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
-import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCalls;
-import org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrices.BrapiResponseAlleleMatrices;
 import org.gobiiproject.gobiibrapi.core.common.BrapiStatus;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseDataList;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelope;
-import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMasterDetail;
 import org.gobiiproject.gobiiclient.core.brapi.BrapiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
@@ -123,7 +120,7 @@ public class BrapiTestAlleleMatrixSearch {
         // that the job is done because there is a file there
         RestUri restUriUpload = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
-                .file(jobId, gobiiFileProcessDir, destinationFileName);
+                .fileForJob(jobId, gobiiFileProcessDir, destinationFileName);
         HttpMethodResult httpMethodResult = GobiiClientContext.getInstance(null, false)
                 .getHttp()
                 .upload(restUriUpload, sourceFile);
@@ -157,7 +154,7 @@ public class BrapiTestAlleleMatrixSearch {
                 .getTestFileDownloadDirectory() + "/" + destinationFileName;
         RestUri restUriForDownload = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
-                .file(jobId, GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS, sourceFileName)
+                .fileForJob(jobId, GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS, sourceFileName)
                 .withDestinationFqpn(tesetClientDestinationPath);
 
 

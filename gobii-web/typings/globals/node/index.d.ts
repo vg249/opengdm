@@ -2445,7 +2445,7 @@ declare module "fs" {
     export function read(fd: number, buffer: Buffer, offset: number, length: number, position: number, callback?: (err: NodeJS.ErrnoException, bytesRead: number, buffer: Buffer) => void): void;
     export function readSync(fd: number, buffer: Buffer, offset: number, length: number, position: number): number;
     /*
-     * Asynchronous readFile - Asynchronously reads the entire contents of a file.
+     * Asynchronous readCropFileForJob - Asynchronously reads the entire contents of a file.
      *
      * @param fileName
      * @param encoding
@@ -2453,44 +2453,44 @@ declare module "fs" {
      */
     export function readFile(filename: string, encoding: string, callback: (err: NodeJS.ErrnoException, data: string) => void): void;
     /*
-     * Asynchronous readFile - Asynchronously reads the entire contents of a file.
+     * Asynchronous readCropFileForJob - Asynchronously reads the entire contents of a file.
      *
      * @param fileName
-     * @param options An object with optional {encoding} and {flag} properties.  If {encoding} is specified, readFile returns a string; otherwise it returns a Buffer.
+     * @param options An object with optional {encoding} and {flag} properties.  If {encoding} is specified, readCropFileForJob returns a string; otherwise it returns a Buffer.
      * @param callback - The callback is passed two arguments (err, data), where data is the contents of the file.
      */
     export function readFile(filename: string, options: { encoding: string; flag?: string; }, callback: (err: NodeJS.ErrnoException, data: string) => void): void;
     /*
-     * Asynchronous readFile - Asynchronously reads the entire contents of a file.
+     * Asynchronous readCropFileForJob - Asynchronously reads the entire contents of a file.
      *
      * @param fileName
-     * @param options An object with optional {encoding} and {flag} properties.  If {encoding} is specified, readFile returns a string; otherwise it returns a Buffer.
+     * @param options An object with optional {encoding} and {flag} properties.  If {encoding} is specified, readCropFileForJob returns a string; otherwise it returns a Buffer.
      * @param callback - The callback is passed two arguments (err, data), where data is the contents of the file.
      */
     export function readFile(filename: string, options: { flag?: string; }, callback: (err: NodeJS.ErrnoException, data: Buffer) => void): void;
     /*
-     * Asynchronous readFile - Asynchronously reads the entire contents of a file.
+     * Asynchronous readCropFileForJob - Asynchronously reads the entire contents of a file.
      *
      * @param fileName
      * @param callback - The callback is passed two arguments (err, data), where data is the contents of the file.
      */
     export function readFile(filename: string, callback: (err: NodeJS.ErrnoException, data: Buffer) => void): void;
     /*
-     * Synchronous readFile - Synchronously reads the entire contents of a file.
+     * Synchronous readCropFileForJob - Synchronously reads the entire contents of a file.
      *
      * @param fileName
      * @param encoding
      */
     export function readFileSync(filename: string, encoding: string): string;
     /*
-     * Synchronous readFile - Synchronously reads the entire contents of a file.
+     * Synchronous readCropFileForJob - Synchronously reads the entire contents of a file.
      *
      * @param fileName
      * @param options An object with optional {encoding} and {flag} properties.  If {encoding} is specified, readFileSync returns a string; otherwise it returns a Buffer.
      */
     export function readFileSync(filename: string, options: { encoding: string; flag?: string; }): string;
     /*
-     * Synchronous readFile - Synchronously reads the entire contents of a file.
+     * Synchronous readCropFileForJob - Synchronously reads the entire contents of a file.
      *
      * @param fileName
      * @param options An object with optional {encoding} and {flag} properties.  If {encoding} is specified, readFileSync returns a string; otherwise it returns a Buffer.

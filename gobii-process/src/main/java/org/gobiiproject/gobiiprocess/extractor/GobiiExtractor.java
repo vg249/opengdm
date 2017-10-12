@@ -430,6 +430,19 @@ public class GobiiExtractor {
 						}
 					}
 					GobiiFileType fileType=extract.getGobiiFileType();
+
+					String confidentialityMessage="";
+					String confidentialityLoc=configuration.getFileNoticePath(crop,GobiiFileNoticeType.CONFIDENTIALITY);
+					File confidentialityFile=new File(confidentialityLoc);
+					if(confidentialityFile.exists()){
+						StringBuilder sb=new StringBuilder();
+							for(String line:Files.readAllLines(Paths.get(confidentialityFile.toURI()))){
+							sb.append(line);
+						}
+						confidentialityMessage=sb.toString();
+						pm.addConfidentialityMessage(confidentialityMessage);
+					}
+
 					jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_FINALASSEMBLY.getCvName(),"Assembling Output Files");
 					if(checkFileExistence(genoFile) || (fileType == GobiiFileType.META_DATA)) {
 						switch (fileType) {

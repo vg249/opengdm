@@ -80,7 +80,7 @@ public class TestUploadDownload {
 
         RestUri restUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
-                .file(jobId, GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS, fileName);
+                .fileForJob(jobId, GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS, fileName);
 
 
         HttpMethodResult httpMethodResult = GobiiClientContext.getInstance(null, false)
@@ -117,7 +117,7 @@ public class TestUploadDownload {
             String downloadFqpn = makeFqpn(fileName);
             RestUri restUri = GobiiClientContext.getInstance(null, false)
                     .getUriFactory()
-                    .file(jobId, GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS, fileName)
+                    .fileForJob(jobId, GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS, fileName)
                     .withDestinationFqpn(downloadFqpn);
 
 

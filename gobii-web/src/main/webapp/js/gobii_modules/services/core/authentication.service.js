@@ -72,7 +72,7 @@ System.register(["@angular/core", "@angular/http", "rxjs/Observable", "rxjs/add/
                             var dtoHeaderAuth = dto_header_auth_1.DtoHeaderAuth
                                 .fromJSON(json);
                             if (dtoHeaderAuth.getToken()) {
-                                scope$.userName = userName;
+                                scope$.userName = userName.trim();
                                 scope$.setToken(dtoHeaderAuth.getToken());
                                 scope$.setGobiiCropType(dtoHeaderAuth.getGobiiCropType());
                                 observer.next(dtoHeaderAuth);
