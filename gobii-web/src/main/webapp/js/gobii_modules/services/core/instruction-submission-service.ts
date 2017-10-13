@@ -91,10 +91,10 @@ export class InstructionSubmissionService {
 
 
                                 submistReady =
+                                    datasetTypeIsPresent &&
                                     ( samplesArePresent
                                         || projectIsPresent
-                                        || pIIsPresent )
-                                    && datasetTypeIsPresent;
+                                        || pIIsPresent );
 
 
                             } else if (gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
@@ -102,7 +102,7 @@ export class InstructionSubmissionService {
                                 let markersArePresent: boolean = all.filter(fi =>
                                     fi.getGobiiExtractFilterType() === gobiiExtractFilterType
                                     && (( fi.getExtractorItemType() === ExtractorItemType.MARKER_LIST_ITEM )
-                                    || fi.getExtractorItemType() === ExtractorItemType.SAMPLE_FILE )
+                                    || fi.getExtractorItemType() === ExtractorItemType.MARKER_FILE )
                                 ).length > 0;
 
                                 let markerGroupIsPresent: boolean = all.filter(fi =>
@@ -126,10 +126,10 @@ export class InstructionSubmissionService {
 
 
                                 submistReady =
-                                    ( markersArePresent
-                                        || markerGroupIsPresent
-                                        || platformIsPresent )
-                                    && datasetTypeIsPresent;
+                                    datasetTypeIsPresent
+                                    && ( markersArePresent
+                                    || markerGroupIsPresent
+                                    || platformIsPresent );
 
                             } else {
 

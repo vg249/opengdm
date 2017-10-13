@@ -114,16 +114,16 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/file-m
                                         && fi.getCvFilterType() === cv_filter_type_1.CvFilterType.DATASET_TYPE;
                                 }).length > 0;
                                 submistReady =
-                                    (samplesArePresent
-                                        || projectIsPresent
-                                        || pIIsPresent)
-                                        && datasetTypeIsPresent;
+                                    datasetTypeIsPresent &&
+                                        (samplesArePresent
+                                            || projectIsPresent
+                                            || pIIsPresent);
                             }
                             else if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
                                 var markersArePresent = all.filter(function (fi) {
                                     return fi.getGobiiExtractFilterType() === gobiiExtractFilterType
                                         && ((fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM)
-                                            || fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_FILE);
+                                            || fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_FILE);
                                 }).length > 0;
                                 var markerGroupIsPresent = all.filter(function (fi) {
                                     return fi.getGobiiExtractFilterType() === gobiiExtractFilterType
@@ -142,10 +142,10 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/file-m
                                         && fi.getCvFilterType() === cv_filter_type_1.CvFilterType.DATASET_TYPE;
                                 }).length > 0;
                                 submistReady =
-                                    (markersArePresent
-                                        || markerGroupIsPresent
-                                        || platformIsPresent)
-                                        && datasetTypeIsPresent;
+                                    datasetTypeIsPresent
+                                        && (markersArePresent
+                                            || markerGroupIsPresent
+                                            || platformIsPresent);
                             }
                             else {
                                 _this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]));
