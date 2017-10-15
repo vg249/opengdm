@@ -33,9 +33,9 @@ System.register(["@angular/http", "./header-names"], function (exports_1, contex
                     returnVal.append(header_names_1.HeaderNames.headerPassword, password);
                     return returnVal;
                 };
+                HttpValues.S_FORBIDDEN = 403;
                 return HttpValues;
             }());
-            HttpValues.S_FORBIDDEN = 403;
             exports_1("HttpValues", HttpValues);
         }
     };

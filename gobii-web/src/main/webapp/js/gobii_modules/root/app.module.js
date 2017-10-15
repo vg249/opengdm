@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/forms", "@angular/http", "@angular/platform-browser", "@angular/platform-browser/animations", "../views/export-format.component", "../views/project-list-box.component", "../views/dataset-checklist-box.component", "../views/status-display-box.component", "../views/crops-list-box.component", "../views/export-type.component", "../views/dataset-types-list-box.component", "../views/checklist-box.component", "../views/sample-marker-box.component", "ng2-file-upload", "./app.extractorroot", "../services/core/dto-request.service", "../services/core/authentication.service", "../views/text-area.component", "../views/uploader.component", "../views/sample-list-type.component", "primeng/primeng", "../views/status-display-tree.component", "../services/core/file-model-tree-service", "../views/name-id-list-box.component", "../services/core/name-id-service", "./app.component", "../views/login.component", "./app.routing", "@angular/common", "../services/core/auth.guard", "primeng/components/button/button"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/forms", "@angular/http", "@angular/platform-browser", "@angular/platform-browser/animations", "../views/export-format.component", "../views/status-display-box.component", "../views/crops-list-box.component", "../views/export-type.component", "../views/dataset-types-list-box.component", "../views/checklist-box.component", "../views/sample-marker-box.component", "ng2-file-upload", "./app.extractorroot", "../services/core/dto-request.service", "../services/core/authentication.service", "../views/text-area.component", "../views/uploader.component", "../views/sample-list-type.component", "primeng/primeng", "../views/status-display-tree.component", "../services/core/file-model-tree-service", "../views/name-id-list-box.component", "../services/core/name-id-service", "./app.component", "../views/login.component", "./app.routing", "@angular/common", "../services/core/auth.guard", "primeng/components/button/button", "./page-by-samples.component", "@ngrx/store", "../store/reducers", "@ngrx/store-devtools", "@ngrx/effects", "../store/effects/tree-effects", "../services/core/tree-structure-service", "../store/effects/file-item-effects", "../services/core/file-item-service", "../services/core/instruction-submission-service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -7,7 +7,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/http", "@angular/p
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, forms_1, http_1, platform_browser_1, animations_1, export_format_component_1, project_list_box_component_1, dataset_checklist_box_component_1, status_display_box_component_1, crops_list_box_component_1, export_type_component_1, dataset_types_list_box_component_1, checklist_box_component_1, sample_marker_box_component_1, ng2_file_upload_1, app_extractorroot_1, dto_request_service_1, authentication_service_1, text_area_component_1, uploader_component_1, sample_list_type_component_1, primeng_1, status_display_tree_component_1, file_model_tree_service_1, name_id_list_box_component_1, name_id_service_1, app_component_1, login_component_1, app_routing_1, common_1, auth_guard_1, button_1, AppModule;
+    var core_1, forms_1, http_1, platform_browser_1, animations_1, export_format_component_1, status_display_box_component_1, crops_list_box_component_1, export_type_component_1, dataset_types_list_box_component_1, checklist_box_component_1, sample_marker_box_component_1, ng2_file_upload_1, app_extractorroot_1, dto_request_service_1, authentication_service_1, text_area_component_1, uploader_component_1, sample_list_type_component_1, primeng_1, status_display_tree_component_1, file_model_tree_service_1, name_id_list_box_component_1, name_id_service_1, app_component_1, login_component_1, app_routing_1, common_1, auth_guard_1, button_1, page_by_samples_component_1, store_1, reducers_1, store_devtools_1, effects_1, tree_effects_1, tree_structure_service_1, file_item_effects_1, file_item_service_1, instruction_submission_service_1, AppModule;
     return {
         setters: [
             function (core_1_1) {
@@ -27,12 +27,6 @@ System.register(["@angular/core", "@angular/forms", "@angular/http", "@angular/p
             },
             function (export_format_component_1_1) {
                 export_format_component_1 = export_format_component_1_1;
-            },
-            function (project_list_box_component_1_1) {
-                project_list_box_component_1 = project_list_box_component_1_1;
-            },
-            function (dataset_checklist_box_component_1_1) {
-                dataset_checklist_box_component_1 = dataset_checklist_box_component_1_1;
             },
             function (status_display_box_component_1_1) {
                 status_display_box_component_1 = status_display_box_component_1_1;
@@ -105,57 +99,95 @@ System.register(["@angular/core", "@angular/forms", "@angular/http", "@angular/p
             },
             function (button_1_1) {
                 button_1 = button_1_1;
+            },
+            function (page_by_samples_component_1_1) {
+                page_by_samples_component_1 = page_by_samples_component_1_1;
+            },
+            function (store_1_1) {
+                store_1 = store_1_1;
+            },
+            function (reducers_1_1) {
+                reducers_1 = reducers_1_1;
+            },
+            function (store_devtools_1_1) {
+                store_devtools_1 = store_devtools_1_1;
+            },
+            function (effects_1_1) {
+                effects_1 = effects_1_1;
+            },
+            function (tree_effects_1_1) {
+                tree_effects_1 = tree_effects_1_1;
+            },
+            function (tree_structure_service_1_1) {
+                tree_structure_service_1 = tree_structure_service_1_1;
+            },
+            function (file_item_effects_1_1) {
+                file_item_effects_1 = file_item_effects_1_1;
+            },
+            function (file_item_service_1_1) {
+                file_item_service_1 = file_item_service_1_1;
+            },
+            function (instruction_submission_service_1_1) {
+                instruction_submission_service_1 = instruction_submission_service_1_1;
             }
         ],
         execute: function () {
             AppModule = (function () {
                 function AppModule() {
                 }
+                AppModule = __decorate([
+                    core_1.NgModule({
+                        imports: [platform_browser_1.BrowserModule,
+                            http_1.HttpModule,
+                            forms_1.FormsModule,
+                            forms_1.ReactiveFormsModule,
+                            primeng_1.TreeModule,
+                            primeng_1.CheckboxModule,
+                            primeng_1.SharedModule,
+                            app_routing_1.routing,
+                            animations_1.BrowserAnimationsModule,
+                            store_1.StoreModule.forRoot(reducers_1.reducers),
+                            effects_1.EffectsModule.forRoot([tree_effects_1.TreeEffects, file_item_effects_1.FileItemEffects]),
+                            store_devtools_1.StoreDevtoolsModule.instrument({
+                                maxAge: 25 //  Retains last 25 states
+                            })
+                        ],
+                        declarations: [
+                            app_component_1.AppComponent,
+                            app_extractorroot_1.ExtractorRoot,
+                            login_component_1.LoginComponent,
+                            export_format_component_1.ExportFormatComponent,
+                            status_display_box_component_1.StatusDisplayComponent,
+                            crops_list_box_component_1.CropsListBoxComponent,
+                            export_type_component_1.ExportTypeComponent,
+                            dataset_types_list_box_component_1.DatasetTypeListBoxComponent,
+                            checklist_box_component_1.CheckListBoxComponent,
+                            sample_marker_box_component_1.SampleMarkerBoxComponent,
+                            ng2_file_upload_1.FileSelectDirective,
+                            ng2_file_upload_1.FileDropDirective,
+                            text_area_component_1.TextAreaComponent,
+                            uploader_component_1.UploaderComponent,
+                            sample_list_type_component_1.SampleListTypeComponent,
+                            name_id_list_box_component_1.NameIdListBoxComponent,
+                            status_display_tree_component_1.StatusDisplayTreeComponent,
+                            primeng_1.Dialog,
+                            button_1.Button,
+                            page_by_samples_component_1.SearchCriteriaBySamplesComponent
+                        ],
+                        providers: [auth_guard_1.AuthGuard,
+                            authentication_service_1.AuthenticationService,
+                            dto_request_service_1.DtoRequestService,
+                            file_model_tree_service_1.FileModelTreeService,
+                            name_id_service_1.NameIdService,
+                            tree_structure_service_1.TreeStructureService,
+                            file_item_service_1.FileItemService,
+                            instruction_submission_service_1.InstructionSubmissionService,
+                            { provide: common_1.APP_BASE_HREF, useValue: './' }],
+                        bootstrap: [app_component_1.AppComponent]
+                    })
+                ], AppModule);
                 return AppModule;
             }());
-            AppModule = __decorate([
-                core_1.NgModule({
-                    imports: [platform_browser_1.BrowserModule,
-                        http_1.HttpModule,
-                        forms_1.FormsModule,
-                        forms_1.ReactiveFormsModule,
-                        primeng_1.TreeModule,
-                        primeng_1.CheckboxModule,
-                        primeng_1.SharedModule,
-                        app_routing_1.routing,
-                        animations_1.BrowserAnimationsModule],
-                    declarations: [
-                        app_component_1.AppComponent,
-                        app_extractorroot_1.ExtractorRoot,
-                        login_component_1.LoginComponent,
-                        export_format_component_1.ExportFormatComponent,
-                        project_list_box_component_1.ProjectListBoxComponent,
-                        dataset_checklist_box_component_1.DataSetCheckListBoxComponent,
-                        status_display_box_component_1.StatusDisplayComponent,
-                        crops_list_box_component_1.CropsListBoxComponent,
-                        export_type_component_1.ExportTypeComponent,
-                        dataset_types_list_box_component_1.DatasetTypeListBoxComponent,
-                        checklist_box_component_1.CheckListBoxComponent,
-                        sample_marker_box_component_1.SampleMarkerBoxComponent,
-                        ng2_file_upload_1.FileSelectDirective,
-                        ng2_file_upload_1.FileDropDirective,
-                        text_area_component_1.TextAreaComponent,
-                        uploader_component_1.UploaderComponent,
-                        sample_list_type_component_1.SampleListTypeComponent,
-                        name_id_list_box_component_1.NameIdListBoxComponent,
-                        status_display_tree_component_1.StatusDisplayTreeComponent,
-                        primeng_1.Dialog,
-                        button_1.Button
-                    ],
-                    providers: [auth_guard_1.AuthGuard,
-                        authentication_service_1.AuthenticationService,
-                        dto_request_service_1.DtoRequestService,
-                        file_model_tree_service_1.FileModelTreeService,
-                        name_id_service_1.NameIdService,
-                        { provide: common_1.APP_BASE_HREF, useValue: './' }],
-                    bootstrap: [app_component_1.AppComponent]
-                })
-            ], AppModule);
             exports_1("AppModule", AppModule);
         }
     };

@@ -66,12 +66,12 @@ System.register(["@angular/core", "../../model/type-process", "../../model/proje
                     // });
                     return returnVal;
                 };
+                DtoRequestItemProject = __decorate([
+                    core_1.Injectable(),
+                    __metadata("design:paramtypes", [Number])
+                ], DtoRequestItemProject);
                 return DtoRequestItemProject;
-            }()); // DtoRequestItemNameIds() 
-            DtoRequestItemProject = __decorate([
-                core_1.Injectable(),
-                __metadata("design:paramtypes", [Number])
-            ], DtoRequestItemProject);
+            }());
             exports_1("DtoRequestItemProject", DtoRequestItemProject);
         }
     };

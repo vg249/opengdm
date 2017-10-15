@@ -58,9 +58,9 @@ System.register(["../model/type-entity", "../model/cv-filter-type", "../model/ty
                     }
                     return this._instance;
                 };
+                Labels._instance = null;
                 return Labels;
             }());
-            Labels._instance = null;
             exports_1("Labels", Labels);
         }
     };

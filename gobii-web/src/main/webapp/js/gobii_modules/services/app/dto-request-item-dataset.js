@@ -67,12 +67,12 @@ System.register(["@angular/core", "../../model/type-process", "../../model/datas
                     return returnVal;
                     //return [new NameId(1, 'foo'), new NameId(2, 'bar')];
                 };
+                DtoRequestItemDataSet = __decorate([
+                    core_1.Injectable(),
+                    __metadata("design:paramtypes", [Number])
+                ], DtoRequestItemDataSet);
                 return DtoRequestItemDataSet;
-            }()); // DtoRequestItemNameIds() 
-            DtoRequestItemDataSet = __decorate([
-                core_1.Injectable(),
-                __metadata("design:paramtypes", [Number])
-            ], DtoRequestItemDataSet);
+            }());
             exports_1("DtoRequestItemDataSet", DtoRequestItemDataSet);
         }
     };

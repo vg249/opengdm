@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/dto-header-status-message", "../model/type-extractor-filter", "../services/core/file-model-tree-service", "../model/gobii-file-item", "../model/type-process", "../model/file-model-node", "./entity-labels", "../model/name-id-request-params", "../model/type-entity"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/dto-header-status-message", "../model/type-extractor-filter", "../model/gobii-file-item", "../model/type-process", "../model/file-model-node", "./entity-labels", "../model/type-nameid-filter-params", "../store/reducers", "../services/core/file-item-service", "@ngrx/store"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, dto_header_status_message_1, type_extractor_filter_1, file_model_tree_service_1, gobii_file_item_1, type_process_1, file_model_node_1, entity_labels_1, name_id_request_params_1, type_entity_1, SampleMarkerBoxComponent;
+    var core_1, dto_header_status_message_1, type_extractor_filter_1, gobii_file_item_1, type_process_1, file_model_node_1, entity_labels_1, type_nameid_filter_params_1, fromRoot, file_item_service_1, store_1, SampleMarkerBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -21,9 +21,6 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
             },
             function (type_extractor_filter_1_1) {
                 type_extractor_filter_1 = type_extractor_filter_1_1;
-            },
-            function (file_model_tree_service_1_1) {
-                file_model_tree_service_1 = file_model_tree_service_1_1;
             },
             function (gobii_file_item_1_1) {
                 gobii_file_item_1 = gobii_file_item_1_1;
@@ -37,17 +34,25 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
             function (entity_labels_1_1) {
                 entity_labels_1 = entity_labels_1_1;
             },
-            function (name_id_request_params_1_1) {
-                name_id_request_params_1 = name_id_request_params_1_1;
+            function (type_nameid_filter_params_1_1) {
+                type_nameid_filter_params_1 = type_nameid_filter_params_1_1;
             },
-            function (type_entity_1_1) {
-                type_entity_1 = type_entity_1_1;
+            function (fromRoot_1) {
+                fromRoot = fromRoot_1;
+            },
+            function (file_item_service_1_1) {
+                file_item_service_1 = file_item_service_1_1;
+            },
+            function (store_1_1) {
+                store_1 = store_1_1;
             }
         ],
         execute: function () {
             SampleMarkerBoxComponent = (function () {
-                function SampleMarkerBoxComponent(_fileModelTreeService) {
-                    this._fileModelTreeService = _fileModelTreeService;
+                function SampleMarkerBoxComponent(store, fileItemService) {
+                    this.store = store;
+                    this.fileItemService = fileItemService;
+                    this.fileItemsMarkerGroups$ = this.store.select(fromRoot.getMarkerGroups);
                     this.maxListItems = 200;
                     this.displayMaxItemsExceeded = false;
                     this.displayChoicePrompt = false;
@@ -57,10 +62,7 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                     this.displayMarkerGroupRadio = false;
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.onSampleMarkerError = new core_1.EventEmitter();
-                    this.onMarkerSamplesCompleted = new core_1.EventEmitter();
                     this.currentFileItems = [];
-                    this.nameIdRequestParamsMarkerGroups = name_id_request_params_1.NameIdRequestParams
-                        .build("Marker Groups", this.gobiiExtractFilterType, type_entity_1.EntityType.MarkerGroups);
                 }
                 // private handleUserSelected(arg) {
                 //     this.onUserSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
@@ -76,14 +78,11 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                             file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM : file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM;
                         items.forEach(function (listItem) {
                             if (listItem && listItem !== "") {
-                                _this._fileModelTreeService
-                                    .put(gobii_file_item_1.GobiiFileItem.build(_this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                                _this.fileItemService
+                                    .loadFileItem(gobii_file_item_1.GobiiFileItem.build(_this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
                                     .setExtractorItemType(listItemType_1)
                                     .setItemId(listItem)
-                                    .setItemName(listItem))
-                                    .subscribe(null, function (headerStatusMessage) {
-                                    _this.handleStatusHeaderMessage(headerStatusMessage);
-                                });
+                                    .setItemName(listItem), true);
                             }
                         });
                     }
@@ -104,7 +103,8 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                 SampleMarkerBoxComponent.prototype.handleSampleMarkerChoicesExist = function () {
                     var _this = this;
                     var returnVal = false;
-                    this._fileModelTreeService.getFileItems(this.gobiiExtractFilterType).subscribe(function (fileItems) {
+                    this.store.select(fromRoot.getAllFileItems)
+                        .subscribe(function (fileItems) {
                         var extractorItemTypeListToFind = file_model_node_1.ExtractorItemType.UNKNOWN;
                         var extractorItemTypeFileToFind = file_model_node_1.ExtractorItemType.UNKNOWN;
                         if (_this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
@@ -135,12 +135,15 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                             }
                             _this.displayChoicePrompt = true;
                             returnVal = true;
+                            // it does not seem that the PrimeNG dialog really blocks in the usual sense; 
+                            // so we have to chain what we do next off of the click events on the dialog.
+                            // see handleUserChoice() 
                         }
                         else {
                         }
                     }, function (hsm) {
                         _this.handleStatusHeaderMessage(hsm);
-                    });
+                    }).unsubscribe();
                     // if (event.currentTarget.defaultValue === "itemArray") {
                     //
                     // } else if (event.currentTarget.defaultValue == "itemFile") {
@@ -167,12 +170,8 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                         }
                         this.currentFileItems.forEach(function (currentFileItem) {
                             currentFileItem.setProcessType(type_process_1.ProcessType.DELETE);
-                            _this._fileModelTreeService
-                                .put(currentFileItem)
-                                .subscribe(function (fmte) {
-                            }, function (headerStatusMessage) {
-                                _this.handleStatusHeaderMessage(headerStatusMessage);
-                            });
+                            _this.fileItemService
+                                .unloadFileItemFromExtract(currentFileItem);
                         });
                     }
                     else {
@@ -195,12 +194,16 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                     if (this.handleSampleMarkerChoicesExist() === false) {
                         this.displayListBox = true;
                         this.displayUploader = false;
+                        // this.displayListBox = true;
+                        // this.displayUploader = false;
                     }
                 };
                 SampleMarkerBoxComponent.prototype.handleOnClickBrowse = function ($event) {
                     if (this.handleSampleMarkerChoicesExist() === false) {
                         this.displayListBox = false;
                         this.displayUploader = true;
+                        // this.displayListBox = false;
+                        // this.displayUploader = true;
                     }
                 };
                 SampleMarkerBoxComponent.prototype.handleMarkerGroupChanged = function ($event) {
@@ -213,7 +216,7 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                     this.onSampleMarkerError.emit(statusMessage);
                 };
                 SampleMarkerBoxComponent.prototype.ngOnInit = function () {
-                    //        this.extractTypeLabel = Labels.instance().extractorFilterTypeLabels[this.gobiiExtractFilterType];
+                    this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.MARKER_GROUPS, null);
                     return null;
                 };
                 SampleMarkerBoxComponent.prototype.ngOnChanges = function (changes) {
@@ -231,17 +234,18 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                         } // if we have a new filter type
                     } // if filter type changed
                 }; // ngonChanges
+                SampleMarkerBoxComponent = __decorate([
+                    core_1.Component({
+                        selector: 'sample-marker-box',
+                        inputs: ['gobiiExtractFilterType'],
+                        outputs: ['onSampleMarkerError'],
+                        template: "\n        <div class=\"container-fluid\">\n\n            <div class=\"row\">\n\n                <input type=\"radio\"\n                       (click)=\"handleOnClickBrowse($event)\"\n                       name=\"listType\"\n                       value=\"itemFile\"\n                       [(ngModel)]=\"selectedListType\">\n                <label class=\"the-legend\">File&nbsp;</label>\n                <input type=\"radio\"\n                       (click)=\"handleTextBoxChanged($event)\"\n                       name=\"listType\"\n                       value=\"itemArray\"\n                       [(ngModel)]=\"selectedListType\">\n                <label class=\"the-legend\">List&nbsp;</label>\n                <input *ngIf=\"displayMarkerGroupRadio\"\n                       type=\"radio\"\n                       (click)=\"handleMarkerGroupChanged($event)\"\n                       name=\"listType\"\n                       value=\"markerGroupsType\"\n                       [(ngModel)]=\"selectedListType\">\n                <label *ngIf=\"displayMarkerGroupRadio\"\n                       class=\"the-legend\">Marker Groups&nbsp;</label>\n\n            </div>\n\n            <div class=\"row\">\n\n                <div *ngIf=\"displayUploader\" class=\"col-md-8\">\n                    <uploader\n                            [gobiiExtractFilterType]=\"gobiiExtractFilterType\"\n                            (onUploaderError)=\"handleStatusHeaderMessage($event)\"></uploader>\n                </div>\n\n                <div *ngIf=\"displayListBox\" class=\"col-md-8\">\n                    <text-area\n                            (onTextboxDataComplete)=\"handleTextBoxDataSubmitted($event)\"></text-area>\n                </div>\n                <div *ngIf=\"displayListBox\" class=\"col-md-4\">\n                    <p class=\"text-warning\">{{maxListItems}} maximum</p>\n                </div>\n\n                <div *ngIf=\"selectedListType == 'markerGroupsType'\" class=\"col-md-8\">\n                    <checklist-box\n                            [gobiiFileItems$]=\"fileItemsMarkerGroups$\"\n                            [gobiiExtractFilterType]=\"gobiiExtractFilterType\"\n                            [retainHistory]=\"true\">\n                    </checklist-box>\n                </div>\n\n            </div>\n\n            <div>\n                <p-dialog header=\"{{extractTypeLabelExisting}} Already Selelected\" [(visible)]=\"displayChoicePrompt\"\n                          modal=\"modal\" width=\"300\" height=\"300\" responsive=\"true\">\n                    <p>A {{extractTypeLabelExisting}} is already selected. Do you want to remove it and specify a {{extractTypeLabelProposed}}\n                        instead?</p>\n                    <p-footer>\n                        <div class=\"ui-dialog-buttonpane ui-widget-content ui-helper-clearfix\">\n                            <button type=\"button\" pButton icon=\"fa-close\" (click)=\"handleUserChoice(false)\"\n                                    label=\"No\"></button>\n                            <button type=\"button\" pButton icon=\"fa-check\" (click)=\"handleUserChoice(true)\"\n                                    label=\"Yes\"></button>\n                        </div>\n                    </p-footer>\n                </p-dialog>\n            </div>\n            <div>\n                <p-dialog header=\"Maximum {{maxExceededTypeLabel}} Items Exceeded\" [(visible)]=\"displayMaxItemsExceeded\"\n                          modal=\"modal\" width=\"300\" height=\"300\" responsive=\"true\">\n                    <p>You attempted to paste more than {{maxListItems}} {{maxExceededTypeLabel}} items; Please reduce\n                        the size of the list</p>\n                </p-dialog>\n            </div>"
+                    }),
+                    __metadata("design:paramtypes", [store_1.Store,
+                        file_item_service_1.FileItemService])
+                ], SampleMarkerBoxComponent);
                 return SampleMarkerBoxComponent;
             }());
-            SampleMarkerBoxComponent = __decorate([
-                core_1.Component({
-                    selector: 'sample-marker-box',
-                    inputs: ['gobiiExtractFilterType'],
-                    outputs: ['onSampleMarkerError'],
-                    template: "<div class=\"container-fluid\">\n            \n                <div class=\"row\">\n\n                            <input type=\"radio\" \n                                (click)=\"handleOnClickBrowse($event)\" \n                                name=\"listType\" \n                                value=\"itemFile\"\n                                [(ngModel)]=\"selectedListType\">\n                          <label class=\"the-legend\">File&nbsp;</label>\n                          <input type=\"radio\" \n                                (click)=\"handleTextBoxChanged($event)\" \n                                name=\"listType\" \n                                value=\"itemArray\"\n                                [(ngModel)]=\"selectedListType\">\n                          <label class=\"the-legend\">List&nbsp;</label>\n                              <input *ngIf=\"displayMarkerGroupRadio\" \n                                    type=\"radio\" \n                                    (click)=\"handleMarkerGroupChanged($event)\" \n                                    name=\"listType\" \n                                    value=\"markerGroupsType\"\n                                    [(ngModel)]=\"selectedListType\">\n                              <label *ngIf=\"displayMarkerGroupRadio\" \n                                class=\"the-legend\">Marker Groups&nbsp;</label>\n\n                 </div>\n                 \n                <div class=\"row\">\n                \n                    <div *ngIf=\"displayUploader\" class=\"col-md-8\">\n                        <uploader\n                        [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                        (onUploaderError)=\"handleStatusHeaderMessage($event)\"></uploader>\n                    </div> \n                    \n                    <div *ngIf=\"displayListBox\" class=\"col-md-8\">\n                        <text-area\n                        (onTextboxDataComplete)=\"handleTextBoxDataSubmitted($event)\"></text-area>\n                    </div> \n                    <div *ngIf=\"displayListBox\" class=\"col-md-4\">\n                          <p class=\"text-warning\">{{maxListItems}} maximum</p>\n                    </div> \n                    \n                    <div *ngIf=\"selectedListType == 'markerGroupsType'\" class=\"col-md-8\">\n                            <checklist-box\n                                [nameIdRequestParams] = \"nameIdRequestParamsMarkerGroups\"\n                                [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                                [retainHistory] = \"false\"\n                                (onAddStatusMessage) = \"handleHeaderStatusMessage($event)\">\n                            </checklist-box>\n                    </div> \n                    \n                 </div>\n                \n                 <div>\n                    <p-dialog header=\"{{extractTypeLabelExisting}} Already Selelected\" [(visible)]=\"displayChoicePrompt\" modal=\"modal\" width=\"300\" height=\"300\" responsive=\"true\">\n                        <p>A {{extractTypeLabelExisting}} is already selected. Do you want to remove it and specify a {{extractTypeLabelProposed}} instead?</p>\n                            <p-footer>\n                                <div class=\"ui-dialog-buttonpane ui-widget-content ui-helper-clearfix\">\n                                    <button type=\"button\" pButton icon=\"fa-close\" (click)=\"handleUserChoice(false)\" label=\"No\"></button>\n                                    <button type=\"button\" pButton icon=\"fa-check\" (click)=\"handleUserChoice(true)\" label=\"Yes\"></button>\n                                </div>\n                            </p-footer>\n                    </p-dialog>\n                  </div>\n                  <div>\n                    <p-dialog header=\"Maximum {{maxExceededTypeLabel}} Items Exceeded\" [(visible)]=\"displayMaxItemsExceeded\" modal=\"modal\" width=\"300\" height=\"300\" responsive=\"true\">\n                        <p>You attempted to paste more than {{maxListItems}} {{maxExceededTypeLabel}} items; Please reduce the size of the list</p>\n                    </p-dialog>\n                  </div>"
-                }),
-                __metadata("design:paramtypes", [file_model_tree_service_1.FileModelTreeService])
-            ], SampleMarkerBoxComponent);
             exports_1("SampleMarkerBoxComponent", SampleMarkerBoxComponent);
         }
     };

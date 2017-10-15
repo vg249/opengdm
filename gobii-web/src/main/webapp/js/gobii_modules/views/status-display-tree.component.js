@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTreeNode", "../model/type-entity", "../model/type-extractor-filter", "../model/file-model-node", "../model/cv-filter-type", "../services/core/file-model-tree-service", "../model/file-model-tree-event", "../model/type-process", "../model/type-extract-format", "../model/dto-header-status-message", "./entity-labels", "../model/type-event-origin", "../model/type-status-level"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTreeNode", "../model/type-entity", "../model/type-extractor-filter", "../model/file-model-node", "../model/cv-filter-type", "../services/core/file-model-tree-service", "../model/file-model-tree-event", "../model/type-process", "../model/type-extract-format", "../model/dto-header-status-message", "./entity-labels", "../model/type-event-origin", "../model/type-status-level", "../store/reducers", "@ngrx/store"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, gobii_file_item_1, GobiiTreeNode_1, type_entity_1, type_extractor_filter_1, file_model_node_1, cv_filter_type_1, file_model_tree_service_1, file_model_tree_event_1, type_process_1, type_extract_format_1, dto_header_status_message_1, entity_labels_1, type_event_origin_1, type_status_level_1, StatusDisplayTreeComponent;
+    var core_1, gobii_file_item_1, GobiiTreeNode_1, type_entity_1, type_extractor_filter_1, file_model_node_1, cv_filter_type_1, file_model_tree_service_1, file_model_tree_event_1, type_process_1, type_extract_format_1, dto_header_status_message_1, entity_labels_1, type_event_origin_1, type_status_level_1, fromRoot, store_1, StatusDisplayTreeComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -57,13 +57,21 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
             },
             function (type_status_level_1_1) {
                 type_status_level_1 = type_status_level_1_1;
+            },
+            function (fromRoot_1) {
+                fromRoot = fromRoot_1;
+            },
+            function (store_1_1) {
+                store_1 = store_1_1;
             }
         ],
         execute: function () {
             StatusDisplayTreeComponent = (function () {
-                function StatusDisplayTreeComponent(_fileModelTreeService) {
+                function StatusDisplayTreeComponent(_fileModelTreeService, store) {
                     var _this = this;
                     this._fileModelTreeService = _fileModelTreeService;
+                    this.store = store;
+                    this.treeNodesByExtractionType = null;
                     this.containerCollapseThreshold = 10;
                     this.onAddMessage = new core_1.EventEmitter();
                     this.onTreeReady = new core_1.EventEmitter();
@@ -71,7 +79,6 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     // *********************  TREE NODE DATA STRUCTURES AND EVENTS
                     this.demoTreeNodes = [];
                     this.selectedDemoNodes = [];
-                    this.gobiiTreeNodes = [];
                     this.selectedGobiiNodes = [];
                     this.treeIsInitialized = false;
                     // ********************************************************************************
@@ -79,6 +86,18 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.onItemChecked = new core_1.EventEmitter();
                     this.onItemSelected = new core_1.EventEmitter();
+                    this.gobiiTreeNodesFromStore$ = store
+                        .select(fromRoot.getGobiiTreeNodesForExtractFilter);
+                    // this.gobiiTreeNodesFromStore$
+                    //     .subscribe( n => {
+                    //         console.log( "new tree nodes" + n);
+                    //     });
+                    this.gobiiSelectedNodesFromStore$ = store
+                        .select(fromRoot.getSelectedGobiiTreeNodes);
+                    // this.gobiiSelectedNodesFromStore$
+                    //     .subscribe( n => {
+                    //         console.log( "new selected nodes" + n);
+                    //     });
                     // has to be in ctor because if you put it in ngOnInit(), there can be ngOnChange events
                     // before ngOnInit() is called.
                     this._fileModelTreeService
@@ -117,6 +136,13 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                         }
                     });
                 }
+                StatusDisplayTreeComponent.prototype.initTreeNodes = function () {
+                    if (this.treeNodesByExtractionType === null) {
+                        this.treeNodesByExtractionType = new Map();
+                        // **** FOR ALL EXTRACTION TYPES **********************************************************************
+                        // **** THESE ARE ALL ROOT LEVEL NODES
+                    }
+                };
                 StatusDisplayTreeComponent.prototype.handleAddStatusMessage = function (headerStatusMessage) {
                     this.onAddMessage.emit(headerStatusMessage);
                 };
@@ -148,7 +174,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                 StatusDisplayTreeComponent.prototype.clearTree = function () {
                     var _this = this;
                     var itemsToRemove = [];
-                    this.gobiiTreeNodes.forEach(function (fin) {
+                    this.gobiiTreeNodes$.forEach(function (fin) {
                         var childItemsToRemove = _this.findRemovableFileItems(fin);
                         itemsToRemove.push.apply(itemsToRemove, childItemsToRemove);
                     });
@@ -323,13 +349,13 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                 };
                 StatusDisplayTreeComponent.prototype.expandAll = function () {
                     var _this = this;
-                    this.gobiiTreeNodes.forEach(function (node) {
+                    this.gobiiTreeNodes$.forEach(function (node) {
                         _this.expandRecursive(node, true);
                     });
                 };
                 StatusDisplayTreeComponent.prototype.collapseAll = function () {
                     var _this = this;
-                    this.gobiiTreeNodes.forEach(function (node) {
+                    this.gobiiTreeNodes$.forEach(function (node) {
                         _this.expandRecursive(node, false);
                     });
                 };
@@ -392,6 +418,11 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                         treeNode.icon = "fa-pencil";
                         treeNode.expandedIcon = "fa-pencil";
                         treeNode.collapsedIcon = "fa-pencil";
+                        // } else {
+                        //     treeNode.icon = "fa-map-marker";
+                        //     treeNode.expandedIcon = "fa-map-marker";
+                        //     treeNode.collapsedIcon = "fa-map-marker";
+                        // }
                     }
                 };
                 StatusDisplayTreeComponent.prototype.addIconsToNode = function (statusTreeTemplate, treeNode, isParent) {
@@ -523,18 +554,19 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                 StatusDisplayTreeComponent.prototype.removeNodeFromTree = function (fileModelTreeEvent) {
                     if (fileModelTreeEvent.fileModelNode != null && fileModelTreeEvent.fileItem != null) {
                         if (fileModelTreeEvent.fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.LEAF) {
-                            var gobiiTreeNodeToBeRemoved = this.findTreeNodebyFileItemUniqueId(this.gobiiTreeNodes, fileModelTreeEvent.fileItem.getFileItemUniqueId());
+                            var gobiiTreeNodeToBeRemoved = this.findTreeNodebyFileItemUniqueId(this.gobiiTreeNodes$, fileModelTreeEvent.fileItem.getFileItemUniqueId());
                             if (gobiiTreeNodeToBeRemoved !== null) {
                                 // will need a funciton to do this correctly
                                 this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, gobiiTreeNodeToBeRemoved, fileModelTreeEvent.fileItem);
                                 this.removeItemFromSelectedNodes(gobiiTreeNodeToBeRemoved);
                             }
                             else {
+                                // error node not found?
                             } // if-else we found an existing node for the LEAF node's file item
                         }
                         else if (fileModelTreeEvent.fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.CONTAINER) {
                             // there should not be a file item associated with the model because it's a container -- the file items are just for the children
-                            var parentTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
+                            var parentTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes$, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
                             if (parentTreeNode != null) {
                                 var nodeToDelete = parentTreeNode.children.find(function (n) {
                                     return n.fileItemId === fileModelTreeEvent.fileItem.getFileItemUniqueId();
@@ -549,16 +581,18 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                                 }
                             }
                             else {
+                                // error?
                             }
                         } // if-else -if on extractor category type
                     }
                     else {
+                        // error condition: invalid event
                     } // there i sno file mode node for tree event
                 };
                 StatusDisplayTreeComponent.prototype.placeNodeInTree = function (fileModelTreeEvent) {
                     if (fileModelTreeEvent.fileModelNode != null && fileModelTreeEvent.fileItem != null) {
                         if (fileModelTreeEvent.fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.LEAF) {
-                            var gobiiTreeLeafNodeTobeMutated = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
+                            var gobiiTreeLeafNodeTobeMutated = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes$, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
                             if (gobiiTreeLeafNodeTobeMutated != null) {
                                 gobiiTreeLeafNodeTobeMutated.fileItemId = fileModelTreeEvent.fileItem.getFileItemUniqueId();
                                 gobiiTreeLeafNodeTobeMutated.entityType = fileModelTreeEvent.fileItem.getEntityType();
@@ -587,7 +621,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                         }
                         else if (fileModelTreeEvent.fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.CONTAINER) {
                             // there should not be a file item associated with the model because it's a container -- the file items are just for the children
-                            var parentTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
+                            var parentTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes$, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
                             if (parentTreeNode != null) {
                                 var existingFileModelItem = fileModelTreeEvent
                                     .fileModelNode
@@ -596,7 +630,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                                     return item.getFileItemUniqueId() === fileModelTreeEvent.fileItem.getFileItemUniqueId();
                                 });
                                 if (existingFileModelItem !== null) {
-                                    var existingGobiiTreeNodeChild = this.findTreeNodebyFileItemUniqueId(this.gobiiTreeNodes, existingFileModelItem.getFileItemUniqueId());
+                                    var existingGobiiTreeNodeChild = this.findTreeNodebyFileItemUniqueId(this.gobiiTreeNodes$, existingFileModelItem.getFileItemUniqueId());
                                     if (existingGobiiTreeNodeChild === null) {
                                         var newGobiiTreeNode = new GobiiTreeNode_1.GobiiTreeNode(parentTreeNode, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId(), fileModelTreeEvent.fileItem.getFileItemUniqueId(), fileModelTreeEvent.fileModelNode.getRequired());
                                         newGobiiTreeNode.entityType = fileModelTreeEvent.fileItem.getEntityType();
@@ -619,22 +653,26 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                                         }
                                     }
                                     else {
+                                        // modify existing existingGobiiTreeNodeChild
                                     } // if-else there already exists a corresponding tree node
                                 }
                                 else {
+                                    // error condition
                                 } // if else we found an existing file item
                             }
                             else {
+                                // error condition
                             } // if-else we found a tree node to serve as parent for the container's item tree nodes
                         } // if-else -if on extractor category type
                     }
                     else {
+                        // error condition: invalid event
                     } // there i sno file mode node for tree event
                 }; // place node in tree
                 StatusDisplayTreeComponent.prototype.setUpRequredItems = function (gobiiExtractorFilterType) {
                     var _this = this;
                     this.treeIsInitialized = false;
-                    this.gobiiTreeNodes = [];
+                    this.gobiiTreeNodes$ = [];
                     var fileModelNodes = [];
                     this._fileModelTreeService.getFileModel(gobiiExtractorFilterType).subscribe(function (f) {
                         fileModelNodes = f;
@@ -642,7 +680,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     fileModelNodes.forEach(function (currentFirstLevelFileModelNode) {
                         var currentTreeNode = _this.makeTreeNodeFromTemplate(null, currentFirstLevelFileModelNode);
                         if (currentTreeNode != null) {
-                            _this.gobiiTreeNodes.push(currentTreeNode);
+                            _this.gobiiTreeNodes$.push(currentTreeNode);
                         }
                     });
                     this.treeIsInitialized = true;
@@ -659,6 +697,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                         returnVal = new GobiiTreeNode_1.GobiiTreeNode(parentNode, fileModelNode.getFileModelNodeUniqueId(), null, fileModelNode.getRequired());
                         returnVal.entityType = fileModelNode.getEntityType();
                         returnVal.label = fileModelNode.getEntityName();
+                        //.MODEL_CONTAINER
                     }
                     else if (fileModelNode.getItemType() == file_model_node_1.ExtractorItemType.EXPORT_FORMAT) {
                         returnVal = new GobiiTreeNode_1.GobiiTreeNode(parentNode, fileModelNode.getFileModelNodeUniqueId(), null, fileModelNode.getRequired());
@@ -703,6 +742,23 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                 StatusDisplayTreeComponent.prototype.ngOnChanges = function (changes) {
                     if (changes['fileItemEventChange'] && changes['fileItemEventChange'].currentValue) {
                         var itemChangedEvent = changes['fileItemEventChange'].currentValue;
+                        //            this.placeNodeInModel(itemChangedEvent);
+                        //this.treeNodes.push(treeNode);
+                        //this.placeNodeInModel(treeNode);
+                        // this.treeNodes.push(treeNode);
+                        //
+                        // if (this.itemChangedEvent) {
+                        //     let itemToChange:FileItem =
+                        //         this.fileItemEvents.filter(e => {
+                        //             return e.id == changes['fileItemEventChange'].currentValue.id;
+                        //         })[0];
+                        //
+                        //     //let indexOfItemToChange:number = this.fileItemEvents.indexOf(arg.currentTarget.name);
+                        //     if (itemToChange) {
+                        //         itemToChange.processType = changes['fileItemEventChange'].currentValue.processType;
+                        //         itemToChange.checked = changes['fileItemEventChange'].currentValue.checked;
+                        //     }
+                        // }
                     }
                     else if (changes['gobiiExtractFilterTypeEvent']
                         && (changes['gobiiExtractFilterTypeEvent'].currentValue != null)
@@ -711,6 +767,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                             this.gobiiExtractFilterType = changes['gobiiExtractFilterTypeEvent'].currentValue;
                             this.setUpRequredItems(this.gobiiExtractFilterType);
                         }
+                        // this.setList(changes['nameIdList'].currentValue);
                     }
                 };
                 StatusDisplayTreeComponent.prototype.makeDemoTreeNodes = function () {
@@ -787,17 +844,18 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     this.demoTreeNodes[1].partialSelected = true;
                     this.demoTreeNodes[1].expanded = true;
                 };
+                StatusDisplayTreeComponent = __decorate([
+                    core_1.Component({
+                        selector: 'status-display-tree',
+                        inputs: ['fileItemEventChange', 'gobiiExtractFilterTypeEvent'],
+                        outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage', 'onTreeReady'],
+                        template: "\n        <p-tree [value]=\"gobiiTreeNodesFromStore$ | async\"\n                selectionMode=\"checkbox\"\n                propagateSelectionUp=\"false\"\n                propagateSelectionDown=\"false\"\n                [selection]=\"gobiiSelectedNodesFromStore$ | async\"\n                (onNodeUnselect)=\"nodeUnselect($event)\"\n                (onNodeSelect)=\"nodeSelect($event)\"\n                (onNodeExpand)=\"nodeExpand($event)\"\n                (onNodeCollapse)=\"nodeCollapse($event)\"\n                [style]=\"{'width':'100%'}\"\n                styleClass=\"criteria-tree\"></p-tree>\n        <!--<p-tree [value]=\"demoTreeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedDemoNodes\"></p-tree>-->\n        <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n    "
+                    }),
+                    __metadata("design:paramtypes", [file_model_tree_service_1.FileModelTreeService,
+                        store_1.Store])
+                ], StatusDisplayTreeComponent);
                 return StatusDisplayTreeComponent;
             }());
-            StatusDisplayTreeComponent = __decorate([
-                core_1.Component({
-                    selector: 'status-display-tree',
-                    inputs: ['fileItemEventChange', 'gobiiExtractFilterTypeEvent'],
-                    outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage', 'onTreeReady'],
-                    template: " \n                    <p-tree [value]=\"gobiiTreeNodes\" \n                    selectionMode=\"checkbox\" \n                    propagateSelectionUp=\"false\"\n                    propagateSelectionDown=\"false\"\n                    [(selection)]=\"selectedGobiiNodes\"\n                    (onNodeUnselect)=\"nodeUnselect($event)\"\n                    (onNodeSelect)=\"nodeSelect($event)\"\n                    (onNodeExpand)=\"nodeExpand($event)\"\n                    (onNodeCollapse)=\"nodeCollapse($event)\"\n                    [style]=\"{'width':'100%'}\"\n                    styleClass=\"criteria-tree\"></p-tree>\n                    <!--<p-tree [value]=\"demoTreeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedDemoNodes\"></p-tree>-->\n                    <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n"
-                }),
-                __metadata("design:paramtypes", [file_model_tree_service_1.FileModelTreeService])
-            ], StatusDisplayTreeComponent);
             exports_1("StatusDisplayTreeComponent", StatusDisplayTreeComponent);
         }
     };
