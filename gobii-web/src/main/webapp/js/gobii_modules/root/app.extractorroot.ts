@@ -8,16 +8,14 @@ import {ServerConfig} from "../model/server-config";
 import {EntitySubType, EntityType} from "../model/type-entity";
 import {NameId} from "../model/name-id";
 import {DtoRequestItemServerConfigs} from "../services/app/dto-request-item-serverconfigs";
-import {EntityFilter} from "../model/type-entity-filter";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
-import {CvFilters, CvFilterType} from "../model/cv-filter-type";
-import {ExtractorItemType} from "../model/file-model-node";
+import {CvFilterType} from "../model/cv-filter-type";
+import {ExtractorItemType} from "../model/type-extractor-item";
 import {GobiiExtractFormat} from "../model/type-extract-format";
 import {Header} from "../model/payload/header";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import {FileItemParams} from "../model/name-id-request-params";
 import {FileName} from "../model/file_name";
-import {TreeStatusNotification} from "../model/tree-status-notification";
 import {Contact} from "../model/contact";
 import {ContactSearchType, DtoRequestItemContact} from "../services/app/dto-request-item-contact";
 import {AuthenticationService} from "../services/core/authentication.service";
@@ -790,7 +788,6 @@ export class ExtractorRoot implements OnInit {
 // ********************************************** MARKER/SAMPLE selection
     // ********************************************************************
     // ********************************************** Extract file submission
-    public treeStatusNotification: TreeStatusNotification = null;
     public submitButtonStyleDefault = "btn btn-primary";
     public buttonStyleSubmitReady = "btn btn-success";
     public buttonStyleSubmitNotReady = "btn btn-warning";

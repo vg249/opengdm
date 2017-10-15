@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/type-extract-format", "../model/gobii-file-item", "../model/type-process", "../model/file-model-node", "../model/type-extractor-filter", "@ngrx/store", "../services/core/file-item-service", "rxjs/Observable"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/type-extract-format", "../model/gobii-file-item", "../model/type-process", "../model//type-extractor-item", "../model/type-extractor-filter", "@ngrx/store", "../services/core/file-item-service", "rxjs/Observable"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/type-extract-format", "../model/gobi
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_extract_format_1, gobii_file_item_1, type_process_1, file_model_node_1, type_extractor_filter_1, store_1, file_item_service_1, Observable_1, ExportFormatComponent;
+    var core_1, type_extract_format_1, gobii_file_item_1, type_process_1, type_extractor_item_1, type_extractor_filter_1, store_1, file_item_service_1, Observable_1, ExportFormatComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -25,8 +25,8 @@ System.register(["@angular/core", "../model/type-extract-format", "../model/gobi
             function (type_process_1_1) {
                 type_process_1 = type_process_1_1;
             },
-            function (file_model_node_1_1) {
-                file_model_node_1 = file_model_node_1_1;
+            function (type_extractor_item_1_1) {
+                type_extractor_item_1 = type_extractor_item_1_1;
             },
             function (type_extractor_filter_1_1) {
                 type_extractor_filter_1 = type_extractor_filter_1_1;
@@ -110,7 +110,7 @@ System.register(["@angular/core", "../model/type-extract-format", "../model/gobi
                 ExportFormatComponent.prototype.updateTreeService = function (arg) {
                     var formatItem = gobii_file_item_1.GobiiFileItem
                         .build(this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)
-                        .setExtractorItemType(file_model_node_1.ExtractorItemType.EXPORT_FORMAT)
+                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.EXPORT_FORMAT)
                         .setItemId(arg)
                         .setItemName(type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat[arg]]);
                     this.fileItemService.loadFileItem(formatItem, true);

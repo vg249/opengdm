@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
-import {Effect, Actions, toPayload} from '@ngrx/effects';
+import {Actions, Effect} from '@ngrx/effects';
 import 'rxjs/add/operator/switchMap'
 import 'rxjs/add/observable/of';
 
@@ -10,16 +10,9 @@ import {TreeStructureService} from "../../services/core/tree-structure-service";
 import {GobiiTreeNode} from "../../model/GobiiTreeNode";
 import * as fromRoot from '../reducers';
 import * as historyAction from '../../store/actions/history-action';
-
-import {NameIdService} from "../../services/core/name-id-service";
-import {FileItemParams} from "../../model/name-id-request-params";
-import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
-import {CvFilterType} from "../../model/cv-filter-type";
-import {ExtractorItemType} from "../../model/file-model-node";
+import {ExtractorItemType} from "../../model/type-extractor-item";
 import {GobiiFileItem} from "../../model/gobii-file-item";
-import {ProcessType} from "../../model/type-process";
 import {Observable} from "rxjs/Observable";
-import {ADD_TO_EXTRACT_BY_ITEM_ID} from "../actions/fileitem-action";
 import {Store} from "@ngrx/store";
 import {FileItemService} from "../../services/core/file-item-service";
 import {NameIdFilterParamTypes} from "../../model/type-nameid-filter-params";

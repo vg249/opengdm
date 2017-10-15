@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-entity", "../../model/file-model-node", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/type-extract-format", "../../store/reducers", "../../store/actions/history-action", "@ngrx/store", "../../model/name-id", "rxjs/Observable", "../../model/type-extractor-sample-list", "../../model/extractor-instructions/data-set-extract", "../../model/extractor-instructions/gobii-extractor-instruction", "../../model/extractor-instructions/dto-extractor-instruction-files", "../app/dto-request-item-extractor-submission", "../../model/type-gobii-file", "./dto-request.service"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-entity", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/type-extract-format", "../../store/reducers", "../../store/actions/history-action", "@ngrx/store", "../../model/name-id", "rxjs/Observable", "../../model/type-extractor-sample-list", "../../model/extractor-instructions/data-set-extract", "../../model/extractor-instructions/gobii-extractor-instruction", "../../model/extractor-instructions/dto-extractor-instruction-files", "../app/dto-request-item-extractor-submission", "../../model/type-gobii-file", "./dto-request.service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/file-m
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_entity_1, file_model_node_1, type_extractor_filter_1, cv_filter_type_1, type_extract_format_1, fromRoot, historyAction, store_1, name_id_1, Observable_1, type_extractor_sample_list_1, data_set_extract_1, gobii_extractor_instruction_1, dto_extractor_instruction_files_1, dto_request_item_extractor_submission_1, type_gobii_file_1, dto_request_service_1, InstructionSubmissionService;
+    var core_1, type_entity_1, type_extractor_item_1, type_extractor_filter_1, cv_filter_type_1, type_extract_format_1, fromRoot, historyAction, store_1, name_id_1, Observable_1, type_extractor_sample_list_1, data_set_extract_1, gobii_extractor_instruction_1, dto_extractor_instruction_files_1, dto_request_item_extractor_submission_1, type_gobii_file_1, dto_request_service_1, InstructionSubmissionService;
     return {
         setters: [
             function (core_1_1) {
@@ -19,8 +19,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/file-m
             function (type_entity_1_1) {
                 type_entity_1 = type_entity_1_1;
             },
-            function (file_model_node_1_1) {
-                file_model_node_1 = file_model_node_1_1;
+            function (type_extractor_item_1_1) {
+                type_extractor_item_1 = type_extractor_item_1_1;
             },
             function (type_extractor_filter_1_1) {
                 type_extractor_filter_1 = type_extractor_filter_1_1;
@@ -85,7 +85,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/file-m
                                     all
                                         .filter(function (fi) {
                                         return fi.getGobiiExtractFilterType() === gobiiExtractFilterType
-                                            && fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY
+                                            && fi.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
                                             && fi.getEntityType() === type_entity_1.EntityType.DataSets;
                                     })
                                         .length > 0;
@@ -93,23 +93,23 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/file-m
                             else if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
                                 var samplesArePresent = all.filter(function (fi) {
                                     return fi.getGobiiExtractFilterType() === gobiiExtractFilterType
-                                        && ((fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM)
-                                            || fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_FILE);
+                                        && ((fi.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_ITEM)
+                                            || fi.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.SAMPLE_FILE);
                                 }).length > 0;
                                 var projectIsPresent = all.filter(function (fi) {
                                     return fi.getGobiiExtractFilterType() === gobiiExtractFilterType
-                                        && (fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY)
+                                        && (fi.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY)
                                         && fi.getEntityType() === type_entity_1.EntityType.Projects;
                                 }).length > 0;
                                 var pIIsPresent = all.filter(function (fi) {
                                     return fi.getGobiiExtractFilterType() === gobiiExtractFilterType
-                                        && (fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY)
+                                        && (fi.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY)
                                         && fi.getEntityType() === type_entity_1.EntityType.Contacts
                                         && fi.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR;
                                 }).length > 0;
                                 var datasetTypeIsPresent = all.filter(function (fi) {
                                     return fi.getGobiiExtractFilterType() === gobiiExtractFilterType
-                                        && (fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY)
+                                        && (fi.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY)
                                         && fi.getEntityType() === type_entity_1.EntityType.CvTerms
                                         && fi.getCvFilterType() === cv_filter_type_1.CvFilterType.DATASET_TYPE;
                                 }).length > 0;
@@ -122,22 +122,22 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/file-m
                             else if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
                                 var markersArePresent = all.filter(function (fi) {
                                     return fi.getGobiiExtractFilterType() === gobiiExtractFilterType
-                                        && ((fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM)
-                                            || fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_FILE);
+                                        && ((fi.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.MARKER_LIST_ITEM)
+                                            || fi.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.MARKER_FILE);
                                 }).length > 0;
                                 var markerGroupIsPresent = all.filter(function (fi) {
                                     return fi.getGobiiExtractFilterType() === gobiiExtractFilterType
-                                        && (fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY)
+                                        && (fi.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY)
                                         && fi.getEntityType() === type_entity_1.EntityType.MarkerGroups;
                                 }).length > 0;
                                 var platformIsPresent = all.filter(function (fi) {
                                     return fi.getGobiiExtractFilterType() === gobiiExtractFilterType
-                                        && (fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY)
+                                        && (fi.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY)
                                         && fi.getEntityType() === type_entity_1.EntityType.Platforms;
                                 }).length > 0;
                                 var datasetTypeIsPresent = all.filter(function (fi) {
                                     return fi.getGobiiExtractFilterType() === gobiiExtractFilterType
-                                        && (fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY)
+                                        && (fi.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY)
                                         && fi.getEntityType() === type_entity_1.EntityType.CvTerms
                                         && fi.getCvFilterType() === cv_filter_type_1.CvFilterType.DATASET_TYPE;
                                 }).length > 0;
@@ -170,21 +170,21 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/file-m
                         .subscribe(function (fileItems) {
                         // ******** JOB ID
                         var fileItemJobId = fileItems.find(function (item) {
-                            return item.getExtractorItemType() === file_model_node_1.ExtractorItemType.JOB_ID;
+                            return item.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.JOB_ID;
                         });
                         if (fileItemJobId != null) {
                             jobId = fileItemJobId.getItemId();
                         }
                         // ******** MARKER FILE
                         var fileItemMarkerFile = fileItems.find(function (item) {
-                            return item.getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_FILE;
+                            return item.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.MARKER_FILE;
                         });
                         if (fileItemMarkerFile != null) {
                             markerFileName = fileItemMarkerFile.getItemId();
                         }
                         // ******** SAMPLE FILE
                         var fileItemSampleFile = fileItems.find(function (item) {
-                            return item.getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_FILE;
+                            return item.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.SAMPLE_FILE;
                         });
                         if (fileItemSampleFile != null) {
                             sampleFileName = fileItemSampleFile.getItemId();
@@ -206,7 +206,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/file-m
                         });
                         // ******** EXPORT FORMAT
                         var exportFileItem = fileItems.find(function (item) {
-                            return item.getExtractorItemType() === file_model_node_1.ExtractorItemType.EXPORT_FORMAT;
+                            return item.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.EXPORT_FORMAT;
                         });
                         // these probably should be just one enum
                         var gobiiFileType = null;
@@ -253,7 +253,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/file-m
                         // ******** MARKERS
                         var markerListItems = fileItems
                             .filter(function (fi) {
-                            return fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM;
+                            return fi.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.MARKER_LIST_ITEM;
                         });
                         var markerList = markerListItems
                             .map(function (mi) {
@@ -262,14 +262,14 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/file-m
                         // ******** SAMPLES
                         var sampleListItems = fileItems
                             .filter(function (fi) {
-                            return fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM;
+                            return fi.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_ITEM;
                         });
                         var sampleList = sampleListItems
                             .map(function (mi) {
                             return mi.getItemId();
                         });
                         var sampleListTypeFileItem = fileItems.find(function (item) {
-                            return item.getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_LIST_TYPE;
+                            return item.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_TYPE;
                         });
                         if (sampleListTypeFileItem != null) {
                             sampleListType = type_extractor_sample_list_1.GobiiSampleListType[sampleListTypeFileItem.getItemId()];

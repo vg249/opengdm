@@ -2,11 +2,10 @@ import {Injectable} from "@angular/core";
 import {ContainerType, GobiiTreeNode} from "../../model/GobiiTreeNode";
 import {EntitySubType, EntityType} from "../../model/type-entity";
 import {Labels} from "../../views/entity-labels";
-import {ExtractorItemType} from "../../model/file-model-node";
+import {ExtractorItemType} from "../../model/type-extractor-item";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 import {CvFilterType} from "../../model/cv-filter-type";
 import {GobiiFileItem} from "../../model/gobii-file-item";
-import {HeaderStatusMessage} from "../../model/dto-header-status-message";
 import {GobiiExtractFormat} from "../../model/type-extract-format";
 import {ProcessType} from "../../model/type-process";
 
@@ -277,7 +276,7 @@ export class TreeStructureService {
 
         this.addIconsToNode(returnVal, false);
         this.applyLabel(returnVal);
-        this.addFileItemNameToNode(returnVal,gobiiFileItem);
+        this.addFileItemNameToNode(returnVal, gobiiFileItem);
 
         return returnVal;
     }
@@ -289,13 +288,13 @@ export class TreeStructureService {
         } else { // coves the LEAF node use case
             if (gobiiFileItem.getExtractorItemType() == ExtractorItemType.EXPORT_FORMAT) {
                 let gobiiExtractFormat: GobiiExtractFormat = <GobiiExtractFormat> GobiiExtractFormat[gobiiFileItem.getItemId()];
-                gobiiTreeNode.label +=  ": " + Labels.instance().extractFormatTypeLabels[gobiiExtractFormat];
+                gobiiTreeNode.label += ": " + Labels.instance().extractFormatTypeLabels[gobiiExtractFormat];
             } else if (gobiiFileItem.getExtractorItemType() == ExtractorItemType.JOB_ID) {
                 gobiiTreeNode.label = Labels.instance().treeExtractorTypeLabels[ExtractorItemType.JOB_ID]
                     + ": " + gobiiFileItem.getItemId();
             } else {
                 if (gobiiFileItem.getProcessType() !== ProcessType.DELETE) {
-                    gobiiTreeNode.label +=  ": " + gobiiFileItem.getItemName();
+                    gobiiTreeNode.label += ": " + gobiiFileItem.getItemName();
                 } else {
                     gobiiTreeNode.label = gobiiFileItem.getItemName();
                 }

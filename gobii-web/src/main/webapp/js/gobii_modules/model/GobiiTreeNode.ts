@@ -1,10 +1,10 @@
 import {TreeNode} from "primeng/components/common/api";
 import {EntityType, EntitySubType} from "./type-entity";
 import {CvFilterType} from "./cv-filter-type";
-import {ExtractorItemType} from "./file-model-node";
 import {Guid} from "./guid";
 import {GobiiExtractFilterType} from "./type-extractor-filter";
 import {GobiiFileItem} from "./gobii-file-item";
+import {ExtractorItemType} from "./type-extractor-item";
 
 
 export enum ContainerType {NONE, STRUCTURE, DATA}

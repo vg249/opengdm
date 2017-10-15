@@ -1,7 +1,7 @@
 import {EntityType, EntitySubType} from "../model/type-entity";
 import {CvFilterType} from "../model/cv-filter-type";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
-import {ExtractorItemType} from "../model/file-model-node";
+import {ExtractorItemType} from "../model//type-extractor-item";
 import {GobiiExtractFormat} from "../model/type-extract-format";
 
 export class Labels {

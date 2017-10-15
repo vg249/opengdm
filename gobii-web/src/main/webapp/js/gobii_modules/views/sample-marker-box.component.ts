@@ -3,7 +3,7 @@ import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import {ProcessType} from "../model/type-process";
-import {ExtractorItemType} from "../model/file-model-node";
+import {ExtractorItemType} from "../model//type-extractor-item";
 import {Labels} from "./entity-labels";
 import {NameIdFilterParamTypes} from "../model/type-nameid-filter-params";
 import * as fromRoot from '../store/reducers';

@@ -1,21 +1,12 @@
-import {Component, OnInit, ViewChild, OnChanges, SimpleChange, EventEmitter} from "@angular/core";
-import {TreeNode, Message, MenuItem} from "primeng/components/common/api";
+import {Component, EventEmitter, OnChanges, OnInit, SimpleChange} from "@angular/core";
+import {TreeNode} from "primeng/components/common/api";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import {GobiiTreeNode} from "../model/GobiiTreeNode";
-import {EntityType, EntitySubType} from "../model/type-entity";
+import {EntityType} from "../model/type-entity";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {CvFilterType} from "../model/cv-filter-type";
-import {FileModelTreeEvent, FileModelState} from "../model/file-model-tree-event";
-import {ProcessType} from "../model/type-process";
-import {GobiiExtractFormat} from "../model/type-extract-format";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
-import {Labels} from "./entity-labels";
-import {Header} from "../model/payload/header";
-import {GobiiUIEventOrigin} from "../model/type-event-origin";
-import {StatusLevel} from "../model/type-status-level";
 import * as fromRoot from '../store/reducers';
-import * as fileItemAction from '../store/actions/fileitem-action';
-import * as treeNodeAction from '../store/actions/treenode-action';
 import {Store} from "@ngrx/store";
 import {Observable} from "rxjs/Observable";
 

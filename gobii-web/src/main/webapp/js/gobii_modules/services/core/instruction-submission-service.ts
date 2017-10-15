@@ -1,35 +1,23 @@
 import {Injectable} from "@angular/core";
-import {ContainerType, GobiiTreeNode} from "../../model/GobiiTreeNode";
 import {EntitySubType, EntityType} from "../../model/type-entity";
-import {Labels} from "../../views/entity-labels";
-import {ExtractorItemType} from "../../model/file-model-node";
+import {ExtractorItemType} from "../../model/type-extractor-item";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
-import {CvFilters, CvFilterType} from "../../model/cv-filter-type";
+import {CvFilterType} from "../../model/cv-filter-type";
 import {GobiiFileItem} from "../../model/gobii-file-item";
-import {HeaderStatusMessage} from "../../model/dto-header-status-message";
 import {GobiiExtractFormat} from "../../model/type-extract-format";
-import {ProcessType} from "../../model/type-process";
-import {NameIdService} from "./name-id-service";
-import {FileItemParams} from "../../model/name-id-request-params";
-import * as fileItemActions from '../../store/actions/fileitem-action'
 import * as fromRoot from '../../store/reducers';
 import * as historyAction from '../../store/actions/history-action';
 
 import {Store} from "@ngrx/store";
-import {NameIdLabelType} from "../../model/name-id-label-type";
 import {NameId} from "../../model/name-id";
-import {EntityFilter} from "../../model/type-entity-filter";
-import {NameIdFilterParamTypes} from "../../model/type-nameid-filter-params";
 import {Observable} from "rxjs/Observable";
 import {GobiiSampleListType} from "../../model/type-extractor-sample-list";
 import {GobiiDataSetExtract} from "../../model/extractor-instructions/data-set-extract";
 import {GobiiExtractorInstruction} from "../../model/extractor-instructions/gobii-extractor-instruction";
 import {ExtractorInstructionFilesDTO} from "../../model/extractor-instructions/dto-extractor-instruction-files";
 import {DtoRequestItemExtractorSubmission} from "../app/dto-request-item-extractor-submission";
-import {FileName} from "../../model/file_name";
 import {GobiiFileType} from "../../model/type-gobii-file";
 import {DtoRequestService} from "./dto-request.service";
-import {StatusLevel} from "../../model/type-status-level";
 
 @Injectable()
 export class InstructionSubmissionService {

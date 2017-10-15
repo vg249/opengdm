@@ -1,7 +1,7 @@
-System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type", "./type-extractor-filter", "./file-model-node", "./type-event-origin"], function (exports_1, context_1) {
+System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type", "./type-extractor-filter", "./type-event-origin", "./type-extractor-item"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var type_process_1, guid_1, type_entity_1, cv_filter_type_1, type_extractor_filter_1, file_model_node_1, type_event_origin_1, GobiiFileItem;
+    var type_process_1, guid_1, type_entity_1, cv_filter_type_1, type_extractor_filter_1, type_event_origin_1, type_extractor_item_1, GobiiFileItem;
     return {
         setters: [
             function (type_process_1_1) {
@@ -19,11 +19,11 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
             function (type_extractor_filter_1_1) {
                 type_extractor_filter_1 = type_extractor_filter_1_1;
             },
-            function (file_model_node_1_1) {
-                file_model_node_1 = file_model_node_1_1;
-            },
             function (type_event_origin_1_1) {
                 type_event_origin_1 = type_event_origin_1_1;
+            },
+            function (type_extractor_item_1_1) {
+                type_extractor_item_1 = type_extractor_item_1_1;
             }
         ],
         execute: function () {
@@ -60,7 +60,7 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
                         this._cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN;
                     }
                     if (this._extractorItemType == null) {
-                        this._extractorItemType = file_model_node_1.ExtractorItemType.UNKNOWN;
+                        this._extractorItemType = type_extractor_item_1.ExtractorItemType.UNKNOWN;
                     }
                     if (this._entityType == null) {
                         this._entityType = type_entity_1.EntityType.UNKNOWN;
@@ -73,7 +73,7 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
                     }
                 }
                 GobiiFileItem.build = function (gobiiExtractFilterType, processType) {
-                    var returnVal = new GobiiFileItem(gobiiExtractFilterType, processType, file_model_node_1.ExtractorItemType.UNKNOWN, type_entity_1.EntityType.UNKNOWN, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null, null, null, null, type_event_origin_1.GobiiUIEventOrigin.UNKNOWN, null, type_entity_1.EntityType.UNKNOWN);
+                    var returnVal = new GobiiFileItem(gobiiExtractFilterType, processType, type_extractor_item_1.ExtractorItemType.UNKNOWN, type_entity_1.EntityType.UNKNOWN, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null, null, null, null, type_event_origin_1.GobiiUIEventOrigin.UNKNOWN, null, type_entity_1.EntityType.UNKNOWN);
                     return returnVal;
                 };
                 GobiiFileItem.prototype.equals = function (gobiiFileItemToCompare) {
@@ -122,7 +122,7 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
                         this._extractorItemType = value;
                     }
                     else {
-                        this._extractorItemType = file_model_node_1.ExtractorItemType.UNKNOWN;
+                        this._extractorItemType = type_extractor_item_1.ExtractorItemType.UNKNOWN;
                     }
                     return this;
                 };

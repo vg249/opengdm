@@ -1,12 +1,9 @@
-import {Component, OnInit, OnChanges, SimpleChange, EventEmitter, Input, DoCheck, KeyValueDiffers} from "@angular/core";
-import {ProcessType} from "../model/type-process";
+import {Component, EventEmitter, KeyValueDiffers} from "@angular/core";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
-import {CvFilterType} from "../model/cv-filter-type";
 import {FileItemParams} from "../model/name-id-request-params";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
-import {NameIdService} from "../services/core/name-id-service";
-import {ExtractorItemType} from "../model/file-model-node";
+import {ExtractorItemType} from "../model//type-extractor-item";
 import * as fromRoot from '../store/reducers';
 import * as fileAction from '../store/actions/fileitem-action';
 import {Store} from "@ngrx/store";

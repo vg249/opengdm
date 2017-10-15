@@ -1,12 +1,10 @@
 import {createSelector} from 'reselect';
 import {GobiiFileItem} from "../../model/gobii-file-item";
 import * as gobiiFileItemAction from "../actions/fileitem-action";
-import {ExtractorItemType} from "../../model/file-model-node";
+import {ExtractorItemType} from "../../model/type-extractor-item";
 import {EntitySubType, EntityType} from "../../model/type-entity";
-import {FileItemParams} from "../../model/name-id-request-params";
 import {NameIdFilterParamTypes} from "../../model/type-nameid-filter-params";
 import {ProcessType} from "../../model/type-process";
-import {getForSelectedFilter} from "./treenode-reducer";
 import {Labels} from "../../views/entity-labels";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 import {GobiiExtractFormat} from "../../model/type-extract-format";

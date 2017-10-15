@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnChanges, OnInit, SimpleChange} from '@
 import {GobiiExtractFormat} from "../model/type-extract-format";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import {ProcessType} from "../model/type-process";
-import {ExtractorItemType} from "../model/file-model-node";
+import {ExtractorItemType} from "../model//type-extractor-item";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {Header} from "../model/payload/header";
 import * as fromRoot from '../store/reducers';

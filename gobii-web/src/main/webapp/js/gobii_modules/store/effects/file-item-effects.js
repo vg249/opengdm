@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/operator/switchMap", "rxjs/add/observable/of", "../actions/fileitem-action", "../actions/treenode-action", "../../services/core/tree-structure-service", "../reducers", "../../store/actions/history-action", "../../model/file-model-node", "rxjs/Observable", "@ngrx/store", "../../services/core/file-item-service", "../../model/type-nameid-filter-params", "../../model/type-entity", "rxjs/add/operator/mergeMap"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/operator/switchMap", "rxjs/add/observable/of", "../actions/fileitem-action", "../actions/treenode-action", "../../services/core/tree-structure-service", "../reducers", "../../store/actions/history-action", "../../model/type-extractor-item", "rxjs/Observable", "@ngrx/store", "../../services/core/file-item-service", "../../model/type-nameid-filter-params", "../../model/type-entity", "rxjs/add/operator/mergeMap"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, router_1, effects_1, fileItemActions, treeNodeActions, tree_structure_service_1, fromRoot, historyAction, file_model_node_1, Observable_1, store_1, file_item_service_1, type_nameid_filter_params_1, type_entity_1, FileItemEffects;
+    var core_1, router_1, effects_1, fileItemActions, treeNodeActions, tree_structure_service_1, fromRoot, historyAction, type_extractor_item_1, Observable_1, store_1, file_item_service_1, type_nameid_filter_params_1, type_entity_1, FileItemEffects;
     return {
         setters: [
             function (core_1_1) {
@@ -41,8 +41,8 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
             function (historyAction_1) {
                 historyAction = historyAction_1;
             },
-            function (file_model_node_1_1) {
-                file_model_node_1 = file_model_node_1_1;
+            function (type_extractor_item_1_1) {
+                type_extractor_item_1 = type_extractor_item_1_1;
             },
             function (Observable_1_1) {
                 Observable_1 = Observable_1_1;
@@ -202,7 +202,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                                     });
                                     // LOAD THE CORRESPONDING TREE NODE FOR THE SELECTED ITEM
                                 } // if we had a filter to dispatch
-                                if (fileItemToReplaceWith.getExtractorItemType() != file_model_node_1.ExtractorItemType.LABEL) {
+                                if (fileItemToReplaceWith.getExtractorItemType() != type_extractor_item_1.ExtractorItemType.LABEL) {
                                     var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(fileItemToReplaceWith);
                                     observer.next(new treeNodeActions.PlaceTreeNodeAction(treeNode));
                                 }

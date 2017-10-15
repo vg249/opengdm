@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/type-extractor-filter", "../model/type-extractor-sample-list", "../model/gobii-file-item", "../model/type-process", "../model/file-model-node", "../store/reducers", "@ngrx/store", "../services/core/file-item-service"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/type-extractor-filter", "../model/type-extractor-sample-list", "../model/gobii-file-item", "../model/type-process", "../model//type-extractor-item", "../store/reducers", "@ngrx/store", "../services/core/file-item-service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../model/ty
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_extractor_filter_1, type_extractor_sample_list_1, gobii_file_item_1, type_process_1, file_model_node_1, fromRoot, store_1, file_item_service_1, SampleListTypeComponent;
+    var core_1, type_extractor_filter_1, type_extractor_sample_list_1, gobii_file_item_1, type_process_1, type_extractor_item_1, fromRoot, store_1, file_item_service_1, SampleListTypeComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -28,8 +28,8 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../model/ty
             function (type_process_1_1) {
                 type_process_1 = type_process_1_1;
             },
-            function (file_model_node_1_1) {
-                file_model_node_1 = file_model_node_1_1;
+            function (type_extractor_item_1_1) {
+                type_extractor_item_1 = type_extractor_item_1_1;
             },
             function (fromRoot_1) {
                 fromRoot = fromRoot_1;
@@ -54,7 +54,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../model/ty
                     var gobiiSampleListType = type_extractor_sample_list_1.GobiiSampleListType[radioValue];
                     this.fileItemService
                         .loadFileItem(gobii_file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
-                        .setExtractorItemType(file_model_node_1.ExtractorItemType.SAMPLE_LIST_TYPE)
+                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_TYPE)
                         .setItemName(type_extractor_sample_list_1.GobiiSampleListType[gobiiSampleListType])
                         .setItemId(type_extractor_sample_list_1.GobiiSampleListType[gobiiSampleListType]), true);
                 };

@@ -4,8 +4,8 @@ import {Guid} from "./guid";
 import {EntityType, EntitySubType} from "./type-entity";
 import {CvFilterType} from "./cv-filter-type";
 import {GobiiExtractFilterType} from "./type-extractor-filter";
-import {ExtractorItemType} from "./file-model-node";
 import {GobiiUIEventOrigin} from "./type-event-origin";
+import {ExtractorItemType} from "./type-extractor-item";
 
 export class GobiiFileItem {
 

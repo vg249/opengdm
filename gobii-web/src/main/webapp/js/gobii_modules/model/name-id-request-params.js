@@ -1,7 +1,7 @@
-System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", "./type-extractor-filter", "./name-id-label-type", "./file-model-node"], function (exports_1, context_1) {
+System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", "./type-extractor-filter", "./name-id-label-type", "./type-extractor-item"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var type_entity_filter_1, type_entity_1, cv_filter_type_1, type_extractor_filter_1, name_id_label_type_1, file_model_node_1, FileItemParams;
+    var type_entity_filter_1, type_entity_1, cv_filter_type_1, type_extractor_filter_1, name_id_label_type_1, type_extractor_item_1, FileItemParams;
     return {
         setters: [
             function (type_entity_filter_1_1) {
@@ -19,8 +19,8 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
             function (name_id_label_type_1_1) {
                 name_id_label_type_1 = name_id_label_type_1_1;
             },
-            function (file_model_node_1_1) {
-                file_model_node_1 = file_model_node_1_1;
+            function (type_extractor_item_1_1) {
+                type_extractor_item_1 = type_extractor_item_1_1;
             }
         ],
         execute: function () {
@@ -52,7 +52,7 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
                     this._dynamicFilterValue = _dynamicFilterValue;
                 }
                 FileItemParams.build = function (queryName, gobiiExtractFilterType, entityType) {
-                    return (new FileItemParams(queryName, entityType, type_entity_filter_1.EntityFilter.NONE, null, null, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, gobiiExtractFilterType, name_id_label_type_1.NameIdLabelType.UNKNOWN, file_model_node_1.ExtractorItemType.ENTITY, null, [], true));
+                    return (new FileItemParams(queryName, entityType, type_entity_filter_1.EntityFilter.NONE, null, null, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, gobiiExtractFilterType, name_id_label_type_1.NameIdLabelType.UNKNOWN, type_extractor_item_1.ExtractorItemType.ENTITY, null, [], true));
                 };
                 FileItemParams.prototype.getEntityType = function () {
                     return this._entityType;

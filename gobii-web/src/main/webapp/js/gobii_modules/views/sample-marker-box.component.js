@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/dto-header-status-message", "../model/type-extractor-filter", "../model/gobii-file-item", "../model/type-process", "../model/file-model-node", "./entity-labels", "../model/type-nameid-filter-params", "../store/reducers", "../services/core/file-item-service", "@ngrx/store"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/dto-header-status-message", "../model/type-extractor-filter", "../model/gobii-file-item", "../model/type-process", "../model//type-extractor-item", "./entity-labels", "../model/type-nameid-filter-params", "../store/reducers", "../services/core/file-item-service", "@ngrx/store"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, dto_header_status_message_1, type_extractor_filter_1, gobii_file_item_1, type_process_1, file_model_node_1, entity_labels_1, type_nameid_filter_params_1, fromRoot, file_item_service_1, store_1, SampleMarkerBoxComponent;
+    var core_1, dto_header_status_message_1, type_extractor_filter_1, gobii_file_item_1, type_process_1, type_extractor_item_1, entity_labels_1, type_nameid_filter_params_1, fromRoot, file_item_service_1, store_1, SampleMarkerBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -28,8 +28,8 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
             function (type_process_1_1) {
                 type_process_1 = type_process_1_1;
             },
-            function (file_model_node_1_1) {
-                file_model_node_1 = file_model_node_1_1;
+            function (type_extractor_item_1_1) {
+                type_extractor_item_1 = type_extractor_item_1_1;
             },
             function (entity_labels_1_1) {
                 entity_labels_1 = entity_labels_1_1;
@@ -75,7 +75,7 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                     var _this = this;
                     if (items.length <= this.maxListItems) {
                         var listItemType_1 = this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER ?
-                            file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM : file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM;
+                            type_extractor_item_1.ExtractorItemType.MARKER_LIST_ITEM : type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_ITEM;
                         items.forEach(function (listItem) {
                             if (listItem && listItem !== "") {
                                 _this.fileItemService
@@ -88,10 +88,10 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                     }
                     else {
                         if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
-                            this.maxExceededTypeLabel = entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM];
+                            this.maxExceededTypeLabel = entity_labels_1.Labels.instance().treeExtractorTypeLabels[type_extractor_item_1.ExtractorItemType.MARKER_LIST_ITEM];
                         }
                         else if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
-                            this.maxExceededTypeLabel = entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM];
+                            this.maxExceededTypeLabel = entity_labels_1.Labels.instance().treeExtractorTypeLabels[type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_ITEM];
                         }
                         else {
                             this.handleStatusHeaderMessage(new dto_header_status_message_1.HeaderStatusMessage("This control does not handle the currently selected item type: "
@@ -105,15 +105,15 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                     var returnVal = false;
                     this.store.select(fromRoot.getAllFileItems)
                         .subscribe(function (fileItems) {
-                        var extractorItemTypeListToFind = file_model_node_1.ExtractorItemType.UNKNOWN;
-                        var extractorItemTypeFileToFind = file_model_node_1.ExtractorItemType.UNKNOWN;
+                        var extractorItemTypeListToFind = type_extractor_item_1.ExtractorItemType.UNKNOWN;
+                        var extractorItemTypeFileToFind = type_extractor_item_1.ExtractorItemType.UNKNOWN;
                         if (_this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
-                            extractorItemTypeListToFind = file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM;
-                            extractorItemTypeFileToFind = file_model_node_1.ExtractorItemType.SAMPLE_FILE;
+                            extractorItemTypeListToFind = type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_ITEM;
+                            extractorItemTypeFileToFind = type_extractor_item_1.ExtractorItemType.SAMPLE_FILE;
                         }
                         else if (_this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
-                            extractorItemTypeListToFind = file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM;
-                            extractorItemTypeFileToFind = file_model_node_1.ExtractorItemType.MARKER_FILE;
+                            extractorItemTypeListToFind = type_extractor_item_1.ExtractorItemType.MARKER_LIST_ITEM;
+                            extractorItemTypeFileToFind = type_extractor_item_1.ExtractorItemType.MARKER_FILE;
                         }
                         _this.currentFileItems = fileItems.filter(function (item) {
                             return ((item.getExtractorItemType() === extractorItemTypeListToFind) ||
@@ -121,17 +121,17 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                         });
                         if (_this.currentFileItems.length > 0) {
                             _this.extractTypeLabelExisting = entity_labels_1.Labels.instance().treeExtractorTypeLabels[_this.currentFileItems[0].getExtractorItemType()];
-                            if (_this.currentFileItems[0].getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM) {
-                                _this.extractTypeLabelProposed = entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.SAMPLE_FILE];
+                            if (_this.currentFileItems[0].getExtractorItemType() === type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_ITEM) {
+                                _this.extractTypeLabelProposed = entity_labels_1.Labels.instance().treeExtractorTypeLabels[type_extractor_item_1.ExtractorItemType.SAMPLE_FILE];
                             }
-                            else if (_this.currentFileItems[0].getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM) {
-                                _this.extractTypeLabelProposed = entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.MARKER_FILE];
+                            else if (_this.currentFileItems[0].getExtractorItemType() === type_extractor_item_1.ExtractorItemType.MARKER_LIST_ITEM) {
+                                _this.extractTypeLabelProposed = entity_labels_1.Labels.instance().treeExtractorTypeLabels[type_extractor_item_1.ExtractorItemType.MARKER_FILE];
                             }
-                            else if (_this.currentFileItems[0].getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_FILE) {
-                                _this.extractTypeLabelProposed = entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM];
+                            else if (_this.currentFileItems[0].getExtractorItemType() === type_extractor_item_1.ExtractorItemType.SAMPLE_FILE) {
+                                _this.extractTypeLabelProposed = entity_labels_1.Labels.instance().treeExtractorTypeLabels[type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_ITEM];
                             }
-                            else if (_this.currentFileItems[0].getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_FILE) {
-                                _this.extractTypeLabelProposed = entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM];
+                            else if (_this.currentFileItems[0].getExtractorItemType() === type_extractor_item_1.ExtractorItemType.MARKER_FILE) {
+                                _this.extractTypeLabelProposed = entity_labels_1.Labels.instance().treeExtractorTypeLabels[type_extractor_item_1.ExtractorItemType.MARKER_LIST_ITEM];
                             }
                             _this.displayChoicePrompt = true;
                             returnVal = true;
@@ -156,14 +156,14 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                     this.displayChoicePrompt = false;
                     if (this.currentFileItems.length > 0 && userChoice === true) {
                         // based on what _was_ the current item, we now make the current selection the other one
-                        if (this.currentFileItems[0].getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM
-                            || this.currentFileItems[0].getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM) {
+                        if (this.currentFileItems[0].getExtractorItemType() === type_extractor_item_1.ExtractorItemType.MARKER_LIST_ITEM
+                            || this.currentFileItems[0].getExtractorItemType() === type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_ITEM) {
                             this.displayListBox = false;
                             this.displayUploader = true;
                             this.selectedListType = "itemFile";
                         }
-                        else if (this.currentFileItems[0].getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_FILE
-                            || this.currentFileItems[0].getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_FILE) {
+                        else if (this.currentFileItems[0].getExtractorItemType() === type_extractor_item_1.ExtractorItemType.MARKER_FILE
+                            || this.currentFileItems[0].getExtractorItemType() === type_extractor_item_1.ExtractorItemType.SAMPLE_FILE) {
                             this.displayListBox = true;
                             this.displayUploader = false;
                             this.selectedListType = "itemArray";

@@ -1,7 +1,7 @@
-System.register(["./type-entity", "./cv-filter-type", "./file-model-node", "./guid", "./type-extractor-filter"], function (exports_1, context_1) {
+System.register(["./type-entity", "./cv-filter-type", "./guid", "./type-extractor-filter", "./type-extractor-item"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var type_entity_1, cv_filter_type_1, file_model_node_1, guid_1, type_extractor_filter_1, ContainerType, GobiiTreeNode;
+    var type_entity_1, cv_filter_type_1, guid_1, type_extractor_filter_1, type_extractor_item_1, ContainerType, GobiiTreeNode;
     return {
         setters: [
             function (type_entity_1_1) {
@@ -10,14 +10,14 @@ System.register(["./type-entity", "./cv-filter-type", "./file-model-node", "./gu
             function (cv_filter_type_1_1) {
                 cv_filter_type_1 = cv_filter_type_1_1;
             },
-            function (file_model_node_1_1) {
-                file_model_node_1 = file_model_node_1_1;
-            },
             function (guid_1_1) {
                 guid_1 = guid_1_1;
             },
             function (type_extractor_filter_1_1) {
                 type_extractor_filter_1 = type_extractor_filter_1_1;
+            },
+            function (type_extractor_item_1_1) {
+                type_extractor_item_1 = type_extractor_item_1_1;
             }
         ],
         execute: function () {
@@ -29,7 +29,7 @@ System.register(["./type-entity", "./cv-filter-type", "./file-model-node", "./gu
             exports_1("ContainerType", ContainerType);
             GobiiTreeNode = (function () {
                 function GobiiTreeNode(parent, fileModelNodeId, fileItemId, required) {
-                    this.itemType = file_model_node_1.ExtractorItemType.ENTITY;
+                    this.itemType = type_extractor_item_1.ExtractorItemType.ENTITY;
                     this.entityType = type_entity_1.EntityType.UNKNOWN;
                     this.entitySubType = type_entity_1.EntitySubType.UNKNOWN;
                     this.cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN;

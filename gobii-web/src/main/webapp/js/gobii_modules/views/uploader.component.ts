@@ -7,7 +7,7 @@ import {FileName} from "../model/file_name";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {ProcessType} from "../model/type-process";
-import {ExtractorItemType} from "../model/file-model-node";
+import {ExtractorItemType} from "../model//type-extractor-item";
 import {Store} from "@ngrx/store";
 import * as fromRoot from '../store/reducers';
 import {Observable} from "rxjs/Observable";

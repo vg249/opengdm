@@ -3,7 +3,7 @@ import {EntityType, EntitySubType} from "./type-entity";
 import {CvFilterType} from "./cv-filter-type";
 import {GobiiExtractFilterType} from "./type-extractor-filter";
 import {NameIdLabelType} from "./name-id-label-type";
-import {ExtractorItemType} from "./file-model-node";
+import {ExtractorItemType} from "./type-extractor-item";
 
 /**
  * Created by Phil on 3/9/2017.

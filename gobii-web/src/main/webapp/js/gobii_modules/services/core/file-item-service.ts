@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {ContainerType, GobiiTreeNode} from "../../model/GobiiTreeNode";
 import {EntitySubType, EntityType} from "../../model/type-entity";
 import {Labels} from "../../views/entity-labels";
-import {ExtractorItemType} from "../../model/file-model-node";
+import {ExtractorItemType} from "../../model/type-extractor-item";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 import {CvFilters, CvFilterType} from "../../model/cv-filter-type";
 import {GobiiFileItem} from "../../model/gobii-file-item";
