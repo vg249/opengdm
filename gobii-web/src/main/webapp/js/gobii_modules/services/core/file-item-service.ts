@@ -63,9 +63,16 @@ export class FileItemService {
 
         this.nameIdRequestParams.set(NameIdFilterParamTypes.MARKER_GROUPS,
             FileItemParams
-            .build(NameIdFilterParamTypes.MARKER_GROUPS,
-                GobiiExtractFilterType.BY_MARKER,
-                EntityType.MarkerGroups));
+                .build(NameIdFilterParamTypes.MARKER_GROUPS,
+                    GobiiExtractFilterType.BY_MARKER,
+                    EntityType.MarkerGroups));
+
+        this.nameIdRequestParams.set(NameIdFilterParamTypes.PROJECTS,
+            FileItemParams
+                .build(NameIdFilterParamTypes.PROJECTS,
+                    GobiiExtractFilterType.BY_SAMPLE,
+                    EntityType.Projects));
+
 
         //for hierarchical items, we need to crate the nameid requests separately from the
         //flat map: they _will_ need to be in the flat map; however, they all need to be
@@ -76,7 +83,7 @@ export class FileItemService {
                 EntityType.Contacts)
             .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR);
 
-        let nameIdRequestParamsProject: FileItemParams = FileItemParams
+        let nameIdRequestParamsProjectByPiContact: FileItemParams = FileItemParams
             .build(NameIdFilterParamTypes.PROJECTS_BY_CONTACT,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.Projects)
@@ -96,17 +103,17 @@ export class FileItemService {
 
         //add the individual requests to the map
         this.nameIdRequestParams.set(nameIdRequestParamsContactsPi.getQueryName(), nameIdRequestParamsContactsPi);
-        this.nameIdRequestParams.set(nameIdRequestParamsProject.getQueryName(), nameIdRequestParamsProject);
+        this.nameIdRequestParams.set(nameIdRequestParamsProjectByPiContact.getQueryName(), nameIdRequestParamsProjectByPiContact);
         this.nameIdRequestParams.set(nameIdRequestParamsExperiments.getQueryName(), nameIdRequestParamsExperiments);
         this.nameIdRequestParams.set(nameIdRequestParamsDatasets.getQueryName(), nameIdRequestParamsDatasets);
 
         //build the parent-child request params graph
         nameIdRequestParamsContactsPi
             .setChildNameIdRequestParams(
-                [nameIdRequestParamsProject
+                [nameIdRequestParamsProjectByPiContact
                     .setParentNameIdRequestParams(nameIdRequestParamsContactsPi)
                     .setChildNameIdRequestParams([nameIdRequestParamsExperiments
-                        .setParentNameIdRequestParams(nameIdRequestParamsProject)
+                        .setParentNameIdRequestParams(nameIdRequestParamsProjectByPiContact)
                         .setChildNameIdRequestParams([nameIdRequestParamsDatasets
                             .setParentNameIdRequestParams(nameIdRequestParamsExperiments)
                         ])
@@ -130,9 +137,16 @@ export class FileItemService {
 
         let nameIdRequestParamsFromType: FileItemParams = this.nameIdRequestParams.get(nameIdFilterParamTypes);
 
-        this.loadNameIdsToFileItems(gobiiExtractFilterType,
-            nameIdRequestParamsFromType,
-            filterValue);
+        if (nameIdRequestParamsFromType) {
+            this.loadNameIdsToFileItems(gobiiExtractFilterType,
+                nameIdRequestParamsFromType,
+                filterValue);
+        } else {
+            this.store.dispatch(new historyAction.AddStatusMessageAction("No is no query params object for query "
+                + nameIdFilterParamTypes
+                + " with extract filter type "
+                + GobiiExtractFilterType[gobiiExtractFilterType]));
+        }
     }
 
 
@@ -164,7 +178,7 @@ export class FileItemService {
                                    nameIdRequestParamsToLoad: FileItemParams,
                                    filterValue: string) {
 
-        if( nameIdRequestParamsToLoad.getDynamicFilterValue() ) {
+        if (nameIdRequestParamsToLoad.getDynamicFilterValue()) {
             nameIdRequestParamsToLoad.setFkEntityFilterValue(filterValue);
         }
 
@@ -303,13 +317,12 @@ export class FileItemService {
     }
 
 
-
     // these next two functions are redundant with respect to the other ones that load nameids
     // the refactoring path is for the loadWithParams() methods to be deprecated and moved into
     // effects  so that all fo these things will use effects.
     public makeFileLoadActions(gobiiExtractFilterType: GobiiExtractFilterType,
-                                nameIdFilterParamTypes: NameIdFilterParamTypes,
-                                filterValue: string): Observable<fileItemActions.LoadFileItemListAction[]> {
+                               nameIdFilterParamTypes: NameIdFilterParamTypes,
+                               filterValue: string): Observable<fileItemActions.LoadFileItemListAction[]> {
 
         let nameIdRequestParamsFromType: FileItemParams = this.nameIdRequestParams.get(nameIdFilterParamTypes);
 
@@ -319,8 +332,6 @@ export class FileItemService {
     }
 
 
-
-
     private recurseFileItems(gobiiExtractFilterType: GobiiExtractFilterType,
                              nameIdRequestParamsToLoad: FileItemParams,
                              filterValue: string): Observable<fileItemActions.LoadFileItemListAction[]> {
@@ -328,7 +339,7 @@ export class FileItemService {
 
         return Observable.create(observer => {
 
-            if( nameIdRequestParamsToLoad.getDynamicFilterValue() ) {
+            if (nameIdRequestParamsToLoad.getDynamicFilterValue()) {
                 nameIdRequestParamsToLoad.setFkEntityFilterValue(filterValue);
             }
 

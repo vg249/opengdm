@@ -92,13 +92,15 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                         .build(type_nameid_filter_params_1.NameIdFilterParamTypes.PLATFORMS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Platforms));
                     this.nameIdRequestParams.set(type_nameid_filter_params_1.NameIdFilterParamTypes.MARKER_GROUPS, name_id_request_params_1.FileItemParams
                         .build(type_nameid_filter_params_1.NameIdFilterParamTypes.MARKER_GROUPS, type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_entity_1.EntityType.MarkerGroups));
+                    this.nameIdRequestParams.set(type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS, name_id_request_params_1.FileItemParams
+                        .build(type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.Projects));
                     //for hierarchical items, we need to crate the nameid requests separately from the
                     //flat map: they _will_ need to be in the flat map; however, they all need to be
                     //useed to set up the filtering hierarchy
                     var nameIdRequestParamsContactsPi = name_id_request_params_1.FileItemParams
                         .build(type_nameid_filter_params_1.NameIdFilterParamTypes.CONTACT_PI, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Contacts)
                         .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR);
-                    var nameIdRequestParamsProject = name_id_request_params_1.FileItemParams
+                    var nameIdRequestParamsProjectByPiContact = name_id_request_params_1.FileItemParams
                         .build(type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS_BY_CONTACT, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Projects)
                         .setEntityFilter(type_entity_filter_1.EntityFilter.BYTYPEID);
                     var nameIdRequestParamsExperiments = name_id_request_params_1.FileItemParams
@@ -109,15 +111,15 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                         .setEntityFilter(type_entity_filter_1.EntityFilter.BYTYPEID);
                     //add the individual requests to the map
                     this.nameIdRequestParams.set(nameIdRequestParamsContactsPi.getQueryName(), nameIdRequestParamsContactsPi);
-                    this.nameIdRequestParams.set(nameIdRequestParamsProject.getQueryName(), nameIdRequestParamsProject);
+                    this.nameIdRequestParams.set(nameIdRequestParamsProjectByPiContact.getQueryName(), nameIdRequestParamsProjectByPiContact);
                     this.nameIdRequestParams.set(nameIdRequestParamsExperiments.getQueryName(), nameIdRequestParamsExperiments);
                     this.nameIdRequestParams.set(nameIdRequestParamsDatasets.getQueryName(), nameIdRequestParamsDatasets);
                     //build the parent-child request params graph
                     nameIdRequestParamsContactsPi
-                        .setChildNameIdRequestParams([nameIdRequestParamsProject
+                        .setChildNameIdRequestParams([nameIdRequestParamsProjectByPiContact
                             .setParentNameIdRequestParams(nameIdRequestParamsContactsPi)
                             .setChildNameIdRequestParams([nameIdRequestParamsExperiments
-                                .setParentNameIdRequestParams(nameIdRequestParamsProject)
+                                .setParentNameIdRequestParams(nameIdRequestParamsProjectByPiContact)
                                 .setChildNameIdRequestParams([nameIdRequestParamsDatasets
                                     .setParentNameIdRequestParams(nameIdRequestParamsExperiments)
                             ])
@@ -130,7 +132,15 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                 };
                 FileItemService.prototype.loadWithFilterParams = function (gobiiExtractFilterType, nameIdFilterParamTypes, filterValue) {
                     var nameIdRequestParamsFromType = this.nameIdRequestParams.get(nameIdFilterParamTypes);
-                    this.loadNameIdsToFileItems(gobiiExtractFilterType, nameIdRequestParamsFromType, filterValue);
+                    if (nameIdRequestParamsFromType) {
+                        this.loadNameIdsToFileItems(gobiiExtractFilterType, nameIdRequestParamsFromType, filterValue);
+                    }
+                    else {
+                        this.store.dispatch(new historyAction.AddStatusMessageAction("No is no query params object for query "
+                            + nameIdFilterParamTypes
+                            + " with extract filter type "
+                            + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]));
+                    }
                 };
                 FileItemService.prototype.loadFileItem = function (gobiiFileItem, selectForExtract) {
                     var loadAction = new fileItemActions.LoadFileItemtAction({

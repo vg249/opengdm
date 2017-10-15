@@ -122,10 +122,20 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
 
                                 </div>
 
-                                <div *ngIf="displaySelectorProject">
+                                <div *ngIf="displaySelectorProjectForPi">
                                     <BR>
                                     <BR>
-                                    <label class="the-label">Project:</label><BR>
+                                    <label class="the-label">PI's Project:</label><BR>
+                                    <name-id-list-box
+                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                            [fileItems$]="fileItemsProjectsForPi$">
+                                    </name-id-list-box>
+                                </div>
+
+                                <div *ngIf="displaySelectorForAllProjects">
+                                    <BR>
+                                    <BR>
+                                    <label class="the-label">Projects:</label><BR>
                                     <name-id-list-box
                                             [gobiiExtractFilterType]="gobiiExtractFilterType"
                                             [fileItems$]="fileItemsProjects$">
@@ -146,7 +156,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                 <div *ngIf="displaySelectorExperiment">
                                     <BR>
                                     <BR>
-                                    <label class="the-label">Experiment:</label><BR>
+                                    <label class="the-label">Project's Experiment:</label><BR>
                                     <name-id-list-box
                                             [gobiiExtractFilterType]="gobiiExtractFilterType"
                                             [fileItems$]="fileItemsExperiments$">
@@ -169,7 +179,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                 <div *ngIf="displayAvailableDatasets">
                                     <BR>
                                     <BR>
-                                    <label class="the-label">Data Sets</label><BR>
+                                    <label class="the-label">Experiment's Data Sets</label><BR>
                                     <checklist-box
                                             [gobiiFileItems$]="fileItemsDatasets$"
                                             [gobiiExtractFilterType]="gobiiExtractFilterType"
@@ -308,7 +318,8 @@ export class ExtractorRoot implements OnInit {
     fileItemsPlatforms$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getPlatforms);
 
     // filtered
-    fileItemsProjects$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getProjectsByPI);
+    fileItemsProjectsForPi$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getProjectsByPI);
+    fileItemsProjects$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getProjects);
     fileItemsExperiments$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getExperimentsByProject);
     fileItemsDatasets$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getDatasetsByExperiment);
 
@@ -458,7 +469,8 @@ export class ExtractorRoot implements OnInit {
     public displayAvailableDatasets: boolean = true;
     public displaySelectorPi: boolean = true;
     public doPrincipleInvestigatorTreeNotifications: boolean = false;
-    public displaySelectorProject: boolean = true;
+    public displaySelectorProjectForPi: boolean = true;
+    public displaySelectorForAllProjects: boolean = false;
     public displaySelectorExperiment: boolean = true;
     public displaySelectorDataType: boolean = false;
     public displaySelectorPlatform: boolean = false;
@@ -535,7 +547,8 @@ export class ExtractorRoot implements OnInit {
                 NameIdFilterParamTypes.CONTACT_PI,
                 NameIdLabelType.UNKNOWN);
             this.displaySelectorPi = true;
-            this.displaySelectorProject = true;
+            this.displaySelectorProjectForPi = true;
+            this.displaySelectorForAllProjects = false;
             this.displaySelectorExperiment = true;
             this.displayAvailableDatasets = true;
             this.displayIncludedDatasetsGrid = true;
@@ -549,7 +562,10 @@ export class ExtractorRoot implements OnInit {
 
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
 
-//            this.initializePlatforms();
+            this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
+                NameIdFilterParamTypes.PROJECTS,
+                null);
+
 
             this.displaySelectorPi = true;
             this.doPrincipleInvestigatorTreeNotifications = true;
@@ -557,7 +573,8 @@ export class ExtractorRoot implements OnInit {
                 NameIdFilterParamTypes.CONTACT_PI,
                 NameIdLabelType.ALL);
 
-            this.displaySelectorProject = true;
+            this.displaySelectorProjectForPi = false;
+            this.displaySelectorForAllProjects = true;
             this.displaySelectorDataType = true;
             this.displaySelectorPlatform = true;
             this.displaySampleListTypeSelector = true;
@@ -577,12 +594,13 @@ export class ExtractorRoot implements OnInit {
             this.displaySelectorPlatform = true;
             this.displaySampleMarkerBox = true;
 
-            this.displaySelectorPi = false;
+            this.displaySelectorProjectForPi = false;
+            this.displaySelectorForAllProjects = false;
             this.doPrincipleInvestigatorTreeNotifications = false;
             this.fileItemService.setItemLabelType(this.gobiiExtractFilterType,
                 NameIdFilterParamTypes.CONTACT_PI,
                 NameIdLabelType.UNKNOWN);
-            this.displaySelectorProject = false;
+            this.displaySelectorProjectForPi = false;
             this.displaySelectorExperiment = false;
             this.displayAvailableDatasets = false;
             this.displayIncludedDatasetsGrid = false;
@@ -687,7 +705,6 @@ export class ExtractorRoot implements OnInit {
     private experimentNameIdList: NameId[];
     public selectedExperimentId: string;
     private selectedExperimentDetailId: string;
-
 
 
 // ********************************************************************
