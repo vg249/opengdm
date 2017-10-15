@@ -1,19 +1,14 @@
-import {Component, OnInit, EventEmitter, OnChanges, SimpleChanges, SimpleChange} from '@angular/core';
-import {EntityFilter} from "../model/type-entity-filter";
+import {Component, EventEmitter, OnChanges, OnInit, SimpleChange} from '@angular/core';
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {GobiiSampleListType} from "../model/type-extractor-sample-list";
-import {FileModelTreeService} from "../services/core/file-model-tree-service";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import {ProcessType} from "../model/type-process";
 import {ExtractorItemType} from "../model/file-model-node";
 import {Observable} from "rxjs/Observable";
 import * as fromRoot from '../store/reducers';
-import * as historyAction from '../store/actions/history-action';
-import * as treeAction from '../store/actions/treenode-action';
 import {Store} from "@ngrx/store";
 import {FileItemService} from "../services/core/file-item-service";
-import {TreeStructureService} from "../services/core/tree-structure-service";
 
 
 @Component({

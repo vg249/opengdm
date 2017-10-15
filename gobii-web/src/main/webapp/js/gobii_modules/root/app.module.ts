@@ -19,7 +19,6 @@ import {UploaderComponent} from "../views/uploader.component";
 import {SampleListTypeComponent} from "../views/sample-list-type.component";
 import {TreeModule, SharedModule, TreeNode, Dialog,CheckboxModule} from 'primeng/primeng';
 import {StatusDisplayTreeComponent} from "../views/status-display-tree.component";
-import {FileModelTreeService} from "../services/core/file-model-tree-service";
 import {NameIdListBoxComponent} from "../views/name-id-list-box.component";
 import {NameIdService} from "../services/core/name-id-service";
 import {AppComponent} from "./app.component";
@@ -81,7 +80,6 @@ import {InstructionSubmissionService} from "../services/core/instruction-submiss
     providers: [AuthGuard,
         AuthenticationService,
         DtoRequestService,
-        FileModelTreeService,
         NameIdService,
         TreeStructureService,
         FileItemService,
