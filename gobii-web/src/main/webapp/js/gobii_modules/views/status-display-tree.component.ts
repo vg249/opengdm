@@ -9,7 +9,6 @@ import {
     CardinalityType
 } from "../model/file-model-node";
 import {CvFilterType} from "../model/cv-filter-type";
-import {FileModelTreeService} from "../services/core/file-model-tree-service";
 import {FileModelTreeEvent, FileModelState} from "../model/file-model-tree-event";
 import {ProcessType} from "../model/type-process";
 import {GobiiExtractFormat} from "../model/type-extract-format";
@@ -77,74 +76,13 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     gobiiTreeNodesFromStore$: Observable<GobiiTreeNode[]>;
     gobiiSelectedNodesFromStore$: Observable<GobiiTreeNode[]>;
 
-    constructor(private _fileModelTreeService: FileModelTreeService,
-                private store: Store<fromRoot.State>) {
+    constructor(private store: Store<fromRoot.State>) {
 
         this.gobiiTreeNodesFromStore$ = store
             .select(fromRoot.getGobiiTreeNodesForExtractFilter);
 
-        // this.gobiiTreeNodesFromStore$
-        //     .subscribe( n => {
-        //         console.log( "new tree nodes" + n);
-        //     });
-
-
         this.gobiiSelectedNodesFromStore$ = store
             .select(fromRoot.getSelectedGobiiTreeNodes);
-
-        // this.gobiiSelectedNodesFromStore$
-        //     .subscribe( n => {
-        //         console.log( "new selected nodes" + n);
-        //     });
-
-
-        // has to be in ctor because if you put it in ngOnInit(), there can be ngOnChange events
-        // before ngOnInit() is called.
-        this._fileModelTreeService
-            .treeNotifications()
-            .subscribe(fileModelTreeEvent => {
-
-
-                if (this.treeIsInitialized) {
-
-                    if (fileModelTreeEvent.fileModelState != FileModelState.MISMATCHED_EXTRACTOR_FILTER_TYPE) {
-
-
-                        if (fileModelTreeEvent.fileItem.getProcessType() === ProcessType.CREATE
-                            || fileModelTreeEvent.fileItem.getProcessType() === ProcessType.UPDATE) {
-                            this.placeNodeInTree(fileModelTreeEvent);
-                        } else if (fileModelTreeEvent.fileItem.getProcessType() === ProcessType.DELETE) {
-                            this.removeNodeFromTree(fileModelTreeEvent);
-                        } else if (fileModelTreeEvent.fileItem.getProcessType() === ProcessType.NOTIFY) {
-                            if (fileModelTreeEvent.fileItem.getExtractorItemType() === ExtractorItemType.CLEAR_TREE) {
-                                this.clearTree();
-                            }
-                        } else {
-
-                            let headerStatusMessage: HeaderStatusMessage =
-                                new HeaderStatusMessage("Error in status display tree processing file item type "
-                                    + ExtractorItemType[fileModelTreeEvent.fileItem.getExtractorItemType()]
-                                    + ": Unknown porcess type: "
-                                    + ProcessType[fileModelTreeEvent.fileItem.getProcessType()], null, null);
-
-                            this.handleAddStatusMessage(headerStatusMessage);
-                        }
-                    }
-
-                } else {
-
-                    let message: string = "Warning: a fileItem was posted ot the tree before the tree was initialized:  "
-                        + Labels.instance().treeExtractorTypeLabels[fileModelTreeEvent.fileModelNode.getItemType()];
-
-                    if (fileModelTreeEvent.fileItem && fileModelTreeEvent.fileItem.getItemName()) {
-                        message += " for fileItem of name " + fileModelTreeEvent.fileItem.getItemName();
-                    }
-
-                    this.handleAddStatusMessage(new HeaderStatusMessage(message,
-                        StatusLevel.WARNING,
-                        null));
-                }
-            });
     }
 
     ngOnInit() {
@@ -206,19 +144,6 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                 let deleted: GobiiTreeNode[] = this.selectedGobiiNodes.splice(idxOfSelectedNodeParentNode, 1);
             }
         })
-
-        itemsToRemove.forEach(itr => {
-            if (itr) {
-                this._fileModelTreeService.put(itr).subscribe(
-                    fmte => {
-
-                    },
-                    headerResponse => {
-                        this.handleAddStatusMessage(headerResponse)
-                    });
-            }
-        });
-
 
     }
 
@@ -373,12 +298,6 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
 
         let fileModelNode: FileModelNode = null;
-        this._fileModelTreeService
-            .getFileModelNode(this.gobiiExtractFilterType, gobiiTreeNode.fileModelNodeId)
-            .subscribe(
-                fmn => fileModelNode = fmn,
-                hsm => this.handleAddStatusMessage(hsm));
-
         let fileItemFromModel: GobiiFileItem = fileModelNode
             .getFileItems()
             .find(fi => fi.getFileItemUniqueId() === gobiiTreeNode.fileItemId);
@@ -851,11 +770,6 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         this.gobiiTreeNodes$ = [];
 
         let fileModelNodes: FileModelNode[] = []
-        this._fileModelTreeService.getFileModel(gobiiExtractorFilterType).subscribe(
-            f => {
-                fileModelNodes = f;
-            }
-        );
 
         fileModelNodes.forEach(
             currentFirstLevelFileModelNode => {
@@ -869,15 +783,6 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
 
         this.treeIsInitialized = true;
-
-        this._fileModelTreeService.put(GobiiFileItem
-            .build(this.gobiiExtractFilterType, ProcessType.NOTIFY)
-            .setExtractorItemType(ExtractorItemType.STATUS_DISPLAY_TREE_READY)).subscribe(
-            null,
-            headerResponse => {
-                this.handleAddStatusMessage(headerResponse)
-            }
-        );
 
     }
 
