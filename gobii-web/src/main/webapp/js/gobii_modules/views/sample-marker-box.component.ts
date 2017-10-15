@@ -228,12 +228,6 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
             }
         ).unsubscribe();
 
-        // if (event.currentTarget.defaultValue === "itemArray") {
-        //
-        // } else if (event.currentTarget.defaultValue == "itemFile") {
-        //
-        // }
-
         return returnVal;
 
     }

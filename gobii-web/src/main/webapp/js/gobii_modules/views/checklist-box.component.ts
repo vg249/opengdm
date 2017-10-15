@@ -69,14 +69,14 @@ export class CheckListBoxComponent  {
 
     } // handleItemChecked()
 
-    private handleItemSelected(arg) {
+    public handleItemSelected(arg) {
 
 //        arg.currentTarget.style = "background-color:#b3d9ff";
 
     }
 
 
-    private handleHeaderStatus(headerStatusMessage: HeaderStatusMessage) {
+    public handleHeaderStatus(headerStatusMessage: HeaderStatusMessage) {
 
         this.onError.emit(headerStatusMessage);
     }

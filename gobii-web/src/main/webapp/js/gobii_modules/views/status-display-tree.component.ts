@@ -54,11 +54,6 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     ngOnInit() {
 
-        let foo: string = "bar";
-
-
-        // this.makeDemoTreeNodes();
-        // this.setUpRequredItems();
 
     }
 

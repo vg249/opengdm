@@ -56,9 +56,6 @@ System.register(["@angular/core", "../model/type-entity", "../model/type-extract
                         .select(fromRoot.getSelectedGobiiTreeNodes);
                 }
                 StatusDisplayTreeComponent.prototype.ngOnInit = function () {
-                    var foo = "bar";
-                    // this.makeDemoTreeNodes();
-                    // this.setUpRequredItems();
                 };
                 StatusDisplayTreeComponent.prototype.nodeSelect = function (event) {
                     // Unless a node already is checked such that it has data, we don't allow checking

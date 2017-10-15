@@ -144,11 +144,6 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                     }, function (hsm) {
                         _this.handleStatusHeaderMessage(hsm);
                     }).unsubscribe();
-                    // if (event.currentTarget.defaultValue === "itemArray") {
-                    //
-                    // } else if (event.currentTarget.defaultValue == "itemFile") {
-                    //
-                    // }
                     return returnVal;
                 };
                 SampleMarkerBoxComponent.prototype.handleUserChoice = function (userChoice) {
