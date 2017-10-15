@@ -272,7 +272,8 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                                 .stream()
                                 .filter(gei -> gei.getDataSetExtracts()
                                         .stream()
-                                        .filter(dse -> dse.getSampleList() != null && dse.getSampleList().size() > 0).count() > 0)
+                                        .filter(dse -> (dse.getSampleList() != null && dse.getSampleList().size() > 0)
+                                                || (dse.getListFileName() != null && dse.getListFileName().length() > 0)).count() > 0)
                                 .count() > 0
                                 ) {
                             thereAreSamples = true;
@@ -284,7 +285,8 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                                 .stream()
                                 .filter(gei -> gei.getDataSetExtracts()
                                         .stream()
-                                        .filter(dse -> dse.getMarkerList() != null && dse.getMarkerList().size() > 0).count() > 0)
+                                        .filter(dse -> (dse.getMarkerList() != null && dse.getMarkerList().size() > 0)
+                                                || (dse.getListFileName() != null && dse.getListFileName().length() > 0)).count() > 0)
                                 .count() > 0
                                 ) {
                             thereAreMarkers = true;
@@ -311,9 +313,39 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                                         .filter(dse -> dse.getMarkerGroups() != null && dse.getMarkerGroups().size() > 0).count() > 0)
                                 .count() > 0;
 
-                        if (thereAreSamples && !thereAreMarkers) {
+                        boolean thereIsAProject = extractorInstructionFilesDTO
+                                .getGobiiExtractorInstructions()
+                                .stream()
+                                .filter(gei -> gei.getDataSetExtracts()
+                                        .stream()
+                                        .filter(dse -> dse.getProject() != null
+                                                && dse.getProject().getId() != null && dse.getProject().getId() > 0).count() > 0)
+                                .count() > 0;
+
+                        boolean thereIsAPi = extractorInstructionFilesDTO
+                                .getGobiiExtractorInstructions()
+                                .stream()
+                                .filter(gei -> gei.getDataSetExtracts()
+                                        .stream()
+                                        .filter(dse -> dse.getPrincipleInvestigator() != null
+                                                && dse.getPrincipleInvestigator().getId() != null
+                                                && dse.getPrincipleInvestigator().getId() > 0).count() > 0)
+                                .count() > 0;
+
+                        boolean thereIsAPlatform = extractorInstructionFilesDTO
+                                .getGobiiExtractorInstructions()
+                                .stream()
+                                .filter(gei -> gei.getDataSetExtracts()
+                                        .stream()
+                                        .filter(dse -> dse.getPlatforms() != null
+                                                && dse.getPlatforms().size() > 0).count() > 0)
+                                .count() > 0;
+
+                        if (!thereAreMarkers &&
+                                (thereAreSamples || thereIsAProject || thereIsAPi)) {
                             jobPayloadType = JobPayloadType.CV_PAYLOADTYPE_SAMPLES;
-                        } else if (!thereAreSamples && thereAreMarkers) {
+                        } else if (!thereAreSamples &&
+                                (thereAreMarkers || thereIsAPlatform)) {
                             jobPayloadType = JobPayloadType.CV_PAYLOADTYPE_MARKERS;
                         } else if (thereAreSamples && thereAreMarkers) {
                             jobPayloadType = JobPayloadType.CV_PAYLOADTYPE_MARKERSAMPLES;
@@ -321,8 +353,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                             jobPayloadType = JobPayloadType.CV_PAYLOADTYPE_MARKERSAMPLES;
                         } else if (thereAreDatasets) {
                             jobPayloadType = JobPayloadType.CV_PAYLOADTYPE_MATRIX;
-                        } else if (thereAreMarkerGroups)
-                        {
+                        } else if (thereAreMarkerGroups) {
                             jobPayloadType = JobPayloadType.CV_PAYLOADTYPE_MARKERS;
                         } else {
                             throw new GobiiException("The instructions for job "
