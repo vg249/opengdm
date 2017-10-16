@@ -21,7 +21,6 @@ export class GobiiFileItem {
                         private _itemName: string,
                         private _selected: boolean,
                         private _required: boolean,
-                        private _gobiiEventOrigin: GobiiUIEventOrigin,
                         private _parentItemId: string,
                         private _parentEntityType: EntityType) {
 
@@ -35,7 +34,6 @@ export class GobiiFileItem {
         this._itemName = _itemName;
         this._selected = _selected;
         this._required = _required;
-        this._gobiiEventOrigin = _gobiiEventOrigin;
         this._parentItemId = _parentItemId;
         this._parentEntityType = _parentEntityType;
 
@@ -57,10 +55,6 @@ export class GobiiFileItem {
             this._entitySubType = EntitySubType.UNKNOWN;
         }
 
-        if (this._gobiiEventOrigin == null) {
-            this._gobiiEventOrigin = GobiiUIEventOrigin.UNKNOWN;
-        }
-
     }
 
     public static build(gobiiExtractFilterType: GobiiExtractFilterType,
@@ -77,7 +71,6 @@ export class GobiiFileItem {
             null,
             null,
             null,
-            GobiiUIEventOrigin.UNKNOWN,
             null,
             EntityType.UNKNOWN
         );
@@ -225,15 +218,6 @@ export class GobiiFileItem {
 
     setRequired(value: boolean): GobiiFileItem {
         this._required = value;
-        return this;
-    }
-
-    getGobiiEventOrigin(): GobiiUIEventOrigin {
-        return this._gobiiEventOrigin;
-    }
-
-    setGobiiEventOrigin(value: GobiiUIEventOrigin) {
-        this._gobiiEventOrigin = value;
         return this;
     }
 
