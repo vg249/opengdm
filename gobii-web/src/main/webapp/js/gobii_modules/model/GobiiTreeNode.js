@@ -1,23 +1,27 @@
-System.register(["./type-entity", "./cv-filter-type", "./guid", "./type-extractor-filter", "./type-extractor-item"], function (exports_1, context_1) {
+System.register(["./guid", "./type-extractor-filter", "./gobii-file-item-compound-id"], function (exports_1, context_1) {
     "use strict";
+    var __extends = (this && this.__extends) || (function () {
+        var extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    })();
     var __moduleName = context_1 && context_1.id;
-    var type_entity_1, cv_filter_type_1, guid_1, type_extractor_filter_1, type_extractor_item_1, ContainerType, GobiiTreeNode;
+    var guid_1, type_extractor_filter_1, gobii_file_item_compound_id_1, ContainerType, GobiiTreeNode;
     return {
         setters: [
-            function (type_entity_1_1) {
-                type_entity_1 = type_entity_1_1;
-            },
-            function (cv_filter_type_1_1) {
-                cv_filter_type_1 = cv_filter_type_1_1;
-            },
             function (guid_1_1) {
                 guid_1 = guid_1_1;
             },
             function (type_extractor_filter_1_1) {
                 type_extractor_filter_1 = type_extractor_filter_1_1;
             },
-            function (type_extractor_item_1_1) {
-                type_extractor_item_1 = type_extractor_item_1_1;
+            function (gobii_file_item_compound_id_1_1) {
+                gobii_file_item_compound_id_1 = gobii_file_item_compound_id_1_1;
             }
         ],
         execute: function () {
@@ -27,23 +31,22 @@ System.register(["./type-entity", "./cv-filter-type", "./guid", "./type-extracto
                 ContainerType[ContainerType["DATA"] = 2] = "DATA";
             })(ContainerType || (ContainerType = {}));
             exports_1("ContainerType", ContainerType);
-            GobiiTreeNode = (function () {
+            GobiiTreeNode = (function (_super) {
+                __extends(GobiiTreeNode, _super);
                 function GobiiTreeNode(parent, fileItemId, required) {
-                    this.itemType = type_extractor_item_1.ExtractorItemType.ENTITY;
-                    this.entityType = type_entity_1.EntityType.UNKNOWN;
-                    this.entitySubType = type_entity_1.EntitySubType.UNKNOWN;
-                    this.cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN;
-                    this.children = [];
+                    var _this = _super.call(this) || this;
+                    _this.children = [];
                     //GOBII UI properties
-                    this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
-                    this.required = false;
-                    this.active = false;
-                    this.containerType = ContainerType.NONE;
-                    this.id = guid_1.Guid.generateUUID();
-                    this.parent = parent;
-                    this.fileItemId = fileItemId;
-                    this.required = required;
-                    this.selectable = false; // for now all nodes are not selectable
+                    _this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
+                    _this.required = false;
+                    _this.active = false;
+                    _this.containerType = ContainerType.NONE;
+                    _this.id = guid_1.Guid.generateUUID();
+                    _this.parent = parent;
+                    _this.fileItemId = fileItemId;
+                    _this.required = required;
+                    _this.selectable = false; // for now all nodes are not selectable
+                    return _this;
                     //(TreeNode)
                 }
                 GobiiTreeNode.build = function (gobiiExtractFilterType, extractoItemType) {
@@ -57,24 +60,31 @@ System.register(["./type-entity", "./cv-filter-type", "./guid", "./type-extracto
                 };
                 //unique identifiers
                 GobiiTreeNode.prototype.getItemType = function () {
-                    return this.itemType;
+                    return _super.prototype.getExtractorItemType.call(this);
                 };
                 GobiiTreeNode.prototype.setItemType = function (value) {
-                    this.itemType = value;
+                    _super.prototype.setExtractorItemType.call(this, value);
                     return this;
                 };
                 GobiiTreeNode.prototype.getEntityType = function () {
-                    return this.entityType;
+                    return _super.prototype.getEntityType.call(this);
                 };
                 GobiiTreeNode.prototype.setEntityType = function (value) {
-                    this.entityType = value;
+                    _super.prototype.setEntityType.call(this, value);
                     return this;
                 };
                 GobiiTreeNode.prototype.getEntitySubType = function () {
-                    return this.entitySubType;
+                    return _super.prototype.getEntitySubType.call(this);
                 };
                 GobiiTreeNode.prototype.setEntitySubType = function (value) {
-                    this.entitySubType = value;
+                    _super.prototype.setEntitySubType.call(this, value);
+                    return this;
+                };
+                GobiiTreeNode.prototype.getCvFilterType = function () {
+                    return _super.prototype.getCvFilterType.call(this);
+                };
+                GobiiTreeNode.prototype.setCvFilterType = function (value) {
+                    _super.prototype.setCvFilterType.call(this, value);
                     return this;
                 };
                 GobiiTreeNode.prototype.setGobiiExtractFilterType = function (gobiiExtractFilterType) {
@@ -89,13 +99,6 @@ System.register(["./type-entity", "./cv-filter-type", "./guid", "./type-extracto
                 };
                 GobiiTreeNode.prototype.setActive = function (value) {
                     this.active = value;
-                    return this;
-                };
-                GobiiTreeNode.prototype.getCvFilterType = function () {
-                    return this.cvFilterType;
-                };
-                GobiiTreeNode.prototype.setCvFilterType = function (value) {
-                    this.cvFilterType = value;
                     return this;
                 };
                 GobiiTreeNode.prototype.getLabel = function () {
@@ -200,7 +203,7 @@ System.register(["./type-entity", "./cv-filter-type", "./guid", "./type-extracto
                     return this;
                 };
                 return GobiiTreeNode;
-            }());
+            }(gobii_file_item_compound_id_1.GobiiFileItemCompoundId));
             exports_1("GobiiTreeNode", GobiiTreeNode);
         }
     };

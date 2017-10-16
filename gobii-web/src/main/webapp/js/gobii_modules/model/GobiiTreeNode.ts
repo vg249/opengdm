@@ -4,15 +4,18 @@ import {CvFilterType} from "./cv-filter-type";
 import {Guid} from "./guid";
 import {GobiiExtractFilterType} from "./type-extractor-filter";
 import {ExtractorItemType} from "./type-extractor-item";
+import {GobiiFileItemCompoundId} from "./gobii-file-item-compound-id";
 
 
 export enum ContainerType {NONE, STRUCTURE, DATA}
 
-export class GobiiTreeNode implements TreeNode {
+export class GobiiTreeNode extends GobiiFileItemCompoundId implements TreeNode {
 
     constructor(parent: GobiiTreeNode,
                 fileItemId: string,
                 required: boolean) {
+
+        super();
 
         this.id = Guid.generateUUID();
 
@@ -48,37 +51,41 @@ export class GobiiTreeNode implements TreeNode {
 
 //unique identifiers
     getItemType(): ExtractorItemType {
-        return this.itemType;
+        return super.getExtractorItemType();
     }
 
     setItemType(value: ExtractorItemType): GobiiTreeNode {
-        this.itemType = value;
+        super.setExtractorItemType(value);
         return this;
     }
 
     getEntityType(): EntityType {
-        return this.entityType;
+        return super.getEntityType();
     }
 
     setEntityType(value: EntityType): GobiiTreeNode {
-        this.entityType = value;
+        super.setEntityType(value);
         return this;
     }
 
     getEntitySubType(): EntitySubType {
-        return this.entitySubType;
+        return super.getEntitySubType();
     }
 
     setEntitySubType(value: EntitySubType): GobiiTreeNode {
-        this.entitySubType = value;
+        super.setEntitySubType(value);
         return this;
     }
 
+    getCvFilterType(): CvFilterType {
+        return super.getCvFilterType();
+    }
+
+    setCvFilterType(value: CvFilterType): GobiiTreeNode {
+        super.setCvFilterType(value);
+        return this;
+    }
     private id: string;
-    public itemType: ExtractorItemType = ExtractorItemType.ENTITY;
-    public entityType: EntityType = EntityType.UNKNOWN;
-    public entitySubType: EntitySubType = EntitySubType.UNKNOWN;
-    public cvFilterType: CvFilterType = CvFilterType.UNKNOWN;
 
 
 //NG properties
@@ -126,14 +133,7 @@ export class GobiiTreeNode implements TreeNode {
     }
 
 
-    getCvFilterType(): CvFilterType {
-        return this.cvFilterType;
-    }
 
-    setCvFilterType(value: CvFilterType): GobiiTreeNode {
-        this.cvFilterType = value;
-        return this;
-    }
 
     getLabel(): string {
         return this.label;
