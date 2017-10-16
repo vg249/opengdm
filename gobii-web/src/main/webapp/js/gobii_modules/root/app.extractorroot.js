@@ -253,7 +253,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         this.reinitProjectList = true;
                     }
                     else if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
-                        //            this.initializePlatforms();
+                        this.displaySelectorPi = false;
                         this.displaySelectorDataType = true;
                         this.displaySelectorPlatform = true;
                         this.displaySampleMarkerBox = true;

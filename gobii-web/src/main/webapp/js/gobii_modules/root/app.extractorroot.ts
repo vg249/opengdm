@@ -526,8 +526,7 @@ export class ExtractorRoot implements OnInit {
 
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
 
-//            this.initializePlatforms();
-
+            this.displaySelectorPi = false;
             this.displaySelectorDataType = true;
             this.displaySelectorPlatform = true;
             this.displaySampleMarkerBox = true;
