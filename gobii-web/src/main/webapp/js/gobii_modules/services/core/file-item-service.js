@@ -93,7 +93,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     this.nameIdRequestParams.set(type_nameid_filter_params_1.NameIdFilterParamTypes.MARKER_GROUPS, name_id_request_params_1.FileItemParams
                         .build(type_nameid_filter_params_1.NameIdFilterParamTypes.MARKER_GROUPS, type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_entity_1.EntityType.MarkerGroups));
                     this.nameIdRequestParams.set(type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS, name_id_request_params_1.FileItemParams
-                        .build(type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.Projects));
+                        .build(type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.Projects)
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL));
                     //for hierarchical items, we need to crate the nameid requests separately from the
                     //flat map: they _will_ need to be in the flat map; however, they all need to be
                     //useed to set up the filtering hierarchy

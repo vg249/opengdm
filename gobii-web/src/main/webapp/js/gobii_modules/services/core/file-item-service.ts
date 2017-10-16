@@ -71,7 +71,8 @@ export class FileItemService {
             FileItemParams
                 .build(NameIdFilterParamTypes.PROJECTS,
                     GobiiExtractFilterType.BY_SAMPLE,
-                    EntityType.Projects));
+                    EntityType.Projects)
+                .setNameIdLabelType(NameIdLabelType.ALL));
 
 
         //for hierarchical items, we need to crate the nameid requests separately from the
