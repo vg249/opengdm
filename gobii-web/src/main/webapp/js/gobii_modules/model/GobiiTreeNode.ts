@@ -1,9 +1,8 @@
 import {TreeNode} from "primeng/components/common/api";
-import {EntityType, EntitySubType} from "./type-entity";
+import {EntitySubType, EntityType} from "./type-entity";
 import {CvFilterType} from "./cv-filter-type";
 import {Guid} from "./guid";
 import {GobiiExtractFilterType} from "./type-extractor-filter";
-import {GobiiFileItem} from "./gobii-file-item";
 import {ExtractorItemType} from "./type-extractor-item";
 
 
@@ -23,6 +22,8 @@ export class GobiiTreeNode implements TreeNode {
         this.fileModelNodeId = fileModelNodeId;
         this.fileItemId = fileItemId;
         this.required = required;
+        this.selectable = false; // for now all nodes are not selectable
+        //(TreeNode)
     }
 
 
@@ -83,20 +84,26 @@ export class GobiiTreeNode implements TreeNode {
     public cvFilterType: CvFilterType = CvFilterType.UNKNOWN;
 
 
-//UI properties
+//NG properties
+    public label?: string;
+    public data?: any;
+    public icon?: any;
+    public expandedIcon?: any;
+    public collapsedIcon?: any;
+    public children?: GobiiTreeNode[] = [];
+    public leaf?: boolean;
+    public expanded?: boolean;
+    public type?: string;
+    public parent?: GobiiTreeNode;
+    public partialSelected?: boolean;
+    public styleClass?: string;
+    public draggable?: boolean;
+    public droppable?: boolean;
+    public selectable?: boolean;
+
+//GOBII UI properties
     private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
     public genericLabel: string;
-    public label: string;
-    public data: any;
-    public icon: any;
-    public expandedIcon: any;
-    public collapsedIcon: any;
-    public children: GobiiTreeNode[] = [];
-    public leaf: boolean;
-    public expanded: boolean;
-    public type: string;
-    public parent: GobiiTreeNode;
-    public partialSelected: boolean;
     public fileModelNodeId: string;
     public fileItemId: string;
     public required: boolean = false;
@@ -263,4 +270,6 @@ export class GobiiTreeNode implements TreeNode {
         this.containerType = value;
         return this;
     }
+
+
 }

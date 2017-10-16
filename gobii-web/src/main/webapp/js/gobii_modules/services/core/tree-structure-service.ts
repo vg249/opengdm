@@ -47,7 +47,8 @@ export class TreeStructureService {
             ...this.makeCommonNodes(GobiiExtractFilterType.WHOLE_DATASET),
             GobiiTreeNode.build(GobiiExtractFilterType.WHOLE_DATASET, ExtractorItemType.ENTITY)
                 .setEntityType(EntityType.DataSets)
-                .setContainerType(ContainerType.DATA),
+                .setContainerType(ContainerType.DATA)
+                ,
 
             // BY SAMPLE
             ...this.makeCommonNodes(GobiiExtractFilterType.BY_SAMPLE),

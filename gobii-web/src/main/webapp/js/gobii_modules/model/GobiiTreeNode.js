@@ -33,9 +33,9 @@ System.register(["./type-entity", "./cv-filter-type", "./guid", "./type-extracto
                     this.entityType = type_entity_1.EntityType.UNKNOWN;
                     this.entitySubType = type_entity_1.EntitySubType.UNKNOWN;
                     this.cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN;
-                    //UI properties
-                    this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.children = [];
+                    //GOBII UI properties
+                    this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.required = false;
                     this.active = false;
                     this.containerType = ContainerType.NONE;
@@ -44,6 +44,8 @@ System.register(["./type-entity", "./cv-filter-type", "./guid", "./type-extracto
                     this.fileModelNodeId = fileModelNodeId;
                     this.fileItemId = fileItemId;
                     this.required = required;
+                    this.selectable = false; // for now all nodes are not selectable
+                    //(TreeNode)
                 }
                 GobiiTreeNode.build = function (gobiiExtractFilterType, extractoItemType) {
                     var returnVal = new GobiiTreeNode(null, null, null, null);
