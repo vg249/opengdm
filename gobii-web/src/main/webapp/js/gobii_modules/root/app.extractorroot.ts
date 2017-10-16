@@ -652,8 +652,9 @@ export class ExtractorRoot implements OnInit {
 
     public handleExtractSubmission() {
 
-        this.instructionSubmissionService.submit(this.gobiiExtractFilterType);
-
+        this.instructionSubmissionService
+            .submit(this.gobiiExtractFilterType)
+            .subscribe( instructions => {this.handleClearTree()});
     }
 
     ngOnInit(): any {

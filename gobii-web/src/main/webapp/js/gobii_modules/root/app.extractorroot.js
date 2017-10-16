@@ -316,7 +316,10 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this.handleExportTypeSelected(this.gobiiExtractFilterType);
                 };
                 ExtractorRoot.prototype.handleExtractSubmission = function () {
-                    this.instructionSubmissionService.submit(this.gobiiExtractFilterType);
+                    var _this = this;
+                    this.instructionSubmissionService
+                        .submit(this.gobiiExtractFilterType)
+                        .subscribe(function (instructions) { _this.handleClearTree(); });
                 };
                 ExtractorRoot.prototype.ngOnInit = function () {
                     this.initializeServerConfigs();
