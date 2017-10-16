@@ -11,7 +11,6 @@ export enum ContainerType {NONE, STRUCTURE, DATA}
 export class GobiiTreeNode implements TreeNode {
 
     constructor(parent: GobiiTreeNode,
-                fileModelNodeId: string,
                 fileItemId: string,
                 required: boolean) {
 
@@ -19,7 +18,6 @@ export class GobiiTreeNode implements TreeNode {
 
 
         this.parent = parent;
-        this.fileModelNodeId = fileModelNodeId;
         this.fileItemId = fileItemId;
         this.required = required;
         this.selectable = false; // for now all nodes are not selectable
@@ -31,7 +29,6 @@ export class GobiiTreeNode implements TreeNode {
                         extractoItemType: ExtractorItemType): GobiiTreeNode {
 
         let returnVal: GobiiTreeNode = new GobiiTreeNode(
-            null,
             null,
             null,
             null
@@ -104,7 +101,6 @@ export class GobiiTreeNode implements TreeNode {
 //GOBII UI properties
     private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
     public genericLabel: string;
-    public fileModelNodeId: string;
     public fileItemId: string;
     public required: boolean = false;
     public active: boolean = false;

@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/type-entity", "../model/type-extractor-filter", "../model/cv-filter-type", "../store/reducers", "@ngrx/store"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/type-extractor-filter", "../store/reducers", "@ngrx/store"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,20 +10,14 @@ System.register(["@angular/core", "../model/type-entity", "../model/type-extract
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_entity_1, type_extractor_filter_1, cv_filter_type_1, fromRoot, store_1, StatusDisplayTreeComponent;
+    var core_1, type_extractor_filter_1, fromRoot, store_1, StatusDisplayTreeComponent;
     return {
         setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
             },
-            function (type_entity_1_1) {
-                type_entity_1 = type_entity_1_1;
-            },
             function (type_extractor_filter_1_1) {
                 type_extractor_filter_1 = type_extractor_filter_1_1;
-            },
-            function (cv_filter_type_1_1) {
-                cv_filter_type_1 = cv_filter_type_1_1;
             },
             function (fromRoot_1) {
                 fromRoot = fromRoot_1;
@@ -44,7 +38,8 @@ System.register(["@angular/core", "../model/type-entity", "../model/type-extract
                     this.demoTreeNodes = [];
                     this.selectedDemoNodes = [];
                     this.selectedGobiiNodes = [];
-                    this.treeIsInitialized = false;
+                    // ********************************************************************************
+                    // ********************* CHECKBOX/TREE NODE CONVERSION FUNCTIONS
                     // ********************************************************************************
                     // ********************* CHECKBOX (GOBII-SPECIFIC)  NODE DATA STRUCTURES AND EVENTS
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
@@ -58,62 +53,9 @@ System.register(["@angular/core", "../model/type-entity", "../model/type-extract
                 StatusDisplayTreeComponent.prototype.ngOnInit = function () {
                 };
                 StatusDisplayTreeComponent.prototype.nodeSelect = function (event) {
-                    // Unless a node already is checked such that it has data, we don't allow checking
-                    // something because it has no meaning without data in it; these would typically
-                    // by CONTAINER type nodes: once they have children they're selected, and it which
-                    // point we deal with check events in nodeUnselect()
-                    // yes this is a bit of a kludge; version 4 of PrimeNG will add a selectable proeprty
-                    // to TreeNode which will enable us to approch selectability of nodes in general in
-                    // a more systematic and elegant way
-                    var _this = this;
-                    var selectedGobiiTreeNode = event.node;
-                    selectedGobiiTreeNode.children.forEach(function (childNode) {
-                        _this.removeItemFromSelectedNodes(childNode);
-                    });
-                    this.removeItemFromSelectedNodes(selectedGobiiTreeNode);
-                };
-                // we need to disable partial selection because when you click
-                // a node that's partially selected, you don't get the unselect event
-                // which breaks everything
-                StatusDisplayTreeComponent.prototype.unsetPartialSelect = function (gobiiTreeNode) {
-                    var thereAreSelectedChildren = false;
-                    if (gobiiTreeNode.partialSelected) {
-                        gobiiTreeNode.partialSelected = false;
-                        var foo = "foo";
-                        var _loop_1 = function (idx) {
-                            var currentTreeNode = gobiiTreeNode.children[idx];
-                            thereAreSelectedChildren = this_1.selectedGobiiNodes.find(function (fi) {
-                                return fi
-                                    && fi.fileItemId
-                                    && (fi.fileItemId === currentTreeNode.fileItemId);
-                            }) != undefined;
-                        };
-                        var this_1 = this;
-                        for (var idx = 0; (idx < gobiiTreeNode.children.length) && !thereAreSelectedChildren; idx++) {
-                            _loop_1(idx);
-                        }
-                        if (thereAreSelectedChildren) {
-                            this.selectedGobiiNodes.push(gobiiTreeNode);
-                        }
-                    }
-                    if ((gobiiTreeNode.parent !== null)
-                        && (gobiiTreeNode.parent !== undefined)) {
-                        this.unsetPartialSelect(gobiiTreeNode.parent);
-                    }
+                    // for now the selectable property on nodes is set to false by default, so we aren't using this yet
                 };
                 StatusDisplayTreeComponent.prototype.nodeUnselect = function (event) {
-                    var _this = this;
-                    // this funditonality is nearly working;
-                    // but it breaks down in the marker criteria section of the
-                    // tree. There is no more time to work on this. It must just
-                    // effectively disabled for now: you can only select and deselect
-                    // from the controls outside the tree
-                    var unselectedTreeNode = event.node;
-                    this.unsetPartialSelect(unselectedTreeNode);
-                    this.selectedGobiiNodes.push(unselectedTreeNode);
-                    unselectedTreeNode.children.forEach(function (tn) {
-                        _this.selectedGobiiNodes.push(tn);
-                    });
                 };
                 StatusDisplayTreeComponent.prototype.nodeExpand = function (event) {
                     if (event.node) {
@@ -140,62 +82,6 @@ System.register(["@angular/core", "../model/type-entity", "../model/type-extract
                         node.children.forEach(function (childNode) {
                             _this.expandRecursive(childNode, isExpand);
                         });
-                    }
-                };
-                // ********************************************************************************
-                // ********************* CHECKBOX/TREE NODE CONVERSION FUNCTIONS
-                StatusDisplayTreeComponent.prototype.addEntityIconToNode = function (entityType, cvFilterType, treeNode) {
-                    if (entityType === type_entity_1.EntityType.DataSets) {
-                        treeNode.icon = "fa-database";
-                        treeNode.expandedIcon = "fa-folder-expanded";
-                        treeNode.collapsedIcon = "fa-database";
-                    }
-                    else if (entityType === type_entity_1.EntityType.Contacts) {
-                        treeNode.icon = "fa-user-o";
-                        treeNode.expandedIcon = "fa-user-o";
-                        treeNode.collapsedIcon = "fa-user-o";
-                    }
-                    else if (entityType === type_entity_1.EntityType.Mapsets) {
-                        treeNode.icon = "fa-map-o";
-                        treeNode.expandedIcon = "fa-map-o";
-                        treeNode.collapsedIcon = "fa-map-o";
-                    }
-                    else if (entityType === type_entity_1.EntityType.Platforms) {
-                        treeNode.icon = "fa-calculator";
-                        treeNode.expandedIcon = "fa-calculator";
-                        treeNode.collapsedIcon = "fa-calculator";
-                    }
-                    else if (entityType === type_entity_1.EntityType.Projects) {
-                        treeNode.icon = "fa-clipboard";
-                        treeNode.expandedIcon = "fa-clipboard";
-                        treeNode.collapsedIcon = "fa-clipboard";
-                    }
-                    else if (entityType === type_entity_1.EntityType.CvTerms) {
-                        if (cvFilterType === cv_filter_type_1.CvFilterType.DATASET_TYPE) {
-                            treeNode.icon = "fa-file-excel-o";
-                            treeNode.expandedIcon = "fa-file-excel-o";
-                            treeNode.collapsedIcon = "fa-file-excel-o";
-                        }
-                    }
-                    else if (entityType === type_entity_1.EntityType.MarkerGroups) {
-                        // if (isParent) {
-                        treeNode.icon = "fa-pencil";
-                        treeNode.expandedIcon = "fa-pencil";
-                        treeNode.collapsedIcon = "fa-pencil";
-                        // } else {
-                        //     treeNode.icon = "fa-map-marker";
-                        //     treeNode.expandedIcon = "fa-map-marker";
-                        //     treeNode.collapsedIcon = "fa-map-marker";
-                        // }
-                    }
-                };
-                StatusDisplayTreeComponent.prototype.removeItemFromSelectedNodes = function (gobiiTreeNode) {
-                    if (gobiiTreeNode) {
-                        var idxOfSelectedNodeParentNode = this.selectedGobiiNodes.indexOf(gobiiTreeNode);
-                        if (idxOfSelectedNodeParentNode >= 0) {
-                            var deleted = this.selectedGobiiNodes.splice(idxOfSelectedNodeParentNode, 1);
-                            var foo = "foo";
-                        }
                     }
                 };
                 StatusDisplayTreeComponent.prototype.ngOnChanges = function (changes) {

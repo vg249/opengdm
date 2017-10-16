@@ -2,9 +2,7 @@ import {Component, EventEmitter, OnChanges, OnInit, SimpleChange} from "@angular
 import {TreeNode} from "primeng/components/common/api";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import {GobiiTreeNode} from "../model/GobiiTreeNode";
-import {EntityType} from "../model/type-entity";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
-import {CvFilterType} from "../model/cv-filter-type";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import * as fromRoot from '../store/reducers';
 import {Store} from "@ngrx/store";
@@ -58,8 +56,6 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     }
 
 
-
-
 // *****************************************************************
 // *********************  TREE NODE DATA STRUCTURES AND EVENTS
 
@@ -67,8 +63,6 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     selectedDemoNodes: TreeNode[] = [];
 
 
-//    gobiiTreeNodes$: Observable<GobiiTreeNode[]>;
-    gobiiTreeNodes$: GobiiTreeNode[];
     selectedGobiiNodes: GobiiTreeNode[] = [];
 
     experimentId: string;
@@ -76,76 +70,12 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     nodeSelect(event) {
 
-        // Unless a node already is checked such that it has data, we don't allow checking
-        // something because it has no meaning without data in it; these would typically
-        // by CONTAINER type nodes: once they have children they're selected, and it which
-        // point we deal with check events in nodeUnselect()
-        // yes this is a bit of a kludge; version 4 of PrimeNG will add a selectable proeprty
-        // to TreeNode which will enable us to approch selectability of nodes in general in
-        // a more systematic and elegant way
-
-
-
-        let selectedGobiiTreeNode: GobiiTreeNode = event.node;
-
-        selectedGobiiTreeNode.children.forEach(childNode => {
-            this.removeItemFromSelectedNodes(childNode);
-        })
-
-        this.removeItemFromSelectedNodes(selectedGobiiTreeNode);
-
+        // for now the selectable property on nodes is set to false by default, so we aren't using this yet
     }
 
 
-    // we need to disable partial selection because when you click
-    // a node that's partially selected, you don't get the unselect event
-    // which breaks everything
-    unsetPartialSelect(gobiiTreeNode: GobiiTreeNode) {
-
-        let thereAreSelectedChildren: boolean = false;
-        if (gobiiTreeNode.partialSelected) {
-
-            gobiiTreeNode.partialSelected = false;
-
-            let foo: string = "foo";
-
-            for (let idx: number = 0;
-                 (idx < gobiiTreeNode.children.length) && !thereAreSelectedChildren; idx++) {
-
-                let currentTreeNode: GobiiTreeNode = gobiiTreeNode.children[idx];
-                thereAreSelectedChildren = this.selectedGobiiNodes.find(fi => {
-
-                    return fi
-                        && fi.fileItemId
-                        && (fi.fileItemId === currentTreeNode.fileItemId)
-                }) != undefined;
-            }
-
-            if (thereAreSelectedChildren) {
-                this.selectedGobiiNodes.push(gobiiTreeNode);
-            }
-        }
-
-        if (( gobiiTreeNode.parent !== null )
-            && ( gobiiTreeNode.parent !== undefined )) {
-            this.unsetPartialSelect(gobiiTreeNode.parent);
-        }
-
-    }
 
     nodeUnselect(event) {
-
-        // this funditonality is nearly working;
-        // but it breaks down in the marker criteria section of the
-        // tree. There is no more time to work on this. It must just
-        // effectively disabled for now: you can only select and deselect
-        // from the controls outside the tree
-        let unselectedTreeNode: GobiiTreeNode = event.node;
-        this.unsetPartialSelect(unselectedTreeNode);
-        this.selectedGobiiNodes.push(unselectedTreeNode);
-        unselectedTreeNode.children.forEach(tn => {
-            this.selectedGobiiNodes.push(tn);
-        })
 
     }
 
@@ -191,78 +121,6 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 // ********************************************************************************
 // ********************* CHECKBOX/TREE NODE CONVERSION FUNCTIONS
 
-    addEntityIconToNode(entityType: EntityType, cvFilterType: CvFilterType, treeNode: GobiiTreeNode) {
-
-        if (entityType === EntityType.DataSets) {
-
-            treeNode.icon = "fa-database";
-            treeNode.expandedIcon = "fa-folder-expanded";
-            treeNode.collapsedIcon = "fa-database";
-
-        } else if (entityType === EntityType.Contacts) {
-
-            treeNode.icon = "fa-user-o";
-            treeNode.expandedIcon = "fa-user-o";
-            treeNode.collapsedIcon = "fa-user-o";
-
-        } else if (entityType === EntityType.Mapsets) {
-
-            treeNode.icon = "fa-map-o";
-            treeNode.expandedIcon = "fa-map-o";
-            treeNode.collapsedIcon = "fa-map-o";
-
-        } else if (entityType === EntityType.Platforms) {
-
-            treeNode.icon = "fa-calculator";
-            treeNode.expandedIcon = "fa-calculator";
-            treeNode.collapsedIcon = "fa-calculator";
-
-        } else if (entityType === EntityType.Projects) {
-
-            treeNode.icon = "fa-clipboard";
-            treeNode.expandedIcon = "fa-clipboard";
-            treeNode.collapsedIcon = "fa-clipboard";
-
-        } else if (entityType === EntityType.CvTerms) {
-
-            if (cvFilterType === CvFilterType.DATASET_TYPE) {
-                treeNode.icon = "fa-file-excel-o";
-                treeNode.expandedIcon = "fa-file-excel-o";
-                treeNode.collapsedIcon = "fa-file-excel-o";
-            }
-
-        } else if (entityType === EntityType.MarkerGroups) {
-
-            // if (isParent) {
-            treeNode.icon = "fa-pencil";
-            treeNode.expandedIcon = "fa-pencil";
-            treeNode.collapsedIcon = "fa-pencil";
-            // } else {
-            //     treeNode.icon = "fa-map-marker";
-            //     treeNode.expandedIcon = "fa-map-marker";
-            //     treeNode.collapsedIcon = "fa-map-marker";
-            // }
-        }
-    }
-
-
-    removeItemFromSelectedNodes(gobiiTreeNode: GobiiTreeNode) {
-
-        if (gobiiTreeNode) {
-
-            let idxOfSelectedNodeParentNode: number = this.selectedGobiiNodes.indexOf(gobiiTreeNode);
-            if (idxOfSelectedNodeParentNode >= 0) {
-                let deleted: GobiiTreeNode[] = this.selectedGobiiNodes.splice(idxOfSelectedNodeParentNode, 1);
-                let foo: string = "foo";
-            }
-        }
-
-
-    }
-
-
-
-    private treeIsInitialized: boolean = false;
 
 
 // ********************************************************************************

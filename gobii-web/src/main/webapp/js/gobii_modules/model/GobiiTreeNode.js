@@ -28,7 +28,7 @@ System.register(["./type-entity", "./cv-filter-type", "./guid", "./type-extracto
             })(ContainerType || (ContainerType = {}));
             exports_1("ContainerType", ContainerType);
             GobiiTreeNode = (function () {
-                function GobiiTreeNode(parent, fileModelNodeId, fileItemId, required) {
+                function GobiiTreeNode(parent, fileItemId, required) {
                     this.itemType = type_extractor_item_1.ExtractorItemType.ENTITY;
                     this.entityType = type_entity_1.EntityType.UNKNOWN;
                     this.entitySubType = type_entity_1.EntitySubType.UNKNOWN;
@@ -41,14 +41,13 @@ System.register(["./type-entity", "./cv-filter-type", "./guid", "./type-extracto
                     this.containerType = ContainerType.NONE;
                     this.id = guid_1.Guid.generateUUID();
                     this.parent = parent;
-                    this.fileModelNodeId = fileModelNodeId;
                     this.fileItemId = fileItemId;
                     this.required = required;
                     this.selectable = false; // for now all nodes are not selectable
                     //(TreeNode)
                 }
                 GobiiTreeNode.build = function (gobiiExtractFilterType, extractoItemType) {
-                    var returnVal = new GobiiTreeNode(null, null, null, null);
+                    var returnVal = new GobiiTreeNode(null, null, null);
                     returnVal.gobiiExtractFilterType = gobiiExtractFilterType;
                     returnVal.setItemType(extractoItemType);
                     return returnVal;
