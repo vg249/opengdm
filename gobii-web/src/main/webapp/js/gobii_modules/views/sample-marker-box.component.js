@@ -74,9 +74,15 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                 SampleMarkerBoxComponent.prototype.handleTextBoxDataSubmitted = function (items) {
                     var _this = this;
                     if (items.length <= this.maxListItems) {
+                        var nonDuplicateItems_1 = [];
+                        items.forEach(function (item) {
+                            if (!nonDuplicateItems_1.find(function (ii) { return ii === item; })) {
+                                nonDuplicateItems_1.push(item);
+                            }
+                        });
                         var listItemType_1 = this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER ?
                             type_extractor_item_1.ExtractorItemType.MARKER_LIST_ITEM : type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_ITEM;
-                        items.forEach(function (listItem) {
+                        nonDuplicateItems_1.forEach(function (listItem) {
                             if (listItem && listItem !== "") {
                                 _this.fileItemService
                                     .loadFileItem(gobii_file_item_1.GobiiFileItem.build(_this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
@@ -135,9 +141,9 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                             }
                             _this.displayChoicePrompt = true;
                             returnVal = true;
-                            // it does not seem that the PrimeNG dialog really blocks in the usual sense; 
+                            // it does not seem that the PrimeNG dialog really blocks in the usual sense;
                             // so we have to chain what we do next off of the click events on the dialog.
-                            // see handleUserChoice() 
+                            // see handleUserChoice()
                         }
                         else {
                         }

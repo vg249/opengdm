@@ -134,11 +134,21 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
 
         if (items.length <= this.maxListItems) {
 
+            let nonDuplicateItems: string[] = [];
+            items.forEach(item => {
+
+                if( !nonDuplicateItems.find(ii => ii === item)) {
+                    nonDuplicateItems.push(item);
+                }
+
+
+            });
+
             let listItemType: ExtractorItemType =
                 this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER ?
                     ExtractorItemType.MARKER_LIST_ITEM : ExtractorItemType.SAMPLE_LIST_ITEM;
 
-            items.forEach(listItem => {
+            nonDuplicateItems.forEach(listItem => {
 
                 if (listItem && listItem !== "") {
 
@@ -146,7 +156,7 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
                         .loadFileItem(GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
                             .setExtractorItemType(listItemType)
                             .setItemId(listItem)
-                            .setItemName(listItem),true);
+                            .setItemName(listItem), true);
                 }
             });
 
@@ -176,57 +186,57 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
         this.store.select(fromRoot.getAllFileItems)
             .subscribe(fileItems => {
 
-                let extractorItemTypeListToFind: ExtractorItemType = ExtractorItemType.UNKNOWN;
-                let extractorItemTypeFileToFind: ExtractorItemType = ExtractorItemType.UNKNOWN;
+                    let extractorItemTypeListToFind: ExtractorItemType = ExtractorItemType.UNKNOWN;
+                    let extractorItemTypeFileToFind: ExtractorItemType = ExtractorItemType.UNKNOWN;
 
-                if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
-                    extractorItemTypeListToFind = ExtractorItemType.SAMPLE_LIST_ITEM;
-                    extractorItemTypeFileToFind = ExtractorItemType.SAMPLE_FILE;
-                } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
-                    extractorItemTypeListToFind = ExtractorItemType.MARKER_LIST_ITEM;
-                    extractorItemTypeFileToFind = ExtractorItemType.MARKER_FILE;
-                }
-
-                this.currentFileItems = fileItems.filter(item => {
-                    return ( ( item.getExtractorItemType() === extractorItemTypeListToFind ) ||
-                        (item.getExtractorItemType() === extractorItemTypeFileToFind) )
-                });
-
-                if (this.currentFileItems.length > 0) {
-
-                    this.extractTypeLabelExisting = Labels.instance().treeExtractorTypeLabels[this.currentFileItems[0].getExtractorItemType()];
-
-                    if (this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_ITEM) {
-
-                        this.extractTypeLabelProposed = Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_FILE];
-
-                    } else if (this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.MARKER_LIST_ITEM) {
-
-                        this.extractTypeLabelProposed = Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_FILE];
-
-                    } else if (this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.SAMPLE_FILE) {
-
-                        this.extractTypeLabelProposed = Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_ITEM];
-
-                    } else if (this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.MARKER_FILE) {
-
-                        this.extractTypeLabelProposed = Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST_ITEM];
+                    if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
+                        extractorItemTypeListToFind = ExtractorItemType.SAMPLE_LIST_ITEM;
+                        extractorItemTypeFileToFind = ExtractorItemType.SAMPLE_FILE;
+                    } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
+                        extractorItemTypeListToFind = ExtractorItemType.MARKER_LIST_ITEM;
+                        extractorItemTypeFileToFind = ExtractorItemType.MARKER_FILE;
                     }
 
-                    this.displayChoicePrompt = true;
-                    returnVal = true;
-                    // it does not seem that the PrimeNG dialog really blocks in the usual sense; 
-                    // so we have to chain what we do next off of the click events on the dialog.
-                    // see handleUserChoice() 
+                    this.currentFileItems = fileItems.filter(item => {
+                        return ( ( item.getExtractorItemType() === extractorItemTypeListToFind ) ||
+                            (item.getExtractorItemType() === extractorItemTypeFileToFind) )
+                    });
 
-                } else {
+                    if (this.currentFileItems.length > 0) {
 
+                        this.extractTypeLabelExisting = Labels.instance().treeExtractorTypeLabels[this.currentFileItems[0].getExtractorItemType()];
+
+                        if (this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_ITEM) {
+
+                            this.extractTypeLabelProposed = Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_FILE];
+
+                        } else if (this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.MARKER_LIST_ITEM) {
+
+                            this.extractTypeLabelProposed = Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_FILE];
+
+                        } else if (this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.SAMPLE_FILE) {
+
+                            this.extractTypeLabelProposed = Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_ITEM];
+
+                        } else if (this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.MARKER_FILE) {
+
+                            this.extractTypeLabelProposed = Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST_ITEM];
+                        }
+
+                        this.displayChoicePrompt = true;
+                        returnVal = true;
+                        // it does not seem that the PrimeNG dialog really blocks in the usual sense;
+                        // so we have to chain what we do next off of the click events on the dialog.
+                        // see handleUserChoice()
+
+                    } else {
+
+                    }
+                },
+                hsm => {
+                    this.handleStatusHeaderMessage(hsm)
                 }
-            },
-            hsm => {
-                this.handleStatusHeaderMessage(hsm)
-            }
-        ).unsubscribe();
+            ).unsubscribe();
 
         return returnVal;
 
