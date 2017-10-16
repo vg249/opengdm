@@ -134,10 +134,10 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
                         var newStyle = null;
                         switch (typeTreeNodeStatus_1) {
                             case type_tree_node_status_1.TypeTreeNodeStatus.NORMAL:
-                                newStyle = "ui-treenode-content";
+                                newStyle = "ui-treenode-label ui-corner-all";
                                 break;
                             case type_tree_node_status_1.TypeTreeNodeStatus.INPUT_REQUIRED:
-                                newStyle = "ui-state-highlight";
+                                newStyle = "ui-treenode-label ui-corner-all ui-state-highlight";
                                 break;
                         }
                         tni.styleClass = newStyle;

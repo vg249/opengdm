@@ -202,17 +202,15 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
                     let newStyle:string = null;
                     switch(typeTreeNodeStatus) {
                         case TypeTreeNodeStatus.NORMAL:
-                            newStyle = "ui-treenode-content";
+                            newStyle = "ui-treenode-label ui-corner-all";
                             break;
 
                         case TypeTreeNodeStatus.INPUT_REQUIRED:
-                            newStyle = "ui-state-highlight";
+                            newStyle = "ui-treenode-label ui-corner-all ui-state-highlight";
                             break;
                     }
 
                     tni.styleClass = newStyle;
-
-
                 }
             });
 
