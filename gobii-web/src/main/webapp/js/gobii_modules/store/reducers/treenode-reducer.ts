@@ -2,6 +2,8 @@ import {createSelector} from 'reselect';
 import * as gobiiTreeNodeAction from "../actions/treenode-action";
 import {ContainerType, GobiiTreeNode} from "../../model/GobiiTreeNode";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
+import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
+import {TypeTreeNodeStatus} from "../../model/type-tree-node-status";
 
 
 export interface State {
@@ -174,6 +176,50 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
                 gobiiExtractFilterType: action.payload,
                 gobiiTreeNodesActive: state.gobiiTreeNodesActive,
                 gobiiTreeNodes: state.gobiiTreeNodes
+            };
+
+            break;
+
+        } // SELECT_EXTRACT_TYPE
+
+        case gobiiTreeNodeAction.SET_NODE_STATUS: {
+
+            const gobiiExtractFilterType: GobiiExtractFilterType = action.payload.gobiiExtractFilterType;
+            const gobiiFileItemCompoundId: GobiiFileItemCompoundId = action.payload.gobiiFileItemCompoundId;
+            const typeTreeNodeStatus: TypeTreeNodeStatus = action.payload.typeTreeNodeStatus;
+
+            const newTreeNodesState = state.gobiiTreeNodes.slice();
+
+            newTreeNodesState.forEach(tni => {
+
+                if (tni.getGobiiExtractFilterType() === gobiiExtractFilterType
+                    && tni.getItemType() === gobiiFileItemCompoundId.getExtractorItemType()
+                    && tni.getEntityType() === gobiiFileItemCompoundId.getEntityType()
+                    && tni.getEntitySubType() === gobiiFileItemCompoundId.getEntitySubType()
+                    && tni.getCvFilterType() === gobiiFileItemCompoundId.getCvFilterType() ) {
+
+
+                    let newStyle:string = null;
+                    switch(typeTreeNodeStatus) {
+                        case TypeTreeNodeStatus.NORMAL:
+                            newStyle = "ui-treenode-content";
+                            break;
+
+                        case TypeTreeNodeStatus.INPUT_REQUIRED:
+                            newStyle = "ui-state-highlight";
+                            break;
+                    }
+
+                    tni.styleClass = newStyle;
+
+
+                }
+            });
+
+            returnVal = {
+                gobiiExtractFilterType: state.gobiiExtractFilterType,
+                gobiiTreeNodesActive: state.gobiiTreeNodesActive,
+                gobiiTreeNodes: newTreeNodesState
             };
 
             break;

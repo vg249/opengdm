@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-entity", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/type-extract-format", "../../store/reducers", "../../store/actions/history-action", "@ngrx/store", "../../model/name-id", "rxjs/Observable", "../../model/type-extractor-sample-list", "../../model/extractor-instructions/data-set-extract", "../../model/extractor-instructions/gobii-extractor-instruction", "../../model/extractor-instructions/dto-extractor-instruction-files", "../app/dto-request-item-extractor-submission", "../../model/type-gobii-file", "./dto-request.service"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-entity", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/type-extract-format", "../../store/reducers", "../../store/actions/history-action", "@ngrx/store", "../../model/name-id", "rxjs/Observable", "../../model/type-extractor-sample-list", "../../model/extractor-instructions/data-set-extract", "../../model/extractor-instructions/gobii-extractor-instruction", "../../model/extractor-instructions/dto-extractor-instruction-files", "../app/dto-request-item-extractor-submission", "../../model/type-gobii-file", "./dto-request.service", "../../model/gobii-file-item-compound-id"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_entity_1, type_extractor_item_1, type_extractor_filter_1, cv_filter_type_1, type_extract_format_1, fromRoot, historyAction, store_1, name_id_1, Observable_1, type_extractor_sample_list_1, data_set_extract_1, gobii_extractor_instruction_1, dto_extractor_instruction_files_1, dto_request_item_extractor_submission_1, type_gobii_file_1, dto_request_service_1, InstructionSubmissionService;
+    var core_1, type_entity_1, type_extractor_item_1, type_extractor_filter_1, cv_filter_type_1, type_extract_format_1, fromRoot, historyAction, store_1, name_id_1, Observable_1, type_extractor_sample_list_1, data_set_extract_1, gobii_extractor_instruction_1, dto_extractor_instruction_files_1, dto_request_item_extractor_submission_1, type_gobii_file_1, dto_request_service_1, gobii_file_item_compound_id_1, InstructionSubmissionService;
     return {
         setters: [
             function (core_1_1) {
@@ -66,6 +66,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
             },
             function (dto_request_service_1_1) {
                 dto_request_service_1 = dto_request_service_1_1;
+            },
+            function (gobii_file_item_compound_id_1_1) {
+                gobii_file_item_compound_id_1 = gobii_file_item_compound_id_1_1;
             }
         ],
         execute: function () {
@@ -118,6 +121,16 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                                         (samplesArePresent
                                             || projectIsPresent
                                             || pIIsPresent);
+                                //                                if(!datasetTypeIsPresent) {
+                                var gobiiFileItemCompoundId = new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.CvTerms, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.DATASET_TYPE);
+                                //commenting this out until the style piece is working properly
+                                // this.store.dispatch(new fromTreeNodeActions.SetTreeNodeStatus(
+                                //     {
+                                //         gobiiExtractFilterType: gobiiExtractFilterType,
+                                //         gobiiFileItemCompoundId: gobiiFileItemCompoundId,
+                                //         typeTreeNodeStatus: TypeTreeNodeStatus.INPUT_REQUIRED
+                                //     }
+                                // ))
                             }
                             else if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
                                 var markersArePresent = all.filter(function (fi) {

@@ -2,6 +2,8 @@ import {Action} from '@ngrx/store';
 import {GobiiTreeNode} from "../../model/GobiiTreeNode";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 import {ClearTextStream} from "tls";
+import {TypeTreeNodeStatus} from "../../model/type-tree-node-status";
+import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 
 export const INIT = '[GobiiTreeNode] Init';
 export const LOAD_TREE_NODE = '[GobiiTreeNode] Load Tree Nodes';
@@ -10,13 +12,13 @@ export const ACTIVATE = '[GobiiTreeNode] Activate';
 export const DEACTIVATE = '[GobiiTreeNode] Deactivate';
 export const SELECT_EXTRACT_TYPE = '[GobiiTreeNode] Select Extract Type';
 export const CLEAR_ALL = '[GobiiTreeNode] Clear All';
+export const SET_NODE_STATUS = '[GobiiTreeNode] Set Node Status';
 
 
 export class InitAction implements Action {
     readonly type = INIT;
 
 }
-
 
 
 /**
@@ -41,7 +43,6 @@ export class PlaceTreeNodeAction implements Action {
 }
 
 
-
 export class ActivateForExtractAction implements Action {
     readonly type = ACTIVATE;
 
@@ -51,6 +52,7 @@ export class ActivateForExtractAction implements Action {
 
 export class DeActivateFromExtractAction implements Action {
     readonly type = DEACTIVATE;
+
     //fileitemuniqueid
     constructor(public payload: string) {
     }
@@ -70,6 +72,17 @@ export class SelectExtractType implements Action {
     }
 }
 
+export class SetTreeNodeStatus implements Action {
+    readonly type = SET_NODE_STATUS;
+
+    constructor(public payload: {
+        gobiiExtractFilterType: GobiiExtractFilterType,
+        gobiiFileItemCompoundId: GobiiFileItemCompoundId,
+        typeTreeNodeStatus: TypeTreeNodeStatus
+    }) {
+    }
+}
+
 
 /**
  * Export a type alias of all actions in this action group
@@ -82,5 +95,6 @@ export type All
     | DeActivateFromExtractAction
     | SelectExtractType
     | InitAction
-    | ClearAll;
+    | ClearAll
+    | SetTreeNodeStatus;
 

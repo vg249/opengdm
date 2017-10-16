@@ -1,4 +1,4 @@
-System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTreeNode", "../../model/type-extractor-filter"], function (exports_1, context_1) {
+System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTreeNode", "../../model/type-extractor-filter", "../../model/type-tree-node-status"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     function placeNodeInTree(nodeToPlace, treeNodes, gobiiExtractFilterType) {
@@ -119,6 +119,36 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
                     gobiiTreeNodes: state.gobiiTreeNodes
                 };
                 break;
+            } // SELECT_EXTRACT_TYPE
+            case gobiiTreeNodeAction.SET_NODE_STATUS: {
+                var gobiiExtractFilterType_1 = action.payload.gobiiExtractFilterType;
+                var gobiiFileItemCompoundId_1 = action.payload.gobiiFileItemCompoundId;
+                var typeTreeNodeStatus_1 = action.payload.typeTreeNodeStatus;
+                var newTreeNodesState = state.gobiiTreeNodes.slice();
+                newTreeNodesState.forEach(function (tni) {
+                    if (tni.getGobiiExtractFilterType() === gobiiExtractFilterType_1
+                        && tni.getItemType() === gobiiFileItemCompoundId_1.getExtractorItemType()
+                        && tni.getEntityType() === gobiiFileItemCompoundId_1.getEntityType()
+                        && tni.getEntitySubType() === gobiiFileItemCompoundId_1.getEntitySubType()
+                        && tni.getCvFilterType() === gobiiFileItemCompoundId_1.getCvFilterType()) {
+                        var newStyle = null;
+                        switch (typeTreeNodeStatus_1) {
+                            case type_tree_node_status_1.TypeTreeNodeStatus.NORMAL:
+                                newStyle = "ui-treenode-content";
+                                break;
+                            case type_tree_node_status_1.TypeTreeNodeStatus.INPUT_REQUIRED:
+                                newStyle = "ui-state-highlight";
+                                break;
+                        }
+                        tni.styleClass = newStyle;
+                    }
+                });
+                returnVal = {
+                    gobiiExtractFilterType: state.gobiiExtractFilterType,
+                    gobiiTreeNodesActive: state.gobiiTreeNodesActive,
+                    gobiiTreeNodes: newTreeNodesState
+                };
+                break;
             }
             case gobiiTreeNodeAction.CLEAR_ALL: {
                 var newSelectedNodes = state
@@ -138,7 +168,7 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
         return returnVal;
     }
     exports_1("gobiiTreeNodesReducer", gobiiTreeNodesReducer);
-    var reselect_1, gobiiTreeNodeAction, GobiiTreeNode_1, type_extractor_filter_1, initialState, getGobiiTreeNodes, getGobiiTreeItemIds, getIdsOfActivated, getExtractFilterType, getSelected, getAll, getForSelectedFilter;
+    var reselect_1, gobiiTreeNodeAction, GobiiTreeNode_1, type_extractor_filter_1, type_tree_node_status_1, initialState, getGobiiTreeNodes, getGobiiTreeItemIds, getIdsOfActivated, getExtractFilterType, getSelected, getAll, getForSelectedFilter;
     return {
         setters: [
             function (reselect_1_1) {
@@ -152,6 +182,9 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
             },
             function (type_extractor_filter_1_1) {
                 type_extractor_filter_1 = type_extractor_filter_1_1;
+            },
+            function (type_tree_node_status_1_1) {
+                type_tree_node_status_1 = type_tree_node_status_1_1;
             }
         ],
         execute: function () {

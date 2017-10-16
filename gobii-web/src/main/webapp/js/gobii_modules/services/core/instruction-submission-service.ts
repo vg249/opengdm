@@ -7,6 +7,7 @@ import {GobiiFileItem} from "../../model/gobii-file-item";
 import {GobiiExtractFormat} from "../../model/type-extract-format";
 import * as fromRoot from '../../store/reducers';
 import * as historyAction from '../../store/actions/history-action';
+import * as fromTreeNodeActions from '../../store/actions/treenode-action';
 
 import {Store} from "@ngrx/store";
 import {NameId} from "../../model/name-id";
@@ -18,6 +19,8 @@ import {ExtractorInstructionFilesDTO} from "../../model/extractor-instructions/d
 import {DtoRequestItemExtractorSubmission} from "../app/dto-request-item-extractor-submission";
 import {GobiiFileType} from "../../model/type-gobii-file";
 import {DtoRequestService} from "./dto-request.service";
+import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
+import {TypeTreeNodeStatus} from "../../model/type-tree-node-status";
 
 @Injectable()
 export class InstructionSubmissionService {
@@ -83,6 +86,27 @@ export class InstructionSubmissionService {
                                     ( samplesArePresent
                                         || projectIsPresent
                                         || pIIsPresent );
+
+//                                if(!datasetTypeIsPresent) {
+
+
+                                let gobiiFileItemCompoundId: GobiiFileItemCompoundId = new GobiiFileItemCompoundId(
+                                    ExtractorItemType.ENTITY,
+                                    EntityType.CvTerms,
+                                    EntitySubType.UNKNOWN,
+                                    CvFilterType.DATASET_TYPE
+                                );
+
+                                //commenting this out until the style piece is working properly
+                                // this.store.dispatch(new fromTreeNodeActions.SetTreeNodeStatus(
+                                //     {
+                                //         gobiiExtractFilterType: gobiiExtractFilterType,
+                                //         gobiiFileItemCompoundId: gobiiFileItemCompoundId,
+                                //         typeTreeNodeStatus: TypeTreeNodeStatus.INPUT_REQUIRED
+                                //     }
+                                // ))
+
+
 
 
                             } else if (gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
