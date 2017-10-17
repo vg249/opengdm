@@ -205,6 +205,13 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         + currentPage;
                     window.location.href = newDestination;
                 }; // handleServerSelected()
+                ExtractorRoot.prototype.refreshJobId = function () {
+                    var jobId = file_name_1.FileName.makeUniqueFileId();
+                    this.fileItemService.loadFileItem(gobii_file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.JOB_ID)
+                        .setItemId(jobId)
+                        .setItemName(jobId), true);
+                };
                 ExtractorRoot.prototype.handleExportTypeSelected = function (arg) {
                     var _this = this;
                     //
@@ -216,11 +223,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         .subscribe(function (submistReady) {
                         submistReady ? _this.submitButtonStyle = _this.buttonStyleSubmitReady : _this.submitButtonStyle = _this.buttonStyleSubmitNotReady;
                     });
-                    var jobId = file_name_1.FileName.makeUniqueFileId();
-                    this.fileItemService.loadFileItem(gobii_file_item_1.GobiiFileItem.build(arg, type_process_1.ProcessType.CREATE)
-                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.JOB_ID)
-                        .setItemId(jobId)
-                        .setItemName(jobId), true);
+                    this.refreshJobId();
                     if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
                         this.doPrincipleInvestigatorTreeNotifications = false;
                         this.fileItemService.setItemLabelType(this.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.CONTACT_PI, name_id_label_type_1.NameIdLabelType.UNKNOWN);
@@ -318,7 +321,17 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     var _this = this;
                     this.instructionSubmissionService
                         .submit(this.gobiiExtractFilterType)
-                        .subscribe(function (instructions) { _this.handleClearTree(); });
+                        .subscribe(function (instructions) {
+                        _this.refreshJobId();
+                        //if you refresh the entire tree, the perceived responsiveness of the app is slow, because
+                        // the status message indicating that submission succeeded doesn't show up until after all
+                        // the GETs that refresh the tree. So best to just leave the criteria in place with a new job
+                        // id and let the user decide whether to re-submit (if you don't refresh the job ID the
+                        // resubmission fails because the instruction file already exists.
+                        // This may be a bad plan if it encourages people to resubmit the same job over and over again.
+                        // We are going to need some kind of submission throttling on the server side.
+                        //this.handleClearTree()
+                    });
                 };
                 ExtractorRoot.prototype.ngOnInit = function () {
                     this.initializeServerConfigs();

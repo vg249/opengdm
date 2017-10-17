@@ -456,6 +456,16 @@ export class ExtractorRoot implements OnInit {
     public reinitProjectList: boolean = false;
     public gobiiExtractFilterType: GobiiExtractFilterType;
 
+
+    private refreshJobId() {
+
+        let jobId: string = FileName.makeUniqueFileId();
+        this.fileItemService.loadFileItem(GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
+            .setExtractorItemType(ExtractorItemType.JOB_ID)
+            .setItemId(jobId)
+            .setItemName(jobId), true)
+    }
+
     private handleExportTypeSelected(arg: GobiiExtractFilterType) {
 
 
@@ -472,11 +482,7 @@ export class ExtractorRoot implements OnInit {
             })
 
 
-        let jobId: string = FileName.makeUniqueFileId();
-        this.fileItemService.loadFileItem(GobiiFileItem.build(arg, ProcessType.CREATE)
-            .setExtractorItemType(ExtractorItemType.JOB_ID)
-            .setItemId(jobId)
-            .setItemName(jobId), true)
+        this.refreshJobId();
 
         if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
@@ -590,9 +596,6 @@ export class ExtractorRoot implements OnInit {
     }
 
 
-
-
-
     public handleAddMessage(arg) {
         this.store.dispatch(new historyAction.AddStatusAction(new HeaderStatusMessage(arg, StatusLevel.OK, undefined)))
     }
@@ -648,7 +651,17 @@ export class ExtractorRoot implements OnInit {
 
         this.instructionSubmissionService
             .submit(this.gobiiExtractFilterType)
-            .subscribe( instructions => {this.handleClearTree()});
+            .subscribe(instructions => {
+                this.refreshJobId();
+                //if you refresh the entire tree, the perceived responsiveness of the app is slow, because
+                // the status message indicating that submission succeeded doesn't show up until after all
+                // the GETs that refresh the tree. So best to just leave the criteria in place with a new job
+                // id and let the user decide whether to re-submit (if you don't refresh the job ID the
+                // resubmission fails because the instruction file already exists.
+                // This may be a bad plan if it encourages people to resubmit the same job over and over again.
+                // We are going to need some kind of submission throttling on the server side.
+                //this.handleClearTree()
+            });
     }
 
     ngOnInit(): any {
