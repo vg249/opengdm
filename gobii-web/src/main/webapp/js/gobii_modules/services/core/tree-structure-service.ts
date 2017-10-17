@@ -8,9 +8,19 @@ import {CvFilterType} from "../../model/cv-filter-type";
 import {GobiiFileItem} from "../../model/gobii-file-item";
 import {GobiiExtractFormat} from "../../model/type-extract-format";
 import {ProcessType} from "../../model/type-process";
+import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
+import {TypeTreeNodeStatus} from "../../model/type-tree-node-status";
+import * as treeNodeActions from '../../store/actions/treenode-action'
+import {Store} from "@ngrx/store";
+import * as fromRoot from '../../store/reducers';
+
 
 @Injectable()
 export class TreeStructureService {
+
+    constructor(private store: Store<fromRoot.State>) {
+    }
+
 
     private makeCommonNodes(gobiiExtractFilterType: GobiiExtractFilterType): GobiiTreeNode[] {
 
@@ -48,7 +58,7 @@ export class TreeStructureService {
             GobiiTreeNode.build(GobiiExtractFilterType.WHOLE_DATASET, ExtractorItemType.ENTITY)
                 .setEntityType(EntityType.DataSets)
                 .setContainerType(ContainerType.DATA)
-                ,
+            ,
 
             // BY SAMPLE
             ...this.makeCommonNodes(GobiiExtractFilterType.BY_SAMPLE),
@@ -150,6 +160,62 @@ export class TreeStructureService {
         })
 
     }
+    
+    private getEntityIcon(gobiiFileItemCompoundId:GobiiFileItemCompoundId):{ icon: string, expandedIcon: string, collapsedIcon: string } {
+
+        let icon: string;
+        let expandedIcon: string;
+        let collapsedIcon: string;
+        
+        if (gobiiFileItemCompoundId.getEntityType() === EntityType.DataSets) {
+
+            icon = "fa-database";
+            expandedIcon = "fa-folder-expanded";
+            collapsedIcon = "fa-database";
+
+        } else if (gobiiFileItemCompoundId.getEntityType() === EntityType.Contacts) {
+
+            icon = "fa-user-o";
+            expandedIcon = "fa-user-o";
+            collapsedIcon = "fa-user-o";
+
+        } else if (gobiiFileItemCompoundId.getEntityType() === EntityType.Mapsets) {
+
+            icon = "fa-map-o";
+            expandedIcon = "fa-map-o";
+            collapsedIcon = "fa-map-o";
+
+        } else if (gobiiFileItemCompoundId.getEntityType() === EntityType.Platforms) {
+
+            icon = "fa-calculator";
+            expandedIcon = "fa-calculator";
+            collapsedIcon = "fa-calculator";
+
+        } else if (gobiiFileItemCompoundId.getEntityType() === EntityType.Projects) {
+
+            icon = "fa-clipboard";
+            expandedIcon = "fa-clipboard";
+            collapsedIcon = "fa-clipboard";
+
+        } else if (gobiiFileItemCompoundId.getEntityType() === EntityType.CvTerms) {
+
+            if (gobiiFileItemCompoundId.getCvFilterType() === CvFilterType.DATASET_TYPE) {
+                icon = "fa-file-excel-o";
+                expandedIcon = "fa-file-excel-o";
+                collapsedIcon = "fa-file-excel-o";
+            }
+
+        } else if (gobiiFileItemCompoundId.getEntityType() === EntityType.MarkerGroups) {
+
+            // if (isParent) {
+            icon = "fa-pencil";
+            expandedIcon = "fa-pencil";
+            collapsedIcon = "fa-pencil";
+
+        }
+
+        return {icon: icon, expandedIcon: expandedIcon, collapsedIcon: collapsedIcon};
+    }
 
 
     private addEntityIconToNode(entityType: EntityType, cvFilterType: CvFilterType, treeNode: GobiiTreeNode) {
@@ -198,75 +264,144 @@ export class TreeStructureService {
             treeNode.icon = "fa-pencil";
             treeNode.expandedIcon = "fa-pencil";
             treeNode.collapsedIcon = "fa-pencil";
-            // } else {
-            //     treeNode.icon = "fa-map-marker";
-            //     treeNode.expandedIcon = "fa-map-marker";
-            //     treeNode.collapsedIcon = "fa-map-marker";
-            // }
+          
         }
     }
 
+    private getIcons(gobiiFileItemCompoundId: GobiiFileItemCompoundId, isParent:boolean): { icon: string, expandedIcon: string, collapsedIcon: string } {
 
-    private addIconsToNode(treeNode: GobiiTreeNode, isParent: boolean) {
 
-        // if( fileModelNode.getItemType() == ExtractorItemType.ENTITY ) {
+        let icon: string;
+        let expandedIcon: string;
+        let collapsedIcon: string;
 
-        if (treeNode.getEntityType() != null
-            && treeNode.getEntityType() != EntityType.UNKNOWN) {
+        if (gobiiFileItemCompoundId.getEntityType() != null
+            && gobiiFileItemCompoundId.getEntityType() != EntityType.UNKNOWN) {
 
-            this.addEntityIconToNode(treeNode.getEntityType(), treeNode.getCvFilterType(), treeNode);
+            let entityIcons = this.getEntityIcon(gobiiFileItemCompoundId);
+            icon = entityIcons.icon;
+            expandedIcon = entityIcons.expandedIcon;
+            collapsedIcon = entityIcons.collapsedIcon;
 
-        } else if (treeNode.getItemType() === ExtractorItemType.EXPORT_FORMAT) {
-            treeNode.icon = "fa-columns";
-            treeNode.expandedIcon = "fa-columns";
-            treeNode.collapsedIcon = "fa-columns";
-        } else if (treeNode.getItemType() === ExtractorItemType.SAMPLE_FILE) {
-            treeNode.icon = "fa-file-text-o";
-            treeNode.expandedIcon = "fa-file-text-o";
-            treeNode.collapsedIcon = "fa-file-text-o";
-        } else if (treeNode.getItemType() === ExtractorItemType.SAMPLE_LIST_ITEM) {
+
+            //this.addEntityIconToNode(gobiiFileItemCompoundId.getEntityType(), gobiiFileItemCompoundId.getCvFilterType(), treeNode);
+
+        } else if (gobiiFileItemCompoundId.getExtractorItemType() === ExtractorItemType.EXPORT_FORMAT) {
+            icon = "fa-columns";
+            expandedIcon = "fa-columns";
+            collapsedIcon = "fa-columns";
+        } else if (gobiiFileItemCompoundId.getExtractorItemType() === ExtractorItemType.SAMPLE_FILE) {
+            icon = "fa-file-text-o";
+            expandedIcon = "fa-file-text-o";
+            collapsedIcon = "fa-file-text-o";
+        } else if (gobiiFileItemCompoundId.getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_ITEM) {
             if (isParent) {
-                treeNode.icon = "fa-list-ul";
-                treeNode.expandedIcon = "fa-list-ul";
-                treeNode.collapsedIcon = "fa-list-ul";
+                icon = "fa-list-ul";
+                expandedIcon = "fa-list-ul";
+                collapsedIcon = "fa-list-ul";
             } else {
-                treeNode.icon = "fa-eyedropper";
-                treeNode.expandedIcon = "fa-eyedropper";
-                treeNode.collapsedIcon = "fa-eyedropper";
+                icon = "fa-eyedropper";
+                expandedIcon = "fa-eyedropper";
+                collapsedIcon = "fa-eyedropper";
             }
-        } else if (treeNode.getItemType() === ExtractorItemType.MARKER_FILE) {
-            treeNode.icon = "fa-file-text-o";
-            treeNode.expandedIcon = "fa-file-text-o";
-            treeNode.collapsedIcon = "fa-file-text-o";
-        } else if (treeNode.getItemType() === ExtractorItemType.MARKER_LIST_ITEM) {
+        } else if (gobiiFileItemCompoundId.getExtractorItemType() === ExtractorItemType.MARKER_FILE) {
+            icon = "fa-file-text-o";
+            expandedIcon = "fa-file-text-o";
+            collapsedIcon = "fa-file-text-o";
+        } else if (gobiiFileItemCompoundId.getExtractorItemType() === ExtractorItemType.MARKER_LIST_ITEM) {
 
             if (isParent) {
-                treeNode.icon = "fa-list-ul";
-                treeNode.expandedIcon = "fa-list-ul";
-                treeNode.collapsedIcon = "fa-list-ul";
+                icon = "fa-list-ul";
+                expandedIcon = "fa-list-ul";
+                collapsedIcon = "fa-list-ul";
             } else {
-                treeNode.icon = "fa-map-marker";
-                treeNode.expandedIcon = "fa-map-marker";
-                treeNode.collapsedIcon = "fa-map-marker";
+                icon = "fa-map-marker";
+                expandedIcon = "fa-map-marker";
+                collapsedIcon = "fa-map-marker";
             }
-        } else if (treeNode.getItemType() === ExtractorItemType.JOB_ID) {
-            treeNode.icon = "fa-info-circle";
-            treeNode.expandedIcon = "fa-info-circle";
-            treeNode.collapsedIcon = "fa-info-circle";
-        } else if (treeNode.getItemType() === ExtractorItemType.SAMPLE_LIST_TYPE) {
-            treeNode.icon = "fa-info-circle";
-            treeNode.expandedIcon = "fa-info-circle";
-            treeNode.collapsedIcon = "fa-info-circle";
+        } else if (gobiiFileItemCompoundId.getExtractorItemType() === ExtractorItemType.JOB_ID) {
+            icon = "fa-info-circle";
+            expandedIcon = "fa-info-circle";
+            collapsedIcon = "fa-info-circle";
+        } else if (gobiiFileItemCompoundId.getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_TYPE) {
+            icon = "fa-info-circle";
+            expandedIcon = "fa-info-circle";
+            collapsedIcon = "fa-info-circle";
         } else {
             //     }
             // } else if (fileModelNode.getItemType() == ExtractorItemType.CATEGORY ) {
-            treeNode.icon = "fa-folder";
-            treeNode.expandedIcon = "fa-folder-expanded";
-            treeNode.collapsedIcon = "fa-folder";
+            icon = "fa-folder";
+            expandedIcon = "fa-folder-expanded";
+            collapsedIcon = "fa-folder";
         }
+
+        return {icon: icon, expandedIcon: expandedIcon, collapsedIcon: collapsedIcon};
+    }
+
+    private addIconsToNode(treeNode: GobiiTreeNode, isParent: boolean) {
+
+        let icons = this.getIcons(treeNode,isParent);
+        treeNode.icon = icons.icon;
+        treeNode.expandedIcon = icons.expandedIcon;
+        treeNode.collapsedIcon = icons.collapsedIcon;
+
+        // if (treeNode.getEntityType() != null
+        //     && treeNode.getEntityType() != EntityType.UNKNOWN) {
+        //
+        //     this.addEntityIconToNode(treeNode.getEntityType(), treeNode.getCvFilterType(), treeNode);
+        //
+        // } else if (treeNode.getItemType() === ExtractorItemType.EXPORT_FORMAT) {
+        //     treeNode.icon = "fa-columns";
+        //     treeNode.expandedIcon = "fa-columns";
+        //     treeNode.collapsedIcon = "fa-columns";
+        // } else if (treeNode.getItemType() === ExtractorItemType.SAMPLE_FILE) {
+        //     treeNode.icon = "fa-file-text-o";
+        //     treeNode.expandedIcon = "fa-file-text-o";
+        //     treeNode.collapsedIcon = "fa-file-text-o";
+        // } else if (treeNode.getItemType() === ExtractorItemType.SAMPLE_LIST_ITEM) {
+        //     if (isParent) {
+        //         treeNode.icon = "fa-list-ul";
+        //         treeNode.expandedIcon = "fa-list-ul";
+        //         treeNode.collapsedIcon = "fa-list-ul";
+        //     } else {
+        //         treeNode.icon = "fa-eyedropper";
+        //         treeNode.expandedIcon = "fa-eyedropper";
+        //         treeNode.collapsedIcon = "fa-eyedropper";
+        //     }
+        // } else if (treeNode.getItemType() === ExtractorItemType.MARKER_FILE) {
+        //     treeNode.icon = "fa-file-text-o";
+        //     treeNode.expandedIcon = "fa-file-text-o";
+        //     treeNode.collapsedIcon = "fa-file-text-o";
+        // } else if (treeNode.getItemType() === ExtractorItemType.MARKER_LIST_ITEM) {
+        //
+        //     if (isParent) {
+        //         treeNode.icon = "fa-list-ul";
+        //         treeNode.expandedIcon = "fa-list-ul";
+        //         treeNode.collapsedIcon = "fa-list-ul";
+        //     } else {
+        //         treeNode.icon = "fa-map-marker";
+        //         treeNode.expandedIcon = "fa-map-marker";
+        //         treeNode.collapsedIcon = "fa-map-marker";
+        //     }
+        // } else if (treeNode.getItemType() === ExtractorItemType.JOB_ID) {
+        //     treeNode.icon = "fa-info-circle";
+        //     treeNode.expandedIcon = "fa-info-circle";
+        //     treeNode.collapsedIcon = "fa-info-circle";
+        // } else if (treeNode.getItemType() === ExtractorItemType.SAMPLE_LIST_TYPE) {
+        //     treeNode.icon = "fa-info-circle";
+        //     treeNode.expandedIcon = "fa-info-circle";
+        //     treeNode.collapsedIcon = "fa-info-circle";
+        // } else {
+        //     //     }
+        //     // } else if (fileModelNode.getItemType() == ExtractorItemType.CATEGORY ) {
+        //     treeNode.icon = "fa-folder";
+        //     treeNode.expandedIcon = "fa-folder-expanded";
+        //     treeNode.collapsedIcon = "fa-folder";
+        // }
     }
 
     public makeTreeNodeFromFileItem(gobiiFileItem: GobiiFileItem): GobiiTreeNode {
+
 
         let returnVal: GobiiTreeNode = GobiiTreeNode
             .build(gobiiFileItem.getGobiiExtractFilterType(), gobiiFileItem.getExtractorItemType())
@@ -303,5 +438,31 @@ export class TreeStructureService {
         }
     }
 
+    public markTreeItemMissing(gobiiExtractFilterType: GobiiExtractFilterType, gobiiFileItemCompoundId: GobiiFileItemCompoundId) {
+
+
+        let icon: string = "fa-chevron-circle-right";
+
+        this.store.dispatch(new treeNodeActions.SetTreeNodeLook(
+            {
+                gobiiExtractFilterType: gobiiExtractFilterType,
+                gobiiFileItemCompoundId: gobiiFileItemCompoundId,
+                icon: icon
+            }
+        ))
+    }
+
+    public unMarkTreeItemMissing(gobiiExtractFilterType: GobiiExtractFilterType, gobiiFileItemCompoundId: GobiiFileItemCompoundId) {
+
+        let icons = this.getIcons(gobiiFileItemCompoundId, false);
+
+        this.store.dispatch(new treeNodeActions.SetTreeNodeLook(
+            {
+                gobiiExtractFilterType: gobiiExtractFilterType,
+                gobiiFileItemCompoundId: gobiiFileItemCompoundId,
+                icon: icons.icon
+            }
+        ))
+    }
 
 }

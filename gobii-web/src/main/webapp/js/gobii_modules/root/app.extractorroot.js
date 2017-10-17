@@ -302,14 +302,13 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         console.log(statusMessage.message);
                     }
                 };
-                ExtractorRoot.prototype.setSubmitButtonState = function () {
-                    var returnVal = false;
-                    return returnVal;
-                };
                 ExtractorRoot.prototype.handleOnMouseOverSubmit = function (arg, isEnter) {
                     // this.criteriaInvalid = true;
                     if (isEnter) {
-                        this.setSubmitButtonState();
+                        this.instructionSubmissionService.markMissingItems(this.gobiiExtractFilterType);
+                    }
+                    else {
+                        this.instructionSubmissionService.unmarkMissingItems(this.gobiiExtractFilterType);
                     }
                 };
                 ExtractorRoot.prototype.handleClearTree = function () {

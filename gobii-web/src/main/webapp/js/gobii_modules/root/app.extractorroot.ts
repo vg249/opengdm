@@ -622,21 +622,15 @@ export class ExtractorRoot implements OnInit {
     public clearButtonStyle = this.submitButtonStyleDefault;
 
 
-    private setSubmitButtonState(): boolean {
-
-        let returnVal: boolean = false;
-
-        return returnVal;
-    }
-
     public handleOnMouseOverSubmit(arg, isEnter) {
 
         // this.criteriaInvalid = true;
 
         if (isEnter) {
 
-            this.setSubmitButtonState()
-
+            this.instructionSubmissionService.markMissingItems(this.gobiiExtractFilterType)
+        } else {
+            this.instructionSubmissionService.unmarkMissingItems(this.gobiiExtractFilterType)
 
         }
 

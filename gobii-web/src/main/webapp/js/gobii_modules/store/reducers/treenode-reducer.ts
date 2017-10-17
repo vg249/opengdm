@@ -70,6 +70,30 @@ function findTreeNodeByFIleItemId(treeNodes: GobiiTreeNode[], fileItemUniqueId: 
     return returnVal;
 }
 
+function findTreeNodeByCompoundId(treeNodes: GobiiTreeNode[],
+                                  gobiiExtractFilterType: GobiiExtractFilterType,
+                                  gobiiFileItemCompoundId: GobiiFileItemCompoundId): GobiiTreeNode {
+
+    let returnVal: GobiiTreeNode = null;
+
+
+    for (let idx: number = 0; (idx < treeNodes.length) && !returnVal; idx++) {
+
+        let currentTreeNode: GobiiTreeNode = treeNodes[idx];
+        if (currentTreeNode.getGobiiExtractFilterType() === gobiiExtractFilterType
+            && currentTreeNode.getItemType() === gobiiFileItemCompoundId.getExtractorItemType()
+            && currentTreeNode.getEntityType() === gobiiFileItemCompoundId.getEntityType()
+            && currentTreeNode.getEntitySubType() === gobiiFileItemCompoundId.getEntitySubType()
+            && currentTreeNode.getCvFilterType() === gobiiFileItemCompoundId.getCvFilterType()) {
+            returnVal = currentTreeNode;
+        } else {
+            returnVal = findTreeNodeByCompoundId(currentTreeNode.getChildren(), gobiiExtractFilterType, gobiiFileItemCompoundId);
+        }
+    }
+
+    return returnVal;
+}
+
 export function gobiiTreeNodesReducer(state: State = initialState, action: gobiiTreeNodeAction.All): State {
 
     let returnVal: State = state;
@@ -186,33 +210,15 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
 
             const gobiiExtractFilterType: GobiiExtractFilterType = action.payload.gobiiExtractFilterType;
             const gobiiFileItemCompoundId: GobiiFileItemCompoundId = action.payload.gobiiFileItemCompoundId;
-            const typeTreeNodeStatus: TypeTreeNodeStatus = action.payload.typeTreeNodeStatus;
+            const icon: string = action.payload.icon;
 
             const newTreeNodesState = state.gobiiTreeNodes.slice();
 
-            newTreeNodesState.forEach(tni => {
+            let treeNodeToMutate: GobiiTreeNode = findTreeNodeByCompoundId(newTreeNodesState,
+                gobiiExtractFilterType,
+                gobiiFileItemCompoundId);
 
-                if (tni.getGobiiExtractFilterType() === gobiiExtractFilterType
-                    && tni.getItemType() === gobiiFileItemCompoundId.getExtractorItemType()
-                    && tni.getEntityType() === gobiiFileItemCompoundId.getEntityType()
-                    && tni.getEntitySubType() === gobiiFileItemCompoundId.getEntitySubType()
-                    && tni.getCvFilterType() === gobiiFileItemCompoundId.getCvFilterType() ) {
-
-
-                    let newStyle:string = null;
-                    switch(typeTreeNodeStatus) {
-                        case TypeTreeNodeStatus.NORMAL:
-                            newStyle = "ui-treenode-label ui-corner-all";
-                            break;
-
-                        case TypeTreeNodeStatus.INPUT_REQUIRED:
-                            newStyle = "ui-treenode-label ui-corner-all ui-state-highlight";
-                            break;
-                    }
-
-                    tni.styleClass = newStyle;
-                }
-            });
+            treeNodeToMutate.icon = icon;
 
             returnVal = {
                 gobiiExtractFilterType: state.gobiiExtractFilterType,

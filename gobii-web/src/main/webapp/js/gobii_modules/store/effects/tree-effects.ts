@@ -10,7 +10,6 @@ import {of} from 'rxjs/observable/of';
 import {TreeStructureService} from '../../services/core/tree-structure-service';
 import * as treeNodeActions from '../actions/treenode-action'
 import {GobiiTreeNode} from "../../model/GobiiTreeNode";
-import * as fileItemAction from '../actions/fileitem-action';
 
 @Injectable()
 export class TreeEffects {

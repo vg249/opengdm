@@ -72,13 +72,13 @@ export class SelectExtractType implements Action {
     }
 }
 
-export class SetTreeNodeStatus implements Action {
+export class SetTreeNodeLook implements Action {
     readonly type = SET_NODE_STATUS;
 
     constructor(public payload: {
         gobiiExtractFilterType: GobiiExtractFilterType,
         gobiiFileItemCompoundId: GobiiFileItemCompoundId,
-        typeTreeNodeStatus: TypeTreeNodeStatus
+        icon: string
     }) {
     }
 }
@@ -96,5 +96,5 @@ export type All
     | SelectExtractType
     | InitAction
     | ClearAll
-    | SetTreeNodeStatus;
+    | SetTreeNodeLook;
 

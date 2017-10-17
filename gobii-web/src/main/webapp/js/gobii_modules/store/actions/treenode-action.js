@@ -1,7 +1,7 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var INIT, LOAD_TREE_NODE, PLACE_TREE_NODE, ACTIVATE, DEACTIVATE, SELECT_EXTRACT_TYPE, CLEAR_ALL, SET_NODE_STATUS, InitAction, LoadTreeNodeAction, PlaceTreeNodeAction, ActivateForExtractAction, DeActivateFromExtractAction, ClearAll, SelectExtractType, SetTreeNodeStatus;
+    var INIT, LOAD_TREE_NODE, PLACE_TREE_NODE, ACTIVATE, DEACTIVATE, SELECT_EXTRACT_TYPE, CLEAR_ALL, SET_NODE_STATUS, InitAction, LoadTreeNodeAction, PlaceTreeNodeAction, ActivateForExtractAction, DeActivateFromExtractAction, ClearAll, SelectExtractType, SetTreeNodeLook;
     return {
         setters: [],
         execute: function () {
@@ -76,14 +76,14 @@ System.register([], function (exports_1, context_1) {
                 return SelectExtractType;
             }());
             exports_1("SelectExtractType", SelectExtractType);
-            SetTreeNodeStatus = (function () {
-                function SetTreeNodeStatus(payload) {
+            SetTreeNodeLook = (function () {
+                function SetTreeNodeLook(payload) {
                     this.payload = payload;
                     this.type = SET_NODE_STATUS;
                 }
-                return SetTreeNodeStatus;
+                return SetTreeNodeLook;
             }());
-            exports_1("SetTreeNodeStatus", SetTreeNodeStatus);
+            exports_1("SetTreeNodeLook", SetTreeNodeLook);
         }
     };
 });

@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-entity", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/type-extract-format", "../../store/reducers", "../../store/actions/history-action", "@ngrx/store", "../../model/name-id", "rxjs/Observable", "../../model/type-extractor-sample-list", "../../model/extractor-instructions/data-set-extract", "../../model/extractor-instructions/gobii-extractor-instruction", "../../model/extractor-instructions/dto-extractor-instruction-files", "../app/dto-request-item-extractor-submission", "../../model/type-gobii-file", "./dto-request.service", "../../model/gobii-file-item-compound-id", "../../model/gobii-file-item-criterion"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-entity", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/type-extract-format", "../../store/reducers", "../../store/actions/history-action", "@ngrx/store", "../../model/name-id", "rxjs/Observable", "../../model/type-extractor-sample-list", "../../model/extractor-instructions/data-set-extract", "../../model/extractor-instructions/gobii-extractor-instruction", "../../model/extractor-instructions/dto-extractor-instruction-files", "../app/dto-request-item-extractor-submission", "../../model/type-gobii-file", "./dto-request.service", "../../model/gobii-file-item-compound-id", "../../model/gobii-file-item-criterion", "./tree-structure-service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_entity_1, type_extractor_item_1, type_extractor_filter_1, cv_filter_type_1, type_extract_format_1, fromRoot, historyAction, store_1, name_id_1, Observable_1, type_extractor_sample_list_1, data_set_extract_1, gobii_extractor_instruction_1, dto_extractor_instruction_files_1, dto_request_item_extractor_submission_1, type_gobii_file_1, dto_request_service_1, gobii_file_item_compound_id_1, gobii_file_item_criterion_1, InstructionSubmissionService;
+    var core_1, type_entity_1, type_extractor_item_1, type_extractor_filter_1, cv_filter_type_1, type_extract_format_1, fromRoot, historyAction, store_1, name_id_1, Observable_1, type_extractor_sample_list_1, data_set_extract_1, gobii_extractor_instruction_1, dto_extractor_instruction_files_1, dto_request_item_extractor_submission_1, type_gobii_file_1, dto_request_service_1, gobii_file_item_compound_id_1, gobii_file_item_criterion_1, tree_structure_service_1, InstructionSubmissionService;
     return {
         setters: [
             function (core_1_1) {
@@ -72,13 +72,17 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
             },
             function (gobii_file_item_criterion_1_1) {
                 gobii_file_item_criterion_1 = gobii_file_item_criterion_1_1;
+            },
+            function (tree_structure_service_1_1) {
+                tree_structure_service_1 = tree_structure_service_1_1;
             }
         ],
         execute: function () {
             InstructionSubmissionService = (function () {
-                function InstructionSubmissionService(store, dtoRequestServiceExtractorFile) {
+                function InstructionSubmissionService(store, dtoRequestServiceExtractorFile, treeStructureService) {
                     this.store = store;
                     this.dtoRequestServiceExtractorFile = dtoRequestServiceExtractorFile;
+                    this.treeStructureService = treeStructureService;
                     this.datasetCriterion = new gobii_file_item_criterion_1.GobiiFileItemCriterion(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.DataSets, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN), false);
                     this.sampleItemCriterion = new gobii_file_item_criterion_1.GobiiFileItemCriterion(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_ITEM, type_entity_1.EntityType.UNKNOWN, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN), false);
                     this.samplefileCriterion = new gobii_file_item_criterion_1.GobiiFileItemCriterion(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.SAMPLE_FILE, type_entity_1.EntityType.UNKNOWN, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN), false);
@@ -93,59 +97,124 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                 InstructionSubmissionService.prototype.isItemPresent = function (gobiiFileItems, gobiiFileItemCriterion) {
                     return gobiiFileItems.filter(function (fi) { return gobiiFileItemCriterion.equals(fi); }).length > 0;
                 };
+                InstructionSubmissionService.prototype.unmarkMissingItems = function (gobiiExtractFilterType) {
+                    var _this = this;
+                    this.store.select(fromRoot.getSelectedFileItems)
+                        .subscribe(function (all) {
+                        if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
+                            if (!_this.isItemPresent(all, _this.datasetCriterion)) {
+                                _this.treeStructureService.unMarkTreeItemMissing(gobiiExtractFilterType, _this.datasetCriterion);
+                            }
+                        }
+                        else if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
+                            _this.treeStructureService.unMarkTreeItemMissing(gobiiExtractFilterType, _this.samplefileCriterion);
+                            _this.treeStructureService.unMarkTreeItemMissing(gobiiExtractFilterType, _this.sampleItemCriterion);
+                            _this.treeStructureService.unMarkTreeItemMissing(gobiiExtractFilterType, _this.projectsCriterion);
+                            _this.treeStructureService.unMarkTreeItemMissing(gobiiExtractFilterType, _this.piContactCriterion);
+                            _this.treeStructureService.unMarkTreeItemMissing(gobiiExtractFilterType, _this.datasetTypesCriterion);
+                        }
+                        else if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
+                            _this.treeStructureService.unMarkTreeItemMissing(gobiiExtractFilterType, _this.markerListItemCriterion);
+                            _this.treeStructureService.unMarkTreeItemMissing(gobiiExtractFilterType, _this.markerListFileCriterion);
+                            _this.treeStructureService.unMarkTreeItemMissing(gobiiExtractFilterType, _this.markergGroupCriterion);
+                            _this.treeStructureService.unMarkTreeItemMissing(gobiiExtractFilterType, _this.platformCriterion);
+                            _this.treeStructureService.unMarkTreeItemMissing(gobiiExtractFilterType, _this.datasetTypesCriterion);
+                        }
+                        else {
+                            _this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]));
+                        }
+                    });
+                };
+                InstructionSubmissionService.prototype.markMissingItems = function (gobiiExtractFilterType) {
+                    var _this = this;
+                    this.store.select(fromRoot.getSelectedFileItems)
+                        .subscribe(function (all) {
+                        if (!_this.areCriteriaMet(all, gobiiExtractFilterType)) {
+                            if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
+                                if (!_this.isItemPresent(all, _this.datasetCriterion)) {
+                                    _this.treeStructureService.markTreeItemMissing(gobiiExtractFilterType, _this.datasetCriterion);
+                                }
+                            }
+                            else if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
+                                if (!_this.isItemPresent(all, _this.samplefileCriterion)) {
+                                    _this.treeStructureService.markTreeItemMissing(gobiiExtractFilterType, _this.samplefileCriterion);
+                                }
+                                if (!_this.isItemPresent(all, _this.sampleItemCriterion)) {
+                                    _this.treeStructureService.markTreeItemMissing(gobiiExtractFilterType, _this.sampleItemCriterion);
+                                }
+                                if (!_this.isItemPresent(all, _this.projectsCriterion)) {
+                                    _this.treeStructureService.markTreeItemMissing(gobiiExtractFilterType, _this.projectsCriterion);
+                                }
+                                if (!_this.isItemPresent(all, _this.piContactCriterion)) {
+                                    _this.treeStructureService.markTreeItemMissing(gobiiExtractFilterType, _this.piContactCriterion);
+                                }
+                                if (!_this.isItemPresent(all, _this.datasetTypesCriterion)) {
+                                    _this.treeStructureService.markTreeItemMissing(gobiiExtractFilterType, _this.datasetTypesCriterion);
+                                }
+                            }
+                            else if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
+                                if (!_this.isItemPresent(all, _this.markerListItemCriterion)) {
+                                    _this.treeStructureService.markTreeItemMissing(gobiiExtractFilterType, _this.markerListItemCriterion);
+                                }
+                                if (!_this.isItemPresent(all, _this.markerListFileCriterion)) {
+                                    _this.treeStructureService.markTreeItemMissing(gobiiExtractFilterType, _this.markerListFileCriterion);
+                                }
+                                if (!_this.isItemPresent(all, _this.markergGroupCriterion)) {
+                                    _this.treeStructureService.markTreeItemMissing(gobiiExtractFilterType, _this.markergGroupCriterion);
+                                }
+                                if (!_this.isItemPresent(all, _this.platformCriterion)) {
+                                    _this.treeStructureService.markTreeItemMissing(gobiiExtractFilterType, _this.platformCriterion);
+                                }
+                                if (!_this.isItemPresent(all, _this.datasetTypesCriterion)) {
+                                    _this.treeStructureService.markTreeItemMissing(gobiiExtractFilterType, _this.datasetTypesCriterion);
+                                }
+                            }
+                            else {
+                                _this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]));
+                            }
+                        }
+                    });
+                }; // markMissingItems()
+                InstructionSubmissionService.prototype.areCriteriaMet = function (all, gobiiExtractFilterType) {
+                    var returnVal;
+                    if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
+                        returnVal = this.isItemPresent(all, this.datasetCriterion);
+                    }
+                    else if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
+                        var samplesArePresent = this.isItemPresent(all, this.samplefileCriterion)
+                            || this.isItemPresent(all, this.sampleItemCriterion);
+                        var projectIsPresent = this.isItemPresent(all, this.projectsCriterion);
+                        var pIIsPresent = this.isItemPresent(all, this.piContactCriterion);
+                        var datasetTypeIsPresent = this.isItemPresent(all, this.datasetTypesCriterion);
+                        returnVal =
+                            datasetTypeIsPresent &&
+                                (samplesArePresent
+                                    || projectIsPresent
+                                    || pIIsPresent);
+                    }
+                    else if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
+                        var markersArePresent = this.isItemPresent(all, this.markerListItemCriterion)
+                            || this.isItemPresent(all, this.markerListFileCriterion);
+                        var markerGroupIsPresent = this.isItemPresent(all, this.markergGroupCriterion);
+                        var platformIsPresent = this.isItemPresent(all, this.platformCriterion);
+                        var datasetTypeIsPresent = this.isItemPresent(all, this.datasetTypesCriterion);
+                        returnVal =
+                            datasetTypeIsPresent
+                                && (markersArePresent
+                                    || markerGroupIsPresent
+                                    || platformIsPresent);
+                    }
+                    else {
+                        this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]));
+                    }
+                    return returnVal;
+                };
                 InstructionSubmissionService.prototype.submitReady = function (gobiiExtractFilterType) {
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
                         _this.store.select(fromRoot.getSelectedFileItems)
                             .subscribe(function (all) {
-                            var submistReady = false;
-                            if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
-                                submistReady = _this.isItemPresent(all, _this.datasetCriterion);
-                            }
-                            else if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
-                                var samplesArePresent = _this.isItemPresent(all, _this.samplefileCriterion)
-                                    || _this.isItemPresent(all, _this.sampleItemCriterion);
-                                var projectIsPresent = _this.isItemPresent(all, _this.projectsCriterion);
-                                var pIIsPresent = _this.isItemPresent(all, _this.piContactCriterion);
-                                var datasetTypeIsPresent = _this.isItemPresent(all, _this.datasetTypesCriterion);
-                                submistReady =
-                                    datasetTypeIsPresent &&
-                                        (samplesArePresent
-                                            || projectIsPresent
-                                            || pIIsPresent);
-                                //                                if(!datasetTypeIsPresent) {
-                                // let gobiiFileItemCompoundId: GobiiFileItemCompoundId = new GobiiFileItemCompoundId(
-                                //     ExtractorItemType.ENTITY,
-                                //     EntityType.CvTerms,
-                                //     EntitySubType.UNKNOWN,
-                                //     CvFilterType.DATASET_TYPE
-                                // );
-                                //
-                                //commenting this out until the style piece is working properly
-                                // this.store.dispatch(new fromTreeNodeActions.SetTreeNodeStatus(
-                                //     {
-                                //         gobiiExtractFilterType: gobiiExtractFilterType,
-                                //         gobiiFileItemCompoundId: gobiiFileItemCompoundId,
-                                //         typeTreeNodeStatus: TypeTreeNodeStatus.INPUT_REQUIRED
-                                //     }
-                                // ))
-                            }
-                            else if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
-                                var markersArePresent = _this.isItemPresent(all, _this.markerListItemCriterion)
-                                    || _this.isItemPresent(all, _this.markerListFileCriterion);
-                                var markerGroupIsPresent = _this.isItemPresent(all, _this.markergGroupCriterion);
-                                var platformIsPresent = _this.isItemPresent(all, _this.platformCriterion);
-                                var datasetTypeIsPresent = _this.isItemPresent(all, _this.datasetTypesCriterion);
-                                submistReady =
-                                    datasetTypeIsPresent
-                                        && (markersArePresent
-                                            || markerGroupIsPresent
-                                            || platformIsPresent);
-                            }
-                            else {
-                                _this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]));
-                            }
-                            var temp = "foo";
+                            var submistReady = _this.areCriteriaMet(all, gobiiExtractFilterType);
                             observer.next(submistReady);
                         }); // inner subscribe
                     } //observer lambda
@@ -313,7 +382,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                 InstructionSubmissionService = __decorate([
                     core_1.Injectable(),
                     __metadata("design:paramtypes", [store_1.Store,
-                        dto_request_service_1.DtoRequestService])
+                        dto_request_service_1.DtoRequestService,
+                        tree_structure_service_1.TreeStructureService])
                 ], InstructionSubmissionService);
                 return InstructionSubmissionService;
             }());
