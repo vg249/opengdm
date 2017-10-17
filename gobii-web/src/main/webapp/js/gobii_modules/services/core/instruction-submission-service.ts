@@ -21,14 +21,97 @@ import {GobiiFileType} from "../../model/type-gobii-file";
 import {DtoRequestService} from "./dto-request.service";
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 import {TypeTreeNodeStatus} from "../../model/type-tree-node-status";
+import {GobiiFileItemCriterion} from "../../model/gobii-file-item-criterion";
 
 @Injectable()
 export class InstructionSubmissionService {
 
+
+    private datasetCriterion: GobiiFileItemCriterion = new GobiiFileItemCriterion(new GobiiFileItemCompoundId(
+        ExtractorItemType.ENTITY,
+        EntityType.DataSets,
+        EntitySubType.UNKNOWN,
+        CvFilterType.UNKNOWN
+    ), false);
+
+    private sampleItemCriterion: GobiiFileItemCriterion = new GobiiFileItemCriterion(new GobiiFileItemCompoundId(
+        ExtractorItemType.SAMPLE_LIST_ITEM,
+        EntityType.UNKNOWN,
+        EntitySubType.UNKNOWN,
+        CvFilterType.UNKNOWN
+    ), false);
+
+    private samplefileCriterion: GobiiFileItemCriterion = new GobiiFileItemCriterion(new GobiiFileItemCompoundId(
+        ExtractorItemType.SAMPLE_FILE,
+        EntityType.UNKNOWN,
+        EntitySubType.UNKNOWN,
+        CvFilterType.UNKNOWN
+    ), false);
+
+    private piContactCriterion: GobiiFileItemCriterion = new GobiiFileItemCriterion(new GobiiFileItemCompoundId(
+        ExtractorItemType.ENTITY,
+        EntityType.Contacts,
+        EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR,
+        CvFilterType.UNKNOWN
+    ), false);
+
+    private projectsCriterion: GobiiFileItemCriterion = new GobiiFileItemCriterion(new GobiiFileItemCompoundId(
+        ExtractorItemType.ENTITY,
+        EntityType.Projects,
+        EntitySubType.UNKNOWN,
+        CvFilterType.UNKNOWN
+    ), false);
+
+    private datasetTypesCriterion: GobiiFileItemCriterion = new GobiiFileItemCriterion(new GobiiFileItemCompoundId(
+        ExtractorItemType.ENTITY,
+        EntityType.CvTerms,
+        EntitySubType.UNKNOWN,
+        CvFilterType.DATASET_TYPE
+    ), false);
+
+
+    private markerListItemCriterion: GobiiFileItemCriterion = new GobiiFileItemCriterion(new GobiiFileItemCompoundId(
+        ExtractorItemType.MARKER_LIST_ITEM,
+        EntityType.UNKNOWN,
+        EntitySubType.UNKNOWN,
+        CvFilterType.UNKNOWN
+    ), false);
+
+
+    private markerListFileCriterion: GobiiFileItemCriterion = new GobiiFileItemCriterion(new GobiiFileItemCompoundId(
+        ExtractorItemType.MARKER_FILE,
+        EntityType.UNKNOWN,
+        EntitySubType.UNKNOWN,
+        CvFilterType.UNKNOWN
+    ), false);
+
+
+    private markergGroupCriterion: GobiiFileItemCriterion = new GobiiFileItemCriterion(new GobiiFileItemCompoundId(
+        ExtractorItemType.ENTITY,
+        EntityType.MarkerGroups,
+        EntitySubType.UNKNOWN,
+        CvFilterType.UNKNOWN
+    ), false);
+
+    private platformCriterion: GobiiFileItemCriterion = new GobiiFileItemCriterion(new GobiiFileItemCompoundId(
+        ExtractorItemType.ENTITY,
+        EntityType.Platforms,
+        EntitySubType.UNKNOWN,
+        CvFilterType.UNKNOWN
+    ), false);
+
+
     constructor(private store: Store<fromRoot.State>,
                 private dtoRequestServiceExtractorFile: DtoRequestService<ExtractorInstructionFilesDTO>,) {
+
+
     }
 
+    private isItemPresent(gobiiFileItems: GobiiFileItem[], gobiiFileItemCriterion: GobiiFileItemCriterion) {
+
+        return gobiiFileItems.filter(fi => gobiiFileItemCriterion.equals(fi)).length > 0;
+
+    }
 
     public submitReady(gobiiExtractFilterType: GobiiExtractFilterType): Observable<boolean> {
 
@@ -42,44 +125,15 @@ export class InstructionSubmissionService {
 
                             if (gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
-                                submistReady =
-                                    all
-                                        .filter(fi =>
-                                            fi.getGobiiExtractFilterType() === gobiiExtractFilterType
-                                            && fi.getExtractorItemType() === ExtractorItemType.ENTITY
-                                            && fi.getEntityType() === EntityType.DataSets
-                                        )
-                                        .length > 0;
-
+                                submistReady = this.isItemPresent(all, this.datasetCriterion);
 
                             } else if (gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
 
-                                let samplesArePresent: boolean = all.filter(fi =>
-                                    fi.getGobiiExtractFilterType() === gobiiExtractFilterType
-                                    && (( fi.getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_ITEM )
-                                    || fi.getExtractorItemType() === ExtractorItemType.SAMPLE_FILE )
-                                ).length > 0;
-
-                                let projectIsPresent: boolean = all.filter(fi =>
-                                    fi.getGobiiExtractFilterType() === gobiiExtractFilterType
-                                    && ( fi.getExtractorItemType() === ExtractorItemType.ENTITY )
-                                    && fi.getEntityType() === EntityType.Projects
-                                ).length > 0;
-
-                                let pIIsPresent: boolean = all.filter(fi =>
-                                    fi.getGobiiExtractFilterType() === gobiiExtractFilterType
-                                    && ( fi.getExtractorItemType() === ExtractorItemType.ENTITY )
-                                    && fi.getEntityType() === EntityType.Contacts
-                                    && fi.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR
-                                ).length > 0;
-
-                                let datasetTypeIsPresent: boolean = all.filter(fi =>
-                                    fi.getGobiiExtractFilterType() === gobiiExtractFilterType
-                                    && ( fi.getExtractorItemType() === ExtractorItemType.ENTITY )
-                                    && fi.getEntityType() === EntityType.CvTerms
-                                    && fi.getCvFilterType() === CvFilterType.DATASET_TYPE
-                                ).length > 0;
-
+                                let samplesArePresent: boolean = this.isItemPresent(all, this.samplefileCriterion)
+                                    || this.isItemPresent(all, this.sampleItemCriterion);
+                                let projectIsPresent: boolean = this.isItemPresent(all, this.projectsCriterion);
+                                let pIIsPresent: boolean = this.isItemPresent(all, this.piContactCriterion);
+                                let datasetTypeIsPresent: boolean = this.isItemPresent(all, this.datasetTypesCriterion);
 
                                 submistReady =
                                     datasetTypeIsPresent &&
@@ -90,13 +144,13 @@ export class InstructionSubmissionService {
 //                                if(!datasetTypeIsPresent) {
 
 
-                                let gobiiFileItemCompoundId: GobiiFileItemCompoundId = new GobiiFileItemCompoundId(
-                                    ExtractorItemType.ENTITY,
-                                    EntityType.CvTerms,
-                                    EntitySubType.UNKNOWN,
-                                    CvFilterType.DATASET_TYPE
-                                );
-
+                                // let gobiiFileItemCompoundId: GobiiFileItemCompoundId = new GobiiFileItemCompoundId(
+                                //     ExtractorItemType.ENTITY,
+                                //     EntityType.CvTerms,
+                                //     EntitySubType.UNKNOWN,
+                                //     CvFilterType.DATASET_TYPE
+                                // );
+                                //
                                 //commenting this out until the style piece is working properly
                                 // this.store.dispatch(new fromTreeNodeActions.SetTreeNodeStatus(
                                 //     {
@@ -107,34 +161,13 @@ export class InstructionSubmissionService {
                                 // ))
 
 
-
-
                             } else if (gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
 
-                                let markersArePresent: boolean = all.filter(fi =>
-                                    fi.getGobiiExtractFilterType() === gobiiExtractFilterType
-                                    && (( fi.getExtractorItemType() === ExtractorItemType.MARKER_LIST_ITEM )
-                                    || fi.getExtractorItemType() === ExtractorItemType.MARKER_FILE )
-                                ).length > 0;
-
-                                let markerGroupIsPresent: boolean = all.filter(fi =>
-                                    fi.getGobiiExtractFilterType() === gobiiExtractFilterType
-                                    && ( fi.getExtractorItemType() === ExtractorItemType.ENTITY )
-                                    && fi.getEntityType() === EntityType.MarkerGroups
-                                ).length > 0;
-
-                                let platformIsPresent: boolean = all.filter(fi =>
-                                    fi.getGobiiExtractFilterType() === gobiiExtractFilterType
-                                    && ( fi.getExtractorItemType() === ExtractorItemType.ENTITY )
-                                    && fi.getEntityType() === EntityType.Platforms
-                                ).length > 0;
-
-                                let datasetTypeIsPresent: boolean = all.filter(fi =>
-                                    fi.getGobiiExtractFilterType() === gobiiExtractFilterType
-                                    && ( fi.getExtractorItemType() === ExtractorItemType.ENTITY )
-                                    && fi.getEntityType() === EntityType.CvTerms
-                                    && fi.getCvFilterType() === CvFilterType.DATASET_TYPE
-                                ).length > 0;
+                                let markersArePresent: boolean = this.isItemPresent(all, this.markerListItemCriterion)
+                                    || this.isItemPresent(all, this.markerListFileCriterion);
+                                let markerGroupIsPresent: boolean = this.isItemPresent(all, this.markergGroupCriterion);
+                                let platformIsPresent: boolean = this.isItemPresent(all, this.platformCriterion);
+                                let datasetTypeIsPresent: boolean = this.isItemPresent(all, this.datasetTypesCriterion);
 
 
                                 submistReady =
