@@ -414,7 +414,9 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
                     }
                 };
                 TreeStructureService.prototype.markTreeItemMissing = function (gobiiExtractFilterType, gobiiFileItemCompoundId) {
-                    var icon = "fa-chevron-circle-right";
+                    //let icon: string = "fa-chevron-circle-right";
+                    var icon = "fa-share";
+                    //let icon: string = "fa-chevron-right";
                     this.store.dispatch(new treeNodeActions.SetTreeNodeLook({
                         gobiiExtractFilterType: gobiiExtractFilterType,
                         gobiiFileItemCompoundId: gobiiFileItemCompoundId,

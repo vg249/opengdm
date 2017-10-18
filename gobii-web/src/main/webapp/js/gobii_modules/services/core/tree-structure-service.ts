@@ -441,7 +441,9 @@ export class TreeStructureService {
     public markTreeItemMissing(gobiiExtractFilterType: GobiiExtractFilterType, gobiiFileItemCompoundId: GobiiFileItemCompoundId) {
 
 
-        let icon: string = "fa-chevron-circle-right";
+        //let icon: string = "fa-chevron-circle-right";
+        let icon: string = "fa-share";
+        //let icon: string = "fa-chevron-right";
 
         this.store.dispatch(new treeNodeActions.SetTreeNodeLook(
             {
