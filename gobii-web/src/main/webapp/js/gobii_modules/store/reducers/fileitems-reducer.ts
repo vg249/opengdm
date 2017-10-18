@@ -10,6 +10,7 @@ import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 import {GobiiExtractFormat} from "../../model/type-extract-format";
 import {CvFilterType} from "../../model/cv-filter-type";
 import {GobiiSampleListType} from "../../model/type-extractor-sample-list";
+import {isNgTemplate} from "@angular/compiler";
 
 
 /***
@@ -99,6 +100,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
             let existingItem: GobiiFileItem = newFileItemsItemsState.find(stateItem =>
                 stateItem.compoundIdeEquals(gobiiFileItemPayloadItem)
+                && stateItem.getItemId() === gobiiFileItemPayloadItem.getItemId()
             );
 
             if (existingItem) {
@@ -197,6 +199,55 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
             let stateAfterRemove: State = removeFromExtractItems(state, itemCurrentlyInExtract);
             returnVal = addToExtractItems(stateAfterRemove, itemToReplaceItWith);
+
+            break;
+        }
+
+        case gobiiFileItemAction.REPLACE_ITEM_OF_SAME_COMPOUND_ID: {
+
+            let newItemToAdd: GobiiFileItem = action.payload.gobiiFileitemToReplaceWith;
+
+            let items: GobiiFileItem[] = state.allFileItems
+                .filter(fi =>
+                    fi.compoundIdeEquals(newItemToAdd)
+                );
+
+
+            let fileItemToReplace: GobiiFileItem = state.allFileItems
+                .find(fi => fi.getGobiiExtractFilterType() === newItemToAdd.getGobiiExtractFilterType()
+                    && fi.compoundIdeEquals(newItemToAdd));
+
+            let stateWithNewFileItem: State = {
+                gobiiExtractFilterType: state.gobiiExtractFilterType,
+                allFileItems: state.allFileItems,
+                uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
+                filters: state.filters
+            };
+
+
+            // remove existing item if applicable
+            stateWithNewFileItem.allFileItems;
+            if (fileItemToReplace) {
+                stateWithNewFileItem.allFileItems =
+                    stateWithNewFileItem.allFileItems.filter(fi =>
+                        fi.getFileItemUniqueId() !== fileItemToReplace.getFileItemUniqueId());
+            }
+
+            // add new item
+            stateWithNewFileItem.allFileItems.push(newItemToAdd);
+
+            // now add new item to selection if applicable
+            let stateWithItemSelection: State;
+            if (action.payload.selectForExtract) {
+                if (fileItemToReplace) {
+                    let oldItemUnselectedState: State = removeFromExtractItems(stateWithNewFileItem, fileItemToReplace);
+                    stateWithItemSelection = addToExtractItems(oldItemUnselectedState, newItemToAdd);
+                } else {
+                    stateWithItemSelection = addToExtractItems(stateWithNewFileItem, newItemToAdd);
+                }
+            }
+
+            returnVal = stateWithItemSelection;
 
             break;
         }

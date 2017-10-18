@@ -77,6 +77,16 @@ export class FileItemEffects {
         );
 
     @Effect()
+    replaceSameByCompoundId$ = this.actions$
+        .ofType(fileItemActions.REPLACE_ITEM_OF_SAME_COMPOUND_ID)
+        .map((action: fileItemActions.ReplaceItemOfSameCompoundIdAction) => {
+                let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(action.payload.gobiiFileitemToReplaceWith);
+                return new treeNodeActions.PlaceTreeNodeAction(treeNode);
+            }
+        );
+
+
+    @Effect()
     replaceInExtract$ = this.actions$
         .ofType(fileItemActions.REPLACE_IN_EXTRACT_BY_ITEM_ID)
         .switchMap((action: fileItemActions.ReplaceInExtractByItemIdAction) => {

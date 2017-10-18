@@ -61,16 +61,6 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
     }
 
 
-    public compoundIdeEquals(gobiiFileItemToCompare: GobiiFileItem) {
-        return (
-            this.getExtractorItemType() === gobiiFileItemToCompare.getExtractorItemType() &&
-            this.getEntityType() === gobiiFileItemToCompare.getEntityType() &&
-            this.getEntitySubType() === gobiiFileItemToCompare.getEntitySubType() &&
-            this.getCvFilterType() === gobiiFileItemToCompare.getCvFilterType() &&
-            this.getItemId() === gobiiFileItemToCompare.getItemId()
-        );
-    }
-
     setFileItemUniqueId(fileItemUniqueId: string): GobiiFileItem {
         this._fileItemUniqueId = fileItemUniqueId;
         return this;

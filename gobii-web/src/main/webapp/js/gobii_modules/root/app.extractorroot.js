@@ -207,7 +207,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 }; // handleServerSelected()
                 ExtractorRoot.prototype.refreshJobId = function () {
                     var jobId = file_name_1.FileName.makeUniqueFileId();
-                    this.fileItemService.loadFileItem(gobii_file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                    this.fileItemService.replaceFileItemByCompoundId(gobii_file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.JOB_ID)
                         .setItemId(jobId)
                         .setItemName(jobId), true);

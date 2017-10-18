@@ -156,9 +156,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                  * @param {GobiiFileItem} gobiiFileItem
                  * @param {boolean} selectForExtract
                  */
-                FileItemService.prototype.replaceFileItem = function (gobiiFileItem, selectForExtract) {
-                    var loadAction = new fileItemActions.LoadFileItemtAction({
-                        gobiiFileItem: gobiiFileItem,
+                FileItemService.prototype.replaceFileItemByCompoundId = function (gobiiFileItem, selectForExtract) {
+                    var loadAction = new fileItemActions.ReplaceItemOfSameCompoundIdAction({
+                        gobiiFileitemToReplaceWith: gobiiFileItem,
                         selectForExtract: selectForExtract
                     });
                     this.store.dispatch(loadAction);

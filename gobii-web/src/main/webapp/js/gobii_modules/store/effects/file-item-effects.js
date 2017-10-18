@@ -168,6 +168,12 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                         var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(action.payload);
                         return new treeNodeActions.PlaceTreeNodeAction(treeNode);
                     });
+                    this.replaceSameByCompoundId$ = this.actions$
+                        .ofType(fileItemActions.REPLACE_ITEM_OF_SAME_COMPOUND_ID)
+                        .map(function (action) {
+                        var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(action.payload.gobiiFileitemToReplaceWith);
+                        return new treeNodeActions.PlaceTreeNodeAction(treeNode);
+                    });
                     this.replaceInExtract$ = this.actions$
                         .ofType(fileItemActions.REPLACE_IN_EXTRACT_BY_ITEM_ID)
                         .switchMap(function (action) {
@@ -279,6 +285,10 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                     effects_1.Effect(),
                     __metadata("design:type", Object)
                 ], FileItemEffects.prototype, "selectForExtract$", void 0);
+                __decorate([
+                    effects_1.Effect(),
+                    __metadata("design:type", Object)
+                ], FileItemEffects.prototype, "replaceSameByCompoundId$", void 0);
                 __decorate([
                     effects_1.Effect(),
                     __metadata("design:type", Object)

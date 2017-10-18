@@ -172,12 +172,13 @@ export class FileItemService {
      * @param {GobiiFileItem} gobiiFileItem
      * @param {boolean} selectForExtract
      */
-    public replaceFileItem(gobiiFileItem: GobiiFileItem, selectForExtract: boolean) {
+    public replaceFileItemByCompoundId(gobiiFileItem: GobiiFileItem,
+                                       selectForExtract: boolean) {
 
 
-        let loadAction: fileItemActions.LoadFileItemtAction = new fileItemActions.LoadFileItemtAction(
+        let loadAction: fileItemActions.ReplaceItemOfSameCompoundIdAction = new fileItemActions.ReplaceItemOfSameCompoundIdAction(
             {
-                gobiiFileItem: gobiiFileItem,
+                gobiiFileitemToReplaceWith: gobiiFileItem,
                 selectForExtract: selectForExtract
             }
         );

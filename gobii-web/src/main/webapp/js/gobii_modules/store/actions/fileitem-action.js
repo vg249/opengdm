@@ -1,13 +1,14 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var ADD_TO_EXTRACT, ADD_TO_EXTRACT_BY_ITEM_ID, REPLACE_IN_EXTRACT_BY_ITEM_ID, REMOVE_FROM_EXTRACT_BY_ITEM_ID, REMOVE_FROM_EXTRACT, SET_FILTER_VALUE, SET_EXTRACT_TYPE, LOAD_FILE_ITEM_LIST, LOAD_FILE_ITEM, REMOVE_ALL_FROM_EXTRACT, LoadFileItemListAction, LoadFileItemtAction, RemoveFromExtractAction, AddToExtractAction, AddToExtractByItemIdAction, ReplaceInExtractByItemIdAction, SetFilterValueAction, SetExtractType, RemoveFromExractByItemIdAction, RemoveAllFromExtractAction;
+    var ADD_TO_EXTRACT, ADD_TO_EXTRACT_BY_ITEM_ID, REPLACE_IN_EXTRACT_BY_ITEM_ID, REPLACE_ITEM_OF_SAME_COMPOUND_ID, REMOVE_FROM_EXTRACT_BY_ITEM_ID, REMOVE_FROM_EXTRACT, SET_FILTER_VALUE, SET_EXTRACT_TYPE, LOAD_FILE_ITEM_LIST, LOAD_FILE_ITEM, REMOVE_ALL_FROM_EXTRACT, LoadFileItemListAction, LoadFileItemtAction, RemoveFromExtractAction, AddToExtractAction, AddToExtractByItemIdAction, ReplaceInExtractByItemIdAction, ReplaceItemOfSameCompoundIdAction, SetFilterValueAction, SetExtractType, RemoveFromExractByItemIdAction, RemoveAllFromExtractAction;
     return {
         setters: [],
         execute: function () {
             exports_1("ADD_TO_EXTRACT", ADD_TO_EXTRACT = '[GobiiFileItem] Add to Extract');
             exports_1("ADD_TO_EXTRACT_BY_ITEM_ID", ADD_TO_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Add to Extract by ID');
             exports_1("REPLACE_IN_EXTRACT_BY_ITEM_ID", REPLACE_IN_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Replace In Extract by ID');
+            exports_1("REPLACE_ITEM_OF_SAME_COMPOUND_ID", REPLACE_ITEM_OF_SAME_COMPOUND_ID = '[GobiiFileItem] Replace In Extract by compound ID');
             exports_1("REMOVE_FROM_EXTRACT_BY_ITEM_ID", REMOVE_FROM_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Remove from Extract by ID');
             exports_1("REMOVE_FROM_EXTRACT", REMOVE_FROM_EXTRACT = '[GobiiFileItem] Remove from Extract');
             exports_1("SET_FILTER_VALUE", SET_FILTER_VALUE = '[GobiiFileItem] Set Filter Value');
@@ -70,6 +71,14 @@ System.register([], function (exports_1, context_1) {
                 return ReplaceInExtractByItemIdAction;
             }());
             exports_1("ReplaceInExtractByItemIdAction", ReplaceInExtractByItemIdAction);
+            ReplaceItemOfSameCompoundIdAction = (function () {
+                function ReplaceItemOfSameCompoundIdAction(payload) {
+                    this.payload = payload;
+                    this.type = REPLACE_ITEM_OF_SAME_COMPOUND_ID;
+                }
+                return ReplaceItemOfSameCompoundIdAction;
+            }());
+            exports_1("ReplaceItemOfSameCompoundIdAction", ReplaceItemOfSameCompoundIdAction);
             SetFilterValueAction = (function () {
                 function SetFilterValueAction(payload) {
                     this.payload = payload;
