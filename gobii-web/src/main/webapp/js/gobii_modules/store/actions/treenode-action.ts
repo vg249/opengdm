@@ -6,7 +6,7 @@ import {TypeTreeNodeStatus} from "../../model/type-tree-node-status";
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 
 export const INIT = '[GobiiTreeNode] Init';
-export const LOAD_TREE_NODE = '[GobiiTreeNode] Load Tree Nodes';
+export const INIT_TREE = '[GobiiTreeNode] Load Tree Nodes';
 export const PLACE_TREE_NODE = '[GobiiTreeNode] Add Tree Node';
 export const ACTIVATE = '[GobiiTreeNode] Activate';
 export const DEACTIVATE = '[GobiiTreeNode] Deactivate';
@@ -28,8 +28,8 @@ export class InitAction implements Action {
  *
  * See Discriminated Unions: https://www.typescriptlang.org/docs/handbook/advanced-types.html#discriminated-unions
  */
-export class LoadTreeNodeAction implements Action {
-    readonly type = LOAD_TREE_NODE;
+export class InitTree implements Action {
+    readonly type = INIT_TREE;
 
     constructor(public payload: GobiiTreeNode[]) {
     }
@@ -89,7 +89,7 @@ export class SetTreeNodeLook implements Action {
  * so that reducers can easily compose action types
  */
 export type All
-    = LoadTreeNodeAction
+    = InitTree
     | PlaceTreeNodeAction
     | ActivateForExtractAction
     | DeActivateFromExtractAction

@@ -18,7 +18,7 @@ export class TreeEffects {
         .ofType(treeNodeActions.INIT)
         .map((action: treeNodeActions.InitAction) => {
                 let initialTreeNodes: GobiiTreeNode[] = this.treeStructureService.getInitialTree();
-                return new treeNodeActions.LoadTreeNodeAction(initialTreeNodes);
+                return new treeNodeActions.InitTree(initialTreeNodes);
             }
         );
 

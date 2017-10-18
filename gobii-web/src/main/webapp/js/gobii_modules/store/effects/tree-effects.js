@@ -50,7 +50,7 @@ System.register(["rxjs/add/operator/catch", "rxjs/add/operator/do", "rxjs/add/op
                         .ofType(treeNodeActions.INIT)
                         .map(function (action) {
                         var initialTreeNodes = _this.treeStructureService.getInitialTree();
-                        return new treeNodeActions.LoadTreeNodeAction(initialTreeNodes);
+                        return new treeNodeActions.InitTree(initialTreeNodes);
                     });
                     this.placeNodeInTree$ = this.actions$
                         .ofType(treeNodeActions.PLACE_TREE_NODE)

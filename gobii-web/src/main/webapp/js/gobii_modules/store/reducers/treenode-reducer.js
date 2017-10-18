@@ -57,25 +57,15 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
         if (state === void 0) { state = initialState; }
         var returnVal = state;
         switch (action.type) {
-            case gobiiTreeNodeAction.LOAD_TREE_NODE: {
+            case gobiiTreeNodeAction.INIT_TREE: {
                 var gobiigobiiTreeItemsPayload = action.payload;
-                var newGobiigobiiTreeItems = gobiigobiiTreeItemsPayload.filter(function (newItem) {
-                    return state
-                        .gobiiTreeNodes
-                        .filter(function (stateItem) {
-                        return stateItem.getItemType() != newItem.getItemType() &&
-                            stateItem.getEntityType() != newItem.getEntityType() &&
-                            stateItem.getEntitySubType() != newItem.getEntitySubType() &&
-                            stateItem.getCvFilterType() != newItem.getCvFilterType();
-                    });
-                });
                 returnVal = {
                     gobiiExtractFilterType: state.gobiiExtractFilterType,
                     gobiiTreeNodesActive: state.gobiiTreeNodesActive,
                     gobiiTreeNodes: gobiigobiiTreeItemsPayload
                 };
                 break;
-            } // LOAD_TREE_NODE
+            } // INIT_TREE
             case gobiiTreeNodeAction.PLACE_TREE_NODE: {
                 var gobiiTreeNodePayload = action.payload;
                 // copy the existing
@@ -88,7 +78,7 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
                     };
                 }
                 break;
-            } // LOAD_TREE_NODE
+            } // INIT_TREE
             case gobiiTreeNodeAction.ACTIVATE: {
                 var fileItemUniqueId = action.payload;
                 returnVal = {

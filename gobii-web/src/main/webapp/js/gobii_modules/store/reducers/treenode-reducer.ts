@@ -94,19 +94,8 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
 
     switch (action.type) {
 
-        case gobiiTreeNodeAction.LOAD_TREE_NODE: {
+        case gobiiTreeNodeAction.INIT_TREE: {
             const gobiigobiiTreeItemsPayload = action.payload;
-
-            const newGobiigobiiTreeItems = gobiigobiiTreeItemsPayload.filter(newItem =>
-                state
-                    .gobiiTreeNodes
-                    .filter(stateItem =>
-                        stateItem.getItemType() != newItem.getItemType() &&
-                        stateItem.getEntityType() != newItem.getEntityType() &&
-                        stateItem.getEntitySubType() != newItem.getEntitySubType() &&
-                        stateItem.getCvFilterType() != newItem.getCvFilterType()
-                    )
-            );
 
             returnVal = {
                 gobiiExtractFilterType: state.gobiiExtractFilterType,
@@ -115,7 +104,7 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
             };
 
             break;
-        } // LOAD_TREE_NODE
+        } // INIT_TREE
 
 
         case gobiiTreeNodeAction.PLACE_TREE_NODE: {
@@ -134,7 +123,7 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
             }
 
             break;
-        } // LOAD_TREE_NODE
+        } // INIT_TREE
 
 
         case gobiiTreeNodeAction.ACTIVATE: {
