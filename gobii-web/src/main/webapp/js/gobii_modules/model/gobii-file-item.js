@@ -64,7 +64,7 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
                     var returnVal = new GobiiFileItem(gobiiExtractFilterType, processType, type_extractor_item_1.ExtractorItemType.UNKNOWN, type_entity_1.EntityType.UNKNOWN, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null, null, null, null, null, type_entity_1.EntityType.UNKNOWN);
                     return returnVal;
                 };
-                GobiiFileItem.prototype.equals = function (gobiiFileItemToCompare) {
+                GobiiFileItem.prototype.compoundIdeEquals = function (gobiiFileItemToCompare) {
                     return (this.getExtractorItemType() === gobiiFileItemToCompare.getExtractorItemType() &&
                         this.getEntityType() === gobiiFileItemToCompare.getEntityType() &&
                         this.getEntitySubType() === gobiiFileItemToCompare.getEntitySubType() &&

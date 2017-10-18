@@ -14,14 +14,6 @@ export class GobiiFileItemCriterion extends GobiiFileItemCompoundId {
             gobiiFileItemCompoundId.getCvFilterType());
     }
 
-    public equals(gobiiFileItemCompoundId:GobiiFileItemCompoundId): boolean {
-
-        return gobiiFileItemCompoundId.getExtractorItemType() === this.getExtractorItemType()
-        && gobiiFileItemCompoundId.getEntityType() === this.getEntityType()
-        && gobiiFileItemCompoundId.getEntitySubType() === this.getEntitySubType()
-        && gobiiFileItemCompoundId.getCvFilterType() === this.getCvFilterType()
-    }
-
     public isPresent(): boolean {
         return this._isPresent;
     }

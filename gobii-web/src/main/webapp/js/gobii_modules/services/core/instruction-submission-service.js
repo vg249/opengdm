@@ -95,7 +95,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                     this.platformCriterion = new gobii_file_item_criterion_1.GobiiFileItemCriterion(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.Platforms, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN), false);
                 }
                 InstructionSubmissionService.prototype.isItemPresent = function (gobiiFileItems, gobiiFileItemCriterion) {
-                    return gobiiFileItems.filter(function (fi) { return gobiiFileItemCriterion.equals(fi); }).length > 0;
+                    return gobiiFileItems.filter(function (fi) { return gobiiFileItemCriterion.compoundIdeEquals(fi); }).length > 0;
                 };
                 InstructionSubmissionService.prototype.unmarkMissingItems = function (gobiiExtractFilterType) {
                     var _this = this;

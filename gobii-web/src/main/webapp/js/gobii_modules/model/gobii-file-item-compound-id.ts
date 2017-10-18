@@ -28,7 +28,7 @@ export class GobiiFileItemCompoundId {
 
     }
 
-    public equals(gobiiFileItemCompoundId:GobiiFileItemCompoundId): boolean {
+    public compoundIdeEquals(gobiiFileItemCompoundId:GobiiFileItemCompoundId): boolean {
         return this.getExtractorItemType() === gobiiFileItemCompoundId.getExtractorItemType()
         && this.getEntityType() === gobiiFileItemCompoundId.getEntityType()
         && this.getEntitySubType() === gobiiFileItemCompoundId.getEntitySubType()

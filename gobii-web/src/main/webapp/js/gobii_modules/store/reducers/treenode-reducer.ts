@@ -81,7 +81,7 @@ function findTreeNodeByCompoundId(treeNodes: GobiiTreeNode[],
 
         let currentTreeNode: GobiiTreeNode = treeNodes[idx];
         if (currentTreeNode.getGobiiExtractFilterType() === gobiiExtractFilterType
-            && gobiiFileItemCompoundId.equals(currentTreeNode)) {
+            && gobiiFileItemCompoundId.compoundIdeEquals(currentTreeNode)) {
             returnVal = currentTreeNode;
         } else {
             returnVal = findTreeNodeByCompoundId(currentTreeNode.getChildren(), gobiiExtractFilterType, gobiiFileItemCompoundId);

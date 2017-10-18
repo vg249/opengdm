@@ -98,7 +98,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
 
             let existingItem: GobiiFileItem = newFileItemsItemsState.find(stateItem =>
-                stateItem.equals(gobiiFileItemPayloadItem)
+                stateItem.compoundIdeEquals(gobiiFileItemPayloadItem)
             );
 
             if (existingItem) {

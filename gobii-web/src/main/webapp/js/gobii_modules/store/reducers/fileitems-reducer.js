@@ -45,7 +45,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 var newFileItemsItemsState = state.allFileItems.slice();
                 var newSelectedFileItemUniqueIdsState = state.uniqueIdsOfExtractFileItems.slice();
                 var existingItem_1 = newFileItemsItemsState.find(function (stateItem) {
-                    return stateItem.equals(gobiiFileItemPayloadItem_1);
+                    return stateItem.compoundIdeEquals(gobiiFileItemPayloadItem_1);
                 });
                 if (existingItem_1) {
                     var existingSelectedUniqueId = newSelectedFileItemUniqueIdsState

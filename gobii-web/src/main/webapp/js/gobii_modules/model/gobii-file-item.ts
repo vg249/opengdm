@@ -61,7 +61,7 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
     }
 
 
-    public equals(gobiiFileItemToCompare: GobiiFileItem) {
+    public compoundIdeEquals(gobiiFileItemToCompare: GobiiFileItem) {
         return (
             this.getExtractorItemType() === gobiiFileItemToCompare.getExtractorItemType() &&
             this.getEntityType() === gobiiFileItemToCompare.getEntityType() &&

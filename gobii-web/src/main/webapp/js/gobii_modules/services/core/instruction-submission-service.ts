@@ -111,7 +111,7 @@ export class InstructionSubmissionService {
 
     private isItemPresent(gobiiFileItems: GobiiFileItem[], gobiiFileItemCriterion: GobiiFileItemCriterion) {
 
-        return gobiiFileItems.filter(fi => gobiiFileItemCriterion.equals(fi)).length > 0;
+        return gobiiFileItems.filter(fi => gobiiFileItemCriterion.compoundIdeEquals(fi)).length > 0;
 
     }
 

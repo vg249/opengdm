@@ -47,7 +47,7 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
         for (var idx = 0; (idx < treeNodes.length) && !returnVal; idx++) {
             var currentTreeNode = treeNodes[idx];
             if (currentTreeNode.getGobiiExtractFilterType() === gobiiExtractFilterType
-                && gobiiFileItemCompoundId.equals(currentTreeNode)) {
+                && gobiiFileItemCompoundId.compoundIdeEquals(currentTreeNode)) {
                 returnVal = currentTreeNode;
             }
             else {

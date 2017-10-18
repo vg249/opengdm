@@ -27,12 +27,6 @@ System.register(["./gobii-file-item-compound-id"], function (exports_1, context_
                     _this._isPresent = _isPresent;
                     return _this;
                 }
-                GobiiFileItemCriterion.prototype.equals = function (gobiiFileItemCompoundId) {
-                    return gobiiFileItemCompoundId.getExtractorItemType() === this.getExtractorItemType()
-                        && gobiiFileItemCompoundId.getEntityType() === this.getEntityType()
-                        && gobiiFileItemCompoundId.getEntitySubType() === this.getEntitySubType()
-                        && gobiiFileItemCompoundId.getCvFilterType() === this.getCvFilterType();
-                };
                 GobiiFileItemCriterion.prototype.isPresent = function () {
                     return this._isPresent;
                 };
