@@ -16,7 +16,7 @@
 
     <property name="log-dir" value="../logs"/>
     <property name="loggerLevel" value="DEBUG"/>
-    <property scope="context" resource="application.properties"/>
+    <property scope="context" resource="logger.properties"/>
     <timestamp key="timestamp" datePattern="yyyyMMdd'T'HHmmss"/>
 
     <!--                      Default Console Appender                            -->
@@ -45,47 +45,8 @@
                 <appender-ref ref="FILE"/>
                 <appender-ref ref="STDOUT"/>
             </logger>
-
-            <logger name="org.gobiiproject.gobiiapimodel" level="${loggerLevel}" additivity="false">
-                <appender-ref ref="FILE"/>
-                <appender-ref ref="STDOUT"/>
-            </logger>
-
-            <logger name="org.gobiiproject.gobiibrapi" level="${loggerLevel}" additivity="false">
-                <appender-ref ref="FILE"/>
-                <appender-ref ref="STDOUT"/>
-            </logger>
-
-            <logger name="org.gobiiproject.gobiidao" level="${loggerLevel}" additivity="false">
-                <appender-ref ref="FILE"/>
-                <appender-ref ref="STDOUT"/>
-            </logger>
-
-            <logger name="org.gobiiproject.gobidomain" level="${loggerLevel}" additivity="false">
-                <appender-ref ref="FILE"/>
-                <appender-ref ref="STDOUT"/>
-            </logger>
-
-            <logger name="org.gobiiproject.gobiidtomapping" level="${loggerLevel}" additivity="false">
-                <appender-ref ref="FILE"/>
-                <appender-ref ref="STDOUT"/>
-            </logger>
-
-        </then>
-    </if>
-
-    <if condition='property("module").equals("process")'>
-        <then>
-            <appender name="GOBII_PROCESS_FILE" class="ch.qos.logback.core.FileAppender">
-                <file>process-${timestamp}.log</file>
-
-                <encoder>
-                    <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} %class{36}.%M %L - %msg%n</pattern>
-                </encoder>
-            </appender>
-
             <logger name="org.gobiiproject.gobiiprocess" level="${loggerLevel}" additivity="false">
-                <appender-ref ref="GOBII_PROCESS_FILE"/>
+                <appender-ref ref="FILE"/>
                 <appender-ref ref="STDOUT"/>
             </logger>
         </then>
@@ -95,38 +56,13 @@
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <logger name="org.gobiiproject.gobiiapimodel" level="${loggerLevel}" additivity="false">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-
-    <logger name="org.gobiiproject.gobiibrapi" level="${loggerLevel}" additivity="false">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-
-    <logger name="org.gobiiproject.gobiidao" level="${loggerLevel}" additivity="false">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-
-    <logger name="org.gobiiproject.gobidomain" level="${loggerLevel}" additivity="false">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-
-    <logger name="org.gobiiproject.gobiidtomapping" level="${loggerLevel}" additivity="false">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-
     <logger name="org.gobiiproject.gobiiprocess" level="${loggerLevel}" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <logger name="org.gobiiproject.gobiiclient" level="${loggerLevel}" additivity="false">
+    <logger name="org.gobiiproject" level="${loggerLevel}" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-
-    <logger name="org.gobiiproject.gobiiweb" level="${loggerLevel}" additivity="false">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-
     <!-- In investigating GSD-269, it is believed gobii-model is overwriting gobii-processes logback.xml.
     Temporarily reducing log level to ERROR as a stopgap measure. -->
     <root level="ERROR">
@@ -134,11 +70,6 @@
         <if condition='property("module").equals("model")'>
             <then>
                 <appender-ref ref="FILE"/>
-            </then>
-        </if>
-        <if condition='property("module").equals("process")'>
-            <then>
-                <appender-ref ref="GOBII_PROCESS_FILE"/>
             </then>
         </if>
     </root>
