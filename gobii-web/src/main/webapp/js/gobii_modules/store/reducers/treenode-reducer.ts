@@ -27,11 +27,8 @@ function placeNodeInTree(nodeToPlace: GobiiTreeNode, treeNodes: GobiiTreeNode[],
 
         let currentTreenode: GobiiTreeNode = treeNodes[idx];
         if (currentTreenode.getGobiiExtractFilterType() === gobiiExtractFilterType &&
-            currentTreenode.getItemType() === nodeToPlace.getItemType() &&
-            currentTreenode.getEntityType() === nodeToPlace.getEntityType() &&
-            currentTreenode.getEntitySubType() === nodeToPlace.getEntitySubType() &&
-            currentTreenode.getCvFilterType() === nodeToPlace.getCvFilterType() &&
-            currentTreenode.getContainerType() !== ContainerType.STRUCTURE
+            currentTreenode.compoundIdeEquals(nodeToPlace)
+            && currentTreenode.getContainerType() !== ContainerType.STRUCTURE
         ) {
             if (currentTreenode.getContainerType() === ContainerType.NONE) {
                 treeNodes[idx] = nodeToPlace;

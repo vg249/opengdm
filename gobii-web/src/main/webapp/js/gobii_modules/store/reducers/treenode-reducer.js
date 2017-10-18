@@ -6,11 +6,8 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
         for (var idx = 0; !returnVal && (idx < treeNodes.length); idx++) {
             var currentTreenode = treeNodes[idx];
             if (currentTreenode.getGobiiExtractFilterType() === gobiiExtractFilterType &&
-                currentTreenode.getItemType() === nodeToPlace.getItemType() &&
-                currentTreenode.getEntityType() === nodeToPlace.getEntityType() &&
-                currentTreenode.getEntitySubType() === nodeToPlace.getEntitySubType() &&
-                currentTreenode.getCvFilterType() === nodeToPlace.getCvFilterType() &&
-                currentTreenode.getContainerType() !== GobiiTreeNode_1.ContainerType.STRUCTURE) {
+                currentTreenode.compoundIdeEquals(nodeToPlace)
+                && currentTreenode.getContainerType() !== GobiiTreeNode_1.ContainerType.STRUCTURE) {
                 if (currentTreenode.getContainerType() === GobiiTreeNode_1.ContainerType.NONE) {
                     treeNodes[idx] = nodeToPlace;
                 }
