@@ -28,6 +28,13 @@ export class GobiiFileItemCompoundId {
 
     }
 
+    public equals(gobiiFileItemCompoundId:GobiiFileItemCompoundId): boolean {
+        return this.getExtractorItemType() === gobiiFileItemCompoundId.getExtractorItemType()
+        && this.getEntityType() === gobiiFileItemCompoundId.getEntityType()
+        && this.getEntitySubType() === gobiiFileItemCompoundId.getEntitySubType()
+        && this.getCvFilterType() === gobiiFileItemCompoundId.getCvFilterType()
+    }
+
 
     getExtractorItemType(): ExtractorItemType {
         return this._extractorItemType;

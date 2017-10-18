@@ -47,10 +47,7 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
         for (var idx = 0; (idx < treeNodes.length) && !returnVal; idx++) {
             var currentTreeNode = treeNodes[idx];
             if (currentTreeNode.getGobiiExtractFilterType() === gobiiExtractFilterType
-                && currentTreeNode.getItemType() === gobiiFileItemCompoundId.getExtractorItemType()
-                && currentTreeNode.getEntityType() === gobiiFileItemCompoundId.getEntityType()
-                && currentTreeNode.getEntitySubType() === gobiiFileItemCompoundId.getEntitySubType()
-                && currentTreeNode.getCvFilterType() === gobiiFileItemCompoundId.getCvFilterType()) {
+                && gobiiFileItemCompoundId.equals(currentTreeNode)) {
                 returnVal = currentTreeNode;
             }
             else {

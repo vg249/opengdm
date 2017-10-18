@@ -166,6 +166,27 @@ export class FileItemService {
 
     }
 
+    /***
+     * This is a hard-repalce: the item is not just removed from the extract, but nuked entirely from
+     * the store
+     * @param {GobiiFileItem} gobiiFileItem
+     * @param {boolean} selectForExtract
+     */
+    public replaceFileItem(gobiiFileItem: GobiiFileItem, selectForExtract: boolean) {
+
+
+        let loadAction: fileItemActions.LoadFileItemtAction = new fileItemActions.LoadFileItemtAction(
+            {
+                gobiiFileItem: gobiiFileItem,
+                selectForExtract: selectForExtract
+            }
+        );
+
+
+        this.store.dispatch(loadAction);
+
+    }
+
     public unloadFileItemFromExtract(gobiiFileItem: GobiiFileItem) {
 
 

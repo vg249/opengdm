@@ -150,6 +150,19 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     });
                     this.store.dispatch(loadAction);
                 };
+                /***
+                 * This is a hard-repalce: the item is not just removed from the extract, but nuked entirely from
+                 * the store
+                 * @param {GobiiFileItem} gobiiFileItem
+                 * @param {boolean} selectForExtract
+                 */
+                FileItemService.prototype.replaceFileItem = function (gobiiFileItem, selectForExtract) {
+                    var loadAction = new fileItemActions.LoadFileItemtAction({
+                        gobiiFileItem: gobiiFileItem,
+                        selectForExtract: selectForExtract
+                    });
+                    this.store.dispatch(loadAction);
+                };
                 FileItemService.prototype.unloadFileItemFromExtract = function (gobiiFileItem) {
                     var loadAction = new fileItemActions.RemoveFromExtractAction(gobiiFileItem);
                     this.store.dispatch(loadAction);

@@ -81,10 +81,7 @@ function findTreeNodeByCompoundId(treeNodes: GobiiTreeNode[],
 
         let currentTreeNode: GobiiTreeNode = treeNodes[idx];
         if (currentTreeNode.getGobiiExtractFilterType() === gobiiExtractFilterType
-            && currentTreeNode.getItemType() === gobiiFileItemCompoundId.getExtractorItemType()
-            && currentTreeNode.getEntityType() === gobiiFileItemCompoundId.getEntityType()
-            && currentTreeNode.getEntitySubType() === gobiiFileItemCompoundId.getEntitySubType()
-            && currentTreeNode.getCvFilterType() === gobiiFileItemCompoundId.getCvFilterType()) {
+            && gobiiFileItemCompoundId.equals(currentTreeNode)) {
             returnVal = currentTreeNode;
         } else {
             returnVal = findTreeNodeByCompoundId(currentTreeNode.getChildren(), gobiiExtractFilterType, gobiiFileItemCompoundId);

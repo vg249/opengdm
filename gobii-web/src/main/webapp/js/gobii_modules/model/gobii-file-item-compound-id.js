@@ -38,6 +38,12 @@ System.register(["./type-entity", "./cv-filter-type", "./type-extractor-item"], 
                         this._entitySubType = type_entity_1.EntitySubType.UNKNOWN;
                     }
                 }
+                GobiiFileItemCompoundId.prototype.equals = function (gobiiFileItemCompoundId) {
+                    return this.getExtractorItemType() === gobiiFileItemCompoundId.getExtractorItemType()
+                        && this.getEntityType() === gobiiFileItemCompoundId.getEntityType()
+                        && this.getEntitySubType() === gobiiFileItemCompoundId.getEntitySubType()
+                        && this.getCvFilterType() === gobiiFileItemCompoundId.getCvFilterType();
+                };
                 GobiiFileItemCompoundId.prototype.getExtractorItemType = function () {
                     return this._extractorItemType;
                 };
