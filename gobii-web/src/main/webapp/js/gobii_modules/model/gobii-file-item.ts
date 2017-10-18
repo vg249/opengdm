@@ -1,62 +1,41 @@
 import {ProcessType} from "./type-process";
-import {TreeNode} from "primeng/components/common/api";
 import {Guid} from "./guid";
-import {EntityType, EntitySubType} from "./type-entity";
+import {EntitySubType, EntityType} from "./type-entity";
 import {CvFilterType} from "./cv-filter-type";
 import {GobiiExtractFilterType} from "./type-extractor-filter";
-import {ExtractorItemType} from "./file-model-node";
-import {GobiiUIEventOrigin} from "./type-event-origin";
+import {ExtractorItemType} from "./type-extractor-item";
+import {GobiiFileItemCompoundId} from "./gobii-file-item-compound-id";
 
-export class GobiiFileItem {
+export class GobiiFileItem extends GobiiFileItemCompoundId {
 
     private _fileItemUniqueId: string;
 
     private constructor(private _gobiiExtractFilterType: GobiiExtractFilterType,
                         private _processType: ProcessType,
-                        private _extractorItemType: ExtractorItemType,
-                        private _entityType: EntityType,
-                        private _entitySubType: EntitySubType,
-                        private _cvFilterType: CvFilterType,
+                        _extractorItemType: ExtractorItemType,
+                        _entityType: EntityType,
+                        _entitySubType: EntitySubType,
+                        _cvFilterType: CvFilterType,
                         private _itemId: string,
                         private _itemName: string,
-                        private _checked: boolean,
+                        private _selected: boolean,
                         private _required: boolean,
-                        private _gobiiEventOrigin:GobiiUIEventOrigin) {
+                        private _parentItemId: string,
+                        private _parentEntityType: EntityType) {
+
+        super(_extractorItemType,_entityType,_entitySubType,_cvFilterType);
+
 
         this._gobiiExtractFilterType = _gobiiExtractFilterType;
         this._processType = _processType;
-        this._entityType = _entityType;
-        this._entitySubType = _entitySubType;
-        this._extractorItemType = _extractorItemType;
-        this._cvFilterType = _cvFilterType;
         this._itemId = _itemId;
         this._itemName = _itemName;
-        this._checked = _checked;
+        this._selected = _selected;
         this._required = _required;
-        this._gobiiEventOrigin = _gobiiEventOrigin;
+        this._parentItemId = _parentItemId;
+        this._parentEntityType = _parentEntityType;
 
         this._fileItemUniqueId = Guid.generateUUID();
-
-        if (this._cvFilterType === null) {
-            this._cvFilterType = CvFilterType.UNKNOWN;
-        }
-
-        if( this._extractorItemType == null ) {
-            this._extractorItemType = ExtractorItemType.UNKNOWN;
-        }
-
-        if(this._entityType == null ) {
-            this._entityType = EntityType.UNKNOWN;
-        }
-
-        if(this._entitySubType == null ) {
-            this._entitySubType = EntitySubType.UNKNOWN;
-        }
-
-        if(this._gobiiEventOrigin == null ) {
-            this._gobiiEventOrigin = GobiiUIEventOrigin.UNKNOWN;
-        }
-
     }
 
     public static build(gobiiExtractFilterType: GobiiExtractFilterType,
@@ -67,18 +46,20 @@ export class GobiiFileItem {
             processType,
             ExtractorItemType.UNKNOWN,
             EntityType.UNKNOWN,
-            EntitySubType.UNKNOWN, 
+            EntitySubType.UNKNOWN,
             CvFilterType.UNKNOWN,
             null,
             null,
             null,
             null,
-            GobiiUIEventOrigin.UNKNOWN
+            null,
+            EntityType.UNKNOWN
         );
 
 
         return returnVal;
     }
+
 
     setFileItemUniqueId(fileItemUniqueId: string): GobiiFileItem {
         this._fileItemUniqueId = fileItemUniqueId;
@@ -95,7 +76,7 @@ export class GobiiFileItem {
 
     setGobiiExtractFilterType(value: GobiiExtractFilterType): GobiiFileItem {
 
-        if( value != null ) {
+        if (value != null) {
             this._gobiiExtractFilterType = value;
         } else {
             this._gobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
@@ -109,7 +90,7 @@ export class GobiiFileItem {
 
     setProcessType(value: ProcessType): GobiiFileItem {
 
-        if( value != null ) {
+        if (value != null) {
             this._processType = value;
         } else {
             this._processType = ProcessType.UNKNOWN;
@@ -120,58 +101,41 @@ export class GobiiFileItem {
 
 
     getExtractorItemType(): ExtractorItemType {
-        return this._extractorItemType;
+        return super.getExtractorItemType();
     }
 
     setExtractorItemType(value: ExtractorItemType): GobiiFileItem {
 
-        if( value != null ) {
-            this._extractorItemType = value;
-        } else {
-            this._extractorItemType = ExtractorItemType.UNKNOWN;
-        }
+        super.setExtractorItemType(value);
         return this;
     }
 
     getEntityType(): EntityType {
-        return this._entityType;
+        return super.getEntityType();
     }
 
     setEntityType(value: EntityType): GobiiFileItem {
 
-        if (value != null ) {
-            this._entityType = value;
-        } else {
-            this._entityType = EntityType.UNKNOWN;
-        }
+        super.setEntityType(value);
         return this;
     }
 
     getEntitySubType(): EntitySubType {
-        return this._entitySubType;
+        return super.getEntitySubType();
     }
 
     setEntitySubType(value: EntitySubType): GobiiFileItem {
 
-        if( value != null ) {
-            this._entitySubType = value;
-        } else {
-            this._entitySubType = EntitySubType.UNKNOWN;
-        }
-
+        super.setEntitySubType(value);
         return this;
     }
 
     getCvFilterType(): CvFilterType {
-        return this._cvFilterType;
+        return super.getCvFilterType();
     }
 
     setCvFilterType(value: CvFilterType): GobiiFileItem {
-        if( value != null ) {
-            this._cvFilterType = value;
-        } else {
-            this._cvFilterType = CvFilterType.UNKNOWN;
-        }
+        super.setCvFilterType(value);
         return this;
     }
 
@@ -193,12 +157,12 @@ export class GobiiFileItem {
         return this;
     }
 
-    getChecked(): boolean {
-        return this._checked;
+    getSelected(): boolean {
+        return this._selected;
     }
 
-    setChecked(value: boolean): GobiiFileItem {
-        this._checked = value;
+    setSelected(value: boolean): GobiiFileItem {
+        this._selected = value;
         return this;
     }
 
@@ -211,12 +175,21 @@ export class GobiiFileItem {
         return this;
     }
 
-    getGobiiEventOrigin(): GobiiUIEventOrigin {
-        return this._gobiiEventOrigin;
+    getParentItemId(): string {
+        return this._parentItemId;
     }
 
-    setGobiiEventOrigin(value: GobiiUIEventOrigin) {
-        this._gobiiEventOrigin = value;
+    setParentItemId(parentIteIid: string): GobiiFileItem {
+        this._parentItemId = parentIteIid;
+        return this;
+    }
+
+    getParentEntityType(): EntityType {
+        return this._parentEntityType;
+    }
+
+    setParentEntityType(parentIteIid: EntityType): GobiiFileItem {
+        this._parentEntityType = parentIteIid;
         return this;
     }
 

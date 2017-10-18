@@ -126,13 +126,13 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
                         }
                     }); // observable
                 };
+                DtoRequestService = __decorate([
+                    core_1.Injectable(),
+                    __metadata("design:paramtypes", [http_1.Http,
+                        authentication_service_1.AuthenticationService])
+                ], DtoRequestService);
                 return DtoRequestService;
             }());
-            DtoRequestService = __decorate([
-                core_1.Injectable(),
-                __metadata("design:paramtypes", [http_1.Http,
-                    authentication_service_1.AuthenticationService])
-            ], DtoRequestService);
             exports_1("DtoRequestService", DtoRequestService);
         }
     };

@@ -28,17 +28,17 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                 DatasetTypeListBoxComponent.prototype.ngOnInit = function () {
                     return null;
                 };
+                DatasetTypeListBoxComponent = __decorate([
+                    core_1.Component({
+                        selector: 'dataset-types-list-box',
+                        outputs: ['onDatasetTypeSelected'],
+                        inputs: ['nameIdList'],
+                        template: "<select name=\"datasetTypes\" (change)=\"handleDatasetTypeSelected($event)\" >\n\t\t\t<option *ngFor=\"let nameId of nameIdList \" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
+                    }),
+                    __metadata("design:paramtypes", [])
+                ], DatasetTypeListBoxComponent);
                 return DatasetTypeListBoxComponent;
             }());
-            DatasetTypeListBoxComponent = __decorate([
-                core_1.Component({
-                    selector: 'dataset-types-list-box',
-                    outputs: ['onDatasetTypeSelected'],
-                    inputs: ['nameIdList'],
-                    template: "<select name=\"datasetTypes\" (change)=\"handleDatasetTypeSelected($event)\" >\n\t\t\t<option *ngFor=\"let nameId of nameIdList \" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
-                }),
-                __metadata("design:paramtypes", [])
-            ], DatasetTypeListBoxComponent);
             exports_1("DatasetTypeListBoxComponent", DatasetTypeListBoxComponent);
         }
     };

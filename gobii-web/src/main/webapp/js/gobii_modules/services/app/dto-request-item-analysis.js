@@ -59,12 +59,12 @@ System.register(["@angular/core", "../../model/type-process", "../../model/analy
                     return returnVal;
                     //return [new NameId(1, 'foo'), new NameId(2, 'bar')];
                 };
+                DtoRequestItemAnalysis = __decorate([
+                    core_1.Injectable(),
+                    __metadata("design:paramtypes", [Number])
+                ], DtoRequestItemAnalysis);
                 return DtoRequestItemAnalysis;
-            }()); // DtoRequestItemNameIds() 
-            DtoRequestItemAnalysis = __decorate([
-                core_1.Injectable(),
-                __metadata("design:paramtypes", [Number])
-            ], DtoRequestItemAnalysis);
+            }());
             exports_1("DtoRequestItemAnalysis", DtoRequestItemAnalysis);
         }
     };

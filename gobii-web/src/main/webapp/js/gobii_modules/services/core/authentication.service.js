@@ -93,12 +93,12 @@ System.register(["@angular/core", "@angular/http", "rxjs/Observable", "rxjs/add/
                     } // observer callback
                     ); // Observer.create() 
                 }; // authenticate() 
+                AuthenticationService = __decorate([
+                    core_1.Injectable(),
+                    __metadata("design:paramtypes", [http_1.Http])
+                ], AuthenticationService);
                 return AuthenticationService;
             }());
-            AuthenticationService = __decorate([
-                core_1.Injectable(),
-                __metadata("design:paramtypes", [http_1.Http])
-            ], AuthenticationService);
             exports_1("AuthenticationService", AuthenticationService);
             /*
              // doing a plain xhr request also does not allow access to token response

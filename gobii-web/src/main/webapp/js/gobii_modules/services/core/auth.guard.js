@@ -39,13 +39,13 @@ System.register(["@angular/core", "@angular/router", "./authentication.service"]
                     }
                     return returnVal;
                 };
+                AuthGuard = __decorate([
+                    core_1.Injectable(),
+                    __metadata("design:paramtypes", [router_1.Router,
+                        authentication_service_1.AuthenticationService])
+                ], AuthGuard);
                 return AuthGuard;
             }());
-            AuthGuard = __decorate([
-                core_1.Injectable(),
-                __metadata("design:paramtypes", [router_1.Router,
-                    authentication_service_1.AuthenticationService])
-            ], AuthGuard);
             exports_1("AuthGuard", AuthGuard);
         }
     };

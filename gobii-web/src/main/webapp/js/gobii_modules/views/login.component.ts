@@ -21,7 +21,7 @@ import {LocationStrategy} from "@angular/common";
                     <p-checkbox label="Agree To Terms"
                                 [(ngModel)]="userAgreed" 
                                 binary="true"
-                                (onChange)="onTermAgreeCheck(event$)"
+                                (onChange)="onTermAgreeCheck()"
                     ></p-checkbox>
                 </div>
                 <h2>GOBII Login</h2>
@@ -106,7 +106,7 @@ export class LoginComponent implements OnInit {
             )
     }
 
-    public onTermAgreeCheck(event$) {
+    public onTermAgreeCheck() {
 
         this.inputDisabled = !this.userAgreed;
     }
@@ -115,7 +115,7 @@ export class LoginComponent implements OnInit {
         this.loading = true;
 //        this.router.navigate(['project']);
         this.loading = false;
-        this.authenticationService.authenticate(this.model.username, this.model.password)
+        this.authenticationService.authenticate(this.model.username.trim(), this.model.password.trim())
             .subscribe(
                 dtoHeaderAuth => {
 

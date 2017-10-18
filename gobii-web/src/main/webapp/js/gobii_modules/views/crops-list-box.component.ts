@@ -21,10 +21,10 @@ export class CropsListBoxComponent implements OnInit {
 
 
     // useg
-    private serverConfigList:ServerConfig[];
-    private selectedServerConfig:ServerConfig;
+    public serverConfigList:ServerConfig[];
+    public selectedServerConfig:ServerConfig;
 
-    private onServerSelected:EventEmitter<ServerConfig> = new EventEmitter();
+    public onServerSelected:EventEmitter<ServerConfig> = new EventEmitter();
 
     private handleServerSelected(arg) {
         this.onServerSelected.emit(this.serverConfigList[arg.srcElement.selectedIndex]);

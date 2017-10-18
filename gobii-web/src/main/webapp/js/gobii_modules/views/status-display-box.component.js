@@ -1,4 +1,4 @@
-System.register(["@angular/core"], function (exports_1, context_1) {
+System.register(["@angular/core", "rxjs/Observable"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,39 +10,43 @@ System.register(["@angular/core"], function (exports_1, context_1) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, StatusDisplayComponent;
+    var core_1, Observable_1, StatusDisplayComponent;
     return {
         setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
+            },
+            function (Observable_1_1) {
+                Observable_1 = Observable_1_1;
             }
         ],
         execute: function () {
             StatusDisplayComponent = (function () {
                 function StatusDisplayComponent() {
-                    // useg
-                    this.messages = [];
                 } // ctor
-                StatusDisplayComponent.prototype.handleClearMessages = function () {
-                    this.messages = [];
-                };
+                // private handleClearMessages() {
+                //     this.messages$ = [];
+                // }
                 StatusDisplayComponent.prototype.ngOnInit = function () {
                     return null;
                 };
                 StatusDisplayComponent.prototype.ngOnChanges = function (changes) {
-                    this.messages = changes['messages'].currentValue;
                 };
+                __decorate([
+                    core_1.Input(),
+                    __metadata("design:type", Observable_1.Observable)
+                ], StatusDisplayComponent.prototype, "messages$", void 0);
+                StatusDisplayComponent = __decorate([
+                    core_1.Component({
+                        selector: 'status-display',
+                        inputs: [],
+                        //directives: [RADIO_GROUP_DIRECTIVES]
+                        template: "<div style=\"overflow:auto; height: 240px; border: 1px solid #336699; padding-left: 5px;\">\n                    <div *ngFor=\"let message of messages$ | async \">{{message}}\n                    <hr style=\"height:1px;border:none;color:#333;background-color:#333;\">\n                    </div>\n                </div>" // end template
+                    }),
+                    __metadata("design:paramtypes", [])
+                ], StatusDisplayComponent);
                 return StatusDisplayComponent;
             }());
-            StatusDisplayComponent = __decorate([
-                core_1.Component({
-                    selector: 'status-display',
-                    inputs: ['messages'],
-                    //directives: [RADIO_GROUP_DIRECTIVES]
-                    template: "<div style=\"overflow:auto; height: 240px; border: 1px solid #336699; padding-left: 5px;\">\n                    <div *ngFor=\"let message of messages\">{{message}}\n                    <hr style=\"height:1px;border:none;color:#333;background-color:#333;\">\n                    </div>\n                </div>" // end template
-                }),
-                __metadata("design:paramtypes", [])
-            ], StatusDisplayComponent);
             exports_1("StatusDisplayComponent", StatusDisplayComponent);
         }
     };

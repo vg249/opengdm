@@ -1,20 +1,18 @@
-import {Component, OnInit, SimpleChange, EventEmitter, ViewChild} from "@angular/core";
-import {
-    FileSelectDirective,
-    FileDropDirective,
-    FileUploader, FileUploaderOptions, Headers, FileItem
-} from 'ng2-file-upload';
+import {Component, EventEmitter, OnInit, ViewChild} from "@angular/core";
+import {FileItem, FileUploader, FileUploaderOptions, Headers} from 'ng2-file-upload';
 import {AuthenticationService} from "../services/core/authentication.service";
 import {HeaderNames} from "../model/header-names";
-import {Header} from "../model/payload/header";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import {FileName} from "../model/file_name";
-import {FileModelTreeService} from "../services/core/file-model-tree-service";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {ProcessType} from "../model/type-process";
-import {ExtractorItemType} from "../model/file-model-node";
-import {GobiiUIEventOrigin} from "../model/type-event-origin";
+import {ExtractorItemType} from "../model//type-extractor-item";
+import {Store} from "@ngrx/store";
+import * as fromRoot from '../store/reducers';
+import {Observable} from "rxjs/Observable";
+import {FileItemService} from "../services/core/file-item-service";
+import * as historyAction from '../store/actions/history-action';
 
 const URL = 'gobii/v1/files/{gobiiJobId}/EXTRACTOR_INSTRUCTIONS?fileName=';
 
@@ -159,10 +157,12 @@ export class UploaderComponent implements OnInit {
 
     private onUploaderError: EventEmitter<HeaderStatusMessage> = new EventEmitter();
     private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
-    private uploadComplete = false;
+    public uploadComplete = false;
 
     constructor(private _authenticationService: AuthenticationService,
-                private _fileModelTreeService: FileModelTreeService) {
+                private store: Store<fromRoot.State>,
+                private fileItemService: FileItemService,
+    ) {
 
 
     } // ctor
@@ -197,13 +197,11 @@ export class UploaderComponent implements OnInit {
 
     ngOnInit(): any {
 
-        let scope$ = this;
-        this._fileModelTreeService.getFileItems(this.gobiiExtractFilterType).subscribe(
-            fileItems => {
-                let fileItemJobId: GobiiFileItem = fileItems.find(item => {
-                    return item.getExtractorItemType() === ExtractorItemType.JOB_ID
-                });
-
+        let JobId$:Observable<GobiiFileItem> = this.store.select(fromRoot.getJobId);
+        
+        JobId$.subscribe(
+            fileItemJobId => {
+               
                 let jobId: string = fileItemJobId.getItemId();
                 let fileUploaderOptions: FileUploaderOptions = {}
                 let url:string = URL.replace("{gobiiJobId}", jobId);
@@ -217,14 +215,14 @@ export class UploaderComponent implements OnInit {
                 let authHeader: Headers = {name: '', value: ''};
                 authHeader.name = HeaderNames.headerToken;
 
-                let token: string = scope$._authenticationService.getToken();
+                let token: string = this._authenticationService.getToken();
 
                 if (token) {
                     authHeader.value = token;
 
                     fileUploaderOptions.headers.push(authHeader);
 
-                    scope$.uploader = new FileUploader(fileUploaderOptions);
+                    this.uploader = new FileUploader(fileUploaderOptions);
 
                     this.uploader.onBeforeUploadItem = (fileItem: FileItem) => {
 
@@ -232,27 +230,23 @@ export class UploaderComponent implements OnInit {
 
                     }
 
-                    scope$.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
+                    this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
 
                         if (status == 200) {
                             let listItemType: ExtractorItemType =
                                 this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER ?
                                     ExtractorItemType.MARKER_FILE : ExtractorItemType.SAMPLE_FILE;
 
-                            scope$._fileModelTreeService.put(GobiiFileItem
+                            this.fileItemService.loadFileItem(GobiiFileItem
                                 .build(this.gobiiExtractFilterType, ProcessType.CREATE)
                                 .setExtractorItemType(listItemType)
                                 .setItemId(item.file.name)
-                                .setItemName(item.file.name))
-                                .subscribe(fme => {
-                                        this.uploadComplete = true;
-                                    },
-                                    headerStatusMessage => {
-                                        scope$.onUploaderError.emit(new HeaderStatusMessage(headerStatusMessage, null, null));
-                                    });
+                                .setItemName(item.file.name),
+                                true);
+
                         } else {
 
-                            scope$.onUploaderError.emit(new HeaderStatusMessage(response, null, null));
+                            this.onUploaderError.emit(new HeaderStatusMessage(response, null, null));
 
                         }
 
@@ -263,26 +257,42 @@ export class UploaderComponent implements OnInit {
             });
 
 
-        this._fileModelTreeService
-            .fileItemNotifications()
-            .subscribe(eventedFileItem => {
-                    if (eventedFileItem.getProcessType() === ProcessType.DELETE) {
-                        let currentItemType: ExtractorItemType = ExtractorItemType.UNKNOWN;
-                        if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
-                            currentItemType = ExtractorItemType.SAMPLE_FILE;
-                        } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
-                            currentItemType = ExtractorItemType.MARKER_FILE;
-                        }
 
-                        if ((eventedFileItem.getGobiiEventOrigin() === GobiiUIEventOrigin.CRITERIA_TREE)
-                            && (eventedFileItem.getExtractorItemType() === currentItemType )) {
-                            this.clearSelectedFile();
-                            this.uploadComplete = false;
-                        }
-                    }
-                },
-                responseHeader => {
-                    this.onUploaderError.emit(responseHeader);
-                });
+        this.store.select(fromRoot.getUploadFiles)
+            .subscribe( fileFileItems =>  {
+            let uploadItem:GobiiFileItem = fileFileItems.find( fi =>
+                fi.getProcessType() === ProcessType.DELETE
+            )
+
+            if( uploadItem) {
+                this.clearSelectedFile();
+                this.uploadComplete = false;
+            }
+        }, errorMessage => {
+                this.store.dispatch(new historyAction.AddStatusMessageAction(errorMessage));
+
+            });
+
+        // this._fileModelTreeService
+        //     .fileItemNotifications()
+        //     .subscribe(eventedFileItem => {
+        //             if (eventedFileItem.getProcessType() === ProcessType.DELETE) {
+        //                 let currentItemType: ExtractorItemType = ExtractorItemType.UNKNOWN;
+        //                 if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
+        //                     currentItemType = ExtractorItemType.SAMPLE_FILE;
+        //                 } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
+        //                     currentItemType = ExtractorItemType.MARKER_FILE;
+        //                 }
+        //
+        //                 if ((eventedFileItem.getGobiiEventOrigin() === GobiiUIEventOrigin.CRITERIA_TREE)
+        //                     && (eventedFileItem.getExtractorItemType() === currentItemType )) {
+        //                     this.clearSelectedFile();
+        //                     this.uploadComplete = false;
+        //                 }
+        //             }
+        //         },
+        //         responseHeader => {
+        //             this.onUploaderError.emit(responseHeader);
+        //         });
     }
 }

@@ -31,17 +31,17 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                 CropsListBoxComponent.prototype.ngOnChanges = function (changes) {
                     this.selectedServerConfig = changes['selectedServerConfig'].currentValue;
                 };
+                CropsListBoxComponent = __decorate([
+                    core_1.Component({
+                        selector: 'crops-list-box',
+                        inputs: ['serverConfigList', 'selectedServerConfig'],
+                        outputs: ['onServerSelected'],
+                        template: "<label class=\"the-label\">Crop:&nbsp;</label>\n                        <select name=\"serverConfigs\" (change)=\"handleServerSelected($event)\">\n                                    <option *ngFor=\"let serverConfig of serverConfigList\" \n                                            value={{serverConfig.domain}}\n                                            [attr.selected]=\"selectedServerConfig.crop\n                                            === serverConfig.crop ? true : null\">\n                                            {{serverConfig.crop}}\n                                    </option>\n                                </select>" // end template
+                    }),
+                    __metadata("design:paramtypes", [])
+                ], CropsListBoxComponent);
                 return CropsListBoxComponent;
             }());
-            CropsListBoxComponent = __decorate([
-                core_1.Component({
-                    selector: 'crops-list-box',
-                    inputs: ['serverConfigList', 'selectedServerConfig'],
-                    outputs: ['onServerSelected'],
-                    template: "<label class=\"the-label\">Crop:&nbsp;</label>\n                        <select name=\"serverConfigs\" (change)=\"handleServerSelected($event)\">\n                                    <option *ngFor=\"let serverConfig of serverConfigList\" \n                                            value={{serverConfig.domain}}\n                                            [attr.selected]=\"selectedServerConfig.crop\n                                            === serverConfig.crop ? true : null\">\n                                            {{serverConfig.crop}}\n                                    </option>\n                                </select>" // end template
-                }),
-                __metadata("design:paramtypes", [])
-            ], CropsListBoxComponent);
             exports_1("CropsListBoxComponent", CropsListBoxComponent);
         }
     };
