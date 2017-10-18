@@ -135,7 +135,6 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                     filters: state.filters
                 };
                 // remove existing item if applicable
-                stateWithNewFileItem.allFileItems;
                 if (fileItemToReplace_1) {
                     stateWithNewFileItem.allFileItems =
                         stateWithNewFileItem.allFileItems.filter(function (fi) {

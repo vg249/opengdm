@@ -226,7 +226,6 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
 
             // remove existing item if applicable
-            stateWithNewFileItem.allFileItems;
             if (fileItemToReplace) {
                 stateWithNewFileItem.allFileItems =
                     stateWithNewFileItem.allFileItems.filter(fi =>
