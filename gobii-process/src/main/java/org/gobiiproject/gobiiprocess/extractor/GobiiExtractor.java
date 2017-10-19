@@ -412,7 +412,6 @@ public class GobiiExtractor {
 					String genoFile = null;
 					if (!extract.getGobiiFileType().equals(GobiiFileType.META_DATA)) {
 						jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_FINALASSEMBLY.getCvName(),"Assembling Output Matrix");
-						GobiiFileType fileType = extract.getGobiiFileType();
 						boolean markerFast = (fileType == GobiiFileType.HAPMAP);
 
 						switch (filterType) {
