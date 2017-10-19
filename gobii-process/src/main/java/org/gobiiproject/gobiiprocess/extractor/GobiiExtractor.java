@@ -463,7 +463,7 @@ public class GobiiExtractor {
 								success &= FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, tempFolder, genoOutFile,errorFile);
 								getCounts(success, pm, markerFile, sampleFile);
 								pm.setBody(jobReadableIdentifier,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
-								mailInterface.send(pm);
+								if(!inst.isQcCheck())mailInterface.send(pm);
 								jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(),"Extract Completed 8uccessfully");
 								break;
 							case HAPMAP:
@@ -474,12 +474,12 @@ public class GobiiExtractor {
 								success &= hapmapTransformer.generateFile(markerFile, sampleFile, extendedMarkerFile, genoFile, hapmapOutFile, errorFile);
 								getCounts(success, pm, markerFile, sampleFile);
 								pm.setBody(jobReadableIdentifier,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
-								mailInterface.send(pm);
+								if(!inst.isQcCheck())mailInterface.send(pm);
 								jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(),"Extract Completed 8uccessfully");
 								break;
 							case META_DATA:
 								pm.setBody(jobReadableIdentifier,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
-								mailInterface.send(pm);
+								if(!inst.isQcCheck())mailInterface.send(pm);
 								jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(),"Successful Data Extract");
 								break;
 							default:
@@ -631,14 +631,14 @@ public class GobiiExtractor {
                 } else {
                     Long qcJobID = jsonPayload.get("jobId").getAsLong();
                     ErrorLogger.logInfo("QC", "New QC job id: " + qcJobID);
-                    ProcessMessage qcStartPm = new ProcessMessage();
-                    qcStartPm.setUser(inst.getContactEmail());
-						qcStartPm.setSubject(new StringBuilder("new QC Job #").append(qcJobID).toString());
-						qcStartPm.addIdentifier("QC Job Identifier", String.valueOf(qcJobID), String.valueOf(qcJobID));
-						qcStartPm.addIdentifier("Dataset Identifier", String.valueOf(datasetId), String.valueOf(qcJobID));
-						qcStartPm.addPath("Output Extraction/QC Directory", extractDir);
-						mailInterface.newMessage();
-						mailInterface.send(qcStartPm);
+					ProcessMessage qcStartPm = new ProcessMessage();
+					qcStartPm.setUser(inst.getContactEmail());
+					qcStartPm.setSubject(new StringBuilder("new QC Job #").append(qcJobID).toString());
+					qcStartPm.addIdentifier("QC Job Identifier", String.valueOf(qcJobID), String.valueOf(qcJobID));
+					qcStartPm.addIdentifier("Dataset Identifier", String.valueOf(datasetId), String.valueOf(qcJobID));
+					qcStartPm.addPath("Output Extraction/QC Directory", extractDir);
+					qcStartPm.setBody("new QC Job #"+qcJobID,"QC",0,"",true,"");
+					mailInterface.send(qcStartPm);
 						RestUri restUriGetQCJobStatus = new RestUri("/",
 								configuration.getKDCConfig().getContextPath(),
 								configuration.getKDCConfig().getPath(ServerConfigKDC.KDCResource.QC_STATUS_));
@@ -678,7 +678,7 @@ public class GobiiExtractor {
 
 						ProcessMessage qcStatusPm = new ProcessMessage();
 						qcStatusPm.setUser(inst.getContactEmail());
-						qcStartPm.setSubject(new StringBuilder("QC Job #").append(qcJobID).append(" status").toString());
+						qcStatusPm.setSubject(new StringBuilder("QC Job #").append(qcJobID).append(" status").toString());
 						qcStatusPm.addIdentifier("QC Job Identifier", String.valueOf(qcJobID), String.valueOf(qcJobID));
 						qcStatusPm.addIdentifier("Dataset Identifier", String.valueOf(datasetId), String.valueOf(qcJobID));
 
@@ -760,7 +760,6 @@ public class GobiiExtractor {
 							}
 							qcStatusPm.setBody(new StringBuilder("[GOBII - QC]: job #").append(qcJobID).toString(), extractType, qcDuration, ErrorLogger.getFirstErrorReason(), false, ErrorLogger.getAllErrorStringsHTML());
 						}
-						mailInterface.newMessage();
 						mailInterface.send(qcStatusPm);
 
 						//purge data
