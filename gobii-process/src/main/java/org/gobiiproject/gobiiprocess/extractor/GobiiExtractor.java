@@ -222,6 +222,20 @@ public class GobiiExtractor {
 
 					String gobiiMDE;//Output of switch
 
+					GobiiFileType fileType=extract.getGobiiFileType();
+
+					String confidentialityMessage="";
+					String confidentialityLoc=configuration.getFileNoticePath(crop,GobiiFileNoticeType.CONFIDENTIALITY);
+					File confidentialityFile=new File(confidentialityLoc);
+					if(confidentialityFile.exists()){
+						StringBuilder sb=new StringBuilder();
+						for(String line:Files.readAllLines(Paths.get(confidentialityFile.toURI()))){
+							sb.append(line);
+						}
+						confidentialityMessage=sb.toString();
+						pm.addConfidentialityMessage(confidentialityMessage);
+					}
+
 					//Common terms
 					String platformTerm, mapIdTerm, markerListLocation, sampleListLocation, verboseTerm;
 					String samplePosFile = "";//Location of sample position indices (see markerList for an example
@@ -429,19 +443,7 @@ public class GobiiExtractor {
 							}
 						}
 					}
-					GobiiFileType fileType=extract.getGobiiFileType();
 
-					String confidentialityMessage="";
-					String confidentialityLoc=configuration.getFileNoticePath(crop,GobiiFileNoticeType.CONFIDENTIALITY);
-					File confidentialityFile=new File(confidentialityLoc);
-					if(confidentialityFile.exists()){
-						StringBuilder sb=new StringBuilder();
-							for(String line:Files.readAllLines(Paths.get(confidentialityFile.toURI()))){
-							sb.append(line);
-						}
-						confidentialityMessage=sb.toString();
-						pm.addConfidentialityMessage(confidentialityMessage);
-					}
 
 					jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_FINALASSEMBLY.getCvName(),"Assembling Output Files");
 					if(checkFileExistence(genoFile) || (fileType == GobiiFileType.META_DATA)) {
