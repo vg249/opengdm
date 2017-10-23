@@ -10,11 +10,12 @@ import java.util.List;
  */
 public interface DtoMapContact {
 
+    ContactDTO createContact(ContactDTO contactDTO) throws GobiiDtoMappingException;
+    ContactDTO replaceContact(Integer contactId, ContactDTO contactDTO) throws GobiiDtoMappingException;
+
     List<ContactDTO> getContacts() throws GobiiDtoMappingException;
     ContactDTO getContactDetails(Integer contactId) throws GobiiDtoMappingException;
     ContactDTO getContactByEmail(String email) throws GobiiDtoMappingException;
     ContactDTO getContactByUserName(String email) throws GobiiDtoMappingException;
-    ContactDTO createContact(ContactDTO contactDTO) throws GobiiDtoMappingException;
-    ContactDTO replaceContact(Integer contactId, ContactDTO contactDTO) throws GobiiDtoMappingException;
 
 }

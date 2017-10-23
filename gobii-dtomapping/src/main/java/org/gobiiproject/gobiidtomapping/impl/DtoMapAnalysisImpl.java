@@ -31,7 +31,7 @@ public class DtoMapAnalysisImpl implements DtoMapAnalysis {
     @Autowired
     private RsAnalysisDao rsAnalysisDao;
 
-    public AnalysisDTO getAnalysisDetails(Integer analysisId) throws GobiiDtoMappingException {
+    public AnalysisDTO get(Integer analysisId) throws GobiiDtoMappingException {
 
         AnalysisDTO returnVal = new AnalysisDTO();
 
@@ -60,7 +60,7 @@ public class DtoMapAnalysisImpl implements DtoMapAnalysis {
     }
 
     @Override
-    public List<AnalysisDTO> getAnalyses() throws GobiiDtoMappingException {
+    public List<AnalysisDTO> getList() throws GobiiDtoMappingException {
 
         List<AnalysisDTO> returnVal = new ArrayList<>();
 
@@ -97,7 +97,7 @@ public class DtoMapAnalysisImpl implements DtoMapAnalysis {
     }
 
     @Override
-    public AnalysisDTO createAnalysis(AnalysisDTO analysisDTO) throws GobiiDtoMappingException {
+    public AnalysisDTO create(AnalysisDTO analysisDTO) throws GobiiDtoMappingException {
 
         AnalysisDTO returnVal = analysisDTO;
 
@@ -119,7 +119,7 @@ public class DtoMapAnalysisImpl implements DtoMapAnalysis {
     }
 
     @Override
-    public AnalysisDTO replaceAnalysis(Integer analysisId, AnalysisDTO analysisDTO) throws GobiiDtoMappingException {
+    public AnalysisDTO replace(Integer analysisId, AnalysisDTO analysisDTO) throws GobiiDtoMappingException {
 
         AnalysisDTO returnVal = analysisDTO;
 

@@ -7,11 +7,15 @@ import java.util.List;
 /**
  * Created by Phil on 4/21/2016.
  */
-public interface DtoMapAnalysis {
+public interface DtoMapAnalysis extends DtoMap<AnalysisDTO> {
 
-    AnalysisDTO getAnalysisDetails(Integer  analysisId) throws GobiiDtoMappingException;
-    AnalysisDTO createAnalysis(AnalysisDTO  analysisDTO) throws GobiiDtoMappingException;
-    AnalysisDTO replaceAnalysis(Integer analysisId, AnalysisDTO analysisDTO) throws GobiiDtoMappingException;
-    List<AnalysisDTO> getAnalyses() throws GobiiDtoMappingException;
+    //DtoMap methods
+    AnalysisDTO create(AnalysisDTO  analysisDTO) throws GobiiDtoMappingException;
+    AnalysisDTO replace(Integer analysisId, AnalysisDTO analysisDTO) throws GobiiDtoMappingException;
+    AnalysisDTO get(Integer  analysisId) throws GobiiDtoMappingException;
+    List<AnalysisDTO> getList() throws GobiiDtoMappingException;
+
+
+
 
 }

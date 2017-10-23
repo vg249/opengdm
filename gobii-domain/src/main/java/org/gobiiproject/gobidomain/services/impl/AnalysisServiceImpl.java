@@ -33,7 +33,7 @@ public class AnalysisServiceImpl implements AnalysisService {
 
             analysisDTO.setCreatedDate(new Date());
             analysisDTO.setModifiedDate(new Date());
-            returnVal = dtoMapAnalysis.createAnalysis(analysisDTO);
+            returnVal = dtoMapAnalysis.create(analysisDTO);
 
             // When we have roles and permissions, this will be set programmatically
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
@@ -57,10 +57,10 @@ public class AnalysisServiceImpl implements AnalysisService {
             if(null == analysisDTO.getAnalysisId() ||
                     analysisDTO.getAnalysisId().equals(analysisId)) {
 
-                AnalysisDTO existingAnalysisDTO = dtoMapAnalysis.getAnalysisDetails(analysisId);
+                AnalysisDTO existingAnalysisDTO = dtoMapAnalysis.get(analysisId);
                 if(null != existingAnalysisDTO.getAnalysisId() && existingAnalysisDTO.getAnalysisId().equals(analysisId)) {
 
-                    returnVal = dtoMapAnalysis.replaceAnalysis(analysisId, analysisDTO);
+                    returnVal = dtoMapAnalysis.replace(analysisId, analysisDTO);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
@@ -100,7 +100,7 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         List<AnalysisDTO> returnVal;
 
-        returnVal = dtoMapAnalysis.getAnalyses();
+        returnVal = dtoMapAnalysis.getList();
         for(AnalysisDTO currentAnalysisDTO : returnVal) {
             currentAnalysisDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
             currentAnalysisDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
@@ -118,7 +118,7 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         AnalysisDTO returnVal;
 
-        returnVal = dtoMapAnalysis.getAnalysisDetails(analysisId);
+        returnVal = dtoMapAnalysis.get(analysisId);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
