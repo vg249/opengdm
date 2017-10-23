@@ -20,14 +20,13 @@ public class SpUpdExperiment extends SpDef {
         this.addParamDef("vendorProtocolId", Integer.class).setNullable(true);
         this.addParamDef("manifestId", Integer.class).setNullable(true);
         this.addParamDef("experimentDataFile", String.class).setNullable(true);
-        this.addParamDef("createdBy", Integer.class).setNullable(false);
-        this.addParamDef("createdDate", Date.class).setNullable(false);
-        this.addParamDef("modifiedBy", Integer.class).setNullable(false);
+        this.addParamDef("createdBy", Integer.class).setNullable(true);
+        this.addParamDef("createdDate", Date.class).setNullable(true);
+        this.addParamDef("modifiedBy", Integer.class).setNullable(true);
         this.addParamDef("modifiedDate", Date.class).setNullable(true);
         this.addParamDef("status", Integer.class).setNullable(false);
 
 
     } // ctor
-
 
 }
