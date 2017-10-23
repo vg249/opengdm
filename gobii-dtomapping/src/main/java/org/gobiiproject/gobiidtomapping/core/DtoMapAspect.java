@@ -14,13 +14,15 @@ import java.util.Date;
 public class DtoMapAspect {
 
 
-//    @Pointcut("execution(public * *(..))")
-//    //@Pointcut(value="execution(* org.gobiiproject.gobiidtomapping.*.create(dto)), && args(dto)")
-//    private void allMapMethods() {}
-
-    //@Before(value="execution(* org.gobiiproject.gobiidtomapping.*.create(dto)), && args(dto)", argNames="dto")
-
-    //@Before("allMapMethods()")
+    /***
+     * It would be ideal if there were a way to configure the advice so that
+     * it would be invoked only when the method argument was of type DTOBaseAuditable
+     * The instanceof idiom is not great OO design. However, getting this piece to work
+     * at all was a challenge. Configuring the join point to trigger in this way just
+     * did not want to work. The mapping classes are being set up now t inherit from a
+     * base class that enforceds the create() and replace() naming convention -- that at
+     * least should ensure the specificity of the target
+     */
     @Before(value = "execution(* org.gobiiproject.gobiidtomapping.*.create(*))")
     public void beforeCreate(JoinPoint joinPoint) {
 
