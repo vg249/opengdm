@@ -9,6 +9,7 @@ package org.gobiiproject.gobiimodel.headerlesscontainer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
+import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 
 import java.util.*;
 
@@ -23,10 +24,6 @@ public class MarkerGroupDTO extends DTOBase {
     private String code;
     private List<MarkerGroupMarkerDTO> markers = new ArrayList<>();
     private String germplasmGroup;
-    private Integer createdBy;
-    private Date createdDate;
-    private Integer modifiedBy;
-    private Date modifiedDate;
     private Integer statusId;
 
 
@@ -59,46 +56,6 @@ public class MarkerGroupDTO extends DTOBase {
     @GobiiEntityColumn(columnName = "status")
     public void setStatusId(Integer statusId) {
         this.statusId = statusId;
-    }
-
-    @GobiiEntityParam(paramName = "modifiedDate")
-    public Date getModifiedDate() {
-        return modifiedDate;
-    }
-
-    @GobiiEntityColumn(columnName = "modified_date")
-    public void setModifiedDate(Date modifiedDate) {
-        this.modifiedDate = modifiedDate;
-    }
-
-    @GobiiEntityParam(paramName = "modifiedBy")
-    public Integer getModifiedBy() {
-        return modifiedBy;
-    }
-
-    @GobiiEntityColumn(columnName = "modified_by")
-    public void setModifiedBy(Integer modifiedBy) {
-        this.modifiedBy = modifiedBy;
-    }
-
-    @GobiiEntityParam(paramName = "createdDate")
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    @GobiiEntityColumn(columnName = "created_date")
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    @GobiiEntityParam(paramName = "createdBy")
-    public Integer getCreatedBy() {
-        return createdBy;
-    }
-
-    @GobiiEntityColumn(columnName = "created_by")
-    public void setCreatedBy(Integer createdBy) {
-        this.createdBy = createdBy;
     }
 
     @GobiiEntityParam(paramName = "germplasmGroup")

@@ -2,9 +2,10 @@ package org.gobiiproject.gobiimodel.headerlesscontainer;
 
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
+import org.gobiiproject.gobiimodel.dto.base.DTOBase;
+import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 import org.gobiiproject.gobiimodel.entity.TableColDisplay;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +14,7 @@ import java.util.Map;
  * Created by Phil on 4/6/2016.
  * Modified by Yanii on 1/27/2017
  */
-public class DisplayDTO extends DTOBase {
+public class DisplayDTO extends DTOBaseAuditable {
 
 	public DisplayDTO() {}
 
@@ -24,10 +25,6 @@ public class DisplayDTO extends DTOBase {
 	private String tableName;
 	private String columnName;
 	private String displayName;
-	private Integer createdBy;
-	private Date createdDate;
-	private Integer modifiedBy;
-	private Date modifiedDate;
 	private Integer displayRank;
 
 	public boolean isIncludeDetailsList() {
@@ -86,46 +83,6 @@ public class DisplayDTO extends DTOBase {
 	@GobiiEntityColumn(columnName = "display_name")
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
-	}
-
-	@GobiiEntityParam(paramName = "createdBy")
-	public Integer getCreatedBy() {
-		return createdBy;
-	}
-
-	@GobiiEntityColumn(columnName = "created_by")
-	public void setCreatedBy(Integer createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	@GobiiEntityParam(paramName = "createdDate")
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	@GobiiEntityColumn(columnName = "created_date")
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
-	@GobiiEntityParam(paramName = "modifiedBy")
-	public Integer getModifiedBy() {
-		return modifiedBy;
-	}
-
-	@GobiiEntityColumn(columnName = "modified_by")
-	public void setModifiedBy(Integer modifiedBy) {
-		this.modifiedBy = modifiedBy;
-	}
-
-	@GobiiEntityParam(paramName = "modifiedDate")
-	public Date getModifiedDate() {
-		return modifiedDate;
-	}
-
-	@GobiiEntityColumn(columnName = "modified_date")
-	public void setModifiedDate(Date modifiedDate) {
-		this.modifiedDate = modifiedDate;
 	}
 
 	@GobiiEntityParam(paramName = "displayRank")

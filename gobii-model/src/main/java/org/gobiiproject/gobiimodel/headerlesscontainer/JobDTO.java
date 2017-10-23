@@ -2,6 +2,7 @@ package org.gobiiproject.gobiimodel.headerlesscontainer;
 
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
+import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 
 import java.util.Date;
 

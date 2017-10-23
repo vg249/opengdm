@@ -1,9 +1,6 @@
 package org.gobiiproject.gobiimodel.headerlesscontainer;
 
-import org.gobiiproject.gobiimodel.config.ServerConfig;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
+import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 
 /**
  * Created by Phil on 4/8/2016.

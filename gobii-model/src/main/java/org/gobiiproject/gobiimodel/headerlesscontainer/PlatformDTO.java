@@ -2,6 +2,8 @@ package org.gobiiproject.gobiimodel.headerlesscontainer;
 
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
+import org.gobiiproject.gobiimodel.dto.base.DTOBase;
+import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,7 +12,7 @@ import java.util.List;
 /**
  * Created by Phil on 4/21/2016.
  */
-public class    PlatformDTO extends DTOBase {
+public class    PlatformDTO extends DTOBaseAuditable {
 
     public PlatformDTO() {
     }

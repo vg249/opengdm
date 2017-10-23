@@ -141,7 +141,7 @@ public class DtoMapJobImpl implements DtoMapJob {
 
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.NONE,
-                        "Something went wrong with setting the createDate of the datasetDTO");
+                        "Something went wrong with setting the createdDate of the datasetDTO");
             }
 
             dataSetDTO.setCreatedDate(parsedDate);

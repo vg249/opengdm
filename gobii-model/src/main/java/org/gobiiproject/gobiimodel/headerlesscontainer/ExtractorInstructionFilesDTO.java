@@ -1,5 +1,7 @@
 package org.gobiiproject.gobiimodel.headerlesscontainer;
 
+import org.gobiiproject.gobiimodel.dto.base.DTOBase;
+import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 
 import java.util.ArrayList;
@@ -8,7 +10,7 @@ import java.util.List;
 /**
  * Created by Phil on 4/8/2016.
  */
-public class ExtractorInstructionFilesDTO extends DTOBase {
+public class ExtractorInstructionFilesDTO extends DTOBaseAuditable {
 
 
     private String jobId;

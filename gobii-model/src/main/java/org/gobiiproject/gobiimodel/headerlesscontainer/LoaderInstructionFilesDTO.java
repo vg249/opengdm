@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiimodel.headerlesscontainer;
 
+import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 
 import java.util.ArrayList;

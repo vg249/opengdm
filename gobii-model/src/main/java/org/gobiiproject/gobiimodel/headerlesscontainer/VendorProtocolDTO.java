@@ -2,11 +2,12 @@ package org.gobiiproject.gobiimodel.headerlesscontainer;
 
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
+import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 
 /**
  * Created by VCalaminos on 2016-12-12.
  */
-public class VendorProtocolDTO extends DTOBase{
+public class VendorProtocolDTO extends DTOBase {
 
     public VendorProtocolDTO(){
     }

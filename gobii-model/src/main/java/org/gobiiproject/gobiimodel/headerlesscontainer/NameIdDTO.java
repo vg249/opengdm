@@ -1,5 +1,7 @@
 package org.gobiiproject.gobiimodel.headerlesscontainer;
 
+import org.gobiiproject.gobiimodel.dto.base.DTOBase;
+
 /**
  * Created by Phil on 4/8/2016.
  */

@@ -2,6 +2,7 @@ package org.gobiiproject.gobiidao.resultset.core;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
+import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 
 import javax.persistence.StoredProcedureParameter;
 import java.lang.annotation.Annotation;
@@ -21,7 +22,7 @@ public class ParamExtractor {
         Map<String, Object> returnVal = new HashMap<>();
 
         try {
-            for (Method currentMethod : dtoInstance.getClass().getDeclaredMethods()) {
+            for (Method currentMethod : dtoInstance.getClass().getMethods()) {
 
                 GobiiEntityParam gobiiEntityParam = currentMethod.getAnnotation(GobiiEntityParam.class);
                 if (null != gobiiEntityParam) {
@@ -42,6 +43,7 @@ public class ParamExtractor {
         return returnVal;
 
     } // makeParamVals()
+
 
 } // ParamExtractor
 
