@@ -13,10 +13,10 @@ import java.util.Set;
  */
 public abstract class DTOBaseAuditable extends DTOBase {
 
-    private Integer createdBy = 0;
-    private Date createdDate = new Date();
-    private Integer modifiedBy = 0;
-    private Date modifiedDate = new Date();
+    private Integer createdBy = null;
+    private Date createdDate = null;
+    private Integer modifiedBy = null;
+    private Date modifiedDate = null;
 
     @GobiiEntityParam(paramName = "createdBy")
     public Integer getCreatedBy() {

@@ -5,6 +5,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
     http://www.springframework.org/schema/context
@@ -12,7 +13,7 @@
     http://www.springframework.org/schema/tx 		
     http://www.springframework.org/schema/tx/spring-tx.xsd
 	http://www.springframework.org/schema/security
-	http://www.springframework.org/schema/security/spring-security-4.2.xsd">
+	http://www.springframework.org/schema/security/spring-security-4.2.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
@@ -27,6 +28,9 @@
     <context:component-scan base-package="org.gobiiproject.gobiidao.core"/>
     <context:component-scan base-package="org.gobiiproject.gobidomain.security"/>
     <context:component-scan base-package="org.gobiiproject.gobiiweb.controllers"/>
+
+
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
 
 
     <!-- ******************** ****************************************** -->
@@ -680,6 +684,8 @@
     <bean id="currentRequestFilter" class="org.gobiiproject.gobiiweb.spring.OncePerRequestCaptureThreadLocal">
         <property name="currentRequest" ref="currentRequest"/>
     </bean>
+
+    <bean id="dtoMapAspect" class="org.gobiiproject.gobiidtomapping.core.DtoMapAspect"/>
 
 
 
