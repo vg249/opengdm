@@ -220,7 +220,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
             }
 
 
-            if (primaryLoaderInstruction.getPlatform().getId() != null) {
+            if (primaryLoaderInstruction.getPlatform().getId() != null && primaryLoaderInstruction.getExperiment().getId() != null) {
 
                 ExperimentDTO experimentDTO = dtoMapExperiment.getExperimentDetails(primaryLoaderInstruction.getExperiment().getId());
 
@@ -337,6 +337,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
         } catch (GobiiException e) {
             throw e;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new GobiiException(e);
         }
 
