@@ -1,8 +1,8 @@
-package org.gobiiproject.gobiidtomapping.impl;
+package org.gobiiproject.gobiidtomapping.system.impl;
 
 import org.gobiiproject.gobiidao.resultset.access.RsPingDao;
 import org.gobiiproject.gobiidao.resultset.core.DbMetaData;
-import org.gobiiproject.gobiidtomapping.DtoMapPing;
+import org.gobiiproject.gobiidtomapping.system.DtoMapPing;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.PingDTO;
 import org.gobiiproject.gobiimodel.utils.LineUtils;

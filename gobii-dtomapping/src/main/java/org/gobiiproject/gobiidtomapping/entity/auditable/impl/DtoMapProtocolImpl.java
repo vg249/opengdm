@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiidtomapping.impl;
+package org.gobiiproject.gobiidtomapping.entity.auditable.impl;
 
 import org.gobiiproject.gobiidao.resultset.access.RsProtocolDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
@@ -6,7 +6,7 @@ import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapOrganization;
-import org.gobiiproject.gobiidtomapping.DtoMapProtocol;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapProtocol;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
@@ -45,7 +45,7 @@ public class DtoMapProtocolImpl implements DtoMapProtocol {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<ProtocolDTO> getProtocols() throws GobiiDtoMappingException {
+    public List<ProtocolDTO> getList() throws GobiiDtoMappingException {
 
         List<ProtocolDTO> returnVal = new ArrayList<>();
 
@@ -70,7 +70,7 @@ public class DtoMapProtocolImpl implements DtoMapProtocol {
 
 
     @Override
-    public ProtocolDTO createProtocol(ProtocolDTO protocolDTO) throws GobiiDtoMappingException {
+    public ProtocolDTO create(ProtocolDTO protocolDTO) throws GobiiDtoMappingException {
 
         ProtocolDTO returnVal = protocolDTO;
 
@@ -90,7 +90,7 @@ public class DtoMapProtocolImpl implements DtoMapProtocol {
     }
 
     @Override
-    public ProtocolDTO replaceProtocol(Integer protocolId, ProtocolDTO protocolDTO) throws GobiiDtoMappingException {
+    public ProtocolDTO replace(Integer protocolId, ProtocolDTO protocolDTO) throws GobiiDtoMappingException {
 
         ProtocolDTO returnVal = protocolDTO;
 
@@ -104,7 +104,7 @@ public class DtoMapProtocolImpl implements DtoMapProtocol {
 
     @Transactional
     @Override
-    public ProtocolDTO getProtocolDetails(Integer protocolId) throws GobiiDtoMappingException {
+    public ProtocolDTO get(Integer protocolId) throws GobiiDtoMappingException {
 
         ProtocolDTO returnVal = new ProtocolDTO();
 
@@ -279,7 +279,7 @@ public class DtoMapProtocolImpl implements DtoMapProtocol {
             throw new GobiiDtoMappingException("Organization name must have a value");
         }
 
-        ProtocolDTO protocolDTO = this.getProtocolDetails(protocolId);
+        ProtocolDTO protocolDTO = this.get(protocolId);
         if (protocolDTO == null ||
                 protocolDTO.getProtocolId() == null ||
                 protocolDTO.getProtocolId() <= 0) {

@@ -94,9 +94,7 @@ public class TestDtoFactory {
         // set the plain properties
         returnVal.setStatusId(1);
         returnVal.setModifiedBy(1);
-        returnVal.setModifiedDate(new Date());
-        returnVal.setCreatedBy(1);
-        returnVal.setCreatedDate(new Date());
+       returnVal.setCreatedBy(1);
         returnVal.setPlatformCode(uniqueStem + "dummy code");
         returnVal.setPlatformDescription(uniqueStem + "dummy description");
         returnVal.setPlatformName(uniqueStem + "New Platform");
@@ -231,9 +229,7 @@ public class TestDtoFactory {
         returnVal.setAddress("address:" + uniqueStem);
         returnVal.setWebsite(uniqueStem + ".com");
         returnVal.setCreatedBy(1);
-        returnVal.setCreatedDate(new Date());
         returnVal.setModifiedBy(1);
-        returnVal.setModifiedDate(new Date());
         returnVal.setStatusId(1);
 
         return returnVal;
@@ -254,9 +250,7 @@ public class TestDtoFactory {
         returnVal.setDescription(uniqueStemString + ": dummy description");
         returnVal.setTypeId(1);
         returnVal.setCreatedBy(1);
-        returnVal.setCreatedDate(new Date());
         returnVal.setModifiedBy(1);
-        returnVal.setModifiedDate(new Date());
         returnVal.setPlatformId(platformId);
         returnVal.setStatus(1);
 

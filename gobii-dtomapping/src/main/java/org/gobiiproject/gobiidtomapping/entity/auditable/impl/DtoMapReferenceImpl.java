@@ -1,9 +1,9 @@
-package org.gobiiproject.gobiidtomapping.impl;
+package org.gobiiproject.gobiidtomapping.entity.auditable.impl;
 
 import org.gobiiproject.gobiidao.resultset.access.RsReferenceDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
-import org.gobiiproject.gobiidtomapping.DtoMapReference;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapReference;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ReferenceDTO;
 import org.slf4j.Logger;
@@ -29,7 +29,7 @@ public class DtoMapReferenceImpl implements DtoMapReference {
     private RsReferenceDao rsReferenceDao;
 
     @Override
-    public List<ReferenceDTO> getReferences() throws GobiiDtoMappingException {
+    public List<ReferenceDTO> getList() throws GobiiDtoMappingException {
 
         List<ReferenceDTO> returnVal = new ArrayList<>();
 
@@ -53,7 +53,7 @@ public class DtoMapReferenceImpl implements DtoMapReference {
 
     @Transactional
     @Override
-    public ReferenceDTO getReferenceDetails(Integer referenceId) throws GobiiDtoMappingException {
+    public ReferenceDTO get(Integer referenceId) throws GobiiDtoMappingException {
 
         ReferenceDTO returnVal = new ReferenceDTO();
 
@@ -78,7 +78,7 @@ public class DtoMapReferenceImpl implements DtoMapReference {
     }
 
     @Override
-    public ReferenceDTO createReference(ReferenceDTO referenceDTO) throws GobiiDtoMappingException {
+    public ReferenceDTO create(ReferenceDTO referenceDTO) throws GobiiDtoMappingException {
         ReferenceDTO returnVal = referenceDTO;
 
         try {
@@ -96,7 +96,7 @@ public class DtoMapReferenceImpl implements DtoMapReference {
     }
 
     @Override
-    public ReferenceDTO replaceReference(Integer referenceId, ReferenceDTO referenceDTO) throws GobiiDtoMappingException {
+    public ReferenceDTO replace(Integer referenceId, ReferenceDTO referenceDTO) throws GobiiDtoMappingException {
 
         ReferenceDTO returnVal = referenceDTO;
 

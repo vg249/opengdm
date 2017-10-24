@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiidtomapping.impl;
+package org.gobiiproject.gobiidtomapping.entity.auditable.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsProjectDao;
@@ -6,9 +6,10 @@ import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
-import org.gobiiproject.gobiidtomapping.DtoMapProject;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapProject;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.core.EntityProperties;
+import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIdListImpl;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -39,7 +40,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<ProjectDTO> getProjects() throws GobiiDtoMappingException {
+    public List<ProjectDTO> getList() throws GobiiDtoMappingException {
 
         List<ProjectDTO> returnVal = new ArrayList<>();
 
@@ -56,7 +57,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
         return returnVal;
     }
 
-    public ProjectDTO getProjectDetails(Integer projectId) throws GobiiDtoMappingException {
+    public ProjectDTO get(Integer projectId) throws GobiiDtoMappingException {
 
 
         ProjectDTO returnVal = new ProjectDTO();
@@ -129,7 +130,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
     }
 
     @Override
-    public ProjectDTO createProject(ProjectDTO projectDTO) throws GobiiDtoMappingException {
+    public ProjectDTO create(ProjectDTO projectDTO) throws GobiiDtoMappingException {
 
         ProjectDTO returnVal = projectDTO;
 
@@ -177,7 +178,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
     }
 
     @Override
-    public ProjectDTO replaceProject(Integer projectId, ProjectDTO projectDTO) throws GobiiDtoMappingException {
+    public ProjectDTO replace(Integer projectId, ProjectDTO projectDTO) throws GobiiDtoMappingException {
 
         ProjectDTO returnVal = projectDTO;
 

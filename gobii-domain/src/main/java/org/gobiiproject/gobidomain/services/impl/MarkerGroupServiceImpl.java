@@ -31,8 +31,6 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
 
         try {
 
-            markerGroupDTO.setCreatedDate(new Date());
-            markerGroupDTO.setModifiedDate(new Date());
             returnVal = dtoMapMarkerGroup.create(markerGroupDTO);
 
             // When we have roles and permissions, this will be set programmatically

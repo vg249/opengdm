@@ -6,7 +6,7 @@ import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapOrganization;
-import org.gobiiproject.gobiidtomapping.DtoMapProtocol;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapProtocol;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.slf4j.Logger;

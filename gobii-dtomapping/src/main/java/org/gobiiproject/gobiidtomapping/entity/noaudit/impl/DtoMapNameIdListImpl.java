@@ -1,8 +1,7 @@
-package org.gobiiproject.gobiidtomapping.impl;
+package org.gobiiproject.gobiidtomapping.entity.noaudit.impl;
 
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapNameIdList;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIdFetch;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;

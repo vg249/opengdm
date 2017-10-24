@@ -39,7 +39,7 @@
     <!-- **** Security Beans *************************************** -->
     <bean id="UserDao"
           class="org.gobiiproject.gobiidao.entity.access.impl.UserDaoImpl"/>
-    <bean id="dtoMapProject" class="org.gobiiproject.gobiidtomapping.impl.DtoMapProjectImpl"/>
+    <bean id="dtoMapProject" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapProjectImpl"/>
     <bean id="projectService"
           class="org.gobiiproject.gobidomain.services.impl.ProjectServiceImpl"/>
 
@@ -57,7 +57,7 @@
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsPingDaoImpl"/>
     <bean id="pingDaoEntity"
           class="org.gobiiproject.gobiidao.entity.access.impl.mock.PingEntityDaoImplMock"/>
-    <bean id="dtoPing" class="org.gobiiproject.gobiidtomapping.impl.DtoMapPingImpl"/>
+    <bean id="dtoPing" class="org.gobiiproject.gobiidtomapping.system.impl.DtoMapPingImpl"/>
     <bean id="pingService"
           class="org.gobiiproject.gobidomain.services.impl.PingServiceImpl"/>
 
@@ -118,7 +118,7 @@
           class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchProtocols"/>
 
     <bean id="dtoMapNameIdList"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdListImpl">
+          class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIdListImpl">
         <property name="dtoMapNameIdFetchMap">
             <map>
                 <!-- ANLYSES -->
@@ -257,7 +257,7 @@
     <bean id="rsPlatformDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsPlatformDaoImpl"/>
     <bean id="dtoMapPlatform"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapPlatformImpl"/>
+          class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapPlatformImpl"/>
     <bean id="platformService"
           class="org.gobiiproject.gobidomain.services.impl.PlatformServiceImpl"/>
 
@@ -286,7 +286,7 @@
     <!-- **** Reference Beans *************************************** -->
     <bean id="rsReferenceDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsReferenceDaoImpl"/>
-    <bean id="dtoMapReference" class="org.gobiiproject.gobiidtomapping.impl.DtoMapReferenceImpl"/>
+    <bean id="dtoMapReference" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapReferenceImpl"/>
     <bean id="ReferenceService" class="org.gobiiproject.gobidomain.services.impl.ReferenceServiceImpl"/>
 
     <!-- **** CvTerms Beans *************************************** -->
@@ -332,7 +332,7 @@
 
     <!-- **** Protocol Beans *************************************** -->
     <bean id="rsProtocolDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsProtocolDaoImpl"/>
-    <bean id="dtoMapProtocol" class="org.gobiiproject.gobiidtomapping.impl.DtoMapProtocolImpl"/>
+    <bean id="dtoMapProtocol" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapProtocolImpl"/>
     <bean id="ProtocolService" class="org.gobiiproject.gobidomain.services.impl.ProtocolServiceImpl"/>
 
 

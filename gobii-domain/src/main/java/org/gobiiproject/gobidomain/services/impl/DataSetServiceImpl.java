@@ -124,8 +124,6 @@ public class DataSetServiceImpl implements DataSetService {
 
         DataSetDTO returnVal;
 
-        dataSetDTO.setCreatedDate(new Date());
-        dataSetDTO.setModifiedDate(new Date());
         returnVal = dtoMapDataSet.create(dataSetDTO);
 
         // When we have roles and permissions, this will be set programmatically
@@ -150,7 +148,6 @@ public class DataSetServiceImpl implements DataSetService {
                 if (null != existingDataSetDTO.getDataSetId() && existingDataSetDTO.getDataSetId().equals(dataSetId)) {
 
 
-                    dataSetDTO.setModifiedDate(new Date());
                     returnVal = dtoMapDataSet.replace(dataSetId, dataSetDTO);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);

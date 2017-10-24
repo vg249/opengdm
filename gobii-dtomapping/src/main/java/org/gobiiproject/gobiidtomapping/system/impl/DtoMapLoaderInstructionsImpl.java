@@ -6,6 +6,9 @@ import org.gobiiproject.gobiidao.filesystem.access.InstructionFileAccess;
 import org.gobiiproject.gobiidtomapping.*;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapDataSet;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapExperiment;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapPlatform;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapProject;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapProtocol;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapJob;
 import org.gobiiproject.gobiidtomapping.system.DtoMapLoaderInstructions;
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
@@ -234,7 +237,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
                     if (vendorProtocolDTO.getProtocolId() != null) {
 
-                        ProtocolDTO protocolDTO = dtoMapProtocol.getProtocolDetails(vendorProtocolDTO.getProtocolId());
+                        ProtocolDTO protocolDTO = dtoMapProtocol.get(vendorProtocolDTO.getProtocolId());
 
                         if (protocolDTO.getPlatformId() != null) {
 

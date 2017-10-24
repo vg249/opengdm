@@ -248,9 +248,7 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
         newContactDTO.setEmail(emailAddress);
         newContactDTO.setCode("added New Code");
         newContactDTO.setCreatedBy(1);
-        newContactDTO.setCreatedDate(new Date());
         newContactDTO.setModifiedBy(1);
-        newContactDTO.setModifiedDate(new Date());
         newContactDTO.setOrganizationId(organizationId);
         newContactDTO.getRoles().add(1);
         newContactDTO.getRoles().add(2);
@@ -303,9 +301,7 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
         newContactDTO.setEmail(UUID.randomUUID().toString());
         newContactDTO.setCode("added New Code");
         newContactDTO.setCreatedBy(1);
-        newContactDTO.setCreatedDate(new Date());
         newContactDTO.setModifiedBy(1);
-        newContactDTO.setModifiedDate(new Date());
         newContactDTO.setOrganizationId(organizationId);
         newContactDTO.getRoles().add(1);
         newContactDTO.getRoles().add(2);
