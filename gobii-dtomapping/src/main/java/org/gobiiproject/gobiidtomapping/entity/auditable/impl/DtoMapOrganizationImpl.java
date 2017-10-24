@@ -1,11 +1,11 @@
-package org.gobiiproject.gobiidtomapping.impl;
+package org.gobiiproject.gobiidtomapping.entity.auditable.impl;
 
 import org.gobiiproject.gobiidao.resultset.access.RsOrganizationDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
-import org.gobiiproject.gobiidtomapping.DtoMapOrganization;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapOrganization;
 import org.gobiiproject.gobiidtomapping.DtoMapProtocol;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
@@ -36,7 +36,7 @@ public class DtoMapOrganizationImpl implements DtoMapOrganization {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<OrganizationDTO> getOrganizations() throws GobiiDtoMappingException {
+    public List<OrganizationDTO> getList() throws GobiiDtoMappingException {
 
         List<OrganizationDTO> returnVal = new ArrayList<OrganizationDTO>();
 
@@ -57,7 +57,7 @@ public class DtoMapOrganizationImpl implements DtoMapOrganization {
     }
 
     @Override
-    public OrganizationDTO getOrganizationDetails(Integer organizationId) throws GobiiDtoMappingException {
+    public OrganizationDTO get(Integer organizationId) throws GobiiDtoMappingException {
 
         OrganizationDTO returnVal = new OrganizationDTO();
 
@@ -79,10 +79,10 @@ public class DtoMapOrganizationImpl implements DtoMapOrganization {
 
         return returnVal;
 
-    } // getOrganizationDetails()
+    } // get()
 
     @Override
-    public OrganizationDTO createOrganization(OrganizationDTO organizationDTO) throws GobiiDtoMappingException {
+    public OrganizationDTO create(OrganizationDTO organizationDTO) throws GobiiDtoMappingException {
         OrganizationDTO returnVal = organizationDTO;
 
         try {
@@ -102,7 +102,7 @@ public class DtoMapOrganizationImpl implements DtoMapOrganization {
 
 
     @Override
-    public OrganizationDTO replaceOrganization(Integer organizationId, OrganizationDTO organizationDTO) throws GobiiDtoMappingException {
+    public OrganizationDTO replace(Integer organizationId, OrganizationDTO organizationDTO) throws GobiiDtoMappingException {
 
         OrganizationDTO returnVal = organizationDTO;
 

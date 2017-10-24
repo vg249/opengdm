@@ -1,8 +1,8 @@
-package org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds;
+package org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds;
 
-import org.gobiiproject.gobiidao.resultset.access.RsPlatformDao;
+import org.gobiiproject.gobiidao.resultset.access.RsProtocolDao;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdFetch;
+import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIdFetch;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -14,51 +14,39 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Phil on 10/16/2016.
  */
-public class DtoMapNameIdFetchPlatforms implements DtoMapNameIdFetch {
+public class DtoMapNameIdFetchProtocols implements DtoMapNameIdFetch {
 
     @Autowired
-    private RsPlatformDao rsPlatformDao = null;
+    private RsProtocolDao rsProtocolDao = null;
 
-
-    Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdFetchPlatforms.class);
+    Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdFetchProtocols.class);
 
 
     @Override
     public GobiiEntityNameType getEntityTypeName() throws GobiiException {
-        return GobiiEntityNameType.PLATFORMS;
+        return GobiiEntityNameType.PROTOCOLS;
     }
 
 
-    private NameIdDTO makeNameIdDtoForPlatform(ResultSet resultSet) throws SQLException {
-
-        NameIdDTO returnVal = new NameIdDTO();
-
-        returnVal.setId(resultSet.getInt("platform_id"));
-        returnVal.setName(resultSet.getString("name"));
-
-        return returnVal;
-    }
-
-    private List<NameIdDTO> getPlatformNames() throws GobiiException {
+    private List<NameIdDTO> getNameIds(ResultSet resultSet ) throws GobiiException {
 
         List<NameIdDTO> returnVal = new ArrayList<>();
 
         try {
 
-            ResultSet resultSet = rsPlatformDao.getPlatformNames();
-            List<NameIdDTO> listDTO = new ArrayList<>();
-
+            NameIdDTO nameIdDTO;
             while (resultSet.next()) {
-                returnVal.add(this.makeNameIdDtoForPlatform(resultSet));
+                nameIdDTO = new NameIdDTO();
+                nameIdDTO.setId(resultSet.getInt("protocol_id"));
+                nameIdDTO.setName(resultSet.getString("name"));
+                returnVal.add(nameIdDTO);
             }
-
 
 
         } catch (Exception e) {
@@ -66,32 +54,24 @@ public class DtoMapNameIdFetchPlatforms implements DtoMapNameIdFetch {
             throw new GobiiDtoMappingException(e);
         }
 
-        return returnVal;
-    }
-
-    private List<NameIdDTO> getPlatformNamesByTypeId(Integer platformTypeId) throws GobiiException{
-
-        List<NameIdDTO> returnVal = new ArrayList<>();
-
-        try {
-
-            ResultSet resultSet = rsPlatformDao.getPlatformNamesByTypeId(platformTypeId);
-
-
-            while (resultSet.next()) {
-                returnVal.add(this.makeNameIdDtoForPlatform(resultSet));
-            }
-
-
-
-        } catch (Exception e) {
-            LOGGER.error("Gobii Maping Error", e);
-            throw new GobiiDtoMappingException(e);
-        }
 
         return returnVal;
     }
 
+    private List<NameIdDTO> getProtocolNames() throws GobiiException {
+
+        List<NameIdDTO> returnVal;
+        ResultSet resultSet = rsProtocolDao.getProtocolNames();
+        returnVal = this.getNameIds(resultSet);
+        return returnVal;
+    }
+
+    private List<NameIdDTO> getNameIdListForProtocolsByPlatformId(Integer platformId) throws GobiiException {
+        List<NameIdDTO> returnVal;
+        ResultSet resultSet = rsProtocolDao.getProtocolNamesByPlatformId(platformId);
+        returnVal = this.getNameIds(resultSet);
+        return returnVal;
+    }
 
     @Override
     public List<NameIdDTO> getNameIds(DtoMapNameIdParams dtoMapNameIdParams) throws GobiiException {
@@ -99,12 +79,12 @@ public class DtoMapNameIdFetchPlatforms implements DtoMapNameIdFetch {
         List<NameIdDTO> returnVal;
 
         if (GobiiFilterType.NONE == dtoMapNameIdParams.getGobiiFilterType()) {
-            returnVal = this.getPlatformNames();
+            returnVal = this.getProtocolNames();
         } else {
 
             if (GobiiFilterType.BYTYPEID == dtoMapNameIdParams.getGobiiFilterType()) {
 
-                returnVal = this.getPlatformNamesByTypeId(dtoMapNameIdParams.getFilterValueAsInteger());
+                returnVal = this.getNameIdListForProtocolsByPlatformId(dtoMapNameIdParams.getFilterValueAsInteger());
 
             } else {
 
@@ -118,5 +98,4 @@ public class DtoMapNameIdFetchPlatforms implements DtoMapNameIdFetch {
 
         return returnVal;
     }
-
 }

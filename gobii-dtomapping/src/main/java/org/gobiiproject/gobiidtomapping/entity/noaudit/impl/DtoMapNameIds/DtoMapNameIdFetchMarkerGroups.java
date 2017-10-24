@@ -1,8 +1,8 @@
-package org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds;
+package org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds;
 
-import org.gobiiproject.gobiidao.resultset.access.RsReferenceDao;
+import org.gobiiproject.gobiidao.resultset.access.RsMarkerGroupDao;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdFetch;
+import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIdFetch;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -20,35 +20,36 @@ import java.util.List;
 /**
  * Created by Phil on 10/16/2016.
  */
-public class DtoMapNameIdFetchReferences implements DtoMapNameIdFetch {
+public class DtoMapNameIdFetchMarkerGroups implements DtoMapNameIdFetch {
+
 
     @Autowired
-    private RsReferenceDao rsReferenceDao = null;
+    private RsMarkerGroupDao rsMarkerGroupDao = null;
 
-
-    Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdFetchReferences.class);
+    Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdFetchMarkerGroups.class);
 
 
     @Override
     public GobiiEntityNameType getEntityTypeName() throws GobiiException {
-        return GobiiEntityNameType.REFERENCES;
+        return GobiiEntityNameType.MARKERGROUPS;
     }
 
-    private List<NameIdDTO> getReferenceNames() {
 
-        List<NameIdDTO>  returnVal = new ArrayList<>();
+    private List<NameIdDTO> getMarkerGroupNames() throws GobiiException {
+
+        List<NameIdDTO> returnVal = new ArrayList<>();
 
         try {
 
-            ResultSet resultSet = rsReferenceDao.getReferenceNames();
+            ResultSet resultSet = rsMarkerGroupDao.getMarkerGroupNames();
+
             NameIdDTO nameIdDTO;
             while (resultSet.next()) {
                 nameIdDTO = new NameIdDTO();
-                nameIdDTO.setId(resultSet.getInt("reference_id"));
+                nameIdDTO.setId(resultSet.getInt("marker_group_id"));
                 nameIdDTO.setName(resultSet.getString("name"));
                 returnVal.add(nameIdDTO);
             }
-
 
         } catch (Exception e) {
             LOGGER.error("Gobii Maping Error", e);
@@ -56,9 +57,8 @@ public class DtoMapNameIdFetchReferences implements DtoMapNameIdFetch {
         }
 
         return returnVal;
-    }
 
-
+    }//getMarkerGroupNames
 
     @Override
     public List<NameIdDTO> getNameIds(DtoMapNameIdParams dtoMapNameIdParams) throws GobiiException {
@@ -66,7 +66,7 @@ public class DtoMapNameIdFetchReferences implements DtoMapNameIdFetch {
         List<NameIdDTO> returnVal;
 
         if (GobiiFilterType.NONE == dtoMapNameIdParams.getGobiiFilterType()) {
-            returnVal = this.getReferenceNames();
+            returnVal = this.getMarkerGroupNames();
         } else {
 
             throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,

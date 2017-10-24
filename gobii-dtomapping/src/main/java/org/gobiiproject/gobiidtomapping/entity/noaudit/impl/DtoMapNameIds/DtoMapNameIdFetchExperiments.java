@@ -1,8 +1,8 @@
-package org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds;
+package org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds;
 
-import org.gobiiproject.gobiidao.resultset.access.RsAnalysisDao;
+import org.gobiiproject.gobiidao.resultset.access.RsExperimentDao;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdFetch;
+import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIdFetch;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -21,67 +21,75 @@ import java.util.List;
 /**
  * Created by Phil on 10/16/2016.
  */
-public class DtoMapNameIdFetchAnalyses implements DtoMapNameIdFetch {
+public class DtoMapNameIdFetchExperiments implements DtoMapNameIdFetch {
 
     @Autowired
-    private RsAnalysisDao rsAnalysisDao = null;
-    Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdFetchAnalyses.class);
+    private RsExperimentDao rsExperimentDao = null;
+
+    Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdFetchExperiments.class);
 
 
     @Override
     public GobiiEntityNameType getEntityTypeName() throws GobiiException {
-        return GobiiEntityNameType.ANALYSES;
+        return GobiiEntityNameType.EXPERIMENTS;
     }
 
 
-    private List<NameIdDTO> getAllNameIdsForAnalysis() throws GobiiException {
+    private NameIdDTO makeNameIdDtoForExperiment(ResultSet resultSet) throws SQLException {
+
+        NameIdDTO returnVal = new NameIdDTO();
+
+        returnVal.setId(resultSet.getInt("experiment_id"));
+        returnVal.setName(resultSet.getString("name"));
+
+
+        return returnVal;
+    }
+
+
+
+    private List<NameIdDTO> getExperimentNames() throws GobiiException {
 
         List<NameIdDTO> returnVal = new ArrayList<>();
 
-        ResultSet resultSet = rsAnalysisDao.getAnalysisNames();
-        List<NameIdDTO> listDTO = new ArrayList<>();
-
         try {
 
-            while (resultSet.next()) {
-                NameIdDTO nameIdDTO = new NameIdDTO();
-                nameIdDTO.setId(resultSet.getInt("analysis_id"));
-                nameIdDTO.setName(resultSet.getString("name"));
-                returnVal.add(nameIdDTO);
-            }
+            ResultSet resultSet = rsExperimentDao.getExperimentNames();
 
-        } catch (SQLException e) {
-            LOGGER.error("error retrieving analysis names", e);
+            while (resultSet.next()) {
+                returnVal.add(this.makeNameIdDtoForExperiment(resultSet));
+            }
+        } catch (Exception e) {
+            LOGGER.error("Gobii Maping Error", e);
             throw new GobiiDtoMappingException(e);
         }
 
         return returnVal;
     }
 
-    private List<NameIdDTO> getNameIdListForAnalysisNameByTypeId(Integer typeId) {
+    private List<NameIdDTO> getExperimentNamesByProjectId(Integer projectId) throws GobiiException{
 
         List<NameIdDTO> returnVal = new ArrayList<>();
 
         try {
 
-            ResultSet resultSet = rsAnalysisDao.getAnalysisNamesByTypeId(typeId);
+            ResultSet resultSet = rsExperimentDao.getExperimentNamesByProjectId(projectId);
 
-            NameIdDTO nameIdDTO;
+            List<NameIdDTO> listDTO = new ArrayList<>();
+
             while (resultSet.next()) {
-                nameIdDTO = new NameIdDTO();
-                nameIdDTO.setId(resultSet.getInt("analysis_id"));
-                nameIdDTO.setName(resultSet.getString("name"));
-                returnVal.add(nameIdDTO);
+                returnVal.add(this.makeNameIdDtoForExperiment(resultSet));
             }
 
 
-        } catch (SQLException e) {
-            LOGGER.error("error retrieving analysis names", e);
-            throw new GobiiDtoMappingException(e);
+        } catch (Exception e) {
+            LOGGER.error("Gobii Maping Error", e);
+            new GobiiDtoMappingException(e);
         }
 
         return returnVal;
-    }
+
+    } // getNameIdListForContactsByRoleName()
 
 
     @Override
@@ -90,14 +98,15 @@ public class DtoMapNameIdFetchAnalyses implements DtoMapNameIdFetch {
         List<NameIdDTO> returnVal;
 
         if (GobiiFilterType.NONE == dtoMapNameIdParams.getGobiiFilterType()) {
-            returnVal = this.getAllNameIdsForAnalysis();
+            returnVal = this.getExperimentNames();
         } else {
 
             if (GobiiFilterType.BYTYPEID == dtoMapNameIdParams.getGobiiFilterType()) {
 
-                returnVal = this.getNameIdListForAnalysisNameByTypeId(dtoMapNameIdParams.getFilterValueAsInteger());
+                returnVal = this.getExperimentNamesByProjectId(dtoMapNameIdParams.getFilterValueAsInteger());
 
             } else {
+
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.NONE,
                         "Unsupported filter type for "
@@ -108,4 +117,5 @@ public class DtoMapNameIdFetchAnalyses implements DtoMapNameIdFetch {
 
         return returnVal;
     }
+
 }

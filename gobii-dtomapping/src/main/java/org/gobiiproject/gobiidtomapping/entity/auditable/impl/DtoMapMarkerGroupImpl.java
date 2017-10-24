@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiidtomapping.impl;
+package org.gobiiproject.gobiidtomapping.entity.auditable.impl;
 
 import com.google.gson.*;
 import org.gobiiproject.gobiidao.GobiiDaoException;
@@ -6,7 +6,7 @@ import org.gobiiproject.gobiidao.resultset.access.RsMarkerGroupDao;
 import org.gobiiproject.gobiidao.resultset.core.EntityPropertyParamNames;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
-import org.gobiiproject.gobiidtomapping.DtoMapMarkerGroup;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapMarkerGroup;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapDataSetImpl;
 import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerGroupDTO;
@@ -41,7 +41,7 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
     private RsMarkerGroupDao rsMarkerGroupDao;
 
 
-    public MarkerGroupDTO getMarkerGroupDetails(Integer markerGroupId) throws GobiiDtoMappingException {
+    public MarkerGroupDTO get(Integer markerGroupId) throws GobiiDtoMappingException {
 
         MarkerGroupDTO returnVal = new MarkerGroupDTO();
 
@@ -103,7 +103,7 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
     }
 
     @Override
-    public List<MarkerGroupDTO> getMarkerGroups() throws GobiiDtoMappingException {
+    public List<MarkerGroupDTO> getList() throws GobiiDtoMappingException {
 
         List<MarkerGroupDTO> returnVal = new ArrayList<>();
 
@@ -261,7 +261,7 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED) // if we throw a runtime exception, we'll rollback
-    public MarkerGroupDTO createMarkerGroup(MarkerGroupDTO markerGroupDTO) throws GobiiDtoMappingException {
+    public MarkerGroupDTO create(MarkerGroupDTO markerGroupDTO) throws GobiiDtoMappingException {
 
         MarkerGroupDTO returnVal = markerGroupDTO;
 
@@ -330,7 +330,7 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
     }
 
     @Override
-    public MarkerGroupDTO replaceMarkerGroup(Integer markerGroupId, MarkerGroupDTO markerGroupDTO) throws GobiiDtoMappingException {
+    public MarkerGroupDTO replace(Integer markerGroupId, MarkerGroupDTO markerGroupDTO) throws GobiiDtoMappingException {
 
         MarkerGroupDTO returnVal = markerGroupDTO;
 
@@ -376,7 +376,7 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
 
             // update marker group name first if marker group name is changed.
 
-            MarkerGroupDTO existingMapsetDTO = getMarkerGroupDetails(markerGroupId);
+            MarkerGroupDTO existingMapsetDTO = get(markerGroupId);
 
             if(existingMapsetDTO.getName() != markerGroupDTO.getName()) {
 

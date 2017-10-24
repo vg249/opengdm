@@ -1,8 +1,8 @@
 package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.services.NameIdListService;
-import org.gobiiproject.gobiidtomapping.DtoMapNameIdList;
-import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
+import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapNameIdList;
+import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;

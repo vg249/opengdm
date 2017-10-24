@@ -1,11 +1,11 @@
-package org.gobiiproject.gobiidtomapping.impl;
+package org.gobiiproject.gobiidtomapping.entity.noaudit.impl;
 
 import org.gobiiproject.gobiidao.resultset.access.RsMarkerDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
-import org.gobiiproject.gobiidtomapping.DtoMapMarker;
+import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapMarker;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
 import org.slf4j.Logger;

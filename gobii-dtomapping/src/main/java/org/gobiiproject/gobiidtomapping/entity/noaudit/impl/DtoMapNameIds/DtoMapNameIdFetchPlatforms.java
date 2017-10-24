@@ -1,8 +1,8 @@
-package org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds;
+package org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds;
 
-import org.gobiiproject.gobiidao.resultset.access.RsExperimentDao;
+import org.gobiiproject.gobiidao.resultset.access.RsPlatformDao;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdFetch;
+import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIdFetch;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -21,44 +21,46 @@ import java.util.List;
 /**
  * Created by Phil on 10/16/2016.
  */
-public class DtoMapNameIdFetchExperiments implements DtoMapNameIdFetch {
+public class DtoMapNameIdFetchPlatforms implements DtoMapNameIdFetch {
 
     @Autowired
-    private RsExperimentDao rsExperimentDao = null;
+    private RsPlatformDao rsPlatformDao = null;
 
-    Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdFetchExperiments.class);
+
+    Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdFetchPlatforms.class);
 
 
     @Override
     public GobiiEntityNameType getEntityTypeName() throws GobiiException {
-        return GobiiEntityNameType.EXPERIMENTS;
+        return GobiiEntityNameType.PLATFORMS;
     }
 
 
-    private NameIdDTO makeNameIdDtoForExperiment(ResultSet resultSet) throws SQLException {
+    private NameIdDTO makeNameIdDtoForPlatform(ResultSet resultSet) throws SQLException {
 
         NameIdDTO returnVal = new NameIdDTO();
 
-        returnVal.setId(resultSet.getInt("experiment_id"));
+        returnVal.setId(resultSet.getInt("platform_id"));
         returnVal.setName(resultSet.getString("name"));
-
 
         return returnVal;
     }
 
-
-
-    private List<NameIdDTO> getExperimentNames() throws GobiiException {
+    private List<NameIdDTO> getPlatformNames() throws GobiiException {
 
         List<NameIdDTO> returnVal = new ArrayList<>();
 
         try {
 
-            ResultSet resultSet = rsExperimentDao.getExperimentNames();
+            ResultSet resultSet = rsPlatformDao.getPlatformNames();
+            List<NameIdDTO> listDTO = new ArrayList<>();
 
             while (resultSet.next()) {
-                returnVal.add(this.makeNameIdDtoForExperiment(resultSet));
+                returnVal.add(this.makeNameIdDtoForPlatform(resultSet));
             }
+
+
+
         } catch (Exception e) {
             LOGGER.error("Gobii Maping Error", e);
             throw new GobiiDtoMappingException(e);
@@ -67,29 +69,28 @@ public class DtoMapNameIdFetchExperiments implements DtoMapNameIdFetch {
         return returnVal;
     }
 
-    private List<NameIdDTO> getExperimentNamesByProjectId(Integer projectId) throws GobiiException{
+    private List<NameIdDTO> getPlatformNamesByTypeId(Integer platformTypeId) throws GobiiException{
 
         List<NameIdDTO> returnVal = new ArrayList<>();
 
         try {
 
-            ResultSet resultSet = rsExperimentDao.getExperimentNamesByProjectId(projectId);
+            ResultSet resultSet = rsPlatformDao.getPlatformNamesByTypeId(platformTypeId);
 
-            List<NameIdDTO> listDTO = new ArrayList<>();
 
             while (resultSet.next()) {
-                returnVal.add(this.makeNameIdDtoForExperiment(resultSet));
+                returnVal.add(this.makeNameIdDtoForPlatform(resultSet));
             }
+
 
 
         } catch (Exception e) {
             LOGGER.error("Gobii Maping Error", e);
-            new GobiiDtoMappingException(e);
+            throw new GobiiDtoMappingException(e);
         }
 
         return returnVal;
-
-    } // getNameIdListForContactsByRoleName()
+    }
 
 
     @Override
@@ -98,12 +99,12 @@ public class DtoMapNameIdFetchExperiments implements DtoMapNameIdFetch {
         List<NameIdDTO> returnVal;
 
         if (GobiiFilterType.NONE == dtoMapNameIdParams.getGobiiFilterType()) {
-            returnVal = this.getExperimentNames();
+            returnVal = this.getPlatformNames();
         } else {
 
             if (GobiiFilterType.BYTYPEID == dtoMapNameIdParams.getGobiiFilterType()) {
 
-                returnVal = this.getExperimentNamesByProjectId(dtoMapNameIdParams.getFilterValueAsInteger());
+                returnVal = this.getPlatformNamesByTypeId(dtoMapNameIdParams.getFilterValueAsInteger());
 
             } else {
 

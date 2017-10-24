@@ -2,7 +2,7 @@ package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.MarkerGroupService;
-import org.gobiiproject.gobiidtomapping.DtoMapMarkerGroup;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapMarkerGroup;
 import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -33,7 +33,7 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
 
             markerGroupDTO.setCreatedDate(new Date());
             markerGroupDTO.setModifiedDate(new Date());
-            returnVal = dtoMapMarkerGroup.createMarkerGroup(markerGroupDTO);
+            returnVal = dtoMapMarkerGroup.create(markerGroupDTO);
 
             // When we have roles and permissions, this will be set programmatically
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
@@ -57,10 +57,10 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
             if(null == markerGroupDTO.getMarkerGroupId() ||
                     markerGroupDTO.getMarkerGroupId().equals(markerGroupId)) {
 
-                MarkerGroupDTO existingMapsetDTO = dtoMapMarkerGroup.getMarkerGroupDetails(markerGroupId);
+                MarkerGroupDTO existingMapsetDTO = dtoMapMarkerGroup.get(markerGroupId);
                 if(null != existingMapsetDTO.getMarkerGroupId() && existingMapsetDTO.getMarkerGroupId().equals(markerGroupId)) {
 
-                    returnVal = dtoMapMarkerGroup.replaceMarkerGroup(markerGroupId, markerGroupDTO);
+                    returnVal = dtoMapMarkerGroup.replace(markerGroupId, markerGroupDTO);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
@@ -100,7 +100,7 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
 
         List<MarkerGroupDTO> returnVal;
 
-        returnVal = dtoMapMarkerGroup.getMarkerGroups();
+        returnVal = dtoMapMarkerGroup.getList();
         for(MarkerGroupDTO currentMarkerGroupDTO : returnVal) {
             currentMarkerGroupDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
             currentMarkerGroupDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
@@ -118,7 +118,7 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
 
         MarkerGroupDTO returnVal;
 
-        returnVal = dtoMapMarkerGroup.getMarkerGroupDetails(markerGroupId);
+        returnVal = dtoMapMarkerGroup.get(markerGroupId);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 

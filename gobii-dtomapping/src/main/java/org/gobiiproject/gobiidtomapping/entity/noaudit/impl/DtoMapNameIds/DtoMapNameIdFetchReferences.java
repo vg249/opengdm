@@ -1,8 +1,8 @@
-package org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds;
+package org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds;
 
-import org.gobiiproject.gobiidao.resultset.access.RsOrganizationDao;
+import org.gobiiproject.gobiidao.resultset.access.RsReferenceDao;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdFetch;
+import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIdFetch;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -20,33 +20,31 @@ import java.util.List;
 /**
  * Created by Phil on 10/16/2016.
  */
-public class DtoMapNameIdFetchOrganizations implements DtoMapNameIdFetch {
+public class DtoMapNameIdFetchReferences implements DtoMapNameIdFetch {
 
     @Autowired
-    private RsOrganizationDao rsOrganizationDao = null;
+    private RsReferenceDao rsReferenceDao = null;
 
-    Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdFetchOrganizations.class);
+
+    Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdFetchReferences.class);
 
 
     @Override
     public GobiiEntityNameType getEntityTypeName() throws GobiiException {
-        return GobiiEntityNameType.ORGANIZATIONS;
+        return GobiiEntityNameType.REFERENCES;
     }
 
+    private List<NameIdDTO> getReferenceNames() {
 
-    private List<NameIdDTO> getOrganizationNames() throws GobiiException {
-
-        List<NameIdDTO> returnVal = new ArrayList<>();
+        List<NameIdDTO>  returnVal = new ArrayList<>();
 
         try {
 
-            ResultSet resultSet = rsOrganizationDao.getOrganizationNames();
-
-
+            ResultSet resultSet = rsReferenceDao.getReferenceNames();
             NameIdDTO nameIdDTO;
             while (resultSet.next()) {
                 nameIdDTO = new NameIdDTO();
-                nameIdDTO.setId(resultSet.getInt("organization_id"));
+                nameIdDTO.setId(resultSet.getInt("reference_id"));
                 nameIdDTO.setName(resultSet.getString("name"));
                 returnVal.add(nameIdDTO);
             }
@@ -60,13 +58,15 @@ public class DtoMapNameIdFetchOrganizations implements DtoMapNameIdFetch {
         return returnVal;
     }
 
+
+
     @Override
     public List<NameIdDTO> getNameIds(DtoMapNameIdParams dtoMapNameIdParams) throws GobiiException {
 
         List<NameIdDTO> returnVal;
 
         if (GobiiFilterType.NONE == dtoMapNameIdParams.getGobiiFilterType()) {
-            returnVal = this.getOrganizationNames();
+            returnVal = this.getReferenceNames();
         } else {
 
             throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,

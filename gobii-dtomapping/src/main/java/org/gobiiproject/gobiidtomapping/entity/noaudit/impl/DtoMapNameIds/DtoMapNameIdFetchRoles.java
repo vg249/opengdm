@@ -1,8 +1,9 @@
-package org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds;
+package org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds;
 
-import org.gobiiproject.gobiidao.resultset.access.RsMarkerGroupDao;
+import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiidao.resultset.access.RsRoleDao;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdFetch;
+import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIdFetch;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -20,45 +21,46 @@ import java.util.List;
 /**
  * Created by Phil on 10/16/2016.
  */
-public class DtoMapNameIdFetchMarkerGroups implements DtoMapNameIdFetch {
-
+public class DtoMapNameIdFetchRoles implements DtoMapNameIdFetch {
 
     @Autowired
-    private RsMarkerGroupDao rsMarkerGroupDao = null;
+    private RsRoleDao rsRoleDao = null;
 
-    Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdFetchMarkerGroups.class);
+
+    Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdFetchRoles.class);
 
 
     @Override
     public GobiiEntityNameType getEntityTypeName() throws GobiiException {
-        return GobiiEntityNameType.MARKERGROUPS;
+        return GobiiEntityNameType.CVGROUPS;
     }
 
 
-    private List<NameIdDTO> getMarkerGroupNames() throws GobiiException {
+    private List<NameIdDTO> getRoleNames() throws GobiiException {
 
         List<NameIdDTO> returnVal = new ArrayList<>();
 
         try {
 
-            ResultSet resultSet = rsMarkerGroupDao.getMarkerGroupNames();
+            ResultSet resultSet = rsRoleDao.getContactRoleNames();
 
             NameIdDTO nameIdDTO;
             while (resultSet.next()) {
                 nameIdDTO = new NameIdDTO();
-                nameIdDTO.setId(resultSet.getInt("marker_group_id"));
-                nameIdDTO.setName(resultSet.getString("name"));
+                nameIdDTO.setId(resultSet.getInt("role_id"));
+                nameIdDTO.setName(resultSet.getString("role_name"));
                 returnVal.add(nameIdDTO);
             }
 
         } catch (Exception e) {
             LOGGER.error("Gobii Maping Error", e);
-            throw new GobiiDtoMappingException(e);
+            throw new GobiiDaoException(e);
         }
 
         return returnVal;
+    }
 
-    }//getMarkerGroupNames
+
 
     @Override
     public List<NameIdDTO> getNameIds(DtoMapNameIdParams dtoMapNameIdParams) throws GobiiException {
@@ -66,7 +68,7 @@ public class DtoMapNameIdFetchMarkerGroups implements DtoMapNameIdFetch {
         List<NameIdDTO> returnVal;
 
         if (GobiiFilterType.NONE == dtoMapNameIdParams.getGobiiFilterType()) {
-            returnVal = this.getMarkerGroupNames();
+            returnVal = this.getRoleNames();
         } else {
 
             throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,

@@ -1,8 +1,8 @@
-package org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds;
+package org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds;
 
-import org.gobiiproject.gobiidao.resultset.access.RsProtocolDao;
+import org.gobiiproject.gobiidao.resultset.access.RsProjectDao;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdFetch;
+import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIdFetch;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -14,62 +14,76 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Phil on 10/16/2016.
  */
-public class DtoMapNameIdFetchProtocols implements DtoMapNameIdFetch {
+public class DtoMapNameIdFetchProjects implements DtoMapNameIdFetch {
 
     @Autowired
-    private RsProtocolDao rsProtocolDao = null;
+    private RsProjectDao rsProjectDao = null;
 
-    Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdFetchProtocols.class);
+
+    Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdFetchProjects.class);
 
 
     @Override
     public GobiiEntityNameType getEntityTypeName() throws GobiiException {
-        return GobiiEntityNameType.PROTOCOLS;
+        return GobiiEntityNameType.PROJECTS;
     }
 
 
-    private List<NameIdDTO> getNameIds(ResultSet resultSet ) throws GobiiException {
+    private NameIdDTO makeNameIdDto( ResultSet resultSet) throws  SQLException {
+
+        NameIdDTO returnVal = new NameIdDTO();
+
+        returnVal.setId(resultSet.getInt("project_id"));
+        returnVal.setName(resultSet.getString("name"));
+
+        return  returnVal;
+
+    }
+
+    private List<NameIdDTO> getNameIdListForProjectNameByContactId(Integer contactId) throws GobiiException {
 
         List<NameIdDTO> returnVal = new ArrayList<>();
 
         try {
+                ResultSet resultSet = rsProjectDao.getProjectNamesForContactId(contactId);
 
-            NameIdDTO nameIdDTO;
-            while (resultSet.next()) {
-                nameIdDTO = new NameIdDTO();
-                nameIdDTO.setId(resultSet.getInt("protocol_id"));
-                nameIdDTO.setName(resultSet.getString("name"));
-                returnVal.add(nameIdDTO);
-            }
-
+                while (resultSet.next()) {
+                    returnVal.add(makeNameIdDto(resultSet));
+                }
 
         } catch (Exception e) {
             LOGGER.error("Gobii Maping Error", e);
             throw new GobiiDtoMappingException(e);
         }
 
-
         return returnVal;
-    }
 
-    private List<NameIdDTO> getProtocolNames() throws GobiiException {
+    } // getNameIdListForContactsByRoleName()
 
-        List<NameIdDTO> returnVal;
-        ResultSet resultSet = rsProtocolDao.getProtocolNames();
-        returnVal = this.getNameIds(resultSet);
-        return returnVal;
-    }
+    private List<NameIdDTO> getNameIdListForProjects() {
 
-    private List<NameIdDTO> getNameIdListForProtocolsByPlatformId(Integer platformId) throws GobiiException {
-        List<NameIdDTO> returnVal;
-        ResultSet resultSet = rsProtocolDao.getProtocolNamesByPlatformId(platformId);
-        returnVal = this.getNameIds(resultSet);
+        List<NameIdDTO> returnVal = new ArrayList<>();
+
+        try {
+
+            ResultSet resultSet = rsProjectDao.getProjectNames();
+
+            while (resultSet.next()) {
+                returnVal.add(makeNameIdDto(resultSet));
+            }
+
+        } catch (Exception e) {
+            LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
+        }
+
         return returnVal;
     }
 
@@ -79,15 +93,14 @@ public class DtoMapNameIdFetchProtocols implements DtoMapNameIdFetch {
         List<NameIdDTO> returnVal;
 
         if (GobiiFilterType.NONE == dtoMapNameIdParams.getGobiiFilterType()) {
-            returnVal = this.getProtocolNames();
+            returnVal = this.getNameIdListForProjects();
         } else {
 
             if (GobiiFilterType.BYTYPEID == dtoMapNameIdParams.getGobiiFilterType()) {
 
-                returnVal = this.getNameIdListForProtocolsByPlatformId(dtoMapNameIdParams.getFilterValueAsInteger());
+                returnVal = this.getNameIdListForProjectNameByContactId(dtoMapNameIdParams.getFilterValueAsInteger());
 
             } else {
-
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.NONE,
                         "Unsupported filter type for "

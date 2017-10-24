@@ -5,7 +5,7 @@ import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
-import org.gobiiproject.gobiidtomapping.DtoMapOrganization;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapOrganization;
 import org.gobiiproject.gobiidtomapping.DtoMapProtocol;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -364,7 +364,7 @@ public class DtoMapProtocolImpl implements DtoMapProtocol {
         OrganizationDTO returnVal = organizationDTO;
 
         try {
-            dtoMapOrganization.replaceOrganization(returnVal.getOrganizationId(), returnVal);
+            dtoMapOrganization.replace(returnVal.getOrganizationId(), returnVal);
 
             List<VendorProtocolDTO> vendorProtocolsForProtocol = returnVal.getVendorProtocols()
                     .stream()

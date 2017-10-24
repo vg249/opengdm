@@ -1,8 +1,8 @@
-package org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds;
+package org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds;
 
-import org.gobiiproject.gobiidao.resultset.access.RsContactDao;
+import org.gobiiproject.gobiidao.resultset.access.RsCvDao;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdFetch;
+import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIdFetch;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -21,78 +21,71 @@ import java.util.List;
 /**
  * Created by Phil on 10/16/2016.
  */
-public class DtoMapNameIdFetchContacts implements DtoMapNameIdFetch {
+public class DtoMapNameIdFetchCvTerms implements DtoMapNameIdFetch {
 
     @Autowired
-    private RsContactDao rsContactDao = null;
+    private RsCvDao rsCvDao = null;
 
-
-    Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdFetchContacts.class);
+    Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdFetchCvTerms.class);
 
 
     @Override
-    public GobiiEntityNameType getEntityTypeName() throws GobiiException {
-        return GobiiEntityNameType.CONTACTS;
+    public GobiiEntityNameType getEntityTypeName() {
+        return GobiiEntityNameType.CVTERMS;
     }
 
-
-    private NameIdDTO makeNameIdDto(ResultSet resultSet) throws SQLException {
-
+    private NameIdDTO makeCvNameId(ResultSet resultSet) throws SQLException   {
         NameIdDTO returnVal = new NameIdDTO();
-        returnVal.setId(resultSet.getInt("contact_id"));
-        String lastName = resultSet.getString("lastname");
-        String firstName = resultSet.getString("firstname");
-        String name = lastName + ", " + firstName;
-        returnVal.setName(name);
+        returnVal.setId(resultSet.getInt("cv_id"));
+        returnVal.setName(resultSet.getString("term").toString());
         return returnVal;
+
     }
 
-    private List<NameIdDTO> getNameIdListForContactsByRoleName(String roleName) throws GobiiException {
+    private List<NameIdDTO> getCvTermsForGroup(String cvGroupName) throws GobiiException {
 
         List<NameIdDTO> returnVal = new ArrayList<>();
 
         try {
 
-            ResultSet resultSet = rsContactDao.getContactNamesForRoleName(roleName);
-            List<NameIdDTO> listDTO = new ArrayList<>();
+            ResultSet resultSet = rsCvDao.getCvTermsByGroup(cvGroupName);
 
             while (resultSet.next()) {
-                returnVal.add(this.makeNameIdDto(resultSet));
-            }
-
-
-        } catch (SQLException e) {
-            LOGGER.error("Gobii Maping Error", e);
-            throw new GobiiDtoMappingException(e);
-        }
-
-
-        return (returnVal);
-
-    } // getNameIdListForContactsByRoleName()
-
-    private List<NameIdDTO> getNameIdListForAllContacts() {
-
-        List<NameIdDTO> returnVal = new ArrayList<>();
-
-        try {
-
-            ResultSet resultSet = rsContactDao.getAllContactNames();
-
-            while (resultSet.next()) {
-                returnVal.add(this.makeNameIdDto(resultSet));
+                returnVal.add(makeCvNameId(resultSet));
             }
 
         } catch (Exception e) {
             LOGGER.error("Gobii Maping Error", e);
             throw new GobiiDtoMappingException(e);
-
         }
 
-        return (returnVal);
+        return returnVal;
 
-    } // getNameIdListForContactsByRoleName()
+    } // getCvTermsForGroup()
 
+    private List<NameIdDTO> getCvTerms() throws GobiiException {
+
+        List<NameIdDTO> returnVal = new ArrayList<>();
+
+        try {
+
+            ResultSet resultSet = rsCvDao.getCvNames();
+
+
+            while (resultSet.next()) {
+                returnVal.add(makeCvNameId(resultSet));
+            }
+
+
+
+        } catch (Exception e) {
+            LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
+        }
+
+        return returnVal;
+
+    }
 
     @Override
     public List<NameIdDTO> getNameIds(DtoMapNameIdParams dtoMapNameIdParams) throws GobiiException {
@@ -100,15 +93,14 @@ public class DtoMapNameIdFetchContacts implements DtoMapNameIdFetch {
         List<NameIdDTO> returnVal;
 
         if (GobiiFilterType.NONE == dtoMapNameIdParams.getGobiiFilterType()) {
-            returnVal = this.getNameIdListForAllContacts();
+            returnVal = this.getCvTerms();
         } else {
 
             if (GobiiFilterType.BYTYPENAME == dtoMapNameIdParams.getGobiiFilterType()) {
 
-                returnVal = this.getNameIdListForContactsByRoleName(dtoMapNameIdParams.getFilterValueAsString());
+                returnVal = this.getCvTermsForGroup(dtoMapNameIdParams.getFilterValueAsString());
 
             } else {
-
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.NONE,
                         "Unsupported filter type for "
@@ -119,5 +111,4 @@ public class DtoMapNameIdFetchContacts implements DtoMapNameIdFetch {
 
         return returnVal;
     }
-
 }

@@ -14,7 +14,7 @@ import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiEntityNameConvert
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
+import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.*;
 import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
@@ -52,7 +52,6 @@ import java.io.FileInputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.security.Principal;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
