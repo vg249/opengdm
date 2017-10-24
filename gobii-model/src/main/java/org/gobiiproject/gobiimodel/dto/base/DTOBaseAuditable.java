@@ -9,7 +9,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by Phil on 9/25/2016.
+ * All Dto classes for tables that have the created_date, modified_date, created_by,
+ * and modified_by columns, only those classes, must derive from DTOBaseAuditable.
+ * This inheritance strategy makes it so that such DTOs will have the methods and column
+ * name annotations will be standardized. Moreover, this interface is relied upon by
+ * the DtoMapAspect class such that for the DtoMap* classes that derive from DtoMap<> and
+ * live in the entity.auditable namespace, the aspect will automatically call these methods
+ * to maintain the date and user columns systematically.
  */
 public abstract class DTOBaseAuditable extends DTOBase {
 

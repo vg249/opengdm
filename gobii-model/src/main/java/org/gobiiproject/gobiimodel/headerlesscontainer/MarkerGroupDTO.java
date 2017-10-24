@@ -10,10 +10,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
+import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 
 import java.util.*;
 
-public class MarkerGroupDTO extends DTOBase {
+public class MarkerGroupDTO extends DTOBaseAuditable {
 
 
     public MarkerGroupDTO() {
