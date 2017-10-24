@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiidtomapping;
+package org.gobiiproject.gobiidtomapping.system;
 
 
 import org.gobiiproject.gobiimodel.config.GobiiException;

@@ -127,7 +127,7 @@ public class DtoMapJobImpl implements DtoMapJob {
 
             // get DatasetDTO
 
-            DataSetDTO dataSetDTO = dtoMapDataSet.getDataSetDetails(jobDTO.getDatasetId());
+            DataSetDTO dataSetDTO = dtoMapDataSet.get(jobDTO.getDatasetId());
 
             String[] datePattern = {"yyyy-MM-dd"};
 
@@ -147,7 +147,7 @@ public class DtoMapJobImpl implements DtoMapJob {
             dataSetDTO.setCreatedDate(parsedDate);
             dataSetDTO.setModifiedDate(jobDTO.getSubmittedDate());
             dataSetDTO.setJobId(jobDTO.getJobId());
-            dtoMapDataSet.replaceDataSet(returnVal.getDatasetId(), dataSetDTO);
+            dtoMapDataSet.replace(returnVal.getDatasetId(), dataSetDTO);
 
         }
 

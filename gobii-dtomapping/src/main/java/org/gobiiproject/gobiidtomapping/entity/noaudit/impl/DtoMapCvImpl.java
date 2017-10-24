@@ -1,10 +1,10 @@
-package org.gobiiproject.gobiidtomapping.impl;
+package org.gobiiproject.gobiidtomapping.entity.noaudit.impl;
 
 import org.gobiiproject.gobiidao.resultset.access.RsCvDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
-import org.gobiiproject.gobiidtomapping.DtoMapCv;
-import org.gobiiproject.gobiidtomapping.DtoMapCvGroup;
+import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapCv;
+import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapCvGroup;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.CvDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.CvGroupDTO;

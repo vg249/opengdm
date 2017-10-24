@@ -35,6 +35,7 @@ public abstract class DTOBaseAuditable extends DTOBase {
 
     @GobiiEntityColumn(columnName = "created_date")
     public void setCreatedDate(Date createdDate) {
+
         this.createdDate = createdDate;
     }
 

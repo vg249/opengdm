@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiidtomapping.auditable;
 
-import org.gobiiproject.gobiidtomapping.DtoMap;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMap;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.AnalysisDTO;
 

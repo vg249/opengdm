@@ -6,7 +6,6 @@ import org.gobiiproject.gobiidtomapping.DtoMapDataSet;
 import org.gobiiproject.gobiidtomapping.DtoMapJob;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
@@ -37,7 +36,7 @@ public class DataSetServiceImpl implements DataSetService {
         List<DataSetDTO> returnVal;
 
         try {
-            returnVal = dtoMapDataSet.getDataSets();
+            returnVal = dtoMapDataSet.getList();
 
             for (DataSetDTO currentDataSetDTO : returnVal) {
                 currentDataSetDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
@@ -66,7 +65,7 @@ public class DataSetServiceImpl implements DataSetService {
 
         try {
 
-            returnVal = dtoMapDataSet.getDataSetsByTypeId(typeId);
+            returnVal = dtoMapDataSet.getByTypeId(typeId);
 
             for (DataSetDTO currentDataSetDTO: returnVal) {
 
@@ -96,7 +95,7 @@ public class DataSetServiceImpl implements DataSetService {
         DataSetDTO returnVal;
 
         try {
-            returnVal = dtoMapDataSet.getDataSetDetails(dataSetId);
+            returnVal = dtoMapDataSet.get(dataSetId);
 
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
@@ -127,7 +126,7 @@ public class DataSetServiceImpl implements DataSetService {
 
         dataSetDTO.setCreatedDate(new Date());
         dataSetDTO.setModifiedDate(new Date());
-        returnVal = dtoMapDataSet.createDataSet(dataSetDTO);
+        returnVal = dtoMapDataSet.create(dataSetDTO);
 
         // When we have roles and permissions, this will be set programmatically
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
@@ -146,13 +145,13 @@ public class DataSetServiceImpl implements DataSetService {
                     dataSetDTO.getDataSetId().equals(dataSetId)) {
 
 
-                DataSetDTO existingDataSetDTO = dtoMapDataSet.getDataSetDetails(dataSetId);
+                DataSetDTO existingDataSetDTO = dtoMapDataSet.get(dataSetId);
 
                 if (null != existingDataSetDTO.getDataSetId() && existingDataSetDTO.getDataSetId().equals(dataSetId)) {
 
 
                     dataSetDTO.setModifiedDate(new Date());
-                    returnVal = dtoMapDataSet.replaceDataSet(dataSetId, dataSetDTO);
+                    returnVal = dtoMapDataSet.replace(dataSetId, dataSetDTO);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 

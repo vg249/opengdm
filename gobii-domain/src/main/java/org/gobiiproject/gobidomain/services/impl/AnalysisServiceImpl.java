@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,8 +30,6 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         try {
 
-            analysisDTO.setCreatedDate(new Date());
-            analysisDTO.setModifiedDate(new Date());
             returnVal = dtoMapAnalysis.create(analysisDTO);
 
             // When we have roles and permissions, this will be set programmatically

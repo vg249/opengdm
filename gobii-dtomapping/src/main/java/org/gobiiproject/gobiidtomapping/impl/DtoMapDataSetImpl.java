@@ -35,7 +35,7 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<DataSetDTO> getDataSets() throws GobiiDtoMappingException {
+    public List<DataSetDTO> getList() throws GobiiDtoMappingException {
 
         List<DataSetDTO> returnVal = new ArrayList<>();
 
@@ -52,7 +52,7 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
     }
 
     @Override
-    public List<DataSetDTO> getDataSetsByTypeId(Integer typeId) throws GobiiDtoMappingException {
+    public List<DataSetDTO> getByTypeId(Integer typeId) throws GobiiDtoMappingException {
 
         List<DataSetDTO> returnVal = new ArrayList<>();
 
@@ -86,7 +86,7 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
 
     @Transactional
     @Override
-    public DataSetDTO getDataSetDetails(Integer dataSetId) throws GobiiDtoMappingException {
+    public DataSetDTO get(Integer dataSetId) throws GobiiDtoMappingException {
 
         DataSetDTO returnVal = new DataSetDTO();
 
@@ -107,7 +107,7 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
     }
 
     @Override
-    public DataSetDTO createDataSet(DataSetDTO dataSetDTO) throws GobiiDtoMappingException {
+    public DataSetDTO create(DataSetDTO dataSetDTO) throws GobiiDtoMappingException {
 
         DataSetDTO returnVal = dataSetDTO;
 
@@ -120,7 +120,7 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
     }
 
     @Override
-    public DataSetDTO replaceDataSet(Integer dataSetId, DataSetDTO dataSetDTO) throws GobiiDtoMappingException {
+    public DataSetDTO replace(Integer dataSetId, DataSetDTO dataSetDTO) throws GobiiDtoMappingException {
 
         DataSetDTO returnVal = dataSetDTO;
 

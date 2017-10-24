@@ -1,7 +1,7 @@
 package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.services.ConfigSettingsService;
-import org.gobiiproject.gobiidtomapping.DtoMapConfigSettings;
+import org.gobiiproject.gobiidtomapping.system.DtoMapConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
 import org.slf4j.Logger;

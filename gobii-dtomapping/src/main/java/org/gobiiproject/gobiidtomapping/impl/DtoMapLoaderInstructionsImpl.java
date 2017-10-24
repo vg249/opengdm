@@ -186,7 +186,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
             // check if the dataset is referenced by the specified experiment
             if (primaryLoaderInstruction.getDataSet().getId() != null) {
 
-                DataSetDTO dataSetDTO = dtoMapDataSet.getDataSetDetails(primaryLoaderInstruction.getDataSet().getId());
+                DataSetDTO dataSetDTO = dtoMapDataSet.get(primaryLoaderInstruction.getDataSet().getId());
 
                 // check if the experiment is referenced by the specified project
                 if (primaryLoaderInstruction.getExperiment().getId() != null) {

@@ -23,7 +23,7 @@ public class DtoMapAspect {
      * base class that enforceds the create() and replace() naming convention -- that at
      * least should ensure the specificity of the target
      */
-    @Before(value = "execution(* org.gobiiproject.gobiidtomapping.*.create(*))")
+    @Before(value = "execution(* org.gobiiproject.gobiidtomapping.entity.auditable.*.create(*))")
     public void beforeCreate(JoinPoint joinPoint) {
 
         Object dtoArg = joinPoint.getArgs()[0];
@@ -33,7 +33,7 @@ public class DtoMapAspect {
         }
     }
 
-    @Before(value = "execution(* org.gobiiproject.gobiidtomapping.*.replace(*,*))")
+    @Before(value = "execution(* org.gobiiproject.gobiidtomapping.entity.auditable.*.replace(*,*))")
     public void beforeReplace(JoinPoint joinPoint) {
 
         Object dtoArg = joinPoint.getArgs()[1];
