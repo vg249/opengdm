@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiidtomapping.entity.auditable;
 
-import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
+import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 
 import java.util.List;
 

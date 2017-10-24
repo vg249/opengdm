@@ -2,7 +2,7 @@ package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.CvService;
-import org.gobiiproject.gobiidtomapping.*;
+import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapCv;
 import org.gobiiproject.gobiimodel.headerlesscontainer.CvDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;

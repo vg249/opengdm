@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds;
 
 import org.gobiiproject.gobiidao.resultset.access.RsExperimentDao;
-import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
+import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIdFetch;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;

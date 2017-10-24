@@ -7,7 +7,7 @@ import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapOrganization;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapProtocol;
-import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
+import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;

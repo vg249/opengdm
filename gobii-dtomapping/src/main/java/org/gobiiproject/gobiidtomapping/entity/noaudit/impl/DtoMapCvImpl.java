@@ -5,7 +5,7 @@ import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapCv;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapCvGroup;
-import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
+import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.CvDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.CvGroupDTO;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;

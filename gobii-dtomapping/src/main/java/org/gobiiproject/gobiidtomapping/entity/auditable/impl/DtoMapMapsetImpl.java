@@ -5,7 +5,7 @@ import org.gobiiproject.gobiidao.resultset.access.RsMapSetDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapMapset;
-import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
+import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.core.EntityProperties;
 import org.gobiiproject.gobiimodel.headerlesscontainer.MapsetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.EntityPropertyDTO;

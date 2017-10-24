@@ -5,7 +5,7 @@ import org.gobiiproject.gobiidao.filesystem.access.InstructionFileAccess;
 import org.gobiiproject.gobiidtomapping.auditable.DtoMapContact;
 import org.gobiiproject.gobiidtomapping.system.DtoMapExtractorInstructions;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapJob;
-import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
+import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;

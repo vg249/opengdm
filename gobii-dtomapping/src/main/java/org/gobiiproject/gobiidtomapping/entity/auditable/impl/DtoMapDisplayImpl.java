@@ -4,7 +4,7 @@ import org.gobiiproject.gobiidao.resultset.access.RsDisplayDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapDisplay;
-import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
+import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DisplayDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

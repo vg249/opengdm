@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiidtomapping.system.impl;
 
 import org.gobiiproject.gobiidtomapping.system.DtoMapConfigSettings;
-import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
+import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.GobiiException;

@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit;
 
-import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
+import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.CvDTO;
 
 import java.util.List;

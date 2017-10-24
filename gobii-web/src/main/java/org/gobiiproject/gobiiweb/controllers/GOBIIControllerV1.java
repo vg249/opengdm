@@ -13,7 +13,7 @@ import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiEntityNameConverter;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
-import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
+import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.*;

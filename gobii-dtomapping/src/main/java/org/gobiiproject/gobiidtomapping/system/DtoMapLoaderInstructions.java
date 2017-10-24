@@ -2,11 +2,8 @@ package org.gobiiproject.gobiidtomapping.system;
 
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderInstructionFilesDTO;
-
-import java.util.List;
 
 /**
  * Created by Phil on 4/12/2016.

@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiidtomapping;
+package org.gobiiproject.gobiidtomapping.core;
 
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
