@@ -1,13 +1,13 @@
-package org.gobiiproject.gobiidtomapping.impl;
+package org.gobiiproject.gobiidtomapping.entity.auditable.impl;
 
-import org.gobiiproject.gobiidao.entity.pojos.Experiment;
 import org.gobiiproject.gobiidao.resultset.access.RsExperimentDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
-import org.gobiiproject.gobiidtomapping.DtoMapExperiment;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapExperiment;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
+import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdListImpl;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.lang.reflect.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -36,7 +35,7 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
 
 
     @Override
-    public List<ExperimentDTO> getExperiments() throws GobiiDtoMappingException {
+    public List<ExperimentDTO> getList() throws GobiiDtoMappingException {
 
         List<ExperimentDTO> returnVal = new ArrayList<>();
 
@@ -49,7 +48,7 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
 
 
     @Override
-    public ExperimentDTO getExperimentDetails(Integer experimentId) throws GobiiDtoMappingException {
+    public ExperimentDTO get(Integer experimentId) throws GobiiDtoMappingException {
 
 
         ExperimentDTO returnVal = new ExperimentDTO();
@@ -107,7 +106,7 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
     }
 
     @Override
-    public ExperimentDTO createExperiment(ExperimentDTO experimentDTO) throws GobiiDtoMappingException {
+    public ExperimentDTO create(ExperimentDTO experimentDTO) throws GobiiDtoMappingException {
 
         ExperimentDTO returnVal = experimentDTO;
 
@@ -120,7 +119,7 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
     }
 
     @Override
-    public ExperimentDTO replaceExperiment(Integer experimentId, ExperimentDTO experimentDTO) throws
+    public ExperimentDTO replace(Integer experimentId, ExperimentDTO experimentDTO) throws
             GobiiDtoMappingException {
 
         ExperimentDTO returnVal = experimentDTO;

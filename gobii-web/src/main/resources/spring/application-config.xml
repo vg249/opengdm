@@ -239,7 +239,7 @@
     <bean id="rsExperimentDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsExperimentDaoImpl"/>
     <bean id="dtoMapExperiment"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapExperimentImpl"/>
+          class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapExperimentImpl"/>
     <bean id="ExperimentService"
           class="org.gobiiproject.gobidomain.services.impl.ExperimentServiceImpl"/>
 

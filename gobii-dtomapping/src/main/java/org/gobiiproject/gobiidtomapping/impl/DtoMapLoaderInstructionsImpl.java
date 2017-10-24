@@ -5,6 +5,7 @@ import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.filesystem.access.InstructionFileAccess;
 import org.gobiiproject.gobiidtomapping.*;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapDataSet;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapExperiment;
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.cvnames.JobType;
@@ -197,7 +198,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                         throw new GobiiDtoMappingException("The specified experiment in the dataset is incorrect");
                     }
 
-                    ExperimentDTO experimentDTO = dtoMapExperiment.getExperimentDetails(primaryLoaderInstruction.getExperiment().getId());
+                    ExperimentDTO experimentDTO = dtoMapExperiment.get(primaryLoaderInstruction.getExperiment().getId());
 
                     if (!experimentDTO.getProjectId().equals(primaryLoaderInstruction.getProject().getId())) {
 
@@ -223,7 +224,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
             if (primaryLoaderInstruction.getPlatform().getId() != null) {
 
-                ExperimentDTO experimentDTO = dtoMapExperiment.getExperimentDetails(primaryLoaderInstruction.getExperiment().getId());
+                ExperimentDTO experimentDTO = dtoMapExperiment.get(primaryLoaderInstruction.getExperiment().getId());
 
                 if (experimentDTO.getVendorProtocolId() != null) {
 
