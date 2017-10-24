@@ -2,7 +2,7 @@ package org.gobiiproject.gobiidtomapping.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.filesystem.access.InstructionFileAccess;
-import org.gobiiproject.gobiidtomapping.DtoMapContact;
+import org.gobiiproject.gobiidtomapping.auditable.DtoMapContact;
 import org.gobiiproject.gobiidtomapping.DtoMapExtractorInstructions;
 import org.gobiiproject.gobiidtomapping.DtoMapJob;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
@@ -115,7 +115,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
                 if (null != currentExtractorInstruction.getContactId() && currentExtractorInstruction.getContactId() > 0) {
 
-                    ContactDTO contactDTO = dtoMapContact.getContactDetails(currentExtractorInstruction.getContactId());
+                    ContactDTO contactDTO = dtoMapContact.get(currentExtractorInstruction.getContactId());
 
                     contactId = contactDTO.getContactId();
 

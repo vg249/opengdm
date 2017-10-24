@@ -1,16 +1,13 @@
-package org.gobiiproject.gobiidtomapping.impl;
+package org.gobiiproject.gobiidtomapping.auditable.impl;
 
-import org.gobiiproject.gobiidao.entity.pojos.Contact;
 import org.gobiiproject.gobiidao.resultset.access.RsContactDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
-import org.gobiiproject.gobiidtomapping.DtoMapContact;
+import org.gobiiproject.gobiidtomapping.auditable.DtoMapContact;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
@@ -42,7 +39,7 @@ public class DtoMapContactImpl implements DtoMapContact {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<ContactDTO> getContacts() throws GobiiDtoMappingException {
+    public List<ContactDTO> getList() throws GobiiDtoMappingException {
 
         List<ContactDTO> returnVal = new ArrayList<ContactDTO>();
 
@@ -55,7 +52,7 @@ public class DtoMapContactImpl implements DtoMapContact {
 
     @Transactional
     @Override
-    public ContactDTO getContactDetails(Integer contactId) throws GobiiDtoMappingException {
+    public ContactDTO get(Integer contactId) throws GobiiDtoMappingException {
 
         ContactDTO returnVal = new ContactDTO();
 
@@ -80,7 +77,7 @@ public class DtoMapContactImpl implements DtoMapContact {
     }
 
     @Transactional
-    public ContactDTO getContactByUserName(String username) throws GobiiDtoMappingException {
+    public ContactDTO getByUserName(String username) throws GobiiDtoMappingException {
 
         ContactDTO returnVal = new ContactDTO();
 
@@ -105,7 +102,7 @@ public class DtoMapContactImpl implements DtoMapContact {
 
     @Transactional
     @Override
-    public ContactDTO getContactByEmail(String email) throws GobiiDtoMappingException {
+    public ContactDTO getByEmail(String email) throws GobiiDtoMappingException {
 
         ContactDTO returnVal = new ContactDTO();
 
@@ -131,7 +128,7 @@ public class DtoMapContactImpl implements DtoMapContact {
 
     @Transactional
     @Override
-    public ContactDTO createContact(ContactDTO contactDTO) throws GobiiDtoMappingException {
+    public ContactDTO create(ContactDTO contactDTO) throws GobiiDtoMappingException {
 
         ContactDTO returnVal = contactDTO;
 
@@ -139,7 +136,7 @@ public class DtoMapContactImpl implements DtoMapContact {
         if (LineUtils.isNullOrEmpty(contactDTO.getEmail())) {
             throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.MISSING_REQUIRED_VALUE, "email address is null");
         } else {
-            ContactDTO contactForEmail = this.getContactByEmail(contactDTO.getEmail());
+            ContactDTO contactForEmail = this.getByEmail(contactDTO.getEmail());
             if ((contactForEmail.getContactId() != null) && (contactForEmail.getContactId() > 0)) {
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_ALREADY_EXISTS,
                         "A contact with email address " + contactDTO.getEmail() + " already exists");
@@ -148,7 +145,7 @@ public class DtoMapContactImpl implements DtoMapContact {
 
         if (!LineUtils.isNullOrEmpty(contactDTO.getUserName())) {
 
-            ContactDTO contactForUserName = this.getContactByUserName(contactDTO.getUserName());
+            ContactDTO contactForUserName = this.getByUserName(contactDTO.getUserName());
             if ((contactForUserName.getContactId() != null) && (contactForUserName.getContactId() > 0)) {
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_ALREADY_EXISTS,
                         "A contact with userName " + contactDTO.getUserName() + " already exists");
@@ -165,7 +162,7 @@ public class DtoMapContactImpl implements DtoMapContact {
 
     @Transactional
     @Override
-    public ContactDTO replaceContact(Integer contactId, ContactDTO contactDTO) throws GobiiDtoMappingException {
+    public ContactDTO replace(Integer contactId, ContactDTO contactDTO) throws GobiiDtoMappingException {
 
         ContactDTO returnVal = contactDTO;
 
