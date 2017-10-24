@@ -1,10 +1,10 @@
-package org.gobiiproject.gobiidtomapping.impl;
+package org.gobiiproject.gobiidtomapping.entity.auditable.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsMapSetDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
-import org.gobiiproject.gobiidtomapping.DtoMapMapset;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapMapset;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.core.EntityProperties;
 import org.gobiiproject.gobiimodel.headerlesscontainer.MapsetDTO;
@@ -31,7 +31,7 @@ public class DtoMapMapsetImpl implements DtoMapMapset {
     private RsMapSetDao rsMapsetDao;
 
     @Override
-    public List<MapsetDTO> getAllMapsetNames() throws GobiiDtoMappingException {
+    public List<MapsetDTO> getList() throws GobiiDtoMappingException {
 
         List<MapsetDTO> returnVal = new ArrayList<MapsetDTO>();
 
@@ -76,7 +76,7 @@ public class DtoMapMapsetImpl implements DtoMapMapset {
     }
 
     @Override
-    public MapsetDTO getMapsetDetails(Integer mapsetId) throws GobiiDtoMappingException {
+    public MapsetDTO get(Integer mapsetId) throws GobiiDtoMappingException {
 
         MapsetDTO returnVal = new MapsetDTO();
 
@@ -104,7 +104,7 @@ public class DtoMapMapsetImpl implements DtoMapMapset {
     }
 
     @Override
-    public MapsetDTO createMapset(MapsetDTO mapsetDTO) throws GobiiDtoMappingException {
+    public MapsetDTO create(MapsetDTO mapsetDTO) throws GobiiDtoMappingException {
 
         MapsetDTO returnVal = mapsetDTO;
 
@@ -145,7 +145,7 @@ public class DtoMapMapsetImpl implements DtoMapMapset {
     }
 
     @Override
-    public MapsetDTO replaceMapset(Integer mapsetId, MapsetDTO mapsetDTO) throws GobiiDtoMappingException {
+    public MapsetDTO replace(Integer mapsetId, MapsetDTO mapsetDTO) throws GobiiDtoMappingException {
 
         MapsetDTO returnVal = mapsetDTO;
 

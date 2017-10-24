@@ -193,11 +193,9 @@ public class TestDtoFactory {
         returnVal.setName(uniqueStem + "dummy name");
         returnVal.setCode(uniqueStem + "add dummy code");
         returnVal.setCreatedBy(1);
-        returnVal.setCreatedDate(new Date());
         returnVal.setDescription(uniqueStem + "dummy description");
         returnVal.setMapType(1);
         returnVal.setModifiedBy(1);
-        returnVal.setModifiedDate(new Date());
         returnVal.setReferenceId(GlobalPkValues.getInstance().getAPkVal(GobiiEntityNameType.REFERENCES));
         returnVal.setStatusId(1);
 

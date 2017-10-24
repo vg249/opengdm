@@ -266,7 +266,7 @@
     <bean id="rsMapDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsMapSetDaoImpl"/>
     <bean id="dtoMapMapset"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapMapsetImpl"/>
+          class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapMapsetImpl"/>
     <bean id="MapsetService"
           class="org.gobiiproject.gobidomain.services.impl.MapsetServiceImpl"/>
 
@@ -320,7 +320,7 @@
 
     <!-- **** Manifests Beans *************************************** -->
     <bean id="rsManifestDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsManifestDaoImpl"/>
-    <bean id="dtoMapManifest" class="org.gobiiproject.gobiidtomapping.impl.DtoMapManifestImpl"/>
+    <bean id="dtoMapManifest" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapManifestImpl"/>
     <bean id="ManifestService" class="org.gobiiproject.gobidomain.services.impl.ManifestServiceImpl"/>
 
 
