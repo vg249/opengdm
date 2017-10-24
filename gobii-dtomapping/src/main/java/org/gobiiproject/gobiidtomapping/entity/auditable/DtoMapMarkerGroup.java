@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiidtomapping.entity.auditable;
 
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerGroupDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.MarkerGroupDTO;
 
 import java.util.List;
 

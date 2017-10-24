@@ -1,12 +1,8 @@
 package org.gobiiproject.gobiidao.resultset.core;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
-import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
+import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
 
-import javax.persistence.StoredProcedureParameter;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;

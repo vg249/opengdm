@@ -8,7 +8,7 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobidomain.services.PingService;
 import org.gobiiproject.gobiidtomapping.system.DtoMapPing;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.headerlesscontainer.PingDTO;
+import org.gobiiproject.gobiimodel.dto.system.PingDTO;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

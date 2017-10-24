@@ -8,8 +8,8 @@ import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapMarkerGroup;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerGroupDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerGroupMarkerDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.MarkerGroupDTO;
+import org.gobiiproject.gobiimodel.dto.entity.children.MarkerGroupMarkerDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 
 import org.slf4j.Logger;

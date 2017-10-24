@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiimodel.dto.instructions.extractor;
 
-import org.gobiiproject.gobiimodel.entity.PropNameId;
+import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.types.GobiiJobStatus;

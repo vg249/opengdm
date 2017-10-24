@@ -2,7 +2,7 @@
 package org.gobiiproject.gobiidtomapping.entity.auditable;
 
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ManifestDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ManifestDTO;
 
 import java.util.List;
 

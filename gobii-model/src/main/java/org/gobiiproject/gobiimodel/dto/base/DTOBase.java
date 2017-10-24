@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiimodel.dto.base;
 
-import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
-import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
+import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
+import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 
 import java.util.Date;

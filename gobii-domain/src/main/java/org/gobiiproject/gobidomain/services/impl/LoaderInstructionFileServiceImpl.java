@@ -2,8 +2,8 @@ package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.LoaderInstructionFilesService;
-import org.gobiiproject.gobiidtomapping.system.DtoMapLoaderInstructions;
-import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderInstructionFilesDTO;
+import org.gobiiproject.gobiidtomapping.instructions.DtoMapLoaderInstructions;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

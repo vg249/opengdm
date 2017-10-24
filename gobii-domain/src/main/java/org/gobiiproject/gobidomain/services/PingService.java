@@ -6,7 +6,7 @@
 package org.gobiiproject.gobidomain.services;
 
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.headerlesscontainer.PingDTO;
+import org.gobiiproject.gobiimodel.dto.system.PingDTO;
 
 /**
  * Created by Phil on 3/24/2016.

@@ -2,9 +2,9 @@ package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ExtractorInstructionFilesService;
-import org.gobiiproject.gobiidtomapping.system.DtoMapExtractorInstructions;
+import org.gobiiproject.gobiidtomapping.instructions.DtoMapExtractorInstructions;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
+import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

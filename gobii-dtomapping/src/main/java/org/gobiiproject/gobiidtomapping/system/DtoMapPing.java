@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiidtomapping.system;
 
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.headerlesscontainer.PingDTO;
+import org.gobiiproject.gobiimodel.dto.system.PingDTO;
 
 /**
  * Created by Phil on 3/29/2016.

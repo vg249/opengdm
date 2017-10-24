@@ -3,7 +3,7 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.MarkerService;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapMarker;
-import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;

@@ -4,7 +4,7 @@ import org.gobiiproject.gobiidao.resultset.access.RsPingDao;
 import org.gobiiproject.gobiidao.resultset.core.DbMetaData;
 import org.gobiiproject.gobiidtomapping.system.DtoMapPing;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.headerlesscontainer.PingDTO;
+import org.gobiiproject.gobiimodel.dto.system.PingDTO;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

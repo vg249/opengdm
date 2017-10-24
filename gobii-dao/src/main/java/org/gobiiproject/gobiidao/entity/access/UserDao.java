@@ -5,7 +5,7 @@
 // ************************************************************************
 package org.gobiiproject.gobiidao.entity.access;
 
-import org.gobiiproject.gobiimodel.entity.User;
+import org.gobiiproject.gobiimodel.dto.system.User;
 import org.springframework.stereotype.Component;
 
 

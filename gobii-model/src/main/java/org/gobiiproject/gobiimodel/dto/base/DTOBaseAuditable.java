@@ -1,12 +1,9 @@
 package org.gobiiproject.gobiimodel.dto.base;
 
-import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
-import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
-import org.gobiiproject.gobiimodel.types.GobiiProcessType;
+import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
+import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * All Dto classes for tables that have the created_date, modified_date, created_by,

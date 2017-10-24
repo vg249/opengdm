@@ -4,9 +4,23 @@ import org.gobiiproject.gobiiclient.gobii.dbops.crud.*;
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.cvnames.JobType;
-import org.gobiiproject.gobiimodel.headerlesscontainer.*;
-import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.DisplayDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ManifestDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.MarkerGroupDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ReferenceDTO;
+import org.gobiiproject.gobiimodel.dto.entity.children.MarkerGroupMarkerDTO;
+import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerDTO;
+import org.gobiiproject.gobiimodel.dto.system.PingDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.OrganizationDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ProtocolDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
@@ -345,23 +359,6 @@ public class TestDtoFactory {
         return returnVal;
 
     }
-    public static QCInstructionsDTO makePopulatedQCInstructionsDTO() throws Exception {
-
-        QCInstructionsDTO returnVal = new QCInstructionsDTO();
-        Integer contactId = (new GlobalPkColl<DtoCrudRequestContactTest>()).getAPkVal(DtoCrudRequestContactTest.class,
-                GobiiEntityNameType.CONTACTS);
-        Integer datasetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getAPkVal(DtoCrudRequestDataSetTest.class,
-                GobiiEntityNameType.DATASETS);
-                returnVal.setContactId(contactId);
-        returnVal.setDatasetId(datasetId);
-        returnVal.setDataFileDirectory("E:/Gobii/dummyPath");
-        returnVal.setDataFileName(getFolderNameWithTimestamp("qcDataFile"));
-        returnVal.setQualityFileName("qualityFileName");
-
-        return returnVal;
-
-    }
-
     public static JobDTO makePopulateJobDTO() throws Exception {
 
         JobDTO newJobDto = new JobDTO();

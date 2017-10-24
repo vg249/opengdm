@@ -3,7 +3,7 @@ package org.gobiiproject.gobiidtomapping.entity.auditable;
 import java.util.List;
 
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.headerlesscontainer.MapsetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
 
 /**
  * Created by Phil on 4/28/2016.

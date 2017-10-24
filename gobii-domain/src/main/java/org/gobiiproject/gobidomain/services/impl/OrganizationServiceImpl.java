@@ -3,7 +3,7 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.OrganizationService;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapOrganization;
-import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.OrganizationDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;

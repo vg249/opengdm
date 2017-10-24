@@ -2,9 +2,9 @@ package org.gobiiproject.gobiidtomapping.entity.auditable;
 
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.VendorProtocolDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.OrganizationDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ProtocolDTO;
+import org.gobiiproject.gobiimodel.dto.entity.children.VendorProtocolDTO;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit;
 
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerDTO;
 
 import java.util.List;
 
