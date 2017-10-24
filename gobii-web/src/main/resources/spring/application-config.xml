@@ -199,19 +199,19 @@
           class="org.gobiiproject.gobidomain.services.impl.FileServiceImpl"/>
 
     <bean id="dtoMapLoaderFiles"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapLoaderFilesImpl"/>
+          class="org.gobiiproject.gobiidtomapping.system.impl.DtoMapLoaderFilesImpl"/>
     <bean id="loaderFilesService"
           class="org.gobiiproject.gobidomain.services.impl.LoaderFilesServiceImpl"/>
 
     <!-- **** Loader Instruction File Beans *************************************** -->
     <bean id="dtoMapLoaderInstructions"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapLoaderInstructionsImpl"/>
+          class="org.gobiiproject.gobiidtomapping.system.impl.DtoMapLoaderInstructionsImpl"/>
     <bean id="loaderInstructionFilesService"
           class="org.gobiiproject.gobidomain.services.impl.LoaderInstructionFileServiceImpl"/>
 
     <!-- **** Extractor File Beans *************************************** -->
     <bean id="dtoMapExtractorInstructions"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapExtractorInstructionsImpl"/>
+          class="org.gobiiproject.gobiidtomapping.system.impl.DtoMapExtractorInstructionsImpl"/>
     <bean id="ExtractorInstructionFilesService"
           class="org.gobiiproject.gobidomain.services.impl.ExtractorInstructionFileServiceImpl"/>
 
@@ -338,7 +338,7 @@
 
     <!-- **** Job Beans *************************************** -->
     <bean id="JobService" class="org.gobiiproject.gobidomain.services.impl.JobServiceImpl"/>
-    <bean id="dtoMapJob" class="org.gobiiproject.gobiidtomapping.impl.DtoMapJobImpl"/>
+    <bean id="dtoMapJob" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapJobImpl"/>
     <bean id="rsJobDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsJobDaoImpl"/>
 
     <bean id="dtoListQueryColl"

@@ -276,9 +276,7 @@ public class TestDtoFactory {
         returnVal.setCode("version:" + uniqueStem);
         returnVal.setFilePath(uniqueStem + " file path");
         returnVal.setCreatedBy(1);
-        returnVal.setCreatedDate(new Date());
         returnVal.setModifiedBy(1);
-        returnVal.setModifiedDate(new Date());
 
         return returnVal;
 

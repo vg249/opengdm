@@ -31,9 +31,7 @@ public class ManifestServiceImpl implements ManifestService {
 
         try {
 
-            manifestDTO.setCreatedDate(new Date());
-            manifestDTO.setModifiedDate(new Date());
-            returnVal = dtoMapManifest.createManifest(manifestDTO);
+            returnVal = dtoMapManifest.create(manifestDTO);
 
             // When we have roles and permissions, this will be set programmatically
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
@@ -57,10 +55,10 @@ public class ManifestServiceImpl implements ManifestService {
             if(null == manifestDTO.getManifestId() ||
                     manifestDTO.getManifestId().equals(manifestId)) {
 
-                ManifestDTO existingManifestDTO = dtoMapManifest.getManifestDetails(manifestId);
+                ManifestDTO existingManifestDTO = dtoMapManifest.get(manifestId);
                 if(null != existingManifestDTO.getManifestId() && existingManifestDTO.getManifestId().equals(manifestId)) {
 
-                    returnVal = dtoMapManifest.replaceManifest(manifestId, manifestDTO);
+                    returnVal = dtoMapManifest.replace(manifestId, manifestDTO);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
@@ -100,7 +98,7 @@ public class ManifestServiceImpl implements ManifestService {
 
         List<ManifestDTO> returnVal;
 
-        returnVal = dtoMapManifest.getManifests();
+        returnVal = dtoMapManifest.getList();
         for(ManifestDTO currentManifestDTO : returnVal) {
             currentManifestDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
             currentManifestDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
@@ -118,7 +116,7 @@ public class ManifestServiceImpl implements ManifestService {
 
         ManifestDTO returnVal;
 
-        returnVal = dtoMapManifest.getManifestDetails(manifestId);
+        returnVal = dtoMapManifest.get(manifestId);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 

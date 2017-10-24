@@ -31,7 +31,7 @@ public class DtoMapManifestImpl implements DtoMapManifest {
 
     @Transactional
     @Override
-    public ManifestDTO getManifestDetails(Integer manifestId) throws GobiiDtoMappingException {
+    public ManifestDTO get(Integer manifestId) throws GobiiDtoMappingException {
 
         ManifestDTO returnVal = new ManifestDTO();
 
@@ -56,7 +56,7 @@ public class DtoMapManifestImpl implements DtoMapManifest {
     }
 
     @Override
-    public List<ManifestDTO> getManifests() throws GobiiDtoMappingException {
+    public List<ManifestDTO> getList() throws GobiiDtoMappingException {
 
         List<ManifestDTO> returnVal = new ArrayList<>();
 
@@ -78,7 +78,7 @@ public class DtoMapManifestImpl implements DtoMapManifest {
     }
 
     @Override
-    public ManifestDTO createManifest(ManifestDTO manifestDTO) throws GobiiDtoMappingException {
+    public ManifestDTO create(ManifestDTO manifestDTO) throws GobiiDtoMappingException {
         ManifestDTO returnVal = manifestDTO;
 
         try {
@@ -97,7 +97,7 @@ public class DtoMapManifestImpl implements DtoMapManifest {
 
 
     @Override
-    public ManifestDTO replaceManifest(Integer manifestId, ManifestDTO manifestDTO) throws GobiiDtoMappingException {
+    public ManifestDTO replace(Integer manifestId, ManifestDTO manifestDTO) throws GobiiDtoMappingException {
 
         ManifestDTO returnVal = manifestDTO;
 

@@ -1,5 +1,6 @@
-package org.gobiiproject.gobiidtomapping;
+package org.gobiiproject.gobiidtomapping.entity.noaudit;
 
+import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
 
 import java.text.ParseException;
