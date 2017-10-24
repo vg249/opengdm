@@ -129,10 +129,8 @@ public class TestDtoFactory {
         returnVal.setColumnName(uniqueStem + "dummy column");
         returnVal.setCreatedBy(1);
         returnVal.setDisplayName(uniqueStem + "dummyDisplay");
-        returnVal.setCreatedDate(new Date());
         returnVal.setDisplayId(1);
         returnVal.setModifiedBy(1);
-        returnVal.setModifiedDate(new Date());
         returnVal.setTableName(uniqueStem + "dummy table");
         returnVal.setDisplayRank(uniqueStem);
 
@@ -168,13 +166,11 @@ public class TestDtoFactory {
         returnVal.setName(uniqueStem + ": foo name");
         returnVal.setStatusId(1);
         returnVal.setCreatedBy(1);
-        returnVal.setCreatedDate(new Date());
         returnVal.setDataFile(uniqueStem + ": foo file");
         returnVal.setQualityFile(uniqueStem + ": foo quality file");
         returnVal.setExperimentId(experimentId);
         returnVal.setDataTable(uniqueStem + ": foo table");
         returnVal.setModifiedBy(1);
-        returnVal.setModifiedDate(new Date());
         returnVal.setCallingAnalysisId(callingAnalysisId);
         for (Integer currentAnalysisId : analysisIds) {
             returnVal.getAnalysesIds().add(currentAnalysisId);
@@ -304,9 +300,7 @@ public class TestDtoFactory {
         returnVal.setEmail(uniqueStem + "mail@email.com");
         returnVal.setCode(uniqueStem + "added New Code");
         returnVal.setCreatedBy(1);
-        returnVal.setCreatedDate(new Date());
         returnVal.setModifiedBy(1);
-        returnVal.setModifiedDate(new Date());
         returnVal.setOrganizationId(organizationId);
         returnVal.getRoles().add(1);
         returnVal.getRoles().add(2);

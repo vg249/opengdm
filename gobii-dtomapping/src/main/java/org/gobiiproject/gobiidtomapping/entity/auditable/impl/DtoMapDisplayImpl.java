@@ -1,9 +1,9 @@
-package org.gobiiproject.gobiidtomapping.impl;
+package org.gobiiproject.gobiidtomapping.entity.auditable.impl;
 
 import org.gobiiproject.gobiidao.resultset.access.RsDisplayDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
-import org.gobiiproject.gobiidtomapping.DtoMapDisplay;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapDisplay;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DisplayDTO;
 import org.slf4j.Logger;
@@ -26,7 +26,7 @@ public class DtoMapDisplayImpl implements DtoMapDisplay {
     private RsDisplayDao rsDisplayDao = null;
 
     @Override
-    public List<DisplayDTO> getDisplays() throws GobiiDtoMappingException {
+    public List<DisplayDTO> getList() throws GobiiDtoMappingException {
 
         List<DisplayDTO> returnVal = new ArrayList<>();
 
@@ -50,7 +50,7 @@ public class DtoMapDisplayImpl implements DtoMapDisplay {
     }
 
     @Override
-    public DisplayDTO getDisplayDetails(Integer displayId) throws GobiiDtoMappingException {
+    public DisplayDTO get(Integer displayId) throws GobiiDtoMappingException {
 
         DisplayDTO returnVal = new DisplayDTO();
 
@@ -71,7 +71,7 @@ public class DtoMapDisplayImpl implements DtoMapDisplay {
 
 
     @Override
-    public DisplayDTO createDisplay(DisplayDTO displayDTO) throws GobiiDtoMappingException {
+    public DisplayDTO create(DisplayDTO displayDTO) throws GobiiDtoMappingException {
         DisplayDTO returnVal = displayDTO;
 
         try {
@@ -90,7 +90,7 @@ public class DtoMapDisplayImpl implements DtoMapDisplay {
     }
 
     @Override
-    public DisplayDTO replaceDisplay(Integer displayId, DisplayDTO displayDTO) throws GobiiDtoMappingException {
+    public DisplayDTO replace(Integer displayId, DisplayDTO displayDTO) throws GobiiDtoMappingException {
 
         DisplayDTO returnVal = displayDTO;
 

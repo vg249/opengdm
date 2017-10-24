@@ -223,7 +223,7 @@
     <!-- **** Display Beans *************************************** -->
     <bean id="rsDisplayDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsDisplayDaoImpl"/>
-    <bean id="dtoMapDisplay" class="org.gobiiproject.gobiidtomapping.impl.DtoMapDisplayImpl"/>
+    <bean id="dtoMapDisplay" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapDisplayImpl"/>
     <bean id="displayService"
           class="org.gobiiproject.gobidomain.services.impl.DisplayServiceImpl"/>
 
@@ -231,7 +231,7 @@
     <!-- **** DataSet Beans *************************************** -->
     <bean id="rsDataSetDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsDataSetDaoImpl"/>
-    <bean id="dtoMapDataSet" class="org.gobiiproject.gobiidtomapping.impl.DtoMapDataSetImpl"/>
+    <bean id="dtoMapDataSet" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapDataSetImpl"/>
     <bean id="DataSetService"
           class="org.gobiiproject.gobidomain.services.impl.DataSetServiceImpl"/>
 

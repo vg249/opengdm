@@ -4,7 +4,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.gobiiproject.gobiidao.resultset.access.RsJobDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
-import org.gobiiproject.gobiidtomapping.DtoMapDataSet;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapDataSet;
 import org.gobiiproject.gobiidtomapping.DtoMapJob;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;

@@ -2,7 +2,7 @@ package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.DataSetService;
-import org.gobiiproject.gobiidtomapping.DtoMapDataSet;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapDataSet;
 import org.gobiiproject.gobiidtomapping.DtoMapJob;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
