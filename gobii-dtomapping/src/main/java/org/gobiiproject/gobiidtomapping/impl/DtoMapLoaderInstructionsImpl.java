@@ -337,7 +337,6 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
         } catch (GobiiException e) {
             throw e;
         } catch (Exception e) {
-            e.printStackTrace();
             throw new GobiiException(e);
         }
 
