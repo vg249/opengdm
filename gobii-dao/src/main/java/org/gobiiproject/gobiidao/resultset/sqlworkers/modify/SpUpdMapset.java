@@ -20,8 +20,8 @@ public class SpUpdMapset extends SpDef {
         this.addParamDef("description", String.class).setNullable(true);
         this.addParamDef("referenceId", Integer.class).setNullable(true);
         this.addParamDef("mapType", Integer.class).setNullable(false);
-        this.addParamDef("createdBy", Integer.class).setNullable(false);
-        this.addParamDef("createdDate", java.util.Date.class).setNullable(false);
+        this.addParamDef("createdBy", Integer.class).setNullable(true);
+        this.addParamDef("createdDate", java.util.Date.class).setNullable(true);
         this.addParamDef("modifiedBy", Integer.class).setNullable(true);
         this.addParamDef("modifiedDate", java.util.Date.class).setNullable(true);
         this.addParamDef("status", Integer.class).setNullable(false);

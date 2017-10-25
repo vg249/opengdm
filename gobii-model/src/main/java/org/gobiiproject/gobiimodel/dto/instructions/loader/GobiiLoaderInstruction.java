@@ -2,10 +2,9 @@ package org.gobiiproject.gobiimodel.dto.instructions.loader;
 
 
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
-import org.gobiiproject.gobiimodel.entity.PropNameId;
+import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;

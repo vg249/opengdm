@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiimodel.utils.email;
 
 
-import org.gobiiproject.gobiimodel.entity.PropNameId;
+import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiidtomapping.core;
 
 import org.gobiiproject.gobiidao.resultset.core.EntityPropertyParamNames;
-import org.gobiiproject.gobiimodel.headerlesscontainer.EntityPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.entity.children.EntityPropertyDTO;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;

@@ -2,9 +2,9 @@ package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ProjectService;
-import org.gobiiproject.gobiidtomapping.DtoMapProject;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapProject;
 
-import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ProjectDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 
@@ -35,7 +34,7 @@ public class ProjectServiceImpl implements ProjectService {
         List<ProjectDTO> returnVal;
 
         try {
-            returnVal = dtoMapProject.getProjects();
+            returnVal = dtoMapProject.getList();
 
             for (ProjectDTO currentProjectDTO : returnVal) {
                 currentProjectDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
@@ -63,7 +62,7 @@ public class ProjectServiceImpl implements ProjectService {
         ProjectDTO returnVal;
 
         try {
-            returnVal = dtoMapProject.getProjectDetails(projectId);
+            returnVal = dtoMapProject.get(projectId);
 
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
@@ -92,9 +91,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         ProjectDTO returnVal;
 
-        projectDTO.setCreatedDate(new Date());
-        projectDTO.setModifiedDate(new Date());
-        returnVal = dtoMapProject.createProject(projectDTO);
+        returnVal = dtoMapProject.create(projectDTO);
 
         // When we have roles and permissions, this will be set programmatically
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
@@ -113,13 +110,12 @@ public class ProjectServiceImpl implements ProjectService {
                     projectDTO.getProjectId().equals(projectId)) {
 
 
-                ProjectDTO existingProjectDTO = dtoMapProject.getProjectDetails(projectId);
+                ProjectDTO existingProjectDTO = dtoMapProject.get(projectId);
 
                 if (null != existingProjectDTO.getProjectId() && existingProjectDTO.getProjectId().equals(projectId)) {
 
 
-                    projectDTO.setModifiedDate(new Date());
-                    returnVal = dtoMapProject.replaceProject(projectId, projectDTO);
+                    returnVal = dtoMapProject.replace(projectId, projectDTO);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 

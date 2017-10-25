@@ -8,7 +8,20 @@ import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
-import org.gobiiproject.gobiimodel.headerlesscontainer.*;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ManifestDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.OrganizationDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ProtocolDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ReferenceDTO;
+import org.gobiiproject.gobiimodel.dto.entity.children.EntityPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
+import org.gobiiproject.gobiimodel.dto.entity.children.VendorProtocolDTO;
 import org.gobiiproject.gobiiapimodel.payload.Header;
 import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -303,9 +316,7 @@ public class GobiiTestData {
         }
 
         newOrganizationDTO.setCreatedBy(1);
-        newOrganizationDTO.setCreatedDate(new Date());
         newOrganizationDTO.setModifiedBy(1);
-        newOrganizationDTO.setModifiedDate(new Date());
         newOrganizationDTO.setStatusId(1);
 
         setFKeyDbPKeyForNewEntity(fkeys, OrganizationDTO.class, newOrganizationDTO, parentElement, dbPkeysurrogateValue, document, xPath);
@@ -421,9 +432,7 @@ public class GobiiTestData {
         }
 
         newContactDTO.setCreatedBy(1);
-        newContactDTO.setCreatedDate(new Date());
         newContactDTO.setModifiedBy(1);
-        newContactDTO.setModifiedDate(new Date());
 
         /** check roles **/
         if (newContactDTO.getRoles().size() <= 0) {
@@ -545,9 +554,7 @@ public class GobiiTestData {
 
         }
 
-        newPlatformDTO.setCreatedDate(new Date());
         newPlatformDTO.setCreatedBy(1);
-        newPlatformDTO.setModifiedDate(new Date());
         newPlatformDTO.setModifiedBy(1);
 
         setFKeyDbPKeyForNewEntity(fkeys, PlatformDTO.class, newPlatformDTO, parentElement, dbPkeysurrogateValue, document, xPath);
@@ -654,9 +661,7 @@ public class GobiiTestData {
             }
         }
 
-        newProtocolDTO.setCreatedDate(new Date());
         newProtocolDTO.setCreatedBy(1);
-        newProtocolDTO.setModifiedDate(new Date());
         newProtocolDTO.setModifiedBy(1);
 
 
@@ -844,9 +849,7 @@ public class GobiiTestData {
 
         }
 
-        newReferenceDTO.setCreatedDate(new Date());
         newReferenceDTO.setCreatedBy(1);
-        newReferenceDTO.setModifiedDate(new Date());
         newReferenceDTO.setModifiedBy(1);
 
         setFKeyDbPKeyForNewEntity(fkeys, ReferenceDTO.class, newReferenceDTO, parentElement, dbPkeysurrogateValue, document, xPath);
@@ -966,9 +969,7 @@ public class GobiiTestData {
             }
         }
 
-        newMapsetDTO.setCreatedDate(new Date());
         newMapsetDTO.setCreatedBy(1);
-        newMapsetDTO.setModifiedDate(new Date());
         newMapsetDTO.setModifiedBy(1);
 
 
@@ -1072,9 +1073,7 @@ public class GobiiTestData {
 
         }
 
-        newProjectDTO.setCreatedDate(new Date());
         newProjectDTO.setCreatedBy(1);
-        newProjectDTO.setModifiedDate(new Date());
         newProjectDTO.setModifiedBy(1);
 
 
@@ -1162,9 +1161,7 @@ public class GobiiTestData {
 
         }
 
-        newManifestDTO.setCreatedDate(new Date());
         newManifestDTO.setCreatedBy(1);
-        newManifestDTO.setModifiedDate(new Date());
         newManifestDTO.setModifiedBy(1);
 
 
@@ -1252,9 +1249,7 @@ public class GobiiTestData {
             field.set(newExperimentDTO, processTypes(propKey.getTextContent(), field.getType()));
 
         }
-        newExperimentDTO.setCreatedDate(new Date());
         newExperimentDTO.setCreatedBy(1);
-        newExperimentDTO.setModifiedDate(new Date());
         newExperimentDTO.setModifiedBy(1);
 
 
@@ -1373,9 +1368,7 @@ public class GobiiTestData {
             }
         }
 
-        newAnalysisDTO.setCreatedDate(new Date());
         newAnalysisDTO.setCreatedBy(1);
-        newAnalysisDTO.setModifiedDate(new Date());
         newAnalysisDTO.setModifiedBy(1);
 
 
@@ -1494,9 +1487,7 @@ public class GobiiTestData {
 
         }
 
-        newDataSetDTO.setCreatedDate(new Date());
         newDataSetDTO.setCreatedBy(1);
-        newDataSetDTO.setModifiedDate(new Date());
         newDataSetDTO.setModifiedBy(1);
 
 

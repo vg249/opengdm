@@ -2,10 +2,8 @@ package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.JobService;
-import org.gobiiproject.gobiidtomapping.DtoMapDataSet;
-import org.gobiiproject.gobiidtomapping.DtoMapJob;
-import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
+import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapJob;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;

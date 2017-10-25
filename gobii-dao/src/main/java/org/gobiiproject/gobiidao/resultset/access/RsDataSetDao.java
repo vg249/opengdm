@@ -1,7 +1,6 @@
 package org.gobiiproject.gobiidao.resultset.access;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
 
 import java.sql.ResultSet;
 import java.util.Map;

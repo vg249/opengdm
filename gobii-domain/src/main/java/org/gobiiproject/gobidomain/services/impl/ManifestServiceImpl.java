@@ -2,8 +2,8 @@ package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ManifestService;
-import org.gobiiproject.gobiidtomapping.DtoMapManifest;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ManifestDTO;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapManifest;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ManifestDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,9 +30,7 @@ public class ManifestServiceImpl implements ManifestService {
 
         try {
 
-            manifestDTO.setCreatedDate(new Date());
-            manifestDTO.setModifiedDate(new Date());
-            returnVal = dtoMapManifest.createManifest(manifestDTO);
+            returnVal = dtoMapManifest.create(manifestDTO);
 
             // When we have roles and permissions, this will be set programmatically
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
@@ -57,10 +54,10 @@ public class ManifestServiceImpl implements ManifestService {
             if(null == manifestDTO.getManifestId() ||
                     manifestDTO.getManifestId().equals(manifestId)) {
 
-                ManifestDTO existingManifestDTO = dtoMapManifest.getManifestDetails(manifestId);
+                ManifestDTO existingManifestDTO = dtoMapManifest.get(manifestId);
                 if(null != existingManifestDTO.getManifestId() && existingManifestDTO.getManifestId().equals(manifestId)) {
 
-                    returnVal = dtoMapManifest.replaceManifest(manifestId, manifestDTO);
+                    returnVal = dtoMapManifest.replace(manifestId, manifestDTO);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
@@ -100,7 +97,7 @@ public class ManifestServiceImpl implements ManifestService {
 
         List<ManifestDTO> returnVal;
 
-        returnVal = dtoMapManifest.getManifests();
+        returnVal = dtoMapManifest.getList();
         for(ManifestDTO currentManifestDTO : returnVal) {
             currentManifestDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
             currentManifestDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
@@ -118,7 +115,7 @@ public class ManifestServiceImpl implements ManifestService {
 
         ManifestDTO returnVal;
 
-        returnVal = dtoMapManifest.getManifestDetails(manifestId);
+        returnVal = dtoMapManifest.get(manifestId);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 

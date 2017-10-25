@@ -2,8 +2,8 @@ package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.PlatformService;
-import org.gobiiproject.gobiidtomapping.DtoMapPlatform;
-import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapPlatform;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,7 +30,7 @@ public class PlatformServiceImpl implements PlatformService {
 
         List<PlatformDTO> returnVal;
 
-            returnVal = dtoMapPlatform.getPlatforms();
+            returnVal = dtoMapPlatform.getList();
             for(PlatformDTO currentPlatformDTO : returnVal ) {
                 currentPlatformDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
                 currentPlatformDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
@@ -50,7 +49,7 @@ public class PlatformServiceImpl implements PlatformService {
 
         PlatformDTO returnVal;
 
-            returnVal = dtoMapPlatform.getPlatformDetails(platformId);
+            returnVal = dtoMapPlatform.get(platformId);
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
@@ -71,7 +70,7 @@ public class PlatformServiceImpl implements PlatformService {
         PlatformDTO returnVal;
 
 
-            returnVal = dtoMapPlatform.createPlatform(platformDTO);
+            returnVal = dtoMapPlatform.create(platformDTO);
 
             // When we have roles and permissions, this will be set programmatically
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
@@ -89,11 +88,11 @@ public class PlatformServiceImpl implements PlatformService {
                     platformDTO.getPlatformId().equals(platformId)) {
 
 
-                PlatformDTO existingPlatformDTO = dtoMapPlatform.getPlatformDetails(platformId);
+                PlatformDTO existingPlatformDTO = dtoMapPlatform.get(platformId);
                 if (null != existingPlatformDTO.getPlatformId() && existingPlatformDTO.getPlatformId().equals(platformId)) {
 
 
-                    returnVal = dtoMapPlatform.replacePlatform(platformId, platformDTO);
+                    returnVal = dtoMapPlatform.replace(platformId, platformDTO);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 

@@ -30,13 +30,13 @@ public class SpUpdProject extends SpDef {
                 .setNullable(false);
 
         this.addParamDef("createdBy", Integer.class)
-                .setNullable(false);
+                .setNullable(true);
 
         this.addParamDef("createdDate", Date.class)
-                .setNullable(false);
+                .setNullable(true);
 
         this.addParamDef("modifiedBy", Integer.class)
-                .setNullable(false);
+                .setNullable(true);
 
         this.addParamDef("modifiedDate", Date.class)
                 .setNullable(true);
