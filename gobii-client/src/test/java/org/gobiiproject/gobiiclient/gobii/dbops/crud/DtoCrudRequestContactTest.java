@@ -236,7 +236,7 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
         ContactDTO newContactDTO = new ContactDTO();
 
         Integer organizationId = (new GlobalPkColl<DtoCrudRequestOrganizationTest>()).getAPkVal(DtoCrudRequestOrganizationTest.class,
-                GobiiEntityNameType.ORGANIZATIONS);
+                GobiiEntityNameType.ORGANIZATION);
 
         String userName = UUID.randomUUID().toString();
         String emailAddress = UUID.randomUUID().toString();
@@ -292,7 +292,7 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
         ContactDTO newContactDTO = new ContactDTO();
 
         Integer organizationId = (new GlobalPkColl<DtoCrudRequestOrganizationTest>()).getAPkVal(DtoCrudRequestOrganizationTest.class,
-                GobiiEntityNameType.ORGANIZATIONS);
+                GobiiEntityNameType.ORGANIZATION);
 
         // set the plain properties
         newContactDTO.setFirstName("Angel Manica");
@@ -321,7 +321,7 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
         ContactDTO contactDTOResponse = contactDTOResponseEnvelope.getPayload().getData().get(0);
         Assert.assertNotEquals(null, contactDTOResponse);
         Assert.assertTrue(contactDTOResponse.getContactId() > 0);
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.CONTACTS, contactDTOResponse.getContactId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.CONTACT, contactDTOResponse.getContactId());
         Assert.assertNotNull(contactDTOResponse.getUserName());
 
         //Now re-retrieve with the link we got back

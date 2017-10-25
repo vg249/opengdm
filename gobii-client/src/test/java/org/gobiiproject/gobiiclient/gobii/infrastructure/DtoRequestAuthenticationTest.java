@@ -352,7 +352,7 @@ public class DtoRequestAuthenticationTest {
                 Assert.assertTrue(GobiiClientContextAuth.authenticate());
 
                 Integer contactId = (new GlobalPkColl<DtoCrudRequestContactTest>()).getAPkVal(DtoCrudRequestContactTest.class,
-                        GobiiEntityNameType.CONTACTS);
+                        GobiiEntityNameType.CONTACT);
 
                 RestUri restUriContact = GobiiClientContext.getInstance(null, false)
                         .getUriFactory()

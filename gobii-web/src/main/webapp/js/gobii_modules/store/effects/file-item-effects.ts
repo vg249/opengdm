@@ -107,12 +107,12 @@ export class FileItemEffects {
                                 let nameIdFilterParamType: NameIdFilterParamTypes = NameIdFilterParamTypes.UNKNOWN;
                                 let filterValue: string = fileItemToReplaceWith.getItemId();
 
-                                if (fileItemToReplaceWith.getEntityType() === EntityType.Contacts
+                                if (fileItemToReplaceWith.getEntityType() === EntityType.Contact
                                     && (fileItemToReplaceWith.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR )) {
                                     nameIdFilterParamType = NameIdFilterParamTypes.PROJECTS_BY_CONTACT;
-                                } else if (fileItemToReplaceWith.getEntityType() === EntityType.Projects) {
+                                } else if (fileItemToReplaceWith.getEntityType() === EntityType.Project) {
                                     nameIdFilterParamType = NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT;
-                                } else if (fileItemToReplaceWith.getEntityType() === EntityType.Experiments) {
+                                } else if (fileItemToReplaceWith.getEntityType() === EntityType.Experiment) {
                                     nameIdFilterParamType = NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT;
                                 }
 

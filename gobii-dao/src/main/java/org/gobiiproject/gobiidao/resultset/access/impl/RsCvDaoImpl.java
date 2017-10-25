@@ -50,7 +50,7 @@ public class RsCvDaoImpl implements RsCvDao {
             returnVal = spGetCvTermsByGroup.getResultSet();
         } catch (SQLGrammarException e) {
 
-            LOGGER.error("Error retrieving CVTERMS terms by group with SQL " + e.getSQL(), e.getSQLException());
+            LOGGER.error("Error retrieving CV terms by group with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
         }
@@ -74,7 +74,7 @@ public class RsCvDaoImpl implements RsCvDao {
             returnVal = spGetCvsByGroup.getResultSet();
         } catch (SQLGrammarException e) {
 
-            LOGGER.error("Error retrieving CVTERMS terms by group with SQL " + e.getSQL(), e.getSQLException());
+            LOGGER.error("Error retrieving CV terms by group with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
         }
@@ -98,7 +98,7 @@ public class RsCvDaoImpl implements RsCvDao {
             returnVal = spGetCvGroups.getResultSet();
         } catch (SQLGrammarException e) {
 
-            LOGGER.error("Error retrieving CVTERMS groups with SQL " + e.getSQL(), e.getSQLException());
+            LOGGER.error("Error retrieving CV groups with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
         }
@@ -122,7 +122,7 @@ public class RsCvDaoImpl implements RsCvDao {
             returnVal = spGetCvTerms.getResultSet();
         } catch (SQLGrammarException e) {
 
-            LOGGER.error("Error retrieving CVTERMS groups with SQL ", e.getSQLException());
+            LOGGER.error("Error retrieving CV groups with SQL ", e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
         }
@@ -147,7 +147,7 @@ public class RsCvDaoImpl implements RsCvDao {
             returnVal = spGetCvItems.getResultSet();
         } catch (SQLGrammarException e) {
 
-            LOGGER.error("Error retrieving CVTERMS groups with SQL " + e.getSQL(), e.getSQLException());
+            LOGGER.error("Error retrieving CV groups with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
         }

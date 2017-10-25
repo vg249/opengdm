@@ -32,7 +32,7 @@ public class DtoMapNameIdFetchMapsets implements DtoMapNameIdFetch {
 
     @Override
     public GobiiEntityNameType getEntityTypeName() throws GobiiException {
-        return GobiiEntityNameType.MAPSETS;
+        return GobiiEntityNameType.MAPSET;
     }
 
 

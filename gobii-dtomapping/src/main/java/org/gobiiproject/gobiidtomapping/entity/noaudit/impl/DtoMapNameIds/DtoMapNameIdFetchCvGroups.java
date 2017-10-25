@@ -30,7 +30,7 @@ public class DtoMapNameIdFetchCvGroups implements DtoMapNameIdFetch {
 
     @Override
     public GobiiEntityNameType getEntityTypeName() throws GobiiException {
-        return GobiiEntityNameType.CVGROUPS;
+        return GobiiEntityNameType.CVGROUP;
     }
 
 

@@ -91,7 +91,7 @@ public class TestDtoFactory {
         returnVal.setMarkerName(markerName);
         Integer platformId = (new GlobalPkColl<DtoCrudRequestPlatformTest>())
                 .getAPkVal(DtoCrudRequestPlatformTest.class,
-                        GobiiEntityNameType.PLATFORMS);
+                        GobiiEntityNameType.PLATFORM);
         returnVal.setPlatformId(platformId);
         returnVal.setStatus(1);
 
@@ -167,7 +167,7 @@ public class TestDtoFactory {
 
         // set the big-ticket items
 
-        Integer experimentId = (new GlobalPkColl<DtoCrudRequestExperimentTest>().getAPkVal(DtoCrudRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENTS));
+        Integer experimentId = (new GlobalPkColl<DtoCrudRequestExperimentTest>().getAPkVal(DtoCrudRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENT));
 
 
         returnVal.getScores().add(1);
@@ -208,7 +208,7 @@ public class TestDtoFactory {
         returnVal.setDescription(uniqueStem + "dummy description");
         returnVal.setMapType(1);
         returnVal.setModifiedBy(1);
-        returnVal.setReferenceId(GlobalPkValues.getInstance().getAPkVal(GobiiEntityNameType.REFERENCES));
+        returnVal.setReferenceId(GlobalPkValues.getInstance().getAPkVal(GobiiEntityNameType.REFERENCE));
         returnVal.setStatusId(1);
 
         returnVal.setProperties(entityParamValues.getProperties());
@@ -257,7 +257,7 @@ public class TestDtoFactory {
 
         Integer platformId = (new GlobalPkColl<DtoCrudRequestPlatformTest>())
                 .getAPkVal(DtoCrudRequestPlatformTest.class,
-                        GobiiEntityNameType.PLATFORMS);
+                        GobiiEntityNameType.PLATFORM);
 
         String uniqueStemString = UUID.randomUUID().toString();
         returnVal.setName(uniqueStemString + ": protocol");
@@ -296,7 +296,7 @@ public class TestDtoFactory {
         // set the plain properties
 
         Integer organizationId = (new GlobalPkColl<DtoCrudRequestOrganizationTest>()).getAPkVal(DtoCrudRequestOrganizationTest.class,
-                GobiiEntityNameType.ORGANIZATIONS);
+                GobiiEntityNameType.ORGANIZATION);
 
 
         returnVal.setFirstName(uniqueStem + " new contact");
