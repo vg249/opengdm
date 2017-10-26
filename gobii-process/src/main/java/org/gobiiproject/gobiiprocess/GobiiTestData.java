@@ -1536,7 +1536,6 @@ public class GobiiTestData {
         Element props = (Element) parentElement.getElementsByTagName("Properties").item(0);
         NodeList propKeyList = props.getElementsByTagName("*");
 
-        GobiiClientContextAuth.authenticate();
 
         switch (entityName) {
 
@@ -1977,11 +1976,54 @@ public class GobiiTestData {
         documentBuilderFactory.setNamespaceAware(true);
 
         File fXmlFile;
-        if(args.length != 1) {
+        if(args.length != 2) {
             ClassLoader classLoader = GobiiTestData.class.getClassLoader();
             fXmlFile = new File(classLoader.getResource("test_profiles/codominant_test.xml").getFile());
+
+            GobiiClientContextAuth.authenticate();
         } else {
             fXmlFile = new File(args[0]);
+
+            String url = args[1];
+
+            BufferedReader br = null;
+
+            System.out.print("Enter crop: ");
+            br = new BufferedReader(new InputStreamReader(System.in));
+            String crop = br.readLine();
+
+            System.out.print("Enter username: ");
+            br = new BufferedReader(new InputStreamReader(System.in));
+            String username = br.readLine();
+
+            String password = "";
+            ConsoleEraser consoleEraser = new ConsoleEraser();
+            System.out.print("Enter password: ");
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+            consoleEraser.start();
+
+            try {
+                password = in.readLine();
+
+                consoleEraser.halt();
+
+                boolean login = GobiiClientContext.getInstance(url, true).login(crop, username, password);
+
+                if (!login) {
+
+                    String failureMessage = GobiiClientContext.getInstance(null, false).getLoginFailure();
+
+                    throw new Exception("Error logging in: " + failureMessage);
+
+                }
+
+
+            } catch (IOException e) {
+                System.out.println("Error trying to read your password!");
+                System.exit(1);
+            }
+
         }
 
 
@@ -2014,7 +2056,31 @@ public class GobiiTestData {
 
         nodeList = (NodeList) xPathExpression.evaluate(document, XPathConstants.NODESET);
 
-        parseScenarios(nodeList, xPath, document, fXmlFile);
+//        parseScenarios(nodeList, xPath, document, fXmlFile);
+
+    }
+
+    private static class ConsoleEraser extends Thread {
+
+        private boolean running = true;
+        public void run() {
+
+            while (running) {
+                System.out.print("");
+                try {
+                    Thread.currentThread().sleep(1);
+                }
+                catch (InterruptedException e) {
+                    break;
+                }
+            }
+
+        }
+
+        public synchronized void halt() {
+            running = false;
+        }
+
 
     }
 
