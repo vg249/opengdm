@@ -1,5 +1,4 @@
 package org.gobiiproject.gobiidtomapping.entity.auditable;
-;
 
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMap;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
