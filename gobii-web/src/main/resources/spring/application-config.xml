@@ -346,6 +346,18 @@
     <bean id="dtoMapEntityStatsImpl" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapEntityStatsImpl"/>
     <bean id="rsJobDaoImpl" class="org.gobiiproject.gobiidao.resultset.access.impl.RsJobDaoImpl"/>
 
+
+
+    <!-- **** ListStatement queries  *************************************** -->
+    <bean id="listStatementContactAll" class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementContactAll"/>
+    <bean id="listStatementDatasetAll" class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementDatasetAll"/>
+    <bean id="listStatementExperimentAll" class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementExperimentAll"/>
+    <bean id="listStatementMarkerAll" class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementMarkerAll"/>
+    <bean id="listStatementOrganizationAll" class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementOrganizationAll"/>
+    <bean id="listStatementPlatformAll" class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementPlatformAll"/>
+    <bean id="listStatementProjectAll" class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementProjectAll"/>
+    <bean id="listStatementProtocolAll" class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementProtocolAll"/>
+
     <bean id="dtoListQueryColl"
           class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl">
         <property name="listQueriesBySqlId">
@@ -357,9 +369,7 @@
                         <constructor-arg>
                             <value>org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO</value>
                         </constructor-arg>
-                        <constructor-arg>
-                            <value>QUERY_ID_DATASET_ALL</value>
-                        </constructor-arg>
+                        <constructor-arg ref="listStatementDatasetAll"/>
                     </bean>
                 </entry>
                 <!--CONTACT -->
@@ -369,9 +379,7 @@
                         <constructor-arg>
                             <value>org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO</value>
                         </constructor-arg>
-                        <constructor-arg>
-                            <value>QUERY_ID_CONTACT_ALL</value>
-                        </constructor-arg>
+                        <constructor-arg ref="listStatementContactAll"/>
                     </bean>
                 </entry>
                 <!--ORGANIZATION -->
@@ -381,9 +389,7 @@
                         <constructor-arg>
                             <value>org.gobiiproject.gobiimodel.dto.entity.auditable.OrganizationDTO</value>
                         </constructor-arg>
-                        <constructor-arg>
-                            <value>QUERY_ID_ORGANIZATION_ALL</value>
-                        </constructor-arg>
+                        <constructor-arg ref="listStatementOrganizationAll"/>
                     </bean>
                 </entry>
                 <!--PLATFORM -->
@@ -393,9 +399,8 @@
                         <constructor-arg>
                             <value>org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO</value>
                         </constructor-arg>
-                        <constructor-arg>
-                            <value>QUERY_ID_PLATFORM_ALL</value>
-                        </constructor-arg>
+                        <constructor-arg ref="listStatementPlatformAll"/>
+
                     </bean>
                 </entry>
                 <!--PROJECT -->
@@ -405,21 +410,18 @@
                         <constructor-arg>
                             <value>org.gobiiproject.gobiimodel.dto.entity.auditable.ProjectDTO</value>
                         </constructor-arg>
-                        <constructor-arg>
-                            <value>QUERY_ID_PROJECT_ALL</value>
-                        </constructor-arg>
+                        <constructor-arg ref="listStatementProjectAll"/>
                     </bean>
                 </entry>
                 <!--EXPERIMENT -->
-                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_EXPERIMENT}">
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_EXPERIMENT_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg>
                             <value>org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO</value>
                         </constructor-arg>
-                        <constructor-arg>
-                            <value>QUERY_ID_EXPERIMENT</value>
-                        </constructor-arg>
+                        <constructor-arg ref="listStatementExperimentAll"/>
+
                     </bean>
                 </entry>
                 <!--MARKER -->
@@ -429,9 +431,7 @@
                         <constructor-arg>
                             <value>org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerDTO</value>
                         </constructor-arg>
-                        <constructor-arg>
-                            <value>QUERY_ID_MARKER_ALL</value>
-                        </constructor-arg>
+                        <constructor-arg ref="listStatementMarkerAll"/>
                     </bean>
                 </entry>
                 <!--PROTOCOL -->
@@ -441,9 +441,7 @@
                         <constructor-arg>
                             <value>org.gobiiproject.gobiimodel.dto.entity.auditable.ProtocolDTO</value>
                         </constructor-arg>
-                        <constructor-arg>
-                            <value>QUERY_ID_PROTOCOL_ALL</value>
-                        </constructor-arg>
+                        <constructor-arg ref="listStatementProtocolAll"/>
                     </bean>
                 </entry>
             </map>

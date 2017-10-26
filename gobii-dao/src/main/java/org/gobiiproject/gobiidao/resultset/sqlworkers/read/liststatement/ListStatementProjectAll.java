@@ -13,7 +13,7 @@ import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY
 /**
 
  */
-public class ListStatementPlatformAll implements ListStatement {
+public class ListStatementProjectAll implements ListStatement {
 
 
 
@@ -39,7 +39,7 @@ public class ListStatementPlatformAll implements ListStatement {
     @Override
     public PreparedStatement makePreparedStatement(Connection dbConnection,Map<String, Object> parameters) throws SQLException {
 
-        String sql = "select * from dataset order by lower(name)";
+        String sql = "select * from project order by lower(name)";
 
         PreparedStatement returnVal = dbConnection.prepareStatement(sql);
 

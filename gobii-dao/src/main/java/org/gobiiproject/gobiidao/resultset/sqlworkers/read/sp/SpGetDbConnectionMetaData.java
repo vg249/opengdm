@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiidao.resultset.sqlworkers.read;
+package org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp;
 
 import org.gobiiproject.gobiidao.resultset.core.DbMetaData;
 import org.hibernate.jdbc.Work;

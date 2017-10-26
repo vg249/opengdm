@@ -2,13 +2,12 @@ package org.gobiiproject.gobiidao.resultset.access.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsOrganizationDao;
-import org.gobiiproject.gobiidao.resultset.core.EntityPropertyParamNames;
 import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsOrganization;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdOrganization;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.*;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetOrganizationDetailsByOrganizationId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetOrganizationDetailsByOrganizationId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetOrganizationNames;
 import org.hibernate.exception.SQLGrammarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

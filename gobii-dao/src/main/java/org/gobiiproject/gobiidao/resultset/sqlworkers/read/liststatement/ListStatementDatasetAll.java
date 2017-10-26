@@ -1,5 +1,7 @@
-package org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp;
+package org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement;
 
+import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
+import org.gobiiproject.gobiidao.resultset.core.listquery.ListStatement;
 import org.hibernate.jdbc.Work;
 
 import java.sql.Connection;
@@ -8,36 +10,41 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
+import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY_ID_DATASET_ALL;
+
 /**
- * Created by VCalaminos on 2/19/2017.
+
  */
-public class SpCvGroupById implements Work {
+public class ListStatementDatasetAll implements ListStatement {
 
 
-    private Map<String, Object> parameters = null;
 
-    public SpCvGroupById(Map<String, Object> parameters) {
-        this.parameters = parameters;
-    }
+//    @Override
+//    public void execute(Connection dbConnection) throws SQLException {
+//
+//        String sql = "select cvgroup_id,name,definition,type from cvgroup where cvgroup_id=?";
+//
+//        PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
+//        Integer groupId = (Integer) parameters.get("groupId");
+//
+//        preparedStatement.setInt(1, groupId);
+//
+//        resultSet = preparedStatement.executeQuery();
+//
+//    } // execute()
 
-    private ResultSet resultSet = null;
-
-    public ResultSet getResultSet() {
-        return resultSet;
+    @Override
+    public ListSqlId getListSqlId() {
+        return QUERY_ID_DATASET_ALL;
     }
 
     @Override
-    public void execute(Connection dbConnection) throws SQLException {
+    public PreparedStatement makePreparedStatement(Connection dbConnection,Map<String, Object> parameters) throws SQLException {
 
-        String sql = "select cvgroup_id,name,definition,type from cvgroup where cvgroup_id=?";
+        String sql = "select * from dataset order by lower(name)";
 
-        PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
-        Integer groupId = (Integer) parameters.get("groupId");
+        PreparedStatement returnVal = dbConnection.prepareStatement(sql);
 
-        preparedStatement.setInt(1, groupId);
-
-        resultSet = preparedStatement.executeQuery();
-
-    } // execute()
-
+        return returnVal;
+    }
 }

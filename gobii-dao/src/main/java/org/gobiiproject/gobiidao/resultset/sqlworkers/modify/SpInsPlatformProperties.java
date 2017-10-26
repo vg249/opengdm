@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiidao.resultset.sqlworkers;
+package org.gobiiproject.gobiidao.resultset.sqlworkers.modify;
 
 import org.gobiiproject.gobiidao.resultset.core.EntityPropertyParamNames;
 import org.gobiiproject.gobiidao.resultset.core.SpDef;

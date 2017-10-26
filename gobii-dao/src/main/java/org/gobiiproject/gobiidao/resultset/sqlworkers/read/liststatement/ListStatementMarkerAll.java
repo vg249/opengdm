@@ -13,7 +13,7 @@ import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY
 /**
 
  */
-public class ListStatementExperimentAll implements ListStatement {
+public class ListStatementMarkerAll implements ListStatement {
 
 
 
@@ -39,7 +39,21 @@ public class ListStatementExperimentAll implements ListStatement {
     @Override
     public PreparedStatement makePreparedStatement(Connection dbConnection,Map<String, Object> parameters) throws SQLException {
 
-        String sql = "select * from dataset order by lower(name)";
+        String sql = "select m.marker_id,\n" +
+                "p.platform_id,\n" +
+                "m.variant_id, \n" +
+                "m.name \"marker_name\", \n" +
+                "m.code, \n" +
+                "m.ref, \n" +
+                "m.alts, \n" +
+                "m.sequence, \n" +
+                "m.reference_id, \n" +
+                "m.strand_id, \n" +
+                "m.status, \n" +
+                "p.name \"platform_name\"\n" +
+                "from marker m\n" +
+                "join platform p on (m.platform_id=p.platform_id)\n" +
+                "order by lower(m.name)";
 
         PreparedStatement returnVal = dbConnection.prepareStatement(sql);
 

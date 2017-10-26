@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiidao.resultset.sqlworkers.read;
+package org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp;
 
 import org.hibernate.jdbc.Work;
 import java.sql.Connection;
