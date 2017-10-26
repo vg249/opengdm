@@ -98,7 +98,7 @@ public class DtoRequestEntityStatsTest {
 
         Assert.assertNotNull("The last modified date is null",
                 entityStatsDTOPosteUpdate.getLastModified() );
-        
+
         Assert.assertTrue("The new datestamp is not later than from before the update",
                 entityStatsDTOPosteUpdate.getLastModified().compareTo(beforeAddTime) > 0 );
 
