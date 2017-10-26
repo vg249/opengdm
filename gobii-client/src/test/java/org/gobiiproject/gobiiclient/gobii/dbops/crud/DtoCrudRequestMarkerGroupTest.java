@@ -150,7 +150,7 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
         Assert.assertNotEquals(null, markerGroupDTOResponse);
         Assert.assertTrue(markerGroupDTOResponse.getMarkerGroupId() > 0);
 
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.MARKERGROUPS, markerGroupDTOResponse.getMarkerGroupId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.MARKER_GROUP, markerGroupDTOResponse.getMarkerGroupId());
 
         RestUri restUriMapsetForGetById = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -163,7 +163,7 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetById.getHeader()));
         MarkerGroupDTO markerGroupDTOResponseForParams = resultEnvelopeForGetById.getPayload().getData().get(0);
 
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.MARKERGROUPS, markerGroupDTOResponse.getMarkerGroupId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.MARKER_GROUP, markerGroupDTOResponse.getMarkerGroupId());
 
     }
 

@@ -111,7 +111,7 @@ public class DtoCrudRequestDisplayTest implements DtoCrudRequestTest {
         Assert.assertTrue(displayDTOResponse.getDisplayId() > 0);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(displayDTOResponseEnvelope.getHeader()));
 
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.DISPLAYNAMES, displayDTOResponse.getDisplayId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.DISPLAY, displayDTOResponse.getDisplayId());
 
         RestUri restUriDisplayForGetById = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -124,7 +124,7 @@ public class DtoCrudRequestDisplayTest implements DtoCrudRequestTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetById.getHeader()));
         DisplayDTO displaytDTOResponseForParams = resultEnvelopeForGetById.getPayload().getData().get(0);
 
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.DISPLAYNAMES, displayDTOResponse.getDisplayId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.DISPLAY, displayDTOResponse.getDisplayId());
 
     }
 

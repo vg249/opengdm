@@ -122,67 +122,67 @@
         <property name="dtoMapNameIdFetchMap">
             <map>
                 <!-- ANLYSES -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).ANALYSES}">
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).ANALYSIS}">
                     <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchAnalyses"/>
                 </entry>
-                <!-- CONTACTS -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).CONTACTS}">
+                <!-- CONTACT -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).CONTACT}">
                     <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchContacts"/>
                 </entry>
-                <!-- DATASETS -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).DATASETS}">
+                <!-- DATASET -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).DATASET}">
                     <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchDataSets"/>
                 </entry>
-                <!-- CVTERMS -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).CVTERMS}">
+                <!-- CV -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).CV}">
                     <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchCvTerms"/>
                 </entry>
-                <!-- CVGROUPS -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).CVGROUPS}">
+                <!-- CVGROUP -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).CVGROUP}">
                     <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchCvGroups"/>
                 </entry>
-                <!-- PROJECTS -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).PROJECTS}">
+                <!-- PROJECT -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).PROJECT}">
                     <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchProjects"/>
                 </entry>
-                <!-- ORGANIZATIONS -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).ORGANIZATIONS}">
+                <!-- ORGANIZATION -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).ORGANIZATION}">
                     <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchOrganizations"/>
                 </entry>
-                <!-- PLATFORMS -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).PLATFORMS}">
+                <!-- PLATFORM -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).PLATFORM}">
                     <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchPlatforms"/>
                 </entry>
-                <!-- MANIFESTS -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).MANIFESTS}">
+                <!-- MANIFEST -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).MANIFEST}">
                     <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchManifests"/>
                 </entry>
-                <!-- MAPSETS -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).MAPSETS}">
+                <!-- MAPSET -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).MAPSET}">
                     <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchMapsets"/>
                 </entry>
-                <!-- MARKERGROUPS -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).MARKERGROUPS}">
+                <!-- MARKER_GROUP -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).MARKER_GROUP}">
                     <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchMarkerGroups"/>
                 </entry>
-                <!-- EXPERIMENTS -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).EXPERIMENTS}">
+                <!-- EXPERIMENT -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).EXPERIMENT}">
                     <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchExperiments"/>
                 </entry>
-                <!-- REFERENCES -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).REFERENCES}">
+                <!-- REFERENCE -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).REFERENCE}">
                     <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchReferences"/>
                 </entry>
-                <!-- ROLES -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).ROLES}">
+                <!-- ROLE -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).ROLE}">
                     <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchRoles"/>
                 </entry>
-                <!-- PROTOCOLS -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).PROTOCOLS}">
+                <!-- PROTOCOL -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).PROTOCOL}">
                     <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchProtocols"/>
                 </entry>
-                <!-- VENDORS_PROTOCOLS -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).VENDORS_PROTOCOLS}">
+                <!-- VENDORS_PROTOCOL -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).VENDORS_PROTOCOL}">
                     <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchVendorProtocols"/>
                 </entry>
             </map>

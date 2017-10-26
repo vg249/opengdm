@@ -177,7 +177,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         if (contact && contact.contactId && contact.contactId > 0) {
                             //loggedInUser
                             _this.fileItemService.loadFileItem(gobii_file_item_1.GobiiFileItem.build(scope$.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
-                                .setEntityType(type_entity_1.EntityType.Contacts)
+                                .setEntityType(type_entity_1.EntityType.Contact)
                                 .setEntitySubType(type_entity_1.EntitySubType.CONTACT_SUBMITED_BY)
                                 .setCvFilterType(cv_filter_type_1.CvFilterType.UNKNOWN)
                                 .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)

@@ -402,7 +402,7 @@ export class ExtractorRoot implements OnInit {
 
                     //loggedInUser
                     this.fileItemService.loadFileItem(GobiiFileItem.build(scope$.gobiiExtractFilterType, ProcessType.CREATE)
-                            .setEntityType(EntityType.Contacts)
+                            .setEntityType(EntityType.Contact)
                             .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
                             .setCvFilterType(CvFilterType.UNKNOWN)
                             .setExtractorItemType(ExtractorItemType.ENTITY)

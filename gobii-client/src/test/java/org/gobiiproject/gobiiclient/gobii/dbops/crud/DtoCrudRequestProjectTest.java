@@ -85,7 +85,7 @@ public class DtoCrudRequestProjectTest implements DtoCrudRequestTest {
         Assert.assertNotEquals(null, projectDTOResponse);
         Assert.assertNotEquals(null, projectDTOResponse.getProjectId());
         Assert.assertTrue(projectDTOResponse.getProjectId() > 0);
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.PROJECTS, projectDTOResponse.getProjectId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.PROJECT, projectDTOResponse.getProjectId());
 
         Assert.assertNotEquals(null, projectDTOResponse.getProperties());
         Assert.assertTrue(projectDTOResponse.getProperties().size() > 0);

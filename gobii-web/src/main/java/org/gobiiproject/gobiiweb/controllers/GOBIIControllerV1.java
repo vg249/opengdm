@@ -1142,7 +1142,7 @@ public class GOBIIControllerV1 {
         PayloadEnvelope<NameIdDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.CVTERMS;
+            GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.CV;
             GobiiFilterType gobiiFilterType = GobiiFilterType.BYTYPENAME;
 
             DtoMapNameIdParams dtoMapNameIdParams = new DtoMapNameIdParams(gobiiEntityNameType, gobiiFilterType, "dataset_type");
@@ -3127,7 +3127,7 @@ public class GOBIIControllerV1 {
     }
 
     // *********************************************
-    // *************************** MAPSETS METHODS
+    // *************************** MAPSET METHODS
     // *********************************************
 
     @RequestMapping(value = "/mapsets", method = RequestMethod.POST)

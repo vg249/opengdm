@@ -30,7 +30,7 @@ public class DtoMapNameIdFetchAnalyses implements DtoMapNameIdFetch {
 
     @Override
     public GobiiEntityNameType getEntityTypeName() throws GobiiException {
-        return GobiiEntityNameType.ANALYSES;
+        return GobiiEntityNameType.ANALYSIS;
     }
 
 

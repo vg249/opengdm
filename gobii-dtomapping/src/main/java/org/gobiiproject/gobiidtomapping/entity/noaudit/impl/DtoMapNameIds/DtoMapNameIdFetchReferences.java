@@ -31,7 +31,7 @@ public class DtoMapNameIdFetchReferences implements DtoMapNameIdFetch {
 
     @Override
     public GobiiEntityNameType getEntityTypeName() throws GobiiException {
-        return GobiiEntityNameType.REFERENCES;
+        return GobiiEntityNameType.REFERENCE;
     }
 
     private List<NameIdDTO> getReferenceNames() {

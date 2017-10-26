@@ -7,14 +7,14 @@ System.register([], function (exports_1, context_1) {
         execute: function () {
             (function (EntityType) {
                 EntityType[EntityType["UNKNOWN"] = 0] = "UNKNOWN";
-                EntityType[EntityType["Contacts"] = 1] = "Contacts";
-                EntityType[EntityType["Projects"] = 2] = "Projects";
-                EntityType[EntityType["Experiments"] = 3] = "Experiments";
-                EntityType[EntityType["DataSets"] = 4] = "DataSets";
-                EntityType[EntityType["CvTerms"] = 5] = "CvTerms";
-                EntityType[EntityType["Mapsets"] = 6] = "Mapsets";
-                EntityType[EntityType["Platforms"] = 7] = "Platforms";
-                EntityType[EntityType["MarkerGroups"] = 8] = "MarkerGroups";
+                EntityType[EntityType["Contact"] = 1] = "Contact";
+                EntityType[EntityType["Project"] = 2] = "Project";
+                EntityType[EntityType["Experiment"] = 3] = "Experiment";
+                EntityType[EntityType["DataSet"] = 4] = "DataSet";
+                EntityType[EntityType["Cv"] = 5] = "Cv";
+                EntityType[EntityType["Mapset"] = 6] = "Mapset";
+                EntityType[EntityType["Platform"] = 7] = "Platform";
+                EntityType[EntityType["Marker_Group"] = 8] = "Marker_Group";
             })(EntityType || (EntityType = {}));
             exports_1("EntityType", EntityType);
             (function (EntitySubType) {

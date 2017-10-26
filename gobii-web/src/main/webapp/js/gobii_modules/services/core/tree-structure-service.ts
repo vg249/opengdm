@@ -29,14 +29,14 @@ export class TreeStructureService {
             GobiiTreeNode.build(gobiiExtractFilterType, ExtractorItemType.JOB_ID)
                 .setGenericLabel(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.JOB_ID]),
             GobiiTreeNode.build(gobiiExtractFilterType, ExtractorItemType.ENTITY)
-                .setEntityType(EntityType.Contacts)
+                .setEntityType(EntityType.Contact)
                 .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
                 .setGenericLabel(Labels.instance().entityNodeLabels[EntitySubType.CONTACT_SUBMITED_BY]),
             GobiiTreeNode.build(gobiiExtractFilterType, ExtractorItemType.EXPORT_FORMAT)
                 .setGenericLabel(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.EXPORT_FORMAT]),
             GobiiTreeNode.build(gobiiExtractFilterType, ExtractorItemType.ENTITY)
-                .setEntityType(EntityType.Mapsets)
-                .setGenericLabel(Labels.instance().entityNodeLabels[EntityType.Mapsets]),
+                .setEntityType(EntityType.Mapset)
+                .setGenericLabel(Labels.instance().entityNodeLabels[EntityType.Mapset]),
         ]
 
         return returnVal;
@@ -56,18 +56,18 @@ export class TreeStructureService {
             // BY DATASET
             ...this.makeCommonNodes(GobiiExtractFilterType.WHOLE_DATASET),
             GobiiTreeNode.build(GobiiExtractFilterType.WHOLE_DATASET, ExtractorItemType.ENTITY)
-                .setEntityType(EntityType.DataSets)
+                .setEntityType(EntityType.DataSet)
                 .setContainerType(ContainerType.DATA)
             ,
 
             // BY SAMPLE
             ...this.makeCommonNodes(GobiiExtractFilterType.BY_SAMPLE),
             GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.ENTITY)
-                .setEntityType(EntityType.CvTerms)
+                .setEntityType(EntityType.Cv)
                 .setCvFilterType(CvFilterType.DATASET_TYPE),
             GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.SAMPLE_LIST_TYPE),
             GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.ENTITY)
-                .setEntityType(EntityType.Platforms)
+                .setEntityType(EntityType.Platform)
                 .setContainerType(ContainerType.DATA),
             GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.TREE_STRUCTURE)
                 .setContainerType(ContainerType.STRUCTURE)
@@ -75,11 +75,11 @@ export class TreeStructureService {
                 .setExpanded(true)
                 .setChildren([
                     GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.ENTITY)
-                        .setEntityType(EntityType.Contacts)
+                        .setEntityType(EntityType.Contact)
                         .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
                         .setContainerType(ContainerType.NONE),
                     GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.ENTITY)
-                        .setEntityType(EntityType.Projects)
+                        .setEntityType(EntityType.Project)
                         .setContainerType(ContainerType.NONE),
                     GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.SAMPLE_FILE),
                     GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.SAMPLE_LIST_ITEM)
@@ -90,7 +90,7 @@ export class TreeStructureService {
             // BY MARKER
             ...this.makeCommonNodes(GobiiExtractFilterType.BY_MARKER),
             GobiiTreeNode.build(GobiiExtractFilterType.BY_MARKER, ExtractorItemType.ENTITY)
-                .setEntityType(EntityType.CvTerms)
+                .setEntityType(EntityType.Cv)
                 .setCvFilterType(CvFilterType.DATASET_TYPE),
             GobiiTreeNode.build(GobiiExtractFilterType.BY_MARKER, ExtractorItemType.TREE_STRUCTURE)
                 .setContainerType(ContainerType.STRUCTURE)
@@ -98,13 +98,13 @@ export class TreeStructureService {
                 .setExpanded(true)
                 .setChildren([
                     GobiiTreeNode.build(GobiiExtractFilterType.BY_MARKER, ExtractorItemType.ENTITY)
-                        .setEntityType(EntityType.Platforms)
+                        .setEntityType(EntityType.Platform)
                         .setContainerType(ContainerType.DATA),
                     GobiiTreeNode.build(GobiiExtractFilterType.BY_MARKER, ExtractorItemType.MARKER_FILE),
                     GobiiTreeNode.build(GobiiExtractFilterType.BY_MARKER, ExtractorItemType.MARKER_LIST_ITEM)
                         .setContainerType(ContainerType.DATA),
                     GobiiTreeNode.build(GobiiExtractFilterType.BY_MARKER, ExtractorItemType.ENTITY)
-                        .setEntityType(EntityType.MarkerGroups)
+                        .setEntityType(EntityType.Marker_Group)
                         .setContainerType(ContainerType.DATA)
                 ])
         ];
@@ -130,7 +130,7 @@ export class TreeStructureService {
 
             if (gobiiTreeNode.getEntitySubType() === EntitySubType.UNKNOWN) {
 
-                if (gobiiTreeNode.getEntityType() !== EntityType.CvTerms) {
+                if (gobiiTreeNode.getEntityType() !== EntityType.Cv) {
                     labelValue = Labels.instance().entityNodeLabels[gobiiTreeNode.getEntityType()];
                 } else {
                     labelValue = Labels.instance().cvFilterNodeLabels[gobiiTreeNode.getCvFilterType()];
@@ -167,37 +167,37 @@ export class TreeStructureService {
         let expandedIcon: string;
         let collapsedIcon: string;
         
-        if (gobiiFileItemCompoundId.getEntityType() === EntityType.DataSets) {
+        if (gobiiFileItemCompoundId.getEntityType() === EntityType.DataSet) {
 
             icon = "fa-database";
             expandedIcon = "fa-folder-expanded";
             collapsedIcon = "fa-database";
 
-        } else if (gobiiFileItemCompoundId.getEntityType() === EntityType.Contacts) {
+        } else if (gobiiFileItemCompoundId.getEntityType() === EntityType.Contact) {
 
             icon = "fa-user-o";
             expandedIcon = "fa-user-o";
             collapsedIcon = "fa-user-o";
 
-        } else if (gobiiFileItemCompoundId.getEntityType() === EntityType.Mapsets) {
+        } else if (gobiiFileItemCompoundId.getEntityType() === EntityType.Mapset) {
 
             icon = "fa-map-o";
             expandedIcon = "fa-map-o";
             collapsedIcon = "fa-map-o";
 
-        } else if (gobiiFileItemCompoundId.getEntityType() === EntityType.Platforms) {
+        } else if (gobiiFileItemCompoundId.getEntityType() === EntityType.Platform) {
 
             icon = "fa-calculator";
             expandedIcon = "fa-calculator";
             collapsedIcon = "fa-calculator";
 
-        } else if (gobiiFileItemCompoundId.getEntityType() === EntityType.Projects) {
+        } else if (gobiiFileItemCompoundId.getEntityType() === EntityType.Project) {
 
             icon = "fa-clipboard";
             expandedIcon = "fa-clipboard";
             collapsedIcon = "fa-clipboard";
 
-        } else if (gobiiFileItemCompoundId.getEntityType() === EntityType.CvTerms) {
+        } else if (gobiiFileItemCompoundId.getEntityType() === EntityType.Cv) {
 
             if (gobiiFileItemCompoundId.getCvFilterType() === CvFilterType.DATASET_TYPE) {
                 icon = "fa-file-excel-o";
@@ -205,7 +205,7 @@ export class TreeStructureService {
                 collapsedIcon = "fa-file-excel-o";
             }
 
-        } else if (gobiiFileItemCompoundId.getEntityType() === EntityType.MarkerGroups) {
+        } else if (gobiiFileItemCompoundId.getEntityType() === EntityType.Marker_Group) {
 
             // if (isParent) {
             icon = "fa-pencil";
@@ -220,37 +220,37 @@ export class TreeStructureService {
 
     private addEntityIconToNode(entityType: EntityType, cvFilterType: CvFilterType, treeNode: GobiiTreeNode) {
 
-        if (entityType === EntityType.DataSets) {
+        if (entityType === EntityType.DataSet) {
 
             treeNode.icon = "fa-database";
             treeNode.expandedIcon = "fa-folder-expanded";
             treeNode.collapsedIcon = "fa-database";
 
-        } else if (entityType === EntityType.Contacts) {
+        } else if (entityType === EntityType.Contact) {
 
             treeNode.icon = "fa-user-o";
             treeNode.expandedIcon = "fa-user-o";
             treeNode.collapsedIcon = "fa-user-o";
 
-        } else if (entityType === EntityType.Mapsets) {
+        } else if (entityType === EntityType.Mapset) {
 
             treeNode.icon = "fa-map-o";
             treeNode.expandedIcon = "fa-map-o";
             treeNode.collapsedIcon = "fa-map-o";
 
-        } else if (entityType === EntityType.Platforms) {
+        } else if (entityType === EntityType.Platform) {
 
             treeNode.icon = "fa-calculator";
             treeNode.expandedIcon = "fa-calculator";
             treeNode.collapsedIcon = "fa-calculator";
 
-        } else if (entityType === EntityType.Projects) {
+        } else if (entityType === EntityType.Project) {
 
             treeNode.icon = "fa-clipboard";
             treeNode.expandedIcon = "fa-clipboard";
             treeNode.collapsedIcon = "fa-clipboard";
 
-        } else if (entityType === EntityType.CvTerms) {
+        } else if (entityType === EntityType.Cv) {
 
             if (cvFilterType === CvFilterType.DATASET_TYPE) {
                 treeNode.icon = "fa-file-excel-o";
@@ -258,7 +258,7 @@ export class TreeStructureService {
                 treeNode.collapsedIcon = "fa-file-excel-o";
             }
 
-        } else if (entityType === EntityType.MarkerGroups) {
+        } else if (entityType === EntityType.Marker_Group) {
 
             // if (isParent) {
             treeNode.icon = "fa-pencil";

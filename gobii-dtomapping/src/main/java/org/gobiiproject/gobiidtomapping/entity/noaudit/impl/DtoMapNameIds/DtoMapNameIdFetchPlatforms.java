@@ -32,7 +32,7 @@ public class DtoMapNameIdFetchPlatforms implements DtoMapNameIdFetch {
 
     @Override
     public GobiiEntityNameType getEntityTypeName() throws GobiiException {
-        return GobiiEntityNameType.PLATFORMS;
+        return GobiiEntityNameType.PLATFORM;
     }
 
 

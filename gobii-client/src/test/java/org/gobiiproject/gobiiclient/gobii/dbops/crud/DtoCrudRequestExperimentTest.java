@@ -60,7 +60,7 @@ public class DtoCrudRequestExperimentTest implements DtoCrudRequestTest {
 //        dtoRequestExperiment.process(experimentDTO);
 
 
-        Integer experimentId = (new GlobalPkColl<DtoCrudRequestExperimentTest>().getAPkVal(DtoCrudRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENTS));
+        Integer experimentId = (new GlobalPkColl<DtoCrudRequestExperimentTest>().getAPkVal(DtoCrudRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENT));
 
         RestUri experimentsUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -106,9 +106,9 @@ public class DtoCrudRequestExperimentTest implements DtoCrudRequestTest {
 
         //DtoRequestExperiment dtoRequestExperiment = new DtoRequestExperiment();
 
-        Integer projectId = (new GlobalPkColl<DtoCrudRequestProjectTest>().getAPkVal(DtoCrudRequestProjectTest.class, GobiiEntityNameType.PROJECTS));
-        Integer manifestId = (new GlobalPkColl<DtoCrudRequestManifestTest>().getAPkVal(DtoCrudRequestManifestTest.class, GobiiEntityNameType.MANIFESTS));
-        Integer idOfProtocolThatHasAVendor = (new GlobalPkColl<DtoCrudRequestVendorProtocolTest>().getAPkVal(DtoCrudRequestVendorProtocolTest.class, GobiiEntityNameType.VENDORS_PROTOCOLS));
+        Integer projectId = (new GlobalPkColl<DtoCrudRequestProjectTest>().getAPkVal(DtoCrudRequestProjectTest.class, GobiiEntityNameType.PROJECT));
+        Integer manifestId = (new GlobalPkColl<DtoCrudRequestManifestTest>().getAPkVal(DtoCrudRequestManifestTest.class, GobiiEntityNameType.MANIFEST));
+        Integer idOfProtocolThatHasAVendor = (new GlobalPkColl<DtoCrudRequestVendorProtocolTest>().getAPkVal(DtoCrudRequestVendorProtocolTest.class, GobiiEntityNameType.VENDORS_PROTOCOL));
 
         // ** GET THE VENDOR_PROTOCOL ID *****************
 
@@ -120,7 +120,7 @@ public class DtoCrudRequestExperimentTest implements DtoCrudRequestTest {
         RestUri namesUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .nameIdListByQueryParams();
-        namesUri.setParamValue("entity", GobiiEntityNameType.VENDORS_PROTOCOLS.toString().toLowerCase());
+        namesUri.setParamValue("entity", GobiiEntityNameType.VENDORS_PROTOCOL.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPEID.toString().toUpperCase()));
         namesUri.setParamValue("filterValue", idOfProtocolThatHasAVendor.toString());
         GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResourceForVendorsProtocol = new GobiiEnvelopeRestResource<>(namesUri);
@@ -163,7 +163,7 @@ public class DtoCrudRequestExperimentTest implements DtoCrudRequestTest {
 
         Assert.assertNotEquals(experimentDTOResponse, null);
         Assert.assertTrue(experimentDTOResponse.getExperimentId() > 0);
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.EXPERIMENTS, experimentDTOResponse.getExperimentId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.EXPERIMENT, experimentDTOResponse.getExperimentId());
 
     } // testGetMarkers()
 
@@ -175,7 +175,7 @@ public class DtoCrudRequestExperimentTest implements DtoCrudRequestTest {
 //        experimentDTORequest.setExperimentId(2);
 //        ExperimentDTO ExperimentDTOExisting = dtoRequestExperiment.process(experimentDTORequest);
 
-        Integer experimentId = (new GlobalPkColl<DtoCrudRequestExperimentTest>().getAPkVal(DtoCrudRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENTS));
+        Integer experimentId = (new GlobalPkColl<DtoCrudRequestExperimentTest>().getAPkVal(DtoCrudRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENT));
 
         RestUri experimentsUriById = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -226,7 +226,7 @@ public class DtoCrudRequestExperimentTest implements DtoCrudRequestTest {
 //        experimentDTORequest.setExperimentId(2);
 //        ExperimentDTO experimentDTOReceived = dtoRequestExperiment.process(experimentDTORequest);
 
-        Integer experimentId = (new GlobalPkColl<DtoCrudRequestExperimentTest>().getAPkVal(DtoCrudRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENTS));
+        Integer experimentId = (new GlobalPkColl<DtoCrudRequestExperimentTest>().getAPkVal(DtoCrudRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENT));
         RestUri experimentsUriById = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceByUriIdParam(GobiiServiceRequestId.URL_EXPERIMENTS);
