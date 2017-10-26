@@ -37,7 +37,7 @@ public class ListStatementMarkerAll implements ListStatement {
     }
 
     @Override
-    public PreparedStatement makePreparedStatement(Connection dbConnection,Map<String, Object> parameters) throws SQLException {
+    public PreparedStatement makePreparedStatement(Connection dbConnection,Map<String, Object> jdbcParamVals) throws SQLException {
 
         String sql = "select m.marker_id,\n" +
                 "p.platform_id,\n" +

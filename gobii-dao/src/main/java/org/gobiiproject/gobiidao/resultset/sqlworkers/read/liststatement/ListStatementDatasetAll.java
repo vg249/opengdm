@@ -39,7 +39,7 @@ public class ListStatementDatasetAll implements ListStatement {
     }
 
     @Override
-    public PreparedStatement makePreparedStatement(Connection dbConnection,Map<String, Object> parameters) throws SQLException {
+    public PreparedStatement makePreparedStatement(Connection dbConnection,Map<String, Object> jdbcParamVals) throws SQLException {
 
         String sql = "select * from dataset order by lower(name)";
 

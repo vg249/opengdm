@@ -366,9 +366,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_DATASET_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg>
-                            <value>org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO</value>
-                        </constructor-arg>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO"/>
                         <constructor-arg ref="listStatementDatasetAll"/>
                     </bean>
                 </entry>
@@ -376,9 +374,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_CONTACT_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg>
-                            <value>org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO</value>
-                        </constructor-arg>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO"/>
                         <constructor-arg ref="listStatementContactAll"/>
                     </bean>
                 </entry>
@@ -386,9 +382,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_ORGANIZATION_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg>
-                            <value>org.gobiiproject.gobiimodel.dto.entity.auditable.OrganizationDTO</value>
-                        </constructor-arg>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.OrganizationDTO"/>
                         <constructor-arg ref="listStatementOrganizationAll"/>
                     </bean>
                 </entry>
@@ -396,9 +390,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_PLATFORM_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg>
-                            <value>org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO</value>
-                        </constructor-arg>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO"/>
                         <constructor-arg ref="listStatementPlatformAll"/>
 
                     </bean>
@@ -407,9 +399,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_PROJECT_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg>
-                            <value>org.gobiiproject.gobiimodel.dto.entity.auditable.ProjectDTO</value>
-                        </constructor-arg>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.ProjectDTO"/>
                         <constructor-arg ref="listStatementProjectAll"/>
                     </bean>
                 </entry>
@@ -417,9 +407,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_EXPERIMENT_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg>
-                            <value>org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO</value>
-                        </constructor-arg>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO"/>
                         <constructor-arg ref="listStatementExperimentAll"/>
 
                     </bean>
@@ -428,9 +416,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_MARKER_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg>
-                            <value>org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerDTO</value>
-                        </constructor-arg>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerDTO"/>
                         <constructor-arg ref="listStatementMarkerAll"/>
                     </bean>
                 </entry>
@@ -438,9 +424,7 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_PROTOCOL_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg>
-                            <value>org.gobiiproject.gobiimodel.dto.entity.auditable.ProtocolDTO</value>
-                        </constructor-arg>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.ProtocolDTO"/>
                         <constructor-arg ref="listStatementProtocolAll"/>
                     </bean>
                 </entry>

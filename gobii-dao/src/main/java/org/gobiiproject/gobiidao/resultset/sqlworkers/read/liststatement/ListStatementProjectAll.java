@@ -37,7 +37,7 @@ public class ListStatementProjectAll implements ListStatement {
     }
 
     @Override
-    public PreparedStatement makePreparedStatement(Connection dbConnection,Map<String, Object> parameters) throws SQLException {
+    public PreparedStatement makePreparedStatement(Connection dbConnection,Map<String, Object> jdbcParamVals) throws SQLException {
 
         String sql = "select * from project order by lower(name)";
 
