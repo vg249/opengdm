@@ -16,17 +16,19 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.*;
-import org.gobiiproject.gobiimodel.headerlesscontainer.AnalysisDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisDTO;
+import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
+import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -118,6 +120,8 @@ public class DtoCrudRequestAnalysisTest implements DtoCrudRequestTest {
         AnalysisDTO newAnalysisDto = TestDtoFactory
                 .makePopulatedAnalysisDTO(GobiiProcessType.CREATE, 1, entityParamValues);
 
+        Assert.assertNull("new dto should have null created date", newAnalysisDto.getCreatedDate());
+        Assert.assertNull("new dto should have null modified date", newAnalysisDto.getModifiedDate());
         PayloadEnvelope<AnalysisDTO> payloadEnvelope = new PayloadEnvelope<>(newAnalysisDto, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<AnalysisDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -131,6 +135,13 @@ public class DtoCrudRequestAnalysisTest implements DtoCrudRequestTest {
         Assert.assertNotEquals(null, analysisDTOResponse);
         Assert.assertTrue(analysisDTOResponse.getAnalysisId() > 0);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(analysisDTOResponseEnvelope.getHeader()));
+
+        Date date = new Date(); // auto-created date should be today
+        Assert.assertNotEquals("auto-created date should be filled in", 0,
+                DateUtils.dayOfMonthOfYearIsEqual(analysisDTOResponse.getCreatedDate(),date));
+
+        Assert.assertNull("new dto should still have null modified date", newAnalysisDto.getModifiedDate());
+
 
         GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.ANALYSES, analysisDTOResponse.getAnalysisId());
 
@@ -181,7 +192,6 @@ public class DtoCrudRequestAnalysisTest implements DtoCrudRequestTest {
                 payloadEnvelope);
         AnalysisDTO newAnalysisDTOResponse = analysisDTOResponseEnvelope.getPayload().getData().get(0);
 
-        // re-retrieve the analysis we just created so we start with a fresh READ mode dto
 
         RestUri restUriAnalysisForGetById = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -203,6 +213,10 @@ public class DtoCrudRequestAnalysisTest implements DtoCrudRequestTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(analysisDTOResponseEnvelopeUpdate.getHeader()));
 
         AnalysisDTO analysisDTORequest = analysisDTOResponseEnvelopeUpdate.getPayload().getData().get(0);
+
+        Date date = new Date(); // auto-created date should be today
+        Assert.assertTrue("Updated dto should have a modified date",
+                DateUtils.dayOfMonthOfYearIsEqual(date,analysisDTORequest.getModifiedDate()));
 
 
         restUriAnalysisForGetById.setParamValue("id", analysisDTORequest.getAnalysisId().toString());

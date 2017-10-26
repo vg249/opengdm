@@ -3,7 +3,7 @@ package org.gobiiproject.gobidomain.services;
 import java.util.List;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobiimodel.headerlesscontainer.MapsetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
 
 /**
  * Created by Phil on 4/28/2016.

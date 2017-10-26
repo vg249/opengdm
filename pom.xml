@@ -18,6 +18,7 @@
 
         <!-- Spring Version -->
         <spring.version>4.2.2.RELEASE</spring.version>
+        <aspectJ.version>1.7.4</aspectJ.version>
 
         <!-- Spring Secuirty -->
         <spring-security.version>4.2.2.RELEASE</spring-security.version>
@@ -308,6 +309,7 @@
                 <artifactId>postgresql</artifactId>
                 <version>9.4-1200-jdbc41</version>
             </dependency>
+
             <!-- Liquibase -->
             <dependency>
                 <groupId>org.liquibase</groupId>

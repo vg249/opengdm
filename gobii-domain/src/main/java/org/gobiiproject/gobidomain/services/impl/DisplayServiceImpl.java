@@ -2,8 +2,8 @@ package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.DisplayService;
-import org.gobiiproject.gobiidtomapping.DtoMapDisplay;
-import org.gobiiproject.gobiimodel.headerlesscontainer.DisplayDTO;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapDisplay;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.DisplayDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,9 +30,7 @@ public class DisplayServiceImpl implements DisplayService {
 
         try {
 
-            displayDTO.setCreatedDate(new Date());
-            displayDTO.setModifiedDate(new Date());
-            returnVal = dtoMapDisplay.createDisplay(displayDTO);
+            returnVal = dtoMapDisplay.create(displayDTO);
 
             // When we have roles and permissions, this will be set programmatically
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
@@ -57,10 +54,10 @@ public class DisplayServiceImpl implements DisplayService {
             if(null == displayDTO.getDisplayId() ||
                     displayDTO.getDisplayId().equals(displayId)) {
 
-                DisplayDTO existingDisplayDTO = dtoMapDisplay.getDisplayDetails(displayId);
+                DisplayDTO existingDisplayDTO = dtoMapDisplay.get(displayId);
                 if(null != existingDisplayDTO.getDisplayId() && existingDisplayDTO.getDisplayId().equals(displayId)) {
 
-                    returnVal = dtoMapDisplay.replaceDisplay(displayId, displayDTO);
+                    returnVal = dtoMapDisplay.replace(displayId, displayDTO);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
@@ -100,7 +97,7 @@ public class DisplayServiceImpl implements DisplayService {
 
         List<DisplayDTO> returnVal;
 
-        returnVal = dtoMapDisplay.getDisplays();
+        returnVal = dtoMapDisplay.getList();
         for(DisplayDTO currentDisplayDTO : returnVal) {
             currentDisplayDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
             currentDisplayDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
@@ -118,7 +115,7 @@ public class DisplayServiceImpl implements DisplayService {
 
         DisplayDTO returnVal;
 
-        returnVal = dtoMapDisplay.getDisplayDetails(displayId);
+        returnVal = dtoMapDisplay.get(displayId);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 

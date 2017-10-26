@@ -2,9 +2,8 @@ package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ExperimentService;
-import org.gobiiproject.gobiidao.entity.pojos.Experiment;
-import org.gobiiproject.gobiidtomapping.DtoMapExperiment;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapExperiment;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -13,9 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Created by Angel on 4/19/2016.
@@ -34,7 +31,7 @@ public class ExperimentServiceImpl implements ExperimentService {
 
         List<ExperimentDTO> returnVal;
 
-        returnVal = dtoMapExperiment.getExperiments();
+        returnVal = dtoMapExperiment.getList();
 
         for (ExperimentDTO currentExperimentDTO : returnVal) {
             currentExperimentDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
@@ -55,7 +52,7 @@ public class ExperimentServiceImpl implements ExperimentService {
 
         ExperimentDTO returnVal;
 
-        returnVal = dtoMapExperiment.getExperimentDetails(experimentId);
+        returnVal = dtoMapExperiment.get(experimentId);
 
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
@@ -76,9 +73,7 @@ public class ExperimentServiceImpl implements ExperimentService {
     public ExperimentDTO createExperiment(ExperimentDTO experimentDTO) throws GobiiDomainException {
         ExperimentDTO returnVal;
 
-        experimentDTO.setCreatedDate(new Date());
-        experimentDTO.setModifiedDate(new Date());
-        returnVal = dtoMapExperiment.createExperiment(experimentDTO);
+        returnVal = dtoMapExperiment.create(experimentDTO);
 
         // When we have roles and permissions, this will be set programmatically
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
@@ -96,13 +91,12 @@ public class ExperimentServiceImpl implements ExperimentService {
                 experimentDTO.getExperimentId().equals(experimentId)) {
 
 
-            ExperimentDTO existingExperimentDTO = dtoMapExperiment.getExperimentDetails(experimentId);
+            ExperimentDTO existingExperimentDTO = dtoMapExperiment.get(experimentId);
 
             if (null != existingExperimentDTO.getExperimentId() && existingExperimentDTO.getExperimentId().equals(experimentId)) {
 
 
-                experimentDTO.setModifiedDate(new Date());
-                returnVal = dtoMapExperiment.replaceExperiment(experimentId, experimentDTO);
+                returnVal = dtoMapExperiment.replace(experimentId, experimentDTO);
                 returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
                 returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 

@@ -6,7 +6,7 @@
 package org.gobiiproject.gobidomain.services;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobiimodel.headerlesscontainer.DisplayDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.DisplayDTO;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
 package org.gobiiproject.gobidomain.services;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 
 import java.text.ParseException;
 import java.util.List;
