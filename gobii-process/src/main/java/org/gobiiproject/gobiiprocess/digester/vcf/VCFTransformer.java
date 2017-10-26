@@ -49,6 +49,16 @@ public class VCFTransformer {
 				mrefLineData[0]=mrefLineRawData[0];
 				System.arraycopy(mrefAltData,0+offset,mrefLineData,1,mrefAltData.length-offset);
 
+				//Fix - to N
+				for(int i =0;i< mrefLineData.length;i++) {
+					if (mrefLineData[i].equals("-"))mrefLineData[i]="N";// - is technically not valid
+					if(mrefLineData[i].equals("*"))mrefLineData[i]="N";// * is upstream deletion
+					if(mrefLineData[i].equals("INS"))mrefLineData[i]="+";// Technically, all these are supposed to be info fields
+					if(mrefLineData[i].equals("DEL"))mrefLineData[i]="-";
+					if(mrefLineData[i].equals("DUP"))mrefLineData[i]="N";
+					if(mrefLineData[i].equals("INV"))mrefLineData[i]="N";
+				}
+
 				String[] matrixLineData = matrixLine.trim().split("\\s+");
 				int columnsNumber = matrixLineData.length;
 				for (int i = 0; i < columnsNumber; i++) {
