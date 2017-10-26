@@ -96,6 +96,9 @@ public class DtoRequestEntityStatsTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopePostUpdate.getHeader()));
         EntityStatsDTO entityStatsDTOPosteUpdate = resultEnvelopePostUpdate.getPayload().getData().get(0);
 
+        Assert.assertNotNull("The last modified date is null",
+                entityStatsDTOPosteUpdate.getLastModified() );
+        
         Assert.assertTrue("The new datestamp is not later than from before the update",
                 entityStatsDTOPosteUpdate.getLastModified().compareTo(beforeAddTime) > 0 );
 

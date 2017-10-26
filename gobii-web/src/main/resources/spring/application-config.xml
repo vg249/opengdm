@@ -341,6 +341,11 @@
     <bean id="dtoMapJob" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapJobImpl"/>
     <bean id="rsJobDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsJobDaoImpl"/>
 
+    <!-- **** Entity Status Beans *************************************** -->
+    <bean id="entityStatsService" class="org.gobiiproject.gobidomain.services.impl.EntityStatsServiceImpl"/>
+    <bean id="dtoMapEntityStatsImpl" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapEntityStatsImpl"/>
+    <bean id="rsJobDaoImpl" class="org.gobiiproject.gobiidao.resultset.access.impl.RsJobDaoImpl"/>
+
     <bean id="dtoListQueryColl"
           class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl">
         <property name="listQueriesBySqlId">
