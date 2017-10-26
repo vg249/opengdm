@@ -20,7 +20,7 @@ public class LoaderGlobalConfigs extends ProcessGlobalConfigs{
     public static void setFromFlags(CommandLine cli){
         ProcessGlobalConfigs.setFromFlags(cli);
         if(cli.hasOption("singleThreadRead")) singleThreadFileRead=true;
-        if(cli.hasOption("keepIntermediateFiles")) keepIntermediateFiles=truel
+        if(cli.hasOption("keepIntermediateFiles")) keepIntermediateFiles=true;
     }
 
     public static boolean getSingleThreadFileRead(){
