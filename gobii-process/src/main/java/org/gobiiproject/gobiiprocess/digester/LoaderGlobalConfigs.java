@@ -6,7 +6,7 @@ import org.gobiiproject.gobiiprocess.ProcessGlobalConfigs;
 public class LoaderGlobalConfigs extends ProcessGlobalConfigs{
     private LoaderGlobalConfigs(){}
     private static boolean singleThreadFileRead=false;
-    private static boolean keepIntermediateFiles=false;
+    private static boolean deleteIntermediateFiles=false;
 
 
     /**
@@ -15,16 +15,16 @@ public class LoaderGlobalConfigs extends ProcessGlobalConfigs{
     public static void addOptions(Options o)  {
         ProcessGlobalConfigs.addOptions(o);
         o.addOption("str", "singleThreadRead", false, "Use a single thread for file reading");
-        o.addOption("kif","keepIntermediateFiles", false, "Keep intermediate files");
+        o.addOption("dif","deleteIntermediateFiles", false, "Delete intermediate files (and save some space)");
     }
     public static void setFromFlags(CommandLine cli){
         ProcessGlobalConfigs.setFromFlags(cli);
         if(cli.hasOption("singleThreadRead")) singleThreadFileRead=true;
-        if(cli.hasOption("keepIntermediateFiles")) keepIntermediateFiles=true;
+        if(cli.hasOption("deleteIntermediateFiles")) deleteIntermediateFiles=true;
     }
 
     public static boolean getSingleThreadFileRead(){
         return singleThreadFileRead;
     }
-    public static boolean getKeepIntermediateFiles() { return keepIntermediateFiles; }
+    public static boolean getDeleteIntermediateFiles() { return deleteIntermediateFiles; }
 }
