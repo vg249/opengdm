@@ -95,7 +95,7 @@ public class DtoCrudRequestMapsetTest implements DtoCrudRequestTest {
     public void create() throws Exception {
 
         RestUri namesUri = GobiiClientContext.getInstance(null, false).getUriFactory().nameIdListByQueryParams();
-        namesUri.setParamValue("entity", GobiiEntityNameType.CVTERMS.toString().toLowerCase());
+        namesUri.setParamValue("entity", GobiiEntityNameType.CV.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
         namesUri.setParamValue("filterValue", "mapset_type");
 
@@ -125,7 +125,7 @@ public class DtoCrudRequestMapsetTest implements DtoCrudRequestTest {
         Assert.assertTrue(mapsetDTOResponse.getMapsetId() > 0);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(mapsetDTOResponseEnvelope.getHeader()));
 
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.MAPSETS, mapsetDTOResponse.getMapsetId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.MAPSET, mapsetDTOResponse.getMapsetId());
 
         RestUri restUriMapsetForGetById = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -138,7 +138,7 @@ public class DtoCrudRequestMapsetTest implements DtoCrudRequestTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetById.getHeader()));
         MapsetDTO mapsetDTOResponseForParams = resultEnvelopeForGetById.getPayload().getData().get(0);
 
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.MAPSETS, mapsetDTOResponse.getMapsetId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.MAPSET, mapsetDTOResponse.getMapsetId());
     }
 
 
@@ -148,7 +148,7 @@ public class DtoCrudRequestMapsetTest implements DtoCrudRequestTest {
     public void update() throws Exception {
 
         RestUri namesUri = GobiiClientContext.getInstance(null, false).getUriFactory().nameIdListByQueryParams();
-        namesUri.setParamValue("entity", GobiiEntityNameType.CVTERMS.toString().toLowerCase());
+        namesUri.setParamValue("entity", GobiiEntityNameType.CV.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
         namesUri.setParamValue("filterValue", "mapset_type");
 

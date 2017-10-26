@@ -30,7 +30,7 @@ public class DtoMapNameIdFetchVendorProtocols implements DtoMapNameIdFetch {
 
     @Override
     public GobiiEntityNameType getEntityTypeName() throws GobiiException {
-        return GobiiEntityNameType.VENDORS_PROTOCOLS;
+        return GobiiEntityNameType.VENDORS_PROTOCOL;
     }
 
 

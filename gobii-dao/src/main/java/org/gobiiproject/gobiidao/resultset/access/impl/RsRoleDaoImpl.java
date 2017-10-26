@@ -1,11 +1,9 @@
 package org.gobiiproject.gobiidao.resultset.access.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiidao.resultset.access.RsPlatformDao;
 import org.gobiiproject.gobiidao.resultset.access.RsRoleDao;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPlatformNames;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetRoleNames;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetRoleNames;
 import org.hibernate.exception.SQLGrammarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

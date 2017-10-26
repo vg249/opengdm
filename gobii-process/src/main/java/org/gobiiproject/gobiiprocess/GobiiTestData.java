@@ -241,7 +241,7 @@ public class GobiiTestData {
                 .getUriFactory()
                 .nameIdListByQueryParams();
         GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
-        namesUri.setParamValue("entity", GobiiEntityNameType.CVTERMS.toString().toLowerCase());
+        namesUri.setParamValue("entity", GobiiEntityNameType.CV.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString().toUpperCase()));
         namesUri.setParamValue("filterValue", filterValue);
 
@@ -390,7 +390,7 @@ public class GobiiTestData {
                 .nameIdListByQueryParams();
 
         GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeNameResource = new GobiiEnvelopeRestResource<>(rolesUri);
-        rolesUri.setParamValue("entity", GobiiEntityNameType.ROLES.toString().toLowerCase());
+        rolesUri.setParamValue("entity", GobiiEntityNameType.ROLE.toString().toLowerCase());
 
         PayloadEnvelope<NameIdDTO> resultEnvelopeRoles = gobiiEnvelopeNameResource.get(NameIdDTO.class);
 

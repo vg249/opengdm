@@ -31,7 +31,7 @@ public class DtoMapNameIdFetchManifests implements DtoMapNameIdFetch {
 
     @Override
     public GobiiEntityNameType getEntityTypeName() throws GobiiException {
-        return GobiiEntityNameType.CVGROUPS;
+        return GobiiEntityNameType.CVGROUP;
     }
 
     private List<NameIdDTO> getManifestNames() throws GobiiException {

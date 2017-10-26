@@ -32,7 +32,7 @@ public class DtoMapNameIdFetchContacts implements DtoMapNameIdFetch {
 
     @Override
     public GobiiEntityNameType getEntityTypeName() throws GobiiException {
-        return GobiiEntityNameType.CONTACTS;
+        return GobiiEntityNameType.CONTACT;
     }
 
 

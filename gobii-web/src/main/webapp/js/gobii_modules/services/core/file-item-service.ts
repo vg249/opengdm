@@ -39,7 +39,7 @@ export class FileItemService {
             FileItemParams
                 .build(NameIdFilterParamTypes.CV_DATATYPE,
                     GobiiExtractFilterType.BY_SAMPLE,
-                    EntityType.CvTerms)
+                    EntityType.Cv)
                 .setDynamicFilterValue(false)
                 .setCvFilterType(CvFilterType.DATASET_TYPE)
                 .setEntityFilter(EntityFilter.BYTYPENAME)
@@ -52,26 +52,26 @@ export class FileItemService {
             FileItemParams
                 .build(NameIdFilterParamTypes.MAPSETS,
                     GobiiExtractFilterType.WHOLE_DATASET,
-                    EntityType.Mapsets)
+                    EntityType.Mapset)
                 .setNameIdLabelType(NameIdLabelType.NO));
 
         this.nameIdRequestParams.set(NameIdFilterParamTypes.PLATFORMS,
             FileItemParams
                 .build(NameIdFilterParamTypes.PLATFORMS,
                     GobiiExtractFilterType.WHOLE_DATASET,
-                    EntityType.Platforms));
+                    EntityType.Platform));
 
         this.nameIdRequestParams.set(NameIdFilterParamTypes.MARKER_GROUPS,
             FileItemParams
                 .build(NameIdFilterParamTypes.MARKER_GROUPS,
                     GobiiExtractFilterType.BY_MARKER,
-                    EntityType.MarkerGroups));
+                    EntityType.Marker_Group));
 
         this.nameIdRequestParams.set(NameIdFilterParamTypes.PROJECTS,
             FileItemParams
                 .build(NameIdFilterParamTypes.PROJECTS,
                     GobiiExtractFilterType.BY_SAMPLE,
-                    EntityType.Projects)
+                    EntityType.Project)
                 .setNameIdLabelType(NameIdLabelType.ALL));
 
 
@@ -81,25 +81,25 @@ export class FileItemService {
         let nameIdRequestParamsContactsPi: FileItemParams = FileItemParams
             .build(NameIdFilterParamTypes.CONTACT_PI,
                 GobiiExtractFilterType.WHOLE_DATASET,
-                EntityType.Contacts)
+                EntityType.Contact)
             .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR);
 
         let nameIdRequestParamsProjectByPiContact: FileItemParams = FileItemParams
             .build(NameIdFilterParamTypes.PROJECTS_BY_CONTACT,
                 GobiiExtractFilterType.WHOLE_DATASET,
-                EntityType.Projects)
+                EntityType.Project)
             .setEntityFilter(EntityFilter.BYTYPEID);
 
         let nameIdRequestParamsExperiments: FileItemParams = FileItemParams
             .build(NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT,
                 GobiiExtractFilterType.WHOLE_DATASET,
-                EntityType.Experiments)
+                EntityType.Experiment)
             .setEntityFilter(EntityFilter.BYTYPEID);
 
         let nameIdRequestParamsDatasets: FileItemParams = FileItemParams
             .build(NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT,
                 GobiiExtractFilterType.WHOLE_DATASET,
-                EntityType.DataSets)
+                EntityType.DataSet)
             .setEntityFilter(EntityFilter.BYTYPEID);
 
         //add the individual requests to the map

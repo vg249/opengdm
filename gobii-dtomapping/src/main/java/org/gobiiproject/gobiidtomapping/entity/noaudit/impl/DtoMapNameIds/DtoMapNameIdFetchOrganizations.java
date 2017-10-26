@@ -30,7 +30,7 @@ public class DtoMapNameIdFetchOrganizations implements DtoMapNameIdFetch {
 
     @Override
     public GobiiEntityNameType getEntityTypeName() throws GobiiException {
-        return GobiiEntityNameType.ORGANIZATIONS;
+        return GobiiEntityNameType.ORGANIZATION;
     }
 
 

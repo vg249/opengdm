@@ -31,7 +31,7 @@ public class DtoMapNameIdFetchCvTerms implements DtoMapNameIdFetch {
 
     @Override
     public GobiiEntityNameType getEntityTypeName() {
-        return GobiiEntityNameType.CVTERMS;
+        return GobiiEntityNameType.CV;
     }
 
     private NameIdDTO makeCvNameId(ResultSet resultSet) throws SQLException   {
