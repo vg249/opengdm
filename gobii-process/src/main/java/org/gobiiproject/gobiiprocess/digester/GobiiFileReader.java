@@ -444,7 +444,9 @@ public class GobiiFileReader {
 						ErrorLogger.logError("FileReader","Error in table "+key);
 					}
 					else{
-						deleteIFLFiles(dstDir,key);
+						if(LoaderGlobalConfigs.getDeleteIntermediateFiles()){
+							deleteIFLFiles(dstDir,key);
+						}
 					}
 
 				}
@@ -880,9 +882,6 @@ public class GobiiFileReader {
 	 * @param tableName
 	 */
 	private static void deleteIFLFiles(File directory, String tableName) {
-		if(LoaderGlobalConfigs.getKeepIntermediateFiles()){
-			return;
-		}
 		File[] fileList = directory.listFiles();
 		if (fileList == null) return;
 		for (File f : fileList) {
