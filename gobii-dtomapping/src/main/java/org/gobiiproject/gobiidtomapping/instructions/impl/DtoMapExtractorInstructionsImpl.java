@@ -2,7 +2,7 @@ package org.gobiiproject.gobiidtomapping.instructions.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.filesystem.access.InstructionFileAccess;
-import org.gobiiproject.gobiidtomapping.auditable.DtoMapContact;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapContact;
 import org.gobiiproject.gobiidtomapping.instructions.DtoMapExtractorInstructions;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapJob;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
