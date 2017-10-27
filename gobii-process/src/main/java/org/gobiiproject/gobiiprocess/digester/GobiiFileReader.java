@@ -441,7 +441,7 @@ public class GobiiFileReader {
                         loadedData = true;
                     }
 					if(counts.invalidData >0 && !isVariableLengthTable(key)){
-						ErrorLogger.logError("FileReader","Error in table "+key);
+						ErrorLogger.logWarning("FileReader","Invalid data in table "+key);
 					}
 					else{
 						if(LoaderGlobalConfigs.getDeleteIntermediateFiles()){
