@@ -13,7 +13,23 @@ import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY
 /**
 
  */
-public class ListStatementProtocolAll implements ListStatement {
+public class ListStatementCvsByGroup implements ListStatement {
+
+
+
+//    @Override
+//    public void execute(Connection dbConnection) throws SQLException {
+//
+//        String sql = "select cvgroup_id,name,definition,type from cvgroup where cvgroup_id=?";
+//
+//        PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
+//        Integer groupId = (Integer) parameters.get("groupId");
+//
+//        preparedStatement.setInt(1, groupId);
+//
+//        resultSet = preparedStatement.executeQuery();
+//
+//    } // execute()
 
     @Override
     public ListSqlId getListSqlId() {
