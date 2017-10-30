@@ -217,7 +217,7 @@
 
 
     <!-- **** Contact Beans *************************************** -->
-    <bean id="dtoMapContact" class="org.gobiiproject.gobiidtomapping.auditable.impl.DtoMapContactImpl"/>
+    <bean id="dtoMapContact" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapContactImpl"/>
     <bean id="contactService" class="org.gobiiproject.gobidomain.services.impl.ContactServiceImpl"/>
 
     <!-- **** Display Beans *************************************** -->
@@ -248,7 +248,7 @@
     <bean id="rsAnalysisDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsAnalysisDaoImpl"/>
     <bean id="dtoMapAnalysis"
-          class="org.gobiiproject.gobiidtomapping.auditable.impl.DtoMapAnalysisImpl"/>
+          class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapAnalysisImpl"/>
     <bean id="AnalysisService"
           class="org.gobiiproject.gobidomain.services.impl.AnalysisServiceImpl"/>
 
