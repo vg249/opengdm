@@ -57,14 +57,14 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
                         GobiiTreeNode_1.GobiiTreeNode.build(gobiiExtractFilterType, type_extractor_item_1.ExtractorItemType.JOB_ID)
                             .setGenericLabel(entity_labels_1.Labels.instance().treeExtractorTypeLabels[type_extractor_item_1.ExtractorItemType.JOB_ID]),
                         GobiiTreeNode_1.GobiiTreeNode.build(gobiiExtractFilterType, type_extractor_item_1.ExtractorItemType.ENTITY)
-                            .setEntityType(type_entity_1.EntityType.Contacts)
+                            .setEntityType(type_entity_1.EntityType.Contact)
                             .setEntitySubType(type_entity_1.EntitySubType.CONTACT_SUBMITED_BY)
                             .setGenericLabel(entity_labels_1.Labels.instance().entityNodeLabels[type_entity_1.EntitySubType.CONTACT_SUBMITED_BY]),
                         GobiiTreeNode_1.GobiiTreeNode.build(gobiiExtractFilterType, type_extractor_item_1.ExtractorItemType.EXPORT_FORMAT)
                             .setGenericLabel(entity_labels_1.Labels.instance().treeExtractorTypeLabels[type_extractor_item_1.ExtractorItemType.EXPORT_FORMAT]),
                         GobiiTreeNode_1.GobiiTreeNode.build(gobiiExtractFilterType, type_extractor_item_1.ExtractorItemType.ENTITY)
-                            .setEntityType(type_entity_1.EntityType.Mapsets)
-                            .setGenericLabel(entity_labels_1.Labels.instance().entityNodeLabels[type_entity_1.EntityType.Mapsets]),
+                            .setEntityType(type_entity_1.EntityType.Mapset)
+                            .setGenericLabel(entity_labels_1.Labels.instance().entityNodeLabels[type_entity_1.EntityType.Mapset]),
                     ];
                     return returnVal;
                 };
@@ -77,15 +77,15 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
                 TreeStructureService.prototype.getInitialTree = function () {
                     var returnVal = this.makeCommonNodes(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET).concat([
                         GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_extractor_item_1.ExtractorItemType.ENTITY)
-                            .setEntityType(type_entity_1.EntityType.DataSets)
+                            .setEntityType(type_entity_1.EntityType.DataSet)
                             .setContainerType(GobiiTreeNode_1.ContainerType.DATA)
                     ], this.makeCommonNodes(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE), [
                         GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_extractor_item_1.ExtractorItemType.ENTITY)
-                            .setEntityType(type_entity_1.EntityType.CvTerms)
+                            .setEntityType(type_entity_1.EntityType.Cv)
                             .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE),
                         GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_TYPE),
                         GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_extractor_item_1.ExtractorItemType.ENTITY)
-                            .setEntityType(type_entity_1.EntityType.Platforms)
+                            .setEntityType(type_entity_1.EntityType.Platform)
                             .setContainerType(GobiiTreeNode_1.ContainerType.DATA),
                         GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_extractor_item_1.ExtractorItemType.TREE_STRUCTURE)
                             .setContainerType(GobiiTreeNode_1.ContainerType.STRUCTURE)
@@ -93,11 +93,11 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
                             .setExpanded(true)
                             .setChildren([
                             GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_extractor_item_1.ExtractorItemType.ENTITY)
-                                .setEntityType(type_entity_1.EntityType.Contacts)
+                                .setEntityType(type_entity_1.EntityType.Contact)
                                 .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
                                 .setContainerType(GobiiTreeNode_1.ContainerType.NONE),
                             GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_extractor_item_1.ExtractorItemType.ENTITY)
-                                .setEntityType(type_entity_1.EntityType.Projects)
+                                .setEntityType(type_entity_1.EntityType.Project)
                                 .setContainerType(GobiiTreeNode_1.ContainerType.NONE),
                             GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_extractor_item_1.ExtractorItemType.SAMPLE_FILE),
                             GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_ITEM)
@@ -105,7 +105,7 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
                         ])
                     ], this.makeCommonNodes(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER), [
                         GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_extractor_item_1.ExtractorItemType.ENTITY)
-                            .setEntityType(type_entity_1.EntityType.CvTerms)
+                            .setEntityType(type_entity_1.EntityType.Cv)
                             .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE),
                         GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_extractor_item_1.ExtractorItemType.TREE_STRUCTURE)
                             .setContainerType(GobiiTreeNode_1.ContainerType.STRUCTURE)
@@ -113,13 +113,13 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
                             .setExpanded(true)
                             .setChildren([
                             GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_extractor_item_1.ExtractorItemType.ENTITY)
-                                .setEntityType(type_entity_1.EntityType.Platforms)
+                                .setEntityType(type_entity_1.EntityType.Platform)
                                 .setContainerType(GobiiTreeNode_1.ContainerType.DATA),
                             GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_extractor_item_1.ExtractorItemType.MARKER_FILE),
                             GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_extractor_item_1.ExtractorItemType.MARKER_LIST_ITEM)
                                 .setContainerType(GobiiTreeNode_1.ContainerType.DATA),
                             GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_extractor_item_1.ExtractorItemType.ENTITY)
-                                .setEntityType(type_entity_1.EntityType.MarkerGroups)
+                                .setEntityType(type_entity_1.EntityType.Marker_Group)
                                 .setContainerType(GobiiTreeNode_1.ContainerType.DATA)
                         ])
                     ]);
@@ -136,7 +136,7 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
                     var labelValue = null;
                     if (gobiiTreeNode.getItemType() === type_extractor_item_1.ExtractorItemType.ENTITY) {
                         if (gobiiTreeNode.getEntitySubType() === type_entity_1.EntitySubType.UNKNOWN) {
-                            if (gobiiTreeNode.getEntityType() !== type_entity_1.EntityType.CvTerms) {
+                            if (gobiiTreeNode.getEntityType() !== type_entity_1.EntityType.Cv) {
                                 labelValue = entity_labels_1.Labels.instance().entityNodeLabels[gobiiTreeNode.getEntityType()];
                             }
                             else {
@@ -169,39 +169,39 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
                     var icon;
                     var expandedIcon;
                     var collapsedIcon;
-                    if (gobiiFileItemCompoundId.getEntityType() === type_entity_1.EntityType.DataSets) {
+                    if (gobiiFileItemCompoundId.getEntityType() === type_entity_1.EntityType.DataSet) {
                         icon = "fa-database";
                         expandedIcon = "fa-folder-expanded";
                         collapsedIcon = "fa-database";
                     }
-                    else if (gobiiFileItemCompoundId.getEntityType() === type_entity_1.EntityType.Contacts) {
+                    else if (gobiiFileItemCompoundId.getEntityType() === type_entity_1.EntityType.Contact) {
                         icon = "fa-user-o";
                         expandedIcon = "fa-user-o";
                         collapsedIcon = "fa-user-o";
                     }
-                    else if (gobiiFileItemCompoundId.getEntityType() === type_entity_1.EntityType.Mapsets) {
+                    else if (gobiiFileItemCompoundId.getEntityType() === type_entity_1.EntityType.Mapset) {
                         icon = "fa-map-o";
                         expandedIcon = "fa-map-o";
                         collapsedIcon = "fa-map-o";
                     }
-                    else if (gobiiFileItemCompoundId.getEntityType() === type_entity_1.EntityType.Platforms) {
+                    else if (gobiiFileItemCompoundId.getEntityType() === type_entity_1.EntityType.Platform) {
                         icon = "fa-calculator";
                         expandedIcon = "fa-calculator";
                         collapsedIcon = "fa-calculator";
                     }
-                    else if (gobiiFileItemCompoundId.getEntityType() === type_entity_1.EntityType.Projects) {
+                    else if (gobiiFileItemCompoundId.getEntityType() === type_entity_1.EntityType.Project) {
                         icon = "fa-clipboard";
                         expandedIcon = "fa-clipboard";
                         collapsedIcon = "fa-clipboard";
                     }
-                    else if (gobiiFileItemCompoundId.getEntityType() === type_entity_1.EntityType.CvTerms) {
+                    else if (gobiiFileItemCompoundId.getEntityType() === type_entity_1.EntityType.Cv) {
                         if (gobiiFileItemCompoundId.getCvFilterType() === cv_filter_type_1.CvFilterType.DATASET_TYPE) {
                             icon = "fa-file-excel-o";
                             expandedIcon = "fa-file-excel-o";
                             collapsedIcon = "fa-file-excel-o";
                         }
                     }
-                    else if (gobiiFileItemCompoundId.getEntityType() === type_entity_1.EntityType.MarkerGroups) {
+                    else if (gobiiFileItemCompoundId.getEntityType() === type_entity_1.EntityType.Marker_Group) {
                         // if (isParent) {
                         icon = "fa-pencil";
                         expandedIcon = "fa-pencil";
@@ -210,39 +210,39 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
                     return { icon: icon, expandedIcon: expandedIcon, collapsedIcon: collapsedIcon };
                 };
                 TreeStructureService.prototype.addEntityIconToNode = function (entityType, cvFilterType, treeNode) {
-                    if (entityType === type_entity_1.EntityType.DataSets) {
+                    if (entityType === type_entity_1.EntityType.DataSet) {
                         treeNode.icon = "fa-database";
                         treeNode.expandedIcon = "fa-folder-expanded";
                         treeNode.collapsedIcon = "fa-database";
                     }
-                    else if (entityType === type_entity_1.EntityType.Contacts) {
+                    else if (entityType === type_entity_1.EntityType.Contact) {
                         treeNode.icon = "fa-user-o";
                         treeNode.expandedIcon = "fa-user-o";
                         treeNode.collapsedIcon = "fa-user-o";
                     }
-                    else if (entityType === type_entity_1.EntityType.Mapsets) {
+                    else if (entityType === type_entity_1.EntityType.Mapset) {
                         treeNode.icon = "fa-map-o";
                         treeNode.expandedIcon = "fa-map-o";
                         treeNode.collapsedIcon = "fa-map-o";
                     }
-                    else if (entityType === type_entity_1.EntityType.Platforms) {
+                    else if (entityType === type_entity_1.EntityType.Platform) {
                         treeNode.icon = "fa-calculator";
                         treeNode.expandedIcon = "fa-calculator";
                         treeNode.collapsedIcon = "fa-calculator";
                     }
-                    else if (entityType === type_entity_1.EntityType.Projects) {
+                    else if (entityType === type_entity_1.EntityType.Project) {
                         treeNode.icon = "fa-clipboard";
                         treeNode.expandedIcon = "fa-clipboard";
                         treeNode.collapsedIcon = "fa-clipboard";
                     }
-                    else if (entityType === type_entity_1.EntityType.CvTerms) {
+                    else if (entityType === type_entity_1.EntityType.Cv) {
                         if (cvFilterType === cv_filter_type_1.CvFilterType.DATASET_TYPE) {
                             treeNode.icon = "fa-file-excel-o";
                             treeNode.expandedIcon = "fa-file-excel-o";
                             treeNode.collapsedIcon = "fa-file-excel-o";
                         }
                     }
-                    else if (entityType === type_entity_1.EntityType.MarkerGroups) {
+                    else if (entityType === type_entity_1.EntityType.Marker_Group) {
                         // if (isParent) {
                         treeNode.icon = "fa-pencil";
                         treeNode.expandedIcon = "fa-pencil";

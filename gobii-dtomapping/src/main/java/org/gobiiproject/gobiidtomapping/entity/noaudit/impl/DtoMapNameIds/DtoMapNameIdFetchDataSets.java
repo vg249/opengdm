@@ -31,7 +31,7 @@ public class DtoMapNameIdFetchDataSets implements DtoMapNameIdFetch {
 
     @Override
     public GobiiEntityNameType getEntityTypeName() throws GobiiException {
-        return GobiiEntityNameType.DATASETS;
+        return GobiiEntityNameType.DATASET;
     }
 
 

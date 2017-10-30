@@ -390,7 +390,7 @@ export const getPiContacts = createSelector(getFileItems, getUniqueIds, (fileIte
     let returnVal: GobiiFileItem[] = fileItems.filter(e =>
         (  e.getExtractorItemType() === ExtractorItemType.ENTITY
             || e.getExtractorItemType() === ExtractorItemType.LABEL )
-        && e.getEntityType() === EntityType.Contacts
+        && e.getEntityType() === EntityType.Contact
         && e.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
         .map(fi => fi);
 
@@ -408,7 +408,7 @@ export const getProjects = createSelector(getFileItems, getUniqueIds, (fileItems
     return fileItems.filter(e =>
         ( e.getExtractorItemType() === ExtractorItemType.ENTITY
             || e.getExtractorItemType() === ExtractorItemType.LABEL )
-        && e.getEntityType() === EntityType.Projects)
+        && e.getEntityType() === EntityType.Project)
         .map(fi => fi);
 });
 
@@ -422,7 +422,7 @@ export const getExperiments = createSelector(getFileItems, getUniqueIds, (fileIt
     return fileItems.filter(e =>
         ( e.getExtractorItemType() === ExtractorItemType.ENTITY
             || e.getExtractorItemType() === ExtractorItemType.LABEL )
-        && e.getEntityType() === EntityType.Experiments)
+        && e.getEntityType() === EntityType.Experiment)
         .map(fi => fi);
 });
 
@@ -436,7 +436,7 @@ export const getDatasets = createSelector(getFileItems, getUniqueIds, (fileItems
     return fileItems.filter(e =>
         ( e.getExtractorItemType() === ExtractorItemType.ENTITY
             || e.getExtractorItemType() === ExtractorItemType.LABEL )
-        && e.getEntityType() === EntityType.DataSets)
+        && e.getEntityType() === EntityType.DataSet)
         .map(fi => fi);
 });
 
@@ -451,7 +451,7 @@ export const getCvTermsDataType = createSelector(getFileItems, getUniqueIds, (fi
     let returnVal: GobiiFileItem[] = fileItems.filter(e =>
         ( e.getExtractorItemType() === ExtractorItemType.ENTITY
             || e.getExtractorItemType() === ExtractorItemType.LABEL )
-        && e.getEntityType() === EntityType.CvTerms
+        && e.getEntityType() === EntityType.Cv
         && e.getCvFilterType() === CvFilterType.DATASET_TYPE)
         .map(fi => fi);
 
@@ -468,7 +468,7 @@ export const getMapsets = createSelector(getFileItems, getUniqueIds, (fileItems,
     return fileItems.filter(e =>
         ( e.getExtractorItemType() === ExtractorItemType.ENTITY
             || e.getExtractorItemType() === ExtractorItemType.LABEL )
-        && e.getEntityType() === EntityType.Mapsets)
+        && e.getEntityType() === EntityType.Mapset)
         .map(fi => fi);
 });
 
@@ -483,7 +483,7 @@ export const getPlatforms = createSelector(getFileItems, getUniqueIds, (fileItem
     return fileItems.filter(e =>
         ( e.getExtractorItemType() === ExtractorItemType.ENTITY
             || e.getExtractorItemType() === ExtractorItemType.LABEL )
-        && e.getEntityType() === EntityType.Platforms)
+        && e.getEntityType() === EntityType.Platform)
         .map(fi => fi);
 });
 
@@ -497,7 +497,7 @@ export const getMarkerGroups = createSelector(getFileItems, getUniqueIds, (fileI
     return fileItems.filter(e =>
         ( e.getExtractorItemType() === ExtractorItemType.ENTITY
             || e.getExtractorItemType() === ExtractorItemType.LABEL )
-        && e.getEntityType() === EntityType.MarkerGroups)
+        && e.getEntityType() === EntityType.Marker_Group)
         .map(fi => fi);
 });
 
@@ -515,7 +515,7 @@ export const getSelectedPiContacts = createSelector(getFileItems, getUniqueIds, 
     return fileItems.filter(e =>
         ids.find(id => id === e.getFileItemUniqueId())
         && e.getExtractorItemType() === ExtractorItemType.ENTITY
-        && e.getEntityType() === EntityType.Contacts
+        && e.getEntityType() === EntityType.Contact
         && e.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
         .map(fi => fi);
 });
@@ -530,7 +530,7 @@ export const getProjectsForSelectedPi = createSelector(getFileItems, getFilters,
         let contactId: string = filters[NameIdFilterParamTypes.PROJECTS_BY_CONTACT];
         returnVal = fileItems.filter(e =>
             ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
-            && ( e.getEntityType() === EntityType.Projects)
+            && ( e.getEntityType() === EntityType.Project)
             && (e.getParentItemId() === contactId )
             && e.getProcessType() !== ProcessType.DUMMY)
             .map(fi => fi);
@@ -538,7 +538,7 @@ export const getProjectsForSelectedPi = createSelector(getFileItems, getFilters,
         if (returnVal.length <= 0) {
             returnVal = fileItems.filter(e =>
                 ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
-                && ( e.getEntityType() === EntityType.Projects)
+                && ( e.getEntityType() === EntityType.Project)
                 //                && (e.getParentItemId() === contactId )
                 && e.getProcessType() === ProcessType.DUMMY)
                 .map(fi => fi);
@@ -558,7 +558,7 @@ export const getExperimentsForSelectedProject = createSelector(getFileItems, get
         let projectId: string = filters[NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT];
         returnVal = fileItems.filter(e =>
             ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
-            && ( e.getEntityType() === EntityType.Experiments)
+            && ( e.getEntityType() === EntityType.Experiment)
             && (e.getParentItemId() === projectId )
             && e.getProcessType() !== ProcessType.DUMMY)
             .map(fi => fi);
@@ -566,7 +566,7 @@ export const getExperimentsForSelectedProject = createSelector(getFileItems, get
         if (returnVal.length <= 0) {
             returnVal = fileItems.filter(e =>
                 ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
-                && ( e.getEntityType() === EntityType.Experiments)
+                && ( e.getEntityType() === EntityType.Experiment)
                 //                && (e.getParentItemId() === projectId )
                 && e.getProcessType() === ProcessType.DUMMY)
                 .map(fi => fi);
@@ -586,7 +586,7 @@ export const getDatasetsForSelectedExperiment = createSelector(getFileItems, get
         let experimentId: string = filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT];
         returnVal = fileItems.filter(e =>
             ( e.getExtractorItemType() === ExtractorItemType.ENTITY
-                && e.getEntityType() === EntityType.DataSets
+                && e.getEntityType() === EntityType.DataSet
                 && e.getParentItemId() === experimentId
                 && e.getProcessType() !== ProcessType.DUMMY))
             .map(fi => fi);
@@ -594,7 +594,7 @@ export const getDatasetsForSelectedExperiment = createSelector(getFileItems, get
         if (returnVal.length <= 0) {
             returnVal = fileItems.filter(e =>
                 ( e.getExtractorItemType() === ExtractorItemType.ENTITY
-                    && e.getEntityType() === EntityType.DataSets
+                    && e.getEntityType() === EntityType.DataSet
                     //                    && e.getParentItemId() === experimentId
                     && e.getProcessType() === ProcessType.DUMMY))
                 .map(fi => fi);

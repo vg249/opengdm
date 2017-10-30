@@ -25,14 +25,14 @@ public class DtoListFromSql<T> implements Work {
 
 
     private Class<T> dtoType;
-    private String sql;
+    private ListStatement listStatement;
     private Map<String, Object> parameters = null;
 
     public DtoListFromSql(Class<T> dtoType,
-                          String sql,
+                          ListStatement listStatement,
                           Map<String, Object> parameters) {
         this.dtoType = dtoType;
-        this.sql = sql;
+        this.listStatement= listStatement;
         this.parameters = parameters;
     }
 
@@ -46,7 +46,7 @@ public class DtoListFromSql<T> implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
+        PreparedStatement preparedStatement = listStatement.makePreparedStatement(dbConnection,parameters);
 
         ResultSet resultSet = preparedStatement.executeQuery();
 

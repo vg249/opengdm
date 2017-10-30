@@ -19,82 +19,82 @@ public class GobiiEntityNameConverter {
         try {
             switch (gobiiEntityNameType) {
 
-                case ANALYSES:
+                case ANALYSIS:
                     returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
                             GobiiServiceRequestId.URL_ANALYSIS);
                     break;
 
-                case CONTACTS:
+                case CONTACT:
                     returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
                             GobiiServiceRequestId.URL_CONTACTS);
                     break;
 
-                case DATASETS:
+                case DATASET:
                     returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
                             GobiiServiceRequestId.URL_DATASETS);
                     break;
 
-                case CVTERMS:
+                case CV:
                     returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
                             GobiiServiceRequestId.URL_CV);
                     break;
 
-                case CVGROUPS:
+                case CVGROUP:
                     returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
                             GobiiServiceRequestId.URL_CV);
                     break;
 
-                case PROJECTS:
+                case PROJECT:
                     returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
                             GobiiServiceRequestId.URL_PROJECTS);
                     break;
 
-                case ORGANIZATIONS:
+                case ORGANIZATION:
                     returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
                             GobiiServiceRequestId.URL_ORGANIZATION);
                     break;
 
-                case PLATFORMS:
+                case PLATFORM:
                     returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
                             GobiiServiceRequestId.URL_PLATFORM);
                     break;
 
-                case MANIFESTS:
+                case MANIFEST:
                     returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
                             GobiiServiceRequestId.URL_MANIFEST);
                     break;
 
-                case MAPSETS:
+                case MAPSET:
                     returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
                             GobiiServiceRequestId.URL_MAPSET);
                     break;
 
-                case MARKERGROUPS:
+                case MARKER_GROUP:
                     returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
                             GobiiServiceRequestId.URL_MARKERGROUP);
                     break;
 
-                case EXPERIMENTS:
+                case EXPERIMENT:
                     returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
                             GobiiServiceRequestId.URL_EXPERIMENTS);
                     break;
 
-                case REFERENCES:
+                case REFERENCE:
                     returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
                             GobiiServiceRequestId.URL_REFERENCE);
                     break;
 
-                case ROLES:
+                case ROLE:
                     returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
                             GobiiServiceRequestId.URL_ROLES);
                     break;
 
-                case PROTOCOLS:
+                case PROTOCOL:
                     returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
                             GobiiServiceRequestId.URL_PROTOCOL);
                     break;
 
-                case VENDORS_PROTOCOLS:
+                case VENDORS_PROTOCOL:
                     returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
                             GobiiServiceRequestId.URL_PROTOCOL)
                             .appendSegment(GobiiServiceRequestId.URL_VENDORS);

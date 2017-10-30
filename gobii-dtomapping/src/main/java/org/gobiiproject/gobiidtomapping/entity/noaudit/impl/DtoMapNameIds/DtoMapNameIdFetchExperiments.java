@@ -31,7 +31,7 @@ public class DtoMapNameIdFetchExperiments implements DtoMapNameIdFetch {
 
     @Override
     public GobiiEntityNameType getEntityTypeName() throws GobiiException {
-        return GobiiEntityNameType.EXPERIMENTS;
+        return GobiiEntityNameType.EXPERIMENT;
     }
 
 

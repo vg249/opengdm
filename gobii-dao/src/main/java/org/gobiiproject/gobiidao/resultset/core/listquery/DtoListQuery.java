@@ -19,17 +19,17 @@ public class DtoListQuery<T> {
 
     Logger LOGGER = LoggerFactory.getLogger(DtoListQuery.class);
 
-    private ListSqlId listSqlId;
+    private ListStatement listStatement;
     private Class<T> dtoType;
     private StoredProcExec storedProcExec;
 
     public DtoListQuery(StoredProcExec storedProcExec,
                         Class<T> dtoType,
-                        ListSqlId listSqlId) {
+                        ListStatement listStatement) {
 
         this.storedProcExec = storedProcExec;
         this.dtoType = dtoType;
-        this.listSqlId = listSqlId;
+        this.listStatement = listStatement;
 
     }
 
@@ -40,8 +40,7 @@ public class DtoListQuery<T> {
 
         try {
 
-            String sql = listSqlId.getSql();
-            DtoListFromSql<T> dtoListFromSql = new DtoListFromSql<>(dtoType, sql, parameters);
+            DtoListFromSql<T> dtoListFromSql = new DtoListFromSql<>(dtoType, listStatement, parameters);
             this.storedProcExec.doWithConnection(dtoListFromSql);
             returnVal = dtoListFromSql.getDtoList();
 

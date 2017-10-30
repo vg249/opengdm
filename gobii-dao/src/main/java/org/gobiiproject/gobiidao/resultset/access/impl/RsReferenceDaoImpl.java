@@ -1,15 +1,13 @@
 package org.gobiiproject.gobiidao.resultset.access.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiidao.resultset.access.RsPlatformDao;
 import org.gobiiproject.gobiidao.resultset.access.RsReferenceDao;
 import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsReference;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdReference;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetReferenceDetailsByReferenceId;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPlatformNames;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetReferenceNames;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetReferenceDetailsByReferenceId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetReferenceNames;
 import org.hibernate.exception.SQLGrammarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

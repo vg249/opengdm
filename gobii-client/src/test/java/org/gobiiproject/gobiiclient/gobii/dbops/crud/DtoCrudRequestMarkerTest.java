@@ -45,7 +45,7 @@ public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
         MarkerDTO returnVal;
 
         Integer markerId = (new GlobalPkColl<DtoCrudRequestMarkerTest>().getAPkVal(DtoCrudRequestMarkerTest.class,
-                GobiiEntityNameType.MARKERS));
+                GobiiEntityNameType.MARKER));
 
         RestUri projectsUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -123,7 +123,7 @@ public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
         Assert.assertTrue(markerDTOResponse.getPlatformId() > 0);
 
         Assert.assertTrue(markerDTOResponse.getMarkerId() > 0);
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.MARKERS,markerDTOResponse.getMarkerId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.MARKER,markerDTOResponse.getMarkerId());
 
     }
 
@@ -166,7 +166,7 @@ public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
     @Override
     public void getList() throws Exception {
 
-        (new GlobalPkColl<DtoCrudRequestMarkerTest>()).getPkVals(DtoCrudRequestMarkerTest.class, GobiiEntityNameType.MARKERS, 100);
+        (new GlobalPkColl<DtoCrudRequestMarkerTest>()).getPkVals(DtoCrudRequestMarkerTest.class, GobiiEntityNameType.MARKER, 100);
 
     }
 }

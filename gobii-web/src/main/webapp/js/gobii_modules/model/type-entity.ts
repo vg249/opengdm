@@ -1,12 +1,12 @@
 export enum EntityType {UNKNOWN,
-Contacts,
-Projects,
-Experiments,
-DataSets,
-CvTerms,
-Mapsets,
-Platforms,
-MarkerGroups}
+Contact,
+Project,
+Experiment,
+DataSet,
+Cv,
+Mapset,
+Platform,
+Marker_Group}
 
 
 
