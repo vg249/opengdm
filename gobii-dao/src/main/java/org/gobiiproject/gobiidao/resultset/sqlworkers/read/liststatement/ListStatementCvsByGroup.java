@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Map;
 
+import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY_ID_CVS_BY_GROUP;
 import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY_ID_DATASET_ALL;
 
 /**
@@ -15,33 +16,18 @@ import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY
  */
 public class ListStatementCvsByGroup implements ListStatement {
 
-
-
-//    @Override
-//    public void execute(Connection dbConnection) throws SQLException {
-//
-//        String sql = "select cvgroup_id,name,definition,type from cvgroup where cvgroup_id=?";
-//
-//        PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
-//        Integer groupId = (Integer) parameters.get("groupId");
-//
-//        preparedStatement.setInt(1, groupId);
-//
-//        resultSet = preparedStatement.executeQuery();
-//
-//    } // execute()
-
     @Override
     public ListSqlId getListSqlId() {
-        return QUERY_ID_DATASET_ALL;
+        return QUERY_ID_CVS_BY_GROUP;
     }
 
     @Override
     public PreparedStatement makePreparedStatement(Connection dbConnection,Map<String, Object> jdbcParamVals) throws SQLException {
 
-        String sql = "select * from protocol order by lower(name)";
-
-        PreparedStatement returnVal = dbConnection.prepareStatement(sql);
+        String Sql = "select cv.*, g.type as group_type from cv join cvgroup g on (cv.cvgroup_id=g.cvgroup_id) where lower(g.name)= ? order by lower(term)";
+        PreparedStatement returnVal = dbConnection.prepareStatement(Sql);
+        String groupName = (String) jdbcParamVals.get("groupName");
+        returnVal.setString(1, groupName.toLowerCase());
 
         return returnVal;
     }

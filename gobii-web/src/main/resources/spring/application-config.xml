@@ -357,6 +357,7 @@
     <bean id="listStatementPlatformAll" class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementPlatformAll"/>
     <bean id="listStatementProjectAll" class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementProjectAll"/>
     <bean id="listStatementProtocolAll" class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementProtocolAll"/>
+    <bean id="listStatementCvsByGroup" class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementCvsByGroup"/>
 
     <bean id="dtoListQueryColl"
           class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl">
@@ -426,6 +427,14 @@
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.ProtocolDTO"/>
                         <constructor-arg ref="listStatementProtocolAll"/>
+                    </bean>
+                </entry>
+                <!--CV BY GROUP -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_CVS_BY_GROUP}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO"/>
+                        <constructor-arg ref="listStatementCvsByGroup"/>
                     </bean>
                 </entry>
             </map>
