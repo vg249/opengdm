@@ -47,4 +47,21 @@ public class DateUtils {
 
         return returnVal;
     }
+
+    public static boolean dayOfMonthOfYearIsEqual(Date dateOne, Date dateTwo) {
+
+        Calendar calendarOne = Calendar.getInstance();
+        calendarOne.setTime(dateOne);
+        int dateOneYear = calendarOne.get(Calendar.YEAR);
+        int dateOneMonth = calendarOne.get(Calendar.MONTH);
+        int dateOneday = calendarOne.get(Calendar.DAY_OF_MONTH);
+
+        Calendar calendarTwo = Calendar.getInstance();
+        calendarTwo.setTime(dateTwo);
+        int dateTwoYear = calendarTwo.get(Calendar.YEAR);
+        int dateTwoMonth = calendarTwo.get(Calendar.MONTH);
+        int dateTwoday = calendarTwo.get(Calendar.DAY_OF_MONTH);
+
+        return (dateOneYear == dateTwoYear) && (dateOneMonth == dateTwoMonth) && (dateOneday == dateTwoday);
+    }
 }

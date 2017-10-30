@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiidao.resultset.core;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
+import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

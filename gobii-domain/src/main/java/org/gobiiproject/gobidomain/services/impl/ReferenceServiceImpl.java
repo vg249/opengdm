@@ -2,8 +2,8 @@ package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ReferenceService;
-import org.gobiiproject.gobiidtomapping.DtoMapReference;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ReferenceDTO;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapReference;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ReferenceDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,9 +30,7 @@ public class ReferenceServiceImpl implements ReferenceService {
 
         try {
 
-            referenceDTO.setCreatedDate(new Date());
-            referenceDTO.setModifiedDate(new Date());
-            returnVal = dtoMapReference.createReference(referenceDTO);
+            returnVal = dtoMapReference.create(referenceDTO);
 
             // When we have roles and permissions, this will be set programmatically
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
@@ -57,10 +54,10 @@ public class ReferenceServiceImpl implements ReferenceService {
             if(null == referenceDTO.getReferenceId() ||
                     referenceDTO.getReferenceId().equals(referenceId)) {
 
-                ReferenceDTO existingReferenceDTO = dtoMapReference.getReferenceDetails(referenceId);
+                ReferenceDTO existingReferenceDTO = dtoMapReference.get(referenceId);
                 if(null != existingReferenceDTO.getReferenceId() && existingReferenceDTO.getReferenceId().equals(referenceId)) {
 
-                    returnVal = dtoMapReference.replaceReference(referenceId, referenceDTO);
+                    returnVal = dtoMapReference.replace(referenceId, referenceDTO);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
@@ -99,7 +96,7 @@ public class ReferenceServiceImpl implements ReferenceService {
 
         List<ReferenceDTO> returnVal;
 
-        returnVal = dtoMapReference.getReferences();
+        returnVal = dtoMapReference.getList();
         for(ReferenceDTO currentReferenceDTO : returnVal) {
             currentReferenceDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
             currentReferenceDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
@@ -117,7 +114,7 @@ public class ReferenceServiceImpl implements ReferenceService {
 
         ReferenceDTO returnVal;
 
-        returnVal = dtoMapReference.getReferenceDetails(referenceId);
+        returnVal = dtoMapReference.get(referenceId);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 

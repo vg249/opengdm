@@ -2,8 +2,8 @@ package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ContactService;
-import org.gobiiproject.gobiidtomapping.DtoMapContact;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
+import org.gobiiproject.gobiidtomapping.auditable.DtoMapContact;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
@@ -29,7 +29,7 @@ public class ContactServiceImpl implements ContactService {
         List<ContactDTO> returnVal;
 
         try {
-            returnVal = dtoMapContact.getContacts();
+            returnVal = dtoMapContact.getList();
             for(ContactDTO currentContactDTO : returnVal ) {
                 currentContactDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
                 currentContactDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
@@ -58,7 +58,7 @@ public class ContactServiceImpl implements ContactService {
 
         try {
 
-            returnVal = dtoMapContact.createContact(contactDTO);
+            returnVal = dtoMapContact.create(contactDTO);
 
             // When we have roles and permissions, this will be set programmatically
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
@@ -83,11 +83,11 @@ public class ContactServiceImpl implements ContactService {
                     contactDTO.getContactId().equals(contactId)) {
 
 
-                ContactDTO existingContactDTO = dtoMapContact.getContactDetails(contactId);
+                ContactDTO existingContactDTO = dtoMapContact.get(contactId);
                 if (null != existingContactDTO.getContactId() && existingContactDTO.getContactId().equals(contactId)) {
 
 
-                    returnVal = dtoMapContact.replaceContact(contactId, contactDTO);
+                    returnVal = dtoMapContact.replace(contactId, contactDTO);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
@@ -130,7 +130,7 @@ public class ContactServiceImpl implements ContactService {
         ContactDTO returnVal;
 
         try {
-            returnVal = dtoMapContact.getContactDetails(contactId);
+            returnVal = dtoMapContact.get(contactId);
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
@@ -158,7 +158,7 @@ public class ContactServiceImpl implements ContactService {
 
         ContactDTO returnVal;
         try {
-            returnVal = dtoMapContact.getContactByEmail(email);
+            returnVal = dtoMapContact.getByEmail(email);
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
@@ -178,7 +178,7 @@ public class ContactServiceImpl implements ContactService {
         ContactDTO returnVal;
 
         try {
-            returnVal = dtoMapContact.getContactByUserName(userName);
+            returnVal = dtoMapContact.getByUserName(userName);
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 

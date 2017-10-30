@@ -2,8 +2,8 @@ package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.MapsetService;
-import org.gobiiproject.gobiidtomapping.DtoMapMapset;
-import org.gobiiproject.gobiimodel.headerlesscontainer.MapsetDTO;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapMapset;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,7 +32,7 @@ public class MapsetServiceImpl implements MapsetService {
         List<MapsetDTO> returnVal;
 
         try {
-            returnVal = dtoMapMapset.getAllMapsetNames();
+            returnVal = dtoMapMapset.getList();
             if (null == returnVal) {
                 returnVal = new ArrayList<>();
             }
@@ -55,9 +54,7 @@ public class MapsetServiceImpl implements MapsetService {
 
         try {
 
-            mapsetDTO.setCreatedDate(new Date());
-            mapsetDTO.setModifiedDate(new Date());
-            returnVal = dtoMapMapset.createMapset(mapsetDTO);
+            returnVal = dtoMapMapset.create(mapsetDTO);
 
             // When we have roles and permissions, this will be set programmatically
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
@@ -81,10 +78,10 @@ public class MapsetServiceImpl implements MapsetService {
             if(null == mapsetDTO.getMapsetId() ||
                     mapsetDTO.getMapsetId().equals(mapsetId)) {
 
-                MapsetDTO existingMapsetDTO = dtoMapMapset.getMapsetDetails(mapsetId);
+                MapsetDTO existingMapsetDTO = dtoMapMapset.get(mapsetId);
                 if(null != existingMapsetDTO.getMapsetId() && existingMapsetDTO.getMapsetId().equals(mapsetId)) {
 
-                    returnVal = dtoMapMapset.replaceMapset(mapsetId, mapsetDTO);
+                    returnVal = dtoMapMapset.replace(mapsetId, mapsetDTO);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
@@ -142,7 +139,7 @@ public class MapsetServiceImpl implements MapsetService {
 
         MapsetDTO returnVal;
 
-        returnVal = dtoMapMapset.getMapsetDetails(mapsetId);
+        returnVal = dtoMapMapset.get(mapsetId);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 

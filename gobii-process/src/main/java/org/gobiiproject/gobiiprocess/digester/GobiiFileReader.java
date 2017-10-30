@@ -16,8 +16,8 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.config.*;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.*;
-import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
@@ -441,10 +441,12 @@ public class GobiiFileReader {
                         loadedData = true;
                     }
 					if(counts.invalidData >0 && !isVariableLengthTable(key)){
-						ErrorLogger.logError("FileReader","Error in table "+key);
+						ErrorLogger.logWarning("FileReader","Invalid data in table "+key);
 					}
 					else{
-						deleteIFLFiles(dstDir,key);
+						if(LoaderGlobalConfigs.getDeleteIntermediateFiles()){
+							deleteIFLFiles(dstDir,key);
+						}
 					}
 
 				}

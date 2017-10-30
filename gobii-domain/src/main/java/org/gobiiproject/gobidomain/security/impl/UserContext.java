@@ -9,7 +9,7 @@ package org.gobiiproject.gobidomain.security.impl;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.gobiiproject.gobiimodel.entity.User;
+import org.gobiiproject.gobiimodel.dto.system.User;
 
 import java.util.ArrayList;
 import java.util.Collection;

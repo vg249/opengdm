@@ -4,9 +4,23 @@ import org.gobiiproject.gobiiclient.gobii.dbops.crud.*;
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.cvnames.JobType;
-import org.gobiiproject.gobiimodel.headerlesscontainer.*;
-import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.DisplayDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ManifestDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.MarkerGroupDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ReferenceDTO;
+import org.gobiiproject.gobiimodel.dto.entity.children.MarkerGroupMarkerDTO;
+import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerDTO;
+import org.gobiiproject.gobiimodel.dto.system.PingDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.OrganizationDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ProtocolDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
@@ -62,8 +76,6 @@ public class TestDtoFactory {
         returnVal.setStatusId(1);
         returnVal.setCreatedBy(1);
         returnVal.setModifiedBy(1);
-        returnVal.setCreatedDate(new Date());
-        returnVal.setModifiedDate(new Date());
 
         returnVal.setParameters(entityParamValues.getProperties());
 
@@ -96,9 +108,7 @@ public class TestDtoFactory {
         // set the plain properties
         returnVal.setStatusId(1);
         returnVal.setModifiedBy(1);
-        returnVal.setModifiedDate(new Date());
-        returnVal.setCreatedBy(1);
-        returnVal.setCreatedDate(new Date());
+       returnVal.setCreatedBy(1);
         returnVal.setPlatformCode(uniqueStem + "dummy code");
         returnVal.setPlatformDescription(uniqueStem + "dummy description");
         returnVal.setPlatformName(uniqueStem + "New Platform");
@@ -131,10 +141,8 @@ public class TestDtoFactory {
         returnVal.setColumnName(uniqueStem + "dummy column");
         returnVal.setCreatedBy(1);
         returnVal.setDisplayName(uniqueStem + "dummyDisplay");
-        returnVal.setCreatedDate(new Date());
         returnVal.setDisplayId(1);
         returnVal.setModifiedBy(1);
-        returnVal.setModifiedDate(new Date());
         returnVal.setTableName(uniqueStem + "dummy table");
         returnVal.setDisplayRank(uniqueStem);
 
@@ -170,13 +178,11 @@ public class TestDtoFactory {
         returnVal.setName(uniqueStem + ": foo name");
         returnVal.setStatusId(1);
         returnVal.setCreatedBy(1);
-        returnVal.setCreatedDate(new Date());
         returnVal.setDataFile(uniqueStem + ": foo file");
         returnVal.setQualityFile(uniqueStem + ": foo quality file");
         returnVal.setExperimentId(experimentId);
         returnVal.setDataTable(uniqueStem + ": foo table");
         returnVal.setModifiedBy(1);
-        returnVal.setModifiedDate(new Date());
         returnVal.setCallingAnalysisId(callingAnalysisId);
         for (Integer currentAnalysisId : analysisIds) {
             returnVal.getAnalysesIds().add(currentAnalysisId);
@@ -199,11 +205,9 @@ public class TestDtoFactory {
         returnVal.setName(uniqueStem + "dummy name");
         returnVal.setCode(uniqueStem + "add dummy code");
         returnVal.setCreatedBy(1);
-        returnVal.setCreatedDate(new Date());
         returnVal.setDescription(uniqueStem + "dummy description");
         returnVal.setMapType(1);
         returnVal.setModifiedBy(1);
-        returnVal.setModifiedDate(new Date());
         returnVal.setReferenceId(GlobalPkValues.getInstance().getAPkVal(GobiiEntityNameType.REFERENCES));
         returnVal.setStatusId(1);
 
@@ -239,9 +243,7 @@ public class TestDtoFactory {
         returnVal.setAddress("address:" + uniqueStem);
         returnVal.setWebsite(uniqueStem + ".com");
         returnVal.setCreatedBy(1);
-        returnVal.setCreatedDate(new Date());
         returnVal.setModifiedBy(1);
-        returnVal.setModifiedDate(new Date());
         returnVal.setStatusId(1);
 
         return returnVal;
@@ -262,9 +264,7 @@ public class TestDtoFactory {
         returnVal.setDescription(uniqueStemString + ": dummy description");
         returnVal.setTypeId(1);
         returnVal.setCreatedBy(1);
-        returnVal.setCreatedDate(new Date());
         returnVal.setModifiedBy(1);
-        returnVal.setModifiedDate(new Date());
         returnVal.setPlatformId(platformId);
         returnVal.setStatus(1);
 
@@ -282,9 +282,7 @@ public class TestDtoFactory {
         returnVal.setCode("version:" + uniqueStem);
         returnVal.setFilePath(uniqueStem + " file path");
         returnVal.setCreatedBy(1);
-        returnVal.setCreatedDate(new Date());
         returnVal.setModifiedBy(1);
-        returnVal.setModifiedDate(new Date());
 
         return returnVal;
 
@@ -306,9 +304,7 @@ public class TestDtoFactory {
         returnVal.setEmail(uniqueStem + "mail@email.com");
         returnVal.setCode(uniqueStem + "added New Code");
         returnVal.setCreatedBy(1);
-        returnVal.setCreatedDate(new Date());
         returnVal.setModifiedBy(1);
-        returnVal.setModifiedDate(new Date());
         returnVal.setOrganizationId(organizationId);
         returnVal.getRoles().add(1);
         returnVal.getRoles().add(2);
@@ -363,23 +359,6 @@ public class TestDtoFactory {
         return returnVal;
 
     }
-    public static QCInstructionsDTO makePopulatedQCInstructionsDTO() throws Exception {
-
-        QCInstructionsDTO returnVal = new QCInstructionsDTO();
-        Integer contactId = (new GlobalPkColl<DtoCrudRequestContactTest>()).getAPkVal(DtoCrudRequestContactTest.class,
-                GobiiEntityNameType.CONTACTS);
-        Integer datasetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getAPkVal(DtoCrudRequestDataSetTest.class,
-                GobiiEntityNameType.DATASETS);
-                returnVal.setContactId(contactId);
-        returnVal.setDatasetId(datasetId);
-        returnVal.setDataFileDirectory("E:/Gobii/dummyPath");
-        returnVal.setDataFileName(getFolderNameWithTimestamp("qcDataFile"));
-        returnVal.setQualityFileName("qualityFileName");
-
-        return returnVal;
-
-    }
-
     public static JobDTO makePopulateJobDTO() throws Exception {
 
         JobDTO newJobDto = new JobDTO();
