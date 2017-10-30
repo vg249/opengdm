@@ -3,6 +3,8 @@ package org.gobiiproject.gobiidtomapping.entity.noaudit.impl;
 import org.gobiiproject.gobiidao.resultset.access.RsCvDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
+import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
+import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapCv;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapCvGroup;
@@ -18,7 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +35,8 @@ public class DtoMapEntityStatsImpl implements DtoMapEntityStats {
     Logger LOGGER = LoggerFactory.getLogger(DtoMapEntityStatsImpl.class);
 
 
+    @Autowired
+    private DtoListQueryColl dtoListQueryColl;
 
 
     @Override
@@ -37,18 +44,23 @@ public class DtoMapEntityStatsImpl implements DtoMapEntityStats {
 
         EntityStatsDTO returnVal = new EntityStatsDTO();
 
+
         try {
-//            ResultSet resultSet = rsCvDao.getCvNames();
-//            while (resultSet.next()) {
-//                CvDTO currentCvDTO = new CvDTO();
-//                currentCvDTO.setTerm(resultSet.getString("term"));
-//                currentCvDTO.setCvId(resultSet.getInt("cv_id"));
-//                currentCvDTO.setGroupType(resultSet.getInt("group_type"));
-//                returnVal.add(currentCvDTO);
-//            }
+            String tableName = gobiiEntityNameType.toString().toUpperCase();
+            ResultSet resultSet = dtoListQueryColl.getResultSet(ListSqlId.QUERY_ID_LAST_MODIFIED,
+                    null,
+                    new HashMap<String, Object>() {{
+                        put("tableName", tableName);
+                    }});
+
+            if (resultSet.next()) {
+                LocalDate localDate = resultSet.getObject("lastmodified", LocalDate.class);
+                Date date = java.sql.Date.valueOf(localDate);
+                returnVal.setLastModified(date);
+            }
         } catch (Exception e) {
-//            LOGGER.error("Gobii Mapping error", e);
-//            throw new GobiiDtoMappingException(e);
+            LOGGER.error("Gobii Mapping error", e);
+            throw new GobiiDtoMappingException(e);
         }
 
         return returnVal;

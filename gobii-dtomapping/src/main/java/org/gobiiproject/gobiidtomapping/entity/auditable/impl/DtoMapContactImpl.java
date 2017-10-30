@@ -45,7 +45,7 @@ public class DtoMapContactImpl implements DtoMapContact {
         List<ContactDTO> returnVal = new ArrayList<ContactDTO>();
 
 
-        returnVal = (List<ContactDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_CONTACT_ALL, null);
+        returnVal = (List<ContactDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_CONTACT_ALL, null,null);
 
 
         return returnVal;

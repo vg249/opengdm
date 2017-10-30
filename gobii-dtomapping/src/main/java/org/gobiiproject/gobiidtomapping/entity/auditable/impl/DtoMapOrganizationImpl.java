@@ -42,7 +42,7 @@ public class DtoMapOrganizationImpl implements DtoMapOrganization {
 
         try {
 
-            returnVal = (List<OrganizationDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_ORGANIZATION_ALL,null);
+            returnVal = (List<OrganizationDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_ORGANIZATION_ALL,null,null);
 
             for( OrganizationDTO currentOrganizationDto : returnVal ) {
                 this.dtoMapProtocol.addVendorProtocolsToOrganization(currentOrganizationDto);

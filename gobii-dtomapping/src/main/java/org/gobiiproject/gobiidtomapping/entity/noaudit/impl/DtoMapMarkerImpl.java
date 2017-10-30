@@ -40,7 +40,7 @@ public class DtoMapMarkerImpl implements DtoMapMarker {
 
         try {
 
-            returnVal = (List<MarkerDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_MARKER_ALL,null);
+            returnVal = (List<MarkerDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_MARKER_ALL,null,null);
 
         } catch (Exception e) {
             LOGGER.error("Gobii Maping Error", e);

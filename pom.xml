@@ -303,12 +303,22 @@
                 <version>1.9.13</version>
             </dependency>
 
-            <!-- Postgres -->
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
-                <version>9.4-1200-jdbc41</version>
+                <version>42.1.4</version>
             </dependency>
+
+            <!-- Guava -->
+            <!-- This had to be added after upgrading to postgres 42 jdbc
+             apaprently the google.common library had been a transitive
+             dependency of the prior jdbc -->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>19.0</version>
+            </dependency>
+
 
             <!-- Liquibase -->
             <dependency>

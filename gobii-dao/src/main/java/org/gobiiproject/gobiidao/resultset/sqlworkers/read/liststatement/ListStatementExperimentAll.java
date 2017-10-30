@@ -22,7 +22,7 @@ public class ListStatementExperimentAll implements ListStatement {
     }
 
     @Override
-    public PreparedStatement makePreparedStatement(Connection dbConnection,Map<String, Object> jdbcParamVals) throws SQLException {
+    public PreparedStatement makePreparedStatement(Connection dbConnection, Map<String, Object> jdbcParamVals, Map<String, Object> sqlParamVals) throws SQLException {
 
         String sql = "select e.*\n" +
                 "from experiment e\n" +

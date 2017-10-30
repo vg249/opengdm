@@ -42,7 +42,7 @@ public class DtoMapPlatformImpl implements DtoMapPlatform {
         List<PlatformDTO> returnVal = new ArrayList<PlatformDTO>();
 
 
-        returnVal = (List<PlatformDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_PLATFORM_ALL, null);
+        returnVal = (List<PlatformDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_PLATFORM_ALL, null,null);
 
 
         return returnVal;

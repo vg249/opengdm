@@ -40,7 +40,7 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
         List<ExperimentDTO> returnVal = new ArrayList<>();
 
 
-        returnVal = (List<ExperimentDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_EXPERIMENT_ALL, null);
+        returnVal = (List<ExperimentDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_EXPERIMENT_ALL, null,null);
 
 
         return returnVal;

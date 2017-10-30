@@ -358,6 +358,7 @@
     <bean id="listStatementProjectAll" class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementProjectAll"/>
     <bean id="listStatementProtocolAll" class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementProtocolAll"/>
     <bean id="listStatementCvsByGroup" class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementCvsByGroup"/>
+    <bean id="listStatementLastModified" class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementLastModified"/>
 
     <bean id="dtoListQueryColl"
           class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl">
@@ -435,6 +436,14 @@
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO"/>
                         <constructor-arg ref="listStatementCvsByGroup"/>
+                    </bean>
+                </entry>
+                <!--LAST MODIFIED -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_LAST_MODIFIED}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
+                        <constructor-arg ref="listStatementLastModified"/>
                     </bean>
                 </entry>
             </map>

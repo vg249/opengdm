@@ -9,7 +9,6 @@ import java.sql.SQLException;
 import java.util.Map;
 
 import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY_ID_CVS_BY_GROUP;
-import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY_ID_DATASET_ALL;
 
 /**
 
@@ -22,7 +21,7 @@ public class ListStatementCvsByGroup implements ListStatement {
     }
 
     @Override
-    public PreparedStatement makePreparedStatement(Connection dbConnection,Map<String, Object> jdbcParamVals) throws SQLException {
+    public PreparedStatement makePreparedStatement(Connection dbConnection, Map<String, Object> jdbcParamVals, Map<String, Object> sqlParamVals) throws SQLException {
 
         String Sql = "select cv.*, g.type as group_type from cv join cvgroup g on (cv.cvgroup_id=g.cvgroup_id) where lower(g.name)= ? order by lower(term)";
         PreparedStatement returnVal = dbConnection.prepareStatement(Sql);

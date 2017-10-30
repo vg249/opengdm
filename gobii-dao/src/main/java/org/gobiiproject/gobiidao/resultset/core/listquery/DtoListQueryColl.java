@@ -2,6 +2,7 @@ package org.gobiiproject.gobiidao.resultset.core.listquery;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 
+import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,20 +33,37 @@ public class DtoListQueryColl {
 
     private Map<ListSqlId, DtoListQuery> listQueriesBySqlId = new HashMap<>();
 
-    public List getList(ListSqlId listSqlId, Map<String, Object> parameters) throws GobiiDaoException {
+    public List getList(ListSqlId listSqlId,
+                        Map<String, Object> jdbcParameters,
+                        Map<String, Object> sqlParameters) throws GobiiDaoException {
 
         List returnVal;
 
         DtoListQuery dtoListQuery = listQueriesBySqlId.get(listSqlId);
 
         if (null != dtoListQuery ) {
-            returnVal = dtoListQuery.getDtoList(parameters);
+            returnVal = dtoListQuery.getDtoList(jdbcParameters,sqlParameters);
         } else {
             throw new GobiiDaoException("Unknown query id " + listSqlId.toString());
         }
 
         return returnVal;
+    }
 
+    public ResultSet getResultSet(ListSqlId listSqlId,
+                                  Map<String, Object> jdbcParameters,
+                                  Map<String, Object> sqlParameters) throws GobiiDaoException {
 
+        ResultSet returnVal;
+
+        DtoListQuery dtoListQuery = listQueriesBySqlId.get(listSqlId);
+
+        if (null != dtoListQuery ) {
+            returnVal = dtoListQuery.getResultSet(jdbcParameters,sqlParameters);
+        } else {
+            throw new GobiiDaoException("Unknown query id " + listSqlId.toString());
+        }
+
+        return returnVal;
     }
 }
