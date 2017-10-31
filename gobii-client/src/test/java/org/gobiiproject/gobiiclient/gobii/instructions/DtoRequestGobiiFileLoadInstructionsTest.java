@@ -361,6 +361,26 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 submittedJobDto.getPayloadType().equals(payloadTypeToTest.getCvName()));
 
 
+        //VERIFY THAT THE DATSET RECORD HAS THE JOB ID FOR THE JOB
+        Integer loadedDataSetId = loaderInstructionFileDTOResponse.getGobiiLoaderInstructions().get(0).getDataSetId();
+        RestUri dataSEtUri = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_DATASETS);
+        dataSEtUri.setParamValue("id", loadedDataSetId.toString());
+        GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceForLoadedDataset = new GobiiEnvelopeRestResource<>(dataSEtUri);
+        PayloadEnvelope<DataSetDTO> resultEnvelopeForLoadedDataset = gobiiEnvelopeRestResourceForLoadedDataset
+                .get(DataSetDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForLoadedDataset.getHeader()));
+        DataSetDTO dataSetDTOResponsForLoadedDataset = resultEnvelopeForLoadedDataset.getPayload().getData().get(0);
+
+        Assert.assertNotNull("Dataset record does not have a job id",
+                dataSetDTOResponsForLoadedDataset.getJobId());
+        Assert.assertEquals("The loade dataset record does not have the correct job ID",
+                submittedJobDto.getJobId(),  dataSetDTOResponsForLoadedDataset.getJobId());
+
+
+
         // ************** VERIFY THAT WE CAN MEANINGFULLY TEST FOR NON EXISTENT DIRECTORIES
         String newInstructionFileName = "testapp_" + DateUtils.makeDateIdString();
         loaderInstructionFilesDTOToSend.setInstructionFileName(newInstructionFileName);
