@@ -4,6 +4,7 @@ import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
 import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 import org.gobiiproject.gobiimodel.dto.entity.children.EntityPropertyDTO;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,9 @@ import java.util.Map;
  */
 public class ProjectDTO extends DTOBaseAuditable {
 
-    public ProjectDTO() {}
+    public ProjectDTO() {
+        super(GobiiEntityNameType.PROJECT);
+    }
 
     @Override
     public Integer getId() {

@@ -11,6 +11,7 @@ import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
 import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 import org.gobiiproject.gobiimodel.dto.entity.children.MarkerGroupMarkerDTO;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 import java.util.*;
 
@@ -18,6 +19,7 @@ public class MarkerGroupDTO extends DTOBaseAuditable {
 
 
     public MarkerGroupDTO() {
+        super(GobiiEntityNameType.MARKER_GROUP);
     }
 
     private Integer markerGroupId;

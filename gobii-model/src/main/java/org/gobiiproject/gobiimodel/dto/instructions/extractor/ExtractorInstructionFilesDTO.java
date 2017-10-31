@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by Phil on 4/8/2016.
  */
-public class ExtractorInstructionFilesDTO extends DTOBaseAuditable {
+public class ExtractorInstructionFilesDTO extends DTOBase {
 
 
     private String jobId;

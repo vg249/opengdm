@@ -4,6 +4,7 @@ package org.gobiiproject.gobiimodel.dto.entity.auditable;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
 import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 
 /**
@@ -12,7 +13,9 @@ import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
  */
 public class ManifestDTO extends DTOBaseAuditable {
 
-    public ManifestDTO() {}
+    public ManifestDTO() {
+        super(GobiiEntityNameType.MANIFEST);
+    }
 
     // we are waiting until we a have a view to retirn
     // properties for that property: we don't know how to represent them yet

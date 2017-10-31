@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit.impl;
 
+import org.gobiiproject.gobiidao.cache.TableTrackingCache;
 import org.gobiiproject.gobiidao.resultset.access.RsCvDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
@@ -38,6 +39,9 @@ public class DtoMapEntityStatsImpl implements DtoMapEntityStats {
     @Autowired
     private DtoListQueryColl dtoListQueryColl;
 
+    @Autowired
+    private TableTrackingCache tableTrackingCache;
+
 
     @Override
     public EntityStatsDTO getEntityCount(GobiiEntityNameType gobiiEntityNameType) throws GobiiDtoMappingException {
@@ -46,6 +50,7 @@ public class DtoMapEntityStatsImpl implements DtoMapEntityStats {
 
 
         try {
+            /*
             String tableName = gobiiEntityNameType.toString().toUpperCase();
             ResultSet resultSet = dtoListQueryColl.getResultSet(ListSqlId.QUERY_ID_LAST_MODIFIED,
                     null,
@@ -57,7 +62,11 @@ public class DtoMapEntityStatsImpl implements DtoMapEntityStats {
                 LocalDate localDate = resultSet.getObject("lastmodified", LocalDate.class);
                 Date date = java.sql.Date.valueOf(localDate);
                 returnVal.setLastModified(date);
-            }
+            } */
+
+            Date lastModified = this.tableTrackingCache.getLastModified(gobiiEntityNameType);
+            returnVal.setLastModified(lastModified);
+
         } catch (Exception e) {
             LOGGER.error("Gobii Mapping error", e);
             throw new GobiiDtoMappingException(e);

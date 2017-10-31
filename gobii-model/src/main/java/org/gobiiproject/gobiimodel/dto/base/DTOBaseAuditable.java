@@ -2,6 +2,7 @@ package org.gobiiproject.gobiimodel.dto.base;
 
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 import java.util.Date;
 
@@ -16,10 +17,20 @@ import java.util.Date;
  */
 public abstract class DTOBaseAuditable extends DTOBase {
 
+
+    private GobiiEntityNameType entityNameType = null;
+    public DTOBaseAuditable(GobiiEntityNameType entityNameType) {
+        this.entityNameType = entityNameType;
+    }
+
     private Integer createdBy = null;
     private Date createdDate = null;
     private Integer modifiedBy = null;
     private Date modifiedDate = null;
+
+    public GobiiEntityNameType getEntityNameType() {
+        return this.entityNameType;
+    }
 
     @GobiiEntityParam(paramName = "createdBy")
     public Integer getCreatedBy() {
