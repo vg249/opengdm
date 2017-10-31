@@ -105,7 +105,7 @@ public class DigestMatrix {
      * @return
      */
     private static List<String> initNucleotide2letterList(){
-        List<String> elements = Arrays.asList("AA", "TT", "CC", "GG", "AT", "AG", "AC", "TG", "TC", "GC", "NN", "++", "--", "+-");
+        List<String> elements = Arrays.asList("AA", "TT", "CC", "GG", "AT", "AG", "AC", "TG", "TC", "GC", "NN", "++", "--", "+-","AN","CN","GN","TN");
         return elements;
     }
 
