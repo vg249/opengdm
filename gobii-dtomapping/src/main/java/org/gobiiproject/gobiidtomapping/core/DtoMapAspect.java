@@ -47,7 +47,9 @@ public class DtoMapAspect {
             DTOBaseAuditable dto = (DTOBaseAuditable) dtoArg;
             Date createDate = new Date();
             dto.setCreatedDate(createDate);
-            this.tableTrackingCache.setLastModified(dto.getEntityNameType(),createDate);
+
+            //use the cache until the date columns in the database support the time portion of the date.
+            this.tableTrackingCache.setLastModified(dto.getEntityNameType(), createDate);
         }
     }
 
@@ -59,6 +61,9 @@ public class DtoMapAspect {
             DTOBaseAuditable dto = (DTOBaseAuditable) dtoArg;
             Date modifiedDate = new Date();
             dto.setModifiedDate(modifiedDate);
-            this.tableTrackingCache.setLastModified(dto.getEntityNameType(),modifiedDate);        }
+
+            //use the cache until the date columns in the database support the time portion of the date.
+            this.tableTrackingCache.setLastModified(dto.getEntityNameType(), modifiedDate);
+        }
     }
 }

@@ -50,19 +50,25 @@ public class DtoMapEntityStatsImpl implements DtoMapEntityStats {
 
 
         try {
-            /*
-            String tableName = gobiiEntityNameType.toString().toUpperCase();
-            ResultSet resultSet = dtoListQueryColl.getResultSet(ListSqlId.QUERY_ID_LAST_MODIFIED,
-                    null,
-                    new HashMap<String, Object>() {{
-                        put("tableName", tableName);
-                    }});
 
-            if (resultSet.next()) {
-                LocalDate localDate = resultSet.getObject("lastmodified", LocalDate.class);
-                Date date = java.sql.Date.valueOf(localDate);
-                returnVal.setLastModified(date);
-            } */
+
+            //When the data type of the date_modified column is changed to timestamp, we can go
+            //to getting the value from the table. For now we will use the cache, which is
+            //adequate only for the purpose of the client knowing when to refresh the values for
+            //a particular entity.
+//            String tableName = gobiiEntityNameType.toString().toUpperCase();
+//            ResultSet resultSet = dtoListQueryColl.getResultSet(ListSqlId.QUERY_ID_LAST_MODIFIED,
+//                    null,
+//                    new HashMap<String, Object>() {{
+//                        put("tableName", tableName);
+//                    }});
+//
+//            if (resultSet.next()) {
+//                LocalDate localDate = resultSet.getObject("lastmodified", LocalDate.class);
+//                Date date = java.sql.Date.valueOf(localDate);
+//                returnVal.setLastModified(date);
+//            }
+//
 
             Date lastModified = this.tableTrackingCache.getLastModified(gobiiEntityNameType);
             returnVal.setLastModified(lastModified);
