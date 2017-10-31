@@ -122,10 +122,14 @@ public class DtoMapJobImpl implements DtoMapJob {
         Integer jobId = rsJobDao.createJobWithCvTerms(parameters);
         returnVal.setJobId(jobId);
 
-        if (returnVal.getType().equals(JobType.CV_JOBTYPE_LOAD)
+        if (returnVal.getType().equals(JobType.CV_JOBTYPE_LOAD.getCvName())
                 && returnVal.getPayloadType().equals(JobPayloadType.CV_PAYLOADTYPE_MATRIX.getCvName())) {
 
-            // get DatasetDTO
+
+            if(jobDTO.getDatasetId() == null || jobDTO.getDatasetId() <= 0 ) {
+                throw new GobiiDtoMappingException("Matrix load job does not have a dataset id: " + returnVal.getDatasetId());
+            }
+
 
             DataSetDTO dataSetDTO = dtoMapDataSet.getDataSetDetails(jobDTO.getDatasetId());
 
