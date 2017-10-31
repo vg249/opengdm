@@ -8,6 +8,7 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
+import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestContactTest;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestOrganizationTest;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.OrganizationDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
@@ -65,6 +66,25 @@ public class DtoRequestEntityStatsTest {
         EntityStatsDTO entityStatsDTOBeforeAddMore = resultEnvelope.getPayload().getData().get(0);
 
         Date beforeAddTime = entityStatsDTOBeforeAddMore.getLastModified();
+        Thread.sleep(500);
+
+        // verify that the time is the same without having done an update
+        resultEnvelope = gobiiEnvelopeRestResource
+                .get(EntityStatsDTO.class);
+        entityStatsDTOBeforeAddMore = resultEnvelope.getPayload().getData().get(0);
+
+        Assert.assertEquals("The date time stamp should not have changed without doing an update",
+                entityStatsDTOBeforeAddMore.getLastModified(), beforeAddTime);
+
+        //verify that the time is the same when _another_ entity is modified
+        List<Integer> contactPkVals = (new GlobalPkColl<DtoCrudRequestContactTest>()
+                .getFreshPkVals(DtoCrudRequestContactTest.class, GobiiEntityNameType.CONTACT, 10));
+        resultEnvelope = gobiiEnvelopeRestResource
+                .get(EntityStatsDTO.class);
+        entityStatsDTOBeforeAddMore = resultEnvelope.getPayload().getData().get(0);
+
+        Assert.assertEquals("The date time stamp should not have changed when another entity was created",
+                entityStatsDTOBeforeAddMore.getLastModified(), beforeAddTime);
 
         //now do an update
         Thread.sleep(500);
