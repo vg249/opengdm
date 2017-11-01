@@ -173,7 +173,8 @@ public class DtoRequestEntityStatsTest {
     public void testGetCountOfChildren() throws Exception {
 
         Integer projectId = (new GlobalPkColl<DtoCrudRequestProjectTest>())
-                .getAPkVal(DtoCrudRequestProjectTest.class, GobiiEntityNameType.PROJECT);
+                .getFreshPkVals(DtoCrudRequestProjectTest.class, GobiiEntityNameType.PROJECT,1)
+                .get(0);
 
         RestUri entityCountdUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -197,7 +198,7 @@ public class DtoRequestEntityStatsTest {
         Integer numberoOfChildrenToAdd = 5;
 
         List<Integer> experimentPks = (new GlobalPkColl<DtoCrudRequestExperimentTest>())
-                .getPkVals(DtoCrudRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENT, numberoOfChildrenToAdd);
+                .getFreshPkVals(DtoCrudRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENT, numberoOfChildrenToAdd);
 
         for(Integer currentExperimentId : experimentPks ) {
             RestUri experimentsUriById = GobiiClientContext.getInstance(null, false)
