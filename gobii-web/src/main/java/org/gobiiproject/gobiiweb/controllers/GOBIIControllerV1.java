@@ -3992,5 +3992,45 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @RequestMapping(value = "/entities/{entityName}/count", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<EntityStatsDTO> getEntityCount(@PathVariable String entityName,
+                                                                 HttpServletRequest request,
+                                                                 HttpServletResponse response) {
+
+        PayloadEnvelope<EntityStatsDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.valueOf(entityName.toUpperCase());
+
+            EntityStatsDTO entityStatsDTO = entityStatsService.getEntityCount(gobiiEntityNameType);
+
+            PayloadWriter<EntityStatsDTO> payloadWriter = new PayloadWriter<>(request, response,
+                    EntityStatsDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    GobiiUriFactory.resourceColl(request.getContextPath(),
+                            GobiiServiceRequestId.URL_CV)
+                            .addUriParam("id"),
+                    entityStatsDTO);
+
+        } catch (GobiiException e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        } catch (Exception e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
 
 }// GOBIIController

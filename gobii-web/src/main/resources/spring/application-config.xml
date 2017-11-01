@@ -33,15 +33,17 @@
     <aop:aspectj-autoproxy proxy-target-class="true"/>
 
 
-
-    <cache:annotation-driven />
+    <cache:annotation-driven/>
 
     <bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
         <property name="caches">
             <set>
                 <bean
                         class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-                        name="tableTracker"/>
+                        name="tableLastUpdateCache"/>
+                <bean
+                        class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+                        name="tableRecordCountCache"/>
             </set>
         </property>
     </bean>
@@ -294,7 +296,6 @@
           class="org.gobiiproject.gobidomain.services.impl.MarkerServiceImpl"/>
 
 
-
     <!-- <bean id="dtoMapMap" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMapImpl"/>
         <bean id="MapService" class="org.gobiiproject.gobidomain.services.impl.MapServiceImpl"/> -->
 
@@ -341,7 +342,8 @@
 
     <!-- **** Organization Beans *************************************** -->
     <bean id="rsOrganizationDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsOrganizationDaoImpl"/>
-    <bean id="dtoMapOrganization" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapOrganizationImpl"/>
+    <bean id="dtoMapOrganization"
+          class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapOrganizationImpl"/>
     <bean id="OrganizationService" class="org.gobiiproject.gobidomain.services.impl.OrganizationServiceImpl"/>
 
 
@@ -358,22 +360,34 @@
 
     <!-- **** Entity Status Beans *************************************** -->
     <bean id="entityStatsService" class="org.gobiiproject.gobidomain.services.impl.EntityStatsServiceImpl"/>
-    <bean id="dtoMapEntityStatsImpl" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapEntityStatsImpl"/>
+    <bean id="dtoMapEntityStatsImpl"
+          class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapEntityStatsImpl"/>
     <bean id="rsJobDaoImpl" class="org.gobiiproject.gobiidao.resultset.access.impl.RsJobDaoImpl"/>
 
 
-
     <!-- **** ListStatement queries  *************************************** -->
-    <bean id="listStatementContactAll" class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementContactAll"/>
-    <bean id="listStatementDatasetAll" class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementDatasetAll"/>
-    <bean id="listStatementExperimentAll" class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementExperimentAll"/>
-    <bean id="listStatementMarkerAll" class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementMarkerAll"/>
-    <bean id="listStatementOrganizationAll" class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementOrganizationAll"/>
-    <bean id="listStatementPlatformAll" class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementPlatformAll"/>
-    <bean id="listStatementProjectAll" class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementProjectAll"/>
-    <bean id="listStatementProtocolAll" class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementProtocolAll"/>
-    <bean id="listStatementCvsByGroup" class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementCvsByGroup"/>
-    <bean id="listStatementLastModified" class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementLastModified"/>
+    <bean id="listStatementContactAll"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementContactAll"/>
+    <bean id="listStatementDatasetAll"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementDatasetAll"/>
+    <bean id="listStatementExperimentAll"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementExperimentAll"/>
+    <bean id="listStatementMarkerAll"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementMarkerAll"/>
+    <bean id="listStatementOrganizationAll"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementOrganizationAll"/>
+    <bean id="listStatementPlatformAll"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementPlatformAll"/>
+    <bean id="listStatementProjectAll"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementProjectAll"/>
+    <bean id="listStatementProtocolAll"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementProtocolAll"/>
+    <bean id="listStatementCvsByGroup"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementCvsByGroup"/>
+    <bean id="listStatementLastModified"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementLastModified"/>
+    <bean id="listStatementCount"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementCount"/>
 
     <bean id="dtoListQueryColl"
           class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl">
@@ -461,15 +475,26 @@
                         <constructor-arg ref="listStatementLastModified"/>
                     </bean>
                 </entry>
+                <!--LAST COUNT -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_COUNT}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
+                        <constructor-arg ref="listStatementCount"/>
+                    </bean>
+                </entry>
             </map>
         </property>
     </bean>
 
     <!-- ********************** BrAPI Beans ******************************* -->
 
-    <bean id="brapiResponseMapStudiesSearch" class="org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseMapStudiesSearch"/>
-    <bean id="brapiResponseMapAlleleMatrixSearch" class="org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrixsearch.BrapiResponseMapAlleleMatrixSearch"/>
-    <bean id="brapiResponseMapAlleleMatrices" class="org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrices.BrapiResponseMapAlleleMatrices"/>
+    <bean id="brapiResponseMapStudiesSearch"
+          class="org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseMapStudiesSearch"/>
+    <bean id="brapiResponseMapAlleleMatrixSearch"
+          class="org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrixsearch.BrapiResponseMapAlleleMatrixSearch"/>
+    <bean id="brapiResponseMapAlleleMatrices"
+          class="org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrices.BrapiResponseMapAlleleMatrices"/>
     <!-- ************************ DATA ACCESS BEANS ************************* -->
 
     <!--&lt;!&ndash;************************** SET UP CONFIGURAITON FOR JDBC settings&ndash;&gt;-->
@@ -696,8 +721,8 @@
         <!-- setting maximum upload size -->
         <property name="maxUploadSize" value="52428800"/>
         <property name="maxInMemorySize" value="52428800"/>
-        <property name="resolveLazily" value="false" />
-        <property name="defaultEncoding" value="utf-8" />
+        <property name="resolveLazily" value="false"/>
+        <property name="defaultEncoding" value="utf-8"/>
     </bean>
 
     <bean id="currentRequest" class="java.lang.ThreadLocal"/>
@@ -706,7 +731,6 @@
     </bean>
 
     <bean id="dtoMapAspect" class="org.gobiiproject.gobiidtomapping.core.DtoMapAspect"/>
-
 
 
 </beans>

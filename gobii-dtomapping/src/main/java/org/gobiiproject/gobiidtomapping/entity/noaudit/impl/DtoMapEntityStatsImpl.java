@@ -81,4 +81,22 @@ public class DtoMapEntityStatsImpl implements DtoMapEntityStats {
         return returnVal;
     }
 
+    @Override
+    public EntityStatsDTO getEntityCount(GobiiEntityNameType gobiiEntityNameType) throws GobiiDtoMappingException {
+
+        EntityStatsDTO returnVal = new EntityStatsDTO();
+
+
+        try {
+
+            Integer count = this.tableTrackingCache.getCount(gobiiEntityNameType);
+            returnVal.setCount(count);
+        } catch (Exception e) {
+            LOGGER.error("Gobii Mapping error", e);
+            throw new GobiiDtoMappingException(e);
+        }
+
+        return returnVal;
+    }
 } // DtoMapNameIdListImpl
+

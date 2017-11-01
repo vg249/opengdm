@@ -2,6 +2,7 @@ package org.gobiiproject.gobiidtomapping.core;
 
 
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -50,6 +51,16 @@ public class DtoMapAspect {
 
             //use the cache until the date columns in the database support the time portion of the date.
             this.tableTrackingCache.setLastModified(dto.getEntityNameType(), createDate);
+        }
+    }
+
+    @After(value = "execution(* org.gobiiproject.gobiidtomapping.entity.auditable.*.create(*))")
+    public void afterCreate(JoinPoint joinPoint) {
+
+        Object dtoArg = joinPoint.getArgs()[0];
+        if (dtoArg instanceof DTOBaseAuditable) {
+            DTOBaseAuditable dto = (DTOBaseAuditable) dtoArg;
+            this.tableTrackingCache.setCount(dto.getEntityNameType());
         }
     }
 

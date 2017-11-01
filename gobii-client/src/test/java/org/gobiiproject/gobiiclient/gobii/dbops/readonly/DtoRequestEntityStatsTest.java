@@ -10,6 +10,7 @@ import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestContactTest;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestOrganizationTest;
+import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestProjectTest;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.OrganizationDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO;
@@ -108,7 +109,7 @@ public class DtoRequestEntityStatsTest {
                 .get(OrganizationDTO.class);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
         OrganizationDTO organizationDTOReRetrieved = resultEnvelopeForGetByID.getPayload().getData().get(0);
-        Assert.assertEquals(organizationDTOReRetrieved.getName(),newName);
+        Assert.assertEquals(organizationDTOReRetrieved.getName(), newName);
 
         PayloadEnvelope<EntityStatsDTO> resultEnvelopePostUpdate = gobiiEnvelopeRestResource
                 .get(EntityStatsDTO.class);
@@ -117,18 +118,53 @@ public class DtoRequestEntityStatsTest {
         EntityStatsDTO entityStatsDTOPosteUpdate = resultEnvelopePostUpdate.getPayload().getData().get(0);
 
         Assert.assertNotNull("The last modified date is null",
-                entityStatsDTOPosteUpdate.getLastModified() );
+                entityStatsDTOPosteUpdate.getLastModified());
 
         Assert.assertTrue("The new datestamp is not later than from before the update",
-                entityStatsDTOPosteUpdate.getLastModified().compareTo(beforeAddTime) > 0 );
+                entityStatsDTOPosteUpdate.getLastModified().compareTo(beforeAddTime) > 0);
 
     }
 
     @Test
     public void testGetCount() throws Exception {
 
+        RestUri entityCountdUri = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .entityCount(GobiiEntityNameType.PROJECT);
+        GobiiEnvelopeRestResource<EntityStatsDTO> gobiiEnvelopeRestResource =
+                new GobiiEnvelopeRestResource<>(entityCountdUri);
+
+        PayloadEnvelope<EntityStatsDTO> resultEnvelope = gobiiEnvelopeRestResource
+                .get(EntityStatsDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+
+        EntityStatsDTO entityStatsDTOCount = resultEnvelope.getPayload().getData().get(0);
+        Assert.assertNotNull("No entity count value was retrieved",
+                entityStatsDTOCount.getCount());
+
+        Integer projectCountBeforeInserts = entityStatsDTOCount.getCount();
+        Integer numberOfProjectsToAdd = 5;
+
+        // now create more projects
+        (new GlobalPkColl<DtoCrudRequestProjectTest>())
+                .getFreshPkVals(DtoCrudRequestProjectTest.class, GobiiEntityNameType.PROJECT, numberOfProjectsToAdd);
+
+        PayloadEnvelope<EntityStatsDTO> resultEnvelopePostAdd = gobiiEnvelopeRestResource
+                .get(EntityStatsDTO.class);
+        EntityStatsDTO entityStatsDTOPostAdd = resultEnvelopePostAdd.getPayload().getData().get(0);
+
+        Assert.assertTrue("The count retrieved was not increased by the number of records added",
+                entityStatsDTOPostAdd.getCount() == (projectCountBeforeInserts + numberOfProjectsToAdd) );
+
+        PayloadEnvelope<EntityStatsDTO> resultEnvelopePostAddRecheck = gobiiEnvelopeRestResource
+                .get(EntityStatsDTO.class);
+        EntityStatsDTO entityStatsDTOPostAddRecheck = resultEnvelopePostAddRecheck.getPayload().getData().get(0);
+
+        Assert.assertTrue("The count did not remain the same when no records were added",
+                entityStatsDTOPostAddRecheck.getCount() == (projectCountBeforeInserts + numberOfProjectsToAdd) );
 
     }
 
 
-    }
+}
