@@ -12,5 +12,5 @@ import java.util.List;
  */
 public interface DtoMapEntityStats {
 
-    EntityStatsDTO getEntityCount(GobiiEntityNameType gobiiEntityNameType) throws GobiiDtoMappingException;
+    EntityStatsDTO getEntityLastModified(GobiiEntityNameType gobiiEntityNameType) throws GobiiDtoMappingException;
 }

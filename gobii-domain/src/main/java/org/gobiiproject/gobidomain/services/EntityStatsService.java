@@ -13,5 +13,5 @@ import java.util.List;
  */
 public interface EntityStatsService {
 
-    EntityStatsDTO getEntityCount(GobiiEntityNameType gobiiEntityNameType) throws GobiiDomainException;
+    EntityStatsDTO getEntityLastModified(GobiiEntityNameType gobiiEntityNameType) throws GobiiDomainException;
 }

@@ -21,13 +21,13 @@ public class EntityStatsServiceImpl implements EntityStatsService {
     DtoMapEntityStats dtoMapEntityStats;
 
     @Override
-    public EntityStatsDTO getEntityCount(GobiiEntityNameType gobiiEntityNameType) throws GobiiDomainException {
+    public EntityStatsDTO getEntityLastModified(GobiiEntityNameType gobiiEntityNameType) throws GobiiDomainException {
 
         EntityStatsDTO returnVal;
 
         try {
 
-            returnVal = dtoMapEntityStats.getEntityCount(gobiiEntityNameType);
+            returnVal = dtoMapEntityStats.getEntityLastModified(gobiiEntityNameType);
 
             // When we have roles and permissions, this will be set programmatically
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);

@@ -50,10 +50,10 @@ public class DtoRequestEntityStatsTest {
                 .getFreshPkVals(DtoCrudRequestOrganizationTest.class, GobiiEntityNameType.ORGANIZATION, 10));
 
 
-        RestUri entityCountUri = GobiiClientContext.getInstance(null, false)
+        RestUri entityLastModifiedUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
-                .entityCount(GobiiEntityNameType.ORGANIZATION);
-        GobiiEnvelopeRestResource<EntityStatsDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(entityCountUri);
+                .entityLastModified(GobiiEntityNameType.ORGANIZATION);
+        GobiiEnvelopeRestResource<EntityStatsDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(entityLastModifiedUri);
 
         PayloadEnvelope<EntityStatsDTO> resultEnvelope = gobiiEnvelopeRestResource
                 .get(EntityStatsDTO.class);
@@ -124,5 +124,11 @@ public class DtoRequestEntityStatsTest {
 
     }
 
+    @Test
+    public void testGetCount() throws Exception {
 
-}
+
+    }
+
+
+    }

@@ -44,7 +44,7 @@ public class DtoMapEntityStatsImpl implements DtoMapEntityStats {
 
 
     @Override
-    public EntityStatsDTO getEntityCount(GobiiEntityNameType gobiiEntityNameType) throws GobiiDtoMappingException {
+    public EntityStatsDTO getEntityLastModified(GobiiEntityNameType gobiiEntityNameType) throws GobiiDtoMappingException {
 
         EntityStatsDTO returnVal = new EntityStatsDTO();
 

@@ -3951,11 +3951,11 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** ENTITY STATS METHODS
     // *********************************************
-    @RequestMapping(value = "/entities/{entityName}/count", method = RequestMethod.GET)
+    @RequestMapping(value = "/entities/{entityName}/lastmodified", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<EntityStatsDTO> getEntityCount(@PathVariable String entityName,
-                                                          HttpServletRequest request,
-                                                          HttpServletResponse response) {
+    public PayloadEnvelope<EntityStatsDTO> getEntityLastModified(@PathVariable String entityName,
+                                                                 HttpServletRequest request,
+                                                                 HttpServletResponse response) {
 
         PayloadEnvelope<EntityStatsDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3963,7 +3963,7 @@ public class GOBIIControllerV1 {
 
             GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.valueOf(entityName.toUpperCase());
 
-            EntityStatsDTO entityStatsDTO = entityStatsService.getEntityCount(gobiiEntityNameType);
+            EntityStatsDTO entityStatsDTO = entityStatsService.getEntityLastModified(gobiiEntityNameType);
 
             PayloadWriter<EntityStatsDTO> payloadWriter = new PayloadWriter<>(request, response,
                     EntityStatsDTO.class);
