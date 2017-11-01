@@ -62,4 +62,27 @@ public class EntityStatsServiceImpl implements EntityStatsService {
         return returnVal;
     }
 
+    @Override
+    public EntityStatsDTO getEntityCountOfChildren(GobiiEntityNameType gobiiEntityNameTypeParent,
+                                            Integer parentId,
+                                            GobiiEntityNameType gobiiEntityNameTypeChild ) throws GobiiDomainException {
+        EntityStatsDTO returnVal;
+
+        try {
+
+            returnVal = dtoMapEntityStats.getEntityCountOfChildren(gobiiEntityNameTypeParent, parentId, gobiiEntityNameTypeChild);
+
+            // When we have roles and permissions, this will be set programmatically
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+        } catch (Exception e) {
+
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+        }
+
+        return returnVal;
+    }
+
+
 }

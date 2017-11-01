@@ -54,16 +54,6 @@ public class DtoMapAspect {
         }
     }
 
-    @After(value = "execution(* org.gobiiproject.gobiidtomapping.entity.auditable.*.create(*))")
-    public void afterCreate(JoinPoint joinPoint) {
-
-        Object dtoArg = joinPoint.getArgs()[0];
-        if (dtoArg instanceof DTOBaseAuditable) {
-            DTOBaseAuditable dto = (DTOBaseAuditable) dtoArg;
-            this.tableTrackingCache.setCount(dto.getEntityNameType());
-        }
-    }
-
     @Before(value = "execution(* org.gobiiproject.gobiidtomapping.entity.auditable.*.replace(*,*))")
     public void beforeReplace(JoinPoint joinPoint) {
 

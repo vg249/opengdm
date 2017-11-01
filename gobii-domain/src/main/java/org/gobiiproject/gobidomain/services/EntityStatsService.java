@@ -15,4 +15,7 @@ public interface EntityStatsService {
 
     EntityStatsDTO getEntityLastModified(GobiiEntityNameType gobiiEntityNameType) throws GobiiDomainException;
     EntityStatsDTO getEntityCount(GobiiEntityNameType gobiiEntityNameType) throws GobiiDomainException;
+    EntityStatsDTO getEntityCountOfChildren(GobiiEntityNameType gobiiEntityNameTypeParent,
+                                            Integer parentId,
+                                            GobiiEntityNameType gobiiEntityNameTypeChild ) throws GobiiDomainException;
 }

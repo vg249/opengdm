@@ -44,6 +44,9 @@
                 <bean
                         class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
                         name="tableRecordCountCache"/>
+                <bean
+                        class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+                        name="parentChildCountCache"/>
             </set>
         </property>
     </bean>
@@ -388,6 +391,8 @@
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementLastModified"/>
     <bean id="listStatementCount"
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementCount"/>
+    <bean id="ListStatementCountOfChildren"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementCountOfChildren"/>
 
     <bean id="dtoListQueryColl"
           class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl">
@@ -475,12 +480,20 @@
                         <constructor-arg ref="listStatementLastModified"/>
                     </bean>
                 </entry>
-                <!--LAST COUNT -->
+                <!--COUNT -->
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_COUNT}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
                         <constructor-arg ref="listStatementCount"/>
+                    </bean>
+                </entry>
+                <!--COUNT CHILDREN -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_COUNT_OF_CHILDREN}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
+                        <constructor-arg ref="ListStatementCountOfChildren"/>
                     </bean>
                 </entry>
             </map>

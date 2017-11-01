@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY_ID_COUNT;
 import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY_ID_LAST_MODIFIED;
 
 /**
@@ -23,7 +24,7 @@ public class ListStatementCount implements ListStatement {
 
     @Override
     public ListSqlId getListSqlId() {
-        return QUERY_ID_LAST_MODIFIED;
+        return QUERY_ID_COUNT;
     }
 
     @Override

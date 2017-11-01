@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiidao.cache;
 
+import javafx.scene.Parent;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
@@ -9,8 +10,11 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /***
  * The idiom here is not obvious. There is a lot of magic going on in the background via the annotations and the
@@ -24,6 +28,10 @@ import java.util.HashMap;
  *
  * Two separate caches are needed per the datatype of the item stored. If you have only one cache, both the date and count
  * methods are storing the data in the same cache and the data don't cast properly upon retrieval.
+ *
+ * NOTE: cached methods DO NOT WORK if you call them from within the class that contains them. For example, if one were to
+ * write a wrapper method around getParentChildState() within this class, the method would work, but the result would not
+ * be cached. Thus, the consumer of the cache _must_ be in a class outside this class.
  */
 public class TableTrackingCache {
 
@@ -41,35 +49,21 @@ public class TableTrackingCache {
     }
 
     @Cacheable(cacheNames = "tableRecordCountCache", key = "#gobiiEntityNameType")
-    public Integer getCount(GobiiEntityNameType gobiiEntityNameType) {
-        return this.getCountFromDb(gobiiEntityNameType);
+    public EntityCountState getCount(GobiiEntityNameType gobiiEntityNameType) {
+        return null; // if we haven't called setCount(), we don't have anything to report
     }
 
     @CachePut(cacheNames = "tableRecordCountCache", key = "#gobiiEntityNameType")
-    public Integer setCount(GobiiEntityNameType gobiiEntityNameType) throws GobiiDaoException {
-        return this.getCountFromDb(gobiiEntityNameType);
+    public EntityCountState setCount(GobiiEntityNameType gobiiEntityNameType, EntityCountState entityCountState) throws GobiiDaoException {
+        return entityCountState;
     }
 
-    private Integer getCountFromDb(GobiiEntityNameType gobiiEntityNameType) {
 
-        Integer returnVal = 0;
-
-        try {
-
-            String tableName = gobiiEntityNameType.toString().toUpperCase();
-            ResultSet resultSet = dtoListQueryColl.getResultSet(ListSqlId.QUERY_ID_COUNT,
-                    null,
-                    new HashMap<String, Object>() {{
-                        put("tableName", tableName);
-                    }});
-
-            if (resultSet.next()) {
-                returnVal = resultSet.getInt("count");
-            }
-        } catch (Exception e) {
-            throw new GobiiDaoException(e);
-        }
-
-        return returnVal;
+    @Cacheable(cacheNames = "parentChildCountCache",key = "#gobiiEntityNameTypeParent.toString() + #parentId.toString() + #gobiiEntityNameTypeChild.toString()")
+    public ParentChildCountState getParentChildState(GobiiEntityNameType gobiiEntityNameTypeParent,
+                                                     Integer parentId,
+                                                     GobiiEntityNameType gobiiEntityNameTypeChild) {
+        return new ParentChildCountState(gobiiEntityNameTypeParent, null, parentId, gobiiEntityNameTypeChild, null, 0);
     }
+
 }

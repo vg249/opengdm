@@ -9,8 +9,10 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestContactTest;
+import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestExperimentTest;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestOrganizationTest;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestProjectTest;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.OrganizationDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO;
@@ -155,14 +157,81 @@ public class DtoRequestEntityStatsTest {
         EntityStatsDTO entityStatsDTOPostAdd = resultEnvelopePostAdd.getPayload().getData().get(0);
 
         Assert.assertTrue("The count retrieved was not increased by the number of records added",
-                entityStatsDTOPostAdd.getCount() == (projectCountBeforeInserts + numberOfProjectsToAdd) );
+                entityStatsDTOPostAdd.getCount() == (projectCountBeforeInserts + numberOfProjectsToAdd));
 
         PayloadEnvelope<EntityStatsDTO> resultEnvelopePostAddRecheck = gobiiEnvelopeRestResource
                 .get(EntityStatsDTO.class);
         EntityStatsDTO entityStatsDTOPostAddRecheck = resultEnvelopePostAddRecheck.getPayload().getData().get(0);
 
         Assert.assertTrue("The count did not remain the same when no records were added",
-                entityStatsDTOPostAddRecheck.getCount() == (projectCountBeforeInserts + numberOfProjectsToAdd) );
+                entityStatsDTOPostAddRecheck.getCount() == (projectCountBeforeInserts + numberOfProjectsToAdd));
+
+    }
+
+
+    @Test
+    public void testGetCountOfChildren() throws Exception {
+
+        Integer projectId = (new GlobalPkColl<DtoCrudRequestProjectTest>())
+                .getAPkVal(DtoCrudRequestProjectTest.class, GobiiEntityNameType.PROJECT);
+
+        RestUri entityCountdUri = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .entityChildCount(GobiiEntityNameType.PROJECT, GobiiEntityNameType.EXPERIMENT, projectId);
+
+        GobiiEnvelopeRestResource<EntityStatsDTO> gobiiEnvelopeRestResource =
+                new GobiiEnvelopeRestResource<>(entityCountdUri);
+        PayloadEnvelope<EntityStatsDTO> resultEnvelopeIntialCount = gobiiEnvelopeRestResource
+                .get(EntityStatsDTO.class);
+
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeIntialCount.getHeader()));
+
+        EntityStatsDTO entityStatsDTOInitialCount = resultEnvelopeIntialCount.getPayload().getData().get(0);
+        Assert.assertNotNull("Null count retrieved",
+                entityStatsDTOInitialCount.getCount()
+        );
+
+        Integer countBeforeAddChildren = entityStatsDTOInitialCount.getCount();
+
+        Integer numberoOfChildrenToAdd = 5;
+
+        List<Integer> experimentPks = (new GlobalPkColl<DtoCrudRequestExperimentTest>())
+                .getPkVals(DtoCrudRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENT, numberoOfChildrenToAdd);
+
+        for(Integer currentExperimentId : experimentPks ) {
+            RestUri experimentsUriById = GobiiClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .resourceByUriIdParam(GobiiServiceRequestId.URL_EXPERIMENTS);
+
+            experimentsUriById.setParamValue("id",currentExperimentId.toString());
+            GobiiEnvelopeRestResource<ExperimentDTO> gobiiEnvelopeRestResourceForExperimentsById = new GobiiEnvelopeRestResource<>(experimentsUriById);
+            PayloadEnvelope<ExperimentDTO> resultEnvelopeExperimentGet = gobiiEnvelopeRestResourceForExperimentsById
+                    .get(ExperimentDTO.class);
+            
+            ExperimentDTO currentExperimentDto = resultEnvelopeExperimentGet.getPayload().getData().get(0);
+            currentExperimentDto.setProjectId(projectId);
+
+            PayloadEnvelope<ExperimentDTO> putRequestEnvelope = new PayloadEnvelope<>(currentExperimentDto, GobiiProcessType.UPDATE);
+
+            gobiiEnvelopeRestResourceForExperimentsById.put(ExperimentDTO.class,putRequestEnvelope);
+        }
+
+        PayloadEnvelope<EntityStatsDTO> postAddChildrenCountResult = gobiiEnvelopeRestResource
+                .get(EntityStatsDTO.class);
+        
+        EntityStatsDTO entityStatsDTOPostAddChildren = postAddChildrenCountResult.getPayload().getData().get(0);
+        
+        Assert.assertTrue("Child count after adding new children was not incremented",
+                entityStatsDTOPostAddChildren.getCount().equals(countBeforeAddChildren + numberoOfChildrenToAdd));
+
+        PayloadEnvelope<EntityStatsDTO> noAddAddChildrenCountResult = gobiiEnvelopeRestResource
+                .get(EntityStatsDTO.class);
+
+        EntityStatsDTO entityStatsDTONoAddChildren = noAddAddChildrenCountResult.getPayload().getData().get(0);
+        Assert.assertTrue("Child count without adding new children should have remained the same",
+                entityStatsDTONoAddChildren.getCount().equals(countBeforeAddChildren + numberoOfChildrenToAdd));
+
 
     }
 

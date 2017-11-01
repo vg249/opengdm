@@ -14,4 +14,7 @@ public interface DtoMapEntityStats {
 
     EntityStatsDTO getEntityLastModified(GobiiEntityNameType gobiiEntityNameType) throws GobiiDtoMappingException;
     EntityStatsDTO getEntityCount(GobiiEntityNameType gobiiEntityNameType) throws GobiiDtoMappingException;
+    EntityStatsDTO getEntityCountOfChildren(GobiiEntityNameType gobiiEntityNameTypeParent,
+                             Integer parentId,
+                             GobiiEntityNameType gobiiEntityNameTypeChild ) throws GobiiDtoMappingException;
 }

@@ -226,7 +226,7 @@ public class GobiiUriFactory {
                 GobiiServiceRequestId.URL_ENTITIES.getResourcePath())
                 .addUriParam("entityNameParent", gobiiEntityNameTypeParent.toString().toLowerCase())
                 .addUriParam("parentId",parentId.toString())
-                .addUriParam("entityNameParent",gobiiEntityNameTypeChild.toString())
+                .addUriParam("entityNameChild",gobiiEntityNameTypeChild.toString())
                 .appendSegment(GobiiServiceRequestId.URL_COUNT);
 
         return returnVal;

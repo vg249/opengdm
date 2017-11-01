@@ -3653,7 +3653,7 @@ public class GOBIIControllerV1 {
      */
     @RequestMapping(value = "/files/{destinationType}",
             method = RequestMethod.DELETE
-            ,produces = MediaType.TEXT_PLAIN_VALUE
+            , produces = MediaType.TEXT_PLAIN_VALUE
     )
     public
     @ResponseBody
@@ -3995,8 +3995,8 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/entities/{entityName}/count", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<EntityStatsDTO> getEntityCount(@PathVariable String entityName,
-                                                                 HttpServletRequest request,
-                                                                 HttpServletResponse response) {
+                                                          HttpServletRequest request,
+                                                          HttpServletResponse response) {
 
         PayloadEnvelope<EntityStatsDTO> returnVal = new PayloadEnvelope<>();
 
@@ -4033,4 +4033,50 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+
+    @RequestMapping(value = "/entities/{entityNameParent}/{parentId}/{entityNameChild}/count", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<EntityStatsDTO> getEntityCountOfChildren(@PathVariable String entityNameParent,
+                                                                    @PathVariable Integer parentId,
+                                                                    @PathVariable String entityNameChild,
+                                                                    HttpServletRequest request,
+                                                                    HttpServletResponse response) {
+
+        PayloadEnvelope<EntityStatsDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            GobiiEntityNameType parentEntityNameType = GobiiEntityNameType.valueOf(entityNameParent.toUpperCase());
+            GobiiEntityNameType childEntityNameType = GobiiEntityNameType.valueOf(entityNameChild.toUpperCase());
+
+            EntityStatsDTO entityStatsDTO = entityStatsService.getEntityCountOfChildren(parentEntityNameType,
+                    parentId,
+                    childEntityNameType);
+
+            PayloadWriter<EntityStatsDTO> payloadWriter = new PayloadWriter<>(request, response,
+                    EntityStatsDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    GobiiUriFactory.resourceColl(request.getContextPath(),
+                            GobiiServiceRequestId.URL_CV)
+                            .addUriParam("id"),
+                    entityStatsDTO);
+
+        } catch (GobiiException e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        } catch (Exception e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
 }// GOBIIController
