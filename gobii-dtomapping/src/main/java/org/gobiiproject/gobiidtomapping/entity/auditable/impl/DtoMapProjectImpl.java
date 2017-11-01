@@ -46,7 +46,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
         try {
 
-            returnVal = (List<ProjectDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_PROJECT_ALL,null);
+            returnVal = (List<ProjectDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_PROJECT_ALL);
 
 
         } catch (Exception e) {

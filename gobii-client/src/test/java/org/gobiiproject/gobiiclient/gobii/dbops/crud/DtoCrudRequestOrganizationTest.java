@@ -61,7 +61,7 @@ public class DtoCrudRequestOrganizationTest implements DtoCrudRequestTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(organizationDTOResponseEnvelope.getHeader()));
         Assert.assertTrue(organizationDTOResponse.getOrganizationId() > 0);
 
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.ORGANIZATIONS,
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.ORGANIZATION,
                 organizationDTOResponse.getOrganizationId());
 
 
@@ -76,7 +76,7 @@ public class DtoCrudRequestOrganizationTest implements DtoCrudRequestTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
         OrganizationDTO organizationDTOResponseForParams = resultEnvelopeForGetByID.getPayload().getData().get(0);
 
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.ORGANIZATIONS, organizationDTOResponse.getOrganizationId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.ORGANIZATION, organizationDTOResponse.getOrganizationId());
     }
 
     @Test

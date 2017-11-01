@@ -69,8 +69,8 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         loaderInstructionFilesDTOToSend.setInstructionFileName(instructionFileName);
 
         String instructionOneTableName = "foo_table";
-        Integer instructionOneDataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS);
-        Integer instructionOneContactId = (new GlobalPkColl<DtoCrudRequestContactTest>()).getAPkVal(DtoCrudRequestContactTest.class, GobiiEntityNameType.CONTACTS);
+        Integer instructionOneDataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET);
+        Integer instructionOneContactId = (new GlobalPkColl<DtoCrudRequestContactTest>()).getAPkVal(DtoCrudRequestContactTest.class, GobiiEntityNameType.CONTACT);
         String gobiiCropType = GobiiClientContext.getInstance(null, false).getCurrentClientCropType();
 
         GobiiLoaderInstruction gobiiLoaderInstructionOne = new GobiiLoaderInstruction();
@@ -138,7 +138,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         /*** InstructionTwo START - Test for wrong projectId for given experiment. Valid experimentId will be used here ***/
         //get existing dataset
-        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS));
+        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET));
 
         RestUri datasetsUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -521,7 +521,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         String instructionOneTableName = "test_table1";
 
         //get existing dataset
-        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS));
+        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET));
 
         RestUri datasetsUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -618,7 +618,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         String gobiiCropType = GobiiClientContext.getInstance(null, false).getCurrentClientCropType();
 
         //get existing dataset
-        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS));
+        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET));
 
         RestUri datasetsUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -732,7 +732,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         String instructionThreeTableName = "test_table3";
 
         //get existing dataset
-        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS));
+        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET));
 
         RestUri datasetsUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -831,7 +831,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         String gobiiCropType = GobiiClientContext.getInstance(null, false).getCurrentClientCropType();
 
         //get existing dataset
-        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS));
+        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET));
 
         RestUri datasetsUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()

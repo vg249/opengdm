@@ -50,7 +50,10 @@ public enum GobiiServiceRequestId {
     URL_ALLELE_MATRIX_SEARCH_STATUS("allelematrix-search/status"),
     URL_ALLELE_MATRICES("allelematrices"),
     URL_FILES("files"),
-    URL_JOB("jobs");
+    URL_JOB("jobs"),
+    URL_ENTITIES("entities"),
+    URL_COUNT("count"),
+    URL_LAST_MODIFIED("lastmodified");
 
 
     private String requestPath;

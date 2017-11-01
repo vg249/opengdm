@@ -102,7 +102,7 @@ public class DtoCrudRequestAnalysisTest implements DtoCrudRequestTest {
     public void create() throws Exception {
 
         RestUri namesUri = GobiiClientContext.getInstance(null, false).getUriFactory().nameIdListByQueryParams();
-        namesUri.setParamValue("entity", GobiiEntityNameType.CVTERMS.toString().toLowerCase());
+        namesUri.setParamValue("entity", GobiiEntityNameType.CV.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
         namesUri.setParamValue("filterValue", "analysis_type");
 
@@ -143,7 +143,7 @@ public class DtoCrudRequestAnalysisTest implements DtoCrudRequestTest {
         Assert.assertNull("new dto should still have null modified date", newAnalysisDto.getModifiedDate());
 
 
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.ANALYSES, analysisDTOResponse.getAnalysisId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.ANALYSIS, analysisDTOResponse.getAnalysisId());
 
         RestUri restUriAnalysisForGetById = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -156,7 +156,7 @@ public class DtoCrudRequestAnalysisTest implements DtoCrudRequestTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetById.getHeader()));
         AnalysisDTO analysisDTOResponseForParams = resultEnvelopeForGetById.getPayload().getData().get(0);
 
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.ANALYSES, analysisDTOResponse.getAnalysisId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.ANALYSIS, analysisDTOResponse.getAnalysisId());
 
     } // testAnalysisCreate
 
@@ -165,7 +165,7 @@ public class DtoCrudRequestAnalysisTest implements DtoCrudRequestTest {
     public void update() throws Exception {
 
         RestUri namesUri = GobiiClientContext.getInstance(null, false).getUriFactory().nameIdListByQueryParams();
-        namesUri.setParamValue("entity", GobiiEntityNameType.CVTERMS.toString().toLowerCase());
+        namesUri.setParamValue("entity", GobiiEntityNameType.CV.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
         namesUri.setParamValue("filterValue", "analysis_type");
 

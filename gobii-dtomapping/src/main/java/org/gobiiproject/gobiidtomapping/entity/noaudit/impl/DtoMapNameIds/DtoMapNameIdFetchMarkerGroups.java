@@ -31,7 +31,7 @@ public class DtoMapNameIdFetchMarkerGroups implements DtoMapNameIdFetch {
 
     @Override
     public GobiiEntityNameType getEntityTypeName() throws GobiiException {
-        return GobiiEntityNameType.MARKERGROUPS;
+        return GobiiEntityNameType.MARKER_GROUP;
     }
 
 

@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.ResultSet;
 import java.util.List;
 import java.util.Map;
 
@@ -19,29 +20,28 @@ public class DtoListQuery<T> {
 
     Logger LOGGER = LoggerFactory.getLogger(DtoListQuery.class);
 
-    private ListSqlId listSqlId;
+    private ListStatement listStatement;
     private Class<T> dtoType;
     private StoredProcExec storedProcExec;
 
     public DtoListQuery(StoredProcExec storedProcExec,
                         Class<T> dtoType,
-                        ListSqlId listSqlId) {
+                        ListStatement listStatement) {
 
         this.storedProcExec = storedProcExec;
         this.dtoType = dtoType;
-        this.listSqlId = listSqlId;
+        this.listStatement = listStatement;
 
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public List<T> getDtoList(Map<String, Object> parameters) throws GobiiException {
+    public List<T> getDtoList(Map<String, Object> jdbcParameters, Map<String, Object> sqlParameters) throws GobiiException {
 
         List<T> returnVal;
 
         try {
 
-            String sql = listSqlId.getSql();
-            DtoListFromSql<T> dtoListFromSql = new DtoListFromSql<>(dtoType, sql, parameters);
+            DtoListFromSql<T> dtoListFromSql = new DtoListFromSql<>(dtoType, listStatement, jdbcParameters,sqlParameters);
             this.storedProcExec.doWithConnection(dtoListFromSql);
             returnVal = dtoListFromSql.getDtoList();
 
@@ -60,4 +60,32 @@ public class DtoListQuery<T> {
         return returnVal;
 
     } // getDtoList()
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public ResultSet getResultSet(Map<String, Object> jdbcParameters, Map<String, Object> sqlParameters) throws GobiiException {
+
+        ResultSet returnVal;
+
+        try {
+
+            ResultSetFromSql resultSetFromSql = new ResultSetFromSql(listStatement, jdbcParameters,sqlParameters);
+            this.storedProcExec.doWithConnection(resultSetFromSql);
+            returnVal = resultSetFromSql.getResultSet();
+
+        }catch(SQLGrammarException e) {
+            LOGGER.error("Error retrieving dto list with SQL " + e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving dto list ", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+
+        return returnVal;
+
+    } // getDtoList()
+
 }

@@ -41,7 +41,7 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
 
         try {
 
-            returnVal = (List<DataSetDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_DATASET_ALL,null);
+            returnVal = (List<DataSetDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_DATASET_ALL);
 
         } catch (Exception e) {
             LOGGER.error("Gobii Maping Error", e);

@@ -43,14 +43,14 @@ public class DtoRequestNameIdListTest {
     public static void setUpClass() throws Exception {
         Assert.assertTrue(GobiiClientContextAuth.authenticate());
 
-//        (new GlobalPkColl<DtoCrudRequestAnalysisTest>()).getPkVals(DtoCrudRequestAnalysisTest.class,GobiiEntityNameType.ANALYSES,10);
-        (new GlobalPkColl<DtoCrudRequestProjectTest>()).getPkVals(DtoCrudRequestProjectTest.class, GobiiEntityNameType.PROJECTS, 10);
-        (new GlobalPkColl<DtoCrudRequestMapsetTest>()).getPkVals(DtoCrudRequestMapsetTest.class, GobiiEntityNameType.MAPSETS, 10);
-        (new GlobalPkColl<DtoCrudRequestContactTest>()).getPkVals(DtoCrudRequestContactTest.class, GobiiEntityNameType.CONTACTS, 10);
-        (new GlobalPkColl<DtoCrudRequestReferenceTest>()).getPkVals(DtoCrudRequestReferenceTest.class, GobiiEntityNameType.REFERENCES, 10);
-        (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getPkVals(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS, 10);
-        (new GlobalPkColl<DtoCrudRequestProtocolTest>()).getPkVals(DtoCrudRequestProtocolTest.class, GobiiEntityNameType.PROTOCOLS, 10);
-        (new GlobalPkColl<DtoCrudRequestVendorProtocolTest>()).getPkVals(DtoCrudRequestVendorProtocolTest.class, GobiiEntityNameType.VENDORS_PROTOCOLS, 10);
+//        (new GlobalPkColl<DtoCrudRequestAnalysisTest>()).getPkVals(DtoCrudRequestAnalysisTest.class,GobiiEntityNameType.ANALYSIS,10);
+        (new GlobalPkColl<DtoCrudRequestProjectTest>()).getPkVals(DtoCrudRequestProjectTest.class, GobiiEntityNameType.PROJECT, 10);
+        (new GlobalPkColl<DtoCrudRequestMapsetTest>()).getPkVals(DtoCrudRequestMapsetTest.class, GobiiEntityNameType.MAPSET, 10);
+        (new GlobalPkColl<DtoCrudRequestContactTest>()).getPkVals(DtoCrudRequestContactTest.class, GobiiEntityNameType.CONTACT, 10);
+        (new GlobalPkColl<DtoCrudRequestReferenceTest>()).getPkVals(DtoCrudRequestReferenceTest.class, GobiiEntityNameType.REFERENCE, 10);
+        (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getPkVals(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET, 10);
+        (new GlobalPkColl<DtoCrudRequestProtocolTest>()).getPkVals(DtoCrudRequestProtocolTest.class, GobiiEntityNameType.PROTOCOL, 10);
+        (new GlobalPkColl<DtoCrudRequestVendorProtocolTest>()).getPkVals(DtoCrudRequestVendorProtocolTest.class, GobiiEntityNameType.VENDORS_PROTOCOL, 10);
     }
 
     @AfterClass
@@ -119,14 +119,14 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetAnalysisNames() throws Exception {
 
-        testNameRetrieval(GobiiEntityNameType.ANALYSES, GobiiFilterType.NONE, null);
+        testNameRetrieval(GobiiEntityNameType.ANALYSIS, GobiiFilterType.NONE, null);
 
     } // testGetAnalysisNames()
 
     @Test
     public void testGetAnalysisNamesByTypeId() throws Exception {
 
-        testNameRetrieval(GobiiEntityNameType.ANALYSES, GobiiFilterType.BYTYPEID, "1");
+        testNameRetrieval(GobiiEntityNameType.ANALYSIS, GobiiFilterType.BYTYPEID, "1");
     }
 
     @Test
@@ -161,7 +161,7 @@ public class DtoRequestNameIdListTest {
                 .nameIdListByQueryParams();
         GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
 
-        namesUri.setParamValue("entity", GobiiEntityNameType.ANALYSES.toString().toLowerCase());
+        namesUri.setParamValue("entity", GobiiEntityNameType.ANALYSIS.toString().toLowerCase());
         namesUri.setParamValue("filterType", "foo");
         namesUri.setParamValue("filterValue", "33");
         PayloadEnvelope<NameIdDTO> resultEnvelope = gobiiEnvelopeRestResource
@@ -187,7 +187,7 @@ public class DtoRequestNameIdListTest {
                 .nameIdListByQueryParams();
         GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
 
-        namesUri.setParamValue("entity", GobiiEntityNameType.ANALYSES.toString().toLowerCase());
+        namesUri.setParamValue("entity", GobiiEntityNameType.ANALYSIS.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPEID.toString().toUpperCase()));
         // normally would also specify "filterValue" here
 
@@ -209,7 +209,7 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetContactsByIdForContactType() throws Exception {
 
-        testNameRetrieval(GobiiEntityNameType.CONTACTS, GobiiFilterType.BYTYPENAME, "Admin");
+        testNameRetrieval(GobiiEntityNameType.CONTACT, GobiiFilterType.BYTYPENAME, "Admin");
 
     } // testGetMarkers()
 
@@ -217,7 +217,7 @@ public class DtoRequestNameIdListTest {
     public void testGetContactNames() throws Exception {
 
 
-        testNameRetrieval(GobiiEntityNameType.CONTACTS, GobiiFilterType.NONE, null);
+        testNameRetrieval(GobiiEntityNameType.CONTACT, GobiiFilterType.NONE, null);
 
 
     } // testGetMarkers()
@@ -226,7 +226,7 @@ public class DtoRequestNameIdListTest {
     public void testGetProjectNames() throws Exception {
 
 
-        testNameRetrieval(GobiiEntityNameType.PROJECTS, GobiiFilterType.NONE, null);
+        testNameRetrieval(GobiiEntityNameType.PROJECT, GobiiFilterType.NONE, null);
 
     } // testGetMarkers()
 
@@ -235,14 +235,14 @@ public class DtoRequestNameIdListTest {
     public void testGetProjectNamesByContactId() throws Exception {
 
 
-        testNameRetrieval(GobiiEntityNameType.PROJECTS, GobiiFilterType.BYTYPEID, "1");
+        testNameRetrieval(GobiiEntityNameType.PROJECT, GobiiFilterType.BYTYPEID, "1");
     }
 
     @Test
     public void testGetExperimentNamesByProjectId() throws Exception {
 
 
-        testNameRetrieval(GobiiEntityNameType.EXPERIMENTS, GobiiFilterType.BYTYPEID, "1");
+        testNameRetrieval(GobiiEntityNameType.EXPERIMENT, GobiiFilterType.BYTYPEID, "1");
 
     }
 
@@ -250,26 +250,26 @@ public class DtoRequestNameIdListTest {
     public void testGetExperimentNames() throws Exception {
 
 
-        testNameRetrieval(GobiiEntityNameType.EXPERIMENTS, GobiiFilterType.NONE, null);
+        testNameRetrieval(GobiiEntityNameType.EXPERIMENT, GobiiFilterType.NONE, null);
     }
 
     @Test
     public void testGetCvTermsByGroup() throws Exception {
 
 
-        testNameRetrieval(GobiiEntityNameType.CVTERMS, GobiiFilterType.BYTYPENAME, "status");
+        testNameRetrieval(GobiiEntityNameType.CV, GobiiFilterType.BYTYPENAME, "status");
     }
 
     @Test
     public void testGetPlatformNames() throws Exception {
 
 
-        //testNameRetrieval(GobiiEntityNameType.PLATFORMS, GobiiFilterType.NONE, null);
+        //testNameRetrieval(GobiiEntityNameType.PLATFORM, GobiiFilterType.NONE, null);
         RestUri namesUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .nameIdListByQueryParams();
         GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
-        namesUri.setParamValue("entity", GobiiEntityNameType.PLATFORMS.toString().toLowerCase());
+        namesUri.setParamValue("entity", GobiiEntityNameType.PLATFORM.toString().toLowerCase());
 
         PayloadEnvelope<NameIdDTO> resultEnvelope = gobiiEnvelopeRestResource
                 .get(NameIdDTO.class);
@@ -341,7 +341,7 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetPlatformNamesByTypeId() throws Exception {
 
-        testNameRetrieval(GobiiEntityNameType.PLATFORMS, GobiiFilterType.BYTYPEID, "1");
+        testNameRetrieval(GobiiEntityNameType.PLATFORM, GobiiFilterType.BYTYPEID, "1");
 
     } // testGetMarkers()
 
@@ -349,7 +349,7 @@ public class DtoRequestNameIdListTest {
     @Ignore
     public void testGetMarkerGroupNames() throws Exception {
 
-        testNameRetrieval(GobiiEntityNameType.MARKERGROUPS, GobiiFilterType.NONE, null);
+        testNameRetrieval(GobiiEntityNameType.MARKER_GROUP, GobiiFilterType.NONE, null);
 
     } // testGetMarkerGroupNames()
 
@@ -357,7 +357,7 @@ public class DtoRequestNameIdListTest {
     public void testGetReferenceNames() throws Exception {
 
 
-        testNameRetrieval(GobiiEntityNameType.REFERENCES, GobiiFilterType.NONE, null);
+        testNameRetrieval(GobiiEntityNameType.REFERENCE, GobiiFilterType.NONE, null);
 
     } // testGetMarkers()
 
@@ -365,13 +365,13 @@ public class DtoRequestNameIdListTest {
     public void testGetMapNames() throws Exception {
 
 
-        testNameRetrieval(GobiiEntityNameType.MAPSETS, GobiiFilterType.NONE, null);
+        testNameRetrieval(GobiiEntityNameType.MAPSET, GobiiFilterType.NONE, null);
 
     } // testGetMarkers()
 
     @Test
     public void testGetMapsSetNamesByType() throws Exception {
-        testNameRetrieval(GobiiEntityNameType.MAPSETS, GobiiFilterType.BYTYPEID, "1");
+        testNameRetrieval(GobiiEntityNameType.MAPSET, GobiiFilterType.BYTYPEID, "1");
 
     } // testGetMarkers()
 
@@ -380,7 +380,7 @@ public class DtoRequestNameIdListTest {
     public void testGetCvTypes() throws Exception {
 
 
-        testNameRetrieval(GobiiEntityNameType.CVGROUPS, GobiiFilterType.NONE, null);
+        testNameRetrieval(GobiiEntityNameType.CVGROUP, GobiiFilterType.NONE, null);
 
     } // testGetMarkers()
 
@@ -388,7 +388,7 @@ public class DtoRequestNameIdListTest {
     public void testGetCvNames() throws Exception {
 
 
-        testNameRetrieval(GobiiEntityNameType.CVTERMS, GobiiFilterType.NONE, null);
+        testNameRetrieval(GobiiEntityNameType.CV, GobiiFilterType.NONE, null);
 
     } // testGetMarkers()
 
@@ -396,14 +396,14 @@ public class DtoRequestNameIdListTest {
     public void testGetRoles() throws Exception {
 
 
-        testNameRetrieval(GobiiEntityNameType.ROLES, GobiiFilterType.NONE, null);
+        testNameRetrieval(GobiiEntityNameType.ROLE, GobiiFilterType.NONE, null);
     } // testGetMarkers()
 
 
     @Test
     public void testGetManifestNames() throws Exception {
 
-        testNameRetrieval(GobiiEntityNameType.MANIFESTS, GobiiFilterType.NONE, null);
+        testNameRetrieval(GobiiEntityNameType.MANIFEST, GobiiFilterType.NONE, null);
 
     }
 
@@ -411,7 +411,7 @@ public class DtoRequestNameIdListTest {
     public void testGetOrganizationNames() throws Exception {
 
 
-        testNameRetrieval(GobiiEntityNameType.ORGANIZATIONS, GobiiFilterType.NONE, null);
+        testNameRetrieval(GobiiEntityNameType.ORGANIZATION, GobiiFilterType.NONE, null);
 
     }
 
@@ -419,7 +419,7 @@ public class DtoRequestNameIdListTest {
     public void testGetDataSetNamesByExperimentId() throws Exception {
 
 
-        testNameRetrieval(GobiiEntityNameType.DATASETS, GobiiFilterType.BYTYPEID, "1");
+        testNameRetrieval(GobiiEntityNameType.DATASET, GobiiFilterType.BYTYPEID, "1");
 
     }
 
@@ -427,26 +427,26 @@ public class DtoRequestNameIdListTest {
     public void testGetDataSetNames() throws Exception {
 
 
-        testNameRetrieval(GobiiEntityNameType.DATASETS, GobiiFilterType.NONE, null);
+        testNameRetrieval(GobiiEntityNameType.DATASET, GobiiFilterType.NONE, null);
     }
 
     @Test
     public void testGetProtocols() throws Exception {
 
-        testNameRetrieval(GobiiEntityNameType.PROTOCOLS, GobiiFilterType.NONE, null);
+        testNameRetrieval(GobiiEntityNameType.PROTOCOL, GobiiFilterType.NONE, null);
     }
 
     @Test
     public void testGetProtocolVendors() throws Exception {
-        testNameRetrieval(GobiiEntityNameType.VENDORS_PROTOCOLS, GobiiFilterType.NONE, null);
+        testNameRetrieval(GobiiEntityNameType.VENDORS_PROTOCOL, GobiiFilterType.NONE, null);
     }
 
     @Test
     public void testGetProtocolVendorsByProtocolId() throws Exception {
         Integer protocolId = (new GlobalPkColl<DtoCrudRequestProtocolTest>()
-                .getAPkVal(DtoCrudRequestProtocolTest.class, GobiiEntityNameType.PROTOCOLS));
+                .getAPkVal(DtoCrudRequestProtocolTest.class, GobiiEntityNameType.PROTOCOL));
 
-        testNameRetrieval(GobiiEntityNameType.VENDORS_PROTOCOLS, GobiiFilterType.BYTYPEID, protocolId.toString());
+        testNameRetrieval(GobiiEntityNameType.VENDORS_PROTOCOL, GobiiFilterType.BYTYPEID, protocolId.toString());
     }
 
 
@@ -475,6 +475,6 @@ public class DtoRequestNameIdListTest {
         Assert.assertNotNull(platformId);
 
 
-        testNameRetrieval(GobiiEntityNameType.PROTOCOLS, GobiiFilterType.BYTYPEID, platformId.toString());
+        testNameRetrieval(GobiiEntityNameType.PROTOCOL, GobiiFilterType.BYTYPEID, platformId.toString());
     }
 }

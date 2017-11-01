@@ -4,6 +4,7 @@ package org.gobiiproject.gobiiapimodel.restresources.gobii;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
@@ -188,7 +189,7 @@ public class GobiiUriFactory {
     }
 
     public RestUri file(GobiiFileProcessDir gobiiFileProcessDir,
-                        String fileName) throws Exception {
+                             String fileName) throws Exception {
 
         RestUri returnVal = new RestUri(this.domain,
                 this.port,
@@ -200,6 +201,50 @@ public class GobiiUriFactory {
 
         return returnVal;
     }
+
+    public RestUri entityCount(GobiiEntityNameType gobiiEntityNameType) throws Exception {
+
+        RestUri returnVal = new RestUri(this.domain,
+                this.port,
+                this.cropContextRoot,
+                this.gobiiControllerType.getControllerPath(),
+                GobiiServiceRequestId.URL_ENTITIES.getResourcePath())
+                .addUriParam("entityName", gobiiEntityNameType.toString().toLowerCase())
+                .appendSegment(GobiiServiceRequestId.URL_COUNT);
+
+        return returnVal;
+    }
+
+    public RestUri entityChildCount(GobiiEntityNameType gobiiEntityNameTypeParent,
+                                    GobiiEntityNameType gobiiEntityNameTypeChild,
+                                    Integer parentId) throws Exception {
+
+        RestUri returnVal = new RestUri(this.domain,
+                this.port,
+                this.cropContextRoot,
+                this.gobiiControllerType.getControllerPath(),
+                GobiiServiceRequestId.URL_ENTITIES.getResourcePath())
+                .addUriParam("entityNameParent", gobiiEntityNameTypeParent.toString().toLowerCase())
+                .addUriParam("parentId",parentId.toString())
+                .addUriParam("entityNameChild",gobiiEntityNameTypeChild.toString())
+                .appendSegment(GobiiServiceRequestId.URL_COUNT);
+
+        return returnVal;
+    }
+
+    public RestUri entityLastModified(GobiiEntityNameType gobiiEntityNameType) throws Exception {
+
+        RestUri returnVal = new RestUri(this.domain,
+                this.port,
+                this.cropContextRoot,
+                this.gobiiControllerType.getControllerPath(),
+                GobiiServiceRequestId.URL_ENTITIES.getResourcePath())
+                .addUriParam("entityName", gobiiEntityNameType.toString().toLowerCase())
+                .appendSegment(GobiiServiceRequestId.URL_LAST_MODIFIED);
+
+        return returnVal;
+    }
+
 }
 
 

@@ -57,7 +57,7 @@ public class DtoCrudRequestProtocolTest implements DtoCrudRequestTest{
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(protocolDTOResponseEnvelope.getHeader()));
         Assert.assertTrue(protocolDTOResponse.getProtocolId() > 0);
 
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.PROTOCOLS,
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.PROTOCOL,
                 protocolDTOResponse.getProtocolId());
 
 
@@ -71,7 +71,7 @@ public class DtoCrudRequestProtocolTest implements DtoCrudRequestTest{
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
         ProtocolDTO protocolDTOResponseForParams = resultEnvelopeForGetByID.getPayload().getData().get(0);
 
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.PROTOCOLS, protocolDTOResponse.getProtocolId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.PROTOCOL, protocolDTOResponse.getProtocolId());
 
     }
 
