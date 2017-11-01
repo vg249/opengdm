@@ -51,7 +51,7 @@ public class DtoMapProtocolImpl implements DtoMapProtocol {
 
         try {
 
-            returnVal = (List<ProtocolDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_PROTOCOL_ALL, null,null);
+            returnVal = (List<ProtocolDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_PROTOCOL_ALL);
 
             // yes, this is inefficient; however, at the moment we have
             // less development time than we do vendors per protocols --

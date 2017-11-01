@@ -228,7 +228,7 @@ public class DtoMapCvImpl implements DtoMapCv {
 
         Map<String, Object> jdbcParameters = new HashMap<>();
         jdbcParameters.put("groupName", groupName);
-        returnVal = (List<CvDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_CVS_BY_GROUP, jdbcParameters,null);
+        returnVal = (List<CvDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_CVS_BY_GROUP, jdbcParameters);
 
         return returnVal;
 

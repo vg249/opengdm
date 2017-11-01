@@ -33,6 +33,18 @@ public class DtoListQueryColl {
 
     private Map<ListSqlId, DtoListQuery> listQueriesBySqlId = new HashMap<>();
 
+
+    public List getList(ListSqlId listSqlId,
+                        Map<String, Object> jdbcParameters) throws GobiiDaoException {
+
+        return this.getList(listSqlId,jdbcParameters,null);
+    }
+
+    public List getList(ListSqlId listSqlId) throws GobiiDaoException {
+
+        return this.getList(listSqlId,null,null);
+    }
+
     public List getList(ListSqlId listSqlId,
                         Map<String, Object> jdbcParameters,
                         Map<String, Object> sqlParameters) throws GobiiDaoException {
