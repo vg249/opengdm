@@ -300,26 +300,6 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             break;
         }
 
-        case gobiiFileItemAction.SET_FILTER_VALUE: {
-
-            const filterId = action.payload.filterId.toString();
-            const filterValue = action.payload.filterValue;
-            const gobiiExtractFilterType = action.payload.gobiiExtractFilterType;
-
-            let newFilterState = Object.assign({}, state.filters);
-            newFilterState[filterId] = filterValue;
-
-
-            returnVal = {
-                gobiiExtractFilterType: gobiiExtractFilterType,
-                allFileItems: state.allFileItems,
-                uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
-                filters: newFilterState
-            };
-
-            break;
-        }
-
         case gobiiFileItemAction.SET_EXTRACT_TYPE: {
 
             const gobiiExtractFilterType = action.payload.gobiiExtractFilterType;

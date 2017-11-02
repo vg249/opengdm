@@ -187,20 +187,6 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 };
                 break;
             }
-            case gobiiFileItemAction.SET_FILTER_VALUE: {
-                var filterId = action.payload.filterId.toString();
-                var filterValue = action.payload.filterValue;
-                var gobiiExtractFilterType = action.payload.gobiiExtractFilterType;
-                var newFilterState = Object.assign({}, state.filters);
-                newFilterState[filterId] = filterValue;
-                returnVal = {
-                    gobiiExtractFilterType: gobiiExtractFilterType,
-                    allFileItems: state.allFileItems,
-                    uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
-                    filters: newFilterState
-                };
-                break;
-            }
             case gobiiFileItemAction.SET_EXTRACT_TYPE: {
                 var gobiiExtractFilterType = action.payload.gobiiExtractFilterType;
                 returnVal = {
