@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit.impl;
 
+import org.gobiiproject.gobiidao.cache.TableTrackingCache;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapNameIdList;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdParams;
@@ -10,7 +11,9 @@ import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +36,8 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
     Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdListImpl.class);
 
+    @Autowired
+    private TableTrackingCache tableTrackingCache;
 
     private Map<GobiiEntityNameType, DtoMapNameIdFetch> dtoMapNameIdFetchMap = new HashMap<>();
 
@@ -49,6 +54,19 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
             DtoMapNameIdFetch dtoMapNameIdFetch = this.dtoMapNameIdFetchMap.get(dtoMapNameIdParams.getEntityType());
             returnVal = dtoMapNameIdFetch.getNameIds(dtoMapNameIdParams);
+
+
+            // since DtoNameId is not an entity-based DTO, it seemed more sensible to handle setting the
+            // entityLasetModified date here rather than in DtoMapAspect. It should be that all NameIDDto
+            // instances are created here and so they should all have this value. Clients will use
+            // this value to the current lastmodified value to determine if their data are stale.
+            Date entityLastModifed = tableTrackingCache.getLastModified(dtoMapNameIdParams.getEntityType());
+            returnVal.forEach(
+                    nameIdDTO -> {
+                        nameIdDTO.setGobiiEntityNameType(dtoMapNameIdParams.getEntityType());
+                        nameIdDTO.setEntityLasetModified(entityLastModifed);
+                    }
+            );
 
         } else {
             throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,

@@ -372,7 +372,7 @@ export class InstructionSubmissionService {
                                 && item.getCvFilterType() === CvFilterType.DATASET_TYPE
                         });
                         let datasetType: NameId = dataTypeFileItem != null ? new NameId(dataTypeFileItem.getItemId(),
-                            dataTypeFileItem.getItemName(), EntityType.Cv) : null;
+                            dataTypeFileItem.getItemName(), EntityType.Cv,null) : null;
 
 
                         // ******** PRINCIPLE INVESTIGATOR CONCEPT
@@ -381,7 +381,7 @@ export class InstructionSubmissionService {
                                 && item.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR
                         });
                         let principleInvestigator: NameId = principleInvestigatorFileItem != null ? new NameId(principleInvestigatorFileItem.getItemId(),
-                            principleInvestigatorFileItem.getItemName(), EntityType.Contact) : null;
+                            principleInvestigatorFileItem.getItemName(), EntityType.Contact,null) : null;
 
 
                         // ******** PROJECT
@@ -389,7 +389,7 @@ export class InstructionSubmissionService {
                             return item.getEntityType() === EntityType.Project
                         });
                         let project: NameId = projectFileItem != null ? new NameId(projectFileItem.getItemId(),
-                            projectFileItem.getItemName(), EntityType.Project) : null;
+                            projectFileItem.getItemName(), EntityType.Project,null) : null;
 
 
                         // ******** PLATFORM
@@ -398,7 +398,7 @@ export class InstructionSubmissionService {
                         });
 
                         let platforms: NameId[] = platformFileItems.map(item => {
-                            return new NameId(item.getItemId(), item.getItemName(), EntityType.Platform)
+                            return new NameId(item.getItemId(), item.getItemName(), EntityType.Platform, null)
                         });
 
                         let markerGroupItems: GobiiFileItem[] = fileItems.filter(item => {
@@ -406,7 +406,7 @@ export class InstructionSubmissionService {
                         });
 
                         let markerGroups: NameId[] = markerGroupItems.map(item => {
-                            return new NameId(item.getItemId(), item.getItemName(), EntityType.Marker_Group)
+                            return new NameId(item.getItemId(), item.getItemName(), EntityType.Marker_Group,null)
                         });
 
                         // ******** MARKERS
@@ -454,7 +454,7 @@ export class InstructionSubmissionService {
                             dataSetItems.forEach(datsetFileItem => {
 
                                 let dataSet: NameId = new NameId(datsetFileItem.getItemId(),
-                                    datsetFileItem.getItemName(), EntityType.Cv);
+                                    datsetFileItem.getItemName(), EntityType.Cv,null);
 
 
                                 gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,

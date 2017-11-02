@@ -58,9 +58,10 @@ System.register(["@angular/core", "../../model/name-id", "../../model/type-entit
                     var returnVal = [];
                     //let nameListItems:Object[] = json.payload.data;
                     json.payload.data.forEach(function (item) {
+                        var entityLasetModified = new Date(item.entityLasetModified);
                         var currentId = String(item.id);
                         var currentName = item.name;
-                        returnVal.push(new name_id_1.NameId(currentId, currentName, _this.entityType));
+                        returnVal.push(new name_id_1.NameId(currentId, currentName, _this.entityType, entityLasetModified));
                     });
                     return returnVal;
                     //return [new NameId(1, 'foo'), new NameId(2, 'bar')];
