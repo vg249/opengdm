@@ -1,7 +1,17 @@
-System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", "./type-extractor-filter", "./name-id-label-type", "./type-extractor-item"], function (exports_1, context_1) {
+System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", "./type-extractor-filter", "./name-id-label-type", "./type-extractor-item", "./gobii-file-item-compound-id"], function (exports_1, context_1) {
     "use strict";
+    var __extends = (this && this.__extends) || (function () {
+        var extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    })();
     var __moduleName = context_1 && context_1.id;
-    var type_entity_filter_1, type_entity_1, cv_filter_type_1, type_extractor_filter_1, name_id_label_type_1, type_extractor_item_1, FileItemParams;
+    var type_entity_filter_1, type_entity_1, cv_filter_type_1, type_extractor_filter_1, name_id_label_type_1, type_extractor_item_1, gobii_file_item_compound_id_1, FileItemParams;
     return {
         setters: [
             function (type_entity_filter_1_1) {
@@ -21,13 +31,17 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
             },
             function (type_extractor_item_1_1) {
                 type_extractor_item_1 = type_extractor_item_1_1;
+            },
+            function (gobii_file_item_compound_id_1_1) {
+                gobii_file_item_compound_id_1 = gobii_file_item_compound_id_1_1;
             }
         ],
         execute: function () {
             /**
              * Created by Phil on 3/9/2017.
              */
-            FileItemParams = (function () {
+            FileItemParams = (function (_super) {
+                __extends(FileItemParams, _super);
                 function FileItemParams(_queryName, _entityType, _entityFilter, _fkEntityFilterValue, _selectedItemId, _entitySubType, _cvFilterType, _gobiiExtractFilterType, _nameIdLabelType, _extractorItemType, _parentNameIdRequestParams, _childNameIdRequestParams, _isDynamicFilterValue) {
                     if (_queryName === void 0) { _queryName = null; }
                     if (_entityType === void 0) { _entityType = type_entity_1.EntityType.UNKNOWN; }
@@ -37,28 +51,50 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
                     if (_entitySubType === void 0) { _entitySubType = type_entity_1.EntitySubType.UNKNOWN; }
                     if (_cvFilterType === void 0) { _cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN; }
                     if (_gobiiExtractFilterType === void 0) { _gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN; }
-                    this._queryName = _queryName;
-                    this._entityType = _entityType;
-                    this._entityFilter = _entityFilter;
-                    this._fkEntityFilterValue = _fkEntityFilterValue;
-                    this._selectedItemId = _selectedItemId;
-                    this._entitySubType = _entitySubType;
-                    this._cvFilterType = _cvFilterType;
-                    this._gobiiExtractFilterType = _gobiiExtractFilterType;
-                    this._nameIdLabelType = _nameIdLabelType;
-                    this._extractorItemType = _extractorItemType;
-                    this._parentNameIdRequestParams = _parentNameIdRequestParams;
-                    this._childNameIdRequestParams = _childNameIdRequestParams;
-                    this._isDynamicFilterValue = _isDynamicFilterValue;
+                    var _this = _super.call(this, _extractorItemType, _entityType, _entitySubType, _cvFilterType) || this;
+                    _this._queryName = _queryName;
+                    _this._entityFilter = _entityFilter;
+                    _this._fkEntityFilterValue = _fkEntityFilterValue;
+                    _this._selectedItemId = _selectedItemId;
+                    _this._gobiiExtractFilterType = _gobiiExtractFilterType;
+                    _this._nameIdLabelType = _nameIdLabelType;
+                    _this._parentNameIdRequestParams = _parentNameIdRequestParams;
+                    _this._childNameIdRequestParams = _childNameIdRequestParams;
+                    _this._isDynamicFilterValue = _isDynamicFilterValue;
+                    return _this;
                 }
                 FileItemParams.build = function (queryName, gobiiExtractFilterType, entityType) {
                     return (new FileItemParams(queryName, entityType, type_entity_filter_1.EntityFilter.NONE, null, null, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, gobiiExtractFilterType, name_id_label_type_1.NameIdLabelType.UNKNOWN, type_extractor_item_1.ExtractorItemType.ENTITY, null, [], true));
                 };
+                FileItemParams.prototype.getQueryName = function () {
+                    return this._queryName;
+                };
+                FileItemParams.prototype.getExtractorItemType = function () {
+                    return _super.prototype.getExtractorItemType.call(this);
+                };
+                FileItemParams.prototype.setExtractorItemType = function (value) {
+                    _super.prototype.setExtractorItemType.call(this, value);
+                    return this;
+                };
                 FileItemParams.prototype.getEntityType = function () {
-                    return this._entityType;
+                    return _super.prototype.getEntityType.call(this);
                 };
                 FileItemParams.prototype.setEntityType = function (value) {
-                    this._entityType = value;
+                    _super.prototype.setEntityType.call(this, value);
+                    return this;
+                };
+                FileItemParams.prototype.getEntitySubType = function () {
+                    return _super.prototype.getEntitySubType.call(this);
+                };
+                FileItemParams.prototype.setEntitySubType = function (value) {
+                    _super.prototype.setEntitySubType.call(this, value);
+                    return this;
+                };
+                FileItemParams.prototype.getCvFilterType = function () {
+                    return _super.prototype.getCvFilterType.call(this);
+                };
+                FileItemParams.prototype.setCvFilterType = function (value) {
+                    _super.prototype.setCvFilterType.call(this, value);
                     return this;
                 };
                 FileItemParams.prototype.getEntityFilter = function () {
@@ -82,20 +118,6 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
                     this._selectedItemId = id;
                     return this;
                 };
-                FileItemParams.prototype.getEntitySubType = function () {
-                    return this._entitySubType;
-                };
-                FileItemParams.prototype.setEntitySubType = function (value) {
-                    this._entitySubType = value;
-                    return this;
-                };
-                FileItemParams.prototype.getCvFilterType = function () {
-                    return this._cvFilterType;
-                };
-                FileItemParams.prototype.setCvFilterType = function (value) {
-                    this._cvFilterType = value;
-                    return this;
-                };
                 FileItemParams.prototype.getGobiiExtractFilterType = function () {
                     return this._gobiiExtractFilterType;
                 };
@@ -103,22 +125,12 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
                     this._gobiiExtractFilterType = value;
                     return this;
                 };
-                FileItemParams.prototype.getQueryName = function () {
-                    return this._queryName;
-                };
                 FileItemParams.prototype.setNameIdLabelType = function (nameIdLabelType) {
                     this._nameIdLabelType = nameIdLabelType;
                     return this;
                 };
                 FileItemParams.prototype.getMameIdLabelType = function () {
                     return this._nameIdLabelType;
-                };
-                FileItemParams.prototype.setExtractorItemType = function (extractorItemType) {
-                    this._extractorItemType = extractorItemType;
-                    return this;
-                };
-                FileItemParams.prototype.getExtractorItemType = function () {
-                    return this._extractorItemType;
                 };
                 FileItemParams.prototype.setParentNameIdRequestParams = function (nameIdRequestParams) {
                     this._parentNameIdRequestParams = nameIdRequestParams;
@@ -142,7 +154,7 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
                     return this._isDynamicFilterValue;
                 };
                 return FileItemParams;
-            }());
+            }(gobii_file_item_compound_id_1.GobiiFileItemCompoundId));
             exports_1("FileItemParams", FileItemParams);
         }
     };

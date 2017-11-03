@@ -29,11 +29,11 @@ System.register(["../model/type-entity", "../model/cv-filter-type", "../model/ty
                     this.extractorFilterTypeLabels = new Map();
                     this.treeExtractorTypeLabels = new Map();
                     this.extractFormatTypeLabels = new Map();
-                    this.entityNodeLabels[type_entity_1.EntityType.DataSet] = "Data Set";
-                    this.entityNodeLabels[type_entity_1.EntityType.Platform] = "Platform";
-                    this.entityNodeLabels[type_entity_1.EntityType.Mapset] = "Mapset";
-                    this.entityNodeLabels[type_entity_1.EntityType.Project] = "Project";
-                    this.entityNodeLabels[type_entity_1.EntityType.Marker_Group] = "Marker Groups";
+                    this.entityNodeLabels[type_entity_1.EntityType.DATASET] = "Data Set";
+                    this.entityNodeLabels[type_entity_1.EntityType.PLATFORM] = "Platform";
+                    this.entityNodeLabels[type_entity_1.EntityType.MAPSET] = "Mapset";
+                    this.entityNodeLabels[type_entity_1.EntityType.PROJECT] = "Project";
+                    this.entityNodeLabels[type_entity_1.EntityType.MARKER_GROUP] = "Marker Groups";
                     this.cvFilterNodeLabels[cv_filter_type_1.CvFilterType.DATASET_TYPE] = "Dataset Type";
                     this.entitySubtypeNodeLabels[type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR] = "Principle Investigator";
                     this.entitySubtypeNodeLabels[type_entity_1.EntitySubType.CONTACT_SUBMITED_BY] = "Submit As";

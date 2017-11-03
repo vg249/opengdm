@@ -20,35 +20,35 @@ public class EntityStatsDTO extends DTOBase {
 
     }
 
-    GobiiEntityNameType entityNameType;
-    GobiiEntityNameType parentNameType;
-    GobiiEntityNameType childNameType;
+//    GobiiEntityNameType entityNameType;
+//    GobiiEntityNameType parentNameType;
+//    GobiiEntityNameType childNameType;
     Integer count = null;
     Date lastModified = null;
 
-    public GobiiEntityNameType getEntityNameType() {
-        return entityNameType;
-    }
-
-    public void setEntityNameType(GobiiEntityNameType entityNameType) {
-        this.entityNameType = entityNameType;
-    }
-
-    public GobiiEntityNameType getParentNameType() {
-        return parentNameType;
-    }
-
-    public void setParentNameType(GobiiEntityNameType parentNameType) {
-        this.parentNameType = parentNameType;
-    }
-
-    public GobiiEntityNameType getChildNameType() {
-        return childNameType;
-    }
-
-    public void setChildNameType(GobiiEntityNameType childNameType) {
-        this.childNameType = childNameType;
-    }
+//    public GobiiEntityNameType getEntityNameType() {
+//        return entityNameType;
+//    }
+//
+//    public void setEntityNameType(GobiiEntityNameType entityNameType) {
+//        this.entityNameType = entityNameType;
+//    }
+//
+//    public GobiiEntityNameType getParentNameType() {
+//        return parentNameType;
+//    }
+//
+//    public void setParentNameType(GobiiEntityNameType parentNameType) {
+//        this.parentNameType = parentNameType;
+//    }
+//
+//    public GobiiEntityNameType getChildNameType() {
+//        return childNameType;
+//    }
+//
+//    public void setChildNameType(GobiiEntityNameType childNameType) {
+//        this.childNameType = childNameType;
+//    }
 
     public Integer getCount() {
         return count;

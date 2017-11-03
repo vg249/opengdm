@@ -42,12 +42,12 @@ System.register(["@angular/core", "./dto-request.service", "../../model/type-ent
                 } // ctor
                 NameIdService.prototype.getEntityFilterValue = function (nameIdRequestParams) {
                     var returnVal = null;
-                    if (nameIdRequestParams.getEntityType() === type_entity_1.EntityType.Contact) {
+                    if (nameIdRequestParams.getEntityType() === type_entity_1.EntityType.CONTACT) {
                         if (nameIdRequestParams.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR) {
                             returnVal = "PI";
                         }
                     }
-                    else if (nameIdRequestParams.getEntityType() === type_entity_1.EntityType.Cv) {
+                    else if (nameIdRequestParams.getEntityType() === type_entity_1.EntityType.CV) {
                         if (nameIdRequestParams.getCvFilterType() != null && nameIdRequestParams.getCvFilterType() != cv_filter_type_1.CvFilterType.UNKNOWN) {
                             returnVal = cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.DATASET_TYPE);
                         }

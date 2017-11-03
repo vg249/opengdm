@@ -83,16 +83,16 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                     this.store = store;
                     this.dtoRequestServiceExtractorFile = dtoRequestServiceExtractorFile;
                     this.treeStructureService = treeStructureService;
-                    this.datasetCriterion = new gobii_file_item_criterion_1.GobiiFileItemCriterion(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.DataSet, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN), false);
+                    this.datasetCriterion = new gobii_file_item_criterion_1.GobiiFileItemCriterion(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.DATASET, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN), false);
                     this.sampleItemCriterion = new gobii_file_item_criterion_1.GobiiFileItemCriterion(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_ITEM, type_entity_1.EntityType.UNKNOWN, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN), false);
                     this.samplefileCriterion = new gobii_file_item_criterion_1.GobiiFileItemCriterion(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.SAMPLE_FILE, type_entity_1.EntityType.UNKNOWN, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN), false);
-                    this.piContactCriterion = new gobii_file_item_criterion_1.GobiiFileItemCriterion(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.Contact, type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR, cv_filter_type_1.CvFilterType.UNKNOWN), false);
-                    this.projectsCriterion = new gobii_file_item_criterion_1.GobiiFileItemCriterion(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.Project, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN), false);
-                    this.datasetTypesCriterion = new gobii_file_item_criterion_1.GobiiFileItemCriterion(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.Cv, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.DATASET_TYPE), false);
+                    this.piContactCriterion = new gobii_file_item_criterion_1.GobiiFileItemCriterion(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.CONTACT, type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR, cv_filter_type_1.CvFilterType.UNKNOWN), false);
+                    this.projectsCriterion = new gobii_file_item_criterion_1.GobiiFileItemCriterion(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.PROJECT, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN), false);
+                    this.datasetTypesCriterion = new gobii_file_item_criterion_1.GobiiFileItemCriterion(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.CV, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.DATASET_TYPE), false);
                     this.markerListItemCriterion = new gobii_file_item_criterion_1.GobiiFileItemCriterion(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.MARKER_LIST_ITEM, type_entity_1.EntityType.UNKNOWN, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN), false);
                     this.markerListFileCriterion = new gobii_file_item_criterion_1.GobiiFileItemCriterion(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.MARKER_FILE, type_entity_1.EntityType.UNKNOWN, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN), false);
-                    this.markergGroupCriterion = new gobii_file_item_criterion_1.GobiiFileItemCriterion(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.Marker_Group, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN), false);
-                    this.platformCriterion = new gobii_file_item_criterion_1.GobiiFileItemCriterion(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.Platform, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN), false);
+                    this.markergGroupCriterion = new gobii_file_item_criterion_1.GobiiFileItemCriterion(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.MARKER_GROUP, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN), false);
+                    this.platformCriterion = new gobii_file_item_criterion_1.GobiiFileItemCriterion(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.PLATFORM, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN), false);
                 }
                 InstructionSubmissionService.prototype.isItemPresent = function (gobiiFileItems, gobiiFileItemCriterion) {
                     return gobiiFileItems.filter(function (fi) { return gobiiFileItemCriterion.compoundIdeEquals(fi); }).length > 0;
@@ -256,14 +256,14 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                             }
                             // ******** SUBMITTER CONTACT
                             var submitterFileItem = fileItems.find(function (item) {
-                                return (item.getEntityType() === type_entity_1.EntityType.Contact)
+                                return (item.getEntityType() === type_entity_1.EntityType.CONTACT)
                                     && (item.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_SUBMITED_BY);
                             });
                             submitterContactid = Number(submitterFileItem.getItemId());
                             // ******** MAPSET IDs
                             var mapsetFileItems = fileItems
                                 .filter(function (item) {
-                                return item.getEntityType() === type_entity_1.EntityType.Mapset;
+                                return item.getEntityType() === type_entity_1.EntityType.MAPSET;
                             });
                             mapsetIds = mapsetFileItems
                                 .map(function (item) {
@@ -287,33 +287,33 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                             }
                             // ******** DATA SET TYPE
                             var dataTypeFileItem = fileItems.find(function (item) {
-                                return item.getEntityType() === type_entity_1.EntityType.Cv
+                                return item.getEntityType() === type_entity_1.EntityType.CV
                                     && item.getCvFilterType() === cv_filter_type_1.CvFilterType.DATASET_TYPE;
                             });
-                            var datasetType = dataTypeFileItem != null ? new name_id_1.NameId(dataTypeFileItem.getItemId(), dataTypeFileItem.getItemName(), type_entity_1.EntityType.Cv, null) : null;
+                            var datasetType = dataTypeFileItem != null ? new name_id_1.NameId(dataTypeFileItem.getItemId(), dataTypeFileItem.getItemName(), type_entity_1.EntityType.CV, null) : null;
                             // ******** PRINCIPLE INVESTIGATOR CONCEPT
                             var principleInvestigatorFileItem = fileItems.find(function (item) {
-                                return item.getEntityType() === type_entity_1.EntityType.Contact
+                                return item.getEntityType() === type_entity_1.EntityType.CONTACT
                                     && item.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR;
                             });
-                            var principleInvestigator = principleInvestigatorFileItem != null ? new name_id_1.NameId(principleInvestigatorFileItem.getItemId(), principleInvestigatorFileItem.getItemName(), type_entity_1.EntityType.Contact, null) : null;
+                            var principleInvestigator = principleInvestigatorFileItem != null ? new name_id_1.NameId(principleInvestigatorFileItem.getItemId(), principleInvestigatorFileItem.getItemName(), type_entity_1.EntityType.CONTACT, null) : null;
                             // ******** PROJECT
                             var projectFileItem = fileItems.find(function (item) {
-                                return item.getEntityType() === type_entity_1.EntityType.Project;
+                                return item.getEntityType() === type_entity_1.EntityType.PROJECT;
                             });
-                            var project = projectFileItem != null ? new name_id_1.NameId(projectFileItem.getItemId(), projectFileItem.getItemName(), type_entity_1.EntityType.Project, null) : null;
+                            var project = projectFileItem != null ? new name_id_1.NameId(projectFileItem.getItemId(), projectFileItem.getItemName(), type_entity_1.EntityType.PROJECT, null) : null;
                             // ******** PLATFORM
                             var platformFileItems = fileItems.filter(function (item) {
-                                return item.getEntityType() === type_entity_1.EntityType.Platform;
+                                return item.getEntityType() === type_entity_1.EntityType.PLATFORM;
                             });
                             var platforms = platformFileItems.map(function (item) {
-                                return new name_id_1.NameId(item.getItemId(), item.getItemName(), type_entity_1.EntityType.Platform, null);
+                                return new name_id_1.NameId(item.getItemId(), item.getItemName(), type_entity_1.EntityType.PLATFORM, null);
                             });
                             var markerGroupItems = fileItems.filter(function (item) {
-                                return item.getEntityType() === type_entity_1.EntityType.Marker_Group;
+                                return item.getEntityType() === type_entity_1.EntityType.MARKER_GROUP;
                             });
                             var markerGroups = markerGroupItems.map(function (item) {
-                                return new name_id_1.NameId(item.getItemId(), item.getItemName(), type_entity_1.EntityType.Marker_Group, null);
+                                return new name_id_1.NameId(item.getItemId(), item.getItemName(), type_entity_1.EntityType.MARKER_GROUP, null);
                             });
                             // ******** MARKERS
                             var markerListItems = fileItems
@@ -342,10 +342,10 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                             if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
                                 var dataSetItems = fileItems
                                     .filter(function (item) {
-                                    return item.getEntityType() === type_entity_1.EntityType.DataSet;
+                                    return item.getEntityType() === type_entity_1.EntityType.DATASET;
                                 });
                                 dataSetItems.forEach(function (datsetFileItem) {
-                                    var dataSet = new name_id_1.NameId(datsetFileItem.getItemId(), datsetFileItem.getItemName(), type_entity_1.EntityType.Cv, null);
+                                    var dataSet = new name_id_1.NameId(datsetFileItem.getItemId(), datsetFileItem.getItemName(), type_entity_1.EntityType.CV, null);
                                     gobiiDataSetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(gobiiFileType, false, null, gobiiExtractFilterType, null, null, markerFileName, null, datasetType, platforms, null, null, dataSet, null));
                                 });
                             }

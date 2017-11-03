@@ -190,14 +190,14 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                                 // RUN FILTERED QUERY TO GET CHILD ITEMS WHEN NECESSARY
                                 var nameIdFilterParamType = type_nameid_filter_params_1.NameIdFilterParamTypes.UNKNOWN;
                                 var filterValue = fileItemToReplaceWith.getItemId();
-                                if (fileItemToReplaceWith.getEntityType() === type_entity_1.EntityType.Contact
+                                if (fileItemToReplaceWith.getEntityType() === type_entity_1.EntityType.CONTACT
                                     && (fileItemToReplaceWith.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)) {
                                     nameIdFilterParamType = type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS_BY_CONTACT;
                                 }
-                                else if (fileItemToReplaceWith.getEntityType() === type_entity_1.EntityType.Project) {
+                                else if (fileItemToReplaceWith.getEntityType() === type_entity_1.EntityType.PROJECT) {
                                     nameIdFilterParamType = type_nameid_filter_params_1.NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT;
                                 }
-                                else if (fileItemToReplaceWith.getEntityType() === type_entity_1.EntityType.Experiment) {
+                                else if (fileItemToReplaceWith.getEntityType() === type_entity_1.EntityType.EXPERIMENT) {
                                     nameIdFilterParamType = type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT;
                                 }
                                 if ((nameIdFilterParamType !== type_nameid_filter_params_1.NameIdFilterParamTypes.UNKNOWN && filterValue != null)) {
