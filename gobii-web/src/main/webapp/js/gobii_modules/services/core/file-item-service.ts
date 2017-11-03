@@ -208,6 +208,7 @@ export class FileItemService {
         this.nameIdService.get(nameIdRequestParamsToLoad)
             .subscribe(nameIds => {
 
+                    let minEntityLastUpdated: Date;
                     let fileItems: GobiiFileItem[] = [];
                     if (nameIds && ( nameIds.length > 0 )) {
 
@@ -229,6 +230,11 @@ export class FileItemService {
 
                             fileItems.push(currentFileItem);
                         });
+
+
+                        minEntityLastUpdated = new Date(Math.min.apply(null, nameIds
+                            .map(nameId => nameId.entityLasetModified))
+                        );
 
 
                         let temp: string = "foo";
@@ -303,7 +309,11 @@ export class FileItemService {
                         {
                             gobiiFileItems: fileItems,
                             filterId: nameIdRequestParamsToLoad.getQueryName(),
-                            filterValue: nameIdRequestParamsToLoad.getFkEntityFilterValue()
+                            filter: {
+                                filterValue:
+                                    nameIdRequestParamsToLoad.getFkEntityFilterValue(),
+                                entityLasteUpdated: minEntityLastUpdated
+                            }
                         }
                     );
 
@@ -342,7 +352,7 @@ export class FileItemService {
 
     // these next two functions are redundant with respect to the other ones that load nameids
     // the refactoring path is for the loadWithParams() methods to be deprecated and moved into
-    // effects  so that all fo these things will use effects.
+    // effects  so that all of these things will use effects.
     public makeFileLoadActions(gobiiExtractFilterType: GobiiExtractFilterType,
                                nameIdFilterParamTypes: NameIdFilterParamTypes,
                                filterValue: string): Observable<fileItemActions.LoadFileItemListAction[]> {
@@ -371,6 +381,7 @@ export class FileItemService {
             this.nameIdService.get(nameIdRequestParamsToLoad)
                 .subscribe(nameIds => {
 
+                        let minEntityLastUpdated: Date;
                         let fileItems: GobiiFileItem[] = [];
                         if (nameIds && ( nameIds.length > 0 )) {
 
@@ -393,6 +404,8 @@ export class FileItemService {
                                 fileItems.push(currentFileItem);
                             });
 
+                            minEntityLastUpdated = new Date(Math.min.apply(null, nameIds
+                                .map(nameId => nameId.entityLasetModified)));
 
                             let temp: string = "foo";
 
@@ -467,7 +480,10 @@ export class FileItemService {
                             {
                                 gobiiFileItems: fileItems,
                                 filterId: nameIdRequestParamsToLoad.getQueryName(),
-                                filterValue: nameIdRequestParamsToLoad.getFkEntityFilterValue()
+                                filter: {
+                                    filterValue: nameIdRequestParamsToLoad.getFkEntityFilterValue(),
+                                    entityLasteUpdated: minEntityLastUpdated
+                                }
                             }
                         );
                         observer.next(loadAction);

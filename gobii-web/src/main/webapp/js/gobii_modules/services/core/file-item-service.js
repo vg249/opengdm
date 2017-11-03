@@ -174,6 +174,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     }
                     this.nameIdService.get(nameIdRequestParamsToLoad)
                         .subscribe(function (nameIds) {
+                        var minEntityLastUpdated;
                         var fileItems = [];
                         if (nameIds && (nameIds.length > 0)) {
                             nameIds.forEach(function (n) {
@@ -189,6 +190,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                     .setParentItemId(nameIdRequestParamsToLoad.getFkEntityFilterValue());
                                 fileItems.push(currentFileItem);
                             });
+                            minEntityLastUpdated = new Date(Math.min.apply(null, nameIds
+                                .map(function (nameId) { return nameId.entityLasetModified; })));
                             var temp = "foo";
                             temp = "bar";
                             if (nameIdRequestParamsToLoad.getMameIdLabelType() != name_id_label_type_1.NameIdLabelType.UNKNOWN) {
@@ -244,7 +247,10 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                         var loadAction = new fileItemActions.LoadFileItemListAction({
                             gobiiFileItems: fileItems,
                             filterId: nameIdRequestParamsToLoad.getQueryName(),
-                            filterValue: nameIdRequestParamsToLoad.getFkEntityFilterValue()
+                            filter: {
+                                filterValue: nameIdRequestParamsToLoad.getFkEntityFilterValue(),
+                                entityLasteUpdated: minEntityLastUpdated
+                            }
                         });
                         _this.store.dispatch(loadAction);
                         // if there are children, we will load their data as well
@@ -287,6 +293,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                         nameIdRequestParamsToLoad.setFkEntityFilterValue(filterValue);
                         _this.nameIdService.get(nameIdRequestParamsToLoad)
                             .subscribe(function (nameIds) {
+                            var minEntityLastUpdated;
                             var fileItems = [];
                             if (nameIds && (nameIds.length > 0)) {
                                 nameIds.forEach(function (n) {
@@ -302,6 +309,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                         .setParentItemId(nameIdRequestParamsToLoad.getFkEntityFilterValue());
                                     fileItems.push(currentFileItem);
                                 });
+                                minEntityLastUpdated = new Date(Math.min.apply(null, nameIds
+                                    .map(function (nameId) { return nameId.entityLasetModified; })));
                                 var temp = "foo";
                                 temp = "bar";
                                 if (nameIdRequestParamsToLoad.getMameIdLabelType() != name_id_label_type_1.NameIdLabelType.UNKNOWN) {
@@ -357,7 +366,10 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                             var loadAction = new fileItemActions.LoadFileItemListAction({
                                 gobiiFileItems: fileItems,
                                 filterId: nameIdRequestParamsToLoad.getQueryName(),
-                                filterValue: nameIdRequestParamsToLoad.getFkEntityFilterValue()
+                                filter: {
+                                    filterValue: nameIdRequestParamsToLoad.getFkEntityFilterValue(),
+                                    entityLasteUpdated: minEntityLastUpdated
+                                }
                             });
                             observer.next(loadAction);
                             // if there are children, we will load their data as well

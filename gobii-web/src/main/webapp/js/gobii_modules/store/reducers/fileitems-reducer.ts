@@ -23,7 +23,7 @@ export interface State {
     gobiiExtractFilterType: GobiiExtractFilterType,
     uniqueIdsOfExtractFileItems: string[];
     allFileItems: GobiiFileItem[] ;
-    filters: { [id: string]: string };
+    filters: { [id: string]: {filterValue: string, entityLasteUpdated: Date} };
 };
 
 export const initialState: State = {
@@ -134,7 +134,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
         case gobiiFileItemAction.LOAD_FILE_ITEM_LIST: {
             const gobiiFileItemsPayload = action.payload.gobiiFileItems;
             const filterId = action.payload.filterId.toString();
-            const filterValue = action.payload.filterValue;
+            const filterValue = action.payload.filter;
 
             const newGobiiFileItems = gobiiFileItemsPayload.filter(newItem =>
                 state
@@ -507,7 +507,7 @@ export const getProjectsForSelectedPi = createSelector(getFileItems, getFilters,
 
     if (filters[NameIdFilterParamTypes.PROJECTS_BY_CONTACT]) {
 
-        let contactId: string = filters[NameIdFilterParamTypes.PROJECTS_BY_CONTACT];
+        let contactId: string = filters[NameIdFilterParamTypes.PROJECTS_BY_CONTACT].filterValue;
         returnVal = fileItems.filter(e =>
             ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
             && ( e.getEntityType() === EntityType.Project)
@@ -535,7 +535,7 @@ export const getExperimentsForSelectedProject = createSelector(getFileItems, get
 
     if (filters[NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT]) {
 
-        let projectId: string = filters[NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT];
+        let projectId: string = filters[NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT].filterValue;
         returnVal = fileItems.filter(e =>
             ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
             && ( e.getEntityType() === EntityType.Experiment)
@@ -563,7 +563,7 @@ export const getDatasetsForSelectedExperiment = createSelector(getFileItems, get
 
     if (filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT]) {
 
-        let experimentId: string = filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT];
+        let experimentId: string = filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT].filterValue;
         returnVal = fileItems.filter(e =>
             ( e.getExtractorItemType() === ExtractorItemType.ENTITY
                 && e.getEntityType() === EntityType.DataSet

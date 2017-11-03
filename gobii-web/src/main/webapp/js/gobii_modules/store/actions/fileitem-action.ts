@@ -28,7 +28,7 @@ export class LoadFileItemListAction implements Action {
     constructor(public payload: {
         gobiiFileItems: GobiiFileItem[],
         filterId: NameIdFilterParamTypes,
-        filterValue: string
+        filter: {filterValue: string, entityLasteUpdated: Date}
 
     }) {
     }
