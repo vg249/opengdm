@@ -51,9 +51,12 @@ export class DtoRequestItemEntityStats implements DtoRequestItem<EntityStats> {
 
         let returnVal: EntityStats;
 
-        returnVal = new EntityStats(json.count,
-            new Date(json.lastModified)
-        );
+        let entityStatsFromServer:any = json.payload.data[0];
+        if( entityStatsFromServer ) {
+            returnVal = new EntityStats(entityStatsFromServer.count,
+                new Date(entityStatsFromServer.lastModified)
+            );
+        }
 
         return returnVal;
     }

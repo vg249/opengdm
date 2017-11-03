@@ -60,7 +60,10 @@ System.register(["@angular/core", "../../model/entity-stats", "../../model/type-
                 };
                 DtoRequestItemEntityStats.prototype.resultFromJson = function (json) {
                     var returnVal;
-                    returnVal = new entity_stats_1.EntityStats(json.count, new Date(json.lastModified));
+                    var entityStatsFromServer = json.payload.data[0];
+                    if (entityStatsFromServer) {
+                        returnVal = new entity_stats_1.EntityStats(entityStatsFromServer.count, new Date(entityStatsFromServer.lastModified));
+                    }
                     return returnVal;
                 };
                 DtoRequestItemEntityStats = __decorate([
