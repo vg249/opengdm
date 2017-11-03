@@ -23,7 +23,7 @@ export class FileItemParams {
                         private _extractorItemType: ExtractorItemType,
                         private _parentNameIdRequestParams: FileItemParams,
                         private _childNameIdRequestParams: FileItemParams[],
-                        private _dynamicFilterValue:boolean) {
+                        private _isDynamicFilterValue:boolean) {
 
     }
 
@@ -151,13 +151,13 @@ export class FileItemParams {
         return this;
     }
 
-    setDynamicFilterValue(dynamicFilterValue:boolean): FileItemParams {
-        this._dynamicFilterValue = dynamicFilterValue;
+    setIsDynamicFilterValue(dynamicFilterValue:boolean): FileItemParams {
+        this._isDynamicFilterValue = dynamicFilterValue;
         return this;
     }
 
-    getDynamicFilterValue(): boolean {
-        return this._dynamicFilterValue;
+    getIsDynamicFilterValue(): boolean {
+        return this._isDynamicFilterValue;
     }
 
 

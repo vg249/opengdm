@@ -28,7 +28,7 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
              * Created by Phil on 3/9/2017.
              */
             FileItemParams = (function () {
-                function FileItemParams(_queryName, _entityType, _entityFilter, _fkEntityFilterValue, _selectedItemId, _entitySubType, _cvFilterType, _gobiiExtractFilterType, _nameIdLabelType, _extractorItemType, _parentNameIdRequestParams, _childNameIdRequestParams, _dynamicFilterValue) {
+                function FileItemParams(_queryName, _entityType, _entityFilter, _fkEntityFilterValue, _selectedItemId, _entitySubType, _cvFilterType, _gobiiExtractFilterType, _nameIdLabelType, _extractorItemType, _parentNameIdRequestParams, _childNameIdRequestParams, _isDynamicFilterValue) {
                     if (_queryName === void 0) { _queryName = null; }
                     if (_entityType === void 0) { _entityType = type_entity_1.EntityType.UNKNOWN; }
                     if (_entityFilter === void 0) { _entityFilter = type_entity_filter_1.EntityFilter.NONE; }
@@ -49,7 +49,7 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
                     this._extractorItemType = _extractorItemType;
                     this._parentNameIdRequestParams = _parentNameIdRequestParams;
                     this._childNameIdRequestParams = _childNameIdRequestParams;
-                    this._dynamicFilterValue = _dynamicFilterValue;
+                    this._isDynamicFilterValue = _isDynamicFilterValue;
                 }
                 FileItemParams.build = function (queryName, gobiiExtractFilterType, entityType) {
                     return (new FileItemParams(queryName, entityType, type_entity_filter_1.EntityFilter.NONE, null, null, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, gobiiExtractFilterType, name_id_label_type_1.NameIdLabelType.UNKNOWN, type_extractor_item_1.ExtractorItemType.ENTITY, null, [], true));
@@ -134,12 +134,12 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
                     this._childNameIdRequestParams = childNameIdRequestParams;
                     return this;
                 };
-                FileItemParams.prototype.setDynamicFilterValue = function (dynamicFilterValue) {
-                    this._dynamicFilterValue = dynamicFilterValue;
+                FileItemParams.prototype.setIsDynamicFilterValue = function (dynamicFilterValue) {
+                    this._isDynamicFilterValue = dynamicFilterValue;
                     return this;
                 };
-                FileItemParams.prototype.getDynamicFilterValue = function () {
-                    return this._dynamicFilterValue;
+                FileItemParams.prototype.getIsDynamicFilterValue = function () {
+                    return this._isDynamicFilterValue;
                 };
                 return FileItemParams;
             }());
