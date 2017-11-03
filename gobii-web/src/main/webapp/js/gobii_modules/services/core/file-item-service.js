@@ -193,6 +193,24 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                         if (nameIdRequestParamsToLoad.getIsDynamicFilterValue()) {
                             nameIdRequestParamsToLoad.setFkEntityFilterValue(filterValue);
                         }
+                        /***
+                         * This approach optimizes switching from one extract type another, when a whole bunch of
+                         * server requests are made at one type. But the improvement is not as great as I would have liked.
+                         * In my bench-testing, the total time to switch, for example, from Data Set to Sample Extract is over 800ms
+                         * the first time, and then 400ms on subsequent requests. Apparently the overhead of each call to lastmodified
+                         * is enough to diminish the benefits. In the next refactoring of this issue, we probably want to have
+                         * a lastmodified call that gives the datetime stamps for _all_entities, because I'm sure the setup/teardown of the
+                         * http request is a lot more expensive, cumulatively, than the extra payload. The trick there is that we'd need to cache the
+                         * entire set of lastmodified dates in such a way that they would get refreshed at the start of a "transaction,"
+                         * where a transaction for this purpose is ill-defined. Does it mean when we switch from one extract type to another?
+                         * There is actually a way to do this when the export type tabs are controlled by the angular router, because for a
+                         * given navigational path transition we could reset the server last modified dates in the store. For that matter,
+                         * with that model, the update of the items in the store could be driven from when the collection of lastmodified
+                         * dates are modified in the store: that is, when you switch from one extract type to another (or some other
+                         * consequential UI event), you dispatch a fresh collection of lastmodified dates, one per each entity-filter type to
+                         * the store. There is then an effect from that dispatch action that iterates all the query filters: if the
+                         * lastmodified for a given filter's entity type has changed, the effect requests a refresh of the filter's items.
+                         */
                         _this.store.select(fromRoot.getFileItemsFilters)
                             .subscribe(function (filters) {
                             var filterState = filters[nameIdRequestParamsToLoad.getQueryName()];
