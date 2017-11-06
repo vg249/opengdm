@@ -271,7 +271,7 @@ class TableEntryValue {
     private Integer rCoord;
     private Integer cCoord;
 
-    TableEntryValue(String name, int rCoord, int cCoord) {
+    TableEntryValue(String name, Integer rCoord, Integer cCoord) {
         this.name = name;
         this.rCoord = rCoord;
         this.cCoord = cCoord;
