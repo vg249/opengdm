@@ -268,8 +268,8 @@ public class InstructionFileValidator {
 
 class TableEntryValue {
     private String name;
-    private int rCoord;
-    private int cCoord;
+    private Integer rCoord;
+    private Integer cCoord;
 
     TableEntryValue(String name, int rCoord, int cCoord) {
         this.name = name;
