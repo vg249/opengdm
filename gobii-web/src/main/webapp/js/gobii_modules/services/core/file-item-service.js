@@ -226,119 +226,118 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                         .filter(function (fi) {
                                         return fi.compoundIdeEquals(nameIdRequestParamsToLoad);
                                     }).length;
-                                    if ((lastModifiedState === null) ||
-                                        itemCountForExtractType === 0 ||
-                                        (entityStats.lastModified > lastModifiedState)) {
-                                        //BEGIN: nameIdService.get()
-                                        _this.nameIdService.get(nameIdRequestParamsToLoad)
-                                            .subscribe(function (nameIds) {
-                                            var minEntityLastUpdated;
-                                            var fileItems = [];
-                                            if (nameIds && (nameIds.length > 0)) {
-                                                nameIds.forEach(function (n) {
-                                                    var currentFileItem = gobii_file_item_1.GobiiFileItem.build(gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
-                                                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
-                                                        .setEntityType(nameIdRequestParamsToLoad.getEntityType())
-                                                        .setEntitySubType(nameIdRequestParamsToLoad.getEntitySubType())
-                                                        .setCvFilterType(nameIdRequestParamsToLoad.getCvFilterType())
-                                                        .setItemId(n.id)
-                                                        .setItemName(n.name)
-                                                        .setSelected(false)
-                                                        .setRequired(false)
-                                                        .setParentItemId(nameIdRequestParamsToLoad.getFkEntityFilterValue());
-                                                    fileItems.push(currentFileItem);
-                                                });
-                                                minEntityLastUpdated = new Date(Math.min.apply(null, nameIds
-                                                    .map(function (nameId) { return nameId.entityLasetModified; })));
-                                                var temp = "foo";
-                                                temp = "bar";
-                                                if (nameIdRequestParamsToLoad.getMameIdLabelType() != name_id_label_type_1.NameIdLabelType.UNKNOWN) {
-                                                    var entityName = "";
-                                                    if (nameIdRequestParamsToLoad.getCvFilterType() !== cv_filter_type_1.CvFilterType.UNKNOWN) {
-                                                        entityName += entity_labels_1.Labels.instance().cvFilterNodeLabels[nameIdRequestParamsToLoad.getCvFilterType()];
-                                                    }
-                                                    else if (nameIdRequestParamsToLoad.getEntitySubType() !== type_entity_1.EntitySubType.UNKNOWN) {
-                                                        entityName += entity_labels_1.Labels.instance().entitySubtypeNodeLabels[nameIdRequestParamsToLoad.getEntitySubType()];
-                                                    }
-                                                    else {
-                                                        entityName += entity_labels_1.Labels.instance().entityNodeLabels[nameIdRequestParamsToLoad.getEntityType()];
-                                                    }
-                                                    var label = "";
-                                                    switch (nameIdRequestParamsToLoad.getMameIdLabelType()) {
-                                                        case name_id_label_type_1.NameIdLabelType.SELECT_A:
-                                                            label = "Select a " + entityName;
-                                                            break;
-                                                        // we require that these entity labels all be in the singular
-                                                        case name_id_label_type_1.NameIdLabelType.ALL:
-                                                            label = "All " + entityName + "s";
-                                                            break;
-                                                        case name_id_label_type_1.NameIdLabelType.NO:
-                                                            label = "No " + entityName;
-                                                            break;
-                                                        default:
-                                                            _this.store.dispatch(new historyAction.AddStatusAction(new dto_header_status_message_1.HeaderStatusMessage("Unknown label type "
-                                                                + name_id_label_type_1.NameIdLabelType[nameIdRequestParamsToLoad.getMameIdLabelType()], null, null)));
-                                                    }
-                                                    var labelFileItem = gobii_file_item_1.GobiiFileItem
-                                                        .build(gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
-                                                        .setEntityType(nameIdRequestParamsToLoad.getEntityType())
-                                                        .setEntitySubType(nameIdRequestParamsToLoad.getEntitySubType())
-                                                        .setCvFilterType(nameIdRequestParamsToLoad.getCvFilterType())
-                                                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.LABEL)
-                                                        .setItemName(label)
-                                                        .setParentItemId(nameIdRequestParamsToLoad.getFkEntityFilterValue())
-                                                        .setItemId("0");
-                                                    fileItems.unshift(labelFileItem);
-                                                    //.selectedFileItemId = "0";
-                                                }
-                                            }
-                                            else {
-                                                var noneFileItem = gobii_file_item_1.GobiiFileItem
-                                                    .build(gobiiExtractFilterType, type_process_1.ProcessType.DUMMY)
+                                    // if ((lastModifiedState === null ) ||
+                                    //     itemCountForExtractType === 0 ||
+                                    //     ( entityStats.lastModified > lastModifiedState) ) {
+                                    //BEGIN: nameIdService.get()
+                                    _this.nameIdService.get(nameIdRequestParamsToLoad)
+                                        .subscribe(function (nameIds) {
+                                        var minEntityLastUpdated;
+                                        var fileItems = [];
+                                        if (nameIds && (nameIds.length > 0)) {
+                                            nameIds.forEach(function (n) {
+                                                var currentFileItem = gobii_file_item_1.GobiiFileItem.build(gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
                                                     .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
                                                     .setEntityType(nameIdRequestParamsToLoad.getEntityType())
-                                                    .setItemId("0")
-                                                    .setItemName("<none>")
+                                                    .setEntitySubType(nameIdRequestParamsToLoad.getEntitySubType())
+                                                    .setCvFilterType(nameIdRequestParamsToLoad.getCvFilterType())
+                                                    .setItemId(n.id)
+                                                    .setItemName(n.name)
+                                                    .setSelected(false)
+                                                    .setRequired(false)
                                                     .setParentItemId(nameIdRequestParamsToLoad.getFkEntityFilterValue());
-                                                fileItems.push(noneFileItem);
-                                            } // if/else any nameids were retrieved
-                                            var loadAction = new fileItemActions.LoadFileItemListAction({
-                                                gobiiFileItems: fileItems,
-                                                filterId: nameIdRequestParamsToLoad.getQueryName(),
-                                                filter: {
-                                                    gobiiExtractFilterType: gobiiExtractFilterType,
-                                                    filterValue: nameIdRequestParamsToLoad.getFkEntityFilterValue(),
-                                                    entityLasteUpdated: minEntityLastUpdated
+                                                fileItems.push(currentFileItem);
+                                            });
+                                            minEntityLastUpdated = new Date(Math.min.apply(null, nameIds
+                                                .map(function (nameId) { return nameId.entityLasetModified; })));
+                                            var temp = "foo";
+                                            temp = "bar";
+                                            if (nameIdRequestParamsToLoad.getMameIdLabelType() != name_id_label_type_1.NameIdLabelType.UNKNOWN) {
+                                                var entityName = "";
+                                                if (nameIdRequestParamsToLoad.getCvFilterType() !== cv_filter_type_1.CvFilterType.UNKNOWN) {
+                                                    entityName += entity_labels_1.Labels.instance().cvFilterNodeLabels[nameIdRequestParamsToLoad.getCvFilterType()];
+                                                }
+                                                else if (nameIdRequestParamsToLoad.getEntitySubType() !== type_entity_1.EntitySubType.UNKNOWN) {
+                                                    entityName += entity_labels_1.Labels.instance().entitySubtypeNodeLabels[nameIdRequestParamsToLoad.getEntitySubType()];
+                                                }
+                                                else {
+                                                    entityName += entity_labels_1.Labels.instance().entityNodeLabels[nameIdRequestParamsToLoad.getEntityType()];
+                                                }
+                                                var label = "";
+                                                switch (nameIdRequestParamsToLoad.getMameIdLabelType()) {
+                                                    case name_id_label_type_1.NameIdLabelType.SELECT_A:
+                                                        label = "Select a " + entityName;
+                                                        break;
+                                                    // we require that these entity labels all be in the singular
+                                                    case name_id_label_type_1.NameIdLabelType.ALL:
+                                                        label = "All " + entityName + "s";
+                                                        break;
+                                                    case name_id_label_type_1.NameIdLabelType.NO:
+                                                        label = "No " + entityName;
+                                                        break;
+                                                    default:
+                                                        _this.store.dispatch(new historyAction.AddStatusAction(new dto_header_status_message_1.HeaderStatusMessage("Unknown label type "
+                                                            + name_id_label_type_1.NameIdLabelType[nameIdRequestParamsToLoad.getMameIdLabelType()], null, null)));
+                                                }
+                                                var labelFileItem = gobii_file_item_1.GobiiFileItem
+                                                    .build(gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                                                    .setEntityType(nameIdRequestParamsToLoad.getEntityType())
+                                                    .setEntitySubType(nameIdRequestParamsToLoad.getEntitySubType())
+                                                    .setCvFilterType(nameIdRequestParamsToLoad.getCvFilterType())
+                                                    .setExtractorItemType(type_extractor_item_1.ExtractorItemType.LABEL)
+                                                    .setItemName(label)
+                                                    .setParentItemId(nameIdRequestParamsToLoad.getFkEntityFilterValue())
+                                                    .setItemId("0");
+                                                fileItems.unshift(labelFileItem);
+                                                //.selectedFileItemId = "0";
+                                            }
+                                        }
+                                        else {
+                                            var noneFileItem = gobii_file_item_1.GobiiFileItem
+                                                .build(gobiiExtractFilterType, type_process_1.ProcessType.DUMMY)
+                                                .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
+                                                .setEntityType(nameIdRequestParamsToLoad.getEntityType())
+                                                .setItemId("0")
+                                                .setItemName("<none>")
+                                                .setParentItemId(nameIdRequestParamsToLoad.getFkEntityFilterValue());
+                                            fileItems.push(noneFileItem);
+                                        } // if/else any nameids were retrieved
+                                        var loadAction = new fileItemActions.LoadFileItemListAction({
+                                            gobiiFileItems: fileItems,
+                                            filterId: nameIdRequestParamsToLoad.getQueryName(),
+                                            filter: {
+                                                gobiiExtractFilterType: gobiiExtractFilterType,
+                                                filterValue: nameIdRequestParamsToLoad.getFkEntityFilterValue(),
+                                                entityLasteUpdated: minEntityLastUpdated
+                                            }
+                                        });
+                                        observer.next(loadAction);
+                                        // if there are children, we will load their data as well
+                                        if (nameIdRequestParamsToLoad
+                                            .getChildNameIdRequestParams()
+                                            .filter(function (rqp) { return rqp.getEntityFilter() === type_entity_filter_1.EntityFilter.BYTYPEID; })
+                                            .length > 0) {
+                                            var parentId_1 = nameIdRequestParamsToLoad.getSelectedItemId();
+                                            if (!parentId_1) {
+                                                parentId_1 = fileItems[0].getItemId();
+                                            }
+                                            nameIdRequestParamsToLoad
+                                                .getChildNameIdRequestParams()
+                                                .forEach(function (rqp) {
+                                                if (rqp.getEntityFilter() === type_entity_filter_1.EntityFilter.BYTYPEID) {
+                                                    rqp.setFkEntityFilterValue(parentId_1);
+                                                    _this.recurseFileItems(gobiiExtractFilterType, rqp, parentId_1)
+                                                        .subscribe(function (fileItems) { return observer.next(fileItems); });
                                                 }
                                             });
-                                            observer.next(loadAction);
-                                            // if there are children, we will load their data as well
-                                            if (nameIdRequestParamsToLoad
-                                                .getChildNameIdRequestParams()
-                                                .filter(function (rqp) { return rqp.getEntityFilter() === type_entity_filter_1.EntityFilter.BYTYPEID; })
-                                                .length > 0) {
-                                                var parentId_1 = nameIdRequestParamsToLoad.getSelectedItemId();
-                                                if (!parentId_1) {
-                                                    parentId_1 = fileItems[0].getItemId();
-                                                }
-                                                nameIdRequestParamsToLoad
-                                                    .getChildNameIdRequestParams()
-                                                    .forEach(function (rqp) {
-                                                    if (rqp.getEntityFilter() === type_entity_filter_1.EntityFilter.BYTYPEID) {
-                                                        rqp.setFkEntityFilterValue(parentId_1);
-                                                        _this.recurseFileItems(gobiiExtractFilterType, rqp, parentId_1)
-                                                            .subscribe(function (fileItems) { return observer.next(fileItems); });
-                                                    }
-                                                });
-                                            }
-                                            var bar = "bar";
-                                        }, // Observer=>next
-                                        function (// Observer=>next
-                                            responseHeader) {
-                                            _this.store.dispatch(new historyAction.AddStatusAction(responseHeader));
-                                        }); // subscribe
-                                        //END: nameIdService.get()
-                                    }
+                                        }
+                                        var bar = "bar";
+                                    }, // Observer=>next
+                                    function (// Observer=>next
+                                        responseHeader) {
+                                        _this.store.dispatch(new historyAction.AddStatusAction(responseHeader));
+                                    }); // subscribe
+                                    //END: nameIdService.get()
                                 })
                                     .unsubscribe();
                             });
