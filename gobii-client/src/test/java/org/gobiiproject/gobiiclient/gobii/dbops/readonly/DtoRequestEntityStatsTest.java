@@ -311,12 +311,12 @@ public class DtoRequestEntityStatsTest {
                 GobiiEntityNameType.ORGANIZATION,
                 GobiiEntityNameType.MANIFEST);
 
-        (new GlobalPkColl<DtoCrudRequestProjectTest>()).getPkVals(DtoCrudRequestProjectTest.class, GobiiEntityNameType.PROJECT, setCountVal);
-        (new GlobalPkColl<DtoCrudRequestMapsetTest>()).getPkVals(DtoCrudRequestMapsetTest.class, GobiiEntityNameType.MAPSET, setCountVal);
-        (new GlobalPkColl<DtoCrudRequestContactTest>()).getPkVals(DtoCrudRequestContactTest.class, GobiiEntityNameType.CONTACT, setCountVal);
-        (new GlobalPkColl<DtoCrudRequestReferenceTest>()).getPkVals(DtoCrudRequestReferenceTest.class, GobiiEntityNameType.REFERENCE, setCountVal);
-        (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getPkVals(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET, setCountVal);
-        (new GlobalPkColl<DtoCrudRequestProtocolTest>()).getPkVals(DtoCrudRequestProtocolTest.class, GobiiEntityNameType.PROTOCOL, setCountVal);
+        (new GlobalPkColl<DtoCrudRequestProjectTest>()).getFreshPkVals(DtoCrudRequestProjectTest.class, GobiiEntityNameType.PROJECT, setCountVal);
+        (new GlobalPkColl<DtoCrudRequestMapsetTest>()).getFreshPkVals(DtoCrudRequestMapsetTest.class, GobiiEntityNameType.MAPSET, setCountVal);
+        (new GlobalPkColl<DtoCrudRequestContactTest>()).getFreshPkVals(DtoCrudRequestContactTest.class, GobiiEntityNameType.CONTACT, setCountVal);
+        (new GlobalPkColl<DtoCrudRequestReferenceTest>()).getFreshPkVals(DtoCrudRequestReferenceTest.class, GobiiEntityNameType.REFERENCE, setCountVal);
+        (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getFreshPkVals(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET, setCountVal);
+        (new GlobalPkColl<DtoCrudRequestProtocolTest>()).getFreshPkVals(DtoCrudRequestProtocolTest.class, GobiiEntityNameType.PROTOCOL, setCountVal);
 
 
         PayloadEnvelope<EntityStatsDTO> resultEnvelopePostUpdate = gobiiEnvelopeRestResource
