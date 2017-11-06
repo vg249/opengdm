@@ -51,6 +51,9 @@ public class InstructionFileValidator {
                     TableEntryKey entryKey = new TableEntryKey(instruction.getTable(), fileColumn.getName());
                     TableEntryValue entryValue = new TableEntryValue(fileColumn.getName(), fileColumn.getrCoord(), fileColumn.getcCoord());
                     instructionMap.put(entryKey, entryValue);
+                    //Add error if row or column is bad (TODO: Fix statusMessage dual nature as flag/value tuple data type, make this logic non static. Class fails OO consistency.)
+                    if(entryValue.getcCoord() == null) statusMessage="Invalid value in column coordinate for " + instruction.getTable()+ "(" + fileColumn.getName() + ")";
+                    if(entryValue.getrCoord() == null) statusMessage="Invalid value in row coordinate for " + instruction.getTable()+ "(" + fileColumn.getName() + ")";
                 }
             }
         }
