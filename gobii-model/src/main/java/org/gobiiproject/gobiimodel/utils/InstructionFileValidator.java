@@ -281,11 +281,11 @@ class TableEntryValue {
         return name;
     }
 
-    int getrCoord() {
+    Integer getrCoord() {
         return rCoord;
     }
 
-    int getcCoord() {
+    Integer getcCoord() {
         return cCoord;
     }
 }
