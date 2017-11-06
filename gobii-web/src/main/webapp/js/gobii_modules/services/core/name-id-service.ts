@@ -22,11 +22,11 @@ export class NameIdService {
 
         let returnVal: string = null;
 
-        if (nameIdRequestParams.getEntityType() === EntityType.Contact) {
+        if (nameIdRequestParams.getEntityType() === EntityType.CONTACT) {
             if (nameIdRequestParams.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR) {
                 returnVal = "PI";
             }
-        } else if (nameIdRequestParams.getEntityType() === EntityType.Cv) {
+        } else if (nameIdRequestParams.getEntityType() === EntityType.CV) {
             if (nameIdRequestParams.getCvFilterType() != null && nameIdRequestParams.getCvFilterType() != CvFilterType.UNKNOWN) {
                 returnVal = CvFilters.get(CvFilterType.DATASET_TYPE);
             }

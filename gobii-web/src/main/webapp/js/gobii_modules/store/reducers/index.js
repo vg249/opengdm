@@ -1,7 +1,7 @@
 System.register(["@ngrx/store", "ngrx-store-freeze", "./fileitems-reducer", "./treenode-reducer", "./history-reducer"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var store_1, store_2, ngrx_store_freeze_1, store_3, fromFileItems, fromGobiiTreeNodes, fromHistory, reducers, developmentReducer, productionReducer, getFileItemsState, getAllFileItems, getFileItems, getSelectedFileItems, getSelectedUniqueIds, getUniqueIds, getPiContacts, getFirstPiContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTermsDataType, getFirstCvTerm, getMapsets, getFirstMapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getProjectsByPI, getExperimentsByProject, getDatasetsByExperiment, getSelectedPiContacts, getSelectedFileFormat, getSelectedSampleType, getJobId, getUploadFiles, getGobiiTreeNodesState, getAllGobiiTreeNodes, getGobiiTreeNodesForExtractFilter, getSelectedGobiiTreeNodes, getSelectedGobiiTreeNodeIds, getIdsOfActivatedGobiiTreeNodes, gobiiHistoryState, getStatusMessages, getLasetStatusMessage;
+    var store_1, store_2, ngrx_store_freeze_1, store_3, fromFileItems, fromGobiiTreeNodes, fromHistory, reducers, developmentReducer, productionReducer, getFileItemsState, getFileItemsFilters, getAllFileItems, getFileItems, getSelectedFileItems, getSelectedUniqueIds, getUniqueIds, getPiContacts, getFirstPiContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTermsDataType, getFirstCvTerm, getMapsets, getFirstMapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getProjectsByPI, getExperimentsByProject, getDatasetsByExperiment, getSelectedPiContacts, getSelectedFileFormat, getSelectedSampleType, getJobId, getUploadFiles, getGobiiTreeNodesState, getAllGobiiTreeNodes, getGobiiTreeNodesForExtractFilter, getSelectedGobiiTreeNodes, getSelectedGobiiTreeNodeIds, getIdsOfActivatedGobiiTreeNodes, gobiiHistoryState, getStatusMessages, getLasetStatusMessage;
     return {
         setters: [
             function (store_1_1) {
@@ -77,6 +77,7 @@ System.register(["@ngrx/store", "ngrx-store-freeze", "./fileitems-reducer", "./t
              * The created selectors can also be composed together to select different
              * pieces of state.
              */
+            exports_1("getFileItemsFilters", getFileItemsFilters = store_1.createSelector(getFileItemsState, fromFileItems.getFilters));
             exports_1("getAllFileItems", getAllFileItems = store_1.createSelector(getFileItemsState, fromFileItems.getAll));
             exports_1("getFileItems", getFileItems = store_1.createSelector(getFileItemsState, fromFileItems.getFileItems));
             exports_1("getSelectedFileItems", getSelectedFileItems = store_1.createSelector(getFileItemsState, fromFileItems.getSelected));

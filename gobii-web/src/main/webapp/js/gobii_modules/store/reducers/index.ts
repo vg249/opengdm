@@ -121,6 +121,7 @@ export const getFileItemsState = (state: State) => state.fileItems;
  * The created selectors can also be composed together to select different
  * pieces of state.
  */
+export const getFileItemsFilters = createSelector(getFileItemsState, fromFileItems.getFilters);
 export const getAllFileItems = createSelector(getFileItemsState, fromFileItems.getAll);
 export const getFileItems = createSelector(getFileItemsState, fromFileItems.getFileItems);
 export const getSelectedFileItems = createSelector(getFileItemsState, fromFileItems.getSelected);

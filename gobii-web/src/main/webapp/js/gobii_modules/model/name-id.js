@@ -6,13 +6,15 @@ System.register([], function (exports_1, context_1) {
         setters: [],
         execute: function () {
             NameId = (function () {
-                function NameId(id, name, entityType) {
+                function NameId(id, name, entityType, entityLasetModified) {
                     this.id = id;
                     this.name = name;
                     this.entityType = entityType;
+                    this.entityLasetModified = entityLasetModified;
                     this.id = id;
                     this.name = name;
                     this.entityType = entityType;
+                    this.entityLasetModified = entityLasetModified;
                 }
                 return NameId;
             }());

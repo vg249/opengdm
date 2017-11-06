@@ -30,7 +30,7 @@ export class InstructionSubmissionService {
 
     private datasetCriterion: GobiiFileItemCriterion = new GobiiFileItemCriterion(new GobiiFileItemCompoundId(
         ExtractorItemType.ENTITY,
-        EntityType.DataSet,
+        EntityType.DATASET,
         EntitySubType.UNKNOWN,
         CvFilterType.UNKNOWN
     ), false);
@@ -51,21 +51,21 @@ export class InstructionSubmissionService {
 
     private piContactCriterion: GobiiFileItemCriterion = new GobiiFileItemCriterion(new GobiiFileItemCompoundId(
         ExtractorItemType.ENTITY,
-        EntityType.Contact,
+        EntityType.CONTACT,
         EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR,
         CvFilterType.UNKNOWN
     ), false);
 
     private projectsCriterion: GobiiFileItemCriterion = new GobiiFileItemCriterion(new GobiiFileItemCompoundId(
         ExtractorItemType.ENTITY,
-        EntityType.Project,
+        EntityType.PROJECT,
         EntitySubType.UNKNOWN,
         CvFilterType.UNKNOWN
     ), false);
 
     private datasetTypesCriterion: GobiiFileItemCriterion = new GobiiFileItemCriterion(new GobiiFileItemCompoundId(
         ExtractorItemType.ENTITY,
-        EntityType.Cv,
+        EntityType.CV,
         EntitySubType.UNKNOWN,
         CvFilterType.DATASET_TYPE
     ), false);
@@ -89,14 +89,14 @@ export class InstructionSubmissionService {
 
     private markergGroupCriterion: GobiiFileItemCriterion = new GobiiFileItemCriterion(new GobiiFileItemCompoundId(
         ExtractorItemType.ENTITY,
-        EntityType.Marker_Group,
+        EntityType.MARKER_GROUP,
         EntitySubType.UNKNOWN,
         CvFilterType.UNKNOWN
     ), false);
 
     private platformCriterion: GobiiFileItemCriterion = new GobiiFileItemCriterion(new GobiiFileItemCompoundId(
         ExtractorItemType.ENTITY,
-        EntityType.Platform,
+        EntityType.PLATFORM,
         EntitySubType.UNKNOWN,
         CvFilterType.UNKNOWN
     ), false);
@@ -332,7 +332,7 @@ export class InstructionSubmissionService {
 
                         // ******** SUBMITTER CONTACT
                         let submitterFileItem: GobiiFileItem = fileItems.find(item => {
-                            return (item.getEntityType() === EntityType.Contact)
+                            return (item.getEntityType() === EntityType.CONTACT)
                                 && (item.getEntitySubType() === EntitySubType.CONTACT_SUBMITED_BY)
                         });
 
@@ -342,7 +342,7 @@ export class InstructionSubmissionService {
                         // ******** MAPSET IDs
                         let mapsetFileItems: GobiiFileItem[] = fileItems
                             .filter(item => {
-                                return item.getEntityType() === EntityType.Mapset
+                                return item.getEntityType() === EntityType.MAPSET
                             });
                         mapsetIds = mapsetFileItems
                             .map(item => {
@@ -368,45 +368,45 @@ export class InstructionSubmissionService {
 
                         // ******** DATA SET TYPE
                         let dataTypeFileItem: GobiiFileItem = fileItems.find(item => {
-                            return item.getEntityType() === EntityType.Cv
+                            return item.getEntityType() === EntityType.CV
                                 && item.getCvFilterType() === CvFilterType.DATASET_TYPE
                         });
                         let datasetType: NameId = dataTypeFileItem != null ? new NameId(dataTypeFileItem.getItemId(),
-                            dataTypeFileItem.getItemName(), EntityType.Cv) : null;
+                            dataTypeFileItem.getItemName(), EntityType.CV,null) : null;
 
 
                         // ******** PRINCIPLE INVESTIGATOR CONCEPT
                         let principleInvestigatorFileItem: GobiiFileItem = fileItems.find(item => {
-                            return item.getEntityType() === EntityType.Contact
+                            return item.getEntityType() === EntityType.CONTACT
                                 && item.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR
                         });
                         let principleInvestigator: NameId = principleInvestigatorFileItem != null ? new NameId(principleInvestigatorFileItem.getItemId(),
-                            principleInvestigatorFileItem.getItemName(), EntityType.Contact) : null;
+                            principleInvestigatorFileItem.getItemName(), EntityType.CONTACT,null) : null;
 
 
                         // ******** PROJECT
                         let projectFileItem: GobiiFileItem = fileItems.find(item => {
-                            return item.getEntityType() === EntityType.Project
+                            return item.getEntityType() === EntityType.PROJECT
                         });
                         let project: NameId = projectFileItem != null ? new NameId(projectFileItem.getItemId(),
-                            projectFileItem.getItemName(), EntityType.Project) : null;
+                            projectFileItem.getItemName(), EntityType.PROJECT,null) : null;
 
 
                         // ******** PLATFORM
                         let platformFileItems: GobiiFileItem[] = fileItems.filter(item => {
-                            return item.getEntityType() === EntityType.Platform
+                            return item.getEntityType() === EntityType.PLATFORM
                         });
 
                         let platforms: NameId[] = platformFileItems.map(item => {
-                            return new NameId(item.getItemId(), item.getItemName(), EntityType.Platform)
+                            return new NameId(item.getItemId(), item.getItemName(), EntityType.PLATFORM, null)
                         });
 
                         let markerGroupItems: GobiiFileItem[] = fileItems.filter(item => {
-                            return item.getEntityType() === EntityType.Marker_Group
+                            return item.getEntityType() === EntityType.MARKER_GROUP
                         });
 
                         let markerGroups: NameId[] = markerGroupItems.map(item => {
-                            return new NameId(item.getItemId(), item.getItemName(), EntityType.Marker_Group)
+                            return new NameId(item.getItemId(), item.getItemName(), EntityType.MARKER_GROUP,null)
                         });
 
                         // ******** MARKERS
@@ -447,14 +447,14 @@ export class InstructionSubmissionService {
 
                             let dataSetItems: GobiiFileItem[] = fileItems
                                 .filter(item => {
-                                    return item.getEntityType() === EntityType.DataSet
+                                    return item.getEntityType() === EntityType.DATASET
                                 });
 
 
                             dataSetItems.forEach(datsetFileItem => {
 
                                 let dataSet: NameId = new NameId(datsetFileItem.getItemId(),
-                                    datsetFileItem.getItemName(), EntityType.Cv);
+                                    datsetFileItem.getItemName(), EntityType.CV,null);
 
 
                                 gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
