@@ -12,6 +12,7 @@ import java.util.List;
  */
 public interface DtoMapEntityStats {
 
+    List<EntityStatsDTO> getAll() throws GobiiDtoMappingException;
     EntityStatsDTO getEntityLastModified(GobiiEntityNameType gobiiEntityNameType) throws GobiiDtoMappingException;
     EntityStatsDTO getEntityCount(GobiiEntityNameType gobiiEntityNameType) throws GobiiDtoMappingException;
     EntityStatsDTO getEntityCountOfChildren(GobiiEntityNameType gobiiEntityNameTypeParent,

@@ -201,8 +201,8 @@
                 <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).PROTOCOL}">
                     <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchProtocols"/>
                 </entry>
-                <!-- VENDORS_PROTOCOL -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).VENDORS_PROTOCOL}">
+                <!-- VENDOR_PROTOCOL -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).VENDOR_PROTOCOL}">
                     <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchVendorProtocols"/>
                 </entry>
             </map>

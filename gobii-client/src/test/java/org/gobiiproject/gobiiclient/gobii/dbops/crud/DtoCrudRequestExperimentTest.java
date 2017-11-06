@@ -108,7 +108,7 @@ public class DtoCrudRequestExperimentTest implements DtoCrudRequestTest {
 
         Integer projectId = (new GlobalPkColl<DtoCrudRequestProjectTest>().getAPkVal(DtoCrudRequestProjectTest.class, GobiiEntityNameType.PROJECT));
         Integer manifestId = (new GlobalPkColl<DtoCrudRequestManifestTest>().getAPkVal(DtoCrudRequestManifestTest.class, GobiiEntityNameType.MANIFEST));
-        Integer idOfProtocolThatHasAVendor = (new GlobalPkColl<DtoCrudRequestVendorProtocolTest>().getAPkVal(DtoCrudRequestVendorProtocolTest.class, GobiiEntityNameType.VENDORS_PROTOCOL));
+        Integer idOfProtocolThatHasAVendor = (new GlobalPkColl<DtoCrudRequestVendorProtocolTest>().getAPkVal(DtoCrudRequestVendorProtocolTest.class, GobiiEntityNameType.VENDOR_PROTOCOL));
 
         // ** GET THE VENDOR_PROTOCOL ID *****************
 
@@ -120,7 +120,7 @@ public class DtoCrudRequestExperimentTest implements DtoCrudRequestTest {
         RestUri namesUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .nameIdListByQueryParams();
-        namesUri.setParamValue("entity", GobiiEntityNameType.VENDORS_PROTOCOL.toString().toLowerCase());
+        namesUri.setParamValue("entity", GobiiEntityNameType.VENDOR_PROTOCOL.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPEID.toString().toUpperCase()));
         namesUri.setParamValue("filterValue", idOfProtocolThatHasAVendor.toString());
         GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResourceForVendorsProtocol = new GobiiEnvelopeRestResource<>(namesUri);

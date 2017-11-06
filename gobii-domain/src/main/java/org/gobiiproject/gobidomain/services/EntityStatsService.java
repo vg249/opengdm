@@ -13,6 +13,7 @@ import java.util.List;
  */
 public interface EntityStatsService {
 
+    List<EntityStatsDTO> getAll() throws GobiiDomainException;
     EntityStatsDTO getEntityLastModified(GobiiEntityNameType gobiiEntityNameType) throws GobiiDomainException;
     EntityStatsDTO getEntityCount(GobiiEntityNameType gobiiEntityNameType) throws GobiiDomainException;
     EntityStatsDTO getEntityCountOfChildren(GobiiEntityNameType gobiiEntityNameTypeParent,

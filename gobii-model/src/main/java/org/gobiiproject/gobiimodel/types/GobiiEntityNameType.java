@@ -22,5 +22,5 @@ public enum GobiiEntityNameType {
     DISPLAY,
     MARKER,
     PROTOCOL,
-    VENDORS_PROTOCOL
+    VENDOR_PROTOCOL
 }

@@ -120,7 +120,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
                     .getUriFactory()
                     .nameIdListByQueryParams();
             GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
-            namesUri.setParamValue("entity", GobiiEntityNameType.VENDORS_PROTOCOL.toString().toLowerCase());
+            namesUri.setParamValue("entity", GobiiEntityNameType.VENDOR_PROTOCOL.toString().toLowerCase());
 
             PayloadEnvelope<NameIdDTO> resultEnvelopeProtocoLVendornames = gobiiEnvelopeRestResource
                     .get(NameIdDTO.class);
@@ -156,7 +156,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
                             ).count() == 1);
         } // iterate through total vendors for protocol
 
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.VENDORS_PROTOCOL, protocolDTO.getProtocolId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.VENDOR_PROTOCOL, protocolDTO.getProtocolId());
 
 
         // ************* VERIFY THAT WE CAN RETRIEVE THE CREATED VENDOR THROUGH THE PROTOCOL URL
@@ -389,7 +389,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
     public void getList() throws Exception {
 
         Integer protocolId = (new GlobalPkColl<DtoCrudRequestVendorProtocolTest>()
-                .getAPkVal(DtoCrudRequestVendorProtocolTest.class, GobiiEntityNameType.VENDORS_PROTOCOL));
+                .getAPkVal(DtoCrudRequestVendorProtocolTest.class, GobiiEntityNameType.VENDOR_PROTOCOL));
 
         RestUri restUriVendorsForProtocol = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()

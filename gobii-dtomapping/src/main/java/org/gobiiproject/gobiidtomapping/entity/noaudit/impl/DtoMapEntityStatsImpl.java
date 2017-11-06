@@ -22,10 +22,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -46,11 +48,58 @@ public class DtoMapEntityStatsImpl implements DtoMapEntityStats {
     private TableTrackingCache tableTrackingCache;
 
 
+    // These are the ones that are of type DTOBaseAuditable
+    // there are others in GobiiEntityNameType that only derive from DTOBase
+    // and because they lack modified/created date columns we cannot
+    // gather statistics on them
+    List<GobiiEntityNameType> trackableEntityNames = Arrays.asList(
+            GobiiEntityNameType.ANALYSIS,
+            GobiiEntityNameType.CONTACT,
+            GobiiEntityNameType.DATASET,
+            GobiiEntityNameType.DISPLAY,
+            GobiiEntityNameType.EXPERIMENT,
+            GobiiEntityNameType.MANIFEST,
+            GobiiEntityNameType.MAPSET,
+            GobiiEntityNameType.MARKER_GROUP,
+            GobiiEntityNameType.ORGANIZATION,
+            GobiiEntityNameType.PLATFORM,
+            GobiiEntityNameType.PROJECT,
+            GobiiEntityNameType.PROTOCOL,
+            GobiiEntityNameType.REFERENCE
+
+    );
+
+
+    @Override
+    public List<EntityStatsDTO> getAll() throws GobiiDtoMappingException {
+
+        List<EntityStatsDTO> returnVal = new ArrayList<>();
+
+        for (GobiiEntityNameType currentTypeName : trackableEntityNames) {
+
+            if (currentTypeName != GobiiEntityNameType.UNKNOWN) {
+
+                EntityStatsDTO currentEntityStatsDTO = this.getEntityCount(currentTypeName);
+                returnVal.add(currentEntityStatsDTO);
+                currentEntityStatsDTO.setEntityNameType(currentTypeName);
+                currentEntityStatsDTO.setLastModified(this.tableTrackingCache.getLastModified(currentTypeName));
+            }
+        }
+
+
+        return returnVal;
+    }
+
+
     @Override
     public EntityStatsDTO getEntityLastModified(GobiiEntityNameType gobiiEntityNameType) throws GobiiDtoMappingException {
 
         EntityStatsDTO returnVal = new EntityStatsDTO();
 
+
+        if(!trackableEntityNames.contains(gobiiEntityNameType)) {
+            throw new GobiiDtoMappingException("The specified entity cannot be tracked because the entity lacks the required tracking columns: " + gobiiEntityNameType.toString());
+        }
 
         try {
 
@@ -61,6 +110,7 @@ public class DtoMapEntityStatsImpl implements DtoMapEntityStats {
             //a particular entity.
             // When we do retrive the value from the db, the jdbc idiom for retrieving a Date is
             // LocalDate localDate = resultSet.getObject("lastmodified", LocalDate.class);
+            returnVal.setEntityNameType(gobiiEntityNameType);
             Date lastModified = this.tableTrackingCache.getLastModified(gobiiEntityNameType);
             returnVal.setLastModified(lastModified);
 
@@ -77,18 +127,22 @@ public class DtoMapEntityStatsImpl implements DtoMapEntityStats {
 
         EntityStatsDTO returnVal = new EntityStatsDTO();
 
+        if(!trackableEntityNames.contains(gobiiEntityNameType)) {
+            throw new GobiiDtoMappingException("The specified entity cannot be tracked because the entity lacks the required tracking columns: " + gobiiEntityNameType.toString());
+        }
+
         try {
 
             Integer count;
             EntityCountState entityCountState = this.tableTrackingCache.getCount(gobiiEntityNameType);
-            if( null == entityCountState ) {
+            if (null == entityCountState) {
                 count = this.getCountFromDb(gobiiEntityNameType);
                 Date lastModified = this.tableTrackingCache.getLastModified(gobiiEntityNameType);
-                EntityCountState entityCountState1New = new EntityCountState(gobiiEntityNameType,lastModified,count);
-                this.tableTrackingCache.setCount(gobiiEntityNameType,entityCountState1New);
+                EntityCountState entityCountState1New = new EntityCountState(gobiiEntityNameType, lastModified, count);
+                this.tableTrackingCache.setCount(gobiiEntityNameType, entityCountState1New);
             } else {
                 Date lastModified = this.tableTrackingCache.getLastModified(gobiiEntityNameType);
-                if( lastModified.equals(entityCountState.getLastModified())) {
+                if (lastModified.equals(entityCountState.getLastModified())) {
                     count = entityCountState.getCount();
                 } else {
                     count = this.getCountFromDb(gobiiEntityNameType);
@@ -98,6 +152,7 @@ public class DtoMapEntityStatsImpl implements DtoMapEntityStats {
 
             }
 
+            returnVal.setEntityNameType(gobiiEntityNameType);
             returnVal.setCount(count);
 
         } catch (Exception e) {
@@ -110,10 +165,20 @@ public class DtoMapEntityStatsImpl implements DtoMapEntityStats {
 
     @Override
     public EntityStatsDTO getEntityCountOfChildren(GobiiEntityNameType gobiiEntityNameTypeParent,
-                                            Integer parentId,
-                                            GobiiEntityNameType gobiiEntityNameTypeChild ) throws GobiiDtoMappingException {
+                                                   Integer parentId,
+                                                   GobiiEntityNameType gobiiEntityNameTypeChild) throws GobiiDtoMappingException {
 
         EntityStatsDTO returnVal = new EntityStatsDTO();
+
+        // we should also be checking to see if the child really is a child of the parent. But the sql error
+        // from the query that will be dynamically assembled will tell us that
+        if(!trackableEntityNames.contains(gobiiEntityNameTypeParent)) {
+            throw new GobiiDtoMappingException("The specified entity cannot be tracked because the entity lacks the required tracking columns: " + gobiiEntityNameTypeParent.toString());
+        }
+
+        if(!trackableEntityNames.contains(gobiiEntityNameTypeChild)) {
+            throw new GobiiDtoMappingException("The specified entity cannot be tracked because the entity lacks the required tracking columns: " + gobiiEntityNameTypeChild.toString());
+        }
 
         try {
 
@@ -134,7 +199,7 @@ public class DtoMapEntityStatsImpl implements DtoMapEntityStats {
                 count = parentChildCountState.getCount();
             }
 
-
+            returnVal.setEntityNameType(gobiiEntityNameTypeChild);
             returnVal.setCount(count);
 
         } catch (Exception e) {
@@ -148,6 +213,7 @@ public class DtoMapEntityStatsImpl implements DtoMapEntityStats {
     private Integer getCountOfChildFromDb(GobiiEntityNameType gobiiEntityNameTypeParent,
                                           Integer parentId,
                                           GobiiEntityNameType gobiiEntityNameTypeChild) {
+
 
         Integer returnVal = 0;
 
