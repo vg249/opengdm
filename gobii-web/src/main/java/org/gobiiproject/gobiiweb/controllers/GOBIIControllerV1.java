@@ -3966,9 +3966,7 @@ public class GOBIIControllerV1 {
                     EntityStatsDTO.class);
 
             payloadWriter.writeList(returnVal,
-                    GobiiUriFactory.resourceColl(request.getContextPath(),
-                            GobiiServiceRequestId.URL_CV)
-                            .addUriParam("id"),
+                    null,
                     allEntityStats);
 
         } catch (GobiiException e) {
@@ -4008,9 +4006,7 @@ public class GOBIIControllerV1 {
                     EntityStatsDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    GobiiUriFactory.resourceColl(request.getContextPath(),
-                            GobiiServiceRequestId.URL_CV)
-                            .addUriParam("id"),
+                    null,
                     entityStatsDTO);
 
         } catch (GobiiException e) {
@@ -4049,9 +4045,7 @@ public class GOBIIControllerV1 {
                     EntityStatsDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    GobiiUriFactory.resourceColl(request.getContextPath(),
-                            GobiiServiceRequestId.URL_CV)
-                            .addUriParam("id"),
+                    null,
                     entityStatsDTO);
 
         } catch (GobiiException e) {
@@ -4096,9 +4090,7 @@ public class GOBIIControllerV1 {
                     EntityStatsDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    GobiiUriFactory.resourceColl(request.getContextPath(),
-                            GobiiServiceRequestId.URL_CV)
-                            .addUriParam("id"),
+                    null,
                     entityStatsDTO);
 
         } catch (GobiiException e) {
