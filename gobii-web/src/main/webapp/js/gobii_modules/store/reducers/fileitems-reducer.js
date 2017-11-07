@@ -1,4 +1,4 @@
-System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem-action", "../../model/type-extractor-item", "../../model/type-entity", "../../model/type-nameid-filter-params", "../../model/type-process", "../../views/entity-labels", "../../model/type-extractor-filter", "../../model/type-extract-format", "../../model/cv-filter-type", "../../model/type-extractor-sample-list"], function (exports_1, context_1) {
+System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem-action", "../../model/type-extractor-item", "../../model/type-process", "../../views/entity-labels", "../../model/type-extractor-filter", "../../model/type-extract-format", "../../model/type-extractor-sample-list"], function (exports_1, context_1) {
     "use strict";
     _this = this;
     var __moduleName = context_1 && context_1.id;
@@ -201,7 +201,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
         return returnVal;
     }
     exports_1("fileItemsReducer", fileItemsReducer);
-    var _this, reselect_1, gobii_file_item_1, gobiiFileItemAction, type_extractor_item_1, type_entity_1, type_nameid_filter_params_1, type_process_1, entity_labels_1, type_extractor_filter_1, type_extract_format_1, cv_filter_type_1, type_extractor_sample_list_1, initialState, getGobiiExtractFilterType, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getPiContacts, getFirstPiContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTermsDataType, getFirstCvTerm, getMapsets, getFirstmapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment, getSelectedFileFormat, getSelectedSampleType, getJobId, getUploadFiles;
+    var _this, reselect_1, gobii_file_item_1, gobiiFileItemAction, type_extractor_item_1, type_process_1, entity_labels_1, type_extractor_filter_1, type_extract_format_1, type_extractor_sample_list_1, initialState, getGobiiExtractFilterType, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getSelectedFileFormat, getSelectedSampleType, getJobId, getUploadFiles;
     return {
         setters: [
             function (reselect_1_1) {
@@ -216,12 +216,6 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             function (type_extractor_item_1_1) {
                 type_extractor_item_1 = type_extractor_item_1_1;
             },
-            function (type_entity_1_1) {
-                type_entity_1 = type_entity_1_1;
-            },
-            function (type_nameid_filter_params_1_1) {
-                type_nameid_filter_params_1 = type_nameid_filter_params_1_1;
-            },
             function (type_process_1_1) {
                 type_process_1 = type_process_1_1;
             },
@@ -233,9 +227,6 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             },
             function (type_extract_format_1_1) {
                 type_extract_format_1 = type_extract_format_1_1;
-            },
-            function (cv_filter_type_1_1) {
-                cv_filter_type_1 = cv_filter_type_1_1;
             },
             function (type_extractor_sample_list_1_1) {
                 type_extractor_sample_list_1 = type_extractor_sample_list_1_1;
@@ -282,175 +273,8 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             // ideally, the redux way of selecting data would be for the selection to be based
             // on which entity is "selected" The problem is that we have controlls in which the
             // entity type is parameterized -- it is not global state
-            exports_1("getPiContacts", getPiContacts = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
-                var returnVal = fileItems.filter(function (e) {
-                    return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
-                        && e.getEntityType() === type_entity_1.EntityType.CONTACT
-                        && e.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR;
-                })
-                    .map(function (fi) { return fi; });
-                return returnVal;
-            }));
-            exports_1("getFirstPiContact", getFirstPiContact = reselect_1.createSelector(getPiContacts, function (contacts) {
-                return contacts[0];
-            }));
-            exports_1("getProjects", getProjects = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
-                return fileItems.filter(function (e) {
-                    return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
-                        && e.getEntityType() === type_entity_1.EntityType.PROJECT;
-                })
-                    .map(function (fi) { return fi; });
-            }));
-            exports_1("getFirstProject", getFirstProject = reselect_1.createSelector(getProjects, function (projects) {
-                return projects[0];
-            }));
-            exports_1("getExperiments", getExperiments = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
-                return fileItems.filter(function (e) {
-                    return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
-                        && e.getEntityType() === type_entity_1.EntityType.EXPERIMENT;
-                })
-                    .map(function (fi) { return fi; });
-            }));
-            exports_1("getFirstExperiment", getFirstExperiment = reselect_1.createSelector(getExperiments, function (experiments) {
-                return experiments[0];
-            }));
-            exports_1("getDatasets", getDatasets = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
-                return fileItems.filter(function (e) {
-                    return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
-                        && e.getEntityType() === type_entity_1.EntityType.DATASET;
-                })
-                    .map(function (fi) { return fi; });
-            }));
-            exports_1("getFirstDataset", getFirstDataset = reselect_1.createSelector(getDatasets, function (datasets) {
-                return datasets[0];
-            }));
-            exports_1("getCvTermsDataType", getCvTermsDataType = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
-                var returnVal = fileItems.filter(function (e) {
-                    return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
-                        && e.getEntityType() === type_entity_1.EntityType.CV
-                        && e.getCvFilterType() === cv_filter_type_1.CvFilterType.DATASET_TYPE;
-                })
-                    .map(function (fi) { return fi; });
-                return returnVal;
-            }));
-            exports_1("getFirstCvTerm", getFirstCvTerm = reselect_1.createSelector(getCvTermsDataType, function (cvterms) {
-                return cvterms[0];
-            }));
-            exports_1("getMapsets", getMapsets = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
-                return fileItems.filter(function (e) {
-                    return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
-                        && e.getEntityType() === type_entity_1.EntityType.MAPSET;
-                })
-                    .map(function (fi) { return fi; });
-            }));
-            exports_1("getFirstmapset", getFirstmapset = reselect_1.createSelector(getMapsets, function (mapsets) {
-                return mapsets[0];
-            }));
-            exports_1("getPlatforms", getPlatforms = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
-                return fileItems.filter(function (e) {
-                    return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
-                        && e.getEntityType() === type_entity_1.EntityType.PLATFORM;
-                })
-                    .map(function (fi) { return fi; });
-            }));
-            exports_1("getFirstPlatform", getFirstPlatform = reselect_1.createSelector(getCvTermsDataType, function (platforms) {
-                return platforms[0];
-            }));
-            exports_1("getMarkerGroups", getMarkerGroups = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
-                return fileItems.filter(function (e) {
-                    return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
-                        && e.getEntityType() === type_entity_1.EntityType.MARKER_GROUP;
-                })
-                    .map(function (fi) { return fi; });
-            }));
-            exports_1("getFirstMarkerGroup", getFirstMarkerGroup = reselect_1.createSelector(getCvTermsDataType, function (markergroups) {
-                return markergroups[0];
-            }));
             /// ****************** SYNCHRONOUS METHODS
             /// **************** GET SELECTED PER ENTITY TYPE
-            exports_1("getSelectedPiContacts", getSelectedPiContacts = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
-                return fileItems.filter(function (e) {
-                    return ids.find(function (id) { return id === e.getFileItemUniqueId(); })
-                        && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                        && e.getEntityType() === type_entity_1.EntityType.CONTACT
-                        && e.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR;
-                })
-                    .map(function (fi) { return fi; });
-            }));
-            exports_1("getProjectsForSelectedPi", getProjectsForSelectedPi = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
-                var returnVal = [];
-                if (filters[type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS_BY_CONTACT]) {
-                    var contactId_1 = filters[type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS_BY_CONTACT].filterValue;
-                    returnVal = fileItems.filter(function (e) {
-                        return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY)
-                            && (e.getEntityType() === type_entity_1.EntityType.PROJECT)
-                            && (e.getParentItemId() === contactId_1)
-                            && e.getProcessType() !== type_process_1.ProcessType.DUMMY;
-                    })
-                        .map(function (fi) { return fi; });
-                    if (returnVal.length <= 0) {
-                        returnVal = fileItems.filter(function (e) {
-                            return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY)
-                                && (e.getEntityType() === type_entity_1.EntityType.PROJECT)
-                                && e.getProcessType() === type_process_1.ProcessType.DUMMY;
-                        })
-                            .map(function (fi) { return fi; });
-                    }
-                }
-                return returnVal;
-            }));
-            exports_1("getExperimentsForSelectedProject", getExperimentsForSelectedProject = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
-                var returnVal = [];
-                if (filters[type_nameid_filter_params_1.NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT]) {
-                    var projectId_1 = filters[type_nameid_filter_params_1.NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT].filterValue;
-                    returnVal = fileItems.filter(function (e) {
-                        return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY)
-                            && (e.getEntityType() === type_entity_1.EntityType.EXPERIMENT)
-                            && (e.getParentItemId() === projectId_1)
-                            && e.getProcessType() !== type_process_1.ProcessType.DUMMY;
-                    })
-                        .map(function (fi) { return fi; });
-                    if (returnVal.length <= 0) {
-                        returnVal = fileItems.filter(function (e) {
-                            return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY)
-                                && (e.getEntityType() === type_entity_1.EntityType.EXPERIMENT)
-                                && e.getProcessType() === type_process_1.ProcessType.DUMMY;
-                        })
-                            .map(function (fi) { return fi; });
-                    }
-                }
-                return returnVal;
-            }));
-            exports_1("getDatasetsForSelectedExperiment", getDatasetsForSelectedExperiment = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
-                var returnVal = [];
-                if (filters[type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT]) {
-                    var experimentId_1 = filters[type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT].filterValue;
-                    returnVal = fileItems.filter(function (e) {
-                        return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                            && e.getEntityType() === type_entity_1.EntityType.DATASET
-                            && e.getParentItemId() === experimentId_1
-                            && e.getProcessType() !== type_process_1.ProcessType.DUMMY);
-                    })
-                        .map(function (fi) { return fi; });
-                    if (returnVal.length <= 0) {
-                        returnVal = fileItems.filter(function (e) {
-                            return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                                && e.getEntityType() === type_entity_1.EntityType.DATASET
-                                && e.getProcessType() === type_process_1.ProcessType.DUMMY);
-                        })
-                            .map(function (fi) { return fi; });
-                    }
-                }
-                return returnVal;
-            }));
             exports_1("getSelectedFileFormat", getSelectedFileFormat = reselect_1.createSelector(getFileItems, getSelectedUniqueIds, function (fileItems, selectedUniqueIds) {
                 // default
                 var returnVal = gobii_file_item_1.GobiiFileItem

@@ -123,42 +123,9 @@ export const getFileItemsState = (state: State) => state.fileItems;
  */
 export const getFileItemsFilters = createSelector(getFileItemsState, fromFileItems.getFilters);
 export const getAllFileItems = createSelector(getFileItemsState, fromFileItems.getAll);
-export const getFileItems = createSelector(getFileItemsState, fromFileItems.getFileItems);
 export const getSelectedFileItems = createSelector(getFileItemsState, fromFileItems.getSelected);
-export const getSelectedUniqueIds = createSelector(getFileItemsState, fromFileItems.getSelectedUniqueIds);
-export const getUniqueIds = createSelector(getFileItemsState, fromFileItems.getUniqueIds);
 
 
-export const getPiContacts = createSelector(getFileItemsState, fromFileItems.getPiContacts);
-export const getFirstPiContact = createSelector(getFileItemsState, fromFileItems.getFirstPiContact);
-
-
-export const getProjects = createSelector(getFileItemsState, fromFileItems.getProjects);
-export const getFirstProject = createSelector(getFileItemsState, fromFileItems.getFirstProject);
-
-export const getExperiments = createSelector(getFileItemsState, fromFileItems.getExperiments);
-export const getFirstExperiment = createSelector(getFileItemsState, fromFileItems.getFirstExperiment);
-
-export const getDatasets = createSelector(getFileItemsState, fromFileItems.getDatasets);
-export const getFirstDataset = createSelector(getFileItemsState, fromFileItems.getFirstDataset);
-
-export const getCvTermsDataType = createSelector(getFileItemsState, fromFileItems.getCvTermsDataType);
-export const getFirstCvTerm = createSelector(getFileItemsState, fromFileItems.getFirstCvTerm);
-
-export const getMapsets = createSelector(getFileItemsState, fromFileItems.getMapsets);
-export const getFirstMapset = createSelector(getFileItemsState, fromFileItems.getFirstmapset);
-
-export const getPlatforms = createSelector(getFileItemsState, fromFileItems.getPlatforms);
-export const getFirstPlatform = createSelector(getFileItemsState, fromFileItems.getFirstPlatform);
-
-export const getMarkerGroups = createSelector(getFileItemsState, fromFileItems.getMarkerGroups);
-export const getFirstMarkerGroup = createSelector(getFileItemsState, fromFileItems.getFirstMarkerGroup);
-
-
-export const getProjectsByPI = createSelector(getFileItemsState, fromFileItems.getProjectsForSelectedPi);
-export const getExperimentsByProject = createSelector(getFileItemsState, fromFileItems.getExperimentsForSelectedProject);
-export const getDatasetsByExperiment = createSelector(getFileItemsState, fromFileItems.getDatasetsForSelectedExperiment);
-export const getSelectedPiContacts = createSelector(getFileItemsState, fromFileItems.getSelectedPiContacts);
 export const getSelectedFileFormat = createSelector(getFileItemsState, fromFileItems.getSelectedFileFormat);
 export const getSelectedSampleType = createSelector(getFileItemsState, fromFileItems.getSelectedSampleType);
 export const getJobId = createSelector(getFileItemsState, fromFileItems.getJobId);
