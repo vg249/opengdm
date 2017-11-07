@@ -94,28 +94,36 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A));
                     this.nameIdRequestParams.set(type_nameid_filter_params_1.NameIdFilterParamTypes.MAPSETS, name_id_request_params_1.FileItemParams
                         .build(type_nameid_filter_params_1.NameIdFilterParamTypes.MAPSETS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.MAPSET)
+                        .setIsDynamicFilterValue(false)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.NO));
                     this.nameIdRequestParams.set(type_nameid_filter_params_1.NameIdFilterParamTypes.PLATFORMS, name_id_request_params_1.FileItemParams
-                        .build(type_nameid_filter_params_1.NameIdFilterParamTypes.PLATFORMS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.PLATFORM));
+                        .build(type_nameid_filter_params_1.NameIdFilterParamTypes.PLATFORMS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.PLATFORM)
+                        .setIsDynamicFilterValue(false));
                     this.nameIdRequestParams.set(type_nameid_filter_params_1.NameIdFilterParamTypes.MARKER_GROUPS, name_id_request_params_1.FileItemParams
-                        .build(type_nameid_filter_params_1.NameIdFilterParamTypes.MARKER_GROUPS, type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_entity_1.EntityType.MARKER_GROUP));
+                        .build(type_nameid_filter_params_1.NameIdFilterParamTypes.MARKER_GROUPS, type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_entity_1.EntityType.MARKER_GROUP)
+                        .setIsDynamicFilterValue(false));
                     this.nameIdRequestParams.set(type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS, name_id_request_params_1.FileItemParams
                         .build(type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.PROJECT)
+                        .setIsDynamicFilterValue(false)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL));
                     //for hierarchical items, we need to crate the nameid requests separately from the
                     //flat map: they _will_ need to be in the flat map; however, they all need to be
                     //useed to set up the filtering hierarchy
                     var nameIdRequestParamsContactsPi = name_id_request_params_1.FileItemParams
                         .build(type_nameid_filter_params_1.NameIdFilterParamTypes.CONTACT_PI, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.CONTACT)
+                        .setIsDynamicFilterValue(true)
                         .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR);
                     var nameIdRequestParamsProjectByPiContact = name_id_request_params_1.FileItemParams
                         .build(type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS_BY_CONTACT, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.PROJECT)
+                        .setIsDynamicFilterValue(true)
                         .setEntityFilter(type_entity_filter_1.EntityFilter.BYTYPEID);
                     var nameIdRequestParamsExperiments = name_id_request_params_1.FileItemParams
                         .build(type_nameid_filter_params_1.NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.EXPERIMENT)
+                        .setIsDynamicFilterValue(true)
                         .setEntityFilter(type_entity_filter_1.EntityFilter.BYTYPEID);
                     var nameIdRequestParamsDatasets = name_id_request_params_1.FileItemParams
                         .build(type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.DATASET)
+                        .setIsDynamicFilterValue(true)
                         .setEntityFilter(type_entity_filter_1.EntityFilter.BYTYPEID);
                     //add the individual requests to the map
                     this.nameIdRequestParams.set(nameIdRequestParamsContactsPi.getQueryName(), nameIdRequestParamsContactsPi);
@@ -141,7 +149,30 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                         _this.store
                             .select(fromRoot.getAllFileItems)
                             .subscribe(function (fileItems) {
-                            var filteredItems = fileItems.filter(function (fi) { return fi.compoundIdeEquals(nameIdRequestParams); });
+                            var filteredItems = [];
+                            if (!nameIdRequestParams.getIsDynamicFilterValue()) {
+                                filteredItems = fileItems.filter(function (fi) { return fi.compoundIdeEquals(nameIdRequestParams); });
+                            }
+                            else {
+                                _this.store.select(fromRoot.getFileItemsFilters)
+                                    .subscribe(function (filters) {
+                                    if (filters[nameIdRequestParams.getQueryName()]) {
+                                        var filterValue_1 = filters[nameIdRequestParams.getQueryName()].filterValue;
+                                        filteredItems = fileItems.filter(function (fi) {
+                                            return fi.compoundIdeEquals(nameIdRequestParams)
+                                                && fi.getParentItemId() === filterValue_1;
+                                        });
+                                        if (filteredItems.length <= 0) {
+                                            filteredItems = fileItems.filter(function (e) {
+                                                return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
+                                                    && e.getEntityType() === type_entity_1.EntityType.DATASET
+                                                    && e.getProcessType() === type_process_1.ProcessType.DUMMY);
+                                            })
+                                                .map(function (fi) { return fi; });
+                                        }
+                                    } // if filters have been populated
+                                });
+                            }
                             observer.next(filteredItems);
                         });
                     });

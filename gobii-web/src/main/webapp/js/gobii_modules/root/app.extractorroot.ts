@@ -186,7 +186,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                     <!--<dataset-checklist-box-->
                                     <!--[gobiiExtractFilterType]="gobiiExtractFilterType"-->
                                     <!--[experimentId]="selectedExperimentId"-->
-                                    <!--(onAddStatusMessage)="handleHeaderStatusMessage($event)">-->
+                                        <!--(onAddStatusMessage)="handleHeaderStatusMessage($event)">-->
                                     <!--</dataset-checklist-box>-->
                                 </div>
                             </div> <!-- panel body -->

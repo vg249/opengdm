@@ -57,25 +57,31 @@ export class FileItemService {
                 .build(NameIdFilterParamTypes.MAPSETS,
                     GobiiExtractFilterType.WHOLE_DATASET,
                     EntityType.MAPSET)
+                .setIsDynamicFilterValue(false)
                 .setNameIdLabelType(NameIdLabelType.NO));
 
         this.nameIdRequestParams.set(NameIdFilterParamTypes.PLATFORMS,
             FileItemParams
                 .build(NameIdFilterParamTypes.PLATFORMS,
                     GobiiExtractFilterType.WHOLE_DATASET,
-                    EntityType.PLATFORM));
+                    EntityType.PLATFORM)
+                .setIsDynamicFilterValue(false)
+        );
 
         this.nameIdRequestParams.set(NameIdFilterParamTypes.MARKER_GROUPS,
             FileItemParams
                 .build(NameIdFilterParamTypes.MARKER_GROUPS,
                     GobiiExtractFilterType.BY_MARKER,
-                    EntityType.MARKER_GROUP));
+                    EntityType.MARKER_GROUP)
+                .setIsDynamicFilterValue(false)
+        );
 
         this.nameIdRequestParams.set(NameIdFilterParamTypes.PROJECTS,
             FileItemParams
                 .build(NameIdFilterParamTypes.PROJECTS,
                     GobiiExtractFilterType.BY_SAMPLE,
                     EntityType.PROJECT)
+                .setIsDynamicFilterValue(false)
                 .setNameIdLabelType(NameIdLabelType.ALL));
 
 
@@ -86,24 +92,28 @@ export class FileItemService {
             .build(NameIdFilterParamTypes.CONTACT_PI,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.CONTACT)
+            .setIsDynamicFilterValue(true)
             .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR);
 
         let nameIdRequestParamsProjectByPiContact: FileItemParams = FileItemParams
             .build(NameIdFilterParamTypes.PROJECTS_BY_CONTACT,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.PROJECT)
+            .setIsDynamicFilterValue(true)
             .setEntityFilter(EntityFilter.BYTYPEID);
 
         let nameIdRequestParamsExperiments: FileItemParams = FileItemParams
             .build(NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.EXPERIMENT)
+            .setIsDynamicFilterValue(true)
             .setEntityFilter(EntityFilter.BYTYPEID);
 
         let nameIdRequestParamsDatasets: FileItemParams = FileItemParams
             .build(NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.DATASET)
+            .setIsDynamicFilterValue(true)
             .setEntityFilter(EntityFilter.BYTYPEID);
 
         //add the individual requests to the map
@@ -137,8 +147,31 @@ export class FileItemService {
             this.store
                 .select(fromRoot.getAllFileItems)
                 .subscribe(fileItems => {
-                        let filteredItems: GobiiFileItem[] =
-                            fileItems.filter(fi => fi.compoundIdeEquals(nameIdRequestParams))
+                        let filteredItems: GobiiFileItem[] = [];
+                        if (!nameIdRequestParams.getIsDynamicFilterValue()) {
+                            filteredItems = fileItems.filter(fi => fi.compoundIdeEquals(nameIdRequestParams))
+                        } else {
+                            this.store.select(fromRoot.getFileItemsFilters)
+                                .subscribe(filters => {
+                                    if( filters[nameIdRequestParams.getQueryName()] ) {
+                                        let filterValue: string = filters[nameIdRequestParams.getQueryName()].filterValue;
+                                        filteredItems = fileItems.filter(
+                                            fi =>
+                                                fi.compoundIdeEquals(nameIdRequestParams)
+                                                && fi.getParentItemId() === filterValue);
+
+                                        if (filteredItems.length <= 0) {
+                                            filteredItems = fileItems.filter(e =>
+                                                ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+                                                    && e.getEntityType() === EntityType.DATASET
+                                                    //                    && e.getParentItemId() === experimentId
+                                                    && e.getProcessType() === ProcessType.DUMMY))
+                                                .map(fi => fi);
+                                        }
+                                    } // if filters have been populated
+                                });
+
+                        }
                         observer.next(filteredItems)
                     }
                 );
