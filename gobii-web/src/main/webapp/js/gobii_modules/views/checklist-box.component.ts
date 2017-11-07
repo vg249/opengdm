@@ -15,7 +15,6 @@ import {NameIdFilterParamTypes} from "../model/type-nameid-filter-params";
 @Component({
     selector: 'checklist-box',
     inputs: ['gobiiExtractFilterType',
-        'retainHistory',
         'nameIdFilterParamTypes'],
     outputs: ['onError'],
     template: `
@@ -52,7 +51,6 @@ export class CheckListBoxComponent  {
         this.gobiiFileItems$ = this.fileItemService.getForFilter(this.nameIdFilterParamTypes);
     }
 
-    private retainHistory: boolean;
     private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
     private onError: EventEmitter<HeaderStatusMessage> = new EventEmitter();
 

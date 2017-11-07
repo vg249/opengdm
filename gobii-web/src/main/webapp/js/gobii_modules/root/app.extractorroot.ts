@@ -165,8 +165,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                     <label class="the-label">Platforms:</label><BR>
                                     <checklist-box
                                             [nameIdFilterParamTypes]="nameIdFilterParamTypes.PLATFORMS"
-                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                            [retainHistory]="true">
+                                            [gobiiExtractFilterType]="gobiiExtractFilterType">
                                     </checklist-box>
                                 </div>
 
@@ -178,14 +177,8 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                     <checklist-box
                                             [nameIdFilterParamTypes]="nameIdFilterParamTypes.DATASETS_BY_EXPERIMENT"
                                             [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                            [retainHistory]="true"
                                             (onError)="handleHeaderStatusMessage($event)">
                                     </checklist-box>
-                                    <!--<dataset-checklist-box-->
-                                    <!--[gobiiExtractFilterType]="gobiiExtractFilterType"-->
-                                    <!--[experimentId]="selectedExperimentId"-->
-                                        <!--(onAddStatusMessage)="handleHeaderStatusMessage($event)">-->
-                                    <!--</dataset-checklist-box>-->
                                 </div>
                             </div> <!-- panel body -->
                         </div> <!-- panel primary -->
@@ -301,28 +294,13 @@ export class ExtractorRoot implements OnInit {
 
     // *** You cannot use an Enum directly as a template type parameter, so we need
     //     to assign them to properties
-    public nameIdRequestParamsDatasetType: FileItemParams;
-    public nameIdRequestParamsPlatforms: FileItemParams;
     // ************************************************************************
 
     //
 
     nameIdFilterParamTypes: any = Object.assign({}, NameIdFilterParamTypes);
 
-    // unfiltered
-    // fileItemsContactsPI$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getPiContacts);
-    // fileItemsMapsets$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getMapsets);
-    // fileItemsDatasetTypes$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getCvTermsDataType);
-    //fileItemsPlatforms$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getPlatforms);
-
-    // filtered
-    // fileItemsProjectsForPi$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getProjectsByPI);
-    // fileItemsProjects$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getProjects);
-    // fileItemsExperiments$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getExperimentsByProject);
-    //fileItemsDatasets$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getDatasetsByExperiment);
-
     selectedExtractFormat$: Observable<GobiiFileItem> = this.store.select(fromRoot.getSelectedFileFormat);
-//    selectedExtractFormat$: Observable<string> = createSelector(getFileItemsState, fromFileItems.getSelectedFileFormat);
 
 
     public messages$: Observable<string[]> = this.store.select(fromRoot.getStatusMessages);
@@ -330,11 +308,6 @@ export class ExtractorRoot implements OnInit {
     // ************************************************************************
 
     public treeFileItemEvent: GobiiFileItem;
-//    private selectedExportTypeEvent:GobiiExtractFilterType;
-    public datasetFileItemEvents: GobiiFileItem[] = [];
-    public gobiiDatasetExtracts: GobiiDataSetExtract[] = [];
-
-    public criteriaInvalid: boolean = true;
 
     public loggedInUser: string = null;
 

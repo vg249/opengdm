@@ -63,8 +63,7 @@ import {Observable} from "rxjs/Observable";
                 <div *ngIf="selectedListType == 'markerGroupsType'" class="col-md-8">
                     <checklist-box
                             [nameIdFilterParamTypes]="nameIdFilterParamTypesMarkerGroup"
-                            [gobiiExtractFilterType]="gobiiExtractFilterType"
-                            [retainHistory]="true">
+                            [gobiiExtractFilterType]="gobiiExtractFilterType">
                     </checklist-box>
                 </div>
 
