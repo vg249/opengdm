@@ -127,6 +127,24 @@ export class FileItemService {
 
     } // constructor
 
+    public getForFilter(nameIdFilterParamTypes: NameIdFilterParamTypes): Observable<GobiiFileItem[]> {
+
+
+        let nameIdRequestParams: FileItemParams = this.nameIdRequestParams.get(nameIdFilterParamTypes);
+
+        return Observable.create(observer => {
+
+            this.store
+                .select(fromRoot.getAllFileItems)
+                .subscribe(fileItems => {
+                        let filteredItems: GobiiFileItem[] =
+                            fileItems.filter(fi => fi.compoundIdeEquals(nameIdRequestParams))
+                        observer.next(filteredItems)
+                    }
+                );
+        })
+    }
+
 
     public setItemLabelType(gobiiExtractFilterType: GobiiExtractFilterType,
                             nameIdFilterParamTypes: NameIdFilterParamTypes,
@@ -256,175 +274,175 @@ export class FileItemService {
                         lastModifiedState = filterState.entityLasteUpdated;
                     }
 
-                    this.entityStatsService.get(new DtoRequestItemEntityStats(
-                        EntityRequestType.LasetUpdated,
-                        nameIdRequestParamsToLoad.getEntityType(),
-                        null,
-                        null))
-                        .subscribe(entityStats => {
+                    // this.entityStatsService.get(new DtoRequestItemEntityStats(
+                    //     EntityRequestType.LasetUpdated,
+                    //     nameIdRequestParamsToLoad.getEntityType(),
+                    //     null,
+                    //     null))
+                    //     .subscribe(entityStats => {
 
-                            this.store.select(fromRoot.getAllFileItems)
-                                .subscribe(fileItems => {
+                    this.store.select(fromRoot.getAllFileItems)
+                        .subscribe(fileItems => {
 
-                                    let itemCountForExtractType: number = fileItems
-                                        .filter(fi =>
-                                            fi.compoundIdeEquals(nameIdRequestParamsToLoad)
-                                        ).length;
+                            let itemCountForExtractType: number = fileItems
+                                .filter(fi =>
+                                    fi.compoundIdeEquals(nameIdRequestParamsToLoad)
+                                ).length;
 
-                                    // if ((lastModifiedState === null ) ||
-                                    //     itemCountForExtractType === 0 ||
-                                    //     ( entityStats.lastModified > lastModifiedState) ) {
-                                    //BEGIN: nameIdService.get()
-                                    this.nameIdService.get(nameIdRequestParamsToLoad)
-                                        .subscribe(nameIds => {
+                            // if ((lastModifiedState === null ) ||
+                            //     itemCountForExtractType === 0 ||
+                            //     ( entityStats.lastModified > lastModifiedState) ) {
+                            //BEGIN: nameIdService.get()
+                            this.nameIdService.get(nameIdRequestParamsToLoad)
+                                .subscribe(nameIds => {
 
-                                                let minEntityLastUpdated: Date;
-                                                let fileItems: GobiiFileItem[] = [];
-                                                if (nameIds && ( nameIds.length > 0 )) {
+                                        let minEntityLastUpdated: Date;
+                                        let fileItems: GobiiFileItem[] = [];
+                                        if (nameIds && ( nameIds.length > 0 )) {
 
-                                                    nameIds.forEach(n => {
-                                                        let currentFileItem: GobiiFileItem =
-                                                            GobiiFileItem.build(
-                                                                gobiiExtractFilterType,
-                                                                ProcessType.CREATE)
-                                                                .setExtractorItemType(ExtractorItemType.ENTITY)
-                                                                .setEntityType(nameIdRequestParamsToLoad.getEntityType())
-                                                                .setEntitySubType(nameIdRequestParamsToLoad.getEntitySubType())
-                                                                .setCvFilterType(nameIdRequestParamsToLoad.getCvFilterType())
-                                                                .setItemId(n.id)
-                                                                .setItemName(n.name)
-                                                                .setSelected(false)
-                                                                .setRequired(false)
-                                                                .setParentItemId(nameIdRequestParamsToLoad.getFkEntityFilterValue());
-
-
-                                                        fileItems.push(currentFileItem);
-                                                    });
-
-                                                    minEntityLastUpdated = new Date(Math.min.apply(null, nameIds
-                                                        .map(nameId => nameId.entityLasetModified)));
-
-                                                    let temp: string = "foo";
-
-                                                    temp = "bar";
-
-                                                    if (nameIdRequestParamsToLoad.getMameIdLabelType() != NameIdLabelType.UNKNOWN) {
-
-                                                        let entityName: string = "";
-                                                        if (nameIdRequestParamsToLoad.getCvFilterType() !== CvFilterType.UNKNOWN) {
-                                                            entityName += Labels.instance().cvFilterNodeLabels[nameIdRequestParamsToLoad.getCvFilterType()];
-                                                        } else if (nameIdRequestParamsToLoad.getEntitySubType() !== EntitySubType.UNKNOWN) {
-                                                            entityName += Labels.instance().entitySubtypeNodeLabels[nameIdRequestParamsToLoad.getEntitySubType()];
-                                                        } else {
-                                                            entityName += Labels.instance().entityNodeLabels[nameIdRequestParamsToLoad.getEntityType()];
-                                                        }
-
-                                                        let label: string = "";
-                                                        switch (nameIdRequestParamsToLoad.getMameIdLabelType()) {
-
-                                                            case NameIdLabelType.SELECT_A:
-                                                                label = "Select a " + entityName;
-                                                                break;
-
-                                                            // we require that these entity labels all be in the singular
-                                                            case NameIdLabelType.ALL:
-                                                                label = "All " + entityName + "s";
-                                                                break;
-
-                                                            case NameIdLabelType.NO:
-                                                                label = "No " + entityName;
-                                                                break;
-
-                                                            default:
-                                                                this.store.dispatch(new historyAction.AddStatusAction(new HeaderStatusMessage("Unknown label type "
-                                                                    + NameIdLabelType[nameIdRequestParamsToLoad.getMameIdLabelType()], null, null)));
-
-                                                        }
-
-
-                                                        let labelFileItem: GobiiFileItem = GobiiFileItem
-                                                            .build(gobiiExtractFilterType, ProcessType.CREATE)
-                                                            .setEntityType(nameIdRequestParamsToLoad.getEntityType())
-                                                            .setEntitySubType(nameIdRequestParamsToLoad.getEntitySubType())
-                                                            .setCvFilterType(nameIdRequestParamsToLoad.getCvFilterType())
-                                                            .setExtractorItemType(ExtractorItemType.LABEL)
-                                                            .setItemName(label)
-                                                            .setParentItemId(nameIdRequestParamsToLoad.getFkEntityFilterValue())
-                                                            .setItemId("0");
-
-
-                                                        fileItems.unshift(labelFileItem);
-                                                        //.selectedFileItemId = "0";
-
-                                                    }
-
-                                                } else {
-
-                                                    let noneFileItem: GobiiFileItem = GobiiFileItem
-                                                        .build(gobiiExtractFilterType, ProcessType.DUMMY)
+                                            nameIds.forEach(n => {
+                                                let currentFileItem: GobiiFileItem =
+                                                    GobiiFileItem.build(
+                                                        gobiiExtractFilterType,
+                                                        ProcessType.CREATE)
                                                         .setExtractorItemType(ExtractorItemType.ENTITY)
                                                         .setEntityType(nameIdRequestParamsToLoad.getEntityType())
-                                                        .setItemId("0")
-                                                        .setItemName("<none>")
+                                                        .setEntitySubType(nameIdRequestParamsToLoad.getEntitySubType())
+                                                        .setCvFilterType(nameIdRequestParamsToLoad.getCvFilterType())
+                                                        .setItemId(n.id)
+                                                        .setItemName(n.name)
+                                                        .setSelected(false)
+                                                        .setRequired(false)
                                                         .setParentItemId(nameIdRequestParamsToLoad.getFkEntityFilterValue());
 
-                                                    fileItems.push(noneFileItem);
 
-                                                }// if/else any nameids were retrieved
+                                                fileItems.push(currentFileItem);
+                                            });
 
+                                            minEntityLastUpdated = new Date(Math.min.apply(null, nameIds
+                                                .map(nameId => nameId.entityLasetModified)));
 
-                                                let loadAction: fileItemActions.LoadFileItemListAction = new fileItemActions.LoadFileItemListAction(
-                                                    {
-                                                        gobiiFileItems: fileItems,
-                                                        filterId: nameIdRequestParamsToLoad.getQueryName(),
-                                                        filter: {
-                                                            gobiiExtractFilterType: gobiiExtractFilterType,
-                                                            filterValue: nameIdRequestParamsToLoad.getFkEntityFilterValue(),
-                                                            entityLasteUpdated: minEntityLastUpdated
-                                                        }
-                                                    }
-                                                );
-                                                observer.next(loadAction);
+                                            let temp: string = "foo";
 
-                                                // if there are children, we will load their data as well
-                                                if (nameIdRequestParamsToLoad
-                                                        .getChildNameIdRequestParams()
-                                                        .filter(rqp => rqp.getEntityFilter() === EntityFilter.BYTYPEID)
-                                                        .length > 0) {
+                                            temp = "bar";
 
-                                                    let parentId: string = nameIdRequestParamsToLoad.getSelectedItemId();
-                                                    if (!parentId) {
-                                                        parentId = fileItems[0].getItemId();
-                                                    }
+                                            if (nameIdRequestParamsToLoad.getMameIdLabelType() != NameIdLabelType.UNKNOWN) {
 
-                                                    nameIdRequestParamsToLoad
-                                                        .getChildNameIdRequestParams()
-                                                        .forEach(rqp => {
-                                                            if (rqp.getEntityFilter() === EntityFilter.BYTYPEID) {
-                                                                rqp.setFkEntityFilterValue(parentId);
-
-                                                                this.recurseFileItems(gobiiExtractFilterType,
-                                                                    rqp,
-                                                                    parentId)
-                                                                    .subscribe(fileItems => observer.next(fileItems));
-                                                            }
-                                                        });
+                                                let entityName: string = "";
+                                                if (nameIdRequestParamsToLoad.getCvFilterType() !== CvFilterType.UNKNOWN) {
+                                                    entityName += Labels.instance().cvFilterNodeLabels[nameIdRequestParamsToLoad.getCvFilterType()];
+                                                } else if (nameIdRequestParamsToLoad.getEntitySubType() !== EntitySubType.UNKNOWN) {
+                                                    entityName += Labels.instance().entitySubtypeNodeLabels[nameIdRequestParamsToLoad.getEntitySubType()];
+                                                } else {
+                                                    entityName += Labels.instance().entityNodeLabels[nameIdRequestParamsToLoad.getEntityType()];
                                                 }
 
-                                                let bar = "bar";
+                                                let label: string = "";
+                                                switch (nameIdRequestParamsToLoad.getMameIdLabelType()) {
 
-                                            }, // Observer=>next
-                                            responseHeader => {
-                                                this.store.dispatch(new historyAction.AddStatusAction(responseHeader));
-                                            }); // subscribe
-                                    //END: nameIdService.get()
+                                                    case NameIdLabelType.SELECT_A:
+                                                        label = "Select a " + entityName;
+                                                        break;
+
+                                                    // we require that these entity labels all be in the singular
+                                                    case NameIdLabelType.ALL:
+                                                        label = "All " + entityName + "s";
+                                                        break;
+
+                                                    case NameIdLabelType.NO:
+                                                        label = "No " + entityName;
+                                                        break;
+
+                                                    default:
+                                                        this.store.dispatch(new historyAction.AddStatusAction(new HeaderStatusMessage("Unknown label type "
+                                                            + NameIdLabelType[nameIdRequestParamsToLoad.getMameIdLabelType()], null, null)));
+
+                                                }
 
 
-                                })
-                                .unsubscribe();
+                                                let labelFileItem: GobiiFileItem = GobiiFileItem
+                                                    .build(gobiiExtractFilterType, ProcessType.CREATE)
+                                                    .setEntityType(nameIdRequestParamsToLoad.getEntityType())
+                                                    .setEntitySubType(nameIdRequestParamsToLoad.getEntitySubType())
+                                                    .setCvFilterType(nameIdRequestParamsToLoad.getCvFilterType())
+                                                    .setExtractorItemType(ExtractorItemType.LABEL)
+                                                    .setItemName(label)
+                                                    .setParentItemId(nameIdRequestParamsToLoad.getFkEntityFilterValue())
+                                                    .setItemId("0");
 
 
-                        });
+                                                fileItems.unshift(labelFileItem);
+                                                //.selectedFileItemId = "0";
+
+                                            }
+
+                                        } else {
+
+                                            let noneFileItem: GobiiFileItem = GobiiFileItem
+                                                .build(gobiiExtractFilterType, ProcessType.DUMMY)
+                                                .setExtractorItemType(ExtractorItemType.ENTITY)
+                                                .setEntityType(nameIdRequestParamsToLoad.getEntityType())
+                                                .setItemId("0")
+                                                .setItemName("<none>")
+                                                .setParentItemId(nameIdRequestParamsToLoad.getFkEntityFilterValue());
+
+                                            fileItems.push(noneFileItem);
+
+                                        }// if/else any nameids were retrieved
+
+
+                                        let loadAction: fileItemActions.LoadFileItemListAction = new fileItemActions.LoadFileItemListAction(
+                                            {
+                                                gobiiFileItems: fileItems,
+                                                filterId: nameIdRequestParamsToLoad.getQueryName(),
+                                                filter: {
+                                                    gobiiExtractFilterType: gobiiExtractFilterType,
+                                                    filterValue: nameIdRequestParamsToLoad.getFkEntityFilterValue(),
+                                                    entityLasteUpdated: minEntityLastUpdated
+                                                }
+                                            }
+                                        );
+                                        observer.next(loadAction);
+
+                                        // if there are children, we will load their data as well
+                                        if (nameIdRequestParamsToLoad
+                                                .getChildNameIdRequestParams()
+                                                .filter(rqp => rqp.getEntityFilter() === EntityFilter.BYTYPEID)
+                                                .length > 0) {
+
+                                            let parentId: string = nameIdRequestParamsToLoad.getSelectedItemId();
+                                            if (!parentId) {
+                                                parentId = fileItems[0].getItemId();
+                                            }
+
+                                            nameIdRequestParamsToLoad
+                                                .getChildNameIdRequestParams()
+                                                .forEach(rqp => {
+                                                    if (rqp.getEntityFilter() === EntityFilter.BYTYPEID) {
+                                                        rqp.setFkEntityFilterValue(parentId);
+
+                                                        this.recurseFileItems(gobiiExtractFilterType,
+                                                            rqp,
+                                                            parentId)
+                                                            .subscribe(fileItems => observer.next(fileItems));
+                                                    }
+                                                });
+                                        }
+
+                                        let bar = "bar";
+
+                                    }, // Observer=>next
+                                    responseHeader => {
+                                        this.store.dispatch(new historyAction.AddStatusAction(responseHeader));
+                                    }); // subscribe
+                            //END: nameIdService.get()
+
+
+                        })
+                        .unsubscribe();
+
+
+//                        }); //subscribe
 
                 }).unsubscribe();
 

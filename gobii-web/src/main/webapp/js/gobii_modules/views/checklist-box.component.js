@@ -39,6 +39,9 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../store/ac
                     this.onError = new core_1.EventEmitter();
                     this.differ = differs.find({}).create(null);
                 } // ctor
+                CheckListBoxComponent.prototype.ngOnInit = function () {
+                    var foo;
+                };
                 CheckListBoxComponent.prototype.handleItemChecked = function (arg) {
                     var currentFileItemUniqueId = arg.currentTarget.value;
                     if (arg.currentTarget.checked) {
@@ -59,8 +62,8 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../store/ac
                         selector: 'checklist-box',
                         inputs: ['gobiiExtractFilterType',
                             'gobiiFileItems$',
-                            'nameIdRequestParams',
-                            'retainHistory'],
+                            'retainHistory',
+                            'nameIdFilterParamTypes'],
                         outputs: ['onError'],
                         template: "\n        <form>\n            <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                <div *ngFor=\"let gobiiFileItem of gobiiFileItems$ | async\"\n                     (click)=handleItemSelected($event)>\n                    <input type=\"checkbox\"\n                           (click)=handleItemChecked($event)\n                           [checked]=\"gobiiFileItem.getSelected()\"\n                           value={{gobiiFileItem.getFileItemUniqueId()}}\n                    name=\"{{gobiiFileItem.getItemName()}}\">&nbsp;{{gobiiFileItem.getItemName()}}\n                </div>\n            </div>\n        </form>" // end template
                     }),

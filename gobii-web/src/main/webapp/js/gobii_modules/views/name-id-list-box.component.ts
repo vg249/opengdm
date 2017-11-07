@@ -6,11 +6,13 @@ import * as fromRoot from '../store/reducers';
 import * as fileAction from '../store/actions/fileitem-action';
 import * as historyAction from '../store/actions/history-action';
 import {Observable} from "rxjs/Observable";
+import {NameIdFilterParamTypes} from "../model/type-nameid-filter-params";
+import {FileItemService} from "../services/core/file-item-service";
 
 
 @Component({
     selector: 'name-id-list-box',
-    inputs: ['fileItems$','gobiiExtractFilterType'],
+    inputs: ['gobiiExtractFilterType','nameIdFilterParamTypes'],
     outputs: [],
     template: `<select (change)="handleFileItemSelected($event)">
         <option *ngFor="let fileItem of fileItems$ | async"
@@ -30,13 +32,17 @@ export class NameIdListBoxComponent  {
 
     private gobiiExtractFilterType: GobiiExtractFilterType;
 
-    constructor(private store: Store<fromRoot.State>) {
+    private nameIdFilterParamTypes:NameIdFilterParamTypes;
+    constructor(private store: Store<fromRoot.State>,
+                private fileItemService:FileItemService) {
 
 
     } // ctor
 
 
     ngOnInit(): any {
+
+        this.fileItems$ = this.fileItemService.getForFilter(this.nameIdFilterParamTypes);
 
         this
             .fileItems$

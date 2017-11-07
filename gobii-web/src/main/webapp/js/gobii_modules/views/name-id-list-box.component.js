@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-action", "../store/actions/history-action"], function (exports_1, context_1) {
+System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-action", "../store/actions/history-action", "../services/core/file-item-service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, store_1, fileAction, historyAction, NameIdListBoxComponent;
+    var core_1, store_1, fileAction, historyAction, file_item_service_1, NameIdListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -24,16 +24,21 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
             },
             function (historyAction_1) {
                 historyAction = historyAction_1;
+            },
+            function (file_item_service_1_1) {
+                file_item_service_1 = file_item_service_1_1;
             }
         ],
         execute: function () {
             NameIdListBoxComponent = (function () {
-                function NameIdListBoxComponent(store) {
+                function NameIdListBoxComponent(store, fileItemService) {
                     this.store = store;
+                    this.fileItemService = fileItemService;
                     this.previousSelectedItemId = null;
                 } // ctor
                 NameIdListBoxComponent.prototype.ngOnInit = function () {
                     var _this = this;
+                    this.fileItems$ = this.fileItemService.getForFilter(this.nameIdFilterParamTypes);
                     this
                         .fileItems$
                         .subscribe(function (items) {
@@ -60,11 +65,12 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
                 NameIdListBoxComponent = __decorate([
                     core_1.Component({
                         selector: 'name-id-list-box',
-                        inputs: ['fileItems$', 'gobiiExtractFilterType'],
+                        inputs: ['gobiiExtractFilterType', 'nameIdFilterParamTypes'],
                         outputs: [],
                         template: "<select (change)=\"handleFileItemSelected($event)\">\n        <option *ngFor=\"let fileItem of fileItems$ | async\"\n                [value]=\"fileItem.getFileItemUniqueId()\"\n                [selected]=\"fileItem.getSelected()\">{{fileItem.getItemName()}}\n        </option>\n    </select>\n    " // end template
                     }),
-                    __metadata("design:paramtypes", [store_1.Store])
+                    __metadata("design:paramtypes", [store_1.Store,
+                        file_item_service_1.FileItemService])
                 ], NameIdListBoxComponent);
                 return NameIdListBoxComponent;
             }());
