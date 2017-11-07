@@ -148,29 +148,31 @@ export class FileItemService {
                 .select(fromRoot.getAllFileItems)
                 .subscribe(fileItems => {
                         let filteredItems: GobiiFileItem[] = [];
-                        if (!nameIdRequestParams.getIsDynamicFilterValue()) {
-                            filteredItems = fileItems.filter(fi => fi.compoundIdeEquals(nameIdRequestParams))
-                        } else {
-                            this.store.select(fromRoot.getFileItemsFilters)
-                                .subscribe(filters => {
-                                    if( filters[nameIdRequestParams.getQueryName()] ) {
-                                        let filterValue: string = filters[nameIdRequestParams.getQueryName()].filterValue;
-                                        filteredItems = fileItems.filter(
-                                            fi =>
-                                                fi.compoundIdeEquals(nameIdRequestParams)
-                                                && fi.getParentItemId() === filterValue);
+                        if (nameIdRequestParams) {
+                            if (!nameIdRequestParams.getIsDynamicFilterValue()) {
+                                filteredItems = fileItems.filter(fi => fi.compoundIdeEquals(nameIdRequestParams))
+                            } else {
+                                this.store.select(fromRoot.getFileItemsFilters)
+                                    .subscribe(filters => {
+                                        if (filters[nameIdRequestParams.getQueryName()]) {
+                                            let filterValue: string = filters[nameIdRequestParams.getQueryName()].filterValue;
+                                            filteredItems = fileItems.filter(
+                                                fi =>
+                                                    fi.compoundIdeEquals(nameIdRequestParams)
+                                                    && fi.getParentItemId() === filterValue);
 
-                                        if (filteredItems.length <= 0) {
-                                            filteredItems = fileItems.filter(e =>
-                                                ( e.getExtractorItemType() === ExtractorItemType.ENTITY
-                                                    && e.getEntityType() === EntityType.DATASET
-                                                    //                    && e.getParentItemId() === experimentId
-                                                    && e.getProcessType() === ProcessType.DUMMY))
-                                                .map(fi => fi);
-                                        }
-                                    } // if filters have been populated
-                                });
+                                            if (filteredItems.length <= 0) {
+                                                filteredItems = fileItems.filter(e =>
+                                                    ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+                                                        && e.getEntityType() === EntityType.DATASET
+                                                        //                    && e.getParentItemId() === experimentId
+                                                        && e.getProcessType() === ProcessType.DUMMY))
+                                                    .map(fi => fi);
+                                            }
+                                        } // if filters have been populated
+                                    });
 
+                            }
                         }
                         observer.next(filteredItems)
                     }

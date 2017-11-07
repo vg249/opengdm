@@ -150,28 +150,30 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                             .select(fromRoot.getAllFileItems)
                             .subscribe(function (fileItems) {
                             var filteredItems = [];
-                            if (!nameIdRequestParams.getIsDynamicFilterValue()) {
-                                filteredItems = fileItems.filter(function (fi) { return fi.compoundIdeEquals(nameIdRequestParams); });
-                            }
-                            else {
-                                _this.store.select(fromRoot.getFileItemsFilters)
-                                    .subscribe(function (filters) {
-                                    if (filters[nameIdRequestParams.getQueryName()]) {
-                                        var filterValue_1 = filters[nameIdRequestParams.getQueryName()].filterValue;
-                                        filteredItems = fileItems.filter(function (fi) {
-                                            return fi.compoundIdeEquals(nameIdRequestParams)
-                                                && fi.getParentItemId() === filterValue_1;
-                                        });
-                                        if (filteredItems.length <= 0) {
-                                            filteredItems = fileItems.filter(function (e) {
-                                                return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                                                    && e.getEntityType() === type_entity_1.EntityType.DATASET
-                                                    && e.getProcessType() === type_process_1.ProcessType.DUMMY);
-                                            })
-                                                .map(function (fi) { return fi; });
-                                        }
-                                    } // if filters have been populated
-                                });
+                            if (nameIdRequestParams) {
+                                if (!nameIdRequestParams.getIsDynamicFilterValue()) {
+                                    filteredItems = fileItems.filter(function (fi) { return fi.compoundIdeEquals(nameIdRequestParams); });
+                                }
+                                else {
+                                    _this.store.select(fromRoot.getFileItemsFilters)
+                                        .subscribe(function (filters) {
+                                        if (filters[nameIdRequestParams.getQueryName()]) {
+                                            var filterValue_1 = filters[nameIdRequestParams.getQueryName()].filterValue;
+                                            filteredItems = fileItems.filter(function (fi) {
+                                                return fi.compoundIdeEquals(nameIdRequestParams)
+                                                    && fi.getParentItemId() === filterValue_1;
+                                            });
+                                            if (filteredItems.length <= 0) {
+                                                filteredItems = fileItems.filter(function (e) {
+                                                    return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
+                                                        && e.getEntityType() === type_entity_1.EntityType.DATASET
+                                                        && e.getProcessType() === type_process_1.ProcessType.DUMMY);
+                                                })
+                                                    .map(function (fi) { return fi; });
+                                            }
+                                        } // if filters have been populated
+                                    });
+                                }
                             }
                             observer.next(filteredItems);
                         });

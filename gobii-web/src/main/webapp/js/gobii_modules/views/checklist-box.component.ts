@@ -15,7 +15,6 @@ import {NameIdFilterParamTypes} from "../model/type-nameid-filter-params";
 @Component({
     selector: 'checklist-box',
     inputs: ['gobiiExtractFilterType',
-        'gobiiFileItems$',
         'retainHistory',
         'nameIdFilterParamTypes'],
     outputs: ['onError'],
@@ -50,7 +49,7 @@ export class CheckListBoxComponent  {
     } // ctor
 
     ngOnInit(): any {
-        let foo:string;
+        this.gobiiFileItems$ = this.fileItemService.getForFilter(this.nameIdFilterParamTypes);
     }
 
     private retainHistory: boolean;

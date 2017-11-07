@@ -164,7 +164,6 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                     <BR>
                                     <label class="the-label">Platforms:</label><BR>
                                     <checklist-box
-                                            [gobiiFileItems$]="fileItemsPlatforms$"
                                             [nameIdFilterParamTypes]="nameIdFilterParamTypes.PLATFORMS"
                                             [gobiiExtractFilterType]="gobiiExtractFilterType"
                                             [retainHistory]="true">
@@ -177,7 +176,6 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                     <BR>
                                     <label class="the-label">Experiment's Data Sets</label><BR>
                                     <checklist-box
-                                            [gobiiFileItems$]="fileItemsDatasets$"
                                             [nameIdFilterParamTypes]="nameIdFilterParamTypes.DATASETS_BY_EXPERIMENT"
                                             [gobiiExtractFilterType]="gobiiExtractFilterType"
                                             [retainHistory]="true"
@@ -315,13 +313,13 @@ export class ExtractorRoot implements OnInit {
     // fileItemsContactsPI$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getPiContacts);
     // fileItemsMapsets$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getMapsets);
     // fileItemsDatasetTypes$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getCvTermsDataType);
-    fileItemsPlatforms$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getPlatforms);
+    //fileItemsPlatforms$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getPlatforms);
 
     // filtered
     // fileItemsProjectsForPi$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getProjectsByPI);
     // fileItemsProjects$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getProjects);
     // fileItemsExperiments$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getExperimentsByProject);
-    fileItemsDatasets$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getDatasetsByExperiment);
+    //fileItemsDatasets$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getDatasetsByExperiment);
 
     selectedExtractFormat$: Observable<GobiiFileItem> = this.store.select(fromRoot.getSelectedFileFormat);
 //    selectedExtractFormat$: Observable<string> = createSelector(getFileItemsState, fromFileItems.getSelectedFileFormat);

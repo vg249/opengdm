@@ -62,7 +62,7 @@ import {Observable} from "rxjs/Observable";
 
                 <div *ngIf="selectedListType == 'markerGroupsType'" class="col-md-8">
                     <checklist-box
-                            [gobiiFileItems$]="fileItemsMarkerGroups$"
+                            [nameIdFilterParamTypes]="nameIdFilterParamTypesMarkerGroup"
                             [gobiiExtractFilterType]="gobiiExtractFilterType"
                             [retainHistory]="true">
                     </checklist-box>
@@ -102,7 +102,8 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
 
     }
 
-    fileItemsMarkerGroups$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getMarkerGroups);
+    public nameIdFilterParamTypesMarkerGroup:NameIdFilterParamTypes = NameIdFilterParamTypes.MARKER_GROUPS;
+
 
     public maxListItems: number = 200;
     public displayMaxItemsExceeded: boolean = false;

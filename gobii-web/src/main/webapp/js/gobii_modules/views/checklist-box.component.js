@@ -40,7 +40,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../store/ac
                     this.differ = differs.find({}).create(null);
                 } // ctor
                 CheckListBoxComponent.prototype.ngOnInit = function () {
-                    var foo;
+                    this.gobiiFileItems$ = this.fileItemService.getForFilter(this.nameIdFilterParamTypes);
                 };
                 CheckListBoxComponent.prototype.handleItemChecked = function (arg) {
                     var currentFileItemUniqueId = arg.currentTarget.value;
@@ -61,7 +61,6 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../store/ac
                     core_1.Component({
                         selector: 'checklist-box',
                         inputs: ['gobiiExtractFilterType',
-                            'gobiiFileItems$',
                             'retainHistory',
                             'nameIdFilterParamTypes'],
                         outputs: ['onError'],
