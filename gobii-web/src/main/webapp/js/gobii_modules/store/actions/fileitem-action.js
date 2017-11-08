@@ -1,7 +1,7 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var ADD_TO_EXTRACT, ADD_TO_EXTRACT_BY_ITEM_ID, REPLACE_IN_EXTRACT_BY_ITEM_ID, REPLACE_ITEM_OF_SAME_COMPOUND_ID, REMOVE_FROM_EXTRACT_BY_ITEM_ID, REMOVE_FROM_EXTRACT, SET_EXTRACT_TYPE, LOAD_FILE_ITEM_LIST, LOAD_FILE_ITEM, REMOVE_ALL_FROM_EXTRACT, LoadFileItemListAction, LoadFileItemtAction, RemoveFromExtractAction, AddToExtractAction, AddToExtractByItemIdAction, ReplaceInExtractByItemIdAction, ReplaceItemOfSameCompoundIdAction, SetExtractType, RemoveFromExractByItemIdAction, RemoveAllFromExtractAction;
+    var ADD_TO_EXTRACT, ADD_TO_EXTRACT_BY_ITEM_ID, REPLACE_IN_EXTRACT_BY_ITEM_ID, REPLACE_ITEM_OF_SAME_COMPOUND_ID, REMOVE_FROM_EXTRACT_BY_ITEM_ID, REMOVE_FROM_EXTRACT, SET_EXTRACT_TYPE, LOAD_FILE_ITEM_LIST, LOAD_FILE_ITEM_LIST_WITH_FILTER, LOAD_FILE_ITEM, LOAD_FILTER, REMOVE_ALL_FROM_EXTRACT, LoadFileItemListWithFilterAction, LoadFileItemListAction, LoadFilterAction, LoadFileItemtAction, RemoveFromExtractAction, AddToExtractAction, AddToExtractByItemIdAction, ReplaceInExtractByItemIdAction, ReplaceItemOfSameCompoundIdAction, SetExtractType, RemoveFromExractByItemIdAction, RemoveAllFromExtractAction;
     return {
         setters: [],
         execute: function () {
@@ -12,8 +12,10 @@ System.register([], function (exports_1, context_1) {
             exports_1("REMOVE_FROM_EXTRACT_BY_ITEM_ID", REMOVE_FROM_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Remove from Extract by ID');
             exports_1("REMOVE_FROM_EXTRACT", REMOVE_FROM_EXTRACT = '[GobiiFileItem] Remove from Extract');
             exports_1("SET_EXTRACT_TYPE", SET_EXTRACT_TYPE = '[GobiiFileItem] Set ExtractType');
-            exports_1("LOAD_FILE_ITEM_LIST", LOAD_FILE_ITEM_LIST = '[GobiiFileItem] Load File Item lIST');
+            exports_1("LOAD_FILE_ITEM_LIST", LOAD_FILE_ITEM_LIST = '[GobiiFileItem] Load File Item List');
+            exports_1("LOAD_FILE_ITEM_LIST_WITH_FILTER", LOAD_FILE_ITEM_LIST_WITH_FILTER = '[GobiiFileItem] Load File Item List With Filter');
             exports_1("LOAD_FILE_ITEM", LOAD_FILE_ITEM = '[GobiiFileItem] Load File Item');
+            exports_1("LOAD_FILTER", LOAD_FILTER = '[GobiiFileItem] Load Filter List');
             exports_1("REMOVE_ALL_FROM_EXTRACT", REMOVE_ALL_FROM_EXTRACT = '[GobiiFileItem] Remove all from Extract');
             /**
              * Every action is comprised of at least a type and an optional
@@ -22,6 +24,14 @@ System.register([], function (exports_1, context_1) {
              *
              * See Discriminated Unions: https://www.typescriptlang.org/docs/handbook/advanced-types.html#discriminated-unions
              */
+            LoadFileItemListWithFilterAction = (function () {
+                function LoadFileItemListWithFilterAction(payload) {
+                    this.payload = payload;
+                    this.type = LOAD_FILE_ITEM_LIST_WITH_FILTER;
+                }
+                return LoadFileItemListWithFilterAction;
+            }());
+            exports_1("LoadFileItemListWithFilterAction", LoadFileItemListWithFilterAction);
             LoadFileItemListAction = (function () {
                 function LoadFileItemListAction(payload) {
                     this.payload = payload;
@@ -30,6 +40,14 @@ System.register([], function (exports_1, context_1) {
                 return LoadFileItemListAction;
             }());
             exports_1("LoadFileItemListAction", LoadFileItemListAction);
+            LoadFilterAction = (function () {
+                function LoadFilterAction(payload) {
+                    this.payload = payload;
+                    this.type = LOAD_FILTER;
+                }
+                return LoadFilterAction;
+            }());
+            exports_1("LoadFilterAction", LoadFilterAction);
             LoadFileItemtAction = (function () {
                 function LoadFileItemtAction(payload) {
                     this.payload = payload;

@@ -129,9 +129,56 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             };
 
             break;
+        } // LOAD_FILE_ITEM
+
+        case gobiiFileItemAction.LOAD_FILTER: {
+            const filterId = action.payload.filterId.toString();
+            const filterValue = action.payload.filter;
+
+
+            let newFilterState = Object.assign({}, state.filters);
+            newFilterState[filterId] = filterValue;
+
+
+            returnVal = {
+                gobiiExtractFilterType: state.gobiiExtractFilterType,
+                uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
+                allFileItems: state.allFileItems,
+                filters: newFilterState
+            };
+
+            break;
         } // LOAD_FILE_ITEM_LIST
 
         case gobiiFileItemAction.LOAD_FILE_ITEM_LIST: {
+            const gobiiFileItemsPayload = action.payload.gobiiFileItems;
+
+            const newGobiiFileItems = gobiiFileItemsPayload.filter(newItem =>
+                state
+                    .allFileItems
+                    .filter(stateItem =>
+                        (
+                            stateItem.getGobiiExtractFilterType() === newItem.getGobiiExtractFilterType() &&
+                            stateItem.getExtractorItemType() === newItem.getExtractorItemType() &&
+                            stateItem.getEntityType() === newItem.getEntityType() &&
+                            stateItem.getEntitySubType() === newItem.getEntitySubType() &&
+                            stateItem.getCvFilterType() === newItem.getCvFilterType() &&
+                            stateItem.getItemId() === newItem.getItemId()
+                        )
+                    ).length === 0
+            );
+
+            returnVal = {
+                gobiiExtractFilterType: state.gobiiExtractFilterType,
+                uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
+                allFileItems: [...state.allFileItems, ...newGobiiFileItems],
+                filters: state.filters
+            };
+
+            break;
+        } // LOAD_FILE_ITEM_LIST
+
+        case gobiiFileItemAction.LOAD_FILE_ITEM_LIST_WITH_FILTER: {
             const gobiiFileItemsPayload = action.payload.gobiiFileItems;
             const filterId = action.payload.filterId.toString();
             const filterValue = action.payload.filter;
@@ -458,4 +505,192 @@ export const getUploadFiles = createSelector(getFileItems, getSelectedUniqueIds,
 
 
 
+export const getPiContacts = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+
+    let returnVal: GobiiFileItem[] = fileItems.filter(e =>
+        (  e.getExtractorItemType() === ExtractorItemType.ENTITY
+            || e.getExtractorItemType() === ExtractorItemType.LABEL )
+        && e.getEntityType() === EntityType.CONTACT
+        && e.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
+        .map(fi => fi);
+
+    return returnVal;
+});
+
+
+
+export const getProjects = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+
+    return fileItems.filter(e =>
+        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            || e.getExtractorItemType() === ExtractorItemType.LABEL )
+        && e.getEntityType() === EntityType.PROJECT)
+        .map(fi => fi);
+});
+
+
+
+export const getExperiments = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+
+    return fileItems.filter(e =>
+        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            || e.getExtractorItemType() === ExtractorItemType.LABEL )
+        && e.getEntityType() === EntityType.EXPERIMENT)
+        .map(fi => fi);
+});
+
+
+
+export const getDatasets = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+
+    return fileItems.filter(e =>
+        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            || e.getExtractorItemType() === ExtractorItemType.LABEL )
+        && e.getEntityType() === EntityType.DATASET)
+        .map(fi => fi);
+});
+
+
+
+
+export const getCvTermsDataType = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+
+    let returnVal: GobiiFileItem[] = fileItems.filter(e =>
+        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            || e.getExtractorItemType() === ExtractorItemType.LABEL )
+        && e.getEntityType() === EntityType.CV
+        && e.getCvFilterType() === CvFilterType.DATASET_TYPE)
+        .map(fi => fi);
+
+    return returnVal;
+});
+
+
+
+export const getMapsets = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+
+    return fileItems.filter(e =>
+        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            || e.getExtractorItemType() === ExtractorItemType.LABEL )
+        && e.getEntityType() === EntityType.MAPSET)
+        .map(fi => fi);
+});
+
+
+
+export const getPlatforms = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+
+    return fileItems.filter(e =>
+        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            || e.getExtractorItemType() === ExtractorItemType.LABEL )
+        && e.getEntityType() === EntityType.PLATFORM)
+        .map(fi => fi);
+});
+
+
+export const getMarkerGroups = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+
+    return fileItems.filter(e =>
+        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            || e.getExtractorItemType() === ExtractorItemType.LABEL )
+        && e.getEntityType() === EntityType.MARKER_GROUP)
+        .map(fi => fi);
+});
+
+
+// **************** GET SELECTED PER ENTITY TYPE
+export const getSelectedPiContacts = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+
+    return fileItems.filter(e =>
+        ids.find(id => id === e.getFileItemUniqueId())
+        && e.getExtractorItemType() === ExtractorItemType.ENTITY
+        && e.getEntityType() === EntityType.CONTACT
+        && e.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
+        .map(fi => fi);
+});
+
+
+export const getProjectsForSelectedPi = createSelector(getFileItems, getFilters, (fileItems, filters) => {
+
+    let returnVal: GobiiFileItem[] = [];
+
+    if (filters[NameIdFilterParamTypes.PROJECTS_BY_CONTACT]) {
+
+        let contactId: string = filters[NameIdFilterParamTypes.PROJECTS_BY_CONTACT].filterValue;
+        returnVal = fileItems.filter(e =>
+            ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
+            && ( e.getEntityType() === EntityType.PROJECT)
+            && (e.getParentItemId() === contactId )
+            && e.getProcessType() !== ProcessType.DUMMY)
+            .map(fi => fi);
+
+        if (returnVal.length <= 0) {
+            returnVal = fileItems.filter(e =>
+                ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
+                && ( e.getEntityType() === EntityType.PROJECT)
+                //                && (e.getParentItemId() === contactId )
+                && e.getProcessType() === ProcessType.DUMMY)
+                .map(fi => fi);
+        }
+    }
+
+    return returnVal;
+});
+
+
+export const getExperimentsForSelectedProject = createSelector(getFileItems, getFilters, (fileItems, filters) => {
+
+    let returnVal: GobiiFileItem[] = [];
+
+    if (filters[NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT]) {
+
+        let projectId: string = filters[NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT].filterValue;
+        returnVal = fileItems.filter(e =>
+            ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
+            && ( e.getEntityType() === EntityType.EXPERIMENT)
+            && (e.getParentItemId() === projectId )
+            && e.getProcessType() !== ProcessType.DUMMY)
+            .map(fi => fi);
+
+        if (returnVal.length <= 0) {
+            returnVal = fileItems.filter(e =>
+                ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
+                && ( e.getEntityType() === EntityType.EXPERIMENT)
+                //                && (e.getParentItemId() === projectId )
+                && e.getProcessType() === ProcessType.DUMMY)
+                .map(fi => fi);
+        }
+    }
+
+    return returnVal;
+});
+
+
+export const getDatasetsForSelectedExperiment = createSelector(getFileItems, getFilters, (fileItems, filters) => {
+
+    let returnVal: GobiiFileItem[] = [];
+
+    if (filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT]) {
+
+        let experimentId: string = filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT].filterValue;
+        returnVal = fileItems.filter(e =>
+            ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+                && e.getEntityType() === EntityType.DATASET
+                && e.getParentItemId() === experimentId
+                && e.getProcessType() !== ProcessType.DUMMY))
+            .map(fi => fi);
+
+        if (returnVal.length <= 0) {
+            returnVal = fileItems.filter(e =>
+                ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+                    && e.getEntityType() === EntityType.DATASET
+                    //                    && e.getParentItemId() === experimentId
+                    && e.getProcessType() === ProcessType.DUMMY))
+                .map(fi => fi);
+        }
+
+    }
+
+    return returnVal;
+});
 

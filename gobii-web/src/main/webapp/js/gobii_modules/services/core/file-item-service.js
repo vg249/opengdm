@@ -143,64 +143,114 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     ]);
                 } // constructor
                 FileItemService.prototype.getForFilter = function (nameIdFilterParamTypes) {
-                    var _this = this;
-                    var nameIdRequestParams = this.nameIdRequestParams.get(nameIdFilterParamTypes);
-                    return Observable_1.Observable.create(function (observer) {
-                        _this.store
-                            .select(fromRoot.getAllFileItems)
-                            .subscribe(function (fileItems) {
-                            var filteredItems = [];
-                            if (nameIdRequestParams) {
-                                if (!nameIdRequestParams.getIsDynamicFilterValue()) {
-                                    filteredItems = fileItems.filter(function (fi) { return fi.compoundIdeEquals(nameIdRequestParams); });
-                                }
-                                else {
-                                    _this.store.select(fromRoot.getFileItemsFilters)
-                                        .subscribe(function (filters) {
-                                        if (filters[nameIdRequestParams.getQueryName()]) {
-                                            var filterValue_1 = filters[nameIdRequestParams.getQueryName()].filterValue;
-                                            filteredItems = fileItems.filter(function (fi) {
-                                                return fi.compoundIdeEquals(nameIdRequestParams)
-                                                    && fi.getParentItemId() === filterValue_1;
-                                            });
-                                            if (filteredItems.length <= 0) {
-                                                filteredItems = fileItems.filter(function (e) {
-                                                    return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                                                        && e.getEntityType() === type_entity_1.EntityType.DATASET
-                                                        && e.getProcessType() === type_process_1.ProcessType.DUMMY);
-                                                })
-                                                    .map(function (fi) { return fi; });
-                                            }
-                                        } // if filters have been populated
-                                    });
-                                }
-                            }
-                            observer.next(filteredItems);
-                        });
-                    });
+                    //Wrapping an Observable around the select functions just doesn't work. So at leaset this
+                    //function can encapsualte getting the correct selector for the filter
+                    var returnVal;
+                    switch (nameIdFilterParamTypes) {
+                        case type_nameid_filter_params_1.NameIdFilterParamTypes.MARKER_GROUPS:
+                            returnVal = this.store.select(fromRoot.getMarkerGroups);
+                            break;
+                        case type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS:
+                            returnVal = this.store.select(fromRoot.getProjects);
+                            break;
+                        case type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS_BY_CONTACT:
+                            returnVal = this.store.select(fromRoot.getProjectsByPI);
+                            break;
+                        case type_nameid_filter_params_1.NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT:
+                            returnVal = this.store.select(fromRoot.getExperimentsByProject);
+                            break;
+                        case type_nameid_filter_params_1.NameIdFilterParamTypes.EXPERIMENTS:
+                            returnVal = this.store.select(fromRoot.getExperiments);
+                            break;
+                        case type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT:
+                            returnVal = this.store.select(fromRoot.getDatasetsByExperiment);
+                            break;
+                        case type_nameid_filter_params_1.NameIdFilterParamTypes.PLATFORMS:
+                            returnVal = this.store.select(fromRoot.getPlatforms);
+                            break;
+                        case type_nameid_filter_params_1.NameIdFilterParamTypes.CV_DATATYPE:
+                            returnVal = this.store.select(fromRoot.getCvTermsDataType);
+                            break;
+                        case type_nameid_filter_params_1.NameIdFilterParamTypes.MAPSETS:
+                            returnVal = this.store.select(fromRoot.getMapsets);
+                            break;
+                        case type_nameid_filter_params_1.NameIdFilterParamTypes.CONTACT_PI:
+                            returnVal = this.store.select(fromRoot.getPiContacts);
+                            break;
+                        default:
+                            returnVal = this.store.select(fromRoot.getAllFileItems);
+                            break;
+                    }
+                    return returnVal;
+                    // THIS IS THE THING THAT DIDN'T WORK; IT'S WORTH KEEPING IT AROUND FOR REFERENCE.
+                    // return Observable.create(observer => {
+                    //     let filteredItems: GobiiFileItem[] = [];
+                    //     this.store
+                    //         .select(fromRoot.getAllFileItems)
+                    //         .subscribe(fileItems => {
+                    //                 let nameIdRequestParams: FileItemParams = this.nameIdRequestParams.get(nameIdFilterParamTypes);
+                    //                 if (nameIdRequestParams) {
+                    //                     if (!nameIdRequestParams.getIsDynamicFilterValue()) {
+                    //                         filteredItems = fileItems.filter(fi => fi.compoundIdeEquals(nameIdRequestParams))
+                    //                     } else {
+                    //                         this.store.select(fromRoot.getFileItemsFilters)
+                    //                             .subscribe(filters => {
+                    //                                 if (filters[nameIdRequestParams.getQueryName()]) {
+                    //                                     let filterValue: string = filters[nameIdRequestParams.getQueryName()].filterValue;
+                    //                                     filteredItems = fileItems.filter(
+                    //                                         fi =>
+                    //                                             fi.compoundIdeEquals(nameIdRequestParams)
+                    //                                             && fi.getParentItemId() === filterValue);
+                    //
+                    //                                     if (filteredItems.length <= 0) {
+                    //                                         filteredItems = fileItems.filter(e =>
+                    //                                             ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+                    //                                                 && e.getEntityType() === EntityType.DATASET
+                    //                                                 //                    && e.getParentItemId() === experimentId
+                    //                                                 && e.getProcessType() === ProcessType.DUMMY))
+                    //                                             .map(fi => fi);
+                    //
+                    //                                     }
+                    //                                     observer.next(filteredItems)
+                    //                                 } // if filters have been populated
+                    //                             });
+                    //
+                    //                     }
+                    //                 }
+                    //             } //Store.subscribe
+                    //         );
+                    //
+                    //
+                    //
+                    // }) //Observable.create()
                 };
                 FileItemService.prototype.setItemLabelType = function (gobiiExtractFilterType, nameIdFilterParamTypes, nameIdLabelType) {
                     var nameIdRequestParamsFromType = this.nameIdRequestParams.get(nameIdFilterParamTypes);
                     nameIdRequestParamsFromType.setNameIdLabelType(nameIdLabelType);
                 };
-                FileItemService.prototype.loadWithFilterParams = function (gobiiExtractFilterType, nameIdFilterParamTypes, filterValue) {
-                    var _this = this;
-                    var nameIdRequestParamsFromType = this.nameIdRequestParams.get(nameIdFilterParamTypes);
-                    if (nameIdRequestParamsFromType) {
-                        this.makeFileLoadActions(gobiiExtractFilterType, nameIdFilterParamTypes, filterValue)
-                            .subscribe(function (action) {
-                            if (action) {
-                                _this.store.dispatch(action);
-                            }
-                        });
-                    }
-                    else {
-                        this.store.dispatch(new historyAction.AddStatusMessageAction("No is no query params object for query "
-                            + nameIdFilterParamTypes
-                            + " with extract filter type "
-                            + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]));
-                    }
-                };
+                // public loadWithFilterParams(gobiiExtractFilterType: GobiiExtractFilterType,
+                //                             nameIdFilterParamTypes: NameIdFilterParamTypes,
+                //                             filterValue: string) {
+                //
+                //     let nameIdRequestParamsFromType: FileItemParams = this.nameIdRequestParams.get(nameIdFilterParamTypes);
+                //
+                //     if (nameIdRequestParamsFromType) {
+                //
+                //         this.makeFileLoadActions(gobiiExtractFilterType, nameIdFilterParamTypes, filterValue)
+                //             .subscribe(action => {
+                //                 if (action) {
+                //                     this.store.dispatch(action);
+                //                 }
+                //             });
+                //
+                //     } else {
+                //         this.store.dispatch(new historyAction.AddStatusMessageAction("No is no query params object for query "
+                //             + nameIdFilterParamTypes
+                //             + " with extract filter type "
+                //             + GobiiExtractFilterType[gobiiExtractFilterType]));
+                //     }
+                // }
+                //
                 FileItemService.prototype.loadFileItem = function (gobiiFileItem, selectForExtract) {
                     var loadAction = new fileItemActions.LoadFileItemtAction({
                         gobiiFileItem: gobiiFileItem,
@@ -227,9 +277,22 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                 };
                 FileItemService.prototype.makeFileLoadActions = function (gobiiExtractFilterType, nameIdFilterParamTypes, filterValue) {
                     var nameIdRequestParamsFromType = this.nameIdRequestParams.get(nameIdFilterParamTypes);
-                    return this.recurseFileItems(gobiiExtractFilterType, nameIdRequestParamsFromType, filterValue);
+                    return this.loadFileItems(gobiiExtractFilterType, nameIdRequestParamsFromType, filterValue, true);
                 };
-                FileItemService.prototype.recurseFileItems = function (gobiiExtractFilterType, nameIdRequestParamsToLoad, filterValue) {
+                FileItemService.prototype.loadFileItemsFromFilter = function (gobiiExtractFilterType, nameIdFilterParamTypes, filterValue) {
+                    var _this = this;
+                    var nameIdRequestParamsFromType = this.nameIdRequestParams.get(nameIdFilterParamTypes);
+                    return this.loadFileItems(gobiiExtractFilterType, nameIdRequestParamsFromType, filterValue, false)
+                        .subscribe(function (action) {
+                        if (action) {
+                            var listLoadAction = new fileItemActions.LoadFileItemListAction({
+                                gobiiFileItems: action.payload.gobiiFileItems
+                            });
+                            _this.store.dispatch(listLoadAction);
+                        }
+                    });
+                };
+                FileItemService.prototype.loadFileItems = function (gobiiExtractFilterType, nameIdRequestParamsToLoad, filterValue, recurse) {
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
                         if (nameIdRequestParamsToLoad.getIsDynamicFilterValue()) {
@@ -348,7 +411,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                             .setParentItemId(nameIdRequestParamsToLoad.getFkEntityFilterValue());
                                         fileItems.push(noneFileItem);
                                     } // if/else any nameids were retrieved
-                                    var loadAction = new fileItemActions.LoadFileItemListAction({
+                                    var loadAction = new fileItemActions.LoadFileItemListWithFilterAction({
                                         gobiiFileItems: fileItems,
                                         filterId: nameIdRequestParamsToLoad.getQueryName(),
                                         filter: {
@@ -359,25 +422,27 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                     });
                                     observer.next(loadAction);
                                     // if there are children, we will load their data as well
-                                    if (nameIdRequestParamsToLoad
-                                        .getChildNameIdRequestParams()
-                                        .filter(function (rqp) { return rqp.getEntityFilter() === type_entity_filter_1.EntityFilter.BYTYPEID; })
-                                        .length > 0) {
-                                        var parentId_1 = nameIdRequestParamsToLoad.getSelectedItemId();
-                                        if (!parentId_1) {
-                                            parentId_1 = fileItems[0].getItemId();
-                                        }
-                                        nameIdRequestParamsToLoad
+                                    if (recurse) {
+                                        if (nameIdRequestParamsToLoad
                                             .getChildNameIdRequestParams()
-                                            .forEach(function (rqp) {
-                                            if (rqp.getEntityFilter() === type_entity_filter_1.EntityFilter.BYTYPEID) {
-                                                rqp.setFkEntityFilterValue(parentId_1);
-                                                _this.recurseFileItems(gobiiExtractFilterType, rqp, parentId_1)
-                                                    .subscribe(function (fileItems) { return observer.next(fileItems); });
+                                            .filter(function (rqp) { return rqp.getEntityFilter() === type_entity_filter_1.EntityFilter.BYTYPEID; })
+                                            .length > 0) {
+                                            var parentId_1 = nameIdRequestParamsToLoad.getSelectedItemId();
+                                            if (!parentId_1) {
+                                                parentId_1 = fileItems[0].getItemId();
                                             }
-                                        });
-                                    }
-                                    var bar = "bar";
+                                            nameIdRequestParamsToLoad
+                                                .getChildNameIdRequestParams()
+                                                .forEach(function (rqp) {
+                                                if (rqp.getEntityFilter() === type_entity_filter_1.EntityFilter.BYTYPEID) {
+                                                    rqp.setFkEntityFilterValue(parentId_1);
+                                                    _this.loadFileItems(gobiiExtractFilterType, rqp, parentId_1, true)
+                                                        .subscribe(function (fileItems) { return observer.next(fileItems); });
+                                                }
+                                            });
+                                        }
+                                        var bar = "bar";
+                                    } // if we are recursing
                                 }, // Observer=>next
                                 function (// Observer=>next
                                     responseHeader) {

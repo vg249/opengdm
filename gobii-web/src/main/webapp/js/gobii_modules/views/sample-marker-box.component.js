@@ -217,7 +217,7 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                     this.onSampleMarkerError.emit(statusMessage);
                 };
                 SampleMarkerBoxComponent.prototype.ngOnInit = function () {
-                    this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.MARKER_GROUPS, null);
+                    this.fileItemService.loadFileItemsFromFilter(this.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.MARKER_GROUPS, null);
                     return null;
                 };
                 SampleMarkerBoxComponent.prototype.ngOnChanges = function (changes) {

@@ -484,7 +484,7 @@ export class ExtractorRoot implements OnInit {
 
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
 
-            this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
+            this.fileItemService.loadFileItemsFromFilter(this.gobiiExtractFilterType,
                 NameIdFilterParamTypes.PROJECTS,
                 null);
 
@@ -536,21 +536,21 @@ export class ExtractorRoot implements OnInit {
         this.initializeSubmissionContact();
 
 
-        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
+        this.fileItemService.loadFileItemsFromFilter(this.gobiiExtractFilterType,
             NameIdFilterParamTypes.CONTACT_PI,
             null);
         // this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
         //     this.nameIdRequestParamsExperiments);
 
-        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
+        this.fileItemService.loadFileItemsFromFilter(this.gobiiExtractFilterType,
             NameIdFilterParamTypes.MAPSETS,
             null);
 
-        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
+        this.fileItemService.loadFileItemsFromFilter(this.gobiiExtractFilterType,
             NameIdFilterParamTypes.CV_DATATYPE,
             null);
 
-        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
+        this.fileItemService.loadFileItemsFromFilter(this.gobiiExtractFilterType,
             NameIdFilterParamTypes.PLATFORMS,
             null);
 

@@ -11,8 +11,10 @@ export const REPLACE_ITEM_OF_SAME_COMPOUND_ID = '[GobiiFileItem] Replace In Extr
 export const REMOVE_FROM_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Remove from Extract by ID';
 export const REMOVE_FROM_EXTRACT = '[GobiiFileItem] Remove from Extract';
 export const SET_EXTRACT_TYPE = '[GobiiFileItem] Set ExtractType';
-export const LOAD_FILE_ITEM_LIST = '[GobiiFileItem] Load File Item lIST';
+export const LOAD_FILE_ITEM_LIST = '[GobiiFileItem] Load File Item List';
+export const LOAD_FILE_ITEM_LIST_WITH_FILTER = '[GobiiFileItem] Load File Item List With Filter';
 export const LOAD_FILE_ITEM = '[GobiiFileItem] Load File Item';
+export const LOAD_FILTER = '[GobiiFileItem] Load Filter List';
 export const REMOVE_ALL_FROM_EXTRACT = '[GobiiFileItem] Remove all from Extract';
 
 /**
@@ -22,14 +24,34 @@ export const REMOVE_ALL_FROM_EXTRACT = '[GobiiFileItem] Remove all from Extract'
  *
  * See Discriminated Unions: https://www.typescriptlang.org/docs/handbook/advanced-types.html#discriminated-unions
  */
-export class LoadFileItemListAction implements Action {
-    readonly type = LOAD_FILE_ITEM_LIST;
+export class LoadFileItemListWithFilterAction implements Action {
+    readonly type = LOAD_FILE_ITEM_LIST_WITH_FILTER;
 
     constructor(public payload: {
         gobiiFileItems: GobiiFileItem[],
         filterId: NameIdFilterParamTypes,
-        filter: {gobiiExtractFilterType: GobiiExtractFilterType, filterValue: string, entityLasteUpdated: Date}
+        filter: { gobiiExtractFilterType: GobiiExtractFilterType, filterValue: string, entityLasteUpdated: Date }
 
+    }) {
+    }
+}
+
+
+export class LoadFileItemListAction implements Action {
+    readonly type = LOAD_FILE_ITEM_LIST;
+
+    constructor(public payload: {
+        gobiiFileItems: GobiiFileItem[]
+    }) {
+    }
+}
+
+export class LoadFilterAction implements Action {
+    readonly type = LOAD_FILTER;
+
+    constructor(public payload: {
+        filterId: NameIdFilterParamTypes,
+        filter: { gobiiExtractFilterType: GobiiExtractFilterType, filterValue: string, entityLasteUpdated: Date }
     }) {
     }
 }
@@ -118,7 +140,7 @@ export class RemoveAllFromExtractAction implements Action {
  * so that reducers can easily compose action types
  */
 export type All
-    = LoadFileItemListAction
+    = LoadFileItemListWithFilterAction
     | AddToExtractAction
     | RemoveFromExtractAction
     | AddToExtractByItemIdAction
@@ -127,5 +149,7 @@ export type All
     | LoadFileItemtAction
     | SetExtractType
     | ReplaceInExtractByItemIdAction
-    | ReplaceItemOfSameCompoundIdAction;
+    | ReplaceItemOfSameCompoundIdAction
+    | LoadFilterAction
+    | LoadFileItemListAction;
 

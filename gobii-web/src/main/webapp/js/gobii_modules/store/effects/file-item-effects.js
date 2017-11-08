@@ -174,6 +174,11 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                         var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(action.payload.gobiiFileitemToReplaceWith);
                         return new treeNodeActions.PlaceTreeNodeAction(treeNode);
                     });
+                    this.loadFileItemsForFilter$ = this.actions$
+                        .ofType(fileItemActions.LOAD_FILTER)
+                        .map(function (action) {
+                        _this.fileItemService.loadFileItemsFromFilter(action.payload.filter.gobiiExtractFilterType, action.payload.filterId, action.payload.filter.filterValue);
+                    });
                     this.replaceInExtract$ = this.actions$
                         .ofType(fileItemActions.REPLACE_IN_EXTRACT_BY_ITEM_ID)
                         .switchMap(function (action) {
@@ -289,6 +294,10 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                     effects_1.Effect(),
                     __metadata("design:type", Object)
                 ], FileItemEffects.prototype, "replaceSameByCompoundId$", void 0);
+                __decorate([
+                    effects_1.Effect(),
+                    __metadata("design:type", Object)
+                ], FileItemEffects.prototype, "loadFileItemsForFilter$", void 0);
                 __decorate([
                     effects_1.Effect(),
                     __metadata("design:type", Object)

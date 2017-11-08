@@ -126,6 +126,21 @@ export const getAllFileItems = createSelector(getFileItemsState, fromFileItems.g
 export const getSelectedFileItems = createSelector(getFileItemsState, fromFileItems.getSelected);
 
 
+
+export const getPiContacts = createSelector(getFileItemsState, fromFileItems.getPiContacts);
+export const getProjects = createSelector(getFileItemsState, fromFileItems.getProjects);
+export const getExperiments = createSelector(getFileItemsState, fromFileItems.getExperiments);
+export const getDatasets = createSelector(getFileItemsState, fromFileItems.getDatasets);
+export const getCvTermsDataType = createSelector(getFileItemsState, fromFileItems.getCvTermsDataType);
+export const getMapsets = createSelector(getFileItemsState, fromFileItems.getMapsets);
+export const getPlatforms = createSelector(getFileItemsState, fromFileItems.getPlatforms);
+export const getMarkerGroups = createSelector(getFileItemsState, fromFileItems.getMarkerGroups);
+export const getProjectsByPI = createSelector(getFileItemsState, fromFileItems.getProjectsForSelectedPi);
+export const getExperimentsByProject = createSelector(getFileItemsState, fromFileItems.getExperimentsForSelectedProject);
+export const getDatasetsByExperiment = createSelector(getFileItemsState, fromFileItems.getDatasetsForSelectedExperiment);
+export const getSelectedPiContacts = createSelector(getFileItemsState, fromFileItems.getSelectedPiContacts);
+
+
 export const getSelectedFileFormat = createSelector(getFileItemsState, fromFileItems.getSelectedFileFormat);
 export const getSelectedSampleType = createSelector(getFileItemsState, fromFileItems.getSelectedSampleType);
 export const getJobId = createSelector(getFileItemsState, fromFileItems.getJobId);

@@ -85,6 +85,16 @@ export class FileItemEffects {
             }
         );
 
+    @Effect()
+    loadFileItemsForFilter$ = this.actions$
+        .ofType(fileItemActions.LOAD_FILTER)
+        .map((action: fileItemActions.LoadFilterAction) => {
+                this.fileItemService.loadFileItemsFromFilter(action.payload.filter.gobiiExtractFilterType,
+                    action.payload.filterId,
+                    action.payload.filter.filterValue);
+            }
+        );
+
 
     @Effect()
     replaceInExtract$ = this.actions$

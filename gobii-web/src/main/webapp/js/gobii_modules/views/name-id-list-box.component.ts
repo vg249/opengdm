@@ -42,7 +42,7 @@ export class NameIdListBoxComponent  {
 
     ngOnInit(): any {
 
-        this.fileItems$ = this.fileItemService.getForFilter(this.nameIdFilterParamTypes);
+        this.fileItems$ = this.fileItemService.getForFilter(this.nameIdFilterParamTypes)
 
         this
             .fileItems$
