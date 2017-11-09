@@ -1967,7 +1967,7 @@ public class GobiiTestData {
         documentBuilderFactory.setNamespaceAware(true);
 
         File fXmlFile;
-        if(args.length != 2) {
+        if(args.length != 1) {
             ClassLoader classLoader = GobiiTestData.class.getClassLoader();
             fXmlFile = new File(classLoader.getResource("test_profiles/codominant_test.xml").getFile());
 
@@ -1975,9 +1975,11 @@ public class GobiiTestData {
         } else {
             fXmlFile = new File(args[0]);
 
-            String url = args[1];
-
             BufferedReader br = null;
+
+            System.out.print("Enter URL: ");
+            br = new BufferedReader(new InputStreamReader(System.in));
+            String url = br.readLine();
 
             System.out.print("Enter crop: ");
             br = new BufferedReader(new InputStreamReader(System.in));
