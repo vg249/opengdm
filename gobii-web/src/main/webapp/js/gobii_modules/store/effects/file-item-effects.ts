@@ -18,6 +18,7 @@ import {FileItemService} from "../../services/core/file-item-service";
 import {NameIdFilterParamTypes} from "../../model/type-nameid-filter-params";
 import {EntitySubType, EntityType} from "../../model/type-entity";
 import "rxjs/add/operator/mergeMap"
+import {AddFilterRetrieved} from "../actions/history-action";
 
 @Injectable()
 export class FileItemEffects {
@@ -82,6 +83,25 @@ export class FileItemEffects {
         .map((action: fileItemActions.ReplaceItemOfSameCompoundIdAction) => {
                 let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(action.payload.gobiiFileitemToReplaceWith);
                 return new treeNodeActions.PlaceTreeNodeAction(treeNode);
+            }
+        );
+
+    @Effect()
+    loadFileItemListWithFilter$ = this.actions$
+        .ofType(fileItemActions.LOAD_FILE_ITEM_LIST_WITH_FILTER)
+        .map((action: fileItemActions.LoadFileItemListWithFilterAction) => {
+
+                let addFilterSubmittedAction: AddFilterRetrieved = new historyAction
+                    .AddFilterRetrieved(
+                        {
+                            gobiiExtractFilterType: action.payload.filter.gobiiExtractFilterType,
+                            filterId: action.payload.filterId,
+                            filterValue: action.payload.filter.filterValue,
+                            entityLasteUpdated: action.payload.filter.entityLasteUpdated
+                        }
+                    );
+
+                return addFilterSubmittedAction;
             }
         );
 
@@ -161,7 +181,6 @@ export class FileItemEffects {
         //         //     //subscribe --> loadFIleItemsFromFilter()
         //         // }).map( fileItems => new fileItemActions.LoadFileItemListAction({gobiiFileItems: fileItems}));
         //     });// switchMap()
-
 
 
     @Effect()

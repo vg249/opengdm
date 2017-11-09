@@ -1,13 +1,11 @@
 import {Action} from '@ngrx/store';
-import {GobiiFileItem} from "../../model/gobii-file-item";
-import {FileItemParams} from "../../model/name-id-request-params";
-import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
-import {NameIdFilterParamTypes} from "../../model/type-nameid-filter-params";
 import {HeaderStatusMessage} from "../../model/dto-header-status-message";
+import {FilterHistory} from "../reducers/history-reducer";
 
-export const ADD_STATUS = '[GobiiStatusMessage] Add Status';
-export const ADD_STATUS_MESSAGE = '[GobiiStatusMessage] Add Status Message';
-export const CLEAR_STATUS = '[GobiiStatusMessage] Clear Status';
+export const ADD_STATUS = '[GobiiHistory] Add Status';
+export const ADD_STATUS_MESSAGE = '[GobiiHistory] Add Status Message';
+export const CLEAR_STATUS = '[GobiiHistory] Clear Status';
+export const ADD_FILTER_RETRIEVED = '[GobiiHistory] Add Filter Submitted';
 
 /**
  * Every action is comprised of at least a type and an optional
@@ -30,6 +28,13 @@ export class AddStatusMessageAction implements Action {
     }
 }
 
+export class AddFilterRetrieved implements Action {
+    readonly type = ADD_FILTER_RETRIEVED;
+
+    constructor(public payload: FilterHistory) {
+    }
+}
+
 export class ClearStatusesAction implements Action {
     readonly type = CLEAR_STATUS;
 
@@ -38,12 +43,14 @@ export class ClearStatusesAction implements Action {
 }
 
 
+
 /**
  * Export a type alias of all actions in this action group
  * so that reducers can easily compose action types
  */
 export type All
-    = AddStatusAction |
-    AddStatusMessageAction |
-    ClearStatusesAction ;
+    = AddStatusAction
+    | AddStatusMessageAction
+    | AddFilterRetrieved
+    | ClearStatusesAction;
 

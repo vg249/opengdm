@@ -11,14 +11,8 @@ System.register(["reselect", "../actions/history-action", "../../model/dto-heade
                 newState.push(newHeaderStatusMessage);
                 returnVal = {
                     statusMessages: newState,
-                    jobSubmissions: state.jobSubmissions
-                };
-                break;
-            } // ADD_STATUS
-            case gobiiHistoryAction.CLEAR_STATUS: {
-                returnVal = {
-                    statusMessages: [],
-                    jobSubmissions: state.jobSubmissions
+                    jobSubmissions: state.jobSubmissions,
+                    filtersRetrieved: state.filtersRetrieved
                 };
                 break;
             } // ADD_STATUS
@@ -28,10 +22,36 @@ System.register(["reselect", "../actions/history-action", "../../model/dto-heade
                 newState.push(newHeaderStatusMessage);
                 returnVal = {
                     statusMessages: newState,
-                    jobSubmissions: state.jobSubmissions
+                    jobSubmissions: state.jobSubmissions,
+                    filtersRetrieved: state.filtersRetrieved
                 };
                 break;
             }
+            case gobiiHistoryAction.ADD_FILTER_RETRIEVED: {
+                var historyPayload_1 = action.payload;
+                var newState = state.filtersRetrieved.slice();
+                var idx = newState.findIndex(function (fr) { return fr.gobiiExtractFilterType === historyPayload_1.gobiiExtractFilterType
+                    && fr.filterId === historyPayload_1.filterId
+                    && fr.filterValue === historyPayload_1.filterValue; });
+                if (idx > -1) {
+                    newState.splice(idx, 1);
+                }
+                newState.push(historyPayload_1);
+                returnVal = {
+                    statusMessages: state.statusMessages,
+                    jobSubmissions: state.jobSubmissions,
+                    filtersRetrieved: newState
+                };
+                break;
+            }
+            case gobiiHistoryAction.CLEAR_STATUS: {
+                returnVal = {
+                    statusMessages: [],
+                    jobSubmissions: state.jobSubmissions,
+                    filtersRetrieved: state.filtersRetrieved
+                };
+                break;
+            } // ADD_STATUS
         } // switch()
         return returnVal;
     }
@@ -56,7 +76,8 @@ System.register(["reselect", "../actions/history-action", "../../model/dto-heade
             ;
             exports_1("initialState", initialState = {
                 statusMessages: [],
-                jobSubmissions: new Map()
+                jobSubmissions: new Map(),
+                filtersRetrieved: []
             });
             exports_1("getStatuses", getStatuses = function (state) { return state.statusMessages; });
             exports_1("getJobSubmissions", getJobSubmissions = function (state) { return state.jobSubmissions; });

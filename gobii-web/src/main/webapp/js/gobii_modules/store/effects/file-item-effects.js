@@ -174,6 +174,18 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                         var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(action.payload.gobiiFileitemToReplaceWith);
                         return new treeNodeActions.PlaceTreeNodeAction(treeNode);
                     });
+                    this.loadFileItemListWithFilter$ = this.actions$
+                        .ofType(fileItemActions.LOAD_FILE_ITEM_LIST_WITH_FILTER)
+                        .map(function (action) {
+                        var addFilterSubmittedAction = new historyAction
+                            .AddFilterRetrieved({
+                            gobiiExtractFilterType: action.payload.filter.gobiiExtractFilterType,
+                            filterId: action.payload.filterId,
+                            filterValue: action.payload.filter.filterValue,
+                            entityLasteUpdated: action.payload.filter.entityLasteUpdated
+                        });
+                        return addFilterSubmittedAction;
+                    });
                     /***
                      * The LOAD_FILTER action was a good idea: you would first LOAD the filter into the store.
                      * There would then be an effect, as we have here, that would actually load the file items
@@ -365,6 +377,10 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                     effects_1.Effect(),
                     __metadata("design:type", Object)
                 ], FileItemEffects.prototype, "replaceSameByCompoundId$", void 0);
+                __decorate([
+                    effects_1.Effect(),
+                    __metadata("design:type", Object)
+                ], FileItemEffects.prototype, "loadFileItemListWithFilter$", void 0);
                 __decorate([
                     effects_1.Effect(),
                     __metadata("design:type", Object)
