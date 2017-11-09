@@ -11,7 +11,6 @@ export const REPLACE_ITEM_OF_SAME_COMPOUND_ID = '[GobiiFileItem] Replace In Extr
 export const REMOVE_FROM_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Remove from Extract by ID';
 export const REMOVE_FROM_EXTRACT = '[GobiiFileItem] Remove from Extract';
 export const SET_EXTRACT_TYPE = '[GobiiFileItem] Set ExtractType';
-export const LOAD_FILE_ITEM_LIST = '[GobiiFileItem] Load File Item List';
 export const LOAD_FILE_ITEM_LIST_WITH_FILTER = '[GobiiFileItem] Load File Item List With Filter';
 export const LOAD_FILE_ITEM = '[GobiiFileItem] Load File Item';
 export const LOAD_FILTER = '[GobiiFileItem] Load Filter List';
@@ -37,24 +36,24 @@ export class LoadFileItemListWithFilterAction implements Action {
 }
 
 
-export class LoadFileItemListAction implements Action {
-    readonly type = LOAD_FILE_ITEM_LIST;
+// export class LoadFileItemListAction implements Action {
+//     readonly type = LOAD_FILE_ITEM_LIST;
+//
+//     constructor(public payload: {
+//         gobiiFileItems: GobiiFileItem[]
+//     }) {
+//     }
+// }
 
-    constructor(public payload: {
-        gobiiFileItems: GobiiFileItem[]
-    }) {
-    }
-}
-
-export class LoadFilterAction implements Action {
-    readonly type = LOAD_FILTER;
-
-    constructor(public payload: {
-        filterId: NameIdFilterParamTypes,
-        filter: { gobiiExtractFilterType: GobiiExtractFilterType, filterValue: string, entityLasteUpdated: Date }
-    }) {
-    }
-}
+// export class LoadFilterAction implements Action {
+//     readonly type = LOAD_FILTER;
+//
+//     constructor(public payload: {
+//         filterId: NameIdFilterParamTypes,
+//         filter: { gobiiExtractFilterType: GobiiExtractFilterType, filterValue: string, entityLasteUpdated: Date }
+//     }) {
+//     }
+// }
 
 export class LoadFileItemtAction implements Action {
     readonly type = LOAD_FILE_ITEM;
@@ -149,7 +148,5 @@ export type All
     | LoadFileItemtAction
     | SetExtractType
     | ReplaceInExtractByItemIdAction
-    | ReplaceItemOfSameCompoundIdAction
-    | LoadFilterAction
-    | LoadFileItemListAction;
+    | ReplaceItemOfSameCompoundIdAction;
 

@@ -131,52 +131,52 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             break;
         } // LOAD_FILE_ITEM
 
-        case gobiiFileItemAction.LOAD_FILTER: {
-            const filterId = action.payload.filterId.toString();
-            const filterValue = action.payload.filter;
+        // case gobiiFileItemAction.LOAD_FILTER: {
+        //     const filterId = action.payload.filterId.toString();
+        //     const filterValue = action.payload.filter;
+        //
+        //
+        //     let newFilterState = Object.assign({}, state.filters);
+        //     newFilterState[filterId] = filterValue;
+        //
+        //
+        //     returnVal = {
+        //         gobiiExtractFilterType: state.gobiiExtractFilterType,
+        //         uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
+        //         allFileItems: state.allFileItems,
+        //         filters: newFilterState
+        //     };
+        //
+        //     break;
+        // } // LOAD_FILTER
 
-
-            let newFilterState = Object.assign({}, state.filters);
-            newFilterState[filterId] = filterValue;
-
-
-            returnVal = {
-                gobiiExtractFilterType: state.gobiiExtractFilterType,
-                uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
-                allFileItems: state.allFileItems,
-                filters: newFilterState
-            };
-
-            break;
-        } // LOAD_FILE_ITEM_LIST
-
-        case gobiiFileItemAction.LOAD_FILE_ITEM_LIST: {
-            const gobiiFileItemsPayload = action.payload.gobiiFileItems;
-
-            const newGobiiFileItems = gobiiFileItemsPayload.filter(newItem =>
-                state
-                    .allFileItems
-                    .filter(stateItem =>
-                        (
-                            stateItem.getGobiiExtractFilterType() === newItem.getGobiiExtractFilterType() &&
-                            stateItem.getExtractorItemType() === newItem.getExtractorItemType() &&
-                            stateItem.getEntityType() === newItem.getEntityType() &&
-                            stateItem.getEntitySubType() === newItem.getEntitySubType() &&
-                            stateItem.getCvFilterType() === newItem.getCvFilterType() &&
-                            stateItem.getItemId() === newItem.getItemId()
-                        )
-                    ).length === 0
-            );
-
-            returnVal = {
-                gobiiExtractFilterType: state.gobiiExtractFilterType,
-                uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
-                allFileItems: [...state.allFileItems, ...newGobiiFileItems],
-                filters: state.filters
-            };
-
-            break;
-        } // LOAD_FILE_ITEM_LIST
+        // case gobiiFileItemAction.LOAD_FILE_ITEM_LIST: {
+        //     const gobiiFileItemsPayload = action.payload.gobiiFileItems;
+        //
+        //     const newGobiiFileItems = gobiiFileItemsPayload.filter(newItem =>
+        //         state
+        //             .allFileItems
+        //             .filter(stateItem =>
+        //                 (
+        //                     stateItem.getGobiiExtractFilterType() === newItem.getGobiiExtractFilterType() &&
+        //                     stateItem.getExtractorItemType() === newItem.getExtractorItemType() &&
+        //                     stateItem.getEntityType() === newItem.getEntityType() &&
+        //                     stateItem.getEntitySubType() === newItem.getEntitySubType() &&
+        //                     stateItem.getCvFilterType() === newItem.getCvFilterType() &&
+        //                     stateItem.getItemId() === newItem.getItemId()
+        //                 )
+        //             ).length === 0
+        //     );
+        //
+        //     returnVal = {
+        //         gobiiExtractFilterType: state.gobiiExtractFilterType,
+        //         uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
+        //         allFileItems: [...state.allFileItems, ...newGobiiFileItems],
+        //         filters: state.filters
+        //     };
+        //
+        //     break;
+        // } // LOAD_FILE_ITEM_LIST
 
         case gobiiFileItemAction.LOAD_FILE_ITEM_LIST_WITH_FILTER: {
             const gobiiFileItemsPayload = action.payload.gobiiFileItems;

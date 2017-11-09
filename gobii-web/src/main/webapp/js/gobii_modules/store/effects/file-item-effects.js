@@ -174,11 +174,82 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                         var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(action.payload.gobiiFileitemToReplaceWith);
                         return new treeNodeActions.PlaceTreeNodeAction(treeNode);
                     });
-                    this.loadFileItemsForFilter$ = this.actions$
-                        .ofType(fileItemActions.LOAD_FILTER)
-                        .map(function (action) {
-                        _this.fileItemService.loadFileItemsFromFilter(action.payload.filter.gobiiExtractFilterType, action.payload.filterId, action.payload.filter.filterValue);
-                    });
+                    /***
+                     * The LOAD_FILTER action was a good idea: you would first LOAD the filter into the store.
+                     * There would then be an effect, as we have here, that would actually load the file items
+                     * corresponding to the filter. This, it was reasoned, would make it easier to do hierarchical
+                     * filtering with modification-date-sensitive updates: to do hierarchial filtering, you have to
+                     * know the result of the parent entity's query, all of which was not working well with the
+                     * existing algorithm. However, I could not get the retrieval of file items from an effect to
+                     * work correctly. When you have a series of such actions -- that is, where the LOAD_FILTER
+                     * action hits the store, say, four times, observer.next() is hit four times, but the map
+                     * handing of the Observer.create() method only gets hit once. The code that's commented out
+                     * here was trying to manually boil this problem down to its simplest expression rather than
+                     * using the file action creating methods of the FileItemService. I spent a day trying to
+                     * get this to work and could not figure it out. So for now I am abaonding this approach.
+                     *
+                     */
+                    // @Effect()
+                    // loadFileItemsForFilter$ = this.actions$
+                    //     .ofType(fileItemActions.LOAD_FILTER)
+                    //     .switchMap((action: fileItemActions.LoadFilterAction) => {
+                    //
+                    //         return Observable.create(observer => {
+                    //
+                    //             let nameIdRequestParamsToLoad: FileItemParams = FileItemParams
+                    //                 .build(NameIdFilterParamTypes.CONTACT_PI,
+                    //                     GobiiExtractFilterType.WHOLE_DATASET,
+                    //                     EntityType.CONTACT)
+                    //                 .setIsDynamicFilterValue(true)
+                    //                 .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR);
+                    //
+                    //                     this.nameIdService.get(nameIdRequestParamsToLoad)
+                    //                         .subscribe(nameIds => {
+                    //
+                    //                             let minEntityLastUpdated: Date;
+                    //                             let fileItems: GobiiFileItem[] = [];
+                    //                             if (nameIds && ( nameIds.length > 0 )) {
+                    //
+                    //                                 nameIds.forEach(n => {
+                    //                                     let currentFileItem: GobiiFileItem =
+                    //                                         GobiiFileItem.build(
+                    //                                             GobiiExtractFilterType.WHOLE_DATASET,
+                    //                                             ProcessType.CREATE)
+                    //                                             .setExtractorItemType(ExtractorItemType.ENTITY)
+                    //                                             .setEntityType(nameIdRequestParamsToLoad.getEntityType())
+                    //                                             .setEntitySubType(nameIdRequestParamsToLoad.getEntitySubType())
+                    //                                             .setCvFilterType(nameIdRequestParamsToLoad.getCvFilterType())
+                    //                                             .setItemId(n.id)
+                    //                                             .setItemName(n.name)
+                    //                                             .setSelected(false)
+                    //                                             .setRequired(false)
+                    //                                             .setParentItemId(nameIdRequestParamsToLoad.getFkEntityFilterValue());
+                    //
+                    //
+                    //                                     fileItems.push(currentFileItem);
+                    //                                 });
+                    //                                 observer.next(fileItems);
+                    //                             }
+                    //                         });//subscsribe
+                    //
+                    //         }).map(fileItems =>
+                    //             new fileItemActions.LoadFileItemListAction({gobiiFileItems: fileItems})
+                    //         ).catch(error => {
+                    //             console.log(error);
+                    //         })
+                    //
+                    //         // return Observable.create(observer => {
+                    //         //     this.fileItemService.makeFileLoadActions(action.payload.filter.gobiiExtractFilterType,
+                    //         //         action.payload.filterId,
+                    //         //         action.payload.filter.filterValue)
+                    //         //         .subscribe(loadFileItemsAction => {
+                    //         //
+                    //         //             observer.next(loadFileItemsAction.payload.gobiiFileItems);
+                    //         //             observer.complete();
+                    //         //         });
+                    //         //     //subscribe --> loadFIleItemsFromFilter()
+                    //         // }).map( fileItems => new fileItemActions.LoadFileItemListAction({gobiiFileItems: fileItems}));
+                    //     });// switchMap()
                     this.replaceInExtract$ = this.actions$
                         .ofType(fileItemActions.REPLACE_IN_EXTRACT_BY_ITEM_ID)
                         .switchMap(function (action) {
@@ -294,10 +365,6 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                     effects_1.Effect(),
                     __metadata("design:type", Object)
                 ], FileItemEffects.prototype, "replaceSameByCompoundId$", void 0);
-                __decorate([
-                    effects_1.Effect(),
-                    __metadata("design:type", Object)
-                ], FileItemEffects.prototype, "loadFileItemsForFilter$", void 0);
                 __decorate([
                     effects_1.Effect(),
                     __metadata("design:type", Object)

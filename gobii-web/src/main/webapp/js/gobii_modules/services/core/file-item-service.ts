@@ -247,29 +247,29 @@ export class FileItemService {
         nameIdRequestParamsFromType.setNameIdLabelType(nameIdLabelType);
     }
 
-    // public loadWithFilterParams(gobiiExtractFilterType: GobiiExtractFilterType,
-    //                             nameIdFilterParamTypes: NameIdFilterParamTypes,
-    //                             filterValue: string) {
-    //
-    //     let nameIdRequestParamsFromType: FileItemParams = this.nameIdRequestParams.get(nameIdFilterParamTypes);
-    //
-    //     if (nameIdRequestParamsFromType) {
-    //
-    //         this.makeFileLoadActions(gobiiExtractFilterType, nameIdFilterParamTypes, filterValue)
-    //             .subscribe(action => {
-    //                 if (action) {
-    //                     this.store.dispatch(action);
-    //                 }
-    //             });
-    //
-    //     } else {
-    //         this.store.dispatch(new historyAction.AddStatusMessageAction("No is no query params object for query "
-    //             + nameIdFilterParamTypes
-    //             + " with extract filter type "
-    //             + GobiiExtractFilterType[gobiiExtractFilterType]));
-    //     }
-    // }
-    //
+    public loadWithFilterParams(gobiiExtractFilterType: GobiiExtractFilterType,
+                                nameIdFilterParamTypes: NameIdFilterParamTypes,
+                                filterValue: string) {
+
+        let nameIdRequestParamsFromType: FileItemParams = this.nameIdRequestParams.get(nameIdFilterParamTypes);
+
+        if (nameIdRequestParamsFromType) {
+
+            this.makeFileLoadActions(gobiiExtractFilterType, nameIdFilterParamTypes, filterValue)
+                .subscribe(action => {
+                    if (action) {
+                        this.store.dispatch(action);
+                    }
+                });
+
+        } else {
+            this.store.dispatch(new historyAction.AddStatusMessageAction("No is no query params object for query "
+                + nameIdFilterParamTypes
+                + " with extract filter type "
+                + GobiiExtractFilterType[gobiiExtractFilterType]));
+        }
+    }
+
 
     public loadFileItem(gobiiFileItem: GobiiFileItem, selectForExtract: boolean) {
 
@@ -329,27 +329,27 @@ export class FileItemService {
             true);
     }
 
-    public loadFileItemsFromFilter(gobiiExtractFilterType: GobiiExtractFilterType,
-                                   nameIdFilterParamTypes: NameIdFilterParamTypes,
-                                   filterValue: string) {
-
-        let nameIdRequestParamsFromType: FileItemParams = this.nameIdRequestParams.get(nameIdFilterParamTypes);
-
-        return this.loadFileItems(gobiiExtractFilterType,
-            nameIdRequestParamsFromType,
-            filterValue,
-            false)
-            .subscribe(action => {
-                if (action) {
-                    let listLoadAction: fileItemActions.LoadFileItemListAction = new fileItemActions.LoadFileItemListAction(
-                        {
-                            gobiiFileItems: action.payload.gobiiFileItems
-                        }
-                    );
-                    this.store.dispatch(listLoadAction);
-                }
-            });
-    }
+    // public loadFileItemsFromFilter(gobiiExtractFilterType: GobiiExtractFilterType,
+    //                                nameIdFilterParamTypes: NameIdFilterParamTypes,
+    //                                filterValue: string) {
+    //
+    //     let nameIdRequestParamsFromType: FileItemParams = this.nameIdRequestParams.get(nameIdFilterParamTypes);
+    //
+    //     return this.loadFileItems(gobiiExtractFilterType,
+    //         nameIdRequestParamsFromType,
+    //         filterValue,
+    //         false)
+    //         .subscribe(action => {
+    //             if (action) {
+    //                 let listLoadAction: fileItemActions.LoadFileItemListAction = new fileItemActions.LoadFileItemListAction(
+    //                     {
+    //                         gobiiFileItems: action.payload.gobiiFileItems
+    //                     }
+    //                 );
+    //                 this.store.dispatch(listLoadAction);
+    //             }
+    //         });
+    // }
 
 
     private loadFileItems(gobiiExtractFilterType: GobiiExtractFilterType,
