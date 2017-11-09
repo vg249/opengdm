@@ -65,8 +65,8 @@ public class DtoMapEntityStatsImpl implements DtoMapEntityStats {
             GobiiEntityNameType.PLATFORM,
             GobiiEntityNameType.PROJECT,
             GobiiEntityNameType.PROTOCOL,
-            GobiiEntityNameType.REFERENCE
-
+            GobiiEntityNameType.REFERENCE,
+            GobiiEntityNameType.CV // CV does not have the columns but it doesn't matter for now because are using the cache instead
     );
 
 
