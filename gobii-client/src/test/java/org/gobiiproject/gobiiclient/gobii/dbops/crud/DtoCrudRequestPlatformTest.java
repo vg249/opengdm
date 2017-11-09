@@ -14,7 +14,9 @@ import org.gobiiproject.gobiiclient.gobii.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.headerlesscontainer.*;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO;
+import org.gobiiproject.gobiimodel.dto.entity.children.EntityPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
@@ -56,7 +58,7 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
 //
 //        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
         RestUri namesUri = GobiiClientContext.getInstance(null, false).getUriFactory().nameIdListByQueryParams();
-        namesUri.setParamValue("entity", GobiiEntityNameType.CVTERMS.toString().toLowerCase());
+        namesUri.setParamValue("entity", GobiiEntityNameType.CV.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
         namesUri.setParamValue("filterValue", "platform_type");
 
@@ -87,7 +89,7 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
 
         Assert.assertNotEquals(null, platformDTOResponse);
         Assert.assertTrue(platformDTOResponse.getPlatformId() > 0);
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.PLATFORMS, platformDTOResponse.getPlatformId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.PLATFORM, platformDTOResponse.getPlatformId());
 
 
         RestUri restUriPlatformForGetById = GobiiClientContext.getInstance(null, false)
@@ -144,7 +146,7 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
 //                .getNamesById());
 
         RestUri namesUri = GobiiClientContext.getInstance(null, false).getUriFactory().nameIdListByQueryParams();
-        namesUri.setParamValue("entity", GobiiEntityNameType.CVTERMS.toString().toLowerCase());
+        namesUri.setParamValue("entity", GobiiEntityNameType.CV.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
         namesUri.setParamValue("filterValue", "platform_type");
 

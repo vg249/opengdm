@@ -14,8 +14,8 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.*;
-import org.gobiiproject.gobiimodel.headerlesscontainer.CvDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.CvGroupDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvGroupDTO;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
@@ -110,7 +110,7 @@ public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(cvDTOResponseEnvelope.getHeader()));
         Assert.assertTrue(cvDTOResponse.getCvId() > 0);
 
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.CVTERMS,
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.CV,
                 cvDTOResponse.getCvId());
 
 
@@ -124,7 +124,7 @@ public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
         CvDTO cvDTOResponseForParams = resultEnvelopeForGetByID.getPayload().getData().get(0);
 
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.CVTERMS, cvDTOResponse.getCvId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.CV, cvDTOResponse.getCvId());
 
     }
 

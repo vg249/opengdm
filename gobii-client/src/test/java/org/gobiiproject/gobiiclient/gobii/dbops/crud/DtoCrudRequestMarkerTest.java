@@ -17,7 +17,7 @@ import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
@@ -25,7 +25,6 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.time.LocalDateTime;
 import java.util.Calendar;
 
 public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
@@ -46,7 +45,7 @@ public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
         MarkerDTO returnVal;
 
         Integer markerId = (new GlobalPkColl<DtoCrudRequestMarkerTest>().getAPkVal(DtoCrudRequestMarkerTest.class,
-                GobiiEntityNameType.MARKERS));
+                GobiiEntityNameType.MARKER));
 
         RestUri projectsUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -124,7 +123,7 @@ public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
         Assert.assertTrue(markerDTOResponse.getPlatformId() > 0);
 
         Assert.assertTrue(markerDTOResponse.getMarkerId() > 0);
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.MARKERS,markerDTOResponse.getMarkerId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.MARKER,markerDTOResponse.getMarkerId());
 
     }
 
@@ -167,7 +166,7 @@ public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
     @Override
     public void getList() throws Exception {
 
-        (new GlobalPkColl<DtoCrudRequestMarkerTest>()).getPkVals(DtoCrudRequestMarkerTest.class, GobiiEntityNameType.MARKERS, 100);
+        (new GlobalPkColl<DtoCrudRequestMarkerTest>()).getPkVals(DtoCrudRequestMarkerTest.class, GobiiEntityNameType.MARKER, 100);
 
     }
 }

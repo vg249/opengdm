@@ -2,8 +2,8 @@ package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.OrganizationService;
-import org.gobiiproject.gobiidtomapping.DtoMapOrganization;
-import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapOrganization;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.OrganizationDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,7 +31,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         List<OrganizationDTO> returnVal;
 
         try {
-            returnVal = dtoMapOrganization.getOrganizations();
+            returnVal = dtoMapOrganization.getList();
             for(OrganizationDTO currentOrganizationDTO : returnVal ) {
                 currentOrganizationDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
                 currentOrganizationDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
@@ -59,7 +58,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         OrganizationDTO returnVal;
 
         try {
-            returnVal = dtoMapOrganization.getOrganizationDetails(organizationId);
+            returnVal = dtoMapOrganization.get(organizationId);
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
@@ -88,7 +87,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
         try {
 
-            returnVal = dtoMapOrganization.createOrganization(organizationDTO);
+            returnVal = dtoMapOrganization.create(organizationDTO);
 
             // When we have roles and permissions, this will be set programmatically
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
@@ -112,11 +111,11 @@ public class OrganizationServiceImpl implements OrganizationService {
                     organizationDTO.getOrganizationId().equals(organizationId)) {
 
 
-                OrganizationDTO existingOrganizationDTO = dtoMapOrganization.getOrganizationDetails(organizationId);
+                OrganizationDTO existingOrganizationDTO = dtoMapOrganization.get(organizationId);
                 if (null != existingOrganizationDTO.getOrganizationId() && existingOrganizationDTO.getOrganizationId().equals(organizationId)) {
 
 
-                    returnVal = dtoMapOrganization.replaceOrganization(organizationId, organizationDTO);
+                    returnVal = dtoMapOrganization.replace(organizationId, organizationDTO);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 

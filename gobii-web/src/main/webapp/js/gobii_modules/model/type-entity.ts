@@ -1,12 +1,23 @@
+// these have to match what's on the server
 export enum EntityType {UNKNOWN,
-Contacts,
-Projects,
-Experiments,
-DataSets,
-CvTerms,
-Mapsets,
-Platforms,
-MarkerGroups}
+ANALYSIS,
+CONTACT,
+DATASET,
+CV,
+CVGROUP,
+PROJECT,
+ORGANIZATION,
+PLATFORM,
+MANIFEST,
+MAPSET,
+MARKER_GROUP,
+EXPERIMENT,
+REFERENCE,
+ROLE,
+DISPLAY,
+MARKER,
+PROTOCOL,
+VENDORS_PROTOCOL}
 
 
 

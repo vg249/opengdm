@@ -1,7 +1,6 @@
 package org.gobiiproject.gobiidao.resultset.core.listquery;
 
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
-import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.hibernate.jdbc.Work;
 
 import java.sql.Connection;
@@ -26,15 +25,18 @@ public class DtoListFromSql<T> implements Work {
 
 
     private Class<T> dtoType;
-    private String sql;
-    private Map<String, Object> parameters = null;
+    private ListStatement listStatement;
+    private Map<String, Object> jdbcParameters = null;
+    private Map<String, Object> sqlParameters  = null;
 
     public DtoListFromSql(Class<T> dtoType,
-                          String sql,
-                          Map<String, Object> parameters) {
+                          ListStatement listStatement,
+                          Map<String, Object> jdbcParameters,
+                          Map<String, Object> sqlParameters) {
         this.dtoType = dtoType;
-        this.sql = sql;
-        this.parameters = parameters;
+        this.listStatement= listStatement;
+        this.jdbcParameters = jdbcParameters;
+        this.sqlParameters = sqlParameters;
     }
 
 
@@ -47,7 +49,9 @@ public class DtoListFromSql<T> implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
+        PreparedStatement preparedStatement = listStatement.makePreparedStatement(dbConnection,
+                this.jdbcParameters,
+                this.sqlParameters  );
 
         ResultSet resultSet = preparedStatement.executeQuery();
 

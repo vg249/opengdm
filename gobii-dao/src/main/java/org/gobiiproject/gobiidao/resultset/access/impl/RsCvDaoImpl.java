@@ -8,7 +8,11 @@ import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpDelCv;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsCv;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdCv;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.*;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetCvDetailsByCvId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetCvGroups;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetCvItems;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetCvTerms;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetCvTermsByGroup;
 import org.hibernate.exception.SQLGrammarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,31 +54,7 @@ public class RsCvDaoImpl implements RsCvDao {
             returnVal = spGetCvTermsByGroup.getResultSet();
         } catch (SQLGrammarException e) {
 
-            LOGGER.error("Error retrieving CVTERMS terms by group with SQL " + e.getSQL(), e.getSQLException());
-            throw (new GobiiDaoException(e.getSQLException()));
-
-        }
-
-
-        return returnVal;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    @Override
-    public ResultSet getCvsByGroup(String groupName) throws GobiiDaoException{
-        ResultSet returnVal = null;
-
-        try {
-            Map<String, Object> parameters = new HashMap<>();
-            parameters.put("groupName", groupName);
-            SpGetCvsByGroup spGetCvsByGroup = new SpGetCvsByGroup(parameters);
-
-            storedProcExec.doWithConnection(spGetCvsByGroup);
-
-            returnVal = spGetCvsByGroup.getResultSet();
-        } catch (SQLGrammarException e) {
-
-            LOGGER.error("Error retrieving CVTERMS terms by group with SQL " + e.getSQL(), e.getSQLException());
+            LOGGER.error("Error retrieving CV terms by group with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
         }
@@ -98,7 +78,7 @@ public class RsCvDaoImpl implements RsCvDao {
             returnVal = spGetCvGroups.getResultSet();
         } catch (SQLGrammarException e) {
 
-            LOGGER.error("Error retrieving CVTERMS groups with SQL " + e.getSQL(), e.getSQLException());
+            LOGGER.error("Error retrieving CV groups with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
         }
@@ -122,7 +102,7 @@ public class RsCvDaoImpl implements RsCvDao {
             returnVal = spGetCvTerms.getResultSet();
         } catch (SQLGrammarException e) {
 
-            LOGGER.error("Error retrieving CVTERMS groups with SQL ", e.getSQLException());
+            LOGGER.error("Error retrieving CV groups with SQL ", e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
         }
@@ -147,7 +127,7 @@ public class RsCvDaoImpl implements RsCvDao {
             returnVal = spGetCvItems.getResultSet();
         } catch (SQLGrammarException e) {
 
-            LOGGER.error("Error retrieving CVTERMS groups with SQL " + e.getSQL(), e.getSQLException());
+            LOGGER.error("Error retrieving CV groups with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
         }

@@ -21,11 +21,11 @@ import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.headerlesscontainer.AnalysisDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO;
 
 
-import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
+import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
@@ -61,7 +61,7 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
 //        dataSetDTORequest.setDataSetId(2);
 //        DataSetDTO dataSetDTOResponse = dtoRequestDataSet.process(dataSetDTORequest);
 
-        Integer dataSetid = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS));
+        Integer dataSetid = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET));
 
         RestUri projectsUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -109,7 +109,7 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
     public void create() throws Exception {
 
         RestUri namesUri = GobiiClientContext.getInstance(null, false).getUriFactory().nameIdListByQueryParams();
-        namesUri.setParamValue("entity", GobiiEntityNameType.CVTERMS.toString().toLowerCase());
+        namesUri.setParamValue("entity", GobiiEntityNameType.CV.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
         namesUri.setParamValue("filterValue", "analysis_type");
 
@@ -193,7 +193,7 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
         Assert.assertTrue(dataSetDTOResponse.getAnalysesIds().size() > 0);
         Assert.assertTrue(dataSetDTOResponse.getTypeId() > 0);
 
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.DATASETS,dataSetDTOResponse.getDataSetId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.DATASET,dataSetDTOResponse.getDataSetId());
 
 
 //        DataSetDTO dataSetDTOReRequest = new DataSetDTO();
@@ -232,7 +232,7 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
 
         // ******** make analyses we'll need for the new data set
         RestUri namesUri = GobiiClientContext.getInstance(null, false).getUriFactory().nameIdListByQueryParams();
-        namesUri.setParamValue("entity", GobiiEntityNameType.CVTERMS.toString().toLowerCase());
+        namesUri.setParamValue("entity", GobiiEntityNameType.CV.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
         namesUri.setParamValue("filterValue", "analysis_type");
 
@@ -443,7 +443,7 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
     @Test
     public void getDataSetsByTypeId() throws Exception {
 
-        Integer dataSetid = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS));
+        Integer dataSetid = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET));
 
         RestUri restUriForDataSets = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()

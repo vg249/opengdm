@@ -56,9 +56,10 @@ export class DtoRequestItemNameIds implements DtoRequestItem<NameId[]> {
         //let nameListItems:Object[] = json.payload.data;
 
         json.payload.data.forEach(item => {
+            let entityLasetModified = new Date(item.entityLasetModified);
             let currentId:string = String(item.id);
             let currentName:string = item.name;
-            returnVal.push(new NameId(currentId, currentName, this.entityType));
+            returnVal.push(new NameId(currentId, currentName, this.entityType,entityLasetModified));
         });
 
         return returnVal;

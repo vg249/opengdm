@@ -10,7 +10,6 @@ export const REPLACE_IN_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Replace In Extract
 export const REPLACE_ITEM_OF_SAME_COMPOUND_ID = '[GobiiFileItem] Replace In Extract by compound ID';
 export const REMOVE_FROM_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Remove from Extract by ID';
 export const REMOVE_FROM_EXTRACT = '[GobiiFileItem] Remove from Extract';
-export const SET_FILTER_VALUE = '[GobiiFileItem] Set Filter Value';
 export const SET_EXTRACT_TYPE = '[GobiiFileItem] Set ExtractType';
 export const LOAD_FILE_ITEM_LIST = '[GobiiFileItem] Load File Item lIST';
 export const LOAD_FILE_ITEM = '[GobiiFileItem] Load File Item';
@@ -29,7 +28,7 @@ export class LoadFileItemListAction implements Action {
     constructor(public payload: {
         gobiiFileItems: GobiiFileItem[],
         filterId: NameIdFilterParamTypes,
-        filterValue: string
+        filter: {gobiiExtractFilterType: GobiiExtractFilterType, filterValue: string, entityLasteUpdated: Date}
 
     }) {
     }
@@ -89,17 +88,6 @@ export class ReplaceItemOfSameCompoundIdAction implements Action {
     }
 }
 
-export class SetFilterValueAction implements Action {
-    readonly type = SET_FILTER_VALUE;
-
-    constructor(public payload: {
-        gobiiExtractFilterType: GobiiExtractFilterType,
-        filterId: NameIdFilterParamTypes,
-        filterValue: string
-    }) {
-    }
-}
-
 export class SetExtractType implements Action {
     readonly type = SET_EXTRACT_TYPE;
 
@@ -133,7 +121,6 @@ export type All
     = LoadFileItemListAction
     | AddToExtractAction
     | RemoveFromExtractAction
-    | SetFilterValueAction
     | AddToExtractByItemIdAction
     | RemoveFromExractByItemIdAction
     | RemoveAllFromExtractAction

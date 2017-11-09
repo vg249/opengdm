@@ -2,8 +2,8 @@ package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.AnalysisService;
-import org.gobiiproject.gobiidtomapping.DtoMapAnalysis;
-import org.gobiiproject.gobiimodel.headerlesscontainer.AnalysisDTO;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapAnalysis;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,9 +30,7 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         try {
 
-            analysisDTO.setCreatedDate(new Date());
-            analysisDTO.setModifiedDate(new Date());
-            returnVal = dtoMapAnalysis.createAnalysis(analysisDTO);
+            returnVal = dtoMapAnalysis.create(analysisDTO);
 
             // When we have roles and permissions, this will be set programmatically
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
@@ -57,10 +54,10 @@ public class AnalysisServiceImpl implements AnalysisService {
             if(null == analysisDTO.getAnalysisId() ||
                     analysisDTO.getAnalysisId().equals(analysisId)) {
 
-                AnalysisDTO existingAnalysisDTO = dtoMapAnalysis.getAnalysisDetails(analysisId);
+                AnalysisDTO existingAnalysisDTO = dtoMapAnalysis.get(analysisId);
                 if(null != existingAnalysisDTO.getAnalysisId() && existingAnalysisDTO.getAnalysisId().equals(analysisId)) {
 
-                    returnVal = dtoMapAnalysis.replaceAnalysis(analysisId, analysisDTO);
+                    returnVal = dtoMapAnalysis.replace(analysisId, analysisDTO);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
@@ -100,7 +97,7 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         List<AnalysisDTO> returnVal;
 
-        returnVal = dtoMapAnalysis.getAnalyses();
+        returnVal = dtoMapAnalysis.getList();
         for(AnalysisDTO currentAnalysisDTO : returnVal) {
             currentAnalysisDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
             currentAnalysisDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
@@ -118,7 +115,7 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         AnalysisDTO returnVal;
 
-        returnVal = dtoMapAnalysis.getAnalysisDetails(analysisId);
+        returnVal = dtoMapAnalysis.get(analysisId);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 

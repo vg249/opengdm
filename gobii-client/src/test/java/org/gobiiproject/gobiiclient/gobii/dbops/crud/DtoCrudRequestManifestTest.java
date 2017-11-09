@@ -14,7 +14,7 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.*;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ManifestDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ManifestDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
@@ -107,7 +107,7 @@ public class DtoCrudRequestManifestTest implements DtoCrudRequestTest {
         Assert.assertTrue(manifestDTOResponse.getManifestId() > 0);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(manifestDTOResponseEnvelope.getHeader()));
 
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.MANIFESTS, manifestDTOResponse.getManifestId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.MANIFEST, manifestDTOResponse.getManifestId());
 
         RestUri restUriManifestForGetById = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -120,7 +120,7 @@ public class DtoCrudRequestManifestTest implements DtoCrudRequestTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetById.getHeader()));
         ManifestDTO manifestDTOResponseForParams = resultEnvelopeForGetById.getPayload().getData().get(0);
 
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.MANIFESTS, manifestDTOResponse.getManifestId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.MANIFEST, manifestDTOResponse.getManifestId());
 
 
     }

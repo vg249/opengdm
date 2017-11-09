@@ -18,20 +18,17 @@ import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestContactTest;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestDataSetTest;
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
-import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.JobDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderInstructionFilesDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ProtocolDTO;
 import org.gobiiproject.gobiimodel.types.*;
 
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.junit.*;
-
-import java.util.List;
-import java.util.Map;
 
 
 public class DtoRequestGobiiFileLoadInstructionsTest {
@@ -72,8 +69,8 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         loaderInstructionFilesDTOToSend.setInstructionFileName(instructionFileName);
 
         String instructionOneTableName = "foo_table";
-        Integer instructionOneDataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS);
-        Integer instructionOneContactId = (new GlobalPkColl<DtoCrudRequestContactTest>()).getAPkVal(DtoCrudRequestContactTest.class, GobiiEntityNameType.CONTACTS);
+        Integer instructionOneDataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET);
+        Integer instructionOneContactId = (new GlobalPkColl<DtoCrudRequestContactTest>()).getAPkVal(DtoCrudRequestContactTest.class, GobiiEntityNameType.CONTACT);
         String gobiiCropType = GobiiClientContext.getInstance(null, false).getCurrentClientCropType();
 
         GobiiLoaderInstruction gobiiLoaderInstructionOne = new GobiiLoaderInstruction();
@@ -141,7 +138,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         /*** InstructionTwo START - Test for wrong projectId for given experiment. Valid experimentId will be used here ***/
         //get existing dataset
-        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS));
+        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET));
 
         RestUri datasetsUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -361,6 +358,26 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 submittedJobDto.getPayloadType().equals(payloadTypeToTest.getCvName()));
 
 
+        //VERIFY THAT THE DATSET RECORD HAS THE JOB ID FOR THE JOB
+        Integer loadedDataSetId = loaderInstructionFileDTOResponse.getGobiiLoaderInstructions().get(0).getDataSetId();
+        RestUri dataSEtUri = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_DATASETS);
+        dataSEtUri.setParamValue("id", loadedDataSetId.toString());
+        GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceForLoadedDataset = new GobiiEnvelopeRestResource<>(dataSEtUri);
+        PayloadEnvelope<DataSetDTO> resultEnvelopeForLoadedDataset = gobiiEnvelopeRestResourceForLoadedDataset
+                .get(DataSetDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForLoadedDataset.getHeader()));
+        DataSetDTO dataSetDTOResponsForLoadedDataset = resultEnvelopeForLoadedDataset.getPayload().getData().get(0);
+
+        Assert.assertNotNull("Dataset record does not have a job id",
+                dataSetDTOResponsForLoadedDataset.getJobId());
+        Assert.assertEquals("The loade dataset record does not have the correct job ID",
+                submittedJobDto.getJobId(),  dataSetDTOResponsForLoadedDataset.getJobId());
+
+
+
         // ************** VERIFY THAT WE CAN MEANINGFULLY TEST FOR NON EXISTENT DIRECTORIES
         String newInstructionFileName = "testapp_" + DateUtils.makeDateIdString();
         loaderInstructionFilesDTOToSend.setInstructionFileName(newInstructionFileName);
@@ -504,7 +521,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         String instructionOneTableName = "test_table1";
 
         //get existing dataset
-        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS));
+        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET));
 
         RestUri datasetsUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -601,7 +618,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         String gobiiCropType = GobiiClientContext.getInstance(null, false).getCurrentClientCropType();
 
         //get existing dataset
-        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS));
+        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET));
 
         RestUri datasetsUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -715,7 +732,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         String instructionThreeTableName = "test_table3";
 
         //get existing dataset
-        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS));
+        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET));
 
         RestUri datasetsUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -814,7 +831,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         String gobiiCropType = GobiiClientContext.getInstance(null, false).getCurrentClientCropType();
 
         //get existing dataset
-        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS));
+        Integer dataSetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET));
 
         RestUri datasetsUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()

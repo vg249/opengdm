@@ -6,7 +6,7 @@
 
     <groupId>org.gobiiproject</groupId>
     <artifactId>parent</artifactId>
-    <version>1.2.0-DEV-2017-10-13_01</version>
+    <version>1.4.0-DEV-2017-11-03_01</version>
     <packaging>pom</packaging>
 
     <description>Parent for GOBii project genotype application</description>
@@ -14,10 +14,11 @@
     <properties>
 
         <!-- Gobii Version -->
-        <gobii.version>1.2.0-DEV-2017-10-13_01</gobii.version>
+        <gobii.version>1.4.0-DEV-2017-11-03_01</gobii.version>
 
         <!-- Spring Version -->
         <spring.version>4.2.2.RELEASE</spring.version>
+        <aspectJ.version>1.7.4</aspectJ.version>
 
         <!-- Spring Secuirty -->
         <spring-security.version>4.2.2.RELEASE</spring-security.version>
@@ -302,12 +303,23 @@
                 <version>1.9.13</version>
             </dependency>
 
-            <!-- Postgres -->
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
-                <version>9.4-1200-jdbc41</version>
+                <version>42.1.4</version>
             </dependency>
+
+            <!-- Guava -->
+            <!-- This had to be added after upgrading to postgres 42 jdbc
+             apaprently the google.common library had been a transitive
+             dependency of the prior jdbc -->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>19.0</version>
+            </dependency>
+
+
             <!-- Liquibase -->
             <dependency>
                 <groupId>org.liquibase</groupId>

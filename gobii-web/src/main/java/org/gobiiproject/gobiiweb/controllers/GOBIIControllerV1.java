@@ -13,10 +13,34 @@ import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiEntityNameConverter;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
-import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
+import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
+import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.headerlesscontainer.*;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.DisplayDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ManifestDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.MarkerGroupDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.OrganizationDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ProtocolDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ReferenceDTO;
+import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvGroupDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerDTO;
+import org.gobiiproject.gobiimodel.dto.system.AuthDTO;
+import org.gobiiproject.gobiimodel.dto.system.ConfigSettingsDTO;
+import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderFilePreviewDTO;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFilesDTO;
+import org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO;
+import org.gobiiproject.gobiimodel.dto.system.PingDTO;
 import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
@@ -52,7 +76,6 @@ import java.io.FileInputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.security.Principal;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -139,6 +162,9 @@ public class GOBIIControllerV1 {
 
     @Autowired
     private JobService jobService = null;
+
+    @Autowired
+    private EntityStatsService entityStatsService = null;
 
     @RequestMapping(value = "/ping", method = RequestMethod.POST)
     @ResponseBody
@@ -1120,7 +1146,7 @@ public class GOBIIControllerV1 {
         PayloadEnvelope<NameIdDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.CVTERMS;
+            GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.CV;
             GobiiFilterType gobiiFilterType = GobiiFilterType.BYTYPENAME;
 
             DtoMapNameIdParams dtoMapNameIdParams = new DtoMapNameIdParams(gobiiEntityNameType, gobiiFilterType, "dataset_type");
@@ -3105,7 +3131,7 @@ public class GOBIIControllerV1 {
     }
 
     // *********************************************
-    // *************************** MAPSETS METHODS
+    // *************************** MAPSET METHODS
     // *********************************************
 
     @RequestMapping(value = "/mapsets", method = RequestMethod.POST)
@@ -3627,7 +3653,7 @@ public class GOBIIControllerV1 {
      */
     @RequestMapping(value = "/files/{destinationType}",
             method = RequestMethod.DELETE
-            ,produces = MediaType.TEXT_PLAIN_VALUE
+            , produces = MediaType.TEXT_PLAIN_VALUE
     )
     public
     @ResponseBody
@@ -3921,4 +3947,136 @@ public class GOBIIControllerV1 {
 
     }
 
+
+    // *********************************************
+    // *************************** ENTITY STATS METHODS
+    // *********************************************
+    @RequestMapping(value = "/entities/{entityName}/lastmodified", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<EntityStatsDTO> getEntityLastModified(@PathVariable String entityName,
+                                                                 HttpServletRequest request,
+                                                                 HttpServletResponse response) {
+
+        PayloadEnvelope<EntityStatsDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.valueOf(entityName.toUpperCase());
+
+            EntityStatsDTO entityStatsDTO = entityStatsService.getEntityLastModified(gobiiEntityNameType);
+
+            PayloadWriter<EntityStatsDTO> payloadWriter = new PayloadWriter<>(request, response,
+                    EntityStatsDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    GobiiUriFactory.resourceColl(request.getContextPath(),
+                            GobiiServiceRequestId.URL_CV)
+                            .addUriParam("id"),
+                    entityStatsDTO);
+
+        } catch (GobiiException e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        } catch (Exception e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+    @RequestMapping(value = "/entities/{entityName}/count", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<EntityStatsDTO> getEntityCount(@PathVariable String entityName,
+                                                          HttpServletRequest request,
+                                                          HttpServletResponse response) {
+
+        PayloadEnvelope<EntityStatsDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.valueOf(entityName.toUpperCase());
+
+            EntityStatsDTO entityStatsDTO = entityStatsService.getEntityCount(gobiiEntityNameType);
+
+            PayloadWriter<EntityStatsDTO> payloadWriter = new PayloadWriter<>(request, response,
+                    EntityStatsDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    GobiiUriFactory.resourceColl(request.getContextPath(),
+                            GobiiServiceRequestId.URL_CV)
+                            .addUriParam("id"),
+                    entityStatsDTO);
+
+        } catch (GobiiException e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        } catch (Exception e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+
+    @RequestMapping(value = "/entities/{entityNameParent}/{parentId}/{entityNameChild}/count", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<EntityStatsDTO> getEntityCountOfChildren(@PathVariable String entityNameParent,
+                                                                    @PathVariable Integer parentId,
+                                                                    @PathVariable String entityNameChild,
+                                                                    HttpServletRequest request,
+                                                                    HttpServletResponse response) {
+
+        PayloadEnvelope<EntityStatsDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            GobiiEntityNameType parentEntityNameType = GobiiEntityNameType.valueOf(entityNameParent.toUpperCase());
+            GobiiEntityNameType childEntityNameType = GobiiEntityNameType.valueOf(entityNameChild.toUpperCase());
+
+            EntityStatsDTO entityStatsDTO = entityStatsService.getEntityCountOfChildren(parentEntityNameType,
+                    parentId,
+                    childEntityNameType);
+
+            PayloadWriter<EntityStatsDTO> payloadWriter = new PayloadWriter<>(request, response,
+                    EntityStatsDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    GobiiUriFactory.resourceColl(request.getContextPath(),
+                            GobiiServiceRequestId.URL_CV)
+                            .addUriParam("id"),
+                    entityStatsDTO);
+
+        } catch (GobiiException e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        } catch (Exception e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
 }// GOBIIController

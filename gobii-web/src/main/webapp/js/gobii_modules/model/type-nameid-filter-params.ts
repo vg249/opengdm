@@ -14,7 +14,7 @@ export class NameIdFilterParamTypes {
     public static PLATFORMS: string = "Platforms";
     public static DATASETS_BY_EXPERIMENT: string = "Datasets-by-experiment";
     public static PROJECTS_BY_CONTACT: string = "Projects-by-contact";
-    public static PROJECTS: string = "Projects";
+    public static PROJECTS: string = "Project";
     public static MARKER_GROUPS: string = "Marker Groups";
 }
 

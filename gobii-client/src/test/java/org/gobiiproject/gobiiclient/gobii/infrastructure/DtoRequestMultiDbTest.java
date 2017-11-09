@@ -16,10 +16,10 @@ import org.gobiiproject.gobiiclient.gobii.Helpers.*;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
-import org.gobiiproject.gobiimodel.headerlesscontainer.CvDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.PingDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO;
+import org.gobiiproject.gobiimodel.dto.system.PingDTO;
 
-import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
+import org.gobiiproject.gobiimodel.dto.system.ConfigSettingsDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
@@ -143,7 +143,7 @@ public class DtoRequestMultiDbTest {
             Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(cvDTOResponseEnvelope.getHeader()));
             Assert.assertTrue(cvDTOResponse.getCvId() > 0);
 
-            GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.CVTERMS,
+            GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.CV,
                     cvDTOResponse.getCvId());
 
 
@@ -157,7 +157,7 @@ public class DtoRequestMultiDbTest {
             Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
             CvDTO cvDTOResponseForParams = resultEnvelopeForGetByID.getPayload().getData().get(0);
 
-            GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.CVTERMS, cvDTOResponse.getCvId());
+            GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.CV, cvDTOResponse.getCvId());
 
         }
     }

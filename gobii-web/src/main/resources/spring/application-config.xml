@@ -5,6 +5,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:cache="http://www.springframework.org/schema/cache"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
     http://www.springframework.org/schema/context
@@ -12,7 +13,7 @@
     http://www.springframework.org/schema/tx 		
     http://www.springframework.org/schema/tx/spring-tx.xsd
 	http://www.springframework.org/schema/security
-	http://www.springframework.org/schema/security/spring-security-4.2.xsd">
+	http://www.springframework.org/schema/security/spring-security-4.2.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
 
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
@@ -29,13 +30,36 @@
     <context:component-scan base-package="org.gobiiproject.gobiiweb.controllers"/>
 
 
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+
+
+    <cache:annotation-driven/>
+
+    <bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
+        <property name="caches">
+            <set>
+                <bean
+                        class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+                        name="tableLastUpdateCache"/>
+                <bean
+                        class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+                        name="tableRecordCountCache"/>
+                <bean
+                        class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+                        name="parentChildCountCache"/>
+            </set>
+        </property>
+    </bean>
+    <bean id="tableTrackingCache"
+          class="org.gobiiproject.gobiidao.cache.TableTrackingCache"/>
+
     <!-- ******************** ****************************************** -->
     <!-- ******************** explicitly defined beans **************** -->
 
     <!-- **** Security Beans *************************************** -->
     <bean id="UserDao"
           class="org.gobiiproject.gobiidao.entity.access.impl.UserDaoImpl"/>
-    <bean id="dtoMapProject" class="org.gobiiproject.gobiidtomapping.impl.DtoMapProjectImpl"/>
+    <bean id="dtoMapProject" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapProjectImpl"/>
     <bean id="projectService"
           class="org.gobiiproject.gobidomain.services.impl.ProjectServiceImpl"/>
 
@@ -53,7 +77,7 @@
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsPingDaoImpl"/>
     <bean id="pingDaoEntity"
           class="org.gobiiproject.gobiidao.entity.access.impl.mock.PingEntityDaoImplMock"/>
-    <bean id="dtoPing" class="org.gobiiproject.gobiidtomapping.impl.DtoMapPingImpl"/>
+    <bean id="dtoPing" class="org.gobiiproject.gobiidtomapping.system.impl.DtoMapPingImpl"/>
     <bean id="pingService"
           class="org.gobiiproject.gobidomain.services.impl.PingServiceImpl"/>
 
@@ -69,117 +93,117 @@
 
 
     <bean id="dtoMapNameIdFetchAnalyses"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchAnalyses"/>
+          class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchAnalyses"/>
 
     <bean id="dtoMapNameIdFetchContacts"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchContacts"/>
+          class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchContacts"/>
 
     <bean id="dtoMapNameIdFetchDataSets"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchDataSets"/>
+          class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchDataSets"/>
 
     <bean id="dtoMapNameIdFetchCvTerms"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchCvTerms"/>
+          class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchCvTerms"/>
 
     <bean id="dtoMapNameIdFetchCvGroups"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchCvGroups"/>
+          class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchCvGroups"/>
 
     <bean id="dtoMapNameIdFetchProjects"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchProjects"/>
+          class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchProjects"/>
 
     <bean id="dtoMapNameIdFetchOrganizations"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchOrganizations"/>
+          class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchOrganizations"/>
 
     <bean id="dtoMapNameIdFetchPlatforms"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchPlatforms"/>
+          class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchPlatforms"/>
 
     <bean id="dtoMapNameIdFetchManifests"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchManifests"/>
+          class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchManifests"/>
 
     <bean id="dtoMapNameIdFetchMapsets"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchMapsets"/>
+          class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchMapsets"/>
 
     <bean id="dtoMapNameIdFetchMarkerGroups"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchMarkerGroups"/>
+          class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchMarkerGroups"/>
 
     <bean id="dtoMapNameIdFetchExperiments"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchExperiments"/>
+          class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchExperiments"/>
 
     <bean id="dtoMapNameIdFetchReferences"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchReferences"/>
+          class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchReferences"/>
 
     <bean id="dtoMapNameIdFetchRoles"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchRoles"/>
+          class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchRoles"/>
 
     <bean id="dtoMapNameIdFetchProtocolNames"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchProtocols"/>
+          class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchProtocols"/>
 
     <bean id="dtoMapNameIdList"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdListImpl">
+          class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIdListImpl">
         <property name="dtoMapNameIdFetchMap">
             <map>
                 <!-- ANLYSES -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).ANALYSES}">
-                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchAnalyses"/>
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).ANALYSIS}">
+                    <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchAnalyses"/>
                 </entry>
-                <!-- CONTACTS -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).CONTACTS}">
-                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchContacts"/>
+                <!-- CONTACT -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).CONTACT}">
+                    <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchContacts"/>
                 </entry>
-                <!-- DATASETS -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).DATASETS}">
-                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchDataSets"/>
+                <!-- DATASET -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).DATASET}">
+                    <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchDataSets"/>
                 </entry>
-                <!-- CVTERMS -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).CVTERMS}">
-                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchCvTerms"/>
+                <!-- CV -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).CV}">
+                    <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchCvTerms"/>
                 </entry>
-                <!-- CVGROUPS -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).CVGROUPS}">
-                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchCvGroups"/>
+                <!-- CVGROUP -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).CVGROUP}">
+                    <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchCvGroups"/>
                 </entry>
-                <!-- PROJECTS -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).PROJECTS}">
-                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchProjects"/>
+                <!-- PROJECT -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).PROJECT}">
+                    <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchProjects"/>
                 </entry>
-                <!-- ORGANIZATIONS -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).ORGANIZATIONS}">
-                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchOrganizations"/>
+                <!-- ORGANIZATION -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).ORGANIZATION}">
+                    <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchOrganizations"/>
                 </entry>
-                <!-- PLATFORMS -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).PLATFORMS}">
-                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchPlatforms"/>
+                <!-- PLATFORM -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).PLATFORM}">
+                    <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchPlatforms"/>
                 </entry>
-                <!-- MANIFESTS -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).MANIFESTS}">
-                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchManifests"/>
+                <!-- MANIFEST -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).MANIFEST}">
+                    <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchManifests"/>
                 </entry>
-                <!-- MAPSETS -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).MAPSETS}">
-                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchMapsets"/>
+                <!-- MAPSET -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).MAPSET}">
+                    <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchMapsets"/>
                 </entry>
-                <!-- MARKERGROUPS -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).MARKERGROUPS}">
-                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchMarkerGroups"/>
+                <!-- MARKER_GROUP -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).MARKER_GROUP}">
+                    <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchMarkerGroups"/>
                 </entry>
-                <!-- EXPERIMENTS -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).EXPERIMENTS}">
-                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchExperiments"/>
+                <!-- EXPERIMENT -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).EXPERIMENT}">
+                    <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchExperiments"/>
                 </entry>
-                <!-- REFERENCES -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).REFERENCES}">
-                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchReferences"/>
+                <!-- REFERENCE -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).REFERENCE}">
+                    <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchReferences"/>
                 </entry>
-                <!-- ROLES -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).ROLES}">
-                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchRoles"/>
+                <!-- ROLE -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).ROLE}">
+                    <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchRoles"/>
                 </entry>
-                <!-- PROTOCOLS -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).PROTOCOLS}">
-                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchProtocols"/>
+                <!-- PROTOCOL -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).PROTOCOL}">
+                    <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchProtocols"/>
                 </entry>
-                <!-- VENDORS_PROTOCOLS -->
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).VENDORS_PROTOCOLS}">
-                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchVendorProtocols"/>
+                <!-- VENDORS_PROTOCOL -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).VENDORS_PROTOCOL}">
+                    <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchVendorProtocols"/>
                 </entry>
             </map>
         </property>
@@ -195,31 +219,31 @@
           class="org.gobiiproject.gobidomain.services.impl.FileServiceImpl"/>
 
     <bean id="dtoMapLoaderFiles"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapLoaderFilesImpl"/>
+          class="org.gobiiproject.gobiidtomapping.instructions.impl.DtoMapLoaderFilesImpl"/>
     <bean id="loaderFilesService"
           class="org.gobiiproject.gobidomain.services.impl.LoaderFilesServiceImpl"/>
 
     <!-- **** Loader Instruction File Beans *************************************** -->
     <bean id="dtoMapLoaderInstructions"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapLoaderInstructionsImpl"/>
+          class="org.gobiiproject.gobiidtomapping.instructions.impl.DtoMapLoaderInstructionsImpl"/>
     <bean id="loaderInstructionFilesService"
           class="org.gobiiproject.gobidomain.services.impl.LoaderInstructionFileServiceImpl"/>
 
     <!-- **** Extractor File Beans *************************************** -->
     <bean id="dtoMapExtractorInstructions"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapExtractorInstructionsImpl"/>
+          class="org.gobiiproject.gobiidtomapping.instructions.impl.DtoMapExtractorInstructionsImpl"/>
     <bean id="ExtractorInstructionFilesService"
           class="org.gobiiproject.gobidomain.services.impl.ExtractorInstructionFileServiceImpl"/>
 
 
     <!-- **** Contact Beans *************************************** -->
-    <bean id="dtoMapContact" class="org.gobiiproject.gobiidtomapping.impl.DtoMapContactImpl"/>
+    <bean id="dtoMapContact" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapContactImpl"/>
     <bean id="contactService" class="org.gobiiproject.gobidomain.services.impl.ContactServiceImpl"/>
 
     <!-- **** Display Beans *************************************** -->
     <bean id="rsDisplayDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsDisplayDaoImpl"/>
-    <bean id="dtoMapDisplay" class="org.gobiiproject.gobiidtomapping.impl.DtoMapDisplayImpl"/>
+    <bean id="dtoMapDisplay" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapDisplayImpl"/>
     <bean id="displayService"
           class="org.gobiiproject.gobidomain.services.impl.DisplayServiceImpl"/>
 
@@ -227,7 +251,7 @@
     <!-- **** DataSet Beans *************************************** -->
     <bean id="rsDataSetDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsDataSetDaoImpl"/>
-    <bean id="dtoMapDataSet" class="org.gobiiproject.gobiidtomapping.impl.DtoMapDataSetImpl"/>
+    <bean id="dtoMapDataSet" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapDataSetImpl"/>
     <bean id="DataSetService"
           class="org.gobiiproject.gobidomain.services.impl.DataSetServiceImpl"/>
 
@@ -235,7 +259,7 @@
     <bean id="rsExperimentDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsExperimentDaoImpl"/>
     <bean id="dtoMapExperiment"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapExperimentImpl"/>
+          class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapExperimentImpl"/>
     <bean id="ExperimentService"
           class="org.gobiiproject.gobidomain.services.impl.ExperimentServiceImpl"/>
 
@@ -244,7 +268,7 @@
     <bean id="rsAnalysisDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsAnalysisDaoImpl"/>
     <bean id="dtoMapAnalysis"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapAnalysisImpl"/>
+          class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapAnalysisImpl"/>
     <bean id="AnalysisService"
           class="org.gobiiproject.gobidomain.services.impl.AnalysisServiceImpl"/>
 
@@ -253,7 +277,7 @@
     <bean id="rsPlatformDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsPlatformDaoImpl"/>
     <bean id="dtoMapPlatform"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapPlatformImpl"/>
+          class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapPlatformImpl"/>
     <bean id="platformService"
           class="org.gobiiproject.gobidomain.services.impl.PlatformServiceImpl"/>
 
@@ -262,7 +286,7 @@
     <bean id="rsMapDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsMapSetDaoImpl"/>
     <bean id="dtoMapMapset"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapMapsetImpl"/>
+          class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapMapsetImpl"/>
     <bean id="MapsetService"
           class="org.gobiiproject.gobidomain.services.impl.MapsetServiceImpl"/>
 
@@ -270,10 +294,9 @@
     <!-- **** Marker Beans *************************************** -->
     <bean id="rsMarkerDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsMarkerDaoImpl"/>
-    <bean id="dtoMapMarker" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMarkerImpl"/>
+    <bean id="dtoMapMarker" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapMarkerImpl"/>
     <bean id="markerService"
           class="org.gobiiproject.gobidomain.services.impl.MarkerServiceImpl"/>
-
 
 
     <!-- <bean id="dtoMapMap" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMapImpl"/>
@@ -282,27 +305,27 @@
     <!-- **** Reference Beans *************************************** -->
     <bean id="rsReferenceDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsReferenceDaoImpl"/>
-    <bean id="dtoMapReference" class="org.gobiiproject.gobiidtomapping.impl.DtoMapReferenceImpl"/>
+    <bean id="dtoMapReference" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapReferenceImpl"/>
     <bean id="ReferenceService" class="org.gobiiproject.gobidomain.services.impl.ReferenceServiceImpl"/>
 
     <!-- **** CvTerms Beans *************************************** -->
     <bean id="rsCvDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsCvDaoImpl"/>
-    <bean id="dtoMapCv" class="org.gobiiproject.gobiidtomapping.impl.DtoMapCvImpl"/>
+    <bean id="dtoMapCv" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapCvImpl"/>
     <bean id="CvService" class="org.gobiiproject.gobidomain.services.impl.CvServiceImpl"/>
 
     <!-- *** CvGroup Beans ******************************************* -->
     <bean id="rsCvGroupDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsCvGroupDaoImpl"/>
-    <bean id="dtoMapCvGroup" class="org.gobiiproject.gobiidtomapping.impl.DtoMapCvGroupImpl"/>
+    <bean id="dtoMapCvGroup" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapCvGroupImpl"/>
     <bean id="CvGroupService" class="org.gobiiproject.gobidomain.services.impl.CvGroupServiceImpl"/>
 
     <!-- **** MarkerGroup Beans *************************************** -->
     <bean id="rsMarkerGroupDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsMarkerGroupDaoImpl"/>
-    <bean id="dtoMapMarkerGroup" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMarkerGroupImpl"/>
+    <bean id="dtoMapMarkerGroup" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapMarkerGroupImpl"/>
     <bean id="MarkerGroupService" class="org.gobiiproject.gobidomain.services.impl.MarkerGroupServiceImpl"/>
 
     <!-- **** ConfigSetrings Beans *************************************** -->
-    <bean id="dtoMapConfigSettings" class="org.gobiiproject.gobiidtomapping.impl.DtoMapConfigSettingsImpl"/>
+    <bean id="dtoMapConfigSettings" class="org.gobiiproject.gobiidtomapping.system.impl.DtoMapConfigSettingsImpl"/>
     <bean id="configSettingsService" class="org.gobiiproject.gobidomain.services.impl.ConfigSettingsServiceImpl"/>
 
     <!-- **** Role Beans *************************************** -->
@@ -316,26 +339,60 @@
 
     <!-- **** Manifests Beans *************************************** -->
     <bean id="rsManifestDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsManifestDaoImpl"/>
-    <bean id="dtoMapManifest" class="org.gobiiproject.gobiidtomapping.impl.DtoMapManifestImpl"/>
+    <bean id="dtoMapManifest" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapManifestImpl"/>
     <bean id="ManifestService" class="org.gobiiproject.gobidomain.services.impl.ManifestServiceImpl"/>
 
 
     <!-- **** Organization Beans *************************************** -->
     <bean id="rsOrganizationDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsOrganizationDaoImpl"/>
-    <bean id="dtoMapOrganization" class="org.gobiiproject.gobiidtomapping.impl.DtoMapOrganizationImpl"/>
+    <bean id="dtoMapOrganization"
+          class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapOrganizationImpl"/>
     <bean id="OrganizationService" class="org.gobiiproject.gobidomain.services.impl.OrganizationServiceImpl"/>
 
 
     <!-- **** Protocol Beans *************************************** -->
     <bean id="rsProtocolDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsProtocolDaoImpl"/>
-    <bean id="dtoMapProtocol" class="org.gobiiproject.gobiidtomapping.impl.DtoMapProtocolImpl"/>
+    <bean id="dtoMapProtocol" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapProtocolImpl"/>
     <bean id="ProtocolService" class="org.gobiiproject.gobidomain.services.impl.ProtocolServiceImpl"/>
 
 
     <!-- **** Job Beans *************************************** -->
     <bean id="JobService" class="org.gobiiproject.gobidomain.services.impl.JobServiceImpl"/>
-    <bean id="dtoMapJob" class="org.gobiiproject.gobiidtomapping.impl.DtoMapJobImpl"/>
+    <bean id="dtoMapJob" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapJobImpl"/>
     <bean id="rsJobDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsJobDaoImpl"/>
+
+    <!-- **** Entity Status Beans *************************************** -->
+    <bean id="entityStatsService" class="org.gobiiproject.gobidomain.services.impl.EntityStatsServiceImpl"/>
+    <bean id="dtoMapEntityStatsImpl"
+          class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapEntityStatsImpl"/>
+    <bean id="rsJobDaoImpl" class="org.gobiiproject.gobiidao.resultset.access.impl.RsJobDaoImpl"/>
+
+
+    <!-- **** ListStatement queries  *************************************** -->
+    <bean id="listStatementContactAll"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementContactAll"/>
+    <bean id="listStatementDatasetAll"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementDatasetAll"/>
+    <bean id="listStatementExperimentAll"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementExperimentAll"/>
+    <bean id="listStatementMarkerAll"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementMarkerAll"/>
+    <bean id="listStatementOrganizationAll"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementOrganizationAll"/>
+    <bean id="listStatementPlatformAll"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementPlatformAll"/>
+    <bean id="listStatementProjectAll"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementProjectAll"/>
+    <bean id="listStatementProtocolAll"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementProtocolAll"/>
+    <bean id="listStatementCvsByGroup"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementCvsByGroup"/>
+    <bean id="listStatementLastModified"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementLastModified"/>
+    <bean id="listStatementCount"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementCount"/>
+    <bean id="ListStatementCountOfChildren"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementCountOfChildren"/>
 
     <bean id="dtoListQueryColl"
           class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl">
@@ -345,96 +402,98 @@
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_DATASET_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg>
-                            <value>org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO</value>
-                        </constructor-arg>
-                        <constructor-arg>
-                            <value>QUERY_ID_DATASET_ALL</value>
-                        </constructor-arg>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO"/>
+                        <constructor-arg ref="listStatementDatasetAll"/>
                     </bean>
                 </entry>
                 <!--CONTACT -->
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_CONTACT_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg>
-                            <value>org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO</value>
-                        </constructor-arg>
-                        <constructor-arg>
-                            <value>QUERY_ID_CONTACT_ALL</value>
-                        </constructor-arg>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO"/>
+                        <constructor-arg ref="listStatementContactAll"/>
                     </bean>
                 </entry>
                 <!--ORGANIZATION -->
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_ORGANIZATION_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg>
-                            <value>org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO</value>
-                        </constructor-arg>
-                        <constructor-arg>
-                            <value>QUERY_ID_ORGANIZATION_ALL</value>
-                        </constructor-arg>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.OrganizationDTO"/>
+                        <constructor-arg ref="listStatementOrganizationAll"/>
                     </bean>
                 </entry>
                 <!--PLATFORM -->
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_PLATFORM_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg>
-                            <value>org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO</value>
-                        </constructor-arg>
-                        <constructor-arg>
-                            <value>QUERY_ID_PLATFORM_ALL</value>
-                        </constructor-arg>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO"/>
+                        <constructor-arg ref="listStatementPlatformAll"/>
+
                     </bean>
                 </entry>
                 <!--PROJECT -->
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_PROJECT_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg>
-                            <value>org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO</value>
-                        </constructor-arg>
-                        <constructor-arg>
-                            <value>QUERY_ID_PROJECT_ALL</value>
-                        </constructor-arg>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.ProjectDTO"/>
+                        <constructor-arg ref="listStatementProjectAll"/>
                     </bean>
                 </entry>
                 <!--EXPERIMENT -->
-                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_EXPERIMENT}">
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_EXPERIMENT_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg>
-                            <value>org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO</value>
-                        </constructor-arg>
-                        <constructor-arg>
-                            <value>QUERY_ID_EXPERIMENT</value>
-                        </constructor-arg>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO"/>
+                        <constructor-arg ref="listStatementExperimentAll"/>
+
                     </bean>
                 </entry>
                 <!--MARKER -->
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_MARKER_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg>
-                            <value>org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO</value>
-                        </constructor-arg>
-                        <constructor-arg>
-                            <value>QUERY_ID_MARKER_ALL</value>
-                        </constructor-arg>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerDTO"/>
+                        <constructor-arg ref="listStatementMarkerAll"/>
                     </bean>
                 </entry>
                 <!--PROTOCOL -->
                 <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_PROTOCOL_ALL}">
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
-                        <constructor-arg>
-                            <value>org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO</value>
-                        </constructor-arg>
-                        <constructor-arg>
-                            <value>QUERY_ID_PROTOCOL_ALL</value>
-                        </constructor-arg>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.ProtocolDTO"/>
+                        <constructor-arg ref="listStatementProtocolAll"/>
+                    </bean>
+                </entry>
+                <!--CV BY GROUP -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_CVS_BY_GROUP}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO"/>
+                        <constructor-arg ref="listStatementCvsByGroup"/>
+                    </bean>
+                </entry>
+                <!--LAST MODIFIED -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_LAST_MODIFIED}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
+                        <constructor-arg ref="listStatementLastModified"/>
+                    </bean>
+                </entry>
+                <!--COUNT -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_COUNT}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
+                        <constructor-arg ref="listStatementCount"/>
+                    </bean>
+                </entry>
+                <!--COUNT CHILDREN -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_COUNT_OF_CHILDREN}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
+                        <constructor-arg ref="ListStatementCountOfChildren"/>
                     </bean>
                 </entry>
             </map>
@@ -443,9 +502,12 @@
 
     <!-- ********************** BrAPI Beans ******************************* -->
 
-    <bean id="brapiResponseMapStudiesSearch" class="org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseMapStudiesSearch"/>
-    <bean id="brapiResponseMapAlleleMatrixSearch" class="org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrixsearch.BrapiResponseMapAlleleMatrixSearch"/>
-    <bean id="brapiResponseMapAlleleMatrices" class="org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrices.BrapiResponseMapAlleleMatrices"/>
+    <bean id="brapiResponseMapStudiesSearch"
+          class="org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseMapStudiesSearch"/>
+    <bean id="brapiResponseMapAlleleMatrixSearch"
+          class="org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrixsearch.BrapiResponseMapAlleleMatrixSearch"/>
+    <bean id="brapiResponseMapAlleleMatrices"
+          class="org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrices.BrapiResponseMapAlleleMatrices"/>
     <!-- ************************ DATA ACCESS BEANS ************************* -->
 
     <!--&lt;!&ndash;************************** SET UP CONFIGURAITON FOR JDBC settings&ndash;&gt;-->
@@ -672,8 +734,8 @@
         <!-- setting maximum upload size -->
         <property name="maxUploadSize" value="52428800"/>
         <property name="maxInMemorySize" value="52428800"/>
-        <property name="resolveLazily" value="false" />
-        <property name="defaultEncoding" value="utf-8" />
+        <property name="resolveLazily" value="false"/>
+        <property name="defaultEncoding" value="utf-8"/>
     </bean>
 
     <bean id="currentRequest" class="java.lang.ThreadLocal"/>
@@ -681,6 +743,7 @@
         <property name="currentRequest" ref="currentRequest"/>
     </bean>
 
+    <bean id="dtoMapAspect" class="org.gobiiproject.gobiidtomapping.core.DtoMapAspect"/>
 
 
 </beans>

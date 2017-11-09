@@ -2,12 +2,15 @@ package org.gobiiproject.gobiidao.resultset.access.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsMarkerGroupDao;
-import org.gobiiproject.gobiidao.resultset.access.RsPlatformDao;
-import org.gobiiproject.gobiidao.resultset.core.EntityPropertyParamNames;
 import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.*;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.*;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetMarkerGroupDetailsByMarkerGroupId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetMarkerGroupNames;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetMarkersByMarkerAndPlatformName;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetMarkersByMarkerId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetMarkersByMarkerName;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetMarkersForMarkerGroup;
 import org.hibernate.exception.SQLGrammarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

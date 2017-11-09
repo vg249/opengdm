@@ -1,18 +1,13 @@
 package org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrices;
 
 import org.gobiiproject.gobidomain.services.ExperimentService;
-import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiRequestStudiesSearch;
-import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearch;
-import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearchItem;
-import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
 
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**

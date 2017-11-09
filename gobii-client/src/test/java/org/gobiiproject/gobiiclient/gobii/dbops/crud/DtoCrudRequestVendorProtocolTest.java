@@ -10,10 +10,10 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.VendorProtocolDTO;
+import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.OrganizationDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ProtocolDTO;
+import org.gobiiproject.gobiimodel.dto.entity.children.VendorProtocolDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -54,7 +54,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
 
         // ********** SET UP THE PROTOCOL
         Integer protocolId = (new GlobalPkColl<DtoCrudRequestProtocolTest>()
-                .getAPkVal(DtoCrudRequestProtocolTest.class, GobiiEntityNameType.PROTOCOLS));
+                .getAPkVal(DtoCrudRequestProtocolTest.class, GobiiEntityNameType.PROTOCOL));
         RestUri restUriForGetProtocolById = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceByUriIdParam(GobiiServiceRequestId.URL_PROTOCOL);
@@ -67,9 +67,9 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
         ProtocolDTO protocolDTO = resultEnvelopeForGetProtocolByID.getPayload().getData().get(0);
 
 
-        // ********** CREATE MULTIPLE ORGANIZATIONS FOR THE PROTOCOL
+        // ********** CREATE MULTIPLE ORGANIZATION FOR THE PROTOCOL
         List<Integer> vendorPkVals = (new GlobalPkColl<DtoCrudRequestOrganizationTest>()
-                .getFreshPkVals(DtoCrudRequestOrganizationTest.class, GobiiEntityNameType.ORGANIZATIONS, TOTAL_VENDORS_PER_PROTOCOL));
+                .getFreshPkVals(DtoCrudRequestOrganizationTest.class, GobiiEntityNameType.ORGANIZATION, TOTAL_VENDORS_PER_PROTOCOL));
         for (Integer currentVendorPk : vendorPkVals) {
             // ********** SET UP THE ORGANIZATION FOR THE VENDOR
 
@@ -120,7 +120,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
                     .getUriFactory()
                     .nameIdListByQueryParams();
             GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
-            namesUri.setParamValue("entity", GobiiEntityNameType.VENDORS_PROTOCOLS.toString().toLowerCase());
+            namesUri.setParamValue("entity", GobiiEntityNameType.VENDORS_PROTOCOL.toString().toLowerCase());
 
             PayloadEnvelope<NameIdDTO> resultEnvelopeProtocoLVendornames = gobiiEnvelopeRestResource
                     .get(NameIdDTO.class);
@@ -156,10 +156,10 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
                             ).count() == 1);
         } // iterate through total vendors for protocol
 
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.VENDORS_PROTOCOLS, protocolDTO.getProtocolId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.VENDORS_PROTOCOL, protocolDTO.getProtocolId());
 
 
-        // ************* VERIFY THAT WE CAN RETRIEVE THE CREATED VENDOR THROUGH THE PROTOCOLS URL
+        // ************* VERIFY THAT WE CAN RETRIEVE THE CREATED VENDOR THROUGH THE PROTOCOL URL
 //        RestUri restUriOrganizationThroughProtocol = GobiiClientContext.getInstance(null, false)
 //                .getUriFactory()
 //                .resourceColl(GobiiServiceRequestId.URL_PROTOCOL)
@@ -189,13 +189,13 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
 
         // ********** PRE-CREATE ENTITIES
         GlobalPkColl globalPkColl = new GlobalPkColl<DtoCrudRequestProtocolTest>();
-        List<Integer> vendorPkVals = globalPkColl.getFreshPkVals(DtoCrudRequestOrganizationTest.class, GobiiEntityNameType.ORGANIZATIONS, TOTAL_VENDORS_PER_PROTOCOL);
+        List<Integer> vendorPkVals = globalPkColl.getFreshPkVals(DtoCrudRequestOrganizationTest.class, GobiiEntityNameType.ORGANIZATION, TOTAL_VENDORS_PER_PROTOCOL);
         List<Integer> protocolPkVals = globalPkColl
-                .getFreshPkVals(DtoCrudRequestProtocolTest.class, GobiiEntityNameType.PROTOCOLS, TOTAL_VENDORS_PER_PROTOCOL);
+                .getFreshPkVals(DtoCrudRequestProtocolTest.class, GobiiEntityNameType.PROTOCOL, TOTAL_VENDORS_PER_PROTOCOL);
 
 
         List<OrganizationDTO> finalPostedVendors = new ArrayList<>();
-        // ** ITERATE PROTOCOLS
+        // ** ITERATE PROTOCOL
         for (Integer currentProtocolId : protocolPkVals) {
 
             RestUri restUriProtocoLVendor = GobiiClientContext.getInstance(null, false)
@@ -389,7 +389,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
     public void getList() throws Exception {
 
         Integer protocolId = (new GlobalPkColl<DtoCrudRequestVendorProtocolTest>()
-                .getAPkVal(DtoCrudRequestVendorProtocolTest.class, GobiiEntityNameType.VENDORS_PROTOCOLS));
+                .getAPkVal(DtoCrudRequestVendorProtocolTest.class, GobiiEntityNameType.VENDORS_PROTOCOL));
 
         RestUri restUriVendorsForProtocol = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()

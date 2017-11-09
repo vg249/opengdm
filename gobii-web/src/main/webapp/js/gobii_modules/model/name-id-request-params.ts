@@ -4,26 +4,30 @@ import {CvFilterType} from "./cv-filter-type";
 import {GobiiExtractFilterType} from "./type-extractor-filter";
 import {NameIdLabelType} from "./name-id-label-type";
 import {ExtractorItemType} from "./type-extractor-item";
+import {GobiiFileItemCompoundId} from "./gobii-file-item-compound-id";
 
 /**
  * Created by Phil on 3/9/2017.
  */
 
-export class FileItemParams {
+export class FileItemParams extends GobiiFileItemCompoundId {
 
     private constructor(private _queryName: string = null,
-                        private _entityType: EntityType = EntityType.UNKNOWN,
+                        _entityType: EntityType = EntityType.UNKNOWN,
                         private _entityFilter: EntityFilter = EntityFilter.NONE,
                         private _fkEntityFilterValue: string = null,
                         private _selectedItemId: string = null,
-                        private _entitySubType: EntitySubType = EntitySubType.UNKNOWN,
-                        private _cvFilterType: CvFilterType = CvFilterType.UNKNOWN,
+                        _entitySubType: EntitySubType = EntitySubType.UNKNOWN,
+                        _cvFilterType: CvFilterType = CvFilterType.UNKNOWN,
                         private _gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN,
                         private _nameIdLabelType: NameIdLabelType,
-                        private _extractorItemType: ExtractorItemType,
+                        _extractorItemType: ExtractorItemType,
                         private _parentNameIdRequestParams: FileItemParams,
                         private _childNameIdRequestParams: FileItemParams[],
-                        private _dynamicFilterValue:boolean) {
+                        private _isDynamicFilterValue:boolean) {
+
+        super(_extractorItemType,_entityType,_entitySubType,_cvFilterType);
+
 
     }
 
@@ -45,13 +49,47 @@ export class FileItemParams {
             true));
     }
 
+    getQueryName(): string {
+        return this._queryName;
+    }
+
+
+    getExtractorItemType(): ExtractorItemType {
+        return super.getExtractorItemType();
+    }
+
+    setExtractorItemType(value: ExtractorItemType): FileItemParams {
+
+        super.setExtractorItemType(value);
+        return this;
+    }
 
     getEntityType(): EntityType {
-        return this._entityType;
+        return super.getEntityType();
     }
 
     setEntityType(value: EntityType): FileItemParams {
-        this._entityType = value;
+
+        super.setEntityType(value);
+        return this;
+    }
+
+    getEntitySubType(): EntitySubType {
+        return super.getEntitySubType();
+    }
+
+    setEntitySubType(value: EntitySubType): FileItemParams {
+
+        super.setEntitySubType(value);
+        return this;
+    }
+
+    getCvFilterType(): CvFilterType {
+        return super.getCvFilterType();
+    }
+
+    setCvFilterType(value: CvFilterType): FileItemParams {
+        super.setCvFilterType(value);
         return this;
     }
 
@@ -82,23 +120,6 @@ export class FileItemParams {
         return this;
     }
 
-    getEntitySubType(): EntitySubType {
-        return this._entitySubType;
-    }
-
-    setEntitySubType(value: EntitySubType): FileItemParams {
-        this._entitySubType = value;
-        return this;
-    }
-
-    getCvFilterType(): CvFilterType {
-        return this._cvFilterType;
-    }
-
-    setCvFilterType(value: CvFilterType): FileItemParams {
-        this._cvFilterType = value;
-        return this;
-    }
 
     getGobiiExtractFilterType(): GobiiExtractFilterType {
         return this._gobiiExtractFilterType;
@@ -110,11 +131,6 @@ export class FileItemParams {
     }
 
 
-    getQueryName(): string {
-        return this._queryName;
-    }
-
-
     setNameIdLabelType(nameIdLabelType: NameIdLabelType) {
         this._nameIdLabelType = nameIdLabelType;
         return this;
@@ -122,15 +138,6 @@ export class FileItemParams {
 
     getMameIdLabelType(): NameIdLabelType {
         return this._nameIdLabelType;
-    }
-
-    setExtractorItemType(extractorItemType: ExtractorItemType) {
-        this._extractorItemType = extractorItemType;
-        return this;
-    }
-
-    getExtractorItemType(): ExtractorItemType {
-        return this._extractorItemType;
     }
 
     setParentNameIdRequestParams(nameIdRequestParams: FileItemParams): FileItemParams {
@@ -151,13 +158,13 @@ export class FileItemParams {
         return this;
     }
 
-    setDynamicFilterValue(dynamicFilterValue:boolean): FileItemParams {
-        this._dynamicFilterValue = dynamicFilterValue;
+    setIsDynamicFilterValue(dynamicFilterValue:boolean): FileItemParams {
+        this._isDynamicFilterValue = dynamicFilterValue;
         return this;
     }
 
-    getDynamicFilterValue(): boolean {
-        return this._dynamicFilterValue;
+    getIsDynamicFilterValue(): boolean {
+        return this._isDynamicFilterValue;
     }
 
 

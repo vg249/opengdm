@@ -3,10 +3,9 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ProtocolService;
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiidtomapping.DtoMapProtocol;
-import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.VendorProtocolDTO;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapProtocol;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.OrganizationDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ProtocolDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -34,7 +33,7 @@ public class ProtocolServiceImpl implements ProtocolService {
 
         try {
 
-            returnVal = dtoMapProtocol.createProtocol(protocolDTO);
+            returnVal = dtoMapProtocol.create(protocolDTO);
 
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
@@ -60,11 +59,11 @@ public class ProtocolServiceImpl implements ProtocolService {
                     protocolDTO.getProtocolId().equals(protocolId)) {
 
 
-                ProtocolDTO existingProtocolDTO = dtoMapProtocol.getProtocolDetails(protocolId);
+                ProtocolDTO existingProtocolDTO = dtoMapProtocol.get(protocolId);
                 if (null != existingProtocolDTO.getProtocolId() && existingProtocolDTO.getProtocolId().equals(protocolId)) {
 
 
-                    returnVal = dtoMapProtocol.replaceProtocol(protocolId, protocolDTO);
+                    returnVal = dtoMapProtocol.replace(protocolId, protocolDTO);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
@@ -106,7 +105,7 @@ public class ProtocolServiceImpl implements ProtocolService {
         ProtocolDTO returnVal;
 
         try {
-            returnVal = dtoMapProtocol.getProtocolDetails(ProtocolId);
+            returnVal = dtoMapProtocol.get(ProtocolId);
 
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
@@ -136,7 +135,7 @@ public class ProtocolServiceImpl implements ProtocolService {
         List<ProtocolDTO> returnVal;
 
         try {
-            returnVal = dtoMapProtocol.getProtocols();
+            returnVal = dtoMapProtocol.getList();
 
             for (ProtocolDTO currentProtocolDTO : returnVal) {
                 currentProtocolDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);

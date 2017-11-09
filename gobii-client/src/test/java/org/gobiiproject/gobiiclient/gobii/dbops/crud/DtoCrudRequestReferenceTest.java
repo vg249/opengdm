@@ -15,7 +15,7 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.*;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ReferenceDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ReferenceDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
@@ -93,7 +93,7 @@ public class DtoCrudRequestReferenceTest implements DtoCrudRequestTest {
         Assert.assertTrue(referenceDTOResponse.getReferenceId() > 0);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(referenceDTOResponseEnvelope.getHeader()));
 
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.REFERENCES, referenceDTOResponse.getReferenceId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.REFERENCE, referenceDTOResponse.getReferenceId());
 
         RestUri restUriReferenceForGetById = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -106,7 +106,7 @@ public class DtoCrudRequestReferenceTest implements DtoCrudRequestTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetById.getHeader()));
         ReferenceDTO referenceDTOResponseForParams = resultEnvelopeForGetById.getPayload().getData().get(0);
 
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.REFERENCES, referenceDTOResponse.getReferenceId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.REFERENCE, referenceDTOResponse.getReferenceId());
 
 
     }

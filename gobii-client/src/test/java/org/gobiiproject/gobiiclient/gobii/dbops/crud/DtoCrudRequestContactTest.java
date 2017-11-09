@@ -20,7 +20,7 @@ import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
@@ -29,7 +29,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -237,7 +236,7 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
         ContactDTO newContactDTO = new ContactDTO();
 
         Integer organizationId = (new GlobalPkColl<DtoCrudRequestOrganizationTest>()).getAPkVal(DtoCrudRequestOrganizationTest.class,
-                GobiiEntityNameType.ORGANIZATIONS);
+                GobiiEntityNameType.ORGANIZATION);
 
         String userName = UUID.randomUUID().toString();
         String emailAddress = UUID.randomUUID().toString();
@@ -248,9 +247,7 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
         newContactDTO.setEmail(emailAddress);
         newContactDTO.setCode("added New Code");
         newContactDTO.setCreatedBy(1);
-        newContactDTO.setCreatedDate(new Date());
         newContactDTO.setModifiedBy(1);
-        newContactDTO.setModifiedDate(new Date());
         newContactDTO.setOrganizationId(organizationId);
         newContactDTO.getRoles().add(1);
         newContactDTO.getRoles().add(2);
@@ -295,7 +292,7 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
         ContactDTO newContactDTO = new ContactDTO();
 
         Integer organizationId = (new GlobalPkColl<DtoCrudRequestOrganizationTest>()).getAPkVal(DtoCrudRequestOrganizationTest.class,
-                GobiiEntityNameType.ORGANIZATIONS);
+                GobiiEntityNameType.ORGANIZATION);
 
         // set the plain properties
         newContactDTO.setFirstName("Angel Manica");
@@ -303,9 +300,7 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
         newContactDTO.setEmail(UUID.randomUUID().toString());
         newContactDTO.setCode("added New Code");
         newContactDTO.setCreatedBy(1);
-        newContactDTO.setCreatedDate(new Date());
         newContactDTO.setModifiedBy(1);
-        newContactDTO.setModifiedDate(new Date());
         newContactDTO.setOrganizationId(organizationId);
         newContactDTO.getRoles().add(1);
         newContactDTO.getRoles().add(2);
@@ -326,7 +321,7 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
         ContactDTO contactDTOResponse = contactDTOResponseEnvelope.getPayload().getData().get(0);
         Assert.assertNotEquals(null, contactDTOResponse);
         Assert.assertTrue(contactDTOResponse.getContactId() > 0);
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.CONTACTS, contactDTOResponse.getContactId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.CONTACT, contactDTOResponse.getContactId());
         Assert.assertNotNull(contactDTOResponse.getUserName());
 
         //Now re-retrieve with the link we got back

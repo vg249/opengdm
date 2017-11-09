@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiidao.resultset.core;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
+import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.sql.Array;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,7 +33,7 @@ public class ResultColumnApplicator {
         String currentParameterName = null;
         Type currentColumnType = null;
         try {
-            for (Method currentMethod : dtoInstance.getClass().getDeclaredMethods()) {
+            for (Method currentMethod : dtoInstance.getClass().getMethods()) {
 
                 GobiiEntityColumn gobiiEntityColumn = currentMethod.getAnnotation(GobiiEntityColumn.class);
 
@@ -44,9 +45,9 @@ public class ResultColumnApplicator {
 
                         currentColumnType = methodParameterTypes[0];
                         currentParameterName = currentMethod.getParameters()[0].getName();
+
+
                         Object currentColumnValue = resultSet.getObject(currentColumnName);
-
-
                         if (currentColumnType.equals(String.class)) {
 
                             String currentStringValue = (String) currentColumnValue;

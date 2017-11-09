@@ -16,8 +16,8 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.DtoRestRequestUtils;
 import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.EntityPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.entity.children.EntityPropertyDTO;
 import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
@@ -85,7 +85,7 @@ public class DtoCrudRequestProjectTest implements DtoCrudRequestTest {
         Assert.assertNotEquals(null, projectDTOResponse);
         Assert.assertNotEquals(null, projectDTOResponse.getProjectId());
         Assert.assertTrue(projectDTOResponse.getProjectId() > 0);
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.PROJECTS, projectDTOResponse.getProjectId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.PROJECT, projectDTOResponse.getProjectId());
 
         Assert.assertNotEquals(null, projectDTOResponse.getProperties());
         Assert.assertTrue(projectDTOResponse.getProperties().size() > 0);
