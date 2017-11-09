@@ -40,9 +40,35 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
             /**
              * Created by Phil on 3/9/2017.
              */
+            /***
+             * This class is used extensively for the purpose of retrieving and
+             * managing the results of queries to the GOBII /names/{entity} service. The primary
+             * use case is in the NameIdService's get() method, where values from this class
+             * are used to set up the GET request to the /names/{entityResource}. Of particular
+             * note is the use fo the _fkEntityFilterValue value for the purpose of retrieving
+             * names for a given entity when that entity must be filtered according to a foreign key.
+             * For example, when retrieving projects by contact_id (i.e., by principle investigator contact
+             * id), the _fkEntityFilterValue will be the value of the PI according to which the project names
+             * should be filtered.
+             * The _parentFileItemParams and _childFileItemParams can be used to create a tree of instances
+             * of this class that can be used for hierarchical filtering. That is to say, the parent/child
+             * relationships of FileItemParam instances corresponds to the primary/foreign key relationships of the
+             * tables involved in generating the query. In our example, the project-by-contact FileFilterParams would be a
+             * child of the contact FileFilterParams.
+             * When an array of GobiiFileItem instances is created from a query resulting from a FileFilterParams,
+             * their parentItemId value is set to the _fkEntityFilterValue value of the FileFilterParams. Moreover,
+             * for all filters, the _fkEntityFilterValue for the current state of the UI is preserved in the store.
+             * Thus, for any given state of the store, with a given filter value, a selector can retrieve the
+             * entities for a given filter value. For example, when projects are retrieved for a given contact id,
+             * the project query's filter is set to that contact when the project file items are added to the store.
+             * When we want to get the "currently selected" projects from the store (i.e., the projects filtered for
+             * the pi who is currently selected in the UI), the selector returns the file items whose parent id
+             * matches current contact ID in state.
+             *
+             */
             FileItemParams = (function (_super) {
                 __extends(FileItemParams, _super);
-                function FileItemParams(_queryName, _entityType, _entityFilter, _fkEntityFilterValue, _selectedItemId, _entitySubType, _cvFilterType, _gobiiExtractFilterType, _nameIdLabelType, _extractorItemType, _parentNameIdRequestParams, _childNameIdRequestParams, _isDynamicFilterValue) {
+                function FileItemParams(_queryName, _entityType, _entityFilter, _fkEntityFilterValue, _selectedItemId, _entitySubType, _cvFilterType, _gobiiExtractFilterType, _nameIdLabelType, _extractorItemType, _parentFileItemParams, _childFileItemParams, _isDynamicFilterValue) {
                     if (_queryName === void 0) { _queryName = null; }
                     if (_entityType === void 0) { _entityType = type_entity_1.EntityType.UNKNOWN; }
                     if (_entityFilter === void 0) { _entityFilter = type_entity_filter_1.EntityFilter.NONE; }
@@ -58,8 +84,8 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
                     _this._selectedItemId = _selectedItemId;
                     _this._gobiiExtractFilterType = _gobiiExtractFilterType;
                     _this._nameIdLabelType = _nameIdLabelType;
-                    _this._parentNameIdRequestParams = _parentNameIdRequestParams;
-                    _this._childNameIdRequestParams = _childNameIdRequestParams;
+                    _this._parentFileItemParams = _parentFileItemParams;
+                    _this._childFileItemParams = _childFileItemParams;
                     _this._isDynamicFilterValue = _isDynamicFilterValue;
                     return _this;
                 }
@@ -111,13 +137,6 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
                     this._fkEntityFilterValue = value;
                     return this;
                 };
-                FileItemParams.prototype.getSelectedItemId = function () {
-                    return this._selectedItemId;
-                };
-                FileItemParams.prototype.setSelectedItemId = function (id) {
-                    this._selectedItemId = id;
-                    return this;
-                };
                 FileItemParams.prototype.getGobiiExtractFilterType = function () {
                     return this._gobiiExtractFilterType;
                 };
@@ -132,18 +151,15 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
                 FileItemParams.prototype.getMameIdLabelType = function () {
                     return this._nameIdLabelType;
                 };
-                FileItemParams.prototype.setParentNameIdRequestParams = function (nameIdRequestParams) {
-                    this._parentNameIdRequestParams = nameIdRequestParams;
+                FileItemParams.prototype.setParentFileItemParams = function (fileItemParams) {
+                    this._parentFileItemParams = fileItemParams;
                     return this;
                 };
-                FileItemParams.prototype.getParentNameIdRequestParams = function () {
-                    return this;
-                };
-                FileItemParams.prototype.getChildNameIdRequestParams = function () {
-                    return this._childNameIdRequestParams;
+                FileItemParams.prototype.getChildFileItemParams = function () {
+                    return this._childFileItemParams;
                 };
                 FileItemParams.prototype.setChildNameIdRequestParams = function (childNameIdRequestParams) {
-                    this._childNameIdRequestParams = childNameIdRequestParams;
+                    this._childFileItemParams = childNameIdRequestParams;
                     return this;
                 };
                 FileItemParams.prototype.setIsDynamicFilterValue = function (dynamicFilterValue) {

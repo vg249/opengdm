@@ -66,14 +66,14 @@ export class NameIdService {
     }
 
 
-    public get(nameIdRequestParams: FileItemParams): Observable < NameId[] > {
+    public get(fileItemParams: FileItemParams): Observable < NameId[] > {
 
         return Observable.create(observer => {
 
                 this._dtoRequestService.get(new DtoRequestItemNameIds(
-                    nameIdRequestParams.getEntityType(),
-                    nameIdRequestParams.getEntityFilter() === EntityFilter.NONE ? null : nameIdRequestParams.getEntityFilter(),
-                    nameIdRequestParams.getFkEntityFilterValue()))
+                    fileItemParams.getEntityType(),
+                    fileItemParams.getEntityFilter() === EntityFilter.NONE ? null : fileItemParams.getEntityFilter(),
+                    fileItemParams.getFkEntityFilterValue()))
                     .subscribe(nameIds => {
                         let nameIdsToReturn: NameId[] = [];
                         if (nameIds && ( nameIds.length > 0 )) {
