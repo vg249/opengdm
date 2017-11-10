@@ -214,6 +214,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     });
                     this.refreshJobId();
                     if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
+                        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.CONTACT_PI, null);
                         this.doPrincipleInvestigatorTreeNotifications = false;
                         this.fileItemService.setItemLabelType(this.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.CONTACT_PI, name_id_label_type_1.NameIdLabelType.UNKNOWN);
                         this.displaySelectorPi = true;
@@ -229,6 +230,8 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         this.reinitProjectList = false;
                     }
                     else if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
+                        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.CONTACT_PI, null);
+                        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.CV_DATATYPE, null);
                         this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS, null);
                         this.displaySelectorPi = true;
                         this.doPrincipleInvestigatorTreeNotifications = true;
@@ -245,6 +248,8 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         this.reinitProjectList = true;
                     }
                     else if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
+                        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.CV_DATATYPE, null);
+                        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.PLATFORMS, null);
                         this.displaySelectorPi = false;
                         this.displaySelectorDataType = true;
                         this.displaySelectorPlatform = true;
@@ -252,7 +257,6 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         this.displaySelectorProjectForPi = false;
                         this.displaySelectorForAllProjects = false;
                         this.doPrincipleInvestigatorTreeNotifications = false;
-                        this.fileItemService.setItemLabelType(this.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.CONTACT_PI, name_id_label_type_1.NameIdLabelType.UNKNOWN);
                         this.displaySelectorProjectForPi = false;
                         this.displaySelectorExperiment = false;
                         this.displayAvailableDatasets = false;
@@ -261,12 +265,9 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         this.reinitProjectList = false;
                     }
                     this.initializeSubmissionContact();
-                    this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.CONTACT_PI, null);
                     // this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
                     //     this.nameIdRequestParamsExperiments);
                     this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.MAPSETS, null);
-                    this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.CV_DATATYPE, null);
-                    this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.PLATFORMS, null);
                     //changing modes will have nuked the submit as item in the tree, so we need to re-event (sic.) it:
                     var formatItem = gobii_file_item_1.GobiiFileItem
                         .build(this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)

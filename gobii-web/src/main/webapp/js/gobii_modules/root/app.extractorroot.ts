@@ -464,6 +464,11 @@ export class ExtractorRoot implements OnInit {
 
         if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
+            this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
+                NameIdFilterParamTypes.CONTACT_PI,
+                null);
+
+
             this.doPrincipleInvestigatorTreeNotifications = false;
             this.fileItemService.setItemLabelType(this.gobiiExtractFilterType,
                 NameIdFilterParamTypes.CONTACT_PI,
@@ -483,6 +488,15 @@ export class ExtractorRoot implements OnInit {
 
 
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
+
+            this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
+                NameIdFilterParamTypes.CONTACT_PI,
+                null);
+
+
+            this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
+                NameIdFilterParamTypes.CV_DATATYPE,
+                null);
 
             this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
                 NameIdFilterParamTypes.PROJECTS,
@@ -510,6 +524,15 @@ export class ExtractorRoot implements OnInit {
 
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
 
+            this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
+                NameIdFilterParamTypes.CV_DATATYPE,
+                null);
+
+            this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
+                NameIdFilterParamTypes.PLATFORMS,
+                null);
+
+
             this.displaySelectorPi = false;
             this.displaySelectorDataType = true;
             this.displaySelectorPlatform = true;
@@ -518,9 +541,6 @@ export class ExtractorRoot implements OnInit {
             this.displaySelectorProjectForPi = false;
             this.displaySelectorForAllProjects = false;
             this.doPrincipleInvestigatorTreeNotifications = false;
-            this.fileItemService.setItemLabelType(this.gobiiExtractFilterType,
-                NameIdFilterParamTypes.CONTACT_PI,
-                NameIdLabelType.UNKNOWN);
             this.displaySelectorProjectForPi = false;
             this.displaySelectorExperiment = false;
             this.displayAvailableDatasets = false;
@@ -536,9 +556,6 @@ export class ExtractorRoot implements OnInit {
         this.initializeSubmissionContact();
 
 
-        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
-            NameIdFilterParamTypes.CONTACT_PI,
-            null);
         // this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
         //     this.nameIdRequestParamsExperiments);
 
@@ -546,13 +563,6 @@ export class ExtractorRoot implements OnInit {
             NameIdFilterParamTypes.MAPSETS,
             null);
 
-        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
-            NameIdFilterParamTypes.CV_DATATYPE,
-            null);
-
-        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
-            NameIdFilterParamTypes.PLATFORMS,
-            null);
 
         //changing modes will have nuked the submit as item in the tree, so we need to re-event (sic.) it:
         let formatItem: GobiiFileItem = GobiiFileItem

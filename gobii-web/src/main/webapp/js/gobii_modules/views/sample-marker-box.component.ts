@@ -338,10 +338,11 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
 
     ngOnInit(): any {
 
-        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
-            NameIdFilterParamTypes.MARKER_GROUPS,
-            null);
-
+        if( this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER ) {
+            this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
+                NameIdFilterParamTypes.MARKER_GROUPS,
+                null);
+        }
 
         return null;
     }
