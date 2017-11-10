@@ -1,13 +1,14 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var ADD_STATUS, ADD_STATUS_MESSAGE, CLEAR_STATUS, AddStatusAction, AddStatusMessageAction, ClearStatusesAction;
+    var ADD_STATUS, ADD_STATUS_MESSAGE, CLEAR_STATUS, ADD_FILTER_RETRIEVED, AddStatusAction, AddStatusMessageAction, AddFilterRetrieved, ClearStatusesAction;
     return {
         setters: [],
         execute: function () {
-            exports_1("ADD_STATUS", ADD_STATUS = '[GobiiStatusMessage] Add Status');
-            exports_1("ADD_STATUS_MESSAGE", ADD_STATUS_MESSAGE = '[GobiiStatusMessage] Add Status Message');
-            exports_1("CLEAR_STATUS", CLEAR_STATUS = '[GobiiStatusMessage] Clear Status');
+            exports_1("ADD_STATUS", ADD_STATUS = '[GobiiHistory] Add Status');
+            exports_1("ADD_STATUS_MESSAGE", ADD_STATUS_MESSAGE = '[GobiiHistory] Add Status Message');
+            exports_1("CLEAR_STATUS", CLEAR_STATUS = '[GobiiHistory] Clear Status');
+            exports_1("ADD_FILTER_RETRIEVED", ADD_FILTER_RETRIEVED = '[GobiiHistory] Add Filter Submitted');
             /**
              * Every action is comprised of at least a type and an optional
              * payload. Expressing actions as classes enables powerful
@@ -31,6 +32,14 @@ System.register([], function (exports_1, context_1) {
                 return AddStatusMessageAction;
             }());
             exports_1("AddStatusMessageAction", AddStatusMessageAction);
+            AddFilterRetrieved = (function () {
+                function AddFilterRetrieved(payload) {
+                    this.payload = payload;
+                    this.type = ADD_FILTER_RETRIEVED;
+                }
+                return AddFilterRetrieved;
+            }());
+            exports_1("AddFilterRetrieved", AddFilterRetrieved);
             ClearStatusesAction = (function () {
                 function ClearStatusesAction() {
                     this.type = CLEAR_STATUS;

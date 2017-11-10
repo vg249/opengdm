@@ -129,9 +129,56 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             };
 
             break;
-        } // LOAD_FILE_ITEM_LIST
+        } // LOAD_FILE_ITEM
 
-        case gobiiFileItemAction.LOAD_FILE_ITEM_LIST: {
+        // case gobiiFileItemAction.LOAD_FILTER: {
+        //     const filterId = action.payload.filterId.toString();
+        //     const filterValue = action.payload.filter;
+        //
+        //
+        //     let newFilterState = Object.assign({}, state.filters);
+        //     newFilterState[filterId] = filterValue;
+        //
+        //
+        //     returnVal = {
+        //         gobiiExtractFilterType: state.gobiiExtractFilterType,
+        //         uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
+        //         allFileItems: state.allFileItems,
+        //         filters: newFilterState
+        //     };
+        //
+        //     break;
+        // } // LOAD_FILTER
+
+        // case gobiiFileItemAction.LOAD_FILE_ITEM_LIST: {
+        //     const gobiiFileItemsPayload = action.payload.gobiiFileItems;
+        //
+        //     const newGobiiFileItems = gobiiFileItemsPayload.filter(newItem =>
+        //         state
+        //             .allFileItems
+        //             .filter(stateItem =>
+        //                 (
+        //                     stateItem.getGobiiExtractFilterType() === newItem.getGobiiExtractFilterType() &&
+        //                     stateItem.getExtractorItemType() === newItem.getExtractorItemType() &&
+        //                     stateItem.getEntityType() === newItem.getEntityType() &&
+        //                     stateItem.getEntitySubType() === newItem.getEntitySubType() &&
+        //                     stateItem.getCvFilterType() === newItem.getCvFilterType() &&
+        //                     stateItem.getItemId() === newItem.getItemId()
+        //                 )
+        //             ).length === 0
+        //     );
+        //
+        //     returnVal = {
+        //         gobiiExtractFilterType: state.gobiiExtractFilterType,
+        //         uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
+        //         allFileItems: [...state.allFileItems, ...newGobiiFileItems],
+        //         filters: state.filters
+        //     };
+        //
+        //     break;
+        // } // LOAD_FILE_ITEM_LIST
+
+        case gobiiFileItemAction.LOAD_FILE_ITEM_LIST_WITH_FILTER: {
             const gobiiFileItemsPayload = action.payload.gobiiFileItems;
             const filterId = action.payload.filterId.toString();
             const filterValue = action.payload.filter;
@@ -163,7 +210,25 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             };
 
             break;
-        } // LOAD_FILE_ITEM_LIST
+        } // LOAD_FILE_ITEM_LIST_WITH_FILTER
+
+        case gobiiFileItemAction.LOAD_FILTER: {
+            const filterId = action.payload.filterId.toString();
+            const filterValue = action.payload.filter;
+
+            let newFilterState = Object.assign({}, state.filters);
+            newFilterState[filterId] = filterValue;
+
+
+            returnVal = {
+                gobiiExtractFilterType: state.gobiiExtractFilterType,
+                uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
+                allFileItems: state.allFileItems,
+                filters: newFilterState
+            };
+
+            break;
+        } // LOAD_FILTER
 
         case gobiiFileItemAction.ADD_TO_EXTRACT: {
 
@@ -365,6 +430,99 @@ export const getAll = createSelector(getFileItems, getUniqueIds, (entities, ids)
 // entity type is parameterized -- it is not global state
 
 
+
+
+
+
+/// ****************** SYNCHRONOUS METHODS
+
+
+/// **************** GET SELECTED PER ENTITY TYPE
+
+
+
+
+
+
+
+
+export const getSelectedFileFormat = createSelector(getFileItems, getSelectedUniqueIds, (fileItems, selectedUniqueIds) => {
+
+    // default
+    let returnVal = GobiiFileItem
+        .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
+        .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
+        .setItemId(GobiiExtractFormat[GobiiExtractFormat.HAPMAP])
+        .setItemName(GobiiExtractFormat[GobiiExtractFormat[GobiiExtractFormat.HAPMAP]]);
+
+    let formatItem: GobiiFileItem = fileItems
+        .find(fi => fi.getExtractorItemType() === ExtractorItemType.EXPORT_FORMAT
+            && undefined !== selectedUniqueIds.find(id => id === fi.getFileItemUniqueId()));
+
+    if (formatItem) {
+        returnVal = formatItem;
+    }
+
+    return returnVal;
+
+});
+
+export const getSelectedSampleType = createSelector(getFileItems, getSelectedUniqueIds, (fileItems, selectedUniqueIds) => {
+
+    // default
+    let returnVal = GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
+        .setExtractorItemType(ExtractorItemType.SAMPLE_LIST_TYPE)
+        .setItemName(GobiiSampleListType[GobiiSampleListType.GERMPLASM_NAME])
+        .setItemId(GobiiSampleListType[GobiiSampleListType.GERMPLASM_NAME]);
+
+    let formatItem: GobiiFileItem = fileItems
+        .find(fi => fi.getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_TYPE
+            && undefined !== selectedUniqueIds.find(id => id === fi.getFileItemUniqueId()));
+
+    if (formatItem) {
+        returnVal = formatItem;
+    }
+
+    return returnVal;
+
+});
+
+export const getJobId = createSelector(getFileItems, getSelectedUniqueIds, (fileItems, selectedUniqueIds) => {
+
+    // default
+    let returnVal = GobiiFileItem
+        .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
+        .setExtractorItemType(ExtractorItemType.JOB_ID)
+        .setItemId("UNSET")
+        .setItemName("UNSET");
+
+    let jobIdItem: GobiiFileItem = fileItems
+        .find(fi => (fi.getExtractorItemType() === ExtractorItemType.JOB_ID)
+            && (selectedUniqueIds.indexOf(fi.getFileItemUniqueId()) > -1 ));
+
+    if (jobIdItem) {
+        returnVal = jobIdItem;
+    }
+
+    return returnVal;
+
+});
+
+
+export const getUploadFiles = createSelector(getFileItems, getSelectedUniqueIds, (fileItems, selectedUniqueIds) => {
+
+    // default
+    let returnVal: GobiiFileItem[] = fileItems
+        .filter(fi => fi.getExtractorItemType() === ExtractorItemType.MARKER_FILE
+            || fi.getExtractorItemType() === ExtractorItemType.SAMPLE_FILE);
+
+
+    return returnVal;
+
+});
+
+
+
 export const getPiContacts = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
     let returnVal: GobiiFileItem[] = fileItems.filter(e =>
@@ -378,10 +536,6 @@ export const getPiContacts = createSelector(getFileItems, getUniqueIds, (fileIte
 });
 
 
-export const getFirstPiContact = createSelector(getPiContacts, (contacts) => {
-    return contacts[0];
-});
-
 
 export const getProjects = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
@@ -392,9 +546,6 @@ export const getProjects = createSelector(getFileItems, getUniqueIds, (fileItems
         .map(fi => fi);
 });
 
-export const getFirstProject = createSelector(getProjects, (projects) => {
-    return projects[0];
-});
 
 
 export const getExperiments = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
@@ -406,9 +557,6 @@ export const getExperiments = createSelector(getFileItems, getUniqueIds, (fileIt
         .map(fi => fi);
 });
 
-export const getFirstExperiment = createSelector(getExperiments, (experiments) => {
-    return experiments[0];
-});
 
 
 export const getDatasets = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
@@ -421,9 +569,6 @@ export const getDatasets = createSelector(getFileItems, getUniqueIds, (fileItems
 });
 
 
-export const getFirstDataset = createSelector(getDatasets, (datasets) => {
-    return datasets[0];
-});
 
 
 export const getCvTermsDataType = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
@@ -438,9 +583,6 @@ export const getCvTermsDataType = createSelector(getFileItems, getUniqueIds, (fi
     return returnVal;
 });
 
-export const getFirstCvTerm = createSelector(getCvTermsDataType, (cvterms) => {
-    return cvterms[0];
-});
 
 
 export const getMapsets = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
@@ -453,10 +595,6 @@ export const getMapsets = createSelector(getFileItems, getUniqueIds, (fileItems,
 });
 
 
-export const getFirstmapset = createSelector(getMapsets, (mapsets) => {
-    return mapsets[0];
-});
-
 
 export const getPlatforms = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
@@ -465,10 +603,6 @@ export const getPlatforms = createSelector(getFileItems, getUniqueIds, (fileItem
             || e.getExtractorItemType() === ExtractorItemType.LABEL )
         && e.getEntityType() === EntityType.PLATFORM)
         .map(fi => fi);
-});
-
-export const getFirstPlatform = createSelector(getCvTermsDataType, (platforms) => {
-    return platforms[0];
 });
 
 
@@ -481,15 +615,8 @@ export const getMarkerGroups = createSelector(getFileItems, getUniqueIds, (fileI
         .map(fi => fi);
 });
 
-export const getFirstMarkerGroup = createSelector(getCvTermsDataType, (markergroups) => {
-    return markergroups[0];
-});
 
-
-/// ****************** SYNCHRONOUS METHODS
-
-
-/// **************** GET SELECTED PER ENTITY TYPE
+// **************** GET SELECTED PER ENTITY TYPE
 export const getSelectedPiContacts = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
     return fileItems.filter(e =>
@@ -584,82 +711,4 @@ export const getDatasetsForSelectedExperiment = createSelector(getFileItems, get
 
     return returnVal;
 });
-
-export const getSelectedFileFormat = createSelector(getFileItems, getSelectedUniqueIds, (fileItems, selectedUniqueIds) => {
-
-    // default
-    let returnVal = GobiiFileItem
-        .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
-        .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
-        .setItemId(GobiiExtractFormat[GobiiExtractFormat.HAPMAP])
-        .setItemName(GobiiExtractFormat[GobiiExtractFormat[GobiiExtractFormat.HAPMAP]]);
-
-    let formatItem: GobiiFileItem = fileItems
-        .find(fi => fi.getExtractorItemType() === ExtractorItemType.EXPORT_FORMAT
-            && undefined !== selectedUniqueIds.find(id => id === fi.getFileItemUniqueId()));
-
-    if (formatItem) {
-        returnVal = formatItem;
-    }
-
-    return returnVal;
-
-});
-
-export const getSelectedSampleType = createSelector(getFileItems, getSelectedUniqueIds, (fileItems, selectedUniqueIds) => {
-
-    // default
-    let returnVal = GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
-        .setExtractorItemType(ExtractorItemType.SAMPLE_LIST_TYPE)
-        .setItemName(GobiiSampleListType[GobiiSampleListType.GERMPLASM_NAME])
-        .setItemId(GobiiSampleListType[GobiiSampleListType.GERMPLASM_NAME]);
-
-    let formatItem: GobiiFileItem = fileItems
-        .find(fi => fi.getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_TYPE
-            && undefined !== selectedUniqueIds.find(id => id === fi.getFileItemUniqueId()));
-
-    if (formatItem) {
-        returnVal = formatItem;
-    }
-
-    return returnVal;
-
-});
-
-export const getJobId = createSelector(getFileItems, getSelectedUniqueIds, (fileItems, selectedUniqueIds) => {
-
-    // default
-    let returnVal = GobiiFileItem
-        .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
-        .setExtractorItemType(ExtractorItemType.JOB_ID)
-        .setItemId("UNSET")
-        .setItemName("UNSET");
-
-    let jobIdItem: GobiiFileItem = fileItems
-        .find(fi => (fi.getExtractorItemType() === ExtractorItemType.JOB_ID)
-            && (selectedUniqueIds.indexOf(fi.getFileItemUniqueId()) > -1 ));
-
-    if (jobIdItem) {
-        returnVal = jobIdItem;
-    }
-
-    return returnVal;
-
-});
-
-
-export const getUploadFiles = createSelector(getFileItems, getSelectedUniqueIds, (fileItems, selectedUniqueIds) => {
-
-    // default
-    let returnVal: GobiiFileItem[] = fileItems
-        .filter(fi => fi.getExtractorItemType() === ExtractorItemType.MARKER_FILE
-            || fi.getExtractorItemType() === ExtractorItemType.SAMPLE_FILE);
-
-
-    return returnVal;
-
-});
-
-
-
 

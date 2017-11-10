@@ -94,7 +94,7 @@ public class GobiiEntityNameConverter {
                             GobiiServiceRequestId.URL_PROTOCOL);
                     break;
 
-                case VENDORS_PROTOCOL:
+                case VENDOR_PROTOCOL:
                     returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
                             GobiiServiceRequestId.URL_PROTOCOL)
                             .appendSegment(GobiiServiceRequestId.URL_VENDORS);

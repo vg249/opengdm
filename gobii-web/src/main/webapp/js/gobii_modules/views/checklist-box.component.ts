@@ -9,14 +9,13 @@ import * as fileAction from '../store/actions/fileitem-action';
 import {Store} from "@ngrx/store";
 import {Observable} from "rxjs/Observable";
 import {FileItemService} from "../services/core/file-item-service";
+import {NameIdFilterParamTypes} from "../model/type-nameid-filter-params";
 
 
 @Component({
     selector: 'checklist-box',
     inputs: ['gobiiExtractFilterType',
-        'gobiiFileItems$',
-        'nameIdRequestParams',
-        'retainHistory'],
+        'nameIdFilterParamTypes'],
     outputs: ['onError'],
     template: `
         <form>
@@ -48,13 +47,15 @@ export class CheckListBoxComponent  {
 
     } // ctor
 
+    ngOnInit(): any {
+        this.gobiiFileItems$ = this.fileItemService.getForFilter(this.nameIdFilterParamTypes);
+    }
 
-    private retainHistory: boolean;
-    private nameIdRequestParams: FileItemParams;
     private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
     private onError: EventEmitter<HeaderStatusMessage> = new EventEmitter();
 
 
+    private nameIdFilterParamTypes:NameIdFilterParamTypes;
     public gobiiFileItems$: Observable< GobiiFileItem[]>;
 
     public handleItemChecked(arg) {

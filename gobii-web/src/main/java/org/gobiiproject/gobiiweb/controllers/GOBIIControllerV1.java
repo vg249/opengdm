@@ -3951,6 +3951,43 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** ENTITY STATS METHODS
     // *********************************************
+    @RequestMapping(value = "/entities", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<EntityStatsDTO> getAllEntityStats(HttpServletRequest request,
+                                                                 HttpServletResponse response) {
+
+        PayloadEnvelope<EntityStatsDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            List<EntityStatsDTO> allEntityStats = entityStatsService.getAll();
+
+            PayloadWriter<EntityStatsDTO> payloadWriter = new PayloadWriter<>(request, response,
+                    EntityStatsDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    null,
+                    allEntityStats);
+
+        } catch (GobiiException e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        } catch (Exception e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+
     @RequestMapping(value = "/entities/{entityName}/lastmodified", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<EntityStatsDTO> getEntityLastModified(@PathVariable String entityName,
@@ -3969,9 +4006,7 @@ public class GOBIIControllerV1 {
                     EntityStatsDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    GobiiUriFactory.resourceColl(request.getContextPath(),
-                            GobiiServiceRequestId.URL_CV)
-                            .addUriParam("id"),
+                    null,
                     entityStatsDTO);
 
         } catch (GobiiException e) {
@@ -4010,9 +4045,7 @@ public class GOBIIControllerV1 {
                     EntityStatsDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    GobiiUriFactory.resourceColl(request.getContextPath(),
-                            GobiiServiceRequestId.URL_CV)
-                            .addUriParam("id"),
+                    null,
                     entityStatsDTO);
 
         } catch (GobiiException e) {
@@ -4057,9 +4090,7 @@ public class GOBIIControllerV1 {
                     EntityStatsDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    GobiiUriFactory.resourceColl(request.getContextPath(),
-                            GobiiServiceRequestId.URL_CV)
-                            .addUriParam("id"),
+                    null,
                     entityStatsDTO);
 
         } catch (GobiiException e) {

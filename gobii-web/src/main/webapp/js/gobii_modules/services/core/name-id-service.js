@@ -75,10 +75,10 @@ System.register(["@angular/core", "./dto-request.service", "../../model/type-ent
                     }
                     return returnVal;
                 };
-                NameIdService.prototype.get = function (nameIdRequestParams) {
+                NameIdService.prototype.get = function (fileItemParams) {
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
-                        _this._dtoRequestService.get(new dto_request_item_nameids_1.DtoRequestItemNameIds(nameIdRequestParams.getEntityType(), nameIdRequestParams.getEntityFilter() === type_entity_filter_1.EntityFilter.NONE ? null : nameIdRequestParams.getEntityFilter(), nameIdRequestParams.getFkEntityFilterValue()))
+                        _this._dtoRequestService.get(new dto_request_item_nameids_1.DtoRequestItemNameIds(fileItemParams.getEntityType(), fileItemParams.getEntityFilter() === type_entity_filter_1.EntityFilter.NONE ? null : fileItemParams.getEntityFilter(), fileItemParams.getFkEntityFilterValue()))
                             .subscribe(function (nameIds) {
                             var nameIdsToReturn = [];
                             if (nameIds && (nameIds.length > 0)) {

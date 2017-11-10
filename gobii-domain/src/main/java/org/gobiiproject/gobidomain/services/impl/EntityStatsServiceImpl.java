@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 /**
  * Created by Phil on 4/21/2016.
  */
@@ -19,6 +21,31 @@ public class EntityStatsServiceImpl implements EntityStatsService {
 
     @Autowired
     DtoMapEntityStats dtoMapEntityStats;
+
+
+    @Override
+    public List<EntityStatsDTO> getAll() throws GobiiDomainException {
+
+        List<EntityStatsDTO> returnVal;
+
+        try {
+
+            returnVal = dtoMapEntityStats.getAll();
+
+            // When we have roles and permissions, this will be set programmatically
+
+            returnVal.forEach(es ->
+                es.getAllowedProcessTypes().add(GobiiProcessType.READ)
+            );
+
+        } catch (Exception e) {
+
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+        }
+
+        return returnVal;
+    }
 
     @Override
     public EntityStatsDTO getEntityLastModified(GobiiEntityNameType gobiiEntityNameType) throws GobiiDomainException {
@@ -31,7 +58,7 @@ public class EntityStatsServiceImpl implements EntityStatsService {
 
             // When we have roles and permissions, this will be set programmatically
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+
         } catch (Exception e) {
 
             LOGGER.error("Gobii service error", e);
@@ -52,7 +79,7 @@ public class EntityStatsServiceImpl implements EntityStatsService {
 
             // When we have roles and permissions, this will be set programmatically
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+
         } catch (Exception e) {
 
             LOGGER.error("Gobii service error", e);
@@ -74,7 +101,7 @@ public class EntityStatsServiceImpl implements EntityStatsService {
 
             // When we have roles and permissions, this will be set programmatically
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+
         } catch (Exception e) {
 
             LOGGER.error("Gobii service error", e);

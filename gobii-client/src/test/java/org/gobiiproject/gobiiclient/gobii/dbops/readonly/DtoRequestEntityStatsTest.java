@@ -9,12 +9,16 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestContactTest;
+import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestDataSetTest;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestExperimentTest;
+import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestMapsetTest;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestOrganizationTest;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestProjectTest;
+import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestProtocolTest;
+import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestReferenceTest;
+import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestVendorProtocolTest;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.OrganizationDTO;
-import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
@@ -23,14 +27,34 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  *
  */
 public class DtoRequestEntityStatsTest {
+
+    List<GobiiEntityNameType> trackableEntityNames = Arrays.asList(
+            GobiiEntityNameType.ANALYSIS,
+            GobiiEntityNameType.CONTACT,
+            GobiiEntityNameType.DATASET,
+            GobiiEntityNameType.DISPLAY,
+            GobiiEntityNameType.EXPERIMENT,
+            GobiiEntityNameType.MANIFEST,
+            GobiiEntityNameType.MAPSET,
+            GobiiEntityNameType.MARKER_GROUP,
+            GobiiEntityNameType.ORGANIZATION,
+            GobiiEntityNameType.PLATFORM,
+            GobiiEntityNameType.PROJECT,
+            GobiiEntityNameType.PROTOCOL,
+            GobiiEntityNameType.REFERENCE
+
+    );
+
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -173,7 +197,7 @@ public class DtoRequestEntityStatsTest {
     public void testGetCountOfChildren() throws Exception {
 
         Integer projectId = (new GlobalPkColl<DtoCrudRequestProjectTest>())
-                .getFreshPkVals(DtoCrudRequestProjectTest.class, GobiiEntityNameType.PROJECT,1)
+                .getFreshPkVals(DtoCrudRequestProjectTest.class, GobiiEntityNameType.PROJECT, 1)
                 .get(0);
 
         RestUri entityCountdUri = GobiiClientContext.getInstance(null, false)
@@ -200,29 +224,29 @@ public class DtoRequestEntityStatsTest {
         List<Integer> experimentPks = (new GlobalPkColl<DtoCrudRequestExperimentTest>())
                 .getFreshPkVals(DtoCrudRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENT, numberoOfChildrenToAdd);
 
-        for(Integer currentExperimentId : experimentPks ) {
+        for (Integer currentExperimentId : experimentPks) {
             RestUri experimentsUriById = GobiiClientContext.getInstance(null, false)
                     .getUriFactory()
                     .resourceByUriIdParam(GobiiServiceRequestId.URL_EXPERIMENTS);
 
-            experimentsUriById.setParamValue("id",currentExperimentId.toString());
+            experimentsUriById.setParamValue("id", currentExperimentId.toString());
             GobiiEnvelopeRestResource<ExperimentDTO> gobiiEnvelopeRestResourceForExperimentsById = new GobiiEnvelopeRestResource<>(experimentsUriById);
             PayloadEnvelope<ExperimentDTO> resultEnvelopeExperimentGet = gobiiEnvelopeRestResourceForExperimentsById
                     .get(ExperimentDTO.class);
-            
+
             ExperimentDTO currentExperimentDto = resultEnvelopeExperimentGet.getPayload().getData().get(0);
             currentExperimentDto.setProjectId(projectId);
 
             PayloadEnvelope<ExperimentDTO> putRequestEnvelope = new PayloadEnvelope<>(currentExperimentDto, GobiiProcessType.UPDATE);
 
-            gobiiEnvelopeRestResourceForExperimentsById.put(ExperimentDTO.class,putRequestEnvelope);
+            gobiiEnvelopeRestResourceForExperimentsById.put(ExperimentDTO.class, putRequestEnvelope);
         }
 
         PayloadEnvelope<EntityStatsDTO> postAddChildrenCountResult = gobiiEnvelopeRestResource
                 .get(EntityStatsDTO.class);
-        
+
         EntityStatsDTO entityStatsDTOPostAddChildren = postAddChildrenCountResult.getPayload().getData().get(0);
-        
+
         Assert.assertTrue("Child count after adding new children was not incremented",
                 entityStatsDTOPostAddChildren.getCount().equals(countBeforeAddChildren + numberoOfChildrenToAdd));
 
@@ -236,5 +260,96 @@ public class DtoRequestEntityStatsTest {
 
     }
 
+    @Test
+    public void testGetAll() throws Exception {
+
+        RestUri allEntityStatsUri = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_ENTITIES);
+
+        GobiiEnvelopeRestResource<EntityStatsDTO> gobiiEnvelopeRestResource =
+                new GobiiEnvelopeRestResource<>(allEntityStatsUri);
+        PayloadEnvelope<EntityStatsDTO> resultEnvelopeIntialCount = gobiiEnvelopeRestResource
+                .get(EntityStatsDTO.class);
+
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeIntialCount.getHeader()));
+
+        List<EntityStatsDTO> allEnttiesStatsInitial = resultEnvelopeIntialCount.getPayload().getData();
+
+        for (GobiiEntityNameType currentEntityName : trackableEntityNames) {
+
+            if (currentEntityName != GobiiEntityNameType.UNKNOWN) {
+
+                Assert.assertTrue("There is not one of the entity type in the collection returned",
+                        allEnttiesStatsInitial
+                                .stream()
+                                .filter(es -> es.getEntityNameType().equals(currentEntityName))
+                                .count() == 1);
+            }
+
+        }
+
+
+        //Now "manually" update a few known entities to flip their modified time and count
+        Integer setCountVal = 3;
+        List<GobiiEntityNameType> modifiedTypeNames = Arrays.asList(GobiiEntityNameType.PROJECT,
+                GobiiEntityNameType.MAPSET,
+                GobiiEntityNameType.CONTACT,
+                GobiiEntityNameType.REFERENCE,
+                GobiiEntityNameType.DATASET,
+                GobiiEntityNameType.PROTOCOL);
+
+        // These need to be excluded because they are creatd as side effects of the crud tests we are using explicitly.
+        // Their counts are indeterminate and so we can't just add them to the items we test for
+        // ANALYSIS, PLATFORM, and EXPERIMENT records are created by the DATASET crud test,
+        // and ORGANIZATION  is created by CONTACT crud
+        // The PROTOCOL test is creating a MANIFEST
+        List<GobiiEntityNameType> sideEffectRecordsToExclude = Arrays.asList(GobiiEntityNameType.ANALYSIS,
+                GobiiEntityNameType.PLATFORM,
+                GobiiEntityNameType.EXPERIMENT,
+                GobiiEntityNameType.ORGANIZATION,
+                GobiiEntityNameType.MANIFEST);
+
+        (new GlobalPkColl<DtoCrudRequestProjectTest>()).getFreshPkVals(DtoCrudRequestProjectTest.class, GobiiEntityNameType.PROJECT, setCountVal);
+        (new GlobalPkColl<DtoCrudRequestMapsetTest>()).getFreshPkVals(DtoCrudRequestMapsetTest.class, GobiiEntityNameType.MAPSET, setCountVal);
+        (new GlobalPkColl<DtoCrudRequestContactTest>()).getFreshPkVals(DtoCrudRequestContactTest.class, GobiiEntityNameType.CONTACT, setCountVal);
+        (new GlobalPkColl<DtoCrudRequestReferenceTest>()).getFreshPkVals(DtoCrudRequestReferenceTest.class, GobiiEntityNameType.REFERENCE, setCountVal);
+        (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getFreshPkVals(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET, setCountVal);
+        (new GlobalPkColl<DtoCrudRequestProtocolTest>()).getFreshPkVals(DtoCrudRequestProtocolTest.class, GobiiEntityNameType.PROTOCOL, setCountVal);
+
+
+        PayloadEnvelope<EntityStatsDTO> resultEnvelopePostUpdate = gobiiEnvelopeRestResource
+                .get(EntityStatsDTO.class);
+        List<EntityStatsDTO> allEnttiesStatsPost = resultEnvelopePostUpdate.getPayload().getData();
+        for (EntityStatsDTO currentEntityStatsDto : allEnttiesStatsPost) {
+            EntityStatsDTO preUpdateEntityStatsDTO = allEnttiesStatsInitial
+                    .stream()
+                    .filter(es -> es.getEntityNameType().equals(currentEntityStatsDto.getEntityNameType()))
+                    .collect(Collectors.toList())
+                    .get(0);
+
+            if (modifiedTypeNames.contains(currentEntityStatsDto.getEntityNameType())) {
+
+                // count can be greater than what we added because additional records are added as side effects of other crud tests
+                Assert.assertTrue("entity stat count was not updated for entity: " + currentEntityStatsDto.getEntityNameType().toString(),
+                        currentEntityStatsDto.getCount() >= (preUpdateEntityStatsDTO.getCount() + setCountVal));
+
+                Assert.assertTrue("entity stat lastmodified was not updated for entity: " + currentEntityStatsDto.getEntityNameType().toString(),
+                        currentEntityStatsDto.getLastModified().compareTo(preUpdateEntityStatsDTO.getLastModified()) > 0);
+            } else {
+                if( !sideEffectRecordsToExclude.contains(currentEntityStatsDto.getEntityNameType())) {
+                    Assert.assertTrue("entity stat count for unchanged entity should not have changed: " + currentEntityStatsDto.getEntityNameType().toString(),
+                            currentEntityStatsDto.getCount().equals(preUpdateEntityStatsDTO.getCount()));
+
+                    Assert.assertTrue("entity stat lastmodified for unchanged entity should not have changed: " + currentEntityStatsDto.getEntityNameType().toString(),
+                            currentEntityStatsDto.getLastModified().equals(preUpdateEntityStatsDTO.getLastModified()));
+                }
+            }
+
+        }
+
+
+    }
 
 }

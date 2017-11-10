@@ -1,7 +1,7 @@
 System.register(["@ngrx/store", "ngrx-store-freeze", "./fileitems-reducer", "./treenode-reducer", "./history-reducer"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var store_1, store_2, ngrx_store_freeze_1, store_3, fromFileItems, fromGobiiTreeNodes, fromHistory, reducers, developmentReducer, productionReducer, getFileItemsState, getFileItemsFilters, getAllFileItems, getFileItems, getSelectedFileItems, getSelectedUniqueIds, getUniqueIds, getPiContacts, getFirstPiContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTermsDataType, getFirstCvTerm, getMapsets, getFirstMapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getProjectsByPI, getExperimentsByProject, getDatasetsByExperiment, getSelectedPiContacts, getSelectedFileFormat, getSelectedSampleType, getJobId, getUploadFiles, getGobiiTreeNodesState, getAllGobiiTreeNodes, getGobiiTreeNodesForExtractFilter, getSelectedGobiiTreeNodes, getSelectedGobiiTreeNodeIds, getIdsOfActivatedGobiiTreeNodes, gobiiHistoryState, getStatusMessages, getLasetStatusMessage;
+    var store_1, store_2, ngrx_store_freeze_1, store_3, fromFileItems, fromGobiiTreeNodes, fromHistory, reducers, developmentReducer, productionReducer, getFileItemsState, getFileItemsFilters, getAllFileItems, getSelectedFileItems, getPiContacts, getProjects, getExperiments, getDatasets, getCvTermsDataType, getMapsets, getPlatforms, getMarkerGroups, getProjectsByPI, getExperimentsByProject, getDatasetsByExperiment, getSelectedPiContacts, getSelectedFileFormat, getSelectedSampleType, getJobId, getUploadFiles, getGobiiTreeNodesState, getAllGobiiTreeNodes, getGobiiTreeNodesForExtractFilter, getSelectedGobiiTreeNodes, getSelectedGobiiTreeNodeIds, getIdsOfActivatedGobiiTreeNodes, gobiiHistoryState, getStatusMessages, getLasetStatusMessage, getFiltersRetrieved;
     return {
         setters: [
             function (store_1_1) {
@@ -79,26 +79,15 @@ System.register(["@ngrx/store", "ngrx-store-freeze", "./fileitems-reducer", "./t
              */
             exports_1("getFileItemsFilters", getFileItemsFilters = store_1.createSelector(getFileItemsState, fromFileItems.getFilters));
             exports_1("getAllFileItems", getAllFileItems = store_1.createSelector(getFileItemsState, fromFileItems.getAll));
-            exports_1("getFileItems", getFileItems = store_1.createSelector(getFileItemsState, fromFileItems.getFileItems));
             exports_1("getSelectedFileItems", getSelectedFileItems = store_1.createSelector(getFileItemsState, fromFileItems.getSelected));
-            exports_1("getSelectedUniqueIds", getSelectedUniqueIds = store_1.createSelector(getFileItemsState, fromFileItems.getSelectedUniqueIds));
-            exports_1("getUniqueIds", getUniqueIds = store_1.createSelector(getFileItemsState, fromFileItems.getUniqueIds));
             exports_1("getPiContacts", getPiContacts = store_1.createSelector(getFileItemsState, fromFileItems.getPiContacts));
-            exports_1("getFirstPiContact", getFirstPiContact = store_1.createSelector(getFileItemsState, fromFileItems.getFirstPiContact));
             exports_1("getProjects", getProjects = store_1.createSelector(getFileItemsState, fromFileItems.getProjects));
-            exports_1("getFirstProject", getFirstProject = store_1.createSelector(getFileItemsState, fromFileItems.getFirstProject));
             exports_1("getExperiments", getExperiments = store_1.createSelector(getFileItemsState, fromFileItems.getExperiments));
-            exports_1("getFirstExperiment", getFirstExperiment = store_1.createSelector(getFileItemsState, fromFileItems.getFirstExperiment));
             exports_1("getDatasets", getDatasets = store_1.createSelector(getFileItemsState, fromFileItems.getDatasets));
-            exports_1("getFirstDataset", getFirstDataset = store_1.createSelector(getFileItemsState, fromFileItems.getFirstDataset));
             exports_1("getCvTermsDataType", getCvTermsDataType = store_1.createSelector(getFileItemsState, fromFileItems.getCvTermsDataType));
-            exports_1("getFirstCvTerm", getFirstCvTerm = store_1.createSelector(getFileItemsState, fromFileItems.getFirstCvTerm));
             exports_1("getMapsets", getMapsets = store_1.createSelector(getFileItemsState, fromFileItems.getMapsets));
-            exports_1("getFirstMapset", getFirstMapset = store_1.createSelector(getFileItemsState, fromFileItems.getFirstmapset));
             exports_1("getPlatforms", getPlatforms = store_1.createSelector(getFileItemsState, fromFileItems.getPlatforms));
-            exports_1("getFirstPlatform", getFirstPlatform = store_1.createSelector(getFileItemsState, fromFileItems.getFirstPlatform));
             exports_1("getMarkerGroups", getMarkerGroups = store_1.createSelector(getFileItemsState, fromFileItems.getMarkerGroups));
-            exports_1("getFirstMarkerGroup", getFirstMarkerGroup = store_1.createSelector(getFileItemsState, fromFileItems.getFirstMarkerGroup));
             exports_1("getProjectsByPI", getProjectsByPI = store_1.createSelector(getFileItemsState, fromFileItems.getProjectsForSelectedPi));
             exports_1("getExperimentsByProject", getExperimentsByProject = store_1.createSelector(getFileItemsState, fromFileItems.getExperimentsForSelectedProject));
             exports_1("getDatasetsByExperiment", getDatasetsByExperiment = store_1.createSelector(getFileItemsState, fromFileItems.getDatasetsForSelectedExperiment));
@@ -116,6 +105,7 @@ System.register(["@ngrx/store", "ngrx-store-freeze", "./fileitems-reducer", "./t
             exports_1("gobiiHistoryState", gobiiHistoryState = function (state) { return state.history; });
             exports_1("getStatusMessages", getStatusMessages = store_1.createSelector(gobiiHistoryState, fromHistory.getStatusMessages));
             exports_1("getLasetStatusMessage", getLasetStatusMessage = store_1.createSelector(gobiiHistoryState, fromHistory.getLastMessage));
+            exports_1("getFiltersRetrieved", getFiltersRetrieved = store_1.createSelector(gobiiHistoryState, fromHistory.getFiltersRetrieved));
             /**
              * Just like with the books selectors, we also have to compose the search
              * fileItemsReducer's and collection fileItemsReducer's selectors.

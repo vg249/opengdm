@@ -19,8 +19,7 @@ import java.util.List;
 /**
  * Created by Phil on 9/25/2016.
  */
-//There fore, the generic type for this class extends DTOBase, so we are
-//guaranteed it must have the getId() methd and the set of allowable actions
+
 public class PayloadWriter<T extends DTOBase> {
 
     private final Class<T> dtoType;
@@ -39,6 +38,20 @@ public class PayloadWriter<T extends DTOBase> {
         this.gobiiWebVersion = GobiiVersionInfo.getVersion();
     }
 
+    /***
+     * For most DTOs, in the response we want to include HATEOS  links that are
+     * in line with the DTOs permissions. the generic type for this class extends DTOBase, so we are
+     * theoretically guaranteed it must have the getId() methd and the set of allowable actions.
+     * That being said, there are DTOs in which the getId() is not meaningful. That it is sometimes
+     * meaningful and sometimes not breaks inheritance and is at best clumsy OO design. However, the
+     * overall shape of the generalization is sound. In the case where we the ID is not HATEOSable,
+     * the id parameter can be set to null, in which case the HATEOS links are not created.
+     * @param payloadEnvelope
+     * @param restUri
+     * @param itemToWrite
+     * @param id
+     * @throws Exception
+     */
     public void writeSingleItemForId(PayloadEnvelope<T> payloadEnvelope,
                                      RestUri restUri,
                                      T itemToWrite,
@@ -53,39 +66,38 @@ public class PayloadWriter<T extends DTOBase> {
 
                 payloadEnvelope.getPayload().getData().add(itemToWrite);
 
-//                String contextPath = this.httpServletRequest.getContextPath();
-//                GobiiUriFactory uriFactory = new GobiiUriFactory(contextPath);
-//                RestUri restUri = uriFactory.resourceByUriIdParam(serviceRequestId);
-                restUri.setParamValue("id", id);
-                //And hence we can create the link ehre
+                if( restUri != null ) {
+                    restUri.setParamValue("id", id);
+                    //And hence we can create the link ehre
 
-                String uri = restUri.makeUrlPath();
-                Link link = new Link(uri, "Link to " + dtoType + ", id " + id);
+                    String uri = restUri.makeUrlPath();
+                    Link link = new Link(uri, "Link to " + dtoType + ", id " + id);
 
-                for (GobiiProcessType currentProcessType : itemToWrite.getAllowedProcessTypes()) {
+                    for (GobiiProcessType currentProcessType : itemToWrite.getAllowedProcessTypes()) {
 
-                    switch (currentProcessType) {
+                        switch (currentProcessType) {
 
-                        case CREATE:
-                            link.getMethods().add(RestMethodTypes.POST);
-                            break;
-                        case READ:
-                            link.getMethods().add(RestMethodTypes.GET);
-                            break;
-                        case UPDATE:
-                            link.getMethods().add(RestMethodTypes.PUT);
-                            // add PATCH when we support that
-                            break;
-                        case DELETE:
-                            link.getMethods().add(RestMethodTypes.DELETE);
+                            case CREATE:
+                                link.getMethods().add(RestMethodTypes.POST);
+                                break;
+                            case READ:
+                                link.getMethods().add(RestMethodTypes.GET);
+                                break;
+                            case UPDATE:
+                                link.getMethods().add(RestMethodTypes.PUT);
+                                // add PATCH when we support that
+                                break;
+                            case DELETE:
+                                link.getMethods().add(RestMethodTypes.DELETE);
+                        }
                     }
+                    payloadEnvelope.getPayload().getLinkCollection().getLinksPerDataItem().add(link);
                 }
 
 
                 payloadEnvelope.getHeader().setGobiiVersion(this.gobiiWebVersion);
                 setAuthHeader(payloadEnvelope.getHeader().getDtoHeaderAuth(),this.httpServletResponse);
                 payloadEnvelope.getHeader().setCropType(payloadEnvelope.getHeader().getDtoHeaderAuth().getGobiiCropType());
-                payloadEnvelope.getPayload().getLinkCollection().getLinksPerDataItem().add(link);
 
 
             } else {
