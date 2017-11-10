@@ -19,8 +19,7 @@ import java.util.List;
 /**
  * Created by Phil on 9/25/2016.
  */
-//There fore, the generic type for this class extends DTOBase, so we are
-//guaranteed it must have the getId() methd and the set of allowable actions
+
 public class PayloadWriter<T extends DTOBase> {
 
     private final Class<T> dtoType;
@@ -39,6 +38,20 @@ public class PayloadWriter<T extends DTOBase> {
         this.gobiiWebVersion = GobiiVersionInfo.getVersion();
     }
 
+    /***
+     * For most DTOs, in the response we want to include HATEOS  links that are
+     * in line with the DTOs permissions. the generic type for this class extends DTOBase, so we are
+     * theoretically guaranteed it must have the getId() methd and the set of allowable actions.
+     * That being said, there are DTOs in which the getId() is not meaningful. That it is sometimes
+     * meaningful and sometimes not breaks inheritance and is at best clumsy OO design. However, the
+     * overall shape of the generalization is sound. In the case where we the ID is not HATEOSable,
+     * the id parameter can be set to null, in which case the HATEOS links are not created.
+     * @param payloadEnvelope
+     * @param restUri
+     * @param itemToWrite
+     * @param id
+     * @throws Exception
+     */
     public void writeSingleItemForId(PayloadEnvelope<T> payloadEnvelope,
                                      RestUri restUri,
                                      T itemToWrite,

@@ -69,7 +69,18 @@ public class DtoMapEntityStatsImpl implements DtoMapEntityStats {
             GobiiEntityNameType.CV // CV does not have the columns but it doesn't matter for now because are using the cache instead
     );
 
-
+    /***
+     * Teh distinction between DTOs that derive from DTOBaseAuditable verses those that do not
+     * was baseed on the assumption that the modified by and user columns in the tables is
+     * meaingful with respect to tracking when something was last updated. However, since those
+     * columns are of a type that doesn't track the actual time of the update, making them useless.
+     * Thus, the aspect that is tracking these entities should be targeted against all crate() and
+     * replace() methods so that it doesn't matter what anything is derived from. This approach would eliminate
+     * the need for the trackableEntityNames list, which is really just an awkward way of breaking inheritance.
+     * 
+     * @return
+     * @throws GobiiDtoMappingException
+     */
     @Override
     public List<EntityStatsDTO> getAll() throws GobiiDtoMappingException {
 
