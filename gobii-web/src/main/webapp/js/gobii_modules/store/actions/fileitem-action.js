@@ -1,7 +1,7 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var ADD_TO_EXTRACT, ADD_TO_EXTRACT_BY_ITEM_ID, REPLACE_IN_EXTRACT_BY_ITEM_ID, REPLACE_ITEM_OF_SAME_COMPOUND_ID, REMOVE_FROM_EXTRACT_BY_ITEM_ID, REMOVE_FROM_EXTRACT, SET_EXTRACT_TYPE, LOAD_FILE_ITEM_LIST_WITH_FILTER, LOAD_FILE_ITEM, LOAD_FILTER, REMOVE_ALL_FROM_EXTRACT, LoadFileItemListWithFilterAction, LoadFileItemtAction, RemoveFromExtractAction, AddToExtractAction, AddToExtractByItemIdAction, ReplaceInExtractByItemIdAction, ReplaceItemOfSameCompoundIdAction, SetExtractType, RemoveFromExractByItemIdAction, RemoveAllFromExtractAction;
+    var ADD_TO_EXTRACT, ADD_TO_EXTRACT_BY_ITEM_ID, REPLACE_IN_EXTRACT_BY_ITEM_ID, REPLACE_ITEM_OF_SAME_COMPOUND_ID, REMOVE_FROM_EXTRACT_BY_ITEM_ID, REMOVE_FROM_EXTRACT, SET_EXTRACT_TYPE, LOAD_FILE_ITEM_LIST_WITH_FILTER, LOAD_FILE_ITEM, LOAD_FILTER, REMOVE_ALL_FROM_EXTRACT, LoadFileItemListWithFilterAction, LoadFilterAction, LoadFileItemtAction, RemoveFromExtractAction, AddToExtractAction, AddToExtractByItemIdAction, ReplaceInExtractByItemIdAction, ReplaceItemOfSameCompoundIdAction, SetExtractType, RemoveFromExractByItemIdAction, RemoveAllFromExtractAction;
     return {
         setters: [],
         execute: function () {
@@ -39,15 +39,14 @@ System.register([], function (exports_1, context_1) {
             //     }) {
             //     }
             // }
-            // export class LoadFilterAction implements Action {
-            //     readonly type = LOAD_FILTER;
-            //
-            //     constructor(public payload: {
-            //         filterId: NameIdFilterParamTypes,
-            //         filter: { gobiiExtractFilterType: GobiiExtractFilterType, filterValue: string, entityLasteUpdated: Date }
-            //     }) {
-            //     }
-            // }
+            LoadFilterAction = (function () {
+                function LoadFilterAction(payload) {
+                    this.payload = payload;
+                    this.type = LOAD_FILTER;
+                }
+                return LoadFilterAction;
+            }());
+            exports_1("LoadFilterAction", LoadFilterAction);
             LoadFileItemtAction = (function () {
                 function LoadFileItemtAction(payload) {
                     this.payload = payload;

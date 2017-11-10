@@ -342,6 +342,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                 if (disregardDateSensitiveQueryingForNow ||
                                     ((!fileHistoryItem) ||
                                         (entityStats.lastModified > fileHistoryItem.entityLasteUpdated))) {
+                                    // Either the data have never been retrieved at all for a given filter value,
+                                    // or the server-side entity has been updated. So we shall refresh the
+                                    // data and dispatch both the new filter value and the
                                     //BEGIN: nameIdService.get()
                                     _this.nameIdService.get(filterParamsToLoad)
                                         .subscribe(function (nameIds) {
@@ -450,11 +453,28 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                     }); // subscribe
                                 }
                                 else {
+                                    // The data for given filter value exist and do not not need to be
+                                    // updated. So here we shall dispatch only the new filter value.
+                                    // The empty gobiiFileItems will amount to a null op.
+                                    //BEGIN: nameIdService.get()
+                                    var loadAction = new fileItemActions.LoadFilterAction({
+                                        filterId: filterParamsToLoad.getQueryName(),
+                                        filter: {
+                                            gobiiExtractFilterType: gobiiExtractFilterType,
+                                            filterValue: filterParamsToLoad.getFkEntityFilterValue(),
+                                            entityLasteUpdated: fileHistoryItem.entityLasteUpdated
+                                        }
+                                    });
+                                    observer.next(loadAction);
                                     if (recurse) {
                                         if (filterParamsToLoad
                                             .getChildFileItemParams()
                                             .filter(function (rqp) { return rqp.getEntityFilter() === type_entity_filter_1.EntityFilter.BYTYPEID; })
                                             .length > 0) {
+                                            // we need to set the current filter in state, but with respect to
+                                            // gobiiFileItems, it should be a null op
+                                            //Because we don't have the data freshly from the sever, we shall need
+                                            //to get the "parentId" from the file items we have in the store
                                             _this.store.select(fromRoot.getAllFileItems)
                                                 .subscribe(function (allFileItems) {
                                                 // Get the parent item id from the store;
@@ -477,10 +497,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                                     }
                                                 }
                                             }).unsubscribe(); //select all file items
-                                        }
-                                        var bar = "bar";
+                                        } // if we have child filters
                                     } // if we are recursing
-                                } // if we are doing an update of the data
+                                } // if-else we need to refresh from server or rely on what's in the store already
                                 //END: nameIdService.get()
                             })
                                 .unsubscribe(); // get filter history items

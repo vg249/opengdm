@@ -45,15 +45,15 @@ export class LoadFileItemListWithFilterAction implements Action {
 //     }
 // }
 
-// export class LoadFilterAction implements Action {
-//     readonly type = LOAD_FILTER;
-//
-//     constructor(public payload: {
-//         filterId: NameIdFilterParamTypes,
-//         filter: { gobiiExtractFilterType: GobiiExtractFilterType, filterValue: string, entityLasteUpdated: Date }
-//     }) {
-//     }
-// }
+export class LoadFilterAction implements Action {
+    readonly type = LOAD_FILTER;
+
+    constructor(public payload: {
+        filterId: NameIdFilterParamTypes,
+        filter: { gobiiExtractFilterType: GobiiExtractFilterType, filterValue: string, entityLasteUpdated: Date }
+    }) {
+    }
+}
 
 export class LoadFileItemtAction implements Action {
     readonly type = LOAD_FILE_ITEM;
@@ -148,5 +148,6 @@ export type All
     | LoadFileItemtAction
     | SetExtractType
     | ReplaceInExtractByItemIdAction
-    | ReplaceItemOfSameCompoundIdAction;
+    | ReplaceItemOfSameCompoundIdAction
+    | LoadFilterAction;
 

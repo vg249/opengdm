@@ -210,7 +210,25 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             };
 
             break;
-        } // LOAD_FILE_ITEM_LIST
+        } // LOAD_FILE_ITEM_LIST_WITH_FILTER
+
+        case gobiiFileItemAction.LOAD_FILTER: {
+            const filterId = action.payload.filterId.toString();
+            const filterValue = action.payload.filter;
+
+            let newFilterState = Object.assign({}, state.filters);
+            newFilterState[filterId] = filterValue;
+
+
+            returnVal = {
+                gobiiExtractFilterType: state.gobiiExtractFilterType,
+                uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
+                allFileItems: state.allFileItems,
+                filters: newFilterState
+            };
+
+            break;
+        } // LOAD_FILTER
 
         case gobiiFileItemAction.ADD_TO_EXTRACT: {
 

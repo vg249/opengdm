@@ -416,6 +416,9 @@ export class FileItemService {
                                     ( entityStats.lastModified > fileHistoryItem.entityLasteUpdated)
                                 )
                             ) {
+                                // Either the data have never been retrieved at all for a given filter value,
+                                // or the server-side entity has been updated. So we shall refresh the
+                                // data and dispatch both the new filter value and the
                                 //BEGIN: nameIdService.get()
                                 this.nameIdService.get(filterParamsToLoad)
                                     .subscribe(nameIds => {
@@ -526,10 +529,12 @@ export class FileItemService {
                                                     }
                                                 }
                                             );
+
                                             observer.next(loadAction);
 
                                             // if there are children, we will load their data as well
                                             if (recurse) {
+
                                                 if (filterParamsToLoad
                                                         .getChildFileItemParams()
                                                         .filter(rqp => rqp.getEntityFilter() === EntityFilter.BYTYPEID)
@@ -562,6 +567,24 @@ export class FileItemService {
                                             this.store.dispatch(new historyAction.AddStatusAction(responseHeader));
                                         }); // subscribe
                             } else {
+                                // The data for given filter value exist and do not not need to be
+                                // updated. So here we shall dispatch only the new filter value.
+                                // The empty gobiiFileItems will amount to a null op.
+                                //BEGIN: nameIdService.get()
+
+
+                                let loadAction: fileItemActions.LoadFilterAction = new fileItemActions.LoadFilterAction(
+                                    {
+                                        filterId: filterParamsToLoad.getQueryName(),
+                                        filter: {
+                                            gobiiExtractFilterType: gobiiExtractFilterType,
+                                            filterValue: filterParamsToLoad.getFkEntityFilterValue(),
+                                            entityLasteUpdated: fileHistoryItem.entityLasteUpdated
+                                        }
+                                    }
+                                );
+                                observer.next(loadAction);
+
                                 if (recurse) {
                                     if (filterParamsToLoad
                                             .getChildFileItemParams()
@@ -569,6 +592,11 @@ export class FileItemService {
                                             .length > 0) {
 
 
+                                        // we need to set the current filter in state, but with respect to
+                                        // gobiiFileItems, it should be a null op
+
+                                        //Because we don't have the data freshly from the sever, we shall need
+                                        //to get the "parentId" from the file items we have in the store
                                         this.store.select(fromRoot.getAllFileItems)
                                             .subscribe(allFileItems => {
 
@@ -603,13 +631,13 @@ export class FileItemService {
 
                                             }).unsubscribe();//select all file items
 
-                                    }
+                                    } // if we have child filters
 
-                                    let bar = "bar";
+
                                 } // if we are recursing
-                            }// if we are doing an update of the data
-                            //END: nameIdService.get()
 
+                            }// if-else we need to refresh from server or rely on what's in the store already
+                            //END: nameIdService.get()
 
                         })
                         .unsubscribe(); // get filter history items

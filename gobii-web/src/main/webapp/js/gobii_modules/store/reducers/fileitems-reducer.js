@@ -139,7 +139,20 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                     filters: newFilterState
                 };
                 break;
-            } // LOAD_FILE_ITEM_LIST
+            } // LOAD_FILE_ITEM_LIST_WITH_FILTER
+            case gobiiFileItemAction.LOAD_FILTER: {
+                var filterId = action.payload.filterId.toString();
+                var filterValue = action.payload.filter;
+                var newFilterState = Object.assign({}, state.filters);
+                newFilterState[filterId] = filterValue;
+                returnVal = {
+                    gobiiExtractFilterType: state.gobiiExtractFilterType,
+                    uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
+                    allFileItems: state.allFileItems,
+                    filters: newFilterState
+                };
+                break;
+            } // LOAD_FILTER
             case gobiiFileItemAction.ADD_TO_EXTRACT: {
                 var gobiiFileItemPayload = action.payload;
                 returnVal = addToExtractItems(state, gobiiFileItemPayload);
