@@ -405,29 +405,28 @@ export class FileItemService {
             true);
     }
 
-    // public loadFileItemsFromFilter(gobiiExtractFilterType: GobiiExtractFilterType,
-    //                                nameIdFilterParamTypes: NameIdFilterParamTypes,
-    //                                filterValue: string) {
-    //
-    //     let nameIdRequestParamsFromType: FileItemParams = this.nameIdRequestParams.get(nameIdFilterParamTypes);
-    //
-    //     return this.loadFileItems(gobiiExtractFilterType,
-    //         nameIdRequestParamsFromType,
-    //         filterValue,
-    //         false)
-    //         .subscribe(action => {
-    //             if (action) {
-    //                 let listLoadAction: fileItemActions.LoadFileItemListAction = new fileItemActions.LoadFileItemListAction(
-    //                     {
-    //                         gobiiFileItems: action.payload.gobiiFileItems
-    //                     }
-    //                 );
-    //                 this.store.dispatch(listLoadAction);
-    //             }
-    //         });
-    // }
 
-
+    /***
+     * This is the core retrieval method for nameIds, which is the bread-and butter of the extractor UI.
+     * This method uses the /entity/lastmodified/{entityName} and the client retrieval history to determine
+     * whether or not data need to be retrieved from the server or can be retrieved from the local store.
+     * This method does not actually add anything to the store. Rather, it is consumed by other places in the
+     * code that need to add GobiiFileItems for particular entities to the store. So this method returns an
+     * observable of actions. Thus, when the data are retrieved from the server, there are actions that both
+     * add the items to the store and set the filter value in the store. When they are retrieved from the
+     * store, the action that is next()'d to the caller only updates the filter value in the store. Because
+     * the selectors use the filter values in the store, it all works out. It was discovered in the process
+     * of development that changing the content of the history store from could within a select() from the
+     * history store causes extremely strange things to happen. I'm sure this is a general rule with ngrx/store:
+     * Any code within a select() must absolutely not generate side effects that change the result of
+     * the select(). Think of this as a variation on the strange things that happen when you try to modify an
+     * array within a loop that is iterating that same array.
+     * @param {GobiiExtractFilterType} gobiiExtractFilterType
+     * @param {FileItemParams} filterParamsToLoad
+     * @param {string} filterValue
+     * @param {boolean} recurse
+     * @returns {Observable<LoadFileItemListWithFilterAction>}
+     */
     private loadFileItems(gobiiExtractFilterType: GobiiExtractFilterType,
                           filterParamsToLoad: FileItemParams,
                           filterValue: string,
@@ -442,12 +441,8 @@ export class FileItemService {
 
 
             /***
-             * This approach optimizes switching from one extract type another, when a whole bunch of
-             * server requests are made at one type. But the improvement is not as great as I would have liked.
-             * In my bench-testing, the total time to switch, for example, from Data Set to Sample Extract is over 800ms
-             * the first time, and then 400ms on subsequent requests. Apparently the overhead of each call to lastmodified
-             * is enough to diminish the benefits. In the next refactoring of this issue, we probably want to have
-             * a lastmodified call that gives the datetime stamps for _all_entities, because I'm sure the setup/teardown of the
+             * In the next refactoring we probably want to use the last modified call
+             * that gives the datetime stamps for _all_entities, because I'm sure the setup/teardown of the
              * http request is a lot more expensive, cumulatively, than the extra payload. The trick there is that we'd need to cache the
              * entire set of lastmodified dates in such a way that they would get refreshed at the start of a "transaction,"
              * where a transaction for this purpose is ill-defined. Does it mean when we switch from one extract type to another?
@@ -459,14 +454,6 @@ export class FileItemService {
              * the store. There is then an effect from that dispatch action that iterates all the query filters: if the
              * lastmodified for a given filter's entity type has changed, the effect requests a refresh of the filter's items.
              */
-            // this.store.select(fromRoot.getFileItemsFilters)
-            //     .subscribe(filters => {
-            //         let filterState = filters[filterParamsToLoad.getQueryName()];
-            //         let lastModifiedDateFromState: Date = null;
-            //         if (filterState) {
-            //             lastModifiedDateFromState = filterState.entityLasteUpdated;
-            //         }
-
             this.entityStatsService.get(new DtoRequestItemEntityStats(
                 EntityRequestType.LasetUpdated,
                 filterParamsToLoad.getEntityType(),
@@ -719,9 +706,6 @@ export class FileItemService {
 
 
                 }); //subscribe get entity stats
-
-//                }).unsubscribe(); // git filter state from file items
-
 
         });//return Observer.create
 

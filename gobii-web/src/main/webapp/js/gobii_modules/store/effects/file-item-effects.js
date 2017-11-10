@@ -199,6 +199,10 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                      * here was trying to manually boil this problem down to its simplest expression rather than
                      * using the file action creating methods of the FileItemService. I spent a day trying to
                      * get this to work and could not figure it out. So for now I am abaonding this approach.
+                     * From my recent experience with retrieval history in the FileItemService::loadFileItems() method,
+                     * I now suspect that somewhere something is generating a side effect that causes the store to
+                     * be updated in such a way that the subsequent actions don't go through. That somehow the observer
+                     * works get gummed up.
                      *
                      */
                     // @Effect()
