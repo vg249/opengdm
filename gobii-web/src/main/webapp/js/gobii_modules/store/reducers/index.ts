@@ -156,6 +156,7 @@ export const getIdsOfActivatedGobiiTreeNodes = createSelector(getGobiiTreeNodesS
 export const gobiiHistoryState = (state: State) => state.history;
 export const getStatusMessages = createSelector(gobiiHistoryState, fromHistory.getStatusMessages);
 export const getLasetStatusMessage = createSelector(gobiiHistoryState, fromHistory.getLastMessage);
+export const getFiltersRetrieved = createSelector(gobiiHistoryState, fromHistory.getFiltersRetrieved);
 
 
 /**

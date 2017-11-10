@@ -115,6 +115,7 @@ export function historyReducer(state: State = initialState, action: gobiiHistory
 
 export const getStatuses = (state: State) => state.statusMessages;
 export const getJobSubmissions = (state: State) => state.jobSubmissions;
+export const getFiltersRetrieved = (state: State) => state.filtersRetrieved;
 
 export const getStatusMessages = createSelector(getStatuses, (statusMessages) => {
 
