@@ -123,10 +123,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                         .allFileItems
                         .filter(function (stateItem) {
                         return (stateItem.getGobiiExtractFilterType() === newItem.getGobiiExtractFilterType() &&
-                            stateItem.getExtractorItemType() === newItem.getExtractorItemType() &&
-                            stateItem.getEntityType() === newItem.getEntityType() &&
-                            stateItem.getEntitySubType() === newItem.getEntitySubType() &&
-                            stateItem.getCvFilterType() === newItem.getCvFilterType() &&
+                            stateItem.compoundIdeEquals(newItem) &&
                             stateItem.getItemId() === newItem.getItemId());
                     }).length === 0;
                 });

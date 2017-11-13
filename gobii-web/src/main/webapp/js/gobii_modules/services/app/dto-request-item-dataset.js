@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-process", "../../model/datas
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_process_1, dataset_1, DtoRequestItemDataSet;
+    var core_1, type_process_1, dataset_1, DataSetSearchType, DtoRequestItemDataSet;
     return {
         setters: [
             function (core_1_1) {
@@ -24,18 +24,30 @@ System.register(["@angular/core", "../../model/type-process", "../../model/datas
             }
         ],
         execute: function () {
+            (function (DataSetSearchType) {
+                DataSetSearchType[DataSetSearchType["UNKNOWN"] = 0] = "UNKNOWN";
+                DataSetSearchType[DataSetSearchType["LIST"] = 1] = "LIST";
+                DataSetSearchType[DataSetSearchType["DETAIL"] = 2] = "DETAIL";
+            })(DataSetSearchType || (DataSetSearchType = {}));
+            exports_1("DataSetSearchType", DataSetSearchType);
             DtoRequestItemDataSet = (function () {
-                function DtoRequestItemDataSet(dataSetId) {
+                function DtoRequestItemDataSet(dataSetSearchType, dataSetId) {
+                    this.dataSetSearchType = dataSetSearchType;
                     this.dataSetId = dataSetId;
                     this.processType = type_process_1.ProcessType.READ;
+                    this.dataSetSearchType = this.dataSetSearchType;
                     this.dataSetId = dataSetId;
                 }
                 DtoRequestItemDataSet.prototype.getUrl = function () {
                     var baseUrl = "gobii/v1/datasets";
                     var returnVal = baseUrl;
-                    if (this.dataSetId) {
-                        returnVal = baseUrl + "/" + this.dataSetId;
-                    }
+                    if (this.dataSetSearchType === DataSetSearchType.DETAIL)
+                        if (this.dataSetId) {
+                            returnVal = baseUrl + "/" + this.dataSetId;
+                        }
+                        else {
+                            throw Error("Query type " + DataSetSearchType[this.dataSetSearchType] + " requires a datasetId");
+                        }
                     return returnVal;
                 }; // getUrl()
                 DtoRequestItemDataSet.prototype.getRequestBody = function () {
@@ -45,31 +57,26 @@ System.register(["@angular/core", "../../model/type-process", "../../model/datas
                     });
                 };
                 DtoRequestItemDataSet.prototype.resultFromJson = function (json) {
-                    var returnVal;
-                    // console.log("*************ENTITY NAME: " + json.entityName);
-                    // console.log(json.dtoHeaderResponse.succeeded ? "succeeded" : "error: " + json.dtoHeaderResponse.statusMessages)
-                    // console.log(json.namesById);
-                    //
-                    // let arrayOfIds = Object.keys(json.serverConfigs);
-                    // arrayOfIds.forEach(crop => {
-                    //     let currentCrop = crop;
-                    //     let currentDomain:string = json.serverConfigs[crop].domain;
-                    //     let currentContextRoot:string = json.serverConfigs[crop].contextRoot;
-                    //     let currentPort:number = Number(json.serverConfigs[crop].port);
-                    //     returnVal.push(new ServerConfig(currentCrop,
-                    //         currentDomain,
-                    //         currentContextRoot,
-                    //         currentPort));
-                    // });
-                    if (json.payload.data[0]) {
-                        returnVal = new dataset_1.DataSet(json.payload.data[0].dataSetId, json.payload.data[0].name, json.payload.data[0].experimentId, json.payload.data[0].callingAnalysisId, json.payload.data[0].dataTable, json.payload.data[0].dataFile, json.payload.data[0].qualityTable, json.payload.data[0].qualityFile, json.payload.data[0].status, json.payload.data[0].typeId, json.payload.data[0].analysesIds);
+                    var returnVal = [];
+                    if (this.dataSetSearchType === DataSetSearchType.DETAIL) {
+                        if (json.payload.data[0]) {
+                            returnVal.push(new dataset_1.DataSet(json.payload.data[0].dataSetId, json.payload.data[0].name, json.payload.data[0].experimentId, json.payload.data[0].callingAnalysisId, json.payload.data[0].dataTable, json.payload.data[0].dataFile, json.payload.data[0].qualityTable, json.payload.data[0].qualityFile, json.payload.data[0].status, json.payload.data[0].typeId, json.payload.data[0].analysesIds));
+                        }
+                    }
+                    else if (this.dataSetSearchType === DataSetSearchType.LIST) {
+                        json.payload.data[0].forEach(function (jsonItem) {
+                            returnVal.push(new dataset_1.DataSet(json.payload.data[0].dataSetId, jsonItem.name, jsonItem.experimentId, jsonItem.callingAnalysisId, jsonItem.dataTable, jsonItem.dataFile, jsonItem.qualityTable, jsonItem.qualityFile, jsonItem.status, jsonItem.typeId, jsonItem.analysesIds));
+                        });
+                    }
+                    else {
+                        throw new Error("Unknown dataset search type: " + DataSetSearchType[this.dataSetSearchType]);
                     }
                     return returnVal;
                     //return [new NameId(1, 'foo'), new NameId(2, 'bar')];
                 };
                 DtoRequestItemDataSet = __decorate([
                     core_1.Injectable(),
-                    __metadata("design:paramtypes", [Number])
+                    __metadata("design:paramtypes", [Number, Number])
                 ], DtoRequestItemDataSet);
                 return DtoRequestItemDataSet;
             }());

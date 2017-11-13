@@ -23,7 +23,7 @@ export interface State {
     gobiiExtractFilterType: GobiiExtractFilterType,
     uniqueIdsOfExtractFileItems: string[];
     allFileItems: GobiiFileItem[] ;
-    filters: { [id: string]: {gobiiExtractFilterType: GobiiExtractFilterType, filterValue: string, entityLasteUpdated: Date} };
+    filters: { [id: string]: { gobiiExtractFilterType: GobiiExtractFilterType, filterValue: string, entityLasteUpdated: Date } };
 };
 
 export const initialState: State = {
@@ -189,10 +189,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
                     .filter(stateItem =>
                         (
                             stateItem.getGobiiExtractFilterType() === newItem.getGobiiExtractFilterType() &&
-                            stateItem.getExtractorItemType() === newItem.getExtractorItemType() &&
-                            stateItem.getEntityType() === newItem.getEntityType() &&
-                            stateItem.getEntitySubType() === newItem.getEntitySubType() &&
-                            stateItem.getCvFilterType() === newItem.getCvFilterType() &&
+                            stateItem.compoundIdeEquals(newItem) &&
                             stateItem.getItemId() === newItem.getItemId()
                         )
                     ).length === 0
@@ -430,20 +427,10 @@ export const getAll = createSelector(getFileItems, getUniqueIds, (entities, ids)
 // entity type is parameterized -- it is not global state
 
 
-
-
-
-
 /// ****************** SYNCHRONOUS METHODS
 
 
 /// **************** GET SELECTED PER ENTITY TYPE
-
-
-
-
-
-
 
 
 export const getSelectedFileFormat = createSelector(getFileItems, getSelectedUniqueIds, (fileItems, selectedUniqueIds) => {
@@ -522,7 +509,6 @@ export const getUploadFiles = createSelector(getFileItems, getSelectedUniqueIds,
 });
 
 
-
 export const getPiContacts = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
     let returnVal: GobiiFileItem[] = fileItems.filter(e =>
@@ -536,7 +522,6 @@ export const getPiContacts = createSelector(getFileItems, getUniqueIds, (fileIte
 });
 
 
-
 export const getProjects = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
     return fileItems.filter(e =>
@@ -545,7 +530,6 @@ export const getProjects = createSelector(getFileItems, getUniqueIds, (fileItems
         && e.getEntityType() === EntityType.PROJECT)
         .map(fi => fi);
 });
-
 
 
 export const getExperiments = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
@@ -558,7 +542,6 @@ export const getExperiments = createSelector(getFileItems, getUniqueIds, (fileIt
 });
 
 
-
 export const getDatasets = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
     return fileItems.filter(e =>
@@ -567,8 +550,6 @@ export const getDatasets = createSelector(getFileItems, getUniqueIds, (fileItems
         && e.getEntityType() === EntityType.DATASET)
         .map(fi => fi);
 });
-
-
 
 
 export const getCvTermsDataType = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
@@ -584,7 +565,6 @@ export const getCvTermsDataType = createSelector(getFileItems, getUniqueIds, (fi
 });
 
 
-
 export const getMapsets = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
     return fileItems.filter(e =>
@@ -593,7 +573,6 @@ export const getMapsets = createSelector(getFileItems, getUniqueIds, (fileItems,
         && e.getEntityType() === EntityType.MAPSET)
         .map(fi => fi);
 });
-
 
 
 export const getPlatforms = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {

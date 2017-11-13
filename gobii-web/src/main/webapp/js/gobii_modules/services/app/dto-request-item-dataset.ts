@@ -3,27 +3,43 @@ import {DtoRequestItem} from "./../core/dto-request-item";
 import {ProcessType} from "../../model/type-process";
 import {DataSet} from "../../model/dataset";
 
-@Injectable()
-export class DtoRequestItemDataSet implements DtoRequestItem<DataSet> {
 
-    public constructor(private dataSetId:number) {
+export enum DataSetSearchType {
+    UNKNOWN,
+    LIST,
+    DETAIL
+}
+
+
+@Injectable()
+export class DtoRequestItemDataSet implements DtoRequestItem<DataSet[]> {
+
+    public constructor(private dataSetSearchType: DataSetSearchType,
+                       private dataSetId: number) {
+        this.dataSetSearchType = this.dataSetSearchType;
         this.dataSetId = dataSetId;
     }
 
-    public getUrl():string {
-        let baseUrl:string = "gobii/v1/datasets";
+    public getUrl(): string {
 
-        let returnVal:string  = baseUrl;
-        if( this.dataSetId ) {
-            returnVal = baseUrl + "/" + this.dataSetId;
-        }
+        let baseUrl: string = "gobii/v1/datasets";
+
+        let returnVal: string = baseUrl;
+
+
+        if (this.dataSetSearchType === DataSetSearchType.DETAIL)
+            if (this.dataSetId) {
+                returnVal = baseUrl + "/" + this.dataSetId;
+            } else {
+                throw Error("Query type " + DataSetSearchType[this.dataSetSearchType] + " requires a datasetId");
+            }
 
         return returnVal;
     } // getUrl()
 
-    private processType:ProcessType = ProcessType.READ;
+    private processType: ProcessType = ProcessType.READ;
 
-    public getRequestBody():string {
+    public getRequestBody(): string {
 
         return JSON.stringify({
             "processType": ProcessType[this.processType],
@@ -31,37 +47,42 @@ export class DtoRequestItemDataSet implements DtoRequestItem<DataSet> {
         })
     }
 
-    public resultFromJson(json):DataSet {
+    public resultFromJson(json): DataSet[] {
 
-        let returnVal:DataSet;
-        // console.log("*************ENTITY NAME: " + json.entityName);
-        // console.log(json.dtoHeaderResponse.succeeded ? "succeeded" : "error: " + json.dtoHeaderResponse.statusMessages)
-        // console.log(json.namesById);
-        //
-        // let arrayOfIds = Object.keys(json.serverConfigs);
-        // arrayOfIds.forEach(crop => {
-        //     let currentCrop = crop;
-        //     let currentDomain:string = json.serverConfigs[crop].domain;
-        //     let currentContextRoot:string = json.serverConfigs[crop].contextRoot;
-        //     let currentPort:number = Number(json.serverConfigs[crop].port);
-        //     returnVal.push(new ServerConfig(currentCrop,
-        //         currentDomain,
-        //         currentContextRoot,
-        //         currentPort));
-        // });
+        let returnVal: DataSet[] = [];
 
-        if( json.payload.data[0]) {
-            returnVal = new DataSet(json.payload.data[0].dataSetId,
-                json.payload.data[0].name,
-                json.payload.data[0].experimentId,
-                json.payload.data[0].callingAnalysisId,
-                json.payload.data[0].dataTable,
-                json.payload.data[0].dataFile,
-                json.payload.data[0].qualityTable,
-                json.payload.data[0].qualityFile,
-                json.payload.data[0].status,
-                json.payload.data[0].typeId,
-                json.payload.data[0].analysesIds);
+        if (this.dataSetSearchType === DataSetSearchType.DETAIL) {
+
+            if (json.payload.data[0]) {
+                returnVal.push(new DataSet(json.payload.data[0].dataSetId,
+                    json.payload.data[0].name,
+                    json.payload.data[0].experimentId,
+                    json.payload.data[0].callingAnalysisId,
+                    json.payload.data[0].dataTable,
+                    json.payload.data[0].dataFile,
+                    json.payload.data[0].qualityTable,
+                    json.payload.data[0].qualityFile,
+                    json.payload.data[0].status,
+                    json.payload.data[0].typeId,
+                    json.payload.data[0].analysesIds));
+            }
+        } else if (this.dataSetSearchType === DataSetSearchType.LIST) {
+            json.payload.data[0].forEach(jsonItem => {
+                returnVal.push(new DataSet(json.payload.data[0].dataSetId,
+                    jsonItem.name,
+                    jsonItem.experimentId,
+                    jsonItem.callingAnalysisId,
+                    jsonItem.dataTable,
+                    jsonItem.dataFile,
+                    jsonItem.qualityTable,
+                    jsonItem.qualityFile,
+                    jsonItem.status,
+                    jsonItem.typeId,
+                    jsonItem.analysesIds))
+            });
+
+        } else {
+            throw new Error("Unknown dataset search type: " + DataSetSearchType[this.dataSetSearchType]);
         }
 
         return returnVal;
