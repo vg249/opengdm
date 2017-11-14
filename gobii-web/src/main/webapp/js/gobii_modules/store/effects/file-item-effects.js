@@ -273,6 +273,11 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                         // as such, there are business behaviors that must be implemented here.
                         // you cannot trigger an ASYNCH requrest such as loadWithFilterParams() from within
                         // the subscribe of a reducer.select(): if you do, you end up with an infinite loop
+                        // There is a flaw here: this action assigns a filter type for further processing baseed on
+                        // entity name; but that's incorrect: not all replace actions should result in further processing
+                        // -- only the ones involved with hierarchical queries do. The ReplaceInExtractByItemIdAction
+                        // should include the filterId and then delegate this part of the processing to FileItemService,
+                        // which specializes in the filter types. 
                         return Observable_1.Observable.create(function (observer) {
                             var fileItemToReplaceWithUniqueId = action.payload.itemIdToReplaceItWith;
                             var fileItemCurrentlyInExtractUniqueId = action.payload.itemIdCurrentlyInExtract;
