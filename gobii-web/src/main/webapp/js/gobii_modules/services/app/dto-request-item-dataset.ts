@@ -2,6 +2,12 @@ import {Injectable} from "@angular/core";
 import {DtoRequestItem} from "./../core/dto-request-item";
 import {ProcessType} from "../../model/type-process";
 import {DataSet} from "../../model/dataset";
+import {GobiiFileItem} from "../../model/gobii-file-item";
+import {getGobiiExtractFilterType} from "../../store/reducers/fileitems-reducer";
+import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
+import {EntityType} from "../../model/type-entity";
+import {ExtractorItemType} from "../../model/type-extractor-item";
+import {JsonToGfiDataset} from "./jsontogfi/json-to-gfi-dataset";
 
 
 export enum DataSetSearchType {
@@ -12,11 +18,11 @@ export enum DataSetSearchType {
 
 
 @Injectable()
-export class DtoRequestItemDataSet implements DtoRequestItem<DataSet[]> {
+export class DtoRequestItemDataSet implements DtoRequestItem<GobiiFileItem[]> {
 
     public constructor(private dataSetSearchType: DataSetSearchType,
-                       private dataSetId: number) {
-        this.dataSetSearchType = this.dataSetSearchType;
+                       private dataSetId: number = null) {
+        this.dataSetSearchType = dataSetSearchType;
         this.dataSetId = dataSetId;
     }
 
@@ -47,50 +53,22 @@ export class DtoRequestItemDataSet implements DtoRequestItem<DataSet[]> {
         })
     }
 
-    public resultFromJson(json): DataSet[] {
+    public resultFromJson(json): GobiiFileItem[] {
 
-        let returnVal: DataSet[] = [];
+        let returnVal: GobiiFileItem[] = [];
+        let jsonToGfiDataset:JsonToGfiDataset = new JsonToGfiDataset()
+        ;
+        json.payload.data[0].forEach(jsonItem => {
 
-        if (this.dataSetSearchType === DataSetSearchType.DETAIL) {
 
-            if (json.payload.data[0]) {
-                returnVal.push(new DataSet(json.payload.data[0].dataSetId,
-                    json.payload.data[0].name,
-                    json.payload.data[0].experimentId,
-                    json.payload.data[0].callingAnalysisId,
-                    json.payload.data[0].dataTable,
-                    json.payload.data[0].dataFile,
-                    json.payload.data[0].qualityTable,
-                    json.payload.data[0].qualityFile,
-                    json.payload.data[0].status,
-                    json.payload.data[0].typeId,
-                    json.payload.data[0].analysesIds));
-            }
-        } else if (this.dataSetSearchType === DataSetSearchType.LIST) {
-            json.payload.data[0].forEach(jsonItem => {
-                returnVal.push(new DataSet(json.payload.data[0].dataSetId,
-                    jsonItem.name,
-                    jsonItem.experimentId,
-                    jsonItem.callingAnalysisId,
-                    jsonItem.dataTable,
-                    jsonItem.dataFile,
-                    jsonItem.qualityTable,
-                    jsonItem.qualityFile,
-                    jsonItem.status,
-                    jsonItem.typeId,
-                    jsonItem.analysesIds))
-            });
+            returnVal.push(jsonToGfiDataset.convert(jsonItem));
 
-        } else {
-            throw new Error("Unknown dataset search type: " + DataSetSearchType[this.dataSetSearchType]);
-        }
+        });
 
         return returnVal;
-        //return [new NameId(1, 'foo'), new NameId(2, 'bar')];
+
     }
-
-
-} // DtoRequestItemNameIds() 
+} // DtoRequestItemNameIds()
 
 
 

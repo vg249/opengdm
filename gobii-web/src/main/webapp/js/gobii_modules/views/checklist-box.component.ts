@@ -1,7 +1,7 @@
 import {Component, EventEmitter, KeyValueDiffers} from "@angular/core";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
-import {FileItemParams} from "../model/name-id-request-params";
+import {FileItemParams} from "../model/file-item-params";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import {ExtractorItemType} from "../model//type-extractor-item";
 import * as fromRoot from '../store/reducers';
@@ -9,7 +9,7 @@ import * as fileAction from '../store/actions/fileitem-action';
 import {Store} from "@ngrx/store";
 import {Observable} from "rxjs/Observable";
 import {FileItemService} from "../services/core/file-item-service";
-import {NameIdFilterParamTypes} from "../model/type-nameid-filter-params";
+import {FileItemParamNames} from "../model/file-item-param-names";
 
 
 @Component({
@@ -55,7 +55,7 @@ export class CheckListBoxComponent  {
     private onError: EventEmitter<HeaderStatusMessage> = new EventEmitter();
 
 
-    private nameIdFilterParamTypes:NameIdFilterParamTypes;
+    private nameIdFilterParamTypes:FileItemParamNames;
     public gobiiFileItems$: Observable< GobiiFileItem[]>;
 
     public handleItemChecked(arg) {

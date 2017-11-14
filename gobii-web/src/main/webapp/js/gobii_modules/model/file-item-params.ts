@@ -1,4 +1,4 @@
-import {EntityFilter} from "./type-entity-filter";
+import {FilterType} from "./filter-type";
 import {EntityType, EntitySubType} from "./type-entity";
 import {CvFilterType} from "./cv-filter-type";
 import {GobiiExtractFilterType} from "./type-extractor-filter";
@@ -40,7 +40,7 @@ export class FileItemParams extends GobiiFileItemCompoundId {
 
     private constructor(private _queryName: string = null,
                         _entityType: EntityType = EntityType.UNKNOWN,
-                        private _entityFilter: EntityFilter = EntityFilter.NONE,
+                        private _filterType: FilterType = FilterType.NONE,
                         private _fkEntityFilterValue: string = null,
                         private _selectedItemId: string = null,
                         _entitySubType: EntitySubType = EntitySubType.UNKNOWN,
@@ -62,7 +62,7 @@ export class FileItemParams extends GobiiFileItemCompoundId {
                         entityType: EntityType): FileItemParams {
         return ( new FileItemParams(queryName,
             entityType,
-            EntityFilter.NONE,
+            FilterType.NONE,
             null,
             null,
             EntitySubType.UNKNOWN,
@@ -119,12 +119,12 @@ export class FileItemParams extends GobiiFileItemCompoundId {
         return this;
     }
 
-    getEntityFilter(): EntityFilter {
-        return this._entityFilter;
+    getFilterType(): FilterType {
+        return this._filterType;
     }
 
-    setEntityFilter(value: EntityFilter): FileItemParams {
-        this._entityFilter = value;
+    setFilterType(value: FilterType): FileItemParams {
+        this._filterType = value;
         return this;
     }
 

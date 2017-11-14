@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/dto-header-status-message", "../model/type-extractor-filter", "../model/gobii-file-item", "../model/type-process", "../model//type-extractor-item", "./entity-labels", "../model/type-nameid-filter-params", "../store/reducers", "../services/core/file-item-service", "@ngrx/store"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/dto-header-status-message", "../model/type-extractor-filter", "../model/gobii-file-item", "../model/type-process", "../model//type-extractor-item", "./entity-labels", "../model/file-item-param-names", "../store/reducers", "../services/core/file-item-service", "@ngrx/store"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, dto_header_status_message_1, type_extractor_filter_1, gobii_file_item_1, type_process_1, type_extractor_item_1, entity_labels_1, type_nameid_filter_params_1, fromRoot, file_item_service_1, store_1, SampleMarkerBoxComponent;
+    var core_1, dto_header_status_message_1, type_extractor_filter_1, gobii_file_item_1, type_process_1, type_extractor_item_1, entity_labels_1, file_item_param_names_1, fromRoot, file_item_service_1, store_1, SampleMarkerBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -34,8 +34,8 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
             function (entity_labels_1_1) {
                 entity_labels_1 = entity_labels_1_1;
             },
-            function (type_nameid_filter_params_1_1) {
-                type_nameid_filter_params_1 = type_nameid_filter_params_1_1;
+            function (file_item_param_names_1_1) {
+                file_item_param_names_1 = file_item_param_names_1_1;
             },
             function (fromRoot_1) {
                 fromRoot = fromRoot_1;
@@ -52,7 +52,7 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                 function SampleMarkerBoxComponent(store, fileItemService) {
                     this.store = store;
                     this.fileItemService = fileItemService;
-                    this.nameIdFilterParamTypesMarkerGroup = type_nameid_filter_params_1.NameIdFilterParamTypes.MARKER_GROUPS;
+                    this.nameIdFilterParamTypesMarkerGroup = file_item_param_names_1.FileItemParamNames.MARKER_GROUPS;
                     this.maxListItems = 200;
                     this.displayMaxItemsExceeded = false;
                     this.displayChoicePrompt = false;
@@ -218,7 +218,7 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                 };
                 SampleMarkerBoxComponent.prototype.ngOnInit = function () {
                     if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
-                        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType, type_nameid_filter_params_1.NameIdFilterParamTypes.MARKER_GROUPS, null);
+                        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FileItemParamNames.MARKER_GROUPS, null);
                     }
                     return null;
                 };

@@ -6,7 +6,7 @@ import * as fromRoot from '../store/reducers';
 import * as fileAction from '../store/actions/fileitem-action';
 import * as historyAction from '../store/actions/history-action';
 import {Observable} from "rxjs/Observable";
-import {NameIdFilterParamTypes} from "../model/type-nameid-filter-params";
+import {FileItemParamNames} from "../model/file-item-param-names";
 import {FileItemService} from "../services/core/file-item-service";
 
 
@@ -23,8 +23,6 @@ import {FileItemService} from "../services/core/file-item-service";
     ` // end template
 
 })
-
-
 export class NameIdListBoxComponent  {
 
 
@@ -32,7 +30,7 @@ export class NameIdListBoxComponent  {
 
     private gobiiExtractFilterType: GobiiExtractFilterType;
 
-    private nameIdFilterParamTypes:NameIdFilterParamTypes;
+    private nameIdFilterParamTypes:FileItemParamNames;
     constructor(private store: Store<fromRoot.State>,
                 private fileItemService:FileItemService) {
 

@@ -5,25 +5,27 @@ import {CvFilterType} from "./cv-filter-type";
 import {GobiiExtractFilterType} from "./type-extractor-filter";
 import {ExtractorItemType} from "./type-extractor-item";
 import {GobiiFileItemCompoundId} from "./gobii-file-item-compound-id";
+import {NameId} from "./name-id";
 
 export class GobiiFileItem extends GobiiFileItemCompoundId {
 
     private _fileItemUniqueId: string;
 
-    private constructor(private _gobiiExtractFilterType: GobiiExtractFilterType,
-                        private _processType: ProcessType,
-                        _extractorItemType: ExtractorItemType,
-                        _entityType: EntityType,
-                        _entitySubType: EntitySubType,
-                        _cvFilterType: CvFilterType,
-                        private _itemId: string,
-                        private _itemName: string,
-                        private _selected: boolean,
-                        private _required: boolean,
-                        private _parentItemId: string,
-                        private _parentEntityType: EntityType) {
+    protected constructor(private _gobiiExtractFilterType: GobiiExtractFilterType,
+                          private _processType: ProcessType,
+                          _extractorItemType: ExtractorItemType,
+                          _entityType: EntityType,
+                          _entitySubType: EntitySubType,
+                          _cvFilterType: CvFilterType,
+                          private _itemId: string,
+                          private _itemName: string,
+                          private _selected: boolean,
+                          private _required: boolean,
+                          private _parentItemId: string,
+                          private _parentEntityType: EntityType,
+                          private _entity: any) {
 
-        super(_extractorItemType,_entityType,_entitySubType,_cvFilterType);
+        super(_extractorItemType, _entityType, _entitySubType, _cvFilterType);
 
 
         this._gobiiExtractFilterType = _gobiiExtractFilterType;
@@ -53,7 +55,8 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
             null,
             null,
             null,
-            EntityType.UNKNOWN
+            EntityType.UNKNOWN,
+            null
         );
 
 
@@ -191,6 +194,15 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
     setParentEntityType(parentIteIid: EntityType): GobiiFileItem {
         this._parentEntityType = parentIteIid;
         return this;
+    }
+
+    setEntity(entity:any){
+        this._entity = entity;
+        return this;
+    }
+
+    getEntity(): any {
+        return this._entity;
     }
 
 } // GobiiFileItem()

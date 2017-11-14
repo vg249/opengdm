@@ -1,4 +1,4 @@
-import {EntityFilter} from "./type-entity-filter";
+import {FilterType} from "./filter-type";
 export class SampleMarkerList {
 
     constructor(public  isArray: boolean,

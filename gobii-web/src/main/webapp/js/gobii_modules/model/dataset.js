@@ -6,8 +6,8 @@ System.register([], function (exports_1, context_1) {
         setters: [],
         execute: function () {
             DataSet = (function () {
-                function DataSet(dataSetId, name, experimentId, callingAnalysisId, dataTable, dataFile, qualityTable, qualityFile, status, typeId, analysesIds) {
-                    this.dataSetId = dataSetId;
+                function DataSet(datasetId, name, experimentId, callingAnalysisId, dataTable, dataFile, qualityTable, qualityFile, status, typeId, analysesIds) {
+                    this.datasetId = datasetId;
                     this.name = name;
                     this.experimentId = experimentId;
                     this.callingAnalysisId = callingAnalysisId;

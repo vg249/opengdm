@@ -1,10 +1,10 @@
 import {Injectable} from "@angular/core";
 import {NameId} from "../../model/name-id";
 import {DtoRequestService} from "./dto-request.service";
-import {EntityFilter} from "../../model/type-entity-filter";
+import {FilterType} from "../../model/filter-type";
 import {CvFilterType, CvFilters} from "../../model/cv-filter-type";
 import {EntityType, EntitySubType} from "../../model/type-entity";
-import {FileItemParams} from "../../model/name-id-request-params";
+import {FileItemParams} from "../../model/file-item-params";
 import {Observable} from 'rxjs/Observable';
 import {DtoRequestItemNameIds} from "../app/dto-request-item-nameids";
 /**
@@ -41,20 +41,20 @@ export class NameIdService {
 
         let returnVal: boolean = false;
 
-        if (nameIdRequestParams.getEntityFilter() === EntityFilter.NONE) {
+        if (nameIdRequestParams.getFilterType() === FilterType.NONE) {
 
             nameIdRequestParams.setFkEntityFilterValue(null);
             returnVal = true;
 
-        } else if (nameIdRequestParams.getEntityFilter() === EntityFilter.BYTYPEID) {
+        } else if (nameIdRequestParams.getFilterType() === FilterType.NAMES_BY_TYPEID) {
 
-            //for filter BYTYPEID we must have a filter value specified by parent
+            //for filter NAMES_BY_TYPEID we must have a filter value specified by parent
 
             returnVal = (nameIdRequestParams.getFkEntityFilterValue() != null);
 
-        } else if (nameIdRequestParams.getEntityFilter() === EntityFilter.BYTYPENAME) {
+        } else if (nameIdRequestParams.getFilterType() === FilterType.NAMES_BY_TYPE_NAME) {
 
-            //for filter BYTYPENAME we divine the typename algorityhmically for now
+            //for filter NAMES_BY_TYPE_NAME we divine the typename algorityhmically for now
             let entityFilterValue: string = this.getEntityFilterValue(nameIdRequestParams);
             if (entityFilterValue) {
                 nameIdRequestParams.setFkEntityFilterValue(entityFilterValue);
@@ -72,7 +72,7 @@ export class NameIdService {
 
                 this._dtoRequestService.get(new DtoRequestItemNameIds(
                     fileItemParams.getEntityType(),
-                    fileItemParams.getEntityFilter() === EntityFilter.NONE ? null : fileItemParams.getEntityFilter(),
+                    fileItemParams.getFilterType() === FilterType.NONE ? null : fileItemParams.getFilterType(),
                     fileItemParams.getFkEntityFilterValue()))
                     .subscribe(nameIds => {
                         let nameIdsToReturn: NameId[] = [];

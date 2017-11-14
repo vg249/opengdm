@@ -1,6 +1,6 @@
 export class DataSet {
 
-    constructor(public  dataSetId:number,
+    constructor(public  datasetId:number,
                 public  name:string,
                 public  experimentId:number,
                 public  callingAnalysisId:number,

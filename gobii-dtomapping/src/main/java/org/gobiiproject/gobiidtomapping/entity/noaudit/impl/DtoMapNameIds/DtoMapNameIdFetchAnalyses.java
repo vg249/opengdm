@@ -93,7 +93,7 @@ public class DtoMapNameIdFetchAnalyses implements DtoMapNameIdFetch {
             returnVal = this.getAllNameIdsForAnalysis();
         } else {
 
-            if (GobiiFilterType.BYTYPEID == dtoMapNameIdParams.getGobiiFilterType()) {
+            if (GobiiFilterType.NAMES_BY_TYPEID == dtoMapNameIdParams.getGobiiFilterType()) {
 
                 returnVal = this.getNameIdListForAnalysisNameByTypeId(dtoMapNameIdParams.getFilterValueAsInteger());
 

@@ -12,7 +12,7 @@ import {CvFilterType} from "../model/cv-filter-type";
 import {ExtractorItemType} from "../model/type-extractor-item";
 import {GobiiExtractFormat} from "../model/type-extract-format";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
-import {FileItemParams} from "../model/name-id-request-params";
+import {FileItemParams} from "../model/file-item-params";
 import {FileName} from "../model/file_name";
 import {Contact} from "../model/contact";
 import {ContactSearchType, DtoRequestItemContact} from "../services/app/dto-request-item-contact";
@@ -23,7 +23,7 @@ import {Store} from "@ngrx/store";
 import * as fromRoot from '../store/reducers';
 import * as fileItemAction from '../store/actions/fileitem-action';
 import * as historyAction from '../store/actions/history-action';
-import {NameIdFilterParamTypes} from "../model/type-nameid-filter-params";
+import {FileItemParamNames} from "../model/file-item-param-names";
 import {FileItemService} from "../services/core/file-item-service";
 import {Observable} from "rxjs/Observable";
 import {InstructionSubmissionService} from "../services/core/instruction-submission-service";
@@ -298,7 +298,7 @@ export class ExtractorRoot implements OnInit {
 
     //
 
-    nameIdFilterParamTypes: any = Object.assign({}, NameIdFilterParamTypes);
+    nameIdFilterParamTypes: any = Object.assign({}, FileItemParamNames);
 
     selectedExtractFormat$: Observable<GobiiFileItem> = this.store.select(fromRoot.getSelectedFileFormat);
 
@@ -464,14 +464,14 @@ export class ExtractorRoot implements OnInit {
 
         if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
-            this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
-                NameIdFilterParamTypes.CONTACT_PI,
+            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                FileItemParamNames.CONTACT_PI,
                 null);
 
 
             this.doPrincipleInvestigatorTreeNotifications = false;
             this.fileItemService.setItemLabelType(this.gobiiExtractFilterType,
-                NameIdFilterParamTypes.CONTACT_PI,
+                FileItemParamNames.CONTACT_PI,
                 NameIdLabelType.UNKNOWN);
             this.displaySelectorPi = true;
             this.displaySelectorProjectForPi = true;
@@ -489,24 +489,24 @@ export class ExtractorRoot implements OnInit {
 
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
 
-            this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
-                NameIdFilterParamTypes.CONTACT_PI,
+            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                FileItemParamNames.CONTACT_PI,
                 null);
 
 
-            this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
-                NameIdFilterParamTypes.CV_DATATYPE,
+            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                FileItemParamNames.CV_DATATYPE,
                 null);
 
-            this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
-                NameIdFilterParamTypes.PROJECTS,
+            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                FileItemParamNames.PROJECTS,
                 null);
 
 
             this.displaySelectorPi = true;
             this.doPrincipleInvestigatorTreeNotifications = true;
             this.fileItemService.setItemLabelType(this.gobiiExtractFilterType,
-                NameIdFilterParamTypes.CONTACT_PI,
+                FileItemParamNames.CONTACT_PI,
                 NameIdLabelType.ALL);
 
             this.displaySelectorProjectForPi = false;
@@ -524,12 +524,12 @@ export class ExtractorRoot implements OnInit {
 
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
 
-            this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
-                NameIdFilterParamTypes.CV_DATATYPE,
+            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                FileItemParamNames.CV_DATATYPE,
                 null);
 
-            this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
-                NameIdFilterParamTypes.PLATFORMS,
+            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                FileItemParamNames.PLATFORMS,
                 null);
 
 
@@ -559,8 +559,8 @@ export class ExtractorRoot implements OnInit {
         // this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
         //     this.nameIdRequestParamsExperiments);
 
-        this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
-            NameIdFilterParamTypes.MAPSETS,
+        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+            FileItemParamNames.MAPSETS,
             null);
 
 

@@ -5,6 +5,8 @@ package org.gobiiproject.gobiimodel.types;
  */
 public enum GobiiFilterType {
     NONE,
-    BYTYPEID,
-    BYTYPENAME
+    NAMES_BY_TYPEID,
+    NAMES_BY_TYPE_NAME,
+    ENTITY_LIST,
+    ENTITY_BY_ID
 }

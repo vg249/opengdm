@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-process", "../../model/dataset"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-process", "./jsontogfi/json-to-gfi-dataset"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-process", "../../model/datas
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_process_1, dataset_1, DataSetSearchType, DtoRequestItemDataSet;
+    var core_1, type_process_1, json_to_gfi_dataset_1, DataSetSearchType, DtoRequestItemDataSet;
     return {
         setters: [
             function (core_1_1) {
@@ -19,8 +19,8 @@ System.register(["@angular/core", "../../model/type-process", "../../model/datas
             function (type_process_1_1) {
                 type_process_1 = type_process_1_1;
             },
-            function (dataset_1_1) {
-                dataset_1 = dataset_1_1;
+            function (json_to_gfi_dataset_1_1) {
+                json_to_gfi_dataset_1 = json_to_gfi_dataset_1_1;
             }
         ],
         execute: function () {
@@ -32,10 +32,11 @@ System.register(["@angular/core", "../../model/type-process", "../../model/datas
             exports_1("DataSetSearchType", DataSetSearchType);
             DtoRequestItemDataSet = (function () {
                 function DtoRequestItemDataSet(dataSetSearchType, dataSetId) {
+                    if (dataSetId === void 0) { dataSetId = null; }
                     this.dataSetSearchType = dataSetSearchType;
                     this.dataSetId = dataSetId;
                     this.processType = type_process_1.ProcessType.READ;
-                    this.dataSetSearchType = this.dataSetSearchType;
+                    this.dataSetSearchType = dataSetSearchType;
                     this.dataSetId = dataSetId;
                 }
                 DtoRequestItemDataSet.prototype.getUrl = function () {
@@ -58,21 +59,11 @@ System.register(["@angular/core", "../../model/type-process", "../../model/datas
                 };
                 DtoRequestItemDataSet.prototype.resultFromJson = function (json) {
                     var returnVal = [];
-                    if (this.dataSetSearchType === DataSetSearchType.DETAIL) {
-                        if (json.payload.data[0]) {
-                            returnVal.push(new dataset_1.DataSet(json.payload.data[0].dataSetId, json.payload.data[0].name, json.payload.data[0].experimentId, json.payload.data[0].callingAnalysisId, json.payload.data[0].dataTable, json.payload.data[0].dataFile, json.payload.data[0].qualityTable, json.payload.data[0].qualityFile, json.payload.data[0].status, json.payload.data[0].typeId, json.payload.data[0].analysesIds));
-                        }
-                    }
-                    else if (this.dataSetSearchType === DataSetSearchType.LIST) {
-                        json.payload.data[0].forEach(function (jsonItem) {
-                            returnVal.push(new dataset_1.DataSet(json.payload.data[0].dataSetId, jsonItem.name, jsonItem.experimentId, jsonItem.callingAnalysisId, jsonItem.dataTable, jsonItem.dataFile, jsonItem.qualityTable, jsonItem.qualityFile, jsonItem.status, jsonItem.typeId, jsonItem.analysesIds));
-                        });
-                    }
-                    else {
-                        throw new Error("Unknown dataset search type: " + DataSetSearchType[this.dataSetSearchType]);
-                    }
+                    var jsonToGfiDataset = new json_to_gfi_dataset_1.JsonToGfiDataset();
+                    json.payload.data[0].forEach(function (jsonItem) {
+                        returnVal.push(jsonToGfiDataset.convert(jsonItem));
+                    });
                     return returnVal;
-                    //return [new NameId(1, 'foo'), new NameId(2, 'bar')];
                 };
                 DtoRequestItemDataSet = __decorate([
                     core_1.Injectable(),

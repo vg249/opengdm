@@ -139,6 +139,7 @@ export const getProjectsByPI = createSelector(getFileItemsState, fromFileItems.g
 export const getExperimentsByProject = createSelector(getFileItemsState, fromFileItems.getExperimentsForSelectedProject);
 export const getDatasetsByExperiment = createSelector(getFileItemsState, fromFileItems.getDatasetsForSelectedExperiment);
 export const getSelectedPiContacts = createSelector(getFileItemsState, fromFileItems.getSelectedPiContacts);
+export const getDatsetEntities = createSelector(getFileItemsState, fromFileItems.getDatasetEntities);
 
 
 export const getSelectedFileFormat = createSelector(getFileItemsState, fromFileItems.getSelectedFileFormat);

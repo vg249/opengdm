@@ -96,7 +96,7 @@ public class DtoMapNameIdFetchCvTerms implements DtoMapNameIdFetch {
             returnVal = this.getCvTerms();
         } else {
 
-            if (GobiiFilterType.BYTYPENAME == dtoMapNameIdParams.getGobiiFilterType()) {
+            if (GobiiFilterType.NAMES_BY_TYPE_NAME == dtoMapNameIdParams.getGobiiFilterType()) {
 
                 returnVal = this.getCvTermsForGroup(dtoMapNameIdParams.getFilterValueAsString());
 

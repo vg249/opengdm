@@ -3,14 +3,14 @@ import {GobiiFileItem} from "../../model/gobii-file-item";
 import * as gobiiFileItemAction from "../actions/fileitem-action";
 import {ExtractorItemType} from "../../model/type-extractor-item";
 import {EntitySubType, EntityType} from "../../model/type-entity";
-import {NameIdFilterParamTypes} from "../../model/type-nameid-filter-params";
+import {FileItemParamNames} from "../../model/file-item-param-names";
 import {ProcessType} from "../../model/type-process";
 import {Labels} from "../../views/entity-labels";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 import {GobiiExtractFormat} from "../../model/type-extract-format";
 import {CvFilterType} from "../../model/cv-filter-type";
 import {GobiiSampleListType} from "../../model/type-extractor-sample-list";
-import {isNgTemplate} from "@angular/compiler";
+import {DataSet} from "../../model/dataset";
 
 
 /***
@@ -190,7 +190,9 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
                         (
                             stateItem.getGobiiExtractFilterType() === newItem.getGobiiExtractFilterType() &&
                             stateItem.compoundIdeEquals(newItem) &&
-                            stateItem.getItemId() === newItem.getItemId()
+                            stateItem.getItemId() === newItem.getItemId() &&
+                            stateItem.getEntity() === null &&
+                            newItem.getEntity() === null
                         )
                     ).length === 0
             );
@@ -611,9 +613,9 @@ export const getProjectsForSelectedPi = createSelector(getFileItems, getFilters,
 
     let returnVal: GobiiFileItem[] = [];
 
-    if (filters[NameIdFilterParamTypes.PROJECTS_BY_CONTACT]) {
+    if (filters[FileItemParamNames.PROJECTS_BY_CONTACT]) {
 
-        let contactId: string = filters[NameIdFilterParamTypes.PROJECTS_BY_CONTACT].filterValue;
+        let contactId: string = filters[FileItemParamNames.PROJECTS_BY_CONTACT].filterValue;
         returnVal = fileItems.filter(e =>
             ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
             && ( e.getEntityType() === EntityType.PROJECT)
@@ -639,9 +641,9 @@ export const getExperimentsForSelectedProject = createSelector(getFileItems, get
 
     let returnVal: GobiiFileItem[] = [];
 
-    if (filters[NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT]) {
+    if (filters[FileItemParamNames.EXPERIMENTS_BY_PROJECT]) {
 
-        let projectId: string = filters[NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT].filterValue;
+        let projectId: string = filters[FileItemParamNames.EXPERIMENTS_BY_PROJECT].filterValue;
         returnVal = fileItems.filter(e =>
             ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
             && ( e.getEntityType() === EntityType.EXPERIMENT)
@@ -667,9 +669,9 @@ export const getDatasetsForSelectedExperiment = createSelector(getFileItems, get
 
     let returnVal: GobiiFileItem[] = [];
 
-    if (filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT]) {
+    if (filters[FileItemParamNames.DATASETS_BY_EXPERIMENT]) {
 
-        let experimentId: string = filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT].filterValue;
+        let experimentId: string = filters[FileItemParamNames.DATASETS_BY_EXPERIMENT].filterValue;
         returnVal = fileItems.filter(e =>
             ( e.getExtractorItemType() === ExtractorItemType.ENTITY
                 && e.getEntityType() === EntityType.DATASET
@@ -691,3 +693,34 @@ export const getDatasetsForSelectedExperiment = createSelector(getFileItems, get
     return returnVal;
 });
 
+export const getDatasetEntities = createSelector(getFileItems, getFilters, (fileItems, filters) => {
+
+    let returnVal: DataSet[] = fileItems
+        .filter(fi => fi.getEntityType() === EntityType.DATASET
+            && fi.getEntity() !== null)
+        .map(gfi => gfi.getEntity());
+
+
+    // if (filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT]) {
+    //
+    //     let experimentId: string = filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT].filterValue;
+    //     returnVal = fileItems.filter(e =>
+    //         ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+    //             && e.getEntityType() === EntityType.DATASET
+    //             && e.getParentItemId() === experimentId
+    //             && e.getProcessType() !== ProcessType.DUMMY))
+    //         .map(fi => fi);
+    //
+    //     if (returnVal.length <= 0) {
+    //         returnVal = fileItems.filter(e =>
+    //             ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+    //                 && e.getEntityType() === EntityType.DATASET
+    //                 //                    && e.getParentItemId() === experimentId
+    //                 && e.getProcessType() === ProcessType.DUMMY))
+    //             .map(fi => fi);
+    //     }
+    //
+    // }
+
+    return returnVal;
+});
