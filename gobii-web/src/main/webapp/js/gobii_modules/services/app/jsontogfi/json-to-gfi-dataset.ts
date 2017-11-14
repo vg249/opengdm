@@ -27,7 +27,7 @@ export class JsonToGfiDataset implements JsonToGfi {
         ).setExtractorItemType(ExtractorItemType.ENTITY)
             .setEntityType(EntityType.DATASET)
             .setItemName(dataset.name)
-            .setItemId(dataset.datasetId.toString())
+            .setItemId(dataset.id.toString())
             .setEntity(dataset);
     }
 }

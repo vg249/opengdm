@@ -15,7 +15,7 @@ import {DataSet} from "../model/dataset";
     template: `
         <p-dataTable [value]="datasets$ | async">
             <p-column field="name" header="Name"></p-column>
-            <p-column field="datasetId" header="Id"></p-column>
+            <p-column field="id" header="Id"></p-column>
         </p-dataTable>
     ` // end template
 

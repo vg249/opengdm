@@ -61,7 +61,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../model/
                         selector: 'dataset-datatable',
                         inputs: [],
                         outputs: [],
-                        template: "\n        <p-dataTable [value]=\"datasets$ | async\">\n            <p-column field=\"name\" header=\"Name\"></p-column>\n            <p-column field=\"datasetId\" header=\"Id\"></p-column>\n        </p-dataTable>\n    " // end template
+                        template: "\n        <p-dataTable [value]=\"datasets$ | async\">\n            <p-column field=\"name\" header=\"Name\"></p-column>\n            <p-column field=\"id\" header=\"Id\"></p-column>\n        </p-dataTable>\n    " // end template
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
                         file_item_service_1.FileItemService])

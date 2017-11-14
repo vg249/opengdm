@@ -191,8 +191,13 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
                             stateItem.getGobiiExtractFilterType() === newItem.getGobiiExtractFilterType() &&
                             stateItem.compoundIdeEquals(newItem) &&
                             stateItem.getItemId() === newItem.getItemId() &&
-                            stateItem.getEntity() === null &&
-                            newItem.getEntity() === null
+                            (
+                                (stateItem.getEntity() === null && newItem.getEntity() === null)
+                                || (
+                                    (stateItem.getEntity() !== null && newItem.getEntity() !== null)
+                                    && (stateItem.getEntity().id === newItem.getEntity().id)
+                                )
+                            )
                         )
                     ).length === 0
             );

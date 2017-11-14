@@ -32,7 +32,7 @@ System.register(["../../../model/gobii-file-item", "../../../model/type-entity",
                     return gobii_file_item_1.GobiiFileItem.build(type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN, type_process_1.ProcessType.READ).setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
                         .setEntityType(type_entity_1.EntityType.DATASET)
                         .setItemName(dataset.name)
-                        .setItemId(dataset.datasetId.toString())
+                        .setItemId(dataset.id.toString())
                         .setEntity(dataset);
                 };
                 return JsonToGfiDataset;
