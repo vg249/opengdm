@@ -200,7 +200,7 @@ export class FileItemEffects {
                 // entity name; but that's incorrect: not all replace actions should result in further processing
                 // -- only the ones involved with hierarchical queries do. The ReplaceInExtractByItemIdAction
                 // should include the filterId and then delegate this part of the processing to FileItemService,
-                // which specializes in the filter types. 
+                // which specializes in the filter types.
                 return Observable.create(observer => {
 
                     let fileItemToReplaceWithUniqueId: string = action.payload.itemIdToReplaceItWith;

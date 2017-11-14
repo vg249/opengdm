@@ -28,7 +28,7 @@ System.register(["../../../model/gobii-file-item", "../../../model/type-entity",
                 function JsonToGfiDataset() {
                 }
                 JsonToGfiDataset.prototype.convert = function (jsonItem) {
-                    var dataset = new dataset_1.DataSet(jsonItem.datasetId, jsonItem.name, jsonItem.experimentId, jsonItem.callingAnalysisId, jsonItem.dataTable, jsonItem.dataFile, jsonItem.qualityTable, jsonItem.qualityFile, jsonItem.status, jsonItem.typeId, jsonItem.analysesIds);
+                    var dataset = new dataset_1.DataSet(jsonItem.id, jsonItem.name, jsonItem.experimentId, jsonItem.callingAnalysisId, jsonItem.dataTable, jsonItem.dataFile, jsonItem.qualityTable, jsonItem.qualityFile, jsonItem.status, jsonItem.typeId, jsonItem.analysesIds);
                     return gobii_file_item_1.GobiiFileItem.build(type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN, type_process_1.ProcessType.READ).setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
                         .setEntityType(type_entity_1.EntityType.DATASET)
                         .setItemName(dataset.name)

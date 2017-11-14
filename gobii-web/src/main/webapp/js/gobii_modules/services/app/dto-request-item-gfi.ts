@@ -20,10 +20,11 @@ export class DtoRequestItemGfi implements DtoRequestItem<GobiiFileItem[]> {
         this.jsonToGfi = jsonToGfi;
 
         if (this.fileItemParams.getFilterType() !== FilterType.ENTITY_LIST
-            || this.fileItemParams.getFilterType() !== FilterType.ENTITY_BY_ID) {
-            throw new Error(this.fileItemParams.getQueryName()
+            && this.fileItemParams.getFilterType() !== FilterType.ENTITY_BY_ID) {
+            throw new Error("The FileItemParams with ID "
+                + this.fileItemParams.getQueryName()
                 + " is not of type " + FilterType[FilterType.ENTITY_LIST]
-                + " or " + this.fileItemParams[FilterType.ENTITY_BY_ID]);
+                + " or " + FilterType[FilterType.ENTITY_BY_ID]);
         }
     }
 
@@ -56,7 +57,7 @@ export class DtoRequestItemGfi implements DtoRequestItem<GobiiFileItem[]> {
     public resultFromJson(json): GobiiFileItem[] {
 
         let returnVal: GobiiFileItem[] = [];
-        json.payload.data[0].forEach(jsonItem => {
+        json.payload.data.forEach(jsonItem => {
 
             returnVal.push(this.jsonToGfi.convert(jsonItem));
 

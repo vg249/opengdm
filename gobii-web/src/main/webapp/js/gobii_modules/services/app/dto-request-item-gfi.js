@@ -41,10 +41,11 @@ System.register(["@angular/core", "../../model/type-process", "../../model/type-
                     this.id = id;
                     this.jsonToGfi = jsonToGfi;
                     if (this.fileItemParams.getFilterType() !== filter_type_1.FilterType.ENTITY_LIST
-                        || this.fileItemParams.getFilterType() !== filter_type_1.FilterType.ENTITY_BY_ID) {
-                        throw new Error(this.fileItemParams.getQueryName()
+                        && this.fileItemParams.getFilterType() !== filter_type_1.FilterType.ENTITY_BY_ID) {
+                        throw new Error("The FileItemParams with ID "
+                            + this.fileItemParams.getQueryName()
                             + " is not of type " + filter_type_1.FilterType[filter_type_1.FilterType.ENTITY_LIST]
-                            + " or " + this.fileItemParams[filter_type_1.FilterType.ENTITY_BY_ID]);
+                            + " or " + filter_type_1.FilterType[filter_type_1.FilterType.ENTITY_BY_ID]);
                     }
                 }
                 DtoRequestItemGfi.prototype.getUrl = function () {
@@ -67,7 +68,7 @@ System.register(["@angular/core", "../../model/type-process", "../../model/type-
                 DtoRequestItemGfi.prototype.resultFromJson = function (json) {
                     var _this = this;
                     var returnVal = [];
-                    json.payload.data[0].forEach(function (jsonItem) {
+                    json.payload.data.forEach(function (jsonItem) {
                         returnVal.push(_this.jsonToGfi.convert(jsonItem));
                     });
                     return returnVal;

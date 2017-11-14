@@ -566,47 +566,63 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                 }; // make file items from query
                 FileItemService.prototype.loadEntityList = function (gobiiExtractFilterType, fileItemParamName) {
                     var _this = this;
-                    var fileItemParams = this.getFilter(fileItemParamName, gobiiExtractFilterType);
-                    if (fileItemParams && fileItemParams.getFilterType() === filter_type_1.FilterType.ENTITY_LIST) {
-                        var dtoRequestItemGfi_1 = new dto_request_item_gfi_1.DtoRequestItemGfi(fileItemParams, null, new json_to_gfi_dataset_1.JsonToGfiDataset());
-                        this.entityStatsService.get(new dto_request_item_entity_stats_1.DtoRequestItemEntityStats(dto_request_item_entity_stats_1.EntityRequestType.LasetUpdated, fileItemParams.getEntityType(), null, null))
-                            .subscribe(function (entityStats) {
-                            _this.store.select(fromRoot.getFiltersRetrieved)
-                                .subscribe(function (filterHistoryItems) {
-                                var fileHistoryItem = filterHistoryItems.find(function (fhi) {
-                                    return fhi.gobiiExtractFilterType === gobiiExtractFilterType
-                                        && fhi.filterId === fileItemParams.getQueryName();
-                                });
-                                if ((!fileHistoryItem) ||
-                                    (entityStats.lastModified > fileHistoryItem.entityLasteUpdated)) {
-                                    _this.fileItemRequestService
-                                        .get(dtoRequestItemGfi_1)
-                                        .subscribe(function (entityItems) {
-                                        var date = new Date();
-                                        var loadAction = new fileItemActions.LoadFileItemListWithFilterAction({
-                                            gobiiFileItems: [],
-                                            filterId: fileItemParams.getQueryName(),
-                                            filter: {
-                                                gobiiExtractFilterType: gobiiExtractFilterType,
-                                                filterValue: null,
-                                                entityLasteUpdated: date
-                                            }
-                                        });
-                                        _this.store.dispatch(loadAction);
-                                    }, function (responseHeader) {
-                                        _this.store.dispatch(new historyAction.AddStatusAction(responseHeader));
+                    try {
+                        var fileItemParams_1 = this.getFilter(fileItemParamName, gobiiExtractFilterType);
+                        if (fileItemParams_1 && fileItemParams_1.getFilterType() === filter_type_1.FilterType.ENTITY_LIST) {
+                            var dtoRequestItemGfi_1 = new dto_request_item_gfi_1.DtoRequestItemGfi(fileItemParams_1, null, new json_to_gfi_dataset_1.JsonToGfiDataset());
+                            this.entityStatsService.get(new dto_request_item_entity_stats_1.DtoRequestItemEntityStats(dto_request_item_entity_stats_1.EntityRequestType.LasetUpdated, fileItemParams_1.getEntityType(), null, null))
+                                .subscribe(function (entityStats) {
+                                _this.store.select(fromRoot.getFiltersRetrieved)
+                                    .subscribe(function (filterHistoryItems) {
+                                    var fileHistoryItem = filterHistoryItems.find(function (fhi) {
+                                        return fhi.gobiiExtractFilterType === gobiiExtractFilterType
+                                            && fhi.filterId === fileItemParams_1.getQueryName();
                                     });
-                                }
+                                    if ((!fileHistoryItem) ||
+                                        (entityStats.lastModified > fileHistoryItem.entityLasteUpdated)) {
+                                        _this.fileItemRequestService
+                                            .get(dtoRequestItemGfi_1)
+                                            .subscribe(function (entityItems) {
+                                            entityItems.forEach(function (fi) {
+                                                fi.setGobiiExtractFilterType(gobiiExtractFilterType);
+                                            });
+                                            var date = new Date();
+                                            var loadAction = new fileItemActions.LoadFileItemListWithFilterAction({
+                                                gobiiFileItems: entityItems,
+                                                filterId: fileItemParams_1.getQueryName(),
+                                                filter: {
+                                                    gobiiExtractFilterType: gobiiExtractFilterType,
+                                                    filterValue: null,
+                                                    entityLasteUpdated: date
+                                                }
+                                            });
+                                            _this.store.dispatch(loadAction);
+                                        }, function (responseHeader) {
+                                            _this.store.dispatch(new historyAction.AddStatusAction(responseHeader));
+                                        });
+                                    }
+                                }, function (error) {
+                                    _this.store.dispatch(new historyAction.AddStatusAction(error));
+                                });
                             });
-                        });
+                        }
+                        else {
+                            var extractFilterTypeString = "undefined";
+                            if (gobiiExtractFilterType) {
+                                extractFilterTypeString = type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType];
+                            }
+                            this.store.dispatch(new historyAction.AddStatusMessageAction("FileItemParams "
+                                + fileItemParamName.toString()
+                                + " either does not exist or is not of type "
+                                + filter_type_1.FilterType[filter_type_1.FilterType.ENTITY_LIST]
+                                + " for extract type "
+                                + extractFilterTypeString));
+                        } // if else fileItemParams are correct
                     }
-                    else {
-                        this.store.dispatch(new historyAction.AddStatusMessageAction("FileItemParams "
-                            + fileItemParamName.toString()
-                            + " either does not exist or is not of type "
-                            + filter_type_1.FilterType[filter_type_1.FilterType.ENTITY_LIST]));
-                    } // if else fileItemParams are correct
-                };
+                    catch (error) {
+                        this.store.dispatch(new historyAction.AddStatusAction(error));
+                    }
+                }; //loadEntityList()
                 FileItemService = __decorate([
                     core_1.Injectable(),
                     __metadata("design:paramtypes", [name_id_service_1.NameIdService,

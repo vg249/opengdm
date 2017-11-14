@@ -41,8 +41,17 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../model/
                     this.datasets$ = this.store.select(fromRoot.getDatsetEntities);
                 }
                 DatasetDatatableComponent.prototype.ngOnInit = function () {
-                    this.fileItemService.loadEntityList(this.gobiiExtractFilterType, file_item_param_names_1.FileItemParamNames.DATASETS);
                 }; // ngOnInit()
+                // gobiiExtractType is not set until you get OnChanges
+                DatasetDatatableComponent.prototype.ngOnChanges = function (changes) {
+                    if (changes['gobiiExtractFilterType']
+                        && (changes['gobiiExtractFilterType'].currentValue != null)
+                        && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
+                        if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
+                            this.fileItemService.loadEntityList(this.gobiiExtractFilterType, file_item_param_names_1.FileItemParamNames.DATASETS);
+                        } // if we have a new filter type
+                    } // if filter type changed
+                }; // ngonChanges
                 __decorate([
                     core_1.Input(),
                     __metadata("design:type", Number)
@@ -50,9 +59,9 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../model/
                 DatasetDatatableComponent = __decorate([
                     core_1.Component({
                         selector: 'dataset-datatable',
-                        inputs: ['gobiiExtractFilterType'],
+                        inputs: [],
                         outputs: [],
-                        template: "\n        <p-dataTable [value]=\"datasets$ | async\">\n            <p-column field=\"name\" header=\"Name\"></p-column>\n            <p-column field=\"modifiedDate\" header=\"Modified\"></p-column>\n        </p-dataTable>\n    " // end template
+                        template: "\n        <p-dataTable [value]=\"datasets$ | async\">\n            <p-column field=\"name\" header=\"Name\"></p-column>\n            <p-column field=\"datasetId\" header=\"Id\"></p-column>\n        </p-dataTable>\n    " // end template
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
                         file_item_service_1.FileItemService])

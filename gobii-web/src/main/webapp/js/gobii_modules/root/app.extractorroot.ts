@@ -1,7 +1,6 @@
 ///<reference path="../../../../../../typings/index.d.ts"/>
 import {Component, OnInit} from "@angular/core";
 import {DtoRequestService} from "../services/core/dto-request.service";
-import {GobiiDataSetExtract} from "../model/extractor-instructions/data-set-extract";
 import {ProcessType} from "../model/type-process";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import {ServerConfig} from "../model/server-config";
@@ -12,7 +11,6 @@ import {CvFilterType} from "../model/cv-filter-type";
 import {ExtractorItemType} from "../model/type-extractor-item";
 import {GobiiExtractFormat} from "../model/type-extract-format";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
-import {FileItemParams} from "../model/file-item-params";
 import {FileName} from "../model/file_name";
 import {Contact} from "../model/contact";
 import {ContactSearchType, DtoRequestItemContact} from "../services/app/dto-request-item-contact";
@@ -179,6 +177,13 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                             [gobiiExtractFilterType]="gobiiExtractFilterType"
                                             (onError)="handleHeaderStatusMessage($event)">
                                     </checklist-box>
+                                    <BR>
+                                    <BR>
+                                    <label class="the-label">All Data Sets</label><BR>
+                                    <dataset-datatable
+                                            [gobiiExtractFilterType]="gobiiExtractFilterType">
+                                    </dataset-datatable>
+                                    
                                 </div>
                             </div> <!-- panel body -->
                         </div> <!-- panel primary -->

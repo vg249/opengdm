@@ -277,7 +277,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                         // entity name; but that's incorrect: not all replace actions should result in further processing
                         // -- only the ones involved with hierarchical queries do. The ReplaceInExtractByItemIdAction
                         // should include the filterId and then delegate this part of the processing to FileItemService,
-                        // which specializes in the filter types. 
+                        // which specializes in the filter types.
                         return Observable_1.Observable.create(function (observer) {
                             var fileItemToReplaceWithUniqueId = action.payload.itemIdToReplaceItWith;
                             var fileItemCurrentlyInExtractUniqueId = action.payload.itemIdCurrentlyInExtract;
