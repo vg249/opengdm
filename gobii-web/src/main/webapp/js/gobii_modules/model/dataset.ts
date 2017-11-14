@@ -10,6 +10,7 @@ export class DataSet {
                 public  qualityFile:string,
                 public  status:number,
                 public  typeId:number,
-                public analysesIds:number[]) {
+                public analysesIds:number[],
+                public createdDate:Date) {
     }
 }

@@ -14,8 +14,13 @@ import {DataSet} from "../model/dataset";
     outputs: [],
     template: `
         <p-dataTable [value]="datasets$ | async">
-            <p-column field="name" header="Name"></p-column>
             <p-column field="id" header="Id"></p-column>
+            <p-column field="name" header="Name"></p-column>
+            <p-column field="createdDate" header="Created">
+                <ng-template let-col let-ds="rowData" pTemplate="body">
+                    {{ds[col.field]|date:'yyyy-MM-dd' }}
+                </ng-template>                
+            </p-column>
         </p-dataTable>
     ` // end template
 
