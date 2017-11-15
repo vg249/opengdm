@@ -27,11 +27,11 @@ import {GobiiFileItem} from "../model/gobii-file-item";
                 </div> <!--status selector row -->
                 <div class="row">
                     <p-dataTable [value]="datasets$ | async">
-                        <p-column field="id" header="Id"></p-column>
                         <p-column field="name" header="Name"></p-column>
-                        <p-column field="createdDate" header="Created">
+                        <p-column field="jobStatusName" header="Status"></p-column>
+                        <p-column field="jobSubmittedDate" header="Submitted">
                             <ng-template let-col let-ds="rowData" pTemplate="body">
-                                {{ds[col.field] | date:'yyyy-MM-dd' }}
+                                {{ds[col.field] | date:'yyyy-MM-dd HH:mm' }}
                             </ng-template>
                         </p-column>
                     </p-dataTable>

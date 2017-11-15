@@ -22,7 +22,10 @@ export class JsonToGfiDataset implements JsonToGfi {
             jsonItem.status,
             jsonItem.typeId,
             jsonItem.analysesIds,
-            new Date(jsonItem.createdDate));
+            new Date(jsonItem.createdDate),
+            jsonItem.jobStatusId,
+            jsonItem.jobStatusName,
+            jsonItem.jobSubmittedDate ? new Date(jsonItem.jobSubmittedDate) : null);
 
         return GobiiFileItem.build(
             GobiiExtractFilterType.UNKNOWN, ProcessType.READ

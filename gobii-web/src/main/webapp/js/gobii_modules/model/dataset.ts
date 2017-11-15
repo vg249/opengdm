@@ -11,6 +11,9 @@ export class DataSet {
                 public  status:number,
                 public  typeId:number,
                 public analysesIds:number[],
-                public createdDate:Date) {
+                public createdDate:Date,
+                public jobStatusId:number,
+                public jobStatusName,
+                public jobSubmittedDate:Date) {
     }
 }
