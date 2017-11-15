@@ -4,7 +4,7 @@ import * as gobiiHistoryAction from "../actions/history-action";
 import {HeaderStatusMessage} from "../../model/dto-header-status-message";
 import {StatusLevel} from "../../model/type-status-level";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
-import {FileItemParamNames} from "../../model/file-item-param-names";
+import {FilterParamNames} from "../../model/file-item-param-names";
 
 
 /***
@@ -16,7 +16,7 @@ import {FileItemParamNames} from "../../model/file-item-param-names";
 
 export interface FilterHistory {
     gobiiExtractFilterType: GobiiExtractFilterType;
-    filterId: FileItemParamNames;
+    filterId: FilterParamNames;
     filterValue: string;
     entityLasteUpdated: Date;
 }

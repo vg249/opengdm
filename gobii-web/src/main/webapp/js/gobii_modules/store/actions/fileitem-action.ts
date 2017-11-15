@@ -1,8 +1,8 @@
 import {Action} from '@ngrx/store';
 import {GobiiFileItem} from "../../model/gobii-file-item";
-import {FileItemParams} from "../../model/file-item-params";
+import {FilterParams} from "../../model/file-item-params";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
-import {FileItemParamNames} from "../../model/file-item-param-names";
+import {FilterParamNames} from "../../model/file-item-param-names";
 
 export const ADD_TO_EXTRACT = '[GobiiFileItem] Add to Extract';
 export const ADD_TO_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Add to Extract by ID';
@@ -28,7 +28,7 @@ export class LoadFileItemListWithFilterAction implements Action {
 
     constructor(public payload: {
         gobiiFileItems: GobiiFileItem[],
-        filterId: FileItemParamNames,
+        filterId: FilterParamNames,
         filter: { gobiiExtractFilterType: GobiiExtractFilterType, filterValue: string, entityLasteUpdated: Date }
 
     }) {
@@ -49,7 +49,7 @@ export class LoadFilterAction implements Action {
     readonly type = LOAD_FILTER;
 
     constructor(public payload: {
-        filterId: FileItemParamNames,
+        filterId: FilterParamNames,
         filter: { gobiiExtractFilterType: GobiiExtractFilterType, filterValue: string, entityLasteUpdated: Date }
     }) {
     }

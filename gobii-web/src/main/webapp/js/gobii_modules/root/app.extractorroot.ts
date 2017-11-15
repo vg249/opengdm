@@ -21,7 +21,7 @@ import {Store} from "@ngrx/store";
 import * as fromRoot from '../store/reducers';
 import * as fileItemAction from '../store/actions/fileitem-action';
 import * as historyAction from '../store/actions/history-action';
-import {FileItemParamNames} from "../model/file-item-param-names";
+import {FilterParamNames} from "../model/file-item-param-names";
 import {FileItemService} from "../services/core/file-item-service";
 import {Observable} from "rxjs/Observable";
 import {InstructionSubmissionService} from "../services/core/instruction-submission-service";
@@ -75,7 +75,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             <name-id-list-box
                                                     [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                                    [nameIdFilterParamTypes]="nameIdFilterParamTypes.MAPSETS">
+                                                    [filterParamName]="nameIdFilterParamTypes.MAPSETS">
                                             </name-id-list-box>
                                         </td>
                                     </tr>
@@ -110,7 +110,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                     <label class="the-label">Principle Investigator:</label><BR>
                                     <name-id-list-box
                                             [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                            [nameIdFilterParamTypes]="nameIdFilterParamTypes.CONTACT_PI">
+                                            [filterParamName]="nameIdFilterParamTypes.CONTACT_PI">
                                     </name-id-list-box>
 
                                 </div>
@@ -121,7 +121,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                     <label class="the-label">PI's Project:</label><BR>
                                     <name-id-list-box
                                             [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                            [nameIdFilterParamTypes]="nameIdFilterParamTypes.PROJECTS_BY_CONTACT">
+                                            [filterParamName]="nameIdFilterParamTypes.PROJECTS_BY_CONTACT">
                                     </name-id-list-box>
                                 </div>
 
@@ -131,7 +131,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                     <label class="the-label">Projects:</label><BR>
                                     <name-id-list-box
                                             [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                            [nameIdFilterParamTypes]="nameIdFilterParamTypes.PROJECTS">
+                                            [filterParamName]="nameIdFilterParamTypes.PROJECTS">
                                     </name-id-list-box>
                                 </div>
 
@@ -141,7 +141,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                     <label class="the-label">Dataset Types:</label><BR>
                                     <name-id-list-box
                                             [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                            [nameIdFilterParamTypes]="nameIdFilterParamTypes.CV_DATATYPE">
+                                            [filterParamName]="nameIdFilterParamTypes.CV_DATATYPE">
                                     </name-id-list-box>
                                 </div>
 
@@ -152,7 +152,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                     <label class="the-label">Project's Experiment:</label><BR>
                                     <name-id-list-box
                                             [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                            [nameIdFilterParamTypes]="nameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT">
+                                            [filterParamName]="nameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT">
                                     </name-id-list-box>
 
                                 </div>
@@ -162,7 +162,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                     <BR>
                                     <label class="the-label">Platforms:</label><BR>
                                     <checklist-box
-                                            [nameIdFilterParamTypes]="nameIdFilterParamTypes.PLATFORMS"
+                                            [filterParamName]="nameIdFilterParamTypes.PLATFORMS"
                                             [gobiiExtractFilterType]="gobiiExtractFilterType">
                                     </checklist-box>
                                 </div>
@@ -173,7 +173,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                     <BR>
                                     <label class="the-label">Experiment's Data Sets</label><BR>
                                     <checklist-box
-                                            [nameIdFilterParamTypes]="nameIdFilterParamTypes.DATASETS_BY_EXPERIMENT"
+                                            [filterParamName]="nameIdFilterParamTypes.DATASETS_BY_EXPERIMENT"
                                             [gobiiExtractFilterType]="gobiiExtractFilterType"
                                             (onError)="handleHeaderStatusMessage($event)">
                                     </checklist-box>
@@ -303,7 +303,7 @@ export class ExtractorRoot implements OnInit {
 
     //
 
-    nameIdFilterParamTypes: any = Object.assign({}, FileItemParamNames);
+    nameIdFilterParamTypes: any = Object.assign({}, FilterParamNames);
 
     selectedExtractFormat$: Observable<GobiiFileItem> = this.store.select(fromRoot.getSelectedFileFormat);
 
@@ -470,13 +470,13 @@ export class ExtractorRoot implements OnInit {
         if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
             this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                FileItemParamNames.CONTACT_PI,
+                FilterParamNames.CONTACT_PI,
                 null);
 
 
             this.doPrincipleInvestigatorTreeNotifications = false;
             this.fileItemService.setItemLabelType(this.gobiiExtractFilterType,
-                FileItemParamNames.CONTACT_PI,
+                FilterParamNames.CONTACT_PI,
                 NameIdLabelType.UNKNOWN);
             this.displaySelectorPi = true;
             this.displaySelectorProjectForPi = true;
@@ -495,23 +495,23 @@ export class ExtractorRoot implements OnInit {
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
 
             this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                FileItemParamNames.CONTACT_PI,
+                FilterParamNames.CONTACT_PI,
                 null);
 
 
             this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                FileItemParamNames.CV_DATATYPE,
+                FilterParamNames.CV_DATATYPE,
                 null);
 
             this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                FileItemParamNames.PROJECTS,
+                FilterParamNames.PROJECTS,
                 null);
 
 
             this.displaySelectorPi = true;
             this.doPrincipleInvestigatorTreeNotifications = true;
             this.fileItemService.setItemLabelType(this.gobiiExtractFilterType,
-                FileItemParamNames.CONTACT_PI,
+                FilterParamNames.CONTACT_PI,
                 NameIdLabelType.ALL);
 
             this.displaySelectorProjectForPi = false;
@@ -530,11 +530,11 @@ export class ExtractorRoot implements OnInit {
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
 
             this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                FileItemParamNames.CV_DATATYPE,
+                FilterParamNames.CV_DATATYPE,
                 null);
 
             this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                FileItemParamNames.PLATFORMS,
+                FilterParamNames.PLATFORMS,
                 null);
 
 
@@ -565,7 +565,7 @@ export class ExtractorRoot implements OnInit {
         //     this.nameIdRequestParamsExperiments);
 
         this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-            FileItemParamNames.MAPSETS,
+            FilterParamNames.MAPSETS,
             null);
 
 

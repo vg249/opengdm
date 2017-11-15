@@ -4,7 +4,7 @@ import {ProcessType} from "../../model/type-process";
 import {DataSet} from "../../model/dataset";
 import {GobiiFileItem} from "../../model/gobii-file-item";
 import {EntityType} from "../../model/type-entity";
-import {FileItemParams} from "../../model/file-item-params";
+import {FilterParams} from "../../model/file-item-params";
 import {JsonToGfi} from "./jsontogfi/json-to-gfi";
 import {FilterType} from "../../model/filter-type";
 
@@ -12,7 +12,7 @@ import {FilterType} from "../../model/filter-type";
 @Injectable()
 export class DtoRequestItemGfi implements DtoRequestItem<GobiiFileItem[]> {
 
-    public constructor(private fileItemParams: FileItemParams,
+    public constructor(private fileItemParams: FilterParams,
                        private id: string = null,
                        private jsonToGfi: JsonToGfi) {
         this.fileItemParams = fileItemParams;

@@ -3,7 +3,7 @@ import {Store} from "@ngrx/store";
 import * as fromRoot from '../store/reducers';
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {FileItemService} from "../services/core/file-item-service";
-import {FileItemParamNames} from "../model/file-item-param-names";
+import {FilterParamNames} from "../model/file-item-param-names";
 import {Observable} from "rxjs/Observable";
 import {DataSet} from "../model/dataset";
 import {GobiiFileItem} from "../model/gobii-file-item";
@@ -21,7 +21,7 @@ import {GobiiFileItem} from "../model/gobii-file-item";
                     <label class="the-legend">Filter by Status:&nbsp;</label>
                     <name-id-list-box
                             [gobiiExtractFilterType]="gobiiExtractFilterType"
-                            [nameIdFilterParamTypes]="nameIdFilterParamTypes.CV_JOB_STATUS">
+                            [filterParamName]="nameIdFilterParamTypes.CV_JOB_STATUS">
                     </name-id-list-box>
 
                 </div> <!--status selector row -->
@@ -50,7 +50,7 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
     }
 
     public datasets$: Observable<DataSet[]> = this.store.select(fromRoot.getDatsetEntities);
-    public nameIdFilterParamTypes: any = Object.assign({}, FileItemParamNames);
+    public nameIdFilterParamTypes: any = Object.assign({}, FilterParamNames);
 
     @Input()
     public gobiiExtractFilterType: GobiiExtractFilterType;
@@ -68,9 +68,9 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
 
             if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
 
-                this.fileItemService.loadEntityList(this.gobiiExtractFilterType, FileItemParamNames.DATASETS);
+                this.fileItemService.loadEntityList(this.gobiiExtractFilterType, FilterParamNames.DATASETS);
                 this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                    FileItemParamNames.CV_JOB_STATUS,
+                    FilterParamNames.CV_JOB_STATUS,
                     null);
 
             } // if we have a new filter type

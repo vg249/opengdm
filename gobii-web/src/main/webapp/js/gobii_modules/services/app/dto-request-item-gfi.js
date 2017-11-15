@@ -75,7 +75,7 @@ System.register(["@angular/core", "../../model/type-process", "../../model/type-
                 };
                 DtoRequestItemGfi = __decorate([
                     core_1.Injectable(),
-                    __metadata("design:paramtypes", [file_item_params_1.FileItemParams, String, Object])
+                    __metadata("design:paramtypes", [file_item_params_1.FilterParams, String, Object])
                 ], DtoRequestItemGfi);
                 return DtoRequestItemGfi;
             }());

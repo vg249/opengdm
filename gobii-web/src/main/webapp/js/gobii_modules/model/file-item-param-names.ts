@@ -3,7 +3,7 @@
 // Knowing the nameidfilterparam type on debugger inspection is
 // particularly important because of the generic way in which nameids
 // are treated in the components and services
-export class FileItemParamNames {
+export class FilterParamNames {
 
     public static UNKNOWN: string = "UNKNOWN";
     public static CONTACT_PI: string = "Contact-PI";

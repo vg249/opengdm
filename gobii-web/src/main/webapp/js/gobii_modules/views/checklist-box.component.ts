@@ -1,7 +1,7 @@
 import {Component, EventEmitter, KeyValueDiffers} from "@angular/core";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
-import {FileItemParams} from "../model/file-item-params";
+import {FilterParams} from "../model/file-item-params";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import {ExtractorItemType} from "../model//type-extractor-item";
 import * as fromRoot from '../store/reducers';
@@ -9,13 +9,13 @@ import * as fileAction from '../store/actions/fileitem-action';
 import {Store} from "@ngrx/store";
 import {Observable} from "rxjs/Observable";
 import {FileItemService} from "../services/core/file-item-service";
-import {FileItemParamNames} from "../model/file-item-param-names";
+import {FilterParamNames} from "../model/file-item-param-names";
 
 
 @Component({
     selector: 'checklist-box',
     inputs: ['gobiiExtractFilterType',
-        'nameIdFilterParamTypes'],
+        'filterParamName'],
     outputs: ['onError'],
     template: `
         <form>
@@ -48,14 +48,14 @@ export class CheckListBoxComponent  {
     } // ctor
 
     ngOnInit(): any {
-        this.gobiiFileItems$ = this.fileItemService.getForFilter(this.nameIdFilterParamTypes);
+        this.gobiiFileItems$ = this.fileItemService.getForFilter(this.filterParamName);
     }
 
     private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
     private onError: EventEmitter<HeaderStatusMessage> = new EventEmitter();
 
 
-    private nameIdFilterParamTypes:FileItemParamNames;
+    private filterParamName:FilterParamNames;
     public gobiiFileItems$: Observable< GobiiFileItem[]>;
 
     public handleItemChecked(arg) {

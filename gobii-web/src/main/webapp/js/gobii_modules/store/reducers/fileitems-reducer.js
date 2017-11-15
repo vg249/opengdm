@@ -483,8 +483,8 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             }));
             exports_1("getProjectsForSelectedPi", getProjectsForSelectedPi = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
                 var returnVal = [];
-                if (filters[file_item_param_names_1.FileItemParamNames.PROJECTS_BY_CONTACT]) {
-                    var contactId_1 = filters[file_item_param_names_1.FileItemParamNames.PROJECTS_BY_CONTACT].filterValue;
+                if (filters[file_item_param_names_1.FilterParamNames.PROJECTS_BY_CONTACT]) {
+                    var contactId_1 = filters[file_item_param_names_1.FilterParamNames.PROJECTS_BY_CONTACT].filterValue;
                     returnVal = fileItems.filter(function (e) {
                         return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY)
                             && (e.getEntityType() === type_entity_1.EntityType.PROJECT)
@@ -505,8 +505,8 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             }));
             exports_1("getExperimentsForSelectedProject", getExperimentsForSelectedProject = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
                 var returnVal = [];
-                if (filters[file_item_param_names_1.FileItemParamNames.EXPERIMENTS_BY_PROJECT]) {
-                    var projectId_1 = filters[file_item_param_names_1.FileItemParamNames.EXPERIMENTS_BY_PROJECT].filterValue;
+                if (filters[file_item_param_names_1.FilterParamNames.EXPERIMENTS_BY_PROJECT]) {
+                    var projectId_1 = filters[file_item_param_names_1.FilterParamNames.EXPERIMENTS_BY_PROJECT].filterValue;
                     returnVal = fileItems.filter(function (e) {
                         return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY)
                             && (e.getEntityType() === type_entity_1.EntityType.EXPERIMENT)
@@ -527,8 +527,8 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             }));
             exports_1("getDatasetsForSelectedExperiment", getDatasetsForSelectedExperiment = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
                 var returnVal = [];
-                if (filters[file_item_param_names_1.FileItemParamNames.DATASETS_BY_EXPERIMENT]) {
-                    var experimentId_1 = filters[file_item_param_names_1.FileItemParamNames.DATASETS_BY_EXPERIMENT].filterValue;
+                if (filters[file_item_param_names_1.FilterParamNames.DATASETS_BY_EXPERIMENT]) {
+                    var experimentId_1 = filters[file_item_param_names_1.FilterParamNames.DATASETS_BY_EXPERIMENT].filterValue;
                     returnVal = fileItems.filter(function (e) {
                         return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
                             && e.getEntityType() === type_entity_1.EntityType.DATASET

@@ -5,7 +5,7 @@ import {GobiiFileItem} from "../model/gobii-file-item";
 import {ProcessType} from "../model/type-process";
 import {ExtractorItemType} from "../model//type-extractor-item";
 import {Labels} from "./entity-labels";
-import {FileItemParamNames} from "../model/file-item-param-names";
+import {FilterParamNames} from "../model/file-item-param-names";
 import * as fromRoot from '../store/reducers';
 import {FileItemService} from "../services/core/file-item-service";
 import {Store} from "@ngrx/store";
@@ -62,7 +62,7 @@ import {Observable} from "rxjs/Observable";
 
                 <div *ngIf="selectedListType == 'markerGroupsType'" class="col-md-8">
                     <checklist-box
-                            [nameIdFilterParamTypes]="nameIdFilterParamTypesMarkerGroup"
+                            [filterParamName]="nameIdFilterParamTypesMarkerGroup"
                             [gobiiExtractFilterType]="gobiiExtractFilterType">
                     </checklist-box>
                 </div>
@@ -101,7 +101,7 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
 
     }
 
-    public nameIdFilterParamTypesMarkerGroup:FileItemParamNames = FileItemParamNames.MARKER_GROUPS;
+    public nameIdFilterParamTypesMarkerGroup:FilterParamNames = FilterParamNames.MARKER_GROUPS;
 
 
     public maxListItems: number = 200;
@@ -340,7 +340,7 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
 
         if( this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER ) {
             this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                FileItemParamNames.MARKER_GROUPS,
+                FilterParamNames.MARKER_GROUPS,
                 null);
         }
 

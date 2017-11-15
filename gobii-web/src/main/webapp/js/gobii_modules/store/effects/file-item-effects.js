@@ -285,19 +285,19 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                                 .subscribe(function (all) {
                                 var fileItemToReplaceWith = all.find(function (fi) { return fi.getFileItemUniqueId() === fileItemToReplaceWithUniqueId; });
                                 // RUN FILTERED QUERY TO GET CHILD ITEMS WHEN NECESSARY
-                                var nameIdFilterParamType = file_item_param_names_1.FileItemParamNames.UNKNOWN;
+                                var nameIdFilterParamType = file_item_param_names_1.FilterParamNames.UNKNOWN;
                                 var filterValue = fileItemToReplaceWith.getItemId();
                                 if (fileItemToReplaceWith.getEntityType() === type_entity_1.EntityType.CONTACT
                                     && (fileItemToReplaceWith.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)) {
-                                    nameIdFilterParamType = file_item_param_names_1.FileItemParamNames.PROJECTS_BY_CONTACT;
+                                    nameIdFilterParamType = file_item_param_names_1.FilterParamNames.PROJECTS_BY_CONTACT;
                                 }
                                 else if (fileItemToReplaceWith.getEntityType() === type_entity_1.EntityType.PROJECT) {
-                                    nameIdFilterParamType = file_item_param_names_1.FileItemParamNames.EXPERIMENTS_BY_PROJECT;
+                                    nameIdFilterParamType = file_item_param_names_1.FilterParamNames.EXPERIMENTS_BY_PROJECT;
                                 }
                                 else if (fileItemToReplaceWith.getEntityType() === type_entity_1.EntityType.EXPERIMENT) {
-                                    nameIdFilterParamType = file_item_param_names_1.FileItemParamNames.DATASETS_BY_EXPERIMENT;
+                                    nameIdFilterParamType = file_item_param_names_1.FilterParamNames.DATASETS_BY_EXPERIMENT;
                                 }
-                                if ((nameIdFilterParamType !== file_item_param_names_1.FileItemParamNames.UNKNOWN && filterValue != null)) {
+                                if ((nameIdFilterParamType !== file_item_param_names_1.FilterParamNames.UNKNOWN && filterValue != null)) {
                                     _this.fileItemService.makeNameIdLoadActions(action.payload.gobiiExtractFilterType, nameIdFilterParamType, filterValue).subscribe(function (loadFileItemListAction) {
                                         observer.next(loadFileItemListAction);
                                     }, function (error) {

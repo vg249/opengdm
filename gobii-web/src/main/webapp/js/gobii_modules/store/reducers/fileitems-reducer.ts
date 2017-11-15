@@ -3,7 +3,7 @@ import {GobiiFileItem} from "../../model/gobii-file-item";
 import * as gobiiFileItemAction from "../actions/fileitem-action";
 import {ExtractorItemType} from "../../model/type-extractor-item";
 import {EntitySubType, EntityType} from "../../model/type-entity";
-import {FileItemParamNames} from "../../model/file-item-param-names";
+import {FilterParamNames} from "../../model/file-item-param-names";
 import {ProcessType} from "../../model/type-process";
 import {Labels} from "../../views/entity-labels";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
@@ -631,9 +631,9 @@ export const getProjectsForSelectedPi = createSelector(getFileItems, getFilters,
 
     let returnVal: GobiiFileItem[] = [];
 
-    if (filters[FileItemParamNames.PROJECTS_BY_CONTACT]) {
+    if (filters[FilterParamNames.PROJECTS_BY_CONTACT]) {
 
-        let contactId: string = filters[FileItemParamNames.PROJECTS_BY_CONTACT].filterValue;
+        let contactId: string = filters[FilterParamNames.PROJECTS_BY_CONTACT].filterValue;
         returnVal = fileItems.filter(e =>
             ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
             && ( e.getEntityType() === EntityType.PROJECT)
@@ -659,9 +659,9 @@ export const getExperimentsForSelectedProject = createSelector(getFileItems, get
 
     let returnVal: GobiiFileItem[] = [];
 
-    if (filters[FileItemParamNames.EXPERIMENTS_BY_PROJECT]) {
+    if (filters[FilterParamNames.EXPERIMENTS_BY_PROJECT]) {
 
-        let projectId: string = filters[FileItemParamNames.EXPERIMENTS_BY_PROJECT].filterValue;
+        let projectId: string = filters[FilterParamNames.EXPERIMENTS_BY_PROJECT].filterValue;
         returnVal = fileItems.filter(e =>
             ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
             && ( e.getEntityType() === EntityType.EXPERIMENT)
@@ -687,9 +687,9 @@ export const getDatasetsForSelectedExperiment = createSelector(getFileItems, get
 
     let returnVal: GobiiFileItem[] = [];
 
-    if (filters[FileItemParamNames.DATASETS_BY_EXPERIMENT]) {
+    if (filters[FilterParamNames.DATASETS_BY_EXPERIMENT]) {
 
-        let experimentId: string = filters[FileItemParamNames.DATASETS_BY_EXPERIMENT].filterValue;
+        let experimentId: string = filters[FilterParamNames.DATASETS_BY_EXPERIMENT].filterValue;
         returnVal = fileItems.filter(e =>
             ( e.getExtractorItemType() === ExtractorItemType.ENTITY
                 && e.getEntityType() === EntityType.DATASET

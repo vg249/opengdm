@@ -8,7 +8,7 @@ import {GobiiFileItem} from "../../model/gobii-file-item";
 import {HeaderStatusMessage} from "../../model/dto-header-status-message";
 import {ProcessType} from "../../model/type-process";
 import {NameIdService} from "./name-id-service";
-import {FileItemParams} from "../../model/file-item-params";
+import {FilterParams} from "../../model/file-item-params";
 import * as historyAction from '../../store/actions/history-action';
 import * as fileItemActions from '../../store/actions/fileitem-action'
 import * as fromRoot from '../../store/reducers';
@@ -16,7 +16,7 @@ import * as fromRoot from '../../store/reducers';
 import {Store} from "@ngrx/store";
 import {NameIdLabelType} from "../../model/name-id-label-type";
 import {FilterType} from "../../model/filter-type";
-import {FileItemParamNames} from "../../model/file-item-param-names";
+import {FilterParamNames} from "../../model/file-item-param-names";
 import {Observable} from "rxjs/Observable";
 import "rxjs/add/operator/expand"
 import {EntityStats} from "../../model/entity-stats";
@@ -30,18 +30,18 @@ import {JsonToGfiDataset} from "../app/jsontogfi/json-to-gfi-dataset";
 @Injectable()
 export class FileItemService {
 
-    fileFilterParams: FileItemParams[] = [];
+    filterParams: FilterParams[] = [];
 
-    private addFilter(filterParamsToAdd: FileItemParams) {
+    private addFilter(filterParamsToAdd: FilterParams) {
 
-        let existingFilterParams = this.fileFilterParams
+        let existingFilterParams = this.filterParams
             .find(ffp =>
                 ffp.getQueryName() === filterParamsToAdd.getQueryName()
                 && ffp.getGobiiExtractFilterType() === filterParamsToAdd.getGobiiExtractFilterType()
             );
 
         if (!existingFilterParams) {
-            this.fileFilterParams.push(filterParamsToAdd);
+            this.filterParams.push(filterParamsToAdd);
         } else {
             this.store.dispatch(new historyAction.AddStatusMessageAction("The query "
                 + filterParamsToAdd.getQueryName()
@@ -51,9 +51,9 @@ export class FileItemService {
         }
     }
 
-    private getFilter(nameIdFilterParamTypes: FileItemParamNames, gobiiExtractFilterType: GobiiExtractFilterType): FileItemParams {
+    private getFilter(nameIdFilterParamTypes: FilterParamNames, gobiiExtractFilterType: GobiiExtractFilterType): FilterParams {
 
-        return this.fileFilterParams.find(ffp =>
+        return this.filterParams.find(ffp =>
             ffp.getQueryName() === nameIdFilterParamTypes &&
             ffp.getGobiiExtractFilterType() === gobiiExtractFilterType
         )
@@ -67,8 +67,8 @@ export class FileItemService {
         // For non-hierarchically filtered request params, we just create them simply
         // as we add them to the flat map
         this.addFilter(
-            FileItemParams
-                .build(FileItemParamNames.CV_DATATYPE,
+            FilterParams
+                .build(FilterParamNames.CV_DATATYPE,
                     GobiiExtractFilterType.BY_SAMPLE,
                     EntityType.CV)
                 .setIsDynamicFilterValue(false)
@@ -80,8 +80,8 @@ export class FileItemService {
 
 
         this.addFilter(
-            FileItemParams
-                .build(FileItemParamNames.CV_DATATYPE,
+            FilterParams
+                .build(FilterParamNames.CV_DATATYPE,
                     GobiiExtractFilterType.BY_MARKER,
                     EntityType.CV)
                 .setIsDynamicFilterValue(false)
@@ -92,8 +92,8 @@ export class FileItemService {
         );
 
         this.addFilter(
-            FileItemParams
-                .build(FileItemParamNames.CV_JOB_STATUS,
+            FilterParams
+                .build(FilterParamNames.CV_JOB_STATUS,
                     GobiiExtractFilterType.WHOLE_DATASET,
                     EntityType.CV)
                 .setIsDynamicFilterValue(false)
@@ -104,72 +104,72 @@ export class FileItemService {
         );
 
         this.addFilter(
-            FileItemParams
-                .build(FileItemParamNames.MAPSETS,
+            FilterParams
+                .build(FilterParamNames.MAPSETS,
                     GobiiExtractFilterType.WHOLE_DATASET,
                     EntityType.MAPSET)
                 .setIsDynamicFilterValue(false)
                 .setNameIdLabelType(NameIdLabelType.NO));
 
         this.addFilter(
-            FileItemParams
-                .build(FileItemParamNames.MAPSETS,
+            FilterParams
+                .build(FilterParamNames.MAPSETS,
                     GobiiExtractFilterType.BY_SAMPLE,
                     EntityType.MAPSET)
                 .setIsDynamicFilterValue(false)
                 .setNameIdLabelType(NameIdLabelType.NO));
 
         this.addFilter(
-            FileItemParams
-                .build(FileItemParamNames.MAPSETS,
+            FilterParams
+                .build(FilterParamNames.MAPSETS,
                     GobiiExtractFilterType.BY_MARKER,
                     EntityType.MAPSET)
                 .setIsDynamicFilterValue(false)
                 .setNameIdLabelType(NameIdLabelType.NO));
 
         this.addFilter(
-            FileItemParams
-                .build(FileItemParamNames.PLATFORMS,
+            FilterParams
+                .build(FilterParamNames.PLATFORMS,
                     GobiiExtractFilterType.BY_SAMPLE,
                     EntityType.PLATFORM)
                 .setIsDynamicFilterValue(false)
         );
 
         this.addFilter(
-            FileItemParams
-                .build(FileItemParamNames.PLATFORMS,
+            FilterParams
+                .build(FilterParamNames.PLATFORMS,
                     GobiiExtractFilterType.BY_MARKER,
                     EntityType.PLATFORM)
                 .setIsDynamicFilterValue(false)
         );
 
         this.addFilter(
-            FileItemParams
-                .build(FileItemParamNames.MARKER_GROUPS,
+            FilterParams
+                .build(FilterParamNames.MARKER_GROUPS,
                     GobiiExtractFilterType.BY_MARKER,
                     EntityType.MARKER_GROUP)
                 .setIsDynamicFilterValue(false)
         );
 
         this.addFilter(
-            FileItemParams
-                .build(FileItemParamNames.PROJECTS,
+            FilterParams
+                .build(FilterParamNames.PROJECTS,
                     GobiiExtractFilterType.BY_SAMPLE,
                     EntityType.PROJECT)
                 .setIsDynamicFilterValue(false)
                 .setNameIdLabelType(NameIdLabelType.ALL));
 
         this.addFilter(
-            FileItemParams
-                .build(FileItemParamNames.CONTACT_PI,
+            FilterParams
+                .build(FilterParamNames.CONTACT_PI,
                     GobiiExtractFilterType.BY_SAMPLE,
                     EntityType.CONTACT)
                 .setIsDynamicFilterValue(false)
                 .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR));
 
 
-        this.addFilter(FileItemParams
-            .build(FileItemParamNames.DATASETS,
+        this.addFilter(FilterParams
+            .build(FilterParamNames.DATASETS,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.DATASET)
             .setFilterType(FilterType.ENTITY_LIST));
@@ -178,30 +178,30 @@ export class FileItemService {
         //for hierarchical items, we need to crate the nameid requests separately from the
         //flat map: they _will_ need to be in the flat map; however, they all need to be
         //useed to set up the filtering hierarchy
-        let nameIdRequestParamsContactsPi: FileItemParams = FileItemParams
-            .build(FileItemParamNames.CONTACT_PI,
+        let nameIdRequestParamsContactsPi: FilterParams = FilterParams
+            .build(FilterParamNames.CONTACT_PI,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.CONTACT)
             .setIsDynamicFilterValue(true)
             .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR);
 
 
-        let nameIdRequestParamsProjectByPiContact: FileItemParams = FileItemParams
-            .build(FileItemParamNames.PROJECTS_BY_CONTACT,
+        let nameIdRequestParamsProjectByPiContact: FilterParams = FilterParams
+            .build(FilterParamNames.PROJECTS_BY_CONTACT,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.PROJECT)
             .setIsDynamicFilterValue(true)
             .setFilterType(FilterType.NAMES_BY_TYPEID);
 
-        let nameIdRequestParamsExperiments: FileItemParams = FileItemParams
-            .build(FileItemParamNames.EXPERIMENTS_BY_PROJECT,
+        let nameIdRequestParamsExperiments: FilterParams = FilterParams
+            .build(FilterParamNames.EXPERIMENTS_BY_PROJECT,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.EXPERIMENT)
             .setIsDynamicFilterValue(true)
             .setFilterType(FilterType.NAMES_BY_TYPEID);
 
-        let nameIdRequestParamsDatasets: FileItemParams = FileItemParams
-            .build(FileItemParamNames.DATASETS_BY_EXPERIMENT,
+        let nameIdRequestParamsDatasets: FilterParams = FilterParams
+            .build(FilterParamNames.DATASETS_BY_EXPERIMENT,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.DATASET)
             .setIsDynamicFilterValue(true)
@@ -228,55 +228,55 @@ export class FileItemService {
 
     } // constructor
 
-    public getForFilter(nameIdFilterParamTypes: FileItemParamNames): Observable<GobiiFileItem[]> {
+    public getForFilter(filterParamName: FilterParamNames): Observable<GobiiFileItem[]> {
 
         //Wrapping an Observable around the select functions just doesn't work. So at leaset this
         //function can encapsualte getting the correct selector for the filter
         let returnVal: Observable<GobiiFileItem[]>;
 
-        switch (nameIdFilterParamTypes) {
+        switch (filterParamName) {
 
-            case FileItemParamNames.MARKER_GROUPS:
+            case FilterParamNames.MARKER_GROUPS:
                 returnVal = this.store.select(fromRoot.getMarkerGroups);
                 break;
 
-            case FileItemParamNames.PROJECTS:
+            case FilterParamNames.PROJECTS:
                 returnVal = this.store.select(fromRoot.getProjects);
                 break;
 
-            case FileItemParamNames.PROJECTS_BY_CONTACT:
+            case FilterParamNames.PROJECTS_BY_CONTACT:
                 returnVal = this.store.select(fromRoot.getProjectsByPI);
                 break;
 
-            case FileItemParamNames.EXPERIMENTS_BY_PROJECT:
+            case FilterParamNames.EXPERIMENTS_BY_PROJECT:
                 returnVal = this.store.select(fromRoot.getExperimentsByProject);
                 break;
 
-            case FileItemParamNames.EXPERIMENTS:
+            case FilterParamNames.EXPERIMENTS:
                 returnVal = this.store.select(fromRoot.getExperiments);
                 break;
 
-            case FileItemParamNames.DATASETS_BY_EXPERIMENT:
+            case FilterParamNames.DATASETS_BY_EXPERIMENT:
                 returnVal = this.store.select(fromRoot.getDatasetsByExperiment);
                 break;
 
-            case FileItemParamNames.PLATFORMS:
+            case FilterParamNames.PLATFORMS:
                 returnVal = this.store.select(fromRoot.getPlatforms);
                 break;
 
-            case FileItemParamNames.CV_DATATYPE:
+            case FilterParamNames.CV_DATATYPE:
                 returnVal = this.store.select(fromRoot.getCvTermsDataType);
                 break;
 
-            case FileItemParamNames.CV_JOB_STATUS:
+            case FilterParamNames.CV_JOB_STATUS:
                 returnVal = this.store.select(fromRoot.getCvTermsJobStatus);
                 break;
 
-            case FileItemParamNames.MAPSETS:
+            case FilterParamNames.MAPSETS:
                 returnVal = this.store.select(fromRoot.getMapsets);
                 break;
 
-            case FileItemParamNames.CONTACT_PI:
+            case FilterParamNames.CONTACT_PI:
                 returnVal = this.store.select(fromRoot.getPiContacts);
                 break;
 
@@ -294,7 +294,7 @@ export class FileItemService {
         //     this.store
         //         .select(fromRoot.getAllFileItems)
         //         .subscribe(fileItems => {
-        //                 let nameIdRequestParams: FileItemParams = this.nameIdRequestParams.get(nameIdFilterParamTypes);
+        //                 let nameIdRequestParams: FileItemParams = this.nameIdRequestParams.get(filterParamNames);
         //                 if (nameIdRequestParams) {
         //                     if (!nameIdRequestParams.getIsDynamicFilterValue()) {
         //                         filteredItems = fileItems.filter(fi => fi.compoundIdeEquals(nameIdRequestParams))
@@ -334,15 +334,15 @@ export class FileItemService {
 
 
     public setItemLabelType(gobiiExtractFilterType: GobiiExtractFilterType,
-                            nameIdFilterParamTypes: FileItemParamNames,
+                            filterParamNames: FilterParamNames,
                             nameIdLabelType: NameIdLabelType) {
 
-        let nameIdRequestParamsFromType: FileItemParams = this.getFilter(nameIdFilterParamTypes, gobiiExtractFilterType);
+        let nameIdRequestParamsFromType: FilterParams = this.getFilter(filterParamNames, gobiiExtractFilterType);
         if (nameIdRequestParamsFromType) {
             nameIdRequestParamsFromType.setNameIdLabelType(nameIdLabelType);
         } else {
             this.store.dispatch(new historyAction.AddStatusMessageAction("Error setting label type: there is no query params object for query "
-                + nameIdFilterParamTypes
+                + filterParamNames
                 + " with extract filter type "
                 + GobiiExtractFilterType[gobiiExtractFilterType]));
         }
@@ -350,14 +350,14 @@ export class FileItemService {
     }
 
     public loadNameIdsFromFilterParams(gobiiExtractFilterType: GobiiExtractFilterType,
-                                       nameIdFilterParamTypes: FileItemParamNames,
+                                       filterParamName: FilterParamNames,
                                        filterValue: string) {
 
-        let nameIdRequestParamsFromType: FileItemParams = this.getFilter(nameIdFilterParamTypes, gobiiExtractFilterType);
+        let nameIdRequestParamsFromType: FilterParams = this.getFilter(filterParamName, gobiiExtractFilterType);
 
         if (nameIdRequestParamsFromType) {
 
-            this.makeNameIdLoadActions(gobiiExtractFilterType, nameIdFilterParamTypes, filterValue)
+            this.makeNameIdLoadActions(gobiiExtractFilterType, filterParamName, filterValue)
                 .subscribe(action => {
                     if (action) {
                         this.store.dispatch(action);
@@ -366,7 +366,7 @@ export class FileItemService {
 
         } else {
             this.store.dispatch(new historyAction.AddStatusMessageAction("Error loading with filter params: there is no query params object for query "
-                + nameIdFilterParamTypes
+                + filterParamName
                 + " with extract filter type "
                 + GobiiExtractFilterType[gobiiExtractFilterType]));
         }
@@ -420,10 +420,10 @@ export class FileItemService {
     }
 
     public makeNameIdLoadActions(gobiiExtractFilterType: GobiiExtractFilterType,
-                                 nameIdFilterParamTypes: FileItemParamNames,
+                                 filterParamTypes: FilterParamNames,
                                  filterValue: string): Observable<fileItemActions.LoadFileItemListWithFilterAction> {
 
-        let nameIdRequestParamsFromType: FileItemParams = this.getFilter(nameIdFilterParamTypes, gobiiExtractFilterType);
+        let nameIdRequestParamsFromType: FilterParams = this.getFilter(filterParamTypes, gobiiExtractFilterType);
 
         if (nameIdRequestParamsFromType) {
             return this.makeFileItemActionsFromNameIds(gobiiExtractFilterType,
@@ -432,7 +432,7 @@ export class FileItemService {
                 true);
         } else {
             this.store.dispatch(new historyAction.AddStatusMessageAction("Undefined FileItemParams filter: "
-                + nameIdFilterParamTypes.toString()
+                + filterParamTypes.toString()
                 + " for extract type " + GobiiExtractFilterType[gobiiExtractFilterType]))
         }
     }
@@ -454,13 +454,13 @@ export class FileItemService {
      * the select(). Think of this as a variation on the strange things that happen when you try to modify an
      * array within a loop that is iterating that same array.
      * @param {GobiiExtractFilterType} gobiiExtractFilterType
-     * @param {FileItemParams} filterParamsToLoad
+     * @param {FilterParams} filterParamsToLoad
      * @param {string} filterValue
      * @param {boolean} recurse
      * @returns {Observable<LoadFileItemListWithFilterAction>}
      */
     private makeFileItemActionsFromNameIds(gobiiExtractFilterType: GobiiExtractFilterType,
-                                           filterParamsToLoad: FileItemParams,
+                                           filterParamsToLoad: FilterParams,
                                            filterValue: string,
                                            recurse: boolean): Observable<fileItemActions.LoadFileItemListWithFilterAction> {
 
@@ -640,7 +640,7 @@ export class FileItemService {
                                                     for (let idx: number = 0;
                                                          idx < filterParamsToLoad.getChildFileItemParams().length;
                                                          idx++) {
-                                                        let rqp: FileItemParams = filterParamsToLoad.getChildFileItemParams()[idx];
+                                                        let rqp: FilterParams = filterParamsToLoad.getChildFileItemParams()[idx];
                                                         if (rqp.getFilterType() === FilterType.NAMES_BY_TYPEID) {
                                                             rqp.setFkEntityFilterValue(parentId);
 
@@ -711,7 +711,7 @@ export class FileItemService {
                                                 for (let idx: number = 0;
                                                      idx < filterParamsToLoad.getChildFileItemParams().length;
                                                      idx++) {
-                                                    let rqp: FileItemParams = filterParamsToLoad.getChildFileItemParams()[idx];
+                                                    let rqp: FilterParams = filterParamsToLoad.getChildFileItemParams()[idx];
                                                     if (rqp.getFilterType() === FilterType.NAMES_BY_TYPEID) {
                                                         rqp.setFkEntityFilterValue(childItemsFilterValue);
 
@@ -745,11 +745,11 @@ export class FileItemService {
 
 
     public loadEntityList(gobiiExtractFilterType: GobiiExtractFilterType,
-                          fileItemParamName: FileItemParamNames) {
+                          fileItemParamName: FilterParamNames) {
 
         try {
 
-            let fileItemParams: FileItemParams = this.getFilter(fileItemParamName, gobiiExtractFilterType);
+            let fileItemParams: FilterParams = this.getFilter(fileItemParamName, gobiiExtractFilterType);
             if (fileItemParams && fileItemParams.getFilterType() === FilterType.ENTITY_LIST) {
 
 

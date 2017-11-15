@@ -11,7 +11,7 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
         };
     })();
     var __moduleName = context_1 && context_1.id;
-    var filter_type_1, type_entity_1, cv_filter_type_1, type_extractor_filter_1, name_id_label_type_1, type_extractor_item_1, gobii_file_item_compound_id_1, FileItemParams;
+    var filter_type_1, type_entity_1, cv_filter_type_1, type_extractor_filter_1, name_id_label_type_1, type_extractor_item_1, gobii_file_item_compound_id_1, FilterParams;
     return {
         setters: [
             function (filter_type_1_1) {
@@ -42,19 +42,23 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
              */
             /***
              * This class is used extensively for the purpose of retrieving and
-             * managing the results of queries to the GOBII /names/{entity} service. The primary
-             * use case is in the NameIdService's get() method, where values from this class
+             * managing the results of queries to the GOBII /names/{entity} service. In this
+             * case, in the NameIdService's get() method, values from this class
              * are used to set up the GET request to the /names/{entityResource}. Of particular
              * note is the use fo the _fkEntityFilterValue value for the purpose of retrieving
              * names for a given entity when that entity must be filtered according to a foreign key.
              * For example, when retrieving projects by contact_id (i.e., by principle investigator contact
              * id), the _fkEntityFilterValue will be the value of the PI according to which the project names
              * should be filtered.
+             *
+             * This class also has more general application for retrieving whole entities (e.g., dataset records.
+             *
              * The _parentFileItemParams and _childFileItemParams can be used to create a tree of instances
              * of this class that can be used for hierarchical filtering. That is to say, the parent/child
              * relationships of FileItemParam instances corresponds to the primary/foreign key relationships of the
              * tables involved in generating the query. In our example, the project-by-contact FileFilterParams would be a
              * child of the contact FileFilterParams.
+             *
              * When an array of GobiiFileItem instances is created from a query resulting from a FileFilterParams,
              * their parentItemId value is set to the _fkEntityFilterValue value of the FileFilterParams. Moreover,
              * for all filters, the _fkEntityFilterValue for the current state of the UI is preserved in the store.
@@ -66,9 +70,9 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
              * matches current contact ID in state.
              *
              */
-            FileItemParams = (function (_super) {
-                __extends(FileItemParams, _super);
-                function FileItemParams(_queryName, _entityType, _filterType, _fkEntityFilterValue, _selectedItemId, _entitySubType, _cvFilterType, _gobiiExtractFilterType, _nameIdLabelType, _extractorItemType, _parentFileItemParams, _childFileItemParams, _isDynamicFilterValue) {
+            FilterParams = (function (_super) {
+                __extends(FilterParams, _super);
+                function FilterParams(_queryName, _entityType, _filterType, _fkEntityFilterValue, _selectedItemId, _entitySubType, _cvFilterType, _gobiiExtractFilterType, _nameIdLabelType, _extractorItemType, _parentFileItemParams, _childFileItemParams, _isDynamicFilterValue) {
                     if (_queryName === void 0) { _queryName = null; }
                     if (_entityType === void 0) { _entityType = type_entity_1.EntityType.UNKNOWN; }
                     if (_filterType === void 0) { _filterType = filter_type_1.FilterType.NONE; }
@@ -89,89 +93,89 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
                     _this._isDynamicFilterValue = _isDynamicFilterValue;
                     return _this;
                 }
-                FileItemParams.build = function (queryName, gobiiExtractFilterType, entityType) {
-                    return (new FileItemParams(queryName, entityType, filter_type_1.FilterType.NONE, null, null, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, gobiiExtractFilterType, name_id_label_type_1.NameIdLabelType.UNKNOWN, type_extractor_item_1.ExtractorItemType.ENTITY, null, [], true));
+                FilterParams.build = function (queryName, gobiiExtractFilterType, entityType) {
+                    return (new FilterParams(queryName, entityType, filter_type_1.FilterType.NONE, null, null, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, gobiiExtractFilterType, name_id_label_type_1.NameIdLabelType.UNKNOWN, type_extractor_item_1.ExtractorItemType.ENTITY, null, [], true));
                 };
-                FileItemParams.prototype.getQueryName = function () {
+                FilterParams.prototype.getQueryName = function () {
                     return this._queryName;
                 };
-                FileItemParams.prototype.getExtractorItemType = function () {
+                FilterParams.prototype.getExtractorItemType = function () {
                     return _super.prototype.getExtractorItemType.call(this);
                 };
-                FileItemParams.prototype.setExtractorItemType = function (value) {
+                FilterParams.prototype.setExtractorItemType = function (value) {
                     _super.prototype.setExtractorItemType.call(this, value);
                     return this;
                 };
-                FileItemParams.prototype.getEntityType = function () {
+                FilterParams.prototype.getEntityType = function () {
                     return _super.prototype.getEntityType.call(this);
                 };
-                FileItemParams.prototype.setEntityType = function (value) {
+                FilterParams.prototype.setEntityType = function (value) {
                     _super.prototype.setEntityType.call(this, value);
                     return this;
                 };
-                FileItemParams.prototype.getEntitySubType = function () {
+                FilterParams.prototype.getEntitySubType = function () {
                     return _super.prototype.getEntitySubType.call(this);
                 };
-                FileItemParams.prototype.setEntitySubType = function (value) {
+                FilterParams.prototype.setEntitySubType = function (value) {
                     _super.prototype.setEntitySubType.call(this, value);
                     return this;
                 };
-                FileItemParams.prototype.getCvFilterType = function () {
+                FilterParams.prototype.getCvFilterType = function () {
                     return _super.prototype.getCvFilterType.call(this);
                 };
-                FileItemParams.prototype.setCvFilterType = function (value) {
+                FilterParams.prototype.setCvFilterType = function (value) {
                     _super.prototype.setCvFilterType.call(this, value);
                     return this;
                 };
-                FileItemParams.prototype.getFilterType = function () {
+                FilterParams.prototype.getFilterType = function () {
                     return this._filterType;
                 };
-                FileItemParams.prototype.setFilterType = function (value) {
+                FilterParams.prototype.setFilterType = function (value) {
                     this._filterType = value;
                     return this;
                 };
-                FileItemParams.prototype.getFkEntityFilterValue = function () {
+                FilterParams.prototype.getFkEntityFilterValue = function () {
                     return this._fkEntityFilterValue;
                 };
-                FileItemParams.prototype.setFkEntityFilterValue = function (value) {
+                FilterParams.prototype.setFkEntityFilterValue = function (value) {
                     this._fkEntityFilterValue = value;
                     return this;
                 };
-                FileItemParams.prototype.getGobiiExtractFilterType = function () {
+                FilterParams.prototype.getGobiiExtractFilterType = function () {
                     return this._gobiiExtractFilterType;
                 };
-                FileItemParams.prototype.setGobiiExtractFilterType = function (value) {
+                FilterParams.prototype.setGobiiExtractFilterType = function (value) {
                     this._gobiiExtractFilterType = value;
                     return this;
                 };
-                FileItemParams.prototype.setNameIdLabelType = function (nameIdLabelType) {
+                FilterParams.prototype.setNameIdLabelType = function (nameIdLabelType) {
                     this._nameIdLabelType = nameIdLabelType;
                     return this;
                 };
-                FileItemParams.prototype.getMameIdLabelType = function () {
+                FilterParams.prototype.getMameIdLabelType = function () {
                     return this._nameIdLabelType;
                 };
-                FileItemParams.prototype.setParentFileItemParams = function (fileItemParams) {
+                FilterParams.prototype.setParentFileItemParams = function (fileItemParams) {
                     this._parentFileItemParams = fileItemParams;
                     return this;
                 };
-                FileItemParams.prototype.getChildFileItemParams = function () {
+                FilterParams.prototype.getChildFileItemParams = function () {
                     return this._childFileItemParams;
                 };
-                FileItemParams.prototype.setChildNameIdRequestParams = function (childNameIdRequestParams) {
+                FilterParams.prototype.setChildNameIdRequestParams = function (childNameIdRequestParams) {
                     this._childFileItemParams = childNameIdRequestParams;
                     return this;
                 };
-                FileItemParams.prototype.setIsDynamicFilterValue = function (dynamicFilterValue) {
+                FilterParams.prototype.setIsDynamicFilterValue = function (dynamicFilterValue) {
                     this._isDynamicFilterValue = dynamicFilterValue;
                     return this;
                 };
-                FileItemParams.prototype.getIsDynamicFilterValue = function () {
+                FilterParams.prototype.getIsDynamicFilterValue = function () {
                     return this._isDynamicFilterValue;
                 };
-                return FileItemParams;
+                return FilterParams;
             }(gobii_file_item_compound_id_1.GobiiFileItemCompoundId));
-            exports_1("FileItemParams", FileItemParams);
+            exports_1("FilterParams", FilterParams);
         }
     };
 });

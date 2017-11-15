@@ -15,7 +15,7 @@ import {GobiiFileItem} from "../../model/gobii-file-item";
 import {Observable} from "rxjs/Observable";
 import {Store} from "@ngrx/store";
 import {FileItemService} from "../../services/core/file-item-service";
-import {FileItemParamNames} from "../../model/file-item-param-names";
+import {FilterParamNames} from "../../model/file-item-param-names";
 import {EntitySubType, EntityType} from "../../model/type-entity";
 import "rxjs/add/operator/mergeMap"
 import {AddFilterRetrieved} from "../actions/history-action";
@@ -210,19 +210,19 @@ export class FileItemEffects {
                                 let fileItemToReplaceWith: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === fileItemToReplaceWithUniqueId);
 
                                 // RUN FILTERED QUERY TO GET CHILD ITEMS WHEN NECESSARY
-                                let nameIdFilterParamType: FileItemParamNames = FileItemParamNames.UNKNOWN;
+                                let nameIdFilterParamType: FilterParamNames = FilterParamNames.UNKNOWN;
                                 let filterValue: string = fileItemToReplaceWith.getItemId();
 
                                 if (fileItemToReplaceWith.getEntityType() === EntityType.CONTACT
                                     && (fileItemToReplaceWith.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR )) {
-                                    nameIdFilterParamType = FileItemParamNames.PROJECTS_BY_CONTACT;
+                                    nameIdFilterParamType = FilterParamNames.PROJECTS_BY_CONTACT;
                                 } else if (fileItemToReplaceWith.getEntityType() === EntityType.PROJECT) {
-                                    nameIdFilterParamType = FileItemParamNames.EXPERIMENTS_BY_PROJECT;
+                                    nameIdFilterParamType = FilterParamNames.EXPERIMENTS_BY_PROJECT;
                                 } else if (fileItemToReplaceWith.getEntityType() === EntityType.EXPERIMENT) {
-                                    nameIdFilterParamType = FileItemParamNames.DATASETS_BY_EXPERIMENT;
+                                    nameIdFilterParamType = FilterParamNames.DATASETS_BY_EXPERIMENT;
                                 }
 
-                                if ((nameIdFilterParamType !== FileItemParamNames.UNKNOWN && filterValue != null)) {
+                                if ((nameIdFilterParamType !== FilterParamNames.UNKNOWN && filterValue != null)) {
 
                                     this.fileItemService.makeNameIdLoadActions(action.payload.gobiiExtractFilterType,
                                         nameIdFilterParamType,

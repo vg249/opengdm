@@ -39,7 +39,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../model/
                     this.store = store;
                     this.fileItemService = fileItemService;
                     this.datasets$ = this.store.select(fromRoot.getDatsetEntities);
-                    this.nameIdFilterParamTypes = Object.assign({}, file_item_param_names_1.FileItemParamNames);
+                    this.nameIdFilterParamTypes = Object.assign({}, file_item_param_names_1.FilterParamNames);
                 }
                 DatasetDatatableComponent.prototype.ngOnInit = function () {
                 }; // ngOnInit()
@@ -49,8 +49,8 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../model/
                         && (changes['gobiiExtractFilterType'].currentValue != null)
                         && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
                         if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
-                            this.fileItemService.loadEntityList(this.gobiiExtractFilterType, file_item_param_names_1.FileItemParamNames.DATASETS);
-                            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FileItemParamNames.CV_JOB_STATUS, null);
+                            this.fileItemService.loadEntityList(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.DATASETS);
+                            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.CV_JOB_STATUS, null);
                         } // if we have a new filter type
                     } // if filter type changed
                 }; // ngonChanges
@@ -63,7 +63,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../model/
                         selector: 'dataset-datatable',
                         inputs: [],
                         outputs: [],
-                        template: "\n        <div style=\"border: 1px solid #336699; padding-left: 5px\">\n            <div class=\"container-fluid\">\n                <div class=\"row\">\n                    <BR>\n                    <label class=\"the-legend\">Filter by Status:&nbsp;</label>\n                    <name-id-list-box\n                            [gobiiExtractFilterType]=\"gobiiExtractFilterType\"\n                            [nameIdFilterParamTypes]=\"nameIdFilterParamTypes.CV_JOB_STATUS\">\n                    </name-id-list-box>\n\n                </div> <!--status selector row -->\n                <div class=\"row\">\n                    <p-dataTable [value]=\"datasets$ | async\">\n                        <p-column field=\"name\" header=\"Name\"></p-column>\n                        <p-column field=\"jobStatusName\" header=\"Status\"></p-column>\n                        <p-column field=\"jobSubmittedDate\" header=\"Submitted\">\n                            <ng-template let-col let-ds=\"rowData\" pTemplate=\"body\">\n                                {{ds[col.field] | date:'yyyy-MM-dd HH:mm' }}\n                            </ng-template>\n                        </p-column>\n                    </p-dataTable>\n                </div> <!-- table row -->\n            </div><!--container  -->\n        </div> <!-- enclosing box  -->\n    " // end template
+                        template: "\n        <div style=\"border: 1px solid #336699; padding-left: 5px\">\n            <div class=\"container-fluid\">\n                <div class=\"row\">\n                    <BR>\n                    <label class=\"the-legend\">Filter by Status:&nbsp;</label>\n                    <name-id-list-box\n                            [gobiiExtractFilterType]=\"gobiiExtractFilterType\"\n                            [filterParamName]=\"nameIdFilterParamTypes.CV_JOB_STATUS\">\n                    </name-id-list-box>\n\n                </div> <!--status selector row -->\n                <div class=\"row\">\n                    <p-dataTable [value]=\"datasets$ | async\">\n                        <p-column field=\"name\" header=\"Name\"></p-column>\n                        <p-column field=\"jobStatusName\" header=\"Status\"></p-column>\n                        <p-column field=\"jobSubmittedDate\" header=\"Submitted\">\n                            <ng-template let-col let-ds=\"rowData\" pTemplate=\"body\">\n                                {{ds[col.field] | date:'yyyy-MM-dd HH:mm' }}\n                            </ng-template>\n                        </p-column>\n                    </p-dataTable>\n                </div> <!-- table row -->\n            </div><!--container  -->\n        </div> <!-- enclosing box  -->\n    " // end template
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
                         file_item_service_1.FileItemService])
