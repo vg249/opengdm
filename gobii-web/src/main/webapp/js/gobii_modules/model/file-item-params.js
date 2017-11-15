@@ -55,17 +55,19 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
              *
              * The _parentFileItemParams and _childFileItemParams can be used to create a tree of instances
              * of this class that can be used for hierarchical filtering. That is to say, the parent/child
-             * relationships of FileItemParam instances corresponds to the primary/foreign key relationships of the
-             * tables involved in generating the query. In our example, the project-by-contact FileFilterParams would be a
-             * child of the contact FileFilterParams.
-             *
-             * When an array of GobiiFileItem instances is created from a query resulting from a FileFilterParams,
-             * their parentItemId value is set to the _fkEntityFilterValue value of the FileFilterParams. Moreover,
-             * for all filters, the _fkEntityFilterValue for the current state of the UI is preserved in the store.
-             * Thus, for any given state of the store, with a given filter value, a selector can retrieve the
-             * entities for a given filter value. For example, when projects are retrieved for a given contact id,
-             * the project query's filter is set to that contact when the project file items are added to the store.
-             * When we want to get the "currently selected" projects from the store (i.e., the projects filtered for
+             * relationships of FilterParams instances corresponds to the primary/foreign key relationships of the
+             * tables involved in generating the query. In our example, the PROJECTS_BY_CONTACT FileFilterParams is a
+             * child of the CONTACT_PI FileFilterParams. The PROJECTS_BY_CONTACT query will be run along with a
+             * contactId value, which will serve to filter the results of the project query. That contactId value
+             * will now be the _fkEntityFilterValue of the PROJECTS_BY_CONTACT FilterValues. Moreover, each
+             * GobiiFileItem resulting from the PROJECTS_BY_CONTACT query will be assigned the contactId as its
+             * parentItemId value. Thus, once the GobiiFileItems have been retrieved from the server, they can
+             * subsequently be retrieved from the store such that the GobiiFileItems of EntityType PROJECT are
+             * filtered as follows: the current _fkEntityFilterValue of the PROJECTS_BY_CONTACT filter matches
+             * the parentItemId of the GobiiFileItems of EntityType PROJECT. Thus, the PROJECTS_BY_CONTACT filter,
+             * with an arbitrary _fkEntityFilterValue, can be dispatched to the store at any time and thereby change
+             * the set of GobiiFileItems that are filtered in this way. In other words, when we want to get the
+             * "currently selected" projects from the store (i.e., the projects filtered for
              * the pi who is currently selected in the UI), the selector returns the file items whose parent id
              * matches current contact ID in state.
              *
