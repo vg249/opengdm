@@ -68,6 +68,7 @@ export class NameIdListBoxComponent  {
         let previousFileItemUniqueId: string = this.previousSelectedItemId;
 
         this.store.dispatch(new fileAction.ReplaceInExtractByItemIdAction({
+            filterParamName: this.filterParamName,
             gobiiExtractFilterType: this.gobiiExtractFilterType,
             itemIdCurrentlyInExtract: previousFileItemUniqueId,
             itemIdToReplaceItWith: newFileItemUniqueId

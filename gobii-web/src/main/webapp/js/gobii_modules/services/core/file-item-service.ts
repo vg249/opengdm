@@ -349,6 +349,7 @@ export class FileItemService {
 
     }
 
+
     public loadNameIdsFromFilterParams(gobiiExtractFilterType: GobiiExtractFilterType,
                                        filterParamName: FilterParamNames,
                                        filterValue: string) {
@@ -419,11 +420,47 @@ export class FileItemService {
 
     }
 
+
+    public loadChildFromFilterParams(gobiiExtractFilterType: GobiiExtractFilterType,
+                                     filterParamName: FilterParamNames,
+                                     filterValue: string): Observable<fileItemActions.LoadFileItemListWithFilterAction> {
+
+        let returnVal:Observable<fileItemActions.LoadFileItemListWithFilterAction>;
+
+        let filterParams: FilterParams = this.getFilter(filterParamName, gobiiExtractFilterType);
+        if (filterParams) {
+
+            if (filterParams.getChildFileItemParams() && filterParams.getChildFileItemParams().length <= 1) {
+
+                if( filterParams.getChildFileItemParams().length === 1 ) {
+                    filterParams = filterParams.getChildFileItemParams()[0];
+                }
+
+                returnVal = this.makeFileItemActionsFromNameIds(gobiiExtractFilterType,
+                    filterParams,
+                    filterValue,
+                    true);
+            } else {
+                this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled filter condition "
+                    + filterParamName.toString()
+                    + " for extract type " + GobiiExtractFilterType[gobiiExtractFilterType]
+                    + " has more than one child filter"));
+            }
+        } else {
+            this.store.dispatch(new historyAction.AddStatusMessageAction("Undefined FileItemParams filter: "
+                + filterParamName.toString()
+                + " for extract type " + GobiiExtractFilterType[gobiiExtractFilterType]));
+        }
+
+        return returnVal;
+    }
+
+
     public makeNameIdLoadActions(gobiiExtractFilterType: GobiiExtractFilterType,
-                                 filterParamTypes: FilterParamNames,
+                                 filterParamName: FilterParamNames,
                                  filterValue: string): Observable<fileItemActions.LoadFileItemListWithFilterAction> {
 
-        let nameIdRequestParamsFromType: FilterParams = this.getFilter(filterParamTypes, gobiiExtractFilterType);
+        let nameIdRequestParamsFromType: FilterParams = this.getFilter(filterParamName, gobiiExtractFilterType);
 
         if (nameIdRequestParamsFromType) {
             return this.makeFileItemActionsFromNameIds(gobiiExtractFilterType,
@@ -432,7 +469,7 @@ export class FileItemService {
                 true);
         } else {
             this.store.dispatch(new historyAction.AddStatusMessageAction("Undefined FileItemParams filter: "
-                + filterParamTypes.toString()
+                + filterParamName.toString()
                 + " for extract type " + GobiiExtractFilterType[gobiiExtractFilterType]))
         }
     }
@@ -831,7 +868,7 @@ export class FileItemService {
 
             } // if else fileItemParams are correct
 
-        } catch(error) {
+        } catch (error) {
             this.store.dispatch(new historyAction.AddStatusAction(error));
         }
     }//loadEntityList()

@@ -205,27 +205,18 @@ export class FileItemEffects {
 
                     let fileItemToReplaceWithUniqueId: string = action.payload.itemIdToReplaceItWith;
                     let fileItemCurrentlyInExtractUniqueId: string = action.payload.itemIdCurrentlyInExtract;
+                    let filterParamName: FilterParamNames = action.payload.filterParamName;
                     this.store.select(fromRoot.getAllFileItems)
                         .subscribe(all => {
                                 let fileItemToReplaceWith: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === fileItemToReplaceWithUniqueId);
 
                                 // RUN FILTERED QUERY TO GET CHILD ITEMS WHEN NECESSARY
-                                let nameIdFilterParamType: FilterParamNames = FilterParamNames.UNKNOWN;
                                 let filterValue: string = fileItemToReplaceWith.getItemId();
 
-                                if (fileItemToReplaceWith.getEntityType() === EntityType.CONTACT
-                                    && (fileItemToReplaceWith.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR )) {
-                                    nameIdFilterParamType = FilterParamNames.PROJECTS_BY_CONTACT;
-                                } else if (fileItemToReplaceWith.getEntityType() === EntityType.PROJECT) {
-                                    nameIdFilterParamType = FilterParamNames.EXPERIMENTS_BY_PROJECT;
-                                } else if (fileItemToReplaceWith.getEntityType() === EntityType.EXPERIMENT) {
-                                    nameIdFilterParamType = FilterParamNames.DATASETS_BY_EXPERIMENT;
-                                }
+                                if ((filterParamName !== FilterParamNames.UNKNOWN && filterValue != null)) {
 
-                                if ((nameIdFilterParamType !== FilterParamNames.UNKNOWN && filterValue != null)) {
-
-                                    this.fileItemService.makeNameIdLoadActions(action.payload.gobiiExtractFilterType,
-                                        nameIdFilterParamType,
+                                    this.fileItemService.loadChildFromFilterParams(action.payload.gobiiExtractFilterType,
+                                        filterParamName,
                                         filterValue).subscribe(loadFileItemListAction => {
 
                                             observer.next(loadFileItemListAction);

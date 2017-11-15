@@ -56,6 +56,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
                     var newFileItemUniqueId = arg.currentTarget.value;
                     var previousFileItemUniqueId = this.previousSelectedItemId;
                     this.store.dispatch(new fileAction.ReplaceInExtractByItemIdAction({
+                        filterParamName: this.filterParamName,
                         gobiiExtractFilterType: this.gobiiExtractFilterType,
                         itemIdCurrentlyInExtract: previousFileItemUniqueId,
                         itemIdToReplaceItWith: newFileItemUniqueId

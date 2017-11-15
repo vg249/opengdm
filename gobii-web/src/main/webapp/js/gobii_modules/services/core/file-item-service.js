@@ -345,14 +345,38 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     var loadAction = new fileItemActions.RemoveFromExtractAction(gobiiFileItem);
                     this.store.dispatch(loadAction);
                 };
-                FileItemService.prototype.makeNameIdLoadActions = function (gobiiExtractFilterType, filterParamTypes, filterValue) {
-                    var nameIdRequestParamsFromType = this.getFilter(filterParamTypes, gobiiExtractFilterType);
+                FileItemService.prototype.loadChildFromFilterParams = function (gobiiExtractFilterType, filterParamName, filterValue) {
+                    var returnVal;
+                    var filterParams = this.getFilter(filterParamName, gobiiExtractFilterType);
+                    if (filterParams) {
+                        if (filterParams.getChildFileItemParams() && filterParams.getChildFileItemParams().length <= 1) {
+                            if (filterParams.getChildFileItemParams().length === 1) {
+                                filterParams = filterParams.getChildFileItemParams()[0];
+                            }
+                            returnVal = this.makeFileItemActionsFromNameIds(gobiiExtractFilterType, filterParams, filterValue, true);
+                        }
+                        else {
+                            this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled filter condition "
+                                + filterParamName.toString()
+                                + " for extract type " + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]
+                                + " has more than one child filter"));
+                        }
+                    }
+                    else {
+                        this.store.dispatch(new historyAction.AddStatusMessageAction("Undefined FileItemParams filter: "
+                            + filterParamName.toString()
+                            + " for extract type " + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]));
+                    }
+                    return returnVal;
+                };
+                FileItemService.prototype.makeNameIdLoadActions = function (gobiiExtractFilterType, filterParamName, filterValue) {
+                    var nameIdRequestParamsFromType = this.getFilter(filterParamName, gobiiExtractFilterType);
                     if (nameIdRequestParamsFromType) {
                         return this.makeFileItemActionsFromNameIds(gobiiExtractFilterType, nameIdRequestParamsFromType, filterValue, true);
                     }
                     else {
                         this.store.dispatch(new historyAction.AddStatusMessageAction("Undefined FileItemParams filter: "
-                            + filterParamTypes.toString()
+                            + filterParamName.toString()
                             + " for extract type " + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]));
                     }
                 };
