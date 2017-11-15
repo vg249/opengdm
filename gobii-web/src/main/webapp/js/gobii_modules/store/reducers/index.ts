@@ -132,6 +132,7 @@ export const getProjects = createSelector(getFileItemsState, fromFileItems.getPr
 export const getExperiments = createSelector(getFileItemsState, fromFileItems.getExperiments);
 export const getDatasets = createSelector(getFileItemsState, fromFileItems.getDatasets);
 export const getCvTermsDataType = createSelector(getFileItemsState, fromFileItems.getCvTermsDataType);
+export const getCvTermsJobStatus = createSelector(getFileItemsState, fromFileItems.getCvTermsJobStatus);
 export const getMapsets = createSelector(getFileItemsState, fromFileItems.getMapsets);
 export const getPlatforms = createSelector(getFileItemsState, fromFileItems.getPlatforms);
 export const getMarkerGroups = createSelector(getFileItemsState, fromFileItems.getMarkerGroups);

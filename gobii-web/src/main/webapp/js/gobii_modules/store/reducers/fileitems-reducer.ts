@@ -572,6 +572,19 @@ export const getCvTermsDataType = createSelector(getFileItems, getUniqueIds, (fi
 });
 
 
+export const getCvTermsJobStatus = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+
+    let returnVal: GobiiFileItem[] = fileItems.filter(e =>
+        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            || e.getExtractorItemType() === ExtractorItemType.LABEL )
+        && e.getEntityType() === EntityType.CV
+        && e.getCvFilterType() === CvFilterType.JOB_STATUS)
+        .map(fi => fi);
+
+    return returnVal;
+});
+
+
 export const getMapsets = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
     return fileItems.filter(e =>

@@ -93,6 +93,18 @@ export class FileItemService {
 
         this.addFilter(
             FileItemParams
+                .build(FileItemParamNames.CV_JOB_STATUS,
+                    GobiiExtractFilterType.WHOLE_DATASET,
+                    EntityType.CV)
+                .setIsDynamicFilterValue(false)
+                .setCvFilterType(CvFilterType.JOB_STATUS)
+                .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
+                .setFkEntityFilterValue(CvFilters.get(CvFilterType.JOB_STATUS))
+                .setNameIdLabelType(NameIdLabelType.ALL)
+        );
+
+        this.addFilter(
+            FileItemParams
                 .build(FileItemParamNames.MAPSETS,
                     GobiiExtractFilterType.WHOLE_DATASET,
                     EntityType.MAPSET)
@@ -254,6 +266,10 @@ export class FileItemService {
 
             case FileItemParamNames.CV_DATATYPE:
                 returnVal = this.store.select(fromRoot.getCvTermsDataType);
+                break;
+
+            case FileItemParamNames.CV_JOB_STATUS:
+                returnVal = this.store.select(fromRoot.getCvTermsJobStatus);
                 break;
 
             case FileItemParamNames.MAPSETS:

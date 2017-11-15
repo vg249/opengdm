@@ -179,7 +179,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                     </checklist-box>
                                     <BR>
                                     <BR>
-                                    <label class="the-label">All Data Sets</label><BR>
+                                    <label class="the-label">Data Sets</label><BR>
                                     <dataset-datatable
                                             [gobiiExtractFilterType]="gobiiExtractFilterType">
                                     </dataset-datatable>

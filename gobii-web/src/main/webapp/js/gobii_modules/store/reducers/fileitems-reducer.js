@@ -259,7 +259,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
         return returnVal;
     }
     exports_1("fileItemsReducer", fileItemsReducer);
-    var _this, reselect_1, gobii_file_item_1, gobiiFileItemAction, type_extractor_item_1, type_entity_1, file_item_param_names_1, type_process_1, entity_labels_1, type_extractor_filter_1, type_extract_format_1, cv_filter_type_1, type_extractor_sample_list_1, initialState, getGobiiExtractFilterType, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getSelectedFileFormat, getSelectedSampleType, getJobId, getUploadFiles, getPiContacts, getProjects, getExperiments, getDatasets, getCvTermsDataType, getMapsets, getPlatforms, getMarkerGroups, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment, getDatasetEntities;
+    var _this, reselect_1, gobii_file_item_1, gobiiFileItemAction, type_extractor_item_1, type_entity_1, file_item_param_names_1, type_process_1, entity_labels_1, type_extractor_filter_1, type_extract_format_1, cv_filter_type_1, type_extractor_sample_list_1, initialState, getGobiiExtractFilterType, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getSelectedFileFormat, getSelectedSampleType, getJobId, getUploadFiles, getPiContacts, getProjects, getExperiments, getDatasets, getCvTermsDataType, getCvTermsJobStatus, getMapsets, getPlatforms, getMarkerGroups, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment, getDatasetEntities;
     return {
         setters: [
             function (reselect_1_1) {
@@ -433,6 +433,16 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                         || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
                         && e.getEntityType() === type_entity_1.EntityType.CV
                         && e.getCvFilterType() === cv_filter_type_1.CvFilterType.DATASET_TYPE;
+                })
+                    .map(function (fi) { return fi; });
+                return returnVal;
+            }));
+            exports_1("getCvTermsJobStatus", getCvTermsJobStatus = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
+                var returnVal = fileItems.filter(function (e) {
+                    return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
+                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
+                        && e.getEntityType() === type_entity_1.EntityType.CV
+                        && e.getCvFilterType() === cv_filter_type_1.CvFilterType.JOB_STATUS;
                 })
                     .map(function (fi) { return fi; });
                 return returnVal;

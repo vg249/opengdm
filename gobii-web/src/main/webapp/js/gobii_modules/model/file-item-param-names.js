@@ -18,6 +18,7 @@ System.register([], function (exports_1, context_1) {
                 FileItemParamNames.EXPERIMENTS = "Experiments";
                 FileItemParamNames.EXPERIMENTS_BY_PROJECT = "Experiments-by-project";
                 FileItemParamNames.CV_DATATYPE = "Cv-DataType";
+                FileItemParamNames.CV_JOB_STATUS = "Cv-JobStatus";
                 FileItemParamNames.MAPSETS = "Mapsets";
                 FileItemParamNames.PLATFORMS = "Platforms";
                 FileItemParamNames.DATASETS_BY_EXPERIMENT = "Datasets-by-experiment";

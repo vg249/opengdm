@@ -27,6 +27,7 @@ export class Labels {
 
 
         this.cvFilterNodeLabels[CvFilterType.DATASET_TYPE] = "Dataset Type";
+        this.cvFilterNodeLabels[CvFilterType.JOB_STATUS] = "Job Statuse";
 
         this.entitySubtypeNodeLabels[EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR] = "Principle Investigator";
         this.entitySubtypeNodeLabels[EntitySubType.CONTACT_SUBMITED_BY] = "Submit As";

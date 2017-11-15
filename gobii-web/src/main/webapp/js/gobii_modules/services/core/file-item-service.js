@@ -110,6 +110,13 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                         .setFkEntityFilterValue(cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.DATASET_TYPE))
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A));
                     this.addFilter(file_item_params_1.FileItemParams
+                        .build(file_item_param_names_1.FileItemParamNames.CV_JOB_STATUS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.CV)
+                        .setIsDynamicFilterValue(false)
+                        .setCvFilterType(cv_filter_type_1.CvFilterType.JOB_STATUS)
+                        .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPE_NAME)
+                        .setFkEntityFilterValue(cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.JOB_STATUS))
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL));
+                    this.addFilter(file_item_params_1.FileItemParams
                         .build(file_item_param_names_1.FileItemParamNames.MAPSETS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.MAPSET)
                         .setIsDynamicFilterValue(false)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.NO));
@@ -227,6 +234,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                             break;
                         case file_item_param_names_1.FileItemParamNames.CV_DATATYPE:
                             returnVal = this.store.select(fromRoot.getCvTermsDataType);
+                            break;
+                        case file_item_param_names_1.FileItemParamNames.CV_JOB_STATUS:
+                            returnVal = this.store.select(fromRoot.getCvTermsJobStatus);
                             break;
                         case file_item_param_names_1.FileItemParamNames.MAPSETS:
                             returnVal = this.store.select(fromRoot.getMapsets);

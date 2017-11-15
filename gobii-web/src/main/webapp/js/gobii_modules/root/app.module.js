@@ -145,6 +145,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/http", "@angular/p
                             primeng_1.CheckboxModule,
                             primeng_1.SharedModule,
                             primeng_1.DataTableModule,
+                            primeng_1.PanelModule,
                             app_routing_1.routing,
                             animations_1.BrowserAnimationsModule,
                             store_1.StoreModule.forRoot(reducers_1.reducers),

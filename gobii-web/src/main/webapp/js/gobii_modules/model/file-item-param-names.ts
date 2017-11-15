@@ -10,6 +10,7 @@ export class FileItemParamNames {
     public static EXPERIMENTS: string = "Experiments";
     public static EXPERIMENTS_BY_PROJECT: string = "Experiments-by-project";
     public static CV_DATATYPE: string = "Cv-DataType";
+    public static CV_JOB_STATUS: string = "Cv-JobStatus";
     public static MAPSETS: string = "Mapsets";
     public static PLATFORMS: string = "Platforms";
     public static DATASETS_BY_EXPERIMENT: string = "Datasets-by-experiment";

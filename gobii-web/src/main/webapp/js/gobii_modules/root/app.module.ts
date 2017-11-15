@@ -17,7 +17,7 @@ import {AuthenticationService} from "../services/core/authentication.service";
 import {TextAreaComponent} from "../views/text-area.component";
 import {UploaderComponent} from "../views/uploader.component";
 import {SampleListTypeComponent} from "../views/sample-list-type.component";
-import {CheckboxModule, DataTableModule, Dialog, SharedModule, TreeModule} from 'primeng/primeng';
+import {CheckboxModule, DataTableModule, Dialog, PanelModule, SharedModule, TreeModule} from 'primeng/primeng';
 import {StatusDisplayTreeComponent} from "../views/status-display-tree.component";
 import {NameIdListBoxComponent} from "../views/name-id-list-box.component";
 import {NameIdService} from "../services/core/name-id-service";
@@ -49,6 +49,7 @@ import {DatasetDatatableComponent} from "../views/dataset-datatable.component.";
         CheckboxModule,
         SharedModule,
         DataTableModule,
+        PanelModule,
         routing,
         BrowserAnimationsModule,
         StoreModule.forRoot(reducers),

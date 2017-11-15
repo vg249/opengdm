@@ -6,6 +6,7 @@ import {FileItemService} from "../services/core/file-item-service";
 import {FileItemParamNames} from "../model/file-item-param-names";
 import {Observable} from "rxjs/Observable";
 import {DataSet} from "../model/dataset";
+import {GobiiFileItem} from "../model/gobii-file-item";
 
 
 @Component({
@@ -13,15 +14,30 @@ import {DataSet} from "../model/dataset";
     inputs: [],
     outputs: [],
     template: `
-        <p-dataTable [value]="datasets$ | async">
-            <p-column field="id" header="Id"></p-column>
-            <p-column field="name" header="Name"></p-column>
-            <p-column field="createdDate" header="Created">
-                <ng-template let-col let-ds="rowData" pTemplate="body">
-                    {{ds[col.field]|date:'yyyy-MM-dd' }}
-                </ng-template>                
-            </p-column>
-        </p-dataTable>
+        <div style="border: 1px solid #336699; padding-left: 5px">
+            <div class="container-fluid">
+                <div class="row">
+                    <BR>
+                    <label class="the-legend">Filter by Status:&nbsp;</label>
+                    <name-id-list-box
+                            [gobiiExtractFilterType]="gobiiExtractFilterType"
+                            [nameIdFilterParamTypes]="nameIdFilterParamTypes.CV_JOB_STATUS">
+                    </name-id-list-box>
+
+                </div> <!--status selector row -->
+                <div class="row">
+                    <p-dataTable [value]="datasets$ | async">
+                        <p-column field="id" header="Id"></p-column>
+                        <p-column field="name" header="Name"></p-column>
+                        <p-column field="createdDate" header="Created">
+                            <ng-template let-col let-ds="rowData" pTemplate="body">
+                                {{ds[col.field] | date:'yyyy-MM-dd' }}
+                            </ng-template>
+                        </p-column>
+                    </p-dataTable>
+                </div> <!-- table row -->
+            </div><!--container  -->
+        </div> <!-- enclosing box  -->
     ` // end template
 
 })
@@ -34,9 +50,10 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
     }
 
     public datasets$: Observable<DataSet[]> = this.store.select(fromRoot.getDatsetEntities);
+    public nameIdFilterParamTypes: any = Object.assign({}, FileItemParamNames);
 
     @Input()
-    private gobiiExtractFilterType: GobiiExtractFilterType;
+    public gobiiExtractFilterType: GobiiExtractFilterType;
 
     ngOnInit() {
 
@@ -52,6 +69,9 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
             if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
 
                 this.fileItemService.loadEntityList(this.gobiiExtractFilterType, FileItemParamNames.DATASETS);
+                this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                    FileItemParamNames.CV_JOB_STATUS,
+                    null);
 
             } // if we have a new filter type
 
