@@ -285,7 +285,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                                 // RUN FILTERED QUERY TO GET CHILD ITEMS WHEN NECESSARY
                                 var filterValue = fileItemToReplaceWith.getItemId();
                                 if ((filterParamName !== file_item_param_names_1.FilterParamNames.UNKNOWN && filterValue != null)) {
-                                    _this.fileItemService.loadChildFromFilterParams(action.payload.gobiiExtractFilterType, filterParamName, filterValue).subscribe(function (loadFileItemListAction) {
+                                    _this.fileItemService.makeFileActionsFromFilterParamName(action.payload.gobiiExtractFilterType, filterParamName, filterValue).subscribe(function (loadFileItemListAction) {
                                         observer.next(loadFileItemListAction);
                                     }, function (error) {
                                         _this.store.dispatch(new historyAction.AddStatusMessageAction(error));

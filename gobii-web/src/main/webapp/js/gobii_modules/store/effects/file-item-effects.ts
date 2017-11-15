@@ -215,7 +215,7 @@ export class FileItemEffects {
 
                                 if ((filterParamName !== FilterParamNames.UNKNOWN && filterValue != null)) {
 
-                                    this.fileItemService.loadChildFromFilterParams(action.payload.gobiiExtractFilterType,
+                                    this.fileItemService.makeFileActionsFromFilterParamName(action.payload.gobiiExtractFilterType,
                                         filterParamName,
                                         filterValue).subscribe(loadFileItemListAction => {
 

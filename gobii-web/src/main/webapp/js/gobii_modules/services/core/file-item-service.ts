@@ -421,9 +421,9 @@ export class FileItemService {
     }
 
 
-    public loadChildFromFilterParams(gobiiExtractFilterType: GobiiExtractFilterType,
-                                     filterParamName: FilterParamNames,
-                                     filterValue: string): Observable<fileItemActions.LoadFileItemListWithFilterAction> {
+    public makeFileActionsFromFilterParamName(gobiiExtractFilterType: GobiiExtractFilterType,
+                                              filterParamName: FilterParamNames,
+                                              filterValue: string): Observable<fileItemActions.LoadFileItemListWithFilterAction> {
 
         let returnVal:Observable<fileItemActions.LoadFileItemListWithFilterAction>;
 
@@ -782,95 +782,117 @@ export class FileItemService {
 
 
     public loadEntityList(gobiiExtractFilterType: GobiiExtractFilterType,
-                          fileItemParamName: FilterParamNames) {
+                          fileItemParamName: FilterParamNames){
 
-        try {
-
-            let fileItemParams: FilterParams = this.getFilter(fileItemParamName, gobiiExtractFilterType);
-            if (fileItemParams && fileItemParams.getFilterType() === FilterType.ENTITY_LIST) {
-
-
-                let dtoRequestItemGfi: DtoRequestItemGfi = new DtoRequestItemGfi(fileItemParams, null, new JsonToGfiDataset());
-
-
-                this.entityStatsService.get(new DtoRequestItemEntityStats(
-                    EntityRequestType.LasetUpdated,
-                    fileItemParams.getEntityType(),
-                    null,
-                    null))
-                    .subscribe(entityStats => {
-
-                        this.store.select(fromRoot.getFiltersRetrieved)
-                            .subscribe(filterHistoryItems => {
-
-                                    let fileHistoryItem: FilterHistory =
-                                        filterHistoryItems.find(fhi =>
-                                            fhi.gobiiExtractFilterType === gobiiExtractFilterType
-                                            && fhi.filterId === fileItemParams.getQueryName()
-                                        );
-
-                                    if ((!fileHistoryItem ) ||
-                                        ( entityStats.lastModified > fileHistoryItem.entityLasteUpdated)
-                                    ) {
-
-                                        this.fileItemRequestService
-                                            .get(dtoRequestItemGfi)
-                                            .subscribe(entityItems => {
-
-
-                                                    entityItems.forEach(fi => {
-                                                        fi.setGobiiExtractFilterType(gobiiExtractFilterType);
-                                                    });
-
-                                                    let date: Date = new Date();
-                                                    let loadAction: fileItemActions.LoadFileItemListWithFilterAction =
-                                                        new fileItemActions.LoadFileItemListWithFilterAction(
-                                                            {
-                                                                gobiiFileItems: entityItems,
-                                                                filterId: fileItemParams.getQueryName(),
-                                                                filter: {
-                                                                    gobiiExtractFilterType: gobiiExtractFilterType,
-                                                                    filterValue: null,
-                                                                    entityLasteUpdated: date
-                                                                }
-                                                            }
-                                                        );
-
-                                                    this.store.dispatch(loadAction)
-
-                                                },
-                                                responseHeader => {
-                                                    this.store.dispatch(new historyAction.AddStatusAction(responseHeader));
-
-                                                });
-                                    }
-                                },
-                                error => {
-                                    this.store.dispatch(new historyAction.AddStatusAction(error));
-
-                                })
-                    })
-
-
-            } else {
-
-                let extractFilterTypeString: string = "undefined";
-                if (gobiiExtractFilterType) {
-                    extractFilterTypeString = GobiiExtractFilterType[gobiiExtractFilterType];
-                }
-                this.store.dispatch(new historyAction.AddStatusMessageAction("FileItemParams "
-                    + fileItemParamName.toString()
-                    + " either does not exist or is not of type "
-                    + FilterType[FilterType.ENTITY_LIST]
-                    + " for extract type "
-                    + extractFilterTypeString));
-
-
-            } // if else fileItemParams are correct
-
-        } catch (error) {
-            this.store.dispatch(new historyAction.AddStatusAction(error));
+        let fileItemParams: FilterParams = this.getFilter(fileItemParamName, gobiiExtractFilterType);
+        if (fileItemParams && fileItemParams.getFilterType() === FilterType.ENTITY_LIST) {
+            this.makeFileItemActionsFromEntities(gobiiExtractFilterType,fileItemParams,null,false)
+                .subscribe(action => {
+                    if (action) {
+                        this.store.dispatch(action);
+                    }
+                });
         }
-    }//loadEntityList()
+    } // loadEntityList()
+
+
+    private makeFileItemActionsFromEntities(gobiiExtractFilterType: GobiiExtractFilterType,
+                                            fileItemParams: FilterParams,
+                                            filterValue: string,
+                                            recurse: boolean): Observable<fileItemActions.LoadFileItemListWithFilterAction> {
+
+        return Observable.create(observer => {
+
+            try {
+
+                if (fileItemParams.getFilterType() === FilterType.ENTITY_LIST) {
+
+
+                    let dtoRequestItemGfi: DtoRequestItemGfi = new DtoRequestItemGfi(fileItemParams, null, new JsonToGfiDataset());
+
+
+                    this.entityStatsService.get(new DtoRequestItemEntityStats(
+                        EntityRequestType.LasetUpdated,
+                        fileItemParams.getEntityType(),
+                        null,
+                        null))
+                        .subscribe(entityStats => {
+
+                            this.store.select(fromRoot.getFiltersRetrieved)
+                                .subscribe(filterHistoryItems => {
+
+                                        let fileHistoryItem: FilterHistory =
+                                            filterHistoryItems.find(fhi =>
+                                                fhi.gobiiExtractFilterType === gobiiExtractFilterType
+                                                && fhi.filterId === fileItemParams.getQueryName()
+                                            );
+
+                                        if ((!fileHistoryItem ) ||
+                                            ( entityStats.lastModified > fileHistoryItem.entityLasteUpdated)
+                                        ) {
+
+                                            this.fileItemRequestService
+                                                .get(dtoRequestItemGfi)
+                                                .subscribe(entityItems => {
+
+
+                                                        entityItems.forEach(fi => {
+                                                            fi.setGobiiExtractFilterType(gobiiExtractFilterType);
+                                                        });
+
+                                                        let date: Date = new Date();
+                                                        let loadAction: fileItemActions.LoadFileItemListWithFilterAction =
+                                                            new fileItemActions.LoadFileItemListWithFilterAction(
+                                                                {
+                                                                    gobiiFileItems: entityItems,
+                                                                    filterId: fileItemParams.getQueryName(),
+                                                                    filter: {
+                                                                        gobiiExtractFilterType: gobiiExtractFilterType,
+                                                                        filterValue: null,
+                                                                        entityLasteUpdated: date
+                                                                    }
+                                                                }
+                                                            );
+
+                                                        observer.next(loadAction);
+
+                                                    },
+                                                    responseHeader => {
+                                                        this.store.dispatch(new historyAction.AddStatusAction(responseHeader));
+
+                                                    });
+                                        }
+                                    },
+                                    error => {
+                                        this.store.dispatch(new historyAction.AddStatusAction(error));
+
+                                    })
+                        })
+
+
+                } else {
+
+                    let extractFilterTypeString: string = "undefined";
+                    if (gobiiExtractFilterType) {
+                        extractFilterTypeString = GobiiExtractFilterType[gobiiExtractFilterType];
+                    }
+                    this.store.dispatch(new historyAction.AddStatusMessageAction("FileItemParams "
+                        + fileItemParams.getQueryName()
+                        + " for extract type "
+                        + extractFilterTypeString
+                        + " is not of type "
+                        + FilterType[FilterType.ENTITY_LIST]
+                    ));
+
+
+                } // if else fileItemParams are correct
+
+            } catch (error) {
+                this.store.dispatch(new historyAction.AddStatusAction(error));
+            }
+
+        }); // Observer.create()
+
+    }//makeFileItemActionsFromEntities()
 
 }
