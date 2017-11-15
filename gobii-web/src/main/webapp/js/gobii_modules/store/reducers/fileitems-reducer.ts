@@ -719,26 +719,5 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
         .map(gfi => gfi.getEntity());
 
 
-    // if (filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT]) {
-    //
-    //     let experimentId: string = filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT].filterValue;
-    //     returnVal = fileItems.filter(e =>
-    //         ( e.getExtractorItemType() === ExtractorItemType.ENTITY
-    //             && e.getEntityType() === EntityType.DATASET
-    //             && e.getParentItemId() === experimentId
-    //             && e.getProcessType() !== ProcessType.DUMMY))
-    //         .map(fi => fi);
-    //
-    //     if (returnVal.length <= 0) {
-    //         returnVal = fileItems.filter(e =>
-    //             ( e.getExtractorItemType() === ExtractorItemType.ENTITY
-    //                 && e.getEntityType() === EntityType.DATASET
-    //                 //                    && e.getParentItemId() === experimentId
-    //                 && e.getProcessType() === ProcessType.DUMMY))
-    //             .map(fi => fi);
-    //     }
-    //
-    // }
-
     return returnVal;
 });

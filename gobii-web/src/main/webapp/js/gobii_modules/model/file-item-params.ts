@@ -42,16 +42,15 @@ import {GobiiFileItemCompoundId} from "./gobii-file-item-compound-id";
  */
 export class FilterParams extends GobiiFileItemCompoundId {
 
-    private constructor(private _queryName: string = null,
-                        _entityType: EntityType = EntityType.UNKNOWN,
-                        private _filterType: FilterType = FilterType.NONE,
-                        private _fkEntityFilterValue: string = null,
-                        private _selectedItemId: string = null,
+    private constructor(_entityType: EntityType = EntityType.UNKNOWN, //first four args are passed to base class ctor
                         _entitySubType: EntitySubType = EntitySubType.UNKNOWN,
                         _cvFilterType: CvFilterType = CvFilterType.UNKNOWN,
+                        _extractorItemType: ExtractorItemType,
+                        private _queryName: string = null,
+                        private _filterType: FilterType = FilterType.NONE,
+                        private _fkEntityFilterValue: string = null,
                         private _gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN,
                         private _nameIdLabelType: NameIdLabelType,
-                        _extractorItemType: ExtractorItemType,
                         private _parentFileItemParams: FilterParams,
                         private _childFileItemParams: FilterParams[],
                         private _isDynamicFilterValue:boolean) {
@@ -64,16 +63,16 @@ export class FilterParams extends GobiiFileItemCompoundId {
     public static build(queryName: string,
                         gobiiExtractFilterType: GobiiExtractFilterType,
                         entityType: EntityType): FilterParams {
-        return ( new FilterParams(queryName,
+        return ( new FilterParams(
             entityType,
-            FilterType.NONE,
-            null,
-            null,
             EntitySubType.UNKNOWN,
             CvFilterType.UNKNOWN,
+            ExtractorItemType.ENTITY,
+            queryName,
+            FilterType.NONE,
+            null,
             gobiiExtractFilterType,
             NameIdLabelType.UNKNOWN,
-            ExtractorItemType.ENTITY,
             null,
             [],
             true));

@@ -552,26 +552,6 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                     .filter(function (fi) { return fi.getEntityType() === type_entity_1.EntityType.DATASET
                     && fi.getEntity() !== null; })
                     .map(function (gfi) { return gfi.getEntity(); });
-                // if (filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT]) {
-                //
-                //     let experimentId: string = filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT].filterValue;
-                //     returnVal = fileItems.filter(e =>
-                //         ( e.getExtractorItemType() === ExtractorItemType.ENTITY
-                //             && e.getEntityType() === EntityType.DATASET
-                //             && e.getParentItemId() === experimentId
-                //             && e.getProcessType() !== ProcessType.DUMMY))
-                //         .map(fi => fi);
-                //
-                //     if (returnVal.length <= 0) {
-                //         returnVal = fileItems.filter(e =>
-                //             ( e.getExtractorItemType() === ExtractorItemType.ENTITY
-                //                 && e.getEntityType() === EntityType.DATASET
-                //                 //                    && e.getParentItemId() === experimentId
-                //                 && e.getProcessType() === ProcessType.DUMMY))
-                //             .map(fi => fi);
-                //     }
-                //
-                // }
                 return returnVal;
             }));
         }
