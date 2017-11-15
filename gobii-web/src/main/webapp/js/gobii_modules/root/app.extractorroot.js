@@ -233,6 +233,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.CONTACT_PI, null);
                         this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.CV_DATATYPE, null);
                         this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.PROJECTS, null);
+                        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.PLATFORMS, null);
                         this.displaySelectorPi = true;
                         this.doPrincipleInvestigatorTreeNotifications = true;
                         this.fileItemService.setItemLabelType(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.CONTACT_PI, name_id_label_type_1.NameIdLabelType.ALL);

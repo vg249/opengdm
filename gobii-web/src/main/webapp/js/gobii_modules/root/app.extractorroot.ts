@@ -507,6 +507,10 @@ export class ExtractorRoot implements OnInit {
                 FilterParamNames.PROJECTS,
                 null);
 
+            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                FilterParamNames.PLATFORMS,
+                null);
+
 
             this.displaySelectorPi = true;
             this.doPrincipleInvestigatorTreeNotifications = true;
