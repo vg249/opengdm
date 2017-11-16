@@ -6,6 +6,7 @@ import {GobiiExtractFilterType} from "./type-extractor-filter";
 import {ExtractorItemType} from "./type-extractor-item";
 import {GobiiFileItemCompoundId} from "./gobii-file-item-compound-id";
 import {NameId} from "./name-id";
+import {GobiiFileItemEntityRelation} from "./gobii-file-item-entity-relation";
 
 export class GobiiFileItem extends GobiiFileItemCompoundId {
 
@@ -22,11 +23,10 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
                           private _selected: boolean,
                           private _required: boolean,
                           private _parentItemId: string,
-                          private _parentEntityType: EntityType,
-                          private _entity: any) {
+                          private _entity: any,
+                          private _entityRelations: GobiiFileItemEntityRelation[]) {
 
         super(_extractorItemType, _entityType, _entitySubType, _cvFilterType);
-
 
         this._gobiiExtractFilterType = _gobiiExtractFilterType;
         this._processType = _processType;
@@ -35,7 +35,7 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
         this._selected = _selected;
         this._required = _required;
         this._parentItemId = _parentItemId;
-        this._parentEntityType = _parentEntityType;
+        this._entityRelations = _entityRelations;
 
         this._fileItemUniqueId = Guid.generateUUID();
     }
@@ -55,7 +55,7 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
             null,
             null,
             null,
-            EntityType.UNKNOWN,
+            null,
             null
         );
 
@@ -187,22 +187,27 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
         return this;
     }
 
-    getParentEntityType(): EntityType {
-        return this._parentEntityType;
-    }
-
-    setParentEntityType(parentIteIid: EntityType): GobiiFileItem {
-        this._parentEntityType = parentIteIid;
-        return this;
-    }
-
-    setEntity(entity:any){
+    setEntity(entity: any) {
         this._entity = entity;
         return this;
     }
 
     getEntity(): any {
         return this._entity;
+    }
+
+    withRelatedEntityValues(gobiiFileItemEntityRelation: GobiiFileItemEntityRelation, relatedId: string): GobiiFileItem {
+
+        let existingGobiiFileItemEntityRelation =
+            this._entityRelations.find(er => er.compoundIdeEquals(gobiiFileItemEntityRelation));
+
+        if (existingGobiiFileItemEntityRelation) {
+            existingGobiiFileItemEntityRelation.setRelatedEntityIds(relatedId);
+        } else {
+            this._entityRelations.push((new GobiiFileItemEntityRelation).setRelatedEntityIds(relatedId))
+        }
+
+        return this;
     }
 
 } // GobiiFileItem()

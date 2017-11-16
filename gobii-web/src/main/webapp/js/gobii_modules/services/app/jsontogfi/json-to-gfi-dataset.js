@@ -25,10 +25,14 @@ System.register(["../../../model/gobii-file-item", "../../../model/type-entity",
         ],
         execute: function () {
             JsonToGfiDataset = (function () {
-                function JsonToGfiDataset() {
-                }
+                function JsonToGfiDataset(_filterParams) {
+                    this._filterParams = _filterParams;
+                    this._filterParams = _filterParams;
+                } //ctor
                 JsonToGfiDataset.prototype.convert = function (jsonItem) {
-                    var dataset = new dataset_1.DataSet(jsonItem.id, jsonItem.name, jsonItem.experimentId, jsonItem.callingAnalysisId, jsonItem.dataTable, jsonItem.dataFile, jsonItem.qualityTable, jsonItem.qualityFile, jsonItem.status, jsonItem.typeId, jsonItem.analysesIds, new Date(jsonItem.createdDate), jsonItem.jobStatusId, jsonItem.jobStatusName, jsonItem.jobSubmittedDate ? new Date(jsonItem.jobSubmittedDate) : null);
+                    var dataset = new dataset_1.DataSet(jsonItem.id, null, null, jsonItem.experimentId, jsonItem.name, jsonItem.callingAnalysisId, jsonItem.dataTable, jsonItem.dataFile, jsonItem.qualityTable, jsonItem.qualityFile, jsonItem.status, jsonItem.typeId, jsonItem.analysesIds, new Date(jsonItem.createdDate), jsonItem.jobStatusId, jsonItem.jobStatusName, jsonItem.jobSubmittedDate ? new Date(jsonItem.jobSubmittedDate) : null);
+                    // note that we are the parent id to the job status ID. This is because
+                    // the primary filtering use case is by job status.
                     return gobii_file_item_1.GobiiFileItem.build(type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN, type_process_1.ProcessType.READ).setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
                         .setEntityType(type_entity_1.EntityType.DATASET)
                         .setItemName(dataset.name)

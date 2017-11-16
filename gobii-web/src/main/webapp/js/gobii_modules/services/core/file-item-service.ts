@@ -1,9 +1,9 @@
 import {Injectable} from "@angular/core";
-import {EntitySubType, EntityType} from "../../model/type-entity";
+import {EntitySubType} from "../../model/type-entity";
 import {Labels} from "../../views/entity-labels";
 import {ExtractorItemType} from "../../model/type-extractor-item";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
-import {CvFilters, CvFilterType} from "../../model/cv-filter-type";
+import {CvFilterType} from "../../model/cv-filter-type";
 import {GobiiFileItem} from "../../model/gobii-file-item";
 import {HeaderStatusMessage} from "../../model/dto-header-status-message";
 import {ProcessType} from "../../model/type-process";
@@ -23,208 +23,21 @@ import {EntityStats} from "../../model/entity-stats";
 import {DtoRequestService} from "./dto-request.service";
 import {DtoRequestItemEntityStats, EntityRequestType} from "../app/dto-request-item-entity-stats";
 import {FilterHistory} from "../../store/reducers/history-reducer";
-import {DataSetSearchType, DtoRequestItemDataSet} from "../app/dto-request-item-dataset";
 import {DtoRequestItemGfi} from "../app/dto-request-item-gfi";
 import {JsonToGfiDataset} from "../app/jsontogfi/json-to-gfi-dataset";
+import {FilterParamsColl} from "./filter-params-coll";
 
 @Injectable()
 export class FileItemService {
 
-    filterParams: FilterParams[] = [];
-
-    private addFilter(filterParamsToAdd: FilterParams) {
-
-        let existingFilterParams = this.filterParams
-            .find(ffp =>
-                ffp.getQueryName() === filterParamsToAdd.getQueryName()
-                && ffp.getGobiiExtractFilterType() === filterParamsToAdd.getGobiiExtractFilterType()
-            );
-
-        if (!existingFilterParams) {
-            this.filterParams.push(filterParamsToAdd);
-        } else {
-            this.store.dispatch(new historyAction.AddStatusMessageAction("The query "
-                + filterParamsToAdd.getQueryName()
-                + " because there is already a filter by that name for this extract type "
-                + GobiiExtractFilterType[filterParamsToAdd.getQueryName()]));
-
-        }
-    }
-
-    private getFilter(nameIdFilterParamTypes: FilterParamNames, gobiiExtractFilterType: GobiiExtractFilterType): FilterParams {
-
-        return this.filterParams.find(ffp =>
-            ffp.getQueryName() === nameIdFilterParamTypes &&
-            ffp.getGobiiExtractFilterType() === gobiiExtractFilterType
-        )
-    }
-
     constructor(private nameIdService: NameIdService,
                 private entityStatsService: DtoRequestService<EntityStats>,
                 private fileItemRequestService: DtoRequestService<GobiiFileItem[]>,
-                private store: Store<fromRoot.State>,) {
+                private store: Store<fromRoot.State>,
+                private filterParamsColl:FilterParamsColl) {
 
         // For non-hierarchically filtered request params, we just create them simply
         // as we add them to the flat map
-        this.addFilter(
-            FilterParams
-                .build(FilterParamNames.CV_DATATYPE,
-                    GobiiExtractFilterType.BY_SAMPLE,
-                    EntityType.CV)
-                .setIsDynamicFilterValue(false)
-                .setCvFilterType(CvFilterType.DATASET_TYPE)
-                .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
-                .setFkEntityFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE))
-                .setNameIdLabelType(NameIdLabelType.SELECT_A)
-        );
-
-
-        this.addFilter(
-            FilterParams
-                .build(FilterParamNames.CV_DATATYPE,
-                    GobiiExtractFilterType.BY_MARKER,
-                    EntityType.CV)
-                .setIsDynamicFilterValue(false)
-                .setCvFilterType(CvFilterType.DATASET_TYPE)
-                .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
-                .setFkEntityFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE))
-                .setNameIdLabelType(NameIdLabelType.SELECT_A)
-        );
-
-        this.addFilter(
-            FilterParams
-                .build(FilterParamNames.CV_JOB_STATUS,
-                    GobiiExtractFilterType.WHOLE_DATASET,
-                    EntityType.CV)
-                .setIsDynamicFilterValue(false)
-                .setCvFilterType(CvFilterType.JOB_STATUS)
-                .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
-                .setFkEntityFilterValue(CvFilters.get(CvFilterType.JOB_STATUS))
-                .setNameIdLabelType(NameIdLabelType.ALL)
-        );
-
-        this.addFilter(
-            FilterParams
-                .build(FilterParamNames.MAPSETS,
-                    GobiiExtractFilterType.WHOLE_DATASET,
-                    EntityType.MAPSET)
-                .setIsDynamicFilterValue(false)
-                .setNameIdLabelType(NameIdLabelType.NO));
-
-        this.addFilter(
-            FilterParams
-                .build(FilterParamNames.MAPSETS,
-                    GobiiExtractFilterType.BY_SAMPLE,
-                    EntityType.MAPSET)
-                .setIsDynamicFilterValue(false)
-                .setNameIdLabelType(NameIdLabelType.NO));
-
-        this.addFilter(
-            FilterParams
-                .build(FilterParamNames.MAPSETS,
-                    GobiiExtractFilterType.BY_MARKER,
-                    EntityType.MAPSET)
-                .setIsDynamicFilterValue(false)
-                .setNameIdLabelType(NameIdLabelType.NO));
-
-        this.addFilter(
-            FilterParams
-                .build(FilterParamNames.PLATFORMS,
-                    GobiiExtractFilterType.BY_SAMPLE,
-                    EntityType.PLATFORM)
-                .setIsDynamicFilterValue(false)
-        );
-
-        this.addFilter(
-            FilterParams
-                .build(FilterParamNames.PLATFORMS,
-                    GobiiExtractFilterType.BY_MARKER,
-                    EntityType.PLATFORM)
-                .setIsDynamicFilterValue(false)
-        );
-
-        this.addFilter(
-            FilterParams
-                .build(FilterParamNames.MARKER_GROUPS,
-                    GobiiExtractFilterType.BY_MARKER,
-                    EntityType.MARKER_GROUP)
-                .setIsDynamicFilterValue(false)
-        );
-
-        this.addFilter(
-            FilterParams
-                .build(FilterParamNames.PROJECTS,
-                    GobiiExtractFilterType.BY_SAMPLE,
-                    EntityType.PROJECT)
-                .setIsDynamicFilterValue(false)
-                .setNameIdLabelType(NameIdLabelType.ALL));
-
-        this.addFilter(
-            FilterParams
-                .build(FilterParamNames.CONTACT_PI,
-                    GobiiExtractFilterType.BY_SAMPLE,
-                    EntityType.CONTACT)
-                .setIsDynamicFilterValue(false)
-                .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR));
-
-
-        this.addFilter(FilterParams
-            .build(FilterParamNames.DATASETS,
-                GobiiExtractFilterType.WHOLE_DATASET,
-                EntityType.DATASET)
-            .setFilterType(FilterType.ENTITY_LIST));
-
-
-        //for hierarchical items, we need to crate the nameid requests separately from the
-        //flat map: they _will_ need to be in the flat map; however, they all need to be
-        //useed to set up the filtering hierarchy
-        let nameIdRequestParamsContactsPi: FilterParams = FilterParams
-            .build(FilterParamNames.CONTACT_PI,
-                GobiiExtractFilterType.WHOLE_DATASET,
-                EntityType.CONTACT)
-            .setIsDynamicFilterValue(true)
-            .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR);
-
-
-        let nameIdRequestParamsProjectByPiContact: FilterParams = FilterParams
-            .build(FilterParamNames.PROJECTS_BY_CONTACT,
-                GobiiExtractFilterType.WHOLE_DATASET,
-                EntityType.PROJECT)
-            .setIsDynamicFilterValue(true)
-            .setFilterType(FilterType.NAMES_BY_TYPEID);
-
-        let nameIdRequestParamsExperiments: FilterParams = FilterParams
-            .build(FilterParamNames.EXPERIMENTS_BY_PROJECT,
-                GobiiExtractFilterType.WHOLE_DATASET,
-                EntityType.EXPERIMENT)
-            .setIsDynamicFilterValue(true)
-            .setFilterType(FilterType.NAMES_BY_TYPEID);
-
-        let nameIdRequestParamsDatasets: FilterParams = FilterParams
-            .build(FilterParamNames.DATASETS_BY_EXPERIMENT,
-                GobiiExtractFilterType.WHOLE_DATASET,
-                EntityType.DATASET)
-            .setIsDynamicFilterValue(true)
-            .setFilterType(FilterType.NAMES_BY_TYPEID);
-
-        //add the individual requests to the map
-        this.addFilter(nameIdRequestParamsContactsPi);
-        this.addFilter(nameIdRequestParamsProjectByPiContact);
-        this.addFilter(nameIdRequestParamsExperiments);
-        this.addFilter(nameIdRequestParamsDatasets);
-
-        //build the parent-child request params graph
-        nameIdRequestParamsContactsPi
-            .setChildNameIdRequestParams(
-                [nameIdRequestParamsProjectByPiContact
-                    .setParentFileItemParams(nameIdRequestParamsContactsPi)
-                    .setChildNameIdRequestParams([nameIdRequestParamsExperiments
-                        .setParentFileItemParams(nameIdRequestParamsProjectByPiContact)
-                        .setChildNameIdRequestParams([nameIdRequestParamsDatasets
-                            .setParentFileItemParams(nameIdRequestParamsExperiments)
-                        ])
-                    ])
-                ]);
 
     } // constructor
 
@@ -337,7 +150,7 @@ export class FileItemService {
                             filterParamNames: FilterParamNames,
                             nameIdLabelType: NameIdLabelType) {
 
-        let nameIdRequestParamsFromType: FilterParams = this.getFilter(filterParamNames, gobiiExtractFilterType);
+        let nameIdRequestParamsFromType: FilterParams = this.filterParamsColl.getFilter(filterParamNames, gobiiExtractFilterType);
         if (nameIdRequestParamsFromType) {
             nameIdRequestParamsFromType.setNameIdLabelType(nameIdLabelType);
         } else {
@@ -349,12 +162,11 @@ export class FileItemService {
 
     }
 
-
     public loadNameIdsFromFilterParams(gobiiExtractFilterType: GobiiExtractFilterType,
                                        filterParamName: FilterParamNames,
                                        filterValue: string) {
 
-        let nameIdRequestParamsFromType: FilterParams = this.getFilter(filterParamName, gobiiExtractFilterType);
+        let nameIdRequestParamsFromType: FilterParams = this.filterParamsColl.getFilter(filterParamName, gobiiExtractFilterType);
 
         if (nameIdRequestParamsFromType) {
 
@@ -427,7 +239,7 @@ export class FileItemService {
 
         let returnVal:Observable<fileItemActions.LoadFileItemListWithFilterAction>;
 
-        let filterParams: FilterParams = this.getFilter(filterParamName, gobiiExtractFilterType);
+        let filterParams: FilterParams = this.filterParamsColl.getFilter(filterParamName, gobiiExtractFilterType);
         if (filterParams) {
 
             if (filterParams.getChildFileItemParams() && filterParams.getChildFileItemParams().length <= 1) {
@@ -460,7 +272,7 @@ export class FileItemService {
                                  filterParamName: FilterParamNames,
                                  filterValue: string): Observable<fileItemActions.LoadFileItemListWithFilterAction> {
 
-        let nameIdRequestParamsFromType: FilterParams = this.getFilter(filterParamName, gobiiExtractFilterType);
+        let nameIdRequestParamsFromType: FilterParams = this.filterParamsColl.getFilter(filterParamName, gobiiExtractFilterType);
 
         if (nameIdRequestParamsFromType) {
             return this.makeFileItemActionsFromNameIds(gobiiExtractFilterType,
@@ -784,7 +596,7 @@ export class FileItemService {
     public loadEntityList(gobiiExtractFilterType: GobiiExtractFilterType,
                           fileItemParamName: FilterParamNames){
 
-        let fileItemParams: FilterParams = this.getFilter(fileItemParamName, gobiiExtractFilterType);
+        let fileItemParams: FilterParams = this.filterParamsColl.getFilter(fileItemParamName, gobiiExtractFilterType);
         if (fileItemParams && fileItemParams.getFilterType() === FilterType.ENTITY_LIST) {
             this.makeFileItemActionsFromEntities(gobiiExtractFilterType,fileItemParams,null,false)
                 .subscribe(action => {
@@ -797,7 +609,7 @@ export class FileItemService {
 
 
     private makeFileItemActionsFromEntities(gobiiExtractFilterType: GobiiExtractFilterType,
-                                            fileItemParams: FilterParams,
+                                            filterParams: FilterParams,
                                             filterValue: string,
                                             recurse: boolean): Observable<fileItemActions.LoadFileItemListWithFilterAction> {
 
@@ -805,15 +617,15 @@ export class FileItemService {
 
             try {
 
-                if (fileItemParams.getFilterType() === FilterType.ENTITY_LIST) {
+                if (filterParams.getFilterType() === FilterType.ENTITY_LIST) {
 
 
-                    let dtoRequestItemGfi: DtoRequestItemGfi = new DtoRequestItemGfi(fileItemParams, null, new JsonToGfiDataset());
+                    let dtoRequestItemGfi: DtoRequestItemGfi = new DtoRequestItemGfi(filterParams, null, new JsonToGfiDataset(filterParams));
 
 
                     this.entityStatsService.get(new DtoRequestItemEntityStats(
                         EntityRequestType.LasetUpdated,
-                        fileItemParams.getEntityType(),
+                        filterParams.getEntityType(),
                         null,
                         null))
                         .subscribe(entityStats => {
@@ -824,7 +636,7 @@ export class FileItemService {
                                         let fileHistoryItem: FilterHistory =
                                             filterHistoryItems.find(fhi =>
                                                 fhi.gobiiExtractFilterType === gobiiExtractFilterType
-                                                && fhi.filterId === fileItemParams.getQueryName()
+                                                && fhi.filterId === filterParams.getQueryName()
                                             );
 
                                         if ((!fileHistoryItem ) ||
@@ -845,7 +657,7 @@ export class FileItemService {
                                                             new fileItemActions.LoadFileItemListWithFilterAction(
                                                                 {
                                                                     gobiiFileItems: entityItems,
-                                                                    filterId: fileItemParams.getQueryName(),
+                                                                    filterId: filterParams.getQueryName(),
                                                                     filter: {
                                                                         gobiiExtractFilterType: gobiiExtractFilterType,
                                                                         filterValue: null,
@@ -877,7 +689,7 @@ export class FileItemService {
                         extractFilterTypeString = GobiiExtractFilterType[gobiiExtractFilterType];
                     }
                     this.store.dispatch(new historyAction.AddStatusMessageAction("FileItemParams "
-                        + fileItemParams.getQueryName()
+                        + filterParams.getQueryName()
                         + " for extract type "
                         + extractFilterTypeString
                         + " is not of type "
@@ -885,7 +697,7 @@ export class FileItemService {
                     ));
 
 
-                } // if else fileItemParams are correct
+                } // if else filterParams are correct
 
             } catch (error) {
                 this.store.dispatch(new historyAction.AddStatusAction(error));

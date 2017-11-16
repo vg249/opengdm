@@ -1,8 +1,10 @@
 export class DataSet {
 
     constructor(public  id:number,
-                public  name:string,
+                public  piContactId:number,
+                public  projectId:number,
                 public  experimentId:number,
+                public  name:string,
                 public  callingAnalysisId:number,
                 public  dataTable:string,
                 public  dataFile:string,
