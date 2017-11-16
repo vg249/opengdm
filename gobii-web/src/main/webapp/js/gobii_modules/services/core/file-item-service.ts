@@ -34,7 +34,7 @@ export class FileItemService {
                 private entityStatsService: DtoRequestService<EntityStats>,
                 private fileItemRequestService: DtoRequestService<GobiiFileItem[]>,
                 private store: Store<fromRoot.State>,
-                private filterParamsColl:FilterParamsColl) {
+                private filterParamsColl: FilterParamsColl) {
 
         // For non-hierarchically filtered request params, we just create them simply
         // as we add them to the flat map
@@ -237,14 +237,14 @@ export class FileItemService {
                                               filterParamName: FilterParamNames,
                                               filterValue: string): Observable<fileItemActions.LoadFileItemListWithFilterAction> {
 
-        let returnVal:Observable<fileItemActions.LoadFileItemListWithFilterAction>;
+        let returnVal: Observable<fileItemActions.LoadFileItemListWithFilterAction>;
 
         let filterParams: FilterParams = this.filterParamsColl.getFilter(filterParamName, gobiiExtractFilterType);
         if (filterParams) {
 
             if (filterParams.getChildFileItemParams() && filterParams.getChildFileItemParams().length <= 1) {
 
-                if( filterParams.getChildFileItemParams().length === 1 ) {
+                if (filterParams.getChildFileItemParams().length === 1) {
                     filterParams = filterParams.getChildFileItemParams()[0];
                 }
 
@@ -594,11 +594,11 @@ export class FileItemService {
 
 
     public loadEntityList(gobiiExtractFilterType: GobiiExtractFilterType,
-                          fileItemParamName: FilterParamNames){
+                          fileItemParamName: FilterParamNames) {
 
         let fileItemParams: FilterParams = this.filterParamsColl.getFilter(fileItemParamName, gobiiExtractFilterType);
         if (fileItemParams && fileItemParams.getFilterType() === FilterType.ENTITY_LIST) {
-            this.makeFileItemActionsFromEntities(gobiiExtractFilterType,fileItemParams,null,false)
+            this.makeFileItemActionsFromEntities(gobiiExtractFilterType, fileItemParams, null, false)
                 .subscribe(action => {
                     if (action) {
                         this.store.dispatch(action);
@@ -620,8 +620,9 @@ export class FileItemService {
                 if (filterParams.getFilterType() === FilterType.ENTITY_LIST) {
 
 
-                    let dtoRequestItemGfi: DtoRequestItemGfi = new DtoRequestItemGfi(filterParams, null, new JsonToGfiDataset(filterParams));
-
+                    let dtoRequestItemGfi: DtoRequestItemGfi = new DtoRequestItemGfi(filterParams,
+                        null,
+                        new JsonToGfiDataset(filterParams, this.filterParamsColl));
 
                     this.entityStatsService.get(new DtoRequestItemEntityStats(
                         EntityRequestType.LasetUpdated,

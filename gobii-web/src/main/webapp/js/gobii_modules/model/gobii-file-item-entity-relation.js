@@ -46,7 +46,7 @@ System.register(["./type-entity", "./cv-filter-type", "./type-extractor-item", "
                 GobiiFileItemEntityRelation.prototype.getRelatedEntityId = function () {
                     return this.relatedEntityIds;
                 };
-                GobiiFileItemEntityRelation.prototype.setRelatedEntityIds = function (relatedEntityId) {
+                GobiiFileItemEntityRelation.prototype.setRelatedEntityId = function (relatedEntityId) {
                     this.relatedEntityIds = relatedEntityId;
                     return this;
                 };

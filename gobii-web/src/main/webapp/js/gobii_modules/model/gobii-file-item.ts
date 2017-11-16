@@ -24,7 +24,7 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
                           private _required: boolean,
                           private _parentItemId: string,
                           private _entity: any,
-                          private _entityRelations: GobiiFileItemEntityRelation[]) {
+                          private _entityRelations: GobiiFileItemEntityRelation[] = []) {
 
         super(_extractorItemType, _entityType, _entitySubType, _cvFilterType);
 
@@ -56,7 +56,7 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
             null,
             null,
             null,
-            null
+            []
         );
 
 
@@ -196,15 +196,29 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
         return this._entity;
     }
 
-    withRelatedEntityValues(gobiiFileItemEntityRelation: GobiiFileItemEntityRelation, relatedId: string): GobiiFileItem {
+    withRelatedEntityValue(gobiiFileItemEntityRelation: GobiiFileItemEntityRelation, relatedId: string): GobiiFileItem {
 
         let existingGobiiFileItemEntityRelation =
             this._entityRelations.find(er => er.compoundIdeEquals(gobiiFileItemEntityRelation));
 
         if (existingGobiiFileItemEntityRelation) {
-            existingGobiiFileItemEntityRelation.setRelatedEntityIds(relatedId);
+            existingGobiiFileItemEntityRelation.setRelatedEntityId(relatedId);
         } else {
-            this._entityRelations.push((new GobiiFileItemEntityRelation).setRelatedEntityIds(relatedId))
+            this._entityRelations.push((new GobiiFileItemEntityRelation).setRelatedEntityId(relatedId))
+        }
+
+        return this;
+    }
+
+    withRelatedEntity(newGobiiFileItemEntityRelation: GobiiFileItemEntityRelation): GobiiFileItem {
+
+        let existingGobiiFileItemEntityRelation =
+            this._entityRelations.find(er => er.compoundIdeEquals(newGobiiFileItemEntityRelation));
+
+        if (existingGobiiFileItemEntityRelation) {
+            existingGobiiFileItemEntityRelation.setRelatedEntityId(newGobiiFileItemEntityRelation.getRelatedEntityId());
+        } else {
+            this._entityRelations.push(newGobiiFileItemEntityRelation)
         }
 
         return this;

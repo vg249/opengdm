@@ -505,7 +505,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     return Observable_1.Observable.create(function (observer) {
                         try {
                             if (filterParams.getFilterType() === filter_type_1.FilterType.ENTITY_LIST) {
-                                var dtoRequestItemGfi_1 = new dto_request_item_gfi_1.DtoRequestItemGfi(filterParams, null, new json_to_gfi_dataset_1.JsonToGfiDataset(filterParams));
+                                var dtoRequestItemGfi_1 = new dto_request_item_gfi_1.DtoRequestItemGfi(filterParams, null, new json_to_gfi_dataset_1.JsonToGfiDataset(filterParams, _this.filterParamsColl));
                                 _this.entityStatsService.get(new dto_request_item_entity_stats_1.DtoRequestItemEntityStats(dto_request_item_entity_stats_1.EntityRequestType.LasetUpdated, filterParams.getEntityType(), null, null))
                                     .subscribe(function (entityStats) {
                                     _this.store.select(fromRoot.getFiltersRetrieved)

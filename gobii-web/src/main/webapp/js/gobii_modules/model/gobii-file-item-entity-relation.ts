@@ -29,7 +29,7 @@ export class GobiiFileItemEntityRelation extends GobiiFileItemCompoundId {
         return this.relatedEntityIds;
     }
 
-    public setRelatedEntityIds(relatedEntityId: string): GobiiFileItemEntityRelation {
+    public setRelatedEntityId(relatedEntityId: string): GobiiFileItemEntityRelation {
         this.relatedEntityIds = relatedEntityId;
         return this;
     }

@@ -14,7 +14,7 @@ import "rxjs/add/operator/expand"
 @Injectable()
 export class FilterParamsColl {
 
-    filterParams: FilterParams[] = [];
+    private filterParams: FilterParams[] = [];
 
     private addFilter(filterParamsToAdd: FilterParams) {
 
