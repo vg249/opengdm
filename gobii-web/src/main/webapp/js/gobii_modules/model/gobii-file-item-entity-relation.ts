@@ -11,7 +11,7 @@ export class GobiiFileItemEntityRelation extends GobiiFileItemCompoundId {
                 entitySubType: EntitySubType = EntitySubType.UNKNOWN,
                 cvFilterType: CvFilterType = CvFilterType.UNKNOWN,
                 cvFilterValue:string = null,
-                private relatedEntityIds: string = null) {
+                private relatedEntityId: string = null) {
 
         super(extractorItemType, entityType, entitySubType, cvFilterType, cvFilterValue);
     }
@@ -22,16 +22,16 @@ export class GobiiFileItemEntityRelation extends GobiiFileItemCompoundId {
             gobiiFileItemCompoundId.getEntityType(),
             gobiiFileItemCompoundId.getEntitySubType(),
             gobiiFileItemCompoundId.getCvFilterType(),
-            null);
+            gobiiFileItemCompoundId.getCvFilterValue());
 
     }
 
     public getRelatedEntityId(): string {
-        return this.relatedEntityIds;
+        return this.relatedEntityId;
     }
 
     public setRelatedEntityId(relatedEntityId: string): GobiiFileItemEntityRelation {
-        this.relatedEntityIds = relatedEntityId;
+        this.relatedEntityId = relatedEntityId;
         return this;
     }
 

@@ -30,25 +30,25 @@ System.register(["./type-entity", "./cv-filter-type", "./type-extractor-item", "
         execute: function () {
             GobiiFileItemEntityRelation = (function (_super) {
                 __extends(GobiiFileItemEntityRelation, _super);
-                function GobiiFileItemEntityRelation(extractorItemType, entityType, entitySubType, cvFilterType, cvFilterValue, relatedEntityIds) {
+                function GobiiFileItemEntityRelation(extractorItemType, entityType, entitySubType, cvFilterType, cvFilterValue, relatedEntityId) {
                     if (extractorItemType === void 0) { extractorItemType = type_extractor_item_1.ExtractorItemType.UNKNOWN; }
                     if (entityType === void 0) { entityType = type_entity_1.EntityType.UNKNOWN; }
                     if (entitySubType === void 0) { entitySubType = type_entity_1.EntitySubType.UNKNOWN; }
                     if (cvFilterType === void 0) { cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN; }
                     if (cvFilterValue === void 0) { cvFilterValue = null; }
-                    if (relatedEntityIds === void 0) { relatedEntityIds = null; }
+                    if (relatedEntityId === void 0) { relatedEntityId = null; }
                     var _this = _super.call(this, extractorItemType, entityType, entitySubType, cvFilterType, cvFilterValue) || this;
-                    _this.relatedEntityIds = relatedEntityIds;
+                    _this.relatedEntityId = relatedEntityId;
                     return _this;
                 }
                 GobiiFileItemEntityRelation.fromGobiiFileItemCompoundId = function (gobiiFileItemCompoundId) {
-                    return new GobiiFileItemEntityRelation(gobiiFileItemCompoundId.getExtractorItemType(), gobiiFileItemCompoundId.getEntityType(), gobiiFileItemCompoundId.getEntitySubType(), gobiiFileItemCompoundId.getCvFilterType(), null);
+                    return new GobiiFileItemEntityRelation(gobiiFileItemCompoundId.getExtractorItemType(), gobiiFileItemCompoundId.getEntityType(), gobiiFileItemCompoundId.getEntitySubType(), gobiiFileItemCompoundId.getCvFilterType(), gobiiFileItemCompoundId.getCvFilterValue());
                 };
                 GobiiFileItemEntityRelation.prototype.getRelatedEntityId = function () {
-                    return this.relatedEntityIds;
+                    return this.relatedEntityId;
                 };
                 GobiiFileItemEntityRelation.prototype.setRelatedEntityId = function (relatedEntityId) {
-                    this.relatedEntityIds = relatedEntityId;
+                    this.relatedEntityId = relatedEntityId;
                     return this;
                 };
                 return GobiiFileItemEntityRelation;

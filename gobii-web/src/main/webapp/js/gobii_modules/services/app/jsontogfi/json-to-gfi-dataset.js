@@ -38,6 +38,7 @@ System.register(["../../../model/gobii-file-item", "../../../model/type-entity",
                     this._filterParamsColl = _filterParamsColl;
                 } //ctor
                 JsonToGfiDataset.prototype.convert = function (jsonItem) {
+                    var returnVal = null;
                     var dataset = new dataset_1.DataSet(jsonItem.id, null, null, jsonItem.experimentId, jsonItem.name, jsonItem.callingAnalysisId, jsonItem.dataTable, jsonItem.dataFile, jsonItem.qualityTable, jsonItem.qualityFile, jsonItem.status, jsonItem.typeId, jsonItem.analysesIds, new Date(jsonItem.createdDate), jsonItem.jobStatusId, jsonItem.jobStatusName, jsonItem.jobSubmittedDate ? new Date(jsonItem.jobSubmittedDate) : null);
                     var piContactRelation = gobii_file_item_entity_relation_1.GobiiFileItemEntityRelation
                         .fromGobiiFileItemCompoundId(this._filterParamsColl.getFilter(file_item_param_names_1.FilterParamNames.CONTACT_PI, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET))
@@ -53,7 +54,7 @@ System.register(["../../../model/gobii-file-item", "../../../model/type-entity",
                         .setRelatedEntityId(dataset.jobStatusId != null ? dataset.jobStatusId.toString() : null);
                     // note that we are the parent id to the job status ID. This is because
                     // the primary filtering use case is by job status.
-                    return gobii_file_item_1.GobiiFileItem.build(type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN, type_process_1.ProcessType.READ).setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
+                    returnVal = gobii_file_item_1.GobiiFileItem.build(type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN, type_process_1.ProcessType.READ).setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
                         .setEntityType(type_entity_1.EntityType.DATASET)
                         .setItemName(dataset.name)
                         .setItemId(dataset.id.toString())
@@ -62,6 +63,7 @@ System.register(["../../../model/gobii-file-item", "../../../model/type-entity",
                         .withRelatedEntity(projectRelation)
                         .withRelatedEntity(experimentRelation)
                         .withRelatedEntity(statusRelation);
+                    return returnVal;
                 };
                 return JsonToGfiDataset;
             }());

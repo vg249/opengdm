@@ -150,28 +150,37 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
                     .filter(tn => tn.getGobiiExtractFilterType() === state.gobiiExtractFilterType),
                 gobiiFileItemUniqueId);
 
+            // not all file items are in the tree
+            if( gobiiTreeNodeToDeActivate ) {
 
-            let containerType: ContainerType = gobiiTreeNodeToDeActivate.parent ?
-                gobiiTreeNodeToDeActivate.parent.getContainerType() :
-                ContainerType.NONE;
+                let containerType: ContainerType = gobiiTreeNodeToDeActivate.parent ?
+                    gobiiTreeNodeToDeActivate.parent.getContainerType() :
+                    ContainerType.NONE;
 
-            if (containerType === ContainerType.NONE
-                || containerType === ContainerType.STRUCTURE) {
-                gobiiTreeNodeToDeActivate.resetLabel();
+                if (containerType === ContainerType.NONE
+                    || containerType === ContainerType.STRUCTURE) {
+                    gobiiTreeNodeToDeActivate.resetLabel();
+                } else {
+                    let children: GobiiTreeNode[] = gobiiTreeNodeToDeActivate.parent.getChildren();
+                    children.splice(children.indexOf(gobiiTreeNodeToDeActivate, 0), 1);
+                }
+
+
+                let newAcxtiveNodeState = state.gobiiTreeNodesActive
+                    .filter(gtn => gtn !== gobiiTreeNodeToDeActivate.getId());
+
+                returnVal = {
+                    gobiiExtractFilterType: state.gobiiExtractFilterType,
+                    gobiiTreeNodesActive: newAcxtiveNodeState,
+                    gobiiTreeNodes: newTreeNodes
+                };
             } else {
-                let children: GobiiTreeNode[] = gobiiTreeNodeToDeActivate.parent.getChildren();
-                children.splice(children.indexOf(gobiiTreeNodeToDeActivate, 0), 1);
+                returnVal = {
+                    gobiiExtractFilterType: state.gobiiExtractFilterType,
+                    gobiiTreeNodesActive: state.gobiiTreeNodesActive,
+                    gobiiTreeNodes: state.gobiiTreeNodes
+                };
             }
-
-
-            let newAcxtiveNodeState = state.gobiiTreeNodesActive
-                .filter(gtn => gtn !== gobiiTreeNodeToDeActivate.getId());
-
-            returnVal = {
-                gobiiExtractFilterType: state.gobiiExtractFilterType,
-                gobiiTreeNodesActive: newAcxtiveNodeState,
-                gobiiTreeNodes: newTreeNodes
-            };
 
             break;
 

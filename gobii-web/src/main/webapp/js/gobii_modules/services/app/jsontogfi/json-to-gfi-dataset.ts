@@ -20,6 +20,8 @@ export class JsonToGfiDataset implements JsonToGfi {
 
     public convert(jsonItem): GobiiFileItem {
 
+        let returnVal:GobiiFileItem  = null;
+
         let dataset: DataSet = new DataSet(
             jsonItem.id,
             null,
@@ -61,7 +63,7 @@ export class JsonToGfiDataset implements JsonToGfi {
 
         // note that we are the parent id to the job status ID. This is because
         // the primary filtering use case is by job status.
-        return GobiiFileItem.build(
+        returnVal = GobiiFileItem.build(
             GobiiExtractFilterType.UNKNOWN, ProcessType.READ
         ).setExtractorItemType(ExtractorItemType.ENTITY)
             .setEntityType(EntityType.DATASET)
@@ -72,5 +74,7 @@ export class JsonToGfiDataset implements JsonToGfi {
             .withRelatedEntity(projectRelation)
             .withRelatedEntity(experimentRelation)
             .withRelatedEntity(statusRelation);
+
+        return returnVal;
     }
 }
