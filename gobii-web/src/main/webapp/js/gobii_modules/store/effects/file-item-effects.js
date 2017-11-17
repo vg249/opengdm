@@ -283,8 +283,9 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                                 .subscribe(function (all) {
                                 var fileItemToReplaceWith = all.find(function (fi) { return fi.getFileItemUniqueId() === fileItemToReplaceWithUniqueId; });
                                 // RUN FILTERED QUERY TO GET CHILD ITEMS WHEN NECESSARY
+                                //If item ID is 0, is a label item, and so for filtering purposes it's null
                                 var filterValue = (fileItemToReplaceWith.getItemId() && Number(fileItemToReplaceWith.getItemId()) > 0) ? fileItemToReplaceWith.getItemId() : null;
-                                if ((filterParamName !== file_item_param_names_1.FilterParamNames.UNKNOWN && filterValue != null)) {
+                                if (filterParamName !== file_item_param_names_1.FilterParamNames.UNKNOWN) {
                                     _this.fileItemService.makeFileActionsFromFilterParamName(action.payload.gobiiExtractFilterType, filterParamName, filterValue).subscribe(function (loadFileItemListAction) {
                                         observer.next(loadFileItemListAction);
                                     }, function (error) {
