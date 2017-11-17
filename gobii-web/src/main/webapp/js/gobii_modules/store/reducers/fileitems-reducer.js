@@ -548,10 +548,25 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 return returnVal;
             }));
             exports_1("getDatasetEntities", getDatasetEntities = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
-                var returnVal = fileItems
-                    .filter(function (fi) { return fi.getEntityType() === type_entity_1.EntityType.DATASET
-                    && fi.getEntity() !== null; })
-                    .map(function (gfi) { return gfi.getEntity(); });
+                var returnVal;
+                var jobStatusFilterParams = filters[file_item_param_names_1.FilterParamNames.CV_JOB_STATUS];
+                if (jobStatusFilterParams
+                    && jobStatusFilterParams.filterValue != null) {
+                    var filterValue_1 = filters[file_item_param_names_1.FilterParamNames.CV_JOB_STATUS].filterValue;
+                    returnVal = fileItems
+                        .filter(function (fi) {
+                        return (fi.getEntityType() === type_entity_1.EntityType.DATASET)
+                            && (fi.getEntity() !== null)
+                            && fi.getRelatedEntityFilterValue(jobStatusFilterParams.gobiiCompoundUniqueId) === filterValue_1;
+                    })
+                        .map(function (gfi) { return gfi.getEntity(); });
+                }
+                else {
+                    returnVal = fileItems
+                        .filter(function (fi) { return fi.getEntityType() === type_entity_1.EntityType.DATASET
+                        && fi.getEntity() !== null; })
+                        .map(function (gfi) { return gfi.getEntity(); });
+                }
                 return returnVal;
             }));
         }

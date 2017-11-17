@@ -54,8 +54,8 @@ export class FilterParamsColl {
                     EntityType.CV)
                 .setIsDynamicFilterValue(false)
                 .setCvFilterType(CvFilterType.DATASET_TYPE)
+                .setCvFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE))
                 .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
-                .setFkEntityFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE))
                 .setNameIdLabelType(NameIdLabelType.SELECT_A)
         );
 
@@ -67,21 +67,9 @@ export class FilterParamsColl {
                     EntityType.CV)
                 .setIsDynamicFilterValue(false)
                 .setCvFilterType(CvFilterType.DATASET_TYPE)
+                .setCvFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE))
                 .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
-                .setFkEntityFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE))
                 .setNameIdLabelType(NameIdLabelType.SELECT_A)
-        );
-
-        this.addFilter(
-            FilterParams
-                .build(FilterParamNames.CV_JOB_STATUS,
-                    GobiiExtractFilterType.WHOLE_DATASET,
-                    EntityType.CV)
-                .setIsDynamicFilterValue(false)
-                .setCvFilterType(CvFilterType.JOB_STATUS)
-                .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
-                .setFkEntityFilterValue(CvFilters.get(CvFilterType.JOB_STATUS))
-                .setNameIdLabelType(NameIdLabelType.ALL)
         );
 
         this.addFilter(
@@ -148,6 +136,18 @@ export class FilterParamsColl {
                 .setIsDynamicFilterValue(false)
                 .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR));
 
+
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.CV_JOB_STATUS,
+                    GobiiExtractFilterType.WHOLE_DATASET,
+                    EntityType.CV)
+                .setIsDynamicFilterValue(true)
+                .setCvFilterType(CvFilterType.JOB_STATUS)
+                .setCvFilterValue(CvFilters.get(CvFilterType.JOB_STATUS))
+                .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
+                .setNameIdLabelType(NameIdLabelType.ALL)
+        );
 
         this.addFilter(FilterParams
             .build(FilterParamNames.DATASETS,

@@ -75,15 +75,16 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
             FilterParams = (function (_super) {
                 __extends(FilterParams, _super);
                 function FilterParams(_entityType, //first four args are passed to base class ctor
-                    _entitySubType, _cvFilterType, _extractorItemType, _queryName, _filterType, _fkEntityFilterValue, _gobiiExtractFilterType, _nameIdLabelType, _parentFileItemParams, _childFileItemParams, _isDynamicFilterValue) {
+                    _entitySubType, _cvFilterType, _cvFilterValue, _extractorItemType, _queryName, _filterType, _fkEntityFilterValue, _gobiiExtractFilterType, _nameIdLabelType, _parentFileItemParams, _childFileItemParams, _isDynamicFilterValue) {
                     if (_entityType === void 0) { _entityType = type_entity_1.EntityType.UNKNOWN; }
                     if (_entitySubType === void 0) { _entitySubType = type_entity_1.EntitySubType.UNKNOWN; }
                     if (_cvFilterType === void 0) { _cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN; }
+                    if (_cvFilterValue === void 0) { _cvFilterValue = null; }
                     if (_queryName === void 0) { _queryName = null; }
                     if (_filterType === void 0) { _filterType = filter_type_1.FilterType.NONE; }
                     if (_fkEntityFilterValue === void 0) { _fkEntityFilterValue = null; }
                     if (_gobiiExtractFilterType === void 0) { _gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN; }
-                    var _this = _super.call(this, _extractorItemType, _entityType, _entitySubType, _cvFilterType) || this;
+                    var _this = _super.call(this, _extractorItemType, _entityType, _entitySubType, _cvFilterType, _cvFilterValue) || this;
                     _this._queryName = _queryName;
                     _this._filterType = _filterType;
                     _this._fkEntityFilterValue = _fkEntityFilterValue;
@@ -95,7 +96,7 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
                     return _this;
                 }
                 FilterParams.build = function (queryName, gobiiExtractFilterType, entityType) {
-                    return (new FilterParams(entityType, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, type_extractor_item_1.ExtractorItemType.ENTITY, queryName, filter_type_1.FilterType.NONE, null, gobiiExtractFilterType, name_id_label_type_1.NameIdLabelType.UNKNOWN, null, [], true));
+                    return (new FilterParams(entityType, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null, type_extractor_item_1.ExtractorItemType.ENTITY, queryName, filter_type_1.FilterType.NONE, null, gobiiExtractFilterType, name_id_label_type_1.NameIdLabelType.UNKNOWN, null, [], true));
                 };
                 FilterParams.prototype.getQueryName = function () {
                     return this._queryName;
@@ -126,6 +127,13 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
                 };
                 FilterParams.prototype.setCvFilterType = function (value) {
                     _super.prototype.setCvFilterType.call(this, value);
+                    return this;
+                };
+                FilterParams.prototype.getCvFilterValue = function () {
+                    return _super.prototype.getCvFilterValue.call(this);
+                };
+                FilterParams.prototype.setCvFilterValue = function (value) {
+                    _super.prototype.setCvFilterValue.call(this, value);
                     return this;
                 };
                 FilterParams.prototype.getFilterType = function () {

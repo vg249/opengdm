@@ -11,6 +11,8 @@ import {GobiiExtractFormat} from "../../model/type-extract-format";
 import {CvFilterType} from "../../model/cv-filter-type";
 import {GobiiSampleListType} from "../../model/type-extractor-sample-list";
 import {DataSet} from "../../model/dataset";
+import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
+import {FilterParams} from "../../model/file-item-params";
 
 
 /***
@@ -23,7 +25,14 @@ export interface State {
     gobiiExtractFilterType: GobiiExtractFilterType,
     uniqueIdsOfExtractFileItems: string[];
     allFileItems: GobiiFileItem[] ;
-    filters: { [id: string]: { gobiiExtractFilterType: GobiiExtractFilterType, filterValue: string, entityLasteUpdated: Date } };
+    filters: {
+        [id: string]: {
+            gobiiExtractFilterType: GobiiExtractFilterType,
+            gobiiCompoundUniqueId: GobiiFileItemCompoundId,
+            filterValue: string,
+            entityLasteUpdated: Date
+        }
+    };
 };
 
 export const initialState: State = {
@@ -713,10 +722,29 @@ export const getDatasetsForSelectedExperiment = createSelector(getFileItems, get
 
 export const getDatasetEntities = createSelector(getFileItems, getFilters, (fileItems, filters) => {
 
-    let returnVal: DataSet[] = fileItems
-        .filter(fi => fi.getEntityType() === EntityType.DATASET
-            && fi.getEntity() !== null)
-        .map(gfi => gfi.getEntity());
+    let returnVal: DataSet[];
+
+
+    let jobStatusFilterParams = filters[FilterParamNames.CV_JOB_STATUS];
+    if (
+        jobStatusFilterParams
+        && jobStatusFilterParams.filterValue != null) {
+
+        let filterValue = filters[FilterParamNames.CV_JOB_STATUS].filterValue;
+        returnVal = fileItems
+            .filter(fi =>
+                (fi.getEntityType() === EntityType.DATASET )
+                && (fi.getEntity() !== null)
+                && fi.getRelatedEntityFilterValue(jobStatusFilterParams.gobiiCompoundUniqueId) === filterValue
+            )
+            .map(gfi => gfi.getEntity());
+
+    } else {
+        returnVal = fileItems
+            .filter(fi => fi.getEntityType() === EntityType.DATASET
+                && fi.getEntity() !== null)
+            .map(gfi => gfi.getEntity());
+    }
 
 
     return returnVal;

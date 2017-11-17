@@ -467,6 +467,7 @@ export class FileItemService {
                                                     filterId: filterParamsToLoad.getQueryName(),
                                                     filter: {
                                                         gobiiExtractFilterType: gobiiExtractFilterType,
+                                                        gobiiCompoundUniqueId: filterParamsToLoad,
                                                         filterValue: filterParamsToLoad.getFkEntityFilterValue(),
                                                         entityLasteUpdated: minEntityLastUpdated
                                                     }
@@ -512,7 +513,7 @@ export class FileItemService {
                             } else {
                                 // The data for given filter value exist and do not not need to be
                                 // updated. So here we shall dispatch only the new filter value.
-                                // The empty gobiiFileItems will amount to a null op.
+                                // This action will not update the filter history -- only the filter value
                                 //BEGIN: nameIdService.get()
 
 
@@ -521,6 +522,7 @@ export class FileItemService {
                                         filterId: filterParamsToLoad.getQueryName(),
                                         filter: {
                                             gobiiExtractFilterType: gobiiExtractFilterType,
+                                            gobiiCompoundUniqueId: filterParamsToLoad,
                                             filterValue: filterParamsToLoad.getFkEntityFilterValue(),
                                             entityLasteUpdated: fileHistoryItem.entityLasteUpdated
                                         }
@@ -617,6 +619,11 @@ export class FileItemService {
 
             try {
 
+                if (filterParams.getIsDynamicFilterValue()) {
+                    filterParams.setFkEntityFilterValue(filterValue);
+                }
+
+
                 if (filterParams.getFilterType() === FilterType.ENTITY_LIST) {
 
 
@@ -661,7 +668,8 @@ export class FileItemService {
                                                                     filterId: filterParams.getQueryName(),
                                                                     filter: {
                                                                         gobiiExtractFilterType: gobiiExtractFilterType,
-                                                                        filterValue: null,
+                                                                        gobiiCompoundUniqueId: filterParams,
+                                                                        filterValue: filterValue,
                                                                         entityLasteUpdated: date
                                                                     }
                                                                 }
@@ -674,7 +682,22 @@ export class FileItemService {
                                                         this.store.dispatch(new historyAction.AddStatusAction(responseHeader));
 
                                                     });
-                                        }
+                                        } else {
+                                            let loadAction: fileItemActions.LoadFilterAction = new fileItemActions.LoadFilterAction(
+                                                {
+                                                    filterId: filterParams.getQueryName(),
+                                                    filter: {
+                                                        gobiiExtractFilterType: gobiiExtractFilterType,
+                                                        gobiiCompoundUniqueId: filterParams,
+                                                        filterValue: filterParams.getFkEntityFilterValue(),
+                                                        entityLasteUpdated: fileHistoryItem.entityLasteUpdated
+                                                    }
+                                                }
+                                            );
+
+                                            observer.next(loadAction);
+
+                                        } // if-else the file  history item exists and the data have not been modified
                                     },
                                     error => {
                                         this.store.dispatch(new historyAction.AddStatusAction(error));

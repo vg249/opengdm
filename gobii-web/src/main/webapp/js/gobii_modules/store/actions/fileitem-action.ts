@@ -3,6 +3,7 @@ import {GobiiFileItem} from "../../model/gobii-file-item";
 import {FilterParams} from "../../model/file-item-params";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 import {FilterParamNames} from "../../model/file-item-param-names";
+import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 
 export const ADD_TO_EXTRACT = '[GobiiFileItem] Add to Extract';
 export const ADD_TO_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Add to Extract by ID';
@@ -29,7 +30,12 @@ export class LoadFileItemListWithFilterAction implements Action {
     constructor(public payload: {
         gobiiFileItems: GobiiFileItem[],
         filterId: FilterParamNames,
-        filter: { gobiiExtractFilterType: GobiiExtractFilterType, filterValue: string, entityLasteUpdated: Date }
+        filter: {
+            gobiiExtractFilterType: GobiiExtractFilterType,
+            gobiiCompoundUniqueId: GobiiFileItemCompoundId,
+            filterValue: string,
+            entityLasteUpdated: Date
+        }
 
     }) {
     }
@@ -50,7 +56,12 @@ export class LoadFilterAction implements Action {
 
     constructor(public payload: {
         filterId: FilterParamNames,
-        filter: { gobiiExtractFilterType: GobiiExtractFilterType, filterValue: string, entityLasteUpdated: Date }
+        filter: {
+            gobiiExtractFilterType: GobiiExtractFilterType,
+            gobiiCompoundUniqueId:GobiiFileItemCompoundId,
+            filterValue: string,
+            entityLasteUpdated: Date
+        }
     }) {
     }
 }

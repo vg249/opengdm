@@ -30,13 +30,14 @@ System.register(["./type-entity", "./cv-filter-type", "./type-extractor-item", "
         execute: function () {
             GobiiFileItemEntityRelation = (function (_super) {
                 __extends(GobiiFileItemEntityRelation, _super);
-                function GobiiFileItemEntityRelation(extractorItemType, entityType, entitySubType, cvFilterType, relatedEntityIds) {
+                function GobiiFileItemEntityRelation(extractorItemType, entityType, entitySubType, cvFilterType, cvFilterValue, relatedEntityIds) {
                     if (extractorItemType === void 0) { extractorItemType = type_extractor_item_1.ExtractorItemType.UNKNOWN; }
                     if (entityType === void 0) { entityType = type_entity_1.EntityType.UNKNOWN; }
                     if (entitySubType === void 0) { entitySubType = type_entity_1.EntitySubType.UNKNOWN; }
                     if (cvFilterType === void 0) { cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN; }
+                    if (cvFilterValue === void 0) { cvFilterValue = null; }
                     if (relatedEntityIds === void 0) { relatedEntityIds = null; }
-                    var _this = _super.call(this, extractorItemType, entityType, entitySubType, cvFilterType) || this;
+                    var _this = _super.call(this, extractorItemType, entityType, entitySubType, cvFilterType, cvFilterValue) || this;
                     _this.relatedEntityIds = relatedEntityIds;
                     return _this;
                 }

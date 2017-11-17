@@ -10,9 +10,10 @@ export class GobiiFileItemEntityRelation extends GobiiFileItemCompoundId {
                 entityType: EntityType = EntityType.UNKNOWN,
                 entitySubType: EntitySubType = EntitySubType.UNKNOWN,
                 cvFilterType: CvFilterType = CvFilterType.UNKNOWN,
+                cvFilterValue:string = null,
                 private relatedEntityIds: string = null) {
 
-        super(extractorItemType, entityType, entitySubType, cvFilterType);
+        super(extractorItemType, entityType, entitySubType, cvFilterType, cvFilterValue);
     }
 
     public static fromGobiiFileItemCompoundId(gobiiFileItemCompoundId: GobiiFileItemCompoundId): GobiiFileItemEntityRelation {

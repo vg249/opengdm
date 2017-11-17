@@ -47,6 +47,7 @@ export class FilterParams extends GobiiFileItemCompoundId {
     private constructor(_entityType: EntityType = EntityType.UNKNOWN, //first four args are passed to base class ctor
                         _entitySubType: EntitySubType = EntitySubType.UNKNOWN,
                         _cvFilterType: CvFilterType = CvFilterType.UNKNOWN,
+                        _cvFilterValue:string = null,
                         _extractorItemType: ExtractorItemType,
                         private _queryName: string = null,
                         private _filterType: FilterType = FilterType.NONE,
@@ -57,7 +58,7 @@ export class FilterParams extends GobiiFileItemCompoundId {
                         private _childFileItemParams: FilterParams[],
                         private _isDynamicFilterValue:boolean) {
 
-        super(_extractorItemType,_entityType,_entitySubType,_cvFilterType);
+        super(_extractorItemType,_entityType,_entitySubType,_cvFilterType,_cvFilterValue);
 
 
     }
@@ -69,6 +70,7 @@ export class FilterParams extends GobiiFileItemCompoundId {
             entityType,
             EntitySubType.UNKNOWN,
             CvFilterType.UNKNOWN,
+            null,
             ExtractorItemType.ENTITY,
             queryName,
             FilterType.NONE,
@@ -123,6 +125,17 @@ export class FilterParams extends GobiiFileItemCompoundId {
         super.setCvFilterType(value);
         return this;
     }
+
+    getCvFilterValue(): string {
+        return super.getCvFilterValue();
+    }
+
+    setCvFilterValue(value: string) {
+
+        super.setCvFilterValue(value);
+        return this;
+    }
+
 
     getFilterType(): FilterType {
         return this._filterType;

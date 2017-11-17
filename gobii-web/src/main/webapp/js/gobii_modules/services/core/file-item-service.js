@@ -405,6 +405,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                             filterId: filterParamsToLoad.getQueryName(),
                                             filter: {
                                                 gobiiExtractFilterType: gobiiExtractFilterType,
+                                                gobiiCompoundUniqueId: filterParamsToLoad,
                                                 filterValue: filterParamsToLoad.getFkEntityFilterValue(),
                                                 entityLasteUpdated: minEntityLastUpdated
                                             }
@@ -437,12 +438,13 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                 else {
                                     // The data for given filter value exist and do not not need to be
                                     // updated. So here we shall dispatch only the new filter value.
-                                    // The empty gobiiFileItems will amount to a null op.
+                                    // This action will not update the filter history -- only the filter value
                                     //BEGIN: nameIdService.get()
                                     var loadAction = new fileItemActions.LoadFilterAction({
                                         filterId: filterParamsToLoad.getQueryName(),
                                         filter: {
                                             gobiiExtractFilterType: gobiiExtractFilterType,
+                                            gobiiCompoundUniqueId: filterParamsToLoad,
                                             filterValue: filterParamsToLoad.getFkEntityFilterValue(),
                                             entityLasteUpdated: fileHistoryItem.entityLasteUpdated
                                         }
@@ -504,6 +506,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
                         try {
+                            if (filterParams.getIsDynamicFilterValue()) {
+                                filterParams.setFkEntityFilterValue(filterValue);
+                            }
                             if (filterParams.getFilterType() === filter_type_1.FilterType.ENTITY_LIST) {
                                 var dtoRequestItemGfi_1 = new dto_request_item_gfi_1.DtoRequestItemGfi(filterParams, null, new json_to_gfi_dataset_1.JsonToGfiDataset(filterParams, _this.filterParamsColl));
                                 _this.entityStatsService.get(new dto_request_item_entity_stats_1.DtoRequestItemEntityStats(dto_request_item_entity_stats_1.EntityRequestType.LasetUpdated, filterParams.getEntityType(), null, null))
@@ -528,7 +533,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                                     filterId: filterParams.getQueryName(),
                                                     filter: {
                                                         gobiiExtractFilterType: gobiiExtractFilterType,
-                                                        filterValue: null,
+                                                        gobiiCompoundUniqueId: filterParams,
+                                                        filterValue: filterValue,
                                                         entityLasteUpdated: date
                                                     }
                                                 });
@@ -537,6 +543,18 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                                 _this.store.dispatch(new historyAction.AddStatusAction(responseHeader));
                                             });
                                         }
+                                        else {
+                                            var loadAction = new fileItemActions.LoadFilterAction({
+                                                filterId: filterParams.getQueryName(),
+                                                filter: {
+                                                    gobiiExtractFilterType: gobiiExtractFilterType,
+                                                    gobiiCompoundUniqueId: filterParams,
+                                                    filterValue: filterParams.getFkEntityFilterValue(),
+                                                    entityLasteUpdated: fileHistoryItem.entityLasteUpdated
+                                                }
+                                            });
+                                            observer.next(loadAction);
+                                        } // if-else the file  history item exists and the data have not been modified
                                     }, function (error) {
                                         _this.store.dispatch(new historyAction.AddStatusAction(error));
                                     });

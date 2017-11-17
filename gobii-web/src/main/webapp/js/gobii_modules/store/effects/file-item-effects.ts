@@ -211,7 +211,7 @@ export class FileItemEffects {
                                 let fileItemToReplaceWith: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === fileItemToReplaceWithUniqueId);
 
                                 // RUN FILTERED QUERY TO GET CHILD ITEMS WHEN NECESSARY
-                                let filterValue: string = fileItemToReplaceWith.getItemId();
+                                let filterValue: string = ( fileItemToReplaceWith.getItemId() && Number(fileItemToReplaceWith.getItemId()) > 0 ) ? fileItemToReplaceWith.getItemId() : null;
 
                                 if ((filterParamName !== FilterParamNames.UNKNOWN && filterValue != null)) {
 

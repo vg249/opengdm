@@ -57,23 +57,16 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .build(file_item_param_names_1.FilterParamNames.CV_DATATYPE, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.CV)
                         .setIsDynamicFilterValue(false)
                         .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE)
+                        .setCvFilterValue(cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.DATASET_TYPE))
                         .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPE_NAME)
-                        .setFkEntityFilterValue(cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.DATASET_TYPE))
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A));
                     this.addFilter(file_item_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.CV_DATATYPE, type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_entity_1.EntityType.CV)
                         .setIsDynamicFilterValue(false)
                         .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE)
+                        .setCvFilterValue(cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.DATASET_TYPE))
                         .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPE_NAME)
-                        .setFkEntityFilterValue(cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.DATASET_TYPE))
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A));
-                    this.addFilter(file_item_params_1.FilterParams
-                        .build(file_item_param_names_1.FilterParamNames.CV_JOB_STATUS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.CV)
-                        .setIsDynamicFilterValue(false)
-                        .setCvFilterType(cv_filter_type_1.CvFilterType.JOB_STATUS)
-                        .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPE_NAME)
-                        .setFkEntityFilterValue(cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.JOB_STATUS))
-                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL));
                     this.addFilter(file_item_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.MAPSETS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.MAPSET)
                         .setIsDynamicFilterValue(false)
@@ -103,6 +96,13 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .build(file_item_param_names_1.FilterParamNames.CONTACT_PI, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.CONTACT)
                         .setIsDynamicFilterValue(false)
                         .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR));
+                    this.addFilter(file_item_params_1.FilterParams
+                        .build(file_item_param_names_1.FilterParamNames.CV_JOB_STATUS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.CV)
+                        .setIsDynamicFilterValue(true)
+                        .setCvFilterType(cv_filter_type_1.CvFilterType.JOB_STATUS)
+                        .setCvFilterValue(cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.JOB_STATUS))
+                        .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPE_NAME)
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL));
                     this.addFilter(file_item_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.DATASETS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.DATASET)
                         .setFilterType(filter_type_1.FilterType.ENTITY_LIST));

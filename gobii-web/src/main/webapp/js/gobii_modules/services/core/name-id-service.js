@@ -54,31 +54,18 @@ System.register(["@angular/core", "./dto-request.service", "../../model/filter-t
                     }
                     return returnVal;
                 };
-                NameIdService.prototype.validateRequest = function (nameIdRequestParams) {
-                    var foo = "bar";
-                    var returnVal = false;
-                    if (nameIdRequestParams.getFilterType() === filter_type_1.FilterType.NONE) {
-                        nameIdRequestParams.setFkEntityFilterValue(null);
-                        returnVal = true;
-                    }
-                    else if (nameIdRequestParams.getFilterType() === filter_type_1.FilterType.NAMES_BY_TYPEID) {
-                        //for filter NAMES_BY_TYPEID we must have a filter value specified by parent
-                        returnVal = (nameIdRequestParams.getFkEntityFilterValue() != null);
-                    }
-                    else if (nameIdRequestParams.getFilterType() === filter_type_1.FilterType.NAMES_BY_TYPE_NAME) {
-                        //for filter NAMES_BY_TYPE_NAME we divine the typename algorityhmically for now
-                        var entityFilterValue = this.getEntityFilterValue(nameIdRequestParams);
-                        if (entityFilterValue) {
-                            nameIdRequestParams.setFkEntityFilterValue(entityFilterValue);
-                            returnVal = true;
-                        }
-                    }
-                    return returnVal;
-                };
-                NameIdService.prototype.get = function (fileItemParams) {
+                NameIdService.prototype.get = function (filterParams) {
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
-                        _this._dtoRequestService.get(new dto_request_item_nameids_1.DtoRequestItemNameIds(fileItemParams.getEntityType(), fileItemParams.getFilterType() === filter_type_1.FilterType.NONE ? null : fileItemParams.getFilterType(), fileItemParams.getFkEntityFilterValue()))
+                        var filterType = filterParams.getFilterType() === filter_type_1.FilterType.NONE ? null : filterParams.getFilterType();
+                        var cvFilterValue = null;
+                        if (filterType === filter_type_1.FilterType.NAMES_BY_TYPEID) {
+                            cvFilterValue = filterParams.getFkEntityFilterValue();
+                        }
+                        else if (filterType === filter_type_1.FilterType.NAMES_BY_TYPE_NAME) {
+                            cvFilterValue = filterParams.getCvFilterValue();
+                        }
+                        _this._dtoRequestService.get(new dto_request_item_nameids_1.DtoRequestItemNameIds(filterParams.getEntityType(), filterType, cvFilterValue))
                             .subscribe(function (nameIds) {
                             var nameIdsToReturn = [];
                             if (nameIds && (nameIds.length > 0)) {
