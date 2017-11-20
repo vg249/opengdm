@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../model/type-extractor-filter", "../services/core/file-item-service", "../model/file-item-param-names"], function (exports_1, context_1) {
+System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../model/type-extractor-filter", "../services/core/file-item-service", "../model/file-item-param-names", "../store/actions/fileitem-action"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../model/
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, store_1, fromRoot, type_extractor_filter_1, file_item_service_1, file_item_param_names_1, DatasetDatatableComponent;
+    var core_1, store_1, fromRoot, type_extractor_filter_1, file_item_service_1, file_item_param_names_1, fileAction, DatasetDatatableComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -30,6 +30,9 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../model/
             },
             function (file_item_param_names_1_1) {
                 file_item_param_names_1 = file_item_param_names_1_1;
+            },
+            function (fileAction_1) {
+                fileAction = fileAction_1;
             }
         ],
         execute: function () {
@@ -41,18 +44,29 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../model/
                     this.datasetsFileItems$ = this.store.select(fromRoot.getDatsetEntities);
                     this.nameIdFilterParamTypes = Object.assign({}, file_item_param_names_1.FilterParamNames);
                 }
+                DatasetDatatableComponent.prototype.handleRowChecked = function (event) {
+                    var selectedDatasetFileItem = event;
+                    this.handleItemChecked(selectedDatasetFileItem.getFileItemUniqueId(), event);
+                };
                 DatasetDatatableComponent.prototype.handleRowSelect = function (event) {
-                    var selectedDataset = event.data;
-                    var foo = "foo";
+                    var selectedDatasetFileItem = event.data;
+                    this.handleItemChecked(selectedDatasetFileItem.getFileItemUniqueId(), event.originalEvent.checked);
                 };
                 DatasetDatatableComponent.prototype.handleRowUnSelect = function (event) {
-                    var selectedDataset = event.data;
-                    var foo = "foo";
+                    var selectedDatasetFileItem = event.data;
+                    this.handleItemChecked(selectedDatasetFileItem.getFileItemUniqueId(), event.originalEvent.checked);
                 };
                 DatasetDatatableComponent.prototype.handleOnRowClick = function (event) {
                     var selectedDataset = event.data;
-                    var foo = "foo";
                 };
+                DatasetDatatableComponent.prototype.handleItemChecked = function (currentFileItemUniqueId, isChecked) {
+                    if (isChecked) {
+                        this.store.dispatch(new fileAction.AddToExtractByItemIdAction(currentFileItemUniqueId));
+                    }
+                    else {
+                        this.store.dispatch(new fileAction.RemoveFromExractByItemIdAction(currentFileItemUniqueId));
+                    }
+                }; // handleItemChecked()
                 DatasetDatatableComponent.prototype.ngOnInit = function () {
                 }; // ngOnInit()
                 // gobiiExtractType is not set until you get OnChanges
@@ -75,7 +89,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../model/
                         selector: 'dataset-datatable',
                         inputs: [],
                         outputs: [],
-                        template: "\n        <div style=\"border: 1px solid #336699; padding-left: 5px\">\n            <div class=\"container-fluid\">\n                <div class=\"row\">\n                    <BR>\n                    <label class=\"the-legend\">Filter by Status:&nbsp;</label>\n                    <name-id-list-box\n                            [gobiiExtractFilterType]=\"gobiiExtractFilterType\"\n                            [filterParamName]=\"nameIdFilterParamTypes.CV_JOB_STATUS\">\n                    </name-id-list-box>\n\n                </div> <!--status selector row -->\n                <div class=\"row\">\n                    <p-dataTable [value]=\"datasetsFileItems$ | async\"\n                                 [(selection)]=\"selectedDatasets\"\n                                 (onRowSelect)=\"handleRowSelect($event)\"\n                                 (onRowUnselect)=\"handleRowUnSelect($event)\"\n                                 (onRowClick)=\"handleOnRowClick($event)\"\n                                 dataKey=\"id\">\n                        <p-column selectionMode=\"multiple\" [style]=\"{'width':'30px'}\"></p-column>\n                        <p-column field=\"_entity.id\" header=\"Id\" hidden=\"true\"></p-column>\n                        <p-column field=\"_entity.name\" header=\"Name\"></p-column>\n                        <p-column field=\"_entity.jobStatusName\" header=\"Status\"></p-column>\n                        <p-column field=\"jobSubmittedDate\" header=\"Submitted\">\n                            <ng-template let-col let-fi=\"rowData\" pTemplate=\"body\">\n                                {{fi._entity[col.field] | date:'yyyy-MM-dd HH:mm' }}\n                            </ng-template>\n                         </p-column>\n                    </p-dataTable>\n                </div> <!-- table row -->\n            </div><!--container  -->\n        </div> <!-- enclosing box  -->\n    " // end template
+                        template: "\n        <div style=\"border: 1px solid #336699; padding-left: 5px\">\n            <div class=\"container-fluid\">\n                <div class=\"row\">\n                    <BR>\n                    <label class=\"the-legend\">Filter by Status:&nbsp;</label>\n                    <name-id-list-box\n                            [gobiiExtractFilterType]=\"gobiiExtractFilterType\"\n                            [filterParamName]=\"nameIdFilterParamTypes.CV_JOB_STATUS\">\n                    </name-id-list-box>\n\n                </div> <!--status selector row -->\n                <div class=\"row\">\n                    <p-dataTable [value]=\"datasetsFileItems$ | async\"\n                                 [(selection)]=\"selectedDatasets\"\n                                 (onRowSelect)=\"handleRowSelect($event)\"\n                                 (onRowUnselect)=\"handleRowUnSelect($event)\"\n                                 (onRowClick)=\"handleOnRowClick($event)\"\n                                 dataKey=\"_entity.id\">\n                        <p-column [style]=\"{'width':'30px'}\">\n                            <ng-template let-col let-fi=\"rowData\" pTemplate=\"body\">\n                                <p-checkbox binary=\"true\"\n                                            [ngModel]=\"fi.getSelected()\"\n                                            (onChange)=\"handleRowChecked(fi)\">\n                                </p-checkbox>\n\n                            </ng-template>\n                        </p-column>\n                        <p-column field=\"_entity.id\" header=\"Id\" hidden=\"true\"></p-column>\n                        <p-column field=\"_entity.name\" header=\"Name\"></p-column>\n                        <p-column field=\"_entity.jobStatusName\" header=\"Status\"></p-column>\n                        <p-column field=\"jobSubmittedDate\" header=\"Submitted\">\n                            <ng-template let-col let-fi=\"rowData\" pTemplate=\"body\">\n                                {{fi._entity[col.field] | date:'yyyy-MM-dd HH:mm' }}\n                            </ng-template>\n                        </p-column>\n                    </p-dataTable>\n                </div> <!-- table row -->\n            </div><!--container  -->\n        </div> <!-- enclosing box  -->\n    " // end template
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
                         file_item_service_1.FileItemService])

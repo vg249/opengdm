@@ -7,6 +7,7 @@ import {FilterParamNames} from "../model/file-item-param-names";
 import {Observable} from "rxjs/Observable";
 import {DataSet} from "../model/dataset";
 import {GobiiFileItem} from "../model/gobii-file-item";
+import * as fileAction from '../store/actions/fileitem-action';
 
 
 @Component({
@@ -31,8 +32,16 @@ import {GobiiFileItem} from "../model/gobii-file-item";
                                  (onRowSelect)="handleRowSelect($event)"
                                  (onRowUnselect)="handleRowUnSelect($event)"
                                  (onRowClick)="handleOnRowClick($event)"
-                                 dataKey="id">
-                        <p-column selectionMode="multiple" [style]="{'width':'30px'}"></p-column>
+                                 dataKey="_entity.id">
+                        <p-column [style]="{'width':'30px'}">
+                            <ng-template let-col let-fi="rowData" pTemplate="body">
+                                <p-checkbox binary="true"
+                                            [ngModel]="fi.getSelected()"
+                                            (onChange)="handleRowChecked(fi)">
+                                </p-checkbox>
+
+                            </ng-template>
+                        </p-column>
                         <p-column field="_entity.id" header="Id" hidden="true"></p-column>
                         <p-column field="_entity.name" header="Name"></p-column>
                         <p-column field="_entity.jobStatusName" header="Status"></p-column>
@@ -40,7 +49,7 @@ import {GobiiFileItem} from "../model/gobii-file-item";
                             <ng-template let-col let-fi="rowData" pTemplate="body">
                                 {{fi._entity[col.field] | date:'yyyy-MM-dd HH:mm' }}
                             </ng-template>
-                         </p-column>
+                        </p-column>
                     </p-dataTable>
                 </div> <!-- table row -->
             </div><!--container  -->
@@ -57,24 +66,41 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
     }
 
     public datasetsFileItems$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getDatsetEntities);
-    public selectedDatasets:GobiiFileItem[];
+    public selectedDatasets: GobiiFileItem[];
     public nameIdFilterParamTypes: any = Object.assign({}, FilterParamNames);
 
 
+    public handleRowChecked(event) {
+        let selectedDatasetFileItem: GobiiFileItem = event;
+        this.handleItemChecked(selectedDatasetFileItem.getFileItemUniqueId(), event);
+    }
+
+
     public handleRowSelect(event) {
-        let selectedDataset:GobiiFileItem= event.data;
-        let foo:string = "foo";
+        let selectedDatasetFileItem: GobiiFileItem = event.data;
+        this.handleItemChecked(selectedDatasetFileItem.getFileItemUniqueId(), event.originalEvent.checked);
     }
 
     public handleRowUnSelect(event) {
-        let selectedDataset:GobiiFileItem = event.data;
-        let foo:string = "foo";
+        let selectedDatasetFileItem: GobiiFileItem = event.data;
+        this.handleItemChecked(selectedDatasetFileItem.getFileItemUniqueId(), event.originalEvent.checked);
     }
 
     public handleOnRowClick(event) {
-        let selectedDataset:GobiiFileItem = event.data;
-        let foo:string = "foo";
+        let selectedDataset: GobiiFileItem = event.data;
+
     }
+
+    public handleItemChecked(currentFileItemUniqueId: string, isChecked: boolean) {
+
+        if (isChecked) {
+            this.store.dispatch(new fileAction.AddToExtractByItemIdAction(currentFileItemUniqueId));
+        } else {
+            this.store.dispatch(new fileAction.RemoveFromExractByItemIdAction(currentFileItemUniqueId));
+        }
+
+    } // handleItemChecked()
+
 
     @Input()
     public gobiiExtractFilterType: GobiiExtractFilterType;
