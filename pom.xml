@@ -6,7 +6,7 @@
 
     <groupId>org.gobiiproject</groupId>
     <artifactId>parent</artifactId>
-    <version>1.4.0-DEV-2017-11-03_01</version>
+    <version>1.4.0-DEV-2017-11-20_01</version>
     <packaging>pom</packaging>
 
     <description>Parent for GOBii project genotype application</description>
