@@ -32,13 +32,13 @@ import {GobiiFileItem} from "../model/gobii-file-item";
                                  (onRowUnselect)="handleRowUnSelect($event)"
                                  (onRowClick)="handleOnRowClick($event)"
                                  dataKey="id">
-                        <p-column selectionMode="multiple"></p-column>
+                        <p-column selectionMode="multiple" [style]="{'width':'30px'}"></p-column>
                         <p-column field="_entity.id" header="Id" hidden="true"></p-column>
                         <p-column field="_entity.name" header="Name"></p-column>
                         <p-column field="_entity.jobStatusName" header="Status"></p-column>
                         <p-column field="jobSubmittedDate" header="Submitted">
-                            <ng-template let-col let-ds="rowData" pTemplate="body">
-                                {{ds._entity[col.field] | date:'yyyy-MM-dd HH:mm' }}
+                            <ng-template let-col let-fi="rowData" pTemplate="body">
+                                {{fi._entity[col.field] | date:'yyyy-MM-dd HH:mm' }}
                             </ng-template>
                          </p-column>
                     </p-dataTable>
