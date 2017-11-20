@@ -100,4 +100,4 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../model/
         }
     };
 });
-//# sourceMappingURL=dataset-datatable.component..js.map
+//# sourceMappingURL=dataset-datatable.component.js.map

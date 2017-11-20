@@ -36,7 +36,7 @@ import {TreeStructureService} from "../services/core/tree-structure-service";
 import {FileItemEffects} from "../store/effects/file-item-effects";
 import {FileItemService} from "../services/core/file-item-service";
 import {InstructionSubmissionService} from "../services/core/instruction-submission-service";
-import {DatasetDatatableComponent} from "../views/dataset-datatable.component.";
+import {DatasetDatatableComponent} from "../views/dataset-datatable.component";
 import {FilterParamsColl} from "../services/core/filter-params-coll";
 
 
