@@ -126,7 +126,7 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetAnalysisNamesByTypeId() throws Exception {
 
-        testNameRetrieval(GobiiEntityNameType.ANALYSIS, GobiiFilterType.BYTYPEID, "1");
+        testNameRetrieval(GobiiEntityNameType.ANALYSIS, GobiiFilterType.NAMES_BY_TYPEID, "1");
     }
 
     @Test
@@ -188,7 +188,7 @@ public class DtoRequestNameIdListTest {
         GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
 
         namesUri.setParamValue("entity", GobiiEntityNameType.ANALYSIS.toString().toLowerCase());
-        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPEID.toString().toUpperCase()));
+        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.NAMES_BY_TYPEID.toString().toUpperCase()));
         // normally would also specify "filterValue" here
 
         PayloadEnvelope<NameIdDTO> resultEnvelope = gobiiEnvelopeRestResource
@@ -209,7 +209,7 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetContactsByIdForContactType() throws Exception {
 
-        testNameRetrieval(GobiiEntityNameType.CONTACT, GobiiFilterType.BYTYPENAME, "Admin");
+        testNameRetrieval(GobiiEntityNameType.CONTACT, GobiiFilterType.NAMES_BY_TYPE_NAME, "Admin");
 
     } // testGetMarkers()
 
@@ -235,14 +235,14 @@ public class DtoRequestNameIdListTest {
     public void testGetProjectNamesByContactId() throws Exception {
 
 
-        testNameRetrieval(GobiiEntityNameType.PROJECT, GobiiFilterType.BYTYPEID, "1");
+        testNameRetrieval(GobiiEntityNameType.PROJECT, GobiiFilterType.NAMES_BY_TYPEID, "1");
     }
 
     @Test
     public void testGetExperimentNamesByProjectId() throws Exception {
 
 
-        testNameRetrieval(GobiiEntityNameType.EXPERIMENT, GobiiFilterType.BYTYPEID, "1");
+        testNameRetrieval(GobiiEntityNameType.EXPERIMENT, GobiiFilterType.NAMES_BY_TYPEID, "1");
 
     }
 
@@ -257,7 +257,7 @@ public class DtoRequestNameIdListTest {
     public void testGetCvTermsByGroup() throws Exception {
 
 
-        testNameRetrieval(GobiiEntityNameType.CV, GobiiFilterType.BYTYPENAME, "status");
+        testNameRetrieval(GobiiEntityNameType.CV, GobiiFilterType.NAMES_BY_TYPE_NAME, "status");
     }
 
     @Test
@@ -341,7 +341,7 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetPlatformNamesByTypeId() throws Exception {
 
-        testNameRetrieval(GobiiEntityNameType.PLATFORM, GobiiFilterType.BYTYPEID, "1");
+        testNameRetrieval(GobiiEntityNameType.PLATFORM, GobiiFilterType.NAMES_BY_TYPEID, "1");
 
     } // testGetMarkers()
 
@@ -371,7 +371,7 @@ public class DtoRequestNameIdListTest {
 
     @Test
     public void testGetMapsSetNamesByType() throws Exception {
-        testNameRetrieval(GobiiEntityNameType.MAPSET, GobiiFilterType.BYTYPEID, "1");
+        testNameRetrieval(GobiiEntityNameType.MAPSET, GobiiFilterType.NAMES_BY_TYPEID, "1");
 
     } // testGetMarkers()
 
@@ -419,7 +419,7 @@ public class DtoRequestNameIdListTest {
     public void testGetDataSetNamesByExperimentId() throws Exception {
 
 
-        testNameRetrieval(GobiiEntityNameType.DATASET, GobiiFilterType.BYTYPEID, "1");
+        testNameRetrieval(GobiiEntityNameType.DATASET, GobiiFilterType.NAMES_BY_TYPEID, "1");
 
     }
 
@@ -446,7 +446,7 @@ public class DtoRequestNameIdListTest {
         Integer protocolId = (new GlobalPkColl<DtoCrudRequestProtocolTest>()
                 .getAPkVal(DtoCrudRequestProtocolTest.class, GobiiEntityNameType.PROTOCOL));
 
-        testNameRetrieval(GobiiEntityNameType.VENDOR_PROTOCOL, GobiiFilterType.BYTYPEID, protocolId.toString());
+        testNameRetrieval(GobiiEntityNameType.VENDOR_PROTOCOL, GobiiFilterType.NAMES_BY_TYPEID, protocolId.toString());
     }
 
 
@@ -475,6 +475,6 @@ public class DtoRequestNameIdListTest {
         Assert.assertNotNull(platformId);
 
 
-        testNameRetrieval(GobiiEntityNameType.PROTOCOL, GobiiFilterType.BYTYPEID, platformId.toString());
+        testNameRetrieval(GobiiEntityNameType.PROTOCOL, GobiiFilterType.NAMES_BY_TYPEID, platformId.toString());
     }
 }

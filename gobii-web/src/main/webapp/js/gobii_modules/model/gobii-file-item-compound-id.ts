@@ -8,7 +8,8 @@ export class GobiiFileItemCompoundId {
     constructor(private _extractorItemType: ExtractorItemType = ExtractorItemType.UNKNOWN,
                 private _entityType: EntityType = EntityType.UNKNOWN,
                 private _entitySubType: EntitySubType = EntitySubType.UNKNOWN,
-                private _cvFilterType: CvFilterType = CvFilterType.UNKNOWN) {
+                private _cvFilterType: CvFilterType = CvFilterType.UNKNOWN,
+                private _cvFilterValue: string = null) {
 
         if (this._cvFilterType === null) {
             this._cvFilterType = CvFilterType.UNKNOWN;
@@ -28,11 +29,12 @@ export class GobiiFileItemCompoundId {
 
     }
 
-    public compoundIdeEquals(gobiiFileItemCompoundId:GobiiFileItemCompoundId): boolean {
+    public compoundIdeEquals(gobiiFileItemCompoundId: GobiiFileItemCompoundId): boolean {
         return this.getExtractorItemType() === gobiiFileItemCompoundId.getExtractorItemType()
-        && this.getEntityType() === gobiiFileItemCompoundId.getEntityType()
-        && this.getEntitySubType() === gobiiFileItemCompoundId.getEntitySubType()
-        && this.getCvFilterType() === gobiiFileItemCompoundId.getCvFilterType()
+            && this.getEntityType() === gobiiFileItemCompoundId.getEntityType()
+            && this.getEntitySubType() === gobiiFileItemCompoundId.getEntitySubType()
+            && this.getCvFilterType() === gobiiFileItemCompoundId.getCvFilterType()
+            && this.getCvFilterValue() === gobiiFileItemCompoundId.getCvFilterValue()
     }
 
 
@@ -83,5 +85,14 @@ export class GobiiFileItemCompoundId {
         } else {
             this._cvFilterType = CvFilterType.UNKNOWN;
         }
+    }
+
+    getCvFilterValue(): string {
+        return this._cvFilterValue;
+    }
+
+    setCvFilterValue(value: string) {
+
+        this._cvFilterValue = value;
     }
 }

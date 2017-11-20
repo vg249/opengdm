@@ -103,7 +103,7 @@ public class DtoMapNameIdFetchContacts implements DtoMapNameIdFetch {
             returnVal = this.getNameIdListForAllContacts();
         } else {
 
-            if (GobiiFilterType.BYTYPENAME == dtoMapNameIdParams.getGobiiFilterType()) {
+            if (GobiiFilterType.NAMES_BY_TYPE_NAME == dtoMapNameIdParams.getGobiiFilterType()) {
 
                 returnVal = this.getNameIdListForContactsByRoleName(dtoMapNameIdParams.getFilterValueAsString());
 

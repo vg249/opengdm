@@ -242,7 +242,7 @@ public class GobiiTestData {
                 .nameIdListByQueryParams();
         GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
         namesUri.setParamValue("entity", GobiiEntityNameType.CV.toString().toLowerCase());
-        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString().toUpperCase()));
+        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.NAMES_BY_TYPE_NAME.toString().toUpperCase()));
         namesUri.setParamValue("filterValue", filterValue);
 
         PayloadEnvelope<NameIdDTO> resultEnvelope = gobiiEnvelopeRestResource.get(NameIdDTO.class);

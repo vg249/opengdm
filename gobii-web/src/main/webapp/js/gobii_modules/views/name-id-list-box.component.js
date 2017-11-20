@@ -38,7 +38,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
                 } // ctor
                 NameIdListBoxComponent.prototype.ngOnInit = function () {
                     var _this = this;
-                    this.fileItems$ = this.fileItemService.getForFilter(this.nameIdFilterParamTypes);
+                    this.fileItems$ = this.fileItemService.getForFilter(this.filterParamName);
                     this
                         .fileItems$
                         .subscribe(function (items) {
@@ -56,6 +56,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
                     var newFileItemUniqueId = arg.currentTarget.value;
                     var previousFileItemUniqueId = this.previousSelectedItemId;
                     this.store.dispatch(new fileAction.ReplaceInExtractByItemIdAction({
+                        filterParamName: this.filterParamName,
                         gobiiExtractFilterType: this.gobiiExtractFilterType,
                         itemIdCurrentlyInExtract: previousFileItemUniqueId,
                         itemIdToReplaceItWith: newFileItemUniqueId
@@ -65,7 +66,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
                 NameIdListBoxComponent = __decorate([
                     core_1.Component({
                         selector: 'name-id-list-box',
-                        inputs: ['gobiiExtractFilterType', 'nameIdFilterParamTypes'],
+                        inputs: ['gobiiExtractFilterType', 'filterParamName'],
                         outputs: [],
                         template: "<select (change)=\"handleFileItemSelected($event)\">\n        <option *ngFor=\"let fileItem of fileItems$ | async\"\n                [value]=\"fileItem.getFileItemUniqueId()\"\n                [selected]=\"fileItem.getSelected()\">{{fileItem.getItemName()}}\n        </option>\n    </select>\n    " // end template
                     }),

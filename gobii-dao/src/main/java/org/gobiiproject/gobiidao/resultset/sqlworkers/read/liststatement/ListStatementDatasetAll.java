@@ -23,7 +23,18 @@ public class ListStatementDatasetAll implements ListStatement {
     @Override
     public PreparedStatement makePreparedStatement(Connection dbConnection, Map<String, Object> jdbcParamVals, Map<String, Object> sqlParamVals) throws SQLException {
 
-        String sql = "select * from dataset order by lower(name)";
+        String sql = "select ds.*, " +
+                "j.status \"jobstatusid\"," +
+                "case " +
+                "when j.status is not null " +
+                "then (select cv.term from cv where cvgroup_id = (select cvgroup_id from cvgroup where name='job_status' and type=1) and cv.cv_id=j.status) " +
+                "else 'Unsubmitted' " +
+                "end " +
+                "as jobstatusname, " +
+                "j.submitted_date as jobsubmitteddate " +
+                "from dataset ds " +
+                "left outer join job j on (ds.job_id=j.job_id) " +
+                "order by lower(ds.name)";
 
         PreparedStatement returnVal = dbConnection.prepareStatement(sql);
 

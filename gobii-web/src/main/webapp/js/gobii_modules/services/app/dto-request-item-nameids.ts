@@ -2,14 +2,14 @@ import {Injectable} from "@angular/core";
 import {NameId} from "../../model/name-id";
 import {DtoRequestItem} from "./../core/dto-request-item";
 import {EntityType} from "../../model/type-entity";
-import {EntityFilter} from "../../model/type-entity-filter";
+import {FilterType} from "../../model/filter-type";
 import {ProcessType} from "../../model/type-process";
 
 @Injectable()
 export class DtoRequestItemNameIds implements DtoRequestItem<NameId[]> {
 
     public constructor(entityType:EntityType,
-                       entityFilter:EntityFilter = null,
+                       entityFilter:FilterType = null,
                        entityFilterValue:string = null) {
         this.entityType = entityType;
         this.entityFilter = entityFilter;
@@ -27,9 +27,9 @@ export class DtoRequestItemNameIds implements DtoRequestItem<NameId[]> {
 
         let returnVal:string = baseUrl + "/" + EntityType[this.entityType].toLowerCase();
 
-        if (this.entityFilter && (EntityFilter.NONE.valueOf() !== this.entityFilter)) {
+        if (this.entityFilter && (FilterType.NONE.valueOf() !== this.entityFilter)) {
             returnVal += "?"
-                + "filterType=" + EntityFilter[this.entityFilter].toLowerCase()
+                + "filterType=" + FilterType[this.entityFilter].toLowerCase()
                 + "&"
                 + "filterValue="
                 + this.entityFilterValue;
@@ -45,7 +45,7 @@ export class DtoRequestItemNameIds implements DtoRequestItem<NameId[]> {
         this.entityType = entityType;
     }
 
-    private entityFilter:EntityFilter;
+    private entityFilter:FilterType;
 
     private entityFilterValue:string;
 

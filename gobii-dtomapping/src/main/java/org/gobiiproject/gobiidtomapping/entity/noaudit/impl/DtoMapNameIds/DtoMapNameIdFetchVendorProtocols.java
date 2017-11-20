@@ -94,7 +94,7 @@ public class DtoMapNameIdFetchVendorProtocols implements DtoMapNameIdFetch {
 
         if (GobiiFilterType.NONE == dtoMapNameIdParams.getGobiiFilterType()) {
             returnVal = this.getProtocolNames();
-        } else if (GobiiFilterType.BYTYPEID == dtoMapNameIdParams.getGobiiFilterType()) {
+        } else if (GobiiFilterType.NAMES_BY_TYPEID == dtoMapNameIdParams.getGobiiFilterType()) {
 
             returnVal = this.getNameIdListForVendorProtcolByProtocolId(dtoMapNameIdParams.getFilterValueAsInteger());
 

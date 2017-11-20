@@ -96,7 +96,7 @@ public class DtoMapNameIdFetchProjects implements DtoMapNameIdFetch {
             returnVal = this.getNameIdListForProjects();
         } else {
 
-            if (GobiiFilterType.BYTYPEID == dtoMapNameIdParams.getGobiiFilterType()) {
+            if (GobiiFilterType.NAMES_BY_TYPEID == dtoMapNameIdParams.getGobiiFilterType()) {
 
                 returnVal = this.getNameIdListForProjectNameByContactId(dtoMapNameIdParams.getFilterValueAsInteger());
 

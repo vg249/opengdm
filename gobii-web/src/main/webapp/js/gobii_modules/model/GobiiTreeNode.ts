@@ -85,6 +85,18 @@ export class GobiiTreeNode extends GobiiFileItemCompoundId implements TreeNode {
         super.setCvFilterType(value);
         return this;
     }
+
+    getCvFilterValue(): string {
+        return super.getCvFilterValue();
+    }
+
+    setCvFilterValue(value: string) {
+
+        super.setCvFilterValue(value);
+        return this;
+    }
+
+
     private id: string;
 
 

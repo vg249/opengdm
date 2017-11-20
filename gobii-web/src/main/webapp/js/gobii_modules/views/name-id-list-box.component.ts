@@ -6,13 +6,13 @@ import * as fromRoot from '../store/reducers';
 import * as fileAction from '../store/actions/fileitem-action';
 import * as historyAction from '../store/actions/history-action';
 import {Observable} from "rxjs/Observable";
-import {NameIdFilterParamTypes} from "../model/type-nameid-filter-params";
+import {FilterParamNames} from "../model/file-item-param-names";
 import {FileItemService} from "../services/core/file-item-service";
 
 
 @Component({
     selector: 'name-id-list-box',
-    inputs: ['gobiiExtractFilterType','nameIdFilterParamTypes'],
+    inputs: ['gobiiExtractFilterType','filterParamName'],
     outputs: [],
     template: `<select (change)="handleFileItemSelected($event)">
         <option *ngFor="let fileItem of fileItems$ | async"
@@ -23,8 +23,6 @@ import {FileItemService} from "../services/core/file-item-service";
     ` // end template
 
 })
-
-
 export class NameIdListBoxComponent  {
 
 
@@ -32,7 +30,7 @@ export class NameIdListBoxComponent  {
 
     private gobiiExtractFilterType: GobiiExtractFilterType;
 
-    private nameIdFilterParamTypes:NameIdFilterParamTypes;
+    private filterParamName:FilterParamNames;
     constructor(private store: Store<fromRoot.State>,
                 private fileItemService:FileItemService) {
 
@@ -42,7 +40,7 @@ export class NameIdListBoxComponent  {
 
     ngOnInit(): any {
 
-        this.fileItems$ = this.fileItemService.getForFilter(this.nameIdFilterParamTypes)
+        this.fileItems$ = this.fileItemService.getForFilter(this.filterParamName)
 
         this
             .fileItems$
@@ -70,6 +68,7 @@ export class NameIdListBoxComponent  {
         let previousFileItemUniqueId: string = this.previousSelectedItemId;
 
         this.store.dispatch(new fileAction.ReplaceInExtractByItemIdAction({
+            filterParamName: this.filterParamName,
             gobiiExtractFilterType: this.gobiiExtractFilterType,
             itemIdCurrentlyInExtract: previousFileItemUniqueId,
             itemIdToReplaceItWith: newFileItemUniqueId

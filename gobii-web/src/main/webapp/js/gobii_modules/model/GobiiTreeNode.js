@@ -87,6 +87,13 @@ System.register(["./guid", "./type-extractor-filter", "./gobii-file-item-compoun
                     _super.prototype.setCvFilterType.call(this, value);
                     return this;
                 };
+                GobiiTreeNode.prototype.getCvFilterValue = function () {
+                    return _super.prototype.getCvFilterValue.call(this);
+                };
+                GobiiTreeNode.prototype.setCvFilterValue = function (value) {
+                    _super.prototype.setCvFilterValue.call(this, value);
+                    return this;
+                };
                 GobiiTreeNode.prototype.setGobiiExtractFilterType = function (gobiiExtractFilterType) {
                     this.gobiiExtractFilterType = gobiiExtractFilterType;
                     return this;

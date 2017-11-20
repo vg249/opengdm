@@ -1147,7 +1147,7 @@ public class GOBIIControllerV1 {
         try {
 
             GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.CV;
-            GobiiFilterType gobiiFilterType = GobiiFilterType.BYTYPENAME;
+            GobiiFilterType gobiiFilterType = GobiiFilterType.NAMES_BY_TYPE_NAME;
 
             DtoMapNameIdParams dtoMapNameIdParams = new DtoMapNameIdParams(gobiiEntityNameType, gobiiFilterType, "dataset_type");
 
@@ -2017,7 +2017,7 @@ public class GOBIIControllerV1 {
 
                 if (!LineUtils.isNullOrEmpty(filterValue)) {
 
-                    if (GobiiFilterType.BYTYPEID == gobiiFilterType) {
+                    if (GobiiFilterType.NAMES_BY_TYPEID == gobiiFilterType) {
                         if (NumberUtils.isNumber(filterValue)) {
                             typedFilterValue = Integer.valueOf(filterValue);
                         } else {
@@ -2031,7 +2031,7 @@ public class GOBIIControllerV1 {
                                             + gobiiEntityNameType);
                         }
 
-                    } else if (GobiiFilterType.BYTYPENAME == gobiiFilterType) {
+                    } else if (GobiiFilterType.NAMES_BY_TYPE_NAME == gobiiFilterType) {
                         // there is nothing to test here -- the string could be anything
                         // add additional validation tests for other filter types
 

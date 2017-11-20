@@ -15,7 +15,7 @@ import {GobiiFileItem} from "../../model/gobii-file-item";
 import {Observable} from "rxjs/Observable";
 import {Store} from "@ngrx/store";
 import {FileItemService} from "../../services/core/file-item-service";
-import {NameIdFilterParamTypes} from "../../model/type-nameid-filter-params";
+import {FilterParamNames} from "../../model/file-item-param-names";
 import {EntitySubType, EntityType} from "../../model/type-entity";
 import "rxjs/add/operator/mergeMap"
 import {AddFilterRetrieved} from "../actions/history-action";
@@ -196,31 +196,27 @@ export class FileItemEffects {
                 // as such, there are business behaviors that must be implemented here.
                 // you cannot trigger an ASYNCH requrest such as loadWithFilterParams() from within
                 // the subscribe of a reducer.select(): if you do, you end up with an infinite loop
+                // There is a flaw here: this action assigns a filter type for further processing baseed on
+                // entity name; but that's incorrect: not all replace actions should result in further processing
+                // -- only the ones involved with hierarchical queries do. The ReplaceInExtractByItemIdAction
+                // should include the filterId and then delegate this part of the processing to FileItemService,
+                // which specializes in the filter types.
                 return Observable.create(observer => {
 
                     let fileItemToReplaceWithUniqueId: string = action.payload.itemIdToReplaceItWith;
                     let fileItemCurrentlyInExtractUniqueId: string = action.payload.itemIdCurrentlyInExtract;
+                    let filterParamName: FilterParamNames = action.payload.filterParamName;
                     this.store.select(fromRoot.getAllFileItems)
                         .subscribe(all => {
                                 let fileItemToReplaceWith: GobiiFileItem = all.find(fi => fi.getFileItemUniqueId() === fileItemToReplaceWithUniqueId);
 
                                 // RUN FILTERED QUERY TO GET CHILD ITEMS WHEN NECESSARY
-                                let nameIdFilterParamType: NameIdFilterParamTypes = NameIdFilterParamTypes.UNKNOWN;
-                                let filterValue: string = fileItemToReplaceWith.getItemId();
+                                //If item ID is 0, is a label item, and so for filtering purposes it's null
+                                let filterValue: string = ( fileItemToReplaceWith.getItemId() && Number(fileItemToReplaceWith.getItemId()) > 0 ) ? fileItemToReplaceWith.getItemId() : null;
+                                if (filterParamName !== FilterParamNames.UNKNOWN) {
 
-                                if (fileItemToReplaceWith.getEntityType() === EntityType.CONTACT
-                                    && (fileItemToReplaceWith.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR )) {
-                                    nameIdFilterParamType = NameIdFilterParamTypes.PROJECTS_BY_CONTACT;
-                                } else if (fileItemToReplaceWith.getEntityType() === EntityType.PROJECT) {
-                                    nameIdFilterParamType = NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT;
-                                } else if (fileItemToReplaceWith.getEntityType() === EntityType.EXPERIMENT) {
-                                    nameIdFilterParamType = NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT;
-                                }
-
-                                if ((nameIdFilterParamType !== NameIdFilterParamTypes.UNKNOWN && filterValue != null)) {
-
-                                    this.fileItemService.makeFileLoadActions(action.payload.gobiiExtractFilterType,
-                                        nameIdFilterParamType,
+                                    this.fileItemService.makeFileActionsFromFilterParamName(action.payload.gobiiExtractFilterType,
+                                        filterParamName,
                                         filterValue).subscribe(loadFileItemListAction => {
 
                                             observer.next(loadFileItemListAction);

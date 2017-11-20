@@ -96,7 +96,7 @@ public class DtoMapNameIdFetchMapsets implements DtoMapNameIdFetch {
             returnVal = this.getMapsetNames();
         } else {
 
-            if (GobiiFilterType.BYTYPEID == dtoMapNameIdParams.getGobiiFilterType()) {
+            if (GobiiFilterType.NAMES_BY_TYPEID == dtoMapNameIdParams.getGobiiFilterType()) {
 
                 returnVal = this.getMapsetNamesByTypeId(dtoMapNameIdParams.getFilterValueAsInteger());
 

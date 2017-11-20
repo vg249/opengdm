@@ -7,6 +7,7 @@ import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,6 +41,9 @@ public class DataSetDTO extends DTOBaseAuditable {
     private Integer statusId;
     private Integer typeId;
     private Integer jobId;
+    private Integer jobStatusId;
+    private String jobStatusName;
+    private Date jobSubmittedDate;
     private List<Integer> analysesIds = new ArrayList<>();
   //  private List<AnalysisDTO> analyses = new ArrayList<>();
     private List<Integer> scores = new ArrayList<>();
@@ -184,4 +188,34 @@ public class DataSetDTO extends DTOBaseAuditable {
 
     @GobiiEntityColumn(columnName = "job_id")
     public void setJobId(Integer jobId) { this.jobId = jobId; }
+
+    @GobiiEntityParam(paramName = "jobStatusId")
+    public Integer getJobStatusId() {
+        return jobStatusId;
+    }
+
+    @GobiiEntityColumn(columnName = "jobstatusid")
+    public void setJobStatusId(Integer jobStatusId) {
+        this.jobStatusId = jobStatusId;
+    }
+
+    @GobiiEntityParam(paramName = "jobStatusName")
+    public String getJobStatusName() {
+        return jobStatusName;
+    }
+
+    @GobiiEntityColumn(columnName = "jobstatusname")
+    public void setJobStatusName(String jobStatusName) {
+        this.jobStatusName = jobStatusName;
+    }
+
+    @GobiiEntityParam(paramName = "jobSubmittedDate")
+    public Date getJobSubmittedDate() {
+        return jobSubmittedDate;
+    }
+
+    @GobiiEntityColumn(columnName = "jobsubmitteddate")
+    public void setJobSubmittedDate(Date jobSubmittedDate) {
+        this.jobSubmittedDate = jobSubmittedDate;
+    }
 }

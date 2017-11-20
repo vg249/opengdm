@@ -13,8 +13,9 @@ import java.util.Map;
  */
 public class SpGetDatasetDetailsByDataSetId implements Work {
 
-    private Map<String,Object> parameters = null;
-    public SpGetDatasetDetailsByDataSetId(Map<String,Object> parameters ) {
+    private Map<String, Object> parameters = null;
+
+    public SpGetDatasetDetailsByDataSetId(Map<String, Object> parameters) {
         this.parameters = parameters;
     }
 
@@ -28,26 +29,19 @@ public class SpGetDatasetDetailsByDataSetId implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String sql = "select\n" +
-                "\tds.dataset_id,\n" +
-                "\tds.name,\n" +
-                "\tds.experiment_id,\n" +
-                "\tds.callinganalysis_id,\n" +
-                "\tds.analyses,\n" +
-                "\tds.data_table,\n" +
-                "\tds.data_file,\n" +
-                "\tds.quality_table,\n" +
-                "\tds.quality_file,\n" +
-//                "\tds.scores,\n" +
-                "\tds.created_by,\n" +
-                "\tds.created_date,\n" +
-                "\tds.modified_by,\n" +
-                "\tds.modified_date,\n" +
-                "\tds.status, \n" +
-                "\tds.type_id, \n" +
-                "\tds.job_id \n" +
-                "from dataset ds \n" +
-                "where dataset_id=?";
+        String sql = "select ds.*, " +
+                "j.status \"jobstatusid\"," +
+                "case " +
+                "when j.status is not null " +
+                "then (select cv.term from cv where cvgroup_id = (select cvgroup_id from cvgroup where name='job_status' and type=1) and cv.cv_id=j.status) " +
+                "else 'Unsubmitted' " +
+                "end " +
+                "as jobstatusname, " +
+                "j.submitted_date as jobsubmitteddate " +
+                "from dataset ds " +
+                "left outer join job j on (ds.job_id=j.job_id) " +
+                "where dataset_id=? " +
+                "order by lower(ds.name)";
 
         PreparedStatement preparedStatement = dbConnection.prepareCall(sql);
         preparedStatement.setInt(1, (Integer) parameters.get("dataSetId"));

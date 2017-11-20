@@ -32,42 +32,48 @@ export class InstructionSubmissionService {
         ExtractorItemType.ENTITY,
         EntityType.DATASET,
         EntitySubType.UNKNOWN,
-        CvFilterType.UNKNOWN
+        CvFilterType.UNKNOWN,
+        null
     ), false);
 
     private sampleItemCriterion: GobiiFileItemCriterion = new GobiiFileItemCriterion(new GobiiFileItemCompoundId(
         ExtractorItemType.SAMPLE_LIST_ITEM,
         EntityType.UNKNOWN,
         EntitySubType.UNKNOWN,
-        CvFilterType.UNKNOWN
+        CvFilterType.UNKNOWN,
+        null
     ), false);
 
     private samplefileCriterion: GobiiFileItemCriterion = new GobiiFileItemCriterion(new GobiiFileItemCompoundId(
         ExtractorItemType.SAMPLE_FILE,
         EntityType.UNKNOWN,
         EntitySubType.UNKNOWN,
-        CvFilterType.UNKNOWN
+        CvFilterType.UNKNOWN,
+        null
     ), false);
 
     private piContactCriterion: GobiiFileItemCriterion = new GobiiFileItemCriterion(new GobiiFileItemCompoundId(
         ExtractorItemType.ENTITY,
         EntityType.CONTACT,
         EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR,
-        CvFilterType.UNKNOWN
+        CvFilterType.UNKNOWN,
+        null
     ), false);
 
     private projectsCriterion: GobiiFileItemCriterion = new GobiiFileItemCriterion(new GobiiFileItemCompoundId(
         ExtractorItemType.ENTITY,
         EntityType.PROJECT,
         EntitySubType.UNKNOWN,
-        CvFilterType.UNKNOWN
+        CvFilterType.UNKNOWN,
+        null
     ), false);
 
     private datasetTypesCriterion: GobiiFileItemCriterion = new GobiiFileItemCriterion(new GobiiFileItemCompoundId(
         ExtractorItemType.ENTITY,
         EntityType.CV,
         EntitySubType.UNKNOWN,
-        CvFilterType.DATASET_TYPE
+        CvFilterType.DATASET_TYPE,
+        null
     ), false);
 
 
@@ -75,7 +81,8 @@ export class InstructionSubmissionService {
         ExtractorItemType.MARKER_LIST_ITEM,
         EntityType.UNKNOWN,
         EntitySubType.UNKNOWN,
-        CvFilterType.UNKNOWN
+        CvFilterType.UNKNOWN,
+        null
     ), false);
 
 
@@ -83,7 +90,8 @@ export class InstructionSubmissionService {
         ExtractorItemType.MARKER_FILE,
         EntityType.UNKNOWN,
         EntitySubType.UNKNOWN,
-        CvFilterType.UNKNOWN
+        CvFilterType.UNKNOWN,
+        null
     ), false);
 
 
@@ -91,14 +99,16 @@ export class InstructionSubmissionService {
         ExtractorItemType.ENTITY,
         EntityType.MARKER_GROUP,
         EntitySubType.UNKNOWN,
-        CvFilterType.UNKNOWN
+        CvFilterType.UNKNOWN,
+        null
     ), false);
 
     private platformCriterion: GobiiFileItemCriterion = new GobiiFileItemCriterion(new GobiiFileItemCompoundId(
         ExtractorItemType.ENTITY,
         EntityType.PLATFORM,
         EntitySubType.UNKNOWN,
-        CvFilterType.UNKNOWN
+        CvFilterType.UNKNOWN,
+        null
     ), false);
 
 
@@ -137,11 +147,11 @@ export class InstructionSubmissionService {
 
                 } else if (gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
 
-                        this.treeStructureService.unMarkTreeItemMissing(gobiiExtractFilterType, this.markerListItemCriterion);
-                        this.treeStructureService.unMarkTreeItemMissing(gobiiExtractFilterType, this.markerListFileCriterion);
-                        this.treeStructureService.unMarkTreeItemMissing(gobiiExtractFilterType, this.markergGroupCriterion);
-                        this.treeStructureService.unMarkTreeItemMissing(gobiiExtractFilterType, this.platformCriterion);
-                        this.treeStructureService.unMarkTreeItemMissing(gobiiExtractFilterType, this.datasetTypesCriterion);
+                    this.treeStructureService.unMarkTreeItemMissing(gobiiExtractFilterType, this.markerListItemCriterion);
+                    this.treeStructureService.unMarkTreeItemMissing(gobiiExtractFilterType, this.markerListFileCriterion);
+                    this.treeStructureService.unMarkTreeItemMissing(gobiiExtractFilterType, this.markergGroupCriterion);
+                    this.treeStructureService.unMarkTreeItemMissing(gobiiExtractFilterType, this.platformCriterion);
+                    this.treeStructureService.unMarkTreeItemMissing(gobiiExtractFilterType, this.datasetTypesCriterion);
 
                 } else {
                     this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + GobiiExtractFilterType[gobiiExtractFilterType]));
@@ -372,7 +382,7 @@ export class InstructionSubmissionService {
                                 && item.getCvFilterType() === CvFilterType.DATASET_TYPE
                         });
                         let datasetType: NameId = dataTypeFileItem != null ? new NameId(dataTypeFileItem.getItemId(),
-                            dataTypeFileItem.getItemName(), EntityType.CV,null) : null;
+                            dataTypeFileItem.getItemName(), EntityType.CV, null) : null;
 
 
                         // ******** PRINCIPLE INVESTIGATOR CONCEPT
@@ -381,7 +391,7 @@ export class InstructionSubmissionService {
                                 && item.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR
                         });
                         let principleInvestigator: NameId = principleInvestigatorFileItem != null ? new NameId(principleInvestigatorFileItem.getItemId(),
-                            principleInvestigatorFileItem.getItemName(), EntityType.CONTACT,null) : null;
+                            principleInvestigatorFileItem.getItemName(), EntityType.CONTACT, null) : null;
 
 
                         // ******** PROJECT
@@ -389,7 +399,7 @@ export class InstructionSubmissionService {
                             return item.getEntityType() === EntityType.PROJECT
                         });
                         let project: NameId = projectFileItem != null ? new NameId(projectFileItem.getItemId(),
-                            projectFileItem.getItemName(), EntityType.PROJECT,null) : null;
+                            projectFileItem.getItemName(), EntityType.PROJECT, null) : null;
 
 
                         // ******** PLATFORM
@@ -406,7 +416,7 @@ export class InstructionSubmissionService {
                         });
 
                         let markerGroups: NameId[] = markerGroupItems.map(item => {
-                            return new NameId(item.getItemId(), item.getItemName(), EntityType.MARKER_GROUP,null)
+                            return new NameId(item.getItemId(), item.getItemName(), EntityType.MARKER_GROUP, null)
                         });
 
                         // ******** MARKERS
@@ -454,7 +464,7 @@ export class InstructionSubmissionService {
                             dataSetItems.forEach(datsetFileItem => {
 
                                 let dataSet: NameId = new NameId(datsetFileItem.getItemId(),
-                                    datsetFileItem.getItemName(), EntityType.CV,null);
+                                    datsetFileItem.getItemName(), EntityType.CV, null);
 
 
                                 gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,

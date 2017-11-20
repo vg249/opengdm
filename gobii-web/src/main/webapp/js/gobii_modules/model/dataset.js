@@ -6,10 +6,12 @@ System.register([], function (exports_1, context_1) {
         setters: [],
         execute: function () {
             DataSet = (function () {
-                function DataSet(dataSetId, name, experimentId, callingAnalysisId, dataTable, dataFile, qualityTable, qualityFile, status, typeId, analysesIds) {
-                    this.dataSetId = dataSetId;
-                    this.name = name;
+                function DataSet(id, piContactId, projectId, experimentId, name, callingAnalysisId, dataTable, dataFile, qualityTable, qualityFile, status, typeId, analysesIds, createdDate, jobStatusId, jobStatusName, jobSubmittedDate) {
+                    this.id = id;
+                    this.piContactId = piContactId;
+                    this.projectId = projectId;
                     this.experimentId = experimentId;
+                    this.name = name;
                     this.callingAnalysisId = callingAnalysisId;
                     this.dataTable = dataTable;
                     this.dataFile = dataFile;
@@ -18,6 +20,10 @@ System.register([], function (exports_1, context_1) {
                     this.status = status;
                     this.typeId = typeId;
                     this.analysesIds = analysesIds;
+                    this.createdDate = createdDate;
+                    this.jobStatusId = jobStatusId;
+                    this.jobStatusName = jobStatusName;
+                    this.jobSubmittedDate = jobSubmittedDate;
                 }
                 return DataSet;
             }());
