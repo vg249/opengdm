@@ -558,14 +558,14 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                         return (fi.getEntityType() === type_entity_1.EntityType.DATASET)
                             && (fi.getEntity() !== null)
                             && fi.getRelatedEntityFilterValue(jobStatusFilterParams.gobiiCompoundUniqueId) === filterValue_1;
-                    })
-                        .map(function (gfi) { return gfi.getEntity(); });
+                    });
+                    //            .map(gfi => gfi.getEntity());
                 }
                 else {
                     returnVal = fileItems
                         .filter(function (fi) { return fi.getEntityType() === type_entity_1.EntityType.DATASET
-                        && fi.getEntity() !== null; })
-                        .map(function (gfi) { return gfi.getEntity(); });
+                        && fi.getEntity() !== null; });
+                    //            .map(gfi => gfi.getEntity());
                 }
                 return returnVal;
             }));

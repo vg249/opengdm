@@ -722,7 +722,7 @@ export const getDatasetsForSelectedExperiment = createSelector(getFileItems, get
 
 export const getDatasetEntities = createSelector(getFileItems, getFilters, (fileItems, filters) => {
 
-    let returnVal: DataSet[];
+    let returnVal: GobiiFileItem[];
 
 
     let jobStatusFilterParams = filters[FilterParamNames.CV_JOB_STATUS];
@@ -736,14 +736,14 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
                 (fi.getEntityType() === EntityType.DATASET )
                 && (fi.getEntity() !== null)
                 && fi.getRelatedEntityFilterValue(jobStatusFilterParams.gobiiCompoundUniqueId) === filterValue
-            )
-            .map(gfi => gfi.getEntity());
+            );
+//            .map(gfi => gfi.getEntity());
 
     } else {
         returnVal = fileItems
             .filter(fi => fi.getEntityType() === EntityType.DATASET
-                && fi.getEntity() !== null)
-            .map(gfi => gfi.getEntity());
+                && fi.getEntity() !== null);
+//            .map(gfi => gfi.getEntity());
     }
 
 

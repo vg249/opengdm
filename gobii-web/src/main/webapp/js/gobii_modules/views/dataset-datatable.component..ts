@@ -26,19 +26,19 @@ import {GobiiFileItem} from "../model/gobii-file-item";
 
                 </div> <!--status selector row -->
                 <div class="row">
-                    <p-dataTable [value]="datasets$ | async" 
+                    <p-dataTable [value]="datasetsFileItems$ | async"
                                  [(selection)]="selectedDatasets"
                                  (onRowSelect)="handleRowSelect($event)"
                                  (onRowUnselect)="handleRowUnSelect($event)"
                                  (onRowClick)="handleOnRowClick($event)"
                                  dataKey="id">
                         <p-column selectionMode="multiple"></p-column>
-                        <p-column field="id" header="Id" hidden="true"></p-column>
-                        <p-column field="name" header="Name"></p-column>
-                        <p-column field="jobStatusName" header="Status"></p-column>
+                        <p-column field="_entity.id" header="Id" hidden="true"></p-column>
+                        <p-column field="_entity.name" header="Name"></p-column>
+                        <p-column field="_entity.jobStatusName" header="Status"></p-column>
                         <p-column field="jobSubmittedDate" header="Submitted">
                             <ng-template let-col let-ds="rowData" pTemplate="body">
-                                {{ds[col.field] | date:'yyyy-MM-dd HH:mm' }}
+                                {{ds._entity[col.field] | date:'yyyy-MM-dd HH:mm' }}
                             </ng-template>
                         </p-column>
                     </p-dataTable>
@@ -56,23 +56,23 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
                 private fileItemService: FileItemService) {
     }
 
-    public datasets$: Observable<DataSet[]> = this.store.select(fromRoot.getDatsetEntities);
-    public selectedDatasets:DataSet[];
+    public datasetsFileItems$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getDatsetEntities);
+    public selectedDatasets:GobiiFileItem[];
     public nameIdFilterParamTypes: any = Object.assign({}, FilterParamNames);
 
 
     public handleRowSelect(event) {
-        let selectedDataset:DataSet = event.data;
+        let selectedDataset:GobiiFileItem= event.data;
         let foo:string = "foo";
     }
 
     public handleRowUnSelect(event) {
-        let selectedDataset:DataSet = event.data;
+        let selectedDataset:GobiiFileItem = event.data;
         let foo:string = "foo";
     }
 
     public handleOnRowClick(event) {
-        let selectedDataset:DataSet = event.data;
+        let selectedDataset:GobiiFileItem = event.data;
         let foo:string = "foo";
     }
 
