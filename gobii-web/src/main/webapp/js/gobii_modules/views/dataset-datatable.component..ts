@@ -40,7 +40,7 @@ import {GobiiFileItem} from "../model/gobii-file-item";
                             <ng-template let-col let-ds="rowData" pTemplate="body">
                                 {{ds._entity[col.field] | date:'yyyy-MM-dd HH:mm' }}
                             </ng-template>
-                        </p-column>
+                         </p-column>
                     </p-dataTable>
                 </div> <!-- table row -->
             </div><!--container  -->

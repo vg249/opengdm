@@ -24,8 +24,9 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
                           private _selected: boolean,
                           private _required: boolean,
                           private _parentItemId: string,
-                          private _entity: any,
-                          private _entityRelations: GobiiFileItemEntityRelation[] = []) {
+                          private _entity: any = null,
+                          private _entityRelations: GobiiFileItemEntityRelation[] = [],
+                          private _hasEntity:boolean = false) {
 
         super(_extractorItemType, _entityType, _entitySubType, _cvFilterType,_cvFilterValue);
 
@@ -37,6 +38,8 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
         this._required = _required;
         this._parentItemId = _parentItemId;
         this._entityRelations = _entityRelations;
+        this._entity = _entity;
+        this._hasEntity = _hasEntity;
 
         this._fileItemUniqueId = Guid.generateUUID();
     }
@@ -200,11 +203,16 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
 
     setEntity(entity: any) {
         this._entity = entity;
+        this._hasEntity = true;
         return this;
     }
 
     getEntity(): any {
         return this._entity;
+    }
+
+    hasEntity() :boolean {
+        return this._hasEntity;
     }
 
     withRelatedEntityValue(gobiiFileItemEntityRelation: GobiiFileItemEntityRelation, relatedId: string): GobiiFileItem {
@@ -247,5 +255,6 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
         }
         return returnVal;
     }
+
 
 } // GobiiFileItem()

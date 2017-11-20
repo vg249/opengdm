@@ -556,7 +556,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                     returnVal = fileItems
                         .filter(function (fi) {
                         return (fi.getEntityType() === type_entity_1.EntityType.DATASET)
-                            && (fi.getEntity() !== null)
+                            && fi.hasEntity()
                             && fi.getRelatedEntityFilterValue(jobStatusFilterParams.gobiiCompoundUniqueId) === filterValue_1;
                     });
                     //            .map(gfi => gfi.getEntity());
@@ -564,7 +564,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 else {
                     returnVal = fileItems
                         .filter(function (fi) { return fi.getEntityType() === type_entity_1.EntityType.DATASET
-                        && fi.getEntity() !== null; });
+                        && fi.hasEntity(); });
                     //            .map(gfi => gfi.getEntity());
                 }
                 return returnVal;

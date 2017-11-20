@@ -734,7 +734,7 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
         returnVal = fileItems
             .filter(fi =>
                 (fi.getEntityType() === EntityType.DATASET )
-                && (fi.getEntity() !== null)
+                && fi.hasEntity()
                 && fi.getRelatedEntityFilterValue(jobStatusFilterParams.gobiiCompoundUniqueId) === filterValue
             );
 //            .map(gfi => gfi.getEntity());
@@ -742,7 +742,7 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
     } else {
         returnVal = fileItems
             .filter(fi => fi.getEntityType() === EntityType.DATASET
-                && fi.getEntity() !== null);
+                && fi.hasEntity());
 //            .map(gfi => gfi.getEntity());
     }
 

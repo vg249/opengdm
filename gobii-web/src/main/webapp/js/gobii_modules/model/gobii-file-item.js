@@ -42,8 +42,10 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
         execute: function () {
             GobiiFileItem = (function (_super) {
                 __extends(GobiiFileItem, _super);
-                function GobiiFileItem(_gobiiExtractFilterType, _processType, _extractorItemType, _entityType, _entitySubType, _cvFilterType, _cvFilterValue, _itemId, _itemName, _selected, _required, _parentItemId, _entity, _entityRelations) {
+                function GobiiFileItem(_gobiiExtractFilterType, _processType, _extractorItemType, _entityType, _entitySubType, _cvFilterType, _cvFilterValue, _itemId, _itemName, _selected, _required, _parentItemId, _entity, _entityRelations, _hasEntity) {
+                    if (_entity === void 0) { _entity = null; }
                     if (_entityRelations === void 0) { _entityRelations = []; }
+                    if (_hasEntity === void 0) { _hasEntity = false; }
                     var _this = _super.call(this, _extractorItemType, _entityType, _entitySubType, _cvFilterType, _cvFilterValue) || this;
                     _this._gobiiExtractFilterType = _gobiiExtractFilterType;
                     _this._processType = _processType;
@@ -54,6 +56,7 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
                     _this._parentItemId = _parentItemId;
                     _this._entity = _entity;
                     _this._entityRelations = _entityRelations;
+                    _this._hasEntity = _hasEntity;
                     _this._gobiiExtractFilterType = _gobiiExtractFilterType;
                     _this._processType = _processType;
                     _this._itemId = _itemId;
@@ -62,6 +65,8 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
                     _this._required = _required;
                     _this._parentItemId = _parentItemId;
                     _this._entityRelations = _entityRelations;
+                    _this._entity = _entity;
+                    _this._hasEntity = _hasEntity;
                     _this._fileItemUniqueId = guid_1.Guid.generateUUID();
                     return _this;
                 }
@@ -172,10 +177,14 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
                 };
                 GobiiFileItem.prototype.setEntity = function (entity) {
                     this._entity = entity;
+                    this._hasEntity = true;
                     return this;
                 };
                 GobiiFileItem.prototype.getEntity = function () {
                     return this._entity;
+                };
+                GobiiFileItem.prototype.hasEntity = function () {
+                    return this._hasEntity;
                 };
                 GobiiFileItem.prototype.withRelatedEntityValue = function (gobiiFileItemEntityRelation, relatedId) {
                     var existingGobiiFileItemEntityRelation = this._entityRelations.find(function (er) { return er.compoundIdeEquals(gobiiFileItemEntityRelation); });
