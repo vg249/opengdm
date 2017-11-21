@@ -359,4 +359,12 @@ public class ConfigSettings {
     public void setAuthenticateBrapi(boolean authenticateBrapi) {
         this.configValues.setAuthenticateBrapi(authenticateBrapi);
     }
+
+    public Integer getMaxUploadSizeMbytes() {
+        return this.configValues.getMaxUploadSizeMbytes();
+    }
+
+    public void setMaxUploadSizeMbytes(Integer maxUploadSizeMbytes) {
+        this.configValues.setMaxUploadSizeMbytes(maxUploadSizeMbytes);
+    }
 }
