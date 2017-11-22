@@ -60,6 +60,8 @@ public class DtoRequestConfigSettingsPropsTest {
 
         returnVal = resultEnvelope;
 
+
+
         Assert.assertTrue(GobiiClientContextAuth.deAuthenticate());
 
 
@@ -77,6 +79,13 @@ public class DtoRequestConfigSettingsPropsTest {
         ConfigSettingsDTO configSettingsDTOResponse = resultEnvelope.getPayload().getData().get(0);
 
         Assert.assertNotNull(configSettingsDTOResponse);
+
+        Assert.assertNotNull("The max upload size is null",
+                configSettingsDTOResponse.getMaxUploadSizeMbytes());
+
+        Assert.assertTrue("The max upload size bytes is not greater than zero",
+                configSettingsDTOResponse.getMaxUploadSizeMbytes() > 0 );
+
         Assert.assertTrue(configSettingsDTOResponse.getServerConfigs().size() > 0);
 
 
@@ -262,4 +271,6 @@ public class DtoRequestConfigSettingsPropsTest {
 
 
     }
+
+
 }

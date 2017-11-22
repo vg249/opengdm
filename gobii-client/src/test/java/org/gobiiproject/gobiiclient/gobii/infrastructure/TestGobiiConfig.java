@@ -176,6 +176,33 @@ public class TestGobiiConfig {
 
     }
 
+
+    @Test
+    public void testSetMaxFileUpload() throws Exception {
+
+        // make sure we're not using the default value to test with
+        Integer newMaxUploadSize = 50;
+
+        String testFileFqpn = makeTestFileFqpn("setmaxuploadmbytes");
+        String commandLine = makeCommandline("-a -wfqpn "
+                + testFileFqpn
+                + " -stMUM "
+                + newMaxUploadSize.toString());
+
+        boolean succeeded = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandLine, succeeded);
+
+        File createdFile = new File(testFileFqpn);
+        Assert.assertTrue("File should have been created but does not exist"
+                        + testFileFqpn,
+                createdFile.exists());
+
+        ConfigSettings configSettingsAfterChange = new ConfigSettings(testFileFqpn);
+        Assert.assertTrue("The max file upload size value read from the file does not match the input",
+                configSettingsAfterChange.getMaxUploadSizeMbytes().equals(newMaxUploadSize));
+
+    }
+
     public void testSetEmailServer() throws Exception {
 
         String testFileFqpn = makeTestFileFqpn("setemailoptions");

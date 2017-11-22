@@ -28,6 +28,8 @@ public class DtoMapConfigSettingsImpl implements DtoMapConfigSettings {
         try {
             ConfigSettings configSettings = new ConfigSettings();
 
+            returnVal.setMaxUploadSizeMbytes(configSettings.getMaxUploadSizeMbytes());
+
             returnVal.setServerCapabilities(configSettings.getServerCapabilities());
 
             for (GobiiCropConfig currentGobiiCropConfig : configSettings.getActiveCropConfigs()) {
