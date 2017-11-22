@@ -45,6 +45,7 @@ import * as fileAction from '../store/actions/fileitem-action';
                         <p-column field="_entity.id" header="Id" hidden="true"></p-column>
                         <p-column field="_entity.name" header="Name"></p-column>
                         <p-column field="_entity.jobStatusName" header="Status"></p-column>
+                        <p-column field="_entity.jobTypeName" header="Type"></p-column>
                         <p-column field="jobSubmittedDate" header="Submitted">
                             <ng-template let-col let-fi="rowData" pTemplate="body">
                                 {{fi._entity[col.field] | date:'yyyy-MM-dd HH:mm' }}

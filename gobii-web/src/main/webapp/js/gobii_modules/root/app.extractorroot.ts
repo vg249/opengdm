@@ -37,7 +37,6 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
     styleUrls: ['/extractor-ui.css'],
     template: `
         <div class="panel panel-default">
-
             <div class="panel-heading">
                 <img src="images/gobii_logo.png" alt="GOBii Project"/>
 
@@ -94,203 +93,198 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
 
             </div>
 
-            <div class="container-fluid">
+        </div>
 
-                <div class="row">
+        <div class="container-fluid">
 
-                    <div class="col-md-4">
+            <div class="row">
 
-                        <div class="panel panel-primary">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">Filters</h3>
-                            </div>
-                            <div class="panel-body">
+                <div class="col-md-4">
 
-                                <div *ngIf="displaySelectorPi">
-                                    <label class="the-label">Principle Investigator:</label><BR>
-                                    <name-id-list-box
-                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                            [filterParamName]="nameIdFilterParamTypes.CONTACT_PI">
-                                    </name-id-list-box>
-
-                                </div>
-
-                                <div *ngIf="displaySelectorProjectForPi">
-                                    <BR>
-                                    <BR>
-                                    <label class="the-label">PI's Project:</label><BR>
-                                    <name-id-list-box
-                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                            [filterParamName]="nameIdFilterParamTypes.PROJECTS_BY_CONTACT">
-                                    </name-id-list-box>
-                                </div>
-
-                                <div *ngIf="displaySelectorForAllProjects">
-                                    <BR>
-                                    <BR>
-                                    <label class="the-label">Projects:</label><BR>
-                                    <name-id-list-box
-                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                            [filterParamName]="nameIdFilterParamTypes.PROJECTS">
-                                    </name-id-list-box>
-                                </div>
-
-                                <div *ngIf="displaySelectorDataType">
-                                    <BR>
-                                    <BR>
-                                    <label class="the-label">Dataset Types:</label><BR>
-                                    <name-id-list-box
-                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                            [filterParamName]="nameIdFilterParamTypes.CV_DATATYPE">
-                                    </name-id-list-box>
-                                </div>
-
-
-                                <div *ngIf="displaySelectorExperiment">
-                                    <BR>
-                                    <BR>
-                                    <label class="the-label">Project's Experiment:</label><BR>
-                                    <name-id-list-box
-                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                            [filterParamName]="nameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT">
-                                    </name-id-list-box>
-
-                                </div>
-
-                                <div *ngIf="displaySelectorPlatform">
-                                    <BR>
-                                    <BR>
-                                    <label class="the-label">Platforms:</label><BR>
-                                    <checklist-box
-                                            [filterParamName]="nameIdFilterParamTypes.PLATFORMS"
-                                            [gobiiExtractFilterType]="gobiiExtractFilterType">
-                                    </checklist-box>
-                                </div>
-
-
-                                <div *ngIf="displayAvailableDatasets">
-                                    <BR>
-                                    <BR>
-                                    <label class="the-label">Experiment's Data Sets</label><BR>
-                                    <checklist-box
-                                            [filterParamName]="nameIdFilterParamTypes.DATASETS_BY_EXPERIMENT"
-                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                            (onError)="handleHeaderStatusMessage($event)">
-                                    </checklist-box>
-                                    <BR>
-                                    <BR>
-                                    <label class="the-label">Data Sets</label><BR>
-                                    <dataset-datatable
-                                            [gobiiExtractFilterType]="gobiiExtractFilterType">
-                                    </dataset-datatable>
-                                    
-                                </div>
-                            </div> <!-- panel body -->
-                        </div> <!-- panel primary -->
-
-
-                        <div *ngIf="displaySampleListTypeSelector">
-                            <div class="panel panel-primary">
-                                <div class="panel-heading">
-                                    <h3 class="panel-title">Included Samples</h3>
-                                </div>
-                                <div class="panel-body">
-                                    <sample-list-type
-                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                            (onHeaderStatusMessage)="handleHeaderStatusMessage($event)">
-                                    </sample-list-type>
-                                    <hr style="width: 100%; color: black; height: 1px; background-color:black;"/>
-                                    <sample-marker-box
-                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                            (onSampleMarkerError)="handleHeaderStatusMessage($event)">
-                                    </sample-marker-box>
-                                </div> <!-- panel body -->
-                            </div> <!-- panel primary -->
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Filters</h3>
                         </div>
+                        <div class="panel-body">
 
-                        <div *ngIf="displaySampleMarkerBox">
-                            <div class="panel panel-primary">
-                                <div class="panel-heading">
-                                    <h3 class="panel-title">Included Markers</h3>
-                                </div>
-                                <div class="panel-body">
-                                    <sample-marker-box
-                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                            (onSampleMarkerError)="handleHeaderStatusMessage($event)">
-                                    </sample-marker-box>
-                                </div> <!-- panel body -->
-                            </div> <!-- panel primary -->
-                        </div>
+                            <div *ngIf="displaySelectorPi">
+                                <label class="the-label">Principle Investigator:</label><BR>
+                                <name-id-list-box
+                                        [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                        [filterParamName]="nameIdFilterParamTypes.CONTACT_PI">
+                                </name-id-list-box>
 
-                    </div>  <!-- outer grid column 1-->
-
-
-                    <div class="col-md-4">
-
-                        <div class="panel panel-primary">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">Extraction Criteria</h3>
                             </div>
-                            <div class="panel-body">
-                                <status-display-tree
-                                        [fileItemEventChange]="treeFileItemEvent"
-                                        [gobiiExtractFilterTypeEvent]="gobiiExtractFilterType"
-                                        (onAddMessage)="handleHeaderStatusMessage($event)">
-                                </status-display-tree>
 
+                            <div *ngIf="displaySelectorProjectForPi">
                                 <BR>
+                                <BR>
+                                <label class="the-label">PI's Project:</label><BR>
+                                <name-id-list-box
+                                        [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                        [filterParamName]="nameIdFilterParamTypes.PROJECTS_BY_CONTACT">
+                                </name-id-list-box>
+                            </div>
 
-                                <button type="submit"
-                                        [class]="submitButtonStyle"
-                                        (mouseenter)="handleOnMouseOverSubmit($event,true)"
-                                        (mouseleave)="handleOnMouseOverSubmit($event,false)"
-                                        (click)="handleExtractSubmission()">Submit
-                                </button>
+                            <div *ngIf="displaySelectorForAllProjects">
+                                <BR>
+                                <BR>
+                                <label class="the-label">Projects:</label><BR>
+                                <name-id-list-box
+                                        [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                        [filterParamName]="nameIdFilterParamTypes.PROJECTS">
+                                </name-id-list-box>
+                            </div>
 
-                                <button type="clear"
-                                        [class]="clearButtonStyle"
-                                        (click)="handleClearTree()">Clear
-                                </button>
+                            <div *ngIf="displaySelectorDataType">
+                                <BR>
+                                <BR>
+                                <label class="the-label">Dataset Types:</label><BR>
+                                <name-id-list-box
+                                        [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                        [filterParamName]="nameIdFilterParamTypes.CV_DATATYPE">
+                                </name-id-list-box>
+                            </div>
 
+
+                            <div *ngIf="displaySelectorExperiment">
+                                <BR>
+                                <BR>
+                                <label class="the-label">Project's Experiment:</label><BR>
+                                <name-id-list-box
+                                        [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                        [filterParamName]="nameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT">
+                                </name-id-list-box>
+
+                            </div>
+
+                            <div *ngIf="displaySelectorPlatform">
+                                <BR>
+                                <BR>
+                                <label class="the-label">Platforms:</label><BR>
+                                <checklist-box
+                                        [filterParamName]="nameIdFilterParamTypes.PLATFORMS"
+                                        [gobiiExtractFilterType]="gobiiExtractFilterType">
+                                </checklist-box>
+                            </div>
+
+
+                            <div *ngIf="displayAvailableDatasets">
+                                <BR>
+                                <BR>
+                                <label class="the-label">Experiment's Data Sets</label><BR>
+                                <checklist-box
+                                        [filterParamName]="nameIdFilterParamTypes.DATASETS_BY_EXPERIMENT"
+                                        [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                        (onError)="handleHeaderStatusMessage($event)">
+                                </checklist-box>
+                                <BR>
+                                <BR>
+                                <label class="the-label">Data Sets</label><BR>
+                                <dataset-datatable
+                                        [gobiiExtractFilterType]="gobiiExtractFilterType">
+                                </dataset-datatable>
+
+                            </div>
+                        </div> <!-- panel body -->
+                    </div> <!-- panel primary -->
+
+
+                    <div *ngIf="displaySampleListTypeSelector">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Included Samples</h3>
+                            </div>
+                            <div class="panel-body">
+                                <sample-list-type
+                                        [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                        (onHeaderStatusMessage)="handleHeaderStatusMessage($event)">
+                                </sample-list-type>
+                                <hr style="width: 100%; color: black; height: 1px; background-color:black;"/>
+                                <sample-marker-box
+                                        [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                        (onSampleMarkerError)="handleHeaderStatusMessage($event)">
+                                </sample-marker-box>
                             </div> <!-- panel body -->
                         </div> <!-- panel primary -->
+                    </div>
 
-                    </div>  <!-- outer grid column 2-->
+                    <div *ngIf="displaySampleMarkerBox">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Included Markers</h3>
+                            </div>
+                            <div class="panel-body">
+                                <sample-marker-box
+                                        [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                        (onSampleMarkerError)="handleHeaderStatusMessage($event)">
+                                </sample-marker-box>
+                            </div> <!-- panel body -->
+                        </div> <!-- panel primary -->
+                    </div>
+
+                </div>  <!-- outer grid column 1-->
 
 
-                    <div class="col-md-4">
+                <div class="col-md-4">
 
-
-                        <div>
-                            <div class="panel panel-primary">
-                                <div class="panel-heading">
-                                    <h3 class="panel-title">Status Messages</h3>
-                                </div>
-                                <div class="panel-body">
-                                    <status-display [messages$]="messages$"></status-display>
-                                    <BR>
-                                    <button type="clear"
-                                            class="btn btn-primary"
-                                            (click)="handleClearMessages()">Clear
-                                    </button>
-                                </div> <!-- panel body -->
-
-                            </div> <!-- panel primary -->
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Extraction Criteria</h3>
                         </div>
+                        <div class="panel-body">
+                            <status-display-tree
+                                    [fileItemEventChange]="treeFileItemEvent"
+                                    [gobiiExtractFilterTypeEvent]="gobiiExtractFilterType"
+                                    (onAddMessage)="handleHeaderStatusMessage($event)">
+                            </status-display-tree>
+
+                            <BR>
+
+                            <button type="submit"
+                                    [class]="submitButtonStyle"
+                                    (mouseenter)="handleOnMouseOverSubmit($event,true)"
+                                    (mouseleave)="handleOnMouseOverSubmit($event,false)"
+                                    (click)="handleExtractSubmission()">Submit
+                            </button>
+
+                            <button type="clear"
+                                    [class]="clearButtonStyle"
+                                    (click)="handleClearTree()">Clear
+                            </button>
+
+                        </div> <!-- panel body -->
+                    </div> <!-- panel primary -->
+
+                </div>  <!-- outer grid column 2-->
 
 
-                    </div>  <!-- outer grid column 3 (inner grid)-->
+                <div class="col-md-4">
 
-                </div> <!-- .row of outer grid -->
 
-                <div class="row"><!-- begin .row 2 of outer grid-->
-                    <div class="col-md-3"><!-- begin column 1 of outer grid -->
+                    <div>
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Status Messages</h3>
+                            </div>
+                            <div class="panel-body">
+                                <status-display [messages$]="messages$"></status-display>
+                                <BR>
+                                <button type="clear"
+                                        class="btn btn-primary"
+                                        (click)="handleClearMessages()">Clear
+                                </button>
+                            </div> <!-- panel body -->
 
-                    </div><!-- end column 1 of outer grid -->
+                        </div> <!-- panel primary -->
+                    </div>
 
-                </div><!-- end .row 2 of outer grid-->
 
-            </div>` // end template
+                </div>  <!-- outer grid column 3 (inner grid)-->
+
+            </div> <!-- .row of outer grid -->
+
+        </div>` // end template
 }) // @Component
 
 export class ExtractorRoot implements OnInit {
