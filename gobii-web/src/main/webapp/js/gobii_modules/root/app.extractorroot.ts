@@ -183,7 +183,6 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                         </checklist-box>
                                         <BR>
                                         <BR>
-                                        <label class="the-label">Data Sets</label><BR>
 
                                     </div>
                                 </div> <!-- panel body dataset filters -->

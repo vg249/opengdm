@@ -37,7 +37,8 @@ import * as fileAction from '../store/actions/fileitem-action';
                             <ng-template let-col let-fi="rowData" pTemplate="body">
                                 <p-checkbox binary="true"
                                             [ngModel]="fi.getSelected()"
-                                            (onChange)="handleRowChecked($event, fi)">
+                                            (onChange)="handleRowChecked($event, fi)"
+                                            [disabled]="fi.getEntity().jobStatusName !== 'completed' || (fi.getEntity().jobTypeName !== 'load')">
                                 </p-checkbox>
 
                             </ng-template>
@@ -71,7 +72,7 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
     public nameIdFilterParamTypes: any = Object.assign({}, FilterParamNames);
 
 
-    public handleRowChecked(checked:boolean, selectedDatasetFileItem: GobiiFileItem) {
+    public handleRowChecked(checked: boolean, selectedDatasetFileItem: GobiiFileItem) {
         this.handleItemChecked(selectedDatasetFileItem.getFileItemUniqueId(), checked);
     }
 
