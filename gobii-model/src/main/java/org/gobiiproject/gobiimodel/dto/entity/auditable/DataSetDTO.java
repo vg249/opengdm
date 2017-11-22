@@ -43,6 +43,8 @@ public class DataSetDTO extends DTOBaseAuditable {
     private Integer jobId;
     private Integer jobStatusId;
     private String jobStatusName;
+    private Integer jobTypeId;
+    private String jobTypeName;
     private Date jobSubmittedDate;
     private List<Integer> analysesIds = new ArrayList<>();
   //  private List<AnalysisDTO> analyses = new ArrayList<>();
@@ -207,6 +209,27 @@ public class DataSetDTO extends DTOBaseAuditable {
     @GobiiEntityColumn(columnName = "jobstatusname")
     public void setJobStatusName(String jobStatusName) {
         this.jobStatusName = jobStatusName;
+    }
+
+
+    @GobiiEntityParam(paramName = "jobTypeId")
+    public Integer getJobTypeId() {
+        return jobTypeId;
+    }
+
+    @GobiiEntityColumn(columnName = "jobtypeid")
+    public void setJobTypeId(Integer jobTypeId) {
+        this.jobTypeId = jobTypeId;
+    }
+
+    @GobiiEntityParam(paramName = "jobTypeName")
+    public String getJobTypeName() {
+        return jobTypeName;
+    }
+
+    @GobiiEntityColumn(columnName = "jobtypename")
+    public void setJobTypeName(String jobTypeName) {
+        this.jobTypeName = jobTypeName;
     }
 
     @GobiiEntityParam(paramName = "jobSubmittedDate")

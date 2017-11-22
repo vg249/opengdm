@@ -39,7 +39,7 @@ System.register(["../../../model/gobii-file-item", "../../../model/type-entity",
                 } //ctor
                 JsonToGfiDataset.prototype.convert = function (jsonItem) {
                     var returnVal = null;
-                    var dataset = new dataset_1.DataSet(jsonItem.id, null, null, jsonItem.experimentId, jsonItem.name, jsonItem.callingAnalysisId, jsonItem.dataTable, jsonItem.dataFile, jsonItem.qualityTable, jsonItem.qualityFile, jsonItem.status, jsonItem.typeId, jsonItem.analysesIds, new Date(jsonItem.createdDate), jsonItem.jobStatusId, jsonItem.jobStatusName, jsonItem.jobSubmittedDate ? new Date(jsonItem.jobSubmittedDate) : null);
+                    var dataset = new dataset_1.DataSet(jsonItem.id, null, null, jsonItem.experimentId, jsonItem.name, jsonItem.callingAnalysisId, jsonItem.dataTable, jsonItem.dataFile, jsonItem.qualityTable, jsonItem.qualityFile, jsonItem.status, jsonItem.typeId, jsonItem.analysesIds, new Date(jsonItem.createdDate), jsonItem.jobStatusId, jsonItem.jobStatusName, jsonItem.jobTypeId, jsonItem.jobTypeName, jsonItem.jobSubmittedDate ? new Date(jsonItem.jobSubmittedDate) : null);
                     var piContactRelation = gobii_file_item_entity_relation_1.GobiiFileItemEntityRelation
                         .fromGobiiFileItemCompoundId(this._filterParamsColl.getFilter(file_item_param_names_1.FilterParamNames.CONTACT_PI, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET))
                         .setRelatedEntityId(dataset.piContactId != null ? dataset.piContactId.toString() : null);

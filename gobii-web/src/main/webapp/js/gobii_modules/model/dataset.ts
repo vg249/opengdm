@@ -16,6 +16,8 @@ export class DataSet {
                 public createdDate:Date,
                 public jobStatusId:number,
                 public jobStatusName,
+                public jobTypeId:number,
+                public jobTypeName,
                 public jobSubmittedDate:Date) {
     }
 }

@@ -31,6 +31,13 @@ public class ListStatementDatasetAll implements ListStatement {
                 "else 'Unsubmitted' " +
                 "end " +
                 "as jobstatusname, " +
+                "j.type_id \"jobtypeid\"," +
+                "case " +
+                "when j.type_id is not null " +
+                "then (select cv.term from cv where cvgroup_id = (select cvgroup_id from cvgroup where name='job_type' and type=1) and cv.cv_id=j.type_id) " +
+                "else 'n/a' " +
+                "end " +
+                "as jobtypename , " +
                 "j.submitted_date as jobsubmitteddate " +
                 "from dataset ds " +
                 "left outer join job j on (ds.job_id=j.job_id) " +
