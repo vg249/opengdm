@@ -1960,6 +1960,86 @@ public class GobiiTestData {
 
                     }
 
+                    // modify gobiiFileColumns attribute
+                    JsonArray gobiiFileColumnsArr = (JsonArray) object.get("gobiiFileColumns");
+                    for (int o = 0; o < gobiiFileColumnsArr.size(); o++) {
+                        JsonObject fileColumnObj = (JsonObject)  gobiiFileColumnsArr.get(o);
+
+                        if(fileColumnObj.has("gobiiColumnType")){
+                            String columnType = fileColumnObj.get("gobiiColumnType").getAsString();
+
+                            if(columnType.equals("CONSTANT")) {
+
+                                if(fileColumnObj.has("name")) {
+                                    String columnName = fileColumnObj.get("name").getAsString();
+
+                                    switch (columnName) {
+
+                                        case "project_id" :
+
+                                            if(entityName.equals("project")) {
+
+                                                fileColumnObj.addProperty("constantValue", currentEntityId);
+
+                                            }
+
+                                            break;
+
+                                        case "experiment_id" :
+
+                                            if(entityName.equals("experiment")) {
+
+                                                fileColumnObj.addProperty("constantValue", currentEntityId);
+
+                                            }
+
+                                            break;
+
+                                        case "platform_id" :
+
+                                            if(entityName.equals("platform")) {
+
+                                                fileColumnObj.addProperty("constantValue", currentEntityId);
+
+                                            }
+
+                                            break;
+
+                                        case "map_id" :
+
+                                            if(entityName.equals("mapset")) {
+
+                                                fileColumnObj.addProperty("constantValue", currentEntityId);
+
+                                            }
+
+                                            break;
+
+                                        case "dataset_id" :
+
+                                            if(entityName.equals("dataSet")) {
+
+                                                fileColumnObj.addProperty("constantValue", currentEntityId);
+
+                                            }
+
+                                            break;
+
+                                        default:
+                                            break;
+
+                                    }
+                                }
+
+                                gobiiFileColumnsArr.set(o, fileColumnObj);
+
+                            }
+                        }
+
+                    }
+
+                    object.add("gobiiFiileColumns", gobiiFileColumnsArr);
+
                     jsonArray.set(k, object);
                 }
             }
