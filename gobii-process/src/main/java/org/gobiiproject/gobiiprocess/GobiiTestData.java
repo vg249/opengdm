@@ -1019,25 +1019,44 @@ public class GobiiTestData {
 
         List<ProjectDTO> projectDTOSList = resultEnvelope.getPayload().getData();
 
+        ProjectDTO newProjectDTO = new ProjectDTO();
+
         for (ProjectDTO currentProjectDTO : projectDTOSList) {
 
             if (currentProjectDTO.getProjectName().equals(dbPkeysurrogateValue)) {
 
-                System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
-
                 /*** set fkey dbpkey for entity ***/
 
-                setFKeyDbPKeyForExistingEntity(fkeys, ProjectDTO.class, currentProjectDTO);
+                setFKeyDbPKeyForNewEntity(fkeys, ProjectDTO.class, newProjectDTO, parentElement, dbPkeysurrogateValue, document, xPath);
 
-                return currentProjectDTO.getId();
+                // get contactID
 
+                String newExpr = "//Project/Keys/Fkey[@entity='Contact']/DbPKey";
+
+                XPathExpression xPathExpression = xPath.compile(newExpr);
+
+                Element contactEntity = (Element) xPathExpression.evaluate(document, XPathConstants.NODE);
+
+                if(!contactEntity.getTextContent().isEmpty()) {
+                    Integer contactEntityId = Integer.parseInt(contactEntity.getTextContent());
+
+                    if(contactEntityId.equals(currentProjectDTO.getPiContact())) {
+
+                        System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
+                        return currentProjectDTO.getId();
+
+                    }
+
+                } else {
+
+                    return currentProjectDTO.getId();
+
+                }
             }
 
         }
 
         System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\nCreating new record...\n");
-
-        ProjectDTO newProjectDTO = new ProjectDTO();
 
         System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
 
@@ -1968,6 +1987,7 @@ public class GobiiTestData {
 
         File fXmlFile;
         if(args.length != 1) {
+
             ClassLoader classLoader = GobiiTestData.class.getClassLoader();
             fXmlFile = new File(classLoader.getResource("test_profiles/codominant_test.xml").getFile());
 
@@ -2049,7 +2069,7 @@ public class GobiiTestData {
 
         nodeList = (NodeList) xPathExpression.evaluate(document, XPathConstants.NODESET);
 
-//        parseScenarios(nodeList, xPath, document, fXmlFile);
+        parseScenarios(nodeList, xPath, document, fXmlFile);
 
     }
 
