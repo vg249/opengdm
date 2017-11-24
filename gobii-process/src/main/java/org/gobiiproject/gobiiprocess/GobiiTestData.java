@@ -22,12 +22,11 @@ import org.gobiiproject.gobiimodel.dto.entity.auditable.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.VendorProtocolDTO;
+import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiiapimodel.payload.Header;
 import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
-import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
-import org.gobiiproject.gobiimodel.types.GobiiFilterType;
-import org.gobiiproject.gobiimodel.types.GobiiProcessType;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.dto.system.ConfigSettingsDTO;
+import org.gobiiproject.gobiimodel.types.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -43,6 +42,9 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.*;
 import java.io.*;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -1019,25 +1021,44 @@ public class GobiiTestData {
 
         List<ProjectDTO> projectDTOSList = resultEnvelope.getPayload().getData();
 
+        ProjectDTO newProjectDTO = new ProjectDTO();
+
         for (ProjectDTO currentProjectDTO : projectDTOSList) {
 
             if (currentProjectDTO.getProjectName().equals(dbPkeysurrogateValue)) {
 
-                System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
-
                 /*** set fkey dbpkey for entity ***/
 
-                setFKeyDbPKeyForExistingEntity(fkeys, ProjectDTO.class, currentProjectDTO);
+                setFKeyDbPKeyForNewEntity(fkeys, ProjectDTO.class, newProjectDTO, parentElement, dbPkeysurrogateValue, document, xPath);
 
-                return currentProjectDTO.getId();
+                // get contactID
 
+                String newExpr = "//Project/Keys/Fkey[@entity='Contact']/DbPKey";
+
+                XPathExpression xPathExpression = xPath.compile(newExpr);
+
+                Element contactEntity = (Element) xPathExpression.evaluate(document, XPathConstants.NODE);
+
+                if(!contactEntity.getTextContent().isEmpty()) {
+                    Integer contactEntityId = Integer.parseInt(contactEntity.getTextContent());
+
+                    if(contactEntityId.equals(currentProjectDTO.getPiContact())) {
+
+                        System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
+                        return currentProjectDTO.getId();
+
+                    }
+
+                } else {
+
+                    return currentProjectDTO.getId();
+
+                }
             }
 
         }
 
         System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\nCreating new record...\n");
-
-        ProjectDTO newProjectDTO = new ProjectDTO();
 
         System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
 
@@ -1527,7 +1548,6 @@ public class GobiiTestData {
         Element props = (Element) parentElement.getElementsByTagName("Properties").item(0);
         NodeList propKeyList = props.getElementsByTagName("*");
 
-        GobiiClientContextAuth.authenticate();
 
         switch (entityName) {
 
@@ -1788,9 +1808,39 @@ public class GobiiTestData {
 
     }
 
+    public static ServerConfig getConfigSettings() throws Exception {
+
+        RestUri configSettingsUri = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_CONFIGSETTINGS);
+
+        GobiiEnvelopeRestResource<ConfigSettingsDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(configSettingsUri);
+        PayloadEnvelope<ConfigSettingsDTO> resultEnvelope = gobiiEnvelopeRestResource
+                .get(ConfigSettingsDTO.class);
+
+        checkStatus(resultEnvelope);
+
+        ConfigSettingsDTO configSettingsDTO = resultEnvelope.getPayload().getData().get(0);
+
+        Map.Entry<String, ServerConfig> serverConfigMap = configSettingsDTO.getServerConfigs().entrySet().iterator().next();
+
+        return serverConfigMap.getValue();
+
+
+
+    }
+
     private static void parseScenarios(NodeList nodeList, XPath xPath, Document document, File fXmlFile) throws  Exception{
 
         JsonParser parser = new JsonParser();
+
+        String folderName = null;
+        String filesPath = null;
+        String digestPath = null;
+        String jobId = null;
+
+        ServerConfig serverConfig = getConfigSettings();
+        Map<GobiiFileProcessDir, String> fileLocations = serverConfig.getFileLocations();
 
         for(int i=0; i<nodeList.getLength(); i++) {
 
@@ -1800,6 +1850,18 @@ public class GobiiTestData {
 
             System.out.println("Parsing scenario: " + scenarioName);
 
+            DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+
+            jobId = dateFormat.format(new Date());
+
+            folderName = "data_" + jobId + "_" + scenarioName;
+
+            filesPath = fileLocations.get(GobiiFileProcessDir.RAW_USER_FILES) + folderName;
+
+            digestPath = fileLocations.get(GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES) + folderName;
+
+
+
             String dataExpr = "//Scenario[Name='"+scenarioName+"']/Files/Data";
 
             XPathExpression xPathExpressionData = xPath.compile(dataExpr);
@@ -1807,6 +1869,10 @@ public class GobiiTestData {
             String sourcePath = (String) xPathExpressionData.evaluate(document, XPathConstants.STRING);
 
             boolean writeSourcePath = true;
+
+            if(!(new File(sourcePath).exists())){
+                writeSourcePath = false;
+            }
 
             String fileExpr = "//Scenario[Name='"+scenarioName+"']/Files/Instruction";
 
@@ -1936,11 +2002,93 @@ public class GobiiTestData {
                     if(writeSourcePath) {
 
                         JsonObject gobiiFileObject = (JsonObject) object.get("gobiiFile");
-                        gobiiFileObject.addProperty("source", sourcePath);
+
+                        gobiiFileObject.addProperty("source", filesPath);
+                        gobiiFileObject.addProperty("destination", digestPath);
 
                         object.add("gobiiFile", gobiiFileObject);
 
                     }
+
+                    // modify gobiiFileColumns attribute
+                    JsonArray gobiiFileColumnsArr = (JsonArray) object.get("gobiiFileColumns");
+                    for (int o = 0; o < gobiiFileColumnsArr.size(); o++) {
+                        JsonObject fileColumnObj = (JsonObject)  gobiiFileColumnsArr.get(o);
+
+                        if(fileColumnObj.has("gobiiColumnType")){
+                            String columnType = fileColumnObj.get("gobiiColumnType").getAsString();
+
+                            if(columnType.equals("CONSTANT")) {
+
+                                if(fileColumnObj.has("name")) {
+                                    String columnName = fileColumnObj.get("name").getAsString();
+
+                                    switch (columnName) {
+
+                                        case "project_id" :
+
+                                            if(entityName.equals("project")) {
+
+                                                fileColumnObj.addProperty("constantValue", currentEntityId);
+
+                                            }
+
+                                            break;
+
+                                        case "experiment_id" :
+
+                                            if(entityName.equals("experiment")) {
+
+                                                fileColumnObj.addProperty("constantValue", currentEntityId);
+
+                                            }
+
+                                            break;
+
+                                        case "platform_id" :
+
+                                            if(entityName.equals("platform")) {
+
+                                                fileColumnObj.addProperty("constantValue", currentEntityId);
+
+                                            }
+
+                                            break;
+
+                                        case "map_id" :
+
+                                            if(entityName.equals("mapset")) {
+
+                                                fileColumnObj.addProperty("constantValue", currentEntityId);
+
+                                            }
+
+                                            break;
+
+                                        case "dataset_id" :
+
+                                            if(entityName.equals("dataSet")) {
+
+                                                fileColumnObj.addProperty("constantValue", currentEntityId);
+
+                                            }
+
+                                            break;
+
+                                        default:
+                                            break;
+
+                                    }
+                                }
+
+                                gobiiFileColumnsArr.set(o, fileColumnObj);
+
+                            }
+                        }
+
+                    }
+
+                    object.add("gobiiFiileColumns", gobiiFileColumnsArr);
 
                     jsonArray.set(k, object);
                 }
@@ -1957,8 +2105,99 @@ public class GobiiTestData {
                 instructionFileWriter.write(prettyJsonString);
                 instructionFileWriter.close();
 
+                // upload files to server
+
+                // for FILES
+                createDirectories(filesPath);
+
+                // for DIGEST
+                createDirectories(digestPath);
+
+                // copy files
+                copyFiles(jobId, instructionFilePath, fileLocations.get(GobiiFileProcessDir.LOADER_INSTRUCTIONS) + folderName + ".json");
+
+                if(writeSourcePath) {
+
+                    File f = new File(sourcePath);
+                    String sourceFileName = f.getName();
+
+                    copyFiles(jobId, sourcePath, filesPath + "/" + sourceFileName);
+
+                }
+
             }
         }
+    }
+
+    public static void copyFiles(String jobId, String pathToSourceFile, String pathToDestinationFile) throws  Exception{
+
+        System.out.println("\nCopying " + pathToSourceFile + " to " + pathToDestinationFile);
+
+        try {
+
+            if(!new File(pathToDestinationFile).exists()) {
+                File destinationFile = new File(pathToDestinationFile);
+                destinationFile.createNewFile();
+
+                if((!destinationFile.canRead()) && !(destinationFile.setReadable(true, false))){
+                    throw new Exception("Unable to set read on file " + destinationFile);
+                }
+
+                if((!destinationFile.canWrite()) && !(destinationFile.setWritable(true, false))){
+                    throw new Exception("Unable to set write on file " + destinationFile);
+                }
+            }
+
+
+            Files.copy(Paths.get(pathToSourceFile), new FileOutputStream(pathToDestinationFile));
+
+
+            System.out.println("\nSuccessfully copied " + pathToSourceFile + " to " + pathToDestinationFile);
+
+        } catch (Exception e) {
+
+            throw new Exception("\nCannot copy file " + pathToSourceFile + " to " + pathToDestinationFile + ". \n" +  e);
+
+        }
+
+    }
+
+
+    public static void createDirectories(String pathName) throws Exception {
+
+        System.out.println("\nCreating directory: " + pathName);
+
+        if(!(new File(pathName).exists())){
+
+            File pathToCreate = new File(pathName);
+
+            if(!pathToCreate.mkdirs()){
+                throw new Exception("Unable to create directory " + pathName);
+            }
+
+            if((!pathToCreate.canRead()) && !(pathToCreate.setReadable(true, false))){
+                throw new Exception("Unable to set read on directory " + pathName);
+            }
+
+            if((!pathToCreate.canWrite()) && !(pathToCreate.setWritable(true, false))){
+                throw new Exception("Unable to set write on directory " + pathName);
+            }
+
+        } else {
+
+            File pathToCreate = new File(pathName);
+            if (!pathToCreate.canRead() && !pathToCreate.setReadable(true, false)) {
+                throw new Exception("Unable to set read permissions on directory " + pathName);
+            }
+
+            if (!pathToCreate.canWrite() && !pathToCreate.setWritable(true, false)) {
+                throw new Exception("Unable to set write permissions on directory " + pathName);
+            }
+        }
+
+
+
+        System.out.println("\nSuccessfully created directory: " + pathName);
     }
 
 
@@ -1969,10 +2208,56 @@ public class GobiiTestData {
 
         File fXmlFile;
         if(args.length != 1) {
+
             ClassLoader classLoader = GobiiTestData.class.getClassLoader();
             fXmlFile = new File(classLoader.getResource("test_profiles/codominant_test.xml").getFile());
+
+            GobiiClientContextAuth.authenticate();
         } else {
             fXmlFile = new File(args[0]);
+
+            BufferedReader br = null;
+
+            System.out.print("Enter URL: ");
+            br = new BufferedReader(new InputStreamReader(System.in));
+            String url = br.readLine();
+
+            System.out.print("Enter crop: ");
+            br = new BufferedReader(new InputStreamReader(System.in));
+            String crop = br.readLine();
+
+            System.out.print("Enter username: ");
+            br = new BufferedReader(new InputStreamReader(System.in));
+            String username = br.readLine();
+
+            String password = "";
+            ConsoleEraser consoleEraser = new ConsoleEraser();
+            System.out.print("Enter password: ");
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+            consoleEraser.start();
+
+            try {
+                password = in.readLine();
+
+                consoleEraser.halt();
+
+                boolean login = GobiiClientContext.getInstance(url, true).login(crop, username, password);
+
+                if (!login) {
+
+                    String failureMessage = GobiiClientContext.getInstance(null, false).getLoginFailure();
+
+                    throw new Exception("Error logging in: " + failureMessage);
+
+                }
+
+
+            } catch (IOException e) {
+                System.out.println("Error trying to read your password!");
+                System.exit(1);
+            }
+
         }
 
 
@@ -2006,6 +2291,30 @@ public class GobiiTestData {
         nodeList = (NodeList) xPathExpression.evaluate(document, XPathConstants.NODESET);
 
         parseScenarios(nodeList, xPath, document, fXmlFile);
+
+    }
+
+    private static class ConsoleEraser extends Thread {
+
+        private boolean running = true;
+        public void run() {
+
+            while (running) {
+                System.out.print("");
+                try {
+                    Thread.currentThread().sleep(1);
+                }
+                catch (InterruptedException e) {
+                    break;
+                }
+            }
+
+        }
+
+        public synchronized void halt() {
+            running = false;
+        }
+
 
     }
 
