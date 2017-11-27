@@ -159,7 +159,7 @@ export class FilterParamsColl {
                 .setCvFilterValue(cvJobStatusCompoundUniqueId.getCvFilterValue())
                 .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
                 .setNameIdLabelType(NameIdLabelType.ALL)
-                .setInitializeTransform((fileItems, filterValue) => {
+                .setOnLoadFilteredItemsAction((fileItems, filterValue) => {
 
 
                     let returnVal: fileAction.LoadFilterAction = null;

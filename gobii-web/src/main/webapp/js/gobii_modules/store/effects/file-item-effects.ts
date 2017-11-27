@@ -114,9 +114,9 @@ export class FileItemEffects {
 
                     let gobiiFileItems: GobiiFileItem[] = action.payload.gobiiFileItems;
                     let filterValue: string = action.payload.filter.filterValue;
-                    if (filterParams && filterParams.getInitializeTransform() !== null) {
+                    if (filterParams && filterParams.getOnLoadFilteredItemsAction() !== null) {
 
-                        let action = filterParams.getInitializeTransform()(gobiiFileItems, filterValue);
+                        let action = filterParams.getOnLoadFilteredItemsAction()(gobiiFileItems, filterValue);
                         if (action) {
                             observer.next(action);
                         }

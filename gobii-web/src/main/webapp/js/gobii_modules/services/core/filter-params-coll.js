@@ -113,7 +113,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .setCvFilterValue(cvJobStatusCompoundUniqueId.getCvFilterValue())
                         .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPE_NAME)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL)
-                        .setInitializeTransform(function (fileItems, filterValue) {
+                        .setOnLoadFilteredItemsAction(function (fileItems, filterValue) {
                         var returnVal = null;
                         if (!filterValue) {
                             var completedItem = fileItems.find(function (fi) { return fi.getItemName() === "completed"; });

@@ -190,8 +190,8 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                             var filterParams = _this.filterParamsColl.getFilter(action.payload.filterId, action.payload.filter.gobiiExtractFilterType);
                             var gobiiFileItems = action.payload.gobiiFileItems;
                             var filterValue = action.payload.filter.filterValue;
-                            if (filterParams && filterParams.getInitializeTransform() !== null) {
-                                var action_1 = filterParams.getInitializeTransform()(gobiiFileItems, filterValue);
+                            if (filterParams && filterParams.getOnLoadFilteredItemsAction() !== null) {
+                                var action_1 = filterParams.getOnLoadFilteredItemsAction()(gobiiFileItems, filterValue);
                                 if (action_1) {
                                     observer.next(action_1);
                                 }

@@ -59,7 +59,7 @@ export class FilterParams extends GobiiFileItemCompoundId {
                         private _parentFileItemParams: FilterParams,
                         private _childFileItemParams: FilterParams[],
                         private _isDynamicFilterValue: boolean,
-                        private initializeTransform: (fileItems: GobiiFileItem[], filterValue:string) => any) {
+                        private onLoadFilteredItemsAction: (fileItems: GobiiFileItem[], filterValue:string) => any) {
 
         super(_extractorItemType, _entityType, _entitySubType, _cvFilterType, _cvFilterValue);
 
@@ -201,13 +201,13 @@ export class FilterParams extends GobiiFileItemCompoundId {
         return this._isDynamicFilterValue;
     }
 
-    setInitializeTransform(initializeTransform: (fileItems: GobiiFileItem[], filterValue:string) => any) {
-        this.initializeTransform = initializeTransform;
+    setOnLoadFilteredItemsAction(initializeTransform: (fileItems: GobiiFileItem[], filterValue:string) => any) {
+        this.onLoadFilteredItemsAction = initializeTransform;
         return this;
     }
 
-    getInitializeTransform(): (fileItems: GobiiFileItem[], filterValue:string) => any {
-        return this.initializeTransform;
+    getOnLoadFilteredItemsAction(): (fileItems: GobiiFileItem[], filterValue:string) => any {
+        return this.onLoadFilteredItemsAction;
     }
 
 }
