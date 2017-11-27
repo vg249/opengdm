@@ -8,6 +8,7 @@ import {Observable} from "rxjs/Observable";
 import {DataSet} from "../model/dataset";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import * as fileAction from '../store/actions/fileitem-action';
+import {ExtractorItemType} from "../model/type-extractor-item";
 
 
 @Component({
@@ -107,7 +108,6 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
     public gobiiExtractFilterType: GobiiExtractFilterType;
 
     ngOnInit() {
-
     } // ngOnInit()
 
     // gobiiExtractType is not set until you get OnChanges
@@ -123,6 +123,8 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
                 this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                     FilterParamNames.CV_JOB_STATUS,
                     null);
+
+
 
             } // if we have a new filter type
 

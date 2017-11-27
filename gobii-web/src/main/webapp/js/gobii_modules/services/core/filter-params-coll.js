@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-entity", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/file-item-params", "../../store/actions/history-action", "@ngrx/store", "../../model/name-id-label-type", "../../model/filter-type", "../../model/file-item-param-names", "rxjs/add/operator/expand"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-entity", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/file-item-params", "../../store/actions/history-action", "@ngrx/store", "../../model/name-id-label-type", "../../model/filter-type", "../../model/file-item-param-names", "rxjs/add/operator/expand", "../../model/type-extractor-item", "../../store/actions/fileitem-action", "../../model/gobii-file-item-compound-id"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_entity_1, type_extractor_filter_1, cv_filter_type_1, file_item_params_1, historyAction, store_1, name_id_label_type_1, filter_type_1, file_item_param_names_1, FilterParamsColl;
+    var core_1, type_entity_1, type_extractor_filter_1, cv_filter_type_1, file_item_params_1, historyAction, store_1, name_id_label_type_1, filter_type_1, file_item_param_names_1, type_extractor_item_1, fileAction, gobii_file_item_compound_id_1, FilterParamsColl;
     return {
         setters: [
             function (core_1_1) {
@@ -44,6 +44,15 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                 file_item_param_names_1 = file_item_param_names_1_1;
             },
             function (_1) {
+            },
+            function (type_extractor_item_1_1) {
+                type_extractor_item_1 = type_extractor_item_1_1;
+            },
+            function (fileAction_1) {
+                fileAction = fileAction_1;
+            },
+            function (gobii_file_item_compound_id_1_1) {
+                gobii_file_item_compound_id_1 = gobii_file_item_compound_id_1_1;
             }
         ],
         execute: function () {
@@ -96,13 +105,34 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .build(file_item_param_names_1.FilterParamNames.CONTACT_PI, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.CONTACT)
                         .setIsDynamicFilterValue(false)
                         .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR));
+                    var cvJobStatusCompoundUniqueId = new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.CV, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.JOB_STATUS, cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.JOB_STATUS));
                     this.addFilter(file_item_params_1.FilterParams
-                        .build(file_item_param_names_1.FilterParamNames.CV_JOB_STATUS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.CV)
+                        .build(file_item_param_names_1.FilterParamNames.CV_JOB_STATUS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, cvJobStatusCompoundUniqueId.getEntityType())
                         .setIsDynamicFilterValue(true)
-                        .setCvFilterType(cv_filter_type_1.CvFilterType.JOB_STATUS)
-                        .setCvFilterValue(cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.JOB_STATUS))
+                        .setCvFilterType(cvJobStatusCompoundUniqueId.getCvFilterType())
+                        .setCvFilterValue(cvJobStatusCompoundUniqueId.getCvFilterValue())
                         .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPE_NAME)
-                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL));
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL)
+                        .setInitializeTransform(function (fileItems, filterValue) {
+                        var returnVal = null;
+                        if (!filterValue) {
+                            var completedItem = fileItems.find(function (fi) { return fi.getItemName() === "completed"; });
+                            var labelItem = fileItems.find(function (fi) { return fi.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL; });
+                            if (completedItem && labelItem) {
+                                completedItem.setSelected(true);
+                                returnVal = new fileAction.LoadFilterAction({
+                                    filterId: file_item_param_names_1.FilterParamNames.CV_JOB_STATUS,
+                                    filter: {
+                                        gobiiExtractFilterType: type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET,
+                                        gobiiCompoundUniqueId: cvJobStatusCompoundUniqueId,
+                                        filterValue: completedItem.getItemId(),
+                                        entityLasteUpdated: null
+                                    }
+                                });
+                            }
+                        }
+                        return returnVal;
+                    }));
                     this.addFilter(file_item_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.DATASETS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.DATASET)
                         .setFilterType(filter_type_1.FilterType.ENTITY_LIST));

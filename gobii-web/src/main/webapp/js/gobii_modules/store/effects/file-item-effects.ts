@@ -16,9 +16,10 @@ import {Observable} from "rxjs/Observable";
 import {Store} from "@ngrx/store";
 import {FileItemService} from "../../services/core/file-item-service";
 import {FilterParamNames} from "../../model/file-item-param-names";
-import {EntitySubType, EntityType} from "../../model/type-entity";
 import "rxjs/add/operator/mergeMap"
 import {AddFilterRetrieved} from "../actions/history-action";
+import {FilterParamsColl} from "../../services/core/filter-params-coll";
+import {FilterParams} from "../../model/file-item-params";
 
 @Injectable()
 export class FileItemEffects {
@@ -89,19 +90,43 @@ export class FileItemEffects {
     @Effect()
     loadFileItemListWithFilter$ = this.actions$
         .ofType(fileItemActions.LOAD_FILE_ITEM_LIST_WITH_FILTER)
-        .map((action: fileItemActions.LoadFileItemListWithFilterAction) => {
+        .switchMap((action: fileItemActions.LoadFileItemListWithFilterAction) => {
 
-                let addFilterSubmittedAction: AddFilterRetrieved = new historyAction
-                    .AddFilterRetrieved(
-                        {
-                            gobiiExtractFilterType: action.payload.filter.gobiiExtractFilterType,
-                            filterId: action.payload.filterId,
-                            filterValue: action.payload.filter.filterValue,
-                            entityLasteUpdated: action.payload.filter.entityLasteUpdated
+
+                return Observable.create(observer => {
+
+
+                    let addFilterSubmittedAction: AddFilterRetrieved = new historyAction
+                        .AddFilterRetrieved(
+                            {
+                                gobiiExtractFilterType: action.payload.filter.gobiiExtractFilterType,
+                                filterId: action.payload.filterId,
+                                filterValue: action.payload.filter.filterValue,
+                                entityLasteUpdated: action.payload.filter.entityLasteUpdated
+                            }
+                        );
+
+
+                    observer.next(addFilterSubmittedAction);
+                    let filterParams: FilterParams = this.filterParamsColl.getFilter(action.payload.filterId,
+                        action.payload.filter.gobiiExtractFilterType);
+
+
+                    let gobiiFileItems: GobiiFileItem[] = action.payload.gobiiFileItems;
+                    let filterValue: string = action.payload.filter.filterValue;
+                    if (filterParams && filterParams.getInitializeTransform() !== null) {
+
+                        let action = filterParams.getInitializeTransform()(gobiiFileItems, filterValue);
+                        if (action) {
+                            observer.next(action);
                         }
-                    );
+                    }
 
-                return addFilterSubmittedAction;
+                }).mergeMap(actions => {
+
+                    return Observable.of(actions);
+
+                });
             }
         );
 
@@ -392,6 +417,7 @@ export class FileItemEffects {
                 private treeStructureService: TreeStructureService,
                 private fileItemService: FileItemService,
                 private store: Store<fromRoot.State>,
+                private filterParamsColl: FilterParamsColl,
                 private router: Router) {
     }
 

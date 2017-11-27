@@ -10,6 +10,11 @@ import {NameIdLabelType} from "../../model/name-id-label-type";
 import {FilterType} from "../../model/filter-type";
 import {FilterParamNames} from "../../model/file-item-param-names";
 import "rxjs/add/operator/expand"
+import {GobiiFileItem} from "../../model/gobii-file-item";
+import {ExtractorItemType} from "../../model/type-extractor-item";
+import * as fileAction from '../../store/actions/fileitem-action';
+import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
+
 
 @Injectable()
 export class FilterParamsColl {
@@ -137,16 +142,56 @@ export class FilterParamsColl {
                 .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR));
 
 
+        let cvJobStatusCompoundUniqueId: GobiiFileItemCompoundId =
+            new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
+                EntityType.CV,
+                EntitySubType.UNKNOWN,
+                CvFilterType.JOB_STATUS,
+                CvFilters.get(CvFilterType.JOB_STATUS));
+
         this.addFilter(
             FilterParams
                 .build(FilterParamNames.CV_JOB_STATUS,
                     GobiiExtractFilterType.WHOLE_DATASET,
-                    EntityType.CV)
+                    cvJobStatusCompoundUniqueId.getEntityType())
                 .setIsDynamicFilterValue(true)
-                .setCvFilterType(CvFilterType.JOB_STATUS)
-                .setCvFilterValue(CvFilters.get(CvFilterType.JOB_STATUS))
+                .setCvFilterType(cvJobStatusCompoundUniqueId.getCvFilterType())
+                .setCvFilterValue(cvJobStatusCompoundUniqueId.getCvFilterValue())
                 .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
                 .setNameIdLabelType(NameIdLabelType.ALL)
+                .setInitializeTransform((fileItems, filterValue) => {
+
+
+                    let returnVal: fileAction.LoadFilterAction = null;
+
+                    if (!filterValue) {
+
+                        let completedItem: GobiiFileItem =
+                            fileItems.find(fi => fi.getItemName() === "completed");
+
+                        let labelItem: GobiiFileItem =
+                            fileItems.find(fi => fi.getExtractorItemType() === ExtractorItemType.LABEL);
+
+                        if (completedItem && labelItem) {
+
+                            completedItem.setSelected(true);
+                            returnVal =  new fileAction.LoadFilterAction(
+                                {
+                                    filterId: FilterParamNames.CV_JOB_STATUS,
+                                    filter: {
+                                        gobiiExtractFilterType: GobiiExtractFilterType.WHOLE_DATASET,
+                                        gobiiCompoundUniqueId: cvJobStatusCompoundUniqueId,
+                                        filterValue: completedItem.getItemId(),
+                                        entityLasteUpdated: null
+                                    }
+                                }
+                            );
+
+                        }
+                    }
+
+                    return returnVal;
+                })
         );
 
         this.addFilter(FilterParams

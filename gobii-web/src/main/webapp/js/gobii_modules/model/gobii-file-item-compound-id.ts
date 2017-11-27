@@ -42,57 +42,66 @@ export class GobiiFileItemCompoundId {
         return this._extractorItemType;
     }
 
-    setExtractorItemType(value: ExtractorItemType) {
+    setExtractorItemType(value: ExtractorItemType): GobiiFileItemCompoundId {
         if (value != null) {
             this._extractorItemType = value;
         } else {
             this._extractorItemType = ExtractorItemType.UNKNOWN;
         }
+
+        return this;
     }
 
     getEntityType(): EntityType {
         return this._entityType;
     }
 
-    setEntityType(value: EntityType) {
+    setEntityType(value: EntityType): GobiiFileItemCompoundId {
 
         if (value != null) {
             this._entityType = value;
         } else {
             this._entityType = EntityType.UNKNOWN;
         }
+
+        return this;
     }
 
     getEntitySubType(): EntitySubType {
         return this._entitySubType;
     }
 
-    setEntitySubType(value: EntitySubType) {
+    setEntitySubType(value: EntitySubType): GobiiFileItemCompoundId {
+
         if (value != null) {
             this._entitySubType = value;
         } else {
             this._entitySubType = EntitySubType.UNKNOWN;
         }
+
+        return this;
     }
 
     getCvFilterType(): CvFilterType {
         return this._cvFilterType;
     }
 
-    setCvFilterType(value: CvFilterType) {
+    setCvFilterType(value: CvFilterType): GobiiFileItemCompoundId {
         if (value != null) {
             this._cvFilterType = value;
         } else {
             this._cvFilterType = CvFilterType.UNKNOWN;
         }
+        return this;
     }
 
     getCvFilterValue(): string {
         return this._cvFilterValue;
     }
 
-    setCvFilterValue(value: string) {
+    setCvFilterValue(value: string): GobiiFileItemCompoundId {
 
         this._cvFilterValue = value;
+        return this;
     }
 }
