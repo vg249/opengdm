@@ -161,6 +161,24 @@ export class FilterParamsColl {
                 .setNameIdLabelType(NameIdLabelType.ALL)
                 .setOnLoadFilteredItemsAction((fileItems, filterValue) => {
 
+                    /***
+                     * This event will cause the initially selected job status to be completed and the
+                     *  dataset grid items to be filtered accordingly.
+                     *
+                     * I am a little uneasy with the implementation. For one thing, it sets the
+                     * completedItem's selected property. Ideally, the semantics of the action
+                     * should be such that the reducer knows to set the selected property. We're sort
+                     * of monkeying with state here. In essence,
+                     * we really need a new action and corresponding reducer code to handle this;
+                     * I'm also not in comfortable with the fact that we are testing for a filter value
+                     * to determine whether or not to apply the initial select state and filter value. Here again,
+                     * there should be semantics in the load filtered items action or something that would indicate
+                     * that it's an initial load. But that will make things more complicated.
+                     *
+                     * For now this is fine. If we expand this type of thing to include other types of initial select
+                     * actions, we will probably want to revisit the design.
+                     *
+                     */
 
                     let returnVal: fileAction.LoadFilterAction = null;
 
