@@ -325,7 +325,7 @@ public class DtoRequestEntityStatsTest {
 
         List<EntityStatsDTO> allEnttiesStatsInitial = resultEnvelopeIntialCount.getPayload().getData();
 
-        Assert.assertTrue("Not all entity states are of EntityStateDaeType"
+        Assert.assertTrue("Not all entity states are of EntityStateDateType"
                         + EntityStatsDTO.EntityStateDateType.INSERT_UPDATE.toString(),
                 allEnttiesStatsInitial
                         .stream()
@@ -379,7 +379,7 @@ public class DtoRequestEntityStatsTest {
                 .get(EntityStatsDTO.class);
         List<EntityStatsDTO> allEnttiesStatsPost = resultEnvelopePostUpdate.getPayload().getData();
 
-        Assert.assertTrue("Not all entity states are of EntityStateDaeType"
+        Assert.assertTrue("Not all entity states are of EntityStateDateType"
                         + EntityStatsDTO.EntityStateDateType.INSERT_UPDATE.toString(),
                 allEnttiesStatsPost
                         .stream()
