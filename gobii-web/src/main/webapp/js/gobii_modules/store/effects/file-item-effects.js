@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/operator/switchMap", "rxjs/add/observable/of", "../actions/fileitem-action", "../actions/treenode-action", "../../services/core/tree-structure-service", "../reducers", "../../store/actions/history-action", "../../model/type-extractor-item", "rxjs/Observable", "@ngrx/store", "../../services/core/file-item-service", "../../model/file-item-param-names", "rxjs/add/operator/mergeMap"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/operator/switchMap", "rxjs/add/observable/of", "../actions/fileitem-action", "../actions/treenode-action", "../../services/core/tree-structure-service", "../reducers", "../../store/actions/history-action", "../../model/type-extractor-item", "rxjs/Observable", "@ngrx/store", "../../services/core/file-item-service", "../../model/file-item-param-names", "rxjs/add/operator/mergeMap", "../../services/core/filter-params-coll"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, router_1, effects_1, fileItemActions, treeNodeActions, tree_structure_service_1, fromRoot, historyAction, type_extractor_item_1, Observable_1, store_1, file_item_service_1, file_item_param_names_1, FileItemEffects;
+    var core_1, router_1, effects_1, fileItemActions, treeNodeActions, tree_structure_service_1, fromRoot, historyAction, type_extractor_item_1, Observable_1, store_1, file_item_service_1, file_item_param_names_1, filter_params_coll_1, FileItemEffects;
     return {
         setters: [
             function (core_1_1) {
@@ -57,6 +57,9 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                 file_item_param_names_1 = file_item_param_names_1_1;
             },
             function (_3) {
+            },
+            function (filter_params_coll_1_1) {
+                filter_params_coll_1 = filter_params_coll_1_1;
             }
         ],
         execute: function () {
@@ -109,12 +112,13 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                 //
                 //
                 //     }); //switch map
-                function FileItemEffects(actions$, treeStructureService, fileItemService, store, router) {
+                function FileItemEffects(actions$, treeStructureService, fileItemService, store, filterParamsColl, router) {
                     var _this = this;
                     this.actions$ = actions$;
                     this.treeStructureService = treeStructureService;
                     this.fileItemService = fileItemService;
                     this.store = store;
+                    this.filterParamsColl = filterParamsColl;
                     this.router = router;
                     /**
                      * The canonical use case for effects is when you want to add the results of an asynchronous
@@ -173,15 +177,28 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                     });
                     this.loadFileItemListWithFilter$ = this.actions$
                         .ofType(fileItemActions.LOAD_FILE_ITEM_LIST_WITH_FILTER)
-                        .map(function (action) {
-                        var addFilterSubmittedAction = new historyAction
-                            .AddFilterRetrieved({
-                            gobiiExtractFilterType: action.payload.filter.gobiiExtractFilterType,
-                            filterId: action.payload.filterId,
-                            filterValue: action.payload.filter.filterValue,
-                            entityLasteUpdated: action.payload.filter.entityLasteUpdated
+                        .switchMap(function (action) {
+                        return Observable_1.Observable.create(function (observer) {
+                            var addFilterSubmittedAction = new historyAction
+                                .AddFilterRetrieved({
+                                gobiiExtractFilterType: action.payload.filter.gobiiExtractFilterType,
+                                filterId: action.payload.filterId,
+                                filterValue: action.payload.filter.filterValue,
+                                entityLasteUpdated: action.payload.filter.entityLasteUpdated
+                            });
+                            observer.next(addFilterSubmittedAction);
+                            var filterParams = _this.filterParamsColl.getFilter(action.payload.filterId, action.payload.filter.gobiiExtractFilterType);
+                            var gobiiFileItems = action.payload.gobiiFileItems;
+                            var filterValue = action.payload.filter.filterValue;
+                            if (filterParams && filterParams.getOnLoadFilteredItemsAction() !== null) {
+                                var action_1 = filterParams.getOnLoadFilteredItemsAction()(gobiiFileItems, filterValue);
+                                if (action_1) {
+                                    observer.next(action_1);
+                                }
+                            }
+                        }).mergeMap(function (actions) {
+                            return Observable_1.Observable.of(actions);
                         });
-                        return addFilterSubmittedAction;
                     });
                     /***
                      * The LOAD_FILTER action was a good idea: you would first LOAD the filter into the store.
@@ -412,6 +429,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                         tree_structure_service_1.TreeStructureService,
                         file_item_service_1.FileItemService,
                         store_1.Store,
+                        filter_params_coll_1.FilterParamsColl,
                         router_1.Router])
                 ], FileItemEffects);
                 return FileItemEffects;

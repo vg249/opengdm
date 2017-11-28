@@ -39,6 +39,8 @@ export class JsonToGfiDataset implements JsonToGfi {
             new Date(jsonItem.createdDate),
             jsonItem.jobStatusId,
             jsonItem.jobStatusName,
+            jsonItem.jobTypeId,
+            jsonItem.jobTypeName,
             jsonItem.jobSubmittedDate ? new Date(jsonItem.jobSubmittedDate) : null);
 
         let piContactRelation: GobiiFileItemEntityRelation = GobiiFileItemEntityRelation

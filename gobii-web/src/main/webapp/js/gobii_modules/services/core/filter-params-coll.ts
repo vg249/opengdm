@@ -10,6 +10,11 @@ import {NameIdLabelType} from "../../model/name-id-label-type";
 import {FilterType} from "../../model/filter-type";
 import {FilterParamNames} from "../../model/file-item-param-names";
 import "rxjs/add/operator/expand"
+import {GobiiFileItem} from "../../model/gobii-file-item";
+import {ExtractorItemType} from "../../model/type-extractor-item";
+import * as fileAction from '../../store/actions/fileitem-action';
+import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
+
 
 @Injectable()
 export class FilterParamsColl {
@@ -137,16 +142,74 @@ export class FilterParamsColl {
                 .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR));
 
 
+        let cvJobStatusCompoundUniqueId: GobiiFileItemCompoundId =
+            new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
+                EntityType.CV,
+                EntitySubType.UNKNOWN,
+                CvFilterType.JOB_STATUS,
+                CvFilters.get(CvFilterType.JOB_STATUS));
+
         this.addFilter(
             FilterParams
                 .build(FilterParamNames.CV_JOB_STATUS,
                     GobiiExtractFilterType.WHOLE_DATASET,
-                    EntityType.CV)
+                    cvJobStatusCompoundUniqueId.getEntityType())
                 .setIsDynamicFilterValue(true)
-                .setCvFilterType(CvFilterType.JOB_STATUS)
-                .setCvFilterValue(CvFilters.get(CvFilterType.JOB_STATUS))
+                .setCvFilterType(cvJobStatusCompoundUniqueId.getCvFilterType())
+                .setCvFilterValue(cvJobStatusCompoundUniqueId.getCvFilterValue())
                 .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
                 .setNameIdLabelType(NameIdLabelType.ALL)
+                .setOnLoadFilteredItemsAction((fileItems, filterValue) => {
+
+                    /***
+                     * This event will cause the initially selected job status to be completed and the
+                     *  dataset grid items to be filtered accordingly.
+                     *
+                     * I am a little uneasy with the implementation. For one thing, it sets the
+                     * completedItem's selected property. Ideally, the semantics of the action
+                     * should be such that the reducer knows to set the selected property. We're sort
+                     * of monkeying with state here. In essence,
+                     * we really need a new action and corresponding reducer code to handle this;
+                     * I'm also not in comfortable with the fact that we are testing for a filter value
+                     * to determine whether or not to apply the initial select state and filter value. Here again,
+                     * there should be semantics in the load filtered items action or something that would indicate
+                     * that it's an initial load. But that will make things more complicated.
+                     *
+                     * For now this is fine. If we expand this type of thing to include other types of initial select
+                     * actions, we will probably want to revisit the design.
+                     *
+                     */
+
+                    let returnVal: fileAction.LoadFilterAction = null;
+
+                    if (!filterValue) {
+
+                        let completedItem: GobiiFileItem =
+                            fileItems.find(fi => fi.getItemName() === "completed");
+
+                        let labelItem: GobiiFileItem =
+                            fileItems.find(fi => fi.getExtractorItemType() === ExtractorItemType.LABEL);
+
+                        if (completedItem && labelItem) {
+
+                            completedItem.setSelected(true);
+                            returnVal =  new fileAction.LoadFilterAction(
+                                {
+                                    filterId: FilterParamNames.CV_JOB_STATUS,
+                                    filter: {
+                                        gobiiExtractFilterType: GobiiExtractFilterType.WHOLE_DATASET,
+                                        gobiiCompoundUniqueId: cvJobStatusCompoundUniqueId,
+                                        filterValue: completedItem.getItemId(),
+                                        entityLasteUpdated: null
+                                    }
+                                }
+                            );
+
+                        }
+                    }
+
+                    return returnVal;
+                })
         );
 
         this.addFilter(FilterParams

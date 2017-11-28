@@ -8,6 +8,7 @@ import {Observable} from "rxjs/Observable";
 import {DataSet} from "../model/dataset";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import * as fileAction from '../store/actions/fileitem-action';
+import {ExtractorItemType} from "../model/type-extractor-item";
 
 
 @Component({
@@ -37,7 +38,8 @@ import * as fileAction from '../store/actions/fileitem-action';
                             <ng-template let-col let-fi="rowData" pTemplate="body">
                                 <p-checkbox binary="true"
                                             [ngModel]="fi.getSelected()"
-                                            (onChange)="handleRowChecked($event, fi)">
+                                            (onChange)="handleRowChecked($event, fi)"
+                                            [disabled]="fi.getEntity().jobStatusName !== 'completed' || (fi.getEntity().jobTypeName !== 'load')">
                                 </p-checkbox>
 
                             </ng-template>
@@ -45,6 +47,7 @@ import * as fileAction from '../store/actions/fileitem-action';
                         <p-column field="_entity.id" header="Id" hidden="true"></p-column>
                         <p-column field="_entity.name" header="Name"></p-column>
                         <p-column field="_entity.jobStatusName" header="Status"></p-column>
+                        <p-column field="_entity.jobTypeName" header="Type"></p-column>
                         <p-column field="jobSubmittedDate" header="Submitted">
                             <ng-template let-col let-fi="rowData" pTemplate="body">
                                 {{fi._entity[col.field] | date:'yyyy-MM-dd HH:mm' }}
@@ -70,7 +73,7 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
     public nameIdFilterParamTypes: any = Object.assign({}, FilterParamNames);
 
 
-    public handleRowChecked(checked:boolean, selectedDatasetFileItem: GobiiFileItem) {
+    public handleRowChecked(checked: boolean, selectedDatasetFileItem: GobiiFileItem) {
         this.handleItemChecked(selectedDatasetFileItem.getFileItemUniqueId(), checked);
     }
 
@@ -105,7 +108,6 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
     public gobiiExtractFilterType: GobiiExtractFilterType;
 
     ngOnInit() {
-
     } // ngOnInit()
 
     // gobiiExtractType is not set until you get OnChanges
@@ -121,6 +123,8 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
                 this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                     FilterParamNames.CV_JOB_STATUS,
                     null);
+
+
 
             } // if we have a new filter type
 

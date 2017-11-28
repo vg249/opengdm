@@ -5,7 +5,6 @@ import {CvFilterType} from "./cv-filter-type";
 import {GobiiExtractFilterType} from "./type-extractor-filter";
 import {ExtractorItemType} from "./type-extractor-item";
 import {GobiiFileItemCompoundId} from "./gobii-file-item-compound-id";
-import {NameId} from "./name-id";
 import {GobiiFileItemEntityRelation} from "./gobii-file-item-entity-relation";
 
 export class GobiiFileItem extends GobiiFileItemCompoundId {

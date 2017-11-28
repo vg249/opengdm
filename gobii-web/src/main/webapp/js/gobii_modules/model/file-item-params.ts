@@ -5,6 +5,8 @@ import {GobiiExtractFilterType} from "./type-extractor-filter";
 import {NameIdLabelType} from "./name-id-label-type";
 import {ExtractorItemType} from "./type-extractor-item";
 import {GobiiFileItemCompoundId} from "./gobii-file-item-compound-id";
+import {GobiiFileItem} from "./gobii-file-item";
+import * as fileAction from '../store/actions/fileitem-action';
 
 /**
  * Created by Phil on 3/9/2017.
@@ -47,7 +49,7 @@ export class FilterParams extends GobiiFileItemCompoundId {
     private constructor(_entityType: EntityType = EntityType.UNKNOWN, //first four args are passed to base class ctor
                         _entitySubType: EntitySubType = EntitySubType.UNKNOWN,
                         _cvFilterType: CvFilterType = CvFilterType.UNKNOWN,
-                        _cvFilterValue:string = null,
+                        _cvFilterValue: string = null,
                         _extractorItemType: ExtractorItemType,
                         private _queryName: string = null,
                         private _filterType: FilterType = FilterType.NONE,
@@ -56,9 +58,10 @@ export class FilterParams extends GobiiFileItemCompoundId {
                         private _nameIdLabelType: NameIdLabelType,
                         private _parentFileItemParams: FilterParams,
                         private _childFileItemParams: FilterParams[],
-                        private _isDynamicFilterValue:boolean) {
+                        private _isDynamicFilterValue: boolean,
+                        private onLoadFilteredItemsAction: (fileItems: GobiiFileItem[], filterValue:string) => any) {
 
-        super(_extractorItemType,_entityType,_entitySubType,_cvFilterType,_cvFilterValue);
+        super(_extractorItemType, _entityType, _entitySubType, _cvFilterType, _cvFilterValue);
 
 
     }
@@ -79,7 +82,8 @@ export class FilterParams extends GobiiFileItemCompoundId {
             NameIdLabelType.UNKNOWN,
             null,
             [],
-            true));
+            true,
+            null));
     }
 
     getQueryName(): string {
@@ -188,7 +192,7 @@ export class FilterParams extends GobiiFileItemCompoundId {
         return this;
     }
 
-    setIsDynamicFilterValue(dynamicFilterValue:boolean): FilterParams {
+    setIsDynamicFilterValue(dynamicFilterValue: boolean): FilterParams {
         this._isDynamicFilterValue = dynamicFilterValue;
         return this;
     }
@@ -197,5 +201,13 @@ export class FilterParams extends GobiiFileItemCompoundId {
         return this._isDynamicFilterValue;
     }
 
+    setOnLoadFilteredItemsAction(initializeTransform: (fileItems: GobiiFileItem[], filterValue:string) => any) {
+        this.onLoadFilteredItemsAction = initializeTransform;
+        return this;
+    }
+
+    getOnLoadFilteredItemsAction(): (fileItems: GobiiFileItem[], filterValue:string) => any {
+        return this.onLoadFilteredItemsAction;
+    }
 
 }
