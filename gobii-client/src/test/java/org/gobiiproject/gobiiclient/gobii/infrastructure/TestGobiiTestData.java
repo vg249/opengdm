@@ -376,7 +376,7 @@ public class TestGobiiTestData {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetById.getHeader()));
         DataSetDTO dataSetDTO  = resultEnvelopeForGetById.getPayload().getData().get(0);
         Assert.assertTrue(dataSetDTO.getDataSetId() > 0);
-        Assert.assertNotNull(dataSetDTO.getName());
+        Assert.assertNotNull(dataSetDTO.getDatasetName());
 
         dbPkeySurrogateName = processPropName(dbPkeySurrogateName);
 

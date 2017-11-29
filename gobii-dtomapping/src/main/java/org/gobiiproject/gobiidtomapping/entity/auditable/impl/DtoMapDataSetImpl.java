@@ -64,9 +64,9 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
 
                 DataSetDTO currentDataSetDTO = new DataSetDTO();
 
-                currentDataSetDTO.setName(resultSet.getString("name"));
+                currentDataSetDTO.setDatasetName(resultSet.getString("name"));
                 currentDataSetDTO.setDataSetId(resultSet.getInt("dataset_id"));
-                currentDataSetDTO.setTypeId(resultSet.getInt("type_id"));
+                currentDataSetDTO.setDatatypeId(resultSet.getInt("type_id"));
 
                 returnVal.add(currentDataSetDTO);
 

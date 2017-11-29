@@ -15,7 +15,7 @@ public class SpInsDataSet extends SpDef {
 
         super("{call createdataset(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
 
-        this.addParamDef("name", String.class).setNullable(false);
+        this.addParamDef("datasetName", String.class).setNullable(false);
         this.addParamDef("experimentId", Integer.class).setNullable(false);
         this.addParamDef("callingAnalysisId", Integer.class).setNullable(false);
         this.addParamDef("datasetAnalysIds", ArrayList.class).setNullable(true);
@@ -28,7 +28,7 @@ public class SpInsDataSet extends SpDef {
         this.addParamDef("modifiedBy", Integer.class).setNullable(true);
         this.addParamDef("modifiedDate", java.util.Date.class).setNullable(true);
         this.addParamDef("status", Integer.class).setNullable(false);
-        this.addParamDef("typeId", Integer.class).setNullable(true);
+        this.addParamDef("datatypeId", Integer.class).setNullable(true);
         this.addParamDef("jobId", Integer.class).setNullable(true);
 
     } // ctor

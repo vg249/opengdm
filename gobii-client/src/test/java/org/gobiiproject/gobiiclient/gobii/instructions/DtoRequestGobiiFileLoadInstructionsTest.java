@@ -178,7 +178,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         gobiiLoaderInstructionTwo.setTable(instructionTwoTableName);
         gobiiLoaderInstructionTwo.setDataSetId(dataSetId);
         gobiiLoaderInstructionTwo.getDataSet().setId(dataSetId);
-        gobiiLoaderInstructionTwo.getDataSet().setName(dataSetDTOResponse.getName());
+        gobiiLoaderInstructionTwo.getDataSet().setName(dataSetDTOResponse.getDatasetName());
         gobiiLoaderInstructionTwo.setGobiiCropType(gobiiCropType);
         gobiiLoaderInstructionTwo.getExperiment().setId(experimentId);
         gobiiLoaderInstructionTwo.getExperiment().setName(experimentDTOResponse.getExperimentName());
@@ -547,7 +547,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         gobiiLoaderInstructionOne.setTable(instructionOneTableName);
         gobiiLoaderInstructionOne.setDataSetId(dataSetId);
         gobiiLoaderInstructionOne.getDataSet().setId(dataSetId);
-        gobiiLoaderInstructionOne.getDataSet().setName(dataSetDTOResponse.getName());
+        gobiiLoaderInstructionOne.getDataSet().setName(dataSetDTOResponse.getDatasetName());
         gobiiLoaderInstructionOne.setGobiiCropType(gobiiCropType);
         gobiiLoaderInstructionOne.getExperiment().setId(invalidExperimentId);
 
@@ -658,7 +658,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         gobiiLoaderInstructionTwo.setTable(instructionTwoTableName);
         gobiiLoaderInstructionTwo.setDataSetId(dataSetId);
         gobiiLoaderInstructionTwo.getDataSet().setId(dataSetId);
-        gobiiLoaderInstructionTwo.getDataSet().setName(dataSetDTOResponse.getName());
+        gobiiLoaderInstructionTwo.getDataSet().setName(dataSetDTOResponse.getDatasetName());
         gobiiLoaderInstructionTwo.setGobiiCropType(gobiiCropType);
         gobiiLoaderInstructionTwo.getExperiment().setId(experimentId);
         gobiiLoaderInstructionTwo.getExperiment().setName(experimentDTOResponse.getExperimentName());
@@ -745,7 +745,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeDataSet.getHeader()));
         DataSetDTO dataSetDTOResponse = resultEnvelopeDataSet.getPayload().getData().get(0);
 
-        Integer dataTypeId = dataSetDTOResponse.getTypeId();
+        Integer dataTypeId = dataSetDTOResponse.getDatatypeId();
 
         // invalid dataTypeId
         Integer invalidDataTypeId = dataTypeId + 1;
@@ -758,7 +758,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         gobiiLoaderInstructionThree.setTable(instructionThreeTableName);
         gobiiLoaderInstructionThree.setDataSetId(dataSetId);
         gobiiLoaderInstructionThree.getDataSet().setId(dataSetId);
-        gobiiLoaderInstructionThree.getDataSet().setName(dataSetDTOResponse.getName());
+        gobiiLoaderInstructionThree.getDataSet().setName(dataSetDTOResponse.getDatasetName());
         gobiiLoaderInstructionThree.setGobiiCropType(gobiiCropType);
         gobiiLoaderInstructionThree.getDatasetType().setId(invalidDataTypeId);
 
