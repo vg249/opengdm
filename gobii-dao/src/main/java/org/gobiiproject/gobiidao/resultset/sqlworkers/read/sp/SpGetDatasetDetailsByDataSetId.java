@@ -44,7 +44,20 @@ public class SpGetDatasetDetailsByDataSetId implements Work {
                 "else 'n/a' " +
                 "end " +
                 "as jobtypename , " +
-                "j.submitted_date as jobsubmitteddate " +
+                "j.submitted_date as jobsubmitteddate, " +
+                "(select count(*) " +
+                "from dataset ds " +
+                "join dnarun d on (ds.experiment_id=d.experiment_id) " +
+                "join dnasample s on (d.dnasample_id=s.dnasample_id) " +
+                "where ds.dataset_id=?) as totalsamples, " +
+                "(select count(*) " +
+                "from dataset ds " +
+                "join experiment e on (ds.experiment_id=e.experiment_id) " +
+                "join vendor_protocol vp on (e.vendor_protocol_id=vp.vendor_protocol_id) " +
+                "join protocol p on (vp.protocol_id=p.protocol_id) " +
+                "join platform pf on (p.platform_id=pf.platform_id) " +
+                "join marker m on (m.platform_id=pf.platform_id) " +
+                "where ds.dataset_id=? ) as totalmarkers " +
                 "from dataset ds " +
                 "left outer join job j on (ds.job_id=j.job_id) " +
                 "where dataset_id=? " +
@@ -52,6 +65,8 @@ public class SpGetDatasetDetailsByDataSetId implements Work {
 
         PreparedStatement preparedStatement = dbConnection.prepareCall(sql);
         preparedStatement.setInt(1, (Integer) parameters.get("dataSetId"));
+        preparedStatement.setInt(2, (Integer) parameters.get("dataSetId"));
+        preparedStatement.setInt(3, (Integer) parameters.get("dataSetId"));
         resultSet = preparedStatement.executeQuery();
     } // execute()
 }

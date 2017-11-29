@@ -38,7 +38,9 @@ public class ListStatementDatasetAll implements ListStatement {
                 "else 'n/a' " +
                 "end " +
                 "as jobtypename , " +
-                "j.submitted_date as jobsubmitteddate " +
+                "j.submitted_date as jobsubmitteddate, " +
+                "null as totalsamples, " +
+                "null as totalmarkers " +
                 "from dataset ds " +
                 "left outer join job j on (ds.job_id=j.job_id) " +
                 "order by lower(ds.name)";
