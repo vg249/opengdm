@@ -45,7 +45,7 @@ import {ExtractorItemType} from "../model/type-extractor-item";
                             </ng-template>
                         </p-column>
                         <p-column field="_entity.id" header="Id" hidden="true"></p-column>
-                        <p-column field="_entity.name" header="Name"></p-column>
+                        <p-column field="_entity.datasetName" header="Name"></p-column>
                         <p-column field="_entity.jobStatusName" header="Status"></p-column>
                         <p-column field="_entity.jobTypeName" header="Type"></p-column>
                         <p-column field="jobSubmittedDate" header="Submitted">
