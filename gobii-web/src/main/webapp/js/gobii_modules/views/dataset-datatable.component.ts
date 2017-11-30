@@ -47,7 +47,7 @@ import {OverlayPanel} from "primeng/primeng";
                         </p-column>
                         <p-column [style]="{'width':'10%','text-align':'center'}">
                             <ng-template let-col="rowData" pTemplate="body">
-                                <button type="button" pButton (click)="selectDataset($event,col,datasetOverlayPanel);" icon="fa-search"></button>
+                                <button type="button" pButton (click)="selectDataset($event,col,datasetOverlayPanel);" icon="fa-bars"></button>
                             </ng-template>
                         </p-column>                      
                         <p-column field="_entity.id" header="Id" hidden="true"></p-column>
