@@ -39,10 +39,18 @@ public class FileSystemInterface {
 	 * @param file File object to be 'removed' as if the RM command was executed on it, but safely in regard to existance of the file.
 	 */
 	public static void rmIfExist(File file){
-		if(file==null)return;
+		if(file==null){
+			return;
+		}
+
 		if(keepAllFiles){
 			return;
 		}
+
+		if(!file.exists()){
+			return;
+		}
+
 		if(keepInTemp){
 			File tmpDir=new File(file.getParent(),"temp");
 			tmpDir.mkdir(); // returns false if directory exists or is file (if it's a file, whoops).
@@ -50,12 +58,11 @@ public class FileSystemInterface {
 			try {
 				Files.move(file.toPath(),tempFile.toPath(),(CopyOption)StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException e) {
-				ErrorLogger.logError("FileSystemInterface",e);
+				ErrorLogger.logError("FileSystemInterface","Unable to move file to a temporary directory",e);
 			}
 		}
-		if(file.exists()){
-			file.delete();
-		}
+
+		file.delete();
 	}
 	/**
 	 * Removes a file only if the file already exists. Note: This method has two global flags that affect its behavior.
