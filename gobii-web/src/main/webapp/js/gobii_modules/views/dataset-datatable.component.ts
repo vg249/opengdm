@@ -76,55 +76,86 @@ import {FilterParams} from "../model/file-item-params";
                 </legend>
 
 
-                <table class="table table-striped table-hover">
-                    <!--<table class="table table-striped table-hover table-bordered">-->
-                    <tbody>
-                    <tr>
-                        <td><b>Principle Investigator</b></td>
-                        <td>{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.piEmail : null}}</td>
-                    </tr>
+                <div class="panel panel-default">
+                    <table class="table table-striped table-hover">
+                        <!--<table class="table table-striped table-hover table-bordered">-->
+                        <tbody>
+                        <tr>
+                            <td><b>Principle Investigator</b></td>
+                            <td>{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.piEmail : null}}</td>
+                        </tr>
 
-                    <tr>
-                        <td><b>Project</b></td>
-                        <td>
-                            {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.projectName : null}}
-                        </td>
-                    </tr>
-
-
-                    <tr>
-                        <td><b>Data Type</b></td>
-                        <td>
-                            {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.datatypeName : null}}
-                        </td>
-                    </tr>
+                        <tr>
+                            <td><b>Project</b></td>
+                            <td>
+                                {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.projectName : null}}
+                            </td>
+                        </tr>
 
 
-                    <tr>
-                        <td><b>Calling Analysis</b></td>
-                        <td>
-                            {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.callingAnalysisName : null}}
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td><b>Total Samples</b></td>
-                        <td>
-                            {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.totalSamples : null}}
-                        </td>
-                    </tr>
+                        <tr>
+                            <td><b>Data Type</b></td>
+                            <td>
+                                {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.datatypeName : null}}
+                            </td>
+                        </tr>
 
 
-                    <tr>
-                        <td><b>Total Markers</b></td>
-                        <td>
-                            {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.totalMarkers : null}}
-                        </td>
-                    </tr>
+                        <tr>
+                            <td><b>Calling Analysis</b></td>
+                            <td>
+                                {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.callingAnalysisName : null}}
+                            </td>
+                        </tr>
 
-                    </tbody>
-                </table>
+                        <tr>
+                            <td><b>Total Samples</b></td>
+                            <td>
+                                {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.totalSamples : null}}
+                            </td>
+                        </tr>
 
+
+                        <tr>
+                            <td><b>Total Markers</b></td>
+                            <td>
+                                {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.totalMarkers : null}}
+                            </td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="font-size: medium">
+                        <b>Experiment:
+                            {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.experimentName : null}}</b>
+
+                    </div>
+                    <div class="card text-white bg-info">
+
+                        <div class="card-body">
+                            <table class="table table-striped table-hover">
+                                <!--<table class="table table-striped table-hover table-bordered">-->
+                                <tbody>
+                                <tr>
+                                    <td>Platform:</td>
+                                    <td>{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.platformName : null}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Protocol:</td>
+                                    <td>{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.protocolName : null}}
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
             </p-overlayPanel>
 
             <!--</div> &lt;!&ndash; table row &ndash;&gt;-->
