@@ -76,15 +76,16 @@ import {FilterParams} from "../model/file-item-params";
                 </legend>
 
 
-                <table class="table table-striped table-hover table-bordered">
+                <table class="table table-striped table-hover">
+                    <!--<table class="table table-striped table-hover table-bordered">-->
                     <tbody>
                     <tr>
-                        <td><b>Principle Investigator:</b></td>
+                        <td><b>Principle Investigator</b></td>
                         <td>{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.piEmail : null}}</td>
                     </tr>
 
                     <tr>
-                        <td><b>Project:</b></td>
+                        <td><b>Project</b></td>
                         <td>
                             {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.projectName : null}}
                         </td>
@@ -92,7 +93,7 @@ import {FilterParams} from "../model/file-item-params";
 
 
                     <tr>
-                        <td><b>Data Type:</b></td>
+                        <td><b>Data Type</b></td>
                         <td>
                             {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.datatypeName : null}}
                         </td>
@@ -100,14 +101,14 @@ import {FilterParams} from "../model/file-item-params";
 
 
                     <tr>
-                        <td><b>Calling Analysis:</b></td>
+                        <td><b>Calling Analysis</b></td>
                         <td>
                             {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.callingAnalysisName : null}}
                         </td>
                     </tr>
 
                     <tr>
-                        <td><b>Total Samples:</b></td>
+                        <td><b>Total Samples</b></td>
                         <td>
                             {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.totalSamples : null}}
                         </td>
@@ -115,7 +116,7 @@ import {FilterParams} from "../model/file-item-params";
 
 
                     <tr>
-                        <td><b>Total Markers:</b></td>
+                        <td><b>Total Markers</b></td>
                         <td>
                             {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.totalMarkers : null}}
                         </td>
