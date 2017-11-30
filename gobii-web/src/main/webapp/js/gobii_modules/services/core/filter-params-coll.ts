@@ -213,11 +213,16 @@ export class FilterParamsColl {
         );
 
         this.addFilter(FilterParams
-            .build(FilterParamNames.DATASETS,
+            .build(FilterParamNames.DATASET_LIST,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.DATASET)
             .setFilterType(FilterType.ENTITY_LIST));
 
+        this.addFilter(FilterParams
+            .build(FilterParamNames.DATASET_BY_DATASET_ID,
+                GobiiExtractFilterType.WHOLE_DATASET,
+                EntityType.DATASET)
+            .setFilterType(FilterType.ENTITY_BY_ID));
 
         //for hierarchical items, we need to crate the nameid requests separately from the
         //flat map: they _will_ need to be in the flat map; however, they all need to be

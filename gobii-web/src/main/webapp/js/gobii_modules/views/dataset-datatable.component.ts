@@ -1,6 +1,7 @@
 import {Component, Input, OnChanges, OnInit, SimpleChange} from "@angular/core";
 import {Store} from "@ngrx/store";
 import * as fromRoot from '../store/reducers';
+import * as historyAction from '../store/actions/history-action';
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {FileItemService} from "../services/core/file-item-service";
 import {FilterParamNames} from "../model/file-item-param-names";
@@ -10,6 +11,11 @@ import {GobiiFileItem} from "../model/gobii-file-item";
 import * as fileAction from '../store/actions/fileitem-action';
 import {ExtractorItemType} from "../model/type-extractor-item";
 import {OverlayPanel} from "primeng/primeng";
+import {DtoRequestService} from "../services/core/dto-request.service";
+import {JsonToGfiDataset} from "../services/app/jsontogfi/json-to-gfi-dataset";
+import {FilterParamsColl} from "../services/core/filter-params-coll";
+import {DtoRequestItemGfi} from "../services/app/dto-request-item-gfi";
+import {FilterParams} from "../model/file-item-params";
 
 
 @Component({
@@ -18,7 +24,7 @@ import {OverlayPanel} from "primeng/primeng";
     outputs: [],
     template: `
         <div style="border: 1px solid #336699; padding-left: 5px">
-            <div class="container-fluid" >
+            <div class="container-fluid">
                 <div class="row">
                     <BR>
                     <label class="the-legend">Filter by Status:&nbsp;</label>
@@ -47,9 +53,10 @@ import {OverlayPanel} from "primeng/primeng";
                         </p-column>
                         <p-column [style]="{'width':'10%','text-align':'center'}">
                             <ng-template let-col="rowData" pTemplate="body">
-                                <button type="button" pButton (click)="selectDataset($event,col,datasetOverlayPanel);" icon="fa-bars"></button>
+                                <button type="button" pButton (click)="selectDataset($event,col,datasetOverlayPanel);"
+                                        icon="fa-bars"></button>
                             </ng-template>
-                        </p-column>                      
+                        </p-column>
                         <p-column field="_entity.id" header="Id" hidden="true"></p-column>
                         <p-column field="_entity.datasetName" header="Name"></p-column>
                         <p-column field="_entity.jobStatusName" header="Status"></p-column>
@@ -64,13 +71,13 @@ import {OverlayPanel} from "primeng/primeng";
 
                         <!--<p>A bunch of text.A bunch of text. A bunch of text. A bunch of text. A bunch of text. A bunch of text. A bunch of text. A bunch of text. A bunch of text. A bunch of text. A bunch of text.  </p>-->
                         <fieldset>
-                            <legend>Personalia:</legend>
-                            Name: <input type="text"><br>
+                            <legend>Dataset Details</legend>
+                            Name: {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.datasetName : null}} <br>
                             Email: <input type="text"><br>
                             Date of birth: <input type="text">
                         </fieldset>
                     </p-overlayPanel>
-                    
+
                 </div> <!-- table row -->
             </div><!--container  -->
             <!--<button type="text" pButton label="Basic" (click)="datasetOverlayPanel.toggle($event, actualTarget)"></button>-->
@@ -85,7 +92,9 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
     //cars: Car[];
 
     constructor(private store: Store<fromRoot.State>,
-                private fileItemService: FileItemService) {
+                private fileItemService: FileItemService,
+                private filterParamsColl: FilterParamsColl,
+                private fileItemRequestService: DtoRequestService<GobiiFileItem[]>) {
     }
 
     public datasetsFileItems$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getDatsetEntities);
@@ -93,9 +102,34 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
     public nameIdFilterParamTypes: any = Object.assign({}, FilterParamNames);
 
 
-    selectDataset(event,dataSet: DataSet, datasetOverlayPanel: OverlayPanel) {
+    public selectedDatasetDetailEntity:DataSet;
+    selectDataset(event, dataSeItem: GobiiFileItem, datasetOverlayPanel: OverlayPanel) {
         //this.selectedCar = car;
-        datasetOverlayPanel.show(event);
+
+
+        let datasetId: number = dataSeItem.getEntity().id;
+        let filterParams: FilterParams = this.filterParamsColl.getFilter(FilterParamNames.DATASET_BY_DATASET_ID, GobiiExtractFilterType.WHOLE_DATASET);
+
+        let dtoRequestItemGfi: DtoRequestItemGfi = new DtoRequestItemGfi(filterParams,
+            datasetId.toString(),
+            new JsonToGfiDataset(filterParams, this.filterParamsColl));
+
+        this.fileItemRequestService
+            .get(dtoRequestItemGfi)
+            .subscribe(entityItems => {
+                if (entityItems.length === 1 && entityItems[0].getEntity()) {
+
+                    this.selectedDatasetDetailEntity = entityItems[0].getEntity();
+                    datasetOverlayPanel.show(event);
+                } else {
+                    this.store
+                        .dispatch(new historyAction.AddStatusMessageAction("There is no dataset data for dataset id "
+                            + datasetId.toString()));
+
+                }
+            });
+
+
     }
 
 
@@ -145,11 +179,10 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
 
             if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
 
-                this.fileItemService.loadEntityList(this.gobiiExtractFilterType, FilterParamNames.DATASETS);
+                this.fileItemService.loadEntityList(this.gobiiExtractFilterType, FilterParamNames.DATASET_LIST);
                 this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                     FilterParamNames.CV_JOB_STATUS,
                     null);
-
 
 
             } // if we have a new filter type
