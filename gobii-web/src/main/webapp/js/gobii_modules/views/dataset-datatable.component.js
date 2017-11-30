@@ -72,7 +72,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/
                         .subscribe(function (entityItems) {
                         if (entityItems.length === 1 && entityItems[0].getEntity()) {
                             _this.selectedDatasetDetailEntity = entityItems[0].getEntity();
-                            datasetOverlayPanel.show(event);
+                            datasetOverlayPanel.toggle(event);
                         }
                         else {
                             _this.store

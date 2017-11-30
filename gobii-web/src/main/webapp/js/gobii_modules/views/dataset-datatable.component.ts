@@ -201,7 +201,7 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
                 if (entityItems.length === 1 && entityItems[0].getEntity()) {
 
                     this.selectedDatasetDetailEntity = entityItems[0].getEntity();
-                    datasetOverlayPanel.show(event);
+                    datasetOverlayPanel.toggle(event);
                 } else {
                     this.store
                         .dispatch(new historyAction.AddStatusMessageAction("There is no dataset data for dataset id "
