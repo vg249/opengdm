@@ -20,7 +20,7 @@ export class DataSet {
                 public jobTypeName,
                 public jobSubmittedDate: Date,
                 public experimentName:string,
-                public projectname: string,
+                public projectName: string,
                 public protocolId: number,
                 public protocolName: string,
                 public platformId: number,

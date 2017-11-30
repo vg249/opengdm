@@ -25,61 +25,109 @@ import {FilterParams} from "../model/file-item-params";
     template: `
         <div style="border: 1px solid #336699; padding-left: 5px">
             <div class="container-fluid">
-                <div class="row">
-                    <BR>
-                    <label class="the-legend">Filter by Status:&nbsp;</label>
-                    <name-id-list-box
-                            [gobiiExtractFilterType]="gobiiExtractFilterType"
-                            [filterParamName]="nameIdFilterParamTypes.CV_JOB_STATUS">
-                    </name-id-list-box>
 
-                </div> <!--status selector row -->
-                <div class="row">
-                    <p-dataTable [value]="datasetsFileItems$ | async"
-                                 [(selection)]="selectedDatasets"
-                                 (onRowSelect)="handleRowSelect($event)"
-                                 (onRowUnselect)="handleRowUnSelect($event)"
-                                 (onRowClick)="handleOnRowClick($event)"
-                                 dataKey="_entity.id">
-                        <p-column [style]="{'width':'30px'}">
-                            <ng-template let-col let-fi="rowData" pTemplate="body">
-                                <p-checkbox binary="true"
-                                            [ngModel]="fi.getSelected()"
-                                            (onChange)="handleRowChecked($event, fi)"
-                                            [disabled]="fi.getEntity().jobStatusName !== 'completed' || (fi.getEntity().jobTypeName !== 'load')">
-                                </p-checkbox>
+                <BR>
+                <label class="the-legend">Filter by Status:&nbsp;</label>
+                <name-id-list-box
+                        [gobiiExtractFilterType]="gobiiExtractFilterType"
+                        [filterParamName]="nameIdFilterParamTypes.CV_JOB_STATUS">
+                </name-id-list-box>
 
-                            </ng-template>
-                        </p-column>
-                        <p-column [style]="{'width':'10%','text-align':'center'}">
-                            <ng-template let-col="rowData" pTemplate="body">
-                                <button type="button" pButton (click)="selectDataset($event,col,datasetOverlayPanel);"
-                                        icon="fa-bars"></button>
-                            </ng-template>
-                        </p-column>
-                        <p-column field="_entity.id" header="Id" hidden="true"></p-column>
-                        <p-column field="_entity.datasetName" header="Name"></p-column>
-                        <p-column field="_entity.jobStatusName" header="Status"></p-column>
-                        <p-column field="_entity.jobTypeName" header="Type"></p-column>
-                        <p-column field="jobSubmittedDate" header="Submitted">
-                            <ng-template let-col let-fi="rowData" pTemplate="body">
-                                {{fi._entity[col.field] | date:'yyyy-MM-dd HH:mm' }}
-                            </ng-template>
-                        </p-column>
-                    </p-dataTable>
-                    <p-overlayPanel #datasetOverlayPanel appendTo="body" showCloseIcon="true">
+            </div> <!--status selector row -->
 
-                        <!--<p>A bunch of text.A bunch of text. A bunch of text. A bunch of text. A bunch of text. A bunch of text. A bunch of text. A bunch of text. A bunch of text. A bunch of text. A bunch of text.  </p>-->
-                        <fieldset>
-                            <legend>Dataset Details</legend>
-                            Name: {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.datasetName : null}} <br>
-                            Email: <input type="text"><br>
-                            Date of birth: <input type="text">
-                        </fieldset>
-                    </p-overlayPanel>
+            <p-dataTable [value]="datasetsFileItems$ | async"
+                         [(selection)]="selectedDatasets"
+                         (onRowSelect)="handleRowSelect($event)"
+                         (onRowUnselect)="handleRowUnSelect($event)"
+                         (onRowClick)="handleOnRowClick($event)"
+                         dataKey="_entity.id">
+                <p-column [style]="{'width':'30px'}">
+                    <ng-template let-col let-fi="rowData" pTemplate="body">
+                        <p-checkbox binary="true"
+                                    [ngModel]="fi.getSelected()"
+                                    (onChange)="handleRowChecked($event, fi)"
+                                    [disabled]="fi.getEntity().jobStatusName !== 'completed' || (fi.getEntity().jobTypeName !== 'load')">
+                        </p-checkbox>
 
-                </div> <!-- table row -->
-            </div><!--container  -->
+                    </ng-template>
+                </p-column>
+                <p-column [style]="{'width':'10%','text-align':'center'}">
+                    <ng-template let-col="rowData" pTemplate="body">
+                        <button type="button" pButton (click)="selectDataset($event,col,datasetOverlayPanel);"
+                                icon="fa-bars"></button>
+                    </ng-template>
+                </p-column>
+                <p-column field="_entity.id" header="Id" hidden="true"></p-column>
+                <p-column field="_entity.datasetName" header="Name"></p-column>
+                <p-column field="_entity.jobStatusName" header="Status"></p-column>
+                <p-column field="_entity.jobTypeName" header="Type"></p-column>
+                <p-column field="jobSubmittedDate" header="Submitted">
+                    <ng-template let-col let-fi="rowData" pTemplate="body">
+                        {{fi._entity[col.field] | date:'yyyy-MM-dd HH:mm' }}
+                    </ng-template>
+                </p-column>
+            </p-dataTable>
+            <p-overlayPanel #datasetOverlayPanel appendTo="body" showCloseIcon="true">
+
+
+                <!-- you have to  -->
+                <legend>Details:
+                    {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.datasetName : null}}
+                </legend>
+
+
+                <table class="table table-striped table-hover table-bordered">
+                    <tbody>
+                    <tr>
+                        <td><b>Principle Investigator:</b></td>
+                        <td>{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.piEmail : null}}</td>
+                    </tr>
+
+                    <tr>
+                        <td><b>Project:</b></td>
+                        <td>
+                            {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.projectName : null}}
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td><b>Data Type:</b></td>
+                        <td>
+                            {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.datatypeName : null}}
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td><b>Calling Analysis:</b></td>
+                        <td>
+                            {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.callingAnalysisName : null}}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><b>Total Samples:</b></td>
+                        <td>
+                            {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.totalSamples : null}}
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td><b>Total Markers:</b></td>
+                        <td>
+                            {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.totalMarkers : null}}
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+
+            </p-overlayPanel>
+
+            <!--</div> &lt;!&ndash; table row &ndash;&gt;-->
+            <!--</div>&lt;!&ndash;container  &ndash;&gt;-->
             <!--<button type="text" pButton label="Basic" (click)="datasetOverlayPanel.toggle($event, actualTarget)"></button>-->
             <!--<p (mouseenter)="datasetOverlayPanel.show($event,  actualTarget)">A random paragraph</p>-->
         </div> <!-- enclosing box  -->
@@ -102,7 +150,8 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
     public nameIdFilterParamTypes: any = Object.assign({}, FilterParamNames);
 
 
-    public selectedDatasetDetailEntity:DataSet;
+    public selectedDatasetDetailEntity: DataSet;
+
     selectDataset(event, dataSeItem: GobiiFileItem, datasetOverlayPanel: OverlayPanel) {
         //this.selectedCar = car;
 

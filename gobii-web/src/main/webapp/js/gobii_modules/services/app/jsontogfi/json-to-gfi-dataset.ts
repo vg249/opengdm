@@ -43,7 +43,7 @@ export class JsonToGfiDataset implements JsonToGfi {
             jsonItem.jobTypeName,
             jsonItem.jobSubmittedDate ? new Date(jsonItem.jobSubmittedDate) : null,
             jsonItem.experimentName,
-            jsonItem.projectname,
+            jsonItem.projectName,
             jsonItem.protocolId,
             jsonItem.protocolName,
             jsonItem.platformId,

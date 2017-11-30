@@ -6,7 +6,7 @@ System.register([], function (exports_1, context_1) {
         setters: [],
         execute: function () {
             DataSet = (function () {
-                function DataSet(id, piContactId, projectId, experimentId, datasetName, callingAnalysisId, dataTable, dataFile, qualityTable, qualityFile, status, datatypeId, analysesIds, createdDate, jobStatusId, jobStatusName, jobTypeId, jobTypeName, jobSubmittedDate, experimentName, projectname, protocolId, protocolName, platformId, platformName, callingAnalysisName, piEmail, datatypeName, totalSamples, totalMarkers) {
+                function DataSet(id, piContactId, projectId, experimentId, datasetName, callingAnalysisId, dataTable, dataFile, qualityTable, qualityFile, status, datatypeId, analysesIds, createdDate, jobStatusId, jobStatusName, jobTypeId, jobTypeName, jobSubmittedDate, experimentName, projectName, protocolId, protocolName, platformId, platformName, callingAnalysisName, piEmail, datatypeName, totalSamples, totalMarkers) {
                     this.id = id;
                     this.piContactId = piContactId;
                     this.projectId = projectId;
@@ -27,7 +27,7 @@ System.register([], function (exports_1, context_1) {
                     this.jobTypeName = jobTypeName;
                     this.jobSubmittedDate = jobSubmittedDate;
                     this.experimentName = experimentName;
-                    this.projectname = projectname;
+                    this.projectName = projectName;
                     this.protocolId = protocolId;
                     this.protocolName = protocolName;
                     this.platformId = platformId;
