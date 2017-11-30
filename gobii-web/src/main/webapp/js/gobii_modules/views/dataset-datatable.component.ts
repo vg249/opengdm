@@ -9,6 +9,7 @@ import {DataSet} from "../model/dataset";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import * as fileAction from '../store/actions/fileitem-action';
 import {ExtractorItemType} from "../model/type-extractor-item";
+import {OverlayPanel} from "primeng/primeng";
 
 
 @Component({
@@ -17,7 +18,7 @@ import {ExtractorItemType} from "../model/type-extractor-item";
     outputs: [],
     template: `
         <div style="border: 1px solid #336699; padding-left: 5px">
-            <div class="container-fluid">
+            <div class="container-fluid" >
                 <div class="row">
                     <BR>
                     <label class="the-legend">Filter by Status:&nbsp;</label>
@@ -44,6 +45,11 @@ import {ExtractorItemType} from "../model/type-extractor-item";
 
                             </ng-template>
                         </p-column>
+                        <p-column [style]="{'width':'10%','text-align':'center'}">
+                            <ng-template let-col="rowData" pTemplate="body">
+                                <button type="button" pButton (click)="selectDataset($event,col,datasetOverlayPanel);" icon="fa-search"></button>
+                            </ng-template>
+                        </p-column>                      
                         <p-column field="_entity.id" header="Id" hidden="true"></p-column>
                         <p-column field="_entity.datasetName" header="Name"></p-column>
                         <p-column field="_entity.jobStatusName" header="Status"></p-column>
@@ -54,12 +60,26 @@ import {ExtractorItemType} from "../model/type-extractor-item";
                             </ng-template>
                         </p-column>
                     </p-dataTable>
+                    <p-overlayPanel #datasetOverlayPanel appendTo="body" showCloseIcon="true">
+
+                        <!--<p>A bunch of text.A bunch of text. A bunch of text. A bunch of text. A bunch of text. A bunch of text. A bunch of text. A bunch of text. A bunch of text. A bunch of text. A bunch of text.  </p>-->
+                        <fieldset>
+                            <legend>Personalia:</legend>
+                            Name: <input type="text"><br>
+                            Email: <input type="text"><br>
+                            Date of birth: <input type="text">
+                        </fieldset>
+                    </p-overlayPanel>
+                    
                 </div> <!-- table row -->
             </div><!--container  -->
+            <!--<button type="text" pButton label="Basic" (click)="datasetOverlayPanel.toggle($event, actualTarget)"></button>-->
+            <!--<p (mouseenter)="datasetOverlayPanel.show($event,  actualTarget)">A random paragraph</p>-->
         </div> <!-- enclosing box  -->
     ` // end template
 
 })
+
 export class DatasetDatatableComponent implements OnInit, OnChanges {
 
     //cars: Car[];
@@ -71,6 +91,12 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
     public datasetsFileItems$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getDatsetEntities);
     public selectedDatasets: GobiiFileItem[];
     public nameIdFilterParamTypes: any = Object.assign({}, FilterParamNames);
+
+
+    selectDataset(event,dataSet: DataSet, datasetOverlayPanel: OverlayPanel) {
+        //this.selectedCar = car;
+        datasetOverlayPanel.show(event);
+    }
 
 
     public handleRowChecked(checked: boolean, selectedDatasetFileItem: GobiiFileItem) {
