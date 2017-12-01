@@ -1137,6 +1137,39 @@ public class GOBIIControllerV1 {
 
     }
 
+    @RequestMapping(value = "/datasets/{dataSetId:[\\d]+}/analyses", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<AnalysisDTO> getAnalysesForDataset(@PathVariable Integer dataSetId,
+                                                       HttpServletRequest request,
+                                                       HttpServletResponse response) {
+
+        PayloadEnvelope<AnalysisDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            List<AnalysisDTO> analysisDTOs = dataSetService.getAnalysesByDatasetId(dataSetId);
+
+            PayloadWriter<AnalysisDTO> payloadWriter = new PayloadWriter<>(request, response,
+                    AnalysisDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
+                            GobiiServiceRequestId.URL_ANALYSIS),
+                    analysisDTOs);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
 
     @RequestMapping(value = "/datasets/types", method = RequestMethod.GET)
     @ResponseBody
