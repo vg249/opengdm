@@ -24,6 +24,7 @@ System.register([], function (exports_1, context_1) {
                 FilterParamNames.DATASETS_BY_EXPERIMENT = "Datasets-by-experiment";
                 FilterParamNames.DATASET_LIST = "Dataset-List";
                 FilterParamNames.DATASET_BY_DATASET_ID = "Dataset-List-By-DatasetId";
+                FilterParamNames.ANALYSES_BY_DATASET_ID = "Analysis-List-By-DatasetId";
                 FilterParamNames.PROJECTS_BY_CONTACT = "Projects-by-contact";
                 FilterParamNames.PROJECTS = "Project";
                 FilterParamNames.MARKER_GROUPS = "Marker Groups";

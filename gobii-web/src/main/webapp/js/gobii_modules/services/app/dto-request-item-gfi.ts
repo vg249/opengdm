@@ -1,12 +1,11 @@
 import {Injectable} from "@angular/core";
 import {DtoRequestItem} from "./../core/dto-request-item";
 import {ProcessType} from "../../model/type-process";
-import {DataSet} from "../../model/dataset";
 import {GobiiFileItem} from "../../model/gobii-file-item";
-import {EntityType} from "../../model/type-entity";
 import {FilterParams} from "../../model/file-item-params";
 import {JsonToGfi} from "./jsontogfi/json-to-gfi";
 import {FilterType} from "../../model/filter-type";
+import {FilterParamNames} from "../../model/file-item-param-names";
 
 
 @Injectable()
@@ -32,13 +31,17 @@ export class DtoRequestItemGfi implements DtoRequestItem<GobiiFileItem[]> {
 
         let returnVal: string = "gobii/v1";
 
-        if (this.fileItemParams.getEntityType() === EntityType.DATASET) {
+        if (this.fileItemParams.getQueryName() === FilterParamNames.DATASET_BY_DATASET_ID ||
+            this.fileItemParams.getQueryName() === FilterParamNames.DATASET_LIST) {
             returnVal += "/datasets";
+
+            if (this.fileItemParams.getFilterType() === FilterType.ENTITY_BY_ID) {
+                returnVal += "/" + this.id;
+            }
+        } else if(this.fileItemParams.getQueryName() === FilterParamNames.ANALYSES_BY_DATASET_ID) {
+            returnVal += "/datasets/" + this.id + "/analyses";
         }
 
-        if (this.fileItemParams.getFilterType() === FilterType.ENTITY_BY_ID) {
-            returnVal += "/" + this.id;
-        }
 
         return returnVal;
     } // getUrl()

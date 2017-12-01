@@ -16,6 +16,7 @@ import {JsonToGfiDataset} from "../services/app/jsontogfi/json-to-gfi-dataset";
 import {FilterParamsColl} from "../services/core/filter-params-coll";
 import {DtoRequestItemGfi} from "../services/app/dto-request-item-gfi";
 import {FilterParams} from "../model/file-item-params";
+import {JsonToGfiAnalysis} from "../services/app/jsontogfi/json-to-gfi-analysis";
 
 
 @Component({
@@ -156,6 +157,20 @@ import {FilterParams} from "../model/file-item-params";
                         </div>
                     </div>
                 </div>
+                <BR>
+                <div>
+                    <p-accordion (onOpen)="handleOpenAnalysesTab($event)">
+                        <p-accordionTab
+                                header="{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.analysesIds.length : null}} Analyses"
+                                style="font-size: medium">
+
+                            <p *ngFor="let name of datasetAnalysesNames">
+                                {{ name }}
+                            </p>
+                        </p-accordionTab>
+                    </p-accordion>
+                </div>
+
             </p-overlayPanel>
 
             <!--</div> &lt;!&ndash; table row &ndash;&gt;-->
@@ -179,15 +194,12 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
 
     public datasetsFileItems$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getDatsetEntities);
     public selectedDatasets: GobiiFileItem[];
+    public datasetAnalysesNames: string[] = [];
     public nameIdFilterParamTypes: any = Object.assign({}, FilterParamNames);
-
-
     public selectedDatasetDetailEntity: DataSet;
 
     selectDataset(event, dataSeItem: GobiiFileItem, datasetOverlayPanel: OverlayPanel) {
         //this.selectedCar = car;
-
-
         let datasetId: number = dataSeItem.getEntity().id;
         let filterParams: FilterParams = this.filterParamsColl.getFilter(FilterParamNames.DATASET_BY_DATASET_ID, GobiiExtractFilterType.WHOLE_DATASET);
 
@@ -199,7 +211,6 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
             .get(dtoRequestItemGfi)
             .subscribe(entityItems => {
                 if (entityItems.length === 1 && entityItems[0].getEntity()) {
-
                     this.selectedDatasetDetailEntity = entityItems[0].getEntity();
                     datasetOverlayPanel.toggle(event);
                 } else {
@@ -209,10 +220,31 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
 
                 }
             });
-
-
     }
 
+
+    public handleOpenAnalysesTab(event) {
+
+        if (this.selectedDatasetDetailEntity) {
+
+            let datasetId: number = this.selectedDatasetDetailEntity.id;
+            let filterParams: FilterParams = this.filterParamsColl.getFilter(FilterParamNames.ANALYSES_BY_DATASET_ID, GobiiExtractFilterType.WHOLE_DATASET);
+
+            let dtoRequestItemGfi: DtoRequestItemGfi = new DtoRequestItemGfi(filterParams,
+                datasetId.toString(),
+                new JsonToGfiAnalysis(filterParams, this.filterParamsColl));
+
+            this.fileItemRequestService
+                .get(dtoRequestItemGfi)
+                .subscribe(entityItems => {
+
+                    this.datasetAnalysesNames = entityItems
+                        .map(gfi => gfi.getItemName())
+                });
+
+        } // if we have a selected datset entity
+
+    }
 
     public handleRowChecked(checked: boolean, selectedDatasetFileItem: GobiiFileItem) {
         this.handleItemChecked(selectedDatasetFileItem.getFileItemUniqueId(), checked);

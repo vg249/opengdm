@@ -224,6 +224,12 @@ export class FilterParamsColl {
                 EntityType.DATASET)
             .setFilterType(FilterType.ENTITY_BY_ID));
 
+        this.addFilter(FilterParams
+            .build(FilterParamNames.ANALYSES_BY_DATASET_ID,
+                GobiiExtractFilterType.WHOLE_DATASET,
+                EntityType.ANALYSIS)
+            .setFilterType(FilterType.ENTITY_BY_ID));
+
         //for hierarchical items, we need to crate the nameid requests separately from the
         //flat map: they _will_ need to be in the flat map; however, they all need to be
         //useed to set up the filtering hierarchy
