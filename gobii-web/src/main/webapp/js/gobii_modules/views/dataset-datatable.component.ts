@@ -9,7 +9,6 @@ import {Observable} from "rxjs/Observable";
 import {DataSet} from "../model/dataset";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import * as fileAction from '../store/actions/fileitem-action';
-import {ExtractorItemType} from "../model/type-extractor-item";
 import {OverlayPanel} from "primeng/primeng";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {JsonToGfiDataset} from "../services/app/jsontogfi/json-to-gfi-dataset";
@@ -172,33 +171,10 @@ import {JsonToGfiAnalysis} from "../services/app/jsontogfi/json-to-gfi-analysis"
                             {{ name }}
                         </p>
                     </p-panel>
-
-                    <!--<p-accordion (onOpen)="handleOpenAnalysesTab($event)"-->
-                    <!--[activeIndex]="analysisAccordianIndex"-->
-                    <!--[lazy]="true"-->
-                    <!--(onOpen)="handleTabOpen($event)">-->
-                    <!--<p-accordionTab-->
-                    <!--header="{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.analysesIds.length : null}} Analyses"-->
-                    <!--style="font-size: medium"-->
-                    <!--[selected]="analysisAccordianSelected">-->
-
-                    <!--<p *ngFor="let name of datasetAnalysesNames">-->
-                    <!--{{ name }}-->
-                    <!--</p>-->
-                    <!--</p-accordionTab>-->
-                    <!--<p-accordionTab [selected]="emptyAccordianSelected">-->
-                    <!--<p>emtpty tab</p>-->
-                    <!--</p-accordionTab>-->
-
-                    <!--</p-accordion>-->
                 </div>
 
             </p-overlayPanel>
 
-            <!--</div> &lt;!&ndash; table row &ndash;&gt;-->
-            <!--</div>&lt;!&ndash;container  &ndash;&gt;-->
-            <!--<button type="text" pButton label="Basic" (click)="datasetOverlayPanel.toggle($event, actualTarget)"></button>-->
-            <!--<p (mouseenter)="datasetOverlayPanel.show($event,  actualTarget)">A random paragraph</p>-->
         </div> <!-- enclosing box  -->
     ` // end template
 
@@ -206,7 +182,6 @@ import {JsonToGfiAnalysis} from "../services/app/jsontogfi/json-to-gfi-analysis"
 
 export class DatasetDatatableComponent implements OnInit, OnChanges {
 
-    //cars: Car[];
 
     constructor(private store: Store<fromRoot.State>,
                 private fileItemService: FileItemService,
@@ -219,31 +194,28 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
     public datasetAnalysesNames: string[] = [];
     public nameIdFilterParamTypes: any = Object.assign({}, FilterParamNames);
     public selectedDatasetDetailEntity: DataSet;
-    public analysisAccordianIndex: number = -1
     public analysisPanelCollapsed: boolean = true;
-    public analysisPanelToggle:boolean = true;
-    public emptyAccordianSelected: boolean = true;
-
-    public handleTabOpen(event) {
-        var index = event.index;
-
-    }
+    public analysisPanelToggle: boolean = true;
 
     public handleHideOverlayPanel($event) {
 
-        // set to a non-existent tab, closes the one tab we have
-        // this.analysisAccordianIndex = 1;
-         this.analysisPanelCollapsed = true;
-        // this.emptyAccordianSelected = true;
-        // this.datasetAnalysesNames = [];
+        this.datasetAnalysesNames = [];
+        this.analysisPanelCollapsed = true;
     }
 
+    /***
+     * Lazy load dataset when the dataset pane is opened. Notice that we don't dispatch the dataset to the store.
+     * There are a couple of things to note here:
+     * 1) Keeping data local to the component breaks the store model, because we are effectively keeping some state locally.
+     *    I would argue that this issues is mitigated by the fact the data are only used in that pop up and then they go away;
+     * 2) Consequently, if the user returns over and over again to the same dataset, we are taking on the otherwise unnecessary
+     *    expense of repeating the same query. However, it is my judgement that that scenario will happen infrequently enough
+     *    that we don't need to worry about this for now.
+     * @param event
+     * @param {GobiiFileItem} dataSeItem
+     * @param {OverlayPanel} datasetOverlayPanel
+     */
     selectDataset(event, dataSeItem: GobiiFileItem, datasetOverlayPanel: OverlayPanel) {
-        //this.selectedCar = car;
-        // this.analysisAccordianIndex = 1;
-        // this.analysisPanelCollapsed = true;
-        // this.emptyAccordianSelected = true;
-//        this.datasetAnalysesNames = [];
 
         let datasetId: number = dataSeItem.getEntity().id;
         let filterParams: FilterParams = this.filterParamsColl.getFilter(FilterParamNames.DATASET_BY_DATASET_ID, GobiiExtractFilterType.WHOLE_DATASET);
@@ -269,6 +241,12 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
     }
 
 
+    /***
+     * Lazy-load analyses if there are any.
+     * The note about not putting these data in the store with regard to the dataset entity applies to
+     * the analyses.
+     * @param event
+     */
     public handleOpenAnalysesTab(event) {
 
         if (this.selectedDatasetDetailEntity) {
