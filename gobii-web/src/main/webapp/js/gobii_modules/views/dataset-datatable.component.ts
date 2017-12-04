@@ -68,7 +68,10 @@ import {JsonToGfiAnalysis} from "../services/app/jsontogfi/json-to-gfi-analysis"
                     </ng-template>
                 </p-column>
             </p-dataTable>
-            <p-overlayPanel #datasetOverlayPanel appendTo="body" showCloseIcon="true">
+            <p-overlayPanel #datasetOverlayPanel
+                            appendTo="body"
+                            showCloseIcon="true"
+                            (onBeforeHide)="handleHideOverlayPanel($event)">
 
 
                 <!-- you have to  -->
@@ -159,16 +162,35 @@ import {JsonToGfiAnalysis} from "../services/app/jsontogfi/json-to-gfi-analysis"
                 </div>
                 <BR>
                 <div>
-                    <p-accordion (onOpen)="handleOpenAnalysesTab($event)">
-                        <p-accordionTab
-                                header="{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.analysesIds.length : null}} Analyses"
-                                style="font-size: medium">
 
-                            <p *ngFor="let name of datasetAnalysesNames">
-                                {{ name }}
-                            </p>
-                        </p-accordionTab>
-                    </p-accordion>
+                    <p-panel
+                            header="{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.analysesIds.length : null}} Analyses"
+                            (onBeforeToggle)="handleOpenAnalysesTab($event)"
+                            [(toggleable)]="analysisPanelToggle"
+                            [(collapsed)]="analysisPanelCollapsed">
+                        <p *ngFor="let name of datasetAnalysesNames">
+                            {{ name }}
+                        </p>
+                    </p-panel>
+
+                    <!--<p-accordion (onOpen)="handleOpenAnalysesTab($event)"-->
+                    <!--[activeIndex]="analysisAccordianIndex"-->
+                    <!--[lazy]="true"-->
+                    <!--(onOpen)="handleTabOpen($event)">-->
+                    <!--<p-accordionTab-->
+                    <!--header="{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.analysesIds.length : null}} Analyses"-->
+                    <!--style="font-size: medium"-->
+                    <!--[selected]="analysisAccordianSelected">-->
+
+                    <!--<p *ngFor="let name of datasetAnalysesNames">-->
+                    <!--{{ name }}-->
+                    <!--</p>-->
+                    <!--</p-accordionTab>-->
+                    <!--<p-accordionTab [selected]="emptyAccordianSelected">-->
+                    <!--<p>emtpty tab</p>-->
+                    <!--</p-accordionTab>-->
+
+                    <!--</p-accordion>-->
                 </div>
 
             </p-overlayPanel>
@@ -197,9 +219,32 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
     public datasetAnalysesNames: string[] = [];
     public nameIdFilterParamTypes: any = Object.assign({}, FilterParamNames);
     public selectedDatasetDetailEntity: DataSet;
+    public analysisAccordianIndex: number = -1
+    public analysisPanelCollapsed: boolean = true;
+    public analysisPanelToggle:boolean = true;
+    public emptyAccordianSelected: boolean = true;
+
+    public handleTabOpen(event) {
+        var index = event.index;
+
+    }
+
+    public handleHideOverlayPanel($event) {
+
+        // set to a non-existent tab, closes the one tab we have
+        // this.analysisAccordianIndex = 1;
+         this.analysisPanelCollapsed = true;
+        // this.emptyAccordianSelected = true;
+        // this.datasetAnalysesNames = [];
+    }
 
     selectDataset(event, dataSeItem: GobiiFileItem, datasetOverlayPanel: OverlayPanel) {
         //this.selectedCar = car;
+        // this.analysisAccordianIndex = 1;
+        // this.analysisPanelCollapsed = true;
+        // this.emptyAccordianSelected = true;
+//        this.datasetAnalysesNames = [];
+
         let datasetId: number = dataSeItem.getEntity().id;
         let filterParams: FilterParams = this.filterParamsColl.getFilter(FilterParamNames.DATASET_BY_DATASET_ID, GobiiExtractFilterType.WHOLE_DATASET);
 
@@ -212,6 +257,7 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
             .subscribe(entityItems => {
                 if (entityItems.length === 1 && entityItems[0].getEntity()) {
                     this.selectedDatasetDetailEntity = entityItems[0].getEntity();
+                    this.analysisPanelToggle = this.selectedDatasetDetailEntity.analysesIds.length > 0;
                     datasetOverlayPanel.toggle(event);
                 } else {
                     this.store
@@ -240,6 +286,8 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
 
                     this.datasetAnalysesNames = entityItems
                         .map(gfi => gfi.getItemName())
+
+
                 });
 
         } // if we have a selected datset entity
