@@ -221,7 +221,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                 // check if the datatype is referenced by the dataset
                 if (primaryLoaderInstruction.getDatasetType().getId() != null) {
 
-                    if (!dataSetDTO.getTypeId().equals(primaryLoaderInstruction.getDatasetType().getId())) {
+                    if (!dataSetDTO.getDatatypeId().equals(primaryLoaderInstruction.getDatasetType().getId())) {
 
                         throw new GobiiDtoMappingException("The specified data type in the dataset is incorrect");
 

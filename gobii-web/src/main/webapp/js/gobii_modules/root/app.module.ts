@@ -16,7 +16,10 @@ import {AuthenticationService} from "../services/core/authentication.service";
 import {TextAreaComponent} from "../views/text-area.component";
 import {UploaderComponent} from "../views/uploader.component";
 import {SampleListTypeComponent} from "../views/sample-list-type.component";
-import {CheckboxModule, DataTableModule, Dialog, PanelModule, SharedModule, TreeModule} from 'primeng/primeng';
+import {
+    CheckboxModule, DataTableModule, Dialog, PanelModule, SharedModule, TreeModule, OverlayPanelModule,
+    AccordionModule, ListboxModule
+} from 'primeng/primeng';
 import {StatusDisplayTreeComponent} from "../views/status-display-tree.component";
 import {NameIdListBoxComponent} from "../views/name-id-list-box.component";
 import {NameIdService} from "../services/core/name-id-service";
@@ -50,6 +53,9 @@ import {FilterParamsColl} from "../services/core/filter-params-coll";
         SharedModule,
         DataTableModule,
         PanelModule,
+        OverlayPanelModule,
+        AccordionModule,
+        ListboxModule,
         routing,
         BrowserAnimationsModule,
         StoreModule.forRoot(reducers),

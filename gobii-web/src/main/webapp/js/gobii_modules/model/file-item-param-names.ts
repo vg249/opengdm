@@ -14,7 +14,9 @@ export class FilterParamNames {
     public static MAPSETS: string = "Mapsets";
     public static PLATFORMS: string = "Platforms";
     public static DATASETS_BY_EXPERIMENT: string = "Datasets-by-experiment";
-    public static DATASETS: string = "Datasets";
+    public static DATASET_LIST: string = "Dataset-List";
+    public static DATASET_BY_DATASET_ID: string = "Dataset-List-By-DatasetId";
+    public static ANALYSES_BY_DATASET_ID: string = "Analysis-List-By-DatasetId";
     public static PROJECTS_BY_CONTACT: string = "Projects-by-contact";
     public static PROJECTS: string = "Project";
     public static MARKER_GROUPS: string = "Marker Groups";

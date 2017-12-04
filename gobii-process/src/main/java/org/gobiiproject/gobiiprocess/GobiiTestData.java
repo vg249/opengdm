@@ -1422,7 +1422,7 @@ public class GobiiTestData {
 
         for (DataSetDTO currentDatasetDTO : datasetDTOSList) {
 
-            if (currentDatasetDTO.getName().equals(dbPkeysurrogateValue)) {
+            if (currentDatasetDTO.getDatasetName().equals(dbPkeysurrogateValue)) {
 
                 System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
 
@@ -1468,7 +1468,7 @@ public class GobiiTestData {
 
                 Integer typeId = datasetTypeMap.get(propKey.getTextContent().toLowerCase());
 
-                newDataSetDTO.setTypeId(typeId);
+                newDataSetDTO.setDatatypeId(typeId);
                 continue;
             }
 

@@ -24,24 +24,35 @@ export class JsonToGfiDataset implements JsonToGfi {
 
         let dataset: DataSet = new DataSet(
             jsonItem.id,
-            null,
-            null,
+            jsonItem.piContactId,
+            jsonItem.projectId,
             jsonItem.experimentId,
-            jsonItem.name,
+            jsonItem.datasetName,
             jsonItem.callingAnalysisId,
             jsonItem.dataTable,
             jsonItem.dataFile,
             jsonItem.qualityTable,
             jsonItem.qualityFile,
             jsonItem.status,
-            jsonItem.typeId,
+            jsonItem.datatypeId,
             jsonItem.analysesIds,
             new Date(jsonItem.createdDate),
             jsonItem.jobStatusId,
             jsonItem.jobStatusName,
             jsonItem.jobTypeId,
             jsonItem.jobTypeName,
-            jsonItem.jobSubmittedDate ? new Date(jsonItem.jobSubmittedDate) : null);
+            jsonItem.jobSubmittedDate ? new Date(jsonItem.jobSubmittedDate) : null,
+            jsonItem.experimentName,
+            jsonItem.projectName,
+            jsonItem.protocolId,
+            jsonItem.protocolName,
+            jsonItem.platformId,
+            jsonItem.platformName,
+            jsonItem.callingAnalysisName,
+            jsonItem.piEmail,
+            jsonItem.datatypeName,
+            jsonItem.totalSamples,
+            jsonItem.totalMarkers);
 
         let piContactRelation: GobiiFileItemEntityRelation = GobiiFileItemEntityRelation
             .fromGobiiFileItemCompoundId(this._filterParamsColl.getFilter(FilterParamNames.CONTACT_PI,
@@ -69,7 +80,7 @@ export class JsonToGfiDataset implements JsonToGfi {
             GobiiExtractFilterType.UNKNOWN, ProcessType.READ
         ).setExtractorItemType(ExtractorItemType.ENTITY)
             .setEntityType(EntityType.DATASET)
-            .setItemName(dataset.name)
+            .setItemName(dataset.datasetName)
             .setItemId(dataset.id.toString())
             .setEntity(dataset)
             .withRelatedEntity(piContactRelation)
