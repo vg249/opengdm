@@ -184,7 +184,7 @@ public class ProcessMessage extends MailMessage {
     }
 
     public ProcessMessage addConfidentialityMessage(String confidentialyMessage){
-        this.setConfidentialityMessage("</br><b>"+escapeHTML(confidentialyMessage)+"</br>");
+        this.setConfidentialityMessage("<font color="+redColor+"><b></br>"+escapeHTML(confidentialyMessage)+"</br></b></font>");
         return this;
     }
 

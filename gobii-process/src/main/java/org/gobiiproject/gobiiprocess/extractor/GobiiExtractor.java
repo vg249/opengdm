@@ -230,9 +230,9 @@ public class GobiiExtractor {
 					if(confidentialityFile.exists()){
 						StringBuilder sb=new StringBuilder();
 						for(String line:Files.readAllLines(Paths.get(confidentialityFile.toURI()))){
-							sb.append(line);
+							sb.append(line + " ");
 						}
-						confidentialityMessage=sb.toString();
+						confidentialityMessage=sb.toString().trim();
 						pm.addConfidentialityMessage(confidentialityMessage);
 					}
 
