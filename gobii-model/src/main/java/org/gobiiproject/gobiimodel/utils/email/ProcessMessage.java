@@ -3,6 +3,7 @@ package org.gobiiproject.gobiimodel.utils.email;
 
 import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
+import org.apache.commons.lang.StringEscapeUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -111,17 +112,17 @@ public class ProcessMessage extends MailMessage {
     public ProcessMessage addIdentifier(String type,String name, String id){
         if((name==null) && ((id==null || id.equals("null"))))return this;
         if(id==null){
-            identifiers.add(new HTMLTableEntity(type,name,""));
+            identifiers.add(new HTMLTableEntity(type,escapeHTML(name),""));
         }
         else {
-            identifiers.add(new HTMLTableEntity(type, name, id));
+            identifiers.add(new HTMLTableEntity(type, escapeHTML(name), id));
         }
          return this;
     }
     
     public ProcessMessage addIdentifier(String type, PropNameId identifier){
         if(identifier==null)return this;//Don't add a null ID to the table
-        return addIdentifier(type,identifier.getName(),identifier.getId()+"");
+        return addIdentifier(type,escapeHTML(identifier.getName()),identifier.getId()+"");
     }
     
      /**
@@ -132,13 +133,13 @@ public class ProcessMessage extends MailMessage {
      */
     public ProcessMessage addEntity(String type,String name){
         if(name==null)return this;
-        entities.add(new HTMLTableEntity(type,name));
+        entities.add(new HTMLTableEntity(type,escapeHTML(name)));
         return this;
     }
 
     public ProcessMessage addEntity(String type, PropNameId entity){
         if(entity==null)return this;//Don't add a null ID to the table
-        return addEntity(type,entity.getName()+"");
+        return addEntity(type,escapeHTML(entity.getName())+"");
     }
     
     
@@ -150,7 +151,7 @@ public class ProcessMessage extends MailMessage {
      */
     public ProcessMessage addPath(String type,String path){
     	if(new File(path).length() > 1){
-    		paths.add(new HTMLTableEntity(type, path, HelperFunctions.sizeToReadable(new File(path).length())));
+    		paths.add(new HTMLTableEntity(type, escapeHTML(path), HelperFunctions.sizeToReadable(new File(path).length())));
     	}
         return this;
     }
@@ -165,7 +166,7 @@ public class ProcessMessage extends MailMessage {
     public ProcessMessage addPath(String type, String path, String donePath){
         String pathFinal = donePath + new File(path).getName();
         if(new File(path).length() > 1){
-            paths.add(new HTMLTableEntity(type, pathFinal, HelperFunctions.sizeToReadable(new File(path).length())));
+            paths.add(new HTMLTableEntity(type, escapeHTML(pathFinal), HelperFunctions.sizeToReadable(new File(path).length())));
         }
         return this;
     }
@@ -183,7 +184,7 @@ public class ProcessMessage extends MailMessage {
     }
 
     public ProcessMessage addConfidentialityMessage(String confidentialyMessage){
-        this.setConfidentialityMessage("</br><b>"+confidentialyMessage+"</br>");
+        this.setConfidentialityMessage("</br><b>"+escapeHTML(confidentialyMessage)+"</br>");
         return this;
     }
 
@@ -225,6 +226,10 @@ public class ProcessMessage extends MailMessage {
         body.append("</html>");
         this.setBody(lastBody + body.toString());
         return this;
+    }
+
+    public String escapeHTML(String strToHTML){
+        return StringEscapeUtils.escapeHtml(strToHTML);
     }
 }
 
