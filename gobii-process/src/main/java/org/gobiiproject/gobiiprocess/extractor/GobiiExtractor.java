@@ -230,9 +230,9 @@ public class GobiiExtractor {
 					if(confidentialityFile.exists()){
 						StringBuilder sb=new StringBuilder();
 						for(String line:Files.readAllLines(Paths.get(confidentialityFile.toURI()))){
-							sb.append(line);
+							sb.append(line + " ");
 						}
-						confidentialityMessage=sb.toString();
+						confidentialityMessage=sb.toString().trim();
 						pm.addConfidentialityMessage(confidentialityMessage);
 					}
 
@@ -461,8 +461,6 @@ public class GobiiExtractor {
 								ErrorLogger.logDebug("GobiiExtractor","Executing FlapJack Genotype file Generation");
 								success &= FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, tempFolder, genoOutFile,errorFile);
 								getCounts(success, pm, markerFile, sampleFile);
-								pm.setBody(jobReadableIdentifier,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
-								if(!inst.isQcCheck())mailInterface.send(pm);
 								jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(),"Extract Completed 8uccessfully");
 								break;
 							case HAPMAP:
@@ -472,20 +470,20 @@ public class GobiiExtractor {
 								ErrorLogger.logDebug("GobiiExtractor", "Executing Hapmap Generation");
 								success &= hapmapTransformer.generateFile(markerFile, sampleFile, extendedMarkerFile, genoFile, hapmapOutFile, errorFile);
 								getCounts(success, pm, markerFile, sampleFile);
-								pm.setBody(jobReadableIdentifier,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
-								if(!inst.isQcCheck())mailInterface.send(pm);
 								jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(),"Extract Completed 8uccessfully");
 								break;
 							case META_DATA:
-								pm.setBody(jobReadableIdentifier,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
-								if(!inst.isQcCheck())mailInterface.send(pm);
 								jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(),"Successful Data Extract");
 								break;
 							default:
 								ErrorLogger.logError("Extractor", "Unknown Extract Type " + extract.getGobiiFileType());
-								pm.setBody(jobReadableIdentifier,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
-                                mailInterface.send(pm);
 								jobStatus.setError("Unsuccessful Data Extract");
+						}
+						if(pm.getBody() == null){
+							pm.setBody(jobReadableIdentifier,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
+						}
+						else{
+							pm.addBody(pm.getBody(),jobReadableIdentifier,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
 						}
                     } else { //We had no genotype file, so we aborted
                         ErrorLogger.logError("GobiiExtractor", "No genetic data extracted. Extract failed.");
@@ -513,6 +511,7 @@ public class GobiiExtractor {
 						jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(),"QC Job Complete");
 					}
 				}
+				if(!inst.isQcCheck())mailInterface.send(pm);
 				HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
 			}catch(Exception e){
 				//TODO - make better email here

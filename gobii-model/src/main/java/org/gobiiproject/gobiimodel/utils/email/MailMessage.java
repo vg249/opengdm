@@ -11,12 +11,13 @@ public class MailMessage{
 	private String body;
 	private String header;
 	private String footer;
+	private String confidentialityMessage;
 	private String img = "GobiiWebImg.png"; // Note: This is full sized logo from the main page
 	private List<String> fileAttachments = new ArrayList();
 	
 	MailMessage(){
-		header = "<b><i>"+getHeaderSalutation()+"</i></b></br><br/> Here is a summary of your transaction: ";
-		footer = "<br/><br/>"+getFooterSalutation()+", </br> <a href=\"http://www.gobiiproject.org\"><img src=\"cid:image\" width=\"300\"></a>";
+		header = "<b><i>"+getHeaderSalutation()+"</i></b><br><br> Here is a summary of your transaction <br> <br>";
+		footer = "<br><br>"+getFooterSalutation()+", <br> <a href=\"http://www.gobiiproject.org\"><img src=\"cid:image\" width=\"300\"></a><br>";
 	}
 	private static String getHeaderSalutation(){
 		int numChoices=10;//Several cases of Good Day
@@ -64,7 +65,7 @@ public class MailMessage{
 	public String getFooter(){
 		return footer;
 	}
-	
+
 	public String getSubject(){
 		return subject;
 	}
@@ -87,6 +88,15 @@ public class MailMessage{
 
 	public MailMessage setFileAttachments(List<String> fileAttachments) {
 		this.fileAttachments = fileAttachments;
+		return this;
+	}
+
+	public String getConfidentialityMessage() {
+		return confidentialityMessage;
+	}
+
+	public MailMessage setConfidentialityMessage(String confidentialityMessage){
+		this.confidentialityMessage = confidentialityMessage;
 		return this;
 	}
 }
