@@ -436,7 +436,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
 //            Assert.assertNotNull(resultEnvelopeForGetByID);
 //            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
 //            ProjectDTO projectDTOFromLink = resultEnvelopeForGetByID.getPayload().getData().get(0);
-//            Assert.assertTrue(currentProjectDto.getProjectName().equals(projectDTOFromLink.getProjectName()));
+//            Assert.assertTrue(currentProjectDto.getDatasetName().equals(projectDTOFromLink.getDatasetName()));
 //            Assert.assertTrue(currentProjectDto.getProjectId().equals(projectDTOFromLink.getProjectId()));
 //        }
 

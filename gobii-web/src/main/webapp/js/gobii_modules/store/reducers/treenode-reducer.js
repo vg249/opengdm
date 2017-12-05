@@ -93,24 +93,34 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
                 var newTreeNodes = state.gobiiTreeNodes.slice();
                 var gobiiTreeNodeToDeActivate_1 = findTreeNodeByFIleItemId(newTreeNodes
                     .filter(function (tn) { return tn.getGobiiExtractFilterType() === state.gobiiExtractFilterType; }), gobiiFileItemUniqueId);
-                var containerType = gobiiTreeNodeToDeActivate_1.parent ?
-                    gobiiTreeNodeToDeActivate_1.parent.getContainerType() :
-                    GobiiTreeNode_1.ContainerType.NONE;
-                if (containerType === GobiiTreeNode_1.ContainerType.NONE
-                    || containerType === GobiiTreeNode_1.ContainerType.STRUCTURE) {
-                    gobiiTreeNodeToDeActivate_1.resetLabel();
+                // not all file items are in the tree
+                if (gobiiTreeNodeToDeActivate_1) {
+                    var containerType = gobiiTreeNodeToDeActivate_1.parent ?
+                        gobiiTreeNodeToDeActivate_1.parent.getContainerType() :
+                        GobiiTreeNode_1.ContainerType.NONE;
+                    if (containerType === GobiiTreeNode_1.ContainerType.NONE
+                        || containerType === GobiiTreeNode_1.ContainerType.STRUCTURE) {
+                        gobiiTreeNodeToDeActivate_1.resetLabel();
+                    }
+                    else {
+                        var children = gobiiTreeNodeToDeActivate_1.parent.getChildren();
+                        children.splice(children.indexOf(gobiiTreeNodeToDeActivate_1, 0), 1);
+                    }
+                    var newAcxtiveNodeState = state.gobiiTreeNodesActive
+                        .filter(function (gtn) { return gtn !== gobiiTreeNodeToDeActivate_1.getId(); });
+                    returnVal = {
+                        gobiiExtractFilterType: state.gobiiExtractFilterType,
+                        gobiiTreeNodesActive: newAcxtiveNodeState,
+                        gobiiTreeNodes: newTreeNodes
+                    };
                 }
                 else {
-                    var children = gobiiTreeNodeToDeActivate_1.parent.getChildren();
-                    children.splice(children.indexOf(gobiiTreeNodeToDeActivate_1, 0), 1);
+                    returnVal = {
+                        gobiiExtractFilterType: state.gobiiExtractFilterType,
+                        gobiiTreeNodesActive: state.gobiiTreeNodesActive,
+                        gobiiTreeNodes: state.gobiiTreeNodes
+                    };
                 }
-                var newAcxtiveNodeState = state.gobiiTreeNodesActive
-                    .filter(function (gtn) { return gtn !== gobiiTreeNodeToDeActivate_1.getId(); });
-                returnVal = {
-                    gobiiExtractFilterType: state.gobiiExtractFilterType,
-                    gobiiTreeNodesActive: newAcxtiveNodeState,
-                    gobiiTreeNodes: newTreeNodes
-                };
                 break;
             } // ADD_TO_EXTRACT
             case gobiiTreeNodeAction.SELECT_EXTRACT_TYPE: {

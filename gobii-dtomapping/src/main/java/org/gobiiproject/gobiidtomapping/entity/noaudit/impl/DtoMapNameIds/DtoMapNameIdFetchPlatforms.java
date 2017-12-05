@@ -102,7 +102,7 @@ public class DtoMapNameIdFetchPlatforms implements DtoMapNameIdFetch {
             returnVal = this.getPlatformNames();
         } else {
 
-            if (GobiiFilterType.BYTYPEID == dtoMapNameIdParams.getGobiiFilterType()) {
+            if (GobiiFilterType.NAMES_BY_TYPEID == dtoMapNameIdParams.getGobiiFilterType()) {
 
                 returnVal = this.getPlatformNamesByTypeId(dtoMapNameIdParams.getFilterValueAsInteger());
 

@@ -101,7 +101,7 @@ public class DtoMapNameIdFetchExperiments implements DtoMapNameIdFetch {
             returnVal = this.getExperimentNames();
         } else {
 
-            if (GobiiFilterType.BYTYPEID == dtoMapNameIdParams.getGobiiFilterType()) {
+            if (GobiiFilterType.NAMES_BY_TYPEID == dtoMapNameIdParams.getGobiiFilterType()) {
 
                 returnVal = this.getExperimentNamesByProjectId(dtoMapNameIdParams.getFilterValueAsInteger());
 

@@ -5,26 +5,29 @@ import {CvFilterType} from "./cv-filter-type";
 import {GobiiExtractFilterType} from "./type-extractor-filter";
 import {ExtractorItemType} from "./type-extractor-item";
 import {GobiiFileItemCompoundId} from "./gobii-file-item-compound-id";
+import {GobiiFileItemEntityRelation} from "./gobii-file-item-entity-relation";
 
 export class GobiiFileItem extends GobiiFileItemCompoundId {
 
     private _fileItemUniqueId: string;
 
-    private constructor(private _gobiiExtractFilterType: GobiiExtractFilterType,
-                        private _processType: ProcessType,
-                        _extractorItemType: ExtractorItemType,
-                        _entityType: EntityType,
-                        _entitySubType: EntitySubType,
-                        _cvFilterType: CvFilterType,
-                        private _itemId: string,
-                        private _itemName: string,
-                        private _selected: boolean,
-                        private _required: boolean,
-                        private _parentItemId: string,
-                        private _parentEntityType: EntityType) {
+    protected constructor(private _gobiiExtractFilterType: GobiiExtractFilterType,
+                          private _processType: ProcessType,
+                          _extractorItemType: ExtractorItemType,
+                          _entityType: EntityType,
+                          _entitySubType: EntitySubType,
+                          _cvFilterType: CvFilterType,
+                          _cvFilterValue: string,
+                          private _itemId: string,
+                          private _itemName: string,
+                          private _selected: boolean,
+                          private _required: boolean,
+                          private _parentItemId: string,
+                          private _entity: any = null,
+                          private _entityRelations: GobiiFileItemEntityRelation[] = [],
+                          private _hasEntity:boolean = false) {
 
-        super(_extractorItemType,_entityType,_entitySubType,_cvFilterType);
-
+        super(_extractorItemType, _entityType, _entitySubType, _cvFilterType,_cvFilterValue);
 
         this._gobiiExtractFilterType = _gobiiExtractFilterType;
         this._processType = _processType;
@@ -33,7 +36,9 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
         this._selected = _selected;
         this._required = _required;
         this._parentItemId = _parentItemId;
-        this._parentEntityType = _parentEntityType;
+        this._entityRelations = _entityRelations;
+        this._entity = _entity;
+        this._hasEntity = _hasEntity;
 
         this._fileItemUniqueId = Guid.generateUUID();
     }
@@ -53,7 +58,8 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
             null,
             null,
             null,
-            EntityType.UNKNOWN
+            null,
+            []
         );
 
 
@@ -139,6 +145,16 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
         return this;
     }
 
+    getCvFilterValue(): string {
+        return super.getCvFilterValue();
+    }
+
+    setCvFilterValue(value: string) {
+
+        super.setCvFilterValue(value);
+        return this;
+    }
+
     getItemId(): string {
         return this._itemId;
     }
@@ -184,13 +200,60 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
         return this;
     }
 
-    getParentEntityType(): EntityType {
-        return this._parentEntityType;
-    }
-
-    setParentEntityType(parentIteIid: EntityType): GobiiFileItem {
-        this._parentEntityType = parentIteIid;
+    setEntity(entity: any) {
+        this._entity = entity;
+        this._hasEntity = true;
         return this;
     }
+
+    getEntity(): any {
+        return this._entity;
+    }
+
+    hasEntity() :boolean {
+        return this._hasEntity;
+    }
+
+    withRelatedEntityValue(gobiiFileItemEntityRelation: GobiiFileItemEntityRelation, relatedId: string): GobiiFileItem {
+
+        let existingGobiiFileItemEntityRelation =
+            this._entityRelations.find(er => er.compoundIdeEquals(gobiiFileItemEntityRelation));
+
+        if (existingGobiiFileItemEntityRelation) {
+            existingGobiiFileItemEntityRelation.setRelatedEntityId(relatedId);
+        } else {
+            this._entityRelations.push((new GobiiFileItemEntityRelation).setRelatedEntityId(relatedId))
+        }
+
+        return this;
+    }
+
+    withRelatedEntity(newGobiiFileItemEntityRelation: GobiiFileItemEntityRelation): GobiiFileItem {
+
+        let existingGobiiFileItemEntityRelation =
+            this._entityRelations.find(er => er.compoundIdeEquals(newGobiiFileItemEntityRelation));
+
+        if (existingGobiiFileItemEntityRelation) {
+            existingGobiiFileItemEntityRelation.setRelatedEntityId(newGobiiFileItemEntityRelation.getRelatedEntityId());
+        } else {
+            this._entityRelations.push(newGobiiFileItemEntityRelation)
+        }
+
+        return this;
+    }
+
+    getRelatedEntityFilterValue(compoundUniqueId:GobiiFileItemCompoundId): string {
+
+        let returnVal:string = null;
+
+        let gobiiFileItemEntityRelation =
+            this._entityRelations.find(er => er.compoundIdeEquals(compoundUniqueId));
+
+        if( gobiiFileItemEntityRelation) {
+            returnVal = gobiiFileItemEntityRelation.getRelatedEntityId()
+        }
+        return returnVal;
+    }
+
 
 } // GobiiFileItem()

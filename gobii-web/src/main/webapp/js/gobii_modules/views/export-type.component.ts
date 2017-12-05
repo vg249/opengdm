@@ -1,5 +1,5 @@
 import {Component, OnInit, EventEmitter} from '@angular/core';
-import {EntityFilter} from "../model/type-entity-filter";
+import {FilterType} from "../model/filter-type";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 
 

@@ -96,7 +96,7 @@ public class DtoCrudRequestMapsetTest implements DtoCrudRequestTest {
 
         RestUri namesUri = GobiiClientContext.getInstance(null, false).getUriFactory().nameIdListByQueryParams();
         namesUri.setParamValue("entity", GobiiEntityNameType.CV.toString().toLowerCase());
-        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
+        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.NAMES_BY_TYPE_NAME.toString()));
         namesUri.setParamValue("filterValue", "mapset_type");
 
         GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResourceForMapsetTerms = new GobiiEnvelopeRestResource<>(namesUri);
@@ -149,7 +149,7 @@ public class DtoCrudRequestMapsetTest implements DtoCrudRequestTest {
 
         RestUri namesUri = GobiiClientContext.getInstance(null, false).getUriFactory().nameIdListByQueryParams();
         namesUri.setParamValue("entity", GobiiEntityNameType.CV.toString().toLowerCase());
-        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
+        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.NAMES_BY_TYPE_NAME.toString()));
         namesUri.setParamValue("filterValue", "mapset_type");
 
         GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResourceForMapsetTerms = new GobiiEnvelopeRestResource<>(namesUri);

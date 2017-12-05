@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/name-id", "../../model/type-entity", "../../model/type-entity-filter"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/name-id", "../../model/type-entity", "../../model/filter-type"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/name-id", "../../model/type-entit
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, name_id_1, type_entity_1, type_entity_filter_1, DtoRequestItemNameIds;
+    var core_1, name_id_1, type_entity_1, filter_type_1, DtoRequestItemNameIds;
     return {
         setters: [
             function (core_1_1) {
@@ -22,8 +22,8 @@ System.register(["@angular/core", "../../model/name-id", "../../model/type-entit
             function (type_entity_1_1) {
                 type_entity_1 = type_entity_1_1;
             },
-            function (type_entity_filter_1_1) {
-                type_entity_filter_1 = type_entity_filter_1_1;
+            function (filter_type_1_1) {
+                filter_type_1 = filter_type_1_1;
             }
         ],
         execute: function () {
@@ -41,9 +41,9 @@ System.register(["@angular/core", "../../model/name-id", "../../model/type-entit
                 DtoRequestItemNameIds.prototype.getUrl = function () {
                     var baseUrl = "gobii/v1/names";
                     var returnVal = baseUrl + "/" + type_entity_1.EntityType[this.entityType].toLowerCase();
-                    if (this.entityFilter && (type_entity_filter_1.EntityFilter.NONE.valueOf() !== this.entityFilter)) {
+                    if (this.entityFilter && (filter_type_1.FilterType.NONE.valueOf() !== this.entityFilter)) {
                         returnVal += "?"
-                            + "filterType=" + type_entity_filter_1.EntityFilter[this.entityFilter].toLowerCase()
+                            + "filterType=" + filter_type_1.FilterType[this.entityFilter].toLowerCase()
                             + "&"
                             + "filterValue="
                             + this.entityFilterValue;

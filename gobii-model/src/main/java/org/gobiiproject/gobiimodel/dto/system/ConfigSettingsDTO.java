@@ -35,7 +35,7 @@ public class ConfigSettingsDTO extends DTOBase {
         this.serverConfigs = serverConfigs;
     }
 
-    private Map<ServerCapabilityType,Boolean> serverCapabilities = new HashMap<>();
+    private Map<ServerCapabilityType, Boolean> serverCapabilities = new HashMap<>();
 
     public Map<ServerCapabilityType, Boolean> getServerCapabilities() {
         return serverCapabilities;
@@ -45,4 +45,14 @@ public class ConfigSettingsDTO extends DTOBase {
         this.serverCapabilities = serverCapabilities;
     }
 
+
+    private Integer maxUploadSizeMbytes;
+
+    public Integer getMaxUploadSizeMbytes() {
+        return maxUploadSizeMbytes;
+    }
+
+    public void setMaxUploadSizeMbytes(Integer maxUploadSizeMbytes) {
+        this.maxUploadSizeMbytes = maxUploadSizeMbytes;
+    }
 }

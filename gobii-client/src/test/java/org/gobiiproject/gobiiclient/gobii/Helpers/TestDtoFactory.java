@@ -175,7 +175,7 @@ public class TestDtoFactory {
         returnVal.getScores().add(3);
 
         // set the plain properties
-        returnVal.setName(uniqueStem + ": foo name");
+        returnVal.setDatasetName(uniqueStem + ": foo name");
         returnVal.setStatusId(1);
         returnVal.setCreatedBy(1);
         returnVal.setDataFile(uniqueStem + ": foo file");
@@ -187,7 +187,7 @@ public class TestDtoFactory {
         for (Integer currentAnalysisId : analysisIds) {
             returnVal.getAnalysesIds().add(currentAnalysisId);
         }
-        returnVal.setTypeId(93);
+        returnVal.setDatatypeId(93);
 
         return returnVal;
 

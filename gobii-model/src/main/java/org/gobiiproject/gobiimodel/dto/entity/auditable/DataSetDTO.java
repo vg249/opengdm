@@ -7,6 +7,7 @@ import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,18 +29,38 @@ public class DataSetDTO extends DTOBaseAuditable {
         this.dataSetId = id;
     }
 
+    // these are in order of appearance in the
+    // select clause of the underlying sql query
+    // for ease of debugging
     private Integer dataSetId = 0;
-    private String name;
+    private String datasetName;
     private Integer experimentId;
+    private String experimentName;
+    private Integer projectId;
+    private String projectName;
+    private Integer protocolId;
+    private String protocolName;
+    private Integer platformId;
+    private String platformName;
     private Integer callingAnalysisId;
-//    private AnalysisDTO callingAnalysis;
+    private String callingAnalysisName;
+    private Integer piContactId;
+    private String piEmail;
     private String dataTable;
     private String dataFile;
     private String qualityTable;
     private String qualityFile;
     private Integer statusId;
-    private Integer typeId;
+    private Integer datatypeId;
+    private String datatypeName;
     private Integer jobId;
+    private Integer jobStatusId;
+    private String jobStatusName;
+    private Integer jobTypeId;
+    private String jobTypeName;
+    private Date jobSubmittedDate;
+    private Long totalSamples;
+    private Long totalMarkers;
     private List<Integer> analysesIds = new ArrayList<>();
   //  private List<AnalysisDTO> analyses = new ArrayList<>();
     private List<Integer> scores = new ArrayList<>();
@@ -54,14 +75,14 @@ public class DataSetDTO extends DTOBaseAuditable {
         this.dataSetId = dataSetId;
     }
 
-    @GobiiEntityParam(paramName = "name")
-    public String getName() {
-        return name;
+    @GobiiEntityParam(paramName = "datasetName")
+    public String getDatasetName() {
+        return datasetName;
     }
 
-    @GobiiEntityColumn(columnName = "name")
-    public void setName(String name) {
-        this.name = name;
+    @GobiiEntityColumn(columnName = "datasetname")
+    public void setDatasetName(String datasetName) {
+        this.datasetName = datasetName;
     }
 
     @GobiiEntityParam(paramName = "experimentId")
@@ -74,7 +95,37 @@ public class DataSetDTO extends DTOBaseAuditable {
         this.experimentId = experimentId;
     }
 
-//    public AnalysisDTO getCallingAnalysis() {
+    @GobiiEntityParam(paramName = "experimentName")
+    public String getExperimentName() {
+        return experimentName;
+    }
+
+    @GobiiEntityColumn(columnName = "experimentname")
+    public void setExperimentName(String experimentName) {
+        this.experimentName = experimentName;
+    }
+
+    @GobiiEntityParam(paramName = "projectId")
+    public Integer getProjectId() {
+        return projectId;
+    }
+
+    @GobiiEntityColumn(columnName = "projectid")
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
+    }
+
+    @GobiiEntityParam(paramName = "projectName")
+    public String getProjectName() {
+        return projectName;
+    }
+
+    @GobiiEntityColumn(columnName = "projectname")
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    //    public AnalysisDTO getCallingAnalysis() {
 //        return callingAnalysis;
 //    }
 //    public void setCallingAnalysis(AnalysisDTO callingAnalysis) {
@@ -86,11 +137,21 @@ public class DataSetDTO extends DTOBaseAuditable {
         return callingAnalysisId;
     }
 
-    @GobiiEntityColumn(columnName = "callinganalysis_id")
+    @GobiiEntityColumn(columnName = "callinganalysisid")
     public void setCallingAnalysisId(Integer callingAnalysisId) {
         this.callingAnalysisId = callingAnalysisId;
     }
 
+
+    @GobiiEntityParam(paramName = "callingAnalysisName")
+    public String getCallingAnalysisName() {
+        return callingAnalysisName;
+    }
+
+    @GobiiEntityColumn(columnName = "callinganalysisname")
+    public void setCallingAnalysisName(String callingAnalysisName) {
+        this.callingAnalysisName = callingAnalysisName;
+    }
 
     @GobiiEntityParam(paramName = "dataTable")
     public String getDataTable() {
@@ -142,7 +203,6 @@ public class DataSetDTO extends DTOBaseAuditable {
         this.statusId = statusId;
     }
 
-
     @GobiiEntityParam(paramName = "datasetAnalysIds")
     public List<Integer> getAnalysesIds() {
         return analysesIds;
@@ -153,14 +213,6 @@ public class DataSetDTO extends DTOBaseAuditable {
         this.analysesIds = analysesIds;
     }
 
-
-//    public List<AnalysisDTO> getAnalyses() {
-//        return analyses;
-//    }
-//    public void setAnalyses(List<AnalysisDTO> analyses) {
-//        this.analyses = analyses;
-//    }
-
     public List<Integer> getScores() {
         return scores;
     }
@@ -169,14 +221,24 @@ public class DataSetDTO extends DTOBaseAuditable {
         this.scores = scores;
     }
 
-    @GobiiEntityParam(paramName = "typeId")
-    public Integer getTypeId() {
-        return typeId;
+    @GobiiEntityParam(paramName = "datatypeId")
+    public Integer getDatatypeId() {
+        return datatypeId;
     }
 
-    @GobiiEntityColumn(columnName = "type_id")
-    public void setTypeId(Integer typeId) {
-        this.typeId = typeId;
+    @GobiiEntityColumn(columnName = "datatypeid")
+    public void setDatatypeId(Integer datatypeId) {
+        this.datatypeId = datatypeId;
+    }
+
+    @GobiiEntityParam(paramName = "datatypeName")
+    public String getDatatypeName() {
+        return datatypeName;
+    }
+
+    @GobiiEntityColumn(columnName = "datatypename")
+    public void setDatatypeName(String datatypeName) {
+        this.datatypeName = datatypeName;
     }
 
     @GobiiEntityParam(paramName = "jobId")
@@ -184,4 +246,135 @@ public class DataSetDTO extends DTOBaseAuditable {
 
     @GobiiEntityColumn(columnName = "job_id")
     public void setJobId(Integer jobId) { this.jobId = jobId; }
+
+    @GobiiEntityParam(paramName = "jobStatusId")
+    public Integer getJobStatusId() {
+        return jobStatusId;
+    }
+
+    @GobiiEntityColumn(columnName = "jobstatusid")
+    public void setJobStatusId(Integer jobStatusId) {
+        this.jobStatusId = jobStatusId;
+    }
+
+    @GobiiEntityParam(paramName = "jobStatusName")
+    public String getJobStatusName() {
+        return jobStatusName;
+    }
+
+    @GobiiEntityColumn(columnName = "jobstatusname")
+    public void setJobStatusName(String jobStatusName) {
+        this.jobStatusName = jobStatusName;
+    }
+
+
+    @GobiiEntityParam(paramName = "jobTypeId")
+    public Integer getJobTypeId() {
+        return jobTypeId;
+    }
+
+    @GobiiEntityColumn(columnName = "jobtypeid")
+    public void setJobTypeId(Integer jobTypeId) {
+        this.jobTypeId = jobTypeId;
+    }
+
+    @GobiiEntityParam(paramName = "jobTypeName")
+    public String getJobTypeName() {
+        return jobTypeName;
+    }
+
+    @GobiiEntityColumn(columnName = "jobtypename")
+    public void setJobTypeName(String jobTypeName) {
+        this.jobTypeName = jobTypeName;
+    }
+
+    @GobiiEntityParam(paramName = "jobSubmittedDate")
+    public Date getJobSubmittedDate() {
+        return jobSubmittedDate;
+    }
+
+    @GobiiEntityColumn(columnName = "jobsubmitteddate")
+    public void setJobSubmittedDate(Date jobSubmittedDate) {
+        this.jobSubmittedDate = jobSubmittedDate;
+    }
+
+    @GobiiEntityParam(paramName = "totalSamples")
+    public Long getTotalSamples() {
+        return totalSamples;
+    }
+
+    @GobiiEntityColumn(columnName = "totalsamples")
+    public void setTotalSamples(Long totalSamples) {
+        this.totalSamples = totalSamples;
+    }
+
+    @GobiiEntityParam(paramName = "totalMarkers")
+    public Long getTotalMarkers() {
+        return totalMarkers;
+    }
+
+    @GobiiEntityColumn(columnName = "totalmarkers")
+    public void setTotalMarkers(Long totalMarkers) {
+        this.totalMarkers = totalMarkers;
+    }
+
+    @GobiiEntityParam(paramName = "piEmail")
+    public String getPiEmail() {
+        return piEmail;
+    }
+
+    @GobiiEntityColumn(columnName = "piemail")
+    public void setPiEmail(String piEmail) {
+        this.piEmail = piEmail;
+    }
+
+    @GobiiEntityParam(paramName = "piContactId")
+    public Integer getPiContactId() {
+        return piContactId;
+    }
+
+    @GobiiEntityColumn(columnName = "picontactid")
+    public void setPiContactId(Integer piContactId) {
+        this.piContactId = piContactId;
+    }
+
+    @GobiiEntityParam(paramName = "protocolId")
+    public Integer getProtocolId() {
+        return protocolId;
+    }
+
+    @GobiiEntityColumn(columnName = "protocolid")
+    public void setProtocolId(Integer protocolId) {
+        this.protocolId = protocolId;
+    }
+
+    @GobiiEntityParam(paramName = "protocolName")
+    public String getProtocolName() {
+        return protocolName;
+    }
+
+    @GobiiEntityColumn(columnName = "protocolname")
+    public void setProtocolName(String protocolName) {
+        this.protocolName = protocolName;
+    }
+
+    @GobiiEntityParam(paramName = "platformId")
+    public Integer getPlatformId() {
+        return platformId;
+    }
+
+    @GobiiEntityColumn(columnName = "platformid")
+    public void setPlatformId(Integer platformId) {
+        this.platformId = platformId;
+    }
+
+    @GobiiEntityParam(paramName = "platformName")
+    public String getPlatformName() {
+        return platformName;
+    }
+
+    @GobiiEntityColumn(columnName = "platformname")
+    public void setPlatformName(String platformName) {
+        this.platformName = platformName;
+    }
 }

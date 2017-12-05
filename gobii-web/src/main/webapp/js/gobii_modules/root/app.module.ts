@@ -7,17 +7,19 @@ import {ExportFormatComponent} from "../views/export-format.component";
 import {StatusDisplayComponent} from "../views/status-display-box.component";
 import {CropsListBoxComponent} from "../views/crops-list-box.component";
 import {ExportTypeComponent} from "../views/export-type.component";
-import {DatasetTypeListBoxComponent} from "../views/dataset-types-list-box.component";
 import {CheckListBoxComponent} from "../views/checklist-box.component";
 import {SampleMarkerBoxComponent} from "../views/sample-marker-box.component";
-import {FileSelectDirective, FileDropDirective} from "ng2-file-upload";
+import {FileDropDirective, FileSelectDirective} from "ng2-file-upload";
 import {ExtractorRoot} from "./app.extractorroot";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {AuthenticationService} from "../services/core/authentication.service";
 import {TextAreaComponent} from "../views/text-area.component";
 import {UploaderComponent} from "../views/uploader.component";
 import {SampleListTypeComponent} from "../views/sample-list-type.component";
-import {TreeModule, SharedModule, TreeNode, Dialog,CheckboxModule} from 'primeng/primeng';
+import {
+    CheckboxModule, DataTableModule, Dialog, PanelModule, SharedModule, TreeModule, OverlayPanelModule,
+    AccordionModule, ListboxModule
+} from 'primeng/primeng';
 import {StatusDisplayTreeComponent} from "../views/status-display-tree.component";
 import {NameIdListBoxComponent} from "../views/name-id-list-box.component";
 import {NameIdService} from "../services/core/name-id-service";
@@ -31,13 +33,14 @@ import {SearchCriteriaBySamplesComponent} from "./page-by-samples.component";
 import {StoreModule} from '@ngrx/store';
 import {reducers} from '../store/reducers';
 import {StoreDevtoolsModule} from "@ngrx/store-devtools";
-import {environmentSettings} from "../environments/environment";
 import {EffectsModule} from "@ngrx/effects";
 import {TreeEffects} from "../store/effects/tree-effects";
 import {TreeStructureService} from "../services/core/tree-structure-service";
 import {FileItemEffects} from "../store/effects/file-item-effects";
 import {FileItemService} from "../services/core/file-item-service";
 import {InstructionSubmissionService} from "../services/core/instruction-submission-service";
+import {DatasetDatatableComponent} from "../views/dataset-datatable.component";
+import {FilterParamsColl} from "../services/core/filter-params-coll";
 
 
 @NgModule({
@@ -48,6 +51,11 @@ import {InstructionSubmissionService} from "../services/core/instruction-submiss
         TreeModule,
         CheckboxModule,
         SharedModule,
+        DataTableModule,
+        PanelModule,
+        OverlayPanelModule,
+        AccordionModule,
+        ListboxModule,
         routing,
         BrowserAnimationsModule,
         StoreModule.forRoot(reducers),
@@ -64,7 +72,6 @@ import {InstructionSubmissionService} from "../services/core/instruction-submiss
         StatusDisplayComponent,
         CropsListBoxComponent,
         ExportTypeComponent,
-        DatasetTypeListBoxComponent,
         CheckListBoxComponent,
         SampleMarkerBoxComponent,
         FileSelectDirective,
@@ -76,7 +83,8 @@ import {InstructionSubmissionService} from "../services/core/instruction-submiss
         StatusDisplayTreeComponent,
         Dialog,
         Button,
-        SearchCriteriaBySamplesComponent],
+        SearchCriteriaBySamplesComponent,
+        DatasetDatatableComponent],
     providers: [AuthGuard,
         AuthenticationService,
         DtoRequestService,
@@ -84,6 +92,7 @@ import {InstructionSubmissionService} from "../services/core/instruction-submiss
         TreeStructureService,
         FileItemService,
         InstructionSubmissionService,
+        FilterParamsColl,
         {provide: APP_BASE_HREF, useValue: './'}],
     bootstrap: [AppComponent]
 })

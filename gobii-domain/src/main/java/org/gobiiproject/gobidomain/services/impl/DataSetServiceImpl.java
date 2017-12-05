@@ -2,12 +2,15 @@ package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.DataSetService;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapAnalysis;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapDataSet;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapJob;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,9 @@ public class DataSetServiceImpl implements DataSetService {
 
     @Autowired
     DtoMapDataSet dtoMapDataSet = null;
+
+    @Autowired
+    DtoMapAnalysis dtoMapAnalysis = null;
 
     @Autowired
     DtoMapJob dtoMapJob = null;
@@ -66,14 +72,14 @@ public class DataSetServiceImpl implements DataSetService {
 
             returnVal = dtoMapDataSet.getByTypeId(typeId);
 
-            for (DataSetDTO currentDataSetDTO: returnVal) {
+            for (DataSetDTO currentDataSetDTO : returnVal) {
 
                 currentDataSetDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
                 currentDataSetDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
             }
 
-            if(null == returnVal) {
+            if (null == returnVal) {
                 returnVal = new ArrayList<>();
             }
 
@@ -84,12 +90,12 @@ public class DataSetServiceImpl implements DataSetService {
             throw new GobiiDomainException(e);
         }
 
-        return  returnVal;
+        return returnVal;
     }
 
 
     @Override
-    public DataSetDTO getDataSetById(Integer dataSetId) throws GobiiDomainException{
+    public DataSetDTO getDataSetById(Integer dataSetId) throws GobiiDomainException {
 
         DataSetDTO returnVal;
 
@@ -197,4 +203,21 @@ public class DataSetServiceImpl implements DataSetService {
         return returnVal;
 
     }
+
+    @Override
+    public List<AnalysisDTO> getAnalysesByDatasetId(Integer datasetId) throws GobiiDomainException {
+
+        List<AnalysisDTO> returnVal = new ArrayList<>();
+
+        DataSetDTO dataSetDTO = dtoMapDataSet.get(datasetId);
+
+        for (Integer currentAnalysisId : dataSetDTO.getAnalysesIds()) {
+            AnalysisDTO analysisDTO = dtoMapAnalysis.get(currentAnalysisId);
+            returnVal.add(analysisDTO);
+        }
+
+
+        return returnVal;
+    }
+
 }

@@ -59,6 +59,7 @@ public class GobiiConfig {
     private static String CONFIG_SVR_GLOBAL_EMAIL = "stE"; // does not require -c
     private static String CONFIG_SVR_GLOBAL_EMAIL_TYPE = "stT"; // does not require -c
     private static String CONFIG_SVR_GLOBAL_EMAIL_HASHTYPE = "stH"; // does not require -c
+    private static String CONFIG_SVR_GLOBAL_MAX_UPLOAD_MBYTES = "stMUM";
     private static String CONFIG_SVR_CROP_WEB = "stW";
     private static String CONFIG_SVR_CROP_POSTGRES = "stP";
     private static String CONFIG_SVR_CROP_MONET = "stM";
@@ -229,6 +230,7 @@ public class GobiiConfig {
             setOption(options, CONFIG_SVR_GLOBAL_EMAIL, false, "Server type: Email (not crop specific)", "server: email"); // does not require -c
             setOption(options, CONFIG_SVR_GLOBAL_EMAIL_TYPE, true, "Email server type", "server type"); // does not require -c
             setOption(options, CONFIG_SVR_GLOBAL_EMAIL_HASHTYPE, true, "Email server hash type", "hash type"); // does not require -c
+            setOption(options, CONFIG_SVR_GLOBAL_MAX_UPLOAD_MBYTES, true, "Max file upload size (mbytes)", "max upload size"); // does not require -c
             setOption(options, CONFIG_SVR_CROP_WEB, false, "Server type: Web", "server: web");
             setOption(options, CONFIG_SVR_CROP_POSTGRES, false, "Server type: postgres", "server: pgsql");
             setOption(options, CONFIG_SVR_CROP_MONET, false, "Server type: Monet DB", "server: monet");
@@ -268,7 +270,7 @@ public class GobiiConfig {
             setOption(options, CONFIG_TST_GLOBAL_CONFIG_CROP_ID, true, "Crop to use for automated testing", "crop id");
             setOption(options, CONFIG_TST_GLOBAL_LDAP_USER, true, "LDAP user as which unit tests authenticate (if Authentication requires LDAP)", "LDAP test user");
             setOption(options, CONFIG_TST_GLOBAL_LDAP_PASSWORD, true, "LDAP password with which LDAP unit test user authenticates (if Authentication requires LDAP)", "LDAP test user password");
-            setOption(options, CONFIG_TST_GLOBAL_DOWNLOAD_DIR,  true, "Destination directory for downloaded files)", "Download Directory");
+            setOption(options, CONFIG_TST_GLOBAL_DOWNLOAD_DIR, true, "Destination directory for downloaded files)", "Download Directory");
             setOption(options, VALIDATE_CONFIGURATION, false, "Verify that the specified configuration has all the values necessary for the system to function (does not test that the servers exist); requires " + PROP_FILE_FQPN, "validate");
 
             setOption(options, SVR_KDC, false, "KDC server to add or modify; must be accompanied by a server options and KDC options", "KDC Server options");
@@ -772,6 +774,26 @@ public class GobiiConfig {
 
                 configSettings.commit();
 
+
+                //CONFIG_SVR_GLOBAL_MAX_UPLOAD_MBYTES
+            } else if (commandLine.hasOption(CONFIG_SVR_GLOBAL_MAX_UPLOAD_MBYTES) ) {
+
+                String maxUploadMbytes = commandLine.getOptionValue(CONFIG_SVR_GLOBAL_MAX_UPLOAD_MBYTES);
+
+                if( NumberUtils.isNumber(maxUploadMbytes) ) {
+                    Integer maxUPloadMbytesInt = Integer.parseInt(maxUploadMbytes);
+                    configSettings.setMaxUploadSizeMbytes(maxUPloadMbytesInt);
+
+                } else {
+                    returnVal = false;
+                    System.err.println("The max upload size is not numeric: " + maxUploadMbytes);
+
+                }
+
+                configSettings.commit();
+
+
+                //CONFIG_SVR_GLOBAL_MAX_UPLOAD_MBYTES
             } else if (commandLine.hasOption(CONFIG_TST_GLOBAL)) {
 
                 List<String> argsSet = new ArrayList<>();

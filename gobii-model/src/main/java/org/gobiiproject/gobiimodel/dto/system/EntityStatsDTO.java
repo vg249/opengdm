@@ -10,6 +10,10 @@ import java.util.Date;
  */
 public class EntityStatsDTO extends DTOBase {
 
+    public enum EntityStateDateType {INSERT_UPDATE,INSERT_ONLY}
+
+
+
     @Override
     public Integer getId() {
         return 1;
@@ -20,9 +24,10 @@ public class EntityStatsDTO extends DTOBase {
 
     }
 
-    Integer count = null;
-    Date lastModified = null;
-    GobiiEntityNameType entityNameType = GobiiEntityNameType.UNKNOWN;
+    private Integer count = null;
+    private Date lastModified = null;
+    private GobiiEntityNameType entityNameType = GobiiEntityNameType.UNKNOWN;
+    private EntityStateDateType entityStateDateType = EntityStateDateType.INSERT_UPDATE;
 
 
     public GobiiEntityNameType getEntityNameType() {
@@ -47,5 +52,13 @@ public class EntityStatsDTO extends DTOBase {
 
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
+    }
+
+    public EntityStateDateType getEntityStateDateType() {
+        return entityStateDateType;
+    }
+
+    public void setEntityStateDateType(EntityStateDateType entityStateDateType) {
+        this.entityStateDateType = entityStateDateType;
     }
 }

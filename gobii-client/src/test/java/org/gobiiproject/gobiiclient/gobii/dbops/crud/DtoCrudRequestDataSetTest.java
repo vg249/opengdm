@@ -110,7 +110,7 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
 
         RestUri namesUri = GobiiClientContext.getInstance(null, false).getUriFactory().nameIdListByQueryParams();
         namesUri.setParamValue("entity", GobiiEntityNameType.CV.toString().toLowerCase());
-        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
+        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.NAMES_BY_TYPE_NAME.toString()));
         namesUri.setParamValue("filterValue", "analysis_type");
 
         GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResourceForAnalysisTerms = new GobiiEnvelopeRestResource<>(namesUri);
@@ -191,7 +191,7 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
         Assert.assertTrue(dataSetDTOResponse.getCallingAnalysisId() > 0);
         Assert.assertNotNull(dataSetDTOResponse.getAnalysesIds());
         Assert.assertTrue(dataSetDTOResponse.getAnalysesIds().size() > 0);
-        Assert.assertTrue(dataSetDTOResponse.getTypeId() > 0);
+        Assert.assertTrue(dataSetDTOResponse.getDatatypeId() > 0);
 
         GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.DATASET,dataSetDTOResponse.getDataSetId());
 
@@ -233,7 +233,7 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
         // ******** make analyses we'll need for the new data set
         RestUri namesUri = GobiiClientContext.getInstance(null, false).getUriFactory().nameIdListByQueryParams();
         namesUri.setParamValue("entity", GobiiEntityNameType.CV.toString().toLowerCase());
-        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
+        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.NAMES_BY_TYPE_NAME.toString()));
         namesUri.setParamValue("filterValue", "analysis_type");
 
         GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResourceForAnalysisTerms = new GobiiEnvelopeRestResource<>(namesUri);
@@ -385,7 +385,7 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
         List<DataSetDTO> dataSetDTOList = resultEnvelope.getPayload().getData();
         Assert.assertNotNull(dataSetDTOList);
         Assert.assertTrue(dataSetDTOList.size() > 0);
-        Assert.assertNotNull(dataSetDTOList.get(0).getName());
+        Assert.assertNotNull(dataSetDTOList.get(0).getDatasetName());
 
 
         LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
@@ -415,7 +415,7 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
             Assert.assertNotNull(resultEnvelopeForGetByID);
             Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
             DataSetDTO dataSetDTOFromLink = resultEnvelopeForGetByID.getPayload().getData().get(0);
-            Assert.assertTrue(currentDataSetDto.getName().equals(dataSetDTOFromLink.getName()));
+            Assert.assertTrue(currentDataSetDto.getDatasetName().equals(dataSetDTOFromLink.getDatasetName()));
             Assert.assertTrue(currentDataSetDto.getDataSetId().equals(dataSetDTOFromLink.getDataSetId()));
 
             Assert.assertNotNull(dataSetDTOFromLink.getAnalysesIds());
@@ -456,7 +456,7 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeDataSet.getHeader()));
         DataSetDTO dataSetDTOResponse = resultEnvelopeDataSet.getPayload().getData().get(0);
 
-        Integer typeId = dataSetDTOResponse.getTypeId();
+        Integer typeId = dataSetDTOResponse.getDatatypeId();
 
         RestUri restUriForDataTypes = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -476,7 +476,7 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
         Assert.assertTrue(dataSetDTOList.size() >= 0);
 
         if(dataSetDTOList.size() > 0) {
-            Assert.assertNotNull(dataSetDTOList.get(0).getName());
+            Assert.assertNotNull(dataSetDTOList.get(0).getDatasetName());
         }
 
         LinkCollection linkCollection = resultEnvelopeDataTypes.getPayload().getLinkCollection();
@@ -506,7 +506,7 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
             Assert.assertNotNull(resultEnvelopeForGetByID);
             Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
             DataSetDTO dataDTOFromLink = resultEnvelopeForGetByID.getPayload().getData().get(0);
-            Assert.assertTrue(currentDatasetDto.getName().equals(dataDTOFromLink.getName()));
+            Assert.assertTrue(currentDatasetDto.getDatasetName().equals(dataDTOFromLink.getDatasetName()));
             Assert.assertTrue(currentDatasetDto.getDataSetId().equals(dataDTOFromLink.getDataSetId()));
         }
 

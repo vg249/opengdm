@@ -121,7 +121,7 @@ public class DtoCrudRequestExperimentTest implements DtoCrudRequestTest {
                 .getUriFactory()
                 .nameIdListByQueryParams();
         namesUri.setParamValue("entity", GobiiEntityNameType.VENDOR_PROTOCOL.toString().toLowerCase());
-        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPEID.toString().toUpperCase()));
+        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.NAMES_BY_TYPEID.toString().toUpperCase()));
         namesUri.setParamValue("filterValue", idOfProtocolThatHasAVendor.toString());
         GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResourceForVendorsProtocol = new GobiiEnvelopeRestResource<>(namesUri);
 

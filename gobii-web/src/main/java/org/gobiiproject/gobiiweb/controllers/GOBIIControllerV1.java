@@ -1137,6 +1137,39 @@ public class GOBIIControllerV1 {
 
     }
 
+    @RequestMapping(value = "/datasets/{dataSetId:[\\d]+}/analyses", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<AnalysisDTO> getAnalysesForDataset(@PathVariable Integer dataSetId,
+                                                       HttpServletRequest request,
+                                                       HttpServletResponse response) {
+
+        PayloadEnvelope<AnalysisDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            List<AnalysisDTO> analysisDTOs = dataSetService.getAnalysesByDatasetId(dataSetId);
+
+            PayloadWriter<AnalysisDTO> payloadWriter = new PayloadWriter<>(request, response,
+                    AnalysisDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
+                            GobiiServiceRequestId.URL_ANALYSIS),
+                    analysisDTOs);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
 
     @RequestMapping(value = "/datasets/types", method = RequestMethod.GET)
     @ResponseBody
@@ -1147,7 +1180,7 @@ public class GOBIIControllerV1 {
         try {
 
             GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.CV;
-            GobiiFilterType gobiiFilterType = GobiiFilterType.BYTYPENAME;
+            GobiiFilterType gobiiFilterType = GobiiFilterType.NAMES_BY_TYPE_NAME;
 
             DtoMapNameIdParams dtoMapNameIdParams = new DtoMapNameIdParams(gobiiEntityNameType, gobiiFilterType, "dataset_type");
 
@@ -2017,7 +2050,7 @@ public class GOBIIControllerV1 {
 
                 if (!LineUtils.isNullOrEmpty(filterValue)) {
 
-                    if (GobiiFilterType.BYTYPEID == gobiiFilterType) {
+                    if (GobiiFilterType.NAMES_BY_TYPEID == gobiiFilterType) {
                         if (NumberUtils.isNumber(filterValue)) {
                             typedFilterValue = Integer.valueOf(filterValue);
                         } else {
@@ -2031,7 +2064,7 @@ public class GOBIIControllerV1 {
                                             + gobiiEntityNameType);
                         }
 
-                    } else if (GobiiFilterType.BYTYPENAME == gobiiFilterType) {
+                    } else if (GobiiFilterType.NAMES_BY_TYPE_NAME == gobiiFilterType) {
                         // there is nothing to test here -- the string could be anything
                         // add additional validation tests for other filter types
 

@@ -58,6 +58,11 @@ public class ResultColumnApplicator {
                             Integer currentIntegerValue = (Integer) currentColumnValue;
                             currentMethod.invoke(dtoInstance, currentIntegerValue);
 
+                        } else if (currentColumnType.equals(Long.class)) {
+
+                            Long currentLongValue = (Long) currentColumnValue;
+                            currentMethod.invoke(dtoInstance, currentLongValue);
+
                         } else if (currentColumnType.equals(Date.class)) {
 
                             Date currentDateValue = (Date) currentColumnValue;

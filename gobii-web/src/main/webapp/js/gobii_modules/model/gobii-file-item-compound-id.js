@@ -16,15 +16,17 @@ System.register(["./type-entity", "./cv-filter-type", "./type-extractor-item"], 
         ],
         execute: function () {
             GobiiFileItemCompoundId = (function () {
-                function GobiiFileItemCompoundId(_extractorItemType, _entityType, _entitySubType, _cvFilterType) {
+                function GobiiFileItemCompoundId(_extractorItemType, _entityType, _entitySubType, _cvFilterType, _cvFilterValue) {
                     if (_extractorItemType === void 0) { _extractorItemType = type_extractor_item_1.ExtractorItemType.UNKNOWN; }
                     if (_entityType === void 0) { _entityType = type_entity_1.EntityType.UNKNOWN; }
                     if (_entitySubType === void 0) { _entitySubType = type_entity_1.EntitySubType.UNKNOWN; }
                     if (_cvFilterType === void 0) { _cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN; }
+                    if (_cvFilterValue === void 0) { _cvFilterValue = null; }
                     this._extractorItemType = _extractorItemType;
                     this._entityType = _entityType;
                     this._entitySubType = _entitySubType;
                     this._cvFilterType = _cvFilterType;
+                    this._cvFilterValue = _cvFilterValue;
                     if (this._cvFilterType === null) {
                         this._cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN;
                     }
@@ -42,7 +44,8 @@ System.register(["./type-entity", "./cv-filter-type", "./type-extractor-item"], 
                     return this.getExtractorItemType() === gobiiFileItemCompoundId.getExtractorItemType()
                         && this.getEntityType() === gobiiFileItemCompoundId.getEntityType()
                         && this.getEntitySubType() === gobiiFileItemCompoundId.getEntitySubType()
-                        && this.getCvFilterType() === gobiiFileItemCompoundId.getCvFilterType();
+                        && this.getCvFilterType() === gobiiFileItemCompoundId.getCvFilterType()
+                        && this.getCvFilterValue() === gobiiFileItemCompoundId.getCvFilterValue();
                 };
                 GobiiFileItemCompoundId.prototype.getExtractorItemType = function () {
                     return this._extractorItemType;
@@ -54,6 +57,7 @@ System.register(["./type-entity", "./cv-filter-type", "./type-extractor-item"], 
                     else {
                         this._extractorItemType = type_extractor_item_1.ExtractorItemType.UNKNOWN;
                     }
+                    return this;
                 };
                 GobiiFileItemCompoundId.prototype.getEntityType = function () {
                     return this._entityType;
@@ -65,6 +69,7 @@ System.register(["./type-entity", "./cv-filter-type", "./type-extractor-item"], 
                     else {
                         this._entityType = type_entity_1.EntityType.UNKNOWN;
                     }
+                    return this;
                 };
                 GobiiFileItemCompoundId.prototype.getEntitySubType = function () {
                     return this._entitySubType;
@@ -76,6 +81,7 @@ System.register(["./type-entity", "./cv-filter-type", "./type-extractor-item"], 
                     else {
                         this._entitySubType = type_entity_1.EntitySubType.UNKNOWN;
                     }
+                    return this;
                 };
                 GobiiFileItemCompoundId.prototype.getCvFilterType = function () {
                     return this._cvFilterType;
@@ -87,6 +93,14 @@ System.register(["./type-entity", "./cv-filter-type", "./type-extractor-item"], 
                     else {
                         this._cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN;
                     }
+                    return this;
+                };
+                GobiiFileItemCompoundId.prototype.getCvFilterValue = function () {
+                    return this._cvFilterValue;
+                };
+                GobiiFileItemCompoundId.prototype.setCvFilterValue = function (value) {
+                    this._cvFilterValue = value;
+                    return this;
                 };
                 return GobiiFileItemCompoundId;
             }());

@@ -12,11 +12,11 @@ import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestContactTest;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestDataSetTest;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestExperimentTest;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestMapsetTest;
+import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestMarkerTest;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestOrganizationTest;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestProjectTest;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestProtocolTest;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestReferenceTest;
-import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestVendorProtocolTest;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.OrganizationDTO;
 import org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO;
@@ -38,10 +38,28 @@ import java.util.stream.Collectors;
  */
 public class DtoRequestEntityStatsTest {
 
-    List<GobiiEntityNameType> trackableEntityNames = Arrays.asList(
+    List<GobiiEntityNameType> auditedEntityNames = Arrays.asList(
             GobiiEntityNameType.ANALYSIS,
             GobiiEntityNameType.CONTACT,
             GobiiEntityNameType.DATASET,
+            GobiiEntityNameType.DISPLAY,
+            GobiiEntityNameType.EXPERIMENT,
+            GobiiEntityNameType.MANIFEST,
+            GobiiEntityNameType.MAPSET,
+            GobiiEntityNameType.MARKER_GROUP,
+            GobiiEntityNameType.ORGANIZATION,
+            GobiiEntityNameType.PLATFORM,
+            GobiiEntityNameType.PROJECT,
+            GobiiEntityNameType.PROTOCOL,
+            GobiiEntityNameType.REFERENCE
+
+    );
+
+
+    List<GobiiEntityNameType> nonAuditedEntityNames = Arrays.asList(
+            GobiiEntityNameType.CV,
+            GobiiEntityNameType.CVGROUP,
+            GobiiEntityNameType.MARKER,
             GobiiEntityNameType.DISPLAY,
             GobiiEntityNameType.EXPERIMENT,
             GobiiEntityNameType.MANIFEST,
@@ -91,6 +109,11 @@ public class DtoRequestEntityStatsTest {
                 (resultEnvelope.getPayload().getData().size() > 0));
 
         EntityStatsDTO entityStatsDTOBeforeAddMore = resultEnvelope.getPayload().getData().get(0);
+        Assert.assertEquals("The EntityStateDateType for auditable entities should be "
+                        + EntityStatsDTO.EntityStateDateType.INSERT_UPDATE.toString(),
+                entityStatsDTOBeforeAddMore.getEntityStateDateType(),
+                EntityStatsDTO.EntityStateDateType.INSERT_UPDATE);
+
 
         Date beforeAddTime = entityStatsDTOBeforeAddMore.getLastModified();
         Thread.sleep(500);
@@ -142,6 +165,10 @@ public class DtoRequestEntityStatsTest {
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopePostUpdate.getHeader()));
         EntityStatsDTO entityStatsDTOPosteUpdate = resultEnvelopePostUpdate.getPayload().getData().get(0);
+        Assert.assertEquals("The EntityStateDateType for auditable entities should be "
+                        + EntityStatsDTO.EntityStateDateType.INSERT_UPDATE.toString(),
+                entityStatsDTOPosteUpdate.getEntityStateDateType(),
+                EntityStatsDTO.EntityStateDateType.INSERT_UPDATE);
 
         Assert.assertNotNull("The last modified date is null",
                 entityStatsDTOPosteUpdate.getLastModified());
@@ -168,6 +195,11 @@ public class DtoRequestEntityStatsTest {
         EntityStatsDTO entityStatsDTOCount = resultEnvelope.getPayload().getData().get(0);
         Assert.assertNotNull("No entity count value was retrieved",
                 entityStatsDTOCount.getCount());
+        Assert.assertEquals("The EntityStateDateType for auditable entities should be "
+
+                        + EntityStatsDTO.EntityStateDateType.INSERT_UPDATE.toString(),
+                entityStatsDTOCount.getEntityStateDateType(),
+                EntityStatsDTO.EntityStateDateType.INSERT_UPDATE);
 
         Integer projectCountBeforeInserts = entityStatsDTOCount.getCount();
         Integer numberOfProjectsToAdd = 5;
@@ -179,6 +211,10 @@ public class DtoRequestEntityStatsTest {
         PayloadEnvelope<EntityStatsDTO> resultEnvelopePostAdd = gobiiEnvelopeRestResource
                 .get(EntityStatsDTO.class);
         EntityStatsDTO entityStatsDTOPostAdd = resultEnvelopePostAdd.getPayload().getData().get(0);
+        Assert.assertEquals("The EntityStateDateType for auditable entities should be "
+                        + EntityStatsDTO.EntityStateDateType.INSERT_UPDATE.toString(),
+                entityStatsDTOPostAdd.getEntityStateDateType(),
+                EntityStatsDTO.EntityStateDateType.INSERT_UPDATE);
 
         Assert.assertTrue("The count retrieved was not increased by the number of records added",
                 entityStatsDTOPostAdd.getCount() == (projectCountBeforeInserts + numberOfProjectsToAdd));
@@ -186,6 +222,10 @@ public class DtoRequestEntityStatsTest {
         PayloadEnvelope<EntityStatsDTO> resultEnvelopePostAddRecheck = gobiiEnvelopeRestResource
                 .get(EntityStatsDTO.class);
         EntityStatsDTO entityStatsDTOPostAddRecheck = resultEnvelopePostAddRecheck.getPayload().getData().get(0);
+        Assert.assertEquals("The EntityStateDateType for auditable entities should be "
+                        + EntityStatsDTO.EntityStateDateType.INSERT_UPDATE.toString(),
+                entityStatsDTOPostAddRecheck.getEntityStateDateType(),
+                EntityStatsDTO.EntityStateDateType.INSERT_UPDATE);
 
         Assert.assertTrue("The count did not remain the same when no records were added",
                 entityStatsDTOPostAddRecheck.getCount() == (projectCountBeforeInserts + numberOfProjectsToAdd));
@@ -216,6 +256,10 @@ public class DtoRequestEntityStatsTest {
         Assert.assertNotNull("Null count retrieved",
                 entityStatsDTOInitialCount.getCount()
         );
+        Assert.assertEquals("The EntityStateDateType for auditable entities should be "
+                        + EntityStatsDTO.EntityStateDateType.INSERT_UPDATE.toString(),
+                entityStatsDTOInitialCount.getEntityStateDateType(),
+                EntityStatsDTO.EntityStateDateType.INSERT_UPDATE);
 
         Integer countBeforeAddChildren = entityStatsDTOInitialCount.getCount();
 
@@ -246,6 +290,10 @@ public class DtoRequestEntityStatsTest {
                 .get(EntityStatsDTO.class);
 
         EntityStatsDTO entityStatsDTOPostAddChildren = postAddChildrenCountResult.getPayload().getData().get(0);
+        Assert.assertEquals("The EntityStateDateType for auditable entities should be "
+                        + EntityStatsDTO.EntityStateDateType.INSERT_UPDATE.toString(),
+                entityStatsDTOPostAddChildren.getEntityStateDateType(),
+                EntityStatsDTO.EntityStateDateType.INSERT_UPDATE);
 
         Assert.assertTrue("Child count after adding new children was not incremented",
                 entityStatsDTOPostAddChildren.getCount().equals(countBeforeAddChildren + numberoOfChildrenToAdd));
@@ -277,7 +325,15 @@ public class DtoRequestEntityStatsTest {
 
         List<EntityStatsDTO> allEnttiesStatsInitial = resultEnvelopeIntialCount.getPayload().getData();
 
-        for (GobiiEntityNameType currentEntityName : trackableEntityNames) {
+        Assert.assertTrue("Not all entity states are of EntityStateDateType"
+                        + EntityStatsDTO.EntityStateDateType.INSERT_UPDATE.toString(),
+                allEnttiesStatsInitial
+                        .stream()
+                        .filter(es -> es.getEntityStateDateType().equals(EntityStatsDTO.EntityStateDateType.INSERT_UPDATE))
+                        .count() == allEnttiesStatsInitial.size());
+
+
+        for (GobiiEntityNameType currentEntityName : auditedEntityNames) {
 
             if (currentEntityName != GobiiEntityNameType.UNKNOWN) {
 
@@ -322,6 +378,16 @@ public class DtoRequestEntityStatsTest {
         PayloadEnvelope<EntityStatsDTO> resultEnvelopePostUpdate = gobiiEnvelopeRestResource
                 .get(EntityStatsDTO.class);
         List<EntityStatsDTO> allEnttiesStatsPost = resultEnvelopePostUpdate.getPayload().getData();
+
+        Assert.assertTrue("Not all entity states are of EntityStateDateType"
+                        + EntityStatsDTO.EntityStateDateType.INSERT_UPDATE.toString(),
+                allEnttiesStatsPost
+                        .stream()
+                        .filter(es -> es.getEntityStateDateType().equals(EntityStatsDTO.EntityStateDateType.INSERT_UPDATE))
+                        .count() == allEnttiesStatsInitial.size());
+
+
+
         for (EntityStatsDTO currentEntityStatsDto : allEnttiesStatsPost) {
             EntityStatsDTO preUpdateEntityStatsDTO = allEnttiesStatsInitial
                     .stream()
@@ -338,7 +404,7 @@ public class DtoRequestEntityStatsTest {
                 Assert.assertTrue("entity stat lastmodified was not updated for entity: " + currentEntityStatsDto.getEntityNameType().toString(),
                         currentEntityStatsDto.getLastModified().compareTo(preUpdateEntityStatsDTO.getLastModified()) > 0);
             } else {
-                if( !sideEffectRecordsToExclude.contains(currentEntityStatsDto.getEntityNameType())) {
+                if (!sideEffectRecordsToExclude.contains(currentEntityStatsDto.getEntityNameType())) {
                     Assert.assertTrue("entity stat count for unchanged entity should not have changed: " + currentEntityStatsDto.getEntityNameType().toString(),
                             currentEntityStatsDto.getCount().equals(preUpdateEntityStatsDTO.getCount()));
 
@@ -350,6 +416,67 @@ public class DtoRequestEntityStatsTest {
         }
 
 
+    }
+
+    @Test
+    public void testGetCountOfNonAuditable() throws Exception {
+
+        RestUri entityCountdUri = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .entityCount(GobiiEntityNameType.MARKER);
+        GobiiEnvelopeRestResource<EntityStatsDTO> gobiiEnvelopeRestResource =
+                new GobiiEnvelopeRestResource<>(entityCountdUri);
+
+        PayloadEnvelope<EntityStatsDTO> resultEnvelope = gobiiEnvelopeRestResource
+                .get(EntityStatsDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+
+        EntityStatsDTO entityStatsDTOCount = resultEnvelope.getPayload().getData().get(0);
+        Assert.assertEquals("The EntityStateDateType for non-auditble entities should be "
+                        + EntityStatsDTO.EntityStateDateType.INSERT_ONLY.toString(),
+                entityStatsDTOCount.getEntityStateDateType(),
+                EntityStatsDTO.EntityStateDateType.INSERT_ONLY);
+
+
+        Assert.assertNotNull("No entity count value was retrieved",
+                entityStatsDTOCount.getCount());
+
+        Integer markerCountBeforeInserts = entityStatsDTOCount.getCount();
+        Date updateDateBeforeInserts = entityStatsDTOCount.getLastModified();
+        Integer numberOfMarkers = 5;
+
+        // now create more projects
+        (new GlobalPkColl<DtoCrudRequestMarkerTest>())
+                .getFreshPkVals(DtoCrudRequestMarkerTest.class, GobiiEntityNameType.MARKER, numberOfMarkers);
+
+        PayloadEnvelope<EntityStatsDTO> resultEnvelopePostAdd = gobiiEnvelopeRestResource
+                .get(EntityStatsDTO.class);
+        EntityStatsDTO entityStatsDTOPostAdd = resultEnvelopePostAdd.getPayload().getData().get(0);
+        Assert.assertEquals("The EntityStateDateType for non-auditble entities should be "
+                        + EntityStatsDTO.EntityStateDateType.INSERT_ONLY.toString(),
+                entityStatsDTOPostAdd.getEntityStateDateType(),
+                EntityStatsDTO.EntityStateDateType.INSERT_ONLY);
+
+        Assert.assertTrue("The count retrieved was not increased by the number of records added",
+                entityStatsDTOPostAdd.getCount() == (markerCountBeforeInserts + numberOfMarkers));
+
+        Assert.assertTrue("The new datestamp is not later than from before the update",
+                entityStatsDTOPostAdd.getLastModified().compareTo(updateDateBeforeInserts) > 0);
+
+        PayloadEnvelope<EntityStatsDTO> resultEnvelopePostAddRecheck = gobiiEnvelopeRestResource
+                .get(EntityStatsDTO.class);
+        EntityStatsDTO entityStatsDTOPostAddRecheck = resultEnvelopePostAddRecheck.getPayload().getData().get(0);
+        Assert.assertEquals("The EntityStateDateType for non-auditble entities should be "
+                        + EntityStatsDTO.EntityStateDateType.INSERT_ONLY.toString(),
+                entityStatsDTOPostAddRecheck.getEntityStateDateType(),
+                EntityStatsDTO.EntityStateDateType.INSERT_ONLY);
+
+        Assert.assertTrue("The count did not remain the same when no records were added",
+                entityStatsDTOPostAddRecheck.getCount() == (markerCountBeforeInserts + numberOfMarkers));
+
+        Assert.assertTrue("The new datestamp is not the same as when no records were added",
+                entityStatsDTOPostAdd.getLastModified().compareTo(entityStatsDTOPostAddRecheck.getLastModified()) == 0);
     }
 
 }
