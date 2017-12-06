@@ -269,6 +269,12 @@ public class DtoRequestConfigSettingsPropsTest {
                 serverCapabilities.get(ServerCapabilityType.KDC)
                         .equals(serverCapabilitiesFromConfigFile.get(ServerCapabilityType.KDC)));
 
+        Assert.assertNotNull("There is no maxupload size",
+                GobiiClientContext.getInstance(null,false).getMaxUploadSizeMbytes());
+
+        Assert.assertTrue("Max upload size is not greather than zero",
+                GobiiClientContext.getInstance(null,false).getMaxUploadSizeMbytes() > 0);
+
 
     }
 
