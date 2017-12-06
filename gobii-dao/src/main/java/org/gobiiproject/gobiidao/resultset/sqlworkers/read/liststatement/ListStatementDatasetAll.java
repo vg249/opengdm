@@ -107,10 +107,13 @@ public class ListStatementDatasetAll implements ListStatement {
                 "	)  join experiment e on " +
                 "	( " +
                 "		ds.experiment_id = e.experiment_id " +
+                "	) join project p on " +
+                "	( " +
+                "		e.project_id = p.project_id " +
                 "	) join contact c on " +
                 "	( " +
                 "		p.pi_contact = c.contact_id " +
-                "	) left outer join job j on " +
+                "	) " +
                 "order by " +
                 "	j.submitted_date desc, " +
                 "	lower( ds.name ) asc	";
