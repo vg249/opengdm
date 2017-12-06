@@ -59,6 +59,8 @@ import {JsonToGfiAnalysis} from "../services/app/jsontogfi/json-to-gfi-analysis"
                 </p-column>
                 <p-column field="_entity.id" header="Id" hidden="true"></p-column>
                 <p-column field="_entity.datasetName" header="Name"></p-column>
+                <p-column field="_entity.experimentName" header="Experiment"></p-column>
+                <p-column field="_entity.piEmail" header="PI"></p-column>
                 <p-column field="_entity.jobStatusName" header="Status"></p-column>
                 <p-column field="_entity.jobTypeName" header="Type"></p-column>
                 <p-column field="jobSubmittedDate" header="Submitted">
