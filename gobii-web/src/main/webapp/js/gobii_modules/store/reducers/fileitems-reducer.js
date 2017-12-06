@@ -549,15 +549,14 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             }));
             exports_1("getDatasetEntities", getDatasetEntities = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
                 var returnVal;
-                var jobStatusFilterParams = filters[file_item_param_names_1.FilterParamNames.CV_JOB_STATUS];
+                var jobStatusFilterParams = filters[file_item_param_names_1.FilterParamNames.DATASET_LIST_STATUS];
                 if (jobStatusFilterParams
                     && jobStatusFilterParams.filterValue != null) {
-                    var filterValue_1 = filters[file_item_param_names_1.FilterParamNames.CV_JOB_STATUS].filterValue;
                     returnVal = fileItems
                         .filter(function (fi) {
                         return (fi.getEntityType() === type_entity_1.EntityType.DATASET)
                             && fi.hasEntity()
-                            && fi.getRelatedEntityFilterValue(jobStatusFilterParams.gobiiCompoundUniqueId) === filterValue_1;
+                            && fi.getEntity().jobStatusName === jobStatusFilterParams.filterValue;
                     });
                     //            .map(gfi => gfi.getEntity());
                 }

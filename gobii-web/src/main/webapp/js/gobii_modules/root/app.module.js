@@ -149,6 +149,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/http", "@angular/p
                             primeng_1.OverlayPanelModule,
                             primeng_1.AccordionModule,
                             primeng_1.ListboxModule,
+                            primeng_1.FieldsetModule,
                             app_routing_1.routing,
                             animations_1.BrowserAnimationsModule,
                             store_1.StoreModule.forRoot(reducers_1.reducers),

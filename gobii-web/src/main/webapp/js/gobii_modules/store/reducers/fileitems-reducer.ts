@@ -725,17 +725,16 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
     let returnVal: GobiiFileItem[];
 
 
-    let jobStatusFilterParams = filters[FilterParamNames.CV_JOB_STATUS];
+    let jobStatusFilterParams = filters[FilterParamNames.DATASET_LIST_STATUS];
     if (
         jobStatusFilterParams
         && jobStatusFilterParams.filterValue != null) {
 
-        let filterValue = filters[FilterParamNames.CV_JOB_STATUS].filterValue;
         returnVal = fileItems
             .filter(fi =>
                 (fi.getEntityType() === EntityType.DATASET )
                 && fi.hasEntity()
-                && fi.getRelatedEntityFilterValue(jobStatusFilterParams.gobiiCompoundUniqueId) === filterValue
+                && fi.getEntity().jobStatusName === jobStatusFilterParams.filterValue
             );
 //            .map(gfi => gfi.getEntity());
 
