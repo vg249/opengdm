@@ -40,8 +40,14 @@ import {JsonToGfiAnalysis} from "../services/app/jsontogfi/json-to-gfi-analysis"
                          (onRowSelect)="handleRowSelect($event)"
                          (onRowUnselect)="handleRowUnSelect($event)"
                          (onRowClick)="handleOnRowClick($event)"
-                         dataKey="_entity.id">
-                <p-column [style]="{'width':'30px'}">
+                         dataKey="_entity.id"
+                         resizableColumns="true"
+                         scrollable="true"
+                         scrollHeight ="700px"
+                         scrollWidth="100%"
+                         columnResizeMode="expand">
+                <p-column field="_entity.id" header="Id" hidden="true"></p-column>
+                <p-column [style]="{'width':'5%','text-align':'center'}">
                     <ng-template let-col let-fi="rowData" pTemplate="body">
                         <p-checkbox binary="true"
                                     [ngModel]="fi.getSelected()"
@@ -51,21 +57,28 @@ import {JsonToGfiAnalysis} from "../services/app/jsontogfi/json-to-gfi-analysis"
 
                     </ng-template>
                 </p-column>
-                <p-column [style]="{'width':'10%','text-align':'center'}">
+                <p-column [style]="{'width':'5%','text-align':'center'}">
                     <ng-template let-col="rowData" pTemplate="body">
                         <button type="button" pButton (click)="selectDataset($event,col,datasetOverlayPanel);"
-                                icon="fa-bars"></button>
+                                icon="fa-bars" style="font-size: 10px"></button>
                     </ng-template>
                 </p-column>
-                <p-column field="_entity.id" header="Id" hidden="true"></p-column>
-                <p-column field="_entity.datasetName" header="Name"></p-column>
-                <p-column field="_entity.experimentName" header="Experiment"></p-column>
-                <p-column field="_entity.piEmail" header="PI"></p-column>
-                <p-column field="_entity.jobStatusName" header="Status"></p-column>
-                <p-column field="_entity.jobTypeName" header="Type"></p-column>
-                <p-column field="jobSubmittedDate" header="Submitted">
+                <p-column field="_entity.datasetName" 
+                          header="Name" 
+                          [style]="{'width': '22.5%'}"></p-column>
+                <p-column field="_entity.experimentName" 
+                          header="Experiment"
+                          [style]="{'width': '22.5%'}"></p-column>
+                <p-column field="_entity.piEmail" 
+                          header="PI"
+                          [style]="{'width': '22.5%'}"></p-column>
+                <!--<p-column field="_entity.jobStatusName" header="Status"></p-column>-->
+                <!--<p-column field="_entity.jobTypeName" header="Type"></p-column>-->
+                <p-column field="jobSubmittedDate" 
+                          header="Processed"
+                          [style]="{'width': '22.5%'}">
                     <ng-template let-col let-fi="rowData" pTemplate="body">
-                        {{fi._entity[col.field] | date:'yyyy-MM-dd HH:mm' }}
+                        {{fi._entity[col.field] | date:'yyyy-MM-dd HH:mm'  }}
                     </ng-template>
                 </p-column>
             </p-dataTable>
