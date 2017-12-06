@@ -61,6 +61,11 @@ public class FileServiceImpl implements FilesService {
                 throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.NONE, "There is no instruction for the job ");
             }
 
+        } else if (gobiiFileProcessDir.equals(GobiiFileProcessDir.RAW_USER_FILES)) {
+
+            returnVal = configSettings.getProcessingPath(cropType,
+                    gobiiFileProcessDir);
+            returnVal += jobId;
         } else {
             returnVal = configSettings.getProcessingPath(cropType,
                     gobiiFileProcessDir);
@@ -97,8 +102,8 @@ public class FileServiceImpl implements FilesService {
 
     @Override
     public void deleteFileFromProcessDir(String cropType,
-                                  String fileName,
-                                  GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
+                                         String fileName,
+                                         GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
 
         ConfigSettings configSettings = new ConfigSettings();
         String path = configSettings.getProcessingPath(cropType, gobiiFileProcessDir);
@@ -107,7 +112,6 @@ public class FileServiceImpl implements FilesService {
 
 
     }
-
 
 
     @Override

@@ -58,6 +58,8 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
         instructionFileAccess.createDirectory(newDirectoryPath);
 
         returnVal.setDirectoryName(newDirectoryPath);
+        returnVal.setPreviewFileName(directoryName);
+
         returnVal.setId(1);//this is arbitrary for now
 
         return returnVal;
