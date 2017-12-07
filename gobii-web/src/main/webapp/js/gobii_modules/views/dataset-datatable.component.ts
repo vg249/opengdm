@@ -78,18 +78,21 @@ import {ExtractorItemType} from "../model/type-extractor-item";
                 </p-column>
                 <p-column field="_entity.datasetName"
                           header="Name"
-                          [style]="{'width': '22.5%'}"></p-column>
+                          [style]="{'width': '18%'}"></p-column>
+                <p-column field="_entity.projectName"
+                          header="Project"
+                          [style]="{'width': '18%'}"></p-column>
                 <p-column field="_entity.experimentName"
                           header="Experiment"
-                          [style]="{'width': '22.5%'}"></p-column>
+                          [style]="{'width': '18%'}"></p-column>
                 <p-column field="_entity.piEmail"
                           header="PI"
-                          [style]="{'width': '22.5%'}"></p-column>
+                          [style]="{'width': '18%'}"></p-column>
                 <!--<p-column field="_entity.jobStatusName" header="Status"></p-column>-->
                 <!--<p-column field="_entity.jobTypeName" header="Type"></p-column>-->
                 <p-column field="jobSubmittedDate"
                           header="Processed"
-                          [style]="{'width': '22.5%'}">
+                          [style]="{'width': '18%'}">
                     <ng-template let-col let-fi="rowData" pTemplate="body">
                         {{fi._entity[col.field] | date:'yyyy-MM-dd HH:mm' }}
                     </ng-template>

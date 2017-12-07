@@ -33,7 +33,7 @@ public class ListStatementDatasetAll implements ListStatement {
                 "	ds.experiment_id, " +
                 "	e.name as \"experimentname\", " +
                 "	null as \"projectid\", " +
-                "	null as \"projectname\", " +
+                "	p.name as \"projectname\", " +
                 "	null as \"protocolid\", " +
                 "	null as \"protocolname\", " +
                 "	null as \"platformid\", " +
