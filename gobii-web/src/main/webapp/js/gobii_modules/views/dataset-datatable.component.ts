@@ -91,9 +91,10 @@ import {ExtractorItemType} from "../model/type-extractor-item";
                 <!--<p-column field="_entity.jobStatusName" header="Status"></p-column>-->
                 <!--<p-column field="_entity.jobTypeName" header="Type"></p-column>-->
                 <p-column field="jobSubmittedDate"
-                          header="Processed"
+                          header="Status"
                           [style]="{'width': '18%'}">
                     <ng-template let-col let-fi="rowData" pTemplate="body">
+                        {{fi._entity.jobTypeName === "load" ? "loaded on " : fi._entity.jobTypeName === "extract" ? "extracted on " : "unprocessed"}}
                         {{fi._entity[col.field] | date:'yyyy-MM-dd HH:mm' }}
                     </ng-template>
                 </p-column>
