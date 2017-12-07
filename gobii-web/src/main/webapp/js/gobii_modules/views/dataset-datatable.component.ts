@@ -28,6 +28,7 @@ import {ExtractorItemType} from "../model/type-extractor-item";
     outputs: [],
     template: `
         <div style="border: 1px solid #336699; padding-left: 5px">
+            <BR>
             <p-checkbox binary="true"
                         [ngModel]="filterToExtractReady"
                         (onChange)="handleFilterToExtractReadyChecked($event)"
@@ -62,15 +63,17 @@ import {ExtractorItemType} from "../model/type-extractor-item";
                         <p-checkbox binary="true"
                                     [ngModel]="fi.getSelected()"
                                     (onChange)="handleRowChecked($event, fi)"
-                                    [disabled]="fi.getEntity().jobStatusName !== 'completed' || (fi.getEntity().jobTypeName !== 'load')">
+                                    [hidden]="fi.getEntity().jobStatusName !== 'completed'">
                         </p-checkbox>
 
                     </ng-template>
                 </p-column>
                 <p-column [style]="{'width':'5%','text-align':'center'}">
                     <ng-template let-col="rowData" pTemplate="body">
-                        <button type="button" pButton (click)="selectDataset($event,col,datasetOverlayPanel);"
-                                icon="fa-bars" style="font-size: 10px"></button>
+                        <button type="button" 
+                                pButton (click)="selectDataset($event,col,datasetOverlayPanel);"
+                                icon="fa-bars" 
+                                style="font-size: 10px"></button>
                     </ng-template>
                 </p-column>
                 <p-column field="_entity.datasetName"
