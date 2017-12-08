@@ -2,12 +2,15 @@ package org.gobiiproject.gobiiprocess;
 
 import com.google.gson.*;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpStatus;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
+import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
+import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO;
@@ -25,8 +28,13 @@ import org.gobiiproject.gobiimodel.dto.entity.children.VendorProtocolDTO;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiiapimodel.payload.Header;
 import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderFilePreviewDTO;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.system.ConfigSettingsDTO;
 import org.gobiiproject.gobiimodel.types.*;
+import org.gobiiproject.gobiimodel.utils.InstructionFileAccess;
+import org.gobiiproject.gobiimodel.utils.InstructionFileValidator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -53,7 +61,6 @@ import java.util.*;
  * Created by VCalaminos on 2/21/2017.
  */
 public class GobiiTestData {
-
 
 
     private static void validateKeys(NodeList nodeList, XPath xPath, Document document) throws Exception {
@@ -2105,25 +2112,139 @@ public class GobiiTestData {
                 instructionFileWriter.write(prettyJsonString);
                 instructionFileWriter.close();
 
-                // upload files to server
+                LoaderFilePreviewDTO loaderFilePreviewDTO = new LoaderFilePreviewDTO();
 
-                // for FILES
-                createDirectories(filesPath);
+                // CREATE DIRECTORY
 
-                // for DIGEST
-                createDirectories(digestPath);
+                RestUri previewTestUriCreate = GobiiClientContext
+                        .getInstance(null, false)
+                        .getUriFactory()
+                        .resourceByUriIdParam(GobiiServiceRequestId.URL_FILE_LOAD);
 
-                // copy files
-                copyFiles(jobId, instructionFilePath, fileLocations.get(GobiiFileProcessDir.LOADER_INSTRUCTIONS) + folderName + ".json");
+                previewTestUriCreate.setParamValue("id", folderName);
+                GobiiEnvelopeRestResource<LoaderFilePreviewDTO> gobiiEnvelopeRestResourceCreate = new GobiiEnvelopeRestResource<>(previewTestUriCreate);
+                PayloadEnvelope<LoaderFilePreviewDTO> resultEnvelopeCreate = gobiiEnvelopeRestResourceCreate.put(LoaderFilePreviewDTO.class,
+                        new PayloadEnvelope<>(loaderFilePreviewDTO, GobiiProcessType.CREATE));
 
-                if(writeSourcePath) {
+                checkStatus(resultEnvelopeCreate);
 
-                    File f = new File(sourcePath);
-                    String sourceFileName = f.getName();
+                String jobName = resultEnvelopeCreate.getPayload().getData().get(0).getPreviewFileName();
+                String fileDirectoryName = null;
 
-                    copyFiles(jobId, sourcePath, filesPath + "/" + sourceFileName);
+                // UPLOAD FILES
+
+                if (writeSourcePath) {
+
+                    File file = new File(sourcePath);
+
+                    try {
+
+                        RestUri restUri = GobiiClientContext.getInstance(null, false)
+                                .getUriFactory()
+                                .fileForJob(jobName, GobiiFileProcessDir.RAW_USER_FILES, file.getName());
+
+                        HttpMethodResult httpMethodResult = GobiiClientContext.getInstance(null, false)
+                                .getHttp()
+                                .upload(restUri, file);
+
+                        if(httpMethodResult.getResponseCode() != HttpStatus.SC_OK) {
+
+                            throw new Exception("Error uploading data: " + file.getName());
+
+                        } else {
+
+                            fileDirectoryName = filesPath;
+
+                        }
+
+                    } catch (Exception e) {
+
+                        throw new Exception("Error uploading data: " + file.getName());
+
+                    }
 
                 }
+
+                // CREATE LOADER INSTRUCTION FILE
+
+                LoaderInstructionFilesDTO loaderInstructionFilesDTO = new LoaderInstructionFilesDTO();
+
+                try {
+
+                    File instructionFile = new File(instructionFilePath);
+
+                    InstructionFileAccess<GobiiLoaderInstruction> instructionInstructionFileAccess = new InstructionFileAccess<>(GobiiLoaderInstruction.class);
+                    List<GobiiLoaderInstruction> instructions =
+                            instructionInstructionFileAccess.getInstructions(instructionFilePath,
+                                    GobiiLoaderInstruction[].class);
+
+                    if (null != instructions) {
+
+                        loaderInstructionFilesDTO.setInstructionFileName(instructionFile.getName());
+                        loaderInstructionFilesDTO.setGobiiLoaderInstructions(instructions);
+
+                    } else {
+
+                        throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                                "The instruction file exists, but could not be read: " + instructionFilePath);
+
+                    }
+
+                } catch (Exception e) {
+
+                    throw new Exception("Error creating instruction file DTO");
+
+                }
+
+                // SUBMIT INSTRUCTION FILE DTO
+
+                InstructionFileValidator instructionFileValidator = new InstructionFileValidator(loaderInstructionFilesDTO.getGobiiLoaderInstructions());
+
+                instructionFileValidator.processInstructionFile();
+
+                String validationStatus = instructionFileValidator.validate();
+                if(validationStatus != null){
+
+                    throw new Exception("Instruction file validation failed.");
+
+                }else{
+
+                    try {
+                        PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTO, GobiiProcessType.CREATE);
+                        GobiiEnvelopeRestResource<LoaderInstructionFilesDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
+                                .getUriFactory()
+                                .resourceColl(GobiiServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
+                        PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResource.post(LoaderInstructionFilesDTO.class,
+                                payloadEnvelope);
+                        checkStatus(loaderInstructionFileDTOResponseEnvelope);
+                    } catch (Exception err) {
+                        throw new Exception("Error submitting instruction file");
+                    }
+                }
+
+
+
+
+//                // upload files to server
+//
+//                // for FILES
+//                createDirectories(filesPath);
+//
+//                // for DIGEST
+//                createDirectories(digestPath);
+//
+//                // copy files
+//                copyFiles(jobId, instructionFilePath, fileLocations.get(GobiiFileProcessDir.LOADER_INSTRUCTIONS) + folderName + ".json");
+//
+//                if(writeSourcePath) {
+//
+//                    File f = new File(sourcePath);
+//                    String sourceFileName = f.getName();
+//
+//                    copyFiles(jobId, sourcePath, filesPath + "/" + sourceFileName);
+//
+//                }
 
             }
         }
