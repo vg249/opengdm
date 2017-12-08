@@ -2095,7 +2095,7 @@ public class GobiiTestData {
 
                     }
 
-                    object.add("gobiiFiileColumns", gobiiFileColumnsArr);
+                    object.add("gobiiFileColumns", gobiiFileColumnsArr);
 
                     jsonArray.set(k, object);
                 }
