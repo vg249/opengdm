@@ -22,8 +22,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType.*;
 
 /**
  * Created by Phil on 4/12/2016.
@@ -402,31 +412,30 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
         ExtractorInstructionFilesDTO returnVal = new ExtractorInstructionFilesDTO();
 
         JobDTO jobDTO = dtoMapJob.getJobDetailsByJobName(instructionFileName);
-        GobiiJobStatus gobiiJobStatus;
+        JobProgressStatusType jobProgressStatus;
         if (jobDTO.getStatus() == null) {
             throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
                     "The specified instruction file does not exist: " +
                             instructionFileName);
         } else {
-            JobProgressStatusType status = JobProgressStatusType.byValue(jobDTO.getStatus());
-            switch (status) {
+            switch (JobProgressStatusType.byValue(jobDTO.getStatus())) {
                 case CV_PROGRESSSTATUS_FAILED:
                 case CV_PROGRESSSTATUS_ABORTED:
-                    gobiiJobStatus = GobiiJobStatus.FAILED;
+                    jobProgressStatus = CV_PROGRESSSTATUS_FAILED;
                     break;
                 case CV_PROGRESSSTATUS_PENDING:
-                    gobiiJobStatus = GobiiJobStatus.STARTED;
+                    jobProgressStatus = CV_PROGRESSSTATUS_PENDING;
                     break;
                 case CV_PROGRESSSTATUS_COMPLETED:
-                    gobiiJobStatus = GobiiJobStatus.COMPLETED;
+                    jobProgressStatus = CV_PROGRESSSTATUS_COMPLETED;
                     break;
                 case CV_PROGRESSSTATUS_INPROGRESS:
                 case CV_PROGRESSSTATUS_METADATAEXTRACT:
                 case CV_PROGRESSSTATUS_FINALASSEMBLY:
                 case CV_PROGRESSSTATUS_QCPROCESSING:
                 default:
-                    gobiiJobStatus = GobiiJobStatus.IN_PROGRESS;
+                    jobProgressStatus = CV_PROGRESSSTATUS_INPROGRESS;
                     break;
             }
             ConfigSettings configSettings = new ConfigSettings();
@@ -450,13 +459,13 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
                 if (instructionFileAccess.doesPathExist(fileDirExtractorDoneFqpn)) {
                     //check if file  is already done
-                    returnVal.setGobiiExtractorInstructions(setGobiiExtractorInstructionStatus(fileDirExtractorDoneFqpn, gobiiJobStatus));
+                    returnVal.setGobiiExtractorInstructions(setGobiiExtractorInstructionStatus(fileDirExtractorDoneFqpn, jobProgressStatus));
                 } else if (instructionFileAccess.doesPathExist(fileDirExtractorInProgressFqpn)) {
                     //check if file  is in InProgress
-                    returnVal.setGobiiExtractorInstructions(setGobiiExtractorInstructionStatus(fileDirExtractorInProgressFqpn, gobiiJobStatus));
+                    returnVal.setGobiiExtractorInstructions(setGobiiExtractorInstructionStatus(fileDirExtractorInProgressFqpn, jobProgressStatus));
                 } else if (instructionFileAccess.doesPathExist(fileDirExtractorInstructionsFqpn)) {
                     //check if file just started
-                    returnVal.setGobiiExtractorInstructions(setGobiiExtractorInstructionStatus(fileDirExtractorInstructionsFqpn, gobiiJobStatus));
+                    returnVal.setGobiiExtractorInstructions(setGobiiExtractorInstructionStatus(fileDirExtractorInstructionsFqpn, jobProgressStatus));
                 } else {
                     throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
@@ -475,21 +484,44 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
         }
     }
 
+
     /**
      * Returns a list of gobii extractor instruction(technically 1). Sets the job status for the data-sets under inspection
      *
      * @param instructionFileFqpn Instruction file path
-     * @param gobiiJobStatus      job status
+     * @param jobProgressStatus job progress status.
      * @return extractor instruction status.
      */
-    private List<GobiiExtractorInstruction> setGobiiExtractorInstructionStatus(String instructionFileFqpn, GobiiJobStatus gobiiJobStatus) {
+    private List<GobiiExtractorInstruction> setGobiiExtractorInstructionStatus(String instructionFileFqpn, JobProgressStatusType jobProgressStatus) {
         List<GobiiExtractorInstruction> gobiiExtractorInstructionsFromFile = instructionFileAccess.getInstructions(instructionFileFqpn, GobiiExtractorInstruction[].class);
         for (GobiiExtractorInstruction instruction : gobiiExtractorInstructionsFromFile) {
             List<GobiiDataSetExtract> dataSetExtracts = instruction.getDataSetExtracts();
-            for (GobiiDataSetExtract dataSet : dataSetExtracts) {
-                dataSet.setGobiiJobStatus(gobiiJobStatus);
+            for (GobiiDataSetExtract dataSetExtract : dataSetExtracts) {
+                dataSetExtract.setGobiiJobStatus(jobProgressStatus);
+                setExtractedFiles(dataSetExtract);
             }
         }
         return gobiiExtractorInstructionsFromFile;
+    }
+
+    /**
+     * If the status of the job is completed, all the files in extracted directory are set. Else a list of size 0 is added.
+     *
+     * @param dataSetExtract Data set
+     */
+    private void setExtractedFiles(GobiiDataSetExtract dataSetExtract) {
+        if (dataSetExtract.getGobiiJobStatus().equals(CV_PROGRESSSTATUS_COMPLETED)) {
+            try {
+                List<File> filesInFolder = Files.walk(Paths.get(dataSetExtract.getExtractDestinationDirectory()))
+                        .filter(Files::isRegularFile)
+                        .map(Path::toFile)
+                        .collect(Collectors.toList());
+                dataSetExtract.setExtractedFiles(filesInFolder);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            dataSetExtract.setExtractedFiles(new ArrayList<>());
+        }
     }
 }

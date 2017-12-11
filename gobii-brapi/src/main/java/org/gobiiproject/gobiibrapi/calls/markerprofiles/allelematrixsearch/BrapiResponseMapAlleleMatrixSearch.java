@@ -7,6 +7,7 @@ import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
+import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
@@ -14,7 +15,6 @@ import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInst
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
-import org.gobiiproject.gobiimodel.types.GobiiJobStatus;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -64,49 +64,20 @@ public class BrapiResponseMapAlleleMatrixSearch {
                 .getStatus(crop, jobId);
 
         String brapiAsynchStatus = null;
-        if ((extractorInstructionFilesDTONew
-                .getGobiiExtractorInstructions().size() > 0) &&
-                (extractorInstructionFilesDTONew
-                        .getGobiiExtractorInstructions().get(0).getDataSetExtracts().size() > 0)) {
+        if ((extractorInstructionFilesDTONew.getGobiiExtractorInstructions().size() > 0) &&
+                (extractorInstructionFilesDTONew.getGobiiExtractorInstructions().get(0).getDataSetExtracts().size() > 0)) {
 
             GobiiDataSetExtract gobiiDataSetExtract = extractorInstructionFilesDTONew
                     .getGobiiExtractorInstructions()
                     .get(0)
                     .getDataSetExtracts()
                     .get(0);
-
-            GobiiJobStatus gobiiJobStatus = gobiiDataSetExtract
-                    .getGobiiJobStatus();
-
-            switch (gobiiJobStatus) {
-
-                case FAILED:
-                    brapiAsynchStatus = "FAILED";
-                    break;
-
-                case STARTED:
-                    brapiAsynchStatus = "PENDING";
-                    break;
-
-                case COMPLETED:
-                    brapiAsynchStatus = "COMPLETED";
-                    break;
-
-                case IN_PROGRESS:
-                    brapiAsynchStatus = "IN-PROGRESS";
-                    break;
-
-            }
-
+            brapiAsynchStatus = gobiiDataSetExtract.getGobiiJobStatus().getCvName();
             // Add the extracted files to response only when job is completed.
-            if (gobiiJobStatus.equals(GobiiJobStatus.COMPLETED)) {
-                try {
-                    String extractDirectory = gobiiDataSetExtract.getExtractDestinationDirectory();
-                    File extractDirectoryFile = new File(extractDirectory);
-                    if( extractDirectoryFile.exists() ) {
+            if (gobiiDataSetExtract.getGobiiJobStatus().equals(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED)) {
+                if (gobiiDataSetExtract.getExtractedFiles().size() > 0) {
 
-                        File[] extractedFiles = extractDirectoryFile.listFiles();
-                        for (File currentFile : extractedFiles) {
+                    for (File currentFile : gobiiDataSetExtract.getExtractedFiles()) {
 
                             // first make the http link
                             RestUri restUri = new GobiiUriFactory(request.getServerName(),
@@ -127,15 +98,9 @@ public class BrapiResponseMapAlleleMatrixSearch {
                         }
 
                     } else {
-                        brapiMetaData.addStatusMessage("error", "The extract directory does not exist: " + extractDirectory);
+                    brapiMetaData.addStatusMessage("error", "There are no extracted files for the directory: " + gobiiDataSetExtract.getExtractDestinationDirectory());
                     }
-
-
-                } catch (Exception e) {
-                    brapiMetaData.addStatusMessage("Exception", e.getMessage());
-                }
             }
-
         } else {
             brapiMetaData.addStatusMessage("error", "There are not extractor instructions for job : " + jobId);
         }
