@@ -74,32 +74,29 @@ public class BrapiResponseMapAlleleMatrixSearch {
                     .get(0);
             brapiAsynchStatus = gobiiDataSetExtract.getGobiiJobStatus().getCvName();
             // Add the extracted files to response only when job is completed.
-            if (gobiiDataSetExtract.getGobiiJobStatus().equals(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED)) {
+            if (gobiiDataSetExtract.getGobiiJobStatus().equals(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName())) {
                 if (gobiiDataSetExtract.getExtractedFiles().size() > 0) {
 
                     for (File currentFile : gobiiDataSetExtract.getExtractedFiles()) {
 
-                            // first make the http link
-                            RestUri restUri = new GobiiUriFactory(request.getServerName(),
-                                    request.getServerPort(),
-                                    request.getContextPath(),
-                                    GobiiControllerType.GOBII)
-                                    .resourceColl(GobiiServiceRequestId.URL_FILES)
-                                    .addUriParam("gobiiJobId", jobId)
-                                    .addUriParam("destinationType", GobiiFileProcessDir.EXTRACTOR_OUTPUT.toString().toLowerCase())
-                                    .addQueryParam("fileName", currentFile.getName());
+                        // first make the http link
+                        RestUri restUri = new GobiiUriFactory(request.getServerName(), request.getServerPort(),
+                                request.getContextPath(), GobiiControllerType.GOBII)
+                                .resourceColl(GobiiServiceRequestId.URL_FILES)
+                                .addUriParam("gobiiJobId", jobId)
+                                .addUriParam("destinationType", GobiiFileProcessDir.EXTRACTOR_OUTPUT.toString().toLowerCase())
+                                .addQueryParam("fileName", currentFile.getName());
 
-                            String fileUri = restUri.makeUrlComplete();
-                            brapiMetaData.getDatafiles().add(fileUri);
+                        String fileUri = restUri.makeUrlComplete();
+                        brapiMetaData.getDatafiles().add(fileUri);
 
-                            // now the absolute path to the file
-                            String filePath = FilenameUtils.normalize(currentFile.getAbsolutePath());
-                            brapiMetaData.getDatafiles().add(filePath);
-                        }
-
-                    } else {
-                    brapiMetaData.addStatusMessage("error", "There are no extracted files for the directory: " + gobiiDataSetExtract.getExtractDestinationDirectory());
+                        // now the absolute path to the file
+                        String filePath = FilenameUtils.normalize(currentFile.getAbsolutePath());
+                        brapiMetaData.getDatafiles().add(filePath);
                     }
+                } else {
+                    brapiMetaData.addStatusMessage("error", "There are no extracted files for the directory: " + gobiiDataSetExtract.getExtractDestinationDirectory());
+                }
             }
         } else {
             brapiMetaData.addStatusMessage("error", "There are not extractor instructions for job : " + jobId);
