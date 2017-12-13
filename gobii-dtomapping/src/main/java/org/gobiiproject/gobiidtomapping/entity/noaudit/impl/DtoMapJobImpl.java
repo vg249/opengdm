@@ -108,7 +108,8 @@ public class DtoMapJobImpl implements DtoMapJob {
         // check if the payload type of the job being submitted is a matrix
         // if it is a matrix, the datasetId of the JobDTO should not be empty
 
-        if (jobDTO.getPayloadType().equals(JobPayloadType.CV_PAYLOADTYPE_MATRIX) && (null == jobDTO.getDatasetId())) {
+        if (jobDTO.getPayloadType().equals(JobPayloadType.CV_PAYLOADTYPE_MATRIX.getCvName())
+                && (null == jobDTO.getDatasetIds())) {
 
             throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
                     GobiiValidationStatusType.BAD_REQUEST,
@@ -122,16 +123,20 @@ public class DtoMapJobImpl implements DtoMapJob {
         Integer jobId = rsJobDao.createJobWithCvTerms(parameters);
         returnVal.setJobId(jobId);
 
-        if (returnVal.getType().equals(JobType.CV_JOBTYPE_LOAD.getCvName())
-                && returnVal.getPayloadType().equals(JobPayloadType.CV_PAYLOADTYPE_MATRIX.getCvName())) {
+        if (
+                (returnVal.getType().equals(JobType.CV_JOBTYPE_LOAD.getCvName())
+                        || returnVal.getType().equals(JobType.CV_JOBTYPE_EXTRACT.getCvName()))
+
+                        && returnVal.getPayloadType().equals(JobPayloadType.CV_PAYLOADTYPE_MATRIX.getCvName())
+                ) {
 
 
-            if(jobDTO.getDatasetId() == null || jobDTO.getDatasetId() <= 0 ) {
-                throw new GobiiDtoMappingException("Matrix load job does not have a dataset id: " + returnVal.getDatasetId());
+            if (jobDTO.getDatasetIds() == null || jobDTO.getDatasetIds().size() <= 0) {
+                throw new GobiiDtoMappingException("Matrix load job does not have a dataset id: " + returnVal.getDatasetIds());
             }
 
 
-            DataSetDTO dataSetDTO = dtoMapDataSet.get(jobDTO.getDatasetId());
+            DataSetDTO dataSetDTO = dtoMapDataSet.get(jobDTO.getDatasetIds().get(0));
 
             String[] datePattern = {"yyyy-MM-dd"};
 
@@ -151,7 +156,7 @@ public class DtoMapJobImpl implements DtoMapJob {
             dataSetDTO.setCreatedDate(parsedDate);
             dataSetDTO.setModifiedDate(jobDTO.getSubmittedDate());
             dataSetDTO.setJobId(jobDTO.getJobId());
-            dtoMapDataSet.replace(returnVal.getDatasetId(), dataSetDTO);
+            dtoMapDataSet.replace(returnVal.getDatasetIds().get(0), dataSetDTO);
 
         }
 

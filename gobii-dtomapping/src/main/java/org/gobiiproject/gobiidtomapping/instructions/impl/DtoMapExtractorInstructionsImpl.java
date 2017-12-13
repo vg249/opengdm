@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Phil on 4/12/2016.
@@ -100,7 +101,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     + extractorInstructionFilesDTO.getInstructionFileName()
                     + INSTRUCTION_FILE_EXT;
 
-
+            List<Integer> datasetIds = new ArrayList<>();
             Integer contactId = null;
             for (GobiiExtractorInstruction currentExtractorInstruction :
                     extractorInstructionFilesDTO.getGobiiExtractorInstructions()) {
@@ -150,6 +151,10 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                      idx++) {
 
                     GobiiDataSetExtract currentGobiiDataSetExtract = currentExtractorInstruction.getDataSetExtracts().get(idx);
+
+                    if( currentGobiiDataSetExtract.getDataSet() != null && currentGobiiDataSetExtract.getDataSet().getId() > 0) {
+                        datasetIds.add(currentGobiiDataSetExtract.getDataSet().getId());
+                    }
 
                     if (currentGobiiDataSetExtract.getListFileName() != null) {
 
@@ -297,17 +302,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                         }
 
 
-                        boolean thereAreDatasets = false;
-                        if (extractorInstructionFilesDTO
-                                .getGobiiExtractorInstructions()
-                                .stream()
-                                .filter(gei -> gei.getDataSetExtracts()
-                                        .stream()
-                                        .filter(dse -> dse.getDataSet() != null && dse.getDataSet().getId() > 0).count() > 0)
-                                .count() > 0
-                                ) {
-                            thereAreDatasets = true;
-                        }
+                        boolean thereAreDatasets = datasetIds.size() > 0;
 
                         boolean thereAreMarkerGroups = extractorInstructionFilesDTO
                                 .getGobiiExtractorInstructions()
@@ -365,17 +360,25 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                                     + " does not have any samples, markers, datasets, or marker groups specified");
                         }
 
-                        JobDTO jobDTONew = new JobDTO();
+                        if( thereAreDatasets ) {
 
-                        jobDTONew.setJobName(extractorInstructionFilesDTO.getInstructionFileName());
-                        jobDTONew.setSubmittedBy(contactId);
-                        jobDTONew.setMessage("Instruction file written by web services");
-                        jobDTONew.setStatus(JobProgressStatusType.CV_PROGRESSSTATUS_PENDING.getCvName());
-                        jobDTONew.setType(JobType.CV_JOBTYPE_EXTRACT.getCvName());
-                        jobDTONew.setPayloadType(jobPayloadType.getCvName());
-                        jobDTONew.setSubmittedDate(new Date());
+                            JobDTO jobDTONew = new JobDTO();
 
-                        dtoMapJob.createJob(jobDTONew);
+                            jobDTONew.setJobName(extractorInstructionFilesDTO.getInstructionFileName());
+                            jobDTONew.setSubmittedBy(contactId);
+                            jobDTONew.setMessage("Instruction file written by web services");
+                            jobDTONew.setStatus(JobProgressStatusType.CV_PROGRESSSTATUS_PENDING.getCvName());
+                            jobDTONew.setType(JobType.CV_JOBTYPE_EXTRACT.getCvName());
+                            jobDTONew.setPayloadType(jobPayloadType.getCvName());
+                            jobDTONew.setSubmittedDate(new Date());
+
+                            dtoMapJob.createJob(jobDTONew);
+
+                        } else {
+
+
+                        }
+
                     } else {
 
                         throw new GobiiException("The specified extractor job already exists: " + extractorInstructionFilesDTO.getInstructionFileName());

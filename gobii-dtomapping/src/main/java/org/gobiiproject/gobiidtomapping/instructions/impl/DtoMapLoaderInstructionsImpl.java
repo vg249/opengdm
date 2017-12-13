@@ -320,7 +320,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                     JobDTO jobDTONew = new JobDTO();
 
                     jobDTONew.setJobName(loaderInstructionFilesDTO.getInstructionFileName());
-                    jobDTONew.setDatasetId(dataSetId);
+                    jobDTONew.getDatasetIds().add(dataSetId);
                     jobDTONew.setSubmittedBy(contactId);
                     jobDTONew.setMessage("Instruction file written by web services");
                     jobDTONew.setStatus(JobProgressStatusType.CV_PROGRESSSTATUS_PENDING.getCvName());

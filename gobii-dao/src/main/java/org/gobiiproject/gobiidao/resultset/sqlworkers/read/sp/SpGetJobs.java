@@ -34,7 +34,9 @@ public class SpGetJobs implements Work{
                 "j.submitted_by,\n" +
                 "j.submitted_date,\n" +
                 "j.name,\n" +
-                "d.dataset_id\n"+
+                "	ARRAY(select d.dataset_id \n" +
+		        "   from dataset d " +
+		        "    where d.job_id = j.job_id) as datasetids " +
                 "from job j\n" +
                 "left JOIN\n" +
                 "dataset d\n" +

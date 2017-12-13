@@ -37,9 +37,8 @@ public class SpGetJobDetailsByDataSetId implements Work {
                 " j.submitted_by," +
                 " j.submitted_date," +
                 " j.name," +
-                " d.dataset_id" +
+                " ARRAY(select d.dataset_id from dataset d where d.job_id = j.job_id) as datasetids " +
                 " from" +
-                " dataset d," +
                 " job j," +
                 " cv type," +
                 " cv payloadtype," +
@@ -48,7 +47,7 @@ public class SpGetJobDetailsByDataSetId implements Work {
                 " j.type_id = type.cv_id" +
                 " and j.payload_type_id = payloadtype.cv_id" +
                 " and j.status = status.cv_id" +
-                " and d.job_id = j.job_id" +
+                " and array_length( ARRAY(select d.dataset_id from dataset d where d.job_id = j.job_id), 1) > 0 " +
                 " and d.dataset_id = ?";
 
         PreparedStatement preparedStatement = dbConnection.prepareCall(sql);
