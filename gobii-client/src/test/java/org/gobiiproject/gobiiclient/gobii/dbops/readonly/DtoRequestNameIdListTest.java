@@ -238,7 +238,7 @@ public class DtoRequestNameIdListTest {
         testNameRetrieval(GobiiEntityNameType.PROJECTS, GobiiFilterType.BYTYPEID, "1");
     }
 
-    @Test
+    @Ignore
     public void testGetExperimentNamesByProjectId() throws Exception {
 
 
