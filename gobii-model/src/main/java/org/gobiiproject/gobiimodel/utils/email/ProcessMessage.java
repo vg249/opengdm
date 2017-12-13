@@ -2,12 +2,12 @@ package org.gobiiproject.gobiimodel.utils.email;
 
 
 import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
+import org.gobiiproject.gobiimodel.utils.HelperFunctions;
+import org.apache.commons.lang.StringEscapeUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.gobiiproject.gobiimodel.utils.HelperFunctions.sizeToReadable;
 
 /*
  *  GOBII - Process mail message format.  (Hopefully to replace DigesterMessage.java)
@@ -32,8 +32,8 @@ public class ProcessMessage extends MailMessage {
     List<HTMLTableEntity> identifiers=new ArrayList<>();
     List<HTMLTableEntity> entities=new ArrayList<>();
     List<HTMLTableEntity> paths=new ArrayList<>();
-    
-    
+
+
     /**
      * Sets the BODY of the mail message with TABLEs
      * @param jobName Name of the JOB ([GOBII - Extractor]: crop - extraction of "xxxx") 
@@ -49,26 +49,30 @@ public class ProcessMessage extends MailMessage {
         this.color = (success ? greenColor:redColor);
         if(!entries.isEmpty()) {
             tableLine = HTMLTableEntity.getHTMLTable(entries, tableLineWidth,"Table","Total in File", "Total Loaded","Total Existing","Total Invalid");
+            entries.clear();
         }
         if(!identifiers.isEmpty()) {
             identifierLine = HTMLTableEntity.getHTMLTable(identifiers, identifierLineWidth,"Identifier Type","Name","ID");
+            identifiers.clear();
         }
         if(!entities.isEmpty()) {
             entityLine = HTMLTableEntity.getHTMLTable(entities, entityLineWidth,"Type","Count");
+            entities.clear();
         }
         if(!paths.isEmpty()) {
             pathsLine = HTMLTableEntity.getHTMLTable(paths, pathsLineWidth,"File Type","Path","Size");
+            paths.clear();
         }
 
-        String line="<br/>";
+        String line="<br>";
         StringBuilder body=new StringBuilder();
         body.append("<html><head><style>table{font-family:arial,sans-serif;border-collapse:collapse;width:60%;}th{background-color:" + color + ";border:1px solid #dddddd;text-align:left;padding:8px;}td{border:1px solid #dddddd;text-align:left;padding:8px;}tr:nth-child(even){background-color:lightblue;}</style></head><body>");
 
         if(type!=null){
-            body.append("<font size = 4><b>"+type+"</b></font> (Duration: "+(time>=1000?time/1000+"secs":time+"ms")+")<br/><br/>");
+            body.append("<font size = 4><b>"+type+"</b></font> (Duration: "+(time>=1000?time/1000+"secs":time+"ms")+")<br><br>");
         }
         else{
-            body.append("<br/><br/>");
+            body.append("<br><br>");
         }
 
         body.append(statusLine+line);
@@ -79,7 +83,6 @@ public class ProcessMessage extends MailMessage {
         if(tableLine!=null)body.append(tableLine+line);
         if(pathsLine!=null)body.append(pathsLine+line);
         if(longError!=null)body.append(longError);
-        if(confidentialyMessage!=null)body.append("<br/><b>"+confidentialyMessage+"</b>");
         body.append("</html>");
         this.setBody(body.toString());
         return this;
@@ -109,17 +112,17 @@ public class ProcessMessage extends MailMessage {
     public ProcessMessage addIdentifier(String type,String name, String id){
         if((name==null) && ((id==null || id.equals("null"))))return this;
         if(id==null){
-            identifiers.add(new HTMLTableEntity(type,name,""));
+            identifiers.add(new HTMLTableEntity(type,escapeHTML(name),""));
         }
         else {
-            identifiers.add(new HTMLTableEntity(type, name, id));
+            identifiers.add(new HTMLTableEntity(type, escapeHTML(name), id));
         }
          return this;
     }
     
     public ProcessMessage addIdentifier(String type, PropNameId identifier){
         if(identifier==null)return this;//Don't add a null ID to the table
-        return addIdentifier(type,identifier.getName(),identifier.getId()+"");
+        return addIdentifier(type,escapeHTML(identifier.getName()),identifier.getId()+"");
     }
     
      /**
@@ -130,13 +133,13 @@ public class ProcessMessage extends MailMessage {
      */
     public ProcessMessage addEntity(String type,String name){
         if(name==null)return this;
-        entities.add(new HTMLTableEntity(type,name));
+        entities.add(new HTMLTableEntity(type,escapeHTML(name)));
         return this;
     }
 
     public ProcessMessage addEntity(String type, PropNameId entity){
         if(entity==null)return this;//Don't add a null ID to the table
-        return addEntity(type,entity.getName()+"");
+        return addEntity(type,escapeHTML(entity.getName())+"");
     }
     
     
@@ -148,7 +151,7 @@ public class ProcessMessage extends MailMessage {
      */
     public ProcessMessage addPath(String type,String path){
     	if(new File(path).length() > 1){
-    		paths.add(new HTMLTableEntity(type,path,sizeToReadable(new File(path).length())));
+    		paths.add(new HTMLTableEntity(type, escapeHTML(path), HelperFunctions.sizeToReadable(new File(path).length())));
     	}
         return this;
     }
@@ -163,7 +166,7 @@ public class ProcessMessage extends MailMessage {
     public ProcessMessage addPath(String type, String path, String donePath){
         String pathFinal = donePath + new File(path).getName();
         if(new File(path).length() > 1){
-            paths.add(new HTMLTableEntity(type,pathFinal,sizeToReadable(new File(path).length())));
+            paths.add(new HTMLTableEntity(type, escapeHTML(pathFinal), HelperFunctions.sizeToReadable(new File(path).length())));
         }
         return this;
     }
@@ -176,14 +179,57 @@ public class ProcessMessage extends MailMessage {
     private ProcessMessage setStatus(boolean status) {
         statusLine = "Status: " + (status ?
                 "<font color="+greenColor+" size=4><b>SUCCESS</b></font>" :
-                "<font color="+redColor+" size=4><b>ERROR</b></font>");
+                "<font color="+redColor+" size=4><b>Failed</b></font>");
         return this;
     }
 
     public ProcessMessage addConfidentialityMessage(String confidentialyMessage){
-        this.confidentialyMessage=confidentialyMessage;
+        this.setConfidentialityMessage("<font color="+redColor+"><b></br>"+escapeHTML(confidentialyMessage)+"</br></b></font>");
         return this;
     }
 
+    public ProcessMessage addBody(String lastBody, String jobName, String type, long time, String shortError,boolean success, String longError){
+        this.errorLine=shortError;
+        this.color = (success ? greenColor:redColor);
+        if(!entries.isEmpty()) {
+            tableLine = HTMLTableEntity.getHTMLTable(entries, tableLineWidth,"Table","Total in File", "Total Loaded","Total Existing","Total Invalid");
+        }
+        if(!identifiers.isEmpty()) {
+            identifierLine = HTMLTableEntity.getHTMLTable(identifiers, identifierLineWidth,"Identifier Type","Name","ID");
+        }
+        if(!entities.isEmpty()) {
+            entityLine = HTMLTableEntity.getHTMLTable(entities, entityLineWidth,"Type","Count");
+        }
+        if(!paths.isEmpty()) {
+            pathsLine = HTMLTableEntity.getHTMLTable(paths, pathsLineWidth,"File Type","Path","Size");
+        }
+
+        String line="<br>";
+        StringBuilder body=new StringBuilder();
+        body.append("<html><head><style>table{font-family:arial,sans-serif;border-collapse:collapse;width:60%;}th{background-color:" + color + ";border:1px solid #dddddd;text-align:left;padding:8px;}td{border:1px solid #dddddd;text-align:left;padding:8px;}tr:nth-child(even){background-color:lightblue;}</style></head><body>");
+
+        if(type!=null){
+            body.append("<font size = 4><b>"+type+"</b></font> (Duration: "+(time>=1000?time/1000+"secs":time+"ms")+")<br><br>");
+        }
+        else{
+            body.append("<br><br>");
+        }
+
+        body.append(statusLine+line);
+        if(errorLine!=null)body.append(errorLine+line);
+        body.append(line);
+        if(identifierLine!=null)body.append(identifierLine+line);
+        if(entityLine!=null)body.append(entityLine+line);
+        if(tableLine!=null)body.append(tableLine+line);
+        if(pathsLine!=null)body.append(pathsLine+line);
+        if(longError!=null)body.append(longError);
+        body.append("</html>");
+        this.setBody(lastBody + body.toString());
+        return this;
+    }
+
+    public String escapeHTML(String strToHTML){
+        return StringEscapeUtils.escapeHtml(strToHTML);
+    }
 }
 
