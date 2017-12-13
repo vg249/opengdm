@@ -11,6 +11,7 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
+import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO;
@@ -1854,6 +1855,7 @@ public class GobiiTestData {
             Element currentElement = (Element) nodeList.item(i);
 
             String scenarioName = currentElement.getElementsByTagName("Name").item(0).getTextContent();
+            String jobPayloadType = currentElement.getElementsByTagName("PayloadType").item(0).getTextContent();
 
             System.out.println("Parsing scenario: " + scenarioName);
 
@@ -2211,6 +2213,17 @@ public class GobiiTestData {
                 }else{
 
                     try {
+
+                        if (jobPayloadType.equals(JobPayloadType.CV_PAYLOADTYPE_MARKERS)) {
+                            loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0).setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MARKERS);
+                        } else if (jobPayloadType.equals(JobPayloadType.CV_PAYLOADTYPE_SAMPLES)) {
+                            loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0).setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_SAMPLES);
+                        } else if (jobPayloadType.equals(JobPayloadType.CV_PAYLOADTYPE_MATRIX)) {
+                            loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0).setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX);
+                        } else {
+                            loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0).setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX);
+                        }
+
                         PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTO, GobiiProcessType.CREATE);
                         GobiiEnvelopeRestResource<LoaderInstructionFilesDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
                                 .getUriFactory()
@@ -2222,105 +2235,9 @@ public class GobiiTestData {
                         throw new Exception("Error submitting instruction file");
                     }
                 }
-
-
-
-
-//                // upload files to server
-//
-//                // for FILES
-//                createDirectories(filesPath);
-//
-//                // for DIGEST
-//                createDirectories(digestPath);
-//
-//                // copy files
-//                copyFiles(jobId, instructionFilePath, fileLocations.get(GobiiFileProcessDir.LOADER_INSTRUCTIONS) + folderName + ".json");
-//
-//                if(writeSourcePath) {
-//
-//                    File f = new File(sourcePath);
-//                    String sourceFileName = f.getName();
-//
-//                    copyFiles(jobId, sourcePath, filesPath + "/" + sourceFileName);
-//
-//                }
-
             }
         }
     }
-
-    public static void copyFiles(String jobId, String pathToSourceFile, String pathToDestinationFile) throws  Exception{
-
-        System.out.println("\nCopying " + pathToSourceFile + " to " + pathToDestinationFile);
-
-        try {
-
-            if(!new File(pathToDestinationFile).exists()) {
-                File destinationFile = new File(pathToDestinationFile);
-                destinationFile.createNewFile();
-
-                if((!destinationFile.canRead()) && !(destinationFile.setReadable(true, false))){
-                    throw new Exception("Unable to set read on file " + destinationFile);
-                }
-
-                if((!destinationFile.canWrite()) && !(destinationFile.setWritable(true, false))){
-                    throw new Exception("Unable to set write on file " + destinationFile);
-                }
-            }
-
-
-            Files.copy(Paths.get(pathToSourceFile), new FileOutputStream(pathToDestinationFile));
-
-
-            System.out.println("\nSuccessfully copied " + pathToSourceFile + " to " + pathToDestinationFile);
-
-        } catch (Exception e) {
-
-            throw new Exception("\nCannot copy file " + pathToSourceFile + " to " + pathToDestinationFile + ". \n" +  e);
-
-        }
-
-    }
-
-
-    public static void createDirectories(String pathName) throws Exception {
-
-        System.out.println("\nCreating directory: " + pathName);
-
-        if(!(new File(pathName).exists())){
-
-            File pathToCreate = new File(pathName);
-
-            if(!pathToCreate.mkdirs()){
-                throw new Exception("Unable to create directory " + pathName);
-            }
-
-            if((!pathToCreate.canRead()) && !(pathToCreate.setReadable(true, false))){
-                throw new Exception("Unable to set read on directory " + pathName);
-            }
-
-            if((!pathToCreate.canWrite()) && !(pathToCreate.setWritable(true, false))){
-                throw new Exception("Unable to set write on directory " + pathName);
-            }
-
-        } else {
-
-            File pathToCreate = new File(pathName);
-            if (!pathToCreate.canRead() && !pathToCreate.setReadable(true, false)) {
-                throw new Exception("Unable to set read permissions on directory " + pathName);
-            }
-
-            if (!pathToCreate.canWrite() && !pathToCreate.setWritable(true, false)) {
-                throw new Exception("Unable to set write permissions on directory " + pathName);
-            }
-        }
-
-
-
-        System.out.println("\nSuccessfully created directory: " + pathName);
-    }
-
 
     public static void main(String[] args) throws Exception{
 
