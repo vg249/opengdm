@@ -34,5 +34,13 @@ public enum JobProgressStatusType {
         return this.progressStatusName;
     }
 
+    public static JobProgressStatusType byValue(String val) {
+        for (JobProgressStatusType en : values()) {
+            if (en.getCvName().equals(val)) {
+                return en;
+            }
+        }
+        return null;
+    }
 
 }

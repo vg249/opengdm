@@ -19,6 +19,7 @@ import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -178,7 +179,7 @@ public class BrapiTestAlleleMatrixSearch {
         return returnVal;
     }
 
-    @Test
+    @Ignore
     public void getAlleleMatrix() throws Exception {
 
         // STEP ONE: SUBMIT AN EXTRACTION JOB SO THAT THE DESTINATION DIRECTORY GETS CREATED BY THE SERVER
