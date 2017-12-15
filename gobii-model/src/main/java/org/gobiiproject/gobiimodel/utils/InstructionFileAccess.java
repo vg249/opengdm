@@ -1,8 +1,7 @@
-package org.gobiiproject.gobiidao.filesystem.access;
+package org.gobiiproject.gobiimodel.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
@@ -33,7 +32,7 @@ public class InstructionFileAccess<T> {
     }
 
     public Boolean writeInstructions(String instructionFileFqpn,
-                                     T instructions) throws GobiiDaoException {
+                                     T instructions) throws GobiiException {
 
         Boolean returnVal = null;
 
@@ -62,25 +61,25 @@ public class InstructionFileAccess<T> {
 
                         returnVal = true;
                     } else {
-                        throw new GobiiDaoException("Path of specified instruction file name is not a directory: "
+                        throw new GobiiException("Path of specified instruction file name is not a directory: "
                                 + destinationDirectory);
                     } // if-else directory is really a directory
 
                 } else {
-                    throw new GobiiDaoException("Path of specified instruction file does not exist: "
+                    throw new GobiiException("Path of specified instruction file does not exist: "
                             + destinationDirectory);
 
                 } // if-else destination directory exists
 
             } else {
 
-                throw new GobiiDaoException("The specified instruction file already exists: "
+                throw new GobiiException("The specified instruction file already exists: "
                         + instructionFileFqpn);
             } // if-else file does not arleady exist
 
         } catch (Exception e) {
             String message = e.getMessage() + "; fqpn: " + instructionFileFqpn;
-            throw new GobiiDaoException(message);
+            throw new GobiiException(message);
         }
 
         return returnVal;
@@ -104,7 +103,7 @@ public class InstructionFileAccess<T> {
 
         } catch (Exception e) {
             String message = e.getMessage() + "; fqpn: " + instructionFileFqpn;
-            throw new GobiiDaoException(message);
+            throw new GobiiException(message);
         }
 
         return returnVal;
@@ -115,7 +114,7 @@ public class InstructionFileAccess<T> {
     // except except the type parameterization for the List type. There is probably a more elegant and hence
     // less redundant way tot do this; however, for now, encapsulating this code in one class is a huge improvement
     // over the way things were.
-    public List<T> getInstructions(String instructionFileFqpn, Class<T[]> listType) throws GobiiDaoException {
+    public List<T> getInstructions(String instructionFileFqpn, Class<T[]> listType) throws GobiiException {
 
         List<T> returnVal = null;
 
@@ -136,56 +135,56 @@ public class InstructionFileAccess<T> {
         } catch (Exception e) {
             String message = e.getMessage() + "; fqpn: " + instructionFileFqpn;
 
-            throw new GobiiDaoException(message);
+            throw new GobiiException(message);
         }
 
         return returnVal;
 
     }
 
-    public boolean doesPathExist(String pathName) throws GobiiDaoException {
+    public boolean doesPathExist(String pathName) throws GobiiException {
         return new File(pathName).exists();
     }
 
-    public void verifyDirectoryPermissions(String pathName) throws GobiiDaoException {
+    public void verifyDirectoryPermissions(String pathName) throws GobiiException {
 
         File pathToCreate = new File(pathName);
         if (!pathToCreate.canRead() && !pathToCreate.setReadable(true, false)) {
-            throw new GobiiDaoException("Unable to set read permissions on directory " + pathName);
+            throw new GobiiException("Unable to set read permissions on directory " + pathName);
         }
 
         if (!pathToCreate.canWrite() && !pathToCreate.setWritable(true, false)) {
-            throw new GobiiDaoException("Unable to set write permissions on directory " + pathName);
+            throw new GobiiException("Unable to set write permissions on directory " + pathName);
         }
     }
 
 
-    public void makeDirectory(String pathName) throws GobiiDaoException {
+    public void makeDirectory(String pathName) throws GobiiException {
 
         if (!doesPathExist(pathName)) {
 
             File pathToCreate = new File(pathName);
 
             if (!pathToCreate.mkdirs()) {
-                throw new GobiiDaoException("Unable to create directory " + pathName);
+                throw new GobiiException("Unable to create directory " + pathName);
             }
 
             if ((!pathToCreate.canRead()) && !(pathToCreate.setReadable(true, false))) {
-                throw new GobiiDaoException("Unable to set read on directory " + pathName);
+                throw new GobiiException("Unable to set read on directory " + pathName);
             }
 
             if ((!pathToCreate.canWrite()) && !(pathToCreate.setWritable(true, false))) {
-                throw new GobiiDaoException("Unable to set write on directory " + pathName);
+                throw new GobiiException("Unable to set write on directory " + pathName);
             }
 
 
         } else {
-            throw new GobiiDaoException("The specified path already exists: " + pathName);
+            throw new GobiiException("The specified path already exists: " + pathName);
         }
     }
 
 
-    public void createDirectory(String instructionFileDirectory) throws GobiiDaoException {
+    public void createDirectory(String instructionFileDirectory) throws GobiiException {
 
 
         if (null != instructionFileDirectory) {
@@ -202,7 +201,7 @@ public class InstructionFileAccess<T> {
     } // createDirectories()
 
 
-    public void writePlainFile(String fileFqpn, byte[] byteArray) throws GobiiDaoException {
+    public void writePlainFile(String fileFqpn, byte[] byteArray) throws GobiiException {
 
         try {
 
@@ -214,7 +213,7 @@ public class InstructionFileAccess<T> {
             stream.close();
 
         } catch (IOException e) {
-            throw new GobiiDaoException("Error wriring file " + fileFqpn + ": " + e.getMessage());
+            throw new GobiiException("Error wriring file " + fileFqpn + ": " + e.getMessage());
         }
 
     }

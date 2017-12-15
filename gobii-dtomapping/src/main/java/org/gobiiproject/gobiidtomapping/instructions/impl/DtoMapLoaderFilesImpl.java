@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiidtomapping.instructions.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiidao.filesystem.access.InstructionFileAccess;
+import org.gobiiproject.gobiimodel.utils.InstructionFileAccess;
 import org.gobiiproject.gobiidtomapping.instructions.DtoMapLoaderFiles;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
@@ -58,6 +58,8 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
         instructionFileAccess.createDirectory(newDirectoryPath);
 
         returnVal.setDirectoryName(newDirectoryPath);
+        returnVal.setPreviewFileName(directoryName);
+
         returnVal.setId(1);//this is arbitrary for now
 
         return returnVal;
