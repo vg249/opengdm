@@ -23,7 +23,7 @@ public class GobiiDataSetExtract {
     //Descriptive name of the data set. Used in reporting
     private JobProgressStatusType gobiiJobStatus;
     //Internal ID of the data set. Used for internal lookups.
-    String extractDestinationDirectory = null;
+    private String extractDestinationDirectory = null;
 
 
     private GobiiExtractFilterType gobiiExtractFilterType;

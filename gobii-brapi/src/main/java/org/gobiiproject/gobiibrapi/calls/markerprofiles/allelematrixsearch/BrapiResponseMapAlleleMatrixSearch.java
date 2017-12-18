@@ -74,7 +74,7 @@ public class BrapiResponseMapAlleleMatrixSearch {
                     .get(0);
             brapiAsynchStatus = gobiiDataSetExtract.getGobiiJobStatus().getCvName();
             // Add the extracted files to response only when job is completed.
-            if (gobiiDataSetExtract.getGobiiJobStatus().equals(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName())) {
+            if (brapiAsynchStatus.equals(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName())) {
                 if (gobiiDataSetExtract.getExtractedFiles().size() > 0) {
 
                     for (File currentFile : gobiiDataSetExtract.getExtractedFiles()) {
