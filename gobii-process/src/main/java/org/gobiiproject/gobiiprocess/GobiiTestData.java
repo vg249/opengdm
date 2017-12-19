@@ -1889,6 +1889,8 @@ public class GobiiTestData {
 
                 fileDirectoryName = filesPath;
 
+                System.out.println("\nSuccessfully uploaded file.");
+
             }
 
         } catch (Exception e) {
@@ -2260,6 +2262,7 @@ public class GobiiTestData {
 
                 if (writeSourcePath) {
 
+                    System.out.println("\nUploading data file, this may take a few minutes...");
                     fileDirectoryName = uploadFiles(jobName, sourcePath, filesPath);
 
                 }
