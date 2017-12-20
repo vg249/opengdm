@@ -124,6 +124,7 @@ public final class GobiiClientContext {
             gobiiClientContext.cropId = cropId;
             gobiiClientContext.fileSystemRoot = configSettings.getFileSystemRoot();
             gobiiClientContext.serverCapabilities = configSettings.getServerCapabilities();
+            gobiiClientContext.maxUploadSizeMbytes = configSettings.getMaxUploadSizeMbytes();
 
             for (GobiiCropConfig currentGobiiCropConfig : configSettings.getActiveCropConfigs()) {
 
@@ -264,6 +265,7 @@ public final class GobiiClientContext {
             ConfigSettingsDTO configSettingsDTOResponse = resultEnvelope.getPayload().getData().get(0);
             returnVal.serverConfigs = configSettingsDTOResponse.getServerConfigs();
             returnVal.serverCapabilities = configSettingsDTOResponse.getServerCapabilities();
+            returnVal.maxUploadSizeMbytes = configSettingsDTOResponse.getMaxUploadSizeMbytes();
 
         } else {
             throw new Exception("Unable to get server configuration from "
@@ -503,8 +505,18 @@ public final class GobiiClientContext {
         return this.getHttp().setToken(token);
     }
 
+    private Integer maxUploadSizeMbytes;
+
     public String getFileSystemRoot() {
         return fileSystemRoot;
+    }
+
+    public Integer getMaxUploadSizeMbytes() {
+        return maxUploadSizeMbytes;
+    }
+
+    public void setMaxUploadSizeMbytes(Integer maxUploadSizeMbytes) {
+        this.maxUploadSizeMbytes = maxUploadSizeMbytes;
     }
 
 
