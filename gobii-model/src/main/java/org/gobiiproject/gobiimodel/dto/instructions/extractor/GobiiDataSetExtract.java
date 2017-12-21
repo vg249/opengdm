@@ -1,11 +1,12 @@
 package org.gobiiproject.gobiimodel.dto.instructions.extractor;
 
+import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.entity.PropNameId;
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
-import org.gobiiproject.gobiimodel.types.GobiiJobStatus;
 import org.gobiiproject.gobiimodel.types.GobiiSampleListType;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,9 +21,9 @@ public class GobiiDataSetExtract {
     //Combine data sets into a single output file (Unused/unsupported)
     private boolean accolate = false;
     //Descriptive name of the data set. Used in reporting
-    private GobiiJobStatus gobiiJobStatus;
+    private JobProgressStatusType gobiiJobStatus;
     //Internal ID of the data set. Used for internal lookups.
-    String extractDestinationDirectory = null;
+    private String extractDestinationDirectory = null;
 
 
     private GobiiExtractFilterType gobiiExtractFilterType;
@@ -36,6 +37,7 @@ public class GobiiDataSetExtract {
     private List<PropNameId> platforms = new ArrayList<>();
     private GobiiSampleListType gobiiSampleListType;
     private List<PropNameId> markerGroups = new ArrayList<>();
+    private List<File> extractedFiles = new ArrayList<>();
 
 
     public GobiiExtractFilterType getGobiiExtractFilterType() {
@@ -118,11 +120,11 @@ public class GobiiDataSetExtract {
         this.extractDestinationDirectory = extractDestinationDirectory;
     }
 
-    public GobiiJobStatus getGobiiJobStatus() {
+    public JobProgressStatusType getGobiiJobStatus() {
         return gobiiJobStatus;
     }
 
-    public void setGobiiJobStatus(GobiiJobStatus gobiiJobStatus) {
+    public void setGobiiJobStatus(JobProgressStatusType gobiiJobStatus) {
         this.gobiiJobStatus = gobiiJobStatus;
     }
 
@@ -157,5 +159,13 @@ public class GobiiDataSetExtract {
 
     public void setMarkerGroups(List<PropNameId> markerGroups) {
         this.markerGroups = markerGroups;
+    }
+
+    public List<File> getExtractedFiles() {
+        return extractedFiles;
+    }
+
+    public void setExtractedFiles(List<File> extractedFiles) {
+        this.extractedFiles = extractedFiles;
     }
 }
