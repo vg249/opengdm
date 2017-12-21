@@ -11,7 +11,6 @@ gobii-api-model/target
 gobii-brapi/target
 gobii-process/target
 gobii-web/target
-gobii-brapi/target
 /bin/
 
 .settings
