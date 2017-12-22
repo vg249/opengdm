@@ -2,6 +2,7 @@ package org.gobiiproject.gobiiclient.core.common;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -205,14 +206,14 @@ public class HttpCore {
      * @param restUri The RestUri that should contain the destination file name
      * @throws Exception
      */
-    private void makeDownloadedFile(String content,
+    private void makeDownloadedFile(byte[] content,
                                     HttpMethodResult httpMethodResult,
                                     RestUri restUri) throws Exception {
 
 
         String destinationFqpn = restUri.getDestinationFqpn();
         File outputFile = new File(destinationFqpn);
-        FileUtils.writeStringToFile(outputFile, content);
+        FileUtils.writeByteArrayToFile(outputFile,content);
         httpMethodResult.setFileName(destinationFqpn);
 
     }
@@ -267,7 +268,7 @@ public class HttpCore {
                     .get(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE);
 
 
-            String resultAsString = EntityUtils.toString(httpResponse.getEntity());
+            byte[] resultAsByteArray = EntityUtils.toByteArray(httpResponse.getEntity());
 
             // for now, if we specify MediaType.WILDCARD in our own request, we essentially don't
             // know about and/or expect to see a content type in the response. We need this
@@ -277,21 +278,29 @@ public class HttpCore {
                 if (responseContentType.contains(MediaType.APPLICATION_JSON)) {
 
                     JsonParser parser = new JsonParser();
+                    String resultAsString = StringUtils.newStringUtf8(resultAsByteArray);
                     JsonObject jsonObject = parser.parse(resultAsString).getAsJsonObject();
                     returnVal.setJsonPayload(jsonObject);
 
                 } else if (responseContentType.contains(MediaType.TEXT_PLAIN)) {
 
+                    String resultAsString = StringUtils.newStringUtf8(resultAsByteArray);
                     returnVal.setPlainPayload(resultAsString);
                     if (!LineUtils.isNullOrEmpty(restUri.getDestinationFqpn())) {
-                        this.makeDownloadedFile(resultAsString, returnVal, restUri);
+
+
+                        this.makeDownloadedFile(
+                                resultAsByteArray ,
+                                returnVal, restUri);
                     }
 
                 } else if (responseContentType.contains(MediaType.APPLICATION_OCTET_STREAM)
                         || responseContentType.contains(MediaType.MULTIPART_FORM_DATA)) {
 
                     if (!LineUtils.isNullOrEmpty(restUri.getDestinationFqpn())) {
-                        this.makeDownloadedFile(resultAsString, returnVal, restUri);
+                        this.makeDownloadedFile(
+                                resultAsByteArray ,
+                                returnVal, restUri);
                     }
                 } else {
                     // do nothing (e.g., we use MediaType.WILDCARD when the response has no body
