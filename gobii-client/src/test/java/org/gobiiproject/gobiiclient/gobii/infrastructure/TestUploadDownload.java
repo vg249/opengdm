@@ -3,7 +3,6 @@ package org.gobiiproject.gobiiclient.gobii.infrastructure;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpStatus;
 import org.docx4j.openpackaging.packages.SpreadsheetMLPackage;
-import org.docx4j.openpackaging.parts.SpreadsheetML.WorksheetPart;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
@@ -16,15 +15,9 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.xlsx4j.sml.Cell;
-import org.xlsx4j.sml.Row;
-import org.xlsx4j.sml.STCellType;
-import org.xlsx4j.sml.SheetData;
-import org.xlsx4j.sml.Worksheet;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -197,6 +190,8 @@ public class TestUploadDownload {
         File downloadedFile = new File(httpMethodResultFromDownload.getFileName());
 
 
+        Assert.assertTrue("The uploaded and downloaded xlsf file does not have the same content",
+                FileUtils.contentEquals(downloadedFile, fileToUpload));
         this.readXlsFile(downloadedFile);
 
     }
