@@ -2,6 +2,8 @@ package org.gobiiproject.gobiiclient.gobii.infrastructure;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpStatus;
+import org.docx4j.openpackaging.packages.SpreadsheetMLPackage;
+import org.docx4j.openpackaging.parts.SpreadsheetML.WorksheetPart;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
@@ -14,9 +16,15 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.xlsx4j.sml.Cell;
+import org.xlsx4j.sml.Row;
+import org.xlsx4j.sml.STCellType;
+import org.xlsx4j.sml.SheetData;
+import org.xlsx4j.sml.Worksheet;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -46,7 +54,7 @@ public class TestUploadDownload {
 
     static Map<String, File> uploadedFiles = new HashMap<>();
 
-    static String makeFqpn(String fileName ) {
+    static String makeFqpn(String fileName) {
 
         String returnVal;
 
@@ -142,10 +150,76 @@ public class TestUploadDownload {
                     downloadedFile.exists());
 
             Assert.assertTrue("The uplaoded and downloaded files do not contain the same content",
-                    FileUtils.contentEquals(downloadedFile,uploadedFile));
+                    FileUtils.contentEquals(downloadedFile, uploadedFile));
 
             downloadedFile.delete();
         }
     }
 
+    @Test
+    public void testUpDownSpreadsheet() throws Exception {
+
+        ClassLoader classLoader = getClass().getClassLoader();
+        String testSourceFileName = "report_from_kdc.xlsx";
+        String resourcePathMap = "spreadsheets/" + testSourceFileName;
+        File fileToUpload = new File(classLoader.getResource(resourcePathMap).getFile());
+
+        this.readXlsFile(fileToUpload);
+
+        String dummyJobIdDir = DateUtils.makeDateIdString();
+
+        RestUri restUriUpload = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .fileForJob(dummyJobIdDir, GobiiFileProcessDir.RAW_USER_FILES, testSourceFileName);
+        HttpMethodResult httpMethodResult = GobiiClientContext.getInstance(null, false)
+                .getHttp()
+                .upload(restUriUpload, fileToUpload);
+        Assert.assertTrue("Expected "
+                        + HttpStatus.SC_OK
+                        + " got: "
+                        + httpMethodResult.getResponseCode()
+                        + ": "
+                        + httpMethodResult.getReasonPhrase() + ": " + httpMethodResult.getPlainPayload(),
+                httpMethodResult.getResponseCode() == HttpStatus.SC_OK);
+
+
+        String downloadFqpn = makeFqpn(testSourceFileName);
+        RestUri restUri = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .fileForJob(dummyJobIdDir, GobiiFileProcessDir.RAW_USER_FILES, testSourceFileName)
+                .withDestinationFqpn(downloadFqpn);
+
+
+        HttpMethodResult httpMethodResultFromDownload = GobiiClientContext.getInstance(null, false)
+                .getHttp()
+                .get(restUri);
+
+        File downloadedFile = new File(httpMethodResultFromDownload.getFileName());
+
+
+        this.readXlsFile(downloadedFile);
+
+    }
+
+
+    private void readXlsFile(File file) throws Exception {
+        SpreadsheetMLPackage spread = SpreadsheetMLPackage.load(file);
+//        for (WorksheetPart sheet : spread.) {
+//            System.out.println(sheet.getPartName().getName());
+//            Worksheet ws = sheet.getJaxbElement();
+//            SheetData data = ws.getSheetData();
+//            for (Row r : data.getRow()) {
+//                System.out.println("row " + r.getR());
+//                for (Cell c : r.getC()) {
+//                    if (c.getT().equals(STCellType.S)) {
+//                        System.out.println("  " + c.getR() + " contains " +
+//                                sharedStrings.getJaxbElement().getSi().get(Integer.parseInt(c.getV())).getT()
+//                        );
+//                    } else {
+//                        // TODO: handle other cell types
+//                        System.out.println("  " + c.getR() + " contains " + c.getV());
+//                    }
+//                }
+//            }
+    }
 }

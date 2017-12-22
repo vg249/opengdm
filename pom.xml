@@ -36,6 +36,9 @@
 
         <!-- HTTP Client -->
         <httpclient.version>4.4</httpclient.version>
+
+
+        <poi.version>3.17</poi.version>
     </properties>
 
     <modules>
@@ -430,6 +433,16 @@
                 <artifactId>httpcore</artifactId>
                 <version>4.4</version>
             </dependency>
+
+
+            <!-- POI -->
+            <!-- https://mvnrepository.com/artifact/org.docx4j/docx4j -->
+            <dependency>
+                <groupId>org.docx4j</groupId>
+                <artifactId>docx4j</artifactId>
+                <version>3.3.6</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
