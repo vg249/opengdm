@@ -1,6 +1,10 @@
 package org.gobiiproject.gobiiprocess;
 
 import com.google.gson.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Options;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
@@ -63,6 +67,7 @@ import java.util.*;
  */
 public class GobiiTestData {
 
+    private static ServerConfig serverConfig;
 
     private static void validateKeys(NodeList nodeList, XPath xPath, Document document) throws Exception {
 
@@ -1838,6 +1843,141 @@ public class GobiiTestData {
 
     }
 
+    private static String createDirectory(String folderName) throws Exception{
+
+        LoaderFilePreviewDTO loaderFilePreviewDTO = new LoaderFilePreviewDTO();
+
+        RestUri previewTestUriCreate = GobiiClientContext
+                .getInstance(null, false)
+                .getUriFactory()
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_FILE_LOAD);
+
+        previewTestUriCreate.setParamValue("id", folderName);
+        GobiiEnvelopeRestResource<LoaderFilePreviewDTO> gobiiEnvelopeRestResourceCreate = new GobiiEnvelopeRestResource<>(previewTestUriCreate);
+        PayloadEnvelope<LoaderFilePreviewDTO> resultEnvelopeCreate = gobiiEnvelopeRestResourceCreate.put(LoaderFilePreviewDTO.class,
+                new PayloadEnvelope<>(loaderFilePreviewDTO, GobiiProcessType.CREATE));
+
+        checkStatus(resultEnvelopeCreate);
+
+        String jobName = resultEnvelopeCreate.getPayload().getData().get(0).getPreviewFileName();
+
+        return jobName;
+
+    }
+
+    private static String uploadFiles(String jobName, String sourcePath, String filesPath) throws Exception {
+
+        String fileDirectoryName;
+
+        File file = new File(sourcePath);
+
+        try {
+
+            RestUri restUri = GobiiClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .fileForJob(jobName, GobiiFileProcessDir.RAW_USER_FILES, file.getName());
+
+            HttpMethodResult httpMethodResult = GobiiClientContext.getInstance(null, false)
+                    .getHttp()
+                    .upload(restUri, file);
+
+            if(httpMethodResult.getResponseCode() != HttpStatus.SC_OK) {
+
+                throw new Exception("Error uploading data: " + file.getName());
+
+            } else {
+
+                fileDirectoryName = filesPath;
+
+                System.out.println("\nSuccessfully uploaded file.");
+
+            }
+
+        } catch (Exception e) {
+
+            throw new Exception("Error uploading data: " + file.getName());
+
+        }
+
+        return fileDirectoryName;
+
+    }
+
+    private static LoaderInstructionFilesDTO createInstructionFileDTO (String instructionFilePath) throws Exception {
+
+        LoaderInstructionFilesDTO loaderInstructionFilesDTO = new LoaderInstructionFilesDTO();
+
+        try {
+
+            File instructionFile = new File(instructionFilePath);
+
+            InstructionFileAccess<GobiiLoaderInstruction> instructionInstructionFileAccess = new InstructionFileAccess<>(GobiiLoaderInstruction.class);
+            List<GobiiLoaderInstruction> instructions =
+                    instructionInstructionFileAccess.getInstructions(instructionFilePath,
+                            GobiiLoaderInstruction[].class);
+
+            if (null != instructions) {
+
+                loaderInstructionFilesDTO.setInstructionFileName(instructionFile.getName());
+                loaderInstructionFilesDTO.setGobiiLoaderInstructions(instructions);
+
+            } else {
+
+                throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                        "The instruction file exists, but could not be read: " + instructionFilePath);
+
+            }
+
+        } catch (Exception e) {
+
+            throw new Exception("Error creating instruction file DTO");
+
+        }
+
+        return loaderInstructionFilesDTO;
+
+    }
+
+    private static void submitInstructionFile(LoaderInstructionFilesDTO loaderInstructionFilesDTO, String jobPayloadType) throws Exception{
+
+        InstructionFileValidator instructionFileValidator = new InstructionFileValidator(loaderInstructionFilesDTO.getGobiiLoaderInstructions());
+
+        instructionFileValidator.processInstructionFile();
+
+        String validationStatus = instructionFileValidator.validate();
+        if(validationStatus != null){
+
+            throw new Exception("Instruction file validation failed. " + validationStatus);
+
+        }else{
+
+            try {
+
+                if (jobPayloadType.equals(JobPayloadType.CV_PAYLOADTYPE_MARKERS.getCvName())) {
+                    loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0).setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MARKERS);
+                } else if (jobPayloadType.equals(JobPayloadType.CV_PAYLOADTYPE_SAMPLES.getCvName())) {
+                    loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0).setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_SAMPLES);
+                } else if (jobPayloadType.equals(JobPayloadType.CV_PAYLOADTYPE_MATRIX.getCvName())) {
+                    loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0).setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX);
+                } else {
+                    loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0).setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX);
+                }
+
+                PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTO, GobiiProcessType.CREATE);
+                GobiiEnvelopeRestResource<LoaderInstructionFilesDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
+                        .getUriFactory()
+                        .resourceColl(GobiiServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
+                PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResource.post(LoaderInstructionFilesDTO.class,
+                        payloadEnvelope);
+                checkStatus(loaderInstructionFileDTOResponseEnvelope);
+            } catch (Exception err) {
+                throw new Exception("Error submitting instruction file");
+            }
+        }
+
+    }
+
     private static void parseScenarios(NodeList nodeList, XPath xPath, Document document, File fXmlFile) throws  Exception{
 
         JsonParser parser = new JsonParser();
@@ -1847,7 +1987,6 @@ public class GobiiTestData {
         String digestPath = null;
         String jobId = null;
 
-        ServerConfig serverConfig = getConfigSettings();
         Map<GobiiFileProcessDir, String> fileLocations = serverConfig.getFileLocations();
 
         for(int i=0; i<nodeList.getLength(); i++) {
@@ -1980,47 +2119,47 @@ public class GobiiTestData {
                 }
 
                 for (int k = 0; k < jsonArray.size(); k++) {
-                    JsonObject object = (JsonObject) jsonArray.get(k);
+                    JsonObject instructionObject = (JsonObject) jsonArray.get(k);
 
                     if(entityName.equals("contact")){
 
-                        if(object.has("contactId")){
-                            object.addProperty("contactId", currentEntityId);
+                        if(instructionObject.has("contactId")){
+                            instructionObject.addProperty("contactId", currentEntityId);
                         }
 
-                        if(object.has("contactEmail")){
-                            object.addProperty("contactEmail", dbPkeySurrogateValue);
+                        if(instructionObject.has("contactEmail")){
+                            instructionObject.addProperty("contactEmail", dbPkeySurrogateValue);
                         }
 
                         continue;
                     }
 
                     if(entityName.equals("dataSet")) {
-                        if (object.has("dataSetId")) {
-                            object.addProperty("dataSetId", currentEntityId);
+                        if (instructionObject.has("dataSetId")) {
+                            instructionObject.addProperty("dataSetId", currentEntityId);
                         }
                     }
 
-                    JsonObject tempObject = (JsonObject) object.get(entityName);
+                    JsonObject tempObject = (JsonObject) instructionObject.get(entityName);
 
                     tempObject.addProperty("name", dbPkeySurrogateValue);
                     tempObject.addProperty("id", currentEntityId);
 
-                    object.add(entityName, tempObject);
+                    instructionObject.add(entityName, tempObject);
 
                     if(writeSourcePath) {
 
-                        JsonObject gobiiFileObject = (JsonObject) object.get("gobiiFile");
+                        JsonObject gobiiFileObject = (JsonObject) instructionObject.get("gobiiFile");
 
                         gobiiFileObject.addProperty("source", filesPath);
                         gobiiFileObject.addProperty("destination", digestPath);
 
-                        object.add("gobiiFile", gobiiFileObject);
+                        instructionObject.add("gobiiFile", gobiiFileObject);
 
                     }
 
                     // modify gobiiFileColumns attribute
-                    JsonArray gobiiFileColumnsArr = (JsonArray) object.get("gobiiFileColumns");
+                    JsonArray gobiiFileColumnsArr = (JsonArray) instructionObject.get("gobiiFileColumns");
                     for (int o = 0; o < gobiiFileColumnsArr.size(); o++) {
                         JsonObject fileColumnObj = (JsonObject)  gobiiFileColumnsArr.get(o);
 
@@ -2097,9 +2236,9 @@ public class GobiiTestData {
 
                     }
 
-                    object.add("gobiiFileColumns", gobiiFileColumnsArr);
+                    instructionObject.add("gobiiFileColumns", gobiiFileColumnsArr);
 
-                    jsonArray.set(k, object);
+                    jsonArray.set(k, instructionObject);
                 }
             }
 
@@ -2114,129 +2253,52 @@ public class GobiiTestData {
                 instructionFileWriter.write(prettyJsonString);
                 instructionFileWriter.close();
 
-                LoaderFilePreviewDTO loaderFilePreviewDTO = new LoaderFilePreviewDTO();
-
                 // CREATE DIRECTORY
 
-                RestUri previewTestUriCreate = GobiiClientContext
-                        .getInstance(null, false)
-                        .getUriFactory()
-                        .resourceByUriIdParam(GobiiServiceRequestId.URL_FILE_LOAD);
-
-                previewTestUriCreate.setParamValue("id", folderName);
-                GobiiEnvelopeRestResource<LoaderFilePreviewDTO> gobiiEnvelopeRestResourceCreate = new GobiiEnvelopeRestResource<>(previewTestUriCreate);
-                PayloadEnvelope<LoaderFilePreviewDTO> resultEnvelopeCreate = gobiiEnvelopeRestResourceCreate.put(LoaderFilePreviewDTO.class,
-                        new PayloadEnvelope<>(loaderFilePreviewDTO, GobiiProcessType.CREATE));
-
-                checkStatus(resultEnvelopeCreate);
-
-                String jobName = resultEnvelopeCreate.getPayload().getData().get(0).getPreviewFileName();
+                String jobName = createDirectory(folderName);
                 String fileDirectoryName = null;
 
                 // UPLOAD FILES
 
                 if (writeSourcePath) {
 
-                    File file = new File(sourcePath);
-
-                    try {
-
-                        RestUri restUri = GobiiClientContext.getInstance(null, false)
-                                .getUriFactory()
-                                .fileForJob(jobName, GobiiFileProcessDir.RAW_USER_FILES, file.getName());
-
-                        HttpMethodResult httpMethodResult = GobiiClientContext.getInstance(null, false)
-                                .getHttp()
-                                .upload(restUri, file);
-
-                        if(httpMethodResult.getResponseCode() != HttpStatus.SC_OK) {
-
-                            throw new Exception("Error uploading data: " + file.getName());
-
-                        } else {
-
-                            fileDirectoryName = filesPath;
-
-                        }
-
-                    } catch (Exception e) {
-
-                        throw new Exception("Error uploading data: " + file.getName());
-
-                    }
+                    System.out.println("\nUploading data file, this may take a few minutes...");
+                    fileDirectoryName = uploadFiles(jobName, sourcePath, filesPath);
 
                 }
 
                 // CREATE LOADER INSTRUCTION FILE
 
-                LoaderInstructionFilesDTO loaderInstructionFilesDTO = new LoaderInstructionFilesDTO();
-
-                try {
-
-                    File instructionFile = new File(instructionFilePath);
-
-                    InstructionFileAccess<GobiiLoaderInstruction> instructionInstructionFileAccess = new InstructionFileAccess<>(GobiiLoaderInstruction.class);
-                    List<GobiiLoaderInstruction> instructions =
-                            instructionInstructionFileAccess.getInstructions(instructionFilePath,
-                                    GobiiLoaderInstruction[].class);
-
-                    if (null != instructions) {
-
-                        loaderInstructionFilesDTO.setInstructionFileName(instructionFile.getName());
-                        loaderInstructionFilesDTO.setGobiiLoaderInstructions(instructions);
-
-                    } else {
-
-                        throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
-                                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                                "The instruction file exists, but could not be read: " + instructionFilePath);
-
-                    }
-
-                } catch (Exception e) {
-
-                    throw new Exception("Error creating instruction file DTO");
-
-                }
+                LoaderInstructionFilesDTO loaderInstructionFilesDTO = createInstructionFileDTO(instructionFilePath);
 
                 // SUBMIT INSTRUCTION FILE DTO
 
-                InstructionFileValidator instructionFileValidator = new InstructionFileValidator(loaderInstructionFilesDTO.getGobiiLoaderInstructions());
+                submitInstructionFile(loaderInstructionFilesDTO, jobPayloadType);
 
-                instructionFileValidator.processInstructionFile();
-
-                String validationStatus = instructionFileValidator.validate();
-                if(validationStatus != null){
-
-                    throw new Exception("Instruction file validation failed.");
-
-                }else{
-
-                    try {
-
-                        if (jobPayloadType.equals(JobPayloadType.CV_PAYLOADTYPE_MARKERS)) {
-                            loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0).setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MARKERS);
-                        } else if (jobPayloadType.equals(JobPayloadType.CV_PAYLOADTYPE_SAMPLES)) {
-                            loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0).setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_SAMPLES);
-                        } else if (jobPayloadType.equals(JobPayloadType.CV_PAYLOADTYPE_MATRIX)) {
-                            loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0).setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX);
-                        } else {
-                            loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0).setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX);
-                        }
-
-                        PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTO, GobiiProcessType.CREATE);
-                        GobiiEnvelopeRestResource<LoaderInstructionFilesDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
-                                .getUriFactory()
-                                .resourceColl(GobiiServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
-                        PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResource.post(LoaderInstructionFilesDTO.class,
-                                payloadEnvelope);
-                        checkStatus(loaderInstructionFileDTOResponseEnvelope);
-                    } catch (Exception err) {
-                        throw new Exception("Error submitting instruction file");
-                    }
-                }
             }
         }
+    }
+
+    private static String INPUT_XML = "wxml";
+    private static String INPUT_HOST = "h";
+    private static String INPUT_USER = "u";
+    private static String INPUT_PASSWORD = "p";
+
+    private static void setOption(Options options,
+                                  String argument,
+                                  boolean requiresValue,
+                                  String helpText,
+                                  String shortName) throws Exception {
+
+        if (options.getOption(argument) != null) {
+            throw new Exception("Option is already defined: " + argument);
+        }
+
+        //There does not appear to be a way to set argument name with the variants on addOption()
+        options
+                .addOption(argument, requiresValue, helpText)
+                .getOption(argument)
+                .setArgName(shortName);
     }
 
     public static void main(String[] args) throws Exception{
@@ -2245,57 +2307,102 @@ public class GobiiTestData {
         documentBuilderFactory.setNamespaceAware(true);
 
         File fXmlFile;
-        if(args.length != 1) {
 
-            ClassLoader classLoader = GobiiTestData.class.getClassLoader();
-            fXmlFile = new File(classLoader.getResource("test_profiles/codominant_test.xml").getFile());
+        // define commandline options
+        Options options = new Options();
+        setOption(options, INPUT_XML, true, "The XML file containing the entities and scenarios", "input xml");
+        setOption(options, INPUT_HOST, true, "The URL of the gobii server to connect to", "gobii server");
+        setOption(options, INPUT_USER, true, "Username of the user doing the load", "username");
+        setOption(options, INPUT_PASSWORD, true, "Password of the user doing the load", "password");
 
-            GobiiClientContextAuth.authenticate();
-        } else {
-            fXmlFile = new File(args[0]);
+        // parse the commandline
+        CommandLineParser parser = new DefaultParser();
+        CommandLine commandLine = parser.parse(options, args);
 
-            BufferedReader br = null;
+        if(!commandLine.hasOption(INPUT_XML)) {
+            System.out.println("Value is required: " + options.getOption(INPUT_XML).getDescription());
+            System.exit(1);
+        }
 
-            System.out.print("Enter URL: ");
-            br = new BufferedReader(new InputStreamReader(System.in));
-            String url = br.readLine();
+        if(!commandLine.hasOption(INPUT_HOST)) {
+            System.out.println("Value is required: " + options.getOption(INPUT_HOST).getDescription());
+            System.exit(1);
+        }
 
-            System.out.print("Enter crop: ");
-            br = new BufferedReader(new InputStreamReader(System.in));
-            String crop = br.readLine();
+        if(!commandLine.hasOption(INPUT_USER)) {
+            System.out.println("Value is required: " + options.getOption(INPUT_USER).getDescription());
+            System.exit(1);
+        }
 
-            System.out.print("Enter username: ");
-            br = new BufferedReader(new InputStreamReader(System.in));
-            String username = br.readLine();
-
-            String password = "";
-            ConsoleEraser consoleEraser = new ConsoleEraser();
-            System.out.print("Enter password: ");
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-            consoleEraser.start();
-
-            try {
-                password = in.readLine();
-
-                consoleEraser.halt();
-
-                boolean login = GobiiClientContext.getInstance(url, true).login(crop, username, password);
-
-                if (!login) {
-
-                    String failureMessage = GobiiClientContext.getInstance(null, false).getLoginFailure();
-
-                    throw new Exception("Error logging in: " + failureMessage);
-
-                }
+        if(!commandLine.hasOption(INPUT_PASSWORD)) {
+            System.out.println("Value is required: " + options.getOption(INPUT_PASSWORD).getDescription());
+            System.exit(1);
+        }
 
 
-            } catch (IOException e) {
-                System.out.println("Error trying to read your password!");
-                System.exit(1);
+        fXmlFile = new File(commandLine.getOptionValue(INPUT_XML));
+        String url = commandLine.getOptionValue(INPUT_HOST);
+        String username = commandLine.getOptionValue(INPUT_USER);
+        String password = commandLine.getOptionValue(INPUT_PASSWORD);
+        String crop = null;
+
+        try {
+
+            GobiiClientContext.getInstance(url, true).getCurrentClientCropType();
+
+            // parse URL for the context root
+
+            String[] tokens = url.split("/");
+
+            Integer tokensCount = tokens.length;
+
+            if(tokensCount == 0) {
+                throw new Exception("The URL you provided is incorrect.");
             }
 
+            String contextRoot = "/" + tokens[tokensCount-1] + "/";
+
+            List<String> crops = GobiiClientContext.getInstance(null, false).getCropTypeTypes();
+
+            for (String currentCrop : crops) {
+
+                ServerConfig currentServerConfig = GobiiClientContext.getInstance(null, false).getServerConfig(currentCrop);
+
+                if(contextRoot.equals(currentServerConfig.getContextRoot())) {
+                    // use the crop for this server config
+                    crop = currentCrop;
+                    break;
+                }
+
+            }
+
+            if(crop.isEmpty()) {
+
+                throw new Exception("Undefined crop for server: " +  url);
+
+            }
+
+            System.out.println("Logging in to " + url + " ...");
+
+            boolean login = GobiiClientContext.getInstance(url, true).login(crop, username, password);
+
+
+            if (!login) {
+
+                String failureMessage = GobiiClientContext.getInstance(null, false).getLoginFailure();
+
+                throw new Exception("Error logging in: " + failureMessage);
+
+            }
+
+            serverConfig = getConfigSettings();
+
+            System.out.println("\nSuccessfully logged in!");
+
+
+        } catch (IOException e) {
+            System.out.println("Error trying to read your password!");
+            System.exit(1);
         }
 
 
@@ -2331,29 +2438,4 @@ public class GobiiTestData {
         parseScenarios(nodeList, xPath, document, fXmlFile);
 
     }
-
-    private static class ConsoleEraser extends Thread {
-
-        private boolean running = true;
-        public void run() {
-
-            while (running) {
-                System.out.print("");
-                try {
-                    Thread.currentThread().sleep(1);
-                }
-                catch (InterruptedException e) {
-                    break;
-                }
-            }
-
-        }
-
-        public synchronized void halt() {
-            running = false;
-        }
-
-
-    }
-
 }
