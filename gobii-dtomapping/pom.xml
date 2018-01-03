@@ -5,7 +5,7 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>org.gobiiproject</groupId>
-        <version>1.4.0-DEV-2017-12-20_01</version>
+        <version>1.4.0-DEV-2018-01-03_01</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
