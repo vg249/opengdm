@@ -93,8 +93,7 @@ public class FileServiceImpl implements FilesService {
         ConfigSettings configSettings = new ConfigSettings();
 
         String path = configSettings.getProcessingPath(cropType, gobiiFileProcessDir);
-        String fqpn = instructionFileAccess.makeFileName(path, fileName);
-        instructionFileAccess.writeFile(fqpn, byteArray);
+        instructionFileAccess.writeFile(path, fileName, byteArray);
 //        } else {
 //           throw new GobiiDomainException("Unauthorized access");
 //        }
@@ -122,8 +121,7 @@ public class FileServiceImpl implements FilesService {
                                     byte[] byteArray) throws GobiiException, Exception {
 
         String path = this.getFilePath(cropType, jobId, gobiiFileProcessDir);
-        String fqpn = instructionFileAccess.makeFileName(path, fileName);
-        instructionFileAccess.writeFile(fqpn, byteArray);
+        instructionFileAccess.writeFile(path, fileName, byteArray);
     }
 
     @Override

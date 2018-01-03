@@ -150,7 +150,7 @@ public class TestUploadDownload {
         }
     }
 
-    @Ignore
+    @Test
     public void testUpDownSpreadsheet() throws Exception {
 
         ClassLoader classLoader = getClass().getClassLoader();

@@ -227,11 +227,13 @@ public class InstructionFileAccess<T> {
 
     }
 
-    public void writeFile(String fqpn,
+    public void writeFile(String path,
+                          String fileName,
                           byte[] byteArray) throws Exception {
 
 
-
+        this.createDirectory(path);
+        String fqpn = this.makeFileName(path, fileName);
         this.writePlainFile(fqpn, byteArray);
 
     }
