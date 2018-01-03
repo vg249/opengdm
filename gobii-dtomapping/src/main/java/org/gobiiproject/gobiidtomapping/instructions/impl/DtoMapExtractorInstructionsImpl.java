@@ -1,5 +1,7 @@
 package org.gobiiproject.gobiidtomapping.instructions.impl;
 
+import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
+import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.utils.InstructionFileAccess;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapContact;
@@ -14,8 +16,6 @@ import org.gobiiproject.gobiimodel.cvnames.JobType;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
-import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
@@ -43,7 +43,6 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
     Logger LOGGER = LoggerFactory.getLogger(DtoMapExtractorInstructionsImpl.class);
 
     private final String INSTRUCTION_FILE_EXT = ".json";
-    private final String DATA_FILE_EXT = ".txt";
 
     @Autowired
     DtoMapContact dtoMapContact;
@@ -372,7 +371,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                         jobDTONew.setJobName(extractorInstructionFilesDTO.getInstructionFileName());
                         jobDTONew.setSubmittedBy(contactId);
                         jobDTONew.setMessage("Instruction file written by web services");
-                        jobDTONew.setStatus(JobProgressStatusType.CV_PROGRESSSTATUS_PENDING.getCvName());
+                        jobDTONew.setStatus(CV_PROGRESSSTATUS_PENDING.getCvName());
                         jobDTONew.setType(JobType.CV_JOBTYPE_EXTRACT.getCvName());
                         jobDTONew.setPayloadType(jobPayloadType.getCvName());
                         jobDTONew.setSubmittedDate(new Date());

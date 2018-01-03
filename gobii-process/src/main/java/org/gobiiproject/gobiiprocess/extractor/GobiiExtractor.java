@@ -461,6 +461,8 @@ public class GobiiExtractor {
 								ErrorLogger.logDebug("GobiiExtractor","Executing FlapJack Genotype file Generation");
 								success &= FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, tempFolder, genoOutFile,errorFile);
 								getCounts(success, pm, markerFile, sampleFile);
+								pm.setBody(jobReadableIdentifier,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
+								if(!inst.isQcCheck())mailInterface.send(pm);
 								jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(),"Extract Completed 8uccessfully");
 								break;
 							case HAPMAP:
@@ -470,9 +472,13 @@ public class GobiiExtractor {
 								ErrorLogger.logDebug("GobiiExtractor", "Executing Hapmap Generation");
 								success &= hapmapTransformer.generateFile(markerFile, sampleFile, extendedMarkerFile, genoFile, hapmapOutFile, errorFile);
 								getCounts(success, pm, markerFile, sampleFile);
+								pm.setBody(jobReadableIdentifier,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
+								if(!inst.isQcCheck())mailInterface.send(pm);
 								jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(),"Extract Completed 8uccessfully");
 								break;
 							case META_DATA:
+								pm.setBody(jobReadableIdentifier,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
+								if(!inst.isQcCheck())mailInterface.send(pm);
 								jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(),"Successful Data Extract");
 								break;
 							default:
