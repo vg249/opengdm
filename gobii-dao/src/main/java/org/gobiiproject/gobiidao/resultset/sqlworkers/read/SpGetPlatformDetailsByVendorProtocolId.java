@@ -28,21 +28,21 @@ public class SpGetPlatformDetailsByVendorProtocolId implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String sql =  "select platform_id,\n" +
-                "name,\n" +
-                "code,\n" +
-                "description,\n" +
-                "created_by,\n" +
-                "created_date,\n" +
-                "modified_by,\n" +
-                "modified_date,\n" +
-                "status,\n" +
-                "type_id\n" +
+        String sql =  "select pl.platform_id,\n" +
+                "pl.name,\n" +
+                "pl.code,\n" +
+                "pl.description,\n" +
+                "pl.created_by,\n" +
+                "pl.created_date,\n" +
+                "pl.modified_by,\n" +
+                "pl.modified_date,\n" +
+                "pl.status,\n" +
+                "pl.type_id\n" +
                 "from platform pl,\n" +
                 "vendor_protocol vp,\n"+
-                "protocol p,\n"+
-                "where pl.platform_id=p.platform_id\n" +
-                "and p.protocol_id = vp.protocol_id\n" +
+                "protocol p \n"+
+                "where pl.platform_id=p.platform_id \n" +
+                "and p.protocol_id = vp.protocol_id \n" +
                 "and vp.vendor_protocol_id = ?";
 
         PreparedStatement preparedStatement = dbConnection.prepareCall(sql);

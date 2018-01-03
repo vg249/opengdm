@@ -13,6 +13,7 @@ public interface DtoMapPlatform extends DtoMap<PlatformDTO> {
     PlatformDTO create(PlatformDTO platformDTO) throws GobiiDtoMappingException;
     PlatformDTO replace(Integer platformId, PlatformDTO platformDTO) throws GobiiDtoMappingException;
     PlatformDTO get(Integer platformId) throws GobiiDtoMappingException;
+    PlatformDTO getPlatformDetailsByVendorProtocolId(Integer vendorProtocolId) throws GobiiDtoMappingException;
     List<PlatformDTO> getList() throws GobiiDtoMappingException;
 
 }

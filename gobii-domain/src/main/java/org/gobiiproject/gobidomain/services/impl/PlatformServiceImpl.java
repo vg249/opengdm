@@ -69,7 +69,7 @@ public class PlatformServiceImpl implements PlatformService {
 
         PlatformDTO returnVal;
 
-        returnVal = dtoMapPlatform.getPlatformDetails(vendorProtocolId);
+        returnVal = dtoMapPlatform.getPlatformDetailsByVendorProtocolId(vendorProtocolId);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 

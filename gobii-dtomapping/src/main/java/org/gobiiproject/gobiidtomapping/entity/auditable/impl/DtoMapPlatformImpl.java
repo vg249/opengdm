@@ -109,7 +109,6 @@ public class DtoMapPlatformImpl implements DtoMapPlatform {
     } // getPlatformDetails()
 
     @Override
-    public PlatformDTO createPlatform(PlatformDTO platformDTO) throws GobiiDtoMappingException {
     public PlatformDTO create(PlatformDTO platformDTO) throws GobiiDtoMappingException {
         PlatformDTO returnVal = platformDTO;
 
