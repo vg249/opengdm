@@ -1,10 +1,7 @@
 package org.gobiiproject.gobiiprocess;
 
 import com.google.gson.*;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
+import org.apache.commons.cli.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
@@ -55,6 +52,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.*;
 import java.io.*;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
@@ -1821,28 +1819,6 @@ public class GobiiTestData {
 
     }
 
-    public static ServerConfig getConfigSettings() throws Exception {
-
-        RestUri configSettingsUri = GobiiClientContext.getInstance(null, false)
-                .getUriFactory()
-                .resourceColl(GobiiServiceRequestId.URL_CONFIGSETTINGS);
-
-        GobiiEnvelopeRestResource<ConfigSettingsDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(configSettingsUri);
-        PayloadEnvelope<ConfigSettingsDTO> resultEnvelope = gobiiEnvelopeRestResource
-                .get(ConfigSettingsDTO.class);
-
-        checkStatus(resultEnvelope);
-
-        ConfigSettingsDTO configSettingsDTO = resultEnvelope.getPayload().getData().get(0);
-
-        Map.Entry<String, ServerConfig> serverConfigMap = configSettingsDTO.getServerConfigs().entrySet().iterator().next();
-
-        return serverConfigMap.getValue();
-
-
-
-    }
-
     private static String createDirectory(String folderName) throws Exception{
 
         LoaderFilePreviewDTO loaderFilePreviewDTO = new LoaderFilePreviewDTO();
@@ -1972,7 +1948,7 @@ public class GobiiTestData {
                         payloadEnvelope);
                 checkStatus(loaderInstructionFileDTOResponseEnvelope);
             } catch (Exception err) {
-                throw new Exception("Error submitting instruction file");
+                throw new Exception("Error submitting instruction file: " + err.getMessage());
             }
         }
 
@@ -2301,6 +2277,20 @@ public class GobiiTestData {
                 .setArgName(shortName);
     }
 
+    public static String getMessageForMissingOption(String optionName, Options options) {
+
+        Option option = options.getOption(optionName);
+
+        if(option.equals(null)) {
+
+            return "Invalid argument: " + optionName;
+        }
+
+
+        return "Value is required: " + option.getArgName() + ", " + option.getDescription();
+
+    }
+
     public static void main(String[] args) throws Exception{
 
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -2320,27 +2310,46 @@ public class GobiiTestData {
         CommandLine commandLine = parser.parse(options, args);
 
         if(!commandLine.hasOption(INPUT_XML)) {
-            System.out.println("Value is required: " + options.getOption(INPUT_XML).getDescription());
+
+            String message = getMessageForMissingOption(INPUT_XML, options);
+
+            System.out.println(message);
             System.exit(1);
         }
 
         if(!commandLine.hasOption(INPUT_HOST)) {
-            System.out.println("Value is required: " + options.getOption(INPUT_HOST).getDescription());
+
+            String message = getMessageForMissingOption(INPUT_HOST, options);
+
+            System.out.println(message);
             System.exit(1);
         }
 
         if(!commandLine.hasOption(INPUT_USER)) {
-            System.out.println("Value is required: " + options.getOption(INPUT_USER).getDescription());
+
+            String message = getMessageForMissingOption(INPUT_USER, options);
+
+            System.out.println(message);
             System.exit(1);
         }
 
         if(!commandLine.hasOption(INPUT_PASSWORD)) {
-            System.out.println("Value is required: " + options.getOption(INPUT_PASSWORD).getDescription());
+
+            String message = getMessageForMissingOption(INPUT_PASSWORD, options);
+
+            System.out.println(message);
             System.exit(1);
         }
 
 
         fXmlFile = new File(commandLine.getOptionValue(INPUT_XML));
+
+        if(!fXmlFile.exists()) {
+
+            throw new Exception("The XML file doesn't exists. Path: " + commandLine.getOptionValue(INPUT_XML));
+
+        }
+
         String url = commandLine.getOptionValue(INPUT_HOST);
         String username = commandLine.getOptionValue(INPUT_USER);
         String password = commandLine.getOptionValue(INPUT_PASSWORD);
@@ -2352,15 +2361,15 @@ public class GobiiTestData {
 
             // parse URL for the context root
 
-            String[] tokens = url.split("/");
+            URL iURL = new URL(url);
 
-            Integer tokensCount = tokens.length;
+            String contextRoot = iURL.getPath();
 
-            if(tokensCount == 0) {
-                throw new Exception("The URL you provided is incorrect.");
+            if('/' != contextRoot.charAt(contextRoot.length() -1)) {
+
+                contextRoot = contextRoot + "/";
+
             }
-
-            String contextRoot = "/" + tokens[tokensCount-1] + "/";
 
             List<String> crops = GobiiClientContext.getInstance(null, false).getCropTypeTypes();
 
@@ -2371,6 +2380,7 @@ public class GobiiTestData {
                 if(contextRoot.equals(currentServerConfig.getContextRoot())) {
                     // use the crop for this server config
                     crop = currentCrop;
+                    serverConfig = currentServerConfig;
                     break;
                 }
 
@@ -2395,16 +2405,14 @@ public class GobiiTestData {
 
             }
 
-            serverConfig = getConfigSettings();
-
             System.out.println("\nSuccessfully logged in!");
 
 
         } catch (IOException e) {
-            System.out.println("Error trying to read your password!");
-            System.exit(1);
-        }
 
+            throw new Exception("Something went wrong. " +  e.getMessage());
+
+        }
 
 
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
