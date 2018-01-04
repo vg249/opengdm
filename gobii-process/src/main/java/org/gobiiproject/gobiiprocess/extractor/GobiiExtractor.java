@@ -760,26 +760,26 @@ public class GobiiExtractor {
 						mailInterface.send(qcStatusPm);
 
 						//purge data
-                    ErrorLogger.logInfo("QC", "Calling QC Purge");
-                    RestUri restUriGetPurge = new RestUri("/",
-                            configuration.getKDCConfig().getContextPath(),
-                            configuration.getKDCConfig().getPath(ServerConfigKDC.KDCResource.QC_PURGE))
-                            .addQueryParam("jobid", String.valueOf(qcJobID))
-                            .withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT, MediaType.WILDCARD);
-
-                    httpMethodResult = genericClientContext
-                            .get(restUriGetPurge);
-                    if (httpMethodResult.getResponseCode() != HttpStatus.SC_OK) {
-                        ErrorLogger.logInfo("QC", "The qcPurge method failed: "
-									+ httpMethodResult.getUri().toString()
-									+ "; failure mode: "
-									+ Integer.toString(httpMethodResult.getResponseCode())
-									+ " ("
-									+ httpMethodResult.getReasonPhrase()
-									+ ")");
-						} else {
-							ErrorLogger.logInfo("QC", "qcPurge method is successful.");
-						}
+//                    ErrorLogger.logInfo("QC", "Calling QC Purge");
+//                    RestUri restUriGetPurge = new RestUri("/",
+//                            configuration.getKDCConfig().getContextPath(),
+//                            configuration.getKDCConfig().getPath(ServerConfigKDC.KDCResource.QC_PURGE))
+//                            .addQueryParam("jobid", String.valueOf(qcJobID))
+//                            .withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT, MediaType.WILDCARD);
+//
+//                    httpMethodResult = genericClientContext
+//                            .get(restUriGetPurge);
+//                    if (httpMethodResult.getResponseCode() != HttpStatus.SC_OK) {
+//                        ErrorLogger.logInfo("QC", "The qcPurge method failed: "
+//									+ httpMethodResult.getUri().toString()
+//									+ "; failure mode: "
+//									+ Integer.toString(httpMethodResult.getResponseCode())
+//									+ " ("
+//									+ httpMethodResult.getReasonPhrase()
+//									+ ")");
+//						} else {
+//							ErrorLogger.logInfo("QC", "qcPurge method is successful.");
+//						}
 
 					}
 				}
