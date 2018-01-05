@@ -2410,7 +2410,7 @@ public class GobiiTestData {
 
         } catch (IOException e) {
 
-            throw new Exception("Something went wrong. " +  e.getMessage());
+            throw new Exception("Initialization and authentication error: " +  e.getMessage());
 
         }
 
