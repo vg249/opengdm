@@ -733,11 +733,11 @@ public class GobiiExtractor {
 								}
                         }
                         if (status.equals("COMPLETED")) {
-                            ErrorLogger.logError("QC", new StringBuilder("The QC job #").append(qcJobID).append(" was completed").toString());
+                            ErrorLogger.logInfo("QC", new StringBuilder("The QC job #").append(qcJobID).append(" has completed").toString());
                             qcStatusPm.setBody(new StringBuilder("[GOBII - QC]: job #").append(qcJobID).toString(), extractType, SimpleTimer.stop("QC"), ErrorLogger.getFirstErrorReason(), true, ErrorLogger.getAllErrorStringsHTML());
                         } else {
                             if (status.equals("FAILED")) {
-                                ErrorLogger.logError("QC", new StringBuilder("The QC job #").append(qcJobID).append(" was failed").toString());
+                                ErrorLogger.logError("QC", new StringBuilder("The QC job #").append(qcJobID).append(" has failed").toString());
                                 qcStatusPm.setBody(new StringBuilder("[GOBII - QC]: job #").append(qcJobID).toString(), extractType, SimpleTimer.stop("QC"), ErrorLogger.getFirstErrorReason(), false, ErrorLogger.getAllErrorStringsHTML());
                             }
 							}
