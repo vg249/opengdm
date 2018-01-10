@@ -33,11 +33,8 @@ public class SpGetJobDetailsByJobName implements Work {
                 "j.submitted_by,\n" +
                 "j.submitted_date,\n" +
                 "j.name,\n" +
-                "d.dataset_id\n"+
-                "from job j\n" +
-                "left JOIN\n" +
-                "dataset d\n" +
-                "on d.job_id = j.job_id,\n" +
+                "ARRAY(select d.dataset_id from dataset d where d.job_id = j.job_id) as datasetids \n" +
+                "from job j,\n" +
                 "cv type,\n" +
                 "cv payloadtype,\n" +
                 "cv status\n" +

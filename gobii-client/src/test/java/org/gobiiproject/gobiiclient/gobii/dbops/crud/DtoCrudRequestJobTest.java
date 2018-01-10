@@ -308,7 +308,7 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
         JobDTO newJobDto = TestDtoFactory.makePopulateJobDTO();
 
         newJobDto.setPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX.getCvName());
-        newJobDto.setDatasetId(newDataSetDtoResponse.getDataSetId());
+        newJobDto.getDatasetIds().add(newDataSetDtoResponse.getDataSetId());
 
         RestUri jobUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()

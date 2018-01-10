@@ -16,6 +16,10 @@ import {FilterParamsColl} from "../services/core/filter-params-coll";
 import {DtoRequestItemGfi} from "../services/app/dto-request-item-gfi";
 import {FilterParams} from "../model/file-item-params";
 import {JsonToGfiAnalysis} from "../services/app/jsontogfi/json-to-gfi-analysis";
+import {CvFilters, CvFilterType} from "../model/cv-filter-type";
+import {EntitySubType, EntityType} from "../model/type-entity";
+import {GobiiFileItemCompoundId} from "../model/gobii-file-item-compound-id";
+import {ExtractorItemType} from "../model/type-extractor-item";
 
 
 @Component({
@@ -24,14 +28,21 @@ import {JsonToGfiAnalysis} from "../services/app/jsontogfi/json-to-gfi-analysis"
     outputs: [],
     template: `
         <div style="border: 1px solid #336699; padding-left: 5px">
+            <BR>
+            <p-checkbox binary="true"
+                        [ngModel]="filterToExtractReady"
+                        (onChange)="handleFilterToExtractReadyChecked($event)"
+                        [disabled]="disableFilterToExtractReadyCheckbox">
+            </p-checkbox>
+            <label class="the-legend">Extract-Ready&nbsp;</label>
+            <BR>
             <div class="container-fluid">
 
-                <BR>
-                <label class="the-legend">Filter by Status:&nbsp;</label>
-                <name-id-list-box
-                        [gobiiExtractFilterType]="gobiiExtractFilterType"
-                        [filterParamName]="nameIdFilterParamTypes.CV_JOB_STATUS">
-                </name-id-list-box>
+
+                <!--<name-id-list-box-->
+                <!--[gobiiExtractFilterType]="gobiiExtractFilterType"-->
+                <!--[filterParamName]="nameIdFilterParamTypes.CV_JOB_STATUS">-->
+                <!--</name-id-list-box>-->
 
             </div> <!--status selector row -->
 
@@ -40,29 +51,50 @@ import {JsonToGfiAnalysis} from "../services/app/jsontogfi/json-to-gfi-analysis"
                          (onRowSelect)="handleRowSelect($event)"
                          (onRowUnselect)="handleRowUnSelect($event)"
                          (onRowClick)="handleOnRowClick($event)"
-                         dataKey="_entity.id">
-                <p-column [style]="{'width':'30px'}">
+                         dataKey="_entity.id"
+                         resizableColumns="true"
+                         scrollable="true"
+                         scrollHeight="700px"
+                         scrollWidth="100%"
+                         columnResizeMode="expand">
+                <p-column field="_entity.id" header="Id" hidden="true"></p-column>
+                <p-column [style]="{'width':'5%','text-align':'center'}">
                     <ng-template let-col let-fi="rowData" pTemplate="body">
                         <p-checkbox binary="true"
                                     [ngModel]="fi.getSelected()"
                                     (onChange)="handleRowChecked($event, fi)"
-                                    [disabled]="fi.getEntity().jobStatusName !== 'completed' || (fi.getEntity().jobTypeName !== 'load')">
+                                    [hidden]="fi.getEntity().jobStatusName !== 'completed'">
                         </p-checkbox>
 
                     </ng-template>
                 </p-column>
-                <p-column [style]="{'width':'10%','text-align':'center'}">
+                <p-column [style]="{'width':'5%','text-align':'center'}">
                     <ng-template let-col="rowData" pTemplate="body">
-                        <button type="button" pButton (click)="selectDataset($event,col,datasetOverlayPanel);"
-                                icon="fa-bars"></button>
+                        <button type="button" 
+                                pButton (click)="selectDataset($event,col,datasetOverlayPanel);"
+                                icon="fa-bars" 
+                                style="font-size: 10px"></button>
                     </ng-template>
                 </p-column>
-                <p-column field="_entity.id" header="Id" hidden="true"></p-column>
-                <p-column field="_entity.datasetName" header="Name"></p-column>
-                <p-column field="_entity.jobStatusName" header="Status"></p-column>
-                <p-column field="_entity.jobTypeName" header="Type"></p-column>
-                <p-column field="jobSubmittedDate" header="Submitted">
+                <p-column field="_entity.datasetName"
+                          header="Name"
+                          [style]="{'width': '18%'}"></p-column>
+                <p-column field="_entity.projectName"
+                          header="Project"
+                          [style]="{'width': '18%'}"></p-column>
+                <p-column field="_entity.experimentName"
+                          header="Experiment"
+                          [style]="{'width': '18%'}"></p-column>
+                <p-column field="_entity.piEmail"
+                          header="PI"
+                          [style]="{'width': '18%','overflow': 'inherit'}"></p-column>
+                <!--<p-column field="_entity.jobStatusName" header="Status"></p-column>-->
+                <!--<p-column field="_entity.jobTypeName" header="Type"></p-column>-->
+                <p-column field="jobSubmittedDate"
+                          header="Status"
+                          [style]="{'width': '18%','overflow': 'inherit'}">
                     <ng-template let-col let-fi="rowData" pTemplate="body">
+                        {{fi._entity.jobTypeName === "load" ? "loaded on " : fi._entity.jobTypeName === "extract" ? "extracted on " : "unprocessed"}}
                         {{fi._entity[col.field] | date:'yyyy-MM-dd HH:mm' }}
                     </ng-template>
                 </p-column>
@@ -196,6 +228,40 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
     public selectedDatasetDetailEntity: DataSet;
     public analysisPanelCollapsed: boolean = true;
     public analysisPanelToggle: boolean = true;
+
+    public filterToExtractReady: boolean = true;
+    public disableFilterToExtractReadyCheckbox: boolean = false;
+
+
+    public handleFilterToExtractReadyChecked(event) {
+
+
+        let filterValue: string;
+        if (event === true) {
+
+            filterValue = "completed";
+        } else {
+            filterValue = null;
+        }
+
+        this.store.dispatch(new fileAction.LoadFilterAction(
+            {
+                filterId: FilterParamNames.DATASET_LIST_STATUS,
+                filter: {
+                    gobiiExtractFilterType: GobiiExtractFilterType.WHOLE_DATASET,
+                    gobiiCompoundUniqueId: new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
+                        EntityType.DATASET,
+                        EntitySubType.UNKNOWN,
+                        CvFilterType.UNKNOWN,
+                        CvFilters.get(CvFilterType.UNKNOWN)),
+                    filterValue: filterValue,
+                    entityLasteUpdated: null
+                }
+            }
+        ))
+
+    }
+
 
     public handleHideOverlayPanel($event) {
 
