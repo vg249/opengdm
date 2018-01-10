@@ -1,28 +1,28 @@
-package org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp;
+package org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement;
 
-import org.hibernate.jdbc.Work;
+import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
+import org.gobiiproject.gobiidao.resultset.core.listquery.ListStatement;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
+import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY_ID_JOB_BY_JOBNAME;
+
 /**
- * Created by VCalaminos on 9/4/2017.
+
  */
-public class SpGetJobDetailsByJobName implements Work {
+public class ListStatementJobByJobName implements ListStatement {
 
-    private Map<String, Object> parameters = null;
-
-    public SpGetJobDetailsByJobName(Map<String, Object> parameters) { this.parameters = parameters; }
-
-    private ResultSet resultSet = null;
-
-    public ResultSet getResultSet() { return resultSet; }
 
     @Override
-    public void execute(Connection dbConnection) throws SQLException {
+    public ListSqlId getListSqlId() {
+        return QUERY_ID_JOB_BY_JOBNAME;
+    }
+
+    @Override
+    public PreparedStatement makePreparedStatement(Connection dbConnection, Map<String, Object> jdbcParamVals, Map<String, Object> sqlParamVals) throws SQLException {
 
         String sql = "select\n" +
                 "j.job_id,\n" +
@@ -42,11 +42,11 @@ public class SpGetJobDetailsByJobName implements Work {
                 "and j.payload_type_id = payloadtype.cv_id\n" +
                 "and j.status = status.cv_id\n" +
                 "and j.name = ?";
-        PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
-        String jobName = (String) parameters.get("jobName");
-        preparedStatement.setString(1, jobName);
-        resultSet = preparedStatement.executeQuery();
 
+        PreparedStatement returnVal = dbConnection.prepareStatement(sql);
+        String jobName = (String) jdbcParamVals.get("jobName");
+        returnVal.setString(1, jobName);
+
+        return returnVal;
     }
-
 }

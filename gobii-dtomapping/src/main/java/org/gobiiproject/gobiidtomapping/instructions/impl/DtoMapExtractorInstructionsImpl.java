@@ -152,7 +152,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
                     GobiiDataSetExtract currentGobiiDataSetExtract = currentExtractorInstruction.getDataSetExtracts().get(idx);
 
-                    if( currentGobiiDataSetExtract.getDataSet() != null && currentGobiiDataSetExtract.getDataSet().getId() > 0) {
+                    if (currentGobiiDataSetExtract.getDataSet() != null && currentGobiiDataSetExtract.getDataSet().getId() > 0) {
                         datasetIds.add(currentGobiiDataSetExtract.getDataSet().getId());
                     }
 
@@ -360,7 +360,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                                     + " does not have any samples, markers, datasets, or marker groups specified");
                         }
 
-                        if( thereAreDatasets ) {
+                        if (thereAreDatasets) {
 
                             JobDTO jobDTONew = new JobDTO();
 
@@ -489,7 +489,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
      * Returns a list of gobii extractor instruction(technically 1). Sets the job status for the data-sets under inspection
      *
      * @param instructionFileFqpn Instruction file path
-     * @param jobProgressStatus job progress status.
+     * @param jobProgressStatus   job progress status.
      * @return extractor instruction status.
      */
     private List<GobiiExtractorInstruction> setGobiiExtractorInstructionStatus(String instructionFileFqpn, JobProgressStatusType jobProgressStatus) {

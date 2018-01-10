@@ -3,7 +3,8 @@ package org.gobiiproject.gobiidtomapping.entity.noaudit.impl;
 import org.apache.commons.lang.time.DateUtils;
 import org.gobiiproject.gobiidao.resultset.access.RsJobDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
-import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
+import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
+import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapDataSet;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapJob;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
@@ -17,8 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.*;
 
@@ -34,7 +33,11 @@ public class DtoMapJobImpl implements DtoMapJob {
     @Autowired
     private DtoMapDataSet dtoMapDataSet = null;
 
+    @Autowired
+    private DtoListQueryColl dtoListQueryColl;
 
+
+    @SuppressWarnings("unchecked")
     @Override
     public List<JobDTO> getJobs() throws GobiiDtoMappingException {
 
@@ -42,56 +45,34 @@ public class DtoMapJobImpl implements DtoMapJob {
 
         try {
 
-            ResultSet resultSet = rsJobDao.getJobs();
+            returnVal = (List<JobDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_JOB_ALL);
 
-            while (resultSet.next()) {
-
-                JobDTO currentJobDTO = new JobDTO();
-                ResultColumnApplicator.applyColumnValues(resultSet, currentJobDTO);
-
-                returnVal.add(currentJobDTO);
-
-            }
-
-
-        } catch (SQLException e) {
+        } catch (Exception e) {
             LOGGER.error("GObii Mapping Error", e);
             throw new GobiiDtoMappingException(e);
         }
 
-
         return returnVal;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public JobDTO getJobDetailsByJobName(String jobName) throws GobiiDtoMappingException {
 
         JobDTO returnVal = new JobDTO();
 
-
-        ResultSet resultSet = rsJobDao.getJobDetailsForJobName(jobName);
-
-        boolean retrievedOneRecord = false;
-
         try {
 
-            while (resultSet.next()) {
+            Map<String, Object> jdbcParameters = new HashMap<>();
+            jdbcParameters.put("jobName", jobName);
+            List<JobDTO> jobs = (List<JobDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_JOB_BY_JOBNAME, jdbcParameters);
 
-                if (true == retrievedOneRecord) {
-
-                    throw (new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
-                            GobiiValidationStatusType.VALIDATION_NOT_UNIQUE,
-                            "There are more than one job records for job id: " + jobName));
-                }
-
-                retrievedOneRecord = true;
-
-                ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
-
+            if(jobs.size() > 0 ) {
+                returnVal = jobs.get(0);
             }
 
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             LOGGER.error("Gobii Mapping Error", e);
             throw new GobiiDtoMappingException(e);
         }
@@ -177,19 +158,23 @@ public class DtoMapJobImpl implements DtoMapJob {
 
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public JobDTO getJobDetailsByDatasetId(Integer datasetId) throws GobiiDtoMappingException {
 
         JobDTO returnVal = new JobDTO();
 
-        ResultSet resultSet = rsJobDao.getJobDetailsByDatasetId(datasetId);
         try {
-            if (resultSet.next()) {
 
-                ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
+            Map<String, Object> jdbcParameters = new HashMap<>();
+            jdbcParameters.put("datasetId", datasetId);
+            List<JobDTO> jobs = (List<JobDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_JOB_BY_DATASET_ID, jdbcParameters);
+
+            if(jobs.size() > 0 ) {
+                returnVal = jobs.get(0);
             }
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new GobiiDtoMappingException(e);
         }
         return returnVal;

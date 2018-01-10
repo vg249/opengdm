@@ -1,32 +1,29 @@
-package org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp;
+package org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement;
 
-import org.hibernate.jdbc.Work;
+import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
+import org.gobiiproject.gobiidao.resultset.core.listquery.ListStatement;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
+import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY_ID_DATASET_ALL;
+import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY_ID_JOB_BY_DATASET_ID;
+
 /**
- * Created by Angel on 4/19/2016.
+
  */
-public class SpGetJobDetailsByDataSetId implements Work {
-
-    private Map<String,Object> parameters = null;
-    public SpGetJobDetailsByDataSetId(Map<String,Object> parameters ) {
-        this.parameters = parameters;
-    }
+public class ListStatementJobByDatasetId implements ListStatement {
 
 
-    private ResultSet resultSet = null;
-
-    public ResultSet getResultSet() {
-        return resultSet;
+    @Override
+    public ListSqlId getListSqlId() {
+        return QUERY_ID_JOB_BY_DATASET_ID;
     }
 
     @Override
-    public void execute(Connection dbConnection) throws SQLException {
+    public PreparedStatement makePreparedStatement(Connection dbConnection, Map<String, Object> jdbcParamVals, Map<String, Object> sqlParamVals) throws SQLException {
 
         String sql = "select" +
                 " j.job_id, " +
@@ -50,8 +47,10 @@ public class SpGetJobDetailsByDataSetId implements Work {
                 " and array_length( ARRAY(select d.dataset_id from dataset d where d.job_id = j.job_id), 1) > 0 " +
                 " and d.dataset_id = ?";
 
-        PreparedStatement preparedStatement = dbConnection.prepareCall(sql);
-        preparedStatement.setInt(1, (Integer) parameters.get("dataSetId"));
-        resultSet = preparedStatement.executeQuery();
-    } // execute()
+        PreparedStatement returnVal = dbConnection.prepareStatement(sql);
+        Integer datasetId = (Integer) jdbcParamVals.get("datasetId");
+        returnVal.setInt(1, datasetId);
+
+        return returnVal;
+    }
 }
