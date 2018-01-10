@@ -37,6 +37,7 @@ import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 
+import javax.validation.constraints.Null;
 import javax.ws.rs.core.MediaType;
 
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
@@ -686,9 +687,9 @@ public class GobiiExtractor {
 						qcStatusPm.addIdentifier("QC Job Identifier", String.valueOf(qcJobID), String.valueOf(qcJobID));
 						qcStatusPm.addIdentifier("Dataset Identifier", String.valueOf(datasetId), String.valueOf(qcJobID));
 
-                        Integer start = jsonPayload.get("start").getAsInt();
-                        Integer end = jsonPayload.get("end").getAsInt();
-                        Integer qcDuration = end - start;
+						int start = jsonPayload.get("start").getAsInt();
+						int	end = jsonPayload.get("end").getAsInt();
+						int qcDuration = end - start;
 
                         if ((status.equals("COMPLETED")) || (status.equals("FAILED"))) {
 							// If the extract directory does not exist or is not writable, it always makes the last qcDownload method crashing and
@@ -739,20 +740,15 @@ public class GobiiExtractor {
 									}
 								}
                         }
-                        if (status.equals("COMPLETED")) {
-                            ErrorLogger.logInfo("QC", new StringBuilder("The QC job #").append(qcJobID).append(" has completed").toString());
-                            qcStatusPm.setBody(new StringBuilder("[GOBII - QC]: job #").append(qcJobID).toString(), extractType, SimpleTimer.stop("QC"), ErrorLogger.getFirstErrorReason(), true, ErrorLogger.getAllErrorStringsHTML());
-                        } else {
-                            if (status.equals("FAILED")) {
-                                ErrorLogger.logError("QC", new StringBuilder("The QC job #").append(qcJobID).append(" has failed").toString());
-                                qcStatusPm.setBody(new StringBuilder("[GOBII - QC]: job #").append(qcJobID).toString(), extractType, SimpleTimer.stop("QC"), ErrorLogger.getFirstErrorReason(), false, ErrorLogger.getAllErrorStringsHTML());
-                            }
+                        int qcDurationInSeconds = qcDuration*60;
+							if (status.equals("COMPLETED")) {
+								ErrorLogger.logInfo("QC", new StringBuilder("The QC job #").append(qcJobID).append(" has completed").toString());
+								qcStatusPm.setBody(new StringBuilder("[GOBII - QC]: job #").append(qcJobID).toString(), extractType, qcDurationInSeconds, ErrorLogger.getFirstErrorReason(), true, ErrorLogger.getAllErrorStringsHTML());
+							} else if (status.equals("FAILED")) {
+								ErrorLogger.logError("QC", new StringBuilder("The QC job #").append(qcJobID).append(" has failed").toString());
+								qcStatusPm.setBody(new StringBuilder("[GOBII - QC]: job #").append(qcJobID).toString(), extractType, qcDurationInSeconds, ErrorLogger.getFirstErrorReason(), false, ErrorLogger.getAllErrorStringsHTML());
 							}
-
-							if( qcDuration != null ) {
-                                qcStatusPm.setBody(new StringBuilder("[GOBII - QC]: job #").append(qcJobID).toString(), extractType, qcDuration, ErrorLogger.getFirstErrorReason(), false, ErrorLogger.getAllErrorStringsHTML());
-                            }
-						}
+						}//endif Status=Completed || Failed
 						else {
 
 							if ((status.equals("CANCELLED")) || (status.equals("UNKNOWN"))) {
