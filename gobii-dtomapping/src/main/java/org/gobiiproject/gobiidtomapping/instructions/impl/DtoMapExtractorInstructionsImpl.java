@@ -371,6 +371,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                             jobDTONew.setType(JobType.CV_JOBTYPE_EXTRACT.getCvName());
                             jobDTONew.setPayloadType(jobPayloadType.getCvName());
                             jobDTONew.setSubmittedDate(new Date());
+                            jobDTONew.setDatasetIds(datasetIds);
 
                             dtoMapJob.createJob(jobDTONew);
 

@@ -126,6 +126,7 @@ public class DtoRequestFileExtractorInstructionsTest {
         gobiiDataSetExtractTwo.setGobiiFileType(DataSetExtractFileTypeTwo);
         gobiiDataSetExtractTwo.setDataSet(new PropNameId(2,"my_foo_2Dataset2"));
 
+
         gobiiExtractorInstructionTwo.getDataSetExtracts().add(gobiiDataSetExtractOne);
         gobiiExtractorInstructionTwo.getDataSetExtracts().add(gobiiDataSetExtractTwo);
 
