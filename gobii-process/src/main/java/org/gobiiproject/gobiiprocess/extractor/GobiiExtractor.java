@@ -503,7 +503,8 @@ public class GobiiExtractor {
 
 					ErrorLogger.logDebug("Extractor", "DataSet " + datasetName + " Created");
 
-					if (inst.isQcCheck()) {//QC - Subsection #1 of 1
+					/*Perform QC if the instruction is QC-based AND we are a successful extract*/
+					if (inst.isQcCheck() && ErrorLogger.success()) {//QC - Subsection #1 of 1
 						ErrorLogger.logInfo("Extractor", "qcCheck detected");
 						ErrorLogger.logInfo("Extractor", "Entering into the QC Subsection #1 of 1...");
 						jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING.getCvName(),"Processing QC Job");
@@ -636,7 +637,7 @@ public class GobiiExtractor {
 					qcStartPm.addIdentifier("Dataset Identifier", String.valueOf(datasetId), String.valueOf(qcJobID));
 					qcStartPm.addPath("Output Extraction/QC Directory", extractDir);
 					qcStartPm.setBody("new QC Job #"+qcJobID,"QC",0,"",true,"");
-					mailInterface.send(qcStartPm);
+					//mailInterface.send(qcStartPm);
 						RestUri restUriGetQCJobStatus = new RestUri("/",
 								configuration.getKDCConfig().getContextPath(),
 								configuration.getKDCConfig().getPath(ServerConfigKDC.KDCResource.QC_STATUS_));
