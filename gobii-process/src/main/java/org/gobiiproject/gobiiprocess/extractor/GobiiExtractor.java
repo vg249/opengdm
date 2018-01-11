@@ -511,6 +511,10 @@ public class GobiiExtractor {
 						performQC(configuration, inst, crop, datasetId, extractDir, mailInterface, extractType);
 						jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(),"QC Job Complete");
 					}
+					//inst.isQcCheck has supressed the email output, we wnat to *unsupress* it if there was a problem with file generation
+					if(inst.isQcCheck() && !ErrorLogger.success()){
+						mailInterface.send(pm);
+					}
 				}
 				HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
 			}catch(Exception e){
