@@ -54,7 +54,7 @@ public class PlatformServiceImpl implements PlatformService {
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
 
-            if (null == returnVal) {
+            if (null == returnVal.getPlatformId() || returnVal.getPlatformId()<1) {
                 throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
                         GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
                         "The specified platformId ("
@@ -74,7 +74,7 @@ public class PlatformServiceImpl implements PlatformService {
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
 
-        if (null == returnVal) {
+        if (null == returnVal.getPlatformId() || returnVal.getPlatformId()<1) {
             throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
                     GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
                     "The specified vendorProtocol id ("
