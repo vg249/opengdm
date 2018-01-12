@@ -8,6 +8,7 @@ import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsPlatformProperties;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsPlatform;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdPlatform;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPlatformDetailsByVendorProtocolId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetPlatformDetailsByPlatformId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetPlatformNames;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetPlatformNamesByTypeId;
@@ -104,6 +105,32 @@ public class RsPlatformDaoImpl implements RsPlatformDao {
 
         } catch (SQLGrammarException e) {
             LOGGER.error("Error getting platform details by platform id with SQL " + e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
+
+        }
+
+        return returnVal;
+
+    } // getPlatformDetailsByPlatformId()
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public ResultSet getPlatformDetailsByVendorProtocolId(Integer vendorProtocolId) throws GobiiDaoException {
+
+        ResultSet returnVal = null;
+
+        try {
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("vendorProtocolId", vendorProtocolId);
+            SpGetPlatformDetailsByVendorProtocolId spGetPlatformDetailsByVendorProtocolId = new SpGetPlatformDetailsByVendorProtocolId(parameters);
+
+            storedProcExec.doWithConnection(spGetPlatformDetailsByVendorProtocolId);
+
+            returnVal = spGetPlatformDetailsByVendorProtocolId.getResultSet();
+
+        } catch (SQLGrammarException e) {
+            LOGGER.error("Error getting platform details by vendorProtocl id with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
         }

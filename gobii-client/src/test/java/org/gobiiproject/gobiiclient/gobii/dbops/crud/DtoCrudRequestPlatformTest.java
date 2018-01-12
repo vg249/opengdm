@@ -9,11 +9,7 @@ import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
-import org.gobiiproject.gobiiclient.gobii.Helpers.DtoRestRequestUtils;
-import org.gobiiproject.gobiiclient.gobii.Helpers.EntityParamValues;
-import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkValues;
-import org.gobiiproject.gobiiclient.gobii.Helpers.TestDtoFactory;
-import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
+import org.gobiiproject.gobiiclient.gobii.Helpers.*;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
@@ -335,4 +331,23 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
 
     }
 
+    @Test
+    public void getPlatformByvendorProtocolId() throws Exception {
+
+        Integer vendorProtocolId = (new GlobalPkColl<DtoCrudRequestVendorProtocolTest>()
+                .getAPkVal(DtoCrudRequestVendorProtocolTest.class, GobiiEntityNameType.VENDOR_PROTOCOL));
+
+        RestUri restUriPlatformForGetByVendorProtocolId = GobiiClientContext.getInstance(null, false).getUriFactory().resourceColl(GobiiServiceRequestId.URL_PLATFORM)
+                .appendSegment(GobiiServiceRequestId.URL_PROTOCOL)
+                .addUriParam("vendorProtocolId")
+                .setParamValue("vendorProtocolId", Integer.toString(vendorProtocolId));
+
+        GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriPlatformForGetByVendorProtocolId);
+        PayloadEnvelope<PlatformDTO> resultEnvelopeForGetByID = gobiiEnvelopeRestResourceForGetById
+                .get(PlatformDTO.class);
+
+        PlatformDTO platformDTO = resultEnvelopeForGetByID.getPayload().getData().get(0);
+        Assert.assertTrue(platformDTO.getPlatformId() > 0);
+        Assert.assertNotNull(platformDTO.getPlatformName());
+    }
 }
