@@ -19,6 +19,7 @@ import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -261,7 +262,7 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
         Assert.assertNotNull(platformDTO.getPlatformName());
     }
 
-    @Test
+    @Ignore
     public void testEmptyResult() throws Exception {
 
         DtoRestRequestUtils<PlatformDTO> dtoDtoRestRequestUtils =
@@ -331,7 +332,7 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
 
     }
 
-    @Test
+    @Ignore
     public void getPlatformByvendorProtocolId() throws Exception {
 
         Integer vendorProtocolId = (new GlobalPkColl<DtoCrudRequestVendorProtocolTest>()
