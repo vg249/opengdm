@@ -724,11 +724,11 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
 
     let returnVal: GobiiFileItem[] = [];
 
-
+    let datasetEntitiesFilteredByExperiment: GobiiFileItem[] = []
     if (filters[FilterParamNames.EXPERIMENTS_BY_PROJECT] && filters[FilterParamNames.DATASETS_BY_EXPERIMENT]) {
         let compounUniqueIdForExperimentsByProject: GobiiFileItemCompoundId = filters[FilterParamNames.EXPERIMENTS_BY_PROJECT].gobiiCompoundUniqueId;
         let experimentId: string = filters[FilterParamNames.DATASETS_BY_EXPERIMENT].filterValue;
-        let datasetEntitiesFilteredByExperiment: GobiiFileItem[] = fileItems.filter(e =>
+        datasetEntitiesFilteredByExperiment = fileItems.filter(e =>
             ( e.getExtractorItemType() === ExtractorItemType.ENTITY
                 && e.getEntityType() === EntityType.DATASET
                 && e.getRelatedEntityFilterValue(compounUniqueIdForExperimentsByProject) === experimentId
@@ -736,27 +736,23 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
                 && e.getProcessType() !== ProcessType.DUMMY))
             .map(fi => fi);
 
-        returnVal = datasetEntitiesFilteredByExperiment;
+        //returnVal = datasetEntitiesFilteredByExperiment;
     }
 
-    /*
+
     let jobStatusFilterParams = filters[FilterParamNames.DATASET_LIST_STATUS];
     if (
         jobStatusFilterParams
         && jobStatusFilterParams.filterValue != null) {
 
-        returnVal = fileItems
-            .filter(fi =>
-                (fi.getEntityType() === EntityType.DATASET )
-                && fi.hasEntity()
-                && fi.getEntity().jobStatusName === jobStatusFilterParams.filterValue
+        returnVal = datasetEntitiesFilteredByExperiment
+            .filter(fi => fi.getEntity().jobStatusName === jobStatusFilterParams.filterValue
             );
     } else {
         returnVal = fileItems
             .filter(fi => fi.getEntityType() === EntityType.DATASET
                 && fi.hasEntity());
     }
-*/
 
     return returnVal;
 });
