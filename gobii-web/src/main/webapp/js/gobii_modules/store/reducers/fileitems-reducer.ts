@@ -722,9 +722,24 @@ export const getDatasetsForSelectedExperiment = createSelector(getFileItems, get
 
 export const getDatasetEntities = createSelector(getFileItems, getFilters, (fileItems, filters) => {
 
-    let returnVal: GobiiFileItem[];
+    let returnVal: GobiiFileItem[] = [];
 
 
+    if (filters[FilterParamNames.EXPERIMENTS_BY_PROJECT] && filters[FilterParamNames.DATASETS_BY_EXPERIMENT]) {
+        let compounUniqueIdForExperimentsByProject: GobiiFileItemCompoundId = filters[FilterParamNames.EXPERIMENTS_BY_PROJECT].gobiiCompoundUniqueId;
+        let experimentId: string = filters[FilterParamNames.DATASETS_BY_EXPERIMENT].filterValue;
+        let datasetEntitiesFilteredByExperiment: GobiiFileItem[] = fileItems.filter(e =>
+            ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+                && e.getEntityType() === EntityType.DATASET
+                && e.getRelatedEntityFilterValue(compounUniqueIdForExperimentsByProject) === experimentId
+                && e.hasEntity()
+                && e.getProcessType() !== ProcessType.DUMMY))
+            .map(fi => fi);
+
+        returnVal = datasetEntitiesFilteredByExperiment;
+    }
+
+    /*
     let jobStatusFilterParams = filters[FilterParamNames.DATASET_LIST_STATUS];
     if (
         jobStatusFilterParams
@@ -736,15 +751,12 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
                 && fi.hasEntity()
                 && fi.getEntity().jobStatusName === jobStatusFilterParams.filterValue
             );
-//            .map(gfi => gfi.getEntity());
-
     } else {
         returnVal = fileItems
             .filter(fi => fi.getEntityType() === EntityType.DATASET
                 && fi.hasEntity());
-//            .map(gfi => gfi.getEntity());
     }
-
+*/
 
     return returnVal;
 });
