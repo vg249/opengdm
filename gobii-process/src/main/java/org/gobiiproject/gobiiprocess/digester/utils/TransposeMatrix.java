@@ -30,8 +30,10 @@ public class TransposeMatrix {
                 ErrorLogger.logError("Transpose Matrix", "Unknown file separator" + sep);
                 break;
         }
-        tryExec("split "+iFile+" "+dest+"/_transpose_");
         File directory = new File(dest);
+        //Create as a directory if it is not
+        directory.mkdir();
+        tryExec("split "+iFile+" "+dest+"/_transpose_");
         File files[] = directory.listFiles();
         List<Thread> threads=new LinkedList<>();
 
@@ -63,6 +65,8 @@ public class TransposeMatrix {
                 inFile.delete();
             }
         }
+        //Delete intermediate folder as well
+        directory.delete();
     }
 
     /***

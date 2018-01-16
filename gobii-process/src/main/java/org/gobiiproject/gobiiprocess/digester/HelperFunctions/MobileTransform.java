@@ -81,6 +81,11 @@ public abstract class MobileTransform {
         };
     }
 
+    /**
+     *
+     * @param dest Name of a non-existent temporary folder to store temporary files in
+     * @return
+     */
     public static MobileTransform getTransposeMatrix(String dest){
         return new MobileTransform(){
             public void transform(String fromFile, String toFile, String errorPath){
