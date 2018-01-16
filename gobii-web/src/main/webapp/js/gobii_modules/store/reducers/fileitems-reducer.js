@@ -570,9 +570,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                         .filter(function (fi) { return fi.getEntity().jobStatusName === jobStatusFilterParams.filterValue; });
                 }
                 else {
-                    returnVal = fileItems
-                        .filter(function (fi) { return fi.getEntityType() === type_entity_1.EntityType.DATASET
-                        && fi.hasEntity(); });
+                    returnVal = datasetEntitiesFilteredByExperiment;
                 }
                 return returnVal;
             }));
