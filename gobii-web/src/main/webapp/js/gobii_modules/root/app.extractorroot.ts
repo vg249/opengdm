@@ -48,39 +48,17 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
 
                         <div class="col-md-1">
 
-                            <crops-list-box
-                                    [serverConfigList]="serverConfigList"
-                                    [selectedServerConfig]="selectedServerConfig"
-                                    (onServerSelected)="handleServerSelected($event)"></crops-list-box>
+                            <p>Crops list was here</p>
                         </div>
 
                         <div class="col-md-5">
-                            <export-type
-                                    (onExportTypeSelected)="handleExportTypeSelected($event)"></export-type>
+                            <p>Filter type selector was here</p>
                         </div>
 
 
                         <div class="col-md-4">
-                            <div class="well">
-                                <table>
-                                    <tr>
-                                        <td colspan="2">
-                                            <export-format
-                                                    [fileFormat$]="selectedExtractFormat$"
-                                                    [gobiiExtractFilterType]="gobiiExtractFilterType">
-                                            </export-format>
-                                        </td>
-                                        <td style="vertical-align: top;">
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                            <name-id-list-box
-                                                    [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                                    [filterParamName]="nameIdFilterParamTypes.MAPSETS">
-                                            </name-id-list-box>
-                                        </td>
-                                    </tr>
-                                </table>
 
-                            </div>
+                            <p>Export format was here</p>
                         </div>
 
 
@@ -293,6 +271,27 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
 
                 <div class="col-md-4"> <!-- outer grid column 2: Criteria summary -->
 
+                    <div class="well">
+                        <table>
+                            <tr>
+                                <td colspan="2">
+                                    <export-format
+                                            [fileFormat$]="selectedExtractFormat$"
+                                            [gobiiExtractFilterType]="gobiiExtractFilterType">
+                                    </export-format>
+                                </td>
+                                <td style="vertical-align: top;">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <name-id-list-box
+                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                            [filterParamName]="nameIdFilterParamTypes.MAPSETS">
+                                    </name-id-list-box>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+                    
                     <div class="panel panel-primary">
                         <div class="panel-heading">
                             <h3 class="panel-title">Extraction Criteria</h3>
