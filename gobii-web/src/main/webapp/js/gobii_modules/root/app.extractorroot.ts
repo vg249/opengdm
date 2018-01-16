@@ -75,7 +75,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
 
                             <p-panel header="Extract Filtering">
                                 <!--<p-tabView [style]="{'border': '1px solid #336699', 'padding-left': '5px'}">-->
-                                <p-tabView 
+                                <p-tabView
                                         (onChange)="handleTabPanelChange($event)"
                                         styleClass="ui-tabview-panels">
                                     <p-tabPanel header="By Dataset">
@@ -87,32 +87,40 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                                             <div class="panel-heading">
                                                                 <h3 class="panel-title">Datasets</h3>
                                                             </div>
+
                                                             <div class="panel-body">
-                                                                <label class="the-label">Principle Investigator:</label><BR>
-                                                                <name-id-list-box
-                                                                        [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                                                        [filterParamName]="nameIdFilterParamTypes.CONTACT_PI">
-                                                                </name-id-list-box>
 
-                                                                <BR>
-                                                                <BR>
-                                                                <label class="the-label">PI's Project:</label><BR>
-                                                                <name-id-list-box
-                                                                        [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                                                        [filterParamName]="nameIdFilterParamTypes.PROJECTS_BY_CONTACT">
-                                                                </name-id-list-box>
-
-                                                                <BR>
-                                                                <BR>
-                                                                <label class="the-label">Project's
-                                                                    Experiment:</label><BR>
-                                                                <name-id-list-box
-                                                                        [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                                                        [filterParamName]="nameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT">
-                                                                </name-id-list-box>
-                                                                <BR>
-                                                                <BR>
-
+                                                                <table class="table">
+                                                                    <tbody>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <label class="the-label">Principle
+                                                                                Investigator:</label><BR>
+                                                                            <name-id-list-box
+                                                                                    [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                                                                    [filterParamName]="nameIdFilterParamTypes.CONTACT_PI">
+                                                                            </name-id-list-box>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label class="the-label">PI's
+                                                                                Project:</label><BR>
+                                                                            <name-id-list-box
+                                                                                    [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                                                                    [filterParamName]="nameIdFilterParamTypes.PROJECTS_BY_CONTACT">
+                                                                            </name-id-list-box>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label class="the-label">Project's
+                                                                                Experiment:</label><BR>
+                                                                            <name-id-list-box
+                                                                                    [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                                                                    [filterParamName]="nameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT">
+                                                                            </name-id-list-box>
+                                                                        </td>
+                                                                    </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                                
                                                                 <dataset-datatable
                                                                         [gobiiExtractFilterType]="gobiiExtractFilterType">
                                                                 </dataset-datatable>
