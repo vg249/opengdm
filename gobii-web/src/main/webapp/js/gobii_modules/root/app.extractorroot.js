@@ -221,7 +221,6 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         .setItemName(jobId), true);
                 };
                 ExtractorRoot.prototype.handleTabPanelChange = function (event) {
-                    var _this = this;
                     var tabIndex = event.index;
                     if (tabIndex === 0) {
                         this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET;
@@ -232,85 +231,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     else if (tabIndex == 2) {
                         this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER;
                     }
-                    this.store.dispatch(new fileItemAction.RemoveAllFromExtractAction(this.gobiiExtractFilterType));
-                    this.store.dispatch(new fileItemAction.SetExtractType({ gobiiExtractFilterType: this.gobiiExtractFilterType }));
-                    // this will trigger onchange events in child components
-                    this.instructionSubmissionService.submitReady(this.gobiiExtractFilterType)
-                        .subscribe(function (submistReady) {
-                        submistReady ? _this.submitButtonStyle = _this.buttonStyleSubmitReady : _this.submitButtonStyle = _this.buttonStyleSubmitNotReady;
-                    });
-                    this.refreshJobId();
-                    if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
-                        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.CONTACT_PI, null);
-                        this.doPrincipleInvestigatorTreeNotifications = false;
-                        this.fileItemService.setItemLabelType(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.CONTACT_PI, name_id_label_type_1.NameIdLabelType.UNKNOWN);
-                        this.displaySelectorPi = true;
-                        this.displaySelectorProjectForPi = true;
-                        this.displaySelectorForAllProjects = false;
-                        this.displaySelectorExperiment = true;
-                        this.displayAvailableDatasets = true;
-                        this.displayIncludedDatasetsGrid = true;
-                        this.displaySelectorDataType = false;
-                        this.displaySelectorPlatform = false;
-                        this.displaySampleListTypeSelector = false;
-                        this.displaySampleMarkerBox = false;
-                        this.reinitProjectList = false;
-                    }
-                    else if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
-                        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.CONTACT_PI, null);
-                        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.CV_DATATYPE, null);
-                        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.PROJECTS, null);
-                        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.PLATFORMS, null);
-                        this.displaySelectorPi = true;
-                        this.doPrincipleInvestigatorTreeNotifications = true;
-                        this.fileItemService.setItemLabelType(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.CONTACT_PI, name_id_label_type_1.NameIdLabelType.ALL);
-                        this.displaySelectorProjectForPi = false;
-                        this.displaySelectorForAllProjects = true;
-                        this.displaySelectorDataType = true;
-                        this.displaySelectorPlatform = true;
-                        this.displaySampleListTypeSelector = true;
-                        this.displaySelectorExperiment = false;
-                        this.displayAvailableDatasets = false;
-                        this.displayIncludedDatasetsGrid = false;
-                        this.displaySampleMarkerBox = false;
-                        this.reinitProjectList = true;
-                    }
-                    else if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
-                        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.CV_DATATYPE, null);
-                        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.PLATFORMS, null);
-                        this.displaySelectorPi = false;
-                        this.displaySelectorDataType = true;
-                        this.displaySelectorPlatform = true;
-                        this.displaySampleMarkerBox = true;
-                        this.displaySelectorProjectForPi = false;
-                        this.displaySelectorForAllProjects = false;
-                        this.doPrincipleInvestigatorTreeNotifications = false;
-                        this.displaySelectorProjectForPi = false;
-                        this.displaySelectorExperiment = false;
-                        this.displayAvailableDatasets = false;
-                        this.displayIncludedDatasetsGrid = false;
-                        this.displaySampleListTypeSelector = false;
-                        this.reinitProjectList = false;
-                    }
-                    else {
-                        ; // error
-                    }
-                    this.initializeSubmissionContact();
-                    // this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
-                    //     this.nameIdRequestParamsExperiments);
-                    this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.MAPSETS, null);
-                    //changing modes will have nuked the submit as item in the tree, so we need to re-event (sic.) it:
-                    var formatItem = gobii_file_item_1.GobiiFileItem
-                        .build(this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)
-                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.EXPORT_FORMAT)
-                        .setItemId(type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat.HAPMAP])
-                        .setItemName(type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat.HAPMAP]]);
-                    this.fileItemService.loadFileItem(formatItem, true);
-                    this.fileItemService
-                        .loadFileItem(gobii_file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
-                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_TYPE)
-                        .setItemName(type_extractor_sample_list_1.GobiiSampleListType[type_extractor_sample_list_1.GobiiSampleListType.GERMPLASM_NAME])
-                        .setItemId(type_extractor_sample_list_1.GobiiSampleListType[type_extractor_sample_list_1.GobiiSampleListType.GERMPLASM_NAME]), true);
+                    this.handleExportTypeSelected(this.gobiiExtractFilterType);
                 }; // handleTabPanelChange
                 ExtractorRoot.prototype.handleExportTypeSelected = function (arg) {
                     var _this = this;

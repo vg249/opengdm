@@ -384,11 +384,12 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
 
             if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
 
-                this.fileItemService.loadEntityList(this.gobiiExtractFilterType, FilterParamNames.DATASET_LIST);
-                this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                    FilterParamNames.CV_JOB_STATUS,
-                    null);
-
+                if( this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET ) {
+                    this.fileItemService.loadEntityList(this.gobiiExtractFilterType, FilterParamNames.DATASET_LIST);
+                    this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                        FilterParamNames.CV_JOB_STATUS,
+                        null);
+                }
 
             } // if we have a new filter type
 
