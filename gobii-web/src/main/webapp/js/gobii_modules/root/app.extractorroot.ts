@@ -270,18 +270,14 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                 </div>  <!-- outer grid column 1: Dataset, Sample, Marker Filtering-->
 
 
-                <p-dialog header="Title" [(visible)]="display" (onHide)="onHideMessageDialog($event)">
+                <p-dialog header="System Message"
+                          [(visible)]="display"
+                          (onHide)="onHideMessageDialog($event)"
+                          [contentStyle]="{'width': '400px'}">
                     <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Status Messages</h3>
-                        </div>
                         <div class="panel-body">
-                            <status-display [messages$]="messages$"></status-display>
-                            <BR>
-                            <button type="clear"
-                                    class="btn btn-primary"
-                                    (click)="handleClearMessages()">Clear
-                            </button>
+                            {{currentStatusMessage}}
+                            <!--<status-display [messages$]="messages$"></status-display>-->
                         </div> <!-- panel body -->
 
                     </div> <!-- panel primary -->
@@ -380,7 +376,6 @@ export class ExtractorRoot implements OnInit {
     public messages$: Observable<string[]> = this.store.select(fromRoot.getStatusMessages);
 
 
-
     // ************************************************************************
 
     public treeFileItemEvent: GobiiFileItem;
@@ -398,7 +393,9 @@ export class ExtractorRoot implements OnInit {
 
         this.messages$.subscribe(
             messages => {
-                if( messages.length > 0 ) {
+                if (messages.length > 0) {
+
+                    this.currentStatusMessage = messages[0];
                     this.showMessagesDialog();
                 }
             }
@@ -407,6 +404,7 @@ export class ExtractorRoot implements OnInit {
     }
 
     public display: boolean = false;
+    public currentStatusMessage: string = null;
 
     showMessagesDialog() {
         this.display = true;
