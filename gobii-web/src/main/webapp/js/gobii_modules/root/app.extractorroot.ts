@@ -333,23 +333,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
 
                         </div> <!-- panel body -->
                     </div> <!-- panel primary -->
-
-                    <div>
-                        <div class="panel panel-primary">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">Status Messages</h3>
-                            </div>
-                            <div class="panel-body">
-                                <status-display [messages$]="messages$"></status-display>
-                                <BR>
-                                <button type="clear"
-                                        class="btn btn-primary"
-                                        (click)="handleClearMessages()">Clear
-                                </button>
-                            </div> <!-- panel body -->
-
-                        </div> <!-- panel primary -->
-                    </div>
+                    
                 </div>  <!-- outer grid column 2: Criteria summary -->
 
 
