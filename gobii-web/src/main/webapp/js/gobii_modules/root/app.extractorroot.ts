@@ -82,19 +82,17 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                         <ng-template pTemplate="content"> <!-- lazy-load controls -->
                                             <div class="container-fluid">
                                                 <div class="row">
-                                                    <div class="col-md-4"> <!-- inner column 1 of main column 1 -->
+                                                    <div class="col-md-12"> <!-- inner column 2 of main column 1 -->
                                                         <div class="panel panel-primary">
                                                             <div class="panel-heading">
-                                                                <h3 class="panel-title">Filters</h3>
+                                                                <h3 class="panel-title">Datasets</h3>
                                                             </div>
                                                             <div class="panel-body">
-
                                                                 <label class="the-label">Principle Investigator:</label><BR>
                                                                 <name-id-list-box
                                                                         [gobiiExtractFilterType]="gobiiExtractFilterType"
                                                                         [filterParamName]="nameIdFilterParamTypes.CONTACT_PI">
                                                                 </name-id-list-box>
-
 
                                                                 <BR>
                                                                 <BR>
@@ -104,7 +102,6 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                                                         [filterParamName]="nameIdFilterParamTypes.PROJECTS_BY_CONTACT">
                                                                 </name-id-list-box>
 
-
                                                                 <BR>
                                                                 <BR>
                                                                 <label class="the-label">Project's
@@ -113,28 +110,9 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                                                         [gobiiExtractFilterType]="gobiiExtractFilterType"
                                                                         [filterParamName]="nameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT">
                                                                 </name-id-list-box>
+                                                                <BR>
+                                                                <BR>
 
-
-                                                                <BR>
-                                                                <BR>
-                                                                <label class="the-label">Experiment's Data
-                                                                    Sets</label><BR>
-                                                                <checklist-box
-                                                                        [filterParamName]="nameIdFilterParamTypes.DATASETS_BY_EXPERIMENT"
-                                                                        [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                                                        (onError)="handleHeaderStatusMessage($event)">
-                                                                </checklist-box>
-                                                                <BR>
-                                                                <BR>
-                                                            </div> <!-- panel body dataset filters -->
-                                                        </div> <!-- panel primary filters -->
-                                                    </div> <!-- dataset filter column-->
-                                                    <div class="col-md-8"> <!-- inner column 2 of main column 1 -->
-                                                        <div class="panel panel-primary">
-                                                            <div class="panel-heading">
-                                                                <h3 class="panel-title">Datasets</h3>
-                                                            </div>
-                                                            <div class="panel-body">
                                                                 <dataset-datatable
                                                                         [gobiiExtractFilterType]="gobiiExtractFilterType">
                                                                 </dataset-datatable>
