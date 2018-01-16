@@ -1,4 +1,4 @@
-///<reference path="../../../../../../typings/index.d.ts"/>
+////<reference path="../../../../../../typings/index.d.ts"/>
 import {Component, OnInit} from "@angular/core";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {ProcessType} from "../model/type-process";
@@ -95,11 +95,154 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
 
         </div>
 
+
         <div class="container-fluid">
 
             <div class="row">
 
                 <div class="col-md-8">
+
+                    <p-panel header="Extract Filtering">
+                        <!--<p-tabView [style]="{'border': '1px solid #336699', 'padding-left': '5px'}">-->
+                        <p-tabView>
+                            <p-tabPanel header="By Dataset">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-md-4"> <!-- inner column 1 of main column 1 -->
+                                            <div class="panel panel-primary">
+                                                <div class="panel-heading">
+                                                    <h3 class="panel-title">Filters</h3>
+                                                </div>
+                                                <div class="panel-body">
+
+                                                    <label class="the-label">Principle Investigator:</label><BR>
+                                                    <name-id-list-box
+                                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                                            [filterParamName]="nameIdFilterParamTypes.CONTACT_PI">
+                                                    </name-id-list-box>
+
+
+                                                    <BR>
+                                                    <BR>
+                                                    <label class="the-label">PI's Project:</label><BR>
+                                                    <name-id-list-box
+                                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                                            [filterParamName]="nameIdFilterParamTypes.PROJECTS_BY_CONTACT">
+                                                    </name-id-list-box>
+
+
+                                                    <BR>
+                                                    <BR>
+                                                    <label class="the-label">Project's Experiment:</label><BR>
+                                                    <name-id-list-box
+                                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                                            [filterParamName]="nameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT">
+                                                    </name-id-list-box>
+
+
+                                                    <BR>
+                                                    <BR>
+                                                    <label class="the-label">Experiment's Data Sets</label><BR>
+                                                    <checklist-box
+                                                            [filterParamName]="nameIdFilterParamTypes.DATASETS_BY_EXPERIMENT"
+                                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                                            (onError)="handleHeaderStatusMessage($event)">
+                                                    </checklist-box>
+                                                    <BR>
+                                                    <BR>
+                                                </div> <!-- panel body dataset filters -->
+                                            </div> <!-- panel primary filters -->
+                                        </div> <!-- dataset filter column-->
+                                        <div class="col-md-8"> <!-- inner column 2 of main column 1 -->
+                                            <div class="panel panel-primary">
+                                                <div class="panel-heading">
+                                                    <h3 class="panel-title">Datasets</h3>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <dataset-datatable
+                                                            [gobiiExtractFilterType]="gobiiExtractFilterType">
+                                                    </dataset-datatable>
+                                                </div> <!-- panel body dataset datatable -->
+                                            </div> <!-- panel primary dataset datatable -->
+                                        </div> <!-- data table column -->
+                                    </div> <!-- ROW  -->
+                                </div> <!-- container  -->
+                            </p-tabPanel>
+                            <p-tabPanel header="By Samples">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-md-4"> <!-- inner column 1 of main column 1 -->
+                                            <div class="panel panel-primary">
+                                                <div class="panel-heading">
+                                                    <h3 class="panel-title">Filters</h3>
+                                                </div>
+                                                <div class="panel-body">
+
+                                                    <BR>
+                                                    <BR>
+                                                    <label class="the-label">Principle Investigator:</label><BR>
+                                                    <name-id-list-box
+                                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                                            [filterParamName]="nameIdFilterParamTypes.CONTACT_PI">
+                                                    </name-id-list-box>
+
+                                                    <BR>
+                                                    <BR>
+                                                    <label class="the-label">Projects:</label><BR>
+                                                    <name-id-list-box
+                                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                                            [filterParamName]="nameIdFilterParamTypes.PROJECTS">
+                                                    </name-id-list-box>
+
+
+                                                    <BR>
+                                                    <BR>
+                                                    <label class="the-label">Dataset Types:</label><BR>
+                                                    <name-id-list-box
+                                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                                            [filterParamName]="nameIdFilterParamTypes.CV_DATATYPE">
+                                                    </name-id-list-box>
+
+                                                    <BR>
+                                                    <BR>
+                                                    <label class="the-label">Platforms:</label><BR>
+                                                    <checklist-box
+                                                            [filterParamName]="nameIdFilterParamTypes.PLATFORMS"
+                                                            [gobiiExtractFilterType]="gobiiExtractFilterType">
+                                                    </checklist-box>
+
+                                                </div> <!-- panel body by sample filters filters -->
+                                            </div> <!-- panel by sample filters -->
+                                        </div> <!-- by sample filter column-->
+                                        <div class="col-md-8"> <!-- inner column 2 of main column 1 -->
+                                            <div class="panel panel-primary">
+                                                <div class="panel-heading">
+                                                    <h3 class="panel-title">Included Samples</h3>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <sample-list-type
+                                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                                            (onHeaderStatusMessage)="handleHeaderStatusMessage($event)">
+                                                    </sample-list-type>
+                                                    <hr style="width: 100%; color: black; height: 1px; background-color:black;"/>
+                                                    <sample-marker-box
+                                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                                            (onSampleMarkerError)="handleHeaderStatusMessage($event)">
+                                                    </sample-marker-box>
+                                                </div> <!-- panel body dataset datatable -->
+                                            </div> <!-- panel primary dataset datatable -->
+                                        </div> <!-- data table column -->
+                                    </div> <!-- ROW  -->
+                                </div> <!-- container  -->
+
+
+                            </p-tabPanel>
+                            <p-tabPanel header="By Markers">
+                                <p>Panel 3</p>
+                            </p-tabPanel>
+                        </p-tabView> <!-- tabview -->
+                    </p-panel> <!-- panel -->
+
 
                     <div class="row"> <!-- column 1, inner row -->
 
