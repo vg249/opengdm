@@ -75,7 +75,9 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
 
                             <p-panel header="Extract Filtering">
                                 <!--<p-tabView [style]="{'border': '1px solid #336699', 'padding-left': '5px'}">-->
-                                <p-tabView (onChange)="handleTabPanelChange($event)">
+                                <p-tabView 
+                                        (onChange)="handleTabPanelChange($event)"
+                                        styleClass="ui-tabview-panels">
                                     <p-tabPanel header="By Dataset">
                                         <ng-template pTemplate="content"> <!-- lazy-load controls -->
                                             <div class="container-fluid">
