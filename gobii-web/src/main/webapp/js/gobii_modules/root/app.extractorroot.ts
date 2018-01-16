@@ -1,5 +1,5 @@
 ////<reference path="../../../../../../typings/index.d.ts"/>
-import {Component, OnInit} from "@angular/core";
+import {Component, OnInit, ChangeDetectorRef} from "@angular/core";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {ProcessType} from "../model/type-process";
 import {GobiiFileItem} from "../model/gobii-file-item";
@@ -45,6 +45,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                         <h3 class="panel-title">Connected to {{currentStatus}}</h3>
                     </div>
                     <div class="panel-body">
+
 
                         <div class="col-md-1">
 
@@ -265,9 +266,26 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                             </p-tabPanel> <!-- tab panel -- markers -->
                         </p-tabView> <!-- tabview -->
                     </p-panel> <!-- panel -->
-                    
+
                 </div>  <!-- outer grid column 1: Dataset, Sample, Marker Filtering-->
 
+
+                <p-dialog header="Title" [(visible)]="display" (onHide)="onHideMessageDialog($event)">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Status Messages</h3>
+                        </div>
+                        <div class="panel-body">
+                            <status-display [messages$]="messages$"></status-display>
+                            <BR>
+                            <button type="clear"
+                                    class="btn btn-primary"
+                                    (click)="handleClearMessages()">Clear
+                            </button>
+                        </div> <!-- panel body -->
+
+                    </div> <!-- panel primary -->
+                </p-dialog>
 
                 <div class="col-md-4"> <!-- outer grid column 2: Criteria summary -->
 
@@ -291,7 +309,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                         </table>
 
                     </div>
-                    
+
                     <div class="panel panel-primary">
                         <div class="panel-heading">
                             <h3 class="panel-title">Extraction Criteria</h3>
@@ -361,6 +379,8 @@ export class ExtractorRoot implements OnInit {
 
     public messages$: Observable<string[]> = this.store.select(fromRoot.getStatusMessages);
 
+
+
     // ************************************************************************
 
     public treeFileItemEvent: GobiiFileItem;
@@ -373,10 +393,32 @@ export class ExtractorRoot implements OnInit {
                 private _dtoRequestServiceServerConfigs: DtoRequestService<ServerConfig[]>,
                 private store: Store<fromRoot.State>,
                 private fileItemService: FileItemService,
-                private instructionSubmissionService: InstructionSubmissionService) {
+                private instructionSubmissionService: InstructionSubmissionService,
+                private changeDetectorRef: ChangeDetectorRef) {
+
+        this.messages$.subscribe(
+            messages => {
+                if( messages.length > 0 ) {
+                    this.showMessagesDialog();
+                }
+            }
+        );
 
     }
 
+    public display: boolean = false;
+
+    showMessagesDialog() {
+        this.display = true;
+
+        //workaround for error when using observable in a
+        //p-dialog; see https://github.com/angular/angular/issues/17572
+        this.changeDetectorRef.detectChanges();
+    }
+
+    public onHideMessageDialog($event) {
+        this.handleClearMessages();
+    }
 
     // ****************************************************************
     // ********************************************** SERVER SELECTION
@@ -405,7 +447,7 @@ export class ExtractorRoot implements OnInit {
                     this.handleExportTypeSelected(GobiiExtractFilterType.WHOLE_DATASET);
 //                    scope$.initializeSubmissionContact();
                     scope$.currentStatus = "GOBII Server " + gobiiVersion;
-                    scope$.handleAddMessage("Connected to crop config: " + scope$.selectedServerConfig.crop);
+                    //scope$.handleAddMessage("Connected to crop config: " + scope$.selectedServerConfig.crop);
 
                 } else {
                     scope$.serverConfigList = [new ServerConfig("<ERROR NO SERVERS>", "<ERROR>", "<ERROR>", 0, "")];
