@@ -4,7 +4,9 @@ import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by VCalaminos on 8/25/2017.
@@ -27,7 +29,7 @@ public class JobDTO extends DTOBase {
     private String message;
     private Integer submittedBy;
     private Date submittedDate;
-    private Integer datasetId;
+    private List<Integer> datasetIds = new ArrayList<>();
 
     @GobiiEntityParam(paramName = "jobId")
     public Integer getJobId() { return jobId; }
@@ -77,10 +79,10 @@ public class JobDTO extends DTOBase {
     @GobiiEntityColumn(columnName = "submitted_date")
     public void setSubmittedDate(Date submittedDate) { this.submittedDate = submittedDate; }
 
-    @GobiiEntityParam(paramName = "datasetId")
-    public Integer getDatasetId() { return datasetId; }
+    @GobiiEntityParam(paramName = "datasetIds")
+    public List<Integer> getDatasetIds() { return datasetIds; }
 
-    @GobiiEntityColumn(columnName = "dataset_id")
-    public void setDatasetId(Integer datasetId) { this.datasetId = datasetId; }
+    @GobiiEntityColumn(columnName = "datasetids")
+    public void setDatasetIds(List<Integer> datasetIds) { this.datasetIds = datasetIds; }
 
 }

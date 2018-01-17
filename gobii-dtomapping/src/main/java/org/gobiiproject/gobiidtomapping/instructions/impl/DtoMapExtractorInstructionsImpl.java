@@ -101,7 +101,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     + extractorInstructionFilesDTO.getInstructionFileName()
                     + INSTRUCTION_FILE_EXT;
 
-
+            List<Integer> datasetIds = new ArrayList<>();
             Integer contactId = null;
             for (GobiiExtractorInstruction currentExtractorInstruction :
                     extractorInstructionFilesDTO.getGobiiExtractorInstructions()) {
@@ -151,6 +151,10 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                      idx++) {
 
                     GobiiDataSetExtract currentGobiiDataSetExtract = currentExtractorInstruction.getDataSetExtracts().get(idx);
+
+                    if (currentGobiiDataSetExtract.getDataSet() != null && currentGobiiDataSetExtract.getDataSet().getId() > 0) {
+                        datasetIds.add(currentGobiiDataSetExtract.getDataSet().getId());
+                    }
 
                     if (currentGobiiDataSetExtract.getListFileName() != null) {
 
@@ -298,17 +302,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                         }
 
 
-                        boolean thereAreDatasets = false;
-                        if (extractorInstructionFilesDTO
-                                .getGobiiExtractorInstructions()
-                                .stream()
-                                .filter(gei -> gei.getDataSetExtracts()
-                                        .stream()
-                                        .filter(dse -> dse.getDataSet() != null && dse.getDataSet().getId() > 0).count() > 0)
-                                .count() > 0
-                                ) {
-                            thereAreDatasets = true;
-                        }
+                        boolean thereAreDatasets = datasetIds.size() > 0;
 
                         boolean thereAreMarkerGroups = extractorInstructionFilesDTO
                                 .getGobiiExtractorInstructions()
@@ -366,17 +360,26 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                                     + " does not have any samples, markers, datasets, or marker groups specified");
                         }
 
-                        JobDTO jobDTONew = new JobDTO();
+                        if (thereAreDatasets) {
 
-                        jobDTONew.setJobName(extractorInstructionFilesDTO.getInstructionFileName());
-                        jobDTONew.setSubmittedBy(contactId);
-                        jobDTONew.setMessage("Instruction file written by web services");
-                        jobDTONew.setStatus(CV_PROGRESSSTATUS_PENDING.getCvName());
-                        jobDTONew.setType(JobType.CV_JOBTYPE_EXTRACT.getCvName());
-                        jobDTONew.setPayloadType(jobPayloadType.getCvName());
-                        jobDTONew.setSubmittedDate(new Date());
+                            JobDTO jobDTONew = new JobDTO();
 
-                        dtoMapJob.createJob(jobDTONew);
+                            jobDTONew.setJobName(extractorInstructionFilesDTO.getInstructionFileName());
+                            jobDTONew.setSubmittedBy(contactId);
+                            jobDTONew.setMessage("Instruction file written by web services");
+                            jobDTONew.setStatus(JobProgressStatusType.CV_PROGRESSSTATUS_PENDING.getCvName());
+                            jobDTONew.setType(JobType.CV_JOBTYPE_EXTRACT.getCvName());
+                            jobDTONew.setPayloadType(jobPayloadType.getCvName());
+                            jobDTONew.setSubmittedDate(new Date());
+                            jobDTONew.setDatasetIds(datasetIds);
+
+                            dtoMapJob.createJob(jobDTONew);
+
+                        } else {
+
+
+                        }
+
                     } else {
 
                         throw new GobiiException("The specified extractor job already exists: " + extractorInstructionFilesDTO.getInstructionFileName());
@@ -487,7 +490,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
      * Returns a list of gobii extractor instruction(technically 1). Sets the job status for the data-sets under inspection
      *
      * @param instructionFileFqpn Instruction file path
-     * @param jobProgressStatus job progress status.
+     * @param jobProgressStatus   job progress status.
      * @return extractor instruction status.
      */
     private List<GobiiExtractorInstruction> setGobiiExtractorInstructionStatus(String instructionFileFqpn, JobProgressStatusType jobProgressStatus) {

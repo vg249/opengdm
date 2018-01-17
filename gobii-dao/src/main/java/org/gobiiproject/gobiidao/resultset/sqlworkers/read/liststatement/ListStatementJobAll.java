@@ -1,29 +1,28 @@
-package org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp;
+package org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement;
 
-import org.hibernate.jdbc.Work;
+import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
+import org.gobiiproject.gobiidao.resultset.core.listquery.ListStatement;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
+import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY_ID_DATASET_ALL;
+
 /**
- * Created by VCalaminos on 9/4/2017.
+
  */
-public class SpGetJobs implements Work{
+public class ListStatementJobAll implements ListStatement {
 
-    private Map<String, Object> parameters = null;
-
-    public SpGetJobs() {
-    }
-
-    private ResultSet resultSet = null;
-
-    public ResultSet getResultSet() { return resultSet; }
 
     @Override
-    public void execute(Connection dbConnection) throws SQLException {
+    public ListSqlId getListSqlId() {
+        return QUERY_ID_DATASET_ALL;
+    }
+
+    @Override
+    public PreparedStatement makePreparedStatement(Connection dbConnection, Map<String, Object> jdbcParamVals, Map<String, Object> sqlParamVals) throws SQLException {
 
         String sql = "select \n" +
                 "j.job_id,\n" +
@@ -34,7 +33,9 @@ public class SpGetJobs implements Work{
                 "j.submitted_by,\n" +
                 "j.submitted_date,\n" +
                 "j.name,\n" +
-                "d.dataset_id\n"+
+                "	ARRAY(select d.dataset_id \n" +
+                "   from dataset d " +
+                "    where d.job_id = j.job_id) as datasetids " +
                 "from job j\n" +
                 "left JOIN\n" +
                 "dataset d\n" +
@@ -47,10 +48,8 @@ public class SpGetJobs implements Work{
                 "and j.status = status.cv_id\n" +
                 "order by j.name";
 
-        PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
+        PreparedStatement returnVal = dbConnection.prepareStatement(sql);
 
-        resultSet = preparedStatement.executeQuery();
-
+        return returnVal;
     }
-
 }

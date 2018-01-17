@@ -149,6 +149,9 @@ System.register(["@angular/core", "@angular/forms", "@angular/http", "@angular/p
                             primeng_1.OverlayPanelModule,
                             primeng_1.AccordionModule,
                             primeng_1.ListboxModule,
+                            primeng_1.FieldsetModule,
+                            primeng_1.TabViewModule,
+                            primeng_1.DialogModule,
                             app_routing_1.routing,
                             animations_1.BrowserAnimationsModule,
                             store_1.StoreModule.forRoot(reducers_1.reducers),
@@ -174,7 +177,6 @@ System.register(["@angular/core", "@angular/forms", "@angular/http", "@angular/p
                             sample_list_type_component_1.SampleListTypeComponent,
                             name_id_list_box_component_1.NameIdListBoxComponent,
                             status_display_tree_component_1.StatusDisplayTreeComponent,
-                            primeng_1.Dialog,
                             button_1.Button,
                             page_by_samples_component_1.SearchCriteriaBySamplesComponent,
                             dataset_datatable_component_1.DatasetDatatableComponent

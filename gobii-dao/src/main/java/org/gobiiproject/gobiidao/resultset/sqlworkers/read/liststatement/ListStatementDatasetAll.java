@@ -31,9 +31,9 @@ public class ListStatementDatasetAll implements ListStatement {
                 "	ds.dataset_id, " +
                 "	ds.name as \"datasetname\", " +
                 "	ds.experiment_id, " +
-                "	null as \"experimentname\", " +
+                "	e.name as \"experimentname\", " +
                 "	null as \"projectid\", " +
-                "	null as \"projectname\", " +
+                "	p.name as \"projectname\", " +
                 "	null as \"protocolid\", " +
                 "	null as \"protocolname\", " +
                 "	null as \"platformid\", " +
@@ -41,7 +41,7 @@ public class ListStatementDatasetAll implements ListStatement {
                 "	ds.callinganalysis_id as \"callinganalysisid\", " +
                 "	null as \"callinganalysisname\", " +
                 "	null as picontactid, " +
-                "	null as piemail, " +
+                "	c.email as piemail, " +
                 "	ds.data_table, " +
                 "	ds.data_file, " +
                 "	ds.quality_table, " +
@@ -104,7 +104,16 @@ public class ListStatementDatasetAll implements ListStatement {
                 "	dataset ds left outer join job j on " +
                 "	( " +
                 "		ds.job_id = j.job_id " +
-                "	)  " +
+                "	)  join experiment e on " +
+                "	( " +
+                "		ds.experiment_id = e.experiment_id " +
+                "	) join project p on " +
+                "	( " +
+                "		e.project_id = p.project_id " +
+                "	) join contact c on " +
+                "	( " +
+                "		p.pi_contact = c.contact_id " +
+                "	) " +
                 "order by " +
                 "	j.submitted_date desc, " +
                 "	lower( ds.name ) asc	";

@@ -151,9 +151,25 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         }
                         return returnVal;
                     }));
+                    var cvDatasetCompoundUniqueId = new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.DATASET, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.UNKNOWN));
                     this.addFilter(file_item_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.DATASET_LIST, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.DATASET)
-                        .setFilterType(filter_type_1.FilterType.ENTITY_LIST));
+                        .setFilterType(filter_type_1.FilterType.ENTITY_LIST)
+                        .setOnLoadFilteredItemsAction(function (fileItems, filterValue) {
+                        var returnVal = null;
+                        if (!filterValue) {
+                            returnVal = new fileAction.LoadFilterAction({
+                                filterId: file_item_param_names_1.FilterParamNames.DATASET_LIST_STATUS,
+                                filter: {
+                                    gobiiExtractFilterType: type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET,
+                                    gobiiCompoundUniqueId: cvDatasetCompoundUniqueId,
+                                    filterValue: "completed",
+                                    entityLasteUpdated: null
+                                }
+                            });
+                        }
+                        return returnVal;
+                    }));
                     this.addFilter(file_item_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.DATASET_BY_DATASET_ID, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.DATASET)
                         .setFilterType(filter_type_1.FilterType.ENTITY_BY_ID));

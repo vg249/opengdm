@@ -10,6 +10,7 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiTestConfiguration;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
@@ -21,6 +22,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -124,6 +126,7 @@ public class DtoRequestFileExtractorInstructionsTest {
         gobiiDataSetExtractTwo.setGobiiFileType(DataSetExtractFileTypeTwo);
         gobiiDataSetExtractTwo.setDataSet(new PropNameId(2,"my_foo_2Dataset2"));
 
+
         gobiiExtractorInstructionTwo.getDataSetExtracts().add(gobiiDataSetExtractOne);
         gobiiExtractorInstructionTwo.getDataSetExtracts().add(gobiiDataSetExtractTwo);
 
@@ -199,6 +202,23 @@ public class DtoRequestFileExtractorInstructionsTest {
                 submittedJobDto.getJobName().equals(jobName));
 
 
+        //VERIFY THAT THE DATSET RECORD HAS THE JOB ID FOR THE JOB
+        Integer extractedDataSetId = extractorInstructionFilesDTOretrieveResponse.getGobiiExtractorInstructions().get(0).getDataSetExtracts().get(0).getDataSet().getId();
+        RestUri dataSetUri = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_DATASETS);
+        dataSetUri.setParamValue("id", extractedDataSetId.toString());
+        GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceForExtractedDataset = new GobiiEnvelopeRestResource<>(dataSetUri);
+        PayloadEnvelope<DataSetDTO> resultEnvelopeForExrtractedDataset = gobiiEnvelopeRestResourceForExtractedDataset
+                .get(DataSetDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForExrtractedDataset.getHeader()));
+        DataSetDTO dataSetDTOResponsForLoadedDataset = resultEnvelopeForExrtractedDataset.getPayload().getData().get(0);
+
+        Assert.assertNotNull("Dataset record for extract does not have a job id",
+                dataSetDTOResponsForLoadedDataset.getJobId());
+        Assert.assertEquals("The dataset record for extract does not have the correct job ID",
+                submittedJobDto.getJobId(),  dataSetDTOResponsForLoadedDataset.getJobId());
 
         // Test link we got from GET
         linkCollection = resultEnvelope.getPayload().getLinkCollection();

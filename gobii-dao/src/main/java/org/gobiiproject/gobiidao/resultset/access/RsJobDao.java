@@ -10,14 +10,8 @@ import java.util.Map;
  */
 public interface RsJobDao {
 
-    ResultSet getJobDetailsForJobName(String jobName) throws GobiiDaoException;
-
-    ResultSet getJobs() throws GobiiDaoException;
-
     Integer createJobWithCvTerms(Map<String, Object> parameters) throws GobiiDaoException;
 
     void updateJobWithCvTerms(Map<String, Object> parameters) throws GobiiDaoException;
-
-    ResultSet getJobDetailsByDatasetId(Integer datasetId) throws GobiiDaoException;
 
 }

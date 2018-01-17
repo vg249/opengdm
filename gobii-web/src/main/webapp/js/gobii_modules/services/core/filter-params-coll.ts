@@ -193,7 +193,7 @@ export class FilterParamsColl {
                         if (completedItem && labelItem) {
 
                             completedItem.setSelected(true);
-                            returnVal =  new fileAction.LoadFilterAction(
+                            returnVal = new fileAction.LoadFilterAction(
                                 {
                                     filterId: FilterParamNames.CV_JOB_STATUS,
                                     filter: {
@@ -212,11 +212,39 @@ export class FilterParamsColl {
                 })
         );
 
+        let cvDatasetCompoundUniqueId: GobiiFileItemCompoundId =
+            new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
+                EntityType.DATASET,
+                EntitySubType.UNKNOWN,
+                CvFilterType.UNKNOWN,
+                CvFilters.get(CvFilterType.UNKNOWN));
         this.addFilter(FilterParams
             .build(FilterParamNames.DATASET_LIST,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.DATASET)
-            .setFilterType(FilterType.ENTITY_LIST));
+            .setFilterType(FilterType.ENTITY_LIST)
+            .setOnLoadFilteredItemsAction((fileItems, filterValue) => {
+
+                let returnVal: fileAction.LoadFilterAction = null;
+
+                if (!filterValue) {
+
+                    returnVal = new fileAction.LoadFilterAction(
+                        {
+                            filterId: FilterParamNames.DATASET_LIST_STATUS,
+                            filter: {
+                                gobiiExtractFilterType: GobiiExtractFilterType.WHOLE_DATASET,
+                                gobiiCompoundUniqueId: cvDatasetCompoundUniqueId,
+                                filterValue: "completed",
+                                entityLasteUpdated: null
+                            }
+                        }
+                    );
+
+                }
+
+                return returnVal;
+            }));
 
         this.addFilter(FilterParams
             .build(FilterParamNames.DATASET_BY_DATASET_ID,
