@@ -381,7 +381,8 @@ public class GobiiFileReader {
 				if (DataSetOrientationType.SAMPLE_FAST.equals(dso)) isSampleFast = true;
 				if (isSampleFast) {
 					//Rotate to marker fast before loading it - all data is marker fast in the system
-					intermediateFile.transform(MobileTransform.getTransposeMatrix(fromFile+"transpose"));
+					File transposeDir=new File(new File(fromFile).getParentFile(),"transpose");
+					intermediateFile.transform(MobileTransform.getTransposeMatrix(transposeDir.getPath()));
 				}
 			}
 			jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_TRANSFORMATION.getCvName(),"Metadata Transformation");
