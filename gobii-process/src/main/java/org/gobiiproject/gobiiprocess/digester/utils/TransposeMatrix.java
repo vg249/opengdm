@@ -36,10 +36,11 @@ public class TransposeMatrix {
         tryExec("split "+iFile+" "+dest+"/_transpose_");
         File files[] = directory.listFiles();
         List<Thread> threads=new LinkedList<>();
-
+        List<String> outFiles=new LinkedList<>();
         for (File inFile: files){
             if(inFile.getName().matches("_transpose_.*")){
                 String outFile = inFile.toString().replace("_transpose_","_transposed_");
+                outFiles.add(outFile);
                 Thread transposeThread=new Thread(new TransposeThread(sep,inFile,outFile));
                 transposeThread.start();
                 threads.add(transposeThread);
@@ -56,8 +57,11 @@ public class TransposeMatrix {
                 ErrorLogger.logError("TransposeMatrix","Interrupt",e);
             }
         }
-
-        tryExec("paste "+dest+"/_transposed_*", oFile, null);
+        StringBuilder fileList=new StringBuilder();
+        for(String s:outFiles){
+            fileList.append(" ").append(s);
+        }
+        tryExec("paste "+ fileList.toString(), oFile, null);
 
         //Delete all intermediates once 'paste' is complete
         for (File inFile: files){
@@ -150,5 +154,3 @@ class TransposeThread implements Runnable{
         }
     }
 }
-
-
