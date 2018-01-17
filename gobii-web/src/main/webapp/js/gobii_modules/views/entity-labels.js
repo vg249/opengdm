@@ -33,6 +33,7 @@ System.register(["../model/type-entity", "../model/cv-filter-type", "../model/ty
                     this.entityNodeLabels[type_entity_1.EntityType.PLATFORM] = "Platform";
                     this.entityNodeLabels[type_entity_1.EntityType.MAPSET] = "Mapset";
                     this.entityNodeLabels[type_entity_1.EntityType.PROJECT] = "Project";
+                    this.entityNodeLabels[type_entity_1.EntityType.EXPERIMENT] = "Experiment";
                     this.entityNodeLabels[type_entity_1.EntityType.MARKER_GROUP] = "Marker Groups";
                     this.cvFilterNodeLabels[cv_filter_type_1.CvFilterType.DATASET_TYPE] = "Dataset Type";
                     this.cvFilterNodeLabels[cv_filter_type_1.CvFilterType.JOB_STATUS] = "Job Status";

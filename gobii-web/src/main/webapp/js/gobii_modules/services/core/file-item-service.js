@@ -134,6 +134,15 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                         case file_item_param_names_1.FilterParamNames.CONTACT_PI_HIERARCHY_ROOT:
                             returnVal = this.store.select(fromRoot.getPiContacts);
                             break;
+                        case file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL:
+                            returnVal = this.store.select(fromRoot.getPiContactsFilterOptional);
+                            break;
+                        case file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL:
+                            returnVal = this.store.select(fromRoot.getProjectsFilterOptional);
+                            break;
+                        case file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL:
+                            returnVal = this.store.select(fromRoot.getExperimentsFilterOptional);
+                            break;
                         default:
                             returnVal = this.store.select(fromRoot.getAllFileItems);
                             break;

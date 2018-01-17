@@ -21,5 +21,8 @@ export class FilterParamNames {
     public static PROJECTS_BY_CONTACT: string = "Projects-by-contact";
     public static PROJECTS: string = "Project";
     public static MARKER_GROUPS: string = "Marker Groups";
+    public static CONTACT_PI_FILTER_OPTIONAL = "Contact-Pi-Filter-Optional";
+    public static PROJECT_FILTER_OPTIONAL = "Project-Filter-Optional";
+    public static EXPERIMENT_FILTER_OPTIONAL = "Experiment-Filter-Optional";
 }
 

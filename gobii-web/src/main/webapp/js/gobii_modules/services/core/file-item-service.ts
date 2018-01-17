@@ -93,6 +93,18 @@ export class FileItemService {
                 returnVal = this.store.select(fromRoot.getPiContacts);
                 break;
 
+            case FilterParamNames.CONTACT_PI_FILTER_OPTIONAL:
+                returnVal = this.store.select(fromRoot.getPiContactsFilterOptional);
+                break;
+
+            case FilterParamNames.PROJECT_FILTER_OPTIONAL:
+                returnVal = this.store.select(fromRoot.getProjectsFilterOptional);
+                break;
+
+            case FilterParamNames.EXPERIMENT_FILTER_OPTIONAL:
+                returnVal = this.store.select(fromRoot.getExperimentsFilterOptional);
+                break;
+
             default:
                 returnVal = this.store.select(fromRoot.getAllFileItems);
                 break;

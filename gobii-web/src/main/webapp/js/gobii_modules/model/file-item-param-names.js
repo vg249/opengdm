@@ -29,6 +29,9 @@ System.register([], function (exports_1, context_1) {
                 FilterParamNames.PROJECTS_BY_CONTACT = "Projects-by-contact";
                 FilterParamNames.PROJECTS = "Project";
                 FilterParamNames.MARKER_GROUPS = "Marker Groups";
+                FilterParamNames.CONTACT_PI_FILTER_OPTIONAL = "Contact-Pi-Filter-Optional";
+                FilterParamNames.PROJECT_FILTER_OPTIONAL = "Project-Filter-Optional";
+                FilterParamNames.EXPERIMENT_FILTER_OPTIONAL = "Experiment-Filter-Optional";
                 return FilterParamNames;
             }());
             exports_1("FilterParamNames", FilterParamNames);

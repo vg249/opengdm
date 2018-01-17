@@ -754,3 +754,33 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
 
     return returnVal;
 });
+
+export const getPiContactsFilterOptional = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+
+    return fileItems.filter(e =>
+        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            || e.getExtractorItemType() === ExtractorItemType.LABEL )
+        && e.getEntityType() === EntityType.CONTACT
+        && e.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
+        .map(fi => fi);
+});
+
+export const getProjectsFilterOptional = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+
+    return fileItems.filter(e =>
+        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            || e.getExtractorItemType() === ExtractorItemType.LABEL )
+        && e.getEntityType() === EntityType.PROJECT)
+        .map(fi => fi);
+});
+
+export const getExperimentsFilterOptional = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+
+    return fileItems.filter(e =>
+        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            || e.getExtractorItemType() === ExtractorItemType.LABEL )
+        && e.getEntityType() === EntityType.EXPERIMENT)
+        .map(fi => fi);
+});
+
+

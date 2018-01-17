@@ -98,23 +98,21 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                                                                 Investigator:</label><BR>
                                                                             <name-id-list-box
                                                                                     [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                                                                    [filterParamName]="nameIdFilterParamTypes.CONTACT_PI_HIERARCHY_ROOT">
+                                                                                    [filterParamName]="nameIdFilterParamTypes.CONTACT_PI_FILTER_OPTIONAL">
                                                                             </name-id-list-box>
                                                                         </td>
                                                                         <td>
-                                                                            <label class="the-label">PI's
-                                                                                Project:</label><BR>
+                                                                            <label class="the-label">Project:</label><BR>
                                                                             <name-id-list-box
                                                                                     [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                                                                    [filterParamName]="nameIdFilterParamTypes.PROJECTS_BY_CONTACT">
+                                                                                    [filterParamName]="nameIdFilterParamTypes.PROJECT_FILTER_OPTIONAL">
                                                                             </name-id-list-box>
                                                                         </td>
                                                                         <td>
-                                                                            <label class="the-label">Project's
-                                                                                Experiment:</label><BR>
+                                                                            <label class="the-label">Experiment:</label><BR>
                                                                             <name-id-list-box
                                                                                     [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                                                                    [filterParamName]="nameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT">
+                                                                                    [filterParamName]="nameIdFilterParamTypes.EXPERIMENT_FILTER_OPTIONAL">
                                                                             </name-id-list-box>
                                                                         </td>
                                                                     </tr>
@@ -549,7 +547,15 @@ export class ExtractorRoot implements OnInit {
         if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
             this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,
+                FilterParamNames.CONTACT_PI_FILTER_OPTIONAL,
+                null);
+
+            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                FilterParamNames.PROJECT_FILTER_OPTIONAL,
+                null);
+
+            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                FilterParamNames.EXPERIMENT_FILTER_OPTIONAL,
                 null);
 
 

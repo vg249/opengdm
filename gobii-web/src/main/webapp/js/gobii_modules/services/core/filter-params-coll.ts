@@ -258,6 +258,32 @@ export class FilterParamsColl {
                 EntityType.ANALYSIS)
             .setFilterType(FilterType.ENTITY_BY_ID));
 
+
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.CONTACT_PI_FILTER_OPTIONAL,
+                    GobiiExtractFilterType.WHOLE_DATASET,
+                    EntityType.CONTACT)
+                .setIsDynamicFilterValue(true)
+                .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
+                .setNameIdLabelType(NameIdLabelType.ALL));
+
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.PROJECT_FILTER_OPTIONAL,
+                    GobiiExtractFilterType.WHOLE_DATASET,
+                    EntityType.PROJECT)
+                .setIsDynamicFilterValue(true)
+                .setNameIdLabelType(NameIdLabelType.ALL));
+
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.EXPERIMENT_FILTER_OPTIONAL,
+                    GobiiExtractFilterType.WHOLE_DATASET,
+                    EntityType.EXPERIMENT)
+                .setIsDynamicFilterValue(true)
+                .setNameIdLabelType(NameIdLabelType.ALL));
+
         //for hierarchical items, we need to crate the nameid requests separately from the
         //flat map: they _will_ need to be in the flat map; however, they all need to be
         //useed to set up the filtering hierarchy
