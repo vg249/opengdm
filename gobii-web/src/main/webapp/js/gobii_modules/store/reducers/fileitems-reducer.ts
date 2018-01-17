@@ -765,14 +765,45 @@ export const getPiContactsFilterOptional = createSelector(getFileItems, getUniqu
         .map(fi => fi);
 });
 
-export const getProjectsFilterOptional = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+export const getProjectsFilterOptional = createSelector(getFileItems, getFilters, (fileItems, filters) => {
+
+    let contactId: string = null;
+    if( filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL]) {
+        contactId = filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].filterValue;
+    }
 
     return fileItems.filter(e =>
         ( e.getExtractorItemType() === ExtractorItemType.ENTITY
             || e.getExtractorItemType() === ExtractorItemType.LABEL )
-        && e.getEntityType() === EntityType.PROJECT)
+        && e.getEntityType() === EntityType.PROJECT
+        && (( contactId === null ) || (e.getParentItemId() === contactId) ))
         .map(fi => fi);
 });
+
+
+/*
+*     if (filters[FilterParamNames.PROJECTS_BY_CONTACT]) {
+
+        let contactId: string = filters[FilterParamNames.PROJECTS_BY_CONTACT].filterValue;
+        returnVal = fileItems.filter(e =>
+            ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
+            && ( e.getEntityType() === EntityType.PROJECT)
+            && (e.getParentItemId() === contactId )
+            && e.getProcessType() !== ProcessType.DUMMY)
+            .map(fi => fi);
+
+        if (returnVal.length <= 0) {
+            returnVal = fileItems.filter(e =>
+                ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
+                && ( e.getEntityType() === EntityType.PROJECT)
+                //                && (e.getParentItemId() === contactId )
+                && e.getProcessType() === ProcessType.DUMMY)
+                .map(fi => fi);
+        }
+    }
+
+*
+* */
 
 export const getExperimentsFilterOptional = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 

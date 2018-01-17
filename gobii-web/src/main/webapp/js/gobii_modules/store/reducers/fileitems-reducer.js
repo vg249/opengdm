@@ -583,14 +583,42 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 })
                     .map(function (fi) { return fi; });
             }));
-            exports_1("getProjectsFilterOptional", getProjectsFilterOptional = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
+            exports_1("getProjectsFilterOptional", getProjectsFilterOptional = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
+                var contactId = null;
+                if (filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL]) {
+                    contactId = filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].filterValue;
+                }
                 return fileItems.filter(function (e) {
                     return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
                         || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
-                        && e.getEntityType() === type_entity_1.EntityType.PROJECT;
+                        && e.getEntityType() === type_entity_1.EntityType.PROJECT
+                        && ((contactId === null) || (e.getParentItemId() === contactId));
                 })
                     .map(function (fi) { return fi; });
             }));
+            /*
+            *     if (filters[FilterParamNames.PROJECTS_BY_CONTACT]) {
+            
+                    let contactId: string = filters[FilterParamNames.PROJECTS_BY_CONTACT].filterValue;
+                    returnVal = fileItems.filter(e =>
+                        ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
+                        && ( e.getEntityType() === EntityType.PROJECT)
+                        && (e.getParentItemId() === contactId )
+                        && e.getProcessType() !== ProcessType.DUMMY)
+                        .map(fi => fi);
+            
+                    if (returnVal.length <= 0) {
+                        returnVal = fileItems.filter(e =>
+                            ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
+                            && ( e.getEntityType() === EntityType.PROJECT)
+                            //                && (e.getParentItemId() === contactId )
+                            && e.getProcessType() === ProcessType.DUMMY)
+                            .map(fi => fi);
+                    }
+                }
+            
+            *
+            * */
             exports_1("getExperimentsFilterOptional", getExperimentsFilterOptional = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
                 return fileItems.filter(function (e) {
                     return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
