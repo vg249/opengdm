@@ -55,7 +55,7 @@ export class JsonToGfiDataset implements JsonToGfi {
             jsonItem.totalMarkers);
 
         let piContactRelation: GobiiFileItemEntityRelation = GobiiFileItemEntityRelation
-            .fromGobiiFileItemCompoundId(this._filterParamsColl.getFilter(FilterParamNames.CONTACT_PI,
+            .fromGobiiFileItemCompoundId(this._filterParamsColl.getFilter(FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,
                 GobiiExtractFilterType.WHOLE_DATASET))
             .setRelatedEntityId(dataset.piContactId != null ? dataset.piContactId.toString() : null);
 

@@ -89,7 +89,7 @@ export class FileItemService {
                 returnVal = this.store.select(fromRoot.getMapsets);
                 break;
 
-            case FilterParamNames.CONTACT_PI:
+            case FilterParamNames.CONTACT_PI_HIERARCHY_ROOT:
                 returnVal = this.store.select(fromRoot.getPiContacts);
                 break;
 

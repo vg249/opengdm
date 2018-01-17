@@ -6,7 +6,7 @@
 export class FilterParamNames {
 
     public static UNKNOWN: string = "UNKNOWN";
-    public static CONTACT_PI: string = "Contact-PI";
+    public static CONTACT_PI_HIERARCHY_ROOT: string = "Contact-PI-Hierarchy-Root";
     public static EXPERIMENTS: string = "Experiments";
     public static EXPERIMENTS_BY_PROJECT: string = "Experiments-by-project";
     public static CV_DATATYPE: string = "Cv-DataType";

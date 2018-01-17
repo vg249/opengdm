@@ -135,7 +135,7 @@ export class FilterParamsColl {
 
         this.addFilter(
             FilterParams
-                .build(FilterParamNames.CONTACT_PI,
+                .build(FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,
                     GobiiExtractFilterType.BY_SAMPLE,
                     EntityType.CONTACT)
                 .setIsDynamicFilterValue(false)
@@ -262,7 +262,7 @@ export class FilterParamsColl {
         //flat map: they _will_ need to be in the flat map; however, they all need to be
         //useed to set up the filtering hierarchy
         let nameIdRequestParamsContactsPi: FilterParams = FilterParams
-            .build(FilterParamNames.CONTACT_PI,
+            .build(FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.CONTACT)
             .setIsDynamicFilterValue(true)

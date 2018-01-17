@@ -14,7 +14,7 @@ System.register([], function (exports_1, context_1) {
                 function FilterParamNames() {
                 }
                 FilterParamNames.UNKNOWN = "UNKNOWN";
-                FilterParamNames.CONTACT_PI = "Contact-PI";
+                FilterParamNames.CONTACT_PI_HIERARCHY_ROOT = "Contact-PI-Hierarchy-Root";
                 FilterParamNames.EXPERIMENTS = "Experiments";
                 FilterParamNames.EXPERIMENTS_BY_PROJECT = "Experiments-by-project";
                 FilterParamNames.CV_DATATYPE = "Cv-DataType";

@@ -102,7 +102,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .setIsDynamicFilterValue(false)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL));
                     this.addFilter(file_item_params_1.FilterParams
-                        .build(file_item_param_names_1.FilterParamNames.CONTACT_PI, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.CONTACT)
+                        .build(file_item_param_names_1.FilterParamNames.CONTACT_PI_HIERARCHY_ROOT, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.CONTACT)
                         .setIsDynamicFilterValue(false)
                         .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR));
                     var cvJobStatusCompoundUniqueId = new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.CV, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.JOB_STATUS, cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.JOB_STATUS));
@@ -180,7 +180,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                     //flat map: they _will_ need to be in the flat map; however, they all need to be
                     //useed to set up the filtering hierarchy
                     var nameIdRequestParamsContactsPi = file_item_params_1.FilterParams
-                        .build(file_item_param_names_1.FilterParamNames.CONTACT_PI, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.CONTACT)
+                        .build(file_item_param_names_1.FilterParamNames.CONTACT_PI_HIERARCHY_ROOT, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.CONTACT)
                         .setIsDynamicFilterValue(true)
                         .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR);
                     var nameIdRequestParamsProjectByPiContact = file_item_params_1.FilterParams

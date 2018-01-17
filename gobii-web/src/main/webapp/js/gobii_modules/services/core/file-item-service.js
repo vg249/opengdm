@@ -131,7 +131,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                         case file_item_param_names_1.FilterParamNames.MAPSETS:
                             returnVal = this.store.select(fromRoot.getMapsets);
                             break;
-                        case file_item_param_names_1.FilterParamNames.CONTACT_PI:
+                        case file_item_param_names_1.FilterParamNames.CONTACT_PI_HIERARCHY_ROOT:
                             returnVal = this.store.select(fromRoot.getPiContacts);
                             break;
                         default:

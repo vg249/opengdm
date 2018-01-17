@@ -98,7 +98,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                                                                 Investigator:</label><BR>
                                                                             <name-id-list-box
                                                                                     [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                                                                    [filterParamName]="nameIdFilterParamTypes.CONTACT_PI">
+                                                                                    [filterParamName]="nameIdFilterParamTypes.CONTACT_PI_HIERARCHY_ROOT">
                                                                             </name-id-list-box>
                                                                         </td>
                                                                         <td>
@@ -120,7 +120,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                                                     </tr>
                                                                     </tbody>
                                                                 </table>
-                                                                
+
                                                                 <dataset-datatable
                                                                         [gobiiExtractFilterType]="gobiiExtractFilterType">
                                                                 </dataset-datatable>
@@ -144,7 +144,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                                                 <label class="the-label">Principle Investigator:</label><BR>
                                                                 <name-id-list-box
                                                                         [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                                                        [filterParamName]="nameIdFilterParamTypes.CONTACT_PI">
+                                                                        [filterParamName]="nameIdFilterParamTypes.CONTACT_PI_HIERARCHY_ROOT">
                                                                 </name-id-list-box>
 
                                                                 <BR>
@@ -549,13 +549,13 @@ export class ExtractorRoot implements OnInit {
         if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
             this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                FilterParamNames.CONTACT_PI,
+                FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,
                 null);
 
 
             this.doPrincipleInvestigatorTreeNotifications = false;
             this.fileItemService.setItemLabelType(this.gobiiExtractFilterType,
-                FilterParamNames.CONTACT_PI,
+                FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,
                 NameIdLabelType.UNKNOWN);
             this.displaySelectorPi = true;
             this.displaySelectorProjectForPi = true;
@@ -574,7 +574,7 @@ export class ExtractorRoot implements OnInit {
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
 
             this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                FilterParamNames.CONTACT_PI,
+                FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,
                 null);
 
 
@@ -594,7 +594,7 @@ export class ExtractorRoot implements OnInit {
             this.displaySelectorPi = true;
             this.doPrincipleInvestigatorTreeNotifications = true;
             this.fileItemService.setItemLabelType(this.gobiiExtractFilterType,
-                FilterParamNames.CONTACT_PI,
+                FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,
                 NameIdLabelType.ALL);
 
             this.displaySelectorProjectForPi = false;
