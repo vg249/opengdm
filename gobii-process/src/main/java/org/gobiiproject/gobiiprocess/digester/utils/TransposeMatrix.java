@@ -61,7 +61,7 @@ public class TransposeMatrix {
         for(String s:outFiles){
             fileList.append(" ").append(s);
         }
-        tryExec("paste "+ fileList.toString(), oFile, null);
+        tryExec("paste"+ fileList.toString(), oFile, null);
 
         //Delete all intermediates once 'paste' is complete
         for (File inFile: files){

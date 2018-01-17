@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiprocess.digester.HelperFunctions;
 
+import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFTransformer;
@@ -30,6 +31,7 @@ public abstract class MobileTransform {
     public static final MobileTransform stripHeader=new MobileTransform(){
         public void transform(String fromFile, String toFile, String errorPath){
             HelperFunctions.tryExec("tail -n +2 ", toFile, errorPath, fromFile);
+            FileSystemInterface.rmIfExist(fromFile);
         }
     };
     public static final MobileTransform IUPACToBI=new MobileTransform(){
