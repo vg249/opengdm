@@ -8,6 +8,7 @@ package org.gobiiproject.gobiiweb.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.gobiiproject.gobidomain.services.PingService;
+import org.gobiiproject.gobiiapimodel.payload.Pagination;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCalls;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseMapCalls;
@@ -197,9 +198,34 @@ public class BRAPIIControllerV1 {
             BrapiRequestReader<BrapiRequestStudiesSearch> brapiRequestReader = new BrapiRequestReader<>(BrapiRequestStudiesSearch.class);
             BrapiRequestStudiesSearch brapiRequestStudiesSearch = brapiRequestReader.makeRequestObj(studiesRequestBody);
 
+            Integer requestedPageSize = brapiRequestStudiesSearch.getPageSize();
+
             BrapiResponseStudiesSearch brapiResponseStudySearch = brapiResponseMapStudiesSearch.getBrapiResponseStudySearch(brapiRequestStudiesSearch);
 
             BrapiResponseEnvelopeMasterDetail.setResult(brapiResponseStudySearch);
+
+            Integer numberOfHits = BrapiResponseEnvelopeMasterDetail.getResult().getData().size();
+
+            Integer reportedPageSize;
+            Integer totalPages;
+            if( requestedPageSize > numberOfHits ) {
+                reportedPageSize = numberOfHits;
+                totalPages = 1;
+            } else {
+                reportedPageSize = requestedPageSize;
+                totalPages = numberOfHits / reportedPageSize; // get the whole part of the result
+                if(numberOfHits % reportedPageSize > 0 ) {   // if there's a remainder, there's an additional page
+                    totalPages += 1;
+                }
+            }
+
+
+            BrapiResponseEnvelopeMasterDetail.getBrapiMetaData().setPagination(new Pagination(
+                    numberOfHits,
+                    reportedPageSize,
+                    totalPages,
+                    0
+            ));
 
         } catch (GobiiException e) {
 
@@ -365,7 +391,7 @@ public class BRAPIIControllerV1 {
     }
 
     @RequestMapping(value = "/allelematrix-search",
-            method = {RequestMethod.GET,RequestMethod.POST},
+            method = {RequestMethod.GET, RequestMethod.POST},
             produces = "application/json")
     @ResponseBody
     public String getAlleleMatrix(@RequestParam("matrixDbId") String matrixDbId,
@@ -453,8 +479,8 @@ public class BRAPIIControllerV1 {
             produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     public void getFile(@RequestParam("fqpn") String fqpn,
-                                        HttpServletRequest request,
-                                        HttpServletResponse response) throws Exception {
+                        HttpServletRequest request,
+                        HttpServletResponse response) throws Exception {
 
         try {
 
