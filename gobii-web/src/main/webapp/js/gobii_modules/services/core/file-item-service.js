@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-entity", "../../views/entity-labels", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/gobii-file-item", "../../model/dto-header-status-message", "../../model/type-process", "./name-id-service", "../../store/actions/history-action", "../../store/actions/fileitem-action", "../../store/reducers", "@ngrx/store", "../../model/name-id-label-type", "../../model/filter-type", "../../model/file-item-param-names", "rxjs/Observable", "rxjs/add/operator/expand", "./dto-request.service", "../app/dto-request-item-entity-stats", "../app/dto-request-item-gfi", "../app/jsontogfi/json-to-gfi-dataset", "./filter-params-coll"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-entity", "../../views/entity-labels", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/gobii-file-item", "../../model/dto-header-status-message", "../../model/type-process", "./name-id-service", "../../store/actions/history-action", "../../store/actions/fileitem-action", "../../store/reducers", "@ngrx/store", "../../model/name-id-label-type", "../../model/filter-type", "../../model/file-item-param-names", "rxjs/Observable", "rxjs/add/operator/expand", "./dto-request.service", "../app/dto-request-item-entity-stats", "../app/dto-request-item-gfi", "../app/jsontogfi/json-to-gfi-dataset", "./filter-params-coll", "../../model/gobii-file-item-entity-relation", "../../model/gobii-file-item-compound-id"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_entity_1, entity_labels_1, type_extractor_item_1, type_extractor_filter_1, cv_filter_type_1, gobii_file_item_1, dto_header_status_message_1, type_process_1, name_id_service_1, historyAction, fileItemActions, fromRoot, store_1, name_id_label_type_1, filter_type_1, file_item_param_names_1, Observable_1, dto_request_service_1, dto_request_item_entity_stats_1, dto_request_item_gfi_1, json_to_gfi_dataset_1, filter_params_coll_1, FileItemService;
+    var core_1, type_entity_1, entity_labels_1, type_extractor_item_1, type_extractor_filter_1, cv_filter_type_1, gobii_file_item_1, dto_header_status_message_1, type_process_1, name_id_service_1, historyAction, fileItemActions, fromRoot, store_1, name_id_label_type_1, filter_type_1, file_item_param_names_1, Observable_1, dto_request_service_1, dto_request_item_entity_stats_1, dto_request_item_gfi_1, json_to_gfi_dataset_1, filter_params_coll_1, gobii_file_item_entity_relation_1, gobii_file_item_compound_id_1, FileItemService;
     return {
         setters: [
             function (core_1_1) {
@@ -83,6 +83,12 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
             },
             function (filter_params_coll_1_1) {
                 filter_params_coll_1 = filter_params_coll_1_1;
+            },
+            function (gobii_file_item_entity_relation_1_1) {
+                gobii_file_item_entity_relation_1 = gobii_file_item_entity_relation_1_1;
+            },
+            function (gobii_file_item_compound_id_1_1) {
+                gobii_file_item_compound_id_1 = gobii_file_item_compound_id_1_1;
             }
         ],
         execute: function () {
@@ -342,17 +348,33 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                         var minEntityLastUpdated;
                                         var fileItems = [];
                                         if (nameIds && (nameIds.length > 0)) {
-                                            nameIds.forEach(function (n) {
+                                            nameIds.forEach(function (nameIdItem) {
+                                                var entityRelation = null;
+                                                // the server method for the particular nameid retrieval in question will have had
+                                                // to have added the fk entity type and id value
+                                                if (nameIdItem.fkEntityType && nameIdItem.fkId) {
+                                                    var gobiiFileItemCompoundUniqueId = null;
+                                                    if (filterParamsToLoad.getParentFileItemParams()) {
+                                                        gobiiFileItemCompoundUniqueId = filterParamsToLoad.getParentFileItemParams();
+                                                    }
+                                                    else {
+                                                        gobiiFileItemCompoundUniqueId = new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, nameIdItem.fkEntityType, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null);
+                                                    }
+                                                    entityRelation = gobii_file_item_entity_relation_1.GobiiFileItemEntityRelation
+                                                        .fromGobiiFileItemCompoundId(gobiiFileItemCompoundUniqueId)
+                                                        .setRelatedEntityId(nameIdItem.fkId);
+                                                }
                                                 var currentFileItem = gobii_file_item_1.GobiiFileItem.build(gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
                                                     .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
                                                     .setEntityType(filterParamsToLoad.getEntityType())
                                                     .setEntitySubType(filterParamsToLoad.getEntitySubType())
                                                     .setCvFilterType(filterParamsToLoad.getCvFilterType())
-                                                    .setItemId(n.id)
-                                                    .setItemName(n.name)
+                                                    .setItemId(nameIdItem.id)
+                                                    .setItemName(nameIdItem.name)
                                                     .setSelected(false)
                                                     .setRequired(false)
-                                                    .setParentItemId(filterParamsToLoad.getFkEntityFilterValue());
+                                                    .setParentItemId(filterParamsToLoad.getFkEntityFilterValue())
+                                                    .withRelatedEntity(entityRelation);
                                                 fileItems.push(currentFileItem);
                                             });
                                             minEntityLastUpdated = new Date(Math.min.apply(null, nameIds

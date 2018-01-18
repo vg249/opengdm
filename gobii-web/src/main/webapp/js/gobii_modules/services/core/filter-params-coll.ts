@@ -14,6 +14,7 @@ import {GobiiFileItem} from "../../model/gobii-file-item";
 import {ExtractorItemType} from "../../model/type-extractor-item";
 import * as fileAction from '../../store/actions/fileitem-action';
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
+import {getGobiiTreeItemIds} from "../../store/reducers/treenode-reducer";
 
 
 @Injectable()
@@ -264,25 +265,32 @@ export class FilterParamsColl {
                 .build(FilterParamNames.CONTACT_PI_FILTER_OPTIONAL,
                     GobiiExtractFilterType.WHOLE_DATASET,
                     EntityType.CONTACT)
+                .setExtractorItemType(ExtractorItemType.ENTITY)
                 .setIsDynamicFilterValue(true)
                 .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
                 .setNameIdLabelType(NameIdLabelType.ALL));
 
+        // relate this filter to CONTACT_PI_FILTER_OPTIONAL as parent
         this.addFilter(
             FilterParams
                 .build(FilterParamNames.PROJECT_FILTER_OPTIONAL,
                     GobiiExtractFilterType.WHOLE_DATASET,
                     EntityType.PROJECT)
+                .setExtractorItemType(ExtractorItemType.ENTITY)
                 .setIsDynamicFilterValue(true)
-                .setNameIdLabelType(NameIdLabelType.ALL));
+                .setNameIdLabelType(NameIdLabelType.ALL)
+                .setParentFileItemParams(this.getFilter(FilterParamNames.CONTACT_PI_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET)));
 
+        // relate this filter to PROJECT_FILTER_OPTIONAL as parent
         this.addFilter(
             FilterParams
                 .build(FilterParamNames.EXPERIMENT_FILTER_OPTIONAL,
                     GobiiExtractFilterType.WHOLE_DATASET,
                     EntityType.EXPERIMENT)
+                .setExtractorItemType(ExtractorItemType.ENTITY)
                 .setIsDynamicFilterValue(true)
-                .setNameIdLabelType(NameIdLabelType.ALL));
+                .setNameIdLabelType(NameIdLabelType.ALL)
+                .setParentFileItemParams(this.getFilter(FilterParamNames.PROJECT_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET)));
 
         //for hierarchical items, we need to crate the nameid requests separately from the
         //flat map: they _will_ need to be in the flat map; however, they all need to be

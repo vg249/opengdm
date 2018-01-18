@@ -26,6 +26,8 @@ import {FilterHistory} from "../../store/reducers/history-reducer";
 import {DtoRequestItemGfi} from "../app/dto-request-item-gfi";
 import {JsonToGfiDataset} from "../app/jsontogfi/json-to-gfi-dataset";
 import {FilterParamsColl} from "./filter-params-coll";
+import {GobiiFileItemEntityRelation} from "../../model/gobii-file-item-entity-relation";
+import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 
 @Injectable()
 export class FileItemService {
@@ -382,7 +384,32 @@ export class FileItemService {
                                             let fileItems: GobiiFileItem[] = [];
                                             if (nameIds && ( nameIds.length > 0 )) {
 
-                                                nameIds.forEach(n => {
+                                                nameIds.forEach(nameIdItem => {
+
+                                                    let entityRelation: GobiiFileItemEntityRelation = null;
+
+                                                    // the server method for the particular nameid retrieval in question will have had
+                                                    // to have added the fk entity type and id value
+                                                    if( nameIdItem.fkEntityType && nameIdItem.fkId ) {
+
+                                                        let gobiiFileItemCompoundUniqueId: GobiiFileItemCompoundId = null;
+
+                                                        if( filterParamsToLoad.getParentFileItemParams() ) {
+                                                            gobiiFileItemCompoundUniqueId = filterParamsToLoad.getParentFileItemParams();
+                                                        } else {
+                                                            gobiiFileItemCompoundUniqueId = new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
+                                                                nameIdItem.fkEntityType,
+                                                                EntitySubType.UNKNOWN,
+                                                                CvFilterType.UNKNOWN,
+                                                                null);
+                                                        }
+
+
+                                                        entityRelation = GobiiFileItemEntityRelation
+                                                            .fromGobiiFileItemCompoundId(gobiiFileItemCompoundUniqueId)
+                                                            .setRelatedEntityId(nameIdItem.fkId);
+                                                    }
+
                                                     let currentFileItem: GobiiFileItem =
                                                         GobiiFileItem.build(
                                                             gobiiExtractFilterType,
@@ -391,11 +418,12 @@ export class FileItemService {
                                                             .setEntityType(filterParamsToLoad.getEntityType())
                                                             .setEntitySubType(filterParamsToLoad.getEntitySubType())
                                                             .setCvFilterType(filterParamsToLoad.getCvFilterType())
-                                                            .setItemId(n.id)
-                                                            .setItemName(n.name)
+                                                            .setItemId(nameIdItem.id)
+                                                            .setItemName(nameIdItem.name)
                                                             .setSelected(false)
                                                             .setRequired(false)
-                                                            .setParentItemId(filterParamsToLoad.getFkEntityFilterValue());
+                                                            .setParentItemId(filterParamsToLoad.getFkEntityFilterValue())
+                                                            .withRelatedEntity(entityRelation);
 
 
                                                     fileItems.push(currentFileItem);

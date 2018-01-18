@@ -183,6 +183,11 @@ export class FilterParams extends GobiiFileItemCompoundId {
         return this;
     }
 
+    getParentFileItemParams(): FilterParams {
+        return this._parentFileItemParams;
+
+    }
+
     getChildFileItemParams(): FilterParams[] {
         return this._childFileItemParams;
     }

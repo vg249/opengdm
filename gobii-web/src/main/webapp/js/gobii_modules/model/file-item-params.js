@@ -169,6 +169,9 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
                     this._parentFileItemParams = fileItemParams;
                     return this;
                 };
+                FilterParams.prototype.getParentFileItemParams = function () {
+                    return this._parentFileItemParams;
+                };
                 FilterParams.prototype.getChildFileItemParams = function () {
                     return this._childFileItemParams;
                 };
