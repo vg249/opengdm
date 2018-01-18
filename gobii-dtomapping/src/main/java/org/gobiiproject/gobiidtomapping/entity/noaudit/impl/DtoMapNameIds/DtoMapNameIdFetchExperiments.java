@@ -39,9 +39,11 @@ public class DtoMapNameIdFetchExperiments implements DtoMapNameIdFetch {
 
         NameIdDTO returnVal = new NameIdDTO();
 
+        returnVal.setGobiiEntityNameType(GobiiEntityNameType.EXPERIMENT);
+        returnVal.setGobiiFkEntityNameType(GobiiEntityNameType.PROJECT);
         returnVal.setId(resultSet.getInt("experiment_id"));
+        returnVal.setFkId(resultSet.getInt("project_id"));
         returnVal.setName(resultSet.getString("name"));
-
 
         return returnVal;
     }

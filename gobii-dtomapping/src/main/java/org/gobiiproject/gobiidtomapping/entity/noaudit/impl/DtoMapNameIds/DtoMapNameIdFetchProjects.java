@@ -40,6 +40,7 @@ public class DtoMapNameIdFetchProjects implements DtoMapNameIdFetch {
 
         NameIdDTO returnVal = new NameIdDTO();
 
+        returnVal.setGobiiEntityNameType(GobiiEntityNameType.PROJECT);
         returnVal.setId(resultSet.getInt("project_id"));
         returnVal.setName(resultSet.getString("name"));
 
@@ -76,7 +77,12 @@ public class DtoMapNameIdFetchProjects implements DtoMapNameIdFetch {
             ResultSet resultSet = rsProjectDao.getProjectNames();
 
             while (resultSet.next()) {
-                returnVal.add(makeNameIdDto(resultSet));
+
+                NameIdDTO nameIdDTO = makeNameIdDto(resultSet);
+                nameIdDTO.setGobiiFkEntityNameType(GobiiEntityNameType.CONTACT);
+                nameIdDTO.setFkId(resultSet.getInt("contact_id"));
+
+                returnVal.add(nameIdDTO);
             }
 
         } catch (Exception e) {

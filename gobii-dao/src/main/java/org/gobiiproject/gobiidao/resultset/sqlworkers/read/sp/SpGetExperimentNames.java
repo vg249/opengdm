@@ -28,7 +28,13 @@ public class SpGetExperimentNames implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String sql = "select experiment_id, name from experiment order by lower(name)";
+        String sql = "\n" +
+                "select e.experiment_id, \n" +
+                "e.name,\n" +
+                "p.project_id\n" +
+                "from experiment e\n" +
+                "left outer join project p on (e.project_id=p.project_id)\n" +
+                "order by lower(e.name)";
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
 
