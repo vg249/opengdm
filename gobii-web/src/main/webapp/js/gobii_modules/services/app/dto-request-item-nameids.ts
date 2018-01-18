@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {NameId} from "../../model/name-id";
 import {DtoRequestItem} from "./../core/dto-request-item";
-import {EntityType} from "../../model/type-entity";
+import {EntityType, entityTypefromString} from "../../model/type-entity";
 import {FilterType} from "../../model/filter-type";
 import {ProcessType} from "../../model/type-process";
 
@@ -59,7 +59,14 @@ export class DtoRequestItemNameIds implements DtoRequestItem<NameId[]> {
             let entityLasetModified = new Date(item.entityLasetModified);
             let currentId:string = String(item.id);
             let currentName:string = item.name;
-            returnVal.push(new NameId(currentId, currentName, this.entityType,entityLasetModified));
+            let fkId: string = String(item.fkId);
+            let fkEntityType: EntityType = entityTypefromString(item.gobiiFkEntityNameType);
+            returnVal.push(new NameId(currentId,
+                fkId,
+                currentName,
+                fkEntityType,
+                this.entityType,
+                entityLasetModified));
         });
 
         return returnVal;
