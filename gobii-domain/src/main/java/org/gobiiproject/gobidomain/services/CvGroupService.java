@@ -14,5 +14,6 @@ public interface CvGroupService {
 
     List<CvDTO> getCvsForGroup(Integer groupId) throws GobiiDomainException;
     List<CvGroupDTO> getCvsForType(GobiiCvGroupType groupType) throws GobiiDomainException;
+    CvGroupDTO getCvGroupDetailsByGroupName(String groupName, Integer cvGroupTypeId) throws GobiiDomainException;
 
 }

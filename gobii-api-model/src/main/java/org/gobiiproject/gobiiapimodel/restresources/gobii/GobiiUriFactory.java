@@ -130,6 +130,19 @@ public class GobiiUriFactory {
 
     } //
 
+    public RestUri cvGroupByQueryParams() throws Exception {
+
+        RestUri returnVal = new RestUri(this.domain,
+                this.port,
+                this.cropContextRoot,
+                this.gobiiControllerType.getControllerPath(),
+                GobiiServiceRequestId.URL_CVGROUP.getResourcePath())
+                .addUriParam("groupName")
+                .addQueryParam("cvGroupTypeId");
+
+        return returnVal;
+    }
+
     public RestUri markerssByQueryParams() throws Exception {
 
         RestUri returnVal = new RestUri(this.domain,

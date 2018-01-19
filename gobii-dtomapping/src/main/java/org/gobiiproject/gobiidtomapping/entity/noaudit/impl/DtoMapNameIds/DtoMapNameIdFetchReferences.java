@@ -58,6 +58,13 @@ public class DtoMapNameIdFetchReferences implements DtoMapNameIdFetch {
         return returnVal;
     }
 
+    private List<NameIdDTO> getReferencesByNameList(List<NameIdDTO> nameIdDTOList) {
+
+        List<NameIdDTO> returnVal = new ArrayList<>();
+
+
+        return returnVal;
+    }
 
 
     @Override
@@ -69,11 +76,18 @@ public class DtoMapNameIdFetchReferences implements DtoMapNameIdFetch {
             returnVal = this.getReferenceNames();
         } else {
 
-            throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.NONE,
-                    "Unsupported filter type for "
-                            + this.getEntityTypeName().toString().toLowerCase()
-                            + ": " + dtoMapNameIdParams.getGobiiFilterType());
+            if (GobiiFilterType.NAMES_BY_NAME_LIST == dtoMapNameIdParams.getGobiiFilterType()) {
+
+                returnVal = this.getReferencesByNameList(dtoMapNameIdParams.getNameIdDTOList());
+
+            } else {
+
+                throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.NONE,
+                        "Unsupported filter type for "
+                                + this.getEntityTypeName().toString().toLowerCase()
+                                + ": " + dtoMapNameIdParams.getGobiiFilterType());
+            }
         }
 
         return returnVal;

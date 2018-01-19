@@ -22,5 +22,6 @@ public interface DtoMapCvGroup {
 
     Integer getGroupTypeForGroupId(Integer groupId) throws GobiiDtoMappingException;
 
+    CvGroupDTO getCvGroupDetailsByGroupName(String groupName, Integer cvGroupTypeId) throws GobiiDtoMappingException;
 
 }

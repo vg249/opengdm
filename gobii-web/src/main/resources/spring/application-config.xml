@@ -393,6 +393,10 @@
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementCount"/>
     <bean id="ListStatementCountOfChildren"
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementCountOfChildren"/>
+    <bean id="ListStatementCvTermsByGroupForList"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementCvTermsByGroupForList"/>
+    <bean id="ListStatementReferencesForList"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.ListStatementReferencesForList"/>
 
     <bean id="dtoListQueryColl"
           class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl">
@@ -494,6 +498,22 @@
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
                         <constructor-arg ref="ListStatementCountOfChildren"/>
+                    </bean>
+                </entry>
+                <!--CV BY GROUP AND LIST -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_CV_BY_GROUP_AND_LIST}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
+                        <constructor-arg ref="ListStatementCvTermsByGroupForList"/>
+                    </bean>
+                </entry>
+                <!--REFERENCE BY LIST -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_REFERENCE_BY_LIST}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
+                        <constructor-arg ref="ListStatementReferencesForList"/>
                     </bean>
                 </entry>
             </map>

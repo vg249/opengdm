@@ -158,4 +158,29 @@ public class DtoMapCvGroupImpl implements DtoMapCvGroup {
         return returnVal;
 
     }
+
+    public CvGroupDTO getCvGroupDetailsByGroupName(String groupName, Integer cvGroupTypeId) throws GobiiDtoMappingException {
+
+        CvGroupDTO returnVal = new CvGroupDTO();
+
+        try {
+
+            ResultSet resultSet = rsCvGroupDao.getCvGroupDetailsByGroupName(groupName, cvGroupTypeId);
+
+            if (resultSet.next()) {
+                // apply cvgroup values
+                ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
+            }
+
+
+        } catch (SQLException e) {
+
+            LOGGER.error("Gobii Mapping Error", e);
+            throw new GobiiDtoMappingException(e);
+
+        }
+
+        return returnVal;
+
+    }
 }

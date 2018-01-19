@@ -7,6 +7,8 @@ import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvGroupDTO;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.gobiiproject.gobidomain.services.CvGroupService;
@@ -55,5 +57,24 @@ public class CvGroupServiceImpl implements CvGroupService {
         return returnVal;
     }
 
+    @Override
+    public CvGroupDTO getCvGroupDetailsByGroupName(String groupName, Integer cvGroupTypeId) throws GobiiDomainException {
+
+        CvGroupDTO returnVal;
+
+        returnVal = dtoMapCvGroup.getCvGroupDetailsByGroupName(groupName, cvGroupTypeId);
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+
+        if (null == returnVal) {
+            throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
+                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                    "The specified cv group name (" +
+                            groupName + ") does not match an existig cv group");
+        }
+
+        return returnVal;
+
+    }
 
 }
