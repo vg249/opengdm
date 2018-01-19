@@ -806,48 +806,9 @@ export const getProjectsFilterOptional = createSelector(getFileItems, getFilters
             .map(fi => fi);
     }
 
-    /**
-     * The following two line are annoying. The problem is that when the results of this filter changes,
-     * the default selected item in the drop-down does not change. Say you selected PI name from the list.
-     * So then projects are filtered as you expect. Then you go back to PI and select "All Principle Investigators."
-     * The project list expands to contain all the projects, but the selected one in the list box
-     * is the one that had been at the top of the list when it was filtered. Setting selected to true here
-     * does solve the problem. But it's a bargain with the devil: technically, we are modifying state.
-     * And state should never be modified outside of a reducer. But any other solution would be
-     * insanely complex and difficult to manage. So this is the kludge for now. Sigh.
-     */
-    if( returnVal[0] ) {
-        returnVal[0].setSelected(true);
-    }
-
     return returnVal;
 
 });
-
-
-/*
-*     if (filters[FilterParamNames.PROJECTS_BY_CONTACT]) {
-
-        let contactId: string = filters[FilterParamNames.PROJECTS_BY_CONTACT].filterValue;
-        returnVal = fileItems.filter(e =>
-            ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
-            && ( e.getEntityType() === EntityType.PROJECT)
-            && (e.getParentItemId() === contactId )
-            && e.getProcessType() !== ProcessType.DUMMY)
-            .map(fi => fi);
-
-        if (returnVal.length <= 0) {
-            returnVal = fileItems.filter(e =>
-                ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
-                && ( e.getEntityType() === EntityType.PROJECT)
-                //                && (e.getParentItemId() === contactId )
-                && e.getProcessType() === ProcessType.DUMMY)
-                .map(fi => fi);
-        }
-    }
-
-*
-* */
 
 export const getExperimentsFilterOptional = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
