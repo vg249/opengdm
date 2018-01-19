@@ -505,16 +505,18 @@ public class GobiiExtractor {
 					ErrorLogger.logDebug("Extractor", "DataSet " + datasetName + " Created");
 
 					/*Perform QC if the instruction is QC-based AND we are a successful extract*/
-					if (inst.isQcCheck() && ErrorLogger.success()) {//QC - Subsection #1 of 1
-						ErrorLogger.logInfo("Extractor", "qcCheck detected");
-						ErrorLogger.logInfo("Extractor", "Entering into the QC Subsection #1 of 1...");
-						jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING.getCvName(),"Processing QC Job");
-						performQC(configuration, inst, crop, datasetId, extractDir, mailInterface, extractType);
-						jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(),"QC Job Complete");
-					}
-					//inst.isQcCheck has supressed the email output, we wnat to *unsupress* it if there was a problem with file generation
-					if(inst.isQcCheck() && !ErrorLogger.success()){
-						mailInterface.send(pm);
+					if (inst.isQcCheck()) {
+						if (ErrorLogger.success()) {//QC - Subsection #1 of 1
+							ErrorLogger.logInfo("Extractor", "qcCheck detected");
+							ErrorLogger.logInfo("Extractor", "Entering into the QC Subsection #1 of 1...");
+							jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING.getCvName(),"Processing QC Job");
+							performQC(configuration, inst, crop, datasetId, extractDir, mailInterface, extractType);
+							jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(),"QC Job Complete");
+						}
+						//inst.isQcCheck has supressed the email output, we wnat to *unsupress* it if there was a problem with file generation
+						else{
+							mailInterface.send(pm);
+						}
 					}
 				}
 				HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
