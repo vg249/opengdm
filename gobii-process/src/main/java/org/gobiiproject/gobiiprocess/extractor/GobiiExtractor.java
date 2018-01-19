@@ -496,6 +496,7 @@ public class GobiiExtractor {
                         ErrorLogger.logError("GobiiExtractor", "No genetic data extracted. Extract failed.");
                         pm.setBody(jobReadableIdentifier, extractType, SimpleTimer.stop("Extract"), ErrorLogger.getFirstErrorReason(), ErrorLogger.success(), ErrorLogger.getAllErrorStringsHTML());
 						jobStatus.setError("Unsuccessful Data Extract");
+						if(!inst.isQcCheck())mailInterface.send(pm);
                     }
 
                     //Clean Temporary Files
