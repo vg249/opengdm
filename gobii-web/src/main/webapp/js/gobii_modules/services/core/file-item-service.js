@@ -421,16 +421,14 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                                 //.selectedFileItemId = "0";
                                             }
                                         }
-                                        else {
-                                            var noneFileItem = gobii_file_item_1.GobiiFileItem
-                                                .build(gobiiExtractFilterType, type_process_1.ProcessType.DUMMY)
-                                                .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
-                                                .setEntityType(filterParamsToLoad.getEntityType())
-                                                .setItemId("0")
-                                                .setItemName("<none>")
-                                                .setParentItemId(filterParamsToLoad.getFkEntityFilterValue());
-                                            fileItems.push(noneFileItem);
-                                        } // if/else any nameids were retrieved
+                                        var noneFileItem = gobii_file_item_1.GobiiFileItem
+                                            .build(gobiiExtractFilterType, type_process_1.ProcessType.DUMMY)
+                                            .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
+                                            .setEntityType(filterParamsToLoad.getEntityType())
+                                            .setItemId("-1")
+                                            .setItemName("<none>")
+                                            .setParentItemId(filterParamsToLoad.getFkEntityFilterValue());
+                                        fileItems.push(noneFileItem);
                                         var loadAction = new fileItemActions.LoadFileItemListWithFilterAction({
                                             gobiiFileItems: fileItems,
                                             filterId: filterParamsToLoad.getQueryName(),

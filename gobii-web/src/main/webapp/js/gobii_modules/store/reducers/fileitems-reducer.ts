@@ -540,11 +540,24 @@ export const getPiContacts = createSelector(getFileItems, getUniqueIds, (fileIte
 
 export const getProjects = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
-    return fileItems.filter(e =>
+    let returnVal:GobiiFileItem[] = [];
+
+    returnVal = fileItems.filter(e =>
         ( e.getExtractorItemType() === ExtractorItemType.ENTITY
             || e.getExtractorItemType() === ExtractorItemType.LABEL )
-        && e.getEntityType() === EntityType.PROJECT)
+        && e.getEntityType() === EntityType.PROJECT
+        && e.getProcessType() !== ProcessType.DUMMY)
         .map(fi => fi);
+
+    if (returnVal.length <= 0) {
+        returnVal = fileItems.filter(e =>
+            ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
+            && ( e.getEntityType() === EntityType.PROJECT)
+            && e.getProcessType() === ProcessType.DUMMY)
+            .map(fi => fi);
+    }
+
+    return returnVal;
 });
 
 
@@ -654,7 +667,6 @@ export const getProjectsForSelectedPi = createSelector(getFileItems, getFilters,
             returnVal = fileItems.filter(e =>
                 ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
                 && ( e.getEntityType() === EntityType.PROJECT)
-                //                && (e.getParentItemId() === contactId )
                 && e.getProcessType() === ProcessType.DUMMY)
                 .map(fi => fi);
         }
@@ -767,17 +779,49 @@ export const getPiContactsFilterOptional = createSelector(getFileItems, getUniqu
 
 export const getProjectsFilterOptional = createSelector(getFileItems, getFilters, (fileItems, filters) => {
 
+    let returnVal: GobiiFileItem[] = [];
+
     let contactId: string = null;
-    if( filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL]) {
+    if (filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL]) {
         contactId = filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].filterValue;
     }
 
-    return fileItems.filter(e =>
-        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
-            || e.getExtractorItemType() === ExtractorItemType.LABEL )
-        && e.getEntityType() === EntityType.PROJECT
-        && (( contactId === null ) || (e.getParentItemId() === contactId) ))
-        .map(fi => fi);
+    returnVal = fileItems.filter(
+        e =>
+            ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+                || e.getExtractorItemType() === ExtractorItemType.LABEL )
+            && e.getProcessType() !== ProcessType.DUMMY
+            && e.getEntityType() === EntityType.PROJECT
+            && (( contactId === null ) // state is not filtered -- we don't care, or . . .
+            || (e.getRelatedEntityFilterValue(filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId) // the item has an fk value
+                && e.getRelatedEntityFilterValue(filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId) === contactId)) // and it matches
+    ).map(fi => fi);
+
+
+    if (returnVal.length <= 0) {
+        returnVal = fileItems.filter(e =>
+            ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+                && e.getEntityType() === EntityType.PROJECT
+                && e.getProcessType() === ProcessType.DUMMY))
+            .map(fi => fi);
+    }
+
+    /**
+     * The following two line are annoying. The problem is that when the results of this filter changes,
+     * the default selected item in the drop-down does not change. Say you selected PI name from the list.
+     * So then projects are filtered as you expect. Then you go back to PI and select "All Principle Investigators."
+     * The project list expands to contain all the projects, but the selected one in the list box
+     * is the one that had been at the top of the list when it was filtered. Setting selected to true here
+     * does solve the problem. But it's a bargain with the devil: technically, we are modifying state.
+     * And state should never be modified outside of a reducer. But any other solution would be
+     * insanely complex and difficult to manage. So this is the kludge for now. Sigh.
+     */
+    if( returnVal[0] ) {
+        returnVal[0].setSelected(true);
+    }
+
+    return returnVal;
+
 });
 
 

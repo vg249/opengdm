@@ -390,11 +390,11 @@ export class FileItemService {
 
                                                     // the server method for the particular nameid retrieval in question will have had
                                                     // to have added the fk entity type and id value
-                                                    if( nameIdItem.fkEntityType && nameIdItem.fkId ) {
+                                                    if (nameIdItem.fkEntityType && nameIdItem.fkId) {
 
                                                         let gobiiFileItemCompoundUniqueId: GobiiFileItemCompoundId = null;
 
-                                                        if( filterParamsToLoad.getParentFileItemParams() ) {
+                                                        if (filterParamsToLoad.getParentFileItemParams()) {
                                                             gobiiFileItemCompoundUniqueId = filterParamsToLoad.getParentFileItemParams();
                                                         } else {
                                                             gobiiFileItemCompoundUniqueId = new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
@@ -486,19 +486,17 @@ export class FileItemService {
 
                                                 }
 
-                                            } else {
+                                            }
 
-                                                let noneFileItem: GobiiFileItem = GobiiFileItem
-                                                    .build(gobiiExtractFilterType, ProcessType.DUMMY)
-                                                    .setExtractorItemType(ExtractorItemType.ENTITY)
-                                                    .setEntityType(filterParamsToLoad.getEntityType())
-                                                    .setItemId("0")
-                                                    .setItemName("<none>")
-                                                    .setParentItemId(filterParamsToLoad.getFkEntityFilterValue());
+                                            let noneFileItem: GobiiFileItem = GobiiFileItem
+                                                .build(gobiiExtractFilterType, ProcessType.DUMMY)
+                                                .setExtractorItemType(ExtractorItemType.ENTITY)
+                                                .setEntityType(filterParamsToLoad.getEntityType())
+                                                .setItemId("-1")
+                                                .setItemName("<none>")
+                                                .setParentItemId(filterParamsToLoad.getFkEntityFilterValue());
 
-                                                fileItems.push(noneFileItem);
-
-                                            }// if/else any nameids were retrieved
+                                            fileItems.push(noneFileItem);
 
 
                                             let loadAction: fileItemActions.LoadFileItemListWithFilterAction = new fileItemActions.LoadFileItemListWithFilterAction(

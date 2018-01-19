@@ -404,12 +404,23 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 return returnVal;
             }));
             exports_1("getProjects", getProjects = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
-                return fileItems.filter(function (e) {
+                var returnVal = [];
+                returnVal = fileItems.filter(function (e) {
                     return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
                         || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
-                        && e.getEntityType() === type_entity_1.EntityType.PROJECT;
+                        && e.getEntityType() === type_entity_1.EntityType.PROJECT
+                        && e.getProcessType() !== type_process_1.ProcessType.DUMMY;
                 })
                     .map(function (fi) { return fi; });
+                if (returnVal.length <= 0) {
+                    returnVal = fileItems.filter(function (e) {
+                        return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY)
+                            && (e.getEntityType() === type_entity_1.EntityType.PROJECT)
+                            && e.getProcessType() === type_process_1.ProcessType.DUMMY;
+                    })
+                        .map(function (fi) { return fi; });
+                }
+                return returnVal;
             }));
             exports_1("getExperiments", getExperiments = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
                 return fileItems.filter(function (e) {
@@ -584,17 +595,33 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                     .map(function (fi) { return fi; });
             }));
             exports_1("getProjectsFilterOptional", getProjectsFilterOptional = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
+                var returnVal = [];
                 var contactId = null;
                 if (filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL]) {
                     contactId = filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].filterValue;
                 }
-                return fileItems.filter(function (e) {
+                returnVal = fileItems.filter(function (e) {
                     return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
                         || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
+                        && e.getProcessType() !== type_process_1.ProcessType.DUMMY
                         && e.getEntityType() === type_entity_1.EntityType.PROJECT
-                        && ((contactId === null) || (e.getParentItemId() === contactId));
-                })
-                    .map(function (fi) { return fi; });
+                        && ((contactId === null) // state is not filtered -- we don't care, or . . .
+                            || (e.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId) // the item has an fk value
+                                && e.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId) === contactId));
+                } // and it matches
+                ).map(function (fi) { return fi; });
+                if (returnVal.length <= 0) {
+                    returnVal = fileItems.filter(function (e) {
+                        return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
+                            && e.getEntityType() === type_entity_1.EntityType.PROJECT
+                            && e.getProcessType() === type_process_1.ProcessType.DUMMY);
+                    })
+                        .map(function (fi) { return fi; });
+                }
+                if (returnVal[0]) {
+                    returnVal[0].setSelected(true);
+                }
+                return returnVal;
             }));
             /*
             *     if (filters[FilterParamNames.PROJECTS_BY_CONTACT]) {
