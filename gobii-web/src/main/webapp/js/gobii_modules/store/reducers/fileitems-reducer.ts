@@ -810,13 +810,36 @@ export const getProjectsFilterOptional = createSelector(getFileItems, getFilters
 
 });
 
-export const getExperimentsFilterOptional = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+export const getExperimentsFilterOptional = createSelector(getFileItems, getFilters, (fileItems, filters) => {
 
-    return fileItems.filter(e =>
-        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
-            || e.getExtractorItemType() === ExtractorItemType.LABEL )
-        && e.getEntityType() === EntityType.EXPERIMENT)
-        .map(fi => fi);
+    let returnVal: GobiiFileItem[] = [];
+
+    let projectId: string = null;
+    if (filters[FilterParamNames.PROJECT_FILTER_OPTIONAL]) {
+        projectId = filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].filterValue;
+    }
+
+    returnVal = fileItems.filter(
+        e =>
+            ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+                || e.getExtractorItemType() === ExtractorItemType.LABEL )
+            && e.getProcessType() !== ProcessType.DUMMY
+            && e.getEntityType() === EntityType.EXPERIMENT
+            && (( projectId === null ) // state is not filtered -- we don't care, or . . .
+            || (e.getRelatedEntityFilterValue(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) // the item has an fk value
+                && e.getRelatedEntityFilterValue(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) === projectId)) // and it matches
+    ).map(fi => fi);
+
+
+    if (returnVal.length <= 0) {
+        returnVal = fileItems.filter(e =>
+            ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+                && e.getEntityType() === EntityType.EXPERIMENT
+                && e.getProcessType() === ProcessType.DUMMY))
+            .map(fi => fi);
+    }
+
+    return returnVal;
 });
 
 

@@ -620,13 +620,31 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 }
                 return returnVal;
             }));
-            exports_1("getExperimentsFilterOptional", getExperimentsFilterOptional = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
-                return fileItems.filter(function (e) {
+            exports_1("getExperimentsFilterOptional", getExperimentsFilterOptional = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
+                var returnVal = [];
+                var projectId = null;
+                if (filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL]) {
+                    projectId = filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].filterValue;
+                }
+                returnVal = fileItems.filter(function (e) {
                     return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
                         || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
-                        && e.getEntityType() === type_entity_1.EntityType.EXPERIMENT;
-                })
-                    .map(function (fi) { return fi; });
+                        && e.getProcessType() !== type_process_1.ProcessType.DUMMY
+                        && e.getEntityType() === type_entity_1.EntityType.EXPERIMENT
+                        && ((projectId === null) // state is not filtered -- we don't care, or . . .
+                            || (e.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) // the item has an fk value
+                                && e.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) === projectId));
+                } // and it matches
+                ).map(function (fi) { return fi; });
+                if (returnVal.length <= 0) {
+                    returnVal = fileItems.filter(function (e) {
+                        return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
+                            && e.getEntityType() === type_entity_1.EntityType.EXPERIMENT
+                            && e.getProcessType() === type_process_1.ProcessType.DUMMY);
+                    })
+                        .map(function (fi) { return fi; });
+                }
+                return returnVal;
             }));
         }
     };
