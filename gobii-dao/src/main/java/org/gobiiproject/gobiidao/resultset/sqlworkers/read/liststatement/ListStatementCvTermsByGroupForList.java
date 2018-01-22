@@ -32,9 +32,9 @@ public class ListStatementCvTermsByGroupForList  implements ListStatement {
 
         List<String> nameArray = (ArrayList) sqlParamVals.get(PARAM_NAME_NAME_LIST);
 
-        // parsed array into CSV
+        // parse array into CSV
 
-        for(String name : nameArray) {
+        for (String name : nameArray) {
 
             String quotedName = "'" + name + "'";
 

@@ -102,7 +102,7 @@ public class DtoMapNameIdFetchCvTerms implements DtoMapNameIdFetch {
 
             List<String> nameArray = new ArrayList<>();
 
-            for(NameIdDTO currentNameIdDTO : nameIdDTOList) {
+            for (NameIdDTO currentNameIdDTO : nameIdDTOList) {
 
                 nameArray.add(currentNameIdDTO.getName());
                 currentNameIdDTO.setId(0);
@@ -129,10 +129,7 @@ public class DtoMapNameIdFetchCvTerms implements DtoMapNameIdFetch {
 
                     }
                 }
-
             }
-
-
 
         } catch (Exception e) {
             throw new GobiiDaoException(e);

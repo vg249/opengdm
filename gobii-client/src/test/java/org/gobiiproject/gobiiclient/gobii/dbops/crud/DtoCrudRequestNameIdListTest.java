@@ -10,6 +10,7 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvGroupDTO;
@@ -134,7 +135,7 @@ public class DtoCrudRequestNameIdListTest {
         }
 
 
-        // create NameIdDTOs; 2 existing in the database, and 2 not existing
+        // create NameIdDTOs; 2 existing in the database, and 1 not existing
 
         NameIdDTO nameIdDTO1 = new NameIdDTO();
         nameIdDTO1.setName(newCvDTO1.getTerm());
@@ -180,16 +181,109 @@ public class DtoCrudRequestNameIdListTest {
 
             }
 
-            if (currentNameIdDTO.getName().equals(nameIdDTONotExisting)) {
+            if (currentNameIdDTO.getName().equals(nameIdDTONotExisting.getName())) {
 
                 Assert.assertTrue(currentNameIdDTO.getId() <= 0);
 
             }
 
+        }
+    }
+
+    @Test
+    public void testGetReferencesByNameList() throws Exception {
+
+        ReferenceDTO newReferenceDto1 = TestDtoFactory
+                .makePopulatedReferenceDTO(GobiiProcessType.CREATE, 1);
+
+        ReferenceDTO newReferenceDto2 = TestDtoFactory
+                .makePopulatedReferenceDTO(GobiiProcessType.CREATE, 1);
+
+        ReferenceDTO notExistingReferenceDto = TestDtoFactory
+                .makePopulatedReferenceDTO(GobiiProcessType.CREATE, 1);
+
+        // create reference 1
+        PayloadEnvelope<ReferenceDTO> payloadEnvelopeReference1 = new PayloadEnvelope<>(newReferenceDto1, GobiiProcessType.CREATE);
+        GobiiEnvelopeRestResource<ReferenceDTO> gobiiEnvelopeRestResourceReference1 = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_REFERENCE));
+        PayloadEnvelope<ReferenceDTO> referenceDTO1ResponseEnvelope = gobiiEnvelopeRestResourceReference1.post(ReferenceDTO.class,
+                payloadEnvelopeReference1);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(referenceDTO1ResponseEnvelope.getHeader()));
+
+        ReferenceDTO referenceDTO1Response = referenceDTO1ResponseEnvelope.getPayload().getData().get(0);
+
+        Assert.assertNotEquals(null, referenceDTO1Response);
+        Assert.assertTrue(referenceDTO1Response.getReferenceId() > 0);
+
+        // create reference 2
+        PayloadEnvelope<ReferenceDTO> payloadEnvelopeReference2 = new PayloadEnvelope<>(newReferenceDto2, GobiiProcessType.CREATE);
+        GobiiEnvelopeRestResource<ReferenceDTO> gobiiEnvelopeRestResourceReference2 = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_REFERENCE));
+        PayloadEnvelope<ReferenceDTO> referenceDTO2ResponseEnvelope = gobiiEnvelopeRestResourceReference2.post(ReferenceDTO.class,
+                payloadEnvelopeReference2);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(referenceDTO2ResponseEnvelope.getHeader()));
+
+        ReferenceDTO referenceDTO2Response = referenceDTO2ResponseEnvelope.getPayload().getData().get(0);
+
+        Assert.assertNotEquals(null, referenceDTO2Response);
+        Assert.assertTrue(referenceDTO2Response.getReferenceId() > 0);
+
+        // create NameIdDTOs; 2 existing in the database, and 1 not existing
+
+        NameIdDTO nameIdDTO1 = new NameIdDTO();
+        nameIdDTO1.setName(newReferenceDto1.getName());
+
+        NameIdDTO nameIdDTO2 = new NameIdDTO();
+        nameIdDTO2.setName(newReferenceDto2.getName());
+
+        String notExistingReference = "notexisting_reference-" + UUID.randomUUID().toString();
+
+        NameIdDTO nameIdDTONotExisting = new NameIdDTO();
+        nameIdDTONotExisting.setName(notExistingReference);
+
+        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+        nameIdDTOList.add(nameIdDTO1);
+        nameIdDTOList.add(nameIdDTO2);
+        nameIdDTOList.add(nameIdDTONotExisting);
+
+        PayloadEnvelope<NameIdDTO> payloadEnvelope = new PayloadEnvelope<>();
+        payloadEnvelope.getHeader().setGobiiProcessType(GobiiProcessType.CREATE);
+        payloadEnvelope.getPayload().setData(nameIdDTOList);
+
+        RestUri namesUri = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .nameIdListByQueryParams();
+        GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
+        namesUri.setParamValue("entity", GobiiEntityNameType.REFERENCE.toString().toLowerCase());
+        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.NAMES_BY_NAME_LIST.toString().toUpperCase()));
+        namesUri.setParamValue("filterValue", "test");
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = gobiiEnvelopeRestResource.post(NameIdDTO.class, payloadEnvelope);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(responsePayloadEnvelope.getHeader()));
+
+        List<NameIdDTO> nameIdDTOListResponse = responsePayloadEnvelope.getPayload().getData();
+        Assert.assertNotEquals(null, nameIdDTOListResponse);
+        Assert.assertEquals(nameIdDTOList.size(), nameIdDTOListResponse.size());
+
+        for (NameIdDTO currentNameIdDTO : nameIdDTOListResponse) {
+
+            if (currentNameIdDTO.getName().equals(nameIdDTO1.getName()) || currentNameIdDTO.getName().equals(nameIdDTO2.getName())) {
+
+                Assert.assertTrue(currentNameIdDTO.getId() > 0);
+
+            }
+
+            if (currentNameIdDTO.getName().equals(nameIdDTONotExisting.getName())) {
+
+                Assert.assertTrue(currentNameIdDTO.getId() <= 0);
+
+            }
 
         }
-
-
     }
 
 }

@@ -1,6 +1,9 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds;
 
+import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsReferenceDao;
+import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
+import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIdFetch;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -15,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -25,6 +29,8 @@ public class DtoMapNameIdFetchReferences implements DtoMapNameIdFetch {
     @Autowired
     private RsReferenceDao rsReferenceDao = null;
 
+    @Autowired
+    private DtoListQueryColl dtoListQueryColl;
 
     Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdFetchReferences.class);
 
@@ -62,6 +68,40 @@ public class DtoMapNameIdFetchReferences implements DtoMapNameIdFetch {
 
         List<NameIdDTO> returnVal = new ArrayList<>();
 
+        try {
+
+            List<String> nameArray = new ArrayList<>();
+
+            for (NameIdDTO currentNameIdDTO : nameIdDTOList) {
+
+                nameArray.add(currentNameIdDTO.getName());
+                currentNameIdDTO.setId(0);
+                returnVal.add(currentNameIdDTO);
+
+            }
+
+            ResultSet resultSet = dtoListQueryColl.getResultSet(ListSqlId.QUERY_ID_REFERENCE_BY_LIST,
+                    new HashMap<String, Object>(){{
+                    }}, new HashMap<String, Object>(){{
+                        put("nameArray", nameArray);
+                    }});
+
+            for (NameIdDTO currentNameIdDTO : returnVal) {
+
+                while (resultSet.next()) {
+
+                    if (currentNameIdDTO.getName().equals(resultSet.getString("name"))) {
+
+                        currentNameIdDTO.setId(resultSet.getInt("reference_id"));
+                        break;
+
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            throw new GobiiDaoException(e);
+        }
 
         return returnVal;
     }
