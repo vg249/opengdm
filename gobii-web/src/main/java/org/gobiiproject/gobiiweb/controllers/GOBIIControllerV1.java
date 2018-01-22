@@ -2255,6 +2255,18 @@ public class GOBIIControllerV1 {
                             gobiiEntityNameType),
                     nameIdList);
 
+            // return the nameIdDTOs with null IDs
+            for (NameIdDTO currentNameIdDTO : nameIdList) {
+
+                if (currentNameIdDTO.getId().equals(0)) {
+
+                    returnVal.getPayload().getData().add(currentNameIdDTO);
+
+                }
+
+            }
+
+
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {

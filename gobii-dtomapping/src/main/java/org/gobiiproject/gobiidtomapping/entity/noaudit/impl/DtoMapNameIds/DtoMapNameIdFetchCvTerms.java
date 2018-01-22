@@ -105,6 +105,8 @@ public class DtoMapNameIdFetchCvTerms implements DtoMapNameIdFetch {
             for(NameIdDTO currentNameIdDTO : nameIdDTOList) {
 
                 nameArray.add(currentNameIdDTO.getName());
+                currentNameIdDTO.setId(0);
+                returnVal.add(currentNameIdDTO);
 
             }
 
@@ -115,25 +117,19 @@ public class DtoMapNameIdFetchCvTerms implements DtoMapNameIdFetch {
                         put("nameArray", nameArray);
                     }});
 
-            NameIdDTO newNameIdDTO;
 
-            for (NameIdDTO currentNameIdDTO : nameIdDTOList) {
-
-                newNameIdDTO = new NameIdDTO();
-                newNameIdDTO.setId(null);
-                newNameIdDTO.setName(currentNameIdDTO.getName());
+            for (NameIdDTO currentNameIdDTO : returnVal) {
 
                 while (resultSet.next()) {
 
-                    if (newNameIdDTO.getName().equals(resultSet.getString("term"))) {
+                    if (currentNameIdDTO.getName().equals(resultSet.getString("term"))) {
 
-                        newNameIdDTO.setId(resultSet.getInt("cv_id"));
+                        currentNameIdDTO.setId(resultSet.getInt("cv_id"));
                         break;
 
                     }
                 }
 
-                returnVal.add(newNameIdDTO);
             }
 
 
