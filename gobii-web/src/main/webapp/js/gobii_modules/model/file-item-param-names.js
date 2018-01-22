@@ -32,6 +32,7 @@ System.register([], function (exports_1, context_1) {
                 FilterParamNames.CONTACT_PI_FILTER_OPTIONAL = "Contact-Pi-Filter-Optional";
                 FilterParamNames.PROJECT_FILTER_OPTIONAL = "Project-Filter-Optional";
                 FilterParamNames.EXPERIMENT_FILTER_OPTIONAL = "Experiment-Filter-Optional";
+                FilterParamNames.DATASET_FILTER_OPTIONAL = "Dataset-Filter-Optional";
                 return FilterParamNames;
             }());
             exports_1("FilterParamNames", FilterParamNames);

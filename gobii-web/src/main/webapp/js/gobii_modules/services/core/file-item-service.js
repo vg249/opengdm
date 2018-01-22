@@ -254,22 +254,15 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     var returnVal;
                     var filterParams = this.filterParamsColl.getFilter(filterParamName, gobiiExtractFilterType);
                     if (filterParams) {
-                        if (filterParams.getChildFileItemParams() && filterParams.getChildFileItemParams().length <= 1) {
-                            if (filterParams.getChildFileItemParams().length === 1) {
-                                filterParams = filterParams.getChildFileItemParams()[0];
-                            }
-                            if (filterParams.getIsDynamicDataLoad()) {
-                                returnVal = this.makeFileItemActionsFromNameIds(gobiiExtractFilterType, filterParams, filterValue, true);
+                        // we only process child filters
+                        if (filterParams.getChildFileItemParams() && filterParams.getChildFileItemParams().length === 1) {
+                            var childFilterParams = filterParams.getChildFileItemParams()[0];
+                            if (childFilterParams.getIsDynamicDataLoad()) {
+                                returnVal = this.makeFileItemActionsFromNameIds(gobiiExtractFilterType, childFilterParams, filterValue, true);
                             }
                             else {
-                                returnVal = this.recurseFilters(gobiiExtractFilterType, filterParams, filterValue, true);
+                                returnVal = this.recurseFilters(gobiiExtractFilterType, childFilterParams, filterValue, true);
                             }
-                        }
-                        else {
-                            this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled filter condition "
-                                + filterParamName.toString()
-                                + " for extract type " + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]
-                                + " has more than one child filter"));
                         }
                     }
                     else {

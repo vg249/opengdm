@@ -540,7 +540,7 @@ export const getPiContacts = createSelector(getFileItems, getUniqueIds, (fileIte
 
 export const getProjects = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
-    let returnVal:GobiiFileItem[] = [];
+    let returnVal: GobiiFileItem[] = [];
 
     returnVal = fileItems.filter(e =>
         ( e.getExtractorItemType() === ExtractorItemType.ENTITY
@@ -794,7 +794,7 @@ export const getProjectsFilterOptional = createSelector(getFileItems, getFilters
                 || e.getExtractorItemType() === ExtractorItemType.LABEL )
             && e.getProcessType() !== ProcessType.DUMMY
             && e.getEntityType() === EntityType.PROJECT
-            && (( contactId === null ) // state is not filtered -- we don't care, or . . .
+            && (( !contactId || (+contactId < 0 ) ) // state is not filtered -- we don't care, or . . .
             || (e.getRelatedEntityFilterValue(filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId) // the item has an fk value
                 && e.getRelatedEntityFilterValue(filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId) === contactId)) // and it matches
     ).map(fi => fi);
@@ -827,7 +827,7 @@ export const getExperimentsFilterOptional = createSelector(getFileItems, getFilt
                 || e.getExtractorItemType() === ExtractorItemType.LABEL )
             && e.getProcessType() !== ProcessType.DUMMY
             && e.getEntityType() === EntityType.EXPERIMENT
-            && (( projectId === null ) // state is not filtered -- we don't care, or . . .
+            && (( !projectId || (+projectId < 0 ) ) // state is not filtered -- we don't care, or . . .
             || (e.getRelatedEntityFilterValue(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) // the item has an fk value
                 && e.getRelatedEntityFilterValue(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) === projectId)) // and it matches
     ).map(fi => fi);

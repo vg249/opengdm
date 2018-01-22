@@ -15,6 +15,7 @@ import {ExtractorItemType} from "../../model/type-extractor-item";
 import * as fileAction from '../../store/actions/fileitem-action';
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 import {getGobiiTreeItemIds} from "../../store/reducers/treenode-reducer";
+import {getSymbolObservable} from "rxjs/symbol/observable";
 
 
 @Injectable()
@@ -294,6 +295,16 @@ export class FilterParamsColl {
                 .setNameIdLabelType(NameIdLabelType.ALL));
 
 
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.DATASET_FILTER_OPTIONAL,
+                    GobiiExtractFilterType.WHOLE_DATASET,
+                    EntityType.DATASET)
+                .setIsDynamicFilterValue(true)
+                .setIsDynamicDataLoad(false)
+                .setExtractorItemType(ExtractorItemType.ENTITY));
+
+
         //Set up hierarchy
         this.getFilter(FilterParamNames.CONTACT_PI_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET)
             .setChildNameIdRequestParams(
@@ -307,7 +318,10 @@ export class FilterParamsColl {
             );
 
         this.getFilter(FilterParamNames.EXPERIMENT_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET)
-            .setParentFileItemParams(this.getFilter(FilterParamNames.PROJECT_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET));
+            .setParentFileItemParams(this.getFilter(FilterParamNames.PROJECT_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET))
+            .setChildNameIdRequestParams(
+                [this.getFilter(FilterParamNames.DATASET_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET)]
+            );
 
         /***
          .setIsDynamicFilterValue(true)

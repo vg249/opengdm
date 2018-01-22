@@ -24,5 +24,6 @@ export class FilterParamNames {
     public static CONTACT_PI_FILTER_OPTIONAL = "Contact-Pi-Filter-Optional";
     public static PROJECT_FILTER_OPTIONAL = "Project-Filter-Optional";
     public static EXPERIMENT_FILTER_OPTIONAL = "Experiment-Filter-Optional";
+    public static DATASET_FILTER_OPTIONAL = "Dataset-Filter-Optional";
 }
 
