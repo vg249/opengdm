@@ -180,6 +180,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .build(file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.CONTACT)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
                         .setIsDynamicFilterValue(true)
+                        .setIsDynamicDataLoad(false)
                         .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL));
                     // relate this filter to CONTACT_PI_FILTER_OPTIONAL as parent
@@ -187,15 +188,32 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .build(file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.PROJECT)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
                         .setIsDynamicFilterValue(true)
-                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL)
-                        .setParentFileItemParams(this.getFilter(file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET)));
+                        .setIsDynamicDataLoad(false)
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL));
                     // relate this filter to PROJECT_FILTER_OPTIONAL as parent
                     this.addFilter(file_item_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.EXPERIMENT)
-                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
                         .setIsDynamicFilterValue(true)
-                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL)
-                        .setParentFileItemParams(this.getFilter(file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET)));
+                        .setIsDynamicDataLoad(false)
+                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL));
+                    //Set up hierarchy
+                    this.getFilter(file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET)
+                        .setChildNameIdRequestParams([this.getFilter(file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET)]);
+                    this.getFilter(file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET)
+                        .setParentFileItemParams(this.getFilter(file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET))
+                        .setChildNameIdRequestParams([this.getFilter(file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET)]);
+                    this.getFilter(file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET)
+                        .setParentFileItemParams(this.getFilter(file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET));
+                    /***
+                     .setIsDynamicFilterValue(true)
+                     *
+                     .setChildNameIdRequestParams([this.getFilter(FilterParamNames.PROJECT_FILTER_OPTIONAL, GobiiExtractFilterType.WHOLE_DATASET)])
+            
+                     .setParentFileItemParams(this.getFilter(FilterParamNames.CONTACT_PI_FILTER_OPTIONAL, GobiiExtractFilterType.WHOLE_DATASET))
+                     .setChildNameIdRequestParams([this.getFilter(FilterParamNames.EXPERIMENT_FILTER_OPTIONAL, GobiiExtractFilterType.WHOLE_DATASET)])
+                     * @type {FilterParams}
+                     */
                     //for hierarchical items, we need to crate the nameid requests separately from the
                     //flat map: they _will_ need to be in the flat map; however, they all need to be
                     //useed to set up the filtering hierarchy

@@ -781,9 +781,11 @@ export const getProjectsFilterOptional = createSelector(getFileItems, getFilters
 
     let returnVal: GobiiFileItem[] = [];
 
+    // The project filter's value is a contactId. So we want only
+    // those projects that have an fk reference to the specified contact.
     let contactId: string = null;
-    if (filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL]) {
-        contactId = filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].filterValue;
+    if (filters[FilterParamNames.PROJECT_FILTER_OPTIONAL]) {
+        contactId = filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].filterValue;
     }
 
     returnVal = fileItems.filter(
@@ -815,8 +817,8 @@ export const getExperimentsFilterOptional = createSelector(getFileItems, getFilt
     let returnVal: GobiiFileItem[] = [];
 
     let projectId: string = null;
-    if (filters[FilterParamNames.PROJECT_FILTER_OPTIONAL]) {
-        projectId = filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].filterValue;
+    if (filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL]) {
+        projectId = filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].filterValue;
     }
 
     returnVal = fileItems.filter(
