@@ -16,19 +16,26 @@ import * as fileAction from '../store/actions/fileitem-action';
  * This class is used extensively for the purpose of retrieving and
  * managing the results of queries to the GOBII /names/{entity} service. In this
  * case, in the NameIdService's get() method, values from this class
- * are used to set up the GET request to the /names/{entityResource}. Of particular
- * note is the use fo the _fkEntityFilterValue value for the purpose of retrieving
- * names for a given entity when that entity must be filtered according to a foreign key.
- * For example, when retrieving projects by contact_id (i.e., by principle investigator contact
- * id), the _fkEntityFilterValue will be the value of the PI according to which the project names
- * should be filtered.
+ * are used to set up the GET request to the /names/{entityResource}.
  *
- * This class also has more general application for retrieving whole entities (e.g., dataset records.
+ * There are several ways in which FilterParams are used to drive queries.
  *
- * The _parentFileItemParams and _childFileItemParams can be used to create a tree of instances
- * of this class that can be used for hierarchical filtering. That is to say, the parent/child
- * relationships of FilterParams instances corresponds to the primary/foreign key relationships of the
- * tables involved in generating the query. In our example, the PROJECTS_BY_CONTACT FileFilterParams is a
+ * 1) The params are used for the fileItemService.loadNameIdsFromFilterParams() method. In the
+ *    Extract root class there are many examples of this -- when you switch to a new export type,
+ *    the file items pertinent to that type are loaded into the ngrx/store so that they can then
+ *    be retrieved via reducer selectors. Usually, the FilterParam instance has no parent or child
+ *    FilterParam instances, and so only those entities are loaded.
+ *
+ * 2) In hierarchical filtering, there is a chain of FilterParam items identified via the parent
+ *    and child properties. For example, If we want to display datasets for a particular experiment
+ *    for a particular project for a particular PI, we will have a hierarchy of four such FilterParam
+ *    instances. The Hierarchy will be recursed so that the filter values will be set up the ngrx/store
+ *    and the selectors will retrieve the correctly filtered items.
+ *
+ * There are more details to be aware of for hierarchical filtering.
+
+ * The parent/child relationships of FilterParams instances corresponds to the primary/foreign key
+ * relationships of the tables involved in generating the query. In our example, the PROJECTS_BY_CONTACT FileFilterParams is a
  * child of the CONTACT_PI FileFilterParams. The PROJECTS_BY_CONTACT query will be run along with a
  * contactId value, which will serve to filter the results of the project query. That contactId value
  * will now be the _fkEntityFilterValue of the PROJECTS_BY_CONTACT FilterValues. Moreover, each
@@ -37,11 +44,47 @@ import * as fileAction from '../store/actions/fileitem-action';
  * subsequently be retrieved from the store such that the GobiiFileItems of EntityType PROJECT are
  * filtered as follows: the current _fkEntityFilterValue of the PROJECTS_BY_CONTACT filter matches
  * the parentItemId of the GobiiFileItems of EntityType PROJECT. Thus, the PROJECTS_BY_CONTACT filter,
- * with an arbitrary _fkEntityFilterValue, can be dispatched to the store at any time and thereby change
+ * with an arbitrary _fkEntityFilterValue, can be dispatched to the store at any time and the   reby change
  * the set of GobiiFileItems that are filtered in this way. In other words, when we want to get the
  * "currently selected" projects from the store (i.e., the projects filtered for
  * the pi who is currently selected in the UI), the selector returns the file items whose parent id
  * matches current contact ID in state.
+ *
+ * The first time this was used, the retrievals from the server were filtered. That is to say,
+ * the hierarchy was traversed each time that a new value was selected. Filters are
+ * stored in the history, uniquely identified by filter name and value. Thus, if that
+ * particular filter with that value had already been retrieved, it would not be re-retrieved.
+ * So the top-most parent in the hierarchy would be loaded, and the children recursed for
+ * the top-items in the list, filtering as they go. Then, when a new value is selected from
+ * a drop down list, the ReplaceInExtractByItemIdAction is triggered, and handled in
+ * file-item-effects. So at any level in the hierarchy, an item is filtered down. Here again,
+ * if the filter-value combination has been encountered, it does not need to be re-retrieved. Whether or
+ * not this type of retrieval is done is controlled by the value of the _isDynamicLoad property.
+ *
+ * Subsequently, a second methodology has evolved. Here, reather than filtering for these items
+ * piecemeal, all items for the particular entity are retrieved at once. This was done in order to
+ * support drop downs that list All of a given entity, but then allow subseqent filtering. So here
+ * the items are all initially loaded, and then filtering only applies to what's already in the
+ * ngrx/store. Here again you can see this functionality operating depending on the value of _isDynamicLoad.
+ *
+ *
+ * Particular note should be taken of the  _fkEntityFilterValue value for the purpose of retrieving
+ * names for a given entity when that entity must be filtered according to a foreign key.
+ * For example, when retrieving projects by contact_id (i.e., by principle investigator contact
+ * id), the _fkEntityFilterValue will be the value of the PI according to which the project names
+ * should be filtered. The fact that the filter value corresponds to the PK id of the parent entity
+ * by which to filter the target item (i.e., the Project filter's filter value is the contactId) is
+ * awkward and difficult to understand. There probably needs to be better semantics for this. Note
+ * that in the FileItemService.makeFileActionsFromFilterParamName() method, there is no way to apply a
+ * filter value to the leaf of the hierarchy. That doesn't seem to matter for now. But there are cases
+ * where it could matter.
+ *
+ * Note that there is also an idiom for filtering where you want to retrieve whole entities rather than
+ * name ids. This is done with the FileItemService.makeFileItemActionsFromEntities() method. Because whole
+ * entities can have FK relationships to multiple entities, the GobiiFileItemEntityRelation[] array was
+ * added to GobiiFileItem. This allows for an arbitrary number of FK relationships to be set up.
+ *
+
  *
  */
 export class FilterParams extends GobiiFileItemCompoundId {

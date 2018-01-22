@@ -211,15 +211,6 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                     this.getFilter(file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET)
                         .setParentFileItemParams(this.getFilter(file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET))
                         .setChildNameIdRequestParams([this.getFilter(file_item_param_names_1.FilterParamNames.DATASET_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET)]);
-                    /***
-                     .setIsDynamicFilterValue(true)
-                     *
-                     .setChildNameIdRequestParams([this.getFilter(FilterParamNames.PROJECT_FILTER_OPTIONAL, GobiiExtractFilterType.WHOLE_DATASET)])
-            
-                     .setParentFileItemParams(this.getFilter(FilterParamNames.CONTACT_PI_FILTER_OPTIONAL, GobiiExtractFilterType.WHOLE_DATASET))
-                     .setChildNameIdRequestParams([this.getFilter(FilterParamNames.EXPERIMENT_FILTER_OPTIONAL, GobiiExtractFilterType.WHOLE_DATASET)])
-                     * @type {FilterParams}
-                     */
                     //for hierarchical items, we need to crate the nameid requests separately from the
                     //flat map: they _will_ need to be in the flat map; however, they all need to be
                     //useed to set up the filtering hierarchy

@@ -323,16 +323,6 @@ export class FilterParamsColl {
                 [this.getFilter(FilterParamNames.DATASET_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET)]
             );
 
-        /***
-         .setIsDynamicFilterValue(true)
-         *
-         .setChildNameIdRequestParams([this.getFilter(FilterParamNames.PROJECT_FILTER_OPTIONAL, GobiiExtractFilterType.WHOLE_DATASET)])
-
-         .setParentFileItemParams(this.getFilter(FilterParamNames.CONTACT_PI_FILTER_OPTIONAL, GobiiExtractFilterType.WHOLE_DATASET))
-         .setChildNameIdRequestParams([this.getFilter(FilterParamNames.EXPERIMENT_FILTER_OPTIONAL, GobiiExtractFilterType.WHOLE_DATASET)])
-         * @type {FilterParams}
-         */
-
 
         //for hierarchical items, we need to crate the nameid requests separately from the
         //flat map: they _will_ need to be in the flat map; however, they all need to be
