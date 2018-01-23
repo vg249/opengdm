@@ -46,23 +46,22 @@ public class DtoCrudRequestNameIdListTest {
     public void testGetCvTermsByGroupAndNameList() throws Exception {
 
         // get cvGroupId
-//        RestUri restUriCvGroupDetails = GobiiClientContext.getInstance(null, false)
-//                .getUriFactory()
-//                .cvGroupByQueryParams()
-//                .setParamValue("groupName", CvGroup.CVGROUP_GERMPLASM_SPECIES.getCvGroupName())
-//                .setParamValue("cvGroupTypeId", GobiiCvGroupType.GROUP_TYPE_USER.getGroupTypeId().toString());
-//
-//        GobiiEnvelopeRestResource<CvGroupDTO> cvGroupDTOGobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriCvGroupDetails);
-//        PayloadEnvelope<CvGroupDTO> cvGroupDTOResultEnvelope = cvGroupDTOGobiiEnvelopeRestResource.get(CvGroupDTO.class);
-//
-//        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(cvGroupDTOResultEnvelope.getHeader()));
-//        CvGroupDTO cvGroupDTO = cvGroupDTOResultEnvelope.getPayload().getData().get(0);
-//        Assert.assertTrue(cvGroupDTO.getCvGroupId() > 0);
-//        Assert.assertEquals(cvGroupDTO.getName(), CvGroup.CVGROUP_GERMPLASM_SPECIES.getCvGroupName());
+        RestUri restUriCvGroupDetails = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .cvGroupByQueryParams()
+                .setParamValue("groupName", CvGroup.CVGROUP_GERMPLASM_SPECIES.getCvGroupName())
+                .setParamValue("cvGroupTypeId", GobiiCvGroupType.GROUP_TYPE_USER.getGroupTypeId().toString());
 
-//        Integer cvGroupId = cvGroupDTO.getCvGroupId();
+        GobiiEnvelopeRestResource<CvGroupDTO> cvGroupDTOGobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriCvGroupDetails);
+        PayloadEnvelope<CvGroupDTO> cvGroupDTOResultEnvelope = cvGroupDTOGobiiEnvelopeRestResource.get(CvGroupDTO.class);
 
-        Integer cvGroupId = 19;
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(cvGroupDTOResultEnvelope.getHeader()));
+        CvGroupDTO cvGroupDTO = cvGroupDTOResultEnvelope.getPayload().getData().get(0);
+        Assert.assertTrue(cvGroupDTO.getCvGroupId() > 0);
+        Assert.assertEquals(cvGroupDTO.getName(), CvGroup.CVGROUP_GERMPLASM_SPECIES.getCvGroupName());
+
+        Integer cvGroupId = cvGroupDTO.getCvGroupId();
+
         // create list of cv terms
 
         CvDTO newCvDTO1 = TestDtoFactory.makePopulatedCvDTO(GobiiProcessType.CREATE, 1);

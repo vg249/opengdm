@@ -938,7 +938,7 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
-    @RequestMapping(value = "/cvgroups/{cvGroupTypeId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/cvgroups/{cvGroupTypeId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<CvGroupDTO> getCvGroupsByType(@PathVariable Integer cvGroupTypeId,
                                                          HttpServletRequest request,

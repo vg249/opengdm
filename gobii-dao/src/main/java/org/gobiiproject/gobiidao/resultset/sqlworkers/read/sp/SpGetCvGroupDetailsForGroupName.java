@@ -25,9 +25,9 @@ public class SpGetCvGroupDetailsForGroupName implements Work {
     public void execute(Connection dbConnection) throws SQLException {
 
         String sql = "select" +
-                "\n cvgroup_id" +
-                "\n name" +
-                "\n definition" +
+                "\n cvgroup_id," +
+                "\n name," +
+                "\n definition," +
                 "\n type" +
                 "\n from cvgroup" +
                 "\n where name = ? and type = ?";
