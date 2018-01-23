@@ -32,7 +32,7 @@ public class ListStatementDatasetAll implements ListStatement {
                 "	ds.name as \"datasetname\", " +
                 "	ds.experiment_id, " +
                 "	e.name as \"experimentname\", " +
-                "	null as \"projectid\", " +
+                "	p.project_id as \"projectid\", " +
                 "	p.name as \"projectname\", " +
                 "	null as \"protocolid\", " +
                 "	null as \"protocolname\", " +
@@ -40,7 +40,7 @@ public class ListStatementDatasetAll implements ListStatement {
                 "	null \"platformname\", " +
                 "	ds.callinganalysis_id as \"callinganalysisid\", " +
                 "	null as \"callinganalysisname\", " +
-                "	null as picontactid, " +
+                "	c.contact_id as picontactid, " +
                 "	c.email as piemail, " +
                 "	ds.data_table, " +
                 "	ds.data_file, " +

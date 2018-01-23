@@ -736,20 +736,34 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
 
     let returnVal: GobiiFileItem[] = [];
 
-    let datasetEntitiesFilteredByExperiment: GobiiFileItem[] = []
-    if (filters[FilterParamNames.EXPERIMENTS_BY_PROJECT] && filters[FilterParamNames.DATASETS_BY_EXPERIMENT]) {
-        let compounUniqueIdForExperimentsByProject: GobiiFileItemCompoundId = filters[FilterParamNames.EXPERIMENTS_BY_PROJECT].gobiiCompoundUniqueId;
-        let experimentId: string = filters[FilterParamNames.DATASETS_BY_EXPERIMENT].filterValue;
-        datasetEntitiesFilteredByExperiment = fileItems.filter(e =>
-            ( e.getExtractorItemType() === ExtractorItemType.ENTITY
-                && e.getEntityType() === EntityType.DATASET
-                && e.getRelatedEntityFilterValue(compounUniqueIdForExperimentsByProject) === experimentId
-                && e.hasEntity()
-                && e.getProcessType() !== ProcessType.DUMMY))
-            .map(fi => fi);
 
-        //returnVal = datasetEntitiesFilteredByExperiment;
-    }
+    // the child filter has the parent fk value
+    let contactId = filters[FilterParamNames.PROJECT_FILTER_OPTIONAL] ?
+        filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].filterValue : null;
+    let compounUniqueIdForContacts: GobiiFileItemCompoundId =
+        filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL] ? filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId : null;
+
+    let projectId = filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL] ?
+        filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].filterValue : null;
+    let compounUniqueIdForProjectsByContact: GobiiFileItemCompoundId =
+        filters[FilterParamNames.PROJECT_FILTER_OPTIONAL] ? filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId : null;
+
+    let experimentId = filters[FilterParamNames.DATASET_FILTER_OPTIONAL] ?
+        filters[FilterParamNames.DATASET_FILTER_OPTIONAL].filterValue : null;
+    let compounUniqueIdForExperimentsByProject: GobiiFileItemCompoundId =
+        filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL] ? filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].gobiiCompoundUniqueId : null;
+
+    let datasetEntitiesFilteredByExperiment: GobiiFileItem[] = []
+
+    datasetEntitiesFilteredByExperiment = fileItems.filter(e =>
+        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            && e.getEntityType() === EntityType.DATASET
+            && ( (  contactId === null ) || +contactId < 1 || compounUniqueIdForContacts === null || e.getRelatedEntityFilterValue(compounUniqueIdForContacts) === contactId )
+            && ( ( projectId === null ) || +projectId < 1  || compounUniqueIdForProjectsByContact === null || e.getRelatedEntityFilterValue(compounUniqueIdForProjectsByContact) === projectId )
+            && ( ( experimentId === null ) || +experimentId < 1 || compounUniqueIdForExperimentsByProject === null || e.getRelatedEntityFilterValue(compounUniqueIdForExperimentsByProject) === experimentId )
+            && e.hasEntity()
+            && e.getProcessType() !== ProcessType.DUMMY))
+        .map(fi => fi);
 
 
     let jobStatusFilterParams = filters[FilterParamNames.DATASET_LIST_STATUS];

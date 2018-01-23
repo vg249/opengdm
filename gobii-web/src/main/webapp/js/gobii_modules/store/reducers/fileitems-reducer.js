@@ -560,20 +560,27 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             }));
             exports_1("getDatasetEntities", getDatasetEntities = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
                 var returnVal = [];
+                // the child filter has the parent fk value
+                var contactId = filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL] ?
+                    filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].filterValue : null;
+                var compounUniqueIdForContacts = filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL] ? filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId : null;
+                var projectId = filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL] ?
+                    filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].filterValue : null;
+                var compounUniqueIdForProjectsByContact = filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL] ? filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId : null;
+                var experimentId = filters[file_item_param_names_1.FilterParamNames.DATASET_FILTER_OPTIONAL] ?
+                    filters[file_item_param_names_1.FilterParamNames.DATASET_FILTER_OPTIONAL].filterValue : null;
+                var compounUniqueIdForExperimentsByProject = filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL] ? filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].gobiiCompoundUniqueId : null;
                 var datasetEntitiesFilteredByExperiment = [];
-                if (filters[file_item_param_names_1.FilterParamNames.EXPERIMENTS_BY_PROJECT] && filters[file_item_param_names_1.FilterParamNames.DATASETS_BY_EXPERIMENT]) {
-                    var compounUniqueIdForExperimentsByProject_1 = filters[file_item_param_names_1.FilterParamNames.EXPERIMENTS_BY_PROJECT].gobiiCompoundUniqueId;
-                    var experimentId_2 = filters[file_item_param_names_1.FilterParamNames.DATASETS_BY_EXPERIMENT].filterValue;
-                    datasetEntitiesFilteredByExperiment = fileItems.filter(function (e) {
-                        return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                            && e.getEntityType() === type_entity_1.EntityType.DATASET
-                            && e.getRelatedEntityFilterValue(compounUniqueIdForExperimentsByProject_1) === experimentId_2
-                            && e.hasEntity()
-                            && e.getProcessType() !== type_process_1.ProcessType.DUMMY);
-                    })
-                        .map(function (fi) { return fi; });
-                    //returnVal = datasetEntitiesFilteredByExperiment;
-                }
+                datasetEntitiesFilteredByExperiment = fileItems.filter(function (e) {
+                    return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
+                        && e.getEntityType() === type_entity_1.EntityType.DATASET
+                        && ((contactId === null) || +contactId < 1 || compounUniqueIdForContacts === null || e.getRelatedEntityFilterValue(compounUniqueIdForContacts) === contactId)
+                        && ((projectId === null) || +projectId < 1 || compounUniqueIdForProjectsByContact === null || e.getRelatedEntityFilterValue(compounUniqueIdForProjectsByContact) === projectId)
+                        && ((experimentId === null) || +experimentId < 1 || compounUniqueIdForExperimentsByProject === null || e.getRelatedEntityFilterValue(compounUniqueIdForExperimentsByProject) === experimentId)
+                        && e.hasEntity()
+                        && e.getProcessType() !== type_process_1.ProcessType.DUMMY);
+                })
+                    .map(function (fi) { return fi; });
                 var jobStatusFilterParams = filters[file_item_param_names_1.FilterParamNames.DATASET_LIST_STATUS];
                 if (jobStatusFilterParams
                     && jobStatusFilterParams.filterValue != null) {
