@@ -49,7 +49,6 @@ System.register(["../../../model/gobii-file-item", "../../../model/type-entity",
                     var experimentRelation = gobii_file_item_entity_relation_1.GobiiFileItemEntityRelation
                         .fromGobiiFileItemCompoundId(this._filterParamsColl.getFilter(file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET))
                         .setRelatedEntityId(dataset.experimentId != null ? dataset.experimentId.toString() : null);
-                    "";
                     var statusRelation = gobii_file_item_entity_relation_1.GobiiFileItemEntityRelation
                         .fromGobiiFileItemCompoundId(this._filterParamsColl.getFilter(file_item_param_names_1.FilterParamNames.CV_JOB_STATUS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET))
                         .setRelatedEntityId(dataset.jobStatusId != null ? dataset.jobStatusId.toString() : null);

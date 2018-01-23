@@ -68,7 +68,7 @@ export class JsonToGfiDataset implements JsonToGfi {
             .fromGobiiFileItemCompoundId(this._filterParamsColl.getFilter(FilterParamNames.EXPERIMENT_FILTER_OPTIONAL,
                 GobiiExtractFilterType.WHOLE_DATASET))
             .setRelatedEntityId(dataset.experimentId != null ? dataset.experimentId.toString() : null);
-``
+
         let statusRelation: GobiiFileItemEntityRelation = GobiiFileItemEntityRelation
             .fromGobiiFileItemCompoundId(this._filterParamsColl.getFilter(FilterParamNames.CV_JOB_STATUS,
                 GobiiExtractFilterType.WHOLE_DATASET))

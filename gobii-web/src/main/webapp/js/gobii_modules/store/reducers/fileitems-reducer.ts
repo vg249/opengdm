@@ -753,7 +753,7 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
     let compounUniqueIdForExperimentsByProject: GobiiFileItemCompoundId =
         filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL] ? filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].gobiiCompoundUniqueId : null;
 
-    let datasetEntitiesFilteredByExperiment: GobiiFileItem[] = []
+    let datasetEntitiesFilteredByExperiment: GobiiFileItem[] = [];
 
     datasetEntitiesFilteredByExperiment = fileItems.filter(e =>
         ( e.getExtractorItemType() === ExtractorItemType.ENTITY
