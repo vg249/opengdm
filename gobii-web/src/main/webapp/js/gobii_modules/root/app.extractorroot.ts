@@ -558,6 +558,7 @@ export class ExtractorRoot implements OnInit {
                 FilterParamNames.EXPERIMENT_FILTER_OPTIONAL,
                 null);
 
+            this.fileItemService.loadFilter(this.gobiiExtractFilterType, FilterParamNames.DATASET_FILTER_OPTIONAL, null);
 
             this.doPrincipleInvestigatorTreeNotifications = false;
             this.fileItemService.setItemLabelType(this.gobiiExtractFilterType,

@@ -249,6 +249,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL, null);
                         this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL, null);
                         this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL, null);
+                        this.fileItemService.loadFilter(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.DATASET_FILTER_OPTIONAL, null);
                         this.doPrincipleInvestigatorTreeNotifications = false;
                         this.fileItemService.setItemLabelType(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.CONTACT_PI_HIERARCHY_ROOT, name_id_label_type_1.NameIdLabelType.UNKNOWN);
                         this.displaySelectorPi = true;

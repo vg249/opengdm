@@ -43,6 +43,34 @@ export class FileItemService {
 
     } // constructor
 
+    public loadFilter(gobiiExtractFilterType: GobiiExtractFilterType, filterParamsName: FilterParamNames, filterValue: string) {
+
+        let filterParams: FilterParams = this.filterParamsColl.getFilter(filterParamsName, gobiiExtractFilterType);
+
+        if (filterParams) {
+
+            let loadAction: fileItemActions.LoadFilterAction = new fileItemActions.LoadFilterAction(
+                {
+                    filterId: filterParams.getQueryName(),
+                    filter: {
+                        gobiiExtractFilterType: gobiiExtractFilterType,
+                        gobiiCompoundUniqueId: filterParams,
+                        filterValue: filterValue,
+                        entityLasteUpdated: null
+                    }
+                }
+            );
+
+            this.store.dispatch(loadAction)
+
+        } else {
+            this.store.dispatch(new historyAction.AddStatusMessageAction("Error loading filter: there is no query params object for query "
+                + filterParamsName
+                + " with extract filter type "
+                + GobiiExtractFilterType[gobiiExtractFilterType]));
+        }
+    }
+
     public getForFilter(filterParamName: FilterParamNames): Observable<GobiiFileItem[]> {
 
         //Wrapping an Observable around the select functions just doesn't work. So at leaset this
@@ -259,18 +287,18 @@ export class FileItemService {
             // we only process child filters
             if (filterParams.getChildFileItemParams() && filterParams.getChildFileItemParams().length === 1) {
 
-                    let childFilterParams:FilterParams = filterParams.getChildFileItemParams()[0];
-                    if (childFilterParams.getIsDynamicDataLoad()) {
-                        returnVal = this.makeFileItemActionsFromNameIds(gobiiExtractFilterType,
-                            childFilterParams,
-                            filterValue,
-                            true);
-                    } else {
-                        returnVal = this.recurseFilters(gobiiExtractFilterType,
-                            childFilterParams,
-                            filterValue,
-                            true);
-                    }
+                let childFilterParams: FilterParams = filterParams.getChildFileItemParams()[0];
+                if (childFilterParams.getIsDynamicDataLoad()) {
+                    returnVal = this.makeFileItemActionsFromNameIds(gobiiExtractFilterType,
+                        childFilterParams,
+                        filterValue,
+                        true);
+                } else {
+                    returnVal = this.recurseFilters(gobiiExtractFilterType,
+                        childFilterParams,
+                        filterValue,
+                        true);
+                }
 
             }
         } else {
@@ -681,7 +709,7 @@ export class FileItemService {
                             // and how we are using it
 
                             // For example contactId
-                            let parentItemFilterValue:string = filterParamsToLoad.getFkEntityFilterValue();
+                            let parentItemFilterValue: string = filterParamsToLoad.getFkEntityFilterValue();
 
                             // For example, the coupound unique ID for Contacts
                             let parentEntityCompoundUniqueId: GobiiFileItemCompoundId = this.filterParamsColl.getFilter(
@@ -713,13 +741,13 @@ export class FileItemService {
                                  idx++) {
                                 let rqp: FilterParams = filterParamsToLoad.getChildFileItemParams()[idx];
 //                                if (rqp.getFilterType() === FilterType.NAMES_BY_TYPEID) {
-                                    rqp.setFkEntityFilterValue(childItemsFilterValue);
+                                rqp.setFkEntityFilterValue(childItemsFilterValue);
 
-                                    this.recurseFilters(gobiiExtractFilterType,
-                                        rqp,
-                                        childItemsFilterValue,
-                                        true)
-                                        .subscribe(fileItems => observer.next(fileItems));
+                                this.recurseFilters(gobiiExtractFilterType,
+                                    rqp,
+                                    childItemsFilterValue,
+                                    true)
+                                    .subscribe(fileItems => observer.next(fileItems));
 //                                }
                             }
 

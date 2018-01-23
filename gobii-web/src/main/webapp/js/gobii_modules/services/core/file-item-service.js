@@ -102,6 +102,27 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     this.store = store;
                     this.filterParamsColl = filterParamsColl;
                 } // constructor
+                FileItemService.prototype.loadFilter = function (gobiiExtractFilterType, filterParamsName, filterValue) {
+                    var filterParams = this.filterParamsColl.getFilter(filterParamsName, gobiiExtractFilterType);
+                    if (filterParams) {
+                        var loadAction = new fileItemActions.LoadFilterAction({
+                            filterId: filterParams.getQueryName(),
+                            filter: {
+                                gobiiExtractFilterType: gobiiExtractFilterType,
+                                gobiiCompoundUniqueId: filterParams,
+                                filterValue: filterValue,
+                                entityLasteUpdated: null
+                            }
+                        });
+                        this.store.dispatch(loadAction);
+                    }
+                    else {
+                        this.store.dispatch(new historyAction.AddStatusMessageAction("Error loading filter: there is no query params object for query "
+                            + filterParamsName
+                            + " with extract filter type "
+                            + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]));
+                    }
+                };
                 FileItemService.prototype.getForFilter = function (filterParamName) {
                     //Wrapping an Observable around the select functions just doesn't work. So at leaset this
                     //function can encapsualte getting the correct selector for the filter
