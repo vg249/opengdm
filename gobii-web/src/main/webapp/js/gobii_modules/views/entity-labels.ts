@@ -23,6 +23,7 @@ export class Labels {
         this.entityNodeLabels[EntityType.PLATFORM] = "Platform";
         this.entityNodeLabels[EntityType.MAPSET] = "Mapset";
         this.entityNodeLabels[EntityType.PROJECT] = "Project";
+        this.entityNodeLabels[EntityType.EXPERIMENT] = "Experiment";
         this.entityNodeLabels[EntityType.MARKER_GROUP] = "Marker Groups";
 
 

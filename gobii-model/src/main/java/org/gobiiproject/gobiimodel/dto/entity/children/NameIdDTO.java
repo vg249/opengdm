@@ -19,7 +19,9 @@ public class NameIdDTO extends DTOBase {
     private Date entityLasetModified;
 
     private GobiiEntityNameType gobiiEntityNameType;
+    private GobiiEntityNameType gobiiFkEntityNameType;
     private Integer id = 0;
+    private Integer fkId = 0;
     private String name = null;
 
     public String getName() {
@@ -52,5 +54,21 @@ public class NameIdDTO extends DTOBase {
 
     public void setGobiiEntityNameType(GobiiEntityNameType gobiiEntityNameType) {
         this.gobiiEntityNameType = gobiiEntityNameType;
+    }
+
+    public GobiiEntityNameType getGobiiFkEntityNameType() {
+        return gobiiFkEntityNameType;
+    }
+
+    public void setGobiiFkEntityNameType(GobiiEntityNameType gobiiFkEntityNameType) {
+        this.gobiiFkEntityNameType = gobiiFkEntityNameType;
+    }
+
+    public Integer getFkId() {
+        return fkId;
+    }
+
+    public void setFkId(Integer fkId) {
+        this.fkId = fkId;
     }
 }

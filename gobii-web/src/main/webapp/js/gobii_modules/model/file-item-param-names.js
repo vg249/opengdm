@@ -14,7 +14,7 @@ System.register([], function (exports_1, context_1) {
                 function FilterParamNames() {
                 }
                 FilterParamNames.UNKNOWN = "UNKNOWN";
-                FilterParamNames.CONTACT_PI = "Contact-PI";
+                FilterParamNames.CONTACT_PI_HIERARCHY_ROOT = "Contact-PI-Hierarchy-Root";
                 FilterParamNames.EXPERIMENTS = "Experiments";
                 FilterParamNames.EXPERIMENTS_BY_PROJECT = "Experiments-by-project";
                 FilterParamNames.CV_DATATYPE = "Cv-DataType";
@@ -29,6 +29,10 @@ System.register([], function (exports_1, context_1) {
                 FilterParamNames.PROJECTS_BY_CONTACT = "Projects-by-contact";
                 FilterParamNames.PROJECTS = "Project";
                 FilterParamNames.MARKER_GROUPS = "Marker Groups";
+                FilterParamNames.CONTACT_PI_FILTER_OPTIONAL = "Contact-Pi-Filter-Optional";
+                FilterParamNames.PROJECT_FILTER_OPTIONAL = "Project-Filter-Optional";
+                FilterParamNames.EXPERIMENT_FILTER_OPTIONAL = "Experiment-Filter-Optional";
+                FilterParamNames.DATASET_FILTER_OPTIONAL = "Dataset-Filter-Optional";
                 return FilterParamNames;
             }());
             exports_1("FilterParamNames", FilterParamNames);

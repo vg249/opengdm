@@ -55,17 +55,17 @@ export class JsonToGfiDataset implements JsonToGfi {
             jsonItem.totalMarkers);
 
         let piContactRelation: GobiiFileItemEntityRelation = GobiiFileItemEntityRelation
-            .fromGobiiFileItemCompoundId(this._filterParamsColl.getFilter(FilterParamNames.CONTACT_PI,
+            .fromGobiiFileItemCompoundId(this._filterParamsColl.getFilter(FilterParamNames.CONTACT_PI_FILTER_OPTIONAL,
                 GobiiExtractFilterType.WHOLE_DATASET))
             .setRelatedEntityId(dataset.piContactId != null ? dataset.piContactId.toString() : null);
 
         let projectRelation: GobiiFileItemEntityRelation = GobiiFileItemEntityRelation
-            .fromGobiiFileItemCompoundId(this._filterParamsColl.getFilter(FilterParamNames.PROJECTS_BY_CONTACT,
+            .fromGobiiFileItemCompoundId(this._filterParamsColl.getFilter(FilterParamNames.PROJECT_FILTER_OPTIONAL,
                 GobiiExtractFilterType.WHOLE_DATASET))
             .setRelatedEntityId(dataset.projectId != null ? dataset.projectId.toString() : null);
 
         let experimentRelation: GobiiFileItemEntityRelation = GobiiFileItemEntityRelation
-            .fromGobiiFileItemCompoundId(this._filterParamsColl.getFilter(FilterParamNames.EXPERIMENTS_BY_PROJECT,
+            .fromGobiiFileItemCompoundId(this._filterParamsColl.getFilter(FilterParamNames.EXPERIMENT_FILTER_OPTIONAL,
                 GobiiExtractFilterType.WHOLE_DATASET))
             .setRelatedEntityId(dataset.experimentId != null ? dataset.experimentId.toString() : null);
 

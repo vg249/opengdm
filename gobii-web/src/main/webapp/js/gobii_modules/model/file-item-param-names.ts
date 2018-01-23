@@ -6,7 +6,7 @@
 export class FilterParamNames {
 
     public static UNKNOWN: string = "UNKNOWN";
-    public static CONTACT_PI: string = "Contact-PI";
+    public static CONTACT_PI_HIERARCHY_ROOT: string = "Contact-PI-Hierarchy-Root";
     public static EXPERIMENTS: string = "Experiments";
     public static EXPERIMENTS_BY_PROJECT: string = "Experiments-by-project";
     public static CV_DATATYPE: string = "Cv-DataType";
@@ -21,5 +21,9 @@ export class FilterParamNames {
     public static PROJECTS_BY_CONTACT: string = "Projects-by-contact";
     public static PROJECTS: string = "Project";
     public static MARKER_GROUPS: string = "Marker Groups";
+    public static CONTACT_PI_FILTER_OPTIONAL = "Contact-Pi-Filter-Optional";
+    public static PROJECT_FILTER_OPTIONAL = "Project-Filter-Optional";
+    public static EXPERIMENT_FILTER_OPTIONAL = "Experiment-Filter-Optional";
+    public static DATASET_FILTER_OPTIONAL = "Dataset-Filter-Optional";
 }
 

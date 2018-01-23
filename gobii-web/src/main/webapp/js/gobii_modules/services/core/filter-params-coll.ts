@@ -14,6 +14,8 @@ import {GobiiFileItem} from "../../model/gobii-file-item";
 import {ExtractorItemType} from "../../model/type-extractor-item";
 import * as fileAction from '../../store/actions/fileitem-action';
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
+import {getGobiiTreeItemIds} from "../../store/reducers/treenode-reducer";
+import {getSymbolObservable} from "rxjs/symbol/observable";
 
 
 @Injectable()
@@ -135,7 +137,7 @@ export class FilterParamsColl {
 
         this.addFilter(
             FilterParams
-                .build(FilterParamNames.CONTACT_PI,
+                .build(FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,
                     GobiiExtractFilterType.BY_SAMPLE,
                     EntityType.CONTACT)
                 .setIsDynamicFilterValue(false)
@@ -258,11 +260,75 @@ export class FilterParamsColl {
                 EntityType.ANALYSIS)
             .setFilterType(FilterType.ENTITY_BY_ID));
 
+
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.CONTACT_PI_FILTER_OPTIONAL,
+                    GobiiExtractFilterType.WHOLE_DATASET,
+                    EntityType.CONTACT)
+                .setExtractorItemType(ExtractorItemType.ENTITY)
+                .setIsDynamicFilterValue(true)
+                .setIsDynamicDataLoad(false)
+                .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
+                .setNameIdLabelType(NameIdLabelType.ALL));
+
+        // relate this filter to CONTACT_PI_FILTER_OPTIONAL as parent
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.PROJECT_FILTER_OPTIONAL,
+                    GobiiExtractFilterType.WHOLE_DATASET,
+                    EntityType.PROJECT)
+                .setExtractorItemType(ExtractorItemType.ENTITY)
+                .setIsDynamicFilterValue(true)
+                .setIsDynamicDataLoad(false)
+                .setNameIdLabelType(NameIdLabelType.ALL));
+
+        // relate this filter to PROJECT_FILTER_OPTIONAL as parent
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.EXPERIMENT_FILTER_OPTIONAL,
+                    GobiiExtractFilterType.WHOLE_DATASET,
+                    EntityType.EXPERIMENT)
+                .setIsDynamicFilterValue(true)
+                .setIsDynamicDataLoad(false)
+                .setExtractorItemType(ExtractorItemType.ENTITY)
+                .setNameIdLabelType(NameIdLabelType.ALL));
+
+
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.DATASET_FILTER_OPTIONAL,
+                    GobiiExtractFilterType.WHOLE_DATASET,
+                    EntityType.DATASET)
+                .setIsDynamicFilterValue(true)
+                .setIsDynamicDataLoad(false)
+                .setExtractorItemType(ExtractorItemType.ENTITY));
+
+
+        //Set up hierarchy
+        this.getFilter(FilterParamNames.CONTACT_PI_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET)
+            .setChildNameIdRequestParams(
+                [this.getFilter(FilterParamNames.PROJECT_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET)]
+            );
+
+        this.getFilter(FilterParamNames.PROJECT_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET)
+            .setParentFileItemParams(this.getFilter(FilterParamNames.CONTACT_PI_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET))
+            .setChildNameIdRequestParams(
+                [this.getFilter(FilterParamNames.EXPERIMENT_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET)]
+            );
+
+        this.getFilter(FilterParamNames.EXPERIMENT_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET)
+            .setParentFileItemParams(this.getFilter(FilterParamNames.PROJECT_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET))
+            .setChildNameIdRequestParams(
+                [this.getFilter(FilterParamNames.DATASET_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET)]
+            );
+
+
         //for hierarchical items, we need to crate the nameid requests separately from the
         //flat map: they _will_ need to be in the flat map; however, they all need to be
         //useed to set up the filtering hierarchy
         let nameIdRequestParamsContactsPi: FilterParams = FilterParams
-            .build(FilterParamNames.CONTACT_PI,
+            .build(FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.CONTACT)
             .setIsDynamicFilterValue(true)

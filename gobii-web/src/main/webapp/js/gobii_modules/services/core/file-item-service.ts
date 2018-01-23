@@ -26,6 +26,8 @@ import {FilterHistory} from "../../store/reducers/history-reducer";
 import {DtoRequestItemGfi} from "../app/dto-request-item-gfi";
 import {JsonToGfiDataset} from "../app/jsontogfi/json-to-gfi-dataset";
 import {FilterParamsColl} from "./filter-params-coll";
+import {GobiiFileItemEntityRelation} from "../../model/gobii-file-item-entity-relation";
+import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 
 @Injectable()
 export class FileItemService {
@@ -40,6 +42,34 @@ export class FileItemService {
         // as we add them to the flat map
 
     } // constructor
+
+    public loadFilter(gobiiExtractFilterType: GobiiExtractFilterType, filterParamsName: FilterParamNames, filterValue: string) {
+
+        let filterParams: FilterParams = this.filterParamsColl.getFilter(filterParamsName, gobiiExtractFilterType);
+
+        if (filterParams) {
+
+            let loadAction: fileItemActions.LoadFilterAction = new fileItemActions.LoadFilterAction(
+                {
+                    filterId: filterParams.getQueryName(),
+                    filter: {
+                        gobiiExtractFilterType: gobiiExtractFilterType,
+                        gobiiCompoundUniqueId: filterParams,
+                        filterValue: filterValue,
+                        entityLasteUpdated: null
+                    }
+                }
+            );
+
+            this.store.dispatch(loadAction)
+
+        } else {
+            this.store.dispatch(new historyAction.AddStatusMessageAction("Error loading filter: there is no query params object for query "
+                + filterParamsName
+                + " with extract filter type "
+                + GobiiExtractFilterType[gobiiExtractFilterType]));
+        }
+    }
 
     public getForFilter(filterParamName: FilterParamNames): Observable<GobiiFileItem[]> {
 
@@ -89,8 +119,20 @@ export class FileItemService {
                 returnVal = this.store.select(fromRoot.getMapsets);
                 break;
 
-            case FilterParamNames.CONTACT_PI:
+            case FilterParamNames.CONTACT_PI_HIERARCHY_ROOT:
                 returnVal = this.store.select(fromRoot.getPiContacts);
+                break;
+
+            case FilterParamNames.CONTACT_PI_FILTER_OPTIONAL:
+                returnVal = this.store.select(fromRoot.getPiContactsFilterOptional);
+                break;
+
+            case FilterParamNames.PROJECT_FILTER_OPTIONAL:
+                returnVal = this.store.select(fromRoot.getProjectsFilterOptional);
+                break;
+
+            case FilterParamNames.EXPERIMENT_FILTER_OPTIONAL:
+                returnVal = this.store.select(fromRoot.getExperimentsFilterOptional);
                 break;
 
             default:
@@ -242,21 +284,22 @@ export class FileItemService {
         let filterParams: FilterParams = this.filterParamsColl.getFilter(filterParamName, gobiiExtractFilterType);
         if (filterParams) {
 
-            if (filterParams.getChildFileItemParams() && filterParams.getChildFileItemParams().length <= 1) {
+            // we only process child filters
+            if (filterParams.getChildFileItemParams() && filterParams.getChildFileItemParams().length === 1) {
 
-                if (filterParams.getChildFileItemParams().length === 1) {
-                    filterParams = filterParams.getChildFileItemParams()[0];
+                let childFilterParams: FilterParams = filterParams.getChildFileItemParams()[0];
+                if (childFilterParams.getIsDynamicDataLoad()) {
+                    returnVal = this.makeFileItemActionsFromNameIds(gobiiExtractFilterType,
+                        childFilterParams,
+                        filterValue,
+                        true);
+                } else {
+                    returnVal = this.recurseFilters(gobiiExtractFilterType,
+                        childFilterParams,
+                        filterValue,
+                        true);
                 }
 
-                returnVal = this.makeFileItemActionsFromNameIds(gobiiExtractFilterType,
-                    filterParams,
-                    filterValue,
-                    true);
-            } else {
-                this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled filter condition "
-                    + filterParamName.toString()
-                    + " for extract type " + GobiiExtractFilterType[gobiiExtractFilterType]
-                    + " has more than one child filter"));
             }
         } else {
             this.store.dispatch(new historyAction.AddStatusMessageAction("Undefined FileItemParams filter: "
@@ -370,7 +413,32 @@ export class FileItemService {
                                             let fileItems: GobiiFileItem[] = [];
                                             if (nameIds && ( nameIds.length > 0 )) {
 
-                                                nameIds.forEach(n => {
+                                                nameIds.forEach(nameIdItem => {
+
+                                                    let entityRelation: GobiiFileItemEntityRelation = null;
+
+                                                    // the server method for the particular nameid retrieval in question will have had
+                                                    // to have added the fk entity type and id value
+                                                    if (nameIdItem.fkEntityType && nameIdItem.fkId) {
+
+                                                        let gobiiFileItemCompoundUniqueId: GobiiFileItemCompoundId = null;
+
+                                                        if (filterParamsToLoad.getParentFileItemParams()) {
+                                                            gobiiFileItemCompoundUniqueId = filterParamsToLoad.getParentFileItemParams();
+                                                        } else {
+                                                            gobiiFileItemCompoundUniqueId = new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
+                                                                nameIdItem.fkEntityType,
+                                                                EntitySubType.UNKNOWN,
+                                                                CvFilterType.UNKNOWN,
+                                                                null);
+                                                        }
+
+
+                                                        entityRelation = GobiiFileItemEntityRelation
+                                                            .fromGobiiFileItemCompoundId(gobiiFileItemCompoundUniqueId)
+                                                            .setRelatedEntityId(nameIdItem.fkId);
+                                                    }
+
                                                     let currentFileItem: GobiiFileItem =
                                                         GobiiFileItem.build(
                                                             gobiiExtractFilterType,
@@ -379,11 +447,12 @@ export class FileItemService {
                                                             .setEntityType(filterParamsToLoad.getEntityType())
                                                             .setEntitySubType(filterParamsToLoad.getEntitySubType())
                                                             .setCvFilterType(filterParamsToLoad.getCvFilterType())
-                                                            .setItemId(n.id)
-                                                            .setItemName(n.name)
+                                                            .setItemId(nameIdItem.id)
+                                                            .setItemName(nameIdItem.name)
                                                             .setSelected(false)
                                                             .setRequired(false)
-                                                            .setParentItemId(filterParamsToLoad.getFkEntityFilterValue());
+                                                            .setParentItemId(filterParamsToLoad.getFkEntityFilterValue())
+                                                            .withRelatedEntity(entityRelation);
 
 
                                                     fileItems.push(currentFileItem);
@@ -446,19 +515,17 @@ export class FileItemService {
 
                                                 }
 
-                                            } else {
+                                            }
 
-                                                let noneFileItem: GobiiFileItem = GobiiFileItem
-                                                    .build(gobiiExtractFilterType, ProcessType.DUMMY)
-                                                    .setExtractorItemType(ExtractorItemType.ENTITY)
-                                                    .setEntityType(filterParamsToLoad.getEntityType())
-                                                    .setItemId("0")
-                                                    .setItemName("<none>")
-                                                    .setParentItemId(filterParamsToLoad.getFkEntityFilterValue());
+                                            let noneFileItem: GobiiFileItem = GobiiFileItem
+                                                .build(gobiiExtractFilterType, ProcessType.DUMMY)
+                                                .setExtractorItemType(ExtractorItemType.ENTITY)
+                                                .setEntityType(filterParamsToLoad.getEntityType())
+                                                .setItemId("-1")
+                                                .setItemName("<none>")
+                                                .setParentItemId(filterParamsToLoad.getFkEntityFilterValue());
 
-                                                fileItems.push(noneFileItem);
-
-                                            }// if/else any nameids were retrieved
+                                            fileItems.push(noneFileItem);
 
 
                                             let loadAction: fileItemActions.LoadFileItemListWithFilterAction = new fileItemActions.LoadFileItemListWithFilterAction(
@@ -594,6 +661,108 @@ export class FileItemService {
 
     } // make file items from query
 
+
+    private recurseFilters(gobiiExtractFilterType: GobiiExtractFilterType,
+                           filterParamsToLoad: FilterParams,
+                           filterValue: string,
+                           recurse: boolean): Observable<fileItemActions.LoadFileItemListWithFilterAction> {
+
+
+        return Observable.create(observer => {
+
+            filterParamsToLoad.setFkEntityFilterValue(filterValue);
+
+            let loadAction: fileItemActions.LoadFilterAction = new fileItemActions.LoadFilterAction(
+                {
+                    filterId: filterParamsToLoad.getQueryName(),
+                    filter: {
+                        gobiiExtractFilterType: gobiiExtractFilterType,
+                        gobiiCompoundUniqueId: filterParamsToLoad,
+                        filterValue: filterParamsToLoad.getFkEntityFilterValue(),
+                        entityLasteUpdated: null //not sure about this
+                    }
+                }
+            );
+            observer.next(loadAction);
+
+            if (recurse) {
+                if (filterParamsToLoad
+                        .getChildFileItemParams()
+                        //.filter(rqp => rqp.getFilterType() === FilterType.NAMES_BY_TYPEID)
+                        .length > 0) {
+
+
+                    // we need to set the current filter in state, but with respect to
+                    // gobiiFileItems, it should be a null op
+
+                    //Because we don't have the data freshly from the sever, we shall need
+                    //to get the "parentId" from the file items we have in the store
+                    this.store.select(fromRoot.getAllFileItems)
+                        .subscribe(allFileItems => {
+
+                            // Get the parent item id from the store;
+                            // however, this will only work if the parent items have been loaded
+                            // already.
+                            //let's make everything 100% explicit. Our comments here will use the example of
+                            //filtering projects by selected contact
+                            // these variables are redundant but I want to make this 100% unambigous what it means
+                            // and how we are using it
+
+                            // For example contactId
+                            let parentItemFilterValue: string = filterParamsToLoad.getFkEntityFilterValue();
+
+                            // For example, the coupound unique ID for Contacts
+                            let parentEntityCompoundUniqueId: GobiiFileItemCompoundId = this.filterParamsColl.getFilter(
+                                filterParamsToLoad.getParentFileItemParams().getQueryName(),
+                                gobiiExtractFilterType
+                            )
+
+
+                            // for example, filter to only those file items that:
+                            // 1) have the compoundUniqueId of the items we are loading (project), and
+                            // 2) have an entity relation that has:
+                            //      a) the compoundUniqueId of the parentEntity (contact)
+                            //      b) the relatedEntityId of the parentFilterValue (the contactId) (
+                            let candidateParentFileItems: GobiiFileItem[] =
+                                allFileItems.filter(fi =>
+                                    filterParamsToLoad.compoundIdeEquals(fi)
+                                    && fi.getRelatedEntityFilterValue(parentEntityCompoundUniqueId) === parentItemFilterValue
+                                );
+
+                            // Now we will set the child filter's fkEntityValue to whatever happens to be the first item
+                            // in the list to which we filtered
+                            let childItemsFilterValue: string = "0";
+                            if (candidateParentFileItems.length > 0) {
+                                childItemsFilterValue = candidateParentFileItems[0].getItemId();
+                            }
+
+                            for (let idx: number = 0;
+                                 idx < filterParamsToLoad.getChildFileItemParams().length;
+                                 idx++) {
+                                let rqp: FilterParams = filterParamsToLoad.getChildFileItemParams()[idx];
+//                                if (rqp.getFilterType() === FilterType.NAMES_BY_TYPEID) {
+                                rqp.setFkEntityFilterValue(childItemsFilterValue);
+
+                                this.recurseFilters(gobiiExtractFilterType,
+                                    rqp,
+                                    childItemsFilterValue,
+                                    true)
+                                    .subscribe(fileItems => observer.next(fileItems));
+//                                }
+                            }
+
+                        }).unsubscribe();//select all file items
+
+                } // if we have child filters
+
+
+            } // if we are recursing
+
+
+        });//return Observer.create
+
+
+    } // recurseFilters()
 
     public loadEntityList(gobiiExtractFilterType: GobiiExtractFilterType,
                           fileItemParamName: FilterParamNames) {

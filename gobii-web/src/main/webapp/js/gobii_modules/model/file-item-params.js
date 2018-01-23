@@ -44,19 +44,26 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
              * This class is used extensively for the purpose of retrieving and
              * managing the results of queries to the GOBII /names/{entity} service. In this
              * case, in the NameIdService's get() method, values from this class
-             * are used to set up the GET request to the /names/{entityResource}. Of particular
-             * note is the use fo the _fkEntityFilterValue value for the purpose of retrieving
-             * names for a given entity when that entity must be filtered according to a foreign key.
-             * For example, when retrieving projects by contact_id (i.e., by principle investigator contact
-             * id), the _fkEntityFilterValue will be the value of the PI according to which the project names
-             * should be filtered.
+             * are used to set up the GET request to the /names/{entityResource}.
              *
-             * This class also has more general application for retrieving whole entities (e.g., dataset records.
+             * There are several ways in which FilterParams are used to drive queries.
              *
-             * The _parentFileItemParams and _childFileItemParams can be used to create a tree of instances
-             * of this class that can be used for hierarchical filtering. That is to say, the parent/child
-             * relationships of FilterParams instances corresponds to the primary/foreign key relationships of the
-             * tables involved in generating the query. In our example, the PROJECTS_BY_CONTACT FileFilterParams is a
+             * 1) The params are used for the fileItemService.loadNameIdsFromFilterParams() method. In the
+             *    Extract root class there are many examples of this -- when you switch to a new export type,
+             *    the file items pertinent to that type are loaded into the ngrx/store so that they can then
+             *    be retrieved via reducer selectors. Usually, the FilterParam instance has no parent or child
+             *    FilterParam instances, and so only those entities are loaded.
+             *
+             * 2) In hierarchical filtering, there is a chain of FilterParam items identified via the parent
+             *    and child properties. For example, If we want to display datasets for a particular experiment
+             *    for a particular project for a particular PI, we will have a hierarchy of four such FilterParam
+             *    instances. The Hierarchy will be recursed so that the filter values will be set up the ngrx/store
+             *    and the selectors will retrieve the correctly filtered items.
+             *
+             * There are more details to be aware of for hierarchical filtering.
+            
+             * The parent/child relationships of FilterParams instances corresponds to the primary/foreign key
+             * relationships of the tables involved in generating the query. In our example, the PROJECTS_BY_CONTACT FileFilterParams is a
              * child of the CONTACT_PI FileFilterParams. The PROJECTS_BY_CONTACT query will be run along with a
              * contactId value, which will serve to filter the results of the project query. That contactId value
              * will now be the _fkEntityFilterValue of the PROJECTS_BY_CONTACT FilterValues. Moreover, each
@@ -65,17 +72,53 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
              * subsequently be retrieved from the store such that the GobiiFileItems of EntityType PROJECT are
              * filtered as follows: the current _fkEntityFilterValue of the PROJECTS_BY_CONTACT filter matches
              * the parentItemId of the GobiiFileItems of EntityType PROJECT. Thus, the PROJECTS_BY_CONTACT filter,
-             * with an arbitrary _fkEntityFilterValue, can be dispatched to the store at any time and thereby change
+             * with an arbitrary _fkEntityFilterValue, can be dispatched to the store at any time and the   reby change
              * the set of GobiiFileItems that are filtered in this way. In other words, when we want to get the
              * "currently selected" projects from the store (i.e., the projects filtered for
              * the pi who is currently selected in the UI), the selector returns the file items whose parent id
              * matches current contact ID in state.
              *
+             * The first time this was used, the retrievals from the server were filtered. That is to say,
+             * the hierarchy was traversed each time that a new value was selected. Filters are
+             * stored in the history, uniquely identified by filter name and value. Thus, if that
+             * particular filter with that value had already been retrieved, it would not be re-retrieved.
+             * So the top-most parent in the hierarchy would be loaded, and the children recursed for
+             * the top-items in the list, filtering as they go. Then, when a new value is selected from
+             * a drop down list, the ReplaceInExtractByItemIdAction is triggered, and handled in
+             * file-item-effects. So at any level in the hierarchy, an item is filtered down. Here again,
+             * if the filter-value combination has been encountered, it does not need to be re-retrieved. Whether or
+             * not this type of retrieval is done is controlled by the value of the _isDynamicLoad property.
+             *
+             * Subsequently, a second methodology has evolved. Here, reather than filtering for these items
+             * piecemeal, all items for the particular entity are retrieved at once. This was done in order to
+             * support drop downs that list All of a given entity, but then allow subseqent filtering. So here
+             * the items are all initially loaded, and then filtering only applies to what's already in the
+             * ngrx/store. Here again you can see this functionality operating depending on the value of _isDynamicLoad.
+             *
+             *
+             * Particular note should be taken of the  _fkEntityFilterValue value for the purpose of retrieving
+             * names for a given entity when that entity must be filtered according to a foreign key.
+             * For example, when retrieving projects by contact_id (i.e., by principle investigator contact
+             * id), the _fkEntityFilterValue will be the value of the PI according to which the project names
+             * should be filtered. The fact that the filter value corresponds to the PK id of the parent entity
+             * by which to filter the target item (i.e., the Project filter's filter value is the contactId) is
+             * awkward and difficult to understand. There probably needs to be better semantics for this. Note
+             * that in the FileItemService.makeFileActionsFromFilterParamName() method, there is no way to apply a
+             * filter value to the leaf of the hierarchy. That doesn't seem to matter for now. But there are cases
+             * where it could matter.
+             *
+             * Note that there is also an idiom for filtering where you want to retrieve whole entities rather than
+             * name ids. This is done with the FileItemService.makeFileItemActionsFromEntities() method. Because whole
+             * entities can have FK relationships to multiple entities, the GobiiFileItemEntityRelation[] array was
+             * added to GobiiFileItem. This allows for an arbitrary number of FK relationships to be set up.
+             *
+            
+             *
              */
             FilterParams = (function (_super) {
                 __extends(FilterParams, _super);
                 function FilterParams(_entityType, //first four args are passed to base class ctor
-                    _entitySubType, _cvFilterType, _cvFilterValue, _extractorItemType, _queryName, _filterType, _fkEntityFilterValue, _gobiiExtractFilterType, _nameIdLabelType, _parentFileItemParams, _childFileItemParams, _isDynamicFilterValue, onLoadFilteredItemsAction) {
+                    _entitySubType, _cvFilterType, _cvFilterValue, _extractorItemType, _queryName, _filterType, _fkEntityFilterValue, _gobiiExtractFilterType, _nameIdLabelType, _parentFileItemParams, _childFileItemParams, _isDynamicFilterValue, _isDynamicDataLoad, onLoadFilteredItemsAction) {
                     if (_entityType === void 0) { _entityType = type_entity_1.EntityType.UNKNOWN; }
                     if (_entitySubType === void 0) { _entitySubType = type_entity_1.EntitySubType.UNKNOWN; }
                     if (_cvFilterType === void 0) { _cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN; }
@@ -93,11 +136,12 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
                     _this._parentFileItemParams = _parentFileItemParams;
                     _this._childFileItemParams = _childFileItemParams;
                     _this._isDynamicFilterValue = _isDynamicFilterValue;
+                    _this._isDynamicDataLoad = _isDynamicDataLoad;
                     _this.onLoadFilteredItemsAction = onLoadFilteredItemsAction;
                     return _this;
                 }
                 FilterParams.build = function (queryName, gobiiExtractFilterType, entityType) {
-                    return (new FilterParams(entityType, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null, type_extractor_item_1.ExtractorItemType.ENTITY, queryName, filter_type_1.FilterType.NONE, null, gobiiExtractFilterType, name_id_label_type_1.NameIdLabelType.UNKNOWN, null, [], true, null));
+                    return (new FilterParams(entityType, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null, type_extractor_item_1.ExtractorItemType.ENTITY, queryName, filter_type_1.FilterType.NONE, null, gobiiExtractFilterType, name_id_label_type_1.NameIdLabelType.UNKNOWN, null, [], true, true, null));
                 };
                 FilterParams.prototype.getQueryName = function () {
                     return this._queryName;
@@ -169,6 +213,9 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
                     this._parentFileItemParams = fileItemParams;
                     return this;
                 };
+                FilterParams.prototype.getParentFileItemParams = function () {
+                    return this._parentFileItemParams;
+                };
                 FilterParams.prototype.getChildFileItemParams = function () {
                     return this._childFileItemParams;
                 };
@@ -182,6 +229,13 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
                 };
                 FilterParams.prototype.getIsDynamicFilterValue = function () {
                     return this._isDynamicFilterValue;
+                };
+                FilterParams.prototype.getIsDynamicDataLoad = function () {
+                    return this._isDynamicDataLoad;
+                };
+                FilterParams.prototype.setIsDynamicDataLoad = function (value) {
+                    this._isDynamicDataLoad = value;
+                    return this;
                 };
                 FilterParams.prototype.setOnLoadFilteredItemsAction = function (initializeTransform) {
                     this.onLoadFilteredItemsAction = initializeTransform;

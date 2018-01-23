@@ -540,11 +540,24 @@ export const getPiContacts = createSelector(getFileItems, getUniqueIds, (fileIte
 
 export const getProjects = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
-    return fileItems.filter(e =>
+    let returnVal: GobiiFileItem[] = [];
+
+    returnVal = fileItems.filter(e =>
         ( e.getExtractorItemType() === ExtractorItemType.ENTITY
             || e.getExtractorItemType() === ExtractorItemType.LABEL )
-        && e.getEntityType() === EntityType.PROJECT)
+        && e.getEntityType() === EntityType.PROJECT
+        && e.getProcessType() !== ProcessType.DUMMY)
         .map(fi => fi);
+
+    if (returnVal.length <= 0) {
+        returnVal = fileItems.filter(e =>
+            ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
+            && ( e.getEntityType() === EntityType.PROJECT)
+            && e.getProcessType() === ProcessType.DUMMY)
+            .map(fi => fi);
+    }
+
+    return returnVal;
 });
 
 
@@ -654,7 +667,6 @@ export const getProjectsForSelectedPi = createSelector(getFileItems, getFilters,
             returnVal = fileItems.filter(e =>
                 ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
                 && ( e.getEntityType() === EntityType.PROJECT)
-                //                && (e.getParentItemId() === contactId )
                 && e.getProcessType() === ProcessType.DUMMY)
                 .map(fi => fi);
         }
@@ -724,20 +736,34 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
 
     let returnVal: GobiiFileItem[] = [];
 
-    let datasetEntitiesFilteredByExperiment: GobiiFileItem[] = []
-    if (filters[FilterParamNames.EXPERIMENTS_BY_PROJECT] && filters[FilterParamNames.DATASETS_BY_EXPERIMENT]) {
-        let compounUniqueIdForExperimentsByProject: GobiiFileItemCompoundId = filters[FilterParamNames.EXPERIMENTS_BY_PROJECT].gobiiCompoundUniqueId;
-        let experimentId: string = filters[FilterParamNames.DATASETS_BY_EXPERIMENT].filterValue;
-        datasetEntitiesFilteredByExperiment = fileItems.filter(e =>
-            ( e.getExtractorItemType() === ExtractorItemType.ENTITY
-                && e.getEntityType() === EntityType.DATASET
-                && e.getRelatedEntityFilterValue(compounUniqueIdForExperimentsByProject) === experimentId
-                && e.hasEntity()
-                && e.getProcessType() !== ProcessType.DUMMY))
-            .map(fi => fi);
 
-        //returnVal = datasetEntitiesFilteredByExperiment;
-    }
+    // the child filter has the parent fk value
+    let contactId = filters[FilterParamNames.PROJECT_FILTER_OPTIONAL] ?
+        filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].filterValue : null;
+    let compounUniqueIdForContacts: GobiiFileItemCompoundId =
+        filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL] ? filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId : null;
+
+    let projectId = filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL] ?
+        filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].filterValue : null;
+    let compounUniqueIdForProjectsByContact: GobiiFileItemCompoundId =
+        filters[FilterParamNames.PROJECT_FILTER_OPTIONAL] ? filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId : null;
+
+    let experimentId = filters[FilterParamNames.DATASET_FILTER_OPTIONAL] ?
+        filters[FilterParamNames.DATASET_FILTER_OPTIONAL].filterValue : null;
+    let compounUniqueIdForExperimentsByProject: GobiiFileItemCompoundId =
+        filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL] ? filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].gobiiCompoundUniqueId : null;
+
+    let datasetEntitiesFilteredByExperiment: GobiiFileItem[] = [];
+
+    datasetEntitiesFilteredByExperiment = fileItems.filter(e =>
+        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            && e.getEntityType() === EntityType.DATASET
+            && ( (  contactId === null ) || +contactId < 1 || compounUniqueIdForContacts === null || e.getRelatedEntityFilterValue(compounUniqueIdForContacts) === contactId )
+            && ( ( projectId === null ) || +projectId < 1  || compounUniqueIdForProjectsByContact === null || e.getRelatedEntityFilterValue(compounUniqueIdForProjectsByContact) === projectId )
+            && ( ( experimentId === null ) || +experimentId < 1 || compounUniqueIdForExperimentsByProject === null || e.getRelatedEntityFilterValue(compounUniqueIdForExperimentsByProject) === experimentId )
+            && e.hasEntity()
+            && e.getProcessType() !== ProcessType.DUMMY))
+        .map(fi => fi);
 
 
     let jobStatusFilterParams = filters[FilterParamNames.DATASET_LIST_STATUS];
@@ -754,3 +780,82 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
 
     return returnVal;
 });
+
+export const getPiContactsFilterOptional = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+
+    return fileItems.filter(e =>
+        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            || e.getExtractorItemType() === ExtractorItemType.LABEL )
+        && e.getEntityType() === EntityType.CONTACT
+        && e.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
+        .map(fi => fi);
+});
+
+export const getProjectsFilterOptional = createSelector(getFileItems, getFilters, (fileItems, filters) => {
+
+    let returnVal: GobiiFileItem[] = [];
+
+    // The project filter's value is a contactId. So we want only
+    // those projects that have an fk reference to the specified contact.
+    let contactId: string = null;
+    if (filters[FilterParamNames.PROJECT_FILTER_OPTIONAL]) {
+        contactId = filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].filterValue;
+    }
+
+    returnVal = fileItems.filter(
+        e =>
+            ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+                || e.getExtractorItemType() === ExtractorItemType.LABEL )
+            && e.getProcessType() !== ProcessType.DUMMY
+            && e.getEntityType() === EntityType.PROJECT
+            && (( !contactId || (+contactId < 0 ) ) // state is not filtered -- we don't care, or . . .
+            || (e.getRelatedEntityFilterValue(filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId) // the item has an fk value
+                && e.getRelatedEntityFilterValue(filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId) === contactId)) // and it matches
+    ).map(fi => fi);
+
+
+    if (returnVal.length <= 0) {
+        returnVal = fileItems.filter(e =>
+            ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+                && e.getEntityType() === EntityType.PROJECT
+                && e.getProcessType() === ProcessType.DUMMY))
+            .map(fi => fi);
+    }
+
+    return returnVal;
+
+});
+
+export const getExperimentsFilterOptional = createSelector(getFileItems, getFilters, (fileItems, filters) => {
+
+    let returnVal: GobiiFileItem[] = [];
+
+    let projectId: string = null;
+    if (filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL]) {
+        projectId = filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].filterValue;
+    }
+
+    returnVal = fileItems.filter(
+        e =>
+            ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+                || e.getExtractorItemType() === ExtractorItemType.LABEL )
+            && e.getProcessType() !== ProcessType.DUMMY
+            && e.getEntityType() === EntityType.EXPERIMENT
+            && (( !projectId || (+projectId < 0 ) ) // state is not filtered -- we don't care, or . . .
+            || (e.getRelatedEntityFilterValue(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) // the item has an fk value
+                && e.getRelatedEntityFilterValue(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) === projectId)) // and it matches
+    ).map(fi => fi);
+
+
+    if (returnVal.length <= 0) {
+        returnVal = fileItems.filter(e =>
+            ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+                && e.getEntityType() === EntityType.EXPERIMENT
+                && e.getProcessType() === ProcessType.DUMMY))
+            .map(fi => fi);
+    }
+
+    return returnVal;
+});
+
+

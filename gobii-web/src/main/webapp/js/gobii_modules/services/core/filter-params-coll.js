@@ -102,7 +102,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .setIsDynamicFilterValue(false)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL));
                     this.addFilter(file_item_params_1.FilterParams
-                        .build(file_item_param_names_1.FilterParamNames.CONTACT_PI, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.CONTACT)
+                        .build(file_item_param_names_1.FilterParamNames.CONTACT_PI_HIERARCHY_ROOT, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.CONTACT)
                         .setIsDynamicFilterValue(false)
                         .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR));
                     var cvJobStatusCompoundUniqueId = new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.CV, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.JOB_STATUS, cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.JOB_STATUS));
@@ -176,11 +176,46 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                     this.addFilter(file_item_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.ANALYSES_BY_DATASET_ID, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.ANALYSIS)
                         .setFilterType(filter_type_1.FilterType.ENTITY_BY_ID));
+                    this.addFilter(file_item_params_1.FilterParams
+                        .build(file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.CONTACT)
+                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
+                        .setIsDynamicFilterValue(true)
+                        .setIsDynamicDataLoad(false)
+                        .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL));
+                    // relate this filter to CONTACT_PI_FILTER_OPTIONAL as parent
+                    this.addFilter(file_item_params_1.FilterParams
+                        .build(file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.PROJECT)
+                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
+                        .setIsDynamicFilterValue(true)
+                        .setIsDynamicDataLoad(false)
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL));
+                    // relate this filter to PROJECT_FILTER_OPTIONAL as parent
+                    this.addFilter(file_item_params_1.FilterParams
+                        .build(file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.EXPERIMENT)
+                        .setIsDynamicFilterValue(true)
+                        .setIsDynamicDataLoad(false)
+                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL));
+                    this.addFilter(file_item_params_1.FilterParams
+                        .build(file_item_param_names_1.FilterParamNames.DATASET_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.DATASET)
+                        .setIsDynamicFilterValue(true)
+                        .setIsDynamicDataLoad(false)
+                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY));
+                    //Set up hierarchy
+                    this.getFilter(file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET)
+                        .setChildNameIdRequestParams([this.getFilter(file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET)]);
+                    this.getFilter(file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET)
+                        .setParentFileItemParams(this.getFilter(file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET))
+                        .setChildNameIdRequestParams([this.getFilter(file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET)]);
+                    this.getFilter(file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET)
+                        .setParentFileItemParams(this.getFilter(file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET))
+                        .setChildNameIdRequestParams([this.getFilter(file_item_param_names_1.FilterParamNames.DATASET_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET)]);
                     //for hierarchical items, we need to crate the nameid requests separately from the
                     //flat map: they _will_ need to be in the flat map; however, they all need to be
                     //useed to set up the filtering hierarchy
                     var nameIdRequestParamsContactsPi = file_item_params_1.FilterParams
-                        .build(file_item_param_names_1.FilterParamNames.CONTACT_PI, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.CONTACT)
+                        .build(file_item_param_names_1.FilterParamNames.CONTACT_PI_HIERARCHY_ROOT, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.CONTACT)
                         .setIsDynamicFilterValue(true)
                         .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR);
                     var nameIdRequestParamsProjectByPiContact = file_item_params_1.FilterParams

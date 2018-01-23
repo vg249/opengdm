@@ -1,7 +1,7 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var EntityType, EntitySubType;
+    var EntityType, entityTypefromString, EntitySubType;
     return {
         setters: [],
         execute: function () {
@@ -28,6 +28,66 @@ System.register([], function (exports_1, context_1) {
                 EntityType[EntityType["VENDORS_PROTOCOL"] = 18] = "VENDORS_PROTOCOL";
             })(EntityType || (EntityType = {}));
             exports_1("EntityType", EntityType);
+            exports_1("entityTypefromString", entityTypefromString = function (entityTypeName) {
+                var returnVal = EntityType.UNKNOWN;
+                switch (entityTypeName) {
+                    case "ANALYSIS":
+                        returnVal = EntityType.ANALYSIS;
+                        break;
+                    case "CONTACT":
+                        returnVal = EntityType.CONTACT;
+                        break;
+                    case "DATASET":
+                        returnVal = EntityType.DATASET;
+                        break;
+                    case "CV":
+                        returnVal = EntityType.CV;
+                        break;
+                    case "CVGROUP":
+                        returnVal = EntityType.CVGROUP;
+                        break;
+                    case "PROJECT":
+                        returnVal = EntityType.PROJECT;
+                        break;
+                    case "ORGANIZATION":
+                        returnVal = EntityType.ORGANIZATION;
+                        break;
+                    case "PLATFORM":
+                        returnVal = EntityType.PLATFORM;
+                        break;
+                    case "MANIFEST":
+                        returnVal = EntityType.MANIFEST;
+                        break;
+                    case "MAPSET":
+                        returnVal = EntityType.MAPSET;
+                        break;
+                    case "MARKER_GROUP":
+                        returnVal = EntityType.MARKER_GROUP;
+                        break;
+                    case "EXPERIMENT":
+                        returnVal = EntityType.EXPERIMENT;
+                        break;
+                    case "REFERENCE":
+                        returnVal = EntityType.REFERENCE;
+                        break;
+                    case "ROLE":
+                        returnVal = EntityType.ROLE;
+                        break;
+                    case "DISPLAY":
+                        returnVal = EntityType.DISPLAY;
+                        break;
+                    case "MARKER":
+                        returnVal = EntityType.MARKER;
+                        break;
+                    case "PROTOCOL":
+                        returnVal = EntityType.PROTOCOL;
+                        break;
+                    case "VENDOR_PROTOCOL":
+                        returnVal = EntityType.VENDORS_PROTOCOL;
+                        break;
+                }
+                return returnVal;
+            });
             (function (EntitySubType) {
                 EntitySubType[EntitySubType["UNKNOWN"] = 0] = "UNKNOWN";
                 EntitySubType[EntitySubType["CONTACT_PRINCIPLE_INVESTIGATOR"] = 1] = "CONTACT_PRINCIPLE_INVESTIGATOR";

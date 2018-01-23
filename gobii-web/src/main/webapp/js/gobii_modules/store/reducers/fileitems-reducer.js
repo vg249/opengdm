@@ -259,7 +259,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
         return returnVal;
     }
     exports_1("fileItemsReducer", fileItemsReducer);
-    var _this, reselect_1, gobii_file_item_1, gobiiFileItemAction, type_extractor_item_1, type_entity_1, file_item_param_names_1, type_process_1, entity_labels_1, type_extractor_filter_1, type_extract_format_1, cv_filter_type_1, type_extractor_sample_list_1, initialState, getGobiiExtractFilterType, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getSelectedFileFormat, getSelectedSampleType, getJobId, getUploadFiles, getPiContacts, getProjects, getExperiments, getDatasets, getCvTermsDataType, getCvTermsJobStatus, getMapsets, getPlatforms, getMarkerGroups, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment, getDatasetEntities;
+    var _this, reselect_1, gobii_file_item_1, gobiiFileItemAction, type_extractor_item_1, type_entity_1, file_item_param_names_1, type_process_1, entity_labels_1, type_extractor_filter_1, type_extract_format_1, cv_filter_type_1, type_extractor_sample_list_1, initialState, getGobiiExtractFilterType, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getSelectedFileFormat, getSelectedSampleType, getJobId, getUploadFiles, getPiContacts, getProjects, getExperiments, getDatasets, getCvTermsDataType, getCvTermsJobStatus, getMapsets, getPlatforms, getMarkerGroups, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment, getDatasetEntities, getPiContactsFilterOptional, getProjectsFilterOptional, getExperimentsFilterOptional;
     return {
         setters: [
             function (reselect_1_1) {
@@ -404,12 +404,23 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 return returnVal;
             }));
             exports_1("getProjects", getProjects = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
-                return fileItems.filter(function (e) {
+                var returnVal = [];
+                returnVal = fileItems.filter(function (e) {
                     return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
                         || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
-                        && e.getEntityType() === type_entity_1.EntityType.PROJECT;
+                        && e.getEntityType() === type_entity_1.EntityType.PROJECT
+                        && e.getProcessType() !== type_process_1.ProcessType.DUMMY;
                 })
                     .map(function (fi) { return fi; });
+                if (returnVal.length <= 0) {
+                    returnVal = fileItems.filter(function (e) {
+                        return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY)
+                            && (e.getEntityType() === type_entity_1.EntityType.PROJECT)
+                            && e.getProcessType() === type_process_1.ProcessType.DUMMY;
+                    })
+                        .map(function (fi) { return fi; });
+                }
+                return returnVal;
             }));
             exports_1("getExperiments", getExperiments = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
                 return fileItems.filter(function (e) {
@@ -549,20 +560,27 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             }));
             exports_1("getDatasetEntities", getDatasetEntities = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
                 var returnVal = [];
+                // the child filter has the parent fk value
+                var contactId = filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL] ?
+                    filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].filterValue : null;
+                var compounUniqueIdForContacts = filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL] ? filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId : null;
+                var projectId = filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL] ?
+                    filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].filterValue : null;
+                var compounUniqueIdForProjectsByContact = filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL] ? filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId : null;
+                var experimentId = filters[file_item_param_names_1.FilterParamNames.DATASET_FILTER_OPTIONAL] ?
+                    filters[file_item_param_names_1.FilterParamNames.DATASET_FILTER_OPTIONAL].filterValue : null;
+                var compounUniqueIdForExperimentsByProject = filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL] ? filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].gobiiCompoundUniqueId : null;
                 var datasetEntitiesFilteredByExperiment = [];
-                if (filters[file_item_param_names_1.FilterParamNames.EXPERIMENTS_BY_PROJECT] && filters[file_item_param_names_1.FilterParamNames.DATASETS_BY_EXPERIMENT]) {
-                    var compounUniqueIdForExperimentsByProject_1 = filters[file_item_param_names_1.FilterParamNames.EXPERIMENTS_BY_PROJECT].gobiiCompoundUniqueId;
-                    var experimentId_2 = filters[file_item_param_names_1.FilterParamNames.DATASETS_BY_EXPERIMENT].filterValue;
-                    datasetEntitiesFilteredByExperiment = fileItems.filter(function (e) {
-                        return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                            && e.getEntityType() === type_entity_1.EntityType.DATASET
-                            && e.getRelatedEntityFilterValue(compounUniqueIdForExperimentsByProject_1) === experimentId_2
-                            && e.hasEntity()
-                            && e.getProcessType() !== type_process_1.ProcessType.DUMMY);
-                    })
-                        .map(function (fi) { return fi; });
-                    //returnVal = datasetEntitiesFilteredByExperiment;
-                }
+                datasetEntitiesFilteredByExperiment = fileItems.filter(function (e) {
+                    return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
+                        && e.getEntityType() === type_entity_1.EntityType.DATASET
+                        && ((contactId === null) || +contactId < 1 || compounUniqueIdForContacts === null || e.getRelatedEntityFilterValue(compounUniqueIdForContacts) === contactId)
+                        && ((projectId === null) || +projectId < 1 || compounUniqueIdForProjectsByContact === null || e.getRelatedEntityFilterValue(compounUniqueIdForProjectsByContact) === projectId)
+                        && ((experimentId === null) || +experimentId < 1 || compounUniqueIdForExperimentsByProject === null || e.getRelatedEntityFilterValue(compounUniqueIdForExperimentsByProject) === experimentId)
+                        && e.hasEntity()
+                        && e.getProcessType() !== type_process_1.ProcessType.DUMMY);
+                })
+                    .map(function (fi) { return fi; });
                 var jobStatusFilterParams = filters[file_item_param_names_1.FilterParamNames.DATASET_LIST_STATUS];
                 if (jobStatusFilterParams
                     && jobStatusFilterParams.filterValue != null) {
@@ -571,6 +589,69 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 }
                 else {
                     returnVal = datasetEntitiesFilteredByExperiment;
+                }
+                return returnVal;
+            }));
+            exports_1("getPiContactsFilterOptional", getPiContactsFilterOptional = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
+                return fileItems.filter(function (e) {
+                    return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
+                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
+                        && e.getEntityType() === type_entity_1.EntityType.CONTACT
+                        && e.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR;
+                })
+                    .map(function (fi) { return fi; });
+            }));
+            exports_1("getProjectsFilterOptional", getProjectsFilterOptional = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
+                var returnVal = [];
+                // The project filter's value is a contactId. So we want only
+                // those projects that have an fk reference to the specified contact.
+                var contactId = null;
+                if (filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL]) {
+                    contactId = filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].filterValue;
+                }
+                returnVal = fileItems.filter(function (e) {
+                    return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
+                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
+                        && e.getProcessType() !== type_process_1.ProcessType.DUMMY
+                        && e.getEntityType() === type_entity_1.EntityType.PROJECT
+                        && ((!contactId || (+contactId < 0)) // state is not filtered -- we don't care, or . . .
+                            || (e.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId) // the item has an fk value
+                                && e.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId) === contactId));
+                } // and it matches
+                ).map(function (fi) { return fi; });
+                if (returnVal.length <= 0) {
+                    returnVal = fileItems.filter(function (e) {
+                        return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
+                            && e.getEntityType() === type_entity_1.EntityType.PROJECT
+                            && e.getProcessType() === type_process_1.ProcessType.DUMMY);
+                    })
+                        .map(function (fi) { return fi; });
+                }
+                return returnVal;
+            }));
+            exports_1("getExperimentsFilterOptional", getExperimentsFilterOptional = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
+                var returnVal = [];
+                var projectId = null;
+                if (filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL]) {
+                    projectId = filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].filterValue;
+                }
+                returnVal = fileItems.filter(function (e) {
+                    return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
+                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
+                        && e.getProcessType() !== type_process_1.ProcessType.DUMMY
+                        && e.getEntityType() === type_entity_1.EntityType.EXPERIMENT
+                        && ((!projectId || (+projectId < 0)) // state is not filtered -- we don't care, or . . .
+                            || (e.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) // the item has an fk value
+                                && e.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) === projectId));
+                } // and it matches
+                ).map(function (fi) { return fi; });
+                if (returnVal.length <= 0) {
+                    returnVal = fileItems.filter(function (e) {
+                        return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
+                            && e.getEntityType() === type_entity_1.EntityType.EXPERIMENT
+                            && e.getProcessType() === type_process_1.ProcessType.DUMMY);
+                    })
+                        .map(function (fi) { return fi; });
                 }
                 return returnVal;
             }));

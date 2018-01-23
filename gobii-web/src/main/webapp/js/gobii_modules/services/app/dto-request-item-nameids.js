@@ -61,7 +61,9 @@ System.register(["@angular/core", "../../model/name-id", "../../model/type-entit
                         var entityLasetModified = new Date(item.entityLasetModified);
                         var currentId = String(item.id);
                         var currentName = item.name;
-                        returnVal.push(new name_id_1.NameId(currentId, currentName, _this.entityType, entityLasetModified));
+                        var fkId = String(item.fkId);
+                        var fkEntityType = type_entity_1.entityTypefromString(item.gobiiFkEntityNameType);
+                        returnVal.push(new name_id_1.NameId(currentId, fkId, currentName, fkEntityType, _this.entityType, entityLasetModified));
                     });
                     return returnVal;
                     //return [new NameId(1, 'foo'), new NameId(2, 'bar')];

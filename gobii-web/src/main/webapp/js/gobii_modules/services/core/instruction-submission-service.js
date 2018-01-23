@@ -290,30 +290,30 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                                 return item.getEntityType() === type_entity_1.EntityType.CV
                                     && item.getCvFilterType() === cv_filter_type_1.CvFilterType.DATASET_TYPE;
                             });
-                            var datasetType = dataTypeFileItem != null ? new name_id_1.NameId(dataTypeFileItem.getItemId(), dataTypeFileItem.getItemName(), type_entity_1.EntityType.CV, null) : null;
+                            var datasetType = dataTypeFileItem != null ? new name_id_1.NameId(dataTypeFileItem.getItemId(), null, dataTypeFileItem.getItemName(), type_entity_1.EntityType.CV, null, null) : null;
                             // ******** PRINCIPLE INVESTIGATOR CONCEPT
                             var principleInvestigatorFileItem = fileItems.find(function (item) {
                                 return item.getEntityType() === type_entity_1.EntityType.CONTACT
                                     && item.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR;
                             });
-                            var principleInvestigator = principleInvestigatorFileItem != null ? new name_id_1.NameId(principleInvestigatorFileItem.getItemId(), principleInvestigatorFileItem.getItemName(), type_entity_1.EntityType.CONTACT, null) : null;
+                            var principleInvestigator = principleInvestigatorFileItem != null ? new name_id_1.NameId(principleInvestigatorFileItem.getItemId(), null, principleInvestigatorFileItem.getItemName(), type_entity_1.EntityType.CONTACT, null, null) : null;
                             // ******** PROJECT
                             var projectFileItem = fileItems.find(function (item) {
                                 return item.getEntityType() === type_entity_1.EntityType.PROJECT;
                             });
-                            var project = projectFileItem != null ? new name_id_1.NameId(projectFileItem.getItemId(), projectFileItem.getItemName(), type_entity_1.EntityType.PROJECT, null) : null;
+                            var project = projectFileItem != null ? new name_id_1.NameId(projectFileItem.getItemId(), null, projectFileItem.getItemName(), type_entity_1.EntityType.PROJECT, null, null) : null;
                             // ******** PLATFORM
                             var platformFileItems = fileItems.filter(function (item) {
                                 return item.getEntityType() === type_entity_1.EntityType.PLATFORM;
                             });
                             var platforms = platformFileItems.map(function (item) {
-                                return new name_id_1.NameId(item.getItemId(), item.getItemName(), type_entity_1.EntityType.PLATFORM, null);
+                                return new name_id_1.NameId(item.getItemId(), null, item.getItemName(), type_entity_1.EntityType.PLATFORM, null, null);
                             });
                             var markerGroupItems = fileItems.filter(function (item) {
                                 return item.getEntityType() === type_entity_1.EntityType.MARKER_GROUP;
                             });
                             var markerGroups = markerGroupItems.map(function (item) {
-                                return new name_id_1.NameId(item.getItemId(), item.getItemName(), type_entity_1.EntityType.MARKER_GROUP, null);
+                                return new name_id_1.NameId(item.getItemId(), null, item.getItemName(), type_entity_1.EntityType.MARKER_GROUP, null, null);
                             });
                             // ******** MARKERS
                             var markerListItems = fileItems
@@ -345,7 +345,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                                     return item.getEntityType() === type_entity_1.EntityType.DATASET;
                                 });
                                 dataSetItems.forEach(function (datsetFileItem) {
-                                    var dataSet = new name_id_1.NameId(datsetFileItem.getItemId(), datsetFileItem.getItemName(), type_entity_1.EntityType.CV, null);
+                                    var dataSet = new name_id_1.NameId(datsetFileItem.getItemId(), null, datsetFileItem.getItemName(), type_entity_1.EntityType.CV, null, null);
                                     gobiiDataSetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(gobiiFileType, false, null, gobiiExtractFilterType, null, null, markerFileName, null, datasetType, platforms, null, null, dataSet, null));
                                 });
                             }
