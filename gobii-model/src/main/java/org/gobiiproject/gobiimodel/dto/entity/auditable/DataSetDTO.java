@@ -59,8 +59,8 @@ public class DataSetDTO extends DTOBaseAuditable {
     private Integer jobTypeId;
     private String jobTypeName;
     private Date jobSubmittedDate;
-    private Long totalSamples;
-    private Long totalMarkers;
+    private Integer totalSamples;
+    private Integer totalMarkers;
     private List<Integer> analysesIds = new ArrayList<>();
   //  private List<AnalysisDTO> analyses = new ArrayList<>();
     private List<Integer> scores = new ArrayList<>();
@@ -299,22 +299,22 @@ public class DataSetDTO extends DTOBaseAuditable {
     }
 
     @GobiiEntityParam(paramName = "totalSamples")
-    public Long getTotalSamples() {
+    public Integer getTotalSamples() {
         return totalSamples;
     }
 
     @GobiiEntityColumn(columnName = "totalsamples")
-    public void setTotalSamples(Long totalSamples) {
+    public void setTotalSamples(Integer totalSamples) {
         this.totalSamples = totalSamples;
     }
 
     @GobiiEntityParam(paramName = "totalMarkers")
-    public Long getTotalMarkers() {
+    public Integer getTotalMarkers() {
         return totalMarkers;
     }
 
     @GobiiEntityColumn(columnName = "totalmarkers")
-    public void setTotalMarkers(Long totalMarkers) {
+    public void setTotalMarkers(Integer totalMarkers) {
         this.totalMarkers = totalMarkers;
     }
 
