@@ -276,14 +276,16 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     var filterParams = this.filterParamsColl.getFilter(filterParamName, gobiiExtractFilterType);
                     if (filterParams) {
                         // we only process child filters
-                        if (filterParams.getChildFileItemParams() && filterParams.getChildFileItemParams().length === 1) {
-                            var childFilterParams = filterParams.getChildFileItemParams()[0];
-                            if (childFilterParams.getIsDynamicDataLoad()) {
-                                returnVal = this.makeFileItemActionsFromNameIds(gobiiExtractFilterType, childFilterParams, filterValue, true);
-                            }
-                            else {
-                                returnVal = this.recurseFilters(gobiiExtractFilterType, childFilterParams, filterValue, true);
-                            }
+                        var filterParamsToProcess = filterParams;
+                        if (filterParams.getChildFileItemParams()
+                            && filterParams.getChildFileItemParams().length === 1) {
+                            filterParamsToProcess = filterParams.getChildFileItemParams()[0];
+                        }
+                        if (filterParamsToProcess.getIsDynamicDataLoad()) {
+                            returnVal = this.makeFileItemActionsFromNameIds(gobiiExtractFilterType, filterParamsToProcess, filterValue, true);
+                        }
+                        else {
+                            returnVal = this.recurseFilters(gobiiExtractFilterType, filterParamsToProcess, filterValue, true);
                         }
                     }
                     else {
