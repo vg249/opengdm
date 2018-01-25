@@ -282,25 +282,32 @@ export class FileItemService {
         let returnVal: Observable<fileItemActions.LoadFileItemListWithFilterAction>;
 
         let filterParams: FilterParams = this.filterParamsColl.getFilter(filterParamName, gobiiExtractFilterType);
+
+
         if (filterParams) {
 
             // we only process child filters
-            if (filterParams.getChildFileItemParams() && filterParams.getChildFileItemParams().length === 1) {
+            let filterParamsToProcess: FilterParams = filterParams;
 
-                let childFilterParams: FilterParams = filterParams.getChildFileItemParams()[0];
-                if (childFilterParams.getIsDynamicDataLoad()) {
-                    returnVal = this.makeFileItemActionsFromNameIds(gobiiExtractFilterType,
-                        childFilterParams,
-                        filterValue,
-                        true);
-                } else {
-                    returnVal = this.recurseFilters(gobiiExtractFilterType,
-                        childFilterParams,
-                        filterValue,
-                        true);
-                }
-
+            if (filterParams.getChildFileItemParams()
+                && filterParams.getChildFileItemParams().length === 1) {
+                filterParamsToProcess = filterParams.getChildFileItemParams()[0];
             }
+
+
+            if (filterParamsToProcess.getIsDynamicDataLoad()) {
+                returnVal = this.makeFileItemActionsFromNameIds(gobiiExtractFilterType,
+                    filterParamsToProcess,
+                    filterValue,
+                    true);
+            } else {
+                returnVal = this.recurseFilters(gobiiExtractFilterType,
+                    filterParamsToProcess,
+                    filterValue,
+                    true);
+            }]
+
+
         } else {
             this.store.dispatch(new historyAction.AddStatusMessageAction("Undefined FileItemParams filter: "
                 + filterParamName.toString()
