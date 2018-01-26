@@ -10,12 +10,13 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.*;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.OrganizationDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ProtocolDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
-import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
-import org.gobiiproject.gobiimodel.types.GobiiFilterType;
-import org.gobiiproject.gobiimodel.types.GobiiProcessType;
+import org.gobiiproject.gobiimodel.dto.entity.children.VendorProtocolDTO;
+import org.gobiiproject.gobiimodel.types.*;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -170,6 +171,7 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
         PayloadEnvelope<PlatformDTO> platformDTOResponseEnvelope = gobiiEnvelopeRestResource.post(PlatformDTO.class,
                 payloadEnvelope);
         PlatformDTO newPlatformDTOResponse = platformDTOResponseEnvelope.getPayload().getData().get(0);
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.PLATFORM, newPlatformDTOResponse.getPlatformId());
 
         // re-retrieve the platform we just created so we start with a fresh READ mode dto
 
@@ -262,7 +264,7 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
         Assert.assertNotNull(platformDTO.getPlatformName());
     }
 
-    @Ignore
+    @Test
     public void testEmptyResult() throws Exception {
 
         DtoRestRequestUtils<PlatformDTO> dtoDtoRestRequestUtils =
@@ -274,10 +276,10 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
         PayloadEnvelope<PlatformDTO> resultEnvelope
                 = dtoDtoRestRequestUtils.getResponseEnvelopeForEntityId(nonExistentId.toString());
 
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+
+        Assert.assertTrue("Request for platformId with ID " + nonExistentId.toString() + " should not have retrieved a result", resultEnvelope.getPayload().getData().size() == 0);
         Assert.assertNotNull(resultEnvelope.getPayload());
         Assert.assertNotNull(resultEnvelope.getPayload().getData());
-        Assert.assertTrue(resultEnvelope.getPayload().getData().size() == 0);
     }
 
 
@@ -332,8 +334,98 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
 
     }
 
-    @Ignore
+    @Test
     public void getPlatformByvendorProtocolId() throws Exception {
+
+        // ************************ create Vendor Protocol entry in the database
+
+        // ********** SET UP THE PROTOCOL
+        Integer protocolId = (new GlobalPkColl<DtoCrudRequestProtocolTest>()
+                .getAPkVal(DtoCrudRequestProtocolTest.class, GobiiEntityNameType.PROTOCOL));
+        RestUri restUriForGetProtocolById = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_PROTOCOL);
+        restUriForGetProtocolById.setParamValue("id", protocolId.toString());
+        GobiiEnvelopeRestResource<ProtocolDTO> gobiiEnvelopeRestResourceForGetProtocolById =
+                new GobiiEnvelopeRestResource<>(restUriForGetProtocolById);
+        PayloadEnvelope<ProtocolDTO> resultEnvelopeForGetProtocolByID = gobiiEnvelopeRestResourceForGetProtocolById
+                .get(ProtocolDTO.class);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetProtocolByID.getHeader()));
+        ProtocolDTO protocolDTO = resultEnvelopeForGetProtocolByID.getPayload().getData().get(0);
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.PROTOCOL, protocolDTO.getProtocolId());
+
+        // ********** CREATE ORGANIZATION FOR THE PROTOCOL
+
+        OrganizationDTO newOrganizationDto = TestDtoFactory
+                .makePopulatedOrganizationDTO(GobiiProcessType.CREATE, 1);
+
+        PayloadEnvelope<OrganizationDTO> payloadEnvelope = new PayloadEnvelope<>(newOrganizationDto, GobiiProcessType.CREATE);
+        GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResourceOrganization = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_ORGANIZATION));
+        PayloadEnvelope<OrganizationDTO> organizationDTOResponseEnvelope = gobiiEnvelopeRestResourceOrganization.post(OrganizationDTO.class,
+                payloadEnvelope);
+        OrganizationDTO organizationDTO = organizationDTOResponseEnvelope.getPayload().getData().get(0);
+
+        Assert.assertNotEquals(null, organizationDTO);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(organizationDTOResponseEnvelope.getHeader()));
+        Assert.assertTrue(organizationDTO.getOrganizationId() > 0);
+
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.ORGANIZATION,
+                organizationDTO.getOrganizationId());
+
+
+            // CREATE VENDOR-PROTOCOL BY POSTING VENDOR TO PROTOCOL
+            // ********** POST VENDOR ORGANIZATION TO PROTOCOL
+            // ********** SET VENDOR-PROTOCOL NAME
+
+            String organizationName = organizationDTO.getName();
+            String vendorProtocolName = organizationName + "_" + UUID.randomUUID().toString();
+            VendorProtocolDTO vendorProtocolDTO = new VendorProtocolDTO(organizationDTO.getOrganizationId(),
+                    protocolId,
+                    vendorProtocolName);
+            organizationDTO.getVendorProtocols().add(vendorProtocolDTO);
+
+            RestUri restUriProtocoLVendor = GobiiClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .childResourceByUriIdParam(GobiiServiceRequestId.URL_PROTOCOL,
+                            GobiiServiceRequestId.URL_VENDORS);
+            restUriProtocoLVendor.setParamValue("id", protocolId.toString());
+            GobiiEnvelopeRestResource<OrganizationDTO> protocolVendorResource =
+                    new GobiiEnvelopeRestResource<>(restUriProtocoLVendor);
+            PayloadEnvelope<OrganizationDTO> vendorPayloadEnvelope =
+                    new PayloadEnvelope<>(organizationDTO, GobiiProcessType.CREATE);
+            PayloadEnvelope<OrganizationDTO> protocolVendorResult =
+                    protocolVendorResource.post(OrganizationDTO.class, vendorPayloadEnvelope);
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(protocolVendorResult.getHeader()));
+            OrganizationDTO postPostOrganizationDTO = protocolVendorResult.getPayload().getData().get(0);
+            Assert.assertTrue(postPostOrganizationDTO.getVendorProtocols().size() == 1);
+            Assert.assertTrue(postPostOrganizationDTO.getVendorProtocols().get(0).getVendorProtocolId() > 0);
+            Assert.assertTrue(postPostOrganizationDTO.getVendorProtocols().get(0).getName().equals(vendorProtocolName));
+
+
+            // ************ VERIFY THAT VENDOR-PROTOCOL WAS CREATED
+            RestUri namesUri = GobiiClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .nameIdListByQueryParams();
+            GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
+            namesUri.setParamValue("entity", GobiiEntityNameType.VENDOR_PROTOCOL.toString().toLowerCase());
+
+            PayloadEnvelope<NameIdDTO> resultEnvelopeProtocoLVendornames = gobiiEnvelopeRestResource
+                    .get(NameIdDTO.class);
+
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeProtocoLVendornames.getHeader()));
+
+            List<NameIdDTO> nameIdDTOs = resultEnvelopeProtocoLVendornames.getPayload().getData();
+
+            Assert.assertTrue(nameIdDTOs.size() > 0);
+
+            Assert.assertTrue(nameIdDTOs
+                    .stream()
+                    .filter(nameIdDTO -> nameIdDTO.getName().toLowerCase().equals(vendorProtocolName))
+                    .count() == 1);
+
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.VENDOR_PROTOCOL, protocolDTO.getProtocolId());
 
         Integer vendorProtocolId = (new GlobalPkColl<DtoCrudRequestVendorProtocolTest>()
                 .getAPkVal(DtoCrudRequestVendorProtocolTest.class, GobiiEntityNameType.VENDOR_PROTOCOL));
