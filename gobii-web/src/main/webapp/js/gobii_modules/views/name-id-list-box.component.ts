@@ -62,10 +62,10 @@ export class NameIdListBoxComponent  {
                      * content of the instruction file. And any other solution I can think of at the moment would be
                      complex, difficult to manage, and more prone to errors. So this is the solution for now.
                      */
-                    items.forEach(item => {item.setSelected(false)})
-                    if( items[0] ) {
-                        items[0].setSelected(true);
-                    }
+                    // items.forEach(item => {item.setSelected(false)})
+                    // if( items[0] ) {
+                    //     items[0].setSelected(true);
+                    // }
 
 
                 },

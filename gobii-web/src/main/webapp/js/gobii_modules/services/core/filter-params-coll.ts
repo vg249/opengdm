@@ -194,7 +194,6 @@ export class FilterParamsColl {
 
                         if (completedItem && labelItem) {
 
-                            completedItem.setSelected(true);
                             returnVal = new fileAction.LoadFilterAction(
                                 {
                                     filterId: FilterParamNames.CV_JOB_STATUS,

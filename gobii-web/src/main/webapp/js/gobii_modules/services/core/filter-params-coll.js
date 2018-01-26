@@ -137,7 +137,6 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                             var completedItem = fileItems.find(function (fi) { return fi.getItemName() === "completed"; });
                             var labelItem = fileItems.find(function (fi) { return fi.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL; });
                             if (completedItem && labelItem) {
-                                completedItem.setSelected(true);
                                 returnVal = new fileAction.LoadFilterAction({
                                     filterId: file_item_param_names_1.FilterParamNames.CV_JOB_STATUS,
                                     filter: {

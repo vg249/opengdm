@@ -58,10 +58,10 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
                          * content of the instruction file. And any other solution I can think of at the moment would be
                          complex, difficult to manage, and more prone to errors. So this is the solution for now.
                          */
-                        items.forEach(function (item) { item.setSelected(false); });
-                        if (items[0]) {
-                            items[0].setSelected(true);
-                        }
+                        // items.forEach(item => {item.setSelected(false)})
+                        // if( items[0] ) {
+                        //     items[0].setSelected(true);
+                        // }
                     }, function (error) {
                         _this.store.dispatch(new historyAction.AddStatusMessageAction(error));
                     });
