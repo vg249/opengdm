@@ -20,7 +20,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
         return returnVal;
     }
     function removeFromExtractItems(state, gobiiFileItem) {
-        gobiiFileItem.setSelected(false);
+        //    gobiiFileItem.setSelected(false);
         var newSelectedUniqueIdsState = state.uniqueIdsOfExtractFileItems.slice();
         // if we don't find it, we don't raise an error: the intent was to remove, but it just wasn't there,
         // so the state when this function exits is as expected

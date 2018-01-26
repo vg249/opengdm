@@ -71,7 +71,7 @@ function addToExtractItems(state: State, gobiiFileItem: GobiiFileItem): State {
 
 function removeFromExtractItems(state: State, gobiiFileItem: GobiiFileItem): State {
 
-    gobiiFileItem.setSelected(false);
+//    gobiiFileItem.setSelected(false);
     let newSelectedUniqueIdsState: string[] = state.uniqueIdsOfExtractFileItems.slice();
 
     // if we don't find it, we don't raise an error: the intent was to remove, but it just wasn't there,
