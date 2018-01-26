@@ -456,7 +456,7 @@ export class FileItemService {
                                                             .setCvFilterType(filterParamsToLoad.getCvFilterType())
                                                             .setItemId(nameIdItem.id)
                                                             .setItemName(nameIdItem.name)
-                                                            .setSelected(false)
+                                                            //.setSelected(false)
                                                             .setRequired(false)
                                                             .setParentItemId(filterParamsToLoad.getFkEntityFilterValue())
                                                             .withRelatedEntity(entityRelation);

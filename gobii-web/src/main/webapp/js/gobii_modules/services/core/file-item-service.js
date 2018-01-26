@@ -392,7 +392,6 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                                     .setCvFilterType(filterParamsToLoad.getCvFilterType())
                                                     .setItemId(nameIdItem.id)
                                                     .setItemName(nameIdItem.name)
-                                                    .setSelected(false)
                                                     .setRequired(false)
                                                     .setParentItemId(filterParamsToLoad.getFkEntityFilterValue())
                                                     .withRelatedEntity(entityRelation);
