@@ -305,7 +305,7 @@ export class FileItemService {
                     filterParamsToProcess,
                     filterValue,
                     true);
-            }]
+            }
 
 
         } else {
