@@ -42,6 +42,46 @@ public class DtoCrudRequestNameIdListTest {
         Assert.assertTrue(GobiiClientContextAuth.deAuthenticate());
     }
 
+    private PayloadEnvelope<CvDTO> createCv(CvDTO newCvDTO) throws Exception {
+
+        PayloadEnvelope<CvDTO> cvCreatePayloadEnvelope = new PayloadEnvelope<>(newCvDTO, GobiiProcessType.CREATE);
+        GobiiEnvelopeRestResource<CvDTO> cvCreateGobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_CV));
+        PayloadEnvelope<CvDTO> cvCreateResultEnvelope = cvCreateGobiiEnvelopeRestResource.post(CvDTO.class,
+                cvCreatePayloadEnvelope);
+
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(cvCreateResultEnvelope.getHeader()));
+        CvDTO cvDTOResponse = cvCreateResultEnvelope.getPayload().getData().get(0);
+        Assert.assertNotEquals(null, cvDTOResponse);
+        Assert.assertTrue(cvDTOResponse.getCvId() > 0);
+
+        return cvCreateResultEnvelope;
+
+    }
+
+    private void checkNameIdListResponse(List<NameIdDTO> nameIdDTOListResponse, NameIdDTO nameIdDTO1, NameIdDTO nameIdDTO2, NameIdDTO nameIdDTONotExisting) {
+
+        for (NameIdDTO currentNameIdDTO : nameIdDTOListResponse) {
+
+            if (currentNameIdDTO.getName().equals(nameIdDTO1.getName()) || currentNameIdDTO.getName().equals(nameIdDTO2.getName())) {
+
+                Assert.assertTrue(currentNameIdDTO.getId() > 0);
+
+            }
+
+            if (currentNameIdDTO.getName().equals(nameIdDTONotExisting.getName())) {
+
+                Assert.assertTrue(currentNameIdDTO.getId() <= 0);
+
+            }
+
+        }
+
+
+    }
+
     @Test
     public void testGetCvTermsByGroupAndNameList() throws Exception {
 
@@ -97,39 +137,18 @@ public class DtoCrudRequestNameIdListTest {
 
         // check if cv terms already exists; if FALSE, create new CvDTO
 
-        PayloadEnvelope<CvDTO> cvCreatePayloadEnvelope;
-        GobiiEnvelopeRestResource<CvDTO> cvCreateGobiiEnvelopeRestResource;
         PayloadEnvelope<CvDTO> cvCreateResultEnvelope;
 
         if (!existingCvTerms.contains(newCvDTO1.getTerm())) {
 
-            cvCreatePayloadEnvelope = new PayloadEnvelope<>(newCvDTO1, GobiiProcessType.CREATE);
-            cvCreateGobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
-                        .getUriFactory()
-                        .resourceColl(GobiiServiceRequestId.URL_CV));
-            cvCreateResultEnvelope = cvCreateGobiiEnvelopeRestResource.post(CvDTO.class,
-                    cvCreatePayloadEnvelope);
+            cvCreateResultEnvelope = createCv(newCvDTO1);
 
-            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(cvCreateResultEnvelope.getHeader()));
-            CvDTO cvDTOResponse1 = cvCreateResultEnvelope.getPayload().getData().get(0);
-            Assert.assertNotEquals(null, cvDTOResponse1);
-            Assert.assertTrue(cvDTOResponse1.getCvId() > 0);
 
         }
 
         if (!existingCvTerms.contains(newCvDTO2.getTerm())) {
 
-            cvCreatePayloadEnvelope = new PayloadEnvelope<>(newCvDTO2, GobiiProcessType.CREATE);
-            cvCreateGobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
-                        .getUriFactory()
-                        .resourceColl(GobiiServiceRequestId.URL_CV));
-            cvCreateResultEnvelope = cvCreateGobiiEnvelopeRestResource.post(CvDTO.class,
-                    cvCreatePayloadEnvelope);
-
-            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(cvCreateResultEnvelope.getHeader()));
-            CvDTO cvDTOResponse2 = cvCreateResultEnvelope.getPayload().getData().get(0);
-            Assert.assertNotEquals(null, cvDTOResponse2);
-            Assert.assertTrue(cvDTOResponse2.getCvId() > 0);
+            cvCreateResultEnvelope = createCv(newCvDTO2);
 
         }
 
@@ -172,21 +191,7 @@ public class DtoCrudRequestNameIdListTest {
         Assert.assertNotEquals(null, nameIdDTOListResponse);
         Assert.assertEquals(nameIdDTOList.size(), nameIdDTOListResponse.size());
 
-        for (NameIdDTO currentNameIdDTO : nameIdDTOListResponse) {
-
-            if (currentNameIdDTO.getName().equals(nameIdDTO1.getName()) || currentNameIdDTO.getName().equals(nameIdDTO2.getName())) {
-
-                Assert.assertTrue(currentNameIdDTO.getId() > 0);
-
-            }
-
-            if (currentNameIdDTO.getName().equals(nameIdDTONotExisting.getName())) {
-
-                Assert.assertTrue(currentNameIdDTO.getId() <= 0);
-
-            }
-
-        }
+        checkNameIdListResponse(nameIdDTOListResponse, nameIdDTO1, nameIdDTO2, nameIdDTONotExisting);
     }
 
     @Test
@@ -268,21 +273,8 @@ public class DtoCrudRequestNameIdListTest {
         Assert.assertNotEquals(null, nameIdDTOListResponse);
         Assert.assertEquals(nameIdDTOList.size(), nameIdDTOListResponse.size());
 
-        for (NameIdDTO currentNameIdDTO : nameIdDTOListResponse) {
+        checkNameIdListResponse(nameIdDTOListResponse, nameIdDTO1, nameIdDTO2, nameIdDTONotExisting);
 
-            if (currentNameIdDTO.getName().equals(nameIdDTO1.getName()) || currentNameIdDTO.getName().equals(nameIdDTO2.getName())) {
-
-                Assert.assertTrue(currentNameIdDTO.getId() > 0);
-
-            }
-
-            if (currentNameIdDTO.getName().equals(nameIdDTONotExisting.getName())) {
-
-                Assert.assertTrue(currentNameIdDTO.getId() <= 0);
-
-            }
-
-        }
     }
 
 }
