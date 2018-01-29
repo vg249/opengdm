@@ -10,7 +10,7 @@ public class BrapiResponseStudiesSearchItem {
 
     private String studyDbId;
     private String name;
-    private String trialDbId1;
+    private String trialDbId;
     private String trialName;
     private String studyType;
     private List<String> seasons;
@@ -39,12 +39,12 @@ public class BrapiResponseStudiesSearchItem {
         this.name = name;
     }
 
-    public String getTrialDbId1() {
-        return trialDbId1;
+    public String getTrialDbId() {
+        return trialDbId;
     }
 
-    public void setTrialDbId1(String trialDbId1) {
-        this.trialDbId1 = trialDbId1;
+    public void setTrialDbId(String trialDbId) {
+        this.trialDbId = trialDbId;
     }
 
     public String getTrialName() {
