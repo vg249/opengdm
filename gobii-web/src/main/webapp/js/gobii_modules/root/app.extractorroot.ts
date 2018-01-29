@@ -503,7 +503,8 @@ export class ExtractorRoot implements OnInit {
             GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
                 .setExtractorItemType(ExtractorItemType.JOB_ID)
                 .setItemId(jobId)
-                .setItemName(jobId), true)
+                .setItemName(jobId)
+                .setIsExtractCriterion(true))
     }
 
 

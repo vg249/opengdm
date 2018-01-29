@@ -103,7 +103,8 @@ export class FilterParams extends GobiiFileItemCompoundId {
                         private _childFileItemParams: FilterParams[],
                         private _isDynamicFilterValue: boolean,
                         private _isDynamicDataLoad: boolean,
-                        private onLoadFilteredItemsAction: (fileItems: GobiiFileItem[], filterValue:string) => any) {
+                        private onLoadFilteredItemsAction: (fileItems: GobiiFileItem[], filterValue:string) => any,
+                        private _primaryFilter: (fileItems: GobiiFileItem[], filterValue:string, gobiiExtractFilterType:GobiiExtractFilterType) => any) {
 
         super(_extractorItemType, _entityType, _entitySubType, _cvFilterType, _cvFilterValue);
 
@@ -128,6 +129,7 @@ export class FilterParams extends GobiiFileItemCompoundId {
             [],
             true,
             true,
+            null,
             null));
     }
 
@@ -185,6 +187,14 @@ export class FilterParams extends GobiiFileItemCompoundId {
         return this;
     }
 
+    getIsExtractCriterion(): boolean {
+        return super.getIsExtractCriterion();
+    }
+
+    setIsExtractCriterion(value: boolean): FilterParams {
+        super.setIsExtractCriterion(value);
+        return this;
+    }
 
     getFilterType(): FilterType {
         return this._filterType;
@@ -270,4 +280,13 @@ export class FilterParams extends GobiiFileItemCompoundId {
         return this.onLoadFilteredItemsAction;
     }
 
+
+    getPrimaryFilter(): (fileItems: GobiiFileItem[], filterValue: string, gobiiExtractFilterType: GobiiExtractFilterType) => any {
+        return this._primaryFilter;
+    }
+
+    setPrimaryFilter(value: (fileItems: GobiiFileItem[], filterValue: string, gobiiExtractFilterType: GobiiExtractFilterType) => any) {
+        this._primaryFilter = value;
+    }
+    
 }

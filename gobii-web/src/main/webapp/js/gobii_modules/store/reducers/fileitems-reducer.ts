@@ -265,19 +265,24 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
         } //
 
-        case gobiiFileItemAction.REPLACE_IN_EXTRACT_BY_ITEM_ID : {
+        case gobiiFileItemAction.REPLACE_BY_ITEM_ID : {
 
             let itemCurrentlyInExtract: GobiiFileItem = state
                 .allFileItems
                 .find(fi => fi.getFileItemUniqueId() === action.payload.itemIdCurrentlyInExtract);
 
-            let itemToReplaceItWith: GobiiFileItem = state
-                .allFileItems
-                .find(fi => fi.getFileItemUniqueId() === action.payload.itemIdToReplaceItWith);
 
-            let stateAfterRemove: State = removeFromExtractItems(state, itemCurrentlyInExtract);
-            returnVal = addToExtractItems(stateAfterRemove, itemToReplaceItWith);
+            if (itemCurrentlyInExtract.getIsExtractCriterion()) {
+                let itemToReplaceItWith: GobiiFileItem = state
+                    .allFileItems
+                    .find(fi => fi.getFileItemUniqueId() === action.payload.itemIdToReplaceItWith);
 
+                let stateAfterRemove: State = removeFromExtractItems(state, itemCurrentlyInExtract);
+                returnVal = addToExtractItems(stateAfterRemove, itemToReplaceItWith);
+            } else {
+                // there is also an effect that does additional things with this action
+                return state;
+            }
             break;
         }
 
@@ -315,7 +320,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
             // now add new item to selection if applicable
             let stateWithItemSelection: State;
-            if (action.payload.selectForExtract) {
+            if (newItemToAdd.getIsExtractCriterion()) {
                 if (fileItemToReplace) {
                     let oldItemUnselectedState: State = removeFromExtractItems(stateWithNewFileItem, fileItemToReplace);
                     stateWithItemSelection = addToExtractItems(oldItemUnselectedState, newItemToAdd);
@@ -759,7 +764,7 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
         ( e.getExtractorItemType() === ExtractorItemType.ENTITY
             && e.getEntityType() === EntityType.DATASET
             && ( (  contactId === null ) || +contactId < 1 || compounUniqueIdForContacts === null || e.getRelatedEntityFilterValue(compounUniqueIdForContacts) === contactId )
-            && ( ( projectId === null ) || +projectId < 1  || compounUniqueIdForProjectsByContact === null || e.getRelatedEntityFilterValue(compounUniqueIdForProjectsByContact) === projectId )
+            && ( ( projectId === null ) || +projectId < 1 || compounUniqueIdForProjectsByContact === null || e.getRelatedEntityFilterValue(compounUniqueIdForProjectsByContact) === projectId )
             && ( ( experimentId === null ) || +experimentId < 1 || compounUniqueIdForExperimentsByProject === null || e.getRelatedEntityFilterValue(compounUniqueIdForExperimentsByProject) === experimentId )
             && e.hasEntity()
             && e.getProcessType() !== ProcessType.DUMMY))
@@ -781,17 +786,18 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
     return returnVal;
 });
 
-export const getPiContactsFilterOptional = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+export const getPiContactsFilterOptional = createSelector(getFileItems, getGobiiExtractFilterType, (fileItems, gobiiExtractFilterType) => {
 
     return fileItems.filter(e =>
-        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+        ( e.getGobiiExtractFilterType() === gobiiExtractFilterType
+            && e.getExtractorItemType() === ExtractorItemType.ENTITY
             || e.getExtractorItemType() === ExtractorItemType.LABEL )
         && e.getEntityType() === EntityType.CONTACT
         && e.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
         .map(fi => fi);
 });
 
-export const getProjectsFilterOptional = createSelector(getFileItems, getFilters, (fileItems, filters) => {
+export const getProjectsFilterOptional = createSelector(getFileItems, getFilters, getGobiiExtractFilterType, (fileItems, filters, gobiiExtractFilterType) => {
 
     let returnVal: GobiiFileItem[] = [];
 
@@ -804,7 +810,8 @@ export const getProjectsFilterOptional = createSelector(getFileItems, getFilters
 
     returnVal = fileItems.filter(
         e =>
-            ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            ( e.getGobiiExtractFilterType() === gobiiExtractFilterType
+                && e.getExtractorItemType() === ExtractorItemType.ENTITY
                 || e.getExtractorItemType() === ExtractorItemType.LABEL )
             && e.getProcessType() !== ProcessType.DUMMY
             && e.getEntityType() === EntityType.PROJECT
@@ -816,7 +823,8 @@ export const getProjectsFilterOptional = createSelector(getFileItems, getFilters
 
     if (returnVal.length <= 0) {
         returnVal = fileItems.filter(e =>
-            ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            ( e.getGobiiExtractFilterType() == gobiiExtractFilterType
+                && e.getExtractorItemType() === ExtractorItemType.ENTITY
                 && e.getEntityType() === EntityType.PROJECT
                 && e.getProcessType() === ProcessType.DUMMY))
             .map(fi => fi);
@@ -826,7 +834,7 @@ export const getProjectsFilterOptional = createSelector(getFileItems, getFilters
 
 });
 
-export const getExperimentsFilterOptional = createSelector(getFileItems, getFilters, (fileItems, filters) => {
+export const getExperimentsFilterOptional = createSelector(getFileItems, getFilters, getGobiiExtractFilterType, (fileItems, filters, gobiiExtractFilterType) => {
 
     let returnVal: GobiiFileItem[] = [];
 
@@ -837,7 +845,8 @@ export const getExperimentsFilterOptional = createSelector(getFileItems, getFilt
 
     returnVal = fileItems.filter(
         e =>
-            ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            ( e.getGobiiExtractFilterType() == gobiiExtractFilterType
+                && e.getExtractorItemType() === ExtractorItemType.ENTITY
                 || e.getExtractorItemType() === ExtractorItemType.LABEL )
             && e.getProcessType() !== ProcessType.DUMMY
             && e.getEntityType() === EntityType.EXPERIMENT

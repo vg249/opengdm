@@ -214,8 +214,8 @@ export class FileItemEffects {
 
     @Effect()
     replaceInExtract$ = this.actions$
-        .ofType(fileItemActions.REPLACE_IN_EXTRACT_BY_ITEM_ID)
-        .switchMap((action: fileItemActions.ReplaceInExtractByItemIdAction) => {
+        .ofType(fileItemActions.REPLACE_BY_ITEM_ID)
+        .switchMap((action: fileItemActions.ReplaceByItemIdAction) => {
 
                 //  This action is triggered by the ubiguitous NameIdListBoxComponent
                 // as such, there are business behaviors that must be implemented here.
@@ -254,16 +254,17 @@ export class FileItemEffects {
                                     );
 
 
-                                    // LOAD THE CORRESPONDING TREE NODE FOR THE SELECTED ITEM
-
                                 } // if we had a filter to dispatch
 
-                                if (fileItemToReplaceWith.getExtractorItemType() != ExtractorItemType.LABEL) {
-                                    let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(fileItemToReplaceWith);
-                                    observer.next(new treeNodeActions.PlaceTreeNodeAction(treeNode));
+                                // LOAD THE CORRESPONDING TREE NODE FOR THE SELECTED ITEM
+                                if (fileItemToReplaceWith.getIsExtractCriterion()) {
+                                    if (fileItemToReplaceWith.getExtractorItemType() != ExtractorItemType.LABEL) {
+                                        let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(fileItemToReplaceWith);
+                                        observer.next(new treeNodeActions.PlaceTreeNodeAction(treeNode));
 
-                                } else {
-                                    observer.next(new fileItemActions.RemoveFromExractByItemIdAction(fileItemCurrentlyInExtractUniqueId));
+                                    } else {
+                                        observer.next(new fileItemActions.RemoveFromExractByItemIdAction(fileItemCurrentlyInExtractUniqueId));
+                                    }
                                 }
 
                             },

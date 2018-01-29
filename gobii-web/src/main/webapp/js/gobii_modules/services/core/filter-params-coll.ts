@@ -269,7 +269,8 @@ export class FilterParamsColl {
                 .setIsDynamicFilterValue(true)
                 .setIsDynamicDataLoad(false)
                 .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
-                .setNameIdLabelType(NameIdLabelType.ALL));
+                .setNameIdLabelType(NameIdLabelType.ALL)
+                .setIsExtractCriterion(false));
 
         // relate this filter to CONTACT_PI_FILTER_OPTIONAL as parent
         this.addFilter(
@@ -280,7 +281,8 @@ export class FilterParamsColl {
                 .setExtractorItemType(ExtractorItemType.ENTITY)
                 .setIsDynamicFilterValue(true)
                 .setIsDynamicDataLoad(false)
-                .setNameIdLabelType(NameIdLabelType.ALL));
+                .setNameIdLabelType(NameIdLabelType.ALL)
+                .setIsExtractCriterion(false));
 
         // relate this filter to PROJECT_FILTER_OPTIONAL as parent
         this.addFilter(
@@ -291,7 +293,8 @@ export class FilterParamsColl {
                 .setIsDynamicFilterValue(true)
                 .setIsDynamicDataLoad(false)
                 .setExtractorItemType(ExtractorItemType.ENTITY)
-                .setNameIdLabelType(NameIdLabelType.ALL));
+                .setNameIdLabelType(NameIdLabelType.ALL)
+                .setIsExtractCriterion(false));
 
 
         this.addFilter(

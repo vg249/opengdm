@@ -96,6 +96,16 @@ export class GobiiTreeNode extends GobiiFileItemCompoundId implements TreeNode {
         return this;
     }
 
+    getIsExtractCriterion(): boolean {
+        return super.getIsExtractCriterion();
+    }
+
+    setIsExtractCriterion(value: boolean): GobiiFileItemCompoundId {
+        super.setIsExtractCriterion(value);
+        return this;
+    }
+
+
 
     private id: string;
 

@@ -249,14 +249,12 @@ export class FileItemService {
      * @param {GobiiFileItem} gobiiFileItem
      * @param {boolean} selectForExtract
      */
-    public replaceFileItemByCompoundId(gobiiFileItem: GobiiFileItem,
-                                       selectForExtract: boolean) {
+    public replaceFileItemByCompoundId(gobiiFileItem: GobiiFileItem) {
 
 
         let loadAction: fileItemActions.ReplaceItemOfSameCompoundIdAction = new fileItemActions.ReplaceItemOfSameCompoundIdAction(
             {
-                gobiiFileitemToReplaceWith: gobiiFileItem,
-                selectForExtract: selectForExtract
+                gobiiFileitemToReplaceWith: gobiiFileItem
             }
         );
 
@@ -459,6 +457,7 @@ export class FileItemService {
                                                             //.setSelected(false)
                                                             .setRequired(false)
                                                             .setParentItemId(filterParamsToLoad.getFkEntityFilterValue())
+                                                            .setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())
                                                             .withRelatedEntity(entityRelation);
 
 
@@ -513,6 +512,7 @@ export class FileItemService {
                                                         .setCvFilterType(filterParamsToLoad.getCvFilterType())
                                                         .setExtractorItemType(ExtractorItemType.LABEL)
                                                         .setItemName(label)
+                                                        .setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())
                                                         .setParentItemId(filterParamsToLoad.getFkEntityFilterValue())
                                                         .setItemId("0");
 
@@ -530,6 +530,7 @@ export class FileItemService {
                                                 .setEntityType(filterParamsToLoad.getEntityType())
                                                 .setItemId("-1")
                                                 .setItemName("<none>")
+                                                .setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())
                                                 .setParentItemId(filterParamsToLoad.getFkEntityFilterValue());
 
                                             fileItems.push(noneFileItem);

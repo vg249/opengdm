@@ -140,6 +140,13 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
                     _super.prototype.setCvFilterValue.call(this, value);
                     return this;
                 };
+                GobiiFileItem.prototype.getIsExtractCriterion = function () {
+                    return _super.prototype.getIsExtractCriterion.call(this);
+                };
+                GobiiFileItem.prototype.setIsExtractCriterion = function (value) {
+                    _super.prototype.setIsExtractCriterion.call(this, value);
+                    return this;
+                };
                 GobiiFileItem.prototype.getItemId = function () {
                     return this._itemId;
                 };

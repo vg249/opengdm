@@ -218,7 +218,8 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this.fileItemService.replaceFileItemByCompoundId(gobii_file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.JOB_ID)
                         .setItemId(jobId)
-                        .setItemName(jobId), true);
+                        .setItemName(jobId)
+                        .setIsExtractCriterion(true));
                 };
                 ExtractorRoot.prototype.handleTabPanelChange = function (event) {
                     var tabIndex = event.index;
