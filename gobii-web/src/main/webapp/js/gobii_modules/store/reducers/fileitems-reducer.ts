@@ -250,7 +250,8 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             })
 
             if (allItemsForFilter[0]) {
-                if (!filterPayload.filterValue || +filterPayload.filterValue < 1) {
+                if (( !filterPayload.filterValue || +filterPayload.filterValue < 1 )
+                    && (allItemsForFilter[0].getExtractorItemType() === ExtractorItemType.LABEL)) {
                     allItemsForFilter[0].setSelected(true);
                 }
             }

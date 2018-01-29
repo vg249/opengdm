@@ -159,7 +159,8 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                     gfi.setSelected(false);
                 });
                 if (allItemsForFilter[0]) {
-                    if (!filterPayload.filterValue || +filterPayload.filterValue < 1) {
+                    if ((!filterPayload.filterValue || +filterPayload.filterValue < 1)
+                        && (allItemsForFilter[0].getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)) {
                         allItemsForFilter[0].setSelected(true);
                     }
                 }
