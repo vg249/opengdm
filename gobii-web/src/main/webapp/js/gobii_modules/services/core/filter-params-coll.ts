@@ -16,6 +16,7 @@ import * as fileAction from '../../store/actions/fileitem-action';
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 import {getGobiiTreeItemIds} from "../../store/reducers/treenode-reducer";
 import {getSymbolObservable} from "rxjs/symbol/observable";
+import {ProcessType} from "../../model/type-process";
 
 
 @Injectable()
@@ -308,21 +309,21 @@ export class FilterParamsColl {
 
 
         //Set up hierarchy
-        this.getFilter(FilterParamNames.CONTACT_PI_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET)
+        this.getFilter(FilterParamNames.CONTACT_PI_FILTER_OPTIONAL, GobiiExtractFilterType.WHOLE_DATASET)
             .setChildNameIdRequestParams(
-                [this.getFilter(FilterParamNames.PROJECT_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET)]
+                [this.getFilter(FilterParamNames.PROJECT_FILTER_OPTIONAL, GobiiExtractFilterType.WHOLE_DATASET)]
             );
 
-        this.getFilter(FilterParamNames.PROJECT_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET)
-            .setParentFileItemParams(this.getFilter(FilterParamNames.CONTACT_PI_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET))
+        this.getFilter(FilterParamNames.PROJECT_FILTER_OPTIONAL, GobiiExtractFilterType.WHOLE_DATASET)
+            .setParentFileItemParams(this.getFilter(FilterParamNames.CONTACT_PI_FILTER_OPTIONAL, GobiiExtractFilterType.WHOLE_DATASET))
             .setChildNameIdRequestParams(
-                [this.getFilter(FilterParamNames.EXPERIMENT_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET)]
+                [this.getFilter(FilterParamNames.EXPERIMENT_FILTER_OPTIONAL, GobiiExtractFilterType.WHOLE_DATASET)]
             );
 
-        this.getFilter(FilterParamNames.EXPERIMENT_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET)
-            .setParentFileItemParams(this.getFilter(FilterParamNames.PROJECT_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET))
+        this.getFilter(FilterParamNames.EXPERIMENT_FILTER_OPTIONAL, GobiiExtractFilterType.WHOLE_DATASET)
+            .setParentFileItemParams(this.getFilter(FilterParamNames.PROJECT_FILTER_OPTIONAL, GobiiExtractFilterType.WHOLE_DATASET))
             .setChildNameIdRequestParams(
-                [this.getFilter(FilterParamNames.DATASET_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET)]
+                [this.getFilter(FilterParamNames.DATASET_FILTER_OPTIONAL, GobiiExtractFilterType.WHOLE_DATASET)]
             );
 
 

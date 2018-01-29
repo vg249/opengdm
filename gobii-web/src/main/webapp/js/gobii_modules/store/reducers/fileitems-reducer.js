@@ -142,13 +142,31 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             } // LOAD_FILE_ITEM_LIST_WITH_FILTER
             case gobiiFileItemAction.LOAD_FILTER: {
                 var filterId = action.payload.filterId.toString();
-                var filterValue = action.payload.filter;
+                var filterPayload = action.payload.filter;
                 var newFilterState = Object.assign({}, state.filters);
-                newFilterState[filterId] = filterValue;
+                newFilterState[filterId] = filterPayload;
+                var newFileItemState = state.allFileItems.slice();
+                var gobiiFileItemCompoundId_1 = newFilterState[filterId].gobiiCompoundUniqueId;
+                var allItemsForFilter = newFileItemState
+                    .filter(function (gfi) {
+                    return (gfi.getGobiiExtractFilterType() === state.gobiiExtractFilterType
+                        && gfi.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
+                        || gfi.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
+                        && gfi.getProcessType() !== type_process_1.ProcessType.DUMMY
+                        && gfi.getEntityType() === gobiiFileItemCompoundId_1.getEntityType();
+                });
+                allItemsForFilter.forEach(function (gfi) {
+                    gfi.setSelected(false);
+                });
+                if (allItemsForFilter[0]) {
+                    if (!filterPayload.filterValue || +filterPayload.filterValue < 1) {
+                        allItemsForFilter[0].setSelected(true);
+                    }
+                }
                 returnVal = {
                     gobiiExtractFilterType: state.gobiiExtractFilterType,
                     uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
-                    allFileItems: state.allFileItems,
+                    allFileItems: newFileItemState,
                     filters: newFilterState
                 };
                 break;

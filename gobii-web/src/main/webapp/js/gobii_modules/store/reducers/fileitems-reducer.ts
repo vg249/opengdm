@@ -226,17 +226,39 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
         } // LOAD_FILE_ITEM_LIST_WITH_FILTER
 
         case gobiiFileItemAction.LOAD_FILTER: {
-            const filterId = action.payload.filterId.toString();
-            const filterValue = action.payload.filter;
+
+            const filterId: string = action.payload.filterId.toString();
+            const filterPayload = action.payload.filter;
 
             let newFilterState = Object.assign({}, state.filters);
-            newFilterState[filterId] = filterValue;
+            newFilterState[filterId] = filterPayload;
 
+            let newFileItemState: GobiiFileItem[] = state.allFileItems.slice();
+
+            let gobiiFileItemCompoundId: GobiiFileItemCompoundId = newFilterState[filterId].gobiiCompoundUniqueId;
+            let allItemsForFilter: GobiiFileItem[] = newFileItemState
+                .filter(gfi => {
+                    return ( gfi.getGobiiExtractFilterType() === state.gobiiExtractFilterType
+                        && gfi.getExtractorItemType() === ExtractorItemType.ENTITY
+                        || gfi.getExtractorItemType() === ExtractorItemType.LABEL )
+                        && gfi.getProcessType() !== ProcessType.DUMMY
+                        && gfi.getEntityType() === gobiiFileItemCompoundId.getEntityType()
+                });
+
+            allItemsForFilter.forEach(gfi => {
+                gfi.setSelected(false)
+            })
+
+            if (allItemsForFilter[0]) {
+                if (!filterPayload.filterValue || +filterPayload.filterValue < 1) {
+                    allItemsForFilter[0].setSelected(true);
+                }
+            }
 
             returnVal = {
                 gobiiExtractFilterType: state.gobiiExtractFilterType,
                 uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
-                allFileItems: state.allFileItems,
+                allFileItems: newFileItemState,
                 filters: newFilterState
             };
 
