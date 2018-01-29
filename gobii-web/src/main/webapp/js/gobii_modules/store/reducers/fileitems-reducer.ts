@@ -200,9 +200,8 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
              consistently (as you would expect whenever changing state).
 
              This particular solution is not ideal. Its conditions are organized around
-             the particular details of this problem -- it's not generaelizable. I think the
-             filter needs better semantics to describe what's needed in a more general
-             way. Most imporantly, the filter that's applied to figure out the target list of
+             the particular details of this problem -- it's not generaelizable. Most imporantly,
+             the filter that's applied to figure out the target list of
              items for which the first Label needs to be selected should be exactly the same
              filter as the one that populated the drop-down in question. I think the best way
              to do this is for the content of the filter to be associated with with the Filterparams
@@ -210,6 +209,8 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
              just get the FilterParams object and apply its filter semantics. The LOAD_ITEMS action would
              then use exactly the same filter to determine the list of items to focus on. But this would
              be a more substantial change than what's needed to fix the immediate issue.
+             Also, the isExtractCriterion condition seems a bit arbitrary. For now, it just means -- this
+             group of controls that I happen to know require this treatment.
 
              */
             let newFileItemState: GobiiFileItem[] = state.allFileItems.slice();
