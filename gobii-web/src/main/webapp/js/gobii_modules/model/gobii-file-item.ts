@@ -155,6 +155,15 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
         return this;
     }
 
+    getIsExtractCriterion(): boolean {
+        return super.getIsExtractCriterion();
+    }
+
+    setIsExtractCriterion(value: boolean): GobiiFileItem {
+        super.setIsExtractCriterion(value);
+        return this;
+    }
+
     getItemId(): string {
         return this._itemId;
     }

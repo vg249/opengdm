@@ -137,7 +137,6 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                             var completedItem = fileItems.find(function (fi) { return fi.getItemName() === "completed"; });
                             var labelItem = fileItems.find(function (fi) { return fi.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL; });
                             if (completedItem && labelItem) {
-                                completedItem.setSelected(true);
                                 returnVal = new fileAction.LoadFilterAction({
                                     filterId: file_item_param_names_1.FilterParamNames.CV_JOB_STATUS,
                                     filter: {
@@ -182,21 +181,24 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .setIsDynamicFilterValue(true)
                         .setIsDynamicDataLoad(false)
                         .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
-                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL));
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL)
+                        .setIsExtractCriterion(false));
                     // relate this filter to CONTACT_PI_FILTER_OPTIONAL as parent
                     this.addFilter(file_item_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.PROJECT)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
                         .setIsDynamicFilterValue(true)
                         .setIsDynamicDataLoad(false)
-                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL));
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL)
+                        .setIsExtractCriterion(false));
                     // relate this filter to PROJECT_FILTER_OPTIONAL as parent
                     this.addFilter(file_item_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.EXPERIMENT)
                         .setIsDynamicFilterValue(true)
                         .setIsDynamicDataLoad(false)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
-                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL));
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL)
+                        .setIsExtractCriterion(false));
                     this.addFilter(file_item_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.DATASET_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.DATASET)
                         .setIsDynamicFilterValue(true)

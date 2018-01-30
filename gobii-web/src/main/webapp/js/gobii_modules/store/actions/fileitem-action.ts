@@ -7,7 +7,7 @@ import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 
 export const ADD_TO_EXTRACT = '[GobiiFileItem] Add to Extract';
 export const ADD_TO_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Add to Extract by ID';
-export const REPLACE_IN_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Replace In Extract by ID';
+export const REPLACE_BY_ITEM_ID = '[GobiiFileItem] Replace In Extract by ID';
 export const REPLACE_ITEM_OF_SAME_COMPOUND_ID = '[GobiiFileItem] Replace In Extract by compound ID';
 export const REMOVE_FROM_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Remove from Extract by ID';
 export const REMOVE_FROM_EXTRACT = '[GobiiFileItem] Remove from Extract';
@@ -97,8 +97,8 @@ export class AddToExtractByItemIdAction implements Action {
     }
 }
 
-export class ReplaceInExtractByItemIdAction implements Action {
-    readonly type = REPLACE_IN_EXTRACT_BY_ITEM_ID;
+export class ReplaceByItemIdAction implements Action {
+    readonly type = REPLACE_BY_ITEM_ID;
 
     constructor(public payload: {
         filterParamName: FilterParamNames
@@ -114,8 +114,7 @@ export class ReplaceItemOfSameCompoundIdAction implements Action {
     readonly type = REPLACE_ITEM_OF_SAME_COMPOUND_ID;
 
     constructor(public payload: {
-        gobiiFileitemToReplaceWith: GobiiFileItem,
-        selectForExtract: boolean
+        gobiiFileitemToReplaceWith: GobiiFileItem
 
     }) {
     }
@@ -159,7 +158,7 @@ export type All
     | RemoveAllFromExtractAction
     | LoadFileItemtAction
     | SetExtractType
-    | ReplaceInExtractByItemIdAction
+    | ReplaceByItemIdAction
     | ReplaceItemOfSameCompoundIdAction
     | LoadFilterAction;
 

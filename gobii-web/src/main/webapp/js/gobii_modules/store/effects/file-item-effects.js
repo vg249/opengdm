@@ -281,7 +281,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                     //         // }).map( fileItems => new fileItemActions.LoadFileItemListAction({gobiiFileItems: fileItems}));
                     //     });// switchMap()
                     this.replaceInExtract$ = this.actions$
-                        .ofType(fileItemActions.REPLACE_IN_EXTRACT_BY_ITEM_ID)
+                        .ofType(fileItemActions.REPLACE_BY_ITEM_ID)
                         .switchMap(function (action) {
                         //  This action is triggered by the ubiguitous NameIdListBoxComponent
                         // as such, there are business behaviors that must be implemented here.
@@ -308,14 +308,16 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                                     }, function (error) {
                                         _this.store.dispatch(new historyAction.AddStatusMessageAction(error));
                                     });
-                                    // LOAD THE CORRESPONDING TREE NODE FOR THE SELECTED ITEM
                                 } // if we had a filter to dispatch
-                                if (fileItemToReplaceWith.getExtractorItemType() != type_extractor_item_1.ExtractorItemType.LABEL) {
-                                    var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(fileItemToReplaceWith);
-                                    observer.next(new treeNodeActions.PlaceTreeNodeAction(treeNode));
-                                }
-                                else {
-                                    observer.next(new fileItemActions.RemoveFromExractByItemIdAction(fileItemCurrentlyInExtractUniqueId));
+                                // LOAD THE CORRESPONDING TREE NODE FOR THE SELECTED ITEM
+                                if (fileItemToReplaceWith.getIsExtractCriterion()) {
+                                    if (fileItemToReplaceWith.getExtractorItemType() != type_extractor_item_1.ExtractorItemType.LABEL) {
+                                        var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(fileItemToReplaceWith);
+                                        observer.next(new treeNodeActions.PlaceTreeNodeAction(treeNode));
+                                    }
+                                    else {
+                                        observer.next(new fileItemActions.RemoveFromExractByItemIdAction(fileItemCurrentlyInExtractUniqueId));
+                                    }
                                 }
                             }, function (error) {
                                 _this.store.dispatch(new historyAction.AddStatusMessageAction(error));

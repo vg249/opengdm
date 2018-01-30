@@ -16,6 +16,7 @@ import * as fileAction from '../../store/actions/fileitem-action';
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 import {getGobiiTreeItemIds} from "../../store/reducers/treenode-reducer";
 import {getSymbolObservable} from "rxjs/symbol/observable";
+import {ProcessType} from "../../model/type-process";
 
 
 @Injectable()
@@ -194,7 +195,6 @@ export class FilterParamsColl {
 
                         if (completedItem && labelItem) {
 
-                            completedItem.setSelected(true);
                             returnVal = new fileAction.LoadFilterAction(
                                 {
                                     filterId: FilterParamNames.CV_JOB_STATUS,
@@ -270,7 +270,8 @@ export class FilterParamsColl {
                 .setIsDynamicFilterValue(true)
                 .setIsDynamicDataLoad(false)
                 .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
-                .setNameIdLabelType(NameIdLabelType.ALL));
+                .setNameIdLabelType(NameIdLabelType.ALL)
+                .setIsExtractCriterion(false));
 
         // relate this filter to CONTACT_PI_FILTER_OPTIONAL as parent
         this.addFilter(
@@ -281,7 +282,8 @@ export class FilterParamsColl {
                 .setExtractorItemType(ExtractorItemType.ENTITY)
                 .setIsDynamicFilterValue(true)
                 .setIsDynamicDataLoad(false)
-                .setNameIdLabelType(NameIdLabelType.ALL));
+                .setNameIdLabelType(NameIdLabelType.ALL)
+                .setIsExtractCriterion(false));
 
         // relate this filter to PROJECT_FILTER_OPTIONAL as parent
         this.addFilter(
@@ -292,7 +294,8 @@ export class FilterParamsColl {
                 .setIsDynamicFilterValue(true)
                 .setIsDynamicDataLoad(false)
                 .setExtractorItemType(ExtractorItemType.ENTITY)
-                .setNameIdLabelType(NameIdLabelType.ALL));
+                .setNameIdLabelType(NameIdLabelType.ALL)
+                .setIsExtractCriterion(false));
 
 
         this.addFilter(
@@ -306,21 +309,21 @@ export class FilterParamsColl {
 
 
         //Set up hierarchy
-        this.getFilter(FilterParamNames.CONTACT_PI_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET)
+        this.getFilter(FilterParamNames.CONTACT_PI_FILTER_OPTIONAL, GobiiExtractFilterType.WHOLE_DATASET)
             .setChildNameIdRequestParams(
-                [this.getFilter(FilterParamNames.PROJECT_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET)]
+                [this.getFilter(FilterParamNames.PROJECT_FILTER_OPTIONAL, GobiiExtractFilterType.WHOLE_DATASET)]
             );
 
-        this.getFilter(FilterParamNames.PROJECT_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET)
-            .setParentFileItemParams(this.getFilter(FilterParamNames.CONTACT_PI_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET))
+        this.getFilter(FilterParamNames.PROJECT_FILTER_OPTIONAL, GobiiExtractFilterType.WHOLE_DATASET)
+            .setParentFileItemParams(this.getFilter(FilterParamNames.CONTACT_PI_FILTER_OPTIONAL, GobiiExtractFilterType.WHOLE_DATASET))
             .setChildNameIdRequestParams(
-                [this.getFilter(FilterParamNames.EXPERIMENT_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET)]
+                [this.getFilter(FilterParamNames.EXPERIMENT_FILTER_OPTIONAL, GobiiExtractFilterType.WHOLE_DATASET)]
             );
 
-        this.getFilter(FilterParamNames.EXPERIMENT_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET)
-            .setParentFileItemParams(this.getFilter(FilterParamNames.PROJECT_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET))
+        this.getFilter(FilterParamNames.EXPERIMENT_FILTER_OPTIONAL, GobiiExtractFilterType.WHOLE_DATASET)
+            .setParentFileItemParams(this.getFilter(FilterParamNames.PROJECT_FILTER_OPTIONAL, GobiiExtractFilterType.WHOLE_DATASET))
             .setChildNameIdRequestParams(
-                [this.getFilter(FilterParamNames.DATASET_FILTER_OPTIONAL,GobiiExtractFilterType.WHOLE_DATASET)]
+                [this.getFilter(FilterParamNames.DATASET_FILTER_OPTIONAL, GobiiExtractFilterType.WHOLE_DATASET)]
             );
 
 

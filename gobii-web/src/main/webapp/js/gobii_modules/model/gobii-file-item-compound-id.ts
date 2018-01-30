@@ -9,7 +9,8 @@ export class GobiiFileItemCompoundId {
                 private _entityType: EntityType = EntityType.UNKNOWN,
                 private _entitySubType: EntitySubType = EntitySubType.UNKNOWN,
                 private _cvFilterType: CvFilterType = CvFilterType.UNKNOWN,
-                private _cvFilterValue: string = null) {
+                private _cvFilterValue: string = null,
+                private _isExtractCriterion: boolean = true) {
 
         if (this._cvFilterType === null) {
             this._cvFilterType = CvFilterType.UNKNOWN;
@@ -102,6 +103,16 @@ export class GobiiFileItemCompoundId {
     setCvFilterValue(value: string): GobiiFileItemCompoundId {
 
         this._cvFilterValue = value;
+        return this;
+    }
+
+
+    getIsExtractCriterion(): boolean {
+        return this._isExtractCriterion;
+    }
+
+    setIsExtractCriterion(value: boolean): GobiiFileItemCompoundId {
+        this._isExtractCriterion = value;
         return this;
     }
 }

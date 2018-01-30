@@ -71,7 +71,7 @@ function addToExtractItems(state: State, gobiiFileItem: GobiiFileItem): State {
 
 function removeFromExtractItems(state: State, gobiiFileItem: GobiiFileItem): State {
 
-    gobiiFileItem.setSelected(false);
+//    gobiiFileItem.setSelected(false);
     let newSelectedUniqueIdsState: string[] = state.uniqueIdsOfExtractFileItems.slice();
 
     // if we don't find it, we don't raise an error: the intent was to remove, but it just wasn't there,
@@ -140,53 +140,6 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             break;
         } // LOAD_FILE_ITEM
 
-        // case gobiiFileItemAction.LOAD_FILTER: {
-        //     const filterId = action.payload.filterId.toString();
-        //     const filterValue = action.payload.filter;
-        //
-        //
-        //     let newFilterState = Object.assign({}, state.filters);
-        //     newFilterState[filterId] = filterValue;
-        //
-        //
-        //     returnVal = {
-        //         gobiiExtractFilterType: state.gobiiExtractFilterType,
-        //         uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
-        //         allFileItems: state.allFileItems,
-        //         filters: newFilterState
-        //     };
-        //
-        //     break;
-        // } // LOAD_FILTER
-
-        // case gobiiFileItemAction.LOAD_FILE_ITEM_LIST: {
-        //     const gobiiFileItemsPayload = action.payload.gobiiFileItems;
-        //
-        //     const newGobiiFileItems = gobiiFileItemsPayload.filter(newItem =>
-        //         state
-        //             .allFileItems
-        //             .filter(stateItem =>
-        //                 (
-        //                     stateItem.getGobiiExtractFilterType() === newItem.getGobiiExtractFilterType() &&
-        //                     stateItem.getExtractorItemType() === newItem.getExtractorItemType() &&
-        //                     stateItem.getEntityType() === newItem.getEntityType() &&
-        //                     stateItem.getEntitySubType() === newItem.getEntitySubType() &&
-        //                     stateItem.getCvFilterType() === newItem.getCvFilterType() &&
-        //                     stateItem.getItemId() === newItem.getItemId()
-        //                 )
-        //             ).length === 0
-        //     );
-        //
-        //     returnVal = {
-        //         gobiiExtractFilterType: state.gobiiExtractFilterType,
-        //         uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
-        //         allFileItems: [...state.allFileItems, ...newGobiiFileItems],
-        //         filters: state.filters
-        //     };
-        //
-        //     break;
-        // } // LOAD_FILE_ITEM_LIST
-
         case gobiiFileItemAction.LOAD_FILE_ITEM_LIST_WITH_FILTER: {
             const gobiiFileItemsPayload = action.payload.gobiiFileItems;
             const filterId = action.payload.filterId.toString();
@@ -226,17 +179,68 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
         } // LOAD_FILE_ITEM_LIST_WITH_FILTER
 
         case gobiiFileItemAction.LOAD_FILTER: {
-            const filterId = action.payload.filterId.toString();
-            const filterValue = action.payload.filter;
+
+            const filterId: string = action.payload.filterId.toString();
+            const filterPayload = action.payload.filter;
 
             let newFilterState = Object.assign({}, state.filters);
-            newFilterState[filterId] = filterValue;
+            newFilterState[filterId] = filterPayload;
 
+
+            /***
+             * The following lines are intended to solve an oddly thorny problem.
+             On the dataset tab, if you don't set the selected label item here in state,
+             when you set the PI filter back to All PI’s, the two child lists are filtered
+             as they should be, but the top-most item in the list doesn’t change – they
+             don’t revert to “All Projects” and “All Experiments.” The problem seems to be
+             that once the list has decided what the top item is, if _none_ of the items
+             in the list has selected==true, it just stays where it is in the list: there
+             needs to be a differentiator. It also matters significantly that you set the
+             selected item in the reducer: if you do it elsewhere it does not work
+             consistently (as you would expect whenever changing state).
+
+             This particular solution is not ideal. Its conditions are organized around
+             the particular details of this problem -- it's not generaelizable. Most imporantly,
+             the filter that's applied to figure out the target list of
+             items for which the first Label needs to be selected should be exactly the same
+             filter as the one that populated the drop-down in question. I think the best way
+             to do this is for the content of the filter to be associated with with the Filterparams
+             and for the reducer to have access to that. So the selector methods in the reducer would
+             just get the FilterParams object and apply its filter semantics. The LOAD_ITEMS action would
+             then use exactly the same filter to determine the list of items to focus on. But this would
+             be a more substantial change than what's needed to fix the immediate issue.
+             Also, the isExtractCriterion condition seems a bit arbitrary. For now, it just means -- this
+             group of controls that I happen to know require this treatment.
+
+             */
+            let newFileItemState: GobiiFileItem[] = state.allFileItems.slice();
+
+            if (!newFilterState[filterId].gobiiCompoundUniqueId.getIsExtractCriterion()) {
+                let gobiiFileItemCompoundId: GobiiFileItemCompoundId = newFilterState[filterId].gobiiCompoundUniqueId;
+                let allItemsForFilter: GobiiFileItem[] = newFileItemState
+                    .filter(gfi => {
+                        return ( gfi.getGobiiExtractFilterType() === state.gobiiExtractFilterType
+                            && gfi.getExtractorItemType() === ExtractorItemType.ENTITY
+                            || gfi.getExtractorItemType() === ExtractorItemType.LABEL )
+                            && gfi.getProcessType() !== ProcessType.DUMMY
+                            && gfi.getEntityType() === gobiiFileItemCompoundId.getEntityType()
+                    });
+
+                allItemsForFilter.forEach(gfi => {
+                    gfi.setSelected(false)
+                })
+
+                if (allItemsForFilter[0]) {
+                    if (( !filterPayload.filterValue || +filterPayload.filterValue < 1 )) {
+                        allItemsForFilter[0].setSelected(true);
+                    }
+                }
+            }
 
             returnVal = {
                 gobiiExtractFilterType: state.gobiiExtractFilterType,
                 uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
-                allFileItems: state.allFileItems,
+                allFileItems: newFileItemState,
                 filters: newFilterState
             };
 
@@ -265,19 +269,24 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
         } //
 
-        case gobiiFileItemAction.REPLACE_IN_EXTRACT_BY_ITEM_ID : {
+        case gobiiFileItemAction.REPLACE_BY_ITEM_ID : {
 
             let itemCurrentlyInExtract: GobiiFileItem = state
                 .allFileItems
                 .find(fi => fi.getFileItemUniqueId() === action.payload.itemIdCurrentlyInExtract);
 
-            let itemToReplaceItWith: GobiiFileItem = state
-                .allFileItems
-                .find(fi => fi.getFileItemUniqueId() === action.payload.itemIdToReplaceItWith);
 
-            let stateAfterRemove: State = removeFromExtractItems(state, itemCurrentlyInExtract);
-            returnVal = addToExtractItems(stateAfterRemove, itemToReplaceItWith);
+            if (itemCurrentlyInExtract.getIsExtractCriterion()) {
+                let itemToReplaceItWith: GobiiFileItem = state
+                    .allFileItems
+                    .find(fi => fi.getFileItemUniqueId() === action.payload.itemIdToReplaceItWith);
 
+                let stateAfterRemove: State = removeFromExtractItems(state, itemCurrentlyInExtract);
+                returnVal = addToExtractItems(stateAfterRemove, itemToReplaceItWith);
+            } else {
+                // there is also an effect that does additional things with this action
+                return state;
+            }
             break;
         }
 
@@ -315,7 +324,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
             // now add new item to selection if applicable
             let stateWithItemSelection: State;
-            if (action.payload.selectForExtract) {
+            if (newItemToAdd.getIsExtractCriterion()) {
                 if (fileItemToReplace) {
                     let oldItemUnselectedState: State = removeFromExtractItems(stateWithNewFileItem, fileItemToReplace);
                     stateWithItemSelection = addToExtractItems(oldItemUnselectedState, newItemToAdd);
@@ -759,7 +768,7 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
         ( e.getExtractorItemType() === ExtractorItemType.ENTITY
             && e.getEntityType() === EntityType.DATASET
             && ( (  contactId === null ) || +contactId < 1 || compounUniqueIdForContacts === null || e.getRelatedEntityFilterValue(compounUniqueIdForContacts) === contactId )
-            && ( ( projectId === null ) || +projectId < 1  || compounUniqueIdForProjectsByContact === null || e.getRelatedEntityFilterValue(compounUniqueIdForProjectsByContact) === projectId )
+            && ( ( projectId === null ) || +projectId < 1 || compounUniqueIdForProjectsByContact === null || e.getRelatedEntityFilterValue(compounUniqueIdForProjectsByContact) === projectId )
             && ( ( experimentId === null ) || +experimentId < 1 || compounUniqueIdForExperimentsByProject === null || e.getRelatedEntityFilterValue(compounUniqueIdForExperimentsByProject) === experimentId )
             && e.hasEntity()
             && e.getProcessType() !== ProcessType.DUMMY))
@@ -781,17 +790,18 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
     return returnVal;
 });
 
-export const getPiContactsFilterOptional = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+export const getPiContactsFilterOptional = createSelector(getFileItems, getGobiiExtractFilterType, (fileItems, gobiiExtractFilterType) => {
 
     return fileItems.filter(e =>
-        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+        ( e.getGobiiExtractFilterType() === gobiiExtractFilterType
+            && e.getExtractorItemType() === ExtractorItemType.ENTITY
             || e.getExtractorItemType() === ExtractorItemType.LABEL )
         && e.getEntityType() === EntityType.CONTACT
         && e.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
         .map(fi => fi);
 });
 
-export const getProjectsFilterOptional = createSelector(getFileItems, getFilters, (fileItems, filters) => {
+export const getProjectsFilterOptional = createSelector(getFileItems, getFilters, getGobiiExtractFilterType, (fileItems, filters, gobiiExtractFilterType) => {
 
     let returnVal: GobiiFileItem[] = [];
 
@@ -804,7 +814,8 @@ export const getProjectsFilterOptional = createSelector(getFileItems, getFilters
 
     returnVal = fileItems.filter(
         e =>
-            ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            ( e.getGobiiExtractFilterType() === gobiiExtractFilterType
+                && e.getExtractorItemType() === ExtractorItemType.ENTITY
                 || e.getExtractorItemType() === ExtractorItemType.LABEL )
             && e.getProcessType() !== ProcessType.DUMMY
             && e.getEntityType() === EntityType.PROJECT
@@ -816,7 +827,8 @@ export const getProjectsFilterOptional = createSelector(getFileItems, getFilters
 
     if (returnVal.length <= 0) {
         returnVal = fileItems.filter(e =>
-            ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            ( e.getGobiiExtractFilterType() == gobiiExtractFilterType
+                && e.getExtractorItemType() === ExtractorItemType.ENTITY
                 && e.getEntityType() === EntityType.PROJECT
                 && e.getProcessType() === ProcessType.DUMMY))
             .map(fi => fi);
@@ -826,7 +838,7 @@ export const getProjectsFilterOptional = createSelector(getFileItems, getFilters
 
 });
 
-export const getExperimentsFilterOptional = createSelector(getFileItems, getFilters, (fileItems, filters) => {
+export const getExperimentsFilterOptional = createSelector(getFileItems, getFilters, getGobiiExtractFilterType, (fileItems, filters, gobiiExtractFilterType) => {
 
     let returnVal: GobiiFileItem[] = [];
 
@@ -837,7 +849,8 @@ export const getExperimentsFilterOptional = createSelector(getFileItems, getFilt
 
     returnVal = fileItems.filter(
         e =>
-            ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            ( e.getGobiiExtractFilterType() == gobiiExtractFilterType
+                && e.getExtractorItemType() === ExtractorItemType.ENTITY
                 || e.getExtractorItemType() === ExtractorItemType.LABEL )
             && e.getProcessType() !== ProcessType.DUMMY
             && e.getEntityType() === EntityType.EXPERIMENT

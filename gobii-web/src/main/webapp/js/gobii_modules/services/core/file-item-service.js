@@ -260,10 +260,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                  * @param {GobiiFileItem} gobiiFileItem
                  * @param {boolean} selectForExtract
                  */
-                FileItemService.prototype.replaceFileItemByCompoundId = function (gobiiFileItem, selectForExtract) {
+                FileItemService.prototype.replaceFileItemByCompoundId = function (gobiiFileItem) {
                     var loadAction = new fileItemActions.ReplaceItemOfSameCompoundIdAction({
-                        gobiiFileitemToReplaceWith: gobiiFileItem,
-                        selectForExtract: selectForExtract
+                        gobiiFileitemToReplaceWith: gobiiFileItem
                     });
                     this.store.dispatch(loadAction);
                 };
@@ -392,9 +391,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                                     .setCvFilterType(filterParamsToLoad.getCvFilterType())
                                                     .setItemId(nameIdItem.id)
                                                     .setItemName(nameIdItem.name)
-                                                    .setSelected(false)
                                                     .setRequired(false)
                                                     .setParentItemId(filterParamsToLoad.getFkEntityFilterValue())
+                                                    .setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())
                                                     .withRelatedEntity(entityRelation);
                                                 fileItems.push(currentFileItem);
                                             });
@@ -436,6 +435,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                                     .setCvFilterType(filterParamsToLoad.getCvFilterType())
                                                     .setExtractorItemType(type_extractor_item_1.ExtractorItemType.LABEL)
                                                     .setItemName(label)
+                                                    .setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())
                                                     .setParentItemId(filterParamsToLoad.getFkEntityFilterValue())
                                                     .setItemId("0");
                                                 fileItems.unshift(labelFileItem);
@@ -448,6 +448,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                             .setEntityType(filterParamsToLoad.getEntityType())
                                             .setItemId("-1")
                                             .setItemName("<none>")
+                                            .setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())
                                             .setParentItemId(filterParamsToLoad.getFkEntityFilterValue());
                                         fileItems.push(noneFileItem);
                                         var loadAction = new fileItemActions.LoadFileItemListWithFilterAction({

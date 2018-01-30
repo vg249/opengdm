@@ -20,7 +20,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
         return returnVal;
     }
     function removeFromExtractItems(state, gobiiFileItem) {
-        gobiiFileItem.setSelected(false);
+        //    gobiiFileItem.setSelected(false);
         var newSelectedUniqueIdsState = state.uniqueIdsOfExtractFileItems.slice();
         // if we don't find it, we don't raise an error: the intent was to remove, but it just wasn't there,
         // so the state when this function exits is as expected
@@ -69,51 +69,6 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 };
                 break;
             } // LOAD_FILE_ITEM
-            // case gobiiFileItemAction.LOAD_FILTER: {
-            //     const filterId = action.payload.filterId.toString();
-            //     const filterValue = action.payload.filter;
-            //
-            //
-            //     let newFilterState = Object.assign({}, state.filters);
-            //     newFilterState[filterId] = filterValue;
-            //
-            //
-            //     returnVal = {
-            //         gobiiExtractFilterType: state.gobiiExtractFilterType,
-            //         uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
-            //         allFileItems: state.allFileItems,
-            //         filters: newFilterState
-            //     };
-            //
-            //     break;
-            // } // LOAD_FILTER
-            // case gobiiFileItemAction.LOAD_FILE_ITEM_LIST: {
-            //     const gobiiFileItemsPayload = action.payload.gobiiFileItems;
-            //
-            //     const newGobiiFileItems = gobiiFileItemsPayload.filter(newItem =>
-            //         state
-            //             .allFileItems
-            //             .filter(stateItem =>
-            //                 (
-            //                     stateItem.getGobiiExtractFilterType() === newItem.getGobiiExtractFilterType() &&
-            //                     stateItem.getExtractorItemType() === newItem.getExtractorItemType() &&
-            //                     stateItem.getEntityType() === newItem.getEntityType() &&
-            //                     stateItem.getEntitySubType() === newItem.getEntitySubType() &&
-            //                     stateItem.getCvFilterType() === newItem.getCvFilterType() &&
-            //                     stateItem.getItemId() === newItem.getItemId()
-            //                 )
-            //             ).length === 0
-            //     );
-            //
-            //     returnVal = {
-            //         gobiiExtractFilterType: state.gobiiExtractFilterType,
-            //         uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
-            //         allFileItems: [...state.allFileItems, ...newGobiiFileItems],
-            //         filters: state.filters
-            //     };
-            //
-            //     break;
-            // } // LOAD_FILE_ITEM_LIST
             case gobiiFileItemAction.LOAD_FILE_ITEM_LIST_WITH_FILTER: {
                 var gobiiFileItemsPayload = action.payload.gobiiFileItems;
                 var filterId = action.payload.filterId.toString();
@@ -142,13 +97,58 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             } // LOAD_FILE_ITEM_LIST_WITH_FILTER
             case gobiiFileItemAction.LOAD_FILTER: {
                 var filterId = action.payload.filterId.toString();
-                var filterValue = action.payload.filter;
+                var filterPayload = action.payload.filter;
                 var newFilterState = Object.assign({}, state.filters);
-                newFilterState[filterId] = filterValue;
+                newFilterState[filterId] = filterPayload;
+                /***
+                 * The following lines are intended to solve an oddly thorny problem.
+                 On the dataset tab, if you don't set the selected label item here in state,
+                 when you set the PI filter back to All PI’s, the two child lists are filtered
+                 as they should be, but the top-most item in the list doesn’t change – they
+                 don’t revert to “All Projects” and “All Experiments.” The problem seems to be
+                 that once the list has decided what the top item is, if _none_ of the items
+                 in the list has selected==true, it just stays where it is in the list: there
+                 needs to be a differentiator. It also matters significantly that you set the
+                 selected item in the reducer: if you do it elsewhere it does not work
+                 consistently (as you would expect whenever changing state).
+    
+                 This particular solution is not ideal. Its conditions are organized around
+                 the particular details of this problem -- it's not generaelizable. I think the
+                 filter needs better semantics to describe what's needed in a more general
+                 way. Most imporantly, the filter that's applied to figure out the target list of
+                 items for which the first Label needs to be selected should be exactly the same
+                 filter as the one that populated the drop-down in question. I think the best way
+                 to do this is for the content of the filter to be associated with with the Filterparams
+                 and for the reducer to have access to that. So the selector methods in the reducer would
+                 just get the FilterParams object and apply its filter semantics. The LOAD_ITEMS action would
+                 then use exactly the same filter to determine the list of items to focus on. But this would
+                 be a more substantial change than what's needed to fix the immediate issue.
+    
+                 */
+                var newFileItemState = state.allFileItems.slice();
+                if (!newFilterState[filterId].gobiiCompoundUniqueId.getIsExtractCriterion()) {
+                    var gobiiFileItemCompoundId_1 = newFilterState[filterId].gobiiCompoundUniqueId;
+                    var allItemsForFilter = newFileItemState
+                        .filter(function (gfi) {
+                        return (gfi.getGobiiExtractFilterType() === state.gobiiExtractFilterType
+                            && gfi.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
+                            || gfi.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
+                            && gfi.getProcessType() !== type_process_1.ProcessType.DUMMY
+                            && gfi.getEntityType() === gobiiFileItemCompoundId_1.getEntityType();
+                    });
+                    allItemsForFilter.forEach(function (gfi) {
+                        gfi.setSelected(false);
+                    });
+                    if (allItemsForFilter[0]) {
+                        if ((!filterPayload.filterValue || +filterPayload.filterValue < 1)) {
+                            allItemsForFilter[0].setSelected(true);
+                        }
+                    }
+                }
                 returnVal = {
                     gobiiExtractFilterType: state.gobiiExtractFilterType,
                     uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
-                    allFileItems: state.allFileItems,
+                    allFileItems: newFileItemState,
                     filters: newFilterState
                 };
                 break;
@@ -166,15 +166,21 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 returnVal = addToExtractItems(state, gobiiFileItem);
                 break;
             } //
-            case gobiiFileItemAction.REPLACE_IN_EXTRACT_BY_ITEM_ID: {
+            case gobiiFileItemAction.REPLACE_BY_ITEM_ID: {
                 var itemCurrentlyInExtract = state
                     .allFileItems
                     .find(function (fi) { return fi.getFileItemUniqueId() === action.payload.itemIdCurrentlyInExtract; });
-                var itemToReplaceItWith = state
-                    .allFileItems
-                    .find(function (fi) { return fi.getFileItemUniqueId() === action.payload.itemIdToReplaceItWith; });
-                var stateAfterRemove = removeFromExtractItems(state, itemCurrentlyInExtract);
-                returnVal = addToExtractItems(stateAfterRemove, itemToReplaceItWith);
+                if (itemCurrentlyInExtract.getIsExtractCriterion()) {
+                    var itemToReplaceItWith = state
+                        .allFileItems
+                        .find(function (fi) { return fi.getFileItemUniqueId() === action.payload.itemIdToReplaceItWith; });
+                    var stateAfterRemove = removeFromExtractItems(state, itemCurrentlyInExtract);
+                    returnVal = addToExtractItems(stateAfterRemove, itemToReplaceItWith);
+                }
+                else {
+                    // there is also an effect that does additional things with this action
+                    return state;
+                }
                 break;
             }
             case gobiiFileItemAction.REPLACE_ITEM_OF_SAME_COMPOUND_ID: {
@@ -203,7 +209,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 stateWithNewFileItem.allFileItems.push(newItemToAdd_1);
                 // now add new item to selection if applicable
                 var stateWithItemSelection = void 0;
-                if (action.payload.selectForExtract) {
+                if (newItemToAdd_1.getIsExtractCriterion()) {
                     if (fileItemToReplace_1) {
                         var oldItemUnselectedState = removeFromExtractItems(stateWithNewFileItem, fileItemToReplace_1);
                         stateWithItemSelection = addToExtractItems(oldItemUnselectedState, newItemToAdd_1);
@@ -592,16 +598,17 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 }
                 return returnVal;
             }));
-            exports_1("getPiContactsFilterOptional", getPiContactsFilterOptional = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
+            exports_1("getPiContactsFilterOptional", getPiContactsFilterOptional = reselect_1.createSelector(getFileItems, getGobiiExtractFilterType, function (fileItems, gobiiExtractFilterType) {
                 return fileItems.filter(function (e) {
-                    return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
+                    return (e.getGobiiExtractFilterType() === gobiiExtractFilterType
+                        && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
                         || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
                         && e.getEntityType() === type_entity_1.EntityType.CONTACT
                         && e.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR;
                 })
                     .map(function (fi) { return fi; });
             }));
-            exports_1("getProjectsFilterOptional", getProjectsFilterOptional = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
+            exports_1("getProjectsFilterOptional", getProjectsFilterOptional = reselect_1.createSelector(getFileItems, getFilters, getGobiiExtractFilterType, function (fileItems, filters, gobiiExtractFilterType) {
                 var returnVal = [];
                 // The project filter's value is a contactId. So we want only
                 // those projects that have an fk reference to the specified contact.
@@ -610,7 +617,8 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                     contactId = filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].filterValue;
                 }
                 returnVal = fileItems.filter(function (e) {
-                    return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
+                    return (e.getGobiiExtractFilterType() === gobiiExtractFilterType
+                        && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
                         || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
                         && e.getProcessType() !== type_process_1.ProcessType.DUMMY
                         && e.getEntityType() === type_entity_1.EntityType.PROJECT
@@ -621,7 +629,8 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 ).map(function (fi) { return fi; });
                 if (returnVal.length <= 0) {
                     returnVal = fileItems.filter(function (e) {
-                        return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
+                        return (e.getGobiiExtractFilterType() == gobiiExtractFilterType
+                            && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
                             && e.getEntityType() === type_entity_1.EntityType.PROJECT
                             && e.getProcessType() === type_process_1.ProcessType.DUMMY);
                     })
@@ -629,14 +638,15 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 }
                 return returnVal;
             }));
-            exports_1("getExperimentsFilterOptional", getExperimentsFilterOptional = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
+            exports_1("getExperimentsFilterOptional", getExperimentsFilterOptional = reselect_1.createSelector(getFileItems, getFilters, getGobiiExtractFilterType, function (fileItems, filters, gobiiExtractFilterType) {
                 var returnVal = [];
                 var projectId = null;
                 if (filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL]) {
                     projectId = filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].filterValue;
                 }
                 returnVal = fileItems.filter(function (e) {
-                    return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
+                    return (e.getGobiiExtractFilterType() == gobiiExtractFilterType
+                        && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
                         || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
                         && e.getProcessType() !== type_process_1.ProcessType.DUMMY
                         && e.getEntityType() === type_entity_1.EntityType.EXPERIMENT

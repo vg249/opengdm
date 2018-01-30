@@ -181,6 +181,13 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
                     _super.prototype.setCvFilterValue.call(this, value);
                     return this;
                 };
+                FilterParams.prototype.getIsExtractCriterion = function () {
+                    return _super.prototype.getIsExtractCriterion.call(this);
+                };
+                FilterParams.prototype.setIsExtractCriterion = function (value) {
+                    _super.prototype.setIsExtractCriterion.call(this, value);
+                    return this;
+                };
                 FilterParams.prototype.getFilterType = function () {
                     return this._filterType;
                 };

@@ -185,6 +185,14 @@ export class FilterParams extends GobiiFileItemCompoundId {
         return this;
     }
 
+    getIsExtractCriterion(): boolean {
+        return super.getIsExtractCriterion();
+    }
+
+    setIsExtractCriterion(value: boolean): FilterParams {
+        super.setIsExtractCriterion(value);
+        return this;
+    }
 
     getFilterType(): FilterType {
         return this._filterType;
