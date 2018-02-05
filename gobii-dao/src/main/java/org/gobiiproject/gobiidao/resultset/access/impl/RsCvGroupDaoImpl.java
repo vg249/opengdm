@@ -4,11 +4,7 @@ import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsCvGroupDao;
 import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpCvGroupById;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetCvGroupsByTypeId;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetCvItemsByGroupId;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetGroupTypeByGroupId;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpUserCvGroupByName;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.*;
 import org.hibernate.exception.SQLGrammarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -165,6 +161,34 @@ public class RsCvGroupDaoImpl implements RsCvGroupDao {
         }
 
         return returnVal;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public ResultSet getCvGroupDetailsByGroupName(String groupName, Integer cvGroupTypeId) throws GobiiDaoException {
+
+        ResultSet returnVal;
+
+        try {
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("groupName", groupName);
+            parameters.put("cvGroupTypeId", cvGroupTypeId);
+
+            SpGetCvGroupDetailsForGroupName spGetCvGroupDetailsForGroupName = new SpGetCvGroupDetailsForGroupName(parameters);
+            storedProcExec.doWithConnection(spGetCvGroupDetailsForGroupName);
+            returnVal = spGetCvGroupDetailsForGroupName.getResultSet();
+
+
+        } catch (SQLGrammarException e) {
+
+            LOGGER.error("Error retrieving cv group details " + e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
+
+        }
+
+        return returnVal;
+
     }
 
 }

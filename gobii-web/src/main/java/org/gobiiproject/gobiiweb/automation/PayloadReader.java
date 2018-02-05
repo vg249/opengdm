@@ -3,6 +3,8 @@ package org.gobiiproject.gobiiweb.automation;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 
+import java.util.List;
+
 /**
  * Created by Phil on 9/25/2016.
  */
@@ -63,6 +65,40 @@ public class PayloadReader<T> {
                     GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
                     "Request payload envelope is null");
         }
+
+        return returnVal;
+    }
+
+    public List<T> extractListOfItems(PayloadEnvelope<T> payloadEnvelope) throws GobiiWebException {
+
+        List<T> returnVal = null;
+
+        if (null != payloadEnvelope) {
+
+            if (null != payloadEnvelope.getPayload()) {
+
+                if (null != payloadEnvelope.getPayload().getData()) {
+
+                    returnVal = payloadEnvelope.getPayload().getData();
+
+                } else {
+                    throw new GobiiWebException(GobiiStatusLevel.VALIDATION,
+                            GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
+                            "Request payload data does not contain a data collection");
+                }
+
+            } else {
+                throw new GobiiWebException(GobiiStatusLevel.VALIDATION,
+                        GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
+                        "Request payload envelope does not contain a payload member");
+            }
+
+        } else {
+            throw new GobiiWebException(GobiiStatusLevel.VALIDATION,
+                    GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
+                    "Request payload envelope is null");
+        }
+
 
         return returnVal;
     }

@@ -1,6 +1,9 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds;
 
+import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsCvDao;
+import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
+import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIdFetch;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -16,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -25,6 +29,9 @@ public class DtoMapNameIdFetchCvTerms implements DtoMapNameIdFetch {
 
     @Autowired
     private RsCvDao rsCvDao = null;
+
+    @Autowired
+    private DtoListQueryColl dtoListQueryColl;
 
     Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdFetchCvTerms.class);
 
@@ -87,6 +94,51 @@ public class DtoMapNameIdFetchCvTerms implements DtoMapNameIdFetch {
 
     }
 
+    private List<NameIdDTO> getCvTermsForGroupByNameList(List<NameIdDTO> nameIdDTOList, String cvGroupName) {
+
+        List<NameIdDTO> returnVal = new ArrayList<>();
+
+        try {
+
+            List<String> nameArray = new ArrayList<>();
+
+            for (NameIdDTO currentNameIdDTO : nameIdDTOList) {
+
+                nameArray.add(currentNameIdDTO.getName());
+                currentNameIdDTO.setId(0);
+                returnVal.add(currentNameIdDTO);
+
+            }
+
+            ResultSet resultSet = dtoListQueryColl.getResultSet(ListSqlId.QUERY_ID_CV_BY_GROUP_AND_LIST,
+                    new HashMap<String, Object>() {{
+                        put("cvGroupName", cvGroupName);
+                    }}, new HashMap<String, Object>(){{
+                        put("nameArray", nameArray);
+                    }});
+
+
+            for (NameIdDTO currentNameIdDTO : returnVal) {
+
+                while (resultSet.next()) {
+
+                    if (currentNameIdDTO.getName().equals(resultSet.getString("term"))) {
+
+                        currentNameIdDTO.setId(resultSet.getInt("cv_id"));
+                        break;
+
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            throw new GobiiDaoException(e);
+        }
+
+        return returnVal;
+
+    }
+
     @Override
     public List<NameIdDTO> getNameIds(DtoMapNameIdParams dtoMapNameIdParams) throws GobiiException {
 
@@ -100,7 +152,11 @@ public class DtoMapNameIdFetchCvTerms implements DtoMapNameIdFetch {
 
                 returnVal = this.getCvTermsForGroup(dtoMapNameIdParams.getFilterValueAsString());
 
-            } else {
+            } else if (GobiiFilterType.NAMES_BY_NAME_LIST == dtoMapNameIdParams.getGobiiFilterType()) {
+
+                returnVal = this.getCvTermsForGroupByNameList(dtoMapNameIdParams.getNameIdDTOList(), dtoMapNameIdParams.getFilterValueAsString());
+
+            }else {
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.NONE,
                         "Unsupported filter type for "

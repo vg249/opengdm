@@ -1,7 +1,10 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds;
 
+import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
+
+import java.util.List;
 
 /**
  * Created by Phil on 10/16/2016.
@@ -11,11 +14,17 @@ public class DtoMapNameIdParams {
     private GobiiEntityNameType gobiiEntityNameType;
     private GobiiFilterType gobiiFilterType;
     private Object filterValue;
+    private List<NameIdDTO> nameIdDTOList;
 
-    public DtoMapNameIdParams(GobiiEntityNameType gobiiEntityNameType, GobiiFilterType gobiiFilterType, Object filterValue) {
+    public DtoMapNameIdParams(GobiiEntityNameType gobiiEntityNameType, GobiiFilterType gobiiFilterType, Object filterValue, List<NameIdDTO> nameIdDTOList) {
         this.gobiiEntityNameType = gobiiEntityNameType;
         this.gobiiFilterType = gobiiFilterType;
         this.filterValue = filterValue;
+        this.nameIdDTOList = nameIdDTOList;
+    }
+
+    public DtoMapNameIdParams(GobiiEntityNameType gobiiEntityNameType, GobiiFilterType gobiiFilterType, Object filterValue) {
+        this(gobiiEntityNameType, gobiiFilterType, filterValue, null);
     }
 
     public GobiiEntityNameType getEntityType() {
@@ -49,4 +58,8 @@ public class DtoMapNameIdParams {
     public void setFilterValue(Object filterValue) {
         this.filterValue = filterValue;
     }
+
+    public List<NameIdDTO> getNameIdDTOList() { return nameIdDTOList; }
+
+    public void setNameIdDTOList(List<NameIdDTO> nameIdDTOList) { this.nameIdDTOList = nameIdDTOList; }
 }

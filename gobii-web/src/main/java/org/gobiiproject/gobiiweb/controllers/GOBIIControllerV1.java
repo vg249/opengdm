@@ -76,6 +76,7 @@ import java.io.FileInputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -937,7 +938,7 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
-    @RequestMapping(value = "/cvgroups/{cvGroupTypeId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/cvgroups/{cvGroupTypeId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<CvGroupDTO> getCvGroupsByType(@PathVariable Integer cvGroupTypeId,
                                                          HttpServletRequest request,
@@ -984,6 +985,46 @@ public class GOBIIControllerV1 {
                 HttpStatus.INTERNAL_SERVER_ERROR);
 
         return (returnVal);
+    }
+
+    @RequestMapping(value = "/cvgroups/{groupName:[a-zA-Z_]+}", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<CvGroupDTO> getCvGroupDetails(@PathVariable("groupName") String groupName,
+                                                         @RequestParam(value = "cvGroupTypeId") Integer cvGroupTypeId,
+                                                         HttpServletRequest request,
+                                                         HttpServletResponse response) {
+
+        PayloadEnvelope<CvGroupDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            CvGroupDTO cvGroupDTO = cvGroupService.getCvGroupDetailsByGroupName(groupName, cvGroupTypeId);
+
+            PayloadWriter<CvGroupDTO> payloadWriter = new PayloadWriter<>(request, response,
+                    CvGroupDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
+                            GobiiServiceRequestId.URL_CVGROUP),
+                    cvGroupDTO);
+
+        } catch (GobiiException e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        } catch (Exception e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
     }
 
     // *********************************************
@@ -2116,6 +2157,130 @@ public class GOBIIControllerV1 {
 
         return (returnVal);
 
+    }
+
+    @RequestMapping(value = "/names/{entity}",
+        method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope<NameIdDTO> getNamesByNameList(@RequestBody PayloadEnvelope<NameIdDTO> payloadEnvelope,
+                                                         @PathVariable("entity") String entity,
+                                                         @RequestParam(value = "filterType", required = false) String filterType,
+                                                         @RequestParam(value = "filterValue", required = false) String filterValue,
+                                                         HttpServletRequest request,
+                                                         HttpServletResponse response) {
+
+        PayloadEnvelope<NameIdDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            GobiiEntityNameType gobiiEntityNameType;
+            try {
+                gobiiEntityNameType = GobiiEntityNameType.valueOf(entity.toUpperCase());
+            } catch (IllegalArgumentException e) {
+
+                throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.NONE,
+                        "Unsupported entity for list request: " + entity);
+            }
+
+            GobiiFilterType gobiiFilterType = GobiiFilterType.NONE;
+            Object typedFilterValue = filterValue;
+            List<NameIdDTO> nameIdDTOList = null;
+
+            if (!LineUtils.isNullOrEmpty(filterType)) {
+
+                try {
+                    gobiiFilterType = GobiiFilterType.valueOf(filterType.toUpperCase());
+                } catch (IllegalArgumentException e) {
+
+                    throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                            GobiiValidationStatusType.NONE,
+                            "Unsupported filter for list request: "
+                                    + filterType
+                                    + " for entity "
+                                    + gobiiEntityNameType);
+                }
+
+                if (!LineUtils.isNullOrEmpty(filterValue)) {
+
+                    if (GobiiFilterType.NAMES_BY_TYPEID == gobiiFilterType) {
+                        if (NumberUtils.isNumber(filterValue)) {
+                            typedFilterValue = Integer.valueOf(filterValue);
+                        } else {
+                            throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                                    GobiiValidationStatusType.NONE,
+                                    "Value for "
+                                            + filterType
+                                            + " value is not a number: "
+                                            + filterValue
+                                            + " for entity "
+                                            + gobiiEntityNameType);
+                        }
+                    } else if (GobiiFilterType.NAMES_BY_TYPE_NAME == gobiiFilterType) {
+                        // there is nothing to test here -- the string could be anything
+                        // add additional validation tests for other filter types
+                    } else if (GobiiFilterType.NAMES_BY_NAME_LIST == gobiiFilterType){
+
+                        PayloadReader<NameIdDTO> payloadReader = new PayloadReader<>(NameIdDTO.class);
+                        nameIdDTOList = payloadReader.extractListOfItems(payloadEnvelope);
+
+                    } else {
+                        throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                                GobiiValidationStatusType.NONE,
+                                "Unable to do type checking on filter value for filter type "
+                                        + filterType
+                                        + " with value "
+                                        + filterValue
+                                        + " for entity "
+                                        + gobiiEntityNameType);
+                    }
+
+                } else {
+                    throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                            GobiiValidationStatusType.NONE,
+                            "A value was not supplied for filter: "
+                                    + filterType
+                                    + " for entity "
+                                    + gobiiEntityNameType);
+                }
+            }
+
+            DtoMapNameIdParams dtoMapNameIdParams = new DtoMapNameIdParams(gobiiEntityNameType, gobiiFilterType, typedFilterValue, nameIdDTOList);
+
+            List<NameIdDTO> nameIdList = nameIdListService.getNameIdList(dtoMapNameIdParams);
+
+            PayloadWriter<NameIdDTO> payloadWriter = new PayloadWriter<>(request, response, NameIdDTO.class);
+            payloadWriter.writeList(returnVal,
+                    GobiiEntityNameConverter.toServiceRequestId(request.getContextPath(),
+                            gobiiEntityNameType),
+                    nameIdList);
+
+            // return the nameIdDTOs with null IDs
+            for (NameIdDTO currentNameIdDTO : nameIdList) {
+
+                if (currentNameIdDTO.getId().equals(0)) {
+
+                    returnVal.getPayload().getData().add(currentNameIdDTO);
+
+                }
+
+            }
+
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+
+        return (returnVal);
     }
 
 
