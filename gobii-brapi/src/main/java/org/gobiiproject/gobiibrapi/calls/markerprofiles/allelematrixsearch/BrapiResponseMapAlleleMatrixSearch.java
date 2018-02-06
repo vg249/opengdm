@@ -71,7 +71,28 @@ public class BrapiResponseMapAlleleMatrixSearch {
         gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.BY_SAMPLE);
         gobiiDataSetExtract.setGobiiSampleListType(GobiiSampleListType.EXTERNAL_CODE);
         gobiiDataSetExtract.setSampleList(externalCodes);
+        gobiiDataSetExtract.setDataSet(null);
 
+        return createExtractorInstruction(crop, gobiiDataSetExtract);
+    }
+
+    public BrapiMetaData searchByGermplasm(String crop, List<String> germplasmList) {
+
+        GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
+        gobiiDataSetExtract.setGobiiFileType(GobiiFileType.FLAPJACK);
+        gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.BY_SAMPLE);
+        gobiiDataSetExtract.setGobiiSampleListType(GobiiSampleListType.GERMPLASM_NAME);
+        gobiiDataSetExtract.setSampleList(germplasmList);
+        return createExtractorInstruction(crop, gobiiDataSetExtract);
+    }
+
+    public BrapiMetaData searchByDNASample(String crop, List<String> externalCodes) {
+
+        GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
+        gobiiDataSetExtract.setGobiiFileType(GobiiFileType.FLAPJACK);
+        gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.BY_SAMPLE);
+        gobiiDataSetExtract.setGobiiSampleListType(GobiiSampleListType.DNA_SAMPLE);
+        gobiiDataSetExtract.setSampleList(externalCodes);
         return createExtractorInstruction(crop, gobiiDataSetExtract);
     }
 

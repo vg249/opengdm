@@ -46,6 +46,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -408,13 +409,18 @@ public class BRAPIIControllerV1 {
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
             if (matrixDbId.isPresent() == markerprofileDbId.isPresent()) {
-                String message = "Incorrect error request format. Provide one of matrixDbId or markerProfileDbId";
+                String message = "Incorrect request format. At least one of matrixDbId or markerprofileDbId should be specified.";
                 brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
-            } else if (matrixDbId.isPresent())
-                brapiResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.searchByMatrixDbId(cropType, String.valueOf(matrixDbId)));
-            else {
-                //TODO: Parse when there is actually a list of Id's
-                List<String> externalCodes = new ArrayList<String>(){{add(String.valueOf(markerprofileDbId));}};
+            } else if (matrixDbId.isPresent()) {
+                List<String> matrixDbIdList = Arrays.asList(matrixDbId.get().split(","));
+                if (matrixDbIdList.size() > 1) {
+                    String message = "Incorrect request format. Only one matrixDbId is supported at the moment.";
+                    brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
+                    return objectMapper.writeValueAsString(brapiResponseEnvelope);
+                }
+                brapiResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.searchByMatrixDbId(cropType, matrixDbIdList.get(0)));
+            } else {
+                List<String> externalCodes = Arrays.asList(markerprofileDbId.get().split(","));
                 brapiResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.searchByExternalCode(cropType, externalCodes));
             }
         } catch (GobiiException e) {
