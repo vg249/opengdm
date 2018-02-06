@@ -43,6 +43,9 @@ public class VCFTransformer {
 				   ((matrixLine = matrixFileBufferedReader.readLine()) != null)) {
 				String[] mrefLineRawData = mrefLine.trim().toUpperCase().split("\\s+");
 				String[] mrefAltData = mrefLineRawData[1].split("[^A-Za-z\\-]+");//Split on non-alphabetic, may be jsonified already
+
+				if(mrefAltData.length==0)mrefAltData=new String[]{""};//if we have no entries, make it a blank first and all below will work fine
+
 				int offset=0;//offset for first alt being blank (happens with this regex and split (freaking split)
 				if(mrefAltData[0].equals(""))offset=1;
 				String mrefLineData[]=new String[mrefAltData.length+1-offset];//List of 1 + alts length
