@@ -394,7 +394,8 @@ public class BRAPIIControllerV1 {
             method = {RequestMethod.GET, RequestMethod.POST},
             produces = "application/json")
     @ResponseBody
-    public String getAlleleMatrix(@RequestParam("matrixDbId") String matrixDbId,
+    public String getAlleleMatrix(@RequestParam("matrixDbId") Optional<String> matrixDbId,
+                                  @RequestParam("markerProfileDbId") Optional<String> markerProfileDbId,
                                   HttpServletRequest request,
                                   HttpServletResponse response) throws Exception {
 
@@ -404,8 +405,14 @@ public class BRAPIIControllerV1 {
         try {
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-            brapiResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.search(cropType, matrixDbId));
-
+            if(matrixDbId.isPresent() == markerProfileDbId.isPresent()){
+                String message = "Incorrect error request format. Provide one of matrixDbId or markerProfileDbId";
+                brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
+            }
+            else if(matrixDbId.isPresent())
+            brapiResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.searchByMatrixDbId(cropType, String.valueOf(matrixDbId)));
+            else
+                brapiResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.searchByMarkerProfileDbId(cropType, String.valueOf(matrixDbId)));
 
         } catch (GobiiException e) {
 

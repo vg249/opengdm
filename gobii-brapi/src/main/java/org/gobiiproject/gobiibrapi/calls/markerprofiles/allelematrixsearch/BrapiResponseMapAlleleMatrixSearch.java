@@ -29,7 +29,40 @@ public class BrapiResponseMapAlleleMatrixSearch {
     @Autowired
     private ExtractorInstructionFilesService extractorInstructionFilesService;
 
-    public BrapiMetaData search(String crop, String matrixDbId) {
+    private GobiiExtractorInstruction createExtractorInstruction(String crop) {
+        GobiiExtractorInstruction gobiiExtractorInstruction = new GobiiExtractorInstruction();
+        GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
+        gobiiDataSetExtract.setGobiiFileType(GobiiFileType.FLAPJACK);
+        gobiiExtractorInstruction.setContactId(1);
+        return gobiiExtractorInstruction;
+    }
+
+    public BrapiMetaData searchByMatrixDbId(String crop, String matrixDbId) {
+
+        BrapiMetaData brapiMetaData = new BrapiMetaData();
+        ExtractorInstructionFilesDTO extractorInstructionFilesDTO = new ExtractorInstructionFilesDTO();
+        GobiiExtractorInstruction gobiiExtractorInstruction
+        Integer dataSetId = Integer.parseInt(matrixDbId);
+
+        gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
+        gobiiDataSetExtract.setDataSet(new PropNameId(dataSetId, null));
+        gobiiExtractorInstruction.getDataSetExtracts().add(gobiiDataSetExtract);
+        gobiiExtractorInstruction.setContactId(1);
+        extractorInstructionFilesDTO.getGobiiExtractorInstructions().add(gobiiExtractorInstruction);
+
+        String jobId = DateUtils.makeDateIdString();
+        extractorInstructionFilesDTO.setInstructionFileName(jobId);
+
+
+        ExtractorInstructionFilesDTO extractorInstructionFilesDTONew = extractorInstructionFilesService
+                .createInstruction(crop, extractorInstructionFilesDTO);
+
+        brapiMetaData.addStatusMessage("asynchid", extractorInstructionFilesDTONew.getJobId());
+
+        return brapiMetaData;
+    }
+
+    public BrapiMetaData searchByMarkerProfileDbId(String crop, String matrixDbId) {
 
         BrapiMetaData brapiMetaData = new BrapiMetaData();
 
