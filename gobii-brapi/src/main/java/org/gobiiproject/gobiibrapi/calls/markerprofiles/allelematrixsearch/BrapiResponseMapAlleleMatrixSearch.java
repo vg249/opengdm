@@ -15,11 +15,14 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFiles
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
+import org.gobiiproject.gobiimodel.types.GobiiSampleListType;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Phil on 12/15/2016.
@@ -29,65 +32,47 @@ public class BrapiResponseMapAlleleMatrixSearch {
     @Autowired
     private ExtractorInstructionFilesService extractorInstructionFilesService;
 
-    private GobiiExtractorInstruction createExtractorInstruction(String crop) {
+    private BrapiMetaData createExtractorInstruction(String crop, GobiiDataSetExtract gobiiDataSetExtract) {
+
+        BrapiMetaData brapiMetaData = new BrapiMetaData();
+
+        ExtractorInstructionFilesDTO extractorInstructionFilesDTO = new ExtractorInstructionFilesDTO();
         GobiiExtractorInstruction gobiiExtractorInstruction = new GobiiExtractorInstruction();
-        GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
-        gobiiDataSetExtract.setGobiiFileType(GobiiFileType.FLAPJACK);
+
+        gobiiExtractorInstruction.getDataSetExtracts().add(gobiiDataSetExtract);
         gobiiExtractorInstruction.setContactId(1);
-        return gobiiExtractorInstruction;
+        extractorInstructionFilesDTO.getGobiiExtractorInstructions().add(gobiiExtractorInstruction);
+
+        String jobId = DateUtils.makeDateIdString();
+        extractorInstructionFilesDTO.setInstructionFileName(jobId);
+
+        ExtractorInstructionFilesDTO extractorInstructionFilesDTONew = extractorInstructionFilesService
+                .createInstruction(crop, extractorInstructionFilesDTO);
+
+        brapiMetaData.addStatusMessage("asynchid", extractorInstructionFilesDTONew.getJobId());
+
+        return brapiMetaData;
     }
 
     public BrapiMetaData searchByMatrixDbId(String crop, String matrixDbId) {
 
-        BrapiMetaData brapiMetaData = new BrapiMetaData();
-        ExtractorInstructionFilesDTO extractorInstructionFilesDTO = new ExtractorInstructionFilesDTO();
-        GobiiExtractorInstruction gobiiExtractorInstruction
-        Integer dataSetId = Integer.parseInt(matrixDbId);
-
-        gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
-        gobiiDataSetExtract.setDataSet(new PropNameId(dataSetId, null));
-        gobiiExtractorInstruction.getDataSetExtracts().add(gobiiDataSetExtract);
-        gobiiExtractorInstruction.setContactId(1);
-        extractorInstructionFilesDTO.getGobiiExtractorInstructions().add(gobiiExtractorInstruction);
-
-        String jobId = DateUtils.makeDateIdString();
-        extractorInstructionFilesDTO.setInstructionFileName(jobId);
-
-
-        ExtractorInstructionFilesDTO extractorInstructionFilesDTONew = extractorInstructionFilesService
-                .createInstruction(crop, extractorInstructionFilesDTO);
-
-        brapiMetaData.addStatusMessage("asynchid", extractorInstructionFilesDTONew.getJobId());
-
-        return brapiMetaData;
-    }
-
-    public BrapiMetaData searchByMarkerProfileDbId(String crop, String matrixDbId) {
-
-        BrapiMetaData brapiMetaData = new BrapiMetaData();
-
-        Integer dataSetId = Integer.parseInt(matrixDbId);
-
-        ExtractorInstructionFilesDTO extractorInstructionFilesDTO = new ExtractorInstructionFilesDTO();
-        GobiiExtractorInstruction gobiiExtractorInstruction = new GobiiExtractorInstruction();
         GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
         gobiiDataSetExtract.setGobiiFileType(GobiiFileType.FLAPJACK);
         gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
-        gobiiDataSetExtract.setDataSet(new PropNameId(dataSetId, null));
-        gobiiExtractorInstruction.getDataSetExtracts().add(gobiiDataSetExtract);
-        gobiiExtractorInstruction.setContactId(1);
-        extractorInstructionFilesDTO.getGobiiExtractorInstructions().add(gobiiExtractorInstruction);
+        gobiiDataSetExtract.setDataSet(new PropNameId(Integer.parseInt(matrixDbId), null));
 
-        String jobId = DateUtils.makeDateIdString();
-        extractorInstructionFilesDTO.setInstructionFileName(jobId);
+        return createExtractorInstruction(crop, gobiiDataSetExtract);
+    }
 
+    public BrapiMetaData searchByExternalCode(String crop, List<String> externalCodes) {
 
-        ExtractorInstructionFilesDTO extractorInstructionFilesDTONew = extractorInstructionFilesService
-                .createInstruction(crop, extractorInstructionFilesDTO);
+        GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
+        gobiiDataSetExtract.setGobiiFileType(GobiiFileType.FLAPJACK);
+        gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.BY_SAMPLE);
+        gobiiDataSetExtract.setGobiiSampleListType(GobiiSampleListType.EXTERNAL_CODE);
+        gobiiDataSetExtract.setSampleList(externalCodes);
 
-        brapiMetaData.addStatusMessage("asynchid", extractorInstructionFilesDTONew.getJobId());
-
-        return brapiMetaData;
+        return createExtractorInstruction(crop, gobiiDataSetExtract);
     }
 
     public BrapiMetaData getStatus(String crop, String jobId, HttpServletRequest request) throws Exception {

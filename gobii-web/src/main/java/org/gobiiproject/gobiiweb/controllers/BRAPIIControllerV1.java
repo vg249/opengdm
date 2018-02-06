@@ -45,6 +45,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -208,13 +210,13 @@ public class BRAPIIControllerV1 {
 
             Integer reportedPageSize;
             Integer totalPages;
-            if( requestedPageSize > numberOfHits ) {
+            if (requestedPageSize > numberOfHits) {
                 reportedPageSize = numberOfHits;
                 totalPages = 1;
             } else {
                 reportedPageSize = requestedPageSize;
                 totalPages = numberOfHits / reportedPageSize; // get the whole part of the result
-                if(numberOfHits % reportedPageSize > 0 ) {   // if there's a remainder, there's an additional page
+                if (numberOfHits % reportedPageSize > 0) {   // if there's a remainder, there's an additional page
                     totalPages += 1;
                 }
             }
@@ -395,7 +397,7 @@ public class BRAPIIControllerV1 {
             produces = "application/json")
     @ResponseBody
     public String getAlleleMatrix(@RequestParam("matrixDbId") Optional<String> matrixDbId,
-                                  @RequestParam("markerProfileDbId") Optional<String> markerProfileDbId,
+                                  @RequestParam("markerprofileDbId") Optional<String> markerprofileDbId,
                                   HttpServletRequest request,
                                   HttpServletResponse response) throws Exception {
 
@@ -405,15 +407,16 @@ public class BRAPIIControllerV1 {
         try {
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-            if(matrixDbId.isPresent() == markerProfileDbId.isPresent()){
+            if (matrixDbId.isPresent() == markerprofileDbId.isPresent()) {
                 String message = "Incorrect error request format. Provide one of matrixDbId or markerProfileDbId";
                 brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
+            } else if (matrixDbId.isPresent())
+                brapiResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.searchByMatrixDbId(cropType, String.valueOf(matrixDbId)));
+            else {
+                //TODO: Parse when there is actually a list of Id's
+                List<String> externalCodes = new ArrayList<String>(){{add(String.valueOf(markerprofileDbId));}};
+                brapiResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.searchByExternalCode(cropType, externalCodes));
             }
-            else if(matrixDbId.isPresent())
-            brapiResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.searchByMatrixDbId(cropType, String.valueOf(matrixDbId)));
-            else
-                brapiResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.searchByMarkerProfileDbId(cropType, String.valueOf(matrixDbId)));
-
         } catch (GobiiException e) {
 
             String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
