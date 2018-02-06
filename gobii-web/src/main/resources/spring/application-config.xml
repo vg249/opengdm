@@ -337,6 +337,11 @@
     <bean id="dtoMapJob" class="org.gobiiproject.gobiidtomapping.impl.DtoMapJobImpl"/>
     <bean id="rsJobDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsJobDaoImpl"/>
 
+    <!-- **** Sample Beans *************************************** -->
+    <bean id="sampleService" class="org.gobiiproject.gobidomain.services.impl.SampleServiceImpl"/>
+    <bean id="dtoMapSample" class="org.gobiiproject.gobiidtomapping.impl.DtoMapSampleImpl"/>
+    <bean id="rsSampleDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsSampleDaoImpl"/>
+
     <bean id="dtoListQueryColl"
           class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl">
         <property name="listQueriesBySqlId">
