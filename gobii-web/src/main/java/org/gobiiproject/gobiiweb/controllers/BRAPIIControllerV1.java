@@ -512,4 +512,54 @@ public class BRAPIIControllerV1 {
     }
 
 
+
+    @RequestMapping(value = "/markerprofiles",
+            method = {RequestMethod.GET, RequestMethod.POST},
+            produces = "application/json")
+    @ResponseBody
+    public String getMarkerProfile(@RequestParam("matrixDbId") Optional<String> matrixDbId,
+                                  @RequestParam("markerprofileDbId") Optional<String> markerprofileDbId,
+                                  HttpServletRequest request,
+                                  HttpServletResponse response) throws Exception {
+
+        String returnVal = null;
+
+        BrapiResponseEnvelope brapiResponseEnvelope = new BrapiResponseEnvelope();
+        try {
+
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            if (matrixDbId.isPresent() == markerprofileDbId.isPresent()) {
+                String message = "Incorrect request format. At least one of matrixDbId or markerprofileDbId should be specified.";
+                brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
+            } else if (matrixDbId.isPresent()) {
+                List<String> matrixDbIdList = Arrays.asList(matrixDbId.get().split(","));
+                if (matrixDbIdList.size() > 1) {
+                    String message = "Incorrect request format. Only one matrixDbId is supported at the moment.";
+                    brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
+                    return objectMapper.writeValueAsString(brapiResponseEnvelope);
+                }
+                brapiResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.searchByMatrixDbId(cropType, matrixDbIdList.get(0)));
+            } else {
+                List<String> externalCodes = Arrays.asList(markerprofileDbId.get().split(","));
+                brapiResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.searchByExternalCode(cropType, externalCodes));
+            }
+        } catch (GobiiException e) {
+
+            String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
+
+            brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
+
+        } catch (Exception e) {
+
+            String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
+
+            brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
+        }
+
+        returnVal = objectMapper.writeValueAsString(brapiResponseEnvelope);
+
+        return returnVal;
+    }
+
+
 }// BRAPIController
