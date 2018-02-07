@@ -1,25 +1,35 @@
 package org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrixsearch;
 
 import org.apache.commons.io.FilenameUtils;
+import org.gobiiproject.gobidomain.services.CvService;
 import org.gobiiproject.gobidomain.services.ExtractorInstructionFilesService;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
+import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.DatasetType;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.entity.PropNameId;
+import org.gobiiproject.gobiimodel.headerlesscontainer.CvDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
+import org.gobiiproject.gobiimodel.types.GobiiSampleListType;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * Created by Phil on 12/15/2016.
@@ -29,18 +39,35 @@ public class BrapiResponseMapAlleleMatrixSearch {
     @Autowired
     private ExtractorInstructionFilesService extractorInstructionFilesService;
 
-    public BrapiMetaData search(String crop, String matrixDbId) {
+    @Autowired
+    private CvService cvService;
+
+    private PropNameId getDatatypeIdForName(DatasetType datasetType) {
+
+
+        List<CvDTO> datasetCvs = cvService.getCvsByGroupName(CvGroup.CVGROUP_DATASETTYPES.getCvGroupName());
+
+        AtomicInteger datasetTypeId = new AtomicInteger(0);
+        datasetCvs
+                .stream()
+                .filter(cv -> cv.getTerm().equals(datasetType.getDatasetTypeName()))
+                .forEach(cv -> datasetTypeId.set(cv.getCvId()));
+
+        if (datasetTypeId.get() == 0) {
+            throw new GobiiException("Unknown datatype: " + datasetType.getDatasetTypeName());
+        }
+
+
+        return new PropNameId(datasetTypeId.get(), datasetType.getDatasetTypeName());
+    }
+
+    private BrapiMetaData createExtractorInstruction(String crop, GobiiDataSetExtract gobiiDataSetExtract) {
 
         BrapiMetaData brapiMetaData = new BrapiMetaData();
 
-        Integer dataSetId = Integer.parseInt(matrixDbId);
-
         ExtractorInstructionFilesDTO extractorInstructionFilesDTO = new ExtractorInstructionFilesDTO();
         GobiiExtractorInstruction gobiiExtractorInstruction = new GobiiExtractorInstruction();
-        GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
-        gobiiDataSetExtract.setGobiiFileType(GobiiFileType.FLAPJACK);
-        gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
-        gobiiDataSetExtract.setDataSet(new PropNameId(dataSetId, null));
+
         gobiiExtractorInstruction.getDataSetExtracts().add(gobiiDataSetExtract);
         gobiiExtractorInstruction.setContactId(1);
         extractorInstructionFilesDTO.getGobiiExtractorInstructions().add(gobiiExtractorInstruction);
@@ -48,13 +75,57 @@ public class BrapiResponseMapAlleleMatrixSearch {
         String jobId = DateUtils.makeDateIdString();
         extractorInstructionFilesDTO.setInstructionFileName(jobId);
 
-
         ExtractorInstructionFilesDTO extractorInstructionFilesDTONew = extractorInstructionFilesService
                 .createInstruction(crop, extractorInstructionFilesDTO);
 
         brapiMetaData.addStatusMessage("asynchid", extractorInstructionFilesDTONew.getJobId());
 
         return brapiMetaData;
+    }
+
+    public BrapiMetaData searchByMatrixDbId(String crop, String matrixDbId) {
+
+        GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
+        gobiiDataSetExtract.setGobiiFileType(GobiiFileType.FLAPJACK);
+        gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
+        gobiiDataSetExtract.setDataSet(new PropNameId(Integer.parseInt(matrixDbId), null));
+
+        return createExtractorInstruction(crop, gobiiDataSetExtract);
+    }
+
+    public BrapiMetaData searchByExternalCode(String crop, List<String> externalCodes) {
+
+        GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
+        gobiiDataSetExtract.setGobiiFileType(GobiiFileType.FLAPJACK);
+        gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.BY_SAMPLE);
+        gobiiDataSetExtract.setGobiiSampleListType(GobiiSampleListType.EXTERNAL_CODE);
+        gobiiDataSetExtract.setSampleList(externalCodes);
+        gobiiDataSetExtract.setDataSet(null);
+        gobiiDataSetExtract.setGobiiDatasetType(this.getDatatypeIdForName(DatasetType.CV_DATASETTYPE_CO_DOMINANT_NON_NUCLEOTIDE));
+
+        return createExtractorInstruction(crop, gobiiDataSetExtract);
+    }
+
+    public BrapiMetaData searchByGermplasm(String crop, List<String> germplasmList) {
+
+        GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
+        gobiiDataSetExtract.setGobiiFileType(GobiiFileType.FLAPJACK);
+        gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.BY_SAMPLE);
+        gobiiDataSetExtract.setGobiiSampleListType(GobiiSampleListType.GERMPLASM_NAME);
+        gobiiDataSetExtract.setSampleList(germplasmList);
+        gobiiDataSetExtract.setDataSet(null);
+        return createExtractorInstruction(crop, gobiiDataSetExtract);
+    }
+
+    public BrapiMetaData searchByDNASample(String crop, List<String> dnaSamples) {
+
+        GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
+        gobiiDataSetExtract.setGobiiFileType(GobiiFileType.FLAPJACK);
+        gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.BY_SAMPLE);
+        gobiiDataSetExtract.setGobiiSampleListType(GobiiSampleListType.DNA_SAMPLE);
+        gobiiDataSetExtract.setSampleList(dnaSamples);
+        gobiiDataSetExtract.setDataSet(null);
+        return createExtractorInstruction(crop, gobiiDataSetExtract);
     }
 
     public BrapiMetaData getStatus(String crop, String jobId, HttpServletRequest request) throws Exception {
