@@ -15,11 +15,14 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFiles
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
+import org.gobiiproject.gobiimodel.types.GobiiSampleListType;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Phil on 12/15/2016.
@@ -29,18 +32,13 @@ public class BrapiResponseMapAlleleMatrixSearch {
     @Autowired
     private ExtractorInstructionFilesService extractorInstructionFilesService;
 
-    public BrapiMetaData search(String crop, String matrixDbId) {
+    private BrapiMetaData createExtractorInstruction(String crop, GobiiDataSetExtract gobiiDataSetExtract) {
 
         BrapiMetaData brapiMetaData = new BrapiMetaData();
 
-        Integer dataSetId = Integer.parseInt(matrixDbId);
-
         ExtractorInstructionFilesDTO extractorInstructionFilesDTO = new ExtractorInstructionFilesDTO();
         GobiiExtractorInstruction gobiiExtractorInstruction = new GobiiExtractorInstruction();
-        GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
-        gobiiDataSetExtract.setGobiiFileType(GobiiFileType.FLAPJACK);
-        gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
-        gobiiDataSetExtract.setDataSet(new PropNameId(dataSetId, null));
+
         gobiiExtractorInstruction.getDataSetExtracts().add(gobiiDataSetExtract);
         gobiiExtractorInstruction.setContactId(1);
         extractorInstructionFilesDTO.getGobiiExtractorInstructions().add(gobiiExtractorInstruction);
@@ -48,13 +46,56 @@ public class BrapiResponseMapAlleleMatrixSearch {
         String jobId = DateUtils.makeDateIdString();
         extractorInstructionFilesDTO.setInstructionFileName(jobId);
 
-
         ExtractorInstructionFilesDTO extractorInstructionFilesDTONew = extractorInstructionFilesService
                 .createInstruction(crop, extractorInstructionFilesDTO);
 
         brapiMetaData.addStatusMessage("asynchid", extractorInstructionFilesDTONew.getJobId());
 
         return brapiMetaData;
+    }
+
+    public BrapiMetaData searchByMatrixDbId(String crop, String matrixDbId) {
+
+        GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
+        gobiiDataSetExtract.setGobiiFileType(GobiiFileType.FLAPJACK);
+        gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
+        gobiiDataSetExtract.setDataSet(new PropNameId(Integer.parseInt(matrixDbId), null));
+
+        return createExtractorInstruction(crop, gobiiDataSetExtract);
+    }
+
+    public BrapiMetaData searchByExternalCode(String crop, List<String> externalCodes) {
+
+        GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
+        gobiiDataSetExtract.setGobiiFileType(GobiiFileType.FLAPJACK);
+        gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.BY_SAMPLE);
+        gobiiDataSetExtract.setGobiiSampleListType(GobiiSampleListType.EXTERNAL_CODE);
+        gobiiDataSetExtract.setSampleList(externalCodes);
+        gobiiDataSetExtract.setDataSet(null);
+
+        return createExtractorInstruction(crop, gobiiDataSetExtract);
+    }
+
+    public BrapiMetaData searchByGermplasm(String crop, List<String> germplasmList) {
+
+        GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
+        gobiiDataSetExtract.setGobiiFileType(GobiiFileType.FLAPJACK);
+        gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.BY_SAMPLE);
+        gobiiDataSetExtract.setGobiiSampleListType(GobiiSampleListType.GERMPLASM_NAME);
+        gobiiDataSetExtract.setSampleList(germplasmList);
+        gobiiDataSetExtract.setDataSet(null);
+        return createExtractorInstruction(crop, gobiiDataSetExtract);
+    }
+
+    public BrapiMetaData searchByDNASample(String crop, List<String> dnaSamples) {
+
+        GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
+        gobiiDataSetExtract.setGobiiFileType(GobiiFileType.FLAPJACK);
+        gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.BY_SAMPLE);
+        gobiiDataSetExtract.setGobiiSampleListType(GobiiSampleListType.DNA_SAMPLE);
+        gobiiDataSetExtract.setSampleList(dnaSamples);
+        gobiiDataSetExtract.setDataSet(null);
+        return createExtractorInstruction(crop, gobiiDataSetExtract);
     }
 
     public BrapiMetaData getStatus(String crop, String jobId, HttpServletRequest request) throws Exception {
