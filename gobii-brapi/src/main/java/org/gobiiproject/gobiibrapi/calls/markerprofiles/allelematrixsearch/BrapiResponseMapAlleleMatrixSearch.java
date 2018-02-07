@@ -83,16 +83,18 @@ public class BrapiResponseMapAlleleMatrixSearch {
         gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.BY_SAMPLE);
         gobiiDataSetExtract.setGobiiSampleListType(GobiiSampleListType.GERMPLASM_NAME);
         gobiiDataSetExtract.setSampleList(germplasmList);
+        gobiiDataSetExtract.setDataSet(null);
         return createExtractorInstruction(crop, gobiiDataSetExtract);
     }
 
-    public BrapiMetaData searchByDNASample(String crop, List<String> externalCodes) {
+    public BrapiMetaData searchByDNASample(String crop, List<String> dnaSamples) {
 
         GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
         gobiiDataSetExtract.setGobiiFileType(GobiiFileType.FLAPJACK);
         gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.BY_SAMPLE);
         gobiiDataSetExtract.setGobiiSampleListType(GobiiSampleListType.DNA_SAMPLE);
-        gobiiDataSetExtract.setSampleList(externalCodes);
+        gobiiDataSetExtract.setSampleList(dnaSamples);
+        gobiiDataSetExtract.setDataSet(null);
         return createExtractorInstruction(crop, gobiiDataSetExtract);
     }
 
