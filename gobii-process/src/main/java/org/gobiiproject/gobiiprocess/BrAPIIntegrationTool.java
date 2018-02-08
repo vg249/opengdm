@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiiprocess;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.*;
 import org.apache.commons.cli.*;
 import org.apache.http.HttpStatus;
@@ -8,6 +7,7 @@ import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiclient.core.common.GenericClientContext;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiimodel.config.ServerBase;
+import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.springframework.util.Assert;
 
 import java.net.URL;
@@ -182,6 +182,8 @@ public class BrAPIIntegrationTool {
 
         restUriBdmsCalls.getHttpHeaders().put("Authorization", b4rAccessToken);
 
+        System.out.print("\nGetting the study object by study name: " + studyName + "....\n");
+
         HttpMethodResult httpMethodResultBdms = bdmsGenericClientContext
                 .post(restUriBdmsCalls, postBody);
 
@@ -189,16 +191,16 @@ public class BrAPIIntegrationTool {
 
         jsonPayload = gson.toJson(httpMethodResultBdms.getJsonPayload());
 
-        System.out.print("\n" + "Start of B4R \n");
-
         JsonObject studyObject = (JsonObject) jsonParser.parse(jsonPayload);
 
+        System.out.print("Successfully retrieved study\n");
 
         // get studyDbId
         JsonObject resultStudyObj = studyObject.get("result").getAsJsonObject();
         JsonArray dataStudyObj = resultStudyObj.get("data").getAsJsonArray();
         Integer studyDbId = dataStudyObj.get(0).getAsJsonObject().get("studyDbId").getAsInt();
 
+        System.out.print("Getting germplasm IDS...\n");
         // get germplasm IDs
         restUriBdmsCalls = new RestUri(bdmsUrlObj.getPath(),
                 "",
@@ -215,6 +217,9 @@ public class BrAPIIntegrationTool {
 
         Assert.isTrue(didHttpMethodSucceed(httpMethodResultGermplasm));
 
+
+        System.out.print("Successfully retrieved germplasm IDS\n");
+
         jsonPayload = gson.toJson(httpMethodResultGermplasm.getJsonPayload());
 
         JsonObject germplasmObject = (JsonObject) jsonParser.parse(jsonPayload);
@@ -223,10 +228,7 @@ public class BrAPIIntegrationTool {
 
         // Get allele matrix from Genomic data system
 
-
         URL gdsUrlObj = new URL(gdsUrl);
-
-        System.out.print(gdsUrlObj);
 
         serverBase = new ServerBase(gdsUrlObj.getHost(),
                 "json-context",
@@ -234,18 +236,96 @@ public class BrAPIIntegrationTool {
                 true);
         GenericClientContext genericClientContext = new GenericClientContext(serverBase);
 
-        RestUri restUriGobiiBrapiCalls = new RestUri(gdsUrlObj.getPath(),
-                "",
-                "allelematrix-search"
-        );
+        RestUri alleleMatrixUri;
+        RestUri alleleMatrixStatusUri;
+        HttpMethodResult httpMethodResultAlleleMatrix;
+        HttpMethodResult httpMethodResultAlleleMatrixStatus;
 
-        HttpMethodResult httpMethodResult = genericClientContext
-                .get(restUriGobiiBrapiCalls);
+        for (int i = 0; i < 1; i++) {
 
-        jsonPayload = gson.toJson(httpMethodResult.getJsonPayload());
+            JsonObject germplasmObj = (JsonObject) germplasmData.get(i);
+            String germplasmDbId = germplasmObj.get("germplasmDbId").getAsString();
 
-        System.out.print(jsonPayload);
-        
+            alleleMatrixUri = new RestUri(gdsUrlObj.getPath(),
+                    "",
+                    "allelematrix-search")
+                    .addQueryParam("markerprofileDbId", germplasmDbId);
+
+            httpMethodResultAlleleMatrix = genericClientContext
+                    .get(alleleMatrixUri);
+
+            Assert.isTrue(didHttpMethodSucceed(httpMethodResultAlleleMatrix));
+
+            jsonPayload = gson.toJson(httpMethodResultAlleleMatrix.getJsonPayload());
+
+            JsonObject allematrixObj = (JsonObject) jsonParser.parse(jsonPayload);
+
+            JsonObject jobObj = allematrixObj.get("metadata").getAsJsonObject().get("status").getAsJsonArray().get(0).getAsJsonObject();
+
+            String jobCode = jobObj.get("code").getAsString();
+
+            if (jobCode.equals("asynchid")) {
+
+                String jobId = jobObj.get("message").getAsString();
+
+                if (!jobId.equals(null)) {
+
+                    String status = "";
+                    JsonArray dataFilesArr = new JsonArray();
+
+                    System.out.print("Checking status... \n");
+
+                    while (!status.equals(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName()) && !status.equals(JobProgressStatusType.CV_PROGRESSSTATUS_FAILED.getCvName())) {
+
+                        // get status of job
+                        alleleMatrixStatusUri = new RestUri(gdsUrlObj.getPath(),
+                                "",
+                                "allelematrix-search")
+                                .appendSegment("status")
+                                .appendSegment(jobId);
+
+                        httpMethodResultAlleleMatrixStatus = genericClientContext
+                                .get(alleleMatrixStatusUri);
+
+                        Assert.isTrue(didHttpMethodSucceed(httpMethodResultAlleleMatrixStatus));
+
+                        jsonPayload = gson.toJson(httpMethodResultAlleleMatrixStatus.getJsonPayload());
+
+                        JsonObject statusCallObj = (JsonObject) jsonParser.parse(jsonPayload);
+
+                        JsonObject statusObj = statusCallObj.get("metadata").getAsJsonObject().get("status").getAsJsonArray().get(0).getAsJsonObject();
+
+                        status = statusObj.get("message").getAsString();
+                        dataFilesArr = statusCallObj.get("metadata").getAsJsonObject().get("datafiles").getAsJsonArray();
+
+                    }
+
+                    System.out.print("Job " + status + "\n");
+                    System.out.print(dataFilesArr);
+                }
+            }
+
+            // get pedigree information
+
+            RestUri getPedigreeUri = new RestUri(bdmsUrlObj.getPath(),
+                    "",
+                    "germplasm")
+                    .addUriParam("germplasmDbId")
+                    .setParamValue("germplasmDbId", germplasmDbId)
+                    .appendSegment("pedigree");
+
+            getPedigreeUri.getHttpHeaders().put("Authorization", b4rAccessToken);
+
+            HttpMethodResult httpMethodResultPedigree = bdmsGenericClientContext
+                    .get(getPedigreeUri);
+
+            Assert.isTrue(didHttpMethodSucceed(httpMethodResultPedigree));
+
+            jsonPayload = gson.toJson(httpMethodResultPedigree.getJsonPayload());
+
+            System.out.print("\nPedigree Information: " + jsonPayload);
+
+        }
 
     }
 
