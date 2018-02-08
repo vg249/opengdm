@@ -31,6 +31,8 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import org.gobiiproject.gobiimodel.types.GobiiJobStatus;
+
 /**
  * Created by Phil on 12/15/2016.
  */
@@ -137,48 +139,90 @@ public class BrapiResponseMapAlleleMatrixSearch {
         ExtractorInstructionFilesDTO extractorInstructionFilesDTONew = extractorInstructionFilesService
                 .getStatus(crop, jobId);
 
-        String brapiAsynchStatus = null;
-        if ((extractorInstructionFilesDTONew.getGobiiExtractorInstructions().size() > 0) &&
-                (extractorInstructionFilesDTONew.getGobiiExtractorInstructions().get(0).getDataSetExtracts().size() > 0)) {
+        if ((extractorInstructionFilesDTONew
+                .getGobiiExtractorInstructions().size() > 0) &&
+                (extractorInstructionFilesDTONew
+                        .getGobiiExtractorInstructions().get(0).getDataSetExtracts().size() > 0)) {
 
             GobiiDataSetExtract gobiiDataSetExtract = extractorInstructionFilesDTONew
                     .getGobiiExtractorInstructions()
                     .get(0)
                     .getDataSetExtracts()
                     .get(0);
-            brapiAsynchStatus = gobiiDataSetExtract.getGobiiJobStatus().getCvName();
-            // Add the extracted files to response only when job is completed.
-            if (brapiAsynchStatus.equals(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName())) {
-                if (gobiiDataSetExtract.getExtractedFiles().size() > 0) {
 
-                    for (File currentFile : gobiiDataSetExtract.getExtractedFiles()) {
+            JobProgressStatusType jobProgressStatus = gobiiDataSetExtract.getGobiiJobStatus();
 
-                        // first make the http link
-                        RestUri restUri = new GobiiUriFactory(request.getServerName(), request.getServerPort(),
-                                request.getContextPath(), GobiiControllerType.GOBII)
-                                .resourceColl(GobiiServiceRequestId.URL_FILES)
-                                .addUriParam("gobiiJobId", jobId)
-                                .addUriParam("destinationType", GobiiFileProcessDir.EXTRACTOR_OUTPUT.toString().toLowerCase())
-                                .addQueryParam("fileName", currentFile.getName());
+            String brapiAsynchStatus = null;
+            switch (jobProgressStatus) {
 
-                        String fileUri = restUri.makeUrlComplete();
-                        brapiMetaData.getDatafiles().add(fileUri);
+                case CV_PROGRESSSTATUS_PENDING:
+                    brapiAsynchStatus = "PENDING";
+                    break;
 
-                        // now the absolute path to the file
-                        String filePath = FilenameUtils.normalize(currentFile.getAbsolutePath());
-                        brapiMetaData.getDatafiles().add(filePath);
-                    }
-                } else {
-                    brapiMetaData.addStatusMessage("error", "There are no extracted files for the directory: " + gobiiDataSetExtract.getExtractDestinationDirectory());
-                }
+                case CV_PROGRESSSTATUS_INPROGRESS:
+                case CV_PROGRESSSTATUS_METADATAEXTRACT:
+                case CV_PROGRESSSTATUS_FINALASSEMBLY:
+                case CV_PROGRESSSTATUS_QCPROCESSING:
+                case CV_PROGRESSSTATUS_TRANSFORMATION:
+                case CV_PROGRESSSTATUS_DIGEST:
+                case CV_PROGRESSSTATUS_NOSTATUS: // I _think_ this only occurs before the digester/extractor sees the instruction file
+                        brapiAsynchStatus = "INPROCESS";
+                    break;
+
+                case CV_PROGRESSSTATUS_COMPLETED:
+                    brapiAsynchStatus = "FINISHED";
+                    break;
+
+                case CV_PROGRESSSTATUS_FAILED:
+                case CV_PROGRESSSTATUS_ABORTED:
+                case CV_PROGRESSSTATUS_METADATALOAD: // these are load status that do not apply to extract TODO: Add an error message for this condition
+                case CV_PROGRESSSTATUS_MATRIXLOAD:
+                case CV_PROGRESSSTATUS_VALIDATION:
+                    brapiAsynchStatus = "FAILED";
+                    break;
+
+
             }
-        } else {
-            brapiMetaData.addStatusMessage("error", "There are not extractor instructions for job : " + jobId);
+
+            if ((extractorInstructionFilesDTONew.getGobiiExtractorInstructions().size() > 0) &&
+                    (extractorInstructionFilesDTONew.getGobiiExtractorInstructions().get(0).getDataSetExtracts().size() > 0)) {
+
+
+                // Add the extracted files to response only when job is completed.
+                if (brapiAsynchStatus.equals(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName())) {
+                    if (gobiiDataSetExtract.getExtractedFiles().size() > 0) {
+
+                        for (File currentFile : gobiiDataSetExtract.getExtractedFiles()) {
+
+                            // first make the http link
+                            RestUri restUri = new GobiiUriFactory(request.getServerName(), request.getServerPort(),
+                                    request.getContextPath(), GobiiControllerType.GOBII)
+                                    .resourceColl(GobiiServiceRequestId.URL_FILES)
+                                    .addUriParam("gobiiJobId", jobId)
+                                    .addUriParam("destinationType", GobiiFileProcessDir.EXTRACTOR_OUTPUT.toString().toLowerCase())
+                                    .addQueryParam("fileName", currentFile.getName());
+
+                            String fileUri = restUri.makeUrlComplete();
+                            brapiMetaData.getDatafiles().add(fileUri);
+
+                            // now the absolute path to the file
+                            String filePath = FilenameUtils.normalize(currentFile.getAbsolutePath());
+                            brapiMetaData.getDatafiles().add(filePath);
+                        }
+                    } else {
+                        brapiMetaData.addStatusMessage("error", "There are no extracted files for the directory: " + gobiiDataSetExtract.getExtractDestinationDirectory());
+                    }
+                }
+            } else {
+                brapiMetaData.addStatusMessage("error", "There are not extractor instructions for job : " + jobId);
+            }
+
+            brapiMetaData.addStatusMessage("asynchstatus", brapiAsynchStatus);
+
         }
 
-        brapiMetaData.addStatusMessage("asynchstatus", brapiAsynchStatus);
-
         return brapiMetaData;
-    }
+
+    } // getStatus()
 
 }
