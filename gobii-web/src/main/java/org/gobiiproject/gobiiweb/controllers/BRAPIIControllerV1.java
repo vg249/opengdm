@@ -17,6 +17,8 @@ import org.gobiiproject.gobiibrapi.calls.germplasm.BrapiResponseMapGermplasmByDb
 import org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrices.BrapiResponseAlleleMatrices;
 import org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrices.BrapiResponseMapAlleleMatrices;
 import org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrixsearch.BrapiResponseMapAlleleMatrixSearch;
+import org.gobiiproject.gobiibrapi.calls.markerprofiles.markerprofiles.BrapiResponseMapMarkerProfiles;
+import org.gobiiproject.gobiibrapi.calls.markerprofiles.markerprofiles.BrapiResponseMarkerProfilesMaster;
 import org.gobiiproject.gobiibrapi.calls.studies.observationvariables.BrapiResponseMapObservationVariables;
 import org.gobiiproject.gobiibrapi.calls.studies.observationvariables.BrapiResponseObservationVariablesMaster;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiRequestStudiesSearch;
@@ -28,6 +30,7 @@ import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelope;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMaster;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMasterDetail;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -45,7 +48,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -131,6 +133,9 @@ public class BRAPIIControllerV1 {
 
     @Autowired
     private BrapiResponseMapAlleleMatrixSearch brapiResponseMapAlleleMatrixSearch = null;
+
+    @Autowired
+    private BrapiResponseMapMarkerProfiles brapiResponseMapMarkerProfiles = null;
 
 
     @Autowired
@@ -512,36 +517,28 @@ public class BRAPIIControllerV1 {
     }
 
 
-
     @RequestMapping(value = "/markerprofiles",
             method = {RequestMethod.GET, RequestMethod.POST},
             produces = "application/json")
     @ResponseBody
-    public String getMarkerProfile(@RequestParam("matrixDbId") Optional<String> matrixDbId,
-                                  @RequestParam("markerprofileDbId") Optional<String> markerprofileDbId,
-                                  HttpServletRequest request,
-                                  HttpServletResponse response) throws Exception {
+    public String  getMarkerProfile(@RequestParam("germplasmDbId") String germplasmDbId,
+                                   HttpServletRequest request,
+                                   HttpServletResponse response) throws Exception {
 
-        String returnVal = null;
+        BrapiResponseEnvelopeMasterDetail<BrapiResponseMarkerProfilesMaster> brapiResponseEnvelope
+                = new BrapiResponseEnvelopeMasterDetail<>();
 
-        BrapiResponseEnvelope brapiResponseEnvelope = new BrapiResponseEnvelope();
+        String returnVal;
         try {
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-            if (matrixDbId.isPresent() == markerprofileDbId.isPresent()) {
-                String message = "Incorrect request format. At least one of matrixDbId or markerprofileDbId should be specified.";
-                brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
-            } else if (matrixDbId.isPresent()) {
-                List<String> matrixDbIdList = Arrays.asList(matrixDbId.get().split(","));
-                if (matrixDbIdList.size() > 1) {
-                    String message = "Incorrect request format. Only one matrixDbId is supported at the moment.";
-                    brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
-                    return objectMapper.writeValueAsString(brapiResponseEnvelope);
-                }
-                brapiResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.searchByMatrixDbId(cropType, matrixDbIdList.get(0)));
+            if (!LineUtils.isNullOrEmpty(germplasmDbId)) {
+
+                brapiResponseEnvelope.setResult(brapiResponseMapMarkerProfiles.getBrapiResponseMarkerProfilesByGermplasmId(germplasmDbId));
+
             } else {
-                List<String> externalCodes = Arrays.asList(markerprofileDbId.get().split(","));
-                brapiResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.searchByExternalCode(cropType, externalCodes));
+                String message = "Incorrect request format: germplasmDbId must be specified";
+                brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
             }
         } catch (GobiiException e) {
 
@@ -549,11 +546,6 @@ public class BRAPIIControllerV1 {
 
             brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
 
-        } catch (Exception e) {
-
-            String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
-
-            brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
         }
 
         returnVal = objectMapper.writeValueAsString(brapiResponseEnvelope);

@@ -67,7 +67,7 @@ public class SpGetSampleDetailsByExternalCode implements Work {
                 "where g.external_code=?";
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
-        preparedStatement.setInt(1, (Integer) parameters.get("externalCode"));
+        preparedStatement.setString(1, parameters.get("externalCode").toString());
         resultSet = preparedStatement.executeQuery();
 
     }
