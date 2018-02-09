@@ -57,10 +57,10 @@ public class SpGetSampleDetailsByExternalCode implements Work {
                 "\t) left outer join dnarun dnr on\n" +
                 "\t(\n" +
                 "\t\tdns.dnasample_id = dnr.dnasample_id\n" +
-                "\t) join experiment e on\n" +
+                "\t) left outer join experiment e on\n" +
                 "\t(\n" +
                 "\t\tdnr.experiment_id = e.experiment_id\n" +
-                "\t) join dataset d on\n" +
+                "\t) left outer join dataset d on\n" +
                 "\t(\n" +
                 "\t\te.experiment_id = d.dataset_id\n" +
                 "\t)\n" +
