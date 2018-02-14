@@ -8,6 +8,7 @@ import org.gobiiproject.gobiiclient.core.common.GenericClientContext;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiimodel.config.ServerBase;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
+import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.springframework.util.Assert;
 
 import java.net.URL;
@@ -23,7 +24,9 @@ public class BrAPIIntegrationTool {
     private static String INPUT_BDMS_AUTH = "ba";
     private static String INPUT_STS_AUTH = "sa";
     private static String INPUT_GDS_AUTH = "ga";
-    private static String INPUT_STUDY_NAME = "study";
+    private static String INPUT_STUDY_NAME = "s";
+    private static String INPUT_DIRECTORY = "dir";
+    private static String INPUT_FLAPJACK_EXE = "fj";
 
     private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static JsonParser jsonParser = new JsonParser();
@@ -110,6 +113,8 @@ public class BrAPIIntegrationTool {
         setOption(options, INPUT_GDS, true, "URL to a Genomic Data System API", "Genomic Data System");
         setOption(options, INPUT_GDS_AUTH, false, "Indicates whether authentication is required", "GDS Authentication");
         setOption(options, INPUT_STUDY_NAME, true, "Name of the study in the Breeding Database System", "Study Name");
+        setOption(options, INPUT_DIRECTORY, true, "Local directory where to store the generated files", "Local directory");
+        setOption(options, INPUT_FLAPJACK_EXE, true, "Path to FlackJack createproject.exe", "Flapjack createproject.exe path");
 
         // parse the commandline
 
@@ -119,6 +124,8 @@ public class BrAPIIntegrationTool {
         checkIfNullOptionForRequiredArgs(commandLine, INPUT_BDMS, options);
         checkIfNullOptionForRequiredArgs(commandLine, INPUT_GDS, options);
         checkIfNullOptionForRequiredArgs(commandLine, INPUT_STUDY_NAME, options);
+        checkIfNullOptionForRequiredArgs(commandLine, INPUT_DIRECTORY, options);
+        checkIfNullOptionForRequiredArgs(commandLine, INPUT_FLAPJACK_EXE, options);
 
         String stsUrl = null;
         String bdmsAuth = "false";
@@ -146,6 +153,8 @@ public class BrAPIIntegrationTool {
         String bdmsUrl = commandLine.getOptionValue(INPUT_BDMS);
         String gdsUrl = commandLine.getOptionValue(INPUT_GDS);
         String studyName = commandLine.getOptionValue(INPUT_STUDY_NAME);
+        String directory = commandLine.getOptionValue(INPUT_DIRECTORY);
+        String flapjackPath = commandLine.getOptionValue(INPUT_FLAPJACK_EXE);
 
         System.out.print("Breeding Database Management System URL: " + bdmsUrl + "\n");
         System.out.print("Genomic Data System URL: " + gdsUrl + "\n");
@@ -241,10 +250,16 @@ public class BrAPIIntegrationTool {
         HttpMethodResult httpMethodResultAlleleMatrix;
         HttpMethodResult httpMethodResultAlleleMatrixStatus;
 
-        for (int i = 0; i < 1; i++) {
+
+        String projectName = "flapjackProject.flapjack";
+        for (int i = 0; i < 3; i++) {
 
             JsonObject germplasmObj = (JsonObject) germplasmData.get(i);
             String germplasmDbId = germplasmObj.get("germplasmDbId").getAsString();
+
+//            germplasmDbId = "10001"; // for testing
+
+            System.out.print("Getting the allele matrix for external code: " + germplasmDbId + "\n");
 
             alleleMatrixUri = new RestUri(gdsUrlObj.getPath(),
                     "",
@@ -275,7 +290,7 @@ public class BrAPIIntegrationTool {
 
                     System.out.print("Checking status... \n");
 
-                    while (!status.equals(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName()) && !status.equals(JobProgressStatusType.CV_PROGRESSSTATUS_FAILED.getCvName())) {
+                    while (!status.equals("FINISHED") && !status.equals(JobProgressStatusType.CV_PROGRESSSTATUS_FAILED.getCvName())) {
 
                         // get status of job
                         alleleMatrixStatusUri = new RestUri(gdsUrlObj.getPath(),
@@ -298,16 +313,42 @@ public class BrAPIIntegrationTool {
                         status = statusObj.get("message").getAsString();
                         dataFilesArr = statusCallObj.get("metadata").getAsJsonObject().get("datafiles").getAsJsonArray();
 
+                        Thread.sleep(500);
                     }
 
                     System.out.print("Job " + status + "\n");
-                    System.out.print(dataFilesArr);
+                    System.out.print(dataFilesArr + "\n");
+
+                    String genotypeFIle = dataFilesArr.get(0).getAsString();
+
+                    URL genotypeDownloadUri = new URL(genotypeFIle);
+
+                    String queryParam = genotypeDownloadUri.getQuery();
+
+                    String[] queryParamArr = queryParam.split("=");
+
+                    String downloadFile = directory + "\\dataset-" + germplasmDbId + ".genotype";
+                    RestUri restUriGenotypeDownload = new RestUri(genotypeDownloadUri.getPath())
+                            .addQueryParam("fileName")
+                            .setParamValue("fileName", queryParamArr[1])
+                            .withDestinationFqpn(downloadFile);
+                    HttpMethodResult httpMethodResultDownload = genericClientContext.get(restUriGenotypeDownload);
+
+                    Assert.isTrue(didHttpMethodSucceed(httpMethodResultDownload));
+
+                    // fun flapjack to create project file
+
+                    String execFlapjack = flapjackPath + " -p " + directory + "\\" + projectName + " -g " + downloadFile;
+
+                    HelperFunctions.tryExec(execFlapjack, directory + "\\output.txt", directory + "\\error.txt");
+
+
                 }
             }
 
             // get pedigree information
 
-            RestUri getPedigreeUri = new RestUri(bdmsUrlObj.getPath(),
+            /*RestUri getPedigreeUri = new RestUri(bdmsUrlObj.getPath(),
                     "",
                     "germplasm")
                     .addUriParam("germplasmDbId")
@@ -324,6 +365,8 @@ public class BrAPIIntegrationTool {
             jsonPayload = gson.toJson(httpMethodResultPedigree.getJsonPayload());
 
             System.out.print("\nPedigree Information: " + jsonPayload);
+            */
+
 
         }
 
