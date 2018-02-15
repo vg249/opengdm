@@ -5,7 +5,7 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>org.gobiiproject</groupId>
-        <version>1.4.0-2018-02-05_01</version>
+        <version>1.4.0-2018-02-15_01</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -149,6 +149,26 @@
                             </archive>
                         </configuration>
                         <id>make-gobiitestdata</id>
+                        <!-- bind to the packaging phase -->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+
+                    </execution>
+
+                    <!-- brapi integration tool execution -->
+                    <execution>
+                        <configuration>
+                            <finalName>brapitool</finalName>
+                            <!-- MainClass in mainfest make a executable jar -->
+                            <archive>
+                                <manifest>
+                                    <mainClass>org.gobiiproject.gobiiprocess.BrAPIIntegrationTool</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                        <id>make-brapitool</id>
                         <!-- bind to the packaging phase -->
                         <phase>package</phase>
                         <goals>

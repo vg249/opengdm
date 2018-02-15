@@ -365,7 +365,10 @@
     <bean id="entityStatsService" class="org.gobiiproject.gobidomain.services.impl.EntityStatsServiceImpl"/>
     <bean id="dtoMapEntityStatsImpl"
           class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapEntityStatsImpl"/>
-    <bean id="rsJobDaoImpl" class="org.gobiiproject.gobiidao.resultset.access.impl.RsJobDaoImpl"/>
+    <!-- **** Sample Beans *************************************** -->
+    <bean id="sampleService" class="org.gobiiproject.gobidomain.services.impl.SampleServiceImpl"/>
+    <bean id="dtoMapSample" class="org.gobiiproject.gobiidtomapping.impl.DtoMapSampleImpl"/>
+    <bean id="rsSampleDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsSampleDaoImpl"/>
 
 
     <!-- **** ListStatement queries  *************************************** -->
@@ -558,6 +561,7 @@
           class="org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrixsearch.BrapiResponseMapAlleleMatrixSearch"/>
     <bean id="brapiResponseMapAlleleMatrices"
           class="org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrices.BrapiResponseMapAlleleMatrices"/>
+    <bean id="brapiResponseMapMarkerProfiles" class="org.gobiiproject.gobiibrapi.calls.markerprofiles.markerprofiles.BrapiResponseMapMarkerProfiles"/>
     <!-- ************************ DATA ACCESS BEANS ************************* -->
 
     <!--&lt;!&ndash;************************** SET UP CONFIGURAITON FOR JDBC settings&ndash;&gt;-->

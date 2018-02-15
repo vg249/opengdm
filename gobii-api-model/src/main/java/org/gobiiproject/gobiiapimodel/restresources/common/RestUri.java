@@ -185,6 +185,16 @@ public class RestUri {
         return this;
     }
 
+    public RestUri appendSegment(String segmentString) throws Exception {
+
+        this.requestTemplate = this.delimitSegment(this.requestTemplate);
+
+        this.requestTemplate += segmentString;
+
+        return this;
+
+    }
+
     public RestUri appendPathVariable(String paramName) {
 
         this.requestTemplate = this.delimitSegment(this.requestTemplate);

@@ -246,8 +246,8 @@ public class BrapiTestAlleleMatrixSearch {
                 brapiStati.size() > 0);
 
 
-        Assert.assertTrue("The status of the job should be FINISHED",
-                brapiStati.get(0).getMessage().equals("pending"));
+        Assert.assertTrue("The status of the job should be PENDING",
+                brapiStati.get(0).getMessage().equals("PENDING"));
 
 /*
         Assert.assertTrue("File list should contain two items",

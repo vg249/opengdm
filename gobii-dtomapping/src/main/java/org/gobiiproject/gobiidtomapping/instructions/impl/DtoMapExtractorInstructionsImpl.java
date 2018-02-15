@@ -420,25 +420,29 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     "The specified instruction file does not exist: " +
                             instructionFileName);
         } else {
-            switch (JobProgressStatusType.byValue(jobDTO.getStatus())) {
-                case CV_PROGRESSSTATUS_FAILED:
-                case CV_PROGRESSSTATUS_ABORTED:
-                    jobProgressStatus = CV_PROGRESSSTATUS_FAILED;
-                    break;
-                case CV_PROGRESSSTATUS_PENDING:
-                    jobProgressStatus = CV_PROGRESSSTATUS_PENDING;
-                    break;
-                case CV_PROGRESSSTATUS_COMPLETED:
-                    jobProgressStatus = CV_PROGRESSSTATUS_COMPLETED;
-                    break;
-                case CV_PROGRESSSTATUS_INPROGRESS:
-                case CV_PROGRESSSTATUS_METADATAEXTRACT:
-                case CV_PROGRESSSTATUS_FINALASSEMBLY:
-                case CV_PROGRESSSTATUS_QCPROCESSING:
-                default:
-                    jobProgressStatus = CV_PROGRESSSTATUS_INPROGRESS;
-                    break;
-            }
+            jobProgressStatus = JobProgressStatusType.byValue(jobDTO.getStatus());
+            // For now I am removing this status compression piece. This is now done by the
+            // BRAPI response map class. There is no other reason I can think of that the more granular
+            // PROGRESS statuses should not be returned to the client.
+//            switch (JobProgressStatusType.byValue(jobDTO.getStatus())) {
+//                case CV_PROGRESSSTATUS_FAILED:
+//                case CV_PROGRESSSTATUS_ABORTED:
+//                    jobProgressStatus = CV_PROGRESSSTATUS_FAILED;
+//                    break;
+//                case CV_PROGRESSSTATUS_PENDING:
+//                    jobProgressStatus = CV_PROGRESSSTATUS_PENDING;
+//                    break;
+//                case CV_PROGRESSSTATUS_COMPLETED:
+//                    jobProgressStatus = CV_PROGRESSSTATUS_COMPLETED;
+//                    break;
+//                case CV_PROGRESSSTATUS_INPROGRESS:
+//                case CV_PROGRESSSTATUS_METADATAEXTRACT:
+//                case CV_PROGRESSSTATUS_FINALASSEMBLY:
+//                case CV_PROGRESSSTATUS_QCPROCESSING:
+//                default:
+//                    jobProgressStatus = CV_PROGRESSSTATUS_INPROGRESS;
+//                    break;
+//            }
             ConfigSettings configSettings = new ConfigSettings();
             try {
 
