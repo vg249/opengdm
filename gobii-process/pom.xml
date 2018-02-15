@@ -150,6 +150,26 @@
 
                     </execution>
 
+                    <!-- brapi integration tool execution -->
+                    <execution>
+                        <configuration>
+                            <finalName>brapitool</finalName>
+                            <!-- MainClass in mainfest make a executable jar -->
+                            <archive>
+                                <manifest>
+                                    <mainClass>org.gobiiproject.gobiiprocess.BrAPIIntegrationTool</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                        <id>make-brapitool</id>
+                        <!-- bind to the packaging phase -->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+
+                    </execution>
+
                     <!--Digester Execution-->
                     <execution>
                         <configuration>
