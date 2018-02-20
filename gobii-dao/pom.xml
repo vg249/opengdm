@@ -66,6 +66,12 @@
             <artifactId>junit</artifactId>
         </dependency>
 
+
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+        </dependency>
+
     </dependencies>
 
     <!-- DO NOT USE THIS PLUGIN FOR NOW.

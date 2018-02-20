@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement;
+package org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete;
 
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListStatement;
@@ -13,8 +13,7 @@ import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY
 /**
 
  */
-public class ListStatementContactAll implements ListStatement {
-
+public class ListStatementOrganizationAll implements ListStatement {
 
     @Override
     public ListSqlId getListSqlId() {
@@ -24,7 +23,7 @@ public class ListStatementContactAll implements ListStatement {
     @Override
     public PreparedStatement makePreparedStatement(Connection dbConnection, Map<String, Object> jdbcParamVals, Map<String, Object> sqlParamVals) throws SQLException {
 
-        String sql = "select * from contact order by lower(lastname),lower(firstname)";
+        String sql = "select * from organization order by lower(name)";
 
         PreparedStatement returnVal = dbConnection.prepareStatement(sql);
 

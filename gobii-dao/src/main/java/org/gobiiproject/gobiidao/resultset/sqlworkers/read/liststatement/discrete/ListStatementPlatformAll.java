@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement;
+package org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete;
 
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListStatement;
@@ -13,8 +13,7 @@ import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY
 /**
 
  */
-public class ListStatementExperimentAll implements ListStatement {
-
+public class ListStatementPlatformAll implements ListStatement {
 
     @Override
     public ListSqlId getListSqlId() {
@@ -24,9 +23,7 @@ public class ListStatementExperimentAll implements ListStatement {
     @Override
     public PreparedStatement makePreparedStatement(Connection dbConnection, Map<String, Object> jdbcParamVals, Map<String, Object> sqlParamVals) throws SQLException {
 
-        String sql = "select e.*\n" +
-                "from experiment e\n" +
-                "order by lower(e.name)";
+        String sql = "select * from platform order by lower(name)";
 
         PreparedStatement returnVal = dbConnection.prepareStatement(sql);
 
