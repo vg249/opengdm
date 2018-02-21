@@ -5,7 +5,6 @@ package org.gobiiproject.gobiidao.resultset.core.listquery;
  */
 public enum ListSqlId {
     QUERY_ID_DATASET_ALL,
-    QUERY_ID_DATASET_ALL_PAGED,
     QUERY_ID_CONTACT_ALL,
     QUERY_ID_ORGANIZATION_ALL,
     QUERY_ID_PLATFORM_ALL,

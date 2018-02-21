@@ -19,8 +19,6 @@ public class PagerSql {
     public static final String PARAM_NAME_PAGE_SIZE = "pageSize";
     public static final String PARAM_NAME_NAME_COL_VAL = "nameColVal";
     public static final String PARAM_NAME_ID_COL_VAL = "idColVal";
-    public static final String PARAM_NAME_NAME_COL_ALIAS = "nameColAlias";
-    public static final String PARAM_NAME_ID_COL_ALIAS = "idColAlias";
     public static final String PARAM_NAME_PAGE_NUMBER_COL_ALIAS = "pageNumberColAlias";
 
 
@@ -32,39 +30,39 @@ public class PagerSql {
     private final String PARAM_NAME_PAGE_SIZE_DELIMITED = ParameterizedSql.makeDelimitedParamName(PARAM_NAME_PAGE_SIZE);
     private final String PARAM_NAME_NAME_COL_VAL_DELIMITED = ParameterizedSql.makeDelimitedParamName(PARAM_NAME_NAME_COL_VAL);
     private final String PARAM_NAME_ID_COL_VAL_DELIMITED = ParameterizedSql.makeDelimitedParamName(PARAM_NAME_ID_COL_VAL);
-    private final String PARAM_NAME_NAME_COL_ALIAS_DELIMITED = ParameterizedSql.makeDelimitedParamName(PARAM_NAME_NAME_COL_ALIAS);
-    private  final String PARAM_NAME_ID_COL_ALIAS_DELIMITED = ParameterizedSql.makeDelimitedParamName(PARAM_NAME_ID_COL_ALIAS);;
     private  final String PARAM_NAME_PAGE_NUMBER_COL_ALIAS_DELIMITED = ParameterizedSql.makeDelimitedParamName(PARAM_NAME_PAGE_NUMBER_COL_ALIAS);;
+
+    public static String getPageNumberColName(){return "page_number";}
 
 
     public String makePageBoundarySql() {
 
         String pageBoundarySqlTemplate = "select " +
-                                    " x." + PARAM_NAME_NAME_COL_ALIAS_DELIMITED + ", " +
-                                    " x." + PARAM_NAME_ID_COL_ALIAS_DELIMITED +", " +
+                                    " x." + PARAM_NAME_NAME_COL_DELIMITED + ", " +
+                                    " x." + PARAM_NAME_ID_COL_DELIMITED +", " +
                                     " row_number() over( " +
                                     " order by " +
-                                        " x." +PARAM_NAME_NAME_COL_ALIAS_DELIMITED + ", " +
-                                        " x." + PARAM_NAME_ID_COL_ALIAS_DELIMITED +" " +
+                                        " x." +PARAM_NAME_NAME_COL_DELIMITED + ", " +
+                                        " x." + PARAM_NAME_ID_COL_DELIMITED +" " +
                                     " ) + 1 page_number " +
                                 " from " +
                                     " ( " +
                                         " select " +
-                                            PARAM_NAME_NAME_COL_DELIMITED + " as " + PARAM_NAME_NAME_COL_ALIAS_DELIMITED + ", " +
-                                            PARAM_NAME_ID_COL_DELIMITED + " as " + PARAM_NAME_ID_COL_ALIAS_DELIMITED + ", " +
+                                            PARAM_NAME_NAME_COL_DELIMITED +
+                                            PARAM_NAME_ID_COL_DELIMITED +
                                             " case " +
                                                 " row_number() over( " +
                                                 " order by " +
-                                                    " 1, -- can't refer to column alias in order by " +
-                                                    " 2 " +
+                                                    PARAM_NAME_NAME_COL_DELIMITED  + "," +
+                                                    PARAM_NAME_ID_COL_DELIMITED +
                                                 " ) % " + PARAM_NAME_PAGE_SIZE_DELIMITED +
                                                 " when 0 then 1 " +
                                                 " else 0 " +
                                             " end page_boundary " +
                                             PARAM_NAME_FROM_WHERE_CLAUSE_DELIMITED +
                                         " order by " +
-                                            " 1, " +
-                                            " 2 " +
+                                            PARAM_NAME_NAME_COL_DELIMITED  + "," +
+                                            PARAM_NAME_ID_COL_DELIMITED +
                                     ") x " +
                                 " where " +
                                     " x.page_boundary = 1";
@@ -78,8 +76,6 @@ public class PagerSql {
                                 put(PARAM_NAME_SELECT_COLS_DELIMITED, null);
                                 put(PARAM_NAME_PAGE_SIZE_DELIMITED, null);
                                 put(PARAM_NAME_FROM_WHERE_CLAUSE_DELIMITED, null);
-                                put(PARAM_NAME_NAME_COL_ALIAS_DELIMITED, null);
-                                put(PARAM_NAME_ID_COL_ALIAS_DELIMITED, null);
                                 put(PARAM_NAME_PAGE_NUMBER_COL_ALIAS_DELIMITED, null);
 
                             }
@@ -88,12 +84,10 @@ public class PagerSql {
         String sql = parameterizedSql
                 .setParamValue(PARAM_NAME_NAME_COL_DELIMITED, this.sqlParamVals.get(PARAM_NAME_NAME_COL).toString())
                 .setParamValue(PARAM_NAME_ID_COL_DELIMITED, this.sqlParamVals.get(PARAM_NAME_ID_COL).toString())
-                .setParamValue(PARAM_NAME_NAME_COL_ALIAS_DELIMITED, this.sqlParamVals.get(PARAM_NAME_NAME_COL_ALIAS).toString())
-                .setParamValue(PARAM_NAME_ID_COL_ALIAS_DELIMITED, this.sqlParamVals.get(PARAM_NAME_ID_COL_ALIAS).toString())
                 .setParamValue(PARAM_NAME_SELECT_COLS_DELIMITED, this.sqlParamVals.get(PARAM_NAME_SELECT_COLS).toString())
                 .setParamValue(PARAM_NAME_PAGE_SIZE_DELIMITED, this.sqlParamVals.get(PARAM_NAME_PAGE_SIZE).toString())
                 .setParamValue(PARAM_NAME_FROM_WHERE_CLAUSE_DELIMITED, this.sqlParamVals.get(PARAM_NAME_FROM_WHERE_CLAUSE).toString())
-                .setParamValue(PARAM_NAME_PAGE_NUMBER_COL_ALIAS_DELIMITED, this.sqlParamVals.get(PARAM_NAME_PAGE_NUMBER_COL_ALIAS).toString())
+                .setParamValue(PARAM_NAME_PAGE_NUMBER_COL_ALIAS_DELIMITED, getPageNumberColName())
                 .getSql();
 
         return sql;

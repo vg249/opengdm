@@ -9,13 +9,29 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY_ID_DATASET_ALL_PAGED;
+import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY_ID_DATASET_ALL;
+
 
 /**
 
  */
 public class ListStatementDatasetPaged implements ListStatementPaged {
 
+
+    @Override
+    public String getNameColName() {
+        return "ds.name";
+    }
+
+    @Override
+    public String getIdColName() {
+        return "ds.dataset_id";
+    }
+
+    @Override
+    public String getPageNumberColName() {
+        return PagerSql.getPageNumberColName();
+    }
 
     private final String fromWhereClause = "from " +
             "	dataset ds left outer join job j on " +
@@ -33,15 +49,17 @@ public class ListStatementDatasetPaged implements ListStatementPaged {
             "	) ";
 
     @Override
-    public PreparedStatement makePreparedStatementForPageFrames(Connection dbConnection, Map<String, Object> sqlParamVals) throws SQLException {
+    public PreparedStatement makePreparedStatementForPageFrames(Connection dbConnection,Integer pageSize ) throws SQLException {
 
-        String selectColumns = " ds.dataset_id, " +
-                "	ds.name ";
+        String selectColumns = " " + this.getIdColName()+ ", " +
+                this.getNameColName();
 
+        Map<String,Object> sqlParamVals = new HashMap<>();
         sqlParamVals.put(PagerSql.PARAM_NAME_SELECT_COLS, selectColumns);
-        sqlParamVals.put(PagerSql.PARAM_NAME_NAME_COL, "d.name");
-        sqlParamVals.put(PagerSql.PARAM_NAME_ID_COL, "d.dataset_id");
+        sqlParamVals.put(PagerSql.PARAM_NAME_NAME_COL, this.getNameColName());
+        sqlParamVals.put(PagerSql.PARAM_NAME_ID_COL, this.getIdColName());
         sqlParamVals.put(PagerSql.PARAM_NAME_FROM_WHERE_CLAUSE, fromWhereClause);
+        sqlParamVals.put(PagerSql.PARAM_NAME_PAGE_SIZE, pageSize);
 
         PagerSql pagerSql = new PagerSql(sqlParamVals);
         String pageFrameSql = pagerSql.makePageBoundarySql();
@@ -51,7 +69,7 @@ public class ListStatementDatasetPaged implements ListStatementPaged {
     }
 
     @Override
-    public PreparedStatement makePreparedStatementForAPage(Connection dbConnection, Integer pageSize, String pgItemNameVal, String pgItemIdVal) throws SQLException {
+    public PreparedStatement makePreparedStatementForAPage(Connection dbConnection, Integer pageSize, String pgItemNameVal, Integer pgItemIdVal) throws SQLException {
 
 
         String selectColumns = " ds.dataset_id, " +
@@ -129,8 +147,8 @@ public class ListStatementDatasetPaged implements ListStatementPaged {
 
         Map<String, Object> sqlParamVals = new HashMap<>();
         sqlParamVals.put(PagerSql.PARAM_NAME_SELECT_COLS, selectColumns);
-        sqlParamVals.put(PagerSql.PARAM_NAME_NAME_COL, "d.name");
-        sqlParamVals.put(PagerSql.PARAM_NAME_ID_COL, "d.dataset_id");
+        sqlParamVals.put(PagerSql.PARAM_NAME_NAME_COL, this.getNameColName());
+        sqlParamVals.put(PagerSql.PARAM_NAME_ID_COL, this.getIdColName());
         sqlParamVals.put(PagerSql.PARAM_NAME_FROM_WHERE_CLAUSE, fromWhereClause);
         sqlParamVals.put(PagerSql.PARAM_NAME_PAGE_SIZE, pageSize);
         sqlParamVals.put(PagerSql.PARAM_NAME_ID_COL_VAL, pgItemIdVal);
@@ -144,7 +162,7 @@ public class ListStatementDatasetPaged implements ListStatementPaged {
     }
 
     public ListSqlId getListSqlId() {
-        return QUERY_ID_DATASET_ALL_PAGED;
+        return QUERY_ID_DATASET_ALL;
     }
 
 

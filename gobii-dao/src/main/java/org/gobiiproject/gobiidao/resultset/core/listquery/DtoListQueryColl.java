@@ -62,6 +62,24 @@ public class DtoListQueryColl {
         return returnVal;
     }
 
+    public List getLisPaged(ListSqlId listSqlId,
+                             Integer pageSize,
+                             Integer pageNo,
+                             String pgQueryId) throws GobiiDaoException {
+
+        List returnVal;
+
+        DtoListQuery dtoListQuery = listQueriesBySqlId.get(listSqlId);
+
+        if (null != dtoListQuery ) {
+            returnVal = dtoListQuery.getDtoListPaged(pageSize,pageNo,pgQueryId);
+        } else {
+            throw new GobiiDaoException("Unknown query id " + listSqlId.toString());
+        }
+
+        return returnVal;
+    }
+
     public ResultSet getResultSet(ListSqlId listSqlId,
                                   Map<String, Object> jdbcParameters,
                                   Map<String, Object> sqlParameters) throws GobiiDaoException {

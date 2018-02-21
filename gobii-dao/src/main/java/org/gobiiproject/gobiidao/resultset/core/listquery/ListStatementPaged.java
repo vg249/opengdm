@@ -8,6 +8,9 @@ import java.util.Map;
 public interface ListStatementPaged {
 
     ListSqlId getListSqlId();
-    PreparedStatement makePreparedStatementForPageFrames(Connection dbConnection, Map<String, Object> sqlParamVals) throws SQLException;
-    PreparedStatement makePreparedStatementForAPage(Connection dbConnection, Integer pageSize, String pgItemNameVal, String pgItemIdVal) throws SQLException;
+    String getNameColName();
+    String getIdColName();
+    String getPageNumberColName();
+    PreparedStatement makePreparedStatementForPageFrames(Connection dbConnection, Integer pageSize ) throws SQLException;
+    PreparedStatement makePreparedStatementForAPage(Connection dbConnection, Integer pageSize, String pgItemNameVal, Integer pgItemIdVal) throws SQLException;
 }

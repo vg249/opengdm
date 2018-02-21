@@ -376,7 +376,7 @@
     <bean id="rsSampleDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsSampleDaoImpl"/>
 
 
-    <!-- **** ListStatement queries  *************************************** -->
+    <!-- **** ListStatement queries *************************************** -->
     <bean id="listStatementContactAll"
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementContactAll"/>
     <bean id="listStatementDatasetAll"
@@ -412,6 +412,10 @@
     <bean id="listStatementJobByJobName"
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementJobByJobName"/>
 
+    <!-- **** ListStatement queries paged *************************************** -->
+    <bean id="listStatementDatasetAllPaged"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.paged.ListStatementDatasetPaged"/>
+
     <bean id="dtoListQueryColl"
           class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl">
         <property name="listQueriesBySqlId">
@@ -422,6 +426,7 @@
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO"/>
                         <constructor-arg ref="listStatementDatasetAll"/>
+                        <constructor-arg ref="listStatementDatasetAllPaged"/>
                     </bean>
                 </entry>
                 <!--CONTACT -->

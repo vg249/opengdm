@@ -6,8 +6,13 @@ import java.util.List;
 
 public class PageFrameState {
 
+    public PageFrameState(Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
     public Date created = new Date();
     public List<PageState> pages = new ArrayList<>();
+    public Integer pageSize;
 
     public Date getCreated() {
         return created;
@@ -15,5 +20,9 @@ public class PageFrameState {
 
     public List<PageState> getPages() {
         return pages;
+    }
+
+    public Integer getPageSize() {
+        return pageSize;
     }
 }

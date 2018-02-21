@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiidao.resultset.core.listquery;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.hibernate.exception.SQLGrammarException;
@@ -10,6 +11,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,17 +25,41 @@ public class DtoListQuery<T> {
     Logger LOGGER = LoggerFactory.getLogger(DtoListQuery.class);
 
     private ListStatement listStatement;
+    private ListStatementPaged listStatementPaged;
     private Class<T> dtoType;
     private StoredProcExec storedProcExec;
 
     public DtoListQuery(StoredProcExec storedProcExec,
                         Class<T> dtoType,
-                        ListStatement listStatement) {
+                        ListStatement listStatement,
+                        ListStatementPaged listStatementPaged) {
 
         this.storedProcExec = storedProcExec;
         this.dtoType = dtoType;
         this.listStatement = listStatement;
+        this.listStatementPaged = listStatementPaged;
+    }
 
+
+    private List<T> makeDtoListFromResultSet(ResultSet resultSet) throws IllegalArgumentException,
+            InstantiationException,
+            SQLException {
+
+        List<T> returnVal = new ArrayList<>();
+
+        while (resultSet.next()) {
+            try {
+                T dto = dtoType.newInstance();
+                ResultColumnApplicator.applyColumnValues(resultSet, dto);
+                returnVal.add(dto);
+            } catch (IllegalAccessException e) {
+                throw new SQLException(e);
+            } catch (InstantiationException e) {
+                throw new SQLException(e);
+            }
+        }
+
+        return returnVal;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -42,11 +69,12 @@ public class DtoListQuery<T> {
 
         try {
 
-            DtoListFromSql<T> dtoListFromSql = new DtoListFromSql<>(dtoType, listStatement, jdbcParameters,sqlParameters);
+            ResultSetFromSql dtoListFromSql = new ResultSetFromSql(listStatement, jdbcParameters, sqlParameters);
             this.storedProcExec.doWithConnection(dtoListFromSql);
-            returnVal = dtoListFromSql.getDtoList();
+            ResultSet resultSet = dtoListFromSql.getResultSet();
+            returnVal = this.makeDtoListFromResultSet(resultSet);
 
-        }catch(SQLGrammarException e) {
+        } catch (SQLGrammarException e) {
             LOGGER.error("Error retrieving dto list with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
@@ -62,21 +90,23 @@ public class DtoListQuery<T> {
     } // getDtoList()
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public List<T> getPages(Integer pageSize,Integer pageNo, String pgQueryId) throws GobiiException {
+    public List<T> getDtoListPaged(Integer pageSize, Integer pageNo, String pgQueryId) throws GobiiException {
 
         List<T> returnVal;
 
         try {
 
-            Map<String, Object> jdbcParameters = new HashMap<>();
-            Map<String, Object> sqlParameters = new HashMap<>();
+            // ideally, all query types will have a paged implementation
+            if (listStatementPaged == null) {
+                throw new GobiiException("There is no paged query support for query " + listStatement.getListSqlId());
+            }
 
+            ResultSetFromSqlPaged resultSetFromSqlPaged = new ResultSetFromSqlPaged(listStatementPaged, pageSize, pageNo, pgQueryId);
+            this.storedProcExec.doWithConnection(resultSetFromSqlPaged);
+            ResultSet resultSet = resultSetFromSqlPaged.getResultSet();
+            returnVal = this.makeDtoListFromResultSet(resultSet);
 
-            DtoListFromSql<T> dtoListFromSql = new DtoListFromSql<>(dtoType, listStatement, jdbcParameters,sqlParameters);
-            this.storedProcExec.doWithConnection(dtoListFromSql);
-            returnVal = dtoListFromSql.getDtoList();
-
-        }catch(SQLGrammarException e) {
+        } catch (SQLGrammarException e) {
             LOGGER.error("Error retrieving dto list with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
@@ -98,11 +128,11 @@ public class DtoListQuery<T> {
 
         try {
 
-            ResultSetFromSql resultSetFromSql = new ResultSetFromSql(listStatement, jdbcParameters,sqlParameters);
+            ResultSetFromSql resultSetFromSql = new ResultSetFromSql(listStatement, jdbcParameters, sqlParameters);
             this.storedProcExec.doWithConnection(resultSetFromSql);
             returnVal = resultSetFromSql.getResultSet();
 
-        }catch(SQLGrammarException e) {
+        } catch (SQLGrammarException e) {
             LOGGER.error("Error retrieving dto list with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
@@ -117,5 +147,6 @@ public class DtoListQuery<T> {
         return returnVal;
 
     } // getDtoList()
+
 
 }
