@@ -83,6 +83,10 @@ public class Header implements Serializable {
 
     } // setPagination()
 
+    public Pagination getPagination() {
+        return pagination;
+    }
+
     public String getGobiiVersion() {
         return gobiiVersion;
     }

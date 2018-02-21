@@ -441,6 +441,36 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
     }
 
     @Test
+    public void getPagedList() throws Exception {
+        RestUri restUriDataSet = GobiiClientContext.getInstance(null, false)
+                .getUriFactory().pagedList(GobiiServiceRequestId.URL_DATASETS,
+                        4,
+                        1,
+                        null);
+        GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriDataSet);
+        PayloadEnvelope<DataSetDTO> resultEnvelope = gobiiEnvelopeRestResource
+                .get(DataSetDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+
+        Assert.assertNotNull("Error in pagination object: Current page is not set",
+                resultEnvelope.getHeader().getPagination().getCurrentPage());
+
+        Assert.assertNotNull("Error in pagination object: Page size is not set",
+                resultEnvelope.getHeader().getPagination().getPageSize());
+
+        Assert.assertNotNull("Error in pagination object: Query ID is not set",
+                resultEnvelope.getHeader().getPagination().getQueryId());
+
+        Assert.assertNotNull("Error in pagination object: Query Time is not set",
+                resultEnvelope.getHeader().getPagination().getQueryTime());
+
+        Assert.assertNotNull("Error in pagination object: Total pages is not set",
+                resultEnvelope.getHeader().getPagination().getTotalPages());
+
+    } // getList()
+
+        @Test
     public void getDataSetsByTypeId() throws Exception {
 
         Integer dataSetid = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET));

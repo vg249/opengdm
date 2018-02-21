@@ -435,6 +435,7 @@
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO"/>
                         <constructor-arg ref="listStatementContactAll"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>
                 <!--ORGANIZATION -->
@@ -443,6 +444,7 @@
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.OrganizationDTO"/>
                         <constructor-arg ref="listStatementOrganizationAll"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>
                 <!--PLATFORM -->
@@ -451,7 +453,7 @@
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO"/>
                         <constructor-arg ref="listStatementPlatformAll"/>
-
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>
                 <!--PROJECT -->
@@ -460,6 +462,7 @@
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.ProjectDTO"/>
                         <constructor-arg ref="listStatementProjectAll"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>
                 <!--EXPERIMENT -->
@@ -468,7 +471,7 @@
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO"/>
                         <constructor-arg ref="listStatementExperimentAll"/>
-
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>
                 <!--MARKER -->
@@ -477,6 +480,7 @@
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerDTO"/>
                         <constructor-arg ref="listStatementMarkerAll"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>
                 <!--PROTOCOL -->
@@ -485,6 +489,7 @@
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.ProtocolDTO"/>
                         <constructor-arg ref="listStatementProtocolAll"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>
                 <!--CV BY GROUP -->
@@ -493,6 +498,7 @@
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO"/>
                         <constructor-arg ref="listStatementCvsByGroup"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>
                 <!--LAST MODIFIED -->
@@ -501,6 +507,7 @@
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
                         <constructor-arg ref="listStatementLastModified"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>
                 <!--COUNT -->
@@ -509,6 +516,7 @@
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
                         <constructor-arg ref="listStatementCount"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>
                 <!--COUNT CHILDREN -->
@@ -517,6 +525,7 @@
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
                         <constructor-arg ref="ListStatementCountOfChildren"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>
                 <!--JOB -->
@@ -525,6 +534,7 @@
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO"/>
                         <constructor-arg ref="listStatementJobAll"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>
                 <!--JOB BY DATASET ID-->
@@ -533,6 +543,7 @@
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO"/>
                         <constructor-arg ref="listStatementJobByDatasetId"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>
                 <!--JOB BY JOB NAME-->
@@ -541,6 +552,7 @@
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO"/>
                         <constructor-arg ref="listStatementJobByJobName"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>
                 <!--CV BY GROUP AND LIST -->
@@ -549,6 +561,7 @@
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
                         <constructor-arg ref="ListStatementCvTermsByGroupForList"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>
                 <!--REFERENCE BY LIST -->
@@ -557,6 +570,7 @@
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
                         <constructor-arg ref="ListStatementReferencesForList"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>
             </map>

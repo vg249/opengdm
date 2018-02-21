@@ -202,7 +202,7 @@ public class GobiiUriFactory {
     }
 
     public RestUri file(GobiiFileProcessDir gobiiFileProcessDir,
-                             String fileName) throws Exception {
+                        String fileName) throws Exception {
 
         RestUri returnVal = new RestUri(this.domain,
                 this.port,
@@ -238,8 +238,8 @@ public class GobiiUriFactory {
                 this.gobiiControllerType.getControllerPath(),
                 GobiiServiceRequestId.URL_ENTITIES.getResourcePath())
                 .addUriParam("entityNameParent", gobiiEntityNameTypeParent.toString().toLowerCase())
-                .addUriParam("parentId",parentId.toString())
-                .addUriParam("entityNameChild",gobiiEntityNameTypeChild.toString())
+                .addUriParam("parentId", parentId.toString())
+                .addUriParam("entityNameChild", gobiiEntityNameTypeChild.toString())
                 .appendSegment(GobiiServiceRequestId.URL_COUNT);
 
         return returnVal;
@@ -254,6 +254,19 @@ public class GobiiUriFactory {
                 GobiiServiceRequestId.URL_ENTITIES.getResourcePath())
                 .addUriParam("entityName", gobiiEntityNameType.toString().toLowerCase())
                 .appendSegment(GobiiServiceRequestId.URL_LAST_MODIFIED);
+
+        return returnVal;
+    }
+
+    public RestUri pagedList(GobiiServiceRequestId gobiiServiceRequestId,
+                             Integer pageSize,
+                             Integer pageNo,
+                             String queryId) throws Exception {
+
+        RestUri returnVal = this.resourceColl(gobiiServiceRequestId)
+                .addQueryParam("pageSize", pageSize.toString())
+                .addQueryParam("pageNo", pageNo.toString())
+                .addQueryParam("queryId", queryId);
 
         return returnVal;
     }
