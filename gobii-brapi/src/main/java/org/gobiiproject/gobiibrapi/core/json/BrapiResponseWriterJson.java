@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
 import org.gobiiproject.gobiiapimodel.payload.Pagination;
+import org.gobiiproject.gobiibrapi.core.common.BrapiPagination;
 import org.gobiiproject.gobiibrapi.core.common.BrapiStatus;
 
 import java.util.List;
@@ -56,7 +57,7 @@ public class BrapiResponseWriterJson<T_LIST_ITEM, T_LIST_META> {
 
     public String makeBrapiResponse(List<T_LIST_ITEM> listItems,
                                     T_LIST_META listMetadData,
-                                    Pagination pagination,
+                                    BrapiPagination pagination,
                                     List<BrapiStatus> statusItems,
                                     List<String> dataFiles
     ) throws Exception {

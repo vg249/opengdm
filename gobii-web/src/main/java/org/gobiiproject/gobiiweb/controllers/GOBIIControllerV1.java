@@ -40,6 +40,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructi
 import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderFilePreviewDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedList;
 import org.gobiiproject.gobiimodel.dto.system.PingDTO;
 import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -1113,21 +1114,37 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/datasets", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<DataSetDTO> getDataSets(HttpServletRequest request,
-                                                   HttpServletResponse response) {
+                                                   HttpServletResponse response,
+                                                   @RequestParam("pageSize") Integer pageSize,
+                                                   @RequestParam("pageNo") Integer pageNo,
+                                                   @RequestParam("queryId") String queryId) {
 
         PayloadEnvelope<DataSetDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            //PayloadReader<DataSetDTO> payloadReader = new PayloadReader<>(DataSetDTO.class);
-            List<DataSetDTO> dataSetDTOs = dataSetService.getDataSets();
-
             PayloadWriter<DataSetDTO> payloadWriter = new PayloadWriter<>(request, response,
                     DataSetDTO.class);
 
-            payloadWriter.writeList(returnVal,
-                    GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
-                            GobiiServiceRequestId.URL_DATASETS),
-                    dataSetDTOs);
+            if(pageSize != null && pageNo != null ) {
+
+                PagedList<DataSetDTO> pagedList = dataSetService.getDatasetsPaged(pageSize,
+                        pageNo,
+                        queryId);
+
+                payloadWriter.writeListFromPagedQuery(returnVal,
+                        GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
+                                GobiiServiceRequestId.URL_DATASETS),
+                        pagedList);
+
+            } else {
+
+                List<DataSetDTO> dataSetDTOs = dataSetService.getDataSets();
+
+                payloadWriter.writeList(returnVal,
+                        GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
+                                GobiiServiceRequestId.URL_DATASETS),
+                        dataSetDTOs);
+            }
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);

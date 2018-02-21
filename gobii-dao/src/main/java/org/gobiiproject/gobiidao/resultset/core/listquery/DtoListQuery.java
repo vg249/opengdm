@@ -119,6 +119,7 @@ public class DtoListQuery<T> {
             returnVal = new PagedList<>(
                     resultSetFromSqlPaged.getPageFrameState().getCreated(),
                     dtoList,
+                    pageSize,
                     resultSetFromSqlPaged.getPageNo(),
                     resultSetFromSqlPaged.getPageFrameState().getPages().size(),
                     pgQueryId

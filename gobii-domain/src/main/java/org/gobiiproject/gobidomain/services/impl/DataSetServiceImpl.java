@@ -2,12 +2,14 @@ package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.DataSetService;
+import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapAnalysis;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapDataSet;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapJob;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedList;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -52,6 +54,30 @@ public class DataSetServiceImpl implements DataSetService {
             if (null == returnVal) {
                 returnVal = new ArrayList<>();
             }
+
+        } catch (Exception e) {
+
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+
+        }
+
+        return returnVal;
+    }
+
+    @Override
+    public PagedList<DataSetDTO> getDatasetsPaged(Integer pageSize, Integer pageNo, String pgQueryId) throws GobiiDtoMappingException {
+
+        PagedList<DataSetDTO> returnVal;
+
+        try {
+            returnVal = dtoMapDataSet.getListPaged(pageSize,pageNo,pgQueryId);
+
+            for (DataSetDTO currentDataSetDTO : returnVal.getDtoList()) {
+                currentDataSetDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
+                currentDataSetDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+            }
+
 
         } catch (Exception e) {
 
