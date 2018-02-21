@@ -17,8 +17,6 @@ import java.util.stream.Collectors;
  */
 public class ResultSetFromSqlPaged<T> implements Work {
 
-    @Autowired
-    PageFramesTrackingCache pageFramesTrackingCache;
 
     private ListStatementPaged listStatementPaged;
     private Integer pageSize;
@@ -29,11 +27,13 @@ public class ResultSetFromSqlPaged<T> implements Work {
     public ResultSetFromSqlPaged(ListStatementPaged listStatementPaged,
                                  Integer pageSize,
                                  Integer pageNo,
-                                 String pgQueryId) {
+                                 String pgQueryId,
+                                 PageFrameState pageFrameState) {
         this.listStatementPaged = listStatementPaged;
         this.pageSize = pageSize;
         this.pageNo = pageNo;
         this.pgQueryId = pgQueryId;
+        this.pageFrameState = pageFrameState;
     }
 
 
@@ -55,8 +55,7 @@ public class ResultSetFromSqlPaged<T> implements Work {
     public void execute(Connection dbConnection) throws SQLException {
 
 
-        this.pageFrameState = this.pageFramesTrackingCache.getPageFrames(this.pgQueryId);
-        if ( this.pageFrameState == null ) {
+        if ( this.pageFrameState.getPages().size() == 0) {
 
             PreparedStatement preparedStatement = listStatementPaged.makePreparedStatementForPageFrames(
                     dbConnection,
@@ -73,8 +72,6 @@ public class ResultSetFromSqlPaged<T> implements Work {
                 PageState currentPageState = new PageState(pageNumber,nameColVal, idColVal);
                 this.pageFrameState.getPages().add(currentPageState);
             }
-
-            this.pageFramesTrackingCache.setPageFrames(this.pgQueryId,pageFrameState);
         }
 
         String nameColVal = null;

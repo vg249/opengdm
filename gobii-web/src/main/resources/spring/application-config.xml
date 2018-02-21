@@ -49,7 +49,7 @@
                         name="parentChildCountCache"/>
                 <bean
                         class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-                        name="pageFramesTrackingCache"/>
+                        name="pageFramesCache"/>
             </set>
         </property>
     </bean>
@@ -425,6 +425,7 @@
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementDatasetAll"/>
                         <constructor-arg ref="listStatementDatasetAllPaged"/>
                     </bean>
@@ -434,6 +435,7 @@
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementContactAll"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
@@ -443,6 +445,7 @@
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.OrganizationDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementOrganizationAll"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
@@ -452,6 +455,7 @@
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementPlatformAll"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
@@ -461,6 +465,7 @@
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.ProjectDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementProjectAll"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
@@ -470,6 +475,7 @@
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementExperimentAll"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
@@ -479,6 +485,7 @@
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementMarkerAll"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
@@ -488,6 +495,7 @@
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.ProtocolDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementProtocolAll"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
@@ -497,6 +505,7 @@
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementCvsByGroup"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
@@ -506,6 +515,7 @@
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementLastModified"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
@@ -515,6 +525,7 @@
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementCount"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
@@ -524,6 +535,7 @@
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="ListStatementCountOfChildren"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
@@ -533,6 +545,7 @@
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementJobAll"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
@@ -542,6 +555,7 @@
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementJobByDatasetId"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
@@ -551,6 +565,7 @@
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementJobByJobName"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
@@ -560,6 +575,7 @@
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="ListStatementCvTermsByGroupForList"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
@@ -569,6 +585,7 @@
                     <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="ListStatementReferencesForList"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>

@@ -44,12 +44,12 @@ public class PagerSql {
                                     " order by " +
                                         " x." +PARAM_NAME_NAME_COL_DELIMITED + ", " +
                                         " x." + PARAM_NAME_ID_COL_DELIMITED +" " +
-                                    " ) + 1 page_number " +
+                                    " ) + 1 " + PARAM_NAME_PAGE_NUMBER_COL_ALIAS_DELIMITED +
                                 " from " +
                                     " ( " +
                                         " select " +
-                                            PARAM_NAME_NAME_COL_DELIMITED +
-                                            PARAM_NAME_ID_COL_DELIMITED +
+                                            PARAM_NAME_NAME_COL_DELIMITED + ", " +
+                                            PARAM_NAME_ID_COL_DELIMITED + ", " +
                                             " case " +
                                                 " row_number() over( " +
                                                 " order by " +
@@ -73,7 +73,6 @@ public class PagerSql {
                             {
                                 put(PARAM_NAME_NAME_COL_DELIMITED, null);
                                 put(PARAM_NAME_ID_COL_DELIMITED, null);
-                                put(PARAM_NAME_SELECT_COLS_DELIMITED, null);
                                 put(PARAM_NAME_PAGE_SIZE_DELIMITED, null);
                                 put(PARAM_NAME_FROM_WHERE_CLAUSE_DELIMITED, null);
                                 put(PARAM_NAME_PAGE_NUMBER_COL_ALIAS_DELIMITED, null);
@@ -84,7 +83,6 @@ public class PagerSql {
         String sql = parameterizedSql
                 .setParamValue(PARAM_NAME_NAME_COL_DELIMITED, this.sqlParamVals.get(PARAM_NAME_NAME_COL).toString())
                 .setParamValue(PARAM_NAME_ID_COL_DELIMITED, this.sqlParamVals.get(PARAM_NAME_ID_COL).toString())
-                .setParamValue(PARAM_NAME_SELECT_COLS_DELIMITED, this.sqlParamVals.get(PARAM_NAME_SELECT_COLS).toString())
                 .setParamValue(PARAM_NAME_PAGE_SIZE_DELIMITED, this.sqlParamVals.get(PARAM_NAME_PAGE_SIZE).toString())
                 .setParamValue(PARAM_NAME_FROM_WHERE_CLAUSE_DELIMITED, this.sqlParamVals.get(PARAM_NAME_FROM_WHERE_CLAUSE).toString())
                 .setParamValue(PARAM_NAME_PAGE_NUMBER_COL_ALIAS_DELIMITED, getPageNumberColName())

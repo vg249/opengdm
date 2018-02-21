@@ -2,6 +2,8 @@ package org.gobiiproject.gobiidao.resultset.core.listquery;
 
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiidao.cache.PageFrameState;
+import org.gobiiproject.gobiidao.cache.PageFramesTrackingCache;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -9,6 +11,7 @@ import org.gobiiproject.gobiimodel.dto.system.PagedList;
 import org.hibernate.exception.SQLGrammarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,14 +34,18 @@ public class DtoListQuery<T> {
     private ListStatementPaged listStatementPaged;
     private Class<T> dtoType;
     private StoredProcExec storedProcExec;
+    private PageFramesTrackingCache pageFramesTrackingCache;
+
 
     public DtoListQuery(StoredProcExec storedProcExec,
                         Class<T> dtoType,
+                        PageFramesTrackingCache pageFramesTrackingCache,
                         ListStatement listStatement,
                         ListStatementPaged listStatementPaged) {
 
         this.storedProcExec = storedProcExec;
         this.dtoType = dtoType;
+        this.pageFramesTrackingCache = pageFramesTrackingCache;
         this.listStatement = listStatement;
         this.listStatementPaged = listStatementPaged;
     }
@@ -105,16 +112,23 @@ public class DtoListQuery<T> {
             }
 
             String pgQueryId;
-            if(StringUtils.isNotEmpty(pgQueryIdFromUser)) {
+            if (StringUtils.isNotEmpty(pgQueryIdFromUser)) {
                 pgQueryId = pgQueryIdFromUser;
             } else {
                 pgQueryId = UUID.randomUUID().toString();
             }
 
-            ResultSetFromSqlPaged resultSetFromSqlPaged = new ResultSetFromSqlPaged(listStatementPaged, pageSize, pageNo, pgQueryId);
+            // in theory an existing id might have gotten nuked if the server were restarted
+            PageFrameState pageFrameState = this.pageFramesTrackingCache.getPageFrames(pgQueryId);
+            if (pageFrameState == null) {
+                pageFrameState = new PageFrameState(pageSize);
+                this.pageFramesTrackingCache.setPageFrames(pgQueryId, pageFrameState);
+            }
+
+            ResultSetFromSqlPaged resultSetFromSqlPaged = new ResultSetFromSqlPaged(listStatementPaged, pageSize, pageNo, pgQueryId, pageFrameState);
             this.storedProcExec.doWithConnection(resultSetFromSqlPaged);
             ResultSet resultSet = resultSetFromSqlPaged.getResultSet();
-            List<T> dtoList =  this.makeDtoListFromResultSet(resultSet);
+            List<T> dtoList = this.makeDtoListFromResultSet(resultSet);
 
             returnVal = new PagedList<>(
                     resultSetFromSqlPaged.getPageFrameState().getCreated(),
