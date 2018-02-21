@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiidao.resultset.core.listquery;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiimodel.dto.system.PagedList;
 
 import java.sql.ResultSet;
 import java.util.HashMap;
@@ -62,12 +63,12 @@ public class DtoListQueryColl {
         return returnVal;
     }
 
-    public List getLisPaged(ListSqlId listSqlId,
-                             Integer pageSize,
-                             Integer pageNo,
-                             String pgQueryId) throws GobiiDaoException {
+    public PagedList getListPaged(ListSqlId listSqlId,
+                                  Integer pageSize,
+                                  Integer pageNo,
+                                  String pgQueryId) throws GobiiDaoException {
 
-        List returnVal;
+        PagedList returnVal;
 
         DtoListQuery dtoListQuery = listQueriesBySqlId.get(listSqlId);
 

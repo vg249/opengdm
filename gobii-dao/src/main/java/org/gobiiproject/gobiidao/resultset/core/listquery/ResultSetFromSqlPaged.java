@@ -3,8 +3,6 @@ package org.gobiiproject.gobiidao.resultset.core.listquery;
 import org.gobiiproject.gobiidao.cache.PageFrameState;
 import org.gobiiproject.gobiidao.cache.PageFramesTrackingCache;
 import org.gobiiproject.gobiidao.cache.PageState;
-import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.paged.PagerSql;
 import org.hibernate.jdbc.Work;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -12,10 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -50,6 +45,10 @@ public class ResultSetFromSqlPaged<T> implements Work {
 
     public PageFrameState getPageFrameState() {
         return pageFrameState;
+    }
+
+    public Integer getPageNo() {
+        return pageNo;
     }
 
     @Override
@@ -96,9 +95,9 @@ public class ResultSetFromSqlPaged<T> implements Work {
                 idColVal = pageStatesForPage.get(0).getIdValue();
             } else {
                 // Cannot decide whether it's better to throw in the case where we got a non existent page number
-                Integer idxOfLast = this.pageFrameState.getPages().size() -1 ;
-                nameColVal = this.pageFrameState.getPages().get(idxOfLast).getNameValue();
-                idColVal = this.pageFrameState.getPages().get(idxOfLast).getIdValue();
+                this.pageNo = this.pageFrameState.getPages().size() -1 ;
+                nameColVal = this.pageFrameState.getPages().get(this.pageNo).getNameValue();
+                idColVal = this.pageFrameState.getPages().get(this.pageNo).getIdValue();
             }
         }
 

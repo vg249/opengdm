@@ -1,9 +1,11 @@
 package org.gobiiproject.gobiidao.resultset.core.listquery;
 
+import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.dto.system.PagedList;
 import org.hibernate.exception.SQLGrammarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by Phil on 10/25/2016.
@@ -90,9 +93,9 @@ public class DtoListQuery<T> {
     } // getDtoList()
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public List<T> getDtoListPaged(Integer pageSize, Integer pageNo, String pgQueryId) throws GobiiException {
+    public PagedList<T> getDtoListPaged(Integer pageSize, Integer pageNo, String pgQueryIdFromUser) throws GobiiException {
 
-        List<T> returnVal;
+        PagedList<T> returnVal;
 
         try {
 
@@ -101,10 +104,25 @@ public class DtoListQuery<T> {
                 throw new GobiiException("There is no paged query support for query " + listStatement.getListSqlId());
             }
 
+            String pgQueryId;
+            if(StringUtils.isNotEmpty(pgQueryIdFromUser)) {
+                pgQueryId = pgQueryIdFromUser;
+            } else {
+                pgQueryId = UUID.randomUUID().toString();
+            }
+
             ResultSetFromSqlPaged resultSetFromSqlPaged = new ResultSetFromSqlPaged(listStatementPaged, pageSize, pageNo, pgQueryId);
             this.storedProcExec.doWithConnection(resultSetFromSqlPaged);
             ResultSet resultSet = resultSetFromSqlPaged.getResultSet();
-            returnVal = this.makeDtoListFromResultSet(resultSet);
+            List<T> dtoList =  this.makeDtoListFromResultSet(resultSet);
+
+            returnVal = new PagedList<>(
+                    resultSetFromSqlPaged.getPageFrameState().getCreated(),
+                    dtoList,
+                    resultSetFromSqlPaged.getPageNo(),
+                    resultSetFromSqlPaged.getPageFrameState().getPages().size(),
+                    pgQueryId
+            );
 
         } catch (SQLGrammarException e) {
             LOGGER.error("Error retrieving dto list with SQL " + e.getSQL(), e.getSQLException());
