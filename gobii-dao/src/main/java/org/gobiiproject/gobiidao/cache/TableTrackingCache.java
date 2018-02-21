@@ -1,20 +1,13 @@
 package org.gobiiproject.gobiidao.cache;
 
-import javafx.scene.Parent;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
-import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 
-import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /***
  * The idiom here is not obvious. There is a lot of magic going on in the background via the annotations and the

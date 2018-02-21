@@ -47,11 +47,16 @@
                 <bean
                         class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
                         name="parentChildCountCache"/>
+                <bean
+                        class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+                        name="pageFramesTrackingCache"/>
             </set>
         </property>
     </bean>
     <bean id="tableTrackingCache"
           class="org.gobiiproject.gobiidao.cache.TableTrackingCache"/>
+    <bean id="pageFramesTrackingCache"
+          class="org.gobiiproject.gobiidao.cache.PageFramesTrackingCache"/>
 
     <!-- ******************** ****************************************** -->
     <!-- ******************** explicitly defined beans **************** -->

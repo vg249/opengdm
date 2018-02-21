@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +57,35 @@ public class DtoListQuery<T> {
 
         }
 
+        return returnVal;
+
+    } // getDtoList()
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<T> getPages(Integer pageSize,Integer pageNo, String pgQueryId) throws GobiiException {
+
+        List<T> returnVal;
+
+        try {
+
+            Map<String, Object> jdbcParameters = new HashMap<>();
+            Map<String, Object> sqlParameters = new HashMap<>();
+
+
+            DtoListFromSql<T> dtoListFromSql = new DtoListFromSql<>(dtoType, listStatement, jdbcParameters,sqlParameters);
+            this.storedProcExec.doWithConnection(dtoListFromSql);
+            returnVal = dtoListFromSql.getDtoList();
+
+        }catch(SQLGrammarException e) {
+            LOGGER.error("Error retrieving dto list with SQL " + e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving dto list ", e);
+            throw (new GobiiDaoException(e));
+
+        }
 
         return returnVal;
 
