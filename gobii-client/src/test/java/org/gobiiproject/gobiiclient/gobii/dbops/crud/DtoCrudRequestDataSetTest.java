@@ -35,8 +35,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
 
@@ -101,7 +103,7 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         Assert.assertNotNull(resultEnvelope.getPayload());
         Assert.assertNotNull(resultEnvelope.getPayload().getData());
-        Assert.assertTrue(resultEnvelope.getPayload().getData().size() == 0 );
+        Assert.assertTrue(resultEnvelope.getPayload().getData().size() == 0);
     }
 
     @Test
@@ -193,7 +195,7 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
         Assert.assertTrue(dataSetDTOResponse.getAnalysesIds().size() > 0);
         Assert.assertTrue(dataSetDTOResponse.getDatatypeId() > 0);
 
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.DATASET,dataSetDTOResponse.getDataSetId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.DATASET, dataSetDTOResponse.getDataSetId());
 
 
 //        DataSetDTO dataSetDTOReRequest = new DataSetDTO();
@@ -442,6 +444,95 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
 
     @Test
     public void getPagedList() throws Exception {
+
+
+        // This our first sorting implementaiton. So we need to do some extensive tesing.
+        // In order for this to work, we need to know what dataset records are in the system.
+        // And if there aren't enough to test paging with, we will need to create some.
+        // We're going to start with the GET for all datasets. Since we don't assume the
+        // sort order order for that method, we're going to have to secondarily resort the
+        // records here. So by the end of this setup phase, we will have N dataset records with
+        // known IDs and known sort order. Then we will get the dataset records via the paging
+        // method and make sure that the page boundaries line up where we expect them to.
+        Integer minimalRequiredDatasetsForTest = 100;
+
+        RestUri restUriDataSet = GobiiClientContext.getInstance(null, false)
+                .getUriFactory().resourceColl(GobiiServiceRequestId.URL_DATASETS);
+        GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriDataSet);
+        PayloadEnvelope<DataSetDTO> resultEnvelope = gobiiEnvelopeRestResource
+                .get(DataSetDTO.class);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        List<DataSetDTO> retrievedDataSets = resultEnvelope.getPayload().getData();
+
+
+        // if we don't have enough datasets for our test, created new ones
+        if (retrievedDataSets.size() < minimalRequiredDatasetsForTest) {
+            Integer totalNewRequired = minimalRequiredDatasetsForTest - retrievedDataSets.size();
+            (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getPkVals(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET, totalNewRequired);
+        }
+
+
+        // since other unit tets have given these records arbitrary and meaningless names, we will
+        // now rename them all in way that makes it easier to debug and evaluate how, given a specific
+        // sort, paging is working
+        Assert.assertTrue("The total number of test records cannot exceed " + (new Integer(26 * 26)).toString(),
+                retrievedDataSets.size() <= (26 * 26));
+        List<String> sortedNames = new ArrayList<>();
+        Integer totalNames = 0;
+        for(char leftCharacter= 65; leftCharacter <= 90 && totalNames < retrievedDataSets.size(); leftCharacter++ ) {
+            for(char rightCharacter = 65; rightCharacter <= 90 && totalNames < retrievedDataSets.size(); rightCharacter++) {
+                String currentName = Character.toString(leftCharacter) + Character.toString(rightCharacter) ;
+                sortedNames.add(currentName);
+                totalNames++;
+            }
+        }
+
+
+
+        //now update the names accordingly
+        for(Integer idx = 0; idx < retrievedDataSets.size(); idx++ ) {
+            DataSetDTO currentDataset = retrievedDataSets.get(idx);
+            String currentName = sortedNames.get(idx);
+            currentDataset.setDatasetName(currentName);
+
+            RestUri datasetByIdUri = GobiiClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .resourceByUriIdParam(GobiiServiceRequestId.URL_DATASETS)
+                    .setParamValue("id",currentDataset.getDataSetId().toString());
+            GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceForDataSetById = new GobiiEnvelopeRestResource<>(datasetByIdUri);
+            resultEnvelope = gobiiEnvelopeRestResourceForDataSetById
+                    .put(DataSetDTO.class, new PayloadEnvelope<>(currentDataset, GobiiProcessType.UPDATE));
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        }
+
+
+        // now retrieve the datasets
+
+/*
+
+        resultEnvelope = gobiiEnvelopeRestResource
+                .get(DataSetDTO.class);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        retrievedDataSets = resultEnvelope.getPayload().getData();
+        for (Integer idx; idx <= retrievedDataSets.size(); idx++) {
+
+
+            String currentDataSetName = "";
+            DataSetDTO currentDTO = retrievedDataSets.get(idx);
+
+
+        }
+
+
+        List<DataSetDTO> sortedDataSets = retrievedDataSets
+                .stream()
+                .sorted(Comparator.comparing(DataSetDTO::getDatasetName).thenComparing(DataSetDTO::getDataSetId))
+                .collect(Collectors.toList());
+
+
+)
+
+
         RestUri restUriDataSet = GobiiClientContext.getInstance(null, false)
                 .getUriFactory().pagedList(GobiiServiceRequestId.URL_DATASETS,
                         4,
@@ -467,10 +558,11 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
 
         Assert.assertNotNull("Error in pagination object: Total pages is not set",
                 resultEnvelope.getHeader().getPagination().getTotalPages());
+                */
 
-    } // getList()
+    } // getPagedList()
 
-        @Test
+    @Test
     public void getDataSetsByTypeId() throws Exception {
 
         Integer dataSetid = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET));
@@ -505,7 +597,7 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
         Assert.assertNotNull(dataSetDTOList);
         Assert.assertTrue(dataSetDTOList.size() >= 0);
 
-        if(dataSetDTOList.size() > 0) {
+        if (dataSetDTOList.size() > 0) {
             Assert.assertNotNull(dataSetDTOList.get(0).getDatasetName());
         }
 

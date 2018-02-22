@@ -81,6 +81,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -1115,9 +1116,9 @@ public class GOBIIControllerV1 {
     @ResponseBody
     public PayloadEnvelope<DataSetDTO> getDataSets(HttpServletRequest request,
                                                    HttpServletResponse response,
-                                                   @RequestParam("pageSize") Integer pageSize,
-                                                   @RequestParam("pageNo") Integer pageNo,
-                                                   @RequestParam("queryId") String queryId) {
+                                                   @RequestParam("pageSize") Optional<Integer> pageSize,
+                                                   @RequestParam("pageNo") Optional<Integer> pageNo,
+                                                   @RequestParam("queryId") Optional<String> queryId) {
 
         PayloadEnvelope<DataSetDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1125,11 +1126,12 @@ public class GOBIIControllerV1 {
             PayloadWriter<DataSetDTO> payloadWriter = new PayloadWriter<>(request, response,
                     DataSetDTO.class);
 
-            if(pageSize != null && pageNo != null ) {
+            if (pageSize.isPresent() && pageSize.get() != null &&
+                    pageNo.isPresent() && pageNo.get() != null) {
 
-                PagedList<DataSetDTO> pagedList = dataSetService.getDatasetsPaged(pageSize,
-                        pageNo,
-                        queryId);
+                PagedList<DataSetDTO> pagedList = dataSetService.getDatasetsPaged(pageSize.get(),
+                        pageNo.get(),
+                        queryId.get());
 
                 payloadWriter.writeListFromPagedQuery(returnVal,
                         GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
@@ -1198,8 +1200,8 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/datasets/{dataSetId:[\\d]+}/analyses", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<AnalysisDTO> getAnalysesForDataset(@PathVariable Integer dataSetId,
-                                                       HttpServletRequest request,
-                                                       HttpServletResponse response) {
+                                                              HttpServletRequest request,
+                                                              HttpServletResponse response) {
 
         PayloadEnvelope<AnalysisDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -2177,7 +2179,7 @@ public class GOBIIControllerV1 {
     }
 
     @RequestMapping(value = "/names/{entity}",
-        method = RequestMethod.POST)
+            method = RequestMethod.POST)
     @ResponseBody
     public PayloadEnvelope<NameIdDTO> getNamesByNameList(@RequestBody PayloadEnvelope<NameIdDTO> payloadEnvelope,
                                                          @PathVariable("entity") String entity,
@@ -2236,7 +2238,7 @@ public class GOBIIControllerV1 {
                     } else if (GobiiFilterType.NAMES_BY_TYPE_NAME == gobiiFilterType) {
                         // there is nothing to test here -- the string could be anything
                         // add additional validation tests for other filter types
-                    } else if (GobiiFilterType.NAMES_BY_NAME_LIST == gobiiFilterType){
+                    } else if (GobiiFilterType.NAMES_BY_NAME_LIST == gobiiFilterType) {
 
                         PayloadReader<NameIdDTO> payloadReader = new PayloadReader<>(NameIdDTO.class);
                         nameIdDTOList = payloadReader.extractListOfItems(payloadEnvelope);
@@ -2657,8 +2659,8 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/platforms/protocols/{vendorProtocolId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<PlatformDTO> getPlatformDetailsByVendorProtocolId(@PathVariable Integer vendorProtocolId,
-                                                         HttpServletRequest request,
-                                                         HttpServletResponse response) {
+                                                                             HttpServletRequest request,
+                                                                             HttpServletResponse response) {
 
         PayloadEnvelope<PlatformDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -4205,7 +4207,7 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/entities", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<EntityStatsDTO> getAllEntityStats(HttpServletRequest request,
-                                                                 HttpServletResponse response) {
+                                                             HttpServletResponse response) {
 
         PayloadEnvelope<EntityStatsDTO> returnVal = new PayloadEnvelope<>();
 
