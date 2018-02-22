@@ -36,7 +36,10 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -506,8 +509,35 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
         }
 
 
-        // now retrieve the datasets
+        // now retrieve the datasets and sort the same way that the paged query sorts -- by name and ID
+        //we'll compare the paging result with the sorted list
+        resultEnvelope = gobiiEnvelopeRestResource
+                .get(DataSetDTO.class);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        retrievedDataSets = resultEnvelope.getPayload().getData();
+        List<DataSetDTO> sortedDataSets = retrievedDataSets
+                .stream()
+                .sorted(Comparator.comparing(DataSetDTO::getDatasetName).thenComparing(DataSetDTO::getDataSetId))
+                .collect(Collectors.toList());
 
+        final Integer pageSize = 4;
+        Map<Integer,List<DataSetDTO>> pageMap = new LinkedHashMap<>();
+        Integer currentPage = 0;
+        for(Integer idx = 0; idx < sortedDataSets.size() ; idx++) {
+
+            List<DataSetDTO> currentList;
+            Integer currentMod = idx % pageSize;
+            if( currentMod == 0 ) {
+                currentList = new ArrayList<>();
+                pageMap.put(++currentPage,currentList);
+            } else {
+                currentList = pageMap.get(currentPage);
+            }
+
+            currentList.add(sortedDataSets.get(idx));
+        }
+
+        String temp = "temp";
 /*
 
         resultEnvelope = gobiiEnvelopeRestResource
