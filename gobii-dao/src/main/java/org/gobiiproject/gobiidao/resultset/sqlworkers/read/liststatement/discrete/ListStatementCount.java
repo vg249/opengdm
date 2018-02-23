@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement;
+package org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete;
 
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListStatement;
@@ -10,12 +10,13 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY_ID_COUNT;
 import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY_ID_LAST_MODIFIED;
 
 /**
 
  */
-public class ListStatementLastModified implements ListStatement {
+public class ListStatementCount implements ListStatement {
 
     private final String PARAM_NAME_TABLE = "tableName";
     private final String PARAM_NAME_TABLE_DELIMITED = ParameterizedSql.makeDelimitedParamName(PARAM_NAME_TABLE);
@@ -23,14 +24,14 @@ public class ListStatementLastModified implements ListStatement {
 
     @Override
     public ListSqlId getListSqlId() {
-        return QUERY_ID_LAST_MODIFIED;
+        return QUERY_ID_COUNT;
     }
 
     @Override
     public PreparedStatement makePreparedStatement(Connection dbConnection, Map<String, Object> jdbcParamVals, Map<String, Object> sqlParamVals) throws SQLException {
 
         ParameterizedSql parameterizedSql =
-                new ParameterizedSql("select max(modified_date) as lastmodified from "
+                new ParameterizedSql("select count(*) as count from "
                         + PARAM_NAME_TABLE_DELIMITED,
                         new HashMap<String, String>() {
                             {

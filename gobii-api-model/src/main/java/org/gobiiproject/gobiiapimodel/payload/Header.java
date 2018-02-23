@@ -9,13 +9,15 @@ package org.gobiiproject.gobiiapimodel.payload;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created by Phil on 3/24/2016.
  */
 public class Header implements Serializable {
 
-    public Header() {}
+    public Header() {
+    }
 
     public Header(GobiiProcessType gobiiProcessType) {
         this.gobiiProcessType = gobiiProcessType;
@@ -43,9 +45,8 @@ public class Header implements Serializable {
         return dtoHeaderAuth;
     }
 
-    public Status getStatus()
-    {
-        if( null == this.status ) {
+    public Status getStatus() {
+        if (null == this.status) {
             this.status = new Status();
         }
         return this.status;
@@ -68,20 +69,30 @@ public class Header implements Serializable {
         this.cropType = cropType;
     }
 
-    public void setPagination(Integer totalCount,
+    public void setPagination(String queryId,
+                              Date queryTime,
                               Integer pageSize,
                               Integer totalPages,
                               Integer currentPage) {
-        
-        this.pagination = new Pagination(totalCount,
+
+        this.pagination = new Pagination(queryId,
+                queryTime,
                 pageSize,
                 totalPages,
                 currentPage);
 
     } // setPagination()
 
-    public String getGobiiVersion() { return gobiiVersion; }
+    public Pagination getPagination() {
+        return pagination;
+    }
 
-    public void setGobiiVersion(String gobiiVersion) { this.gobiiVersion = gobiiVersion; }
+    public String getGobiiVersion() {
+        return gobiiVersion;
+    }
+
+    public void setGobiiVersion(String gobiiVersion) {
+        this.gobiiVersion = gobiiVersion;
+    }
 
 } // Header

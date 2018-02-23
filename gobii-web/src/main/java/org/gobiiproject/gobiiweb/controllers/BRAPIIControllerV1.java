@@ -25,6 +25,7 @@ import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiRequestStudiesSearc
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseMapStudiesSearch;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearch;
 
+import org.gobiiproject.gobiibrapi.core.common.BrapiPagination;
 import org.gobiiproject.gobiibrapi.core.common.BrapiRequestReader;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelope;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMaster;
@@ -228,7 +229,7 @@ public class BRAPIIControllerV1 {
             }
 
 
-            BrapiResponseEnvelopeMasterDetail.getBrapiMetaData().setPagination(new Pagination(
+            BrapiResponseEnvelopeMasterDetail.getBrapiMetaData().setPagination(new BrapiPagination(
                     numberOfHits,
                     reportedPageSize,
                     totalPages,

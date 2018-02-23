@@ -4,6 +4,7 @@ import org.gobiiproject.gobiiapimodel.hateos.Link;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
+import org.gobiiproject.gobiimodel.dto.system.PagedList;
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
 import org.gobiiproject.gobiimodel.types.RestMethodTypes;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
@@ -141,6 +142,24 @@ public class PayloadWriter<T extends DTOBase> {
 
         payloadEnvelope.getHeader().setGobiiVersion(this.gobiiWebVersion);
     }
+
+    public void writeListFromPagedQuery(PayloadEnvelope<T> payloadEnvelope,
+                          RestUri restUri,
+                          PagedList<T> pagedListToWrite) throws GobiiWebException, Exception {
+
+        for (T currentItem : pagedListToWrite.getDtoList()) {
+            this.writeSingleItemForDefaultId(payloadEnvelope, restUri, currentItem);
+        }
+
+        payloadEnvelope.getHeader().setPagination(pagedListToWrite.getPgQueryId(),
+                pagedListToWrite.getQueryTime(),
+                pagedListToWrite.getPageSize(),
+                pagedListToWrite.getTotalPages(),
+                pagedListToWrite.getCurrentPageNo());
+
+        payloadEnvelope.getHeader().setGobiiVersion(this.gobiiWebVersion);
+    }
+
 
     public void setAuthHeader(HeaderAuth headerAuth, HttpServletResponse response) {
 

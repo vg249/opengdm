@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiidao.resultset.core.listquery;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiimodel.dto.system.PagedList;
 
 import java.sql.ResultSet;
 import java.util.HashMap;
@@ -55,6 +56,24 @@ public class DtoListQueryColl {
 
         if (null != dtoListQuery ) {
             returnVal = dtoListQuery.getDtoList(jdbcParameters,sqlParameters);
+        } else {
+            throw new GobiiDaoException("Unknown query id " + listSqlId.toString());
+        }
+
+        return returnVal;
+    }
+
+    public PagedList getListPaged(ListSqlId listSqlId,
+                                  Integer pageSize,
+                                  Integer pageNo,
+                                  String pgQueryId) throws GobiiDaoException {
+
+        PagedList returnVal;
+
+        DtoListQuery dtoListQuery = listQueriesBySqlId.get(listSqlId);
+
+        if (null != dtoListQuery ) {
+            returnVal = dtoListQuery.getDtoListPaged(pageSize,pageNo,pgQueryId);
         } else {
             throw new GobiiDaoException("Unknown query id " + listSqlId.toString());
         }

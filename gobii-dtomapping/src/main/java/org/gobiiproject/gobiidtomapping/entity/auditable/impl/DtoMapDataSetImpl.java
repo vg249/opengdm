@@ -8,6 +8,7 @@ import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapDataSet;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.system.PagedList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,26 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
         try {
 
             returnVal = (List<DataSetDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_DATASET_ALL);
+
+        } catch (Exception e) {
+            LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
+        }
+
+        return returnVal;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public PagedList<DataSetDTO> getListPaged(Integer pageSize, Integer pageNo, String pgQueryId) throws GobiiDtoMappingException {
+
+        PagedList<DataSetDTO> returnVal;
+        try {
+
+            returnVal = (PagedList<DataSetDTO>) dtoListQueryColl.getListPaged(ListSqlId.QUERY_ID_DATASET_ALL,
+                    pageSize,
+                    pageNo,
+                    pgQueryId);
 
         } catch (Exception e) {
             LOGGER.error("Gobii Maping Error", e);

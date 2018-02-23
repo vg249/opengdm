@@ -17,21 +17,21 @@ public class BrapiMetaData {
 
     }
 
-    public BrapiMetaData(Pagination pagination, List<BrapiStatus> status, List<String> datafiles) {
+    public BrapiMetaData(BrapiPagination pagination, List<BrapiStatus> status, List<String> datafiles) {
         this.pagination = pagination;
         this.status = status;
         this.datafiles = datafiles;
     }
 
-    Pagination pagination = new Pagination(0,0,0,0);
+    BrapiPagination pagination = new BrapiPagination(0,0,0,0);
     List<BrapiStatus> status = new ArrayList<>();
     List<String> datafiles = new ArrayList<>();
 
-    public Pagination getPagination() {
+    public BrapiPagination getPagination() {
         return pagination;
     }
 
-    public void setPagination(Pagination pagination) {
+    public void setPagination(BrapiPagination pagination) {
         this.pagination = pagination;
     }
 

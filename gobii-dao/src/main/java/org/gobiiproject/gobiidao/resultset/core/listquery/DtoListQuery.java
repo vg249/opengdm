@@ -1,17 +1,27 @@
 package org.gobiiproject.gobiidao.resultset.core.listquery;
 
+import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiidao.cache.PageFrameState;
+import org.gobiiproject.gobiidao.cache.PageFramesTrackingCache;
+import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.dto.system.PagedList;
 import org.hibernate.exception.SQLGrammarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by Phil on 10/25/2016.
@@ -21,17 +31,45 @@ public class DtoListQuery<T> {
     Logger LOGGER = LoggerFactory.getLogger(DtoListQuery.class);
 
     private ListStatement listStatement;
+    private ListStatementPaged listStatementPaged;
     private Class<T> dtoType;
     private StoredProcExec storedProcExec;
+    private PageFramesTrackingCache pageFramesTrackingCache;
+
 
     public DtoListQuery(StoredProcExec storedProcExec,
                         Class<T> dtoType,
-                        ListStatement listStatement) {
+                        PageFramesTrackingCache pageFramesTrackingCache,
+                        ListStatement listStatement,
+                        ListStatementPaged listStatementPaged) {
 
         this.storedProcExec = storedProcExec;
         this.dtoType = dtoType;
+        this.pageFramesTrackingCache = pageFramesTrackingCache;
         this.listStatement = listStatement;
+        this.listStatementPaged = listStatementPaged;
+    }
 
+
+    private List<T> makeDtoListFromResultSet(ResultSet resultSet) throws IllegalArgumentException,
+            InstantiationException,
+            SQLException {
+
+        List<T> returnVal = new ArrayList<>();
+
+        while (resultSet.next()) {
+            try {
+                T dto = dtoType.newInstance();
+                ResultColumnApplicator.applyColumnValues(resultSet, dto);
+                returnVal.add(dto);
+            } catch (IllegalAccessException e) {
+                throw new SQLException(e);
+            } catch (InstantiationException e) {
+                throw new SQLException(e);
+            }
+        }
+
+        return returnVal;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -41,11 +79,12 @@ public class DtoListQuery<T> {
 
         try {
 
-            DtoListFromSql<T> dtoListFromSql = new DtoListFromSql<>(dtoType, listStatement, jdbcParameters,sqlParameters);
+            ResultSetFromSql dtoListFromSql = new ResultSetFromSql(listStatement, jdbcParameters, sqlParameters);
             this.storedProcExec.doWithConnection(dtoListFromSql);
-            returnVal = dtoListFromSql.getDtoList();
+            ResultSet resultSet = dtoListFromSql.getResultSet();
+            returnVal = this.makeDtoListFromResultSet(resultSet);
 
-        }catch(SQLGrammarException e) {
+        } catch (SQLGrammarException e) {
             LOGGER.error("Error retrieving dto list with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
@@ -56,6 +95,73 @@ public class DtoListQuery<T> {
 
         }
 
+        return returnVal;
+
+    } // getDtoList()
+
+    /***
+     * This method does two queries. The first, when the there is no existing query ID, will populate the page
+     * frame table that enables the client to know how many pages there are given a specific page size. In other words,
+     * if there are N total records in the target query, those records will be divided by the page size, and the
+     * page frames table will provide the record boundaries with which each page can be retrieved from the target query
+     * result. Once the page frame query has been run, the result is cached so that the page frame query only has to be
+     * run once per execution cycle.
+     * @param pageSize the number of records per page
+     * @param pageNo The number of the page from with the page frame table
+     * @param pgQueryIdFromUser The ID with which to identify the page frames from a previous queury
+     * @return
+     * @throws GobiiException
+     */
+    @Transactional(propagation = Propagation.REQUIRED)
+    public PagedList<T> getDtoListPaged(Integer pageSize, Integer pageNo, String pgQueryIdFromUser) throws GobiiException {
+
+        PagedList<T> returnVal;
+
+        try {
+
+            // ideally, all query types will have a paged implementation
+            if (listStatementPaged == null) {
+                throw new GobiiException("There is no paged query support for query " + listStatement.getListSqlId());
+            }
+
+            String pgQueryId;
+            if (StringUtils.isNotEmpty(pgQueryIdFromUser)) {
+                pgQueryId = pgQueryIdFromUser;
+            } else {
+                pgQueryId = UUID.randomUUID().toString();
+            }
+
+            // in theory an existing id might have gotten nuked if the server were restarted
+            PageFrameState pageFrameState = this.pageFramesTrackingCache.getPageFrames(pgQueryId);
+            if (pageFrameState == null) {
+                pageFrameState = new PageFrameState(pageSize);
+                this.pageFramesTrackingCache.setPageFrames(pgQueryId, pageFrameState);
+            }
+
+            ResultSetFromSqlPaged resultSetFromSqlPaged = new ResultSetFromSqlPaged(listStatementPaged, pageSize, pageNo, pgQueryId, pageFrameState);
+            this.storedProcExec.doWithConnection(resultSetFromSqlPaged);
+            ResultSet resultSet = resultSetFromSqlPaged.getResultSet();
+            List<T> dtoList = this.makeDtoListFromResultSet(resultSet);
+
+            returnVal = new PagedList<>(
+                    resultSetFromSqlPaged.getPageFrameState().getCreated(),
+                    dtoList,
+                    pageSize,
+                    resultSetFromSqlPaged.getPageNo(),
+                    resultSetFromSqlPaged.getPageFrameState().getPages().size(),
+                    pgQueryId
+            );
+
+        } catch (SQLGrammarException e) {
+            LOGGER.error("Error retrieving dto list with SQL " + e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving dto list ", e);
+            throw (new GobiiDaoException(e));
+
+        }
 
         return returnVal;
 
@@ -68,11 +174,11 @@ public class DtoListQuery<T> {
 
         try {
 
-            ResultSetFromSql resultSetFromSql = new ResultSetFromSql(listStatement, jdbcParameters,sqlParameters);
+            ResultSetFromSql resultSetFromSql = new ResultSetFromSql(listStatement, jdbcParameters, sqlParameters);
             this.storedProcExec.doWithConnection(resultSetFromSql);
             returnVal = resultSetFromSql.getResultSet();
 
-        }catch(SQLGrammarException e) {
+        } catch (SQLGrammarException e) {
             LOGGER.error("Error retrieving dto list with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
@@ -87,5 +193,6 @@ public class DtoListQuery<T> {
         return returnVal;
 
     } // getDtoList()
+
 
 }
