@@ -5,6 +5,14 @@ import org.gobiiproject.gobiidao.resultset.core.listquery.ParameterizedSql;
 import java.util.HashMap;
 import java.util.Map;
 
+/*
+* This class is the core of paging sql. The page frame methods returns the sql for a table that
+* specifies the pages and their boundaries, where "boundary" is defined as a compound unique
+* value consisting of the name and the primary key. The single page method returns the sql for
+* retrieving one page's worth of rows from the page frame. The idea is that the value in each row of
+* the page frame define the last row of the previous page, such that the query gives you the PAGELIIMITth
+* page's records.
+* */
 public class PagerSql {
 
     Map<String, Object> sqlParamVals;

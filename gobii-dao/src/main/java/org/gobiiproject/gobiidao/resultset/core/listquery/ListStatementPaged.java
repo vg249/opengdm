@@ -5,6 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Map;
 
+/***
+ * Classes that implement this interface will provide sql for the page frame and single page queries.
+ */
 public interface ListStatementPaged {
 
     ListSqlId getListSqlId();

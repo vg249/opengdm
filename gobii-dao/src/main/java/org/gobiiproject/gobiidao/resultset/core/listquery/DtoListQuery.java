@@ -99,6 +99,19 @@ public class DtoListQuery<T> {
 
     } // getDtoList()
 
+    /***
+     * This method does two queries. The first, when the there is no existing query ID, will populate the page
+     * frame table that enables the client to know how many pages there are given a specific page size. In other words,
+     * if there are N total records in the target query, those records will be divided by the page size, and the
+     * page frames table will provide the record boundaries with which each page can be retrieved from the target query
+     * result. Once the page frame query has been run, the result is cached so that the page frame query only has to be
+     * run once per execution cycle.
+     * @param pageSize the number of records per page
+     * @param pageNo The number of the page from with the page frame table
+     * @param pgQueryIdFromUser The ID with which to identify the page frames from a previous queury
+     * @return
+     * @throws GobiiException
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public PagedList<T> getDtoListPaged(Integer pageSize, Integer pageNo, String pgQueryIdFromUser) throws GobiiException {
 
