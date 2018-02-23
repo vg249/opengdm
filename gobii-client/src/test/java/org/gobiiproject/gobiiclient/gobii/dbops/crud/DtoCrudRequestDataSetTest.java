@@ -537,58 +537,66 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
             currentList.add(sortedDataSets.get(idx));
         }
 
-        String temp = "temp";
-/*
+        List<Integer> pageList = new ArrayList<>(pageMap.keySet());
+        String queryKey = null;
+        for( Integer currentPageKey : pageList) {
 
-        resultEnvelope = gobiiEnvelopeRestResource
-                .get(DataSetDTO.class);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
-        retrievedDataSets = resultEnvelope.getPayload().getData();
-        for (Integer idx; idx <= retrievedDataSets.size(); idx++) {
+            RestUri pagedUriDataSet = GobiiClientContext.getInstance(null, false)
+                    .getUriFactory().pagedList(GobiiServiceRequestId.URL_DATASETS,
+                            pageSize,
+                            currentPageKey,
+                            queryKey);
+            GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceForPaged = new GobiiEnvelopeRestResource<>(pagedUriDataSet);
+            PayloadEnvelope<DataSetDTO> resultEnvelopeForPaged = gobiiEnvelopeRestResourceForPaged
+                    .get(DataSetDTO.class);
+
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForPaged.getHeader()));
+
+            Assert.assertNotNull("Error in pagination object: Current page is not set",
+                    resultEnvelopeForPaged.getHeader().getPagination().getCurrentPage());
+
+            Assert.assertNotNull("Error in pagination object: Page size is not set",
+                    resultEnvelopeForPaged.getHeader().getPagination().getPageSize());
+
+            Assert.assertNotNull("Error in pagination object: Query ID is not set",
+                    resultEnvelopeForPaged.getHeader().getPagination().getQueryId());
+
+            Assert.assertNotNull("Error in pagination object: Query Time is not set",
+                    resultEnvelopeForPaged.getHeader().getPagination().getQueryTime());
+
+            Assert.assertNotNull("Error in pagination object: Total pages is not set",
+                    resultEnvelopeForPaged.getHeader().getPagination().getTotalPages());
 
 
-            String currentDataSetName = "";
-            DataSetDTO currentDTO = retrievedDataSets.get(idx);
+            if( currentPageKey == 1 ) {
+                queryKey = resultEnvelopeForPaged.getHeader().getPagination().getQueryId();
+            } else {
+                Assert.assertTrue("The query key for subsquent pages did not match the one retrieved for the first p[page: " +
+                        queryKey + " initial vs." + resultEnvelopeForPaged.getHeader().getPagination().getQueryId() + " subsequent",
+                        queryKey.equals(resultEnvelopeForPaged.getHeader().getPagination().getQueryId()));
+            }
+
+            List<DataSetDTO> currentPageDTOs = resultEnvelopeForPaged.getPayload().getData();
+            List<DataSetDTO> currentReferenceDTOs = pageMap.get(currentPageKey);
+
+            Assert.assertTrue("The retrieved page datasets differs in length from the refereference datasets",
+                    currentPageDTOs.size() == currentReferenceDTOs.size());
+
+            for(Integer idx = 0; idx < currentPageDTOs.size(); idx++ ) {
+                DataSetDTO currentRetrievedDto = currentPageDTOs.get(idx);
+                DataSetDTO currentReferenceDTO = currentReferenceDTOs.get(idx);
+
+                Assert.assertEquals("The names of the page item do not match",
+                        currentReferenceDTO.getDatasetName(),currentRetrievedDto.getDatasetName());
+
+                Assert.assertEquals("The dataset Ids of the page item do not match",
+                        currentReferenceDTO.getDataSetId(),currentRetrievedDto.getDataSetId());
+
+
+            }
 
 
         }
-
-
-        List<DataSetDTO> sortedDataSets = retrievedDataSets
-                .stream()
-                .sorted(Comparator.comparing(DataSetDTO::getDatasetName).thenComparing(DataSetDTO::getDataSetId))
-                .collect(Collectors.toList());
-
-
-)
-
-
-        RestUri restUriDataSet = GobiiClientContext.getInstance(null, false)
-                .getUriFactory().pagedList(GobiiServiceRequestId.URL_DATASETS,
-                        4,
-                        1,
-                        null);
-        GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriDataSet);
-        PayloadEnvelope<DataSetDTO> resultEnvelope = gobiiEnvelopeRestResource
-                .get(DataSetDTO.class);
-
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
-
-        Assert.assertNotNull("Error in pagination object: Current page is not set",
-                resultEnvelope.getHeader().getPagination().getCurrentPage());
-
-        Assert.assertNotNull("Error in pagination object: Page size is not set",
-                resultEnvelope.getHeader().getPagination().getPageSize());
-
-        Assert.assertNotNull("Error in pagination object: Query ID is not set",
-                resultEnvelope.getHeader().getPagination().getQueryId());
-
-        Assert.assertNotNull("Error in pagination object: Query Time is not set",
-                resultEnvelope.getHeader().getPagination().getQueryTime());
-
-        Assert.assertNotNull("Error in pagination object: Total pages is not set",
-                resultEnvelope.getHeader().getPagination().getTotalPages());
-                */
 
     } // getPagedList()
 
