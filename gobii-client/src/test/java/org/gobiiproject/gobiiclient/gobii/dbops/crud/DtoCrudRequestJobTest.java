@@ -9,6 +9,7 @@ import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
+import org.gobiiproject.gobiiclient.gobii.Helpers.DtoRestRequestUtils;
 import org.gobiiproject.gobiiclient.gobii.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
@@ -67,7 +68,7 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
     /* This unit test should test the creation of a matrix job with dataset ID is not specified
     *  The exception should be tested in this function
     * */
-    @Ignore
+    @Test
     public void createFailMatrixJob() throws Exception {
 
         JobDTO newJobDto = TestDtoFactory.makePopulateJobDTO();
@@ -83,12 +84,12 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
                 .post(JobDTO.class, payloadEnvelope);
 
         System.out.print(resultEnvelope.getHeader().getStatus().getStatusMessages().get(0).getMessage());
-        Assert.assertTrue("The error message should contain 'Missing dataset ID for job'",
+        Assert.assertTrue("The error message should contain 'Matrix load job does not have a dataset id'",
                 resultEnvelope.getHeader()
                     .getStatus()
                     .getStatusMessages()
                     .stream()
-                    .filter(m -> m.getMessage().contains("Missing dataset ID for job"))
+                    .filter(m -> m.getMessage().contains("Matrix load job does not have a dataset id"))
                     .count()
                     > 0);
 
@@ -357,10 +358,23 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
 
     }
 
-    @Ignore
+    @Test
     @Override
     public void testEmptyResult() throws Exception {
 
+        DtoRestRequestUtils<JobDTO> dtoDtoRestRequestUtils =
+                new DtoRestRequestUtils<>(JobDTO.class, GobiiServiceRequestId.URL_JOB);
+        Integer maxId = dtoDtoRestRequestUtils.getMaxPkVal();
+        Integer nonExistentId = maxId + 1;
+
+
+        PayloadEnvelope<JobDTO> resultEnvelope =
+                dtoDtoRestRequestUtils.getResponseEnvelopeForEntityId(nonExistentId.toString());
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        Assert.assertNotNull(resultEnvelope.getPayload());
+        Assert.assertNotNull(resultEnvelope.getPayload().getData());
+        Assert.assertTrue(resultEnvelope.getPayload().getData().size() == 0 );
     }
 
 }

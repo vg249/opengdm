@@ -55,7 +55,7 @@ public class DtoRequestFileExtractorInstructionsTest {
     }
 
 
-    @Ignore// fails on SYS_INT
+    @Test// fails on SYS_INT
     public void testSendExtractorInstructionFile() throws Exception {
 
 
@@ -283,153 +283,9 @@ public class DtoRequestFileExtractorInstructionsTest {
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetStatusByFileName.getHeader()));
         ExtractorInstructionFilesDTO resultExtractorInstructionFilesDTO = resultEnvelopeForGetStatusByFileName.getPayload().getData().get(0);
+        Assert.assertNotNull("There's no id returned",resultExtractorInstructionFilesDTO.getId());
 
-        //testGetExtractorInstructionStatus
-        Assert.assertTrue(doesInstructionHaveAnExtractWithStatusEqualTo(GobiiJobStatus.STARTED, resultExtractorInstructionFilesDTO));//test if status is started since file is still in directory: INSTRUCTIONS
-
-        Path extractorInProgressFilePath = Paths.get(getFilePath(GobiiFileProcessDir.EXTRACTOR_INPROGRESS) + resultExtractorInstructionFilesDTO.getJobId() + INSTRUCTION_FILE_EXT);
-        Path extractorInstructionsFilePath = Paths.get(getFilePath(GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS) + resultExtractorInstructionFilesDTO.getJobId() + INSTRUCTION_FILE_EXT);
-        Path extractorDoneFilePath = Paths.get(getFilePath(GobiiFileProcessDir.EXTRACTOR_DONE) + resultExtractorInstructionFilesDTO.getJobId() + INSTRUCTION_FILE_EXT);
-
-        //Move instruction file to directory: INPROGRESS
-        Files.move(extractorInstructionsFilePath, extractorInProgressFilePath, StandardCopyOption.REPLACE_EXISTING);
-
-        //call another get and testGetExtractorInstructionStatus after moving files
-        resultEnvelopeForGetStatusByFileName = gobiiEnvelopeRestResourceForGetById.get(ExtractorInstructionFilesDTO.class);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetStatusByFileName.getHeader()));
-        resultExtractorInstructionFilesDTO = resultEnvelopeForGetStatusByFileName.getPayload().getData().get(0);
-        Assert.assertTrue(doesInstructionHaveAnExtractWithStatusEqualTo(GobiiJobStatus.IN_PROGRESS, resultExtractorInstructionFilesDTO));//test if status is inProgress since file was moved to directory: IN_PROGRESS
-
-        //Move instruction file to directory: DONE
-        Files.move(extractorInProgressFilePath, extractorDoneFilePath, StandardCopyOption.REPLACE_EXISTING);//call another get and testGetExtractorInstructionStatus after moving files
-        createFiles(resultExtractorInstructionFilesDTO);//create sampleFiles according to the instruction extractor files
-        resultEnvelopeForGetStatusByFileName = gobiiEnvelopeRestResourceForGetById.get(ExtractorInstructionFilesDTO.class);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetStatusByFileName.getHeader()));
-        resultExtractorInstructionFilesDTO = resultEnvelopeForGetStatusByFileName.getPayload().getData().get(0);
-        Assert.assertTrue(doesInstructionHaveAnExtractWithStatusEqualTo(GobiiJobStatus.COMPLETED, resultExtractorInstructionFilesDTO));//test if status is COMPLETED since file was in DONE and the files for each extract has been created
-
-        deleteFiles(resultExtractorInstructionFilesDTO);//create sampleFiles according to the instruction extractor files
-
-
-        //test if status is Failed since file was no longer in InProgress or in Instructions but the files for each extract has been deleted
-        resultEnvelopeForGetStatusByFileName = gobiiEnvelopeRestResourceForGetById.get(ExtractorInstructionFilesDTO.class);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetStatusByFileName.getHeader()));
-        resultExtractorInstructionFilesDTO = resultEnvelopeForGetStatusByFileName.getPayload().getData().get(0);
-        Assert.assertTrue("Expected job status " + GobiiJobStatus.FAILED.toString() + ": got "
-                + resultExtractorInstructionFilesDTO.getGobiiExtractorInstructions().get(0).getDataSetExtracts().get(0).getGobiiJobStatus().toString(),
-                doesInstructionHaveAnExtractWithStatusEqualTo(GobiiJobStatus.FAILED, resultExtractorInstructionFilesDTO));
     }
 
-    private void deleteFiles(ExtractorInstructionFilesDTO resultExtractorInstructionFilesDTO) throws Exception {
-        List<GobiiExtractorInstruction> returnVal = resultExtractorInstructionFilesDTO.getGobiiExtractorInstructions();
-
-        for (GobiiExtractorInstruction instruction : returnVal) {
-
-            for (GobiiDataSetExtract dataSetExtract : instruction.getDataSetExtracts()) {
-
-                String extractDestinationDirectory = dataSetExtract.getExtractDestinationDirectory() + "/";
-                List<String> dataExtractFileNames = getFileNamesFor("DS" + Integer.toString(dataSetExtract.getDataSet().getId()), dataSetExtract.getGobiiFileType());
-
-                for (String currentFileName : dataExtractFileNames) {
-                    String currentExtractFile = extractDestinationDirectory + currentFileName;
-                    if (new File(currentExtractFile).exists()) Files.delete(Paths.get(currentExtractFile));
-
-                } // iterate file names
-
-            } // iterate extracts
-
-        } // iterate instructions
-    }
-
-    private void createFiles(ExtractorInstructionFilesDTO resultExtractorInstructionFilesDTO) throws Exception {
-
-        List<GobiiExtractorInstruction> returnVal = resultExtractorInstructionFilesDTO.getGobiiExtractorInstructions();
-
-        for (GobiiExtractorInstruction instruction : returnVal) {
-
-            for (GobiiDataSetExtract dataSetExtract : instruction.getDataSetExtracts()) {
-
-                String extractDestinationDirectory = dataSetExtract.getExtractDestinationDirectory() + "/";
-                List<String> dataExtractFileNames = getFileNamesFor("DS" + Integer.toString(dataSetExtract.getDataSet().getId()), dataSetExtract.getGobiiFileType());
-
-                for (String currentFileName : dataExtractFileNames) {
-
-                    String currentExtractFile = extractDestinationDirectory + currentFileName;
-                    if (!new File(currentExtractFile).exists()) Files.createFile(Paths.get(currentExtractFile));
-
-                } // iterate extract file names
-
-            } // iterate extracts
-
-        } // iterate instructions
-    }
-
-    private String getFilePath(GobiiFileProcessDir extractorDirectory) throws Exception {
-        String returnVal;
-
-        //get intended path for the created directory
-        GobiiTestConfiguration gobiiTestConfiguration = new GobiiTestConfiguration();
-        String testCrop = gobiiTestConfiguration.getConfigSettings().getTestExecConfig().getTestCrop();
-        returnVal = gobiiTestConfiguration.getConfigSettings().getProcessingPath(testCrop, extractorDirectory);
-
-        //check if directory exists
-        File returnValDir = new File(returnVal);
-        if (!returnValDir.exists()) {//create directory
-            returnValDir.mkdirs();
-        }
-
-        return returnVal;
-    }
-
-    private boolean doesInstructionHaveAnExtractWithStatusEqualTo(GobiiJobStatus status, ExtractorInstructionFilesDTO resultExtractorInstructionFilesDTO) {
-
-        boolean returnVal = true;
-
-        for (GobiiExtractorInstruction gobiiExtractorInstruction : resultExtractorInstructionFilesDTO.getGobiiExtractorInstructions()) {
-
-            for (GobiiDataSetExtract gobiiDataSetExtract : gobiiExtractorInstruction.getDataSetExtracts()) {
-
-                if (!gobiiDataSetExtract.getGobiiJobStatus().equals(status)) {
-
-                    returnVal = false;
-                    break;
-
-                }
-
-            } // iterate extracts
-
-        } // iterate instructions
-
-        return returnVal;
-    }
-
-    private List<String> getFileNamesFor(String fileName, GobiiFileType gobiiFileType) throws Exception {
-
-        List<String> fileNames = new ArrayList<String>();
-
-        switch (gobiiFileType) {
-            case HAPMAP:
-                fileNames.add(fileName + ".hmp.txt");
-                break;
-
-            case FLAPJACK:
-                fileNames.add(fileName + ".map");
-                fileNames.add(fileName + ".genotype");
-                break;
-
-            case VCF:
-                //fileNames.add(fileName+"hmp.txt"); to be added
-                break;
-
-            case GENERIC:
-                fileNames.add(fileName + ".txt"); //to be added
-
-            default:
-                throw new Exception("Unknown GobiiFileType: " + gobiiFileType.toString());
-
-        }
-
-        return fileNames;
-    }
 }
 

@@ -187,7 +187,7 @@ public class DtoCrudRequestProtocolTest implements DtoCrudRequestTest{
 
 
 
-    @Ignore
+    @Test
     @Override
     public void getList() throws Exception {
 

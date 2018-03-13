@@ -177,7 +177,7 @@ public class BrapiTestAlleleMatrixSearch {
         return returnVal;
     }
 
-    @Ignore
+    @Test
     public void getAlleleMatrix() throws Exception {
 
         // STEP ONE: SUBMIT AN EXTRACTION JOB SO THAT THE DESTINATION DIRECTORY GETS CREATED BY THE SERVER
