@@ -21,10 +21,7 @@ import org.gobiiproject.gobiimodel.dto.entity.auditable.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ProtocolDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ReferenceDTO;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
+import org.junit.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -413,7 +410,7 @@ public class TestGobiiTestData {
         return returnVal;
     }
 
-    @Ignore
+    @Test
     public void testGobiiTestData() throws Exception {
         String commandline = makeCommandLine();
 
@@ -436,26 +433,27 @@ public class TestGobiiTestData {
 
         NodeList nodeList = (NodeList) xPathExpression.evaluate(document, XPathConstants.NODESET);
 
-        for(int i=0; i<nodeList.getLength(); i++) {
+            for (int i = 0; i < nodeList.getLength(); i++) {
 
-            Element element = (Element) nodeList.item(i);
-            Element parentElement = (Element) element.getParentNode();
-            Element rootElement = (Element) parentElement.getParentNode();
+                Element element = (Element) nodeList.item(i);
+                Element parentElement = (Element) element.getParentNode();
+                Element rootElement = (Element) parentElement.getParentNode();
 
-            String parentLocalName = parentElement.getLocalName();
-            String dbPkeySurrogateName = rootElement.getAttribute("DbPKeysurrogate");
+                String parentLocalName = parentElement.getLocalName();
+                String dbPkeySurrogateName = rootElement.getAttribute("DbPKeysurrogate");
 
-            Element props = (Element) parentElement.getElementsByTagName("Properties").item(0);
+                Element props = (Element) parentElement.getElementsByTagName("Properties").item(0);
 
-            String dbPkeySurrogateValue = props.getElementsByTagName(dbPkeySurrogateName).item(0).getTextContent();
+                String dbPkeySurrogateValue = props.getElementsByTagName(dbPkeySurrogateName).item(0).getTextContent();
 
-            Element dbPkey = (Element) element.getElementsByTagName("DbPKey").item(0);
+                Element dbPkey = (Element) element.getElementsByTagName("DbPKey").item(0);
 
-            String currentElementId = dbPkey.getTextContent();
+                String currentElementId = dbPkey.getTextContent();
 
-            NodeList fkeys = element.getElementsByTagName("Fkey");
+                NodeList fkeys = element.getElementsByTagName("Fkey");
 
-            checkEntities(parentLocalName, currentElementId, dbPkeySurrogateName, dbPkeySurrogateValue, fkeys);
+               if (!currentElementId.isEmpty()) checkEntities(parentLocalName, currentElementId, dbPkeySurrogateName, dbPkeySurrogateValue, fkeys);
+
         }
 
 

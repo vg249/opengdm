@@ -346,7 +346,7 @@ public class DtoRequestNameIdListTest {
     } // testGetMarkers()
 
 
-    @Ignore
+    @Test
     public void testGetMarkerGroupNames() throws Exception {
 
         testNameRetrieval(GobiiEntityNameType.MARKER_GROUP, GobiiFilterType.NONE, null);
