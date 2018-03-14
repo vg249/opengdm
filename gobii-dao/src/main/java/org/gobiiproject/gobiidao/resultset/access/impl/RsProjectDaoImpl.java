@@ -7,11 +7,7 @@ import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProject;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProjectProperties;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdProject;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetProjectByNameAndPIContact;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetProjecttNamesByContactId;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetPropertiesForProject;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetProjectDetailsByProjectId;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetProjectNames;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.*;
 import org.hibernate.exception.SQLGrammarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -223,5 +219,29 @@ public class RsProjectDaoImpl implements RsProjectDao {
 
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public ResultSet getProjectsForLoadedDatasets() throws GobiiDaoException {
+
+        ResultSet returnVal = null;
+
+        try {
+
+            Map<String, Object> parameters = new HashMap<>();
+            SpGetProjectsForLoadedDatasets spGetProjectsForLoadedDatasets = new SpGetProjectsForLoadedDatasets();
+
+            storedProcExec.doWithConnection(spGetProjectsForLoadedDatasets);
+
+            returnVal = spGetProjectsForLoadedDatasets.getResultSet();
+
+        } catch (SQLGrammarException e) {
+
+            LOGGER.error("Error retrieving project names for datasets with SQL " + e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
+        }
+
+        return returnVal;
+
+    }
 
 } // RsProjectDaoImpl

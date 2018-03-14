@@ -134,13 +134,13 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
     }
 
     @Override
-    public List<ExperimentDTO> getAlleleMatrices(Integer projectId) throws GobiiDtoMappingException {
+    public List<ExperimentDTO> getExperimentsByProjectIdForLoadedDatasets(Integer projectId) throws GobiiDtoMappingException {
 
         List<ExperimentDTO> returnVal = new ArrayList<>();
 
         try {
 
-            ResultSet resultSet = rsExperimentDao.getAlleleMatrices(projectId);
+            ResultSet resultSet = rsExperimentDao.getExperimentsByProjectIdForLoadedDatasets(projectId);
 
             Integer currentExperimentId = null;
 

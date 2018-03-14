@@ -11,11 +11,11 @@ import java.util.Map;
 /**
  * Created by VCalaminos on 6/14/2017.
  */
-public class SpGetAlleleMatricesByStudyId implements Work {
+public class SpGetExperimentsByProjectIdForLoadedDatasets implements Work {
 
     private Map<String, Object> parameters = null;
 
-    public SpGetAlleleMatricesByStudyId(Map<String,Object> parameters) { this.parameters = parameters; }
+    public SpGetExperimentsByProjectIdForLoadedDatasets(Map<String,Object> parameters) { this.parameters = parameters; }
 
     private ResultSet resultSet = null;
 
@@ -42,6 +42,7 @@ public class SpGetAlleleMatricesByStudyId implements Work {
                 "on\n" +
                 "d.experiment_id = e.experiment_id\n" +
                 "where e.project_id = ?\n" +
+                "and d.job_id is not null\n" +
                 "order by e.experiment_id, e.project_id";
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);

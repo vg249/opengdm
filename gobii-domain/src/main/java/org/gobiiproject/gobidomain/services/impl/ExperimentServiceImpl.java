@@ -127,14 +127,14 @@ public class ExperimentServiceImpl implements ExperimentService {
     }
 
     @Override
-    public List<ExperimentDTO> getAlleleMatrices(Integer projectId) throws GobiiDomainException {
+    public List<ExperimentDTO> getExperimentsByProjectIdForLoadedDatasets(Integer projectId) throws GobiiDomainException {
 
 
         List<ExperimentDTO> returnVal = null;
 
         try {
 
-            returnVal = dtoMapExperiment.getAlleleMatrices(projectId);
+            returnVal = dtoMapExperiment.getExperimentsByProjectIdForLoadedDatasets(projectId);
 
             for (ExperimentDTO currentExperimentDTO : returnVal) {
 

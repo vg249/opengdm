@@ -14,6 +14,6 @@ public interface DtoMapExperiment extends DtoMap<ExperimentDTO> {
     ExperimentDTO replace(Integer experimentId, ExperimentDTO experimentDTO) throws GobiiDtoMappingException;
     ExperimentDTO get(Integer experimentId) throws GobiiDtoMappingException;
     List<ExperimentDTO> getList() throws GobiiDtoMappingException;
-    List<ExperimentDTO> getAlleleMatrices(Integer projectId) throws GobiiDtoMappingException;
+    List<ExperimentDTO> getExperimentsByProjectIdForLoadedDatasets(Integer projectId) throws GobiiDtoMappingException;
 
 }

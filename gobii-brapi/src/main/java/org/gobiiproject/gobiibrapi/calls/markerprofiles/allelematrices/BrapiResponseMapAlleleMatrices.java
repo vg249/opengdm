@@ -22,7 +22,7 @@ public class BrapiResponseMapAlleleMatrices {
 
         List<BrapiResponseAlleleMatricesItem> returnVal = new ArrayList<>();
 
-        List<ExperimentDTO> experimentDTOS = experimentService.getAlleleMatrices(null);
+        List<ExperimentDTO> experimentDTOS = experimentService.getExperimentsByProjectIdForLoadedDatasets(null);
 
         returnVal = getListBrapiResponseAlleleMatricesItem(experimentDTOS);
 
@@ -60,7 +60,7 @@ public class BrapiResponseMapAlleleMatrices {
 
         List<BrapiResponseAlleleMatricesItem> returnVal = new ArrayList<>();
 
-        List<ExperimentDTO> experimentDTOS = experimentService.getAlleleMatrices(studyDbId);
+        List<ExperimentDTO> experimentDTOS = experimentService.getExperimentsByProjectIdForLoadedDatasets(studyDbId);
 
         returnVal = getListBrapiResponseAlleleMatricesItem(experimentDTOS);
 

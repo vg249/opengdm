@@ -201,4 +201,27 @@ public class DtoMapProjectImpl implements DtoMapProject {
         return returnVal;
 
     }
+
+    @Override
+    public List<ProjectDTO> getProjectsForLoadedDatasets() throws GobiiDtoMappingException {
+
+        List<ProjectDTO> returnVal = new ArrayList<>();
+
+        try {
+
+            ResultSet resultSet = rsProjectDao.getProjectsForLoadedDatasets();
+            while (resultSet.next()) {
+                ProjectDTO currentProjectDTO = new ProjectDTO();
+                ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
+                returnVal.add(currentProjectDTO);
+            }
+
+        } catch (SQLException e) {
+            LOGGER.error("Gobii Mapping error", e);
+        }
+
+
+        return  returnVal;
+
+    }
 }

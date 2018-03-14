@@ -26,7 +26,7 @@ public interface RsExperimentDao {
     ResultSet getExperimentsByNameProjectid(String experimentName,
                                             Integer projectId) throws GobiiDaoException;
 
-    ResultSet getAlleleMatrices(Integer projectId) throws GobiiDaoException;
+    ResultSet getExperimentsByProjectIdForLoadedDatasets(Integer projectId) throws GobiiDaoException;
 
 
 }
