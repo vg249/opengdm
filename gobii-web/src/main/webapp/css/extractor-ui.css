@@ -98,3 +98,6 @@ button:disabled {
     white-space: nowrap;
 }
 
+div.ui-datatable-scrollable-body {
+    overflow-y: scroll;
+}
