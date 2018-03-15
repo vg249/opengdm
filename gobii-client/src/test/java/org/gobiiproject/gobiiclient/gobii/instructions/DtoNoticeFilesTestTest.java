@@ -11,6 +11,7 @@ import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
+import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.junit.AfterClass;
@@ -114,7 +115,7 @@ public class DtoNoticeFilesTestTest {
     @Test
     public void testGetConfidentialityNotice() throws Exception {
         //*************************************************************
-        // ****************** Prove that file is not there
+        // ****************** Remove the file if it's already there
         ClassLoader classLoader = getClass().getClassLoader();
         String confidentialityFileName = "confidentiality.txt";
         RestUri restUriDelete = GobiiClientContext.getInstance(null, false)
@@ -124,13 +125,9 @@ public class DtoNoticeFilesTestTest {
         HttpMethodResult httpMethodResultDeleteNonExistent = GobiiClientContext.getInstance(null, false)
                 .getHttp()
                 .delete(restUriDelete);
-        Assert.assertTrue("Expected "
-                        + HttpStatus.SC_NOT_ACCEPTABLE
-                        + " got: "
-                        + httpMethodResultDeleteNonExistent.getResponseCode()
-                        + ": "
-                        + httpMethodResultDeleteNonExistent.getReasonPhrase() + ": " + httpMethodResultDeleteNonExistent.getPlainPayload(),
-                httpMethodResultDeleteNonExistent.getResponseCode() == HttpStatus.SC_NOT_ACCEPTABLE);
+
+        // we don't check the result because if the file wasn't already there, the result will be HttpStatus.SC_NOT_ACCEPTABLE
+        // SC_OK otherwise; we don't care as long as it's not there.
 
         //*****************************************************************
         // CHECK THAT NOTICE IS EMPTY
