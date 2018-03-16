@@ -228,11 +228,6 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                                                 <h3 class="panel-title">Included Markers</h3>
                                                             </div>
                                                             <div class="panel-body">
-                                                                <sample-list-type
-                                                                        [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                                                        (onHeaderStatusMessage)="handleHeaderStatusMessage($event)">
-                                                                </sample-list-type>
-                                                                <hr style="width: 100%; color: black; height: 1px; background-color:black;"/>
                                                                 <sample-marker-box
                                                                         [gobiiExtractFilterType]="gobiiExtractFilterType"
                                                                         (onSampleMarkerError)="handleHeaderStatusMessage($event)">
@@ -394,7 +389,7 @@ export class ExtractorRoot implements OnInit {
         let scope$ = this;
         this._dtoRequestServiceServerConfigs.get(new DtoRequestItemServerConfigs()).subscribe(serverConfigs => {
 
-                if (serverConfigs && ( serverConfigs.length > 0 )) {
+                if (serverConfigs && (serverConfigs.length > 0)) {
                     scope$.serverConfigList = serverConfigs;
 
                     let serverCrop: String =
@@ -494,7 +489,6 @@ export class ExtractorRoot implements OnInit {
     public displaySampleMarkerBox: boolean = false;
     public reinitProjectList: boolean = false;
     public gobiiExtractFilterType: GobiiExtractFilterType;
-
 
     private refreshJobId() {
 
@@ -609,7 +603,7 @@ export class ExtractorRoot implements OnInit {
             this.displaySelectorForAllProjects = true;
             this.displaySelectorDataType = true;
             this.displaySelectorPlatform = true;
-            this.displaySampleListTypeSelector = true;
+            this.displaySampleListTypeSelector = false;
 
             this.displaySelectorExperiment = false;
             this.displayAvailableDatasets = false;
