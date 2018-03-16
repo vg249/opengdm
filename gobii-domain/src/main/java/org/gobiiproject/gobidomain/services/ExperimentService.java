@@ -19,6 +19,6 @@ public interface ExperimentService {
     ExperimentDTO replaceExperiment(Integer experimentId, ExperimentDTO experimentDTO) throws GobiiDomainException;
     List<ExperimentDTO> getExperiments() throws GobiiDomainException;
     ExperimentDTO getExperimentById(Integer experimentId) throws GobiiDomainException;
-    List<ExperimentDTO> getAlleleMatrices(Integer projectId) throws GobiiDomainException;
+    List<ExperimentDTO> getExperimentsByProjectIdForLoadedDatasets(Integer projectId) throws GobiiDomainException;
 
 }

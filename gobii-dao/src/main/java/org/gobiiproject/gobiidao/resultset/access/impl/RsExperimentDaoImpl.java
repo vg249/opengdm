@@ -7,7 +7,7 @@ import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsExperiment;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdExperiment;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetAlleleMatrices;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetAlleleMatricesByStudyId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetExperimentsByProjectIdForLoadedDatasets;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetExperimentByNameProjectId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetExperimentDetailsByExperimentId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetExperimentNames;
@@ -166,7 +166,7 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public ResultSet getAlleleMatrices(Integer projectId) throws GobiiDaoException {
+    public ResultSet getExperimentsByProjectIdForLoadedDatasets(Integer projectId) throws GobiiDaoException {
 
         ResultSet returnVal = null;
 
@@ -177,11 +177,11 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
                 Map<String, Object> parameters = new HashMap<>();
                 parameters.put("projectId", projectId);
 
-                SpGetAlleleMatricesByStudyId spGetAlleleMatricesByStudyId = new SpGetAlleleMatricesByStudyId(parameters);
+                SpGetExperimentsByProjectIdForLoadedDatasets spGetExperimentsByProjectIdForLoadedDatasets = new SpGetExperimentsByProjectIdForLoadedDatasets(parameters);
 
-                storedProcExec.doWithConnection(spGetAlleleMatricesByStudyId);
+                storedProcExec.doWithConnection(spGetExperimentsByProjectIdForLoadedDatasets);
 
-                returnVal = spGetAlleleMatricesByStudyId.getResultSet();
+                returnVal = spGetExperimentsByProjectIdForLoadedDatasets.getResultSet();
 
             } else {
 

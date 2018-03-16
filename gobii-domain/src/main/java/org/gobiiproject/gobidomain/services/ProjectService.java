@@ -19,5 +19,6 @@ public interface ProjectService {
     ProjectDTO replaceProject(Integer projectId, ProjectDTO projectDTO) throws GobiiDomainException;
     List<ProjectDTO> getProjects() throws GobiiDomainException;
     ProjectDTO getProjectById(Integer projectId) throws GobiiDomainException;
+    List<ProjectDTO> getProjectsForLoadedDatasets() throws GobiiDomainException;
     
 }

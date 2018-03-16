@@ -152,4 +152,32 @@ public class ProjectServiceImpl implements ProjectService {
         return returnVal;
     }
 
+    @Override
+    public List<ProjectDTO> getProjectsForLoadedDatasets() throws GobiiDomainException {
+
+        List<ProjectDTO> returnVal;
+        try {
+
+            returnVal = dtoMapProject.getProjectsForLoadedDatasets();
+
+            for (ProjectDTO currentProjectDTO : returnVal) {
+                currentProjectDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
+                currentProjectDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+            }
+
+            if (null == returnVal) {
+                returnVal = new ArrayList<>();
+            }
+
+        } catch (Exception e) {
+
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+
+        }
+
+        return returnVal;
+
+    }
+
 } // ProjectServiceImpl
