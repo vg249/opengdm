@@ -737,14 +737,7 @@ export class ExtractorRoot implements OnInit {
             .submit(this.gobiiExtractFilterType)
             .subscribe(instructions => {
                 this.refreshJobId();
-                //if you refresh the entire tree, the perceived responsiveness of the app is slow, because
-                // the status message indicating that submission succeeded doesn't show up until after all
-                // the GETs that refresh the tree. So best to just leave the criteria in place with a new job
-                // id and let the user decide whether to re-submit (if you don't refresh the job ID the
-                // resubmission fails because the instruction file already exists.
-                // This may be a bad plan if it encourages people to resubmit the same job over and over again.
-                // We are going to need some kind of submission throttling on the server side.
-                //this.handleClearTree()
+                this.handleClearTree()
             });
     }
 
