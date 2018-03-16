@@ -28,10 +28,17 @@ public class SpGetProjectsForLoadedDatasets implements Work {
                 "project p,\n" +
                 "experiment e,\n" +
                 "dataset d\n" +
+                "inner join \n" +
+                "job j \n" +
+                "on \n" +
+                "j.job_id = d.job_id \n" +
                 "where\n" +
                 "p.project_id = e.project_id\n" +
                 "and e.experiment_id = d.experiment_id\n" +
-                "and d.job_id is not null";
+                "and (\n" +
+                "(j.type_id::text = (select cvid::text from getcvid('load', 'job_type', 1)) and j.status::text = (select cvid::text from getcvid('completed', 'job_status', 1)))\n" +
+                "or (j.type_id::text = (select cvid::text from getcvid('extract', 'job_type', 1)))\n" +
+                ")";
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
 
