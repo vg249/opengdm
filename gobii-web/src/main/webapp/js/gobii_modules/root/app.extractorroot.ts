@@ -228,11 +228,6 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                                                 <h3 class="panel-title">Included Markers</h3>
                                                             </div>
                                                             <div class="panel-body">
-                                                                <sample-list-type
-                                                                        [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                                                        (onHeaderStatusMessage)="handleHeaderStatusMessage($event)">
-                                                                </sample-list-type>
-                                                                <hr style="width: 100%; color: black; height: 1px; background-color:black;"/>
                                                                 <sample-marker-box
                                                                         [gobiiExtractFilterType]="gobiiExtractFilterType"
                                                                         (onSampleMarkerError)="handleHeaderStatusMessage($event)">
@@ -394,7 +389,7 @@ export class ExtractorRoot implements OnInit {
         let scope$ = this;
         this._dtoRequestServiceServerConfigs.get(new DtoRequestItemServerConfigs()).subscribe(serverConfigs => {
 
-                if (serverConfigs && ( serverConfigs.length > 0 )) {
+                if (serverConfigs && (serverConfigs.length > 0)) {
                     scope$.serverConfigList = serverConfigs;
 
                     let serverCrop: String =
@@ -481,20 +476,7 @@ export class ExtractorRoot implements OnInit {
 // ********************************************** EXPORT TYPE SELECTION AND FLAGS
 
 
-    public displayAvailableDatasets: boolean = true;
-    public displaySelectorPi: boolean = true;
-    public doPrincipleInvestigatorTreeNotifications: boolean = false;
-    public displaySelectorProjectForPi: boolean = true;
-    public displaySelectorForAllProjects: boolean = false;
-    public displaySelectorExperiment: boolean = true;
-    public displaySelectorDataType: boolean = false;
-    public displaySelectorPlatform: boolean = false;
-    public displayIncludedDatasetsGrid: boolean = true;
-    public displaySampleListTypeSelector: boolean = false;
-    public displaySampleMarkerBox: boolean = false;
-    public reinitProjectList: boolean = false;
     public gobiiExtractFilterType: GobiiExtractFilterType;
-
 
     private refreshJobId() {
 
@@ -561,23 +543,9 @@ export class ExtractorRoot implements OnInit {
 
             this.fileItemService.loadFilter(this.gobiiExtractFilterType, FilterParamNames.DATASET_FILTER_OPTIONAL, null);
 
-            this.doPrincipleInvestigatorTreeNotifications = false;
             this.fileItemService.setItemLabelType(this.gobiiExtractFilterType,
                 FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,
                 NameIdLabelType.UNKNOWN);
-            this.displaySelectorPi = true;
-            this.displaySelectorProjectForPi = true;
-            this.displaySelectorForAllProjects = false;
-            this.displaySelectorExperiment = true;
-            this.displayAvailableDatasets = true;
-            this.displayIncludedDatasetsGrid = true;
-
-            this.displaySelectorDataType = false;
-            this.displaySelectorPlatform = false;
-            this.displaySampleListTypeSelector = false;
-            this.displaySampleMarkerBox = false;
-            this.reinitProjectList = false;
-
 
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
 
@@ -599,24 +567,10 @@ export class ExtractorRoot implements OnInit {
                 null);
 
 
-            this.displaySelectorPi = true;
-            this.doPrincipleInvestigatorTreeNotifications = true;
             this.fileItemService.setItemLabelType(this.gobiiExtractFilterType,
                 FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,
                 NameIdLabelType.ALL);
 
-            this.displaySelectorProjectForPi = false;
-            this.displaySelectorForAllProjects = true;
-            this.displaySelectorDataType = true;
-            this.displaySelectorPlatform = true;
-            this.displaySampleListTypeSelector = true;
-
-            this.displaySelectorExperiment = false;
-            this.displayAvailableDatasets = false;
-            this.displayIncludedDatasetsGrid = false;
-            this.displaySampleMarkerBox = false;
-
-            this.reinitProjectList = true;
 
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
 
@@ -627,24 +581,6 @@ export class ExtractorRoot implements OnInit {
             this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                 FilterParamNames.PLATFORMS,
                 null);
-
-
-            this.displaySelectorPi = false;
-            this.displaySelectorDataType = true;
-            this.displaySelectorPlatform = true;
-            this.displaySampleMarkerBox = true;
-
-            this.displaySelectorProjectForPi = false;
-            this.displaySelectorForAllProjects = false;
-            this.doPrincipleInvestigatorTreeNotifications = false;
-            this.displaySelectorProjectForPi = false;
-            this.displaySelectorExperiment = false;
-            this.displayAvailableDatasets = false;
-            this.displayIncludedDatasetsGrid = false;
-            this.displaySampleListTypeSelector = false;
-
-            this.reinitProjectList = false;
-
 
         }
 
