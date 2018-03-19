@@ -17,7 +17,9 @@ import {FileItemService} from "../services/core/file-item-service";
     template: `<select (change)="handleFileItemSelected($event)">
         <option *ngFor="let fileItem of fileItems$ | async"
                 [value]="fileItem.getFileItemUniqueId()"
-                [selected]="fileItem.getSelected()">{{fileItem.getItemName()}}
+                [selected]="fileItem.getSelected()"
+                title="{{fileItem.getItemName()}}">
+              {{fileItem.getItemName().length < 30 ? fileItem.getItemName().substr(0,29) : fileItem.getItemName().substr(0,26).concat("...")}}
         </option>
     </select>
     ` // end template
