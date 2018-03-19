@@ -23,7 +23,7 @@ public class BrapiResponseMapStudiesSearch {
 
         List<BrapiResponseStudiesSearchItem> returnVal = new ArrayList<>();
 
-        List<ProjectDTO> projectDTOS = projectService.getProjects();
+        List<ProjectDTO> projectDTOS = projectService.getProjectsForLoadedDatasets();
         for( ProjectDTO projectDTO : projectDTOS ) {
 
 

@@ -14,6 +14,8 @@ public class BrapiResponseAlleleMatricesItem {
     private String description;
     private String lastUpdated;
     private String studyDbId;
+    private Integer totalMarkers;
+    private Integer totalSamples;
 
     public String getName() {
         return name;
@@ -54,4 +56,12 @@ public class BrapiResponseAlleleMatricesItem {
     public void setStudyDbId(String studyDbId) {
         this.studyDbId = studyDbId;
     }
+
+    public Integer getTotalMarkers() { return totalMarkers; }
+
+    public void setTotalMarkers(Integer totalMarkers) { this.totalMarkers = totalMarkers; }
+
+    public Integer getTotalSamples() { return totalSamples; }
+
+    public void setTotalSamples(Integer totalSamples) { this.totalSamples = totalSamples; }
 }
