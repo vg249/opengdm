@@ -39,12 +39,17 @@ public class BrapiResponseMapAlleleMatrices {
 
             for(DataSetDTO dataSetDTO : currentDataSetList) {
 
+                Integer totalMarkers = dataSetDTO.getTotalMarkers();
+                Integer totalSamples = dataSetDTO.getTotalSamples();
+
                 BrapiResponseAlleleMatricesItem brapiResponseAlleleMatricesItem = new BrapiResponseAlleleMatricesItem();
-                brapiResponseAlleleMatricesItem.setName(experimentDTO.getExperimentName() + "-" +dataSetDTO.getDatasetName());
+                brapiResponseAlleleMatricesItem.setName(experimentDTO.getExperimentName() + "-" +dataSetDTO.getDatasetName() + "("+totalMarkers+"*"+totalSamples+")");
                 brapiResponseAlleleMatricesItem.setLastUpdated(DateUtils.makeDateYYYYMMDD());
                 brapiResponseAlleleMatricesItem.setMatrixDbId(dataSetDTO.getDataSetId().toString());
                 brapiResponseAlleleMatricesItem.setStudyDbId(experimentDTO.getProjectId().toString());
                 brapiResponseAlleleMatricesItem.setDescription("Dummy description " + dataSetDTO.getDataSetId().toString());
+                brapiResponseAlleleMatricesItem.setTotalMarkers(totalMarkers);
+                brapiResponseAlleleMatricesItem.setTotalSamples(totalSamples);
                 returnVal.add(brapiResponseAlleleMatricesItem);
 
             }
