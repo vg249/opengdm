@@ -68,7 +68,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
                         selector: 'name-id-list-box',
                         inputs: ['gobiiExtractFilterType', 'filterParamName'],
                         outputs: [],
-                        template: "<select (change)=\"handleFileItemSelected($event)\">\n        <option *ngFor=\"let fileItem of fileItems$ | async\"\n                [value]=\"fileItem.getFileItemUniqueId()\"\n                [selected]=\"fileItem.getSelected()\">{{fileItem.getItemName()}}\n        </option>\n    </select>\n    " // end template
+                        template: "<select class=\"nameIdListBox\" (change)=\"handleFileItemSelected($event)\" >\n        <option *ngFor=\"let fileItem of fileItems$ | async\"\n                [value]=\"fileItem.getFileItemUniqueId()\"\n                [selected]=\"fileItem.getSelected()\"\n                title=\"{{fileItem.getItemName()}}\">\n              {{fileItem.getItemName().length < 30 ? fileItem.getItemName().substr(0,29) : fileItem.getItemName().substr(0,24).concat(\" . . .\")}}\n        </option>\n    </select>\n    " // end template
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
                         file_item_service_1.FileItemService])

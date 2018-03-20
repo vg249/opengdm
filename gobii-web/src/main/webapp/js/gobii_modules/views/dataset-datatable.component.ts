@@ -20,7 +20,7 @@ import {CvFilters, CvFilterType} from "../model/cv-filter-type";
 import {EntitySubType, EntityType} from "../model/type-entity";
 import {GobiiFileItemCompoundId} from "../model/gobii-file-item-compound-id";
 import {ExtractorItemType} from "../model/type-extractor-item";
-
+// import {TooltipModule} from "/primeng/primeng";
 
 @Component({
     selector: 'dataset-datatable',
@@ -45,7 +45,6 @@ import {ExtractorItemType} from "../model/type-extractor-item";
                 <!--</name-id-list-box>-->
 
             </div> <!--status selector row -->
-
             <p-dataTable [value]="datasetsFileItems$ | async"
                          [(selection)]="selectedDatasets"
                          (onRowSelect)="handleRowSelect($event)"
@@ -78,21 +77,37 @@ import {ExtractorItemType} from "../model/type-extractor-item";
                 </p-column>
                 <p-column field="_entity.datasetName"
                           header="Name"
-                          [style]="{'width': '18%'}"></p-column>
+                          [style]="{'width': '18%'}">
+                    <ng-template pTemplate="body" let-col let-fi="rowData">
+                        <span pTooltip="{{fi._entity.datasetName}}" tooltipPosition="left"> {{fi._entity.datasetName}} </span>
+                    </ng-template>
+                </p-column>
                 <p-column field="_entity.projectName"
                           header="Project"
-                          [style]="{'width': '18%'}"></p-column>
+                          [style]="{'width': '18%'}">
+                    <ng-template pTemplate="body" let-col let-fi="rowData">
+                        <span pTooltip="{{fi._entity.projectName}}" tooltipPosition="left"> {{fi._entity.projectName}} </span>
+                    </ng-template>
+                </p-column>
                 <p-column field="_entity.experimentName"
                           header="Experiment"
-                          [style]="{'width': '18%'}"></p-column>
+                          [style]="{'width': '18%'}">
+                    <ng-template pTemplate="body" let-col let-fi="rowData">
+                        <span pTooltip="{{fi._entity.experimentName}}" tooltipPosition="left"> {{fi._entity.experimentName}} </span>
+                    </ng-template>
+                </p-column>
                 <p-column field="_entity.piEmail"
                           header="PI"
-                          [style]="{'width': '18%','overflow': 'inherit'}"></p-column>
+                          [style]="{'width': '18%'}">
+                    <ng-template pTemplate="body" let-col let-fi="rowData">
+                        <span pTooltip="{{fi._entity.piEmail}}" tooltipPosition="left"> {{fi._entity.piEmail}} </span>
+                    </ng-template>
+                </p-column>
                 <!--<p-column field="_entity.jobStatusName" header="Status"></p-column>-->
                 <!--<p-column field="_entity.jobTypeName" header="Type"></p-column>-->
                 <p-column field="jobSubmittedDate"
                           header="Status"
-                          [style]="{'width': '18%','overflow': 'inherit'}">
+                          [style]="{'width': '18%'}">
                     <ng-template let-col let-fi="rowData" pTemplate="body">
                         {{fi._entity.jobTypeName === "load" ? "loaded on " : fi._entity.jobTypeName === "extract" ? "extracted on " : "unprocessed"}}
                         {{fi._entity[col.field] | date:'yyyy-MM-dd HH:mm' }}
