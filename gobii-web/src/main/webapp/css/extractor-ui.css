@@ -101,3 +101,10 @@ button:disabled {
 div.ui-datatable-scrollable-body {
     overflow-y: scroll;
 }
+
+.nameIdListBox{
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 40px;
+}

@@ -14,7 +14,7 @@ import {FileItemService} from "../services/core/file-item-service";
     selector: 'name-id-list-box',
     inputs: ['gobiiExtractFilterType','filterParamName'],
     outputs: [],
-    template: `<select (change)="handleFileItemSelected($event)">
+    template: `<select class="nameIdListBox" (change)="handleFileItemSelected($event)" >
         <option *ngFor="let fileItem of fileItems$ | async"
                 [value]="fileItem.getFileItemUniqueId()"
                 [selected]="fileItem.getSelected()"
