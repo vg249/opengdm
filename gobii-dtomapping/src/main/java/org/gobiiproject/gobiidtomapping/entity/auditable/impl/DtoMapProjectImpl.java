@@ -212,7 +212,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
             ResultSet resultSet = rsProjectDao.getProjectsForLoadedDatasets();
             while (resultSet.next()) {
                 ProjectDTO currentProjectDTO = new ProjectDTO();
-                ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
+                ResultColumnApplicator.applyColumnValues(resultSet, currentProjectDTO);
                 returnVal.add(currentProjectDTO);
             }
 
