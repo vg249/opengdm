@@ -6,12 +6,7 @@ import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsExperiment;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdExperiment;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetAlleleMatrices;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetExperimentsByProjectIdForLoadedDatasets;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetExperimentByNameProjectId;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetExperimentDetailsByExperimentId;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetExperimentNames;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.SpGetExperimentNamesByProjectId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.*;
 import org.hibernate.exception.SQLGrammarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -185,11 +180,11 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
 
             } else {
 
-                SpGetAlleleMatrices spGetAlleleMatrices = new SpGetAlleleMatrices();
+                SpGetExperimentsForLoadedDatasets spGetExperimentsForLoadedDatasets = new SpGetExperimentsForLoadedDatasets();
 
-                storedProcExec.doWithConnection(spGetAlleleMatrices);
+                storedProcExec.doWithConnection(spGetExperimentsForLoadedDatasets);
 
-                returnVal = spGetAlleleMatrices.getResultSet();
+                returnVal = spGetExperimentsForLoadedDatasets.getResultSet();
             }
 
 
