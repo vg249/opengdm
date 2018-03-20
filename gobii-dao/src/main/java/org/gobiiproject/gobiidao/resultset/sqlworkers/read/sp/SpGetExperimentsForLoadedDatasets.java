@@ -6,21 +6,18 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
 
 /**
- * Created by VCalaminos on 6/14/2017.
+ * Created by VCalaminos on 3/20/2018.
  */
-public class SpGetExperimentsByProjectIdForLoadedDatasets implements Work {
+public class SpGetExperimentsForLoadedDatasets implements Work {
 
-    private Map<String, Object> parameters = null;
-
-    public SpGetExperimentsByProjectIdForLoadedDatasets(Map<String,Object> parameters) { this.parameters = parameters; }
+    public SpGetExperimentsForLoadedDatasets() {
+    }
 
     private ResultSet resultSet = null;
 
     public ResultSet getResultSet() { return resultSet; }
-
 
     @Override
     public void execute(Connection dbConnection) throws SQLException {
@@ -34,7 +31,7 @@ public class SpGetExperimentsByProjectIdForLoadedDatasets implements Work {
                 "d.name as dataset_name, \n" +
                 "d.callinganalysis_id, \n" +
                 "e.code, \n" +
-                "e.data_file, \n" +
+                "e.data_file,\n" +
                 "(select gettotaldnarunsindataset from gettotaldnarunsindataset(d.dataset_id::text)) as totalsamples,\n" +
                 "(select gettotaldnarunsindataset from gettotaldnarunsindataset(d.dataset_id::text)) as totalmarkers\n" +
                 "from \n" +
@@ -47,19 +44,14 @@ public class SpGetExperimentsByProjectIdForLoadedDatasets implements Work {
                 "job j\n" +
                 "on\n" +
                 "j.job_id = d.job_id\n" +
-                "where \n" +
-                "e.project_id = ?\n" +
-                "and (\n" +
+                "where ( \n" +
                 "(j.type_id::text = (select cvid::text from getcvid('load', 'job_type', 1)) and j.status::text = (select cvid::text from getcvid('completed', 'job_status', 1)))\n" +
                 "or (j.type_id::text = (select cvid::text from getcvid('extract', 'job_type', 1)))\n" +
                 ")\n" +
                 "order by e.experiment_id, e.project_id";
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
-        preparedStatement.setInt(1, (Integer) parameters.get("projectId"));
         resultSet = preparedStatement.executeQuery();
 
-
     }
-
 }
