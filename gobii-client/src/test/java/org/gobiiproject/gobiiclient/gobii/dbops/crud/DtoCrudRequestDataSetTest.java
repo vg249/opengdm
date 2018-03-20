@@ -537,6 +537,7 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
             currentList.add(sortedDataSets.get(idx));
         }
 
+        // now iterate pages, per page map
         List<Integer> pageList = new ArrayList<>(pageMap.keySet());
         String queryKey = null;
         for( Integer currentPageKey : pageList) {
@@ -596,7 +597,7 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
             }
 
 
-        }
+        } // iterate pages
 
     } // getPagedList()
 

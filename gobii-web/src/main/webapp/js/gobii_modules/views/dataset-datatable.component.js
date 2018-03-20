@@ -94,7 +94,8 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/
                             gobiiExtractFilterType: type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET,
                             gobiiCompoundUniqueId: new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.DATASET, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.UNKNOWN)),
                             filterValue: filterValue,
-                            entityLasteUpdated: null
+                            entityLasteUpdated: null,
+                            paging: null
                         }
                     }));
                 };
@@ -186,6 +187,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/
                         if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
                             if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
                                 this.fileItemService.loadEntityList(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.DATASET_LIST);
+                                this.fileItemService.loadPagedEntityList(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.DATASET_LIST_PAGED, 5, 0);
                                 this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.CV_JOB_STATUS, null);
                             }
                         } // if we have a new filter type

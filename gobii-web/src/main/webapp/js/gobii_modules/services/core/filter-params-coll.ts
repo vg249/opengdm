@@ -202,7 +202,8 @@ export class FilterParamsColl {
                                         gobiiExtractFilterType: GobiiExtractFilterType.WHOLE_DATASET,
                                         gobiiCompoundUniqueId: cvJobStatusCompoundUniqueId,
                                         filterValue: completedItem.getItemId(),
-                                        entityLasteUpdated: null
+                                        entityLasteUpdated: null,
+                                        paging: null
                                     }
                                 }
                             );
@@ -238,7 +239,8 @@ export class FilterParamsColl {
                                 gobiiExtractFilterType: GobiiExtractFilterType.WHOLE_DATASET,
                                 gobiiCompoundUniqueId: cvDatasetCompoundUniqueId,
                                 filterValue: "completed",
-                                entityLasteUpdated: null
+                                entityLasteUpdated: null,
+                                paging: null
                             }
                         }
                     );
@@ -247,6 +249,38 @@ export class FilterParamsColl {
 
                 return returnVal;
             }));
+
+        // same as previous except configured for paging
+        this.addFilter(FilterParams
+            .build(FilterParamNames.DATASET_LIST_PAGED,
+                GobiiExtractFilterType.WHOLE_DATASET,
+                EntityType.DATASET)
+            .setFilterType(FilterType.ENTITY_LIST)
+            .setOnLoadFilteredItemsAction((fileItems, filterValue) => {
+
+                let returnVal: fileAction.LoadFilterAction = null;
+
+                if (!filterValue) {
+
+                    returnVal = new fileAction.LoadFilterAction(
+                        {
+                            filterId: FilterParamNames.DATASET_LIST_STATUS,
+                            filter: {
+                                gobiiExtractFilterType: GobiiExtractFilterType.WHOLE_DATASET,
+                                gobiiCompoundUniqueId: cvDatasetCompoundUniqueId,
+                                filterValue: "completed",
+                                entityLasteUpdated: null,
+                                paging: null
+                            }
+                        }
+                    );
+
+                }
+
+                return returnVal;
+            })
+            .setIsPaged(true));
+
 
         this.addFilter(FilterParams
             .build(FilterParamNames.DATASET_BY_DATASET_ID,

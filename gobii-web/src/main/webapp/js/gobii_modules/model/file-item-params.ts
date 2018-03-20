@@ -103,6 +103,10 @@ export class FilterParams extends GobiiFileItemCompoundId {
                         private _childFileItemParams: FilterParams[],
                         private _isDynamicFilterValue: boolean,
                         private _isDynamicDataLoad: boolean,
+                        private _isPaged: boolean,
+                        private _pageSize: number,
+                        private _pageNum: number,
+                        private _pagedQueryId: string,
                         private onLoadFilteredItemsAction: (fileItems: GobiiFileItem[], filterValue:string) => any) {
 
         super(_extractorItemType, _entityType, _entitySubType, _cvFilterType, _cvFilterValue);
@@ -128,6 +132,10 @@ export class FilterParams extends GobiiFileItemCompoundId {
             [],
             true,
             true,
+            false,
+            null,
+            null,
+            null,
             null));
     }
 
@@ -276,6 +284,43 @@ export class FilterParams extends GobiiFileItemCompoundId {
 
     getOnLoadFilteredItemsAction(): (fileItems: GobiiFileItem[], filterValue:string) => any {
         return this.onLoadFilteredItemsAction;
+    }
+
+
+    getIsPaged(): boolean {
+        return this._isPaged;
+    }
+
+    setIsPaged(value: boolean): FilterParams {
+        this._isPaged  = value;
+        return this;
+    }
+
+    getPageNum(): number {
+        return this._pageNum;
+    }
+
+    setPageNum(value: number): FilterParams {
+        this._pageNum= value;
+        return this;
+    }
+
+    getPageSize(): number {
+        return this._pageSize;
+    }
+
+    setPageSize(value: number): FilterParams {
+        this._pageSize= value;
+        return this;
+    }
+
+    getPagedQueryId(): string {
+        return this._pagedQueryId;
+    }
+
+    setPagedQueryId(value: string): FilterParams {
+        this._pagedQueryId;
+        return this;
     }
 
 }

@@ -32,16 +32,24 @@ export class DtoRequestItemGfi implements DtoRequestItem<GobiiFileItem[]> {
         let returnVal: string = "gobii/v1";
 
         if (this.fileItemParams.getQueryName() === FilterParamNames.DATASET_BY_DATASET_ID ||
-            this.fileItemParams.getQueryName() === FilterParamNames.DATASET_LIST) {
+            this.fileItemParams.getQueryName() === FilterParamNames.DATASET_LIST ||
+            this.fileItemParams.getQueryName() === FilterParamNames.DATASET_LIST_PAGED) {
             returnVal += "/datasets";
 
             if (this.fileItemParams.getFilterType() === FilterType.ENTITY_BY_ID) {
                 returnVal += "/" + this.id;
             }
-        } else if(this.fileItemParams.getQueryName() === FilterParamNames.ANALYSES_BY_DATASET_ID) {
+        } else if (this.fileItemParams.getQueryName() === FilterParamNames.ANALYSES_BY_DATASET_ID) {
             returnVal += "/datasets/" + this.id + "/analyses";
         }
 
+        if (this.fileItemParams.getIsPaged()) {
+
+            returnVal += "?pageSize=" + this.fileItemParams.getPageSize().toString() +
+                encodeURIComponent('&') + "pageNo=" + this.fileItemParams.getPageNum().toString() +
+                encodeURIComponent('&') + "queryId=" + this.fileItemParams.getPagedQueryId();
+
+        }
 
         return returnVal;
     } // getUrl()
@@ -58,6 +66,9 @@ export class DtoRequestItemGfi implements DtoRequestItem<GobiiFileItem[]> {
     }
 
     public resultFromJson(json): GobiiFileItem[] {
+
+
+
 
         let returnVal: GobiiFileItem[] = [];
         json.payload.data.forEach(jsonItem => {

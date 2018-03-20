@@ -255,7 +255,8 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
                         CvFilterType.UNKNOWN,
                         CvFilters.get(CvFilterType.UNKNOWN)),
                     filterValue: filterValue,
-                    entityLasteUpdated: null
+                    entityLasteUpdated: null,
+                    paging: null
                 }
             }
         ))
@@ -386,6 +387,10 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
 
                 if( this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET ) {
                     this.fileItemService.loadEntityList(this.gobiiExtractFilterType, FilterParamNames.DATASET_LIST);
+                    this.fileItemService.loadPagedEntityList(this.gobiiExtractFilterType,
+                        FilterParamNames.DATASET_LIST_PAGED,
+                        5,
+                        0);
                     this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                         FilterParamNames.CV_JOB_STATUS,
                         null);

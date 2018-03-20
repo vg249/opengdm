@@ -28,6 +28,7 @@ import {JsonToGfiDataset} from "../app/jsontogfi/json-to-gfi-dataset";
 import {FilterParamsColl} from "./filter-params-coll";
 import {GobiiFileItemEntityRelation} from "../../model/gobii-file-item-entity-relation";
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
+import {StatusLevel} from "../../model/type-status-level";
 
 @Injectable()
 export class FileItemService {
@@ -56,7 +57,8 @@ export class FileItemService {
                         gobiiExtractFilterType: gobiiExtractFilterType,
                         gobiiCompoundUniqueId: filterParams,
                         filterValue: filterValue,
-                        entityLasteUpdated: null
+                        entityLasteUpdated: null,
+                        paging: null
                     }
                 }
             );
@@ -403,8 +405,8 @@ export class FileItemService {
                             let disregardDateSensitiveQueryingForNow = false;
                             if (disregardDateSensitiveQueryingForNow ||
                                 (
-                                    (!fileHistoryItem ) ||
-                                    ( entityStats.lastModified > fileHistoryItem.entityLasteUpdated)
+                                    (!fileHistoryItem) ||
+                                    (entityStats.lastModified > fileHistoryItem.entityLasteUpdated)
                                 )
                             ) {
                                 // Either the data have never been retrieved at all for a given filter value,
@@ -416,7 +418,7 @@ export class FileItemService {
 
                                             let minEntityLastUpdated: Date;
                                             let fileItems: GobiiFileItem[] = [];
-                                            if (nameIds && ( nameIds.length > 0 )) {
+                                            if (nameIds && (nameIds.length > 0)) {
 
                                                 nameIds.forEach(nameIdItem => {
 
@@ -599,7 +601,8 @@ export class FileItemService {
                                             gobiiExtractFilterType: gobiiExtractFilterType,
                                             gobiiCompoundUniqueId: filterParamsToLoad,
                                             filterValue: filterParamsToLoad.getFkEntityFilterValue(),
-                                            entityLasteUpdated: fileHistoryItem.entityLasteUpdated
+                                            entityLasteUpdated: fileHistoryItem.entityLasteUpdated,
+                                            paging: null
                                         }
                                     }
                                 );
@@ -687,7 +690,8 @@ export class FileItemService {
                         gobiiExtractFilterType: gobiiExtractFilterType,
                         gobiiCompoundUniqueId: filterParamsToLoad,
                         filterValue: filterParamsToLoad.getFkEntityFilterValue(),
-                        entityLasteUpdated: null //not sure about this
+                        entityLasteUpdated: null, //not sure about this
+                        paging: null
                     }
                 }
             );
@@ -787,6 +791,33 @@ export class FileItemService {
     } // loadEntityList()
 
 
+    public loadPagedEntityList(gobiiExtractFilterType: GobiiExtractFilterType,
+                          fileItemParamName: FilterParamNames,
+                               pageSize: number,
+                               pageNum: number) {
+
+        let fileItemParams: FilterParams = this.filterParamsColl.getFilter(fileItemParamName, gobiiExtractFilterType);
+
+        if(fileItemParams.getIsPaged()) {
+            fileItemParams.setPageSize(pageSize);
+            fileItemParams.setPageNum(pageNum);
+            if (fileItemParams && fileItemParams.getFilterType() === FilterType.ENTITY_LIST) {
+                this.makeFileItemActionsFromEntities(gobiiExtractFilterType, fileItemParams, null, false)
+                    .subscribe(action => {
+                        if (action) {
+                            this.store.dispatch(action);
+                        }
+                    });
+            }
+        } else {
+            this.store.dispatch(new historyAction.AddStatusAction(new HeaderStatusMessage("This filter does not support paging: " + fileItemParamName,
+                StatusLevel.ERROR,
+                null)));
+        }
+
+    } // loadEntityList()
+
+
     private makeFileItemActionsFromEntities(gobiiExtractFilterType: GobiiExtractFilterType,
                                             filterParams: FilterParams,
                                             filterValue: string,
@@ -804,6 +835,9 @@ export class FileItemService {
                 if (filterParams.getFilterType() === FilterType.ENTITY_LIST) {
 
 
+                    // for the moment the only query that does consumes this method is the one
+                    // that gets dataset entities; when it is use for other types, we will need
+                    // a polymorphic approach to making JsonToGfi instances.
                     let dtoRequestItemGfi: DtoRequestItemGfi = new DtoRequestItemGfi(filterParams,
                         null,
                         new JsonToGfiDataset(filterParams, this.filterParamsColl));
@@ -824,8 +858,8 @@ export class FileItemService {
                                                 && fhi.filterId === filterParams.getQueryName()
                                             );
 
-                                        if ((!fileHistoryItem ) ||
-                                            ( entityStats.lastModified > fileHistoryItem.entityLasteUpdated)
+                                        if ((!fileHistoryItem) ||
+                                            (entityStats.lastModified > fileHistoryItem.entityLasteUpdated)
                                         ) {
 
                                             this.fileItemRequestService
@@ -867,7 +901,8 @@ export class FileItemService {
                                                         gobiiExtractFilterType: gobiiExtractFilterType,
                                                         gobiiCompoundUniqueId: filterParams,
                                                         filterValue: filterParams.getFkEntityFilterValue(),
-                                                        entityLasteUpdated: fileHistoryItem.entityLasteUpdated
+                                                        entityLasteUpdated: fileHistoryItem.entityLasteUpdated,
+                                                        paging: null
                                                     }
                                                 }
                                             );

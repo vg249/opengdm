@@ -143,7 +143,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                                         gobiiExtractFilterType: type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET,
                                         gobiiCompoundUniqueId: cvJobStatusCompoundUniqueId,
                                         filterValue: completedItem.getItemId(),
-                                        entityLasteUpdated: null
+                                        entityLasteUpdated: null,
+                                        paging: null
                                     }
                                 });
                             }
@@ -163,12 +164,34 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                                     gobiiExtractFilterType: type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET,
                                     gobiiCompoundUniqueId: cvDatasetCompoundUniqueId,
                                     filterValue: "completed",
-                                    entityLasteUpdated: null
+                                    entityLasteUpdated: null,
+                                    paging: null
                                 }
                             });
                         }
                         return returnVal;
                     }));
+                    // same as previous except configured for paging
+                    this.addFilter(file_item_params_1.FilterParams
+                        .build(file_item_param_names_1.FilterParamNames.DATASET_LIST_PAGED, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.DATASET)
+                        .setFilterType(filter_type_1.FilterType.ENTITY_LIST)
+                        .setOnLoadFilteredItemsAction(function (fileItems, filterValue) {
+                        var returnVal = null;
+                        if (!filterValue) {
+                            returnVal = new fileAction.LoadFilterAction({
+                                filterId: file_item_param_names_1.FilterParamNames.DATASET_LIST_STATUS,
+                                filter: {
+                                    gobiiExtractFilterType: type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET,
+                                    gobiiCompoundUniqueId: cvDatasetCompoundUniqueId,
+                                    filterValue: "completed",
+                                    entityLasteUpdated: null,
+                                    paging: null
+                                }
+                            });
+                        }
+                        return returnVal;
+                    })
+                        .setIsPaged(true));
                     this.addFilter(file_item_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.DATASET_BY_DATASET_ID, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.DATASET)
                         .setFilterType(filter_type_1.FilterType.ENTITY_BY_ID));

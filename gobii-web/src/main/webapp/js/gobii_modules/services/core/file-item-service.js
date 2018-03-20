@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-entity", "../../views/entity-labels", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/gobii-file-item", "../../model/dto-header-status-message", "../../model/type-process", "./name-id-service", "../../store/actions/history-action", "../../store/actions/fileitem-action", "../../store/reducers", "@ngrx/store", "../../model/name-id-label-type", "../../model/filter-type", "../../model/file-item-param-names", "rxjs/Observable", "rxjs/add/operator/expand", "./dto-request.service", "../app/dto-request-item-entity-stats", "../app/dto-request-item-gfi", "../app/jsontogfi/json-to-gfi-dataset", "./filter-params-coll", "../../model/gobii-file-item-entity-relation", "../../model/gobii-file-item-compound-id"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-entity", "../../views/entity-labels", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/gobii-file-item", "../../model/dto-header-status-message", "../../model/type-process", "./name-id-service", "../../store/actions/history-action", "../../store/actions/fileitem-action", "../../store/reducers", "@ngrx/store", "../../model/name-id-label-type", "../../model/filter-type", "../../model/file-item-param-names", "rxjs/Observable", "rxjs/add/operator/expand", "./dto-request.service", "../app/dto-request-item-entity-stats", "../app/dto-request-item-gfi", "../app/jsontogfi/json-to-gfi-dataset", "./filter-params-coll", "../../model/gobii-file-item-entity-relation", "../../model/gobii-file-item-compound-id", "../../model/type-status-level"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_entity_1, entity_labels_1, type_extractor_item_1, type_extractor_filter_1, cv_filter_type_1, gobii_file_item_1, dto_header_status_message_1, type_process_1, name_id_service_1, historyAction, fileItemActions, fromRoot, store_1, name_id_label_type_1, filter_type_1, file_item_param_names_1, Observable_1, dto_request_service_1, dto_request_item_entity_stats_1, dto_request_item_gfi_1, json_to_gfi_dataset_1, filter_params_coll_1, gobii_file_item_entity_relation_1, gobii_file_item_compound_id_1, FileItemService;
+    var core_1, type_entity_1, entity_labels_1, type_extractor_item_1, type_extractor_filter_1, cv_filter_type_1, gobii_file_item_1, dto_header_status_message_1, type_process_1, name_id_service_1, historyAction, fileItemActions, fromRoot, store_1, name_id_label_type_1, filter_type_1, file_item_param_names_1, Observable_1, dto_request_service_1, dto_request_item_entity_stats_1, dto_request_item_gfi_1, json_to_gfi_dataset_1, filter_params_coll_1, gobii_file_item_entity_relation_1, gobii_file_item_compound_id_1, type_status_level_1, FileItemService;
     return {
         setters: [
             function (core_1_1) {
@@ -89,6 +89,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
             },
             function (gobii_file_item_compound_id_1_1) {
                 gobii_file_item_compound_id_1 = gobii_file_item_compound_id_1_1;
+            },
+            function (type_status_level_1_1) {
+                type_status_level_1 = type_status_level_1_1;
             }
         ],
         execute: function () {
@@ -111,7 +114,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                 gobiiExtractFilterType: gobiiExtractFilterType,
                                 gobiiCompoundUniqueId: filterParams,
                                 filterValue: filterValue,
-                                entityLasteUpdated: null
+                                entityLasteUpdated: null,
+                                paging: null
                             }
                         });
                         this.store.dispatch(loadAction);
@@ -497,7 +501,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                             gobiiExtractFilterType: gobiiExtractFilterType,
                                             gobiiCompoundUniqueId: filterParamsToLoad,
                                             filterValue: filterParamsToLoad.getFkEntityFilterValue(),
-                                            entityLasteUpdated: fileHistoryItem.entityLasteUpdated
+                                            entityLasteUpdated: fileHistoryItem.entityLasteUpdated,
+                                            paging: null
                                         }
                                     });
                                     observer.next(loadAction);
@@ -551,7 +556,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                 gobiiExtractFilterType: gobiiExtractFilterType,
                                 gobiiCompoundUniqueId: filterParamsToLoad,
                                 filterValue: filterParamsToLoad.getFkEntityFilterValue(),
-                                entityLasteUpdated: null //not sure about this
+                                entityLasteUpdated: null,
+                                paging: null
                             }
                         });
                         observer.next(loadAction);
@@ -616,6 +622,25 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                         });
                     }
                 }; // loadEntityList()
+                FileItemService.prototype.loadPagedEntityList = function (gobiiExtractFilterType, fileItemParamName, pageSize, pageNum) {
+                    var _this = this;
+                    var fileItemParams = this.filterParamsColl.getFilter(fileItemParamName, gobiiExtractFilterType);
+                    if (fileItemParams.getIsPaged()) {
+                        fileItemParams.setPageSize(pageSize);
+                        fileItemParams.setPageNum(pageNum);
+                        if (fileItemParams && fileItemParams.getFilterType() === filter_type_1.FilterType.ENTITY_LIST) {
+                            this.makeFileItemActionsFromEntities(gobiiExtractFilterType, fileItemParams, null, false)
+                                .subscribe(function (action) {
+                                if (action) {
+                                    _this.store.dispatch(action);
+                                }
+                            });
+                        }
+                    }
+                    else {
+                        this.store.dispatch(new historyAction.AddStatusAction(new dto_header_status_message_1.HeaderStatusMessage("This filter does not support paging: " + fileItemParamName, type_status_level_1.StatusLevel.ERROR, null)));
+                    }
+                }; // loadEntityList()
                 FileItemService.prototype.makeFileItemActionsFromEntities = function (gobiiExtractFilterType, filterParams, filterValue, recurse) {
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
@@ -624,6 +649,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                 filterParams.setFkEntityFilterValue(filterValue);
                             }
                             if (filterParams.getFilterType() === filter_type_1.FilterType.ENTITY_LIST) {
+                                // for the moment the only query that does consumes this method is the one
+                                // that gets dataset entities; when it is use for other types, we will need
+                                // a polymorphic approach to making JsonToGfi instances.
                                 var dtoRequestItemGfi_1 = new dto_request_item_gfi_1.DtoRequestItemGfi(filterParams, null, new json_to_gfi_dataset_1.JsonToGfiDataset(filterParams, _this.filterParamsColl));
                                 _this.entityStatsService.get(new dto_request_item_entity_stats_1.DtoRequestItemEntityStats(dto_request_item_entity_stats_1.EntityRequestType.LasetUpdated, filterParams.getEntityType(), null, null))
                                     .subscribe(function (entityStats) {
@@ -664,7 +692,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                                     gobiiExtractFilterType: gobiiExtractFilterType,
                                                     gobiiCompoundUniqueId: filterParams,
                                                     filterValue: filterParams.getFkEntityFilterValue(),
-                                                    entityLasteUpdated: fileHistoryItem.entityLasteUpdated
+                                                    entityLasteUpdated: fileHistoryItem.entityLasteUpdated,
+                                                    paging: null
                                                 }
                                             });
                                             observer.next(loadAction);

@@ -118,7 +118,7 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
             FilterParams = (function (_super) {
                 __extends(FilterParams, _super);
                 function FilterParams(_entityType, //first four args are passed to base class ctor
-                    _entitySubType, _cvFilterType, _cvFilterValue, _extractorItemType, _queryName, _filterType, _fkEntityFilterValue, _gobiiExtractFilterType, _nameIdLabelType, _parentFileItemParams, _childFileItemParams, _isDynamicFilterValue, _isDynamicDataLoad, onLoadFilteredItemsAction) {
+                    _entitySubType, _cvFilterType, _cvFilterValue, _extractorItemType, _queryName, _filterType, _fkEntityFilterValue, _gobiiExtractFilterType, _nameIdLabelType, _parentFileItemParams, _childFileItemParams, _isDynamicFilterValue, _isDynamicDataLoad, _isPaged, _pageSize, _pageNum, _pagedQueryId, onLoadFilteredItemsAction) {
                     if (_entityType === void 0) { _entityType = type_entity_1.EntityType.UNKNOWN; }
                     if (_entitySubType === void 0) { _entitySubType = type_entity_1.EntitySubType.UNKNOWN; }
                     if (_cvFilterType === void 0) { _cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN; }
@@ -137,11 +137,15 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
                     _this._childFileItemParams = _childFileItemParams;
                     _this._isDynamicFilterValue = _isDynamicFilterValue;
                     _this._isDynamicDataLoad = _isDynamicDataLoad;
+                    _this._isPaged = _isPaged;
+                    _this._pageSize = _pageSize;
+                    _this._pageNum = _pageNum;
+                    _this._pagedQueryId = _pagedQueryId;
                     _this.onLoadFilteredItemsAction = onLoadFilteredItemsAction;
                     return _this;
                 }
                 FilterParams.build = function (queryName, gobiiExtractFilterType, entityType) {
-                    return (new FilterParams(entityType, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null, type_extractor_item_1.ExtractorItemType.ENTITY, queryName, filter_type_1.FilterType.NONE, null, gobiiExtractFilterType, name_id_label_type_1.NameIdLabelType.UNKNOWN, null, [], true, true, null));
+                    return (new FilterParams(entityType, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null, type_extractor_item_1.ExtractorItemType.ENTITY, queryName, filter_type_1.FilterType.NONE, null, gobiiExtractFilterType, name_id_label_type_1.NameIdLabelType.UNKNOWN, null, [], true, true, false, null, null, null, null));
                 };
                 FilterParams.prototype.getQueryName = function () {
                     return this._queryName;
@@ -250,6 +254,34 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
                 };
                 FilterParams.prototype.getOnLoadFilteredItemsAction = function () {
                     return this.onLoadFilteredItemsAction;
+                };
+                FilterParams.prototype.getIsPaged = function () {
+                    return this._isPaged;
+                };
+                FilterParams.prototype.setIsPaged = function (value) {
+                    this._isPaged = value;
+                    return this;
+                };
+                FilterParams.prototype.getPageNum = function () {
+                    return this._pageNum;
+                };
+                FilterParams.prototype.setPageNum = function (value) {
+                    this._pageNum = value;
+                    return this;
+                };
+                FilterParams.prototype.getPageSize = function () {
+                    return this._pageSize;
+                };
+                FilterParams.prototype.setPageSize = function (value) {
+                    this._pageSize = value;
+                    return this;
+                };
+                FilterParams.prototype.getPagedQueryId = function () {
+                    return this._pagedQueryId;
+                };
+                FilterParams.prototype.setPagedQueryId = function (value) {
+                    this._pagedQueryId;
+                    return this;
                 };
                 return FilterParams;
             }(gobii_file_item_compound_id_1.GobiiFileItemCompoundId));

@@ -51,7 +51,8 @@ System.register(["@angular/core", "../../model/type-process", "../../model/file-
                 DtoRequestItemGfi.prototype.getUrl = function () {
                     var returnVal = "gobii/v1";
                     if (this.fileItemParams.getQueryName() === file_item_param_names_1.FilterParamNames.DATASET_BY_DATASET_ID ||
-                        this.fileItemParams.getQueryName() === file_item_param_names_1.FilterParamNames.DATASET_LIST) {
+                        this.fileItemParams.getQueryName() === file_item_param_names_1.FilterParamNames.DATASET_LIST ||
+                        this.fileItemParams.getQueryName() === file_item_param_names_1.FilterParamNames.DATASET_LIST_PAGED) {
                         returnVal += "/datasets";
                         if (this.fileItemParams.getFilterType() === filter_type_1.FilterType.ENTITY_BY_ID) {
                             returnVal += "/" + this.id;
@@ -59,6 +60,11 @@ System.register(["@angular/core", "../../model/type-process", "../../model/file-
                     }
                     else if (this.fileItemParams.getQueryName() === file_item_param_names_1.FilterParamNames.ANALYSES_BY_DATASET_ID) {
                         returnVal += "/datasets/" + this.id + "/analyses";
+                    }
+                    if (this.fileItemParams.getIsPaged()) {
+                        returnVal += "?pageSize=" + this.fileItemParams.getPageSize().toString() +
+                            encodeURIComponent('&') + "pageNo=" + this.fileItemParams.getPageNum().toString() +
+                            encodeURIComponent('&') + "queryId=" + this.fileItemParams.getPagedQueryId();
                     }
                     return returnVal;
                 }; // getUrl()

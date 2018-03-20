@@ -60,7 +60,12 @@ export class LoadFilterAction implements Action {
             gobiiExtractFilterType: GobiiExtractFilterType,
             gobiiCompoundUniqueId:GobiiFileItemCompoundId,
             filterValue: string,
-            entityLasteUpdated: Date
+            entityLasteUpdated: Date,
+            paging: {
+                pageSize: number,
+                queryKey: string,
+                currentPage: number
+            }
         }
     }) {
     }
