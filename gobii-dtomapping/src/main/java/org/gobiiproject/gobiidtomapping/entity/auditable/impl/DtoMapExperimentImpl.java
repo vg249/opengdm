@@ -177,8 +177,8 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
                 dataSetDTO.setDataSetId(resultSet.getInt("matrixdbid"));
                 dataSetDTO.setDatasetName(resultSet.getString("dataset_name"));
                 dataSetDTO.setCallingAnalysisId(resultSet.getInt("callinganalysis_id"));
-                dataSetDTO.setTotalSamples(resultSet.getInt("totalsamples"));
-                dataSetDTO.setTotalMarkers(resultSet.getInt("totalmarkers"));
+                dataSetDTO.setTotalSamples(resultSet.getInt("sampleCount"));
+                dataSetDTO.setTotalMarkers(resultSet.getInt("markerCount"));
 
                 currentExperimentDTO.getDatasets().add(dataSetDTO);
 
