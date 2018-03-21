@@ -86,7 +86,7 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
                             }); // subscribe http
                         }
                         else {
-                            var header = new header_1.Header(null, null, new status_1.Status(false, [new dto_header_status_message_1.HeaderStatusMessage("Unauthenticated", null, null)]), null);
+                            var header = new header_1.Header(null, null, new status_1.Status(false, [new dto_header_status_message_1.HeaderStatusMessage("Unauthenticated", null, null)]), null, null);
                             observer.error(header);
                         }
                     }); // observable
@@ -121,7 +121,7 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
                             }); // subscribe http
                         }
                         else {
-                            var header = new header_1.Header(null, null, new status_1.Status(false, [new dto_header_status_message_1.HeaderStatusMessage("Unauthenticated", null, null)]), null);
+                            var header = new header_1.Header(null, null, new status_1.Status(false, [new dto_header_status_message_1.HeaderStatusMessage("Unauthenticated", null, null)]), null, null);
                             observer.error(header);
                         }
                     }); // observable

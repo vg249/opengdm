@@ -67,9 +67,6 @@ export class DtoRequestItemGfi implements DtoRequestItem<GobiiFileItem[]> {
 
     public resultFromJson(json): GobiiFileItem[] {
 
-
-
-
         let returnVal: GobiiFileItem[] = [];
         json.payload.data.forEach(jsonItem => {
 
