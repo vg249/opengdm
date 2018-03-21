@@ -7,13 +7,13 @@ import java.util.List;
 public class PagedList<T> {
 
 
-    public PagedList(Date queryTime, List<T> dtoList, Integer pageSize, Integer currentPageNo, Integer totalPages, String pgQueryId) {
+    public PagedList(Date queryTime, List<T> dtoList, Integer pageSize, Integer currentPageNo, Integer totalPages, String pagingQueryId) {
         this.queryTime = queryTime;
         this.dtoList = dtoList;
         this.pageSize = pageSize;
         this.currentPageNo = currentPageNo;
         this.totalPages = totalPages;
-        this.pgQueryId = pgQueryId;
+        this.pagingQueryId = pagingQueryId;
     }
 
     private Date queryTime;
@@ -21,7 +21,7 @@ public class PagedList<T> {
     private Integer pageSize;
     private Integer currentPageNo;
     private Integer totalPages;
-    private String pgQueryId;
+    private String pagingQueryId;
 
     public Date getQueryTime() {
         return queryTime;
@@ -43,7 +43,7 @@ public class PagedList<T> {
         return totalPages;
     }
 
-    public String getPgQueryId() {
-        return pgQueryId;
+    public String getPagingQueryId() {
+        return pagingQueryId;
     }
 }

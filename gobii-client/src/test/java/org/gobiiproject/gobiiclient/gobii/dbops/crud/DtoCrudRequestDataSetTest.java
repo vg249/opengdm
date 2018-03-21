@@ -36,7 +36,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -560,7 +559,7 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
                     resultEnvelopeForPaged.getHeader().getPagination().getPageSize());
 
             Assert.assertNotNull("Error in pagination object: Query ID is not set",
-                    resultEnvelopeForPaged.getHeader().getPagination().getQueryId());
+                    resultEnvelopeForPaged.getHeader().getPagination().getPagedQueryId());
 
             Assert.assertNotNull("Error in pagination object: Query Time is not set",
                     resultEnvelopeForPaged.getHeader().getPagination().getQueryTime());
@@ -570,11 +569,11 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
 
 
             if( currentPageKey == 1 ) {
-                queryKey = resultEnvelopeForPaged.getHeader().getPagination().getQueryId();
+                queryKey = resultEnvelopeForPaged.getHeader().getPagination().getPagedQueryId();
             } else {
                 Assert.assertTrue("The query key for subsquent pages did not match the one retrieved for the first p[page: " +
-                        queryKey + " initial vs." + resultEnvelopeForPaged.getHeader().getPagination().getQueryId() + " subsequent",
-                        queryKey.equals(resultEnvelopeForPaged.getHeader().getPagination().getQueryId()));
+                        queryKey + " initial vs." + resultEnvelopeForPaged.getHeader().getPagination().getPagedQueryId() + " subsequent",
+                        queryKey.equals(resultEnvelopeForPaged.getHeader().getPagination().getPagedQueryId()));
             }
 
             List<DataSetDTO> currentPageDTOs = resultEnvelopeForPaged.getPayload().getData();
