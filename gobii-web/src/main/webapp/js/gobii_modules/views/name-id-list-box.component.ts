@@ -19,7 +19,8 @@ import {FileItemService} from "../services/core/file-item-service";
                 [value]="fileItem.getFileItemUniqueId()"
                 [selected]="fileItem.getSelected()"
                 title="{{fileItem.getItemName()}}">
-              {{fileItem.getItemName().length < 30 ? fileItem.getItemName().substr(0,29) : fileItem.getItemName().substr(0,24).concat(" . . .")}}
+            {{fileItem.getItemName().length < 34 ? fileItem.getItemName() : fileItem.getItemName().substr(0,30).concat(" . . .")}}
+            
         </option>
     </select>
     ` // end template
