@@ -134,6 +134,7 @@ public class DtoListQuery<T> {
             // in theory an existing id might have gotten nuked if the server were restarted
             PageFrameState pageFrameState = this.pageFramesTrackingCache.getPageFrames(pgQueryId);
             if (pageFrameState == null) {
+                pgQueryId = UUID.randomUUID().toString(); //force client to refresh query id
                 pageFrameState = new PageFrameState(pageSize);
                 this.pageFramesTrackingCache.setPageFrames(pgQueryId, pageFrameState);
             }
