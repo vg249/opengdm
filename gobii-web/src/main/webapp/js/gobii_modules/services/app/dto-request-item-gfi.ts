@@ -46,8 +46,8 @@ export class DtoRequestItemGfi implements DtoRequestItem<GobiiFileItem[]> {
         if (this.fileItemParams.getIsPaged()) {
 
             returnVal += "?pageSize=" + this.fileItemParams.getPageSize().toString() +
-                encodeURIComponent('&') + "pageNo=" + this.fileItemParams.getPageNum().toString() +
-                encodeURIComponent('&') + "queryId=" + this.fileItemParams.getPagedQueryId();
+                "&pageNo=" + this.fileItemParams.getPageNum().toString() +
+                "&queryId=" + this.fileItemParams.getPagedQueryId();
 
         }
 
