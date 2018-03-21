@@ -1,8 +1,5 @@
 package org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrices;
 
-import java.util.List;
-import java.util.Map;
-
 /**
  * Created by Phil on 12/15/2016.
  */
@@ -14,8 +11,8 @@ public class BrapiResponseAlleleMatricesItem {
     private String description;
     private String lastUpdated;
     private String studyDbId;
-    private Integer totalMarkers;
-    private Integer totalSamples;
+    private Integer markerCount;
+    private Integer sampleCount;
 
     public String getName() {
         return name;
@@ -57,11 +54,11 @@ public class BrapiResponseAlleleMatricesItem {
         this.studyDbId = studyDbId;
     }
 
-    public Integer getTotalMarkers() { return totalMarkers; }
+    public Integer getMarkerCount() { return markerCount; }
 
-    public void setTotalMarkers(Integer totalMarkers) { this.totalMarkers = totalMarkers; }
+    public void setMarkerCount(Integer markerCount) { this.markerCount = markerCount; }
 
-    public Integer getTotalSamples() { return totalSamples; }
+    public Integer getSampleCount() { return sampleCount; }
 
-    public void setTotalSamples(Integer totalSamples) { this.totalSamples = totalSamples; }
+    public void setSampleCount(Integer sampleCount) { this.sampleCount = sampleCount; }
 }

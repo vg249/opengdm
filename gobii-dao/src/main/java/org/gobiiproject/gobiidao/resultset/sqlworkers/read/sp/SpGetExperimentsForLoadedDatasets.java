@@ -32,8 +32,8 @@ public class SpGetExperimentsForLoadedDatasets implements Work {
                 "d.callinganalysis_id, \n" +
                 "e.code, \n" +
                 "e.data_file,\n" +
-                "(select gettotaldnarunsindataset from gettotaldnarunsindataset(d.dataset_id::text)) as totalsamples,\n" +
-                "(select gettotalmarkersindataset from gettotalmarkersindataset(d.dataset_id::text)) as totalmarkers\n" +
+                "(select gettotaldnarunsindataset from gettotaldnarunsindataset(d.dataset_id::text)) as sampleCount,\n" +
+                "(select gettotalmarkersindataset from gettotalmarkersindataset(d.dataset_id::text)) as markerCount\n" +
                 "from \n" +
                 "experiment e \n" +
                 "join \n" +
