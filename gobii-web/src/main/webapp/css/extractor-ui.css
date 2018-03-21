@@ -105,6 +105,14 @@ div.ui-datatable-scrollable-body {
 .nameIdListBox{
     width: 100%;
     overflow: hidden;
-    text-overflow: ellipsis;
-    padding-right: 40px;
+    max-width: 300px !important;
+    min-width: 100px !important;
+}
+
+.tableTooltip {
+    max-width: 500px !important;
+}
+
+td{
+    width: 300px !important;
 }
