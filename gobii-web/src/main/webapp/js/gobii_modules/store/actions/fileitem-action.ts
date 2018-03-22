@@ -4,6 +4,7 @@ import {FilterParams} from "../../model/file-item-params";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 import {FilterParamNames} from "../../model/file-item-param-names";
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
+import {Pagination} from "../../model/payload/pagination";
 
 export const ADD_TO_EXTRACT = '[GobiiFileItem] Add to Extract';
 export const ADD_TO_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Add to Extract by ID';
@@ -34,7 +35,8 @@ export class LoadFileItemListWithFilterAction implements Action {
             gobiiExtractFilterType: GobiiExtractFilterType,
             gobiiCompoundUniqueId: GobiiFileItemCompoundId,
             filterValue: string,
-            entityLasteUpdated: Date
+            entityLasteUpdated: Date,
+            pagination: Pagination
         }
 
     }) {
@@ -61,11 +63,7 @@ export class LoadFilterAction implements Action {
             gobiiCompoundUniqueId:GobiiFileItemCompoundId,
             filterValue: string,
             entityLasteUpdated: Date,
-            paging: {
-                pageSize: number,
-                queryKey: string,
-                currentPage: number
-            }
+            pagination: Pagination
         }
     }) {
     }

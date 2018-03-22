@@ -21,6 +21,7 @@ import {EntitySubType, EntityType} from "../model/type-entity";
 import {GobiiFileItemCompoundId} from "../model/gobii-file-item-compound-id";
 import {ExtractorItemType} from "../model/type-extractor-item";
 import {PagedFileItemList} from "../model/payload/paged-item-list";
+import {Pagination} from "../model/payload/pagination";
 
 
 @Component({
@@ -223,6 +224,7 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
     }
 
     public datasetsFileItems$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getDatsetEntities);
+    public pagination: Pagination;
     public selectedDatasets: GobiiFileItem[];
     public datasetAnalysesNames: string[] = [];
     public nameIdFilterParamTypes: any = Object.assign({}, FilterParamNames);
@@ -257,7 +259,7 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
                         CvFilters.get(CvFilterType.UNKNOWN)),
                     filterValue: filterValue,
                     entityLasteUpdated: null,
-                    paging: null
+                    pagination: null
                 }
             }
         ))
@@ -342,6 +344,7 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
 
     public handleRowChecked(checked: boolean, selectedDatasetFileItem: GobiiFileItem) {
         this.handleItemChecked(selectedDatasetFileItem.getFileItemUniqueId(), checked);
+        this.handleLoadPage(1);
     }
 
 
@@ -370,11 +373,30 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
 
     } // handleItemChecked()
 
+    private page:number = 0;
+    public handleLoadPage(pageNum:number) {
+
+        this.store.select(fromRoot.getPagingForDatasets)
+            .subscribe(
+                pgn => {
+
+                    if (pgn) {
+                        this.fileItemService.loadPagedEntityList(this.gobiiExtractFilterType,
+                            FilterParamNames.DATASET_LIST_PAGED,
+                            pgn.pagedQueryId,
+                            pgn.pageSize,
+                            this.page++);
+                    }
+                }
+            );
+    }
+
 
     @Input()
     public gobiiExtractFilterType: GobiiExtractFilterType;
 
     ngOnInit() {
+
     } // ngOnInit()
 
     // gobiiExtractType is not set until you get OnChanges
@@ -387,9 +409,10 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
             if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
 
                 if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
-                    this.fileItemService.loadEntityList(this.gobiiExtractFilterType, FilterParamNames.DATASET_LIST);
+ //                   this.fileItemService.loadEntityList(this.gobiiExtractFilterType, FilterParamNames.DATASET_LIST);
                     this.fileItemService.loadPagedEntityList(this.gobiiExtractFilterType,
                         FilterParamNames.DATASET_LIST_PAGED,
+                        null,
                         5,
                         0);
                     this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,

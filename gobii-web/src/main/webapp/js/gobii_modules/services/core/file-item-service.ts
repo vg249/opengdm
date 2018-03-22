@@ -31,6 +31,7 @@ import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 import {StatusLevel} from "../../model/type-status-level";
 import {DtoRequestItem} from "./dto-request-item";
 import {PagedFileItemList} from "../../model/payload/paged-item-list";
+import {Pagination} from "../../model/payload/pagination";
 
 @Injectable()
 export class FileItemService {
@@ -60,7 +61,7 @@ export class FileItemService {
                         gobiiCompoundUniqueId: filterParams,
                         filterValue: filterValue,
                         entityLasteUpdated: null,
-                        paging: null
+                        pagination: null
                     }
                 }
             );
@@ -548,7 +549,8 @@ export class FileItemService {
                                                         gobiiExtractFilterType: gobiiExtractFilterType,
                                                         gobiiCompoundUniqueId: filterParamsToLoad,
                                                         filterValue: filterParamsToLoad.getFkEntityFilterValue(),
-                                                        entityLasteUpdated: minEntityLastUpdated
+                                                        entityLasteUpdated: minEntityLastUpdated,
+                                                        pagination: null
                                                     }
                                                 }
                                             );
@@ -604,7 +606,7 @@ export class FileItemService {
                                             gobiiCompoundUniqueId: filterParamsToLoad,
                                             filterValue: filterParamsToLoad.getFkEntityFilterValue(),
                                             entityLasteUpdated: fileHistoryItem.entityLasteUpdated,
-                                            paging: null
+                                            pagination: null
                                         }
                                     }
                                 );
@@ -693,7 +695,7 @@ export class FileItemService {
                         gobiiCompoundUniqueId: filterParamsToLoad,
                         filterValue: filterParamsToLoad.getFkEntityFilterValue(),
                         entityLasteUpdated: null, //not sure about this
-                        paging: null
+                        pagination: null
                     }
                 }
             );
@@ -795,6 +797,7 @@ export class FileItemService {
 
     public loadPagedEntityList(gobiiExtractFilterType: GobiiExtractFilterType,
                                fileItemParamName: FilterParamNames,
+                               paedQueryId:string,
                                pageSize: number,
                                pageNum: number) {
 
@@ -803,6 +806,7 @@ export class FileItemService {
         if (fileItemParams.getIsPaged()) {
             fileItemParams.setPageSize(pageSize);
             fileItemParams.setPageNum(pageNum);
+            fileItemParams.setPagedQueryId(paedQueryId);
             if (fileItemParams && fileItemParams.getFilterType() === FilterType.ENTITY_LIST) {
                 this.makeFileItemActionsFromEntities(gobiiExtractFilterType, fileItemParams, null, false)
                     .subscribe(action => {
@@ -865,10 +869,12 @@ export class FileItemService {
                                                 .get(dtoRequestItem)
                                                 .subscribe(entityResult => {
 
+                                                        let pagination:Pagination = null;
                                                         let entityItems: GobiiFileItem[] = [];
                                                         if (filterParams.getIsPaged()) {
 
                                                             entityItems = entityResult.gobiiFileItems;
+                                                            pagination = entityResult.pagination;
 
                                                         } else {
 
@@ -890,7 +896,8 @@ export class FileItemService {
                                                                         gobiiExtractFilterType: gobiiExtractFilterType,
                                                                         gobiiCompoundUniqueId: filterParams,
                                                                         filterValue: filterValue,
-                                                                        entityLasteUpdated: date
+                                                                        entityLasteUpdated: date,
+                                                                        pagination: pagination
                                                                     }
                                                                 }
                                                             );
@@ -911,7 +918,7 @@ export class FileItemService {
                                                         gobiiCompoundUniqueId: filterParams,
                                                         filterValue: filterParams.getFkEntityFilterValue(),
                                                         entityLasteUpdated: fileHistoryItem.entityLasteUpdated,
-                                                        paging: null
+                                                        pagination: null
                                                     }
                                                 }
                                             );

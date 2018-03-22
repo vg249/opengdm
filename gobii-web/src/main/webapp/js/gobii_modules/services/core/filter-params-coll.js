@@ -158,7 +158,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                                         gobiiCompoundUniqueId: cvJobStatusCompoundUniqueId,
                                         filterValue: completedItem.getItemId(),
                                         entityLasteUpdated: null,
-                                        paging: null
+                                        pagination: null
                                     }
                                 });
                             }
@@ -179,7 +179,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                                     gobiiCompoundUniqueId: cvDatasetCompoundUniqueId,
                                     filterValue: "completed",
                                     entityLasteUpdated: null,
-                                    paging: null
+                                    pagination: null
                                 }
                             });
                         }
@@ -203,7 +203,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                                     gobiiCompoundUniqueId: cvDatasetCompoundUniqueId,
                                     filterValue: "completed",
                                     entityLasteUpdated: null,
-                                    paging: null
+                                    pagination: null
                                 }
                             });
                         }

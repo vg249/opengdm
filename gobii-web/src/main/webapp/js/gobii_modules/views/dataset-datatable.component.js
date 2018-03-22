@@ -79,6 +79,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/
                     this.analysisPanelToggle = true;
                     this.filterToExtractReady = true;
                     this.disableFilterToExtractReadyCheckbox = false;
+                    this.page = 0;
                 }
                 DatasetDatatableComponent.prototype.handleFilterToExtractReadyChecked = function (event) {
                     var filterValue;
@@ -95,7 +96,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/
                             gobiiCompoundUniqueId: new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.DATASET, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.UNKNOWN)),
                             filterValue: filterValue,
                             entityLasteUpdated: null,
-                            paging: null
+                            pagination: null
                         }
                     }));
                 };
@@ -157,6 +158,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/
                 };
                 DatasetDatatableComponent.prototype.handleRowChecked = function (checked, selectedDatasetFileItem) {
                     this.handleItemChecked(selectedDatasetFileItem.getFileItemUniqueId(), checked);
+                    this.handleLoadPage(1);
                 };
                 DatasetDatatableComponent.prototype.handleRowSelect = function (event) {
                     var selectedDatasetFileItem = event.data;
@@ -177,6 +179,15 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/
                         this.store.dispatch(new fileAction.RemoveFromExractByItemIdAction(currentFileItemUniqueId));
                     }
                 }; // handleItemChecked()
+                DatasetDatatableComponent.prototype.handleLoadPage = function (pageNum) {
+                    var _this = this;
+                    this.store.select(fromRoot.getPagingForDatasets)
+                        .subscribe(function (pgn) {
+                        if (pgn) {
+                            _this.fileItemService.loadPagedEntityList(_this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.DATASET_LIST_PAGED, pgn.pagedQueryId, pgn.pageSize, _this.page++);
+                        }
+                    });
+                };
                 DatasetDatatableComponent.prototype.ngOnInit = function () {
                 }; // ngOnInit()
                 // gobiiExtractType is not set until you get OnChanges
@@ -186,8 +197,8 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/
                         && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
                         if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
                             if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
-                                this.fileItemService.loadEntityList(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.DATASET_LIST);
-                                this.fileItemService.loadPagedEntityList(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.DATASET_LIST_PAGED, 5, 0);
+                                //                   this.fileItemService.loadEntityList(this.gobiiExtractFilterType, FilterParamNames.DATASET_LIST);
+                                this.fileItemService.loadPagedEntityList(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.DATASET_LIST_PAGED, null, 5, 0);
                                 this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.CV_JOB_STATUS, null);
                             }
                         } // if we have a new filter type

@@ -212,7 +212,7 @@ export class FilterParamsColl {
                                         gobiiCompoundUniqueId: cvJobStatusCompoundUniqueId,
                                         filterValue: completedItem.getItemId(),
                                         entityLasteUpdated: null,
-                                        paging: null
+                                        pagination: null
                                     }
                                 }
                             );
@@ -249,7 +249,7 @@ export class FilterParamsColl {
                                 gobiiCompoundUniqueId: cvDatasetCompoundUniqueId,
                                 filterValue: "completed",
                                 entityLasteUpdated: null,
-                                paging: null
+                                pagination: null
                             }
                         }
                     );
@@ -291,7 +291,7 @@ export class FilterParamsColl {
                                 gobiiCompoundUniqueId: cvDatasetCompoundUniqueId,
                                 filterValue: "completed",
                                 entityLasteUpdated: null,
-                                paging: null
+                                pagination: null
                             }
                         }
                     );

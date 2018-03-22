@@ -109,7 +109,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                 gobiiCompoundUniqueId: filterParams,
                                 filterValue: filterValue,
                                 entityLasteUpdated: null,
-                                paging: null
+                                pagination: null
                             }
                         });
                         this.store.dispatch(loadAction);
@@ -456,7 +456,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                                 gobiiExtractFilterType: gobiiExtractFilterType,
                                                 gobiiCompoundUniqueId: filterParamsToLoad,
                                                 filterValue: filterParamsToLoad.getFkEntityFilterValue(),
-                                                entityLasteUpdated: minEntityLastUpdated
+                                                entityLasteUpdated: minEntityLastUpdated,
+                                                pagination: null
                                             }
                                         });
                                         observer.next(loadAction);
@@ -496,7 +497,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                             gobiiCompoundUniqueId: filterParamsToLoad,
                                             filterValue: filterParamsToLoad.getFkEntityFilterValue(),
                                             entityLasteUpdated: fileHistoryItem.entityLasteUpdated,
-                                            paging: null
+                                            pagination: null
                                         }
                                     });
                                     observer.next(loadAction);
@@ -551,7 +552,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                 gobiiCompoundUniqueId: filterParamsToLoad,
                                 filterValue: filterParamsToLoad.getFkEntityFilterValue(),
                                 entityLasteUpdated: null,
-                                paging: null
+                                pagination: null
                             }
                         });
                         observer.next(loadAction);
@@ -616,12 +617,13 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                         });
                     }
                 }; // loadEntityList()
-                FileItemService.prototype.loadPagedEntityList = function (gobiiExtractFilterType, fileItemParamName, pageSize, pageNum) {
+                FileItemService.prototype.loadPagedEntityList = function (gobiiExtractFilterType, fileItemParamName, paedQueryId, pageSize, pageNum) {
                     var _this = this;
                     var fileItemParams = this.filterParamsColl.getFilter(fileItemParamName, gobiiExtractFilterType);
                     if (fileItemParams.getIsPaged()) {
                         fileItemParams.setPageSize(pageSize);
                         fileItemParams.setPageNum(pageNum);
+                        fileItemParams.setPagedQueryId(paedQueryId);
                         if (fileItemParams && fileItemParams.getFilterType() === filter_type_1.FilterType.ENTITY_LIST) {
                             this.makeFileItemActionsFromEntities(gobiiExtractFilterType, fileItemParams, null, false)
                                 .subscribe(function (action) {
@@ -658,9 +660,11 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                             dtoRequestService
                                                 .get(dtoRequestItem_1)
                                                 .subscribe(function (entityResult) {
+                                                var pagination = null;
                                                 var entityItems = [];
                                                 if (filterParams.getIsPaged()) {
                                                     entityItems = entityResult.gobiiFileItems;
+                                                    pagination = entityResult.pagination;
                                                 }
                                                 else {
                                                     entityItems = entityResult;
@@ -676,7 +680,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                                         gobiiExtractFilterType: gobiiExtractFilterType,
                                                         gobiiCompoundUniqueId: filterParams,
                                                         filterValue: filterValue,
-                                                        entityLasteUpdated: date
+                                                        entityLasteUpdated: date,
+                                                        pagination: pagination
                                                     }
                                                 });
                                                 observer.next(loadAction);
@@ -692,7 +697,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                                     gobiiCompoundUniqueId: filterParams,
                                                     filterValue: filterParams.getFkEntityFilterValue(),
                                                     entityLasteUpdated: fileHistoryItem.entityLasteUpdated,
-                                                    paging: null
+                                                    pagination: null
                                                 }
                                             });
                                             observer.next(loadAction);
