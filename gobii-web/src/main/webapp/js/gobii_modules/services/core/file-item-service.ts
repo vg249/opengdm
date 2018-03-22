@@ -29,6 +29,8 @@ import {FilterParamsColl} from "./filter-params-coll";
 import {GobiiFileItemEntityRelation} from "../../model/gobii-file-item-entity-relation";
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 import {StatusLevel} from "../../model/type-status-level";
+import {DtoRequestItem} from "./dto-request-item";
+import {PagedFileItemList} from "../../model/payload/paged-item-list";
 
 @Injectable()
 export class FileItemService {
@@ -792,13 +794,13 @@ export class FileItemService {
 
 
     public loadPagedEntityList(gobiiExtractFilterType: GobiiExtractFilterType,
-                          fileItemParamName: FilterParamNames,
+                               fileItemParamName: FilterParamNames,
                                pageSize: number,
                                pageNum: number) {
 
         let fileItemParams: FilterParams = this.filterParamsColl.getFilter(fileItemParamName, gobiiExtractFilterType);
 
-        if(fileItemParams.getIsPaged()) {
+        if (fileItemParams.getIsPaged()) {
             fileItemParams.setPageSize(pageSize);
             fileItemParams.setPageNum(pageNum);
             if (fileItemParams && fileItemParams.getFilterType() === FilterType.ENTITY_LIST) {
@@ -835,12 +837,7 @@ export class FileItemService {
                 if (filterParams.getFilterType() === FilterType.ENTITY_LIST) {
 
 
-                    // for the moment the only query that does consumes this method is the one
-                    // that gets dataset entities; when it is use for other types, we will need
-                    // a polymorphic approach to making JsonToGfi instances.
-                    let dtoRequestItemGfi: DtoRequestItemGfi = new DtoRequestItemGfi(filterParams,
-                        null,
-                        new JsonToGfiDataset(filterParams, this.filterParamsColl));
+                    let dtoRequestItem: DtoRequestItem<any> = filterParams.getDtoRequestItem();
 
                     this.entityStatsService.get(new DtoRequestItemEntityStats(
                         EntityRequestType.LasetUpdated,
@@ -862,9 +859,21 @@ export class FileItemService {
                                             (entityStats.lastModified > fileHistoryItem.entityLasteUpdated)
                                         ) {
 
-                                            this.fileItemRequestService
-                                                .get(dtoRequestItemGfi)
-                                                .subscribe(entityItems => {
+                                            let dtoRequestService: DtoRequestService<any> = filterParams.getDtoRequestService();
+
+                                            dtoRequestService
+                                                .get(dtoRequestItem)
+                                                .subscribe(entityResult => {
+
+                                                        let entityItems: GobiiFileItem[] = [];
+                                                        if (filterParams.getIsPaged()) {
+
+                                                            entityItems = entityResult.gobiiFileItems;
+
+                                                        } else {
+
+                                                            entityItems = entityResult;
+                                                        }
 
 
                                                         entityItems.forEach(fi => {

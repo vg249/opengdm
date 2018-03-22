@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-process", "../../model/file-item-params", "../../model/filter-type", "../../model/file-item-param-names"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-process", "../../model/file-item-params", "../../model/filter-type", "../../model/file-item-param-names", "../../model/payload/paged-item-list", "../../model/payload/pagination"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-process", "../../model/file-
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_process_1, file_item_params_1, filter_type_1, file_item_param_names_1, DtoRequestItemGfi;
+    var core_1, type_process_1, file_item_params_1, filter_type_1, file_item_param_names_1, paged_item_list_1, pagination_1, DtoRequestItemGfiPaged;
     return {
         setters: [
             function (core_1_1) {
@@ -27,11 +27,17 @@ System.register(["@angular/core", "../../model/type-process", "../../model/file-
             },
             function (file_item_param_names_1_1) {
                 file_item_param_names_1 = file_item_param_names_1_1;
+            },
+            function (paged_item_list_1_1) {
+                paged_item_list_1 = paged_item_list_1_1;
+            },
+            function (pagination_1_1) {
+                pagination_1 = pagination_1_1;
             }
         ],
         execute: function () {
-            DtoRequestItemGfi = (function () {
-                function DtoRequestItemGfi(fileItemParams, id, jsonToGfi) {
+            DtoRequestItemGfiPaged = (function () {
+                function DtoRequestItemGfiPaged(fileItemParams, id, jsonToGfi) {
                     if (id === void 0) { id = null; }
                     this.fileItemParams = fileItemParams;
                     this.id = id;
@@ -48,43 +54,40 @@ System.register(["@angular/core", "../../model/type-process", "../../model/file-
                             + " or " + filter_type_1.FilterType[filter_type_1.FilterType.ENTITY_BY_ID]);
                     }
                 }
-                DtoRequestItemGfi.prototype.getUrl = function () {
+                DtoRequestItemGfiPaged.prototype.getUrl = function () {
                     var returnVal = "gobii/v1";
-                    if (this.fileItemParams.getQueryName() === file_item_param_names_1.FilterParamNames.DATASET_BY_DATASET_ID ||
-                        this.fileItemParams.getQueryName() === file_item_param_names_1.FilterParamNames.DATASET_LIST) {
+                    if (this.fileItemParams.getQueryName() === file_item_param_names_1.FilterParamNames.DATASET_LIST_PAGED) {
                         returnVal += "/datasets";
-                        if (this.fileItemParams.getFilterType() === filter_type_1.FilterType.ENTITY_BY_ID) {
-                            returnVal += "/" + this.id;
-                        }
                     }
-                    else if (this.fileItemParams.getQueryName() === file_item_param_names_1.FilterParamNames.ANALYSES_BY_DATASET_ID) {
-                        returnVal += "/datasets/" + this.id + "/analyses";
-                    }
+                    returnVal += "?pageSize=" + this.fileItemParams.getPageSize().toString() +
+                        "&pageNo=" + this.fileItemParams.getPageNum().toString() +
+                        "&queryId=" + this.fileItemParams.getPagedQueryId();
                     return returnVal;
                 }; // getUrl()
                 // this is probably not being used anymore
-                DtoRequestItemGfi.prototype.getRequestBody = function () {
+                DtoRequestItemGfiPaged.prototype.getRequestBody = function () {
                     return JSON.stringify({
                         "processType": type_process_1.ProcessType[this.processType],
                         "id": this.id
                     });
                 };
-                DtoRequestItemGfi.prototype.resultFromJson = function (json) {
+                DtoRequestItemGfiPaged.prototype.resultFromJson = function (json) {
                     var _this = this;
-                    var returnVal = [];
+                    var fileItems = [];
                     json.payload.data.forEach(function (jsonItem) {
-                        returnVal.push(_this.jsonToGfi.convert(jsonItem));
+                        fileItems.push(_this.jsonToGfi.convert(jsonItem));
                     });
+                    var returnVal = new paged_item_list_1.PagedFileItemList(fileItems, pagination_1.Pagination.fromJSON(json.header.pagination));
                     return returnVal;
                 };
-                DtoRequestItemGfi = __decorate([
+                DtoRequestItemGfiPaged = __decorate([
                     core_1.Injectable(),
                     __metadata("design:paramtypes", [file_item_params_1.FilterParams, String, Object])
-                ], DtoRequestItemGfi);
-                return DtoRequestItemGfi;
+                ], DtoRequestItemGfiPaged);
+                return DtoRequestItemGfiPaged;
             }());
-            exports_1("DtoRequestItemGfi", DtoRequestItemGfi);
+            exports_1("DtoRequestItemGfiPaged", DtoRequestItemGfiPaged);
         }
     };
 });
-//# sourceMappingURL=dto-request-item-gfi.js.map
+//# sourceMappingURL=dto-request-item-gfi-paged.js.map

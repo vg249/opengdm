@@ -6,10 +6,12 @@ import {FilterParams} from "../../model/file-item-params";
 import {JsonToGfi} from "./jsontogfi/json-to-gfi";
 import {FilterType} from "../../model/filter-type";
 import {FilterParamNames} from "../../model/file-item-param-names";
+import {PagedFileItemList} from "../../model/payload/paged-item-list";
+import {Pagination} from "../../model/payload/pagination";
 
 
 @Injectable()
-export class DtoRequestItemGfi implements DtoRequestItem<GobiiFileItem[]> {
+export class DtoRequestItemGfiPaged implements DtoRequestItem<PagedFileItemList> {
 
     public constructor(private fileItemParams: FilterParams,
                        private id: string = null,
@@ -31,16 +33,15 @@ export class DtoRequestItemGfi implements DtoRequestItem<GobiiFileItem[]> {
 
         let returnVal: string = "gobii/v1";
 
-        if (this.fileItemParams.getQueryName() === FilterParamNames.DATASET_BY_DATASET_ID ||
-            this.fileItemParams.getQueryName() === FilterParamNames.DATASET_LIST ) {
+        if (this.fileItemParams.getQueryName() === FilterParamNames.DATASET_LIST_PAGED) {
             returnVal += "/datasets";
 
-            if (this.fileItemParams.getFilterType() === FilterType.ENTITY_BY_ID) {
-                returnVal += "/" + this.id;
-            }
-        } else if (this.fileItemParams.getQueryName() === FilterParamNames.ANALYSES_BY_DATASET_ID) {
-            returnVal += "/datasets/" + this.id + "/analyses";
         }
+
+        returnVal += "?pageSize=" + this.fileItemParams.getPageSize().toString() +
+            "&pageNo=" + this.fileItemParams.getPageNum().toString() +
+            "&queryId=" + this.fileItemParams.getPagedQueryId();
+
 
         return returnVal;
     } // getUrl()
@@ -56,14 +57,17 @@ export class DtoRequestItemGfi implements DtoRequestItem<GobiiFileItem[]> {
         })
     }
 
-    public resultFromJson(json): GobiiFileItem[] {
+    public resultFromJson(json): PagedFileItemList {
 
-        let returnVal: GobiiFileItem[] = [];
+        let fileItems: GobiiFileItem[] = [];
+
         json.payload.data.forEach(jsonItem => {
 
-            returnVal.push(this.jsonToGfi.convert(jsonItem));
+            fileItems.push(this.jsonToGfi.convert(jsonItem));
 
         });
+
+        let returnVal: PagedFileItemList = new PagedFileItemList(fileItems, Pagination.fromJSON(json.header.pagination));
 
         return returnVal;
 

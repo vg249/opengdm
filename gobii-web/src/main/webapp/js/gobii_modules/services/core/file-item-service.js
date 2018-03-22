@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-entity", "../../views/entity-labels", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/gobii-file-item", "../../model/dto-header-status-message", "../../model/type-process", "./name-id-service", "../../store/actions/history-action", "../../store/actions/fileitem-action", "../../store/reducers", "@ngrx/store", "../../model/name-id-label-type", "../../model/filter-type", "../../model/file-item-param-names", "rxjs/Observable", "rxjs/add/operator/expand", "./dto-request.service", "../app/dto-request-item-entity-stats", "../app/dto-request-item-gfi", "../app/jsontogfi/json-to-gfi-dataset", "./filter-params-coll", "../../model/gobii-file-item-entity-relation", "../../model/gobii-file-item-compound-id", "../../model/type-status-level"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-entity", "../../views/entity-labels", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/gobii-file-item", "../../model/dto-header-status-message", "../../model/type-process", "./name-id-service", "../../store/actions/history-action", "../../store/actions/fileitem-action", "../../store/reducers", "@ngrx/store", "../../model/name-id-label-type", "../../model/filter-type", "../../model/file-item-param-names", "rxjs/Observable", "rxjs/add/operator/expand", "./dto-request.service", "../app/dto-request-item-entity-stats", "./filter-params-coll", "../../model/gobii-file-item-entity-relation", "../../model/gobii-file-item-compound-id", "../../model/type-status-level"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_entity_1, entity_labels_1, type_extractor_item_1, type_extractor_filter_1, cv_filter_type_1, gobii_file_item_1, dto_header_status_message_1, type_process_1, name_id_service_1, historyAction, fileItemActions, fromRoot, store_1, name_id_label_type_1, filter_type_1, file_item_param_names_1, Observable_1, dto_request_service_1, dto_request_item_entity_stats_1, dto_request_item_gfi_1, json_to_gfi_dataset_1, filter_params_coll_1, gobii_file_item_entity_relation_1, gobii_file_item_compound_id_1, type_status_level_1, FileItemService;
+    var core_1, type_entity_1, entity_labels_1, type_extractor_item_1, type_extractor_filter_1, cv_filter_type_1, gobii_file_item_1, dto_header_status_message_1, type_process_1, name_id_service_1, historyAction, fileItemActions, fromRoot, store_1, name_id_label_type_1, filter_type_1, file_item_param_names_1, Observable_1, dto_request_service_1, dto_request_item_entity_stats_1, filter_params_coll_1, gobii_file_item_entity_relation_1, gobii_file_item_compound_id_1, type_status_level_1, FileItemService;
     return {
         setters: [
             function (core_1_1) {
@@ -74,12 +74,6 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
             },
             function (dto_request_item_entity_stats_1_1) {
                 dto_request_item_entity_stats_1 = dto_request_item_entity_stats_1_1;
-            },
-            function (dto_request_item_gfi_1_1) {
-                dto_request_item_gfi_1 = dto_request_item_gfi_1_1;
-            },
-            function (json_to_gfi_dataset_1_1) {
-                json_to_gfi_dataset_1 = json_to_gfi_dataset_1_1;
             },
             function (filter_params_coll_1_1) {
                 filter_params_coll_1 = filter_params_coll_1_1;
@@ -649,10 +643,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                 filterParams.setFkEntityFilterValue(filterValue);
                             }
                             if (filterParams.getFilterType() === filter_type_1.FilterType.ENTITY_LIST) {
-                                // for the moment the only query that does consumes this method is the one
-                                // that gets dataset entities; when it is use for other types, we will need
-                                // a polymorphic approach to making JsonToGfi instances.
-                                var dtoRequestItemGfi_1 = new dto_request_item_gfi_1.DtoRequestItemGfi(filterParams, null, new json_to_gfi_dataset_1.JsonToGfiDataset(filterParams, _this.filterParamsColl));
+                                var dtoRequestItem_1 = filterParams.getDtoRequestItem();
                                 _this.entityStatsService.get(new dto_request_item_entity_stats_1.DtoRequestItemEntityStats(dto_request_item_entity_stats_1.EntityRequestType.LasetUpdated, filterParams.getEntityType(), null, null))
                                     .subscribe(function (entityStats) {
                                     _this.store.select(fromRoot.getFiltersRetrieved)
@@ -663,9 +654,17 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                         });
                                         if ((!fileHistoryItem) ||
                                             (entityStats.lastModified > fileHistoryItem.entityLasteUpdated)) {
-                                            _this.fileItemRequestService
-                                                .get(dtoRequestItemGfi_1)
-                                                .subscribe(function (entityItems) {
+                                            var dtoRequestService = filterParams.getDtoRequestService();
+                                            dtoRequestService
+                                                .get(dtoRequestItem_1)
+                                                .subscribe(function (entityResult) {
+                                                var entityItems = [];
+                                                if (filterParams.getIsPaged()) {
+                                                    entityItems = entityResult.gobiiFileItems;
+                                                }
+                                                else {
+                                                    entityItems = entityResult;
+                                                }
                                                 entityItems.forEach(function (fi) {
                                                     fi.setGobiiExtractFilterType(gobiiExtractFilterType);
                                                 });

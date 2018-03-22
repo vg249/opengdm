@@ -20,6 +20,7 @@ import {CvFilters, CvFilterType} from "../model/cv-filter-type";
 import {EntitySubType, EntityType} from "../model/type-entity";
 import {GobiiFileItemCompoundId} from "../model/gobii-file-item-compound-id";
 import {ExtractorItemType} from "../model/type-extractor-item";
+import {PagedFileItemList} from "../model/payload/paged-item-list";
 
 
 @Component({
@@ -70,9 +71,9 @@ import {ExtractorItemType} from "../model/type-extractor-item";
                 </p-column>
                 <p-column [style]="{'width':'5%','text-align':'center'}">
                     <ng-template let-col="rowData" pTemplate="body">
-                        <button type="button" 
+                        <button type="button"
                                 pButton (click)="selectDataset($event,col,datasetOverlayPanel);"
-                                icon="fa-bars" 
+                                icon="fa-bars"
                                 style="font-size: 10px"></button>
                     </ng-template>
                 </p-column>
@@ -380,12 +381,12 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
     ngOnChanges(changes: { [propName: string]: SimpleChange }) {
 
         if (changes['gobiiExtractFilterType']
-            && ( changes['gobiiExtractFilterType'].currentValue != null )
-            && ( changes['gobiiExtractFilterType'].currentValue != undefined )) {
+            && (changes['gobiiExtractFilterType'].currentValue != null)
+            && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
 
             if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
 
-                if( this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET ) {
+                if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
                     this.fileItemService.loadEntityList(this.gobiiExtractFilterType, FilterParamNames.DATASET_LIST);
                     this.fileItemService.loadPagedEntityList(this.gobiiExtractFilterType,
                         FilterParamNames.DATASET_LIST_PAGED,
