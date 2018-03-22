@@ -94,7 +94,9 @@ public class MailInterface {
 		
 		MimeMultipart multipart = new MimeMultipart("related");
 		BodyPart messageBodyPart = new MimeBodyPart();
-		String htmlContent = message.getHeader() + message.getBody() + message.getFooter() + message.getConfidentialityMessage();
+		String confidentialityContent = message.getConfidentialityMessage();
+		if(confidentialityContent==null)confidentialityContent="";
+		String htmlContent = message.getHeader() + message.getBody() + message.getFooter() + confidentialityContent;
 		messageBodyPart.setContent(htmlContent, "text/html");
 		multipart.addBodyPart(messageBodyPart);
 		messageBodyPart = new MimeBodyPart();
