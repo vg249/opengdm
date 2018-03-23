@@ -874,14 +874,5 @@ export const getExperimentsFilterOptional = createSelector(getFileItems, getFilt
 });
 
 
-export const getPagingForDatasets = createSelector(getFilters, (filters) => {
-
-    let returnVal:Pagination;
-
-    if( filters[FilterParamNames.DATASET_LIST_PAGED]) {
-        returnVal = filters[FilterParamNames.DATASET_LIST_PAGED].pagination;
-    }
-    return returnVal;
-});
 
 

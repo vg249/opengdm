@@ -690,17 +690,20 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                             });
                                         }
                                         else {
-                                            var loadAction = new fileItemActions.LoadFilterAction({
-                                                filterId: filterParams.getQueryName(),
-                                                filter: {
-                                                    gobiiExtractFilterType: gobiiExtractFilterType,
-                                                    gobiiCompoundUniqueId: filterParams,
-                                                    filterValue: filterParams.getFkEntityFilterValue(),
-                                                    entityLasteUpdated: fileHistoryItem.entityLasteUpdated,
-                                                    pagination: null
-                                                }
-                                            });
-                                            observer.next(loadAction);
+                                            // let loadAction: fileItemActions.LoadFilterAction = new fileItemActions.LoadFilterAction(
+                                            //     {
+                                            //         filterId: filterParams.getQueryName(),
+                                            //         filter: {
+                                            //             gobiiExtractFilterType: gobiiExtractFilterType,
+                                            //             gobiiCompoundUniqueId: filterParams,
+                                            //             filterValue: filterParams.getFkEntityFilterValue(),
+                                            //             entityLasteUpdated: fileHistoryItem.entityLasteUpdated,
+                                            //             pagination: null
+                                            //         }
+                                            //     }
+                                            // );
+                                            //
+                                            // observer.next(loadAction);
                                         } // if-else the file  history item exists and the data have not been modified
                                     }, function (error) {
                                         _this.store.dispatch(new historyAction.AddStatusAction(error));

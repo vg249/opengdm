@@ -22,7 +22,8 @@ import {GobiiFileItemCompoundId} from "../model/gobii-file-item-compound-id";
 import {ExtractorItemType} from "../model/type-extractor-item";
 import {PagedFileItemList} from "../model/payload/paged-item-list";
 import {Pagination} from "../model/payload/pagination";
-
+import {Subject} from "rxjs/Subject";
+import 'rxjs/add/operator/withLatestFrom'
 
 @Component({
     selector: 'dataset-datatable',
@@ -209,6 +210,8 @@ import {Pagination} from "../model/payload/pagination";
 
             </p-overlayPanel>
 
+            <button pButton type="button" (click)="onClickForNextPage$.next($event)" label="Test Paging"></button>
+
         </div> <!-- enclosing box  -->
     ` // end template
 
@@ -217,14 +220,31 @@ import {Pagination} from "../model/payload/pagination";
 export class DatasetDatatableComponent implements OnInit, OnChanges {
 
 
+    public onClickForNextPage$ = new Subject<Pagination>();
+
     constructor(private store: Store<fromRoot.State>,
                 private fileItemService: FileItemService,
                 private filterParamsColl: FilterParamsColl,
                 private fileItemRequestService: DtoRequestService<GobiiFileItem[]>) {
+
+
+        this.onClickForNextPage$
+            .withLatestFrom(this.store)
+            .subscribe(([data, state]) => {
+                if (state.fileItems.filters[FilterParamNames.DATASET_LIST_PAGED]) {
+                    let pagination: Pagination = state.fileItems.filters[FilterParamNames.DATASET_LIST_PAGED].pagination;
+                    if (pagination) {
+                        this.fileItemService.loadPagedEntityList(this.gobiiExtractFilterType,
+                            FilterParamNames.DATASET_LIST_PAGED,
+                            pagination.pagedQueryId,
+                            pagination.pageSize,
+                            this.page++)
+                    }
+                }
+            });
     }
 
     public datasetsFileItems$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getDatsetEntities);
-    public pagination: Pagination;
     public selectedDatasets: GobiiFileItem[];
     public datasetAnalysesNames: string[] = [];
     public nameIdFilterParamTypes: any = Object.assign({}, FilterParamNames);
@@ -342,9 +362,12 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
 
     }
 
+
+    private page: number = 0;
+
     public handleRowChecked(checked: boolean, selectedDatasetFileItem: GobiiFileItem) {
         this.handleItemChecked(selectedDatasetFileItem.getFileItemUniqueId(), checked);
-        this.handleLoadPage(1);
+
     }
 
 
@@ -373,30 +396,13 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
 
     } // handleItemChecked()
 
-    private page:number = 0;
-    public handleLoadPage(pageNum:number) {
-
-        this.store.select(fromRoot.getPagingForDatasets)
-            .subscribe(
-                pgn => {
-
-                    if (pgn) {
-                        this.fileItemService.loadPagedEntityList(this.gobiiExtractFilterType,
-                            FilterParamNames.DATASET_LIST_PAGED,
-                            pgn.pagedQueryId,
-                            pgn.pageSize,
-                            this.page++);
-                    }
-                }
-            );
-    }
-
 
     @Input()
     public gobiiExtractFilterType: GobiiExtractFilterType;
 
     ngOnInit() {
 
+        //this.handleLoadPage(1);
     } // ngOnInit()
 
     // gobiiExtractType is not set until you get OnChanges
@@ -409,7 +415,7 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
             if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
 
                 if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
- //                   this.fileItemService.loadEntityList(this.gobiiExtractFilterType, FilterParamNames.DATASET_LIST);
+                    //                   this.fileItemService.loadEntityList(this.gobiiExtractFilterType, FilterParamNames.DATASET_LIST);
                     this.fileItemService.loadPagedEntityList(this.gobiiExtractFilterType,
                         FilterParamNames.DATASET_LIST_PAGED,
                         null,
