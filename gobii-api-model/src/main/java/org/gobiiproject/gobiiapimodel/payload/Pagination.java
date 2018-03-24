@@ -10,13 +10,13 @@ public class Pagination {
 
     public Pagination() {}
 
-    public Pagination(String queryId,
+    public Pagination(String pagedQueryId,
                       Date queryTime,
                       Integer pageSize,
                       Integer totalPages,
                       Integer currentPage
     ) {
-        this.queryId = queryId;
+        this.pagedQueryId = pagedQueryId;
         this.queryTime = queryTime;
         this.pageSize= pageSize;
         this.totalPages= totalPages;
@@ -24,15 +24,15 @@ public class Pagination {
 
     }
 
-    private String queryId;
+    private String pagedQueryId;
     private Date queryTime;
     private Integer pageSize;
     private Integer totalPages;
     private Integer currentPage;
 
 
-    public String getQueryId() {
-        return queryId;
+    public String getPagedQueryId() {
+        return pagedQueryId;
     }
 
     public Date getQueryTime() {

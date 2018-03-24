@@ -20,7 +20,7 @@ export class JsonToGfiDataset implements JsonToGfi {
 
     public convert(jsonItem): GobiiFileItem {
 
-        let returnVal:GobiiFileItem  = null;
+        let returnVal:GobiiFileItem;
 
         let dataset: DataSet = new DataSet(
             jsonItem.id,

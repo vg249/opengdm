@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-entity", "../../views/entity-labels", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/gobii-file-item", "../../model/dto-header-status-message", "../../model/type-process", "./name-id-service", "../../store/actions/history-action", "../../store/actions/fileitem-action", "../../store/reducers", "@ngrx/store", "../../model/name-id-label-type", "../../model/filter-type", "../../model/file-item-param-names", "rxjs/Observable", "rxjs/add/operator/expand", "./dto-request.service", "../app/dto-request-item-entity-stats", "../app/dto-request-item-gfi", "../app/jsontogfi/json-to-gfi-dataset", "./filter-params-coll", "../../model/gobii-file-item-entity-relation", "../../model/gobii-file-item-compound-id"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-entity", "../../views/entity-labels", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/gobii-file-item", "../../model/dto-header-status-message", "../../model/type-process", "./name-id-service", "../../store/actions/history-action", "../../store/actions/fileitem-action", "../../store/reducers", "@ngrx/store", "../../model/name-id-label-type", "../../model/filter-type", "../../model/file-item-param-names", "rxjs/Observable", "rxjs/add/operator/expand", "./dto-request.service", "../app/dto-request-item-entity-stats", "./filter-params-coll", "../../model/gobii-file-item-entity-relation", "../../model/gobii-file-item-compound-id", "../../model/type-status-level"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_entity_1, entity_labels_1, type_extractor_item_1, type_extractor_filter_1, cv_filter_type_1, gobii_file_item_1, dto_header_status_message_1, type_process_1, name_id_service_1, historyAction, fileItemActions, fromRoot, store_1, name_id_label_type_1, filter_type_1, file_item_param_names_1, Observable_1, dto_request_service_1, dto_request_item_entity_stats_1, dto_request_item_gfi_1, json_to_gfi_dataset_1, filter_params_coll_1, gobii_file_item_entity_relation_1, gobii_file_item_compound_id_1, FileItemService;
+    var core_1, type_entity_1, entity_labels_1, type_extractor_item_1, type_extractor_filter_1, cv_filter_type_1, gobii_file_item_1, dto_header_status_message_1, type_process_1, name_id_service_1, historyAction, fileItemActions, fromRoot, store_1, name_id_label_type_1, filter_type_1, file_item_param_names_1, Observable_1, dto_request_service_1, dto_request_item_entity_stats_1, filter_params_coll_1, gobii_file_item_entity_relation_1, gobii_file_item_compound_id_1, type_status_level_1, FileItemService;
     return {
         setters: [
             function (core_1_1) {
@@ -75,12 +75,6 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
             function (dto_request_item_entity_stats_1_1) {
                 dto_request_item_entity_stats_1 = dto_request_item_entity_stats_1_1;
             },
-            function (dto_request_item_gfi_1_1) {
-                dto_request_item_gfi_1 = dto_request_item_gfi_1_1;
-            },
-            function (json_to_gfi_dataset_1_1) {
-                json_to_gfi_dataset_1 = json_to_gfi_dataset_1_1;
-            },
             function (filter_params_coll_1_1) {
                 filter_params_coll_1 = filter_params_coll_1_1;
             },
@@ -89,6 +83,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
             },
             function (gobii_file_item_compound_id_1_1) {
                 gobii_file_item_compound_id_1 = gobii_file_item_compound_id_1_1;
+            },
+            function (type_status_level_1_1) {
+                type_status_level_1 = type_status_level_1_1;
             }
         ],
         execute: function () {
@@ -111,7 +108,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                 gobiiExtractFilterType: gobiiExtractFilterType,
                                 gobiiCompoundUniqueId: filterParams,
                                 filterValue: filterValue,
-                                entityLasteUpdated: null
+                                entityLasteUpdated: null,
+                                pagination: null
                             }
                         });
                         this.store.dispatch(loadAction);
@@ -458,7 +456,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                                 gobiiExtractFilterType: gobiiExtractFilterType,
                                                 gobiiCompoundUniqueId: filterParamsToLoad,
                                                 filterValue: filterParamsToLoad.getFkEntityFilterValue(),
-                                                entityLasteUpdated: minEntityLastUpdated
+                                                entityLasteUpdated: minEntityLastUpdated,
+                                                pagination: null
                                             }
                                         });
                                         observer.next(loadAction);
@@ -497,7 +496,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                             gobiiExtractFilterType: gobiiExtractFilterType,
                                             gobiiCompoundUniqueId: filterParamsToLoad,
                                             filterValue: filterParamsToLoad.getFkEntityFilterValue(),
-                                            entityLasteUpdated: fileHistoryItem.entityLasteUpdated
+                                            entityLasteUpdated: fileHistoryItem.entityLasteUpdated,
+                                            pagination: null
                                         }
                                     });
                                     observer.next(loadAction);
@@ -551,7 +551,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                 gobiiExtractFilterType: gobiiExtractFilterType,
                                 gobiiCompoundUniqueId: filterParamsToLoad,
                                 filterValue: filterParamsToLoad.getFkEntityFilterValue(),
-                                entityLasteUpdated: null //not sure about this
+                                entityLasteUpdated: null,
+                                pagination: null
                             }
                         });
                         observer.next(loadAction);
@@ -616,6 +617,26 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                         });
                     }
                 }; // loadEntityList()
+                FileItemService.prototype.loadPagedEntityList = function (gobiiExtractFilterType, fileItemParamName, paedQueryId, pageSize, pageNum) {
+                    var _this = this;
+                    var fileItemParams = this.filterParamsColl.getFilter(fileItemParamName, gobiiExtractFilterType);
+                    if (fileItemParams.getIsPaged()) {
+                        fileItemParams.setPageSize(pageSize);
+                        fileItemParams.setPageNum(pageNum);
+                        fileItemParams.setPagedQueryId(paedQueryId);
+                        if (fileItemParams && fileItemParams.getFilterType() === filter_type_1.FilterType.ENTITY_LIST) {
+                            this.makeFileItemActionsFromEntities(gobiiExtractFilterType, fileItemParams, null, false)
+                                .subscribe(function (action) {
+                                if (action) {
+                                    _this.store.dispatch(action);
+                                }
+                            });
+                        }
+                    }
+                    else {
+                        this.store.dispatch(new historyAction.AddStatusAction(new dto_header_status_message_1.HeaderStatusMessage("This filter does not support paging: " + fileItemParamName, type_status_level_1.StatusLevel.ERROR, null)));
+                    }
+                }; // loadEntityList()
                 FileItemService.prototype.makeFileItemActionsFromEntities = function (gobiiExtractFilterType, filterParams, filterValue, recurse) {
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
@@ -623,55 +644,43 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                             if (filterParams.getIsDynamicFilterValue()) {
                                 filterParams.setFkEntityFilterValue(filterValue);
                             }
+                            // note that this method does not do any of the entity dating and checking
+                            // thing. It needs to be reworked for paging so that the filter ID also takes
+                            // into account the current page -- i.e., so that the datetime stamp pertains to the
+                            // specific page. This is going to require some refactoring.
                             if (filterParams.getFilterType() === filter_type_1.FilterType.ENTITY_LIST) {
-                                var dtoRequestItemGfi_1 = new dto_request_item_gfi_1.DtoRequestItemGfi(filterParams, null, new json_to_gfi_dataset_1.JsonToGfiDataset(filterParams, _this.filterParamsColl));
-                                _this.entityStatsService.get(new dto_request_item_entity_stats_1.DtoRequestItemEntityStats(dto_request_item_entity_stats_1.EntityRequestType.LasetUpdated, filterParams.getEntityType(), null, null))
-                                    .subscribe(function (entityStats) {
-                                    _this.store.select(fromRoot.getFiltersRetrieved)
-                                        .subscribe(function (filterHistoryItems) {
-                                        var fileHistoryItem = filterHistoryItems.find(function (fhi) {
-                                            return fhi.gobiiExtractFilterType === gobiiExtractFilterType
-                                                && fhi.filterId === filterParams.getQueryName();
-                                        });
-                                        if ((!fileHistoryItem) ||
-                                            (entityStats.lastModified > fileHistoryItem.entityLasteUpdated)) {
-                                            _this.fileItemRequestService
-                                                .get(dtoRequestItemGfi_1)
-                                                .subscribe(function (entityItems) {
-                                                entityItems.forEach(function (fi) {
-                                                    fi.setGobiiExtractFilterType(gobiiExtractFilterType);
-                                                });
-                                                var date = new Date();
-                                                var loadAction = new fileItemActions.LoadFileItemListWithFilterAction({
-                                                    gobiiFileItems: entityItems,
-                                                    filterId: filterParams.getQueryName(),
-                                                    filter: {
-                                                        gobiiExtractFilterType: gobiiExtractFilterType,
-                                                        gobiiCompoundUniqueId: filterParams,
-                                                        filterValue: filterValue,
-                                                        entityLasteUpdated: date
-                                                    }
-                                                });
-                                                observer.next(loadAction);
-                                            }, function (responseHeader) {
-                                                _this.store.dispatch(new historyAction.AddStatusAction(responseHeader));
-                                            });
-                                        }
-                                        else {
-                                            var loadAction = new fileItemActions.LoadFilterAction({
-                                                filterId: filterParams.getQueryName(),
-                                                filter: {
-                                                    gobiiExtractFilterType: gobiiExtractFilterType,
-                                                    gobiiCompoundUniqueId: filterParams,
-                                                    filterValue: filterParams.getFkEntityFilterValue(),
-                                                    entityLasteUpdated: fileHistoryItem.entityLasteUpdated
-                                                }
-                                            });
-                                            observer.next(loadAction);
-                                        } // if-else the file  history item exists and the data have not been modified
-                                    }, function (error) {
-                                        _this.store.dispatch(new historyAction.AddStatusAction(error));
+                                var dtoRequestItem = filterParams.getDtoRequestItem();
+                                var dtoRequestService = filterParams.getDtoRequestService();
+                                dtoRequestService
+                                    .get(dtoRequestItem)
+                                    .subscribe(function (entityResult) {
+                                    var pagination = null;
+                                    var entityItems = [];
+                                    if (filterParams.getIsPaged()) {
+                                        entityItems = entityResult.gobiiFileItems;
+                                        pagination = entityResult.pagination;
+                                    }
+                                    else {
+                                        entityItems = entityResult;
+                                    }
+                                    entityItems.forEach(function (fi) {
+                                        fi.setGobiiExtractFilterType(gobiiExtractFilterType);
                                     });
+                                    var date = new Date();
+                                    var loadAction = new fileItemActions.LoadFileItemListWithFilterAction({
+                                        gobiiFileItems: entityItems,
+                                        filterId: filterParams.getQueryName(),
+                                        filter: {
+                                            gobiiExtractFilterType: gobiiExtractFilterType,
+                                            gobiiCompoundUniqueId: filterParams,
+                                            filterValue: filterValue,
+                                            entityLasteUpdated: date,
+                                            pagination: pagination
+                                        }
+                                    });
+                                    observer.next(loadAction);
+                                }, function (responseHeader) {
+                                    _this.store.dispatch(new historyAction.AddStatusAction(responseHeader));
                                 });
                             }
                             else {

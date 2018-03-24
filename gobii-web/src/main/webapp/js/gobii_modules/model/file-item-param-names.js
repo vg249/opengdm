@@ -23,6 +23,7 @@ System.register([], function (exports_1, context_1) {
                 FilterParamNames.PLATFORMS = "Platforms";
                 FilterParamNames.DATASETS_BY_EXPERIMENT = "Datasets-by-experiment";
                 FilterParamNames.DATASET_LIST = "Dataset-List";
+                FilterParamNames.DATASET_LIST_PAGED = "Dataset-List-Paged";
                 FilterParamNames.DATASET_LIST_STATUS = "Dataset-List-Status";
                 FilterParamNames.DATASET_BY_DATASET_ID = "Dataset-List-By-DatasetId";
                 FilterParamNames.ANALYSES_BY_DATASET_ID = "Analysis-List-By-DatasetId";

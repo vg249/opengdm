@@ -17,6 +17,12 @@ import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 import {getGobiiTreeItemIds} from "../../store/reducers/treenode-reducer";
 import {getSymbolObservable} from "rxjs/symbol/observable";
 import {ProcessType} from "../../model/type-process";
+import {DtoRequestService} from "./dto-request.service";
+import {PagedFileItemList} from "../../model/payload/paged-item-list";
+import {DataSet} from "../../model/dataset";
+import {JsonToGfiDataset} from "../app/jsontogfi/json-to-gfi-dataset";
+import {DtoRequestItemGfi} from "../app/dto-request-item-gfi";
+import {DtoRequestItemGfiPaged} from "../app/dto-request-item-gfi-paged";
 
 
 @Injectable()
@@ -51,7 +57,10 @@ export class FilterParamsColl {
         )
     }
 
-    constructor(private store: Store<fromRoot.State>) {
+    constructor(private store: Store<fromRoot.State>,
+                private pagedDatasetRequestService: DtoRequestService<PagedFileItemList>,
+                private fileItemRequestService: DtoRequestService<GobiiFileItem[]>
+    ) {
 
         // For non-hierarchically filtered request params, we just create them simply
         // as we add them to the flat map
@@ -202,7 +211,8 @@ export class FilterParamsColl {
                                         gobiiExtractFilterType: GobiiExtractFilterType.WHOLE_DATASET,
                                         gobiiCompoundUniqueId: cvJobStatusCompoundUniqueId,
                                         filterValue: completedItem.getItemId(),
-                                        entityLasteUpdated: null
+                                        entityLasteUpdated: null,
+                                        pagination: null
                                     }
                                 }
                             );
@@ -238,7 +248,8 @@ export class FilterParamsColl {
                                 gobiiExtractFilterType: GobiiExtractFilterType.WHOLE_DATASET,
                                 gobiiCompoundUniqueId: cvDatasetCompoundUniqueId,
                                 filterValue: "completed",
-                                entityLasteUpdated: null
+                                entityLasteUpdated: null,
+                                pagination: null
                             }
                         }
                     );
@@ -247,6 +258,61 @@ export class FilterParamsColl {
 
                 return returnVal;
             }));
+
+        // add dto request to DATASET_LIST filter
+        this.getFilter(FilterParamNames.DATASET_LIST,GobiiExtractFilterType.WHOLE_DATASET)
+            .setDtoRequestItem(new DtoRequestItemGfi(
+                this.getFilter(FilterParamNames.DATASET_LIST,
+                    GobiiExtractFilterType.WHOLE_DATASET),
+                null,
+                new JsonToGfiDataset(this.getFilter(FilterParamNames.DATASET_LIST,
+                    GobiiExtractFilterType.WHOLE_DATASET),
+                    this)))
+            .setDtoRequestService(this.fileItemRequestService);
+
+
+        // same as previous except configured for paging
+        this.addFilter(FilterParams
+            .build(FilterParamNames.DATASET_LIST_PAGED,
+                GobiiExtractFilterType.WHOLE_DATASET,
+                EntityType.DATASET)
+            .setFilterType(FilterType.ENTITY_LIST)
+            .setOnLoadFilteredItemsAction((fileItems, filterValue) => {
+
+                let returnVal: fileAction.LoadFilterAction = null;
+
+                if (!filterValue) {
+
+                    returnVal = new fileAction.LoadFilterAction(
+                        {
+                            filterId: FilterParamNames.DATASET_LIST_STATUS,
+                            filter: {
+                                gobiiExtractFilterType: GobiiExtractFilterType.WHOLE_DATASET,
+                                gobiiCompoundUniqueId: cvDatasetCompoundUniqueId,
+                                filterValue: "completed",
+                                entityLasteUpdated: null,
+                                pagination: null
+                            }
+                        }
+                    );
+
+                }
+
+                return returnVal;
+            })
+            .setIsPaged(true));
+
+        // add dto request to DATASET_LIST_PAGED filter
+        this.getFilter(FilterParamNames.DATASET_LIST_PAGED,GobiiExtractFilterType.WHOLE_DATASET)
+            .setDtoRequestItem(new DtoRequestItemGfiPaged(
+                this.getFilter(FilterParamNames.DATASET_LIST_PAGED,
+                GobiiExtractFilterType.WHOLE_DATASET),
+            null,
+            new JsonToGfiDataset(this.getFilter(FilterParamNames.DATASET_LIST_PAGED,
+                GobiiExtractFilterType.WHOLE_DATASET),
+                this)))
+            .setDtoRequestService(this.pagedDatasetRequestService);
+
 
         this.addFilter(FilterParams
             .build(FilterParamNames.DATASET_BY_DATASET_ID,

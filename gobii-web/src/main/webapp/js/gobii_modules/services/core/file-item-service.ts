@@ -28,6 +28,10 @@ import {JsonToGfiDataset} from "../app/jsontogfi/json-to-gfi-dataset";
 import {FilterParamsColl} from "./filter-params-coll";
 import {GobiiFileItemEntityRelation} from "../../model/gobii-file-item-entity-relation";
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
+import {StatusLevel} from "../../model/type-status-level";
+import {DtoRequestItem} from "./dto-request-item";
+import {PagedFileItemList} from "../../model/payload/paged-item-list";
+import {Pagination} from "../../model/payload/pagination";
 
 @Injectable()
 export class FileItemService {
@@ -56,7 +60,8 @@ export class FileItemService {
                         gobiiExtractFilterType: gobiiExtractFilterType,
                         gobiiCompoundUniqueId: filterParams,
                         filterValue: filterValue,
-                        entityLasteUpdated: null
+                        entityLasteUpdated: null,
+                        pagination: null
                     }
                 }
             );
@@ -403,8 +408,8 @@ export class FileItemService {
                             let disregardDateSensitiveQueryingForNow = false;
                             if (disregardDateSensitiveQueryingForNow ||
                                 (
-                                    (!fileHistoryItem ) ||
-                                    ( entityStats.lastModified > fileHistoryItem.entityLasteUpdated)
+                                    (!fileHistoryItem) ||
+                                    (entityStats.lastModified > fileHistoryItem.entityLasteUpdated)
                                 )
                             ) {
                                 // Either the data have never been retrieved at all for a given filter value,
@@ -416,7 +421,7 @@ export class FileItemService {
 
                                             let minEntityLastUpdated: Date;
                                             let fileItems: GobiiFileItem[] = [];
-                                            if (nameIds && ( nameIds.length > 0 )) {
+                                            if (nameIds && (nameIds.length > 0)) {
 
                                                 nameIds.forEach(nameIdItem => {
 
@@ -544,7 +549,8 @@ export class FileItemService {
                                                         gobiiExtractFilterType: gobiiExtractFilterType,
                                                         gobiiCompoundUniqueId: filterParamsToLoad,
                                                         filterValue: filterParamsToLoad.getFkEntityFilterValue(),
-                                                        entityLasteUpdated: minEntityLastUpdated
+                                                        entityLasteUpdated: minEntityLastUpdated,
+                                                        pagination: null
                                                     }
                                                 }
                                             );
@@ -599,7 +605,8 @@ export class FileItemService {
                                             gobiiExtractFilterType: gobiiExtractFilterType,
                                             gobiiCompoundUniqueId: filterParamsToLoad,
                                             filterValue: filterParamsToLoad.getFkEntityFilterValue(),
-                                            entityLasteUpdated: fileHistoryItem.entityLasteUpdated
+                                            entityLasteUpdated: fileHistoryItem.entityLasteUpdated,
+                                            pagination: null
                                         }
                                     }
                                 );
@@ -687,7 +694,8 @@ export class FileItemService {
                         gobiiExtractFilterType: gobiiExtractFilterType,
                         gobiiCompoundUniqueId: filterParamsToLoad,
                         filterValue: filterParamsToLoad.getFkEntityFilterValue(),
-                        entityLasteUpdated: null //not sure about this
+                        entityLasteUpdated: null, //not sure about this
+                        pagination: null
                     }
                 }
             );
@@ -787,6 +795,35 @@ export class FileItemService {
     } // loadEntityList()
 
 
+    public loadPagedEntityList(gobiiExtractFilterType: GobiiExtractFilterType,
+                               fileItemParamName: FilterParamNames,
+                               paedQueryId: string,
+                               pageSize: number,
+                               pageNum: number) {
+
+        let fileItemParams: FilterParams = this.filterParamsColl.getFilter(fileItemParamName, gobiiExtractFilterType);
+
+        if (fileItemParams.getIsPaged()) {
+            fileItemParams.setPageSize(pageSize);
+            fileItemParams.setPageNum(pageNum);
+            fileItemParams.setPagedQueryId(paedQueryId);
+            if (fileItemParams && fileItemParams.getFilterType() === FilterType.ENTITY_LIST) {
+                this.makeFileItemActionsFromEntities(gobiiExtractFilterType, fileItemParams, null, false)
+                    .subscribe(action => {
+                        if (action) {
+                            this.store.dispatch(action);
+                        }
+                    });
+            }
+        } else {
+            this.store.dispatch(new historyAction.AddStatusAction(new HeaderStatusMessage("This filter does not support paging: " + fileItemParamName,
+                StatusLevel.ERROR,
+                null)));
+        }
+
+    } // loadEntityList()
+
+
     private makeFileItemActionsFromEntities(gobiiExtractFilterType: GobiiExtractFilterType,
                                             filterParams: FilterParams,
                                             filterValue: string,
@@ -800,88 +837,63 @@ export class FileItemService {
                     filterParams.setFkEntityFilterValue(filterValue);
                 }
 
+                // note that this method does not do any of the entity dating and checking
+                // thing. It needs to be reworked for paging so that the filter ID also takes
+                // into account the current page -- i.e., so that the datetime stamp pertains to the
+                // specific page. This is going to require some refactoring.
 
                 if (filterParams.getFilterType() === FilterType.ENTITY_LIST) {
 
 
-                    let dtoRequestItemGfi: DtoRequestItemGfi = new DtoRequestItemGfi(filterParams,
-                        null,
-                        new JsonToGfiDataset(filterParams, this.filterParamsColl));
-
-                    this.entityStatsService.get(new DtoRequestItemEntityStats(
-                        EntityRequestType.LasetUpdated,
-                        filterParams.getEntityType(),
-                        null,
-                        null))
-                        .subscribe(entityStats => {
-
-                            this.store.select(fromRoot.getFiltersRetrieved)
-                                .subscribe(filterHistoryItems => {
-
-                                        let fileHistoryItem: FilterHistory =
-                                            filterHistoryItems.find(fhi =>
-                                                fhi.gobiiExtractFilterType === gobiiExtractFilterType
-                                                && fhi.filterId === filterParams.getQueryName()
-                                            );
-
-                                        if ((!fileHistoryItem ) ||
-                                            ( entityStats.lastModified > fileHistoryItem.entityLasteUpdated)
-                                        ) {
-
-                                            this.fileItemRequestService
-                                                .get(dtoRequestItemGfi)
-                                                .subscribe(entityItems => {
+                    let dtoRequestItem: DtoRequestItem<any> = filterParams.getDtoRequestItem();
 
 
-                                                        entityItems.forEach(fi => {
-                                                            fi.setGobiiExtractFilterType(gobiiExtractFilterType);
-                                                        });
+                    let dtoRequestService: DtoRequestService<any> = filterParams.getDtoRequestService();
 
-                                                        let date: Date = new Date();
-                                                        let loadAction: fileItemActions.LoadFileItemListWithFilterAction =
-                                                            new fileItemActions.LoadFileItemListWithFilterAction(
-                                                                {
-                                                                    gobiiFileItems: entityItems,
-                                                                    filterId: filterParams.getQueryName(),
-                                                                    filter: {
-                                                                        gobiiExtractFilterType: gobiiExtractFilterType,
-                                                                        gobiiCompoundUniqueId: filterParams,
-                                                                        filterValue: filterValue,
-                                                                        entityLasteUpdated: date
-                                                                    }
-                                                                }
-                                                            );
+                    dtoRequestService
+                        .get(dtoRequestItem)
+                        .subscribe(entityResult => {
 
-                                                        observer.next(loadAction);
+                                let pagination: Pagination = null;
+                                let entityItems: GobiiFileItem[] = [];
+                                if (filterParams.getIsPaged()) {
 
-                                                    },
-                                                    responseHeader => {
-                                                        this.store.dispatch(new historyAction.AddStatusAction(responseHeader));
+                                    entityItems = entityResult.gobiiFileItems;
+                                    pagination = entityResult.pagination;
 
-                                                    });
-                                        } else {
-                                            let loadAction: fileItemActions.LoadFilterAction = new fileItemActions.LoadFilterAction(
-                                                {
-                                                    filterId: filterParams.getQueryName(),
-                                                    filter: {
-                                                        gobiiExtractFilterType: gobiiExtractFilterType,
-                                                        gobiiCompoundUniqueId: filterParams,
-                                                        filterValue: filterParams.getFkEntityFilterValue(),
-                                                        entityLasteUpdated: fileHistoryItem.entityLasteUpdated
-                                                    }
-                                                }
-                                            );
+                                } else {
 
-                                            observer.next(loadAction);
+                                    entityItems = entityResult;
+                                }
 
-                                        } // if-else the file  history item exists and the data have not been modified
-                                    },
-                                    error => {
-                                        this.store.dispatch(new historyAction.AddStatusAction(error));
 
-                                    })
-                        })
+                                entityItems.forEach(fi => {
+                                    fi.setGobiiExtractFilterType(gobiiExtractFilterType);
+                                });
 
+                                let date: Date = new Date();
+                                let loadAction: fileItemActions.LoadFileItemListWithFilterAction =
+                                    new fileItemActions.LoadFileItemListWithFilterAction(
+                                        {
+                                            gobiiFileItems: entityItems,
+                                            filterId: filterParams.getQueryName(),
+                                            filter: {
+                                                gobiiExtractFilterType: gobiiExtractFilterType,
+                                                gobiiCompoundUniqueId: filterParams,
+                                                filterValue: filterValue,
+                                                entityLasteUpdated: date,
+                                                pagination: pagination
+                                            }
+                                        }
+                                    );
+
+                                observer.next(loadAction);
+
+                            },
+                            responseHeader => {
+                                this.store.dispatch(new historyAction.AddStatusAction(responseHeader));
+
+                            });
 
                 } else {
 

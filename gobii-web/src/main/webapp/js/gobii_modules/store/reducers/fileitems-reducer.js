@@ -562,6 +562,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                         })
                             .map(function (fi) { return fi; });
                     }
+                    "";
                 }
                 return returnVal;
             }));
