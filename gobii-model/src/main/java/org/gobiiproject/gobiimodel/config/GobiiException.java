@@ -1,7 +1,8 @@
 package org.gobiiproject.gobiimodel.config;
 
 
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 
@@ -21,6 +22,10 @@ public class GobiiException extends RuntimeException {
 
     public GobiiException(String message) {
         super(message);
+    }
+
+    public GobiiException(String message, Exception e) {
+        super(message, e);
     }
 
     public GobiiException(GobiiStatusLevel gobiiStatusLevel,

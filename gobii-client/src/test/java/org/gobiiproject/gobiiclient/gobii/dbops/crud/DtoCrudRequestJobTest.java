@@ -221,7 +221,7 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
 
     }
 
-    @Ignore
+    @Test
     public void getJobByDataSetId() throws Exception {
 
         // create analysis for new dataset for this test
