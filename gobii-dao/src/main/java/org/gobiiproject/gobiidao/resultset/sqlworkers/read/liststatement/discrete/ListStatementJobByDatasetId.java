@@ -39,7 +39,8 @@ public class ListStatementJobByDatasetId implements ListStatement {
                 " job j," +
                 " cv type," +
                 " cv payloadtype," +
-                " cv status" +
+                " cv status," +
+                " dataset d" +
                 " where" +
                 " j.type_id = type.cv_id" +
                 " and j.payload_type_id = payloadtype.cv_id" +

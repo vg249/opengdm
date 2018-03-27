@@ -85,13 +85,16 @@ public class DtoListQuery<T> {
             returnVal = this.makeDtoListFromResultSet(resultSet);
 
         } catch (SQLGrammarException e) {
-            LOGGER.error("Error retrieving dto list with SQL " + e.getSQL(), e.getSQLException());
-            throw (new GobiiDaoException(e.getSQLException()));
+            String message = "Error retrieving dto list " + this.listStatement.getListSqlId().name() + " with SQL " + e.getSQL();
+            LOGGER.error(message, e.getSQLException());
+            throw (new GobiiDaoException(message, e.getSQLException()));
 
         } catch (Exception e) {
 
-            LOGGER.error("Error retrieving dto list ", e);
-            throw (new GobiiDaoException(e));
+
+            String message = "Error retrieving dto list " + this.listStatement.getListSqlId().name();
+            LOGGER.error(message, e);
+            throw (new GobiiDaoException(message, e));
 
         }
 
@@ -121,7 +124,7 @@ public class DtoListQuery<T> {
 
             // ideally, all query types will have a paged implementation
             if (listStatementPaged == null) {
-                throw new GobiiException("There is no paged query support for query " + listStatement.getListSqlId());
+                throw new GobiiException("There is no paged query support for query " + listStatement.getListSqlId().name());
             }
 
             String pgQueryId;
@@ -153,13 +156,15 @@ public class DtoListQuery<T> {
             );
 
         } catch (SQLGrammarException e) {
-            LOGGER.error("Error retrieving dto list with SQL " + e.getSQL(), e.getSQLException());
-            throw (new GobiiDaoException(e.getSQLException()));
+            String message = "Error retrieving dto list " + this.listStatementPaged.getListSqlId().name() + " with SQL " + e.getSQL();
+            LOGGER.error(message, e.getSQLException());
+            throw (new GobiiDaoException(message, e.getSQLException()));
 
         } catch (Exception e) {
 
-            LOGGER.error("Error retrieving dto list ", e);
-            throw (new GobiiDaoException(e));
+            String message = "Error retrieving dto list " + this.listStatementPaged.getListSqlId().name();
+            LOGGER.error(message, e);
+            throw (new GobiiDaoException(message, e));
 
         }
 
@@ -179,13 +184,15 @@ public class DtoListQuery<T> {
             returnVal = resultSetFromSql.getResultSet();
 
         } catch (SQLGrammarException e) {
-            LOGGER.error("Error retrieving dto list with SQL " + e.getSQL(), e.getSQLException());
-            throw (new GobiiDaoException(e.getSQLException()));
+            String message = "Error retrieving dto list " + listStatement.getListSqlId().name() + "with SQL " + e.getSQL();
+            LOGGER.error(message, e.getSQLException());
+            throw (new GobiiDaoException(message, e.getSQLException()));
 
         } catch (Exception e) {
 
-            LOGGER.error("Error retrieving dto list ", e);
-            throw (new GobiiDaoException(e));
+            String message = "Error retrieving dto list " + this.listStatement.getListSqlId().name();
+            LOGGER.error(message, e);
+            throw (new GobiiDaoException(message, e));
 
         }
 

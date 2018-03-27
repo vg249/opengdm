@@ -18,6 +18,11 @@ public class GobiiDaoException extends GobiiException {
         super(message);
     }
 
+    public GobiiDaoException(String message, Exception e) {
+        super(message, e);
+    }
+
+
     public GobiiDaoException(GobiiStatusLevel gobiiStatusLevel,
                                 GobiiValidationStatusType gobiiValidationStatusType,
                                 String message) {
