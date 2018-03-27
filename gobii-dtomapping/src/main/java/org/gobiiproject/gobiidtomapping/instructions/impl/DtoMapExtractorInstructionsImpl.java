@@ -18,6 +18,8 @@ import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
+import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
+import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -458,6 +460,13 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                         + instructionFileName
                         + INSTRUCTION_FILE_EXT;
 
+                /*** for error logging ***/
+                String logDir = configSettings.getFileSystemLog();
+                String logFile = logDir + "/" + instructionFileName + ".log";
+                ErrorLogger.setLogFilepath(logFile);
+
+                ProcessMessage pm = new ProcessMessage();
+
                 returnVal.setJobId(instructionFileName);
 
                 returnVal.setInstructionFileName(instructionFileName);
@@ -465,6 +474,14 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                 if (instructionFileAccess.doesPathExist(fileDirExtractorDoneFqpn)) {
                     //check if file  is already done
                     returnVal.setGobiiExtractorInstructions(setGobiiExtractorInstructionStatus(fileDirExtractorDoneFqpn, jobProgressStatus));
+
+                    if (jobProgressStatus.equals(JobProgressStatusType.CV_PROGRESSSTATUS_FAILED.getCvName())) {
+                        JobPayloadType jobPayloadType = JobPayloadType.byValue(jobDTO.getPayloadType());
+                        pm.setBody(jobDTO.getJobName(),"Extract by " + jobPayloadType.getCvName(),1, ErrorLogger.getFirstErrorReason(), ErrorLogger.success(), ErrorLogger.getAllErrorStringsHTML());
+
+                        returnVal.setLogMessage(pm.getBody());
+                    }
+
                 } else if (instructionFileAccess.doesPathExist(fileDirExtractorInProgressFqpn)) {
                     //check if file  is in InProgress
                     returnVal.setGobiiExtractorInstructions(setGobiiExtractorInstructionStatus(fileDirExtractorInProgressFqpn, jobProgressStatus));

@@ -14,6 +14,7 @@ public class ExtractorInstructionFilesDTO extends DTOBase {
 
 
     private String jobId;
+    private String logMessage;
 
     @Override
     public Integer getId() {
@@ -51,5 +52,9 @@ public class ExtractorInstructionFilesDTO extends DTOBase {
     public void setJobId(String jobId) {
         this.jobId = jobId;
     }
+
+    public String getLogMessage() { return logMessage; }
+
+    public void setLogMessage(String logMessage) { this.logMessage = logMessage; }
 
 }
