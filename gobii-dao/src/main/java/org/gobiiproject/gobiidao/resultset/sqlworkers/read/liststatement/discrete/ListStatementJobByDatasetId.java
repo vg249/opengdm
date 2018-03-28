@@ -25,28 +25,38 @@ public class ListStatementJobByDatasetId implements ListStatement {
     @Override
     public PreparedStatement makePreparedStatement(Connection dbConnection, Map<String, Object> jdbcParamVals, Map<String, Object> sqlParamVals) throws SQLException {
 
-        String sql = "select" +
-                " j.job_id, " +
-                " type.term as type_id," +
-                " payloadtype.term as payload_type_id," +
-                " status.term as status," +
-                " j.message," +
-                " j.submitted_by," +
-                " j.submitted_date," +
-                " j.name," +
-                " ARRAY(select d.dataset_id from dataset d where d.job_id = j.job_id) as datasetids " +
-                " from" +
-                " job j," +
-                " cv type," +
-                " cv payloadtype," +
-                " cv status," +
-                " dataset d" +
-                " where" +
-                " j.type_id = type.cv_id" +
-                " and j.payload_type_id = payloadtype.cv_id" +
-                " and j.status = status.cv_id" +
-                " and array_length( ARRAY(select d.dataset_id from dataset d where d.job_id = j.job_id), 1) > 0 " +
-                " and d.dataset_id = ?";
+        String sql = " 	select " +
+                    "	j.job_id, " +
+                    "	getcvterm(j.type_id) as type, " +
+                    "	getcvterm(j.payload_type_id) as payload_type,  " +
+                    "	getcvterm(j.status) as status,  " +
+                    "	j.message,  " +
+                    "	j.submitted_by,  " +
+                    "	j.submitted_date,  " +
+                    "	j.name,  " +
+                    "	array(  " +
+                    "		select  " +
+                     "			d.dataset_id " +
+                    "		from " +
+                    "			dataset d " +
+                    "		where " +
+                    "			d.job_id = j.job_id " +
+                    "	) as datasetids " +
+                    " from " +
+                    "	dataset d " +
+                    "	join job j on (d.job_id=j.job_id) " +
+                    " where array_length( " +
+                    "		array( " +
+                    "			select " +
+                    "				ds.dataset_id " +
+                    "			from " +
+                    "				dataset ds " +
+                    "			where " +
+                    "				ds.job_id = j.job_id " +
+                    "		), " +
+                    "		1 " +
+                    "	) > 0 " +
+                    "	and d.dataset_id = ?";
 
         PreparedStatement returnVal = dbConnection.prepareStatement(sql);
         Integer datasetId = (Integer) jdbcParamVals.get("datasetId");

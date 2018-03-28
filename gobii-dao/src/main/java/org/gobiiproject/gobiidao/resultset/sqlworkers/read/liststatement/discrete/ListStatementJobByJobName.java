@@ -26,8 +26,8 @@ public class ListStatementJobByJobName implements ListStatement {
 
         String sql = "select\n" +
                 "j.job_id,\n" +
-                "type.term as type_id,\n" +
-                "payloadtype.term as payload_type_id,\n" +
+                "type.term as type,\n" +
+                "payloadtype.term as payload_type,\n" +
                 "status.term as status,\n" +
                 "j.message,\n" +
                 "j.submitted_by,\n" +
