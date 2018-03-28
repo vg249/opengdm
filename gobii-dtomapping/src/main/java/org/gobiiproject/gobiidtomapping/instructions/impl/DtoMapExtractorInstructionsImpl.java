@@ -360,25 +360,23 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                                     + " does not have any samples, markers, datasets, or marker groups specified");
                         }
 
+
+                        JobDTO jobDTONew = new JobDTO();
+
+                        jobDTONew.setJobName(extractorInstructionFilesDTO.getInstructionFileName());
+                        jobDTONew.setSubmittedBy(contactId);
+                        jobDTONew.setMessage("Instruction file written by web services");
+                        jobDTONew.setStatus(JobProgressStatusType.CV_PROGRESSSTATUS_PENDING.getCvName());
+                        jobDTONew.setType(JobType.CV_JOBTYPE_EXTRACT.getCvName());
+                        jobDTONew.setPayloadType(jobPayloadType.getCvName());
+                        jobDTONew.setSubmittedDate(new Date());
+
                         if (thereAreDatasets) {
-
-                            JobDTO jobDTONew = new JobDTO();
-
-                            jobDTONew.setJobName(extractorInstructionFilesDTO.getInstructionFileName());
-                            jobDTONew.setSubmittedBy(contactId);
-                            jobDTONew.setMessage("Instruction file written by web services");
-                            jobDTONew.setStatus(JobProgressStatusType.CV_PROGRESSSTATUS_PENDING.getCvName());
-                            jobDTONew.setType(JobType.CV_JOBTYPE_EXTRACT.getCvName());
-                            jobDTONew.setPayloadType(jobPayloadType.getCvName());
-                            jobDTONew.setSubmittedDate(new Date());
                             jobDTONew.setDatasetIds(datasetIds);
-
-                            dtoMapJob.createJob(jobDTONew);
-
-                        } else {
-
-
                         }
+
+                        dtoMapJob.createJob(jobDTONew);
+
 
                     } else {
 
