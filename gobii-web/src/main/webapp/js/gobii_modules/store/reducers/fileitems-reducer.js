@@ -186,10 +186,6 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             }
             case gobiiFileItemAction.REPLACE_ITEM_OF_SAME_COMPOUND_ID: {
                 var newItemToAdd_1 = action.payload.gobiiFileitemToReplaceWith;
-                var items = state.allFileItems
-                    .filter(function (fi) {
-                    return fi.compoundIdeEquals(newItemToAdd_1);
-                });
                 var fileItemToReplace_1 = state.allFileItems
                     .find(function (fi) { return fi.getGobiiExtractFilterType() === newItemToAdd_1.getGobiiExtractFilterType()
                     && fi.compoundIdeEquals(newItemToAdd_1); });

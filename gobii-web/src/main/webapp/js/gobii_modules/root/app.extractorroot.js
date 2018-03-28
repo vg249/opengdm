@@ -260,7 +260,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.EXPORT_FORMAT)
                         .setItemId(type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat.HAPMAP])
                         .setItemName(type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat.HAPMAP]]);
-                    this.fileItemService.loadFileItem(formatItem, true);
+                    this.fileItemService.replaceFileItemByCompoundId(formatItem);
                     this.fileItemService
                         .loadFileItem(gobii_file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_TYPE)

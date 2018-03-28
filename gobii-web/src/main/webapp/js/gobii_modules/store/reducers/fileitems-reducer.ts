@@ -294,12 +294,6 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
             let newItemToAdd: GobiiFileItem = action.payload.gobiiFileitemToReplaceWith;
 
-            let items: GobiiFileItem[] = state.allFileItems
-                .filter(fi =>
-                    fi.compoundIdeEquals(newItemToAdd)
-                );
-
-
             let fileItemToReplace: GobiiFileItem = state.allFileItems
                 .find(fi => fi.getGobiiExtractFilterType() === newItemToAdd.getGobiiExtractFilterType()
                     && fi.compoundIdeEquals(newItemToAdd));
