@@ -46,13 +46,13 @@ public class JobDTO extends DTOBase {
     @GobiiEntityParam(paramName = "type")
     public String getType() { return type; }
 
-    @GobiiEntityColumn(columnName = "type_id")
+    @GobiiEntityColumn(columnName = "type")
     public void setType(String type) { this.type = type;}
 
     @GobiiEntityParam(paramName = "payloadType")
     public String getPayloadType() { return payloadType; }
 
-    @GobiiEntityColumn(columnName = "payload_type_id")
+    @GobiiEntityColumn(columnName = "payload_type")
     public void setPayloadType(String payloadType) { this.payloadType = payloadType; }
 
     @GobiiEntityParam(paramName = "status")
