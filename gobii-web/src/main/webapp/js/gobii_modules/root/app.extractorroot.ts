@@ -602,7 +602,7 @@ export class ExtractorRoot implements OnInit {
             .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
             .setItemId(GobiiExtractFormat[GobiiExtractFormat.HAPMAP])
             .setItemName(GobiiExtractFormat[GobiiExtractFormat[GobiiExtractFormat.HAPMAP]]);
-        this.fileItemService.loadFileItem(formatItem, true);
+        this.fileItemService.replaceFileItemByCompoundId(formatItem);
 
 
         this.fileItemService

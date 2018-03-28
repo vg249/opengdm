@@ -62,7 +62,7 @@ System.register(["@angular/core", "../model/type-extract-format", "../model/gobi
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.EXPORT_FORMAT)
                         .setItemId(arg)
                         .setItemName(type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat[arg]]);
-                    this.fileItemService.loadFileItem(formatItem, true);
+                    this.fileItemService.replaceFileItemByCompoundId(formatItem);
                 };
                 ExportFormatComponent.prototype.ngOnChanges = function (changes) {
                     if (changes['gobiiExtractFilterType']
