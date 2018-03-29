@@ -212,6 +212,8 @@ public class BrapiResponseMapAlleleMatrixSearch {
                     } else {
                         brapiMetaData.addStatusMessage("error", "There are no extracted files for the directory: " + gobiiDataSetExtract.getExtractDestinationDirectory());
                     }
+                } else if (brapiAsynchStatus.equals("FAILED")) {
+                    brapiMetaData.addStatusMessage("error", extractorInstructionFilesDTONew.getLogMessage());
                 }
             } else {
                 brapiMetaData.addStatusMessage("error", "There are not extractor instructions for job : " + jobId);

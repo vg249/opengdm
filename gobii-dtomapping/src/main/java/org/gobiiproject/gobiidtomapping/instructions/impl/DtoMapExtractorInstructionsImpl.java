@@ -460,13 +460,6 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                         + instructionFileName
                         + INSTRUCTION_FILE_EXT;
 
-                /*** for error logging ***/
-                String logDir = configSettings.getFileSystemLog();
-                String logFile = logDir + "/" + instructionFileName + ".log";
-                ErrorLogger.setLogFilepath(logFile);
-
-                ProcessMessage pm = new ProcessMessage();
-
                 returnVal.setJobId(instructionFileName);
 
                 returnVal.setInstructionFileName(instructionFileName);
@@ -476,6 +469,14 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     returnVal.setGobiiExtractorInstructions(setGobiiExtractorInstructionStatus(fileDirExtractorDoneFqpn, jobProgressStatus));
 
                     if (jobProgressStatus.equals(JobProgressStatusType.CV_PROGRESSSTATUS_FAILED.getCvName())) {
+
+                        /*** for error logging ***/
+                        String logDir = configSettings.getFileSystemLog();
+                        String logFile = logDir + "/" + instructionFileName + ".log";
+                        ErrorLogger.setLogFilepath(logFile);
+
+                        ProcessMessage pm = new ProcessMessage();
+
                         JobPayloadType jobPayloadType = JobPayloadType.byValue(jobDTO.getPayloadType());
                         pm.setBody(jobDTO.getJobName(),"Extract by " + jobPayloadType.getCvName(),1, ErrorLogger.getFirstErrorReason(), ErrorLogger.success(), ErrorLogger.getAllErrorStringsHTML());
 
