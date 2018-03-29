@@ -74,8 +74,11 @@ System.register(["@angular/core", "../../model/type-process", "../../model/file-
                 DtoRequestItemGfiPaged.prototype.resultFromJson = function (json) {
                     var _this = this;
                     var fileItems = [];
+                    var currentPage = json.header.pagination.currentPage;
                     json.payload.data.forEach(function (jsonItem) {
-                        fileItems.push(_this.jsonToGfi.convert(jsonItem));
+                        var currentFileItem = _this.jsonToGfi.convert(jsonItem);
+                        currentFileItem.setPageNumber(currentPage);
+                        fileItems.push(currentFileItem);
                     });
                     var returnVal = new paged_item_list_1.PagedFileItemList(fileItems, pagination_1.Pagination.fromJSON(json.header.pagination));
                     return returnVal;

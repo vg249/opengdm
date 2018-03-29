@@ -61,9 +61,12 @@ export class DtoRequestItemGfiPaged implements DtoRequestItem<PagedFileItemList>
 
         let fileItems: GobiiFileItem[] = [];
 
+        let currentPage:number = json.header.pagination.currentPage;
         json.payload.data.forEach(jsonItem => {
 
-            fileItems.push(this.jsonToGfi.convert(jsonItem));
+            let currentFileItem:GobiiFileItem = this.jsonToGfi.convert(jsonItem);
+            currentFileItem.setPageNumber(currentPage);
+            fileItems.push(currentFileItem);
 
         });
 

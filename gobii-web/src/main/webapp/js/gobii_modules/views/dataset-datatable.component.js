@@ -79,7 +79,8 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/
                     this.filterParamsColl = filterParamsColl;
                     this.fileItemRequestService = fileItemRequestService;
                     this.onClickForNextPage$ = new Subject_1.Subject();
-                    this.datasetsFileItems$ = this.store.select(fromRoot.getDatsetEntities);
+                    //    public datasetsFileItems$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getDatsetEntities);
+                    this.datasetsFileItems$ = this.store.select(fromRoot.getDatsetEntitiesPaged);
                     this.datasetAnalysesNames = [];
                     this.nameIdFilterParamTypes = Object.assign({}, file_item_param_names_1.FilterParamNames);
                     this.analysisPanelCollapsed = true;
@@ -94,7 +95,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/
                         if (state.fileItems.filters[file_item_param_names_1.FilterParamNames.DATASET_LIST_PAGED]) {
                             var pagination = state.fileItems.filters[file_item_param_names_1.FilterParamNames.DATASET_LIST_PAGED].pagination;
                             if (pagination) {
-                                _this.fileItemService.loadPagedEntityList(_this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.DATASET_LIST_PAGED, pagination.pagedQueryId, pagination.pageSize, _this.page++);
+                                _this.fileItemService.loadPagedEntityList(_this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.DATASET_LIST_PAGED, pagination.pagedQueryId, pagination.pageSize, ++_this.page);
                             }
                         }
                     });

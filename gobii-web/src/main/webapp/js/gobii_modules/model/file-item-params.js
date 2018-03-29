@@ -282,7 +282,7 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
                     return this._pagedQueryId;
                 };
                 FilterParams.prototype.setPagedQueryId = function (value) {
-                    this._pagedQueryId;
+                    this._pagedQueryId = value;
                     return this;
                 };
                 FilterParams.prototype.getDtoRequestItem = function () {

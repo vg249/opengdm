@@ -731,7 +731,8 @@ export const getDatasetsForSelectedExperiment = createSelector(getFileItems, get
                     //                    && e.getParentItemId() === experimentId
                     && e.getProcessType() === ProcessType.DUMMY))
                 .map(fi => fi);
-        }``
+        }
+        ``
 
     }
 
@@ -786,6 +787,19 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
 
     return returnVal;
 });
+
+
+export const getDatasetEntitiesPaged = createSelector(getFileItems, getFilters, (fileItems, filters) => {
+
+    let intermediateResult: GobiiFileItem[] = getDatasetEntities.resultFunc(fileItems, filters);
+    let payloadFilter: PayloadFilter = filters[FilterParamNames.DATASET_LIST_PAGED];
+
+    let returnVal: GobiiFileItem[] = intermediateResult.filter(gfi => gfi.getPageNumber() === payloadFilter.pagination.currentPage);
+
+    return returnVal;
+
+});
+
 
 export const getPiContactsFilterOptional = createSelector(getFileItems, getGobiiExtractFilterType, (fileItems, gobiiExtractFilterType) => {
 

@@ -25,7 +25,8 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
                           private _parentItemId: string,
                           private _entity: any = null,
                           private _entityRelations: GobiiFileItemEntityRelation[] = [],
-                          private _hasEntity:boolean = false) {
+                          private _hasEntity:boolean = false,
+                          private _pageNumber:number) {
 
         super(_extractorItemType, _entityType, _entitySubType, _cvFilterType,_cvFilterValue);
 
@@ -39,6 +40,7 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
         this._entityRelations = _entityRelations;
         this._entity = _entity;
         this._hasEntity = _hasEntity;
+        this._pageNumber = _pageNumber;
 
         this._fileItemUniqueId = Guid.generateUUID();
     }
@@ -59,7 +61,10 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
             null,
             null,
             null,
-            []
+            [],
+            [],
+            false,
+            0
         );
 
 
@@ -264,5 +269,13 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
         return returnVal;
     }
 
+    setPageNumber(value:number): GobiiFileItem {
+        this._pageNumber = value;
+        return this;
+    }
+
+    getPageNumber(): number {
+        return this._pageNumber;
+    }
 
 } // GobiiFileItem()

@@ -327,7 +327,7 @@ export class FilterParams extends GobiiFileItemCompoundId {
     }
 
     setPagedQueryId(value: string): FilterParams {
-        this._pagedQueryId;
+        this._pagedQueryId = value;
         return this;
     }
 
@@ -344,7 +344,7 @@ export class FilterParams extends GobiiFileItemCompoundId {
         return this.dtoRequestService;
     }
 
-    setDtoRequestService(value:DtoRequestService<any>): FilterParams {
+    setDtoRequestService(value: DtoRequestService<any>): FilterParams {
         this.dtoRequestService = value;
         return this;
     }

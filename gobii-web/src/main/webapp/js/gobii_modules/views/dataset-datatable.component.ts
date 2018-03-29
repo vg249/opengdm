@@ -254,13 +254,14 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
                             FilterParamNames.DATASET_LIST_PAGED,
                             pagination.pagedQueryId,
                             pagination.pageSize,
-                            this.page++)
+                            ++this.page)
                     }
                 }
             });
     }
 
-    public datasetsFileItems$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getDatsetEntities);
+//    public datasetsFileItems$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getDatsetEntities);
+    public datasetsFileItems$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getDatsetEntitiesPaged);
     public selectedDatasets: GobiiFileItem[];
     public datasetAnalysesNames: string[] = [];
     public nameIdFilterParamTypes: any = Object.assign({}, FilterParamNames);
