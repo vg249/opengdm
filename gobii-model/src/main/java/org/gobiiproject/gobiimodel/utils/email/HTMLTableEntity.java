@@ -31,8 +31,14 @@ public class HTMLTableEntity {
         }
         StringBuilder sb=new StringBuilder();
         sb.append("<table style=width:"+width+"%, border=\"1\"><tr>");
-        for(String name:fieldNames) {
-            sb.append("<th align=\"left\">").append(name).append("</th>");//Left align to better align tables
+        if(fieldNames.length == 1){
+            String name = fieldNames[0];
+            sb.append("<th colspan=\"2\" align=\"left\">").append(name).append("</th>");//Left align to better align tables
+        }
+        else{
+            for(String name:fieldNames) {
+                sb.append("<th align=\"left\">").append(name).append("</th>");//Left align to better align tables
+            }
         }
         return sb.append("</tr>").toString();
     }

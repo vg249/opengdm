@@ -16,6 +16,7 @@ public class ProcessMessage extends MailMessage {
     private String statusLine;
     private String errorLine;
     private String tableLine;
+    private String extractCriteriaLine;
     private String entityLine;
     private String identifierLine;
     private String pathsLine;
@@ -27,13 +28,16 @@ public class ProcessMessage extends MailMessage {
     final String tableLineWidth = "40";
     final String entityLineWidth = "40";
     final String identifierLineWidth = "40";
+    final String extractCriteriaLineWidth = "40";
     final String pathsLineWidth = "65";
     List<HTMLTableEntity> entries=new ArrayList<>();
     List<HTMLTableEntity> identifiers=new ArrayList<>();
+    List<HTMLTableEntity> extractCriteria=new ArrayList<>();
     List<HTMLTableEntity> entities=new ArrayList<>();
     List<HTMLTableEntity> paths=new ArrayList<>();
-    
-    
+    private List<String> names;
+
+
     /**
      * Sets the BODY of the mail message with TABLEs
      * @param jobName Name of the JOB ([GOBII - Extractor]: crop - extraction of "xxxx") 
@@ -52,6 +56,9 @@ public class ProcessMessage extends MailMessage {
         }
         if(!identifiers.isEmpty()) {
             identifierLine = HTMLTableEntity.getHTMLTable(identifiers, identifierLineWidth,"Identifier Type","Name","ID");
+        }
+        if(!extractCriteria.isEmpty()) {
+            extractCriteriaLine = HTMLTableEntity.getHTMLTable(extractCriteria, extractCriteriaLineWidth, "Extraction Criteria");
         }
         if(!entities.isEmpty()) {
             entityLine = HTMLTableEntity.getHTMLTable(entities, entityLineWidth,"Type","Count");
@@ -75,6 +82,7 @@ public class ProcessMessage extends MailMessage {
         if(errorLine!=null)body.append(errorLine+line);
         body.append(line);
         if(identifierLine!=null)body.append(identifierLine+line);
+        if(extractCriteriaLine!=null)body.append(extractCriteriaLine+line);
         if(entityLine!=null)body.append(entityLine+line);
         if(tableLine!=null)body.append(tableLine+line);
         if(pathsLine!=null)body.append(pathsLine+line);
@@ -131,6 +139,39 @@ public class ProcessMessage extends MailMessage {
     public ProcessMessage addEntity(String type,String name){
         if(name==null)return this;
         entities.add(new HTMLTableEntity(type,name));
+        return this;
+    }
+
+    public ProcessMessage addCriteria(String type, String name){
+        if(name == null)return this;
+        extractCriteria.add(new HTMLTableEntity(type, name));
+        return this;
+    }
+
+    public ProcessMessage addCriteria(String type, PropNameId criteria){
+        if(criteria == null)return this;
+        extractCriteria.add(new HTMLTableEntity(type, criteria.getName().toString()));
+        return this;
+    }
+
+
+//    public ProcessMessage addCriteria(String type, List<String> names){
+//        String name = "";
+//        if(names == null)return this;
+//        for (String str:names){
+//            name.concat(", " + str);
+//        }
+//        extractCriteria.add(new HTMLTableEntity(type, name));
+//        return this;
+//    }
+
+    public ProcessMessage addCriteria(String type, List<PropNameId> criterias){
+        String name = "";
+        if(criterias == null)return this;
+        for (PropNameId criteria :criterias){
+            name.concat(", " + criteria.getName());
+        }
+        extractCriteria.add(new HTMLTableEntity(type, name));
         return this;
     }
 
