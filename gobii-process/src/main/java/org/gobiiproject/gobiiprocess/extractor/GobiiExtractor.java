@@ -138,11 +138,11 @@ public class GobiiExtractor {
 			String instructionName=new File(instructionFile).getName();
 			instructionName=instructionName.substring(0,instructionName.lastIndexOf('.'));
 			logFile=logDir+"/"+instructionName+".log";
-//			String oldLogFile=ErrorLogger.getLogFilepath();
-//			ErrorLogger.logDebug("Error Logger","Moving error log to "+logFile);
-//			ErrorLogger.setLogFilepath(logFile);
-//			ErrorLogger.logDebug("Error Logger","Moved error log to "+logFile);
-//			FileSystemInterface.rmIfExist(oldLogFile);
+			String oldLogFile=ErrorLogger.getLogFilepath();
+			ErrorLogger.logDebug("Error Logger","Moving error log to "+logFile);
+			ErrorLogger.setLogFilepath(logFile);
+			ErrorLogger.logDebug("Error Logger","Moved error log to "+logFile);
+			FileSystemInterface.rmIfExist(oldLogFile);
         } else {
 			ErrorLogger.logError("Extractor","log directory is not defined in config file");
 			return;
@@ -256,8 +256,7 @@ public class GobiiExtractor {
 					switch (filterType) {
 						case WHOLE_DATASET:
 							extractType="Extract by Dataset";
-							gobiiMDE = "/opt/anaconda2/bin/python3 " + mdePath +
-//							gobiiMDE = "python " + mdePath +
+							gobiiMDE = "python " + mdePath +
 									" -c " + HelperFunctions.getPostgresConnectionString(gobiiCropConfig) +
 									" --extractByDataset" +
 									" -m " + markerFile +
@@ -293,8 +292,7 @@ public class GobiiExtractor {
 
 
 							//Actually call the thing
-							gobiiMDE = "/opt/anaconda2/bin/python " + mdePath +
-//							gobiiMDE = "python " + mdePath +
+							gobiiMDE = "python " + mdePath +
 									" -c " + HelperFunctions.getPostgresConnectionString(gobiiCropConfig) +
 									" --extractByMarkers" +
 									" -m " + markerFile +
@@ -338,8 +336,7 @@ public class GobiiExtractor {
 								projectTerm = " --projectId " + project.getId();
 							}
 
-							gobiiMDE = "/opt/anaconda2/bin/python " + mdePath +
-//							gobiiMDE = "python " + mdePath +
+							gobiiMDE = "python " + mdePath +
 									" -c " + HelperFunctions.getPostgresConnectionString(gobiiCropConfig) +
 									" --extractBySamples" +
 									" -m " + markerFile +
