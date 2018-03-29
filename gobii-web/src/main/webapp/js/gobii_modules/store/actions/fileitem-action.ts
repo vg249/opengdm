@@ -5,6 +5,7 @@ import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 import {FilterParamNames} from "../../model/file-item-param-names";
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 import {Pagination} from "../../model/payload/pagination";
+import {PayloadFilter} from "./action-payload-filter";
 
 export const ADD_TO_EXTRACT = '[GobiiFileItem] Add to Extract';
 export const ADD_TO_EXTRACT_BY_ITEM_ID = '[GobiiFileItem] Add to Extract by ID';
@@ -31,13 +32,7 @@ export class LoadFileItemListWithFilterAction implements Action {
     constructor(public payload: {
         gobiiFileItems: GobiiFileItem[],
         filterId: FilterParamNames,
-        filter: {
-            gobiiExtractFilterType: GobiiExtractFilterType,
-            gobiiCompoundUniqueId: GobiiFileItemCompoundId,
-            filterValue: string,
-            entityLasteUpdated: Date,
-            pagination: Pagination
-        }
+        filter: PayloadFilter
 
     }) {
     }
@@ -58,13 +53,7 @@ export class LoadFilterAction implements Action {
 
     constructor(public payload: {
         filterId: FilterParamNames,
-        filter: {
-            gobiiExtractFilterType: GobiiExtractFilterType,
-            gobiiCompoundUniqueId:GobiiFileItemCompoundId,
-            filterValue: string,
-            entityLasteUpdated: Date,
-            pagination: Pagination
-        }
+        filter:PayloadFilter
     }) {
     }
 }

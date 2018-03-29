@@ -10,6 +10,7 @@ import * as fileAction from '../store/actions/fileitem-action';
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {JsonToGfi} from "../services/app/jsontogfi/json-to-gfi";
 import {DtoRequestItem} from "../services/core/dto-request-item";
+import {PayloadFilter} from "../store/actions/action-payload-filter";
 
 /**
  * Created by Phil on 3/9/2017.
@@ -110,7 +111,7 @@ export class FilterParams extends GobiiFileItemCompoundId {
                         private _pageSize: number,
                         private _pageNum: number,
                         private _pagedQueryId: string,
-                        private onLoadFilteredItemsAction: (fileItems: GobiiFileItem[], filterValue: string) => any,
+                        private onLoadFilteredItemsAction: (fileItems: GobiiFileItem[], payloadFilter: PayloadFilter) => any,
                         private dtoRequestItem: DtoRequestItem<any>,
                         private dtoRequestService: DtoRequestService<any>) {
 
@@ -284,12 +285,12 @@ export class FilterParams extends GobiiFileItemCompoundId {
         return this;
     }
 
-    setOnLoadFilteredItemsAction(initializeTransform: (fileItems: GobiiFileItem[], filterValue: string) => any) {
+    setOnLoadFilteredItemsAction(initializeTransform: (fileItems: GobiiFileItem[], payloadFilter: PayloadFilter) => any) {
         this.onLoadFilteredItemsAction = initializeTransform;
         return this;
     }
 
-    getOnLoadFilteredItemsAction(): (fileItems: GobiiFileItem[], filterValue: string) => any {
+    getOnLoadFilteredItemsAction(): (fileItems: GobiiFileItem[], payloadFilter: PayloadFilter) => any {
         return this.onLoadFilteredItemsAction;
     }
 

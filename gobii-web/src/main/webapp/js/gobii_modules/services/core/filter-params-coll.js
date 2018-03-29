@@ -127,7 +127,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .setCvFilterValue(cvJobStatusCompoundUniqueId.getCvFilterValue())
                         .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPE_NAME)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL)
-                        .setOnLoadFilteredItemsAction(function (fileItems, filterValue) {
+                        .setOnLoadFilteredItemsAction(function (fileItems, payloadFilter) {
                         /***
                          * This event will cause the initially selected job status to be completed and the
                          *  dataset grid items to be filtered accordingly.
@@ -147,7 +147,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                          *
                          */
                         var returnVal = null;
-                        if (!filterValue) {
+                        if (!payloadFilter) {
                             var completedItem = fileItems.find(function (fi) { return fi.getItemName() === "completed"; });
                             var labelItem = fileItems.find(function (fi) { return fi.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL; });
                             if (completedItem && labelItem) {
@@ -157,8 +157,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                                         gobiiExtractFilterType: type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET,
                                         gobiiCompoundUniqueId: cvJobStatusCompoundUniqueId,
                                         filterValue: completedItem.getItemId(),
-                                        entityLasteUpdated: null,
-                                        pagination: null
+                                        entityLasteUpdated: payloadFilter.entityLasteUpdated,
+                                        pagination: payloadFilter.pagination
                                     }
                                 });
                             }
@@ -169,17 +169,17 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                     this.addFilter(file_item_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.DATASET_LIST, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.DATASET)
                         .setFilterType(filter_type_1.FilterType.ENTITY_LIST)
-                        .setOnLoadFilteredItemsAction(function (fileItems, filterValue) {
+                        .setOnLoadFilteredItemsAction(function (fileItems, payloadFilter) {
                         var returnVal = null;
-                        if (!filterValue) {
+                        if (!payloadFilter) {
                             returnVal = new fileAction.LoadFilterAction({
                                 filterId: file_item_param_names_1.FilterParamNames.DATASET_LIST_STATUS,
                                 filter: {
                                     gobiiExtractFilterType: type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET,
                                     gobiiCompoundUniqueId: cvDatasetCompoundUniqueId,
                                     filterValue: "completed",
-                                    entityLasteUpdated: null,
-                                    pagination: null
+                                    entityLasteUpdated: payloadFilter.entityLasteUpdated,
+                                    pagination: payloadFilter.pagination
                                 }
                             });
                         }
@@ -193,17 +193,17 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                     this.addFilter(file_item_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.DATASET_LIST_PAGED, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.DATASET)
                         .setFilterType(filter_type_1.FilterType.ENTITY_LIST)
-                        .setOnLoadFilteredItemsAction(function (fileItems, filterValue) {
+                        .setOnLoadFilteredItemsAction(function (fileItems, payloadFilter) {
                         var returnVal = null;
-                        if (!filterValue) {
+                        if (!payloadFilter) {
                             returnVal = new fileAction.LoadFilterAction({
                                 filterId: file_item_param_names_1.FilterParamNames.DATASET_LIST_STATUS,
                                 filter: {
                                     gobiiExtractFilterType: type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET,
                                     gobiiCompoundUniqueId: cvDatasetCompoundUniqueId,
                                     filterValue: "completed",
-                                    entityLasteUpdated: null,
-                                    pagination: null
+                                    entityLasteUpdated: payloadFilter.entityLasteUpdated,
+                                    pagination: payloadFilter.pagination
                                 }
                             });
                         }

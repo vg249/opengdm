@@ -14,6 +14,7 @@ import {DataSet} from "../../model/dataset";
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 import {FilterParams} from "../../model/file-item-params";
 import {Pagination} from "../../model/payload/pagination";
+import {PayloadFilter} from "../actions/action-payload-filter";
 
 
 /***
@@ -27,13 +28,7 @@ export interface State {
     uniqueIdsOfExtractFileItems: string[];
     allFileItems: GobiiFileItem[];
     filters: {
-        [id: string]: {
-            gobiiExtractFilterType: GobiiExtractFilterType,
-            gobiiCompoundUniqueId: GobiiFileItemCompoundId,
-            filterValue: string,
-            entityLasteUpdated: Date,
-            pagination: Pagination
-        }
+        [id: string]: PayloadFilter
     };
 };
 

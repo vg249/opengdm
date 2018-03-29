@@ -171,7 +171,7 @@ export class FilterParamsColl {
                 .setCvFilterValue(cvJobStatusCompoundUniqueId.getCvFilterValue())
                 .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
                 .setNameIdLabelType(NameIdLabelType.ALL)
-                .setOnLoadFilteredItemsAction((fileItems, filterValue) => {
+                .setOnLoadFilteredItemsAction((fileItems, payloadFilter) => {
 
                     /***
                      * This event will cause the initially selected job status to be completed and the
@@ -194,7 +194,7 @@ export class FilterParamsColl {
 
                     let returnVal: fileAction.LoadFilterAction = null;
 
-                    if (!filterValue) {
+                    if (!payloadFilter) {
 
                         let completedItem: GobiiFileItem =
                             fileItems.find(fi => fi.getItemName() === "completed");
@@ -211,8 +211,8 @@ export class FilterParamsColl {
                                         gobiiExtractFilterType: GobiiExtractFilterType.WHOLE_DATASET,
                                         gobiiCompoundUniqueId: cvJobStatusCompoundUniqueId,
                                         filterValue: completedItem.getItemId(),
-                                        entityLasteUpdated: null,
-                                        pagination: null
+                                        entityLasteUpdated: payloadFilter.entityLasteUpdated,
+                                        pagination: payloadFilter.pagination
                                     }
                                 }
                             );
@@ -235,11 +235,11 @@ export class FilterParamsColl {
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.DATASET)
             .setFilterType(FilterType.ENTITY_LIST)
-            .setOnLoadFilteredItemsAction((fileItems, filterValue) => {
+            .setOnLoadFilteredItemsAction((fileItems, payloadFilter) => {
 
                 let returnVal: fileAction.LoadFilterAction = null;
 
-                if (!filterValue) {
+                if (!payloadFilter) {
 
                     returnVal = new fileAction.LoadFilterAction(
                         {
@@ -248,8 +248,8 @@ export class FilterParamsColl {
                                 gobiiExtractFilterType: GobiiExtractFilterType.WHOLE_DATASET,
                                 gobiiCompoundUniqueId: cvDatasetCompoundUniqueId,
                                 filterValue: "completed",
-                                entityLasteUpdated: null,
-                                pagination: null
+                                entityLasteUpdated: payloadFilter.entityLasteUpdated,
+                                pagination: payloadFilter.pagination
                             }
                         }
                     );
@@ -277,11 +277,11 @@ export class FilterParamsColl {
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.DATASET)
             .setFilterType(FilterType.ENTITY_LIST)
-            .setOnLoadFilteredItemsAction((fileItems, filterValue) => {
+            .setOnLoadFilteredItemsAction((fileItems, payloadFilter) => {
 
                 let returnVal: fileAction.LoadFilterAction = null;
 
-                if (!filterValue) {
+                if (!payloadFilter) {
 
                     returnVal = new fileAction.LoadFilterAction(
                         {
@@ -290,8 +290,8 @@ export class FilterParamsColl {
                                 gobiiExtractFilterType: GobiiExtractFilterType.WHOLE_DATASET,
                                 gobiiCompoundUniqueId: cvDatasetCompoundUniqueId,
                                 filterValue: "completed",
-                                entityLasteUpdated: null,
-                                pagination: null
+                                entityLasteUpdated: payloadFilter.entityLasteUpdated,
+                                pagination: payloadFilter.pagination
                             }
                         }
                     );

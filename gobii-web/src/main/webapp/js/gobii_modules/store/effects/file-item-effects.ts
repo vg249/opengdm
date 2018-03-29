@@ -20,6 +20,7 @@ import "rxjs/add/operator/mergeMap"
 import {AddFilterRetrieved} from "../actions/history-action";
 import {FilterParamsColl} from "../../services/core/filter-params-coll";
 import {FilterParams} from "../../model/file-item-params";
+import {PayloadFilter} from "../actions/action-payload-filter";
 
 @Injectable()
 export class FileItemEffects {
@@ -113,10 +114,10 @@ export class FileItemEffects {
 
 
                     let gobiiFileItems: GobiiFileItem[] = action.payload.gobiiFileItems;
-                    let filterValue: string = action.payload.filter.filterValue;
+                    let payloadFilter: PayloadFilter = action.payload.filter;
                     if (filterParams && filterParams.getOnLoadFilteredItemsAction() !== null) {
 
-                        let action = filterParams.getOnLoadFilteredItemsAction()(gobiiFileItems, filterValue);
+                        let action = filterParams.getOnLoadFilteredItemsAction()(gobiiFileItems, payloadFilter);
                         if (action) {
                             observer.next(action);
                         }
