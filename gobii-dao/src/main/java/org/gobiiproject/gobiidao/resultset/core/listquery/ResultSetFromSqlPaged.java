@@ -93,8 +93,8 @@ public class ResultSetFromSqlPaged<T> implements Work {
                 nameColVal = pageState.getNameValue();
                 idColVal = pageState.getIdValue();
             } else {
-                String message = "The requested page " + this.pageNo + " exceeds the number of  available pages " + this.pageFrameState.pageSize;
-                throw new SQLGrammarException(message, null, message);
+                String message = "The requested page " + this.pageNo + " exceeds the number of available pages " + this.pageFrameState.getPages().size();
+                throw new SQLGrammarException(message, new SQLException(message), message);
             }
 
         }

@@ -612,6 +612,18 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
         // should have failed
         Assert.assertFalse(resultEnvelopeForPaged.getHeader().getStatus().isSucceeded());
 
+
+        Assert.assertTrue(
+        resultEnvelopeForPaged
+                .getHeader()
+                .getStatus()
+                .getStatusMessages()
+                .stream()
+                .filter(sm -> sm.getMessage().contains("exceeds the number of available pages"))
+                .count() > 0 );
+
+        //Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForPaged.getHeader()));
+
     } // getPagedList()
 
     @Test
