@@ -36,7 +36,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -482,18 +481,17 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
                 retrievedDataSets.size() <= (26 * 26));
         List<String> sortedNames = new ArrayList<>();
         Integer totalNames = 0;
-        for(char leftCharacter= 65; leftCharacter <= 90 && totalNames < retrievedDataSets.size(); leftCharacter++ ) {
-            for(char rightCharacter = 65; rightCharacter <= 90 && totalNames < retrievedDataSets.size(); rightCharacter++) {
-                String currentName = Character.toString(leftCharacter) + Character.toString(rightCharacter) ;
-                sortedNames.add(currentName);
+        for (char leftCharacter = 65; leftCharacter <= 90 && totalNames < retrievedDataSets.size(); leftCharacter++) {
+            for (char rightCharacter = 65; rightCharacter <= 90 && totalNames < retrievedDataSets.size(); rightCharacter++) {
+                String currentName = Character.toString(leftCharacter) + Character.toString(rightCharacter);
+                sortedNames.add(currentName + " (" + totalNames + ")");
                 totalNames++;
             }
         }
 
 
-
         //now update the names accordingly
-        for(Integer idx = 0; idx < retrievedDataSets.size(); idx++ ) {
+        for (Integer idx = 0; idx < retrievedDataSets.size(); idx++) {
             DataSetDTO currentDataset = retrievedDataSets.get(idx);
             String currentName = sortedNames.get(idx);
             currentDataset.setDatasetName(currentName);
@@ -501,7 +499,7 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
             RestUri datasetByIdUri = GobiiClientContext.getInstance(null, false)
                     .getUriFactory()
                     .resourceByUriIdParam(GobiiServiceRequestId.URL_DATASETS)
-                    .setParamValue("id",currentDataset.getDataSetId().toString());
+                    .setParamValue("id", currentDataset.getDataSetId().toString());
             GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceForDataSetById = new GobiiEnvelopeRestResource<>(datasetByIdUri);
             resultEnvelope = gobiiEnvelopeRestResourceForDataSetById
                     .put(DataSetDTO.class, new PayloadEnvelope<>(currentDataset, GobiiProcessType.UPDATE));
@@ -521,15 +519,15 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
                 .collect(Collectors.toList());
 
         final Integer pageSize = 4;
-        Map<Integer,List<DataSetDTO>> pageMap = new LinkedHashMap<>();
+        Map<Integer, List<DataSetDTO>> pageMap = new LinkedHashMap<>();
         Integer currentPage = 0;
-        for(Integer idx = 0; idx < sortedDataSets.size() ; idx++) {
+        for (Integer idx = 0; idx < sortedDataSets.size(); idx++) {
 
             List<DataSetDTO> currentList;
             Integer currentMod = idx % pageSize;
-            if( currentMod == 0 ) {
+            if (currentMod == 0) {
                 currentList = new ArrayList<>();
-                pageMap.put(++currentPage,currentList);
+                pageMap.put(++currentPage, currentList);
             } else {
                 currentList = pageMap.get(currentPage);
             }
@@ -537,14 +535,16 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
             currentList.add(sortedDataSets.get(idx));
         }
 
+        // now iterate pages, per page map
         List<Integer> pageList = new ArrayList<>(pageMap.keySet());
         String queryKey = null;
-        for( Integer currentPageKey : pageList) {
+        for (Integer currentPageKey : pageList) {
 
+            Integer pageNo = currentPageKey - 1; // pages are zero based
             RestUri pagedUriDataSet = GobiiClientContext.getInstance(null, false)
                     .getUriFactory().pagedList(GobiiServiceRequestId.URL_DATASETS,
                             pageSize,
-                            currentPageKey,
+                            pageNo,
                             queryKey);
             GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceForPaged = new GobiiEnvelopeRestResource<>(pagedUriDataSet);
             PayloadEnvelope<DataSetDTO> resultEnvelopeForPaged = gobiiEnvelopeRestResourceForPaged
@@ -559,7 +559,7 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
                     resultEnvelopeForPaged.getHeader().getPagination().getPageSize());
 
             Assert.assertNotNull("Error in pagination object: Query ID is not set",
-                    resultEnvelopeForPaged.getHeader().getPagination().getQueryId());
+                    resultEnvelopeForPaged.getHeader().getPagination().getPagedQueryId());
 
             Assert.assertNotNull("Error in pagination object: Query Time is not set",
                     resultEnvelopeForPaged.getHeader().getPagination().getQueryTime());
@@ -568,35 +568,61 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
                     resultEnvelopeForPaged.getHeader().getPagination().getTotalPages());
 
 
-            if( currentPageKey == 1 ) {
-                queryKey = resultEnvelopeForPaged.getHeader().getPagination().getQueryId();
+            if (pageNo == 0) {
+                queryKey = resultEnvelopeForPaged.getHeader().getPagination().getPagedQueryId();
             } else {
                 Assert.assertTrue("The query key for subsquent pages did not match the one retrieved for the first p[page: " +
-                        queryKey + " initial vs." + resultEnvelopeForPaged.getHeader().getPagination().getQueryId() + " subsequent",
-                        queryKey.equals(resultEnvelopeForPaged.getHeader().getPagination().getQueryId()));
+                                queryKey + " initial vs." + resultEnvelopeForPaged.getHeader().getPagination().getPagedQueryId() + " subsequent",
+                        queryKey.equals(resultEnvelopeForPaged.getHeader().getPagination().getPagedQueryId()));
             }
 
             List<DataSetDTO> currentPageDTOs = resultEnvelopeForPaged.getPayload().getData();
-            List<DataSetDTO> currentReferenceDTOs = pageMap.get(currentPageKey);
+            List<DataSetDTO> currentReferenceDTOs = pageMap.get(currentPageKey); // but reference the map by current key
 
             Assert.assertTrue("The retrieved page datasets differs in length from the refereference datasets",
                     currentPageDTOs.size() == currentReferenceDTOs.size());
 
-            for(Integer idx = 0; idx < currentPageDTOs.size(); idx++ ) {
+            for (Integer idx = 0; idx < currentPageDTOs.size(); idx++) {
                 DataSetDTO currentRetrievedDto = currentPageDTOs.get(idx);
                 DataSetDTO currentReferenceDTO = currentReferenceDTOs.get(idx);
 
-                Assert.assertEquals("The names of the page item do not match",
-                        currentReferenceDTO.getDatasetName(),currentRetrievedDto.getDatasetName());
+                Assert.assertTrue("The names of the page item do not match for page # " + pageNo,
+                        currentRetrievedDto.getDatasetName().contains(currentReferenceDTO.getDatasetName()));
 
                 Assert.assertEquals("The dataset Ids of the page item do not match",
-                        currentReferenceDTO.getDataSetId(),currentRetrievedDto.getDataSetId());
+                        currentReferenceDTO.getDataSetId(), currentRetrievedDto.getDataSetId());
 
 
             }
 
 
-        }
+        } // iterate pages
+
+        Integer exceedingPageNo = pageMap.keySet().size(); // pages are zero based
+        RestUri pagedUriDataSet = GobiiClientContext.getInstance(null, false)
+                .getUriFactory().pagedList(GobiiServiceRequestId.URL_DATASETS,
+                        pageSize,
+                        exceedingPageNo + 1,
+                        queryKey);
+        GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceForPaged = new GobiiEnvelopeRestResource<>(pagedUriDataSet);
+        PayloadEnvelope<DataSetDTO> resultEnvelopeForPaged = gobiiEnvelopeRestResourceForPaged
+                .get(DataSetDTO.class);
+
+
+        // should have failed
+        Assert.assertFalse(resultEnvelopeForPaged.getHeader().getStatus().isSucceeded());
+
+
+        Assert.assertTrue(
+        resultEnvelopeForPaged
+                .getHeader()
+                .getStatus()
+                .getStatusMessages()
+                .stream()
+                .filter(sm -> sm.getMessage().contains("exceeds the number of available pages"))
+                .count() > 0 );
+
+        //Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForPaged.getHeader()));
 
     } // getPagedList()
 

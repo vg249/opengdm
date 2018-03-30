@@ -151,7 +151,7 @@ public class PayloadWriter<T extends DTOBase> {
             this.writeSingleItemForDefaultId(payloadEnvelope, restUri, currentItem);
         }
 
-        payloadEnvelope.getHeader().setPagination(pagedListToWrite.getPgQueryId(),
+        payloadEnvelope.getHeader().setPagination(pagedListToWrite.getPagingQueryId(),
                 pagedListToWrite.getQueryTime(),
                 pagedListToWrite.getPageSize(),
                 pagedListToWrite.getTotalPages(),

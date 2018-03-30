@@ -7,6 +7,10 @@ import {ExtractorItemType} from "./type-extractor-item";
 import {GobiiFileItemCompoundId} from "./gobii-file-item-compound-id";
 import {GobiiFileItem} from "./gobii-file-item";
 import * as fileAction from '../store/actions/fileitem-action';
+import {DtoRequestService} from "../services/core/dto-request.service";
+import {JsonToGfi} from "../services/app/jsontogfi/json-to-gfi";
+import {DtoRequestItem} from "../services/core/dto-request-item";
+import {PayloadFilter} from "../store/actions/action-payload-filter";
 
 /**
  * Created by Phil on 3/9/2017.
@@ -103,7 +107,13 @@ export class FilterParams extends GobiiFileItemCompoundId {
                         private _childFileItemParams: FilterParams[],
                         private _isDynamicFilterValue: boolean,
                         private _isDynamicDataLoad: boolean,
-                        private onLoadFilteredItemsAction: (fileItems: GobiiFileItem[], filterValue:string) => any) {
+                        private _isPaged: boolean,
+                        private _pageSize: number,
+                        private _pageNum: number,
+                        private _pagedQueryId: string,
+                        private onLoadFilteredItemsAction: (fileItems: GobiiFileItem[], payloadFilter: PayloadFilter) => any,
+                        private dtoRequestItem: DtoRequestItem<any>,
+                        private dtoRequestService: DtoRequestService<any>) {
 
         super(_extractorItemType, _entityType, _entitySubType, _cvFilterType, _cvFilterValue);
 
@@ -113,7 +123,7 @@ export class FilterParams extends GobiiFileItemCompoundId {
     public static build(queryName: string,
                         gobiiExtractFilterType: GobiiExtractFilterType,
                         entityType: EntityType): FilterParams {
-        return ( new FilterParams(
+        return (new FilterParams(
             entityType,
             EntitySubType.UNKNOWN,
             CvFilterType.UNKNOWN,
@@ -128,6 +138,12 @@ export class FilterParams extends GobiiFileItemCompoundId {
             [],
             true,
             true,
+            false,
+            null,
+            null,
+            null,
+            null,
+            null,
             null));
     }
 
@@ -269,13 +285,68 @@ export class FilterParams extends GobiiFileItemCompoundId {
         return this;
     }
 
-    setOnLoadFilteredItemsAction(initializeTransform: (fileItems: GobiiFileItem[], filterValue:string) => any) {
+    setOnLoadFilteredItemsAction(initializeTransform: (fileItems: GobiiFileItem[], payloadFilter: PayloadFilter) => any) {
         this.onLoadFilteredItemsAction = initializeTransform;
         return this;
     }
 
-    getOnLoadFilteredItemsAction(): (fileItems: GobiiFileItem[], filterValue:string) => any {
+    getOnLoadFilteredItemsAction(): (fileItems: GobiiFileItem[], payloadFilter: PayloadFilter) => any {
         return this.onLoadFilteredItemsAction;
+    }
+
+
+    getIsPaged(): boolean {
+        return this._isPaged;
+    }
+
+    setIsPaged(value: boolean): FilterParams {
+        this._isPaged = value;
+        return this;
+    }
+
+    getPageNum(): number {
+        return this._pageNum;
+    }
+
+    setPageNum(value: number): FilterParams {
+        this._pageNum = value;
+        return this;
+    }
+
+    getPageSize(): number {
+        return this._pageSize;
+    }
+
+    setPageSize(value: number): FilterParams {
+        this._pageSize = value;
+        return this;
+    }
+
+    getPagedQueryId(): string {
+        return this._pagedQueryId;
+    }
+
+    setPagedQueryId(value: string): FilterParams {
+        this._pagedQueryId = value;
+        return this;
+    }
+
+    getDtoRequestItem(): DtoRequestItem<any> {
+        return this.dtoRequestItem;
+    }
+
+    setDtoRequestItem(value: DtoRequestItem<any>): FilterParams {
+        this.dtoRequestItem = value;
+        return this;
+    }
+
+    getDtoRequestService(): DtoRequestService<any> {
+        return this.dtoRequestService;
+    }
+
+    setDtoRequestService(value: DtoRequestService<any>): FilterParams {
+        this.dtoRequestService = value;
+        return this;
     }
 
 }

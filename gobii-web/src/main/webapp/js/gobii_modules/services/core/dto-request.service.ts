@@ -34,7 +34,7 @@ export class DtoRequestService<T> {
         return this._gobbiiVersion;
     }
 
-    public post(dtoRequestItem: DtoRequestItem<T>): Observable < T > {
+    public post(dtoRequestItem: DtoRequestItem<T>): Observable<T> {
 
         let scope$ = this;
 
@@ -73,7 +73,7 @@ export class DtoRequestService<T> {
                         }); // subscribe http
 
             } else {
-                let header: Header = new Header(null, null, new Status(false, [new HeaderStatusMessage("Unauthenticated", null, null)]), null);
+                let header: Header = new Header(null, null, new Status(false, [new HeaderStatusMessage("Unauthenticated", null, null)]), null, null);
                 observer.error(header);
             }
 
@@ -81,10 +81,7 @@ export class DtoRequestService<T> {
     }
 
 
-
-
-
-    public get(dtoRequestItem: DtoRequestItem<T>, authenticate:boolean = true): Observable < T > {
+    public get(dtoRequestItem: DtoRequestItem<T>, authenticate: boolean = true): Observable<T> {
 
         let scope$ = this;
         return Observable.create(observer => {
@@ -92,7 +89,7 @@ export class DtoRequestService<T> {
             let token: string = this._authenticationService
                 .getToken();
 
-            if(token || !authenticate ) {
+            if (token || !authenticate) {
 
                 let headers = HttpValues.makeTokenHeaders(token, scope$._authenticationService.getGobiiCropType());
 
@@ -121,7 +118,7 @@ export class DtoRequestService<T> {
                         }); // subscribe http
 
             } else {
-                let header: Header = new Header(null, null, new Status(false, [new HeaderStatusMessage("Unauthenticated", null, null)]), null);
+                let header: Header = new Header(null, null, new Status(false, [new HeaderStatusMessage("Unauthenticated", null, null)]), null, null);
                 observer.error(header);
             }
 

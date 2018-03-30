@@ -136,15 +136,18 @@ public class DtoListQuery<T> {
 
             // in theory an existing id might have gotten nuked if the server were restarted
             PageFrameState pageFrameState = this.pageFramesTrackingCache.getPageFrames(pgQueryId);
-            if (pageFrameState == null) {
-                pageFrameState = new PageFrameState(pageSize);
-                this.pageFramesTrackingCache.setPageFrames(pgQueryId, pageFrameState);
-            }
 
-            ResultSetFromSqlPaged resultSetFromSqlPaged = new ResultSetFromSqlPaged(listStatementPaged, pageSize, pageNo, pgQueryId, pageFrameState);
+            ResultSetFromSqlPaged resultSetFromSqlPaged = new ResultSetFromSqlPaged(listStatementPaged, pageSize, pageNo, pageFrameState);
             this.storedProcExec.doWithConnection(resultSetFromSqlPaged);
             ResultSet resultSet = resultSetFromSqlPaged.getResultSet();
             List<T> dtoList = this.makeDtoListFromResultSet(resultSet);
+
+            if (pageFrameState == null) {
+                pgQueryId = UUID.randomUUID().toString(); //force client to refresh query id
+                pageFrameState = resultSetFromSqlPaged.getPageFrameState();
+                this.pageFramesTrackingCache.setPageFrames(pgQueryId, pageFrameState);
+            }
+
 
             returnVal = new PagedList<>(
                     resultSetFromSqlPaged.getPageFrameState().getCreated(),

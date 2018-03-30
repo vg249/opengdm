@@ -21,6 +21,10 @@ import {EntitySubType, EntityType} from "../model/type-entity";
 import {GobiiFileItemCompoundId} from "../model/gobii-file-item-compound-id";
 import {ExtractorItemType} from "../model/type-extractor-item";
 // import {TooltipModule} from "/primeng/primeng";
+import {PagedFileItemList} from "../model/payload/paged-item-list";
+import {Pagination} from "../model/payload/pagination";
+import {Subject} from "rxjs/Subject";
+import 'rxjs/add/operator/withLatestFrom'
 
 @Component({
     selector: 'dataset-datatable',
@@ -69,9 +73,9 @@ import {ExtractorItemType} from "../model/type-extractor-item";
                 </p-column>
                 <p-column [style]="{'width':'5%','text-align':'center'}">
                     <ng-template let-col="rowData" pTemplate="body">
-                        <button type="button" 
+                        <button type="button"
                                 pButton (click)="selectDataset($event,col,datasetOverlayPanel);"
-                                icon="fa-bars" 
+                                icon="fa-bars"
                                 style="font-size: 10px"></button>
                     </ng-template>
                 </p-column>
@@ -79,21 +83,24 @@ import {ExtractorItemType} from "../model/type-extractor-item";
                           header="Name"
                           [style]="{'width': '18%'}">
                     <ng-template pTemplate="body" let-col let-fi="rowData">
-                        <span pTooltip="{{fi._entity.datasetName}}" tooltipPosition="left" tooltipStyleClass="tableTooltip"> {{fi._entity.datasetName}} </span>
+                        <span pTooltip="{{fi._entity.datasetName}}" tooltipPosition="left"
+                              tooltipStyleClass="tableTooltip"> {{fi._entity.datasetName}} </span>
                     </ng-template>
                 </p-column>
                 <p-column field="_entity.projectName"
                           header="Project"
                           [style]="{'width': '18%'}">
                     <ng-template pTemplate="body" let-col let-fi="rowData">
-                        <span pTooltip="{{fi._entity.projectName}}" tooltipPosition="left" tooltipStyleClass="tableTooltip"> {{fi._entity.projectName}} </span>
+                        <span pTooltip="{{fi._entity.projectName}}" tooltipPosition="left"
+                              tooltipStyleClass="tableTooltip"> {{fi._entity.projectName}} </span>
                     </ng-template>
                 </p-column>
                 <p-column field="_entity.experimentName"
                           header="Experiment"
                           [style]="{'width': '18%'}">
                     <ng-template pTemplate="body" let-col let-fi="rowData">
-                        <span pTooltip="{{fi._entity.experimentName}}" tooltipPosition="left" tooltipStyleClass="tableTooltip"> {{fi._entity.experimentName}} </span>
+                        <span pTooltip="{{fi._entity.experimentName}}" tooltipPosition="left"
+                              tooltipStyleClass="tableTooltip"> {{fi._entity.experimentName}} </span>
                     </ng-template>
                 </p-column>
                 <p-column field="_entity.piEmail"
@@ -222,6 +229,9 @@ import {ExtractorItemType} from "../model/type-extractor-item";
 
             </p-overlayPanel>
 
+            <div *ngIf="doPaging">
+                <button pButton type="button" (click)="onClickForNextPage$.next($event)" label="Test Paging"></button>
+            </div>
         </div> <!-- enclosing box  -->
     ` // end template
 
@@ -230,13 +240,39 @@ import {ExtractorItemType} from "../model/type-extractor-item";
 export class DatasetDatatableComponent implements OnInit, OnChanges {
 
 
+    public onClickForNextPage$ = new Subject<Pagination>();
+
     constructor(private store: Store<fromRoot.State>,
                 private fileItemService: FileItemService,
                 private filterParamsColl: FilterParamsColl,
                 private fileItemRequestService: DtoRequestService<GobiiFileItem[]>) {
+
+        if (this.doPaging) {
+            this.datasetsFileItems$ = this.store.select(fromRoot.getDatsetEntitiesPaged);
+        } else {
+            this.datasetsFileItems$ = this.store.select(fromRoot.getDatsetEntities);
+        }
+
+        this.onClickForNextPage$
+            .withLatestFrom(this.store)
+            .subscribe(([data, state]) => {
+                if (state.fileItems.filters[FilterParamNames.DATASET_LIST_PAGED]) {
+                    let pagination: Pagination = state.fileItems.filters[FilterParamNames.DATASET_LIST_PAGED].pagination;
+                    if (pagination) {
+                        this.fileItemService.loadPagedEntityList(this.gobiiExtractFilterType,
+                            FilterParamNames.DATASET_LIST_PAGED,
+                            pagination.pagedQueryId,
+                            pagination.pageSize,
+                            ++this.page)
+                    }
+                }
+            });
     }
 
-    public datasetsFileItems$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getDatsetEntities);
+    public doPaging = false;
+//    public datasetsFileItems$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getDatsetEntities);
+    //public datasetsFileItems$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getDatsetEntitiesPaged);
+    public datasetsFileItems$: Observable<GobiiFileItem[]>;
     public selectedDatasets: GobiiFileItem[];
     public datasetAnalysesNames: string[] = [];
     public nameIdFilterParamTypes: any = Object.assign({}, FilterParamNames);
@@ -270,7 +306,8 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
                         CvFilterType.UNKNOWN,
                         CvFilters.get(CvFilterType.UNKNOWN)),
                     filterValue: filterValue,
-                    entityLasteUpdated: null
+                    entityLasteUpdated: null,
+                    pagination: null
                 }
             }
         ))
@@ -353,8 +390,12 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
 
     }
 
+
+    private page: number = 0;
+
     public handleRowChecked(checked: boolean, selectedDatasetFileItem: GobiiFileItem) {
         this.handleItemChecked(selectedDatasetFileItem.getFileItemUniqueId(), checked);
+
     }
 
 
@@ -388,22 +429,34 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
     public gobiiExtractFilterType: GobiiExtractFilterType;
 
     ngOnInit() {
+
+        //this.handleLoadPage(1);
     } // ngOnInit()
 
     // gobiiExtractType is not set until you get OnChanges
     ngOnChanges(changes: { [propName: string]: SimpleChange }) {
 
         if (changes['gobiiExtractFilterType']
-            && ( changes['gobiiExtractFilterType'].currentValue != null )
-            && ( changes['gobiiExtractFilterType'].currentValue != undefined )) {
+            && (changes['gobiiExtractFilterType'].currentValue != null)
+            && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
 
             if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
 
-                if( this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET ) {
-                    this.fileItemService.loadEntityList(this.gobiiExtractFilterType, FilterParamNames.DATASET_LIST);
-                    this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                        FilterParamNames.CV_JOB_STATUS,
-                        null);
+                if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
+
+                    if( this.doPaging ) {
+                        this.fileItemService.loadPagedEntityList(this.gobiiExtractFilterType,
+                            FilterParamNames.DATASET_LIST_PAGED,
+                            null,
+                            5,
+                            0);
+                        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                            FilterParamNames.CV_JOB_STATUS,
+                            null);
+
+                    } else {
+                        this.fileItemService.loadEntityList(this.gobiiExtractFilterType, FilterParamNames.DATASET_LIST);
+                    }
                 }
 
             } // if we have a new filter type

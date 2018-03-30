@@ -262,7 +262,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
         return returnVal;
     }
     exports_1("fileItemsReducer", fileItemsReducer);
-    var _this, reselect_1, gobii_file_item_1, gobiiFileItemAction, type_extractor_item_1, type_entity_1, file_item_param_names_1, type_process_1, entity_labels_1, type_extractor_filter_1, type_extract_format_1, cv_filter_type_1, type_extractor_sample_list_1, initialState, getGobiiExtractFilterType, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getSelectedFileFormat, getSelectedSampleType, getJobId, getUploadFiles, getPiContacts, getProjects, getExperiments, getDatasets, getCvTermsDataType, getCvTermsJobStatus, getMapsets, getPlatforms, getMarkerGroups, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment, getDatasetEntities, getPiContactsFilterOptional, getProjectsFilterOptional, getExperimentsFilterOptional;
+    var _this, reselect_1, gobii_file_item_1, gobiiFileItemAction, type_extractor_item_1, type_entity_1, file_item_param_names_1, type_process_1, entity_labels_1, type_extractor_filter_1, type_extract_format_1, cv_filter_type_1, type_extractor_sample_list_1, initialState, getGobiiExtractFilterType, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getSelectedFileFormat, getSelectedSampleType, getJobId, getUploadFiles, getPiContacts, getProjects, getExperiments, getDatasets, getCvTermsDataType, getCvTermsJobStatus, getMapsets, getPlatforms, getMarkerGroups, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment, getDatasetEntities, getDatasetEntitiesPaged, getPiContactsFilterOptional, getProjectsFilterOptional, getExperimentsFilterOptional;
     return {
         setters: [
             function (reselect_1_1) {
@@ -558,6 +558,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                         })
                             .map(function (fi) { return fi; });
                     }
+                    "";
                 }
                 return returnVal;
             }));
@@ -593,6 +594,12 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 else {
                     returnVal = datasetEntitiesFilteredByExperiment;
                 }
+                return returnVal;
+            }));
+            exports_1("getDatasetEntitiesPaged", getDatasetEntitiesPaged = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
+                var intermediateResult = getDatasetEntities.resultFunc(fileItems, filters);
+                var payloadFilter = filters[file_item_param_names_1.FilterParamNames.DATASET_LIST_PAGED];
+                var returnVal = intermediateResult.filter(function (gfi) { return gfi.getPageNumber() === payloadFilter.pagination.currentPage; });
                 return returnVal;
             }));
             exports_1("getPiContactsFilterOptional", getPiContactsFilterOptional = reselect_1.createSelector(getFileItems, getGobiiExtractFilterType, function (fileItems, gobiiExtractFilterType) {

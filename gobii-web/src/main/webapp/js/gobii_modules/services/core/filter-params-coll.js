@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-entity", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/file-item-params", "../../store/actions/history-action", "@ngrx/store", "../../model/name-id-label-type", "../../model/filter-type", "../../model/file-item-param-names", "rxjs/add/operator/expand", "../../model/type-extractor-item", "../../store/actions/fileitem-action", "../../model/gobii-file-item-compound-id"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-entity", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/file-item-params", "../../store/actions/history-action", "@ngrx/store", "../../model/name-id-label-type", "../../model/filter-type", "../../model/file-item-param-names", "rxjs/add/operator/expand", "../../model/type-extractor-item", "../../store/actions/fileitem-action", "../../model/gobii-file-item-compound-id", "./dto-request.service", "../app/jsontogfi/json-to-gfi-dataset", "../app/dto-request-item-gfi", "../app/dto-request-item-gfi-paged"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_entity_1, type_extractor_filter_1, cv_filter_type_1, file_item_params_1, historyAction, store_1, name_id_label_type_1, filter_type_1, file_item_param_names_1, type_extractor_item_1, fileAction, gobii_file_item_compound_id_1, FilterParamsColl;
+    var core_1, type_entity_1, type_extractor_filter_1, cv_filter_type_1, file_item_params_1, historyAction, store_1, name_id_label_type_1, filter_type_1, file_item_param_names_1, type_extractor_item_1, fileAction, gobii_file_item_compound_id_1, dto_request_service_1, json_to_gfi_dataset_1, dto_request_item_gfi_1, dto_request_item_gfi_paged_1, FilterParamsColl;
     return {
         setters: [
             function (core_1_1) {
@@ -53,12 +53,26 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
             },
             function (gobii_file_item_compound_id_1_1) {
                 gobii_file_item_compound_id_1 = gobii_file_item_compound_id_1_1;
+            },
+            function (dto_request_service_1_1) {
+                dto_request_service_1 = dto_request_service_1_1;
+            },
+            function (json_to_gfi_dataset_1_1) {
+                json_to_gfi_dataset_1 = json_to_gfi_dataset_1_1;
+            },
+            function (dto_request_item_gfi_1_1) {
+                dto_request_item_gfi_1 = dto_request_item_gfi_1_1;
+            },
+            function (dto_request_item_gfi_paged_1_1) {
+                dto_request_item_gfi_paged_1 = dto_request_item_gfi_paged_1_1;
             }
         ],
         execute: function () {
             FilterParamsColl = (function () {
-                function FilterParamsColl(store) {
+                function FilterParamsColl(store, pagedDatasetRequestService, fileItemRequestService) {
                     this.store = store;
+                    this.pagedDatasetRequestService = pagedDatasetRequestService;
+                    this.fileItemRequestService = fileItemRequestService;
                     this.filterParams = [];
                     // For non-hierarchically filtered request params, we just create them simply
                     // as we add them to the flat map
@@ -113,7 +127,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .setCvFilterValue(cvJobStatusCompoundUniqueId.getCvFilterValue())
                         .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPE_NAME)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL)
-                        .setOnLoadFilteredItemsAction(function (fileItems, filterValue) {
+                        .setOnLoadFilteredItemsAction(function (fileItems, payloadFilter) {
                         /***
                          * This event will cause the initially selected job status to be completed and the
                          *  dataset grid items to be filtered accordingly.
@@ -133,7 +147,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                          *
                          */
                         var returnVal = null;
-                        if (!filterValue) {
+                        if (!payloadFilter) {
                             var completedItem = fileItems.find(function (fi) { return fi.getItemName() === "completed"; });
                             var labelItem = fileItems.find(function (fi) { return fi.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL; });
                             if (completedItem && labelItem) {
@@ -143,7 +157,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                                         gobiiExtractFilterType: type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET,
                                         gobiiCompoundUniqueId: cvJobStatusCompoundUniqueId,
                                         filterValue: completedItem.getItemId(),
-                                        entityLasteUpdated: null
+                                        entityLasteUpdated: payloadFilter.entityLasteUpdated,
+                                        pagination: payloadFilter.pagination
                                     }
                                 });
                             }
@@ -154,21 +169,51 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                     this.addFilter(file_item_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.DATASET_LIST, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.DATASET)
                         .setFilterType(filter_type_1.FilterType.ENTITY_LIST)
-                        .setOnLoadFilteredItemsAction(function (fileItems, filterValue) {
+                        .setOnLoadFilteredItemsAction(function (fileItems, payloadFilter) {
                         var returnVal = null;
-                        if (!filterValue) {
+                        if (!payloadFilter) {
                             returnVal = new fileAction.LoadFilterAction({
                                 filterId: file_item_param_names_1.FilterParamNames.DATASET_LIST_STATUS,
                                 filter: {
                                     gobiiExtractFilterType: type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET,
                                     gobiiCompoundUniqueId: cvDatasetCompoundUniqueId,
                                     filterValue: "completed",
-                                    entityLasteUpdated: null
+                                    entityLasteUpdated: payloadFilter.entityLasteUpdated,
+                                    pagination: payloadFilter.pagination
                                 }
                             });
                         }
                         return returnVal;
                     }));
+                    // add dto request to DATASET_LIST filter
+                    this.getFilter(file_item_param_names_1.FilterParamNames.DATASET_LIST, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET)
+                        .setDtoRequestItem(new dto_request_item_gfi_1.DtoRequestItemGfi(this.getFilter(file_item_param_names_1.FilterParamNames.DATASET_LIST, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET), null, new json_to_gfi_dataset_1.JsonToGfiDataset(this.getFilter(file_item_param_names_1.FilterParamNames.DATASET_LIST, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET), this)))
+                        .setDtoRequestService(this.fileItemRequestService);
+                    // same as previous except configured for paging
+                    this.addFilter(file_item_params_1.FilterParams
+                        .build(file_item_param_names_1.FilterParamNames.DATASET_LIST_PAGED, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.DATASET)
+                        .setFilterType(filter_type_1.FilterType.ENTITY_LIST)
+                        .setOnLoadFilteredItemsAction(function (fileItems, payloadFilter) {
+                        var returnVal = null;
+                        if (!payloadFilter) {
+                            returnVal = new fileAction.LoadFilterAction({
+                                filterId: file_item_param_names_1.FilterParamNames.DATASET_LIST_STATUS,
+                                filter: {
+                                    gobiiExtractFilterType: type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET,
+                                    gobiiCompoundUniqueId: cvDatasetCompoundUniqueId,
+                                    filterValue: "completed",
+                                    entityLasteUpdated: payloadFilter.entityLasteUpdated,
+                                    pagination: payloadFilter.pagination
+                                }
+                            });
+                        }
+                        return returnVal;
+                    })
+                        .setIsPaged(true));
+                    // add dto request to DATASET_LIST_PAGED filter
+                    this.getFilter(file_item_param_names_1.FilterParamNames.DATASET_LIST_PAGED, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET)
+                        .setDtoRequestItem(new dto_request_item_gfi_paged_1.DtoRequestItemGfiPaged(this.getFilter(file_item_param_names_1.FilterParamNames.DATASET_LIST_PAGED, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET), null, new json_to_gfi_dataset_1.JsonToGfiDataset(this.getFilter(file_item_param_names_1.FilterParamNames.DATASET_LIST_PAGED, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET), this)))
+                        .setDtoRequestService(this.pagedDatasetRequestService);
                     this.addFilter(file_item_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.DATASET_BY_DATASET_ID, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.DATASET)
                         .setFilterType(filter_type_1.FilterType.ENTITY_BY_ID));
@@ -273,7 +318,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                 };
                 FilterParamsColl = __decorate([
                     core_1.Injectable(),
-                    __metadata("design:paramtypes", [store_1.Store])
+                    __metadata("design:paramtypes", [store_1.Store,
+                        dto_request_service_1.DtoRequestService,
+                        dto_request_service_1.DtoRequestService])
                 ], FilterParamsColl);
                 return FilterParamsColl;
             }());
