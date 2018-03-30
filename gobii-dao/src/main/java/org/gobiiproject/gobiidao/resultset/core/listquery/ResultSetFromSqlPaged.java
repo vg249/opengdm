@@ -1,10 +1,9 @@
 package org.gobiiproject.gobiidao.resultset.core.listquery;
 
 import org.gobiiproject.gobiidao.cache.PageFrameState;
-import org.gobiiproject.gobiidao.cache.PageFramesTrackingCache;
 import org.gobiiproject.gobiidao.cache.PageState;
+import org.hibernate.exception.SQLGrammarException;
 import org.hibernate.jdbc.Work;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,12 +26,10 @@ public class ResultSetFromSqlPaged<T> implements Work {
     public ResultSetFromSqlPaged(ListStatementPaged listStatementPaged,
                                  Integer pageSize,
                                  Integer pageNo,
-                                 String pgQueryId,
                                  PageFrameState pageFrameState) {
         this.listStatementPaged = listStatementPaged;
         this.pageSize = pageSize;
         this.pageNo = pageNo;
-        this.pgQueryId = pgQueryId;
         this.pageFrameState = pageFrameState;
     }
 
@@ -55,8 +52,9 @@ public class ResultSetFromSqlPaged<T> implements Work {
     public void execute(Connection dbConnection) throws SQLException {
 
 
-        if ( this.pageFrameState.getPages().size() == 0) {
+        if (this.pageFrameState == null) {
 
+            this.pageFrameState = new PageFrameState(this.pageSize);
             PreparedStatement preparedStatement = listStatementPaged.makePreparedStatementForPageFrames(
                     dbConnection,
                     pageSize
@@ -69,7 +67,7 @@ public class ResultSetFromSqlPaged<T> implements Work {
                 String nameColVal = resultSet.getString(listStatementPaged.getNameColName());
                 Integer pageNumber = resultSet.getInt(listStatementPaged.getPageNumberColName());
 
-                PageState currentPageState = new PageState(pageNumber,nameColVal, idColVal);
+                PageState currentPageState = new PageState(pageNumber, nameColVal, idColVal);
                 this.pageFrameState.getPages().add(currentPageState);
             }
         }
@@ -77,25 +75,28 @@ public class ResultSetFromSqlPaged<T> implements Work {
         String nameColVal = null;
         Integer idColVal = null;
 
-        if( this.pageNo > 1 ) {
+        // our incoming page number is zero based, but in the page frame query result:
+        // 1) There is no first page page definition -- the first page is just the first n records;
+        // 2) The number is 1-based -- the first page has page number 2
+        // So if we are requesting page 0, we want nameColVal and idCol val to be empty so that the query
+        // will default over to the first N records; otherwise, we want to index into the page collectioin
+        // and set nameColVal and idColVal accordingly
+        if (this.pageNo > 0) {
 
-            List<PageState> pageStatesForPage
-                    = this.pageFrameState.pages.stream()
-                    .filter( ps -> ps.getPageNumber()
-                            .equals(this.pageNo))
-                    .collect(Collectors.toList());
+
+            if ((this.pageNo - 1) <= (this.pageFrameState.getPages().size() - 1)) {
+
+                Integer pageStateNo = this.pageNo - 1; // off by one more
+                PageState pageState = this.pageFrameState.getPages().get(pageStateNo);
 
 
-
-            if( pageStatesForPage.size() == 1) {
-                nameColVal = pageStatesForPage.get(0).getNameValue();
-                idColVal = pageStatesForPage.get(0).getIdValue();
+                nameColVal = pageState.getNameValue();
+                idColVal = pageState.getIdValue();
             } else {
-                // Cannot decide whether it's better to throw in the case where we got a non existent page number
-                this.pageNo = this.pageFrameState.getPages().size() -1 ;
-                nameColVal = this.pageFrameState.getPages().get(this.pageNo).getNameValue();
-                idColVal = this.pageFrameState.getPages().get(this.pageNo).getIdValue();
+                String message = "The requested page " + this.pageNo + " exceeds the number of  available pages " + this.pageFrameState.pageSize;
+                throw new SQLGrammarException(message, null, message);
             }
+
         }
 
 
