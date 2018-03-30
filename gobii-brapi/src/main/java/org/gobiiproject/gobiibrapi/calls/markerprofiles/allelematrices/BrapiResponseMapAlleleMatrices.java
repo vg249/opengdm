@@ -43,7 +43,7 @@ public class BrapiResponseMapAlleleMatrices {
                 Integer totalSamples = dataSetDTO.getTotalSamples();
 
                 BrapiResponseAlleleMatricesItem brapiResponseAlleleMatricesItem = new BrapiResponseAlleleMatricesItem();
-                brapiResponseAlleleMatricesItem.setName(experimentDTO.getExperimentName() + "-" +dataSetDTO.getDatasetName() + " ("+totalMarkers+"*"+totalSamples+")");
+                brapiResponseAlleleMatricesItem.setName(experimentDTO.getExperimentName() + "-" +dataSetDTO.getDatasetName() + " ("+totalMarkers+" * "+totalSamples+")");
                 brapiResponseAlleleMatricesItem.setLastUpdated(DateUtils.makeDateYYYYMMDD());
                 brapiResponseAlleleMatricesItem.setMatrixDbId(dataSetDTO.getDataSetId().toString());
                 brapiResponseAlleleMatricesItem.setStudyDbId(experimentDTO.getProjectId().toString());
