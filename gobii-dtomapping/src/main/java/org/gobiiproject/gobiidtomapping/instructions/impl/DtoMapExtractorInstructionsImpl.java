@@ -478,7 +478,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                         JobPayloadType jobPayloadType = JobPayloadType.byValue(jobDTO.getPayloadType());
                         pm.setBody(jobDTO.getJobName(),"Extract by " + jobPayloadType.getCvName(),1, ErrorLogger.getFirstErrorReason(), ErrorLogger.success(), ErrorLogger.getAllErrorStringsHTML());
 
-                        returnVal.setLogMessage(pm.getBody());
+                        returnVal.setGobiiExtractorInstructions(setGobiiExtractorInstructionLogMessage(fileDirExtractorDoneFqpn, pm.getBody()));
                     }
 
                 } else if (instructionFileAccess.doesPathExist(fileDirExtractorInProgressFqpn)) {
@@ -523,6 +523,26 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
             }
         }
         return gobiiExtractorInstructionsFromFile;
+    }
+
+    /**
+     * Returns a list of gobii extractor instruction(technically 1). Sets the log messsage for the data-sets under inspection
+     *
+     * @param instructionFileFqpn Instruction file path
+     * @param logMessage   job progress status.
+     * @return extractor instruction status.
+     */
+
+    private List<GobiiExtractorInstruction> setGobiiExtractorInstructionLogMessage(String instructionFileFqpn, String logMessage) {
+        List<GobiiExtractorInstruction> gobiiExtractorInstructionsFromFile = instructionFileAccess.getInstructions(instructionFileFqpn, GobiiExtractorInstruction[].class);
+        for (GobiiExtractorInstruction instruction : gobiiExtractorInstructionsFromFile) {
+            List<GobiiDataSetExtract> dataSetExtracts = instruction.getDataSetExtracts();
+            for (GobiiDataSetExtract dataSetExtract : dataSetExtracts) {
+                dataSetExtract.setLogMessage(logMessage);
+            }
+        }
+
+        return  gobiiExtractorInstructionsFromFile;
     }
 
     /**
