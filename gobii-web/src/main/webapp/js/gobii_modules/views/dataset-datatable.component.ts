@@ -137,8 +137,11 @@ import 'rxjs/add/operator/withLatestFrom'
                         <!--<table class="table table-striped table-hover table-bordered">-->
                         <tbody>
                         <tr>
-                            <td><b>Principle Investigator</b></td>
-                            <td>{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.piEmail : null}}</td>
+                            <td><b>Loaded By</b></td>
+                            <td>{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.loaderLastName: null}}
+                                {{ (selectedDatasetDetailEntity && selectedDatasetDetailEntity.loaderFirstName )  ? ", ": null}}
+                                {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.loaderFirstName: null}}
+                            </td>
                         </tr>
 
                         <tr>

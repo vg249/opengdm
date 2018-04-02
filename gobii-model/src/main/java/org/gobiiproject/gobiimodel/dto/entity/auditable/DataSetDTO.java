@@ -61,6 +61,8 @@ public class DataSetDTO extends DTOBaseAuditable {
     private Date jobSubmittedDate;
     private Integer totalSamples;
     private Integer totalMarkers;
+    private String loaderLastName;
+    private String loaderFirstName;
     private List<Integer> analysesIds = new ArrayList<>();
   //  private List<AnalysisDTO> analyses = new ArrayList<>();
     private List<Integer> scores = new ArrayList<>();
@@ -376,5 +378,25 @@ public class DataSetDTO extends DTOBaseAuditable {
     @GobiiEntityColumn(columnName = "platformname")
     public void setPlatformName(String platformName) {
         this.platformName = platformName;
+    }
+
+    @GobiiEntityParam(paramName = "loaderLastName")
+    public String getLoaderLastName() {
+        return loaderLastName;
+    }
+
+    @GobiiEntityColumn(columnName = "loader_last_name")
+    public void setLoaderLastName(String loaderLastName) {
+        this.loaderLastName = loaderLastName;
+    }
+
+    @GobiiEntityParam(paramName = "loaderFirstName")
+    public String getLoaderFirstName() {
+        return loaderFirstName;
+    }
+
+    @GobiiEntityColumn(columnName = "loader_first_name")
+    public void setLoaderFirstName(String loaderFirstName) {
+        this.loaderFirstName = loaderFirstName;
     }
 }
