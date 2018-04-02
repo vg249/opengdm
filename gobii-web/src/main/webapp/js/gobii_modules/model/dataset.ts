@@ -29,7 +29,8 @@ export class DataSet {
                 public piEmail: string,
                 public datatypeName: string,
                 public totalSamples: number,
-                public totalMarkers: number
+                public totalMarkers: number,
+                public loadedDate: Date
                 ) {
     }
 }
