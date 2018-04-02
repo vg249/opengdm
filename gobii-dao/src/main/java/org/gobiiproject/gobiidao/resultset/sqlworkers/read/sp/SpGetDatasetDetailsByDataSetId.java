@@ -68,8 +68,8 @@ public class SpGetDatasetDetailsByDataSetId implements Work {
                 "   c.lastname as loader_last_name, " +
                 "   c.firstname as loader_first_name " +
                 " from v_jobs_summary js " +
-                " join contact c on (js.modified_by=c.contact_id) " +
-                " where  dataset_id=? ";
+                " left outer join contact c on (js.modified_by=c.contact_id) " +
+                " where dataset_id=? ";
 
         PreparedStatement preparedStatement = dbConnection.prepareCall(sql);
         preparedStatement.setInt(1, (Integer) parameters.get("dataSetId"));
