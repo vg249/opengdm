@@ -11,9 +11,12 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.DtoRestRequestUtils;
 import org.gobiiproject.gobiiclient.gobii.Helpers.EntityParamValues;
+import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
+import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
+import org.gobiiproject.gobiimodel.cvnames.JobType;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
@@ -21,9 +24,11 @@ import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
+import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.junit.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -376,5 +381,124 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
         Assert.assertNotNull(resultEnvelope.getPayload().getData());
         Assert.assertTrue(resultEnvelope.getPayload().getData().size() == 0 );
     }
+
+
+
+    @Test
+    public void testLoadedDataWorkflow() throws Exception{
+        /*
+            Per GP1-1534, and until GP1-1539 is implemented, the modified_by and modified_date columns
+            of the dataset table are reserved for the user and date on which a dataset was succesfully
+            loaded. This test is intended to verify this workflow.
+         */
+
+
+
+
+        // Verify that new and modified datasets have null modified_date and modified_by colu7mns
+        Integer arbitraryDatasetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>())
+                .getAPkVal(DtoCrudRequestDataSetTest.class,
+                GobiiEntityNameType.DATASET);
+
+
+        RestUri datasetUri = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_DATASETS);
+        datasetUri.setParamValue("id", arbitraryDatasetId.toString());
+        GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceForDatsetsets = new GobiiEnvelopeRestResource<>(datasetUri);
+        PayloadEnvelope<DataSetDTO> datasetResultEnvelope = gobiiEnvelopeRestResourceForDatsetsets
+                .get(DataSetDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(datasetResultEnvelope.getHeader()));
+
+
+        Assert.assertTrue("There is no dataset with dataset id " + arbitraryDatasetId,
+                datasetResultEnvelope.getPayload().getData().size() == 1);
+
+        DataSetDTO dataSetDTO = datasetResultEnvelope.getPayload().getData().get(0);
+        Assert.assertNull("New datasets should not have a modified_by value",
+                dataSetDTO.getModifiedBy());
+
+        Assert.assertNull("New datasets should not have a modified_date value",
+                dataSetDTO.getModifiedDate());
+
+        Assert.assertNull("New datasets should not have a job id value",
+                dataSetDTO.getJobId());
+
+        dataSetDTO.setDatasetName("New foo name");
+        datasetResultEnvelope = gobiiEnvelopeRestResourceForDatsetsets
+                .put(DataSetDTO.class, new PayloadEnvelope<>(dataSetDTO, GobiiProcessType.UPDATE));
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(datasetResultEnvelope.getHeader()));
+
+
+        // re-retrieve dataset after update
+        datasetResultEnvelope = gobiiEnvelopeRestResourceForDatsetsets
+                .get(DataSetDTO.class);
+
+        Assert.assertTrue("There is no dataset with dataset id " + arbitraryDatasetId,
+                datasetResultEnvelope.getPayload().getData().size() == 1);
+
+        dataSetDTO = datasetResultEnvelope.getPayload().getData().get(0);
+        Assert.assertNull("Modified datasets should not have a modified_by value",
+                dataSetDTO.getModifiedBy());
+
+        Assert.assertNull("Modified datasets should not have a modified_date value",
+                dataSetDTO.getModifiedDate());
+
+        Assert.assertNull("datasets should not have a job id value until a job record has be created",
+                dataSetDTO.getJobId());
+
+        // Make a job for the dataset
+        // In server-land, the job will ahve been created by the extract or load service
+        // So for example in that context, the contactId will have come from the instruction
+        // file. Here we will emulate that behavior.
+
+
+        JobDTO newJobDto = TestDtoFactory.makePopulateJobDTO();
+        Integer jobContactId =  (new GlobalPkColl<DtoCrudRequestContactTest>())
+                .getAPkVal(DtoCrudRequestContactTest.class,
+                        GobiiEntityNameType.CONTACT);
+
+        // give the job our contact and dataset id
+        newJobDto.setSubmittedBy(jobContactId);
+        newJobDto.getDatasetIds().add(arbitraryDatasetId);
+
+        //we only update the dfataset in this way for completed load jobs
+        newJobDto.setType(JobType.CV_JOBTYPE_LOAD.getCvName());
+        newJobDto.setPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX.getCvName());
+        newJobDto.setStatus(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName());
+
+        RestUri statusUri = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_JOB);
+        GobiiEnvelopeRestResource<JobDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(statusUri);
+        PayloadEnvelope<JobDTO> payloadEnvelope = new PayloadEnvelope<>(newJobDto, GobiiProcessType.CREATE);
+        PayloadEnvelope<JobDTO> jobResultEnvelope = gobiiEnvelopeRestResource
+                .post(JobDTO.class, payloadEnvelope);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(jobResultEnvelope.getHeader()));
+        newJobDto = jobResultEnvelope.getPayload().getData().get(0); //capture the new job id
+
+        // Now that we've createed a new job for the specified dataset with the dataset Id
+        // and the contact ID (as will be done for a sucessful load job), the modified_by
+        // and modified_date of the dataset record should be set accordingly
+        // re-retrieve dataset after update
+        datasetResultEnvelope = gobiiEnvelopeRestResourceForDatsetsets
+                .get(DataSetDTO.class);
+        dataSetDTO = datasetResultEnvelope.getPayload().getData().get(0);
+
+        Assert.assertNotNull("The modified date of the the dataset should now have a value",
+                dataSetDTO.getModifiedDate());
+
+        Assert.assertEquals("The job ID for the datset does not match the job",
+                dataSetDTO.getJobId(),
+                newJobDto.getJobId());
+
+        Assert.assertEquals("The modified_by value should match that the submitted by user of the job",
+                dataSetDTO.getModifiedBy(),
+                newJobDto.getSubmittedBy());
+
+    }
+
 
 }

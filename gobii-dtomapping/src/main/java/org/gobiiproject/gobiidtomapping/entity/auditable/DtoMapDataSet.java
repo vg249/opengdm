@@ -2,6 +2,7 @@ package org.gobiiproject.gobiidtomapping.entity.auditable;
 
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedList;
 
 import java.util.List;
@@ -19,5 +20,7 @@ public interface DtoMapDataSet extends DtoMap<DataSetDTO>{
     PagedList<DataSetDTO> getListPaged(Integer pageSize, Integer pageNo, String pgQueryId) throws GobiiDtoMappingException;
 
     List<DataSetDTO> getByTypeId(Integer typeId) throws GobiiDtoMappingException;
+
+    void updateDatasetForJobInfo(JobDTO jobDTO, DataSetDTO dataSetDTO) throws GobiiDtoMappingException;
 
 }

@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit.impl;
 
+import javafx.print.PrinterJob;
 import org.apache.commons.lang.time.DateUtils;
 import org.gobiiproject.gobiidao.resultset.access.RsJobDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
@@ -9,6 +10,7 @@ import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapDataSet;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapJob;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
+import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.cvnames.JobType;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
@@ -81,6 +83,7 @@ public class DtoMapJobImpl implements DtoMapJob {
 
     }
 
+
     @Override
     public JobDTO createJob(JobDTO jobDTO) throws GobiiDtoMappingException, ParseException {
 
@@ -137,7 +140,7 @@ public class DtoMapJobImpl implements DtoMapJob {
             dataSetDTO.setCreatedDate(parsedDate);
             dataSetDTO.setModifiedDate(jobDTO.getSubmittedDate());
             dataSetDTO.setJobId(jobDTO.getJobId());
-            dtoMapDataSet.replace(returnVal.getDatasetIds().get(0), dataSetDTO);
+            dtoMapDataSet.updateDatasetForJobInfo(jobDTO,dataSetDTO);
 
         }
 
@@ -153,6 +156,9 @@ public class DtoMapJobImpl implements DtoMapJob {
         Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
         parameters.put("jobName", jobName);
         rsJobDao.updateJobWithCvTerms(parameters);
+
+        DataSetDTO dataSetDTO = dtoMapDataSet.get(jobDTO.getDatasetIds().get(0));
+        this.dtoMapDataSet.updateDatasetForJobInfo(jobDTO,dataSetDTO);
 
         return returnVal;
 
