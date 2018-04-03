@@ -157,8 +157,16 @@ public class DtoMapJobImpl implements DtoMapJob {
         parameters.put("jobName", jobName);
         rsJobDao.updateJobWithCvTerms(parameters);
 
-        DataSetDTO dataSetDTO = dtoMapDataSet.get(jobDTO.getDatasetIds().get(0));
-        this.dtoMapDataSet.updateDatasetForJobInfo(jobDTO,dataSetDTO);
+        if( jobDTO.getDatasetIds() != null ) {
+
+            for( Integer currentDatsetId : jobDTO.getDatasetIds() ) {
+
+                DataSetDTO dataSetDTO = dtoMapDataSet.get(currentDatsetId);
+                if( dataSetDTO.getDataSetId() != null && dataSetDTO.getDataSetId() > 0 ) {
+                    this.dtoMapDataSet.updateDatasetForJobInfo(jobDTO, dataSetDTO);
+                }
+            }
+        }
 
         return returnVal;
 

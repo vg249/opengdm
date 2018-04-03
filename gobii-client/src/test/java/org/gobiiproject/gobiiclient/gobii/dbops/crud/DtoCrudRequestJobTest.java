@@ -88,7 +88,6 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
         PayloadEnvelope<JobDTO> resultEnvelope = gobiiEnvelopeRestResource
                 .post(JobDTO.class, payloadEnvelope);
 
-        System.out.print(resultEnvelope.getHeader().getStatus().getStatusMessages().get(0).getMessage());
         Assert.assertTrue("The error message should contain 'Matrix load job does not have a dataset id'",
                 resultEnvelope.getHeader()
                     .getStatus()
@@ -329,6 +328,7 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
 
         Assert.assertNotNull(createdJobDto.getJobId());
 
+        // retrieve job by jobname
         RestUri restUriStatus = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceByUriIdParamName("jobName", GobiiServiceRequestId.URL_JOB);
@@ -343,7 +343,6 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
 
 
         // retrieve job by datasetID
-
         RestUri restUriJobByDataSetID = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(GobiiServiceRequestId.URL_DATASETS)

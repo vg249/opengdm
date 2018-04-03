@@ -180,13 +180,12 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
 
             dataSetDTO.setModifiedBy(jobDTO.getSubmittedBy());
             dataSetDTO.setModifiedDate(new Date());
-            Map<String, Object> parameters = ParamExtractor.makeParamVals(dataSetDTO);
-            rsDataSetDao.updateDataSet(parameters);
 
         } // --if it's a load job and it's complete
 
+        Map<String, Object> parameters = ParamExtractor.makeParamVals(dataSetDTO);
+        rsDataSetDao.updateDataSet(parameters);
+z`
     }
-
-
 
 }
