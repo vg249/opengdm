@@ -44,16 +44,18 @@ public class SpGetDatasetDetailsByDataSetId implements Work {
                 "	calling_analysis_id as \"callinganalysisid\", " +
                 "	calling_analysis_name as \"callinganalysisname\", " +
                 "	pi_contact_id as picontactid, " +
-                "	pi_email as piemail, " +
+                "	pi_email as piemail," +
+                "   c.lastname as pilastname," +
+                "   c.firstname as pifirstname," +
                 "	data_table, " +
                 "	data_file, " +
                 "	quality_table, " +
                 "	quality_file, " +
                 "	status, " +
-                "	created_by, " +
-                "	created_date, " +
-                "	modified_by, " +
-                "	modified_date, " +
+                "	v.created_by, " +
+                "	v.created_date, " +
+                "	v.modified_by, " +
+                "	v.modified_date, " +
                 "	analyses, " +
                 "	dataset_type_id as \"datatypeid\", " +
                 "	dataset_type_name as datatypename, " +
@@ -65,7 +67,8 @@ public class SpGetDatasetDetailsByDataSetId implements Work {
                 "	job_submitted_date as jobsubmitteddate, " +
                 "	total_samples as totalsamples, " +
                 "	total_markers as totalmarkers " +
-                " from v_jobs_summary " +
+                " from v_jobs_summary v" +
+                " inner join contact c on c.contact_id = v.pi_contact_id" +
                 " where dataset_id=? ";
 
 

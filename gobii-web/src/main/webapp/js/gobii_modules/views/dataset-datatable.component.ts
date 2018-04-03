@@ -132,7 +132,7 @@ import {ExtractorItemType} from "../model/type-extractor-item";
                         <tbody>
                         <tr>
                             <td><b>Principle Investigator</b></td>
-                            <td>{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.piEmail : null}}</td>
+                            <td>{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.piLastName +", "+ selectedDatasetDetailEntity.piFirstName : null}}</td>
                         </tr>
 
                         <tr>
