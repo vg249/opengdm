@@ -1,4 +1,4 @@
-// ************************************************************************
+/// ************************************************************************
 // (c) 2016 GOBii Project
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-25
@@ -22,7 +22,7 @@ import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisDTO;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
 
 
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;

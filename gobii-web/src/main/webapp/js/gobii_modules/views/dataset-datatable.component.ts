@@ -112,12 +112,11 @@ import 'rxjs/add/operator/withLatestFrom'
                 </p-column>
                 <!--<p-column field="_entity.jobStatusName" header="Status"></p-column>-->
                 <!--<p-column field="_entity.jobTypeName" header="Type"></p-column>-->
-                <p-column field="jobSubmittedDate"
-                          header="Status"
+                <p-column field="_entity.loadedDate"
+                          header="Loaded"
                           [style]="{'width': '18%'}">
                     <ng-template let-col let-fi="rowData" pTemplate="body">
-                        {{fi._entity.jobTypeName === "load" ? "loaded on " : fi._entity.jobTypeName === "extract" ? "extracted on " : "unprocessed"}}
-                        {{fi._entity[col.field] | date:'yyyy-MM-dd HH:mm' }}
+                        {{fi._entity.loadedDate | date:'yyyy-MM-dd HH:mm' }}
                     </ng-template>
                 </p-column>
             </p-dataTable>
@@ -140,6 +139,13 @@ import 'rxjs/add/operator/withLatestFrom'
                         <tr>
                             <td><b>Principle Investigator</b></td>
                             <td>{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.piLastName +", "+ selectedDatasetDetailEntity.piFirstName : null}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Loaded By</b></td>
+                            <td>{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.loaderLastName: null}}
+                                {{ (selectedDatasetDetailEntity && selectedDatasetDetailEntity.loaderFirstName )  ? ", ": null}}
+                                {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.loaderFirstName: null}}
+                            </td>
                         </tr>
 
                         <tr>

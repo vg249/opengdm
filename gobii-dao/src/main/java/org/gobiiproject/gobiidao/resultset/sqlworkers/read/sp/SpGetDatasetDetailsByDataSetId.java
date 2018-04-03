@@ -31,46 +31,48 @@ public class SpGetDatasetDetailsByDataSetId implements Work {
 
         // BuildMyString.com generated code. Please enjoy your string responsibly.
         String sql = "select " +
-                "	dataset_id, " +
-                "	dataset_name as \"datasetname\", " +
-                "	experiment_id, " +
-                "	experiment_name as \"experimentname\", " +
-                "	project_id as \"projectid\", " +
-                "	project_name as \"projectname\", " +
-                "	protocol_id as \"protocolid\", " +
-                "	protocol_name as \"protocolname\", " +
-                "	platform_id as \"platformid\", " +
-                "	platform_name as \"platformname\", " +
-                "	calling_analysis_id as \"callinganalysisid\", " +
-                "	calling_analysis_name as \"callinganalysisname\", " +
-                "	pi_contact_id as picontactid, " +
-                "	pi_email as piemail," +
-                "   c.lastname as pilastname," +
-                "   c.firstname as pifirstname," +
-                "	data_table, " +
-                "	data_file, " +
-                "	quality_table, " +
-                "	quality_file, " +
-                "	status, " +
-                "	v.created_by, " +
-                "	v.created_date, " +
-                "	v.modified_by, " +
-                "	v.modified_date, " +
-                "	analyses, " +
-                "	dataset_type_id as \"datatypeid\", " +
-                "	dataset_type_name as datatypename, " +
-                "	job_id, " +
-                "	job_status_id \"jobstatusid\", " +
-                "	job_status_name jobstatusname, " +
-                "	job_type_id \"jobtypeid\", " +
-                "	job_type_name as jobtypename, " +
-                "	job_submitted_date as jobsubmitteddate, " +
-                "	total_samples as totalsamples, " +
-                "	total_markers as totalmarkers " +
-                " from v_jobs_summary v" +
-                " inner join contact c on c.contact_id = v.pi_contact_id" +
+                "	js.dataset_id, " +
+                "	js.dataset_name as \"datasetname\", " +
+                "	js.experiment_id, " +
+                "	js.experiment_name as \"experimentname\", " +
+                "	js.project_id as \"projectid\", " +
+                "	js.project_name as \"projectname\", " +
+                "	js.protocol_id as \"protocolid\", " +
+                "	js.protocol_name as \"protocolname\", " +
+                "	js.platform_id as \"platformid\", " +
+                "	js.platform_name as \"platformname\", " +
+                "	js.calling_analysis_id as \"callinganalysisid\", " +
+                "	js.calling_analysis_name as \"callinganalysisname\", " +
+                "	js.pi_contact_id as picontactid, " +
+                "	js.pi_email as piemail, " +
+                "	js.data_table, " +
+                "	js.data_file, " +
+                "	js.quality_table, " +
+                "	js.quality_file, " +
+                "	js.status, " +
+                "	js.created_by, " +
+                "	js.created_date, " +
+                "	js.modified_by, " +
+                "	js.modified_date, " +
+                "	js.analyses, " +
+                "	js.dataset_type_id as \"datatypeid\", " +
+                "	js.dataset_type_name as datatypename, " +
+                "	js.job_id, " +
+                "	js.job_status_id \"jobstatusid\", " +
+                "	js.job_status_name jobstatusname, " +
+                "	js.job_type_id \"jobtypeid\", " +
+                "	js.job_type_name as jobtypename, " +
+                "	js.job_submitted_date as jobsubmitteddate, " +
+                "	js.total_samples as totalsamples, " +
+                "	js.total_markers as totalmarkers, " +
+                "   c_by_modified.lastname as loader_last_name, " +
+                "   c_by_modified.firstname as loader_first_name, " +
+                "   c_by_pi.lastname as pilastname, " +
+                "   c_by_pi.firstname as pifirstname " +
+                " from v_jobs_summary js " +
+                " left outer join contact c_by_modified on (js.modified_by=c_by_modified.contact_id) " +
+                " left outer join contact c_by_pi on (js.pi_contact_id=c_by_pi.contact_id) " +
                 " where dataset_id=? ";
-
 
         PreparedStatement preparedStatement = dbConnection.prepareCall(sql);
         preparedStatement.setInt(1, (Integer) parameters.get("dataSetId"));

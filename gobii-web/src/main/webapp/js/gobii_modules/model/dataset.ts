@@ -31,7 +31,10 @@ export class DataSet {
                 public piLastName: string,
                 public datatypeName: string,
                 public totalSamples: number,
-                public totalMarkers: number
+                public totalMarkers: number,
+                public loadedDate: Date,
+                public loaderLastName: string,
+                public loaderFirstName: string
                 ) {
     }
 }

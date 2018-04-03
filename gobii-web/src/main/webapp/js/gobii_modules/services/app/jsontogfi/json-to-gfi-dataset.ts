@@ -54,7 +54,10 @@ export class JsonToGfiDataset implements JsonToGfi {
             jsonItem.piLastName,
             jsonItem.datatypeName,
             jsonItem.totalSamples,
-            jsonItem.totalMarkers);
+            jsonItem.totalMarkers,
+            jsonItem.modifiedDate ? new Date(jsonItem.modifiedDate): null,
+            jsonItem.loaderLastName,
+            jsonItem.loaderFirstName);
 
         let piContactRelation: GobiiFileItemEntityRelation = GobiiFileItemEntityRelation
             .fromGobiiFileItemCompoundId(this._filterParamsColl.getFilter(FilterParamNames.CONTACT_PI_FILTER_OPTIONAL,

@@ -152,7 +152,9 @@ public class ListStatementDatasetPaged implements ListStatementPaged {
                 "	end as jobtypename, " +
                 "	j.submitted_date as jobsubmitteddate, " +
                 "	null as totalsamples, " +
-                "	null as totalmarkers ";
+                "	null as totalmarkers, " +
+                "   null as loader_last_name, " +
+                "   null as loader_first_name ";
 
 
 
