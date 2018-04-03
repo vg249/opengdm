@@ -11,7 +11,7 @@ import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.config.TestExecConfig;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ManifestDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;

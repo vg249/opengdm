@@ -3,7 +3,7 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.SampleService;
 import org.gobiiproject.gobiidtomapping.DtoMapSample;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.SampleDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;

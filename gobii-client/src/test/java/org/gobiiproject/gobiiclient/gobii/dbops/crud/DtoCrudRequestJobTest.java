@@ -18,18 +18,17 @@ import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.cvnames.JobType;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisDTO;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
-import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.junit.*;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by VCalaminos on 8/25/2017.
@@ -496,6 +495,46 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
         Assert.assertEquals("The modified_by value should match that the submitted by user of the job",
                 dataSetDTO.getModifiedBy(),
                 newJobDto.getSubmittedBy());
+
+
+        // Now we are going to update the dataset to modify columns unrelated ot the
+        // modify date and modified by columns
+        // re-retrieve our
+        datasetResultEnvelope = gobiiEnvelopeRestResourceForDatsetsets
+                .get(DataSetDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(datasetResultEnvelope.getHeader()));
+        Assert.assertTrue("No dataset retrieved ",
+                datasetResultEnvelope.getPayload().getData().size() == 1);
+
+        DataSetDTO retrievedDatasetDto = datasetResultEnvelope.getPayload().getData().get(0);
+        Assert.assertTrue("The retrieved dataset is not the one that was tested",
+                arbitraryDatasetId.equals(retrievedDatasetDto.getDataSetId()));
+
+        String newName = UUID.randomUUID().toString();
+        retrievedDatasetDto.setDatasetName(newName);
+        gobiiEnvelopeRestResourceForDatsetsets.put(DataSetDTO.class, new PayloadEnvelope<>(retrievedDatasetDto,
+                GobiiProcessType.UPDATE));
+
+        datasetResultEnvelope = gobiiEnvelopeRestResourceForDatsetsets
+                .get(DataSetDTO.class);
+        DataSetDTO reRetrievedDatasetDto = datasetResultEnvelope.getPayload().getData().get(0);
+        Assert.assertEquals("The name was not really updated",
+                newName,
+                reRetrievedDatasetDto.getDatasetName());
+
+        Assert.assertNotNull("The date of the modified and reretrieved dataset should still have a value",
+                reRetrievedDatasetDto.getModifiedDate());
+
+        Assert.assertEquals("The job ID of the modified and reretrieved dataset no longer matche the job",
+                reRetrievedDatasetDto.getJobId(),
+                newJobDto.getJobId());
+
+        Assert.assertEquals("The modified_by value of the modified and reretrieved dataset should still match that the submitted by user of the job",
+                reRetrievedDatasetDto.getModifiedBy(),
+                newJobDto.getSubmittedBy());
+
+
 
     }
 

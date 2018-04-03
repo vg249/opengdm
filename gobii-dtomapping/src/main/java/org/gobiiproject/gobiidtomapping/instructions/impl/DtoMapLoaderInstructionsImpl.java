@@ -16,7 +16,7 @@ import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.cvnames.JobType;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ProtocolDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.VendorProtocolDTO;

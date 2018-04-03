@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit.impl;
 
-import javafx.print.PrinterJob;
 import org.apache.commons.lang.time.DateUtils;
 import org.gobiiproject.gobiidao.resultset.access.RsJobDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
@@ -10,9 +9,8 @@ import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapDataSet;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapJob;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
-import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.cvnames.JobType;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -122,22 +120,22 @@ public class DtoMapJobImpl implements DtoMapJob {
 
             DataSetDTO dataSetDTO = dtoMapDataSet.get(jobDTO.getDatasetIds().get(0));
 
-            String[] datePattern = {"yyyy-MM-dd"};
+//            String[] datePattern = {"yyyy-MM-dd"};
+//
+//            Date parsedDate;
+//
+//            try {
+//
+//                parsedDate = DateUtils.parseDateStrictly(dataSetDTO.getCreatedDate().toString(), datePattern);
+//
+//            } catch (Exception e) {
+//
+//                throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+//                        GobiiValidationStatusType.NONE,
+//                        "Something went wrong with setting the createdDate of the datasetDTO");
+//            }
 
-            Date parsedDate;
-
-            try {
-
-                parsedDate = DateUtils.parseDateStrictly(dataSetDTO.getCreatedDate().toString(), datePattern);
-
-            } catch (Exception e) {
-
-                throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.NONE,
-                        "Something went wrong with setting the createdDate of the datasetDTO");
-            }
-
-            dataSetDTO.setCreatedDate(parsedDate);
+            dataSetDTO.setCreatedDate(new Date());
             dataSetDTO.setModifiedDate(jobDTO.getSubmittedDate());
             dataSetDTO.setJobId(jobDTO.getJobId());
             dtoMapDataSet.updateDatasetForJobInfo(jobDTO,dataSetDTO);

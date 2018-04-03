@@ -9,7 +9,7 @@ import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapDataSet;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.cvnames.JobType;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedList;
 import org.slf4j.Logger;
@@ -157,9 +157,6 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
         // is handled by the updateDatasetForJobInfo() method. In the generic case, as we have here,
         // want these columns to be null. In other words, modified_date and modified_by should have
         // values only when the dataset has been successfully loaded.
-        returnVal.setModifiedDate(null);
-        returnVal.setModifiedBy(null);
-
         Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
         parameters.put("projectId", projectId);
         rsDataSetDao.updateDataSet(parameters);
@@ -185,7 +182,7 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
 
         Map<String, Object> parameters = ParamExtractor.makeParamVals(dataSetDTO);
         rsDataSetDao.updateDataSet(parameters);
-z`
+
     }
 
 }

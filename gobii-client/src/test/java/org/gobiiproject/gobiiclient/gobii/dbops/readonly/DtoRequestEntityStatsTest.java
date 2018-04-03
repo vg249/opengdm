@@ -353,7 +353,7 @@ public class DtoRequestEntityStatsTest {
                 GobiiEntityNameType.MAPSET,
                 GobiiEntityNameType.CONTACT,
                 GobiiEntityNameType.REFERENCE,
-                GobiiEntityNameType.DATASET,
+//                GobiiEntityNameType.DATASET,
                 GobiiEntityNameType.PROTOCOL);
 
         // These need to be excluded because they are creatd as side effects of the crud tests we are using explicitly.
@@ -371,7 +371,7 @@ public class DtoRequestEntityStatsTest {
         (new GlobalPkColl<DtoCrudRequestMapsetTest>()).getFreshPkVals(DtoCrudRequestMapsetTest.class, GobiiEntityNameType.MAPSET, setCountVal);
         (new GlobalPkColl<DtoCrudRequestContactTest>()).getFreshPkVals(DtoCrudRequestContactTest.class, GobiiEntityNameType.CONTACT, setCountVal);
         (new GlobalPkColl<DtoCrudRequestReferenceTest>()).getFreshPkVals(DtoCrudRequestReferenceTest.class, GobiiEntityNameType.REFERENCE, setCountVal);
-        (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getFreshPkVals(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET, setCountVal);
+//        (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getFreshPkVals(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET, setCountVal);
         (new GlobalPkColl<DtoCrudRequestProtocolTest>()).getFreshPkVals(DtoCrudRequestProtocolTest.class, GobiiEntityNameType.PROTOCOL, setCountVal);
 
 
