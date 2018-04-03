@@ -71,11 +71,11 @@ public class RsDataSetDaoImpl implements RsDataSetDao {
 
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("dataSetId", dataSetId);
-            SpGetDatasetDetailsByDataSetId spGetDatasetDetailsByExperimentId = new SpGetDatasetDetailsByDataSetId(parameters);
+            SpGetDatasetDetailsByDataSetId spGetDatasetDetailsByDataSetIdId = new SpGetDatasetDetailsByDataSetId(parameters);
 
-            storedProcExec.doWithConnection(spGetDatasetDetailsByExperimentId);
+            storedProcExec.doWithConnection(spGetDatasetDetailsByDataSetIdId);
 
-            returnVal = spGetDatasetDetailsByExperimentId.getResultSet();
+            returnVal = spGetDatasetDetailsByDataSetIdId.getResultSet();
 
         } catch (SQLGrammarException e) {
 
