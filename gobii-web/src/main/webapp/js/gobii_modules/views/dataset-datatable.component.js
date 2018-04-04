@@ -214,11 +214,11 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/
                             if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
                                 if (this.doPaging) {
                                     this.fileItemService.loadPagedEntityList(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.DATASET_LIST_PAGED, null, 5, 0);
-                                    this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.CV_JOB_STATUS, null);
                                 }
                                 else {
                                     this.fileItemService.loadEntityList(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.DATASET_LIST);
                                 }
+                                this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.CV_JOB_STATUS, null);
                             }
                         } // if we have a new filter type
                     } // if filter type changed
