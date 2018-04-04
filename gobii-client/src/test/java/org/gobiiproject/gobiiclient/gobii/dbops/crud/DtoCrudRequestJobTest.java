@@ -395,8 +395,9 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
 
         // Verify that new and modified datasets have null modified_date and modified_by colu7mns
         Integer arbitraryDatasetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>())
-                .getAPkVal(DtoCrudRequestDataSetTest.class,
-                GobiiEntityNameType.DATASET);
+                .getFreshPkVals(DtoCrudRequestDataSetTest.class,
+                GobiiEntityNameType.DATASET,
+                        1).get(0);
 
 
         RestUri datasetUri = GobiiClientContext.getInstance(null, false)
