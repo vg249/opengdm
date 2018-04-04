@@ -176,7 +176,7 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
                 ) {
 
             dataSetDTO.setModifiedBy(jobDTO.getSubmittedBy());
-            dataSetDTO.setModifiedDate(new Date());
+            dataSetDTO.setModifiedDate(jobDTO.getSubmittedDate());
 
         } // --if it's a load job and it's complete
 

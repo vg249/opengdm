@@ -135,8 +135,6 @@ public class DtoMapJobImpl implements DtoMapJob {
 //                        "Something went wrong with setting the createdDate of the datasetDTO");
 //            }
 
-            dataSetDTO.setCreatedDate(new Date());
-            dataSetDTO.setModifiedDate(jobDTO.getSubmittedDate());
             dataSetDTO.setJobId(jobDTO.getJobId());
             dtoMapDataSet.updateDatasetForJobInfo(jobDTO,dataSetDTO);
 
