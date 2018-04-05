@@ -5,9 +5,12 @@ import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
-import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapDataSet;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.DataSetDTO;
+import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapDataSet;
+import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
+import org.gobiiproject.gobiimodel.cvnames.JobType;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.dto.system.PagedList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -133,6 +137,8 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
         DataSetDTO returnVal = dataSetDTO;
 
 
+        dataSetDTO.setModifiedBy(null);
+        dataSetDTO.setModifiedDate(null);
         Map<String, Object> parameters = ParamExtractor.makeParamVals(dataSetDTO);
         Integer datasetId = rsDataSetDao.createDataset(parameters);
         returnVal.setDataSetId(datasetId);
@@ -141,18 +147,42 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
     }
 
     @Override
-    public DataSetDTO replace(Integer dataSetId, DataSetDTO dataSetDTO) throws GobiiDtoMappingException {
+    public DataSetDTO replace(Integer projectId, DataSetDTO dataSetDTO) throws GobiiDtoMappingException {
 
         DataSetDTO returnVal = dataSetDTO;
 
 
+        // Under the GP1-1534 dispensation, the modified_date and modified_by columns of dataset are
+        // exclusively reserved for the date and submitter of a successful load job. This scenario
+        // is handled by the updateDatasetForJobInfo() method. In the generic case, as we have here,
+        // want these columns to be null. In other words, modified_date and modified_by should have
+        // values only when the dataset has been successfully loaded.
         Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
-        parameters.put("projectId", dataSetId);
+        parameters.put("projectId", projectId);
         rsDataSetDao.updateDataSet(parameters);
 
 
         return returnVal;
     }
 
+
+    @Override
+    public void updateDatasetForJobInfo(JobDTO jobDTO, DataSetDTO dataSetDTO) throws GobiiDtoMappingException {
+
+        // since this method is not defined at the base class auditable level, the date column will not be
+        // overwritten by the aspect
+        if( jobDTO.getType().equals(JobType.CV_JOBTYPE_LOAD.getCvName())
+                && jobDTO.getStatus().equals(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName())
+                ) {
+
+            dataSetDTO.setModifiedBy(jobDTO.getSubmittedBy());
+            dataSetDTO.setModifiedDate(jobDTO.getSubmittedDate());
+
+        } // --if it's a load job and it's complete
+
+        Map<String, Object> parameters = ParamExtractor.makeParamVals(dataSetDTO);
+        rsDataSetDao.updateDataSet(parameters);
+
+    }
 
 }

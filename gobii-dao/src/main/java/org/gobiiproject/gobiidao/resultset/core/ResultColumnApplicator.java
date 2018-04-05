@@ -11,6 +11,7 @@ import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -65,7 +66,12 @@ public class ResultColumnApplicator {
 
                         } else if (currentColumnType.equals(Date.class)) {
 
-                            Date currentDateValue = (Date) currentColumnValue;
+                            //Date currentDateValue = (Date) currentColumnValue;
+                            Timestamp timestamp = resultSet.getTimestamp(currentColumnName);
+                            java.util.Date currentDateValue = null;
+                            if( timestamp != null ) {
+                              currentDateValue = new java.util.Date(timestamp.getTime());
+                            }
                             currentMethod.invoke(dtoInstance, currentDateValue);
 
                         } else if (currentColumnType.equals(List.class)) {

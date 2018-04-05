@@ -1,10 +1,9 @@
-package org.gobiiproject.gobiimodel.dto.entity.auditable;
+package org.gobiiproject.gobiimodel.dto.entity.noaudit;
 
 
+import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
-import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
-import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,11 +11,21 @@ import java.util.List;
 
 /**
  * Created by Phil on 4/21/2016.
+ *
+ * 2018-04-03: Had to make this non-auditble because
+ * we are highjacking the modified_by and modified_date columns
+ * for tracking the user by and date on which the dataset was successfully
+ * loaded. So we can't be automatically monkeying with these columns. When
+ * we have proper job tracking of datasets (i.e., when we can know the full
+ * history of a dataset's job history via a jsonb column per GP1-1539), we
+ * will again make this DTO auditable. Consequently, as well, this DTO has
+ * implement the created/modified columns that it would otherwize have gotten form
+ * the auditable base class. This also will be reversed when GP1-1539 is implemented.
  */
-public class DataSetDTO extends DTOBaseAuditable {
+public class DataSetDTO extends DTOBase {
 
     public DataSetDTO() {
-        super(GobiiEntityNameType.DATASET);
+        // super(GobiiEntityNameType.DATASET);
     }
 
     @Override
@@ -28,6 +37,55 @@ public class DataSetDTO extends DTOBaseAuditable {
     public void setId(Integer id) {
         this.dataSetId = id;
     }
+
+    // *********** BEGIN REMOVE THESE WHEN GP1-1539 IS IMPLEMENTED
+    private Integer createdBy = null;
+    private Date createdDate = null;
+    private Integer modifiedBy = null;
+    private Date modifiedDate = null;
+    @GobiiEntityParam(paramName = "createdBy")
+    public Integer getCreatedBy() {
+        return createdBy;
+    }
+
+    @GobiiEntityColumn(columnName = "created_by")
+    public void setCreatedBy(Integer createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    @GobiiEntityParam(paramName = "createdDate")
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    @GobiiEntityColumn(columnName = "created_date")
+    public void setCreatedDate(Date createdDate) {
+
+        this.createdDate = createdDate;
+    }
+
+    @GobiiEntityParam(paramName = "modifiedBy")
+    public Integer getModifiedBy() {
+        return modifiedBy;
+    }
+
+    @GobiiEntityColumn(columnName = "modified_by")
+    public void setModifiedBy(Integer modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
+
+    @GobiiEntityParam(paramName = "modifiedDate")
+    public Date getModifiedDate() {
+        return modifiedDate;
+    }
+
+    @GobiiEntityColumn(columnName = "modified_date")
+    public void setModifiedDate(Date modifiedDate) {
+        this.modifiedDate = modifiedDate;
+    }
+
+    // *********** END REMOVE THESE WHEN GP1-1539 IS IMPLEMENTED
+
 
     // these are in order of appearance in the
     // select clause of the underlying sql query
@@ -46,6 +104,8 @@ public class DataSetDTO extends DTOBaseAuditable {
     private String callingAnalysisName;
     private Integer piContactId;
     private String piEmail;
+    private String piFirstName;
+    private String piLastName;
     private String dataTable;
     private String dataFile;
     private String qualityTable;
@@ -61,6 +121,8 @@ public class DataSetDTO extends DTOBaseAuditable {
     private Date jobSubmittedDate;
     private Integer totalSamples;
     private Integer totalMarkers;
+    private String loaderLastName;
+    private String loaderFirstName;
     private List<Integer> analysesIds = new ArrayList<>();
   //  private List<AnalysisDTO> analyses = new ArrayList<>();
     private List<Integer> scores = new ArrayList<>();
@@ -328,6 +390,26 @@ public class DataSetDTO extends DTOBaseAuditable {
         this.piEmail = piEmail;
     }
 
+    @GobiiEntityParam(paramName = "piFirstName")
+    public String getPiFirstName() {
+        return piFirstName;
+    }
+
+    @GobiiEntityColumn(columnName = "pifirstname")
+    public void setPiFirstName(String piFirstName) {
+        this.piFirstName = piFirstName;
+    }
+
+    @GobiiEntityParam(paramName = "piLastName")
+    public String getPiLastName() {
+        return piLastName;
+    }
+
+    @GobiiEntityColumn(columnName = "pilastname")
+    public void setPiLastName(String piLastName) {
+        this.piLastName = piLastName;
+    }
+
     @GobiiEntityParam(paramName = "piContactId")
     public Integer getPiContactId() {
         return piContactId;
@@ -376,5 +458,25 @@ public class DataSetDTO extends DTOBaseAuditable {
     @GobiiEntityColumn(columnName = "platformname")
     public void setPlatformName(String platformName) {
         this.platformName = platformName;
+    }
+
+    @GobiiEntityParam(paramName = "loaderLastName")
+    public String getLoaderLastName() {
+        return loaderLastName;
+    }
+
+    @GobiiEntityColumn(columnName = "loader_last_name")
+    public void setLoaderLastName(String loaderLastName) {
+        this.loaderLastName = loaderLastName;
+    }
+
+    @GobiiEntityParam(paramName = "loaderFirstName")
+    public String getLoaderFirstName() {
+        return loaderFirstName;
+    }
+
+    @GobiiEntityColumn(columnName = "loader_first_name")
+    public void setLoaderFirstName(String loaderFirstName) {
+        this.loaderFirstName = loaderFirstName;
     }
 }

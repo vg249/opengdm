@@ -27,9 +27,14 @@ export class DataSet {
                 public platformName: string,
                 public callingAnalysisName: string,
                 public piEmail: string,
+                public piFirstName: string,
+                public piLastName: string,
                 public datatypeName: string,
                 public totalSamples: number,
-                public totalMarkers: number
+                public totalMarkers: number,
+                public loadedDate: Date,
+                public loaderLastName: string,
+                public loaderFirstName: string
                 ) {
     }
 }

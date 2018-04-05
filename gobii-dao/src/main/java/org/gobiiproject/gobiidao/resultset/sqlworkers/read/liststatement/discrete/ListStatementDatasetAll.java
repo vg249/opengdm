@@ -42,6 +42,8 @@ public class ListStatementDatasetAll implements ListStatement {
                 "	null as \"callinganalysisname\", " +
                 "	c.contact_id as picontactid, " +
                 "	c.email as piemail, " +
+                "   c.firstname as pifirstname,"+
+                "   c.lastname as pilastname,"+
                 "	ds.data_table, " +
                 "	ds.data_file, " +
                 "	ds.quality_table, " +
@@ -99,7 +101,9 @@ public class ListStatementDatasetAll implements ListStatement {
                 "	end as jobtypename, " +
                 "	j.submitted_date as jobsubmitteddate, " +
                 "	null as totalsamples, " +
-                "	null as totalmarkers " +
+                "	null as totalmarkers, " +
+                "   null as loader_last_name, " +
+                "   null as loader_first_name " +
                 "from " +
                 "	dataset ds left outer join job j on " +
                 "	( " +

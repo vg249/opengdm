@@ -171,7 +171,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .setFilterType(filter_type_1.FilterType.ENTITY_LIST)
                         .setOnLoadFilteredItemsAction(function (fileItems, payloadFilter) {
                         var returnVal = null;
-                        if (!payloadFilter) {
+                        if (!payloadFilter || !payloadFilter.filterValue) {
                             returnVal = new fileAction.LoadFilterAction({
                                 filterId: file_item_param_names_1.FilterParamNames.DATASET_LIST_STATUS,
                                 filter: {
@@ -195,7 +195,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .setFilterType(filter_type_1.FilterType.ENTITY_LIST)
                         .setOnLoadFilteredItemsAction(function (fileItems, payloadFilter) {
                         var returnVal = null;
-                        if (!payloadFilter) {
+                        if (!payloadFilter || !payloadFilter.filterValue) {
                             returnVal = new fileAction.LoadFilterAction({
                                 filterId: file_item_param_names_1.FilterParamNames.DATASET_LIST_STATUS,
                                 filter: {

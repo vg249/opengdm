@@ -14,12 +14,8 @@ import {GobiiFileItem} from "../../model/gobii-file-item";
 import {ExtractorItemType} from "../../model/type-extractor-item";
 import * as fileAction from '../../store/actions/fileitem-action';
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
-import {getGobiiTreeItemIds} from "../../store/reducers/treenode-reducer";
-import {getSymbolObservable} from "rxjs/symbol/observable";
-import {ProcessType} from "../../model/type-process";
 import {DtoRequestService} from "./dto-request.service";
 import {PagedFileItemList} from "../../model/payload/paged-item-list";
-import {DataSet} from "../../model/dataset";
 import {JsonToGfiDataset} from "../app/jsontogfi/json-to-gfi-dataset";
 import {DtoRequestItemGfi} from "../app/dto-request-item-gfi";
 import {DtoRequestItemGfiPaged} from "../app/dto-request-item-gfi-paged";
@@ -239,7 +235,7 @@ export class FilterParamsColl {
 
                 let returnVal: fileAction.LoadFilterAction = null;
 
-                if (!payloadFilter) {
+                if (!payloadFilter || !payloadFilter.filterValue) {
 
                     returnVal = new fileAction.LoadFilterAction(
                         {
@@ -281,7 +277,7 @@ export class FilterParamsColl {
 
                 let returnVal: fileAction.LoadFilterAction = null;
 
-                if (!payloadFilter) {
+                if (!payloadFilter || !payloadFilter.filterValue ) {
 
                     returnVal = new fileAction.LoadFilterAction(
                         {

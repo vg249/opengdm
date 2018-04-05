@@ -107,17 +107,16 @@ import 'rxjs/add/operator/withLatestFrom'
                           header="PI"
                           [style]="{'width': '18%'}">
                     <ng-template pTemplate="body" let-col let-fi="rowData">
-                        <span pTooltip="{{fi._entity.piEmail}}" tooltipPosition="left" tooltipStyleClass="tableTooltip"> {{fi._entity.piEmail}} </span>
+                        <span pTooltip="{{fi._entity.piLastName}}, {{fi._entity.piFirstName}}" tooltipPosition="left" tooltipStyleClass="tableTooltip"> {{fi._entity.piLastName}}, {{fi._entity.piFirstName}} </span>
                     </ng-template>
                 </p-column>
                 <!--<p-column field="_entity.jobStatusName" header="Status"></p-column>-->
                 <!--<p-column field="_entity.jobTypeName" header="Type"></p-column>-->
-                <p-column field="jobSubmittedDate"
-                          header="Status"
+                <p-column field="_entity.loadedDate"
+                          header="Loaded"
                           [style]="{'width': '18%'}">
                     <ng-template let-col let-fi="rowData" pTemplate="body">
-                        {{fi._entity.jobTypeName === "load" ? "loaded on " : fi._entity.jobTypeName === "extract" ? "extracted on " : "unprocessed"}}
-                        {{fi._entity[col.field] | date:'yyyy-MM-dd HH:mm' }}
+                        {{fi._entity.loadedDate | date:'yyyy-MM-dd HH:mm' }}
                     </ng-template>
                 </p-column>
             </p-dataTable>
@@ -139,7 +138,14 @@ import 'rxjs/add/operator/withLatestFrom'
                         <tbody>
                         <tr>
                             <td><b>Principle Investigator</b></td>
-                            <td>{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.piEmail : null}}</td>
+                            <td>{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.piLastName +", "+ selectedDatasetDetailEntity.piFirstName : null}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Loaded By</b></td>
+                            <td>{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.loaderLastName: null}}
+                                {{ (selectedDatasetDetailEntity && selectedDatasetDetailEntity.loaderFirstName )  ? ", ": null}}
+                                {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.loaderFirstName: null}}
+                            </td>
                         </tr>
 
                         <tr>
@@ -450,13 +456,15 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
                             null,
                             5,
                             0);
-                        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                            FilterParamNames.CV_JOB_STATUS,
-                            null);
 
                     } else {
                         this.fileItemService.loadEntityList(this.gobiiExtractFilterType, FilterParamNames.DATASET_LIST);
                     }
+
+                    this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                        FilterParamNames.CV_JOB_STATUS,
+                        null);
+
                 }
 
             } // if we have a new filter type
