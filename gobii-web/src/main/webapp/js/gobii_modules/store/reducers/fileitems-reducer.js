@@ -627,6 +627,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                         && e.getProcessType() !== type_process_1.ProcessType.DUMMY
                         && e.getEntityType() === type_entity_1.EntityType.PROJECT
                         && ((!contactId || (+contactId < 0)) // state is not filtered -- we don't care, or . . .
+                            || +e.getItemId() === 0 // Inlcude label "All Projects"
                             || (e.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId) // the item has an fk value
                                 && e.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId) === contactId));
                 } // and it matches
@@ -655,6 +656,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                         && e.getProcessType() !== type_process_1.ProcessType.DUMMY
                         && e.getEntityType() === type_entity_1.EntityType.EXPERIMENT
                         && ((!projectId || (+projectId < 0)) // state is not filtered -- we don't care, or . . .
+                            || +e.getItemId() === 0 // Inlcude label "All Projects"
                             || (e.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) // the item has an fk value
                                 && e.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) === projectId));
                 } // and it matches
