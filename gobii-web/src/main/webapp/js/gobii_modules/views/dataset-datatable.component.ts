@@ -81,7 +81,8 @@ import 'rxjs/add/operator/withLatestFrom'
                 </p-column>
                 <p-column field="_entity.datasetName"
                           header="Name"
-                          [style]="{'width': '18%'}">
+                          [style]="{'width': '18%'}"
+                          [sortable]="true">
                     <ng-template pTemplate="body" let-col let-fi="rowData">
                         <span pTooltip="{{fi._entity.datasetName}}" tooltipPosition="left"
                               tooltipStyleClass="tableTooltip"> {{fi._entity.datasetName}} </span>
@@ -89,7 +90,8 @@ import 'rxjs/add/operator/withLatestFrom'
                 </p-column>
                 <p-column field="_entity.projectName"
                           header="Project"
-                          [style]="{'width': '18%'}">
+                          [style]="{'width': '18%'}"
+                          [sortable]="true">
                     <ng-template pTemplate="body" let-col let-fi="rowData">
                         <span pTooltip="{{fi._entity.projectName}}" tooltipPosition="left"
                               tooltipStyleClass="tableTooltip"> {{fi._entity.projectName}} </span>
@@ -97,15 +99,17 @@ import 'rxjs/add/operator/withLatestFrom'
                 </p-column>
                 <p-column field="_entity.experimentName"
                           header="Experiment"
-                          [style]="{'width': '18%'}">
+                          [style]="{'width': '18%'}"
+                          [sortable]="true">
                     <ng-template pTemplate="body" let-col let-fi="rowData">
                         <span pTooltip="{{fi._entity.experimentName}}" tooltipPosition="left"
                               tooltipStyleClass="tableTooltip"> {{fi._entity.experimentName}} </span>
                     </ng-template>
                 </p-column>
-                <p-column field="_entity.piEmail"
+                <p-column field="_entity.piLastName"
                           header="PI"
-                          [style]="{'width': '18%'}">
+                          [style]="{'width': '18%'}"
+                          [sortable]="true">
                     <ng-template pTemplate="body" let-col let-fi="rowData">
                         <span pTooltip="{{fi._entity.piLastName}}, {{fi._entity.piFirstName}}" tooltipPosition="left" tooltipStyleClass="tableTooltip"> {{fi._entity.piLastName}}, {{fi._entity.piFirstName}} </span>
                     </ng-template>
