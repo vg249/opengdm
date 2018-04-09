@@ -15,6 +15,7 @@ import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 import {FilterParams} from "../../model/file-item-params";
 import {Pagination} from "../../model/payload/pagination";
 import {PayloadFilter} from "../actions/action-payload-filter";
+import {map} from "rxjs/operator/map";
 
 
 /***
@@ -844,6 +845,41 @@ export const getProjectsFilterOptional = createSelector(getFileItems, getFilters
 
 });
 
+// export const getExperimentsFilterOptional = createSelector(getFileItems, getFilters, getGobiiExtractFilterType, (fileItems, filters, gobiiExtractFilterType) => {
+//
+//     let returnVal: GobiiFileItem[] = [];
+//
+//     let projectId: string = null;
+//     if (filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL]) {
+//         projectId = filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].filterValue;
+//     }
+//
+//     returnVal = fileItems.filter(
+//         e =>
+//             (e.getGobiiExtractFilterType() == gobiiExtractFilterType
+//                 && e.getExtractorItemType() === ExtractorItemType.ENTITY
+//                 || e.getExtractorItemType() === ExtractorItemType.LABEL)
+//             && e.getProcessType() !== ProcessType.DUMMY
+//             && e.getEntityType() === EntityType.EXPERIMENT
+//             && ((!projectId || (+projectId < 0)) // state is not filtered -- we don't care, or . . .
+//             || +e.getItemId() === 0 // Inlcude label "All Projects"
+//             || (e.getRelatedEntityFilterValue(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) // the item has an fk value
+//                 && e.getRelatedEntityFilterValue(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) === projectId)) // and it matches
+//     ).map(fi => fi);
+//
+//
+//     if (returnVal.length <= 0) {
+//         returnVal = fileItems.filter(e =>
+//             (e.getExtractorItemType() === ExtractorItemType.ENTITY
+//                 && e.getEntityType() === EntityType.EXPERIMENT
+//                 && e.getProcessType() === ProcessType.DUMMY))
+//             .map(fi => fi);
+//     }
+//
+//     return returnVal;
+// });
+
+
 export const getExperimentsFilterOptional = createSelector(getFileItems, getFilters, getGobiiExtractFilterType, (fileItems, filters, gobiiExtractFilterType) => {
 
     let returnVal: GobiiFileItem[] = [];
@@ -851,6 +887,20 @@ export const getExperimentsFilterOptional = createSelector(getFileItems, getFilt
     let projectId: string = null;
     if (filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL]) {
         projectId = filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].filterValue;
+    }
+
+    let contactId: string = null;
+    if (filters[FilterParamNames.PROJECT_FILTER_OPTIONAL]) {
+        contactId = filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].filterValue;
+    }
+
+
+    let projectIds: string [] = [];
+    if ((projectId && +projectId > 0) && (contactId && +contactId)) {
+        projectIds = fileItems
+            .filter(fi => fi.compoundIdeEquals(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId)
+                && fi.getRelatedEntityFilterValue(filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId) === contactId)
+            .map(fi => fi.getItemId());
     }
 
     returnVal = fileItems.filter(
@@ -863,9 +913,8 @@ export const getExperimentsFilterOptional = createSelector(getFileItems, getFilt
             && ((!projectId || (+projectId < 0)) // state is not filtered -- we don't care, or . . .
             || +e.getItemId() === 0 // Inlcude label "All Projects"
             || (e.getRelatedEntityFilterValue(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) // the item has an fk value
-                && e.getRelatedEntityFilterValue(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) === projectId)) // and it matches
+                && projectIds.find(pid => e.getRelatedEntityFilterValue(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) === pid))) // and it matches
     ).map(fi => fi);
-
 
     if (returnVal.length <= 0) {
         returnVal = fileItems.filter(e =>
@@ -877,7 +926,4 @@ export const getExperimentsFilterOptional = createSelector(getFileItems, getFilt
 
     return returnVal;
 });
-
-
-
 
