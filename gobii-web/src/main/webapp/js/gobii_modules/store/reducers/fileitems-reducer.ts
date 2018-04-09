@@ -825,6 +825,7 @@ export const getProjectsFilterOptional = createSelector(getFileItems, getFilters
             && e.getProcessType() !== ProcessType.DUMMY
             && e.getEntityType() === EntityType.PROJECT
             && ((!contactId || (+contactId < 0)) // state is not filtered -- we don't care, or . . .
+            || +e.getItemId() === 0 // Inlcude label "All Projects"
             || (e.getRelatedEntityFilterValue(filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId) // the item has an fk value
                 && e.getRelatedEntityFilterValue(filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId) === contactId)) // and it matches
     ).map(fi => fi);
@@ -860,6 +861,7 @@ export const getExperimentsFilterOptional = createSelector(getFileItems, getFilt
             && e.getProcessType() !== ProcessType.DUMMY
             && e.getEntityType() === EntityType.EXPERIMENT
             && ((!projectId || (+projectId < 0)) // state is not filtered -- we don't care, or . . .
+            || +e.getItemId() === 0 // Inlcude label "All Projects"
             || (e.getRelatedEntityFilterValue(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) // the item has an fk value
                 && e.getRelatedEntityFilterValue(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) === projectId)) // and it matches
     ).map(fi => fi);
