@@ -466,10 +466,14 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     //check if file  is already done
                     returnVal.setGobiiExtractorInstructions(setGobiiExtractorInstructionStatus(fileDirExtractorDoneFqpn, jobProgressStatus));
 
-                    if (jobProgressStatus.equals(JobProgressStatusType.CV_PROGRESSSTATUS_FAILED.getCvName())) {
+                    if (jobProgressStatus.getCvName().equals(JobProgressStatusType.CV_PROGRESSSTATUS_FAILED.getCvName())) {
 
                         /*** for error logging ***/
                         String logDir = configSettings.getFileSystemLog();
+
+                        if (logDir.endsWith("/")) {
+                            logDir = logDir.substring(0, logDir.length() - 1);
+                        }
                         String logFile = logDir + "/" + instructionFileName + ".log";
                         ErrorLogger.setLogFilepath(logFile);
 
