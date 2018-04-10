@@ -66,55 +66,63 @@ public class GobiiTestData {
     private static void validateKeys(NodeList nodeList, XPath xPath, Document document) throws Exception {
 
 
-        for(int i=0; i<nodeList.getLength(); i++) {
+        for (int i = 0; i < nodeList.getLength(); i++) {
 
             String parentName = nodeList.item(i).getLocalName();
 
             Element element = (Element) nodeList.item(i);
             String DbPKeysurrogate = element.getAttribute("DbPKeysurrogate");
+            if (DbPKeysurrogate.isEmpty()) {
 
-            System.out.println("\nChecking DbPKeysurrogate ("+DbPKeysurrogate+") for " + parentName +"......\n");
+                throw new Exception("DbPKeysurrogate (" + DbPKeysurrogate + ") attribute for " +
+                        element + " entity cannot be empty.");
+
+            }
+
+            System.out.println("\nChecking DbPKeysurrogate (" + DbPKeysurrogate + ") for " + parentName + "......\n");
             Node node = nodeList.item(i);
 
             NodeList childNodes = node.getChildNodes();
 
             int count = 0;
-            for (int j=0; j<childNodes.getLength(); j++) {
+            for (int j = 0; j < childNodes.getLength(); j++) {
 
                 if (childNodes.item(j) instanceof Element == false)
                     continue;
 
-                System.out.println("\nRecord " + (count+1) + "....\n");
+                System.out.println("\nRecord " + (count + 1) + "....\n");
 
                 count++;
                 String childName = childNodes.item(j).getLocalName();
                 Element childElement = (Element) childNodes.item(j);
 
                 Element props = (Element) childElement.getElementsByTagName("Properties").item(0);
+                validateNode(props, childName, "Properties");
+                Node dbPkeysurrogateNode = props.getElementsByTagName(DbPKeysurrogate).item(0);
+                validateNode(dbPkeysurrogateNode, childName, "DbPKeysurrogate " + DbPKeysurrogate);
 
-                String dbPkeysurrogateValue = props.getElementsByTagName(DbPKeysurrogate).item(0).getTextContent();
-
+                String dbPkeysurrogateValue = dbPkeysurrogateNode.getTextContent();
                 System.out.println("\nChecking for value....\n");
 
-                if(dbPkeysurrogateValue.isEmpty()) {
+                if (dbPkeysurrogateValue.isEmpty()) {
 
-                    throw new Exception("DbPKeysurrogate ("+DbPKeysurrogate+") attribute for "+
-                            childName+" entity cannot be empty.");
+                    throw new Exception("DbPKeysurrogate (" + DbPKeysurrogate + ") attribute for " +
+                            childName + " entity cannot be empty.");
 
                 }
 
                 System.out.println("\nChecking for duplicates...\n");
 
-                String expr = "count(//Entities/"+parentName+"/"+childName+"/Properties["+DbPKeysurrogate+"='"+dbPkeysurrogateValue+"'])";
+                String expr = "count(//Entities/" + parentName + "/" + childName + "/Properties[" + DbPKeysurrogate + "='" + dbPkeysurrogateValue + "'])";
 
                 XPathExpression xPathExpressionCount = xPath.compile(expr);
                 Double countDuplicate = (Double) xPathExpressionCount.evaluate(document, XPathConstants.NUMBER);
 
 
-                if(countDuplicate > 1) {
+                if (countDuplicate > 1) {
 
                     String message = "Duplicate DbPKeysurrogate (" +
-                            DbPKeysurrogate + ") value ("+ dbPkeysurrogateValue +") " +
+                            DbPKeysurrogate + ") value (" + dbPkeysurrogateValue + ") " +
                             "for " + childName + " entity.";
 
 
@@ -126,17 +134,16 @@ public class GobiiTestData {
                 System.out.println("\nChecking for foreign keys...\n");
 
                 Element keys = (Element) childElement.getElementsByTagName("Keys").item(0);
+                validateNode(keys, childName, "Keys");
                 NodeList fkeys = keys.getElementsByTagName("Fkey");
 
-                for(int k = 0; k < fkeys.getLength(); k++) {
+                for (int k = 0; k < fkeys.getLength(); k++) {
 
                     Element fkey = (Element) fkeys.item(k);
-
                     String entity = fkey.getAttribute("entity");
+                    if (entity == null || entity.isEmpty()) {
 
-                    if(entity.isEmpty()) {
-
-                        String message = "Entity attribute for Fkey of "+ childName+" ("+dbPkeysurrogateValue+") cannot be empty.";
+                        String message = "Entity attribute for Fkey of " + childName + " (" + dbPkeysurrogateValue + ") cannot be empty.";
 
                         throw new Exception(message);
 
@@ -144,16 +151,16 @@ public class GobiiTestData {
 
                     NodeList fkeyDbPkey = fkey.getElementsByTagName("DbPKeySurrogate");
 
-                    if(fkeyDbPkey.getLength() < 1) {
+                    if (fkeyDbPkey.getLength() < 1) {
 
-                        String message = "FKey property for "+ childName +" ("+ dbPkeysurrogateValue+ ") should have <DbPKeySurrogate> tag.";
+                        String message = "FKey property for " + childName + " (" + dbPkeysurrogateValue + ") should have <DbPKeySurrogate> tag.";
 
                         throw new Exception(message);
                     }
 
                     String fkeyDbPkeyValue = fkeyDbPkey.item(0).getTextContent();
 
-                    if(fkeyDbPkeyValue.isEmpty()) {
+                    if (fkeyDbPkeyValue == null || fkeyDbPkeyValue.isEmpty()) {
 
                         String message = "DbPKeySurrogate property for " + entity + " FKey of " + childName + " (" + dbPkeysurrogateValue + ") cannot be empty.";
 
@@ -162,19 +169,19 @@ public class GobiiTestData {
                     }
 
                     // get parent node of fkey entity
-                    XPathExpression exprParentFkey = xPath.compile("//"+entity+"/parent::*");
+                    XPathExpression exprParentFkey = xPath.compile("//" + entity + "/parent::*");
                     Element ancestor = (Element) exprParentFkey.evaluate(document, XPathConstants.NODE);
-
+                    validateNode(ancestor, childName, entity);
                     String fkeyPKey = ancestor.getAttribute("DbPKeysurrogate");
 
-                    String exprCheckIfFKeyExists = "count(//Entities/"+ancestor.getNodeName()+"/"+entity+"/Properties["+fkeyPKey+"='"+fkeyDbPkeyValue+"'])";
+                    String exprCheckIfFKeyExists = "count(//Entities/" + ancestor.getNodeName() + "/" + entity + "/Properties[" + fkeyPKey + "='" + fkeyDbPkeyValue + "'])";
 
                     XPathExpression xPathExpressionCountFkey = xPath.compile(exprCheckIfFKeyExists);
                     Double countIfExists = (Double) xPathExpressionCountFkey.evaluate(document, XPathConstants.NUMBER);
 
-                    if(countIfExists < 1) {
+                    if (countIfExists < 1) {
 
-                        String message = entity + " (" + fkeyDbPkeyValue+ ") fkey value for "
+                        String message = entity + " (" + fkeyDbPkeyValue + ") fkey value for "
                                 + childName + "(" + dbPkeysurrogateValue + ")" +
                                 " doesn't exist in the file.";
 
@@ -184,6 +191,13 @@ public class GobiiTestData {
             }
         }
 
+    }
+
+    private static void validateNode(Node props, String element, String property) {
+        if (props == null) {
+            System.out.println("Could not find " + property + " in element " + element);
+            System.exit(1);
+        }
     }
 
     private static String processPropName(String propertyName) {
@@ -197,7 +211,7 @@ public class GobiiTestData {
 
     }
 
-    public static <E> E processTypes (Object value, Class<E> type) throws ParseException {
+    public static <E> E processTypes(Object value, Class<E> type) throws ParseException {
 
         if (type.equals(Integer.class)) {
 
@@ -217,7 +231,7 @@ public class GobiiTestData {
         return type.cast(value);
     }
 
-    private static void checkStatus(PayloadEnvelope payloadEnvelope) throws  Exception{
+    private static void checkStatus(PayloadEnvelope payloadEnvelope) throws Exception {
 
         Header header = payloadEnvelope.getHeader();
         if (!header.getStatus().isSucceeded() ||
@@ -233,7 +247,7 @@ public class GobiiTestData {
 
             for (HeaderStatusMessage currentStatusMessage : header.getStatus().getStatusMessages()) {
 
-                message = message +  "\n" + currentStatusMessage.getMessage();
+                message = message + "\n" + currentStatusMessage.getMessage();
             }
 
             throw new Exception(message);
@@ -242,7 +256,7 @@ public class GobiiTestData {
 
     }
 
-    private static Map<String, Integer> getCvTermsWithId(String filterValue) throws Exception{
+    private static Map<String, Integer> getCvTermsWithId(String filterValue) throws Exception {
 
         Map<String, Integer> returnVal = new HashMap<>();
 
@@ -258,7 +272,7 @@ public class GobiiTestData {
 
         List<NameIdDTO> nameIdDTOList = resultEnvelope.getPayload().getData();
 
-        for (int i=0; i<nameIdDTOList.size(); i++){
+        for (int i = 0; i < nameIdDTOList.size(); i++) {
 
             NameIdDTO currentNameIdDTO = nameIdDTOList.get(i);
             returnVal.put(currentNameIdDTO.getName().toLowerCase(), currentNameIdDTO.getId());
@@ -275,7 +289,7 @@ public class GobiiTestData {
         Integer returnVal = null;
 
 
-        System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        System.out.println("\nChecking if " + entityName + " (" + dbPkeysurrogateValue + ") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
         RestUri restUriOrganization = GobiiClientContext.getInstance(null, false)
@@ -292,7 +306,7 @@ public class GobiiTestData {
 
             if (currentOrganizationDTO.getName().equals(dbPkeysurrogateValue)) {
 
-                System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
+                System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") already exists in the database. Return current entity ID.\n");
 
                 /*** set fkey dbpkey for entity ***/
 
@@ -305,13 +319,13 @@ public class GobiiTestData {
         }
 
 
-        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\nCreating new record...\n");
+        System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") doesn't exist in the database.\nCreating new record...\n");
 
         OrganizationDTO newOrganizationDTO = new OrganizationDTO();
 
-        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
+        System.out.println("Populating " + entityName + "DTO with attributes from XML file...");
 
-        for (int j=0; j<propKeyList.getLength(); j++) {
+        for (int j = 0; j < propKeyList.getLength(); j++) {
 
             Element propKey = (Element) propKeyList.item(j);
 
@@ -347,9 +361,9 @@ public class GobiiTestData {
 
         returnVal = organizationDTOResponse.getOrganizationId();
 
-        System.out.println(entityName + "("+dbPkeysurrogateValue+") is successfully created!\n");
+        System.out.println(entityName + "(" + dbPkeysurrogateValue + ") is successfully created!\n");
 
-        return  returnVal;
+        return returnVal;
 
     }
 
@@ -360,7 +374,7 @@ public class GobiiTestData {
         Integer returnVal = null;
 
 
-        System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        System.out.println("\nChecking if " + entityName + " (" + dbPkeysurrogateValue + ") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
         RestUri restUriContact = GobiiClientContext.getInstance(null, false)
@@ -376,7 +390,7 @@ public class GobiiTestData {
 
             ContactDTO currentContactDTO = resultEnvelope.getPayload().getData().get(0);
 
-            System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
+            System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") already exists in the database. Return current entity ID.\n");
 
             /*** set fkey dbpkey for entity ***/
 
@@ -387,11 +401,11 @@ public class GobiiTestData {
         }
 
 
-        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\nCreating new record...\n");
+        System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") doesn't exist in the database.\nCreating new record...\n");
 
         ContactDTO newContactDTO = new ContactDTO();
 
-        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
+        System.out.println("Populating " + entityName + "DTO with attributes from XML file...");
 
         // get roles
         RestUri rolesUri = GobiiClientContext.getInstance(null, false)
@@ -407,22 +421,24 @@ public class GobiiTestData {
 
         Map<String, Integer> rolesMap = new HashMap<>();
 
-        for(int i=0; i<nameIdDTOList.size(); i++) {
+        for (int i = 0; i < nameIdDTOList.size(); i++) {
 
             NameIdDTO currentNameIdDTO = nameIdDTOList.get(i);
             rolesMap.put(currentNameIdDTO.getName(), currentNameIdDTO.getId());
 
         }
 
-        for (int j=0; j<propKeyList.getLength(); j++) {
+        for (int j = 0; j < propKeyList.getLength(); j++) {
 
             Element propKey = (Element) propKeyList.item(j);
 
             String propKeyLocalName = propKey.getLocalName();
 
-            if (propKeyLocalName.equals("Roles")) {continue;}
+            if (propKeyLocalName.equals("Roles")) {
+                continue;
+            }
 
-            if(propKeyLocalName.equals("Role")) {
+            if (propKeyLocalName.equals("Role")) {
 
                 Integer roleId = rolesMap.get(propKey.getTextContent());
 
@@ -446,7 +462,7 @@ public class GobiiTestData {
         /** check roles **/
         if (newContactDTO.getRoles().size() <= 0) {
 
-            throw new Exception("Roles are required to create a contact. Please add role/s for Contact ("+newContactDTO.getEmail()+").");
+            throw new Exception("Roles are required to create a contact. Please add role/s for Contact (" + newContactDTO.getEmail() + ").");
 
         }
 
@@ -458,8 +474,8 @@ public class GobiiTestData {
 
         PayloadEnvelope<ContactDTO> payloadEnvelopeContact = new PayloadEnvelope<>(newContactDTO, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResourceContact = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
-                    .getUriFactory()
-                    .resourceColl(GobiiServiceRequestId.URL_CONTACTS));
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_CONTACTS));
         PayloadEnvelope<ContactDTO> contactDTOResponseEnvelope = gobiiEnvelopeRestResourceContact.post(ContactDTO.class,
                 payloadEnvelopeContact);
 
@@ -469,7 +485,7 @@ public class GobiiTestData {
 
         returnVal = contactDTOResponse.getContactId();
 
-        System.out.println(entityName + "("+dbPkeysurrogateValue+") is successfully created!\n");
+        System.out.println(entityName + "(" + dbPkeysurrogateValue + ") is successfully created!\n");
 
         return returnVal;
 
@@ -481,7 +497,7 @@ public class GobiiTestData {
 
         Integer returnVal = null;
 
-        System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        System.out.println("\nChecking if " + entityName + " (" + dbPkeysurrogateValue + ") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
         RestUri restUriPlatform = GobiiClientContext.getInstance(null, false)
@@ -498,7 +514,7 @@ public class GobiiTestData {
 
             if (currentPlatformDTO.getPlatformName().equals(dbPkeysurrogateValue)) {
 
-                System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
+                System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") already exists in the database. Return current entity ID.\n");
 
                 /*** set fkey dbpkey for entity ***/
 
@@ -510,11 +526,11 @@ public class GobiiTestData {
 
         }
 
-        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\nCreating new record...\n");
+        System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") doesn't exist in the database.\nCreating new record...\n");
 
         PlatformDTO newPlatformDTO = new PlatformDTO();
 
-        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
+        System.out.println("Populating " + entityName + "DTO with attributes from XML file...");
 
         Element propertiesElement = null;
 
@@ -522,7 +538,7 @@ public class GobiiTestData {
 
         Map<String, Integer> platformTypeMap = getCvTermsWithId("platform_type");
 
-        for (int j=0; j<propKeyList.getLength(); j++) {
+        for (int j = 0; j < propKeyList.getLength(); j++) {
 
             Element propKey = (Element) propKeyList.item(j);
 
@@ -544,7 +560,7 @@ public class GobiiTestData {
                 continue;
             }
 
-            if(propKey.getParentNode().equals(propertiesElement)) { // add to properties attribute of platform
+            if (propKey.getParentNode().equals(propertiesElement)) { // add to properties attribute of platform
 
                 EntityPropertyDTO entityPropertyDTO = new EntityPropertyDTO();
 
@@ -552,8 +568,7 @@ public class GobiiTestData {
                 entityPropertyDTO.setPropertyValue(propKey.getTextContent());
 
                 newPlatformDTO.getProperties().add(entityPropertyDTO);
-            }
-            else {
+            } else {
 
                 Field field = PlatformDTO.class.getDeclaredField(propKeyLocalName);
                 field.setAccessible(true);
@@ -575,8 +590,8 @@ public class GobiiTestData {
 
         PayloadEnvelope<PlatformDTO> payloadEnvelopePlatform = new PayloadEnvelope<>(newPlatformDTO, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResourcePlatform = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
-                        .getUriFactory()
-                        .resourceColl(GobiiServiceRequestId.URL_PLATFORM));
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_PLATFORM));
         PayloadEnvelope<PlatformDTO> platformDTOResponseEnvelope = gobiiEnvelopeRestResourcePlatform.post(PlatformDTO.class,
                 payloadEnvelopePlatform);
 
@@ -587,7 +602,7 @@ public class GobiiTestData {
 
         returnVal = platformDTOResponse.getPlatformId();
 
-        System.out.println(entityName + "("+dbPkeysurrogateValue+") is successfully created!\n");
+        System.out.println(entityName + "(" + dbPkeysurrogateValue + ") is successfully created!\n");
 
         return returnVal;
 
@@ -599,7 +614,7 @@ public class GobiiTestData {
         Integer returnVal = null;
 
 
-        System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        System.out.println("\nChecking if " + entityName + " (" + dbPkeysurrogateValue + ") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
         RestUri restUriProtocol = GobiiClientContext.getInstance(null, false)
@@ -616,7 +631,7 @@ public class GobiiTestData {
 
             if (currentProtocolDTO.getName().equals(dbPkeysurrogateValue)) {
 
-                System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
+                System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") already exists in the database. Return current entity ID.\n");
 
                 /*** set fkey dbpkey for entity ***/
 
@@ -629,15 +644,15 @@ public class GobiiTestData {
         }
 
 
-        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\nCreating new record...\n");
+        System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") doesn't exist in the database.\nCreating new record...\n");
 
         ProtocolDTO newProtocolDTO = new ProtocolDTO();
 
-        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
+        System.out.println("Populating " + entityName + "DTO with attributes from XML file...");
 
         Element propsElement = null;
 
-        for (int j=0; j<propKeyList.getLength(); j++) {
+        for (int j = 0; j < propKeyList.getLength(); j++) {
 
             Element propKey = (Element) propKeyList.item(j);
 
@@ -645,15 +660,17 @@ public class GobiiTestData {
 
             propKeyLocalName = processPropName(propKeyLocalName);
 
-            if(propKeyLocalName.equals("vendorProtocols")) {continue;}
+            if (propKeyLocalName.equals("vendorProtocols")) {
+                continue;
+            }
 
-            if(propKeyLocalName.equals("props")) {
+            if (propKeyLocalName.equals("props")) {
 
                 propsElement = propKey;
                 continue;
             }
 
-            if(propKey.getParentNode().equals(propsElement)) {
+            if (propKey.getParentNode().equals(propsElement)) {
 
                 EntityPropertyDTO entityPropertyDTO = new EntityPropertyDTO();
 
@@ -661,8 +678,7 @@ public class GobiiTestData {
                 entityPropertyDTO.setPropertyValue(propKey.getTextContent());
 
                 newProtocolDTO.getProps().add(entityPropertyDTO);
-            }
-            else {
+            } else {
 
                 Field field = ProtocolDTO.class.getDeclaredField(propKeyLocalName);
                 field.setAccessible(true);
@@ -683,8 +699,8 @@ public class GobiiTestData {
 
         PayloadEnvelope<ProtocolDTO> payloadEnvelopeProtocol = new PayloadEnvelope<>(newProtocolDTO, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<ProtocolDTO> gobiiEnvelopeRestResourceProtocol = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
-                        .getUriFactory()
-                        .resourceColl(GobiiServiceRequestId.URL_PROTOCOL));
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_PROTOCOL));
         PayloadEnvelope<ProtocolDTO> protocolDTOResponseEnvelope = gobiiEnvelopeRestResourceProtocol.post(ProtocolDTO.class,
                 payloadEnvelopeProtocol);
 
@@ -695,7 +711,7 @@ public class GobiiTestData {
 
         returnVal = protocolDTOResponse.getProtocolId();
 
-        System.out.println(entityName + "("+dbPkeysurrogateValue+") is successfully created!\n");
+        System.out.println(entityName + "(" + dbPkeysurrogateValue + ") is successfully created!\n");
 
         return returnVal;
 
@@ -708,7 +724,7 @@ public class GobiiTestData {
 
         VendorProtocolDTO newVendorProtocolDTO = new VendorProtocolDTO();
 
-        for (int j=0; j<propKeyList.getLength(); j++) {
+        for (int j = 0; j < propKeyList.getLength(); j++) {
 
             Element propKey = (Element) propKeyList.item(j);
 
@@ -724,7 +740,7 @@ public class GobiiTestData {
 
         setFKeyDbPKeyForNewEntity(fkeys, VendorProtocolDTO.class, newVendorProtocolDTO, parentElement, dbPkeysurrogateValue, document, xPath);
 
-        System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        System.out.println("\nChecking if " + entityName + " (" + dbPkeysurrogateValue + ") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
         RestUri restUriOrganizationForGetById = GobiiClientContext.getInstance(null, false)
@@ -742,7 +758,7 @@ public class GobiiTestData {
 
             if (vendorProtocolDTO.getProtocolId().equals(newVendorProtocolDTO.getProtocolId())) {
 
-                System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
+                System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") already exists in the database. Return current entity ID.\n");
 
                 return vendorProtocolDTO.getId();
 
@@ -750,8 +766,8 @@ public class GobiiTestData {
 
         }
 
-        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\nCreating new record...\n");
-        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
+        System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") doesn't exist in the database.\nCreating new record...\n");
+        System.out.println("Populating " + entityName + "DTO with attributes from XML file...");
 
 
         System.out.println("Calling the web service...\n");
@@ -797,19 +813,19 @@ public class GobiiTestData {
 
         }
 
-        System.out.println(entityName + "("+dbPkeysurrogateValue+") is successfully created!\n");
+        System.out.println(entityName + "(" + dbPkeysurrogateValue + ") is successfully created!\n");
 
         return returnVal;
 
     }
 
     private static Integer createReference(Element parentElement, String entityName, NodeList fkeys, String dbPkeysurrogateValue,
-                                          XPath xPath, Document document, NodeList propKeyList) throws Exception {
+                                           XPath xPath, Document document, NodeList propKeyList) throws Exception {
 
         Integer returnVal = null;
 
 
-        System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        System.out.println("\nChecking if " + entityName + " (" + dbPkeysurrogateValue + ") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
         RestUri restUriReference = GobiiClientContext.getInstance(null, false)
@@ -826,7 +842,7 @@ public class GobiiTestData {
 
             if (currentReferenceDTO.getName().equals(dbPkeysurrogateValue)) {
 
-                System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
+                System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") already exists in the database. Return current entity ID.\n");
 
                 /*** set fkey dbpkey for entity ***/
 
@@ -838,13 +854,13 @@ public class GobiiTestData {
 
         }
 
-        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\nCreating new record...\n");
+        System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") doesn't exist in the database.\nCreating new record...\n");
 
         ReferenceDTO newReferenceDTO = new ReferenceDTO();
 
-        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
+        System.out.println("Populating " + entityName + "DTO with attributes from XML file...");
 
-        for (int j=0; j<propKeyList.getLength(); j++) {
+        for (int j = 0; j < propKeyList.getLength(); j++) {
 
             Element propKey = (Element) propKeyList.item(j);
 
@@ -870,8 +886,8 @@ public class GobiiTestData {
 
         PayloadEnvelope<ReferenceDTO> payloadEnvelopeReference = new PayloadEnvelope<>(newReferenceDTO, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<ReferenceDTO> gobiiEnvelopeRestResourceReference = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
-                        .getUriFactory()
-                        .resourceColl(GobiiServiceRequestId.URL_REFERENCE));
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_REFERENCE));
         PayloadEnvelope<ReferenceDTO> referenceDTOResponseEnvelope = gobiiEnvelopeRestResourceReference.post(ReferenceDTO.class,
                 payloadEnvelopeReference);
 
@@ -882,19 +898,19 @@ public class GobiiTestData {
 
         returnVal = referenceDTOResponse.getReferenceId();
 
-        System.out.println(entityName + "("+dbPkeysurrogateValue+") is successfully created!\n");
+        System.out.println(entityName + "(" + dbPkeysurrogateValue + ") is successfully created!\n");
 
-        return  returnVal;
+        return returnVal;
 
     }
 
     private static Integer createMapset(Element parentElement, String entityName, NodeList fkeys, String dbPkeysurrogateValue,
-                                           XPath xPath, Document document, NodeList propKeyList) throws Exception {
+                                        XPath xPath, Document document, NodeList propKeyList) throws Exception {
 
         Integer returnVal = null;
 
 
-        System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        System.out.println("\nChecking if " + entityName + " (" + dbPkeysurrogateValue + ") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
         RestUri restUriMapset = GobiiClientContext.getInstance(null, false)
@@ -911,7 +927,7 @@ public class GobiiTestData {
 
             if (currentMapsetDTO.getName().equals(dbPkeysurrogateValue)) {
 
-                System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
+                System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") already exists in the database. Return current entity ID.\n");
 
                 /*** set fkey dbpkey for entity ***/
 
@@ -923,11 +939,11 @@ public class GobiiTestData {
 
         }
 
-        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\nCreating new record...\n");
+        System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") doesn't exist in the database.\nCreating new record...\n");
 
         MapsetDTO newMapsetDTO = new MapsetDTO();
 
-        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
+        System.out.println("Populating " + entityName + "DTO with attributes from XML file...");
 
         Element propertiesElement = null;
 
@@ -935,7 +951,7 @@ public class GobiiTestData {
 
         Map<String, Integer> mapsetTypeMap = getCvTermsWithId("mapset_type");
 
-        for (int j=0; j<propKeyList.getLength(); j++) {
+        for (int j = 0; j < propKeyList.getLength(); j++) {
 
             Element propKey = (Element) propKeyList.item(j);
 
@@ -968,8 +984,7 @@ public class GobiiTestData {
 
                 newMapsetDTO.getProperties().add(entityPropertyDTO);
 
-            }
-            else {
+            } else {
 
                 Field field = MapsetDTO.class.getDeclaredField(propKeyLocalName);
                 field.setAccessible(true);
@@ -991,8 +1006,8 @@ public class GobiiTestData {
 
         PayloadEnvelope<MapsetDTO> payloadEnvelopeMapset = new PayloadEnvelope<>(newMapsetDTO, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<MapsetDTO> gobiiEnvelopeRestResourceMapset = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
-                        .getUriFactory()
-                        .resourceColl(GobiiServiceRequestId.URL_MAPSET));
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_MAPSET));
         PayloadEnvelope<MapsetDTO> mapsetDTOResponseEnvelope = gobiiEnvelopeRestResourceMapset.post(MapsetDTO.class,
                 payloadEnvelopeMapset);
 
@@ -1003,19 +1018,19 @@ public class GobiiTestData {
 
         returnVal = mapsetDTOResponse.getMapsetId();
 
-        System.out.println(entityName + "("+dbPkeysurrogateValue+") is successfully created!\n");
+        System.out.println(entityName + "(" + dbPkeysurrogateValue + ") is successfully created!\n");
 
         return returnVal;
 
     }
 
     private static Integer createProject(Element parentElement, String entityName, NodeList fkeys, String dbPkeysurrogateValue,
-                                        XPath xPath, Document document, NodeList propKeyList) throws Exception {
+                                         XPath xPath, Document document, NodeList propKeyList) throws Exception {
 
         Integer returnVal = null;
 
 
-        System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        System.out.println("\nChecking if " + entityName + " (" + dbPkeysurrogateValue + ") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
         RestUri restUriProject = GobiiClientContext.getInstance(null, false)
@@ -1046,12 +1061,12 @@ public class GobiiTestData {
 
                 Element contactEntity = (Element) xPathExpression.evaluate(document, XPathConstants.NODE);
 
-                if(!contactEntity.getTextContent().isEmpty()) {
+                if (!contactEntity.getTextContent().isEmpty()) {
                     Integer contactEntityId = Integer.parseInt(contactEntity.getTextContent());
 
-                    if(contactEntityId.equals(currentProjectDTO.getPiContact())) {
+                    if (contactEntityId.equals(currentProjectDTO.getPiContact())) {
 
-                        System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
+                        System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") already exists in the database. Return current entity ID.\n");
                         return currentProjectDTO.getId();
 
                     }
@@ -1065,15 +1080,15 @@ public class GobiiTestData {
 
         }
 
-        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\nCreating new record...\n");
+        System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") doesn't exist in the database.\nCreating new record...\n");
 
-        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
+        System.out.println("Populating " + entityName + "DTO with attributes from XML file...");
 
         Element propertiesElement = null;
 
         Integer propertyCount = 0;
 
-        for (int j=0; j<propKeyList.getLength(); j++) {
+        for (int j = 0; j < propKeyList.getLength(); j++) {
 
             Element propKey = (Element) propKeyList.item(j);
 
@@ -1127,19 +1142,19 @@ public class GobiiTestData {
 
         returnVal = projectDTOResponse.getProjectId();
 
-        System.out.println(entityName + "("+dbPkeysurrogateValue+") is successfully created!\n");
+        System.out.println(entityName + "(" + dbPkeysurrogateValue + ") is successfully created!\n");
 
         return returnVal;
 
     }
 
     private static Integer createManifest(Element parentElement, String entityName, NodeList fkeys, String dbPkeysurrogateValue,
-                                        XPath xPath, Document document, NodeList propKeyList) throws Exception {
+                                          XPath xPath, Document document, NodeList propKeyList) throws Exception {
 
         Integer returnVal = null;
 
 
-        System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        System.out.println("\nChecking if " + entityName + " (" + dbPkeysurrogateValue + ") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
         RestUri restUriManifest = GobiiClientContext.getInstance(null, false)
@@ -1156,7 +1171,7 @@ public class GobiiTestData {
 
             if (currentManifestDTO.getName().equals(dbPkeysurrogateValue)) {
 
-                System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
+                System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") already exists in the database. Return current entity ID.\n");
 
                 /*** set fkey dbpkey for entity ***/
 
@@ -1169,13 +1184,13 @@ public class GobiiTestData {
         }
 
 
-        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\nCreating new record...\n");
+        System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") doesn't exist in the database.\nCreating new record...\n");
 
         ManifestDTO newManifestDTO = new ManifestDTO();
 
-        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
+        System.out.println("Populating " + entityName + "DTO with attributes from XML file...");
 
-        for (int j=0; j<propKeyList.getLength(); j++) {
+        for (int j = 0; j < propKeyList.getLength(); j++) {
 
             Element propKey = (Element) propKeyList.item(j);
 
@@ -1203,8 +1218,8 @@ public class GobiiTestData {
 
         PayloadEnvelope<ManifestDTO> payloadEnvelopeManifest = new PayloadEnvelope<>(newManifestDTO, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<ManifestDTO> gobiiEnvelopeRestResourceManifest = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
-                        .getUriFactory()
-                        .resourceColl(GobiiServiceRequestId.URL_MANIFEST));
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_MANIFEST));
         PayloadEnvelope<ManifestDTO> manifestDTOResponseEnvelope = gobiiEnvelopeRestResourceManifest.post(ManifestDTO.class,
                 payloadEnvelopeManifest);
 
@@ -1215,7 +1230,7 @@ public class GobiiTestData {
 
         returnVal = manifestDTOResponse.getManifestId();
 
-        System.out.println(entityName + "("+dbPkeysurrogateValue+") is successfully created!\n");
+        System.out.println(entityName + "(" + dbPkeysurrogateValue + ") is successfully created!\n");
 
         return returnVal;
 
@@ -1223,12 +1238,12 @@ public class GobiiTestData {
     }
 
     private static Integer createExperiment(Element parentElement, String entityName, NodeList fkeys, String dbPkeysurrogateValue,
-                                        XPath xPath, Document document, NodeList propKeyList) throws Exception {
+                                            XPath xPath, Document document, NodeList propKeyList) throws Exception {
 
         Integer returnVal = null;
 
 
-        System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        System.out.println("\nChecking if " + entityName + " (" + dbPkeysurrogateValue + ") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
         RestUri restUriExperiment = GobiiClientContext.getInstance(null, false)
@@ -1245,7 +1260,7 @@ public class GobiiTestData {
 
             if (currentExperimentDTO.getExperimentName().equals(dbPkeysurrogateValue)) {
 
-                System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
+                System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") already exists in the database. Return current entity ID.\n");
 
                 /*** set fkey dbpkey for entity ***/
 
@@ -1258,13 +1273,13 @@ public class GobiiTestData {
         }
 
 
-        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\nCreating new record...\n");
+        System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") doesn't exist in the database.\nCreating new record...\n");
 
         ExperimentDTO newExperimentDTO = new ExperimentDTO();
 
-        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
+        System.out.println("Populating " + entityName + "DTO with attributes from XML file...");
 
-        for (int j=0; j<propKeyList.getLength(); j++) {
+        for (int j = 0; j < propKeyList.getLength(); j++) {
 
             Element propKey = (Element) propKeyList.item(j);
 
@@ -1290,8 +1305,8 @@ public class GobiiTestData {
 
         PayloadEnvelope<ExperimentDTO> payloadEnvelopeExperiment = new PayloadEnvelope<>(newExperimentDTO, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<ExperimentDTO> gobiiEnvelopeRestResourceExperiment = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
-                        .getUriFactory()
-                        .resourceColl(GobiiServiceRequestId.URL_EXPERIMENTS));
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_EXPERIMENTS));
         PayloadEnvelope<ExperimentDTO> experimentDTOResponseEnvelope = gobiiEnvelopeRestResourceExperiment.post(ExperimentDTO.class,
                 payloadEnvelopeExperiment);
 
@@ -1302,19 +1317,19 @@ public class GobiiTestData {
 
         returnVal = experimentDTOResponse.getExperimentId();
 
-        System.out.println(entityName + "("+dbPkeysurrogateValue+") is successfully created!\n");
+        System.out.println(entityName + "(" + dbPkeysurrogateValue + ") is successfully created!\n");
 
         return returnVal;
 
     }
 
     private static Integer createAnalysis(Element parentElement, String entityName, NodeList fkeys, String dbPkeysurrogateValue,
-                                        XPath xPath, Document document, NodeList propKeyList) throws Exception {
+                                          XPath xPath, Document document, NodeList propKeyList) throws Exception {
 
         Integer returnVal = null;
 
 
-        System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        System.out.println("\nChecking if " + entityName + " (" + dbPkeysurrogateValue + ") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
         RestUri restUriAnalysis = GobiiClientContext.getInstance(null, false)
@@ -1331,7 +1346,7 @@ public class GobiiTestData {
 
             if (currentAnalysisDTO.getAnalysisName().equals(dbPkeysurrogateValue)) {
 
-                System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
+                System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") already exists in the database. Return current entity ID.\n");
 
                 /*** set fkey dbpkey for entity ***/
 
@@ -1344,11 +1359,11 @@ public class GobiiTestData {
         }
 
 
-        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\nCreating new record...\n");
+        System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") doesn't exist in the database.\nCreating new record...\n");
 
         AnalysisDTO newAnalysisDTO = new AnalysisDTO();
 
-        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
+        System.out.println("Populating " + entityName + "DTO with attributes from XML file...");
 
         Element paramElement = null;
 
@@ -1356,7 +1371,7 @@ public class GobiiTestData {
 
         Map<String, Integer> analysisTypeMap = getCvTermsWithId("analysis_type");
 
-        for (int j=0; j<propKeyList.getLength(); j++) {
+        for (int j = 0; j < propKeyList.getLength(); j++) {
 
             Element propKey = (Element) propKeyList.item(j);
 
@@ -1364,7 +1379,7 @@ public class GobiiTestData {
 
             propKeyLocalName = processPropName(propKeyLocalName);
 
-            if(propKeyLocalName.equals("parameters")){
+            if (propKeyLocalName.equals("parameters")) {
 
                 paramElement = propKey;
                 continue;
@@ -1386,8 +1401,7 @@ public class GobiiTestData {
                 entityPropertyDTO.setPropertyValue(propKey.getTextContent());
 
                 newAnalysisDTO.getParameters().add(entityPropertyDTO);
-            }
-            else {
+            } else {
 
                 Field field = AnalysisDTO.class.getDeclaredField(propKeyLocalName);
                 field.setAccessible(true);
@@ -1409,8 +1423,8 @@ public class GobiiTestData {
 
         PayloadEnvelope<AnalysisDTO> payloadEnvelopeAnalysis = new PayloadEnvelope<>(newAnalysisDTO, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<AnalysisDTO> gobiiEnvelopeRestResourceAnalysis = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
-                        .getUriFactory()
-                        .resourceColl(GobiiServiceRequestId.URL_ANALYSIS));
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_ANALYSIS));
         PayloadEnvelope<AnalysisDTO> analysisDTOResponseEnvelope = gobiiEnvelopeRestResourceAnalysis.post(AnalysisDTO.class,
                 payloadEnvelopeAnalysis);
 
@@ -1421,21 +1435,20 @@ public class GobiiTestData {
 
         returnVal = analysisDTOResponse.getAnalysisId();
 
-        System.out.println(entityName + "("+dbPkeysurrogateValue+") is successfully created!\n");
+        System.out.println(entityName + "(" + dbPkeysurrogateValue + ") is successfully created!\n");
 
         return returnVal;
-
 
 
     }
 
     private static Integer createDataset(Element parentElement, String entityName, NodeList fkeys, String dbPkeysurrogateValue,
-                                        XPath xPath, Document document, NodeList propKeyList) throws Exception {
+                                         XPath xPath, Document document, NodeList propKeyList) throws Exception {
 
         Integer returnVal = null;
 
 
-        System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        System.out.println("\nChecking if " + entityName + " (" + dbPkeysurrogateValue + ") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
         RestUri restUriDataset = GobiiClientContext.getInstance(null, false)
@@ -1452,7 +1465,7 @@ public class GobiiTestData {
 
             if (currentDatasetDTO.getDatasetName().equals(dbPkeysurrogateValue)) {
 
-                System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
+                System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") already exists in the database. Return current entity ID.\n");
 
                 /*** set fkey dbpkey for entity ***/
 
@@ -1465,18 +1478,18 @@ public class GobiiTestData {
         }
 
 
-        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\nCreating new record...\n");
+        System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") doesn't exist in the database.\nCreating new record...\n");
 
         DataSetDTO newDataSetDTO = new DataSetDTO();
 
-        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
+        System.out.println("Populating " + entityName + "DTO with attributes from XML file...");
 
         /*** get cv's from dataset_type group ***/
 
         Map<String, Integer> datasetTypeMap = getCvTermsWithId("dataset_type");
 
 
-        for (int j=0; j<propKeyList.getLength(); j++) {
+        for (int j = 0; j < propKeyList.getLength(); j++) {
 
             Element propKey = (Element) propKeyList.item(j);
 
@@ -1484,9 +1497,11 @@ public class GobiiTestData {
 
             propKeyLocalName = processPropName(propKeyLocalName);
 
-            if(propKeyLocalName.equals("analysesIds")) {continue;}
+            if (propKeyLocalName.equals("analysesIds")) {
+                continue;
+            }
 
-            if(propKeyLocalName.equals("analysisId")) {
+            if (propKeyLocalName.equals("analysisId")) {
 
                 newDataSetDTO.getAnalysesIds().add(Integer.parseInt(propKey.getTextContent()));
                 continue;
@@ -1501,9 +1516,11 @@ public class GobiiTestData {
             }
 
 
-            if(propKeyLocalName.equals("scores")) {continue;}
+            if (propKeyLocalName.equals("scores")) {
+                continue;
+            }
 
-            if(propKeyLocalName.equals("score")) {
+            if (propKeyLocalName.equals("score")) {
 
                 newDataSetDTO.getScores().add(Integer.parseInt(propKey.getTextContent()));
                 continue;
@@ -1528,8 +1545,8 @@ public class GobiiTestData {
 
         PayloadEnvelope<DataSetDTO> payloadEnvelopeDataSet = new PayloadEnvelope<>(newDataSetDTO, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceDataSet = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
-                        .getUriFactory()
-                        .resourceColl(GobiiServiceRequestId.URL_DATASETS));
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_DATASETS));
         PayloadEnvelope<DataSetDTO> dataSetDTOResponseEnvelope = gobiiEnvelopeRestResourceDataSet.post(DataSetDTO.class,
                 payloadEnvelopeDataSet);
 
@@ -1540,7 +1557,7 @@ public class GobiiTestData {
 
         returnVal = dataSetDTOResponse.getDataSetId();
 
-        System.out.println(entityName + "("+dbPkeysurrogateValue+") is successfully created!\n");
+        System.out.println(entityName + "(" + dbPkeysurrogateValue + ") is successfully created!\n");
 
         return returnVal;
 
@@ -1551,14 +1568,16 @@ public class GobiiTestData {
 
         Integer returnVal = null;
 
-
         Element props = (Element) parentElement.getElementsByTagName("Properties").item(0);
+        validateNode(props, parentElement.getTagName(), "Properties");
         NodeList propKeyList = props.getElementsByTagName("*");
-
-
+        if (propKeyList.getLength() < 1) {
+            throw new Exception("Properies for " +
+                    parentElement + " entity cannot be empty.");
+        }
         switch (entityName) {
 
-            case "Organization" :
+            case "Organization":
 
                 returnVal = createOrganization(parentElement, entityName, fKeys, dbPkeysurrogateValue, xPath, document, propKeyList);
 
@@ -1643,15 +1662,18 @@ public class GobiiTestData {
 
 
     private static void setFKeyDbPKeyForNewEntity(NodeList fkeys, Class currentClass, Object currentDTO, Element parentElement, String dbPkeysurrogateValue,
-                                      Document document, XPath xPath) throws Exception {
+                                                  Document document, XPath xPath) throws Exception {
 
-        if(fkeys != null && fkeys.getLength() > 0) {
+        if (fkeys != null && fkeys.getLength() > 0) {
 
-            for (int i=0; i<fkeys.getLength(); i++) {
+            for (int i = 0; i < fkeys.getLength(); i++) {
 
                 Element currentFkeyElement = (Element) fkeys.item(i);
-
+                validateNode(currentFkeyElement, currentFkeyElement.getParentNode().getParentNode().getLocalName(), "fkproperty");
                 String fkproperty = currentFkeyElement.getAttribute("fkproperty");
+                if (fkproperty.isEmpty())
+                    throw new Exception("FkProperty attribute for "
+                            + currentFkeyElement.getParentNode().getParentNode().getLocalName() + " does not exist.");
 
                 Integer fKeyDbPkey = getFKeyDbPKey(currentFkeyElement, parentElement, dbPkeysurrogateValue, document, xPath);
 
@@ -1668,19 +1690,21 @@ public class GobiiTestData {
 
     private static void setFKeyDbPKeyForExistingEntity(NodeList fkeys, Class currentClass, Object currentDTO) throws Exception {
 
-        if(fkeys != null && fkeys.getLength() > 0) {
+        if (fkeys != null && fkeys.getLength() > 0) {
 
-            for (int i=0; i<fkeys.getLength(); i++) {
+            for (int i = 0; i < fkeys.getLength(); i++) {
 
                 Element currentFkeyElement = (Element) fkeys.item(i);
-
+                validateNode(currentFkeyElement, currentFkeyElement.getParentNode().getParentNode().getLocalName(), "fkproperty");
                 String fkproperty = currentFkeyElement.getAttribute("fkproperty");
-
+                if (fkproperty.isEmpty())
+                    throw new Exception("FkProperty attribute for "
+                            + currentFkeyElement.getParentNode().getParentNode().getLocalName() + " does not exist.");
                 Field field = currentClass.getDeclaredField(fkproperty);
                 field.setAccessible(true);
 
                 Element currentFkeydbPKeyElement = (Element) currentFkeyElement.getElementsByTagName("DbPKey").item(0);
-
+                validateNode(currentFkeydbPKeyElement, currentFkeyElement.getTagName(), "DbPKey");
                 currentFkeydbPKeyElement.setTextContent(field.get(currentDTO).toString());
 
             }
@@ -1694,33 +1718,47 @@ public class GobiiTestData {
 
 
         String entity = currentFkeyElement.getAttribute("entity");
+        if (entity.isEmpty())
+            throw new Exception("Entity attribute for "
+                    + currentFkeyElement.getParentNode().getParentNode().getLocalName() + " does not exist.");
 
         String fKeyDbPkeyValue = currentFkeyElement.getElementsByTagName("DbPKeySurrogate").item(0).getTextContent();
+        if (fKeyDbPkeyValue.isEmpty())
+            throw new Exception("DbPKeySurrogate attribute for "
+                    + currentFkeyElement.getParentNode().getParentNode().getLocalName() + " does not exist.");
 
 
-        System.out.println("\nWriting "+ entity+ " (" + fKeyDbPkeyValue+ ") FkeyDbPkey for " + parentElement.getLocalName()+
-                "  (" +dbPkeysurrogateValue+ " ) to file...\n");
+        System.out.println("\nWriting " + entity + " (" + fKeyDbPkeyValue + ") FkeyDbPkey for " + parentElement.getLocalName() +
+                "  (" + dbPkeysurrogateValue + " ) to file...\n");
 
 
-
-        XPathExpression exprParentFkey = xPath.compile("//"+entity+"/parent::*");
+        XPathExpression exprParentFkey = xPath.compile("//" + entity + "/parent::*");
         Element ancestor = (Element) exprParentFkey.evaluate(document, XPathConstants.NODE);
 
         String fkeyPKey = ancestor.getAttribute("DbPKeysurrogate");
+        if (fkeyPKey.isEmpty())
+            throw new Exception("DbPKeySurrogate attribute for "
+                    + ancestor.getLocalName() + " does not exist.");
 
-        String exprCheckIfFKeyExists = "//Entities/"+ancestor.getNodeName()+"/"+entity+"/Properties["+fkeyPKey+"='"+fKeyDbPkeyValue+"']";
+        String exprCheckIfFKeyExists = "//Entities/" + ancestor.getNodeName() + "/" + entity + "/Properties[" + fkeyPKey + "='" + fKeyDbPkeyValue + "']";
 
         XPathExpression xPathExprNodeFKey = xPath.compile(exprCheckIfFKeyExists);
         Element nodeFKey = (Element) xPathExprNodeFKey.evaluate(document, XPathConstants.NODE);
 
         Element parentNode = (Element) nodeFKey.getParentNode();
 
-        String dbPkeyValue =  ((Element) parentNode.getElementsByTagName("Keys").item(0)).getElementsByTagName("DbPKey").item(0).getTextContent();
+        Element dbPkeyNode = ((Element) parentNode.getElementsByTagName("Keys").item(0));
+        validateNode(dbPkeyNode, parentElement.getTagName(), "Keys");
+
+        String dbPkeyValue = dbPkeyNode.getElementsByTagName("DbPKey").item(0).getTextContent();
+        if (dbPkeyValue.isEmpty())
+            throw new Exception("DbPKey attribute for "
+                    + dbPkeyNode.getLocalName() + " does not exist.");
 
         // set to <FKey><DbPkey></DbPkey></Fkey>
 
         Element currentFkeydbPKeyElement = (Element) currentFkeyElement.getElementsByTagName("DbPKey").item(0);
-
+        validateNode(currentFkeydbPKeyElement, currentFkeyElement.getTagName(), "DbPKey");
         currentFkeydbPKeyElement.setTextContent(dbPkeyValue);
 
         return Integer.parseInt(dbPkeyValue);
@@ -1728,9 +1766,9 @@ public class GobiiTestData {
 
     }
 
-    private static void writePkValues(NodeList nodeList, XPath xPath, Document document) throws Exception{
+    private static void writePkValues(NodeList nodeList, XPath xPath, Document document) throws Exception {
 
-        for (int i=0; i<nodeList.getLength(); i++) {
+        for (int i = 0; i < nodeList.getLength(); i++) {
 
             Element element = (Element) nodeList.item(i);
 
@@ -1741,18 +1779,26 @@ public class GobiiTestData {
             Element rootElement = (Element) parentElement.getParentNode();
 
             String DBPKeysurrogateName = rootElement.getAttribute("DbPKeysurrogate");
+            if (DBPKeysurrogateName.isEmpty()) {
 
+                throw new Exception("DbPKeysurrogate (" + DBPKeysurrogateName + ") attribute for " +
+                        rootElement + " entity cannot be empty.");
+
+            }
             Element props = (Element) parentElement.getElementsByTagName("Properties").item(0);
+            validateNode(props, parentElement.getTagName(), "Properties");
+            Node dbPkeysurrogateNode = props.getElementsByTagName(DBPKeysurrogateName).item(0);
+            validateNode(dbPkeysurrogateNode, parentElement.getTagName(), DBPKeysurrogateName);
 
-            String dbPkeysurrogateValue = props.getElementsByTagName(DBPKeysurrogateName).item(0).getTextContent();
+            String dbPkeysurrogateValue = dbPkeysurrogateNode.getTextContent();
 
             Element dbPKey = (Element) element.getElementsByTagName("DbPKey").item(0);
-
+            validateNode(dbPKey, element.getTagName(), "DbPKey");
             NodeList fkeys = element.getElementsByTagName("Fkey");
 
             Integer returnEntityId = createEntity(parentElement, parentLocalName, fkeys, dbPkeysurrogateValue, xPath, document);
 
-            System.out.println("\nWriting DbPKey for "+parentLocalName+" ("+dbPkeysurrogateValue+") " +
+            System.out.println("\nWriting DbPKey for " + parentLocalName + " (" + dbPkeysurrogateValue + ") " +
                     " to file...\n");
 
             dbPKey.setTextContent(returnEntityId.toString());
@@ -1760,7 +1806,7 @@ public class GobiiTestData {
 
     }
 
-    private static void getEntities(XPath xPath, Document document, File fXmlFile) throws Exception{
+    private static void getEntities(XPath xPath, Document document, File fXmlFile) throws Exception {
 
         /****** get nodes with no FKey dependencies to update DbPKey ******/
 
@@ -1787,9 +1833,9 @@ public class GobiiTestData {
         entityList.add("Experiment");
         entityList.add("Dataset");
 
-        for (int i=0; i<entityList.size(); i++) {
+        for (int i = 0; i < entityList.size(); i++) {
 
-            expr = constantStr + "'"+entityList.get(i)+"']]";
+            expr = constantStr + "'" + entityList.get(i) + "']]";
             xPathExpression = xPath.compile(expr);
             nodeList = (NodeList) xPathExpression.evaluate(document, XPathConstants.NODESET);
             writePkValues(nodeList, xPath, document);
@@ -1800,7 +1846,7 @@ public class GobiiTestData {
 
     }
 
-    private static void writeToFile(Document document, File fXmlFile) throws Exception{
+    private static void writeToFile(Document document, File fXmlFile) throws Exception {
 
         // Get file ready to write
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -1815,7 +1861,7 @@ public class GobiiTestData {
 
     }
 
-    private static String createDirectory(String folderName) throws Exception{
+    private static String createDirectory(String folderName) throws Exception {
 
         LoaderFilePreviewDTO loaderFilePreviewDTO = new LoaderFilePreviewDTO();
 
@@ -1853,7 +1899,7 @@ public class GobiiTestData {
                     .getHttp()
                     .upload(restUri, file);
 
-            if(httpMethodResult.getResponseCode() != HttpStatus.SC_OK) {
+            if (httpMethodResult.getResponseCode() != HttpStatus.SC_OK) {
 
                 throw new Exception("Error uploading data: " + file.getName());
 
@@ -1875,7 +1921,7 @@ public class GobiiTestData {
 
     }
 
-    private static LoaderInstructionFilesDTO createInstructionFileDTO (String instructionFilePath) throws Exception {
+    private static LoaderInstructionFilesDTO createInstructionFileDTO(String instructionFilePath) throws Exception {
 
         LoaderInstructionFilesDTO loaderInstructionFilesDTO = new LoaderInstructionFilesDTO();
 
@@ -1911,18 +1957,18 @@ public class GobiiTestData {
 
     }
 
-    private static void submitInstructionFile(LoaderInstructionFilesDTO loaderInstructionFilesDTO, String jobPayloadType) throws Exception{
+    private static void submitInstructionFile(LoaderInstructionFilesDTO loaderInstructionFilesDTO, String jobPayloadType) throws Exception {
 
         InstructionFileValidator instructionFileValidator = new InstructionFileValidator(loaderInstructionFilesDTO.getGobiiLoaderInstructions());
 
         instructionFileValidator.processInstructionFile();
 
         String validationStatus = instructionFileValidator.validate();
-        if(validationStatus != null){
+        if (validationStatus != null) {
 
             throw new Exception("Instruction file validation failed. " + validationStatus);
 
-        }else{
+        } else {
 
             try {
 
@@ -1950,7 +1996,7 @@ public class GobiiTestData {
 
     }
 
-    private static void parseScenarios(NodeList nodeList, XPath xPath, Document document, File fXmlFile) throws  Exception{
+    private static void parseScenarios(NodeList nodeList, XPath xPath, Document document, File fXmlFile) throws Exception {
 
         JsonParser parser = new JsonParser();
 
@@ -1961,12 +2007,17 @@ public class GobiiTestData {
 
         Map<GobiiFileProcessDir, String> fileLocations = serverConfig.getFileLocations();
 
-        for(int i=0; i<nodeList.getLength(); i++) {
+        for (int i = 0; i < nodeList.getLength(); i++) {
 
             Element currentElement = (Element) nodeList.item(i);
 
-            String scenarioName = currentElement.getElementsByTagName("Name").item(0).getTextContent();
-            String jobPayloadType = currentElement.getElementsByTagName("PayloadType").item(0).getTextContent();
+
+            Node scenarioNode = currentElement.getElementsByTagName("Name").item(0);
+            validateNode(scenarioNode, currentElement.getTagName(), "Name");
+            String scenarioName = scenarioNode.getTextContent();
+            Node jobPayloadTypeNode = currentElement.getElementsByTagName("PayloadType").item(0);
+            validateNode(jobPayloadTypeNode,currentElement.getTagName(),"PayloadType");
+            String jobPayloadType = jobPayloadTypeNode.getTextContent();
 
             System.out.println("Parsing scenario: " + scenarioName);
 
@@ -1981,8 +2032,7 @@ public class GobiiTestData {
             digestPath = fileLocations.get(GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES) + folderName;
 
 
-
-            String dataExpr = "//Scenario[Name='"+scenarioName+"']/Files/Data";
+            String dataExpr = "//Scenario[Name='" + scenarioName + "']/Files/Data";
 
             XPathExpression xPathExpressionData = xPath.compile(dataExpr);
 
@@ -1990,11 +2040,11 @@ public class GobiiTestData {
 
             boolean writeSourcePath = true;
 
-            if(!(new File(sourcePath).exists())){
+            if (!(new File(sourcePath).exists())) {
                 writeSourcePath = false;
             }
 
-            String fileExpr = "//Scenario[Name='"+scenarioName+"']/Files/Instruction";
+            String fileExpr = "//Scenario[Name='" + scenarioName + "']/Files/Instruction";
 
             XPathExpression xPathExpressionFiles = xPath.compile(fileExpr);
 
@@ -2002,11 +2052,11 @@ public class GobiiTestData {
 
             Object obj;
 
-            if (!new File(instructionFilePath).exists()){
+            if (!new File(instructionFilePath).exists()) {
 
                 ClassLoader classLoader = GobiiTestData.class.getClassLoader();
 
-                if(classLoader.getResourceAsStream(instructionFilePath) == null){
+                if (classLoader.getResourceAsStream(instructionFilePath) == null) {
 
                     throw new Exception(" Instruction file template " + instructionFilePath + " not found.");
                 }
@@ -2024,7 +2074,7 @@ public class GobiiTestData {
 
             } else {
 
-                 obj = parser.parse(new FileReader(instructionFilePath));
+                obj = parser.parse(new FileReader(instructionFilePath));
 
             }
 
@@ -2032,16 +2082,27 @@ public class GobiiTestData {
 
             NodeList dbPkeys = currentElement.getElementsByTagName("DbFkey");
 
-            for(int j=0; j<dbPkeys.getLength(); j++) {
+            for (int j = 0; j < dbPkeys.getLength(); j++) {
 
                 Element currentDbPkeyElement = (Element) dbPkeys.item(j);
 
                 String entityName = currentDbPkeyElement.getAttribute("entity");
+                if (entityName.isEmpty()) {
+
+                    throw new Exception("Entity attribute for " +
+                            currentElement + " entity cannot be empty.");
+
+                }
 
                 Element dbPkeySurrogateElement = (Element) currentDbPkeyElement.getElementsByTagName("DbPKeySurrogate").item(0);
-
+                validateNode(dbPkeySurrogateElement,currentElement.getTagName(),"DbPKeySurrogate");
                 String dbPkeySurrogateValue = dbPkeySurrogateElement.getTextContent();
+                if (dbPkeySurrogateValue.isEmpty()) {
 
+                    throw new Exception("DbPKeySurrogate attribute for " +
+                            currentElement + " entity cannot be empty.");
+
+                }
                 // get DbPKeysurrogate attribute of entity (ie Contacts - Email)
 
                 String expr = "//" + entityName + "s/@DbPKeysurrogate";
@@ -2051,62 +2112,61 @@ public class GobiiTestData {
                 String refAttr = (String) xPathExpression.evaluate(document, XPathConstants.STRING);
 
                 // check if entity with the specify dbPkeysurrogate value exist in the file
-                expr = "count(//Entities/"+entityName+"s/"+entityName+"/Properties["+refAttr+"='"+dbPkeySurrogateValue+"'])";
+                expr = "count(//Entities/" + entityName + "s/" + entityName + "/Properties[" + refAttr + "='" + dbPkeySurrogateValue + "'])";
 
                 xPathExpression = xPath.compile(expr);
 
                 Double count = (Double) xPathExpression.evaluate(document, XPathConstants.NUMBER);
 
-                if(count <= 0) {
+                if (count <= 0) {
 
                     throw new Exception(entityName + ": " + dbPkeySurrogateValue + " does not exist in the file.");
                 }
 
-                expr = "//"+entityName+"[Properties/"+refAttr+"='"+dbPkeySurrogateValue+"']/Keys/DbPKey";
+                expr = "//" + entityName + "[Properties/" + refAttr + "='" + dbPkeySurrogateValue + "']/Keys/DbPKey";
 
                 xPathExpression = xPath.compile(expr);
 
                 Element currentEntity = (Element) xPathExpression.evaluate(document, XPathConstants.NODE);
 
-                if(currentEntity.getTextContent().isEmpty()) {
+                if (currentEntity.getTextContent().isEmpty()) {
 
                     throw new Exception("The primary DB key of " + entityName + ": " + dbPkeySurrogateValue + " is not written in the file");
                 }
 
                 Element dbPkeyElement = (Element) currentDbPkeyElement.getElementsByTagName("DbPKey").item(0);
-
+                validateNode(dbPkeyElement,currentElement.getTagName(),"DbPKey");
                 String currentEntityId = currentEntity.getTextContent();
-
                 dbPkeyElement.setTextContent(currentEntityId);
                 writeToFile(document, fXmlFile);
 
                 //write to instruction file
 
-                if(entityName.equals("Dataset")){
+                if (entityName.equals("Dataset")) {
 
                     entityName = "dataSet";
 
-                } else{
+                } else {
                     entityName = entityName.toLowerCase();
                 }
 
                 for (int k = 0; k < jsonArray.size(); k++) {
                     JsonObject instructionObject = (JsonObject) jsonArray.get(k);
 
-                    if(entityName.equals("contact")){
+                    if (entityName.equals("contact")) {
 
-                        if(instructionObject.has("contactId")){
+                        if (instructionObject.has("contactId")) {
                             instructionObject.addProperty("contactId", currentEntityId);
                         }
 
-                        if(instructionObject.has("contactEmail")){
+                        if (instructionObject.has("contactEmail")) {
                             instructionObject.addProperty("contactEmail", dbPkeySurrogateValue);
                         }
 
                         continue;
                     }
 
-                    if(entityName.equals("dataSet")) {
+                    if (entityName.equals("dataSet")) {
                         if (instructionObject.has("dataSetId")) {
                             instructionObject.addProperty("dataSetId", currentEntityId);
                         }
@@ -2119,7 +2179,7 @@ public class GobiiTestData {
 
                     instructionObject.add(entityName, tempObject);
 
-                    if(writeSourcePath) {
+                    if (writeSourcePath) {
 
                         JsonObject gobiiFileObject = (JsonObject) instructionObject.get("gobiiFile");
 
@@ -2133,31 +2193,21 @@ public class GobiiTestData {
                     // modify gobiiFileColumns attribute
                     JsonArray gobiiFileColumnsArr = (JsonArray) instructionObject.get("gobiiFileColumns");
                     for (int o = 0; o < gobiiFileColumnsArr.size(); o++) {
-                        JsonObject fileColumnObj = (JsonObject)  gobiiFileColumnsArr.get(o);
+                        JsonObject fileColumnObj = (JsonObject) gobiiFileColumnsArr.get(o);
 
-                        if(fileColumnObj.has("gobiiColumnType")){
+                        if (fileColumnObj.has("gobiiColumnType")) {
                             String columnType = fileColumnObj.get("gobiiColumnType").getAsString();
 
-                            if(columnType.equals("CONSTANT")) {
+                            if (columnType.equals("CONSTANT")) {
 
-                                if(fileColumnObj.has("name")) {
+                                if (fileColumnObj.has("name")) {
                                     String columnName = fileColumnObj.get("name").getAsString();
 
                                     switch (columnName) {
 
-                                        case "project_id" :
+                                        case "project_id":
 
-                                            if(entityName.equals("project")) {
-
-                                                fileColumnObj.addProperty("constantValue", currentEntityId);
-
-                                            }
-
-                                            break;
-
-                                        case "experiment_id" :
-
-                                            if(entityName.equals("experiment")) {
+                                            if (entityName.equals("project")) {
 
                                                 fileColumnObj.addProperty("constantValue", currentEntityId);
 
@@ -2165,19 +2215,9 @@ public class GobiiTestData {
 
                                             break;
 
-                                        case "platform_id" :
+                                        case "experiment_id":
 
-                                            if(entityName.equals("platform")) {
-
-                                                fileColumnObj.addProperty("constantValue", currentEntityId);
-
-                                            }
-
-                                            break;
-
-                                        case "map_id" :
-
-                                            if(entityName.equals("mapset")) {
+                                            if (entityName.equals("experiment")) {
 
                                                 fileColumnObj.addProperty("constantValue", currentEntityId);
 
@@ -2185,9 +2225,29 @@ public class GobiiTestData {
 
                                             break;
 
-                                        case "dataset_id" :
+                                        case "platform_id":
 
-                                            if(entityName.equals("dataSet")) {
+                                            if (entityName.equals("platform")) {
+
+                                                fileColumnObj.addProperty("constantValue", currentEntityId);
+
+                                            }
+
+                                            break;
+
+                                        case "map_id":
+
+                                            if (entityName.equals("mapset")) {
+
+                                                fileColumnObj.addProperty("constantValue", currentEntityId);
+
+                                            }
+
+                                            break;
+
+                                        case "dataset_id":
+
+                                            if (entityName.equals("dataSet")) {
 
                                                 fileColumnObj.addProperty("constantValue", currentEntityId);
 
@@ -2215,7 +2275,7 @@ public class GobiiTestData {
             }
 
             // update instruction file
-            System.out.println("\nWriting instruction file for " +scenarioName + "\n");
+            System.out.println("\nWriting instruction file for " + scenarioName + "\n");
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             String prettyJsonString = gson.toJson(jsonArray);
 
@@ -2277,7 +2337,7 @@ public class GobiiTestData {
 
         Option option = options.getOption(optionName);
 
-        if(option.equals(null)) {
+        if (option.equals(null)) {
 
             return "Invalid argument: " + optionName;
         }
@@ -2287,8 +2347,7 @@ public class GobiiTestData {
 
     }
 
-    public static void main(String[] args) throws Exception{
-
+    public static void main(String[] args) throws Exception {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
 
@@ -2305,7 +2364,7 @@ public class GobiiTestData {
         CommandLineParser parser = new DefaultParser();
         CommandLine commandLine = parser.parse(options, args);
 
-        if(!commandLine.hasOption(INPUT_XML)) {
+        if (!commandLine.hasOption(INPUT_XML)) {
 
             String message = getMessageForMissingOption(INPUT_XML, options);
 
@@ -2313,7 +2372,7 @@ public class GobiiTestData {
             System.exit(1);
         }
 
-        if(!commandLine.hasOption(INPUT_HOST)) {
+        if (!commandLine.hasOption(INPUT_HOST)) {
 
             String message = getMessageForMissingOption(INPUT_HOST, options);
 
@@ -2321,7 +2380,7 @@ public class GobiiTestData {
             System.exit(1);
         }
 
-        if(!commandLine.hasOption(INPUT_USER)) {
+        if (!commandLine.hasOption(INPUT_USER)) {
 
             String message = getMessageForMissingOption(INPUT_USER, options);
 
@@ -2329,7 +2388,7 @@ public class GobiiTestData {
             System.exit(1);
         }
 
-        if(!commandLine.hasOption(INPUT_PASSWORD)) {
+        if (!commandLine.hasOption(INPUT_PASSWORD)) {
 
             String message = getMessageForMissingOption(INPUT_PASSWORD, options);
 
@@ -2340,7 +2399,7 @@ public class GobiiTestData {
 
         fXmlFile = new File(commandLine.getOptionValue(INPUT_XML));
 
-        if(!fXmlFile.exists()) {
+        if (!fXmlFile.exists()) {
 
             throw new Exception("The XML file doesn't exists. Path: " + commandLine.getOptionValue(INPUT_XML));
 
@@ -2361,7 +2420,7 @@ public class GobiiTestData {
 
             String contextRoot = iURL.getPath();
 
-            if('/' != contextRoot.charAt(contextRoot.length() -1)) {
+            if ('/' != contextRoot.charAt(contextRoot.length() - 1)) {
 
                 contextRoot = contextRoot + "/";
 
@@ -2373,7 +2432,7 @@ public class GobiiTestData {
 
                 ServerConfig currentServerConfig = GobiiClientContext.getInstance(null, false).getServerConfig(currentCrop);
 
-                if(contextRoot.equals(currentServerConfig.getContextRoot())) {
+                if (contextRoot.equals(currentServerConfig.getContextRoot())) {
                     // use the crop for this server config
                     crop = currentCrop;
                     serverConfig = currentServerConfig;
@@ -2382,9 +2441,9 @@ public class GobiiTestData {
 
             }
 
-            if(crop.isEmpty()) {
+            if (crop.isEmpty()) {
 
-                throw new Exception("Undefined crop for server: " +  url);
+                throw new Exception("Undefined crop for server: " + url);
 
             }
 
@@ -2406,7 +2465,7 @@ public class GobiiTestData {
 
         } catch (IOException e) {
 
-            throw new Exception("Initialization and authentication error: " +  e.getMessage());
+            throw new Exception("Initialization and authentication error: " + e.getMessage());
 
         }
 
@@ -2438,8 +2497,8 @@ public class GobiiTestData {
         xPathExpression = xPath.compile(getAllScenarios);
 
         nodeList = (NodeList) xPathExpression.evaluate(document, XPathConstants.NODESET);
-
         parseScenarios(nodeList, xPath, document, fXmlFile);
+
 
     }
 }
