@@ -118,7 +118,8 @@ import 'rxjs/add/operator/withLatestFrom'
                 <!--<p-column field="_entity.jobTypeName" header="Type"></p-column>-->
                 <p-column field="_entity.loadedDate"
                           header="Loaded"
-                          [style]="{'width': '18%'}">
+                          [style]="{'width': '18%'}"
+                          [sortable]="true">
                     <ng-template let-col let-fi="rowData" pTemplate="body">
                         {{fi._entity.loadedDate | date:'yyyy-MM-dd HH:mm' }}
                     </ng-template>
