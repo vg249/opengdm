@@ -687,11 +687,16 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                     contactId = filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].filterValue;
                 }
                 var projectIds = [];
-                if ((projectId && +projectId > 0) && (contactId && +contactId)) {
-                    projectIds = fileItems
-                        .filter(function (fi) { return fi.compoundIdeEquals(filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId)
-                        && fi.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId) === contactId; })
-                        .map(function (fi) { return fi.getItemId(); });
+                if ((projectId && +projectId > 0)) {
+                    if (contactId && +contactId) {
+                        projectIds = fileItems
+                            .filter(function (fi) { return fi.compoundIdeEquals(filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId)
+                            && fi.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId) === contactId; })
+                            .map(function (fi) { return fi.getItemId(); });
+                    }
+                    else {
+                        projectIds.push(projectId);
+                    }
                 }
                 returnVal = fileItems.filter(function (e) {
                     return (e.getGobiiExtractFilterType() == gobiiExtractFilterType

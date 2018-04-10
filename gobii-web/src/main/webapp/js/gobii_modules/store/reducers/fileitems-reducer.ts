@@ -896,11 +896,16 @@ export const getExperimentsFilterOptional = createSelector(getFileItems, getFilt
 
 
     let projectIds: string [] = [];
-    if ((projectId && +projectId > 0) && (contactId && +contactId)) {
-        projectIds = fileItems
-            .filter(fi => fi.compoundIdeEquals(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId)
-                && fi.getRelatedEntityFilterValue(filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId) === contactId)
-            .map(fi => fi.getItemId());
+    if ((projectId && +projectId > 0)) {
+
+        if (contactId && +contactId) {
+            projectIds = fileItems
+                .filter(fi => fi.compoundIdeEquals(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId)
+                    && fi.getRelatedEntityFilterValue(filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId) === contactId)
+                .map(fi => fi.getItemId());
+        } else {
+            projectIds.push(projectId);
+        }
     }
 
     returnVal = fileItems.filter(
@@ -911,9 +916,10 @@ export const getExperimentsFilterOptional = createSelector(getFileItems, getFilt
             && e.getProcessType() !== ProcessType.DUMMY
             && e.getEntityType() === EntityType.EXPERIMENT
             && ((!projectId || (+projectId < 0)) // state is not filtered -- we don't care, or . . .
-            || +e.getItemId() === 0 // Inlcude label "All Projects"
-            || (e.getRelatedEntityFilterValue(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) // the item has an fk value
-                && projectIds.find(pid => e.getRelatedEntityFilterValue(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) === pid))) // and it matches
+                || +e.getItemId() === 0 // Inlcude label "All Projects"
+                || (e.getRelatedEntityFilterValue(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) // the item has an fk value
+                && projectIds.find(pid => e.getRelatedEntityFilterValue(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) === pid))
+            ) // and it matches
     ).map(fi => fi);
 
     if (returnVal.length <= 0) {
