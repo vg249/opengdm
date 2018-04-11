@@ -475,14 +475,24 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                             logDir = logDir.substring(0, logDir.length() - 1);
                         }
                         String logFile = logDir + "/" + instructionFileName + ".log";
-                        ErrorLogger.setLogFilepath(logFile);
 
-                        ProcessMessage pm = new ProcessMessage();
+                        // check if log file exists
+                        File logFileObj = new File(logFile);
 
-                        JobPayloadType jobPayloadType = JobPayloadType.byValue(jobDTO.getPayloadType());
-                        pm.setBody(jobDTO.getJobName(),"Extract by " + jobPayloadType.getCvName(),1, ErrorLogger.getFirstErrorReason(), ErrorLogger.success(), ErrorLogger.getAllErrorStringsHTML());
+                        if (logFileObj.exists() && !logFileObj.isDirectory()) {
 
-                        returnVal.setGobiiExtractorInstructions(setGobiiExtractorInstructionLogMessage(fileDirExtractorDoneFqpn, pm.getBody()));
+                            String content = new String(Files.readAllBytes(Paths.get(logFile)));
+                            
+                            returnVal.setGobiiExtractorInstructions(setGobiiExtractorInstructionLogMessage(fileDirExtractorDoneFqpn, content, jobProgressStatus));
+
+                        } else {
+
+                            throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                                    "The log file for this job does not exist");
+
+                        }
+
                     }
 
                 } else if (instructionFileAccess.doesPathExist(fileDirExtractorInProgressFqpn)) {
@@ -537,12 +547,13 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
      * @return extractor instruction status.
      */
 
-    private List<GobiiExtractorInstruction> setGobiiExtractorInstructionLogMessage(String instructionFileFqpn, String logMessage) {
+    private List<GobiiExtractorInstruction> setGobiiExtractorInstructionLogMessage(String instructionFileFqpn, String logMessage, JobProgressStatusType jobProgressStatus) {
         List<GobiiExtractorInstruction> gobiiExtractorInstructionsFromFile = instructionFileAccess.getInstructions(instructionFileFqpn, GobiiExtractorInstruction[].class);
         for (GobiiExtractorInstruction instruction : gobiiExtractorInstructionsFromFile) {
             List<GobiiDataSetExtract> dataSetExtracts = instruction.getDataSetExtracts();
             for (GobiiDataSetExtract dataSetExtract : dataSetExtracts) {
                 dataSetExtract.setLogMessage(logMessage);
+                dataSetExtract.setGobiiJobStatus(jobProgressStatus);
             }
         }
 
