@@ -18,8 +18,6 @@ import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
-import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -412,112 +410,41 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
         ExtractorInstructionFilesDTO returnVal = new ExtractorInstructionFilesDTO();
 
-        JobDTO jobDTO = dtoMapJob.getJobDetailsByJobName(instructionFileName);
-        JobProgressStatusType jobProgressStatus;
-        if (jobDTO.getStatus() == null) {
-            throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                    "The specified instruction file does not exist: " +
-                            instructionFileName);
-        } else {
-            jobProgressStatus = JobProgressStatusType.byValue(jobDTO.getStatus());
-            // For now I am removing this status compression piece. This is now done by the
-            // BRAPI response map class. There is no other reason I can think of that the more granular
-            // PROGRESS statuses should not be returned to the client.
-//            switch (JobProgressStatusType.byValue(jobDTO.getStatus())) {
-//                case CV_PROGRESSSTATUS_FAILED:
-//                case CV_PROGRESSSTATUS_ABORTED:
-//                    jobProgressStatus = CV_PROGRESSSTATUS_FAILED;
-//                    break;
-//                case CV_PROGRESSSTATUS_PENDING:
-//                    jobProgressStatus = CV_PROGRESSSTATUS_PENDING;
-//                    break;
-//                case CV_PROGRESSSTATUS_COMPLETED:
-//                    jobProgressStatus = CV_PROGRESSSTATUS_COMPLETED;
-//                    break;
-//                case CV_PROGRESSSTATUS_INPROGRESS:
-//                case CV_PROGRESSSTATUS_METADATAEXTRACT:
-//                case CV_PROGRESSSTATUS_FINALASSEMBLY:
-//                case CV_PROGRESSSTATUS_QCPROCESSING:
-//                default:
-//                    jobProgressStatus = CV_PROGRESSSTATUS_INPROGRESS;
-//                    break;
-//            }
-            ConfigSettings configSettings = new ConfigSettings();
-            try {
+        JobStatusReporter jobStatusReporter = new JobStatusReporter(instructionFileName, dtoMapJob, INSTRUCTION_FILE_EXT);
 
-                String fileDirExtractorInProgressFqpn = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.EXTRACTOR_INPROGRESS)
-                        + instructionFileName
-                        + INSTRUCTION_FILE_EXT;
+        JobProgressStatusType jobProgressStatus = jobStatusReporter.getJobProgressStatusType();
 
-                String fileDirExtractorInstructionsFqpn = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS)
-                        + instructionFileName
-                        + INSTRUCTION_FILE_EXT;
+        try {
 
-                String fileDirExtractorDoneFqpn = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.EXTRACTOR_DONE)
-                        + instructionFileName
-                        + INSTRUCTION_FILE_EXT;
+            returnVal.setJobId(instructionFileName);
 
-                returnVal.setJobId(instructionFileName);
+            returnVal.setInstructionFileName(instructionFileName);
+            String fileDirExtractorDoneFqpn = jobStatusReporter.getExtractorEinstructionFileFqpn(cropType);
 
-                returnVal.setInstructionFileName(instructionFileName);
 
-                if (instructionFileAccess.doesPathExist(fileDirExtractorDoneFqpn)) {
-                    //check if file  is already done
-                    returnVal.setGobiiExtractorInstructions(setGobiiExtractorInstructionStatus(fileDirExtractorDoneFqpn, jobProgressStatus));
+            //All we care about here is getting the instruction file and we let the JobStatusReporter figure that
+            //out for us. What do not ever do is figure out job status based on the location of the
+            //instruction file.
+            returnVal.setGobiiExtractorInstructions(setGobiiExtractorInstructionStatus(fileDirExtractorDoneFqpn, jobProgressStatus));
 
-                    if (jobProgressStatus.getCvName().equals(JobProgressStatusType.CV_PROGRESSSTATUS_FAILED.getCvName())) {
+            if (jobProgressStatus.equals(JobProgressStatusType.CV_PROGRESSSTATUS_FAILED)) {
 
-                        /*** for error logging ***/
-                        String logDir = configSettings.getFileSystemLog();
+                String logErrorMessage = jobStatusReporter.getLogErrorMessage();
 
-                        if (logDir.endsWith("/")) {
-                            logDir = logDir.substring(0, logDir.length() - 1);
-                        }
-                        String logFile = logDir + "/" + instructionFileName + ".log";
-
-                        // check if log file exists
-                        File logFileObj = new File(logFile);
-
-                        if (logFileObj.exists() && !logFileObj.isDirectory()) {
-
-                            String content = new String(Files.readAllBytes(Paths.get(logFile)));
-                            
-                            returnVal.setGobiiExtractorInstructions(setGobiiExtractorInstructionLogMessage(fileDirExtractorDoneFqpn, content, jobProgressStatus));
-
-                        } else {
-
-                            throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
-                                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                                    "The log file for this job does not exist");
-
-                        }
-
-                    }
-
-                } else if (instructionFileAccess.doesPathExist(fileDirExtractorInProgressFqpn)) {
-                    //check if file  is in InProgress
-                    returnVal.setGobiiExtractorInstructions(setGobiiExtractorInstructionStatus(fileDirExtractorInProgressFqpn, jobProgressStatus));
-                } else if (instructionFileAccess.doesPathExist(fileDirExtractorInstructionsFqpn)) {
-                    //check if file just started
-                    returnVal.setGobiiExtractorInstructions(setGobiiExtractorInstructionStatus(fileDirExtractorInstructionsFqpn, jobProgressStatus));
-                } else {
-                    throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
-                            GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                            "The specified instruction file does not exist: " +
-                                    instructionFileName);
-                } // if-else instruction file exists
-
-            } catch (GobiiException e) {
-                LOGGER.error("Gobii Maping Error", e);
-                throw e;
-            } catch (Exception e) {
-                LOGGER.error("Gobii Maping Error", e);
-                throw new GobiiException(e);
+                returnVal.setGobiiExtractorInstructions(setGobiiExtractorInstructionLogMessage(fileDirExtractorDoneFqpn, logErrorMessage, jobProgressStatus));
             }
-            return returnVal;
+
+        } catch (GobiiException e) {
+            LOGGER.error("Gobii Maping Error", e);
+            throw e;
+        } catch (Exception e) {
+            LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiException(e);
         }
-    }
+
+        return returnVal;
+
+    } // getStatus()
 
 
     /**
@@ -543,7 +470,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
      * Returns a list of gobii extractor instruction(technically 1). Sets the log messsage for the data-sets under inspection
      *
      * @param instructionFileFqpn Instruction file path
-     * @param logMessage   job progress status.
+     * @param logMessage          job progress status.
      * @return extractor instruction status.
      */
 
@@ -557,7 +484,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
             }
         }
 
-        return  gobiiExtractorInstructionsFromFile;
+        return gobiiExtractorInstructionsFromFile;
     }
 
     /**
