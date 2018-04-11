@@ -18,6 +18,8 @@ import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
+import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
+import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -463,6 +465,36 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                 if (instructionFileAccess.doesPathExist(fileDirExtractorDoneFqpn)) {
                     //check if file  is already done
                     returnVal.setGobiiExtractorInstructions(setGobiiExtractorInstructionStatus(fileDirExtractorDoneFqpn, jobProgressStatus));
+
+                    if (jobProgressStatus.getCvName().equals(JobProgressStatusType.CV_PROGRESSSTATUS_FAILED.getCvName())) {
+
+                        /*** for error logging ***/
+                        String logDir = configSettings.getFileSystemLog();
+
+                        if (logDir.endsWith("/")) {
+                            logDir = logDir.substring(0, logDir.length() - 1);
+                        }
+                        String logFile = logDir + "/" + instructionFileName + ".log";
+
+                        // check if log file exists
+                        File logFileObj = new File(logFile);
+
+                        if (logFileObj.exists() && !logFileObj.isDirectory()) {
+
+                            String content = new String(Files.readAllBytes(Paths.get(logFile)));
+                            
+                            returnVal.setGobiiExtractorInstructions(setGobiiExtractorInstructionLogMessage(fileDirExtractorDoneFqpn, content, jobProgressStatus));
+
+                        } else {
+
+                            throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                                    "The log file for this job does not exist");
+
+                        }
+
+                    }
+
                 } else if (instructionFileAccess.doesPathExist(fileDirExtractorInProgressFqpn)) {
                     //check if file  is in InProgress
                     returnVal.setGobiiExtractorInstructions(setGobiiExtractorInstructionStatus(fileDirExtractorInProgressFqpn, jobProgressStatus));
@@ -505,6 +537,27 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
             }
         }
         return gobiiExtractorInstructionsFromFile;
+    }
+
+    /**
+     * Returns a list of gobii extractor instruction(technically 1). Sets the log messsage for the data-sets under inspection
+     *
+     * @param instructionFileFqpn Instruction file path
+     * @param logMessage   job progress status.
+     * @return extractor instruction status.
+     */
+
+    private List<GobiiExtractorInstruction> setGobiiExtractorInstructionLogMessage(String instructionFileFqpn, String logMessage, JobProgressStatusType jobProgressStatus) {
+        List<GobiiExtractorInstruction> gobiiExtractorInstructionsFromFile = instructionFileAccess.getInstructions(instructionFileFqpn, GobiiExtractorInstruction[].class);
+        for (GobiiExtractorInstruction instruction : gobiiExtractorInstructionsFromFile) {
+            List<GobiiDataSetExtract> dataSetExtracts = instruction.getDataSetExtracts();
+            for (GobiiDataSetExtract dataSetExtract : dataSetExtracts) {
+                dataSetExtract.setLogMessage(logMessage);
+                dataSetExtract.setGobiiJobStatus(jobProgressStatus);
+            }
+        }
+
+        return  gobiiExtractorInstructionsFromFile;
     }
 
     /**
