@@ -91,13 +91,14 @@ import {PayloadFilter} from "../store/actions/action-payload-filter";
 
  *
  */
-export class FilterParams extends GobiiFileItemCompoundId {
+export class FilterParams  {
 
     private constructor(_entityType: EntityType = EntityType.UNKNOWN, //first four args are passed to base class ctor
                         _entitySubType: EntitySubType = EntitySubType.UNKNOWN,
                         _cvFilterType: CvFilterType = CvFilterType.UNKNOWN,
                         _cvFilterValue: string = null,
                         _extractorItemType: ExtractorItemType,
+                        private targetEntityUniqueId:GobiiFileItemCompoundId,
                         private _queryName: string = null,
                         private _filterType: FilterType = FilterType.NONE,
                         private _fkEntityFilterValue: string = null,
@@ -115,7 +116,7 @@ export class FilterParams extends GobiiFileItemCompoundId {
                         private dtoRequestItem: DtoRequestItem<any>,
                         private dtoRequestService: DtoRequestService<any>) {
 
-        super(_extractorItemType, _entityType, _entitySubType, _cvFilterType, _cvFilterValue);
+        this.targetEntityUniqueId = new GobiiFileItemCompoundId(_extractorItemType, _entityType, _entitySubType, _cvFilterType, _cvFilterValue);
 
 
     }
@@ -129,6 +130,7 @@ export class FilterParams extends GobiiFileItemCompoundId {
             CvFilterType.UNKNOWN,
             null,
             ExtractorItemType.ENTITY,
+            null,
             queryName,
             FilterType.NONE,
             null,
@@ -153,61 +155,65 @@ export class FilterParams extends GobiiFileItemCompoundId {
 
 
     getExtractorItemType(): ExtractorItemType {
-        return super.getExtractorItemType();
+        return this.targetEntityUniqueId.getExtractorItemType();
     }
 
     setExtractorItemType(value: ExtractorItemType): FilterParams {
 
-        super.setExtractorItemType(value);
+        this.targetEntityUniqueId.setExtractorItemType(value);
         return this;
     }
 
     getEntityType(): EntityType {
-        return super.getEntityType();
+        return this.targetEntityUniqueId.getEntityType();
     }
 
     setEntityType(value: EntityType): FilterParams {
 
-        super.setEntityType(value);
+        this.targetEntityUniqueId.setEntityType(value);
         return this;
     }
 
     getEntitySubType(): EntitySubType {
-        return super.getEntitySubType();
+        return this.targetEntityUniqueId.getEntitySubType();
     }
 
     setEntitySubType(value: EntitySubType): FilterParams {
 
-        super.setEntitySubType(value);
+        this.targetEntityUniqueId.setEntitySubType(value);
         return this;
     }
 
     getCvFilterType(): CvFilterType {
-        return super.getCvFilterType();
+        return this.targetEntityUniqueId.getCvFilterType();
     }
 
     setCvFilterType(value: CvFilterType): FilterParams {
-        super.setCvFilterType(value);
+        this.targetEntityUniqueId.setCvFilterType(value);
         return this;
     }
 
     getCvFilterValue(): string {
-        return super.getCvFilterValue();
+        return this.targetEntityUniqueId.getCvFilterValue();
     }
 
     setCvFilterValue(value: string) {
 
-        super.setCvFilterValue(value);
+        this.targetEntityUniqueId.setCvFilterValue(value);
         return this;
     }
 
     getIsExtractCriterion(): boolean {
-        return super.getIsExtractCriterion();
+        return this.targetEntityUniqueId.getIsExtractCriterion();
     }
 
     setIsExtractCriterion(value: boolean): FilterParams {
-        super.setIsExtractCriterion(value);
+        this.targetEntityUniqueId.setIsExtractCriterion(value);
         return this;
+    }
+
+    getTargetEtityUniqueId() :GobiiFileItemCompoundId {
+        return this.targetEntityUniqueId;
     }
 
     getFilterType(): FilterType {

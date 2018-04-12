@@ -1,15 +1,5 @@
 System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-extractor-filter", "./name-id-label-type", "./type-extractor-item", "./gobii-file-item-compound-id"], function (exports_1, context_1) {
     "use strict";
-    var __extends = (this && this.__extends) || (function () {
-        var extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return function (d, b) {
-            extendStatics(d, b);
-            function __() { this.constructor = d; }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
-    })();
     var __moduleName = context_1 && context_1.id;
     var filter_type_1, type_entity_1, cv_filter_type_1, type_extractor_filter_1, name_id_label_type_1, type_extractor_item_1, gobii_file_item_compound_id_1, FilterParams;
     return {
@@ -115,10 +105,9 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
             
              *
              */
-            FilterParams = (function (_super) {
-                __extends(FilterParams, _super);
+            FilterParams = (function () {
                 function FilterParams(_entityType, //first four args are passed to base class ctor
-                    _entitySubType, _cvFilterType, _cvFilterValue, _extractorItemType, _queryName, _filterType, _fkEntityFilterValue, _gobiiExtractFilterType, _nameIdLabelType, _parentFileItemParams, _childFileItemParams, _isDynamicFilterValue, _isDynamicDataLoad, _isPaged, _pageSize, _pageNum, _pagedQueryId, onLoadFilteredItemsAction, dtoRequestItem, dtoRequestService) {
+                    _entitySubType, _cvFilterType, _cvFilterValue, _extractorItemType, targetEntityUniqueId, _queryName, _filterType, _fkEntityFilterValue, _gobiiExtractFilterType, _nameIdLabelType, _parentFileItemParams, _childFileItemParams, _isDynamicFilterValue, _isDynamicDataLoad, _isPaged, _pageSize, _pageNum, _pagedQueryId, onLoadFilteredItemsAction, dtoRequestItem, dtoRequestService) {
                     if (_entityType === void 0) { _entityType = type_entity_1.EntityType.UNKNOWN; }
                     if (_entitySubType === void 0) { _entitySubType = type_entity_1.EntitySubType.UNKNOWN; }
                     if (_cvFilterType === void 0) { _cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN; }
@@ -127,72 +116,75 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
                     if (_filterType === void 0) { _filterType = filter_type_1.FilterType.NONE; }
                     if (_fkEntityFilterValue === void 0) { _fkEntityFilterValue = null; }
                     if (_gobiiExtractFilterType === void 0) { _gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN; }
-                    var _this = _super.call(this, _extractorItemType, _entityType, _entitySubType, _cvFilterType, _cvFilterValue) || this;
-                    _this._queryName = _queryName;
-                    _this._filterType = _filterType;
-                    _this._fkEntityFilterValue = _fkEntityFilterValue;
-                    _this._gobiiExtractFilterType = _gobiiExtractFilterType;
-                    _this._nameIdLabelType = _nameIdLabelType;
-                    _this._parentFileItemParams = _parentFileItemParams;
-                    _this._childFileItemParams = _childFileItemParams;
-                    _this._isDynamicFilterValue = _isDynamicFilterValue;
-                    _this._isDynamicDataLoad = _isDynamicDataLoad;
-                    _this._isPaged = _isPaged;
-                    _this._pageSize = _pageSize;
-                    _this._pageNum = _pageNum;
-                    _this._pagedQueryId = _pagedQueryId;
-                    _this.onLoadFilteredItemsAction = onLoadFilteredItemsAction;
-                    _this.dtoRequestItem = dtoRequestItem;
-                    _this.dtoRequestService = dtoRequestService;
-                    return _this;
+                    this.targetEntityUniqueId = targetEntityUniqueId;
+                    this._queryName = _queryName;
+                    this._filterType = _filterType;
+                    this._fkEntityFilterValue = _fkEntityFilterValue;
+                    this._gobiiExtractFilterType = _gobiiExtractFilterType;
+                    this._nameIdLabelType = _nameIdLabelType;
+                    this._parentFileItemParams = _parentFileItemParams;
+                    this._childFileItemParams = _childFileItemParams;
+                    this._isDynamicFilterValue = _isDynamicFilterValue;
+                    this._isDynamicDataLoad = _isDynamicDataLoad;
+                    this._isPaged = _isPaged;
+                    this._pageSize = _pageSize;
+                    this._pageNum = _pageNum;
+                    this._pagedQueryId = _pagedQueryId;
+                    this.onLoadFilteredItemsAction = onLoadFilteredItemsAction;
+                    this.dtoRequestItem = dtoRequestItem;
+                    this.dtoRequestService = dtoRequestService;
+                    this.targetEntityUniqueId = new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(_extractorItemType, _entityType, _entitySubType, _cvFilterType, _cvFilterValue);
                 }
                 FilterParams.build = function (queryName, gobiiExtractFilterType, entityType) {
-                    return (new FilterParams(entityType, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null, type_extractor_item_1.ExtractorItemType.ENTITY, queryName, filter_type_1.FilterType.NONE, null, gobiiExtractFilterType, name_id_label_type_1.NameIdLabelType.UNKNOWN, null, [], true, true, false, null, null, null, null, null, null));
+                    return (new FilterParams(entityType, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null, type_extractor_item_1.ExtractorItemType.ENTITY, null, queryName, filter_type_1.FilterType.NONE, null, gobiiExtractFilterType, name_id_label_type_1.NameIdLabelType.UNKNOWN, null, [], true, true, false, null, null, null, null, null, null));
                 };
                 FilterParams.prototype.getQueryName = function () {
                     return this._queryName;
                 };
                 FilterParams.prototype.getExtractorItemType = function () {
-                    return _super.prototype.getExtractorItemType.call(this);
+                    return this.targetEntityUniqueId.getExtractorItemType();
                 };
                 FilterParams.prototype.setExtractorItemType = function (value) {
-                    _super.prototype.setExtractorItemType.call(this, value);
+                    this.targetEntityUniqueId.setExtractorItemType(value);
                     return this;
                 };
                 FilterParams.prototype.getEntityType = function () {
-                    return _super.prototype.getEntityType.call(this);
+                    return this.targetEntityUniqueId.getEntityType();
                 };
                 FilterParams.prototype.setEntityType = function (value) {
-                    _super.prototype.setEntityType.call(this, value);
+                    this.targetEntityUniqueId.setEntityType(value);
                     return this;
                 };
                 FilterParams.prototype.getEntitySubType = function () {
-                    return _super.prototype.getEntitySubType.call(this);
+                    return this.targetEntityUniqueId.getEntitySubType();
                 };
                 FilterParams.prototype.setEntitySubType = function (value) {
-                    _super.prototype.setEntitySubType.call(this, value);
+                    this.targetEntityUniqueId.setEntitySubType(value);
                     return this;
                 };
                 FilterParams.prototype.getCvFilterType = function () {
-                    return _super.prototype.getCvFilterType.call(this);
+                    return this.targetEntityUniqueId.getCvFilterType();
                 };
                 FilterParams.prototype.setCvFilterType = function (value) {
-                    _super.prototype.setCvFilterType.call(this, value);
+                    this.targetEntityUniqueId.setCvFilterType(value);
                     return this;
                 };
                 FilterParams.prototype.getCvFilterValue = function () {
-                    return _super.prototype.getCvFilterValue.call(this);
+                    return this.targetEntityUniqueId.getCvFilterValue();
                 };
                 FilterParams.prototype.setCvFilterValue = function (value) {
-                    _super.prototype.setCvFilterValue.call(this, value);
+                    this.targetEntityUniqueId.setCvFilterValue(value);
                     return this;
                 };
                 FilterParams.prototype.getIsExtractCriterion = function () {
-                    return _super.prototype.getIsExtractCriterion.call(this);
+                    return this.targetEntityUniqueId.getIsExtractCriterion();
                 };
                 FilterParams.prototype.setIsExtractCriterion = function (value) {
-                    _super.prototype.setIsExtractCriterion.call(this, value);
+                    this.targetEntityUniqueId.setIsExtractCriterion(value);
                     return this;
+                };
+                FilterParams.prototype.getTargetEtityUniqueId = function () {
+                    return this.targetEntityUniqueId;
                 };
                 FilterParams.prototype.getFilterType = function () {
                     return this._filterType;
@@ -300,7 +292,7 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
                     return this;
                 };
                 return FilterParams;
-            }(gobii_file_item_compound_id_1.GobiiFileItemCompoundId));
+            }());
             exports_1("FilterParams", FilterParams);
         }
     };

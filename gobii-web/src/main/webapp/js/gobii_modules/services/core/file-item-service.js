@@ -108,7 +108,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     if (filterParams) {
                         var loadAction = new fileItemActions.LoadFilterAction({
                             filterId: filterParams.getQueryName(),
-                            filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParams, filterValue, null, null)
+                            filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParams.getTargetEtityUniqueId(), filterValue, null, null)
                         });
                         this.store.dispatch(loadAction);
                     }
@@ -377,7 +377,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                                 if (nameIdItem.fkEntityType && nameIdItem.fkId) {
                                                     var gobiiFileItemCompoundUniqueId = null;
                                                     if (filterParamsToLoad.getParentFileItemParams()) {
-                                                        gobiiFileItemCompoundUniqueId = filterParamsToLoad.getParentFileItemParams();
+                                                        gobiiFileItemCompoundUniqueId = filterParamsToLoad.getParentFileItemParams().getTargetEtityUniqueId();
                                                     }
                                                     else {
                                                         gobiiFileItemCompoundUniqueId = new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, nameIdItem.fkEntityType, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null);
@@ -456,7 +456,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                         var loadAction = new fileItemActions.LoadFileItemListWithFilterAction({
                                             gobiiFileItems: fileItems,
                                             filterId: filterParamsToLoad.getQueryName(),
-                                            filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParamsToLoad, filterParamsToLoad.getFkEntityFilterValue(), minEntityLastUpdated, null)
+                                            filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParamsToLoad.getTargetEtityUniqueId(), filterParamsToLoad.getFkEntityFilterValue(), minEntityLastUpdated, null)
                                         });
                                         observer.next(loadAction);
                                         // if there are children, we will load their data as well
@@ -490,7 +490,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                     //BEGIN: nameIdService.get()
                                     var loadAction = new fileItemActions.LoadFilterAction({
                                         filterId: filterParamsToLoad.getQueryName(),
-                                        filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParamsToLoad, filterParamsToLoad.getFkEntityFilterValue(), fileHistoryItem.entityLasteUpdated, null)
+                                        filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParamsToLoad.getTargetEtityUniqueId(), filterParamsToLoad.getFkEntityFilterValue(), fileHistoryItem.entityLasteUpdated, null)
                                     });
                                     observer.next(loadAction);
                                     if (recurse) {
@@ -508,7 +508,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                                 // however, this will only work if the parent items have been loaded
                                                 // already.
                                                 var candidateParentFileItems = allFileItems.filter(function (fi) {
-                                                    return filterParamsToLoad.compoundIdeEquals(fi)
+                                                    return filterParamsToLoad.getTargetEtityUniqueId().compoundIdeEquals(fi)
                                                         && fi.getParentItemId() === filterParamsToLoad.getFkEntityFilterValue();
                                                 });
                                                 var childItemsFilterValue = "0";
@@ -539,7 +539,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                         filterParamsToLoad.setFkEntityFilterValue(filterValue);
                         var loadAction = new fileItemActions.LoadFilterAction({
                             filterId: filterParamsToLoad.getQueryName(),
-                            filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParamsToLoad, filterParamsToLoad.getFkEntityFilterValue(), null, //not sure about this
+                            filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParamsToLoad.getTargetEtityUniqueId(), filterParamsToLoad.getFkEntityFilterValue(), null, //not sure about this
                             null)
                         });
                         observer.next(loadAction);
@@ -563,14 +563,14 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                     // For example contactId
                                     var parentItemFilterValue = filterParamsToLoad.getFkEntityFilterValue();
                                     // For example, the coupound unique ID for Contacts
-                                    var parentEntityCompoundUniqueId = _this.filterParamsColl.getFilter(filterParamsToLoad.getParentFileItemParams().getQueryName(), gobiiExtractFilterType);
+                                    var parentEntityCompoundUniqueId = _this.filterParamsColl.getFilter(filterParamsToLoad.getParentFileItemParams().getQueryName(), gobiiExtractFilterType).getTargetEtityUniqueId();
                                     // for example, filter to only those file items that:
                                     // 1) have the compoundUniqueId of the items we are loading (project), and
                                     // 2) have an entity relation that has:
                                     //      a) the compoundUniqueId of the parentEntity (contact)
                                     //      b) the relatedEntityId of the parentFilterValue (the contactId) (
                                     var candidateParentFileItems = allFileItems.filter(function (fi) {
-                                        return filterParamsToLoad.compoundIdeEquals(fi)
+                                        return filterParamsToLoad.getTargetEtityUniqueId().compoundIdeEquals(fi)
                                             && fi.getRelatedEntityFilterValue(parentEntityCompoundUniqueId) === parentItemFilterValue;
                                     });
                                     // Now we will set the child filter's fkEntityValue to whatever happens to be the first item
@@ -658,7 +658,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                     var loadAction = new fileItemActions.LoadFileItemListWithFilterAction({
                                         gobiiFileItems: entityItems,
                                         filterId: filterParams.getQueryName(),
-                                        filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParams, filterValue, date, pagination)
+                                        filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParams.getTargetEtityUniqueId(), filterValue, date, pagination)
                                     });
                                     observer.next(loadAction);
                                 }, function (responseHeader) {

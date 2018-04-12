@@ -61,7 +61,7 @@ export class FileItemService {
                     filterId: filterParams.getQueryName(),
                     filter: new PayloadFilter(
                         gobiiExtractFilterType,
-                        filterParams,
+                        filterParams.getTargetEtityUniqueId(),
                         filterValue,
                         null,
                         null
@@ -444,7 +444,7 @@ export class FileItemService {
                                                         let gobiiFileItemCompoundUniqueId: GobiiFileItemCompoundId = null;
 
                                                         if (filterParamsToLoad.getParentFileItemParams()) {
-                                                            gobiiFileItemCompoundUniqueId = filterParamsToLoad.getParentFileItemParams();
+                                                            gobiiFileItemCompoundUniqueId = filterParamsToLoad.getParentFileItemParams().getTargetEtityUniqueId();
                                                         } else {
                                                             gobiiFileItemCompoundUniqueId = new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
                                                                 nameIdItem.fkEntityType,
@@ -557,7 +557,7 @@ export class FileItemService {
                                                     filterId: filterParamsToLoad.getQueryName(),
                                                     filter: new PayloadFilter(
                                                         gobiiExtractFilterType,
-                                                        filterParamsToLoad,
+                                                        filterParamsToLoad.getTargetEtityUniqueId(),
                                                         filterParamsToLoad.getFkEntityFilterValue(),
                                                         minEntityLastUpdated,
                                                         null
@@ -613,7 +613,7 @@ export class FileItemService {
                                         filterId: filterParamsToLoad.getQueryName(),
                                         filter: new PayloadFilter(
                                             gobiiExtractFilterType,
-                                            filterParamsToLoad,
+                                            filterParamsToLoad.getTargetEtityUniqueId(),
                                             filterParamsToLoad.getFkEntityFilterValue(),
                                             fileHistoryItem.entityLasteUpdated,
                                             null
@@ -642,7 +642,7 @@ export class FileItemService {
                                                 // already.
                                                 let candidateParentFileItems: GobiiFileItem[] =
                                                     allFileItems.filter(fi =>
-                                                        filterParamsToLoad.compoundIdeEquals(fi)
+                                                        filterParamsToLoad.getTargetEtityUniqueId().compoundIdeEquals(fi)
                                                         && fi.getParentItemId() === filterParamsToLoad.getFkEntityFilterValue()
                                                     );
 
@@ -702,7 +702,7 @@ export class FileItemService {
                     filterId: filterParamsToLoad.getQueryName(),
                     filter: new PayloadFilter(
                         gobiiExtractFilterType,
-                        filterParamsToLoad,
+                        filterParamsToLoad.getTargetEtityUniqueId(),
                         filterParamsToLoad.getFkEntityFilterValue(),
                         null, //not sure about this
                         null
@@ -741,7 +741,7 @@ export class FileItemService {
                             let parentEntityCompoundUniqueId: GobiiFileItemCompoundId = this.filterParamsColl.getFilter(
                                 filterParamsToLoad.getParentFileItemParams().getQueryName(),
                                 gobiiExtractFilterType
-                            )
+                            ).getTargetEtityUniqueId();
 
 
                             // for example, filter to only those file items that:
@@ -751,7 +751,7 @@ export class FileItemService {
                             //      b) the relatedEntityId of the parentFilterValue (the contactId) (
                             let candidateParentFileItems: GobiiFileItem[] =
                                 allFileItems.filter(fi =>
-                                    filterParamsToLoad.compoundIdeEquals(fi)
+                                    filterParamsToLoad.getTargetEtityUniqueId().compoundIdeEquals(fi)
                                     && fi.getRelatedEntityFilterValue(parentEntityCompoundUniqueId) === parentItemFilterValue
                                 );
 
@@ -890,10 +890,10 @@ export class FileItemService {
                                             filterId: filterParams.getQueryName(),
                                             filter: new PayloadFilter(
                                                 gobiiExtractFilterType,
-                                                filterParams,
+                                                filterParams.getTargetEtityUniqueId(),
                                                 filterValue,
                                                 date,
-                                                pagination
+                                                pagination  
                                             )
                                         }
                                     );
