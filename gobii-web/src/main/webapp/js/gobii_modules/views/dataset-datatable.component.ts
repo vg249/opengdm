@@ -14,7 +14,7 @@ import {DtoRequestService} from "../services/core/dto-request.service";
 import {JsonToGfiDataset} from "../services/app/jsontogfi/json-to-gfi-dataset";
 import {FilterParamsColl} from "../services/core/filter-params-coll";
 import {DtoRequestItemGfi} from "../services/app/dto-request-item-gfi";
-import {FilterParams} from "../model/file-item-params";
+import {FilterParams} from "../model/filter-params";
 import {JsonToGfiAnalysis} from "../services/app/jsontogfi/json-to-gfi-analysis";
 import {CvFilters, CvFilterType} from "../model/cv-filter-type";
 import {EntitySubType, EntityType} from "../model/type-entity";

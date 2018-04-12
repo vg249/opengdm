@@ -12,7 +12,7 @@ import {CvFilterType} from "../../model/cv-filter-type";
 import {GobiiSampleListType} from "../../model/type-extractor-sample-list";
 import {DataSet} from "../../model/dataset";
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
-import {FilterParams} from "../../model/file-item-params";
+import {FilterParams} from "../../model/filter-params";
 import {Pagination} from "../../model/payload/pagination";
 import {PayloadFilter} from "../actions/action-payload-filter";
 import {map} from "rxjs/operator/map";

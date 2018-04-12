@@ -8,7 +8,7 @@ import {GobiiFileItem} from "../../model/gobii-file-item";
 import {HeaderStatusMessage} from "../../model/dto-header-status-message";
 import {ProcessType} from "../../model/type-process";
 import {NameIdService} from "./name-id-service";
-import {FilterParams} from "../../model/file-item-params";
+import {FilterParams} from "../../model/filter-params";
 import * as historyAction from '../../store/actions/history-action';
 import * as fileItemActions from '../../store/actions/fileitem-action'
 import * as fromRoot from '../../store/reducers';
@@ -35,6 +35,8 @@ import {Pagination} from "../../model/payload/pagination";
 
 @Injectable()
 export class FileItemService {
+
+    private readonly NONE_ITEM_ITEM_ID: string = "-1";
 
     constructor(private nameIdService: NameIdService,
                 private entityStatsService: DtoRequestService<EntityStats>,
@@ -297,17 +299,19 @@ export class FileItemService {
                 filterParamsToProcess = filterParams.getChildFileItemParams()[0];
             }
 
-
             if (filterParamsToProcess.getIsDynamicDataLoad()) {
                 returnVal = this.makeFileItemActionsFromNameIds(gobiiExtractFilterType,
                     filterParamsToProcess,
                     filterValue,
                     true);
             } else {
+
+                let recurse: boolean = filterParamsToProcess.getIsDynamicFilterValue() ? true : filterValue === null;
+
                 returnVal = this.recurseFilters(gobiiExtractFilterType,
                     filterParamsToProcess,
                     filterValue,
-                    true);
+                    recurse);
             }
 
 
@@ -533,7 +537,7 @@ export class FileItemService {
                                                 .build(gobiiExtractFilterType, ProcessType.DUMMY)
                                                 .setExtractorItemType(ExtractorItemType.ENTITY)
                                                 .setEntityType(filterParamsToLoad.getEntityType())
-                                                .setItemId("-1")
+                                                .setItemId(this.NONE_ITEM_ITEM_ID)
                                                 .setItemName("<none>")
                                                 .setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())
                                                 .setParentItemId(filterParamsToLoad.getFkEntityFilterValue());
@@ -749,7 +753,8 @@ export class FileItemService {
                             // in the list to which we filtered
                             let childItemsFilterValue: string = "0";
                             if (candidateParentFileItems.length > 0) {
-                                childItemsFilterValue = candidateParentFileItems[0].getItemId();
+                                childItemsFilterValue = candidateParentFileItems[0].getItemId() !==
+                                this.NONE_ITEM_ITEM_ID ? candidateParentFileItems[0].getItemId() : null;
                             }
 
                             for (let idx: number = 0;

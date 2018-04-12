@@ -98,6 +98,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     this.fileItemRequestService = fileItemRequestService;
                     this.store = store;
                     this.filterParamsColl = filterParamsColl;
+                    this.NONE_ITEM_ITEM_ID = "-1";
                 } // constructor
                 FileItemService.prototype.loadFilter = function (gobiiExtractFilterType, filterParamsName, filterValue) {
                     var filterParams = this.filterParamsColl.getFilter(filterParamsName, gobiiExtractFilterType);
@@ -282,7 +283,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                             returnVal = this.makeFileItemActionsFromNameIds(gobiiExtractFilterType, filterParamsToProcess, filterValue, true);
                         }
                         else {
-                            returnVal = this.recurseFilters(gobiiExtractFilterType, filterParamsToProcess, filterValue, true);
+                            var recurse = filterParamsToProcess.getIsDynamicFilterValue() ? true : filterValue === null;
+                            returnVal = this.recurseFilters(gobiiExtractFilterType, filterParamsToProcess, filterValue, recurse);
                         }
                     }
                     else {
@@ -444,7 +446,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                             .build(gobiiExtractFilterType, type_process_1.ProcessType.DUMMY)
                                             .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
                                             .setEntityType(filterParamsToLoad.getEntityType())
-                                            .setItemId("-1")
+                                            .setItemId(_this.NONE_ITEM_ITEM_ID)
                                             .setItemName("<none>")
                                             .setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())
                                             .setParentItemId(filterParamsToLoad.getFkEntityFilterValue());
@@ -590,7 +592,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                     // in the list to which we filtered
                                     var childItemsFilterValue = "0";
                                     if (candidateParentFileItems.length > 0) {
-                                        childItemsFilterValue = candidateParentFileItems[0].getItemId();
+                                        childItemsFilterValue = candidateParentFileItems[0].getItemId() !==
+                                            _this.NONE_ITEM_ITEM_ID ? candidateParentFileItems[0].getItemId() : null;
                                     }
                                     for (var idx = 0; idx < filterParamsToLoad.getChildFileItemParams().length; idx++) {
                                         var rqp = filterParamsToLoad.getChildFileItemParams()[idx];

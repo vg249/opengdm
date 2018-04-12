@@ -19,7 +19,7 @@ import {FilterParamNames} from "../../model/file-item-param-names";
 import "rxjs/add/operator/mergeMap"
 import {AddFilterRetrieved} from "../actions/history-action";
 import {FilterParamsColl} from "../../services/core/filter-params-coll";
-import {FilterParams} from "../../model/file-item-params";
+import {FilterParams} from "../../model/filter-params";
 import {PayloadFilter} from "../actions/action-payload-filter";
 
 @Injectable()
@@ -239,15 +239,15 @@ export class FileItemEffects {
                                 // RUN FILTERED QUERY TO GET CHILD ITEMS WHEN NECESSARY
                                 //If item ID is 0, is a label item, and so for filtering purposes it's null
                                 let filterValue: string = ( fileItemToReplaceWith.getItemId() && Number(fileItemToReplaceWith.getItemId()) > 0 ) ? fileItemToReplaceWith.getItemId() : null;
-                                if (filterParamName !== FilterParamNames.UNKNOWN) {
+                                if (filterParamName !== FilterParamNames.UNKNOWN ) {
 
                                     this.fileItemService.makeFileActionsFromFilterParamName(action.payload.gobiiExtractFilterType,
                                         filterParamName,
                                         filterValue).subscribe(loadFileItemListAction => {
 
-                                            observer.next(loadFileItemListAction);
-
-
+                                            if( loadFileItemListAction ) {
+                                                observer.next(loadFileItemListAction);
+                                            }
                                         },
                                         error => {
                                             this.store.dispatch(new historyAction.AddStatusMessageAction(error))

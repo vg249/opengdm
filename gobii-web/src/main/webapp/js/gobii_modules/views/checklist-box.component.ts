@@ -1,7 +1,7 @@
 import {Component, EventEmitter, KeyValueDiffers} from "@angular/core";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
-import {FilterParams} from "../model/file-item-params";
+import {FilterParams} from "../model/filter-params";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import {ExtractorItemType} from "../model//type-extractor-item";
 import * as fromRoot from '../store/reducers';

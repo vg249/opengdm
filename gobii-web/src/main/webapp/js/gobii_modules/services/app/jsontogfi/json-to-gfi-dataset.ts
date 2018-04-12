@@ -5,7 +5,7 @@ import {ExtractorItemType} from "../../../model/type-extractor-item";
 import {ProcessType} from "../../../model/type-process";
 import {GobiiExtractFilterType} from "../../../model/type-extractor-filter";
 import {DataSet} from "../../../model/dataset";
-import {FilterParams} from "../../../model/file-item-params";
+import {FilterParams} from "../../../model/filter-params";
 import {GobiiFileItemEntityRelation} from "../../../model/gobii-file-item-entity-relation";
 import {FilterParamsColl} from "../../core/filter-params-coll";
 import {FilterParamNames} from "../../../model/file-item-param-names";

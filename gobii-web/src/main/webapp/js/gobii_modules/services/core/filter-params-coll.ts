@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {EntitySubType, EntityType} from "../../model/type-entity";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 import {CvFilters, CvFilterType} from "../../model/cv-filter-type";
-import {FilterParams} from "../../model/file-item-params";
+import {FilterParams} from "../../model/filter-params";
 import * as historyAction from '../../store/actions/history-action';
 import * as fromRoot from '../../store/reducers';
 import {Store} from "@ngrx/store";
@@ -329,7 +329,7 @@ export class FilterParamsColl {
                     GobiiExtractFilterType.WHOLE_DATASET,
                     EntityType.CONTACT)
                 .setExtractorItemType(ExtractorItemType.ENTITY)
-                .setIsDynamicFilterValue(true)
+                .setIsDynamicFilterValue(false)
                 .setIsDynamicDataLoad(false)
                 .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
                 .setNameIdLabelType(NameIdLabelType.ALL)
@@ -342,18 +342,18 @@ export class FilterParamsColl {
                     GobiiExtractFilterType.WHOLE_DATASET,
                     EntityType.PROJECT)
                 .setExtractorItemType(ExtractorItemType.ENTITY)
-                .setIsDynamicFilterValue(true)
+                .setIsDynamicFilterValue(false)
                 .setIsDynamicDataLoad(false)
                 .setNameIdLabelType(NameIdLabelType.ALL)
                 .setIsExtractCriterion(false));
 
-        // relate this filter to PROJECT_FILTER_OPTIONAL as parent
+        // relate this filter to PROJECT_FILTER_OPTIONAL as pa\rent
         this.addFilter(
             FilterParams
                 .build(FilterParamNames.EXPERIMENT_FILTER_OPTIONAL,
                     GobiiExtractFilterType.WHOLE_DATASET,
                     EntityType.EXPERIMENT)
-                .setIsDynamicFilterValue(true)
+                .setIsDynamicFilterValue(false)
                 .setIsDynamicDataLoad(false)
                 .setExtractorItemType(ExtractorItemType.ENTITY)
                 .setNameIdLabelType(NameIdLabelType.ALL)

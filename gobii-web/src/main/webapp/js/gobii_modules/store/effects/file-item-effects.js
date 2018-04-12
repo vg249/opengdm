@@ -304,7 +304,9 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                                 var filterValue = (fileItemToReplaceWith.getItemId() && Number(fileItemToReplaceWith.getItemId()) > 0) ? fileItemToReplaceWith.getItemId() : null;
                                 if (filterParamName !== file_item_param_names_1.FilterParamNames.UNKNOWN) {
                                     _this.fileItemService.makeFileActionsFromFilterParamName(action.payload.gobiiExtractFilterType, filterParamName, filterValue).subscribe(function (loadFileItemListAction) {
-                                        observer.next(loadFileItemListAction);
+                                        if (loadFileItemListAction) {
+                                            observer.next(loadFileItemListAction);
+                                        }
                                     }, function (error) {
                                         _this.store.dispatch(new historyAction.AddStatusMessageAction(error));
                                     });
