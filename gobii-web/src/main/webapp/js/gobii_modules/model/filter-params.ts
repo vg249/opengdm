@@ -91,14 +91,15 @@ import {PayloadFilter} from "../store/actions/action-payload-filter";
 
  *
  */
-export class FilterParams  {
+export class FilterParams {
 
     private constructor(_entityType: EntityType = EntityType.UNKNOWN, //first four args are passed to base class ctor
                         _entitySubType: EntitySubType = EntitySubType.UNKNOWN,
                         _cvFilterType: CvFilterType = CvFilterType.UNKNOWN,
                         _cvFilterValue: string = null,
                         _extractorItemType: ExtractorItemType,
-                        private targetEntityUniqueId:GobiiFileItemCompoundId,
+                        private targetEntityUniqueId: GobiiFileItemCompoundId,
+                        private relatedEntityUniqueId: GobiiFileItemCompoundId,
                         private _queryName: string = null,
                         private _filterType: FilterType = FilterType.NONE,
                         private _fkEntityFilterValue: string = null,
@@ -130,6 +131,7 @@ export class FilterParams  {
             CvFilterType.UNKNOWN,
             null,
             ExtractorItemType.ENTITY,
+            null,
             null,
             queryName,
             FilterType.NONE,
@@ -212,8 +214,18 @@ export class FilterParams  {
         return this;
     }
 
-    getTargetEtityUniqueId() :GobiiFileItemCompoundId {
+    getTargetEtityUniqueId(): GobiiFileItemCompoundId {
         return this.targetEntityUniqueId;
+    }
+
+
+    setRelatedEntityUniqueId(value: GobiiFileItemCompoundId): FilterParams {
+        this.relatedEntityUniqueId = value;
+        return this;
+    }
+
+    getRelatedEntityUniqueId(): GobiiFileItemCompoundId {
+        return this.relatedEntityUniqueId;
     }
 
     getFilterType(): FilterType {

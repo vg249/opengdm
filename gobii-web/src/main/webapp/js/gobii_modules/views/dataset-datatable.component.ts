@@ -320,6 +320,7 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
                         EntitySubType.UNKNOWN,
                         CvFilterType.UNKNOWN,
                         CvFilters.get(CvFilterType.UNKNOWN)),
+                    null,
                     filterValue,
                     null,
                     null

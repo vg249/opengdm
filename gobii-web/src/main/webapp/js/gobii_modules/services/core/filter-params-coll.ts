@@ -205,6 +205,7 @@ export class FilterParamsColl {
                                     filterId: FilterParamNames.CV_JOB_STATUS,
                                     filter: new PayloadFilter(GobiiExtractFilterType.WHOLE_DATASET,
                                         cvJobStatusCompoundUniqueId,
+                                        null,
                                         completedItem.getItemId(),
                                         payloadFilter.entityLasteUpdated,
                                         payloadFilter.pagination)
@@ -241,6 +242,7 @@ export class FilterParamsColl {
                             filter: new PayloadFilter(
                                 GobiiExtractFilterType.WHOLE_DATASET,
                                 cvDatasetCompoundUniqueId,
+                                null,
                                 "completed",
                                 payloadFilter.entityLasteUpdated,
                                 payloadFilter.pagination
@@ -283,6 +285,7 @@ export class FilterParamsColl {
                             filter: new PayloadFilter(
                                 GobiiExtractFilterType.WHOLE_DATASET,
                                 cvDatasetCompoundUniqueId,
+                                null,
                                 "completed",
                                 payloadFilter.entityLasteUpdated,
                                 payloadFilter.pagination
@@ -340,6 +343,11 @@ export class FilterParamsColl {
                     GobiiExtractFilterType.WHOLE_DATASET,
                     EntityType.PROJECT)
                 .setExtractorItemType(ExtractorItemType.ENTITY)
+                .setRelatedEntityUniqueId(new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
+                    EntityType.CONTACT,
+                    EntitySubType.UNKNOWN,
+                    CvFilterType.UNKNOWN,
+                    null))
                 .setIsDynamicFilterValue(false)
                 .setIsDynamicDataLoad(false)
                 .setNameIdLabelType(NameIdLabelType.ALL)
@@ -351,6 +359,11 @@ export class FilterParamsColl {
                 .build(FilterParamNames.EXPERIMENT_FILTER_OPTIONAL,
                     GobiiExtractFilterType.WHOLE_DATASET,
                     EntityType.EXPERIMENT)
+                .setRelatedEntityUniqueId(new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
+                    EntityType.PROJECT,
+                    EntitySubType.UNKNOWN,
+                    CvFilterType.UNKNOWN,
+                    null))
                 .setIsDynamicFilterValue(false)
                 .setIsDynamicDataLoad(false)
                 .setExtractorItemType(ExtractorItemType.ENTITY)
@@ -363,6 +376,11 @@ export class FilterParamsColl {
                 .build(FilterParamNames.DATASET_FILTER_OPTIONAL,
                     GobiiExtractFilterType.WHOLE_DATASET,
                     EntityType.DATASET)
+                .setRelatedEntityUniqueId(new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
+                    EntityType.EXPERIMENT,
+                    EntitySubType.UNKNOWN,
+                    CvFilterType.UNKNOWN,
+                    null))
                 .setIsDynamicFilterValue(true)
                 .setIsDynamicDataLoad(false)
                 .setExtractorItemType(ExtractorItemType.ENTITY));

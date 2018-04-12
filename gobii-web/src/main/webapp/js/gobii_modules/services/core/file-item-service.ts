@@ -62,6 +62,7 @@ export class FileItemService {
                     filter: new PayloadFilter(
                         gobiiExtractFilterType,
                         filterParams.getTargetEtityUniqueId(),
+                        filterParams.getRelatedEntityUniqueId(),
                         filterValue,
                         null,
                         null
@@ -558,6 +559,7 @@ export class FileItemService {
                                                     filter: new PayloadFilter(
                                                         gobiiExtractFilterType,
                                                         filterParamsToLoad.getTargetEtityUniqueId(),
+                                                        filterParamsToLoad.getRelatedEntityUniqueId(),
                                                         filterParamsToLoad.getFkEntityFilterValue(),
                                                         minEntityLastUpdated,
                                                         null
@@ -614,6 +616,7 @@ export class FileItemService {
                                         filter: new PayloadFilter(
                                             gobiiExtractFilterType,
                                             filterParamsToLoad.getTargetEtityUniqueId(),
+                                            filterParamsToLoad.getRelatedEntityUniqueId(),
                                             filterParamsToLoad.getFkEntityFilterValue(),
                                             fileHistoryItem.entityLasteUpdated,
                                             null
@@ -703,6 +706,7 @@ export class FileItemService {
                     filter: new PayloadFilter(
                         gobiiExtractFilterType,
                         filterParamsToLoad.getTargetEtityUniqueId(),
+                        filterParamsToLoad.getRelatedEntityUniqueId(),
                         filterParamsToLoad.getFkEntityFilterValue(),
                         null, //not sure about this
                         null
@@ -891,9 +895,10 @@ export class FileItemService {
                                             filter: new PayloadFilter(
                                                 gobiiExtractFilterType,
                                                 filterParams.getTargetEtityUniqueId(),
+                                                filterParams.getRelatedEntityUniqueId(),
                                                 filterValue,
                                                 date,
-                                                pagination  
+                                                pagination
                                             )
                                         }
                                     );
