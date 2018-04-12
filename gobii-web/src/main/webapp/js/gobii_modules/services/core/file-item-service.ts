@@ -306,6 +306,11 @@ export class FileItemService {
                     true);
             } else {
 
+                // This condition was occasioned by the specific need of the dataset grid's filter drop-down boxes.
+                // The idea is that these filters should function independently -- that they should not casdcade.
+                // However, when the user selects "All <entity name>" at any level, it _should_ cascade. The
+                // effects action handler will have set the filter value to null when All <endity name> is the
+                // item that was selected. Hence we do recurse in that case.
                 let recurse: boolean = filterParamsToProcess.getIsDynamicFilterValue() ? true : filterValue === null;
 
                 returnVal = this.recurseFilters(gobiiExtractFilterType,
