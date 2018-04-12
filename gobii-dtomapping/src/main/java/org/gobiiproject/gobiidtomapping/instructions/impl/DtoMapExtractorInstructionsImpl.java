@@ -431,7 +431,8 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
                 String logErrorMessage = jobStatusReporter.getLogErrorMessage();
 
-                returnVal.setGobiiExtractorInstructions(setGobiiExtractorInstructionLogMessage(fileDirExtractorDoneFqpn, logErrorMessage, jobProgressStatus));
+                setStatus(returnVal.getGobiiExtractorInstructions(), logErrorMessage, jobProgressStatus);
+
             }
 
         } catch (GobiiException e) {
@@ -445,6 +446,26 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
         return returnVal;
 
     } // getStatus()
+
+    /**
+     * Sets the status for a list of gobii extractor instructions
+     *
+     * @param gobiiExtractorInstructionList list of extractor instructions
+     * @param logMessage content of the log file
+     * @param jobProgressStatus status of the job
+     */
+
+    private void setStatus(List<GobiiExtractorInstruction> gobiiExtractorInstructionList, String logMessage, JobProgressStatusType jobProgressStatus) {
+
+        for (GobiiExtractorInstruction instruction : gobiiExtractorInstructionList) {
+            List<GobiiDataSetExtract> dataSetExtracts = instruction.getDataSetExtracts();
+            for (GobiiDataSetExtract dataSetExtract : dataSetExtracts) {
+                dataSetExtract.setLogMessage(logMessage);
+                dataSetExtract.setGobiiJobStatus(jobProgressStatus);
+            }
+        }
+
+    }
 
 
     /**
@@ -466,26 +487,6 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
         return gobiiExtractorInstructionsFromFile;
     }
 
-    /**
-     * Returns a list of gobii extractor instruction(technically 1). Sets the log messsage for the data-sets under inspection
-     *
-     * @param instructionFileFqpn Instruction file path
-     * @param logMessage          job progress status.
-     * @return extractor instruction status.
-     */
-
-    private List<GobiiExtractorInstruction> setGobiiExtractorInstructionLogMessage(String instructionFileFqpn, String logMessage, JobProgressStatusType jobProgressStatus) {
-        List<GobiiExtractorInstruction> gobiiExtractorInstructionsFromFile = instructionFileAccess.getInstructions(instructionFileFqpn, GobiiExtractorInstruction[].class);
-        for (GobiiExtractorInstruction instruction : gobiiExtractorInstructionsFromFile) {
-            List<GobiiDataSetExtract> dataSetExtracts = instruction.getDataSetExtracts();
-            for (GobiiDataSetExtract dataSetExtract : dataSetExtracts) {
-                dataSetExtract.setLogMessage(logMessage);
-                dataSetExtract.setGobiiJobStatus(jobProgressStatus);
-            }
-        }
-
-        return gobiiExtractorInstructionsFromFile;
-    }
 
     /**
      * If the status of the job is completed, all the files in extracted directory are set. Else a list of size 0 is added.
