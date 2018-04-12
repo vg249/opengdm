@@ -183,7 +183,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                                 .AddFilterRetrieved({
                                 gobiiExtractFilterType: action.payload.filter.gobiiExtractFilterType,
                                 filterId: action.payload.filterId,
-                                filterValue: action.payload.filter.filterValue,
+                                filterValue: action.payload.filter.relatedEntityFilterValue,
                                 entityLasteUpdated: action.payload.filter.entityLasteUpdated
                             });
                             observer.next(addFilterSubmittedAction);

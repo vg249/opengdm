@@ -213,8 +213,8 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
              */
             let newFileItemState: GobiiFileItem[] = state.allFileItems.slice();
 
-            if (!newFilterState[filterId].gobiiCompoundUniqueId.getIsExtractCriterion()) {
-                let gobiiFileItemCompoundId: GobiiFileItemCompoundId = newFilterState[filterId].gobiiCompoundUniqueId;
+            if (!newFilterState[filterId].targetEntityUniqueId.getIsExtractCriterion()) {
+                let gobiiFileItemCompoundId: GobiiFileItemCompoundId = newFilterState[filterId].targetEntityUniqueId;
                 let allItemsForFilter: GobiiFileItem[] = newFileItemState
                     .filter(gfi => {
                         return (gfi.getGobiiExtractFilterType() === state.gobiiExtractFilterType
@@ -229,7 +229,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
                 })
 
                 if (allItemsForFilter[0]) {
-                    if ((!filterPayload.filterValue || +filterPayload.filterValue < 1)) {
+                    if ((!filterPayload.relatedEntityFilterValue || +filterPayload.relatedEntityFilterValue < 1)) {
                         allItemsForFilter[0].setSelected(true);
                     }
                 }
@@ -656,7 +656,7 @@ export const getProjectsForSelectedPi = createSelector(getFileItems, getFilters,
 
     if (filters[FilterParamNames.PROJECTS_BY_CONTACT]) {
 
-        let contactId: string = filters[FilterParamNames.PROJECTS_BY_CONTACT].filterValue;
+        let contactId: string = filters[FilterParamNames.PROJECTS_BY_CONTACT].relatedEntityFilterValue;
         returnVal = fileItems.filter(e =>
             (e.getExtractorItemType() === ExtractorItemType.ENTITY)
             && (e.getEntityType() === EntityType.PROJECT)
@@ -683,7 +683,7 @@ export const getExperimentsForSelectedProject = createSelector(getFileItems, get
 
     if (filters[FilterParamNames.EXPERIMENTS_BY_PROJECT]) {
 
-        let projectId: string = filters[FilterParamNames.EXPERIMENTS_BY_PROJECT].filterValue;
+        let projectId: string = filters[FilterParamNames.EXPERIMENTS_BY_PROJECT].relatedEntityFilterValue;
         returnVal = fileItems.filter(e =>
             (e.getExtractorItemType() === ExtractorItemType.ENTITY)
             && (e.getEntityType() === EntityType.EXPERIMENT)
@@ -711,7 +711,7 @@ export const getDatasetsForSelectedExperiment = createSelector(getFileItems, get
 
     if (filters[FilterParamNames.DATASETS_BY_EXPERIMENT]) {
 
-        let experimentId: string = filters[FilterParamNames.DATASETS_BY_EXPERIMENT].filterValue;
+        let experimentId: string = filters[FilterParamNames.DATASETS_BY_EXPERIMENT].relatedEntityFilterValue;
         returnVal = fileItems.filter(e =>
             (e.getExtractorItemType() === ExtractorItemType.ENTITY
                 && e.getEntityType() === EntityType.DATASET
@@ -741,19 +741,19 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
 
     // the child filter has the parent fk value
     let contactId = filters[FilterParamNames.PROJECT_FILTER_OPTIONAL] ?
-        filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].filterValue : null;
+        filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].relatedEntityFilterValue : null;
     let compounUniqueIdForContacts: GobiiFileItemCompoundId =
-        filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL] ? filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId : null;
+        filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL] ? filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].targetEntityUniqueId : null;
 
     let projectId = filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL] ?
-        filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].filterValue : null;
+        filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].relatedEntityFilterValue : null;
     let compounUniqueIdForProjectsByContact: GobiiFileItemCompoundId =
-        filters[FilterParamNames.PROJECT_FILTER_OPTIONAL] ? filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId : null;
+        filters[FilterParamNames.PROJECT_FILTER_OPTIONAL] ? filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].targetEntityUniqueId : null;
 
     let experimentId = filters[FilterParamNames.DATASET_FILTER_OPTIONAL] ?
-        filters[FilterParamNames.DATASET_FILTER_OPTIONAL].filterValue : null;
+        filters[FilterParamNames.DATASET_FILTER_OPTIONAL].relatedEntityFilterValue : null;
     let compounUniqueIdForExperimentsByProject: GobiiFileItemCompoundId =
-        filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL] ? filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].gobiiCompoundUniqueId : null;
+        filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL] ? filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].targetEntityUniqueId : null;
 
     let datasetEntitiesFilteredByExperiment: GobiiFileItem[] = [];
 
@@ -771,10 +771,10 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
     let jobStatusFilterParams = filters[FilterParamNames.DATASET_LIST_STATUS];
     if (
         jobStatusFilterParams
-        && jobStatusFilterParams.filterValue != null) {
+        && jobStatusFilterParams.relatedEntityFilterValue != null) {
 
         returnVal = datasetEntitiesFilteredByExperiment
-            .filter(fi => fi.getEntity().jobStatusName === jobStatusFilterParams.filterValue
+            .filter(fi => fi.getEntity().jobStatusName === jobStatusFilterParams.relatedEntityFilterValue
             );
     } else {
         returnVal = datasetEntitiesFilteredByExperiment;
@@ -815,7 +815,7 @@ export const getProjectsFilterOptional = createSelector(getFileItems, getFilters
     // those projects that have an fk reference to the specified contact.
     let contactId: string = null;
     if (filters[FilterParamNames.PROJECT_FILTER_OPTIONAL]) {
-        contactId = filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].filterValue;
+        contactId = filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].relatedEntityFilterValue;
     }
 
     returnVal = fileItems.filter(
@@ -827,8 +827,8 @@ export const getProjectsFilterOptional = createSelector(getFileItems, getFilters
             && e.getEntityType() === EntityType.PROJECT
             && ((!contactId || (+contactId < 0)) // state is not filtered -- we don't care, or . . .
             || +e.getItemId() === 0 // Inlcude label "All Projects"
-            || (e.getRelatedEntityFilterValue(filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId) // the item has an fk value
-                && e.getRelatedEntityFilterValue(filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId) === contactId)) // and it matches
+            || (e.getRelatedEntityFilterValue(filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].targetEntityUniqueId) // the item has an fk value
+                && e.getRelatedEntityFilterValue(filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].targetEntityUniqueId) === contactId)) // and it matches
     ).map(fi => fi);
 
 
@@ -851,7 +851,7 @@ export const getProjectsFilterOptional = createSelector(getFileItems, getFilters
 //
 //     let projectId: string = null;
 //     if (filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL]) {
-//         projectId = filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].filterValue;
+//         projectId = filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].relatedEntityFilterValue;
 //     }
 //
 //     returnVal = fileItems.filter(
@@ -886,12 +886,12 @@ export const getExperimentsFilterOptional = createSelector(getFileItems, getFilt
 
     let projectId: string = null;
     if (filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL]) {
-        projectId = filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].filterValue;
+        projectId = filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].relatedEntityFilterValue;
     }
 
     let contactId: string = null;
     if (filters[FilterParamNames.PROJECT_FILTER_OPTIONAL]) {
-        contactId = filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].filterValue;
+        contactId = filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].relatedEntityFilterValue;
     }
 
 
@@ -902,8 +902,8 @@ export const getExperimentsFilterOptional = createSelector(getFileItems, getFilt
 
     } else if (contactId && +contactId) {
         projectIds = fileItems
-            .filter(fi => fi.compoundIdeEquals(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId)
-                && fi.getRelatedEntityFilterValue(filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId) === contactId)
+            .filter(fi => fi.compoundIdeEquals(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].targetEntityUniqueId)
+                && fi.getRelatedEntityFilterValue(filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].targetEntityUniqueId) === contactId)
             .map(fi => fi.getItemId());
     }
 
@@ -916,8 +916,8 @@ export const getExperimentsFilterOptional = createSelector(getFileItems, getFilt
             && e.getEntityType() === EntityType.EXPERIMENT
             && ((!projectId && !contactId) // state is not filtered -- we don't care, or . . .
                 || +e.getItemId() === 0 // Inlcude label "All Projects"
-                || (e.getRelatedEntityFilterValue(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) // the item has an fk value
-                && projectIds.find(pid => e.getRelatedEntityFilterValue(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) === pid))
+                || (e.getRelatedEntityFilterValue(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].targetEntityUniqueId) // the item has an fk value
+                && projectIds.find(pid => e.getRelatedEntityFilterValue(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].targetEntityUniqueId) === pid))
             ) // and it matches
     ).map(fi => fi);
 

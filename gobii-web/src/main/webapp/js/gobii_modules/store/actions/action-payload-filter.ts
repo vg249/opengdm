@@ -4,8 +4,8 @@ import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 
 export class PayloadFilter {
     constructor(public gobiiExtractFilterType: GobiiExtractFilterType,
-                public gobiiCompoundUniqueId:GobiiFileItemCompoundId,
-                public filterValue: string,
+                public targetEntityUniqueId:GobiiFileItemCompoundId,
+                public relatedEntityFilterValue: string,
                 public entityLasteUpdated: Date,
                 public pagination: Pagination) {
 

@@ -6,10 +6,10 @@ System.register([], function (exports_1, context_1) {
         setters: [],
         execute: function () {
             PayloadFilter = (function () {
-                function PayloadFilter(gobiiExtractFilterType, gobiiCompoundUniqueId, filterValue, entityLasteUpdated, pagination) {
+                function PayloadFilter(gobiiExtractFilterType, targetEntityUniqueId, relatedEntityFilterValue, entityLasteUpdated, pagination) {
                     this.gobiiExtractFilterType = gobiiExtractFilterType;
-                    this.gobiiCompoundUniqueId = gobiiCompoundUniqueId;
-                    this.filterValue = filterValue;
+                    this.targetEntityUniqueId = targetEntityUniqueId;
+                    this.relatedEntityFilterValue = relatedEntityFilterValue;
                     this.entityLasteUpdated = entityLasteUpdated;
                     this.pagination = pagination;
                 }

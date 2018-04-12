@@ -25,6 +25,7 @@ import {PagedFileItemList} from "../model/payload/paged-item-list";
 import {Pagination} from "../model/payload/pagination";
 import {Subject} from "rxjs/Subject";
 import 'rxjs/add/operator/withLatestFrom'
+import {PayloadFilter} from "../store/actions/action-payload-filter";
 
 @Component({
     selector: 'dataset-datatable',
@@ -111,7 +112,8 @@ import 'rxjs/add/operator/withLatestFrom'
                           [style]="{'width': '18%'}"
                           [sortable]="true">
                     <ng-template pTemplate="body" let-col let-fi="rowData">
-                        <span pTooltip="{{fi._entity.piLastName}}, {{fi._entity.piFirstName}}" tooltipPosition="left" tooltipStyleClass="tableTooltip"> {{fi._entity.piLastName}}, {{fi._entity.piFirstName}} </span>
+                        <span pTooltip="{{fi._entity.piLastName}}, {{fi._entity.piFirstName}}" tooltipPosition="left"
+                              tooltipStyleClass="tableTooltip"> {{fi._entity.piLastName}}, {{fi._entity.piFirstName}} </span>
                     </ng-template>
                 </p-column>
                 <!--<p-column field="_entity.jobStatusName" header="Status"></p-column>-->
@@ -143,13 +145,15 @@ import 'rxjs/add/operator/withLatestFrom'
                         <tbody>
                         <tr>
                             <td><b>Principle Investigator</b></td>
-                            <td>{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.piLastName +", "+ selectedDatasetDetailEntity.piFirstName : null}}</td>
+                            <td>
+                                {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.piLastName + ", " + selectedDatasetDetailEntity.piFirstName : null}}
+                            </td>
                         </tr>
                         <tr>
                             <td><b>Loaded By</b></td>
-                            <td>{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.loaderLastName: null}}
-                                {{ (selectedDatasetDetailEntity && selectedDatasetDetailEntity.loaderFirstName )  ? ", ": null}}
-                                {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.loaderFirstName: null}}
+                            <td>{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.loaderLastName : null}}
+                                {{ (selectedDatasetDetailEntity && selectedDatasetDetailEntity.loaderFirstName) ? ", " : null}}
+                                {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.loaderFirstName : null}}
                             </td>
                         </tr>
 
@@ -309,17 +313,17 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
         this.store.dispatch(new fileAction.LoadFilterAction(
             {
                 filterId: FilterParamNames.DATASET_LIST_STATUS,
-                filter: {
-                    gobiiExtractFilterType: GobiiExtractFilterType.WHOLE_DATASET,
-                    gobiiCompoundUniqueId: new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
+                filter: new PayloadFilter(
+                    GobiiExtractFilterType.WHOLE_DATASET,
+                    new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
                         EntityType.DATASET,
                         EntitySubType.UNKNOWN,
                         CvFilterType.UNKNOWN,
                         CvFilters.get(CvFilterType.UNKNOWN)),
-                    filterValue: filterValue,
-                    entityLasteUpdated: null,
-                    pagination: null
-                }
+                    filterValue,
+                    null,
+                    null
+                )
             }
         ))
 
@@ -455,7 +459,7 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
 
                 if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
-                    if( this.doPaging ) {
+                    if (this.doPaging) {
                         this.fileItemService.loadPagedEntityList(this.gobiiExtractFilterType,
                             FilterParamNames.DATASET_LIST_PAGED,
                             null,

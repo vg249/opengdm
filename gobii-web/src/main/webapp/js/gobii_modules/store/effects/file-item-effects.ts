@@ -102,7 +102,7 @@ export class FileItemEffects {
                             {
                                 gobiiExtractFilterType: action.payload.filter.gobiiExtractFilterType,
                                 filterId: action.payload.filterId,
-                                filterValue: action.payload.filter.filterValue,
+                                filterValue: action.payload.filter.relatedEntityFilterValue,
                                 entityLasteUpdated: action.payload.filter.entityLasteUpdated
                             }
                         );

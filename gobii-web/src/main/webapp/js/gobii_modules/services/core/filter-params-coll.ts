@@ -19,6 +19,7 @@ import {PagedFileItemList} from "../../model/payload/paged-item-list";
 import {JsonToGfiDataset} from "../app/jsontogfi/json-to-gfi-dataset";
 import {DtoRequestItemGfi} from "../app/dto-request-item-gfi";
 import {DtoRequestItemGfiPaged} from "../app/dto-request-item-gfi-paged";
+import {PayloadFilter} from "../../store/actions/action-payload-filter";
 
 
 @Injectable()
@@ -55,8 +56,7 @@ export class FilterParamsColl {
 
     constructor(private store: Store<fromRoot.State>,
                 private pagedDatasetRequestService: DtoRequestService<PagedFileItemList>,
-                private fileItemRequestService: DtoRequestService<GobiiFileItem[]>
-    ) {
+                private fileItemRequestService: DtoRequestService<GobiiFileItem[]>) {
 
         // For non-hierarchically filtered request params, we just create them simply
         // as we add them to the flat map
@@ -203,13 +203,11 @@ export class FilterParamsColl {
                             returnVal = new fileAction.LoadFilterAction(
                                 {
                                     filterId: FilterParamNames.CV_JOB_STATUS,
-                                    filter: {
-                                        gobiiExtractFilterType: GobiiExtractFilterType.WHOLE_DATASET,
-                                        gobiiCompoundUniqueId: cvJobStatusCompoundUniqueId,
-                                        filterValue: completedItem.getItemId(),
-                                        entityLasteUpdated: payloadFilter.entityLasteUpdated,
-                                        pagination: payloadFilter.pagination
-                                    }
+                                    filter: new PayloadFilter(GobiiExtractFilterType.WHOLE_DATASET,
+                                        cvJobStatusCompoundUniqueId,
+                                        completedItem.getItemId(),
+                                        payloadFilter.entityLasteUpdated,
+                                        payloadFilter.pagination)
                                 }
                             );
 
@@ -235,18 +233,18 @@ export class FilterParamsColl {
 
                 let returnVal: fileAction.LoadFilterAction = null;
 
-                if (!payloadFilter || !payloadFilter.filterValue) {
+                if (!payloadFilter || !payloadFilter.relatedEntityFilterValue) {
 
                     returnVal = new fileAction.LoadFilterAction(
                         {
                             filterId: FilterParamNames.DATASET_LIST_STATUS,
-                            filter: {
-                                gobiiExtractFilterType: GobiiExtractFilterType.WHOLE_DATASET,
-                                gobiiCompoundUniqueId: cvDatasetCompoundUniqueId,
-                                filterValue: "completed",
-                                entityLasteUpdated: payloadFilter.entityLasteUpdated,
-                                pagination: payloadFilter.pagination
-                            }
+                            filter: new PayloadFilter(
+                                GobiiExtractFilterType.WHOLE_DATASET,
+                                cvDatasetCompoundUniqueId,
+                                "completed",
+                                payloadFilter.entityLasteUpdated,
+                                payloadFilter.pagination
+                            )
                         }
                     );
 
@@ -256,7 +254,7 @@ export class FilterParamsColl {
             }));
 
         // add dto request to DATASET_LIST filter
-        this.getFilter(FilterParamNames.DATASET_LIST,GobiiExtractFilterType.WHOLE_DATASET)
+        this.getFilter(FilterParamNames.DATASET_LIST, GobiiExtractFilterType.WHOLE_DATASET)
             .setDtoRequestItem(new DtoRequestItemGfi(
                 this.getFilter(FilterParamNames.DATASET_LIST,
                     GobiiExtractFilterType.WHOLE_DATASET),
@@ -277,18 +275,18 @@ export class FilterParamsColl {
 
                 let returnVal: fileAction.LoadFilterAction = null;
 
-                if (!payloadFilter || !payloadFilter.filterValue ) {
+                if (!payloadFilter || !payloadFilter.relatedEntityFilterValue) {
 
                     returnVal = new fileAction.LoadFilterAction(
                         {
                             filterId: FilterParamNames.DATASET_LIST_STATUS,
-                            filter: {
-                                gobiiExtractFilterType: GobiiExtractFilterType.WHOLE_DATASET,
-                                gobiiCompoundUniqueId: cvDatasetCompoundUniqueId,
-                                filterValue: "completed",
-                                entityLasteUpdated: payloadFilter.entityLasteUpdated,
-                                pagination: payloadFilter.pagination
-                            }
+                            filter: new PayloadFilter(
+                                GobiiExtractFilterType.WHOLE_DATASET,
+                                cvDatasetCompoundUniqueId,
+                                "completed",
+                                payloadFilter.entityLasteUpdated,
+                                payloadFilter.pagination
+                            )
                         }
                     );
 
@@ -299,14 +297,14 @@ export class FilterParamsColl {
             .setIsPaged(true));
 
         // add dto request to DATASET_LIST_PAGED filter
-        this.getFilter(FilterParamNames.DATASET_LIST_PAGED,GobiiExtractFilterType.WHOLE_DATASET)
+        this.getFilter(FilterParamNames.DATASET_LIST_PAGED, GobiiExtractFilterType.WHOLE_DATASET)
             .setDtoRequestItem(new DtoRequestItemGfiPaged(
                 this.getFilter(FilterParamNames.DATASET_LIST_PAGED,
-                GobiiExtractFilterType.WHOLE_DATASET),
-            null,
-            new JsonToGfiDataset(this.getFilter(FilterParamNames.DATASET_LIST_PAGED,
-                GobiiExtractFilterType.WHOLE_DATASET),
-                this)))
+                    GobiiExtractFilterType.WHOLE_DATASET),
+                null,
+                new JsonToGfiDataset(this.getFilter(FilterParamNames.DATASET_LIST_PAGED,
+                    GobiiExtractFilterType.WHOLE_DATASET),
+                    this)))
             .setDtoRequestService(this.pagedDatasetRequestService);
 
 

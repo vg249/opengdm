@@ -32,6 +32,7 @@ import {StatusLevel} from "../../model/type-status-level";
 import {DtoRequestItem} from "./dto-request-item";
 import {PagedFileItemList} from "../../model/payload/paged-item-list";
 import {Pagination} from "../../model/payload/pagination";
+import {PayloadFilter} from "../../store/actions/action-payload-filter";
 
 @Injectable()
 export class FileItemService {
@@ -58,13 +59,13 @@ export class FileItemService {
             let loadAction: fileItemActions.LoadFilterAction = new fileItemActions.LoadFilterAction(
                 {
                     filterId: filterParams.getQueryName(),
-                    filter: {
-                        gobiiExtractFilterType: gobiiExtractFilterType,
-                        gobiiCompoundUniqueId: filterParams,
-                        filterValue: filterValue,
-                        entityLasteUpdated: null,
-                        pagination: null
-                    }
+                    filter: new PayloadFilter(
+                        gobiiExtractFilterType,
+                        filterParams,
+                        filterValue,
+                        null,
+                        null
+                    )
                 }
             );
 
@@ -554,13 +555,13 @@ export class FileItemService {
                                                 {
                                                     gobiiFileItems: fileItems,
                                                     filterId: filterParamsToLoad.getQueryName(),
-                                                    filter: {
-                                                        gobiiExtractFilterType: gobiiExtractFilterType,
-                                                        gobiiCompoundUniqueId: filterParamsToLoad,
-                                                        filterValue: filterParamsToLoad.getFkEntityFilterValue(),
-                                                        entityLasteUpdated: minEntityLastUpdated,
-                                                        pagination: null
-                                                    }
+                                                    filter: new PayloadFilter(
+                                                        gobiiExtractFilterType,
+                                                        filterParamsToLoad,
+                                                        filterParamsToLoad.getFkEntityFilterValue(),
+                                                        minEntityLastUpdated,
+                                                        null
+                                                    )
                                                 }
                                             );
 
@@ -610,13 +611,13 @@ export class FileItemService {
                                 let loadAction: fileItemActions.LoadFilterAction = new fileItemActions.LoadFilterAction(
                                     {
                                         filterId: filterParamsToLoad.getQueryName(),
-                                        filter: {
-                                            gobiiExtractFilterType: gobiiExtractFilterType,
-                                            gobiiCompoundUniqueId: filterParamsToLoad,
-                                            filterValue: filterParamsToLoad.getFkEntityFilterValue(),
-                                            entityLasteUpdated: fileHistoryItem.entityLasteUpdated,
-                                            pagination: null
-                                        }
+                                        filter: new PayloadFilter(
+                                            gobiiExtractFilterType,
+                                            filterParamsToLoad,
+                                            filterParamsToLoad.getFkEntityFilterValue(),
+                                            fileHistoryItem.entityLasteUpdated,
+                                            null
+                                        )
                                     }
                                 );
                                 observer.next(loadAction);
@@ -699,13 +700,13 @@ export class FileItemService {
             let loadAction: fileItemActions.LoadFilterAction = new fileItemActions.LoadFilterAction(
                 {
                     filterId: filterParamsToLoad.getQueryName(),
-                    filter: {
-                        gobiiExtractFilterType: gobiiExtractFilterType,
-                        gobiiCompoundUniqueId: filterParamsToLoad,
-                        filterValue: filterParamsToLoad.getFkEntityFilterValue(),
-                        entityLasteUpdated: null, //not sure about this
-                        pagination: null
-                    }
+                    filter: new PayloadFilter(
+                        gobiiExtractFilterType,
+                        filterParamsToLoad,
+                        filterParamsToLoad.getFkEntityFilterValue(),
+                        null, //not sure about this
+                        null
+                    )
                 }
             );
             observer.next(loadAction);
@@ -887,13 +888,13 @@ export class FileItemService {
                                         {
                                             gobiiFileItems: entityItems,
                                             filterId: filterParams.getQueryName(),
-                                            filter: {
-                                                gobiiExtractFilterType: gobiiExtractFilterType,
-                                                gobiiCompoundUniqueId: filterParams,
-                                                filterValue: filterValue,
-                                                entityLasteUpdated: date,
-                                                pagination: pagination
-                                            }
+                                            filter: new PayloadFilter(
+                                                gobiiExtractFilterType,
+                                                filterParams,
+                                                filterValue,
+                                                date,
+                                                pagination
+                                            )
                                         }
                                     );
 

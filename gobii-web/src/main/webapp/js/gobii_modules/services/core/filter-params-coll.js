@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-entity", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/filter-params", "../../store/actions/history-action", "@ngrx/store", "../../model/name-id-label-type", "../../model/filter-type", "../../model/file-item-param-names", "rxjs/add/operator/expand", "../../model/type-extractor-item", "../../store/actions/fileitem-action", "../../model/gobii-file-item-compound-id", "./dto-request.service", "../app/jsontogfi/json-to-gfi-dataset", "../app/dto-request-item-gfi", "../app/dto-request-item-gfi-paged"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-entity", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/filter-params", "../../store/actions/history-action", "@ngrx/store", "../../model/name-id-label-type", "../../model/filter-type", "../../model/file-item-param-names", "rxjs/add/operator/expand", "../../model/type-extractor-item", "../../store/actions/fileitem-action", "../../model/gobii-file-item-compound-id", "./dto-request.service", "../app/jsontogfi/json-to-gfi-dataset", "../app/dto-request-item-gfi", "../app/dto-request-item-gfi-paged", "../../store/actions/action-payload-filter"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_entity_1, type_extractor_filter_1, cv_filter_type_1, filter_params_1, historyAction, store_1, name_id_label_type_1, filter_type_1, file_item_param_names_1, type_extractor_item_1, fileAction, gobii_file_item_compound_id_1, dto_request_service_1, json_to_gfi_dataset_1, dto_request_item_gfi_1, dto_request_item_gfi_paged_1, FilterParamsColl;
+    var core_1, type_entity_1, type_extractor_filter_1, cv_filter_type_1, filter_params_1, historyAction, store_1, name_id_label_type_1, filter_type_1, file_item_param_names_1, type_extractor_item_1, fileAction, gobii_file_item_compound_id_1, dto_request_service_1, json_to_gfi_dataset_1, dto_request_item_gfi_1, dto_request_item_gfi_paged_1, action_payload_filter_1, FilterParamsColl;
     return {
         setters: [
             function (core_1_1) {
@@ -65,6 +65,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
             },
             function (dto_request_item_gfi_paged_1_1) {
                 dto_request_item_gfi_paged_1 = dto_request_item_gfi_paged_1_1;
+            },
+            function (action_payload_filter_1_1) {
+                action_payload_filter_1 = action_payload_filter_1_1;
             }
         ],
         execute: function () {
@@ -153,13 +156,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                             if (completedItem && labelItem) {
                                 returnVal = new fileAction.LoadFilterAction({
                                     filterId: file_item_param_names_1.FilterParamNames.CV_JOB_STATUS,
-                                    filter: {
-                                        gobiiExtractFilterType: type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET,
-                                        gobiiCompoundUniqueId: cvJobStatusCompoundUniqueId,
-                                        filterValue: completedItem.getItemId(),
-                                        entityLasteUpdated: payloadFilter.entityLasteUpdated,
-                                        pagination: payloadFilter.pagination
-                                    }
+                                    filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, cvJobStatusCompoundUniqueId, completedItem.getItemId(), payloadFilter.entityLasteUpdated, payloadFilter.pagination)
                                 });
                             }
                         }
@@ -171,16 +168,10 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .setFilterType(filter_type_1.FilterType.ENTITY_LIST)
                         .setOnLoadFilteredItemsAction(function (fileItems, payloadFilter) {
                         var returnVal = null;
-                        if (!payloadFilter || !payloadFilter.filterValue) {
+                        if (!payloadFilter || !payloadFilter.relatedEntityFilterValue) {
                             returnVal = new fileAction.LoadFilterAction({
                                 filterId: file_item_param_names_1.FilterParamNames.DATASET_LIST_STATUS,
-                                filter: {
-                                    gobiiExtractFilterType: type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET,
-                                    gobiiCompoundUniqueId: cvDatasetCompoundUniqueId,
-                                    filterValue: "completed",
-                                    entityLasteUpdated: payloadFilter.entityLasteUpdated,
-                                    pagination: payloadFilter.pagination
-                                }
+                                filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, cvDatasetCompoundUniqueId, "completed", payloadFilter.entityLasteUpdated, payloadFilter.pagination)
                             });
                         }
                         return returnVal;
@@ -195,16 +186,10 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .setFilterType(filter_type_1.FilterType.ENTITY_LIST)
                         .setOnLoadFilteredItemsAction(function (fileItems, payloadFilter) {
                         var returnVal = null;
-                        if (!payloadFilter || !payloadFilter.filterValue) {
+                        if (!payloadFilter || !payloadFilter.relatedEntityFilterValue) {
                             returnVal = new fileAction.LoadFilterAction({
                                 filterId: file_item_param_names_1.FilterParamNames.DATASET_LIST_STATUS,
-                                filter: {
-                                    gobiiExtractFilterType: type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET,
-                                    gobiiCompoundUniqueId: cvDatasetCompoundUniqueId,
-                                    filterValue: "completed",
-                                    entityLasteUpdated: payloadFilter.entityLasteUpdated,
-                                    pagination: payloadFilter.pagination
-                                }
+                                filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, cvDatasetCompoundUniqueId, "completed", payloadFilter.entityLasteUpdated, payloadFilter.pagination)
                             });
                         }
                         return returnVal;
