@@ -688,15 +688,13 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 }
                 var projectIds = [];
                 if ((projectId && +projectId > 0)) {
-                    if (contactId && +contactId) {
-                        projectIds = fileItems
-                            .filter(function (fi) { return fi.compoundIdeEquals(filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId)
-                            && fi.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId) === contactId; })
-                            .map(function (fi) { return fi.getItemId(); });
-                    }
-                    else {
-                        projectIds.push(projectId);
-                    }
+                    projectIds.push(projectId);
+                }
+                else if (contactId && +contactId) {
+                    projectIds = fileItems
+                        .filter(function (fi) { return fi.compoundIdeEquals(filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId)
+                        && fi.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId) === contactId; })
+                        .map(function (fi) { return fi.getItemId(); });
                 }
                 returnVal = fileItems.filter(function (e) {
                     return (e.getGobiiExtractFilterType() == gobiiExtractFilterType
@@ -704,7 +702,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                         || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
                         && e.getProcessType() !== type_process_1.ProcessType.DUMMY
                         && e.getEntityType() === type_entity_1.EntityType.EXPERIMENT
-                        && ((!projectId || (+projectId < 0)) // state is not filtered -- we don't care, or . . .
+                        && ((!projectId && !contactId) // state is not filtered -- we don't care, or . . .
                             || +e.getItemId() === 0 // Inlcude label "All Projects"
                             || (e.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) // the item has an fk value
                                 && projectIds.find(function (pid) { return e.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) === pid; })));
