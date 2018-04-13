@@ -45,7 +45,7 @@ export class NameIdService {
                 let filterType: FilterType = filterParams.getFilterType() === FilterType.NONE ? null : filterParams.getFilterType();
                 let cvFilterValue: string = null;
                 if (filterType === FilterType.NAMES_BY_TYPEID) {
-                    cvFilterValue = filterParams.getFkEntityFilterValue();
+                    cvFilterValue = filterParams.getRelatedEntityFilterValue();
                 } else if (filterType === FilterType.NAMES_BY_TYPE_NAME) {
                     cvFilterValue = filterParams.getCvFilterValue();
                 }

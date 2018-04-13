@@ -156,7 +156,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                             if (completedItem && labelItem) {
                                 returnVal = new fileAction.LoadFilterAction({
                                     filterId: file_item_param_names_1.FilterParamNames.CV_JOB_STATUS,
-                                    filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, cvJobStatusCompoundUniqueId, null, completedItem.getItemId(), payloadFilter.entityLasteUpdated, payloadFilter.pagination)
+                                    filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, cvJobStatusCompoundUniqueId, null, completedItem.getItemId(), null, payloadFilter.entityLasteUpdated, payloadFilter.pagination)
                                 });
                             }
                         }
@@ -171,7 +171,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         if (!payloadFilter || !payloadFilter.relatedEntityFilterValue) {
                             returnVal = new fileAction.LoadFilterAction({
                                 filterId: file_item_param_names_1.FilterParamNames.DATASET_LIST_STATUS,
-                                filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, cvDatasetCompoundUniqueId, null, "completed", payloadFilter.entityLasteUpdated, payloadFilter.pagination)
+                                filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, cvDatasetCompoundUniqueId, null, "completed", null, payloadFilter.entityLasteUpdated, payloadFilter.pagination)
                             });
                         }
                         return returnVal;
@@ -189,7 +189,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         if (!payloadFilter || !payloadFilter.relatedEntityFilterValue) {
                             returnVal = new fileAction.LoadFilterAction({
                                 filterId: file_item_param_names_1.FilterParamNames.DATASET_LIST_STATUS,
-                                filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, cvDatasetCompoundUniqueId, null, "completed", payloadFilter.entityLasteUpdated, payloadFilter.pagination)
+                                filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, cvDatasetCompoundUniqueId, null, "completed", null, payloadFilter.entityLasteUpdated, payloadFilter.pagination)
                             });
                         }
                         return returnVal;

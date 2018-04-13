@@ -207,6 +207,7 @@ export class FilterParamsColl {
                                         cvJobStatusCompoundUniqueId,
                                         null,
                                         completedItem.getItemId(),
+                                        null,
                                         payloadFilter.entityLasteUpdated,
                                         payloadFilter.pagination)
                                 }
@@ -244,6 +245,7 @@ export class FilterParamsColl {
                                 cvDatasetCompoundUniqueId,
                                 null,
                                 "completed",
+                                null,
                                 payloadFilter.entityLasteUpdated,
                                 payloadFilter.pagination
                             )
@@ -287,6 +289,7 @@ export class FilterParamsColl {
                                 cvDatasetCompoundUniqueId,
                                 null,
                                 "completed",
+                                null,
                                 payloadFilter.entityLasteUpdated,
                                 payloadFilter.pagination
                             )

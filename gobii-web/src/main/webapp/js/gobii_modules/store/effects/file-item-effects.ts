@@ -3,6 +3,7 @@ import {Router} from '@angular/router';
 import {Actions, Effect} from '@ngrx/effects';
 import 'rxjs/add/operator/switchMap'
 import 'rxjs/add/observable/of';
+import "rxjs/add/operator/concat"
 
 import * as fileItemActions from '../actions/fileitem-action'
 import * as treeNodeActions from '../actions/treenode-action'

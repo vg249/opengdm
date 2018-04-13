@@ -56,13 +56,13 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
              * relationships of the tables involved in generating the query. In our example, the PROJECTS_BY_CONTACT FileFilterParams is a
              * child of the CONTACT_PI FileFilterParams. The PROJECTS_BY_CONTACT query will be run along with a
              * contactId value, which will serve to filter the results of the project query. That contactId value
-             * will now be the _fkEntityFilterValue of the PROJECTS_BY_CONTACT FilterValues. Moreover, each
+             * will now be the _relatedEntityFilterValue of the PROJECTS_BY_CONTACT FilterValues. Moreover, each
              * GobiiFileItem resulting from the PROJECTS_BY_CONTACT query will be assigned the contactId as its
              * parentItemId value. Thus, once the GobiiFileItems have been retrieved from the server, they can
              * subsequently be retrieved from the store such that the GobiiFileItems of EntityType PROJECT are
-             * filtered as follows: the current _fkEntityFilterValue of the PROJECTS_BY_CONTACT filter matches
+             * filtered as follows: the current _relatedEntityFilterValue of the PROJECTS_BY_CONTACT filter matches
              * the parentItemId of the GobiiFileItems of EntityType PROJECT. Thus, the PROJECTS_BY_CONTACT filter,
-             * with an arbitrary _fkEntityFilterValue, can be dispatched to the store at any time and the   reby change
+             * with an arbitrary _relatedEntityFilterValue, can be dispatched to the store at any time and the   reby change
              * the set of GobiiFileItems that are filtered in this way. In other words, when we want to get the
              * "currently selected" projects from the store (i.e., the projects filtered for
              * the pi who is currently selected in the UI), the selector returns the file items whose parent id
@@ -86,10 +86,10 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
              * ngrx/store. Here again you can see this functionality operating depending on the value of _isDynamicLoad.
              *
              *
-             * Particular note should be taken of the  _fkEntityFilterValue value for the purpose of retrieving
+             * Particular note should be taken of the  _relatedEntityFilterValue value for the purpose of retrieving
              * names for a given entity when that entity must be filtered according to a foreign key.
              * For example, when retrieving projects by contact_id (i.e., by principle investigator contact
-             * id), the _fkEntityFilterValue will be the value of the PI according to which the project names
+             * id), the _relatedEntityFilterValue will be the value of the PI according to which the project names
              * should be filtered. The fact that the filter value corresponds to the PK id of the parent entity
              * by which to filter the target item (i.e., the Project filter's filter value is the contactId) is
              * awkward and difficult to understand. There probably needs to be better semantics for this. Note
@@ -107,20 +107,22 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
              */
             FilterParams = (function () {
                 function FilterParams(_entityType, //first four args are passed to base class ctor
-                    _entitySubType, _cvFilterType, _cvFilterValue, _extractorItemType, targetEntityUniqueId, relatedEntityUniqueId, _queryName, _filterType, _fkEntityFilterValue, _gobiiExtractFilterType, _nameIdLabelType, _parentFileItemParams, _childFileItemParams, _isDynamicFilterValue, _isDynamicDataLoad, _isPaged, _pageSize, _pageNum, _pagedQueryId, onLoadFilteredItemsAction, dtoRequestItem, dtoRequestService) {
+                    _entitySubType, _cvFilterType, _cvFilterValue, _extractorItemType, targetEntityUniqueId, relatedEntityUniqueId, _queryName, _filterType, _targetEntityFilterValue, _relatedEntityFilterValue, _gobiiExtractFilterType, _nameIdLabelType, _parentFileItemParams, _childFileItemParams, _isDynamicFilterValue, _isDynamicDataLoad, _isPaged, _pageSize, _pageNum, _pagedQueryId, onLoadFilteredItemsAction, dtoRequestItem, dtoRequestService) {
                     if (_entityType === void 0) { _entityType = type_entity_1.EntityType.UNKNOWN; }
                     if (_entitySubType === void 0) { _entitySubType = type_entity_1.EntitySubType.UNKNOWN; }
                     if (_cvFilterType === void 0) { _cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN; }
                     if (_cvFilterValue === void 0) { _cvFilterValue = null; }
                     if (_queryName === void 0) { _queryName = null; }
                     if (_filterType === void 0) { _filterType = filter_type_1.FilterType.NONE; }
-                    if (_fkEntityFilterValue === void 0) { _fkEntityFilterValue = null; }
+                    if (_targetEntityFilterValue === void 0) { _targetEntityFilterValue = null; }
+                    if (_relatedEntityFilterValue === void 0) { _relatedEntityFilterValue = null; }
                     if (_gobiiExtractFilterType === void 0) { _gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN; }
                     this.targetEntityUniqueId = targetEntityUniqueId;
                     this.relatedEntityUniqueId = relatedEntityUniqueId;
                     this._queryName = _queryName;
                     this._filterType = _filterType;
-                    this._fkEntityFilterValue = _fkEntityFilterValue;
+                    this._targetEntityFilterValue = _targetEntityFilterValue;
+                    this._relatedEntityFilterValue = _relatedEntityFilterValue;
                     this._gobiiExtractFilterType = _gobiiExtractFilterType;
                     this._nameIdLabelType = _nameIdLabelType;
                     this._parentFileItemParams = _parentFileItemParams;
@@ -137,7 +139,7 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
                     this.targetEntityUniqueId = new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(_extractorItemType, _entityType, _entitySubType, _cvFilterType, _cvFilterValue);
                 }
                 FilterParams.build = function (queryName, gobiiExtractFilterType, entityType) {
-                    return (new FilterParams(entityType, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null, type_extractor_item_1.ExtractorItemType.ENTITY, null, null, queryName, filter_type_1.FilterType.NONE, null, gobiiExtractFilterType, name_id_label_type_1.NameIdLabelType.UNKNOWN, null, [], true, true, false, null, null, null, null, null, null));
+                    return (new FilterParams(entityType, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null, type_extractor_item_1.ExtractorItemType.ENTITY, null, null, queryName, filter_type_1.FilterType.NONE, null, null, gobiiExtractFilterType, name_id_label_type_1.NameIdLabelType.UNKNOWN, null, [], true, true, false, null, null, null, null, null, null));
                 };
                 FilterParams.prototype.getQueryName = function () {
                     return this._queryName;
@@ -201,11 +203,18 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
                     this._filterType = value;
                     return this;
                 };
-                FilterParams.prototype.getFkEntityFilterValue = function () {
-                    return this._fkEntityFilterValue;
+                FilterParams.prototype.getRelatedEntityFilterValue = function () {
+                    return this._relatedEntityFilterValue;
                 };
-                FilterParams.prototype.setFkEntityFilterValue = function (value) {
-                    this._fkEntityFilterValue = value;
+                FilterParams.prototype.setRelatedEntityFilterValue = function (value) {
+                    this._relatedEntityFilterValue = value;
+                    return this;
+                };
+                FilterParams.prototype.getTargetEntityFilterValue = function () {
+                    return this._targetEntityFilterValue;
+                };
+                FilterParams.prototype.setTargetEntityFilterValue = function (value) {
+                    this._targetEntityFilterValue = value;
                     return this;
                 };
                 FilterParams.prototype.getGobiiExtractFilterType = function () {

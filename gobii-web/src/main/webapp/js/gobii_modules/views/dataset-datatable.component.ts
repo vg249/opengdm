@@ -323,6 +323,7 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
                     null,
                     filterValue,
                     null,
+                    null,
                     null
                 )
             }

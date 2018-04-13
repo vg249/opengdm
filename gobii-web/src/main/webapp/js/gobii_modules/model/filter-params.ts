@@ -42,13 +42,13 @@ import {PayloadFilter} from "../store/actions/action-payload-filter";
  * relationships of the tables involved in generating the query. In our example, the PROJECTS_BY_CONTACT FileFilterParams is a
  * child of the CONTACT_PI FileFilterParams. The PROJECTS_BY_CONTACT query will be run along with a
  * contactId value, which will serve to filter the results of the project query. That contactId value
- * will now be the _fkEntityFilterValue of the PROJECTS_BY_CONTACT FilterValues. Moreover, each
+ * will now be the _relatedEntityFilterValue of the PROJECTS_BY_CONTACT FilterValues. Moreover, each
  * GobiiFileItem resulting from the PROJECTS_BY_CONTACT query will be assigned the contactId as its
  * parentItemId value. Thus, once the GobiiFileItems have been retrieved from the server, they can
  * subsequently be retrieved from the store such that the GobiiFileItems of EntityType PROJECT are
- * filtered as follows: the current _fkEntityFilterValue of the PROJECTS_BY_CONTACT filter matches
+ * filtered as follows: the current _relatedEntityFilterValue of the PROJECTS_BY_CONTACT filter matches
  * the parentItemId of the GobiiFileItems of EntityType PROJECT. Thus, the PROJECTS_BY_CONTACT filter,
- * with an arbitrary _fkEntityFilterValue, can be dispatched to the store at any time and the   reby change
+ * with an arbitrary _relatedEntityFilterValue, can be dispatched to the store at any time and the   reby change
  * the set of GobiiFileItems that are filtered in this way. In other words, when we want to get the
  * "currently selected" projects from the store (i.e., the projects filtered for
  * the pi who is currently selected in the UI), the selector returns the file items whose parent id
@@ -72,10 +72,10 @@ import {PayloadFilter} from "../store/actions/action-payload-filter";
  * ngrx/store. Here again you can see this functionality operating depending on the value of _isDynamicLoad.
  *
  *
- * Particular note should be taken of the  _fkEntityFilterValue value for the purpose of retrieving
+ * Particular note should be taken of the  _relatedEntityFilterValue value for the purpose of retrieving
  * names for a given entity when that entity must be filtered according to a foreign key.
  * For example, when retrieving projects by contact_id (i.e., by principle investigator contact
- * id), the _fkEntityFilterValue will be the value of the PI according to which the project names
+ * id), the _relatedEntityFilterValue will be the value of the PI according to which the project names
  * should be filtered. The fact that the filter value corresponds to the PK id of the parent entity
  * by which to filter the target item (i.e., the Project filter's filter value is the contactId) is
  * awkward and difficult to understand. There probably needs to be better semantics for this. Note
@@ -102,7 +102,8 @@ export class FilterParams {
                         private relatedEntityUniqueId: GobiiFileItemCompoundId,
                         private _queryName: string = null,
                         private _filterType: FilterType = FilterType.NONE,
-                        private _fkEntityFilterValue: string = null,
+                        private _targetEntityFilterValue: string = null,
+                        private _relatedEntityFilterValue: string = null,
                         private _gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN,
                         private _nameIdLabelType: NameIdLabelType,
                         private _parentFileItemParams: FilterParams,
@@ -135,6 +136,7 @@ export class FilterParams {
             null,
             queryName,
             FilterType.NONE,
+            null,
             null,
             gobiiExtractFilterType,
             NameIdLabelType.UNKNOWN,
@@ -237,12 +239,21 @@ export class FilterParams {
         return this;
     }
 
-    getFkEntityFilterValue(): string {
-        return this._fkEntityFilterValue;
+    getRelatedEntityFilterValue(): string {
+        return this._relatedEntityFilterValue;
     }
 
-    setFkEntityFilterValue(value: string): FilterParams {
-        this._fkEntityFilterValue = value;
+    setRelatedEntityFilterValue(value: string): FilterParams {
+        this._relatedEntityFilterValue = value;
+        return this;
+    }
+
+    getTargetEntityFilterValue(): string {
+        return this._targetEntityFilterValue;
+    }
+
+    setTargetEntityFilterValue(value: string): FilterParams {
+        this._targetEntityFilterValue = value;
         return this;
     }
 

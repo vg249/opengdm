@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-entity", "../../views/entity-labels", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/gobii-file-item", "../../model/dto-header-status-message", "../../model/type-process", "./name-id-service", "../../store/actions/history-action", "../../store/actions/fileitem-action", "../../store/reducers", "@ngrx/store", "../../model/name-id-label-type", "../../model/filter-type", "../../model/file-item-param-names", "rxjs/Observable", "rxjs/add/operator/expand", "./dto-request.service", "../app/dto-request-item-entity-stats", "./filter-params-coll", "../../model/gobii-file-item-entity-relation", "../../model/gobii-file-item-compound-id", "../../model/type-status-level", "../../store/actions/action-payload-filter"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-entity", "../../views/entity-labels", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/gobii-file-item", "../../model/dto-header-status-message", "../../model/type-process", "./name-id-service", "../../store/actions/history-action", "../../store/actions/fileitem-action", "../../store/reducers", "@ngrx/store", "../../model/name-id-label-type", "../../model/filter-type", "../../model/file-item-param-names", "rxjs/Observable", "rxjs/add/operator/expand", "rxjs/add/operator/concat", "./dto-request.service", "../app/dto-request-item-entity-stats", "./filter-params-coll", "../../model/gobii-file-item-entity-relation", "../../model/gobii-file-item-compound-id", "../../model/type-status-level", "../../store/actions/action-payload-filter"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -69,6 +69,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
             },
             function (_1) {
             },
+            function (_2) {
+            },
             function (dto_request_service_1_1) {
                 dto_request_service_1 = dto_request_service_1_1;
             },
@@ -108,7 +110,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     if (filterParams) {
                         var loadAction = new fileItemActions.LoadFilterAction({
                             filterId: filterParams.getQueryName(),
-                            filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParams.getTargetEtityUniqueId(), filterParams.getRelatedEntityUniqueId(), filterValue, null, null)
+                            filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParams.getTargetEtityUniqueId(), filterParams.getRelatedEntityUniqueId(), filterValue, filterParams.getTargetEntityFilterValue(), null, null)
                         });
                         this.store.dispatch(loadAction);
                     }
@@ -266,18 +268,39 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     var loadAction = new fileItemActions.RemoveFromExtractAction(gobiiFileItem);
                     this.store.dispatch(loadAction);
                 };
-                FileItemService.prototype.makeFileActionsFromFilterParamName = function (gobiiExtractFilterType, filterParamName, filterValue) {
+                FileItemService.prototype.makeFileActionsFromFilterParamName = function (gobiiExtractFilterType, filterParamName, parentFilterValue) {
+                    var _this = this;
+                    return Observable_1.Observable.create(function (observer) {
+                        var parentFilterParams = _this.filterParamsColl.getFilter(filterParamName, gobiiExtractFilterType);
+                        if (parentFilterParams) {
+                            parentFilterParams.setTargetEntityFilterValue(parentFilterValue);
+                            var parentLoadAction = new fileItemActions.LoadFilterAction({
+                                filterId: parentFilterParams.getQueryName(),
+                                filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, parentFilterParams.getTargetEtityUniqueId(), parentFilterParams.getRelatedEntityUniqueId(), parentFilterParams.getRelatedEntityFilterValue(), parentFilterParams.getTargetEntityFilterValue(), null, //not sure about this
+                                null)
+                            });
+                            observer.next(parentLoadAction);
+                            observer.complete();
+                        }
+                        else {
+                            _this.store.dispatch(new historyAction.AddStatusMessageAction("Undefined FileItemParams filter: "
+                                + filterParamName.toString()
+                                + " for extract type " + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]));
+                        }
+                    }).concat(this.makeChildActions(gobiiExtractFilterType, filterParamName, parentFilterValue)); // observable
+                };
+                FileItemService.prototype.makeChildActions = function (gobiiExtractFilterType, filterParamName, parentFilterValue) {
                     var returnVal;
                     var filterParams = this.filterParamsColl.getFilter(filterParamName, gobiiExtractFilterType);
                     if (filterParams) {
-                        // we only process child filters
+                        // Now we process child filters
                         var filterParamsToProcess = filterParams;
                         if (filterParams.getChildFileItemParams()
                             && filterParams.getChildFileItemParams().length === 1) {
                             filterParamsToProcess = filterParams.getChildFileItemParams()[0];
                         }
                         if (filterParamsToProcess.getIsDynamicDataLoad()) {
-                            returnVal = this.makeFileItemActionsFromNameIds(gobiiExtractFilterType, filterParamsToProcess, filterValue, true);
+                            returnVal = this.makeFileItemActionsFromNameIds(gobiiExtractFilterType, filterParamsToProcess, parentFilterValue, true);
                         }
                         else {
                             // This condition was occasioned by the specific need of the dataset grid's filter drop-down boxes.
@@ -285,8 +308,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                             // However, when the user selects "All <entity name>" at any level, it _should_ cascade. The
                             // effects action handler will have set the filter value to null when All <endity name> is the
                             // item that was selected. Hence we do recurse in that case.
-                            var recurse = filterParamsToProcess.getIsDynamicFilterValue() ? true : filterValue === null;
-                            returnVal = this.recurseFilters(gobiiExtractFilterType, filterParamsToProcess, filterValue, recurse);
+                            var recurse = filterParamsToProcess.getIsDynamicFilterValue() ? true : parentFilterValue === null;
+                            returnVal = this.recurseFilters(gobiiExtractFilterType, filterParamsToProcess, parentFilterValue, recurse);
                         }
                     }
                     else {
@@ -332,7 +355,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
                         if (filterParamsToLoad.getIsDynamicFilterValue()) {
-                            filterParamsToLoad.setFkEntityFilterValue(filterValue);
+                            filterParamsToLoad.setRelatedEntityFilterValue(filterValue);
                         }
                         /***
                          * In the next refactoring we probably want to use the last modified call
@@ -355,7 +378,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                 var fileHistoryItem = filterHistoryItems.find(function (fhi) {
                                     return fhi.gobiiExtractFilterType === filterParamsToLoad.getGobiiExtractFilterType()
                                         && fhi.filterId === filterParamsToLoad.getQueryName()
-                                        && fhi.filterValue === filterParamsToLoad.getFkEntityFilterValue();
+                                        && fhi.filterValue === filterParamsToLoad.getRelatedEntityFilterValue();
                                 });
                                 var disregardDateSensitiveQueryingForNow = false;
                                 if (disregardDateSensitiveQueryingForNow ||
@@ -394,7 +417,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                                     .setItemId(nameIdItem.id)
                                                     .setItemName(nameIdItem.name)
                                                     .setRequired(false)
-                                                    .setParentItemId(filterParamsToLoad.getFkEntityFilterValue())
+                                                    .setParentItemId(filterParamsToLoad.getRelatedEntityFilterValue())
                                                     .setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())
                                                     .withRelatedEntity(entityRelation);
                                                 fileItems.push(currentFileItem);
@@ -438,7 +461,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                                     .setExtractorItemType(type_extractor_item_1.ExtractorItemType.LABEL)
                                                     .setItemName(label)
                                                     .setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())
-                                                    .setParentItemId(filterParamsToLoad.getFkEntityFilterValue())
+                                                    .setParentItemId(filterParamsToLoad.getRelatedEntityFilterValue())
                                                     .setItemId("0");
                                                 fileItems.unshift(labelFileItem);
                                                 //.selectedFileItemId = "0";
@@ -451,12 +474,14 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                             .setItemId(_this.NONE_ITEM_ITEM_ID)
                                             .setItemName("<none>")
                                             .setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())
-                                            .setParentItemId(filterParamsToLoad.getFkEntityFilterValue());
+                                            .setParentItemId(filterParamsToLoad.getRelatedEntityFilterValue());
                                         fileItems.push(noneFileItem);
+                                        var parentId = fileItems[0].getItemId();
+                                        filterParamsToLoad.setTargetEntityFilterValue(parentId);
                                         var loadAction = new fileItemActions.LoadFileItemListWithFilterAction({
                                             gobiiFileItems: fileItems,
                                             filterId: filterParamsToLoad.getQueryName(),
-                                            filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParamsToLoad.getTargetEtityUniqueId(), filterParamsToLoad.getRelatedEntityUniqueId(), filterParamsToLoad.getFkEntityFilterValue(), minEntityLastUpdated, null)
+                                            filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParamsToLoad.getTargetEtityUniqueId(), filterParamsToLoad.getRelatedEntityUniqueId(), filterParamsToLoad.getRelatedEntityFilterValue(), filterParamsToLoad.getTargetEntityFilterValue(), minEntityLastUpdated, null)
                                         });
                                         observer.next(loadAction);
                                         // if there are children, we will load their data as well
@@ -465,11 +490,10 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                                 .getChildFileItemParams()
                                                 .filter(function (rqp) { return rqp.getFilterType() === filter_type_1.FilterType.NAMES_BY_TYPEID; })
                                                 .length > 0) {
-                                                var parentId = fileItems[0].getItemId();
                                                 for (var idx = 0; idx < filterParamsToLoad.getChildFileItemParams().length; idx++) {
                                                     var rqp = filterParamsToLoad.getChildFileItemParams()[idx];
                                                     if (rqp.getFilterType() === filter_type_1.FilterType.NAMES_BY_TYPEID) {
-                                                        rqp.setFkEntityFilterValue(parentId);
+                                                        rqp.setRelatedEntityFilterValue(parentId);
                                                         _this.makeFileItemActionsFromNameIds(gobiiExtractFilterType, rqp, parentId, true)
                                                             .subscribe(function (fileItems) { return observer.next(fileItems); });
                                                     }
@@ -490,7 +514,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                     //BEGIN: nameIdService.get()
                                     var loadAction = new fileItemActions.LoadFilterAction({
                                         filterId: filterParamsToLoad.getQueryName(),
-                                        filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParamsToLoad.getTargetEtityUniqueId(), filterParamsToLoad.getRelatedEntityUniqueId(), filterParamsToLoad.getFkEntityFilterValue(), fileHistoryItem.entityLasteUpdated, null)
+                                        filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParamsToLoad.getTargetEtityUniqueId(), filterParamsToLoad.getRelatedEntityUniqueId(), filterParamsToLoad.getRelatedEntityFilterValue(), filterParamsToLoad.getTargetEntityFilterValue(), fileHistoryItem.entityLasteUpdated, null)
                                     });
                                     observer.next(loadAction);
                                     if (recurse) {
@@ -509,7 +533,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                                 // already.
                                                 var candidateParentFileItems = allFileItems.filter(function (fi) {
                                                     return filterParamsToLoad.getTargetEtityUniqueId().compoundIdeEquals(fi)
-                                                        && fi.getParentItemId() === filterParamsToLoad.getFkEntityFilterValue();
+                                                        && fi.getParentItemId() === filterParamsToLoad.getRelatedEntityFilterValue();
                                                 });
                                                 var childItemsFilterValue = "0";
                                                 if (candidateParentFileItems.length > 0) {
@@ -518,7 +542,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                                 for (var idx = 0; idx < filterParamsToLoad.getChildFileItemParams().length; idx++) {
                                                     var rqp = filterParamsToLoad.getChildFileItemParams()[idx];
                                                     if (rqp.getFilterType() === filter_type_1.FilterType.NAMES_BY_TYPEID) {
-                                                        rqp.setFkEntityFilterValue(childItemsFilterValue);
+                                                        rqp.setRelatedEntityFilterValue(childItemsFilterValue);
                                                         _this.makeFileItemActionsFromNameIds(gobiiExtractFilterType, rqp, childItemsFilterValue, true)
                                                             .subscribe(function (fileItems) { return observer.next(fileItems); });
                                                     }
@@ -536,10 +560,10 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                 FileItemService.prototype.recurseFilters = function (gobiiExtractFilterType, filterParamsToLoad, filterValue, recurse) {
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
-                        filterParamsToLoad.setFkEntityFilterValue(filterValue);
+                        filterParamsToLoad.setRelatedEntityFilterValue(filterValue);
                         var loadAction = new fileItemActions.LoadFilterAction({
                             filterId: filterParamsToLoad.getQueryName(),
-                            filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParamsToLoad.getTargetEtityUniqueId(), filterParamsToLoad.getRelatedEntityUniqueId(), filterParamsToLoad.getFkEntityFilterValue(), null, //not sure about this
+                            filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParamsToLoad.getTargetEtityUniqueId(), filterParamsToLoad.getRelatedEntityUniqueId(), filterParamsToLoad.getRelatedEntityFilterValue(), filterParamsToLoad.getTargetEntityFilterValue(), null, //not sure about this
                             null)
                         });
                         observer.next(loadAction);
@@ -561,7 +585,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                     // these variables are redundant but I want to make this 100% unambigous what it means
                                     // and how we are using it
                                     // For example contactId
-                                    var parentItemFilterValue = filterParamsToLoad.getFkEntityFilterValue();
+                                    var parentItemFilterValue = filterParamsToLoad.getRelatedEntityFilterValue();
                                     // For example, the coupound unique ID for Contacts
                                     var parentEntityCompoundUniqueId = _this.filterParamsColl.getFilter(filterParamsToLoad.getParentFileItemParams().getQueryName(), gobiiExtractFilterType).getTargetEtityUniqueId();
                                     // for example, filter to only those file items that:
@@ -583,7 +607,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                     for (var idx = 0; idx < filterParamsToLoad.getChildFileItemParams().length; idx++) {
                                         var rqp = filterParamsToLoad.getChildFileItemParams()[idx];
                                         //                                if (rqp.getFilterType() === FilterType.NAMES_BY_TYPEID) {
-                                        rqp.setFkEntityFilterValue(childItemsFilterValue);
+                                        rqp.setRelatedEntityFilterValue(childItemsFilterValue);
                                         _this.recurseFilters(gobiiExtractFilterType, rqp, childItemsFilterValue, true)
                                             .subscribe(function (fileItems) { return observer.next(fileItems); });
                                         //                                }
@@ -630,7 +654,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     return Observable_1.Observable.create(function (observer) {
                         try {
                             if (filterParams.getIsDynamicFilterValue()) {
-                                filterParams.setFkEntityFilterValue(filterValue);
+                                filterParams.setRelatedEntityFilterValue(filterValue);
                             }
                             // note that this method does not do any of the entity dating and checking
                             // thing. It needs to be reworked for paging so that the filter ID also takes
@@ -658,7 +682,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                     var loadAction = new fileItemActions.LoadFileItemListWithFilterAction({
                                         gobiiFileItems: entityItems,
                                         filterId: filterParams.getQueryName(),
-                                        filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParams.getTargetEtityUniqueId(), filterParams.getRelatedEntityUniqueId(), filterValue, date, pagination)
+                                        filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParams.getTargetEtityUniqueId(), filterParams.getRelatedEntityUniqueId(), filterValue, filterParams.getTargetEntityFilterValue(), date, pagination)
                                     });
                                     observer.next(loadAction);
                                 }, function (responseHeader) {
