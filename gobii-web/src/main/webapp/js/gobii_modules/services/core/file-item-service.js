@@ -477,7 +477,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                             .setParentItemId(filterParamsToLoad.getRelatedEntityFilterValue());
                                         fileItems.push(noneFileItem);
                                         var parentId = fileItems[0].getItemId();
-                                        filterParamsToLoad.setTargetEntityFilterValue(parentId);
+                                        filterParamsToLoad.setTargetEntityFilterValue(parentId && +parentId > 0 ? parentId : null);
                                         var loadAction = new fileItemActions.LoadFileItemListWithFilterAction({
                                             gobiiFileItems: fileItems,
                                             filterId: filterParamsToLoad.getQueryName(),

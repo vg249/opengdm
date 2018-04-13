@@ -598,7 +598,7 @@ export class FileItemService {
                                             fileItems.push(noneFileItem);
 
                                             let parentId: string = fileItems[0].getItemId();
-                                            filterParamsToLoad.setTargetEntityFilterValue(parentId);
+                                            filterParamsToLoad.setTargetEntityFilterValue(parentId && +parentId > 0 ? parentId : null);
                                             let loadAction: fileItemActions.LoadFileItemListWithFilterAction = new fileItemActions.LoadFileItemListWithFilterAction(
                                                 {
                                                     gobiiFileItems: fileItems,
