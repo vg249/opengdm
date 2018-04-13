@@ -284,6 +284,42 @@ export class FileItemService {
     }
 
 
+    /***
+     * The purpose of this method is to create an observable of filter load actions for a given filter
+     * with a given filter value. Conceptually, the filtername and value passed to this function are the
+     * initial target filter. For example, if the user select's a PI (contact) for the dataset grid, the filter name
+     * and filter value (contactId) will make their way (though the effect for the action) to this method. The contactId filter
+     * value passed in will become the "target" value for the filter. The idea is that the target reflects
+     * the value that the user actually selected for a given filter. The primary observable creates the
+     * action for this filter. The makeChildActions() method with which it is concatenated performs further
+     * processing on the filter's children. The makeChildActions() method will take the first child filter of the
+     * target filter and pass it along with what is now considered the "parent" filter value (still contactId) into the recurseFilters()
+     * method. There the name of the game is to set up the related filter values. For example, the contract filter
+     * will have a child filter for projects. recurseFilters() will set the related filter value of the project
+     * filter to the contact id of the target (parent) filter. The recurseFilters() method will now recursively
+     * process the children of the project filter and its children. For the subsequent children, it will figure
+     * out how to set the related IDs (the new parent ids) based on the results of the filter passed to it. For
+     * example, when the project filter is passed to recurseFilters(), recurseFilters() will also retrieve all
+     * file items of type project with that contact ID as their related entity. It will then use the 0th such
+     * file item's item id as the new parentid of the project filter's child filters. The filter's target filter
+     * value is set in only two places: in this method, and in recruseFilters(). recruseFilters() will set it to null
+     * in the condition where the related filter value has changed. Thus, for example, if the user selects a new
+     * PI value, the contactId in the project filter's related filter value will no longer match. In this circumstance,
+     * the target filter value of the project filter has been invalidated by the new related (parent) id value,
+     * and so the target filter value of the project filter will be set to null. What this means in practice is that
+     * only related IDs are cascaded; target IDs are selected by the user or invalidated by the user's selection of
+     * a new parent ID. Moreover, for the most part the target filter values are used for filtering the content of the
+     * grid whereas the related IDs are used for filtering the content of the grid's drop downs.
+     *
+     * The organization of these nethods is a bit haphahard and represents the atheoretical way in which they evolved.
+     * It should be that there is just one method and one obsevable here that handles everything more elegantly. But
+     * for now this all seems to work.
+     *
+     * @param {GobiiExtractFilterType} gobiiExtractFilterType
+     * @param {FilterParamNames} filterParamName
+     * @param {string} parentFilterValue
+     * @returns {Observable<LoadFileItemListWithFilterAction>}
+     */
     public makeFileActionsFromFilterParamName(gobiiExtractFilterType: GobiiExtractFilterType,
                                               filterParamName: FilterParamNames,
                                               parentFilterValue: string): Observable<fileItemActions.LoadFileItemListWithFilterAction> {
@@ -352,13 +388,6 @@ export class FileItemService {
                     parentFilterValue,
                     true);
             } else {
-
-                // This condition was occasioned by the specific need of the dataset grid's filter drop-down boxes.
-                // The idea is that these filters should function independently -- that they should not casdcade.
-                // However, when the user selects "All <entity name>" at any level, it _should_ cascade. The
-                // effects action handler will have set the filter value to null when All <endity name> is the
-                // item that was selected. Hence we do recurse in that case.
-                //let recurse: boolean = filterParamsToProcess.getIsDynamicFilterValue() ? true : parentFilterValue === null;
 
                 returnVal = this.recurseFilters(gobiiExtractFilterType,
                     filterParamsToProcess,

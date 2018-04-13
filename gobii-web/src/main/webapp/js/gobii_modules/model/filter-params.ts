@@ -76,12 +76,14 @@ import {PayloadFilter} from "../store/actions/action-payload-filter";
  * names for a given entity when that entity must be filtered according to a foreign key.
  * For example, when retrieving projects by contact_id (i.e., by principle investigator contact
  * id), the _relatedEntityFilterValue will be the value of the PI according to which the project names
- * should be filtered. The fact that the filter value corresponds to the PK id of the parent entity
- * by which to filter the target item (i.e., the Project filter's filter value is the contactId) is
- * awkward and difficult to understand. There probably needs to be better semantics for this. Note
- * that in the FileItemService.makeFileActionsFromFilterParamName() method, there is no way to apply a
- * filter value to the leaf of the hierarchy. That doesn't seem to matter for now. But there are cases
- * where it could matter.
+ * should be filtered.
+ *
+ * In recent changes, better semantics have been added for expressing the entities to which FilterParam items
+ * pertain and their respective filter values. Thus, the target unique ID references the compounduniqueid of the
+ * entity filtered by the filter, whilst the related id is the compounduniqueid references the related entity.
+ * Thus, in the case of the project filter, the target is project, and the related id is for principle investigator
+ * contact. The target and related filter values are the actual filter values for these things. See the comment on
+ * makeFileActionsFromFilterParamName() in file item service for further details.
  *
  * Note that there is also an idiom for filtering where you want to retrieve whole entities rather than
  * name ids. This is done with the FileItemService.makeFileItemActionsFromEntities() method. Because whole
