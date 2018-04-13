@@ -333,7 +333,7 @@ export class FilterParamsColl {
                     GobiiExtractFilterType.WHOLE_DATASET,
                     EntityType.CONTACT)
                 .setExtractorItemType(ExtractorItemType.ENTITY)
-                .setIsDynamicFilterValue(false)
+                .setIsDynamicFilterValue(true)
                 .setIsDynamicDataLoad(false)
                 .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
                 .setNameIdLabelType(NameIdLabelType.ALL)
@@ -351,7 +351,7 @@ export class FilterParamsColl {
                     EntitySubType.UNKNOWN,
                     CvFilterType.UNKNOWN,
                     null))
-                .setIsDynamicFilterValue(false)
+                .setIsDynamicFilterValue(true)
                 .setIsDynamicDataLoad(false)
                 .setNameIdLabelType(NameIdLabelType.ALL)
                 .setIsExtractCriterion(false));
@@ -367,7 +367,7 @@ export class FilterParamsColl {
                     EntitySubType.UNKNOWN,
                     CvFilterType.UNKNOWN,
                     null))
-                .setIsDynamicFilterValue(false)
+                .setIsDynamicFilterValue(true)
                 .setIsDynamicDataLoad(false)
                 .setExtractorItemType(ExtractorItemType.ENTITY)
                 .setNameIdLabelType(NameIdLabelType.ALL)

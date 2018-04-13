@@ -308,8 +308,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                             // However, when the user selects "All <entity name>" at any level, it _should_ cascade. The
                             // effects action handler will have set the filter value to null when All <endity name> is the
                             // item that was selected. Hence we do recurse in that case.
-                            var recurse = filterParamsToProcess.getIsDynamicFilterValue() ? true : parentFilterValue === null;
-                            returnVal = this.recurseFilters(gobiiExtractFilterType, filterParamsToProcess, parentFilterValue, recurse);
+                            //let recurse: boolean = filterParamsToProcess.getIsDynamicFilterValue() ? true : parentFilterValue === null;
+                            returnVal = this.recurseFilters(gobiiExtractFilterType, filterParamsToProcess, parentFilterValue, filterParamsToProcess.getIsDynamicFilterValue());
                         }
                     }
                     else {
@@ -535,7 +535,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                                     return filterParamsToLoad.getTargetEtityUniqueId().compoundIdeEquals(fi)
                                                         && fi.getParentItemId() === filterParamsToLoad.getRelatedEntityFilterValue();
                                                 });
-                                                var childItemsFilterValue = "0";
+                                                var childItemsFilterValue = null;
                                                 if (candidateParentFileItems.length > 0) {
                                                     childItemsFilterValue = candidateParentFileItems[0].getItemId();
                                                 }
@@ -560,9 +560,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                 FileItemService.prototype.recurseFilters = function (gobiiExtractFilterType, filterParamsToLoad, filterValue, recurse) {
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
-                        filterParamsToLoad.setRelatedEntityFilterValue(filterValue);
-                        if (!filterValue) {
-                            filterParamsToLoad.setTargetEntityFilterValue(filterValue);
+                        if (filterParamsToLoad.getRelatedEntityFilterValue() !== filterValue) {
+                            filterParamsToLoad.setRelatedEntityFilterValue(filterValue);
+                            filterParamsToLoad.setTargetEntityFilterValue(null);
                         }
                         var loadAction = new fileItemActions.LoadFilterAction({
                             filterId: filterParamsToLoad.getQueryName(),
@@ -598,19 +598,20 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                     //      b) the relatedEntityId of the parentFilterValue (the contactId) (
                                     var candidateParentFileItems = allFileItems.filter(function (fi) {
                                         return filterParamsToLoad.getTargetEtityUniqueId().compoundIdeEquals(fi)
-                                            && fi.getRelatedEntityFilterValue(parentEntityCompoundUniqueId) === parentItemFilterValue;
+                                            && fi.getRelatedEntityFilterValue(parentEntityCompoundUniqueId) === parentItemFilterValue
+                                            && fi.getItemId() !== _this.NONE_ITEM_ITEM_ID;
                                     });
                                     // Now we will set the child filter's fkEntityValue to whatever happens to be the first item
                                     // in the list to which we filtered
-                                    var childItemsFilterValue = "0";
+                                    var childItemsFilterValue = null;
                                     if (candidateParentFileItems.length > 0) {
-                                        childItemsFilterValue = candidateParentFileItems[0].getItemId() !==
-                                            _this.NONE_ITEM_ITEM_ID ? candidateParentFileItems[0].getItemId() : null;
+                                        childItemsFilterValue = candidateParentFileItems[0].getItemId();
                                     }
                                     for (var idx = 0; idx < filterParamsToLoad.getChildFileItemParams().length; idx++) {
                                         var rqp = filterParamsToLoad.getChildFileItemParams()[idx];
                                         //                                if (rqp.getFilterType() === FilterType.NAMES_BY_TYPEID) {
                                         rqp.setRelatedEntityFilterValue(childItemsFilterValue);
+                                        rqp.setTargetEntityFilterValue(null); //the parent selection invalidates the previous target selection
                                         _this.recurseFilters(gobiiExtractFilterType, rqp, childItemsFilterValue, true)
                                             .subscribe(function (fileItems) { return observer.next(fileItems); });
                                         //                                }

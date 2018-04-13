@@ -208,7 +208,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                     this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.CONTACT)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
-                        .setIsDynamicFilterValue(false)
+                        .setIsDynamicFilterValue(true)
                         .setIsDynamicDataLoad(false)
                         .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL)
@@ -218,7 +218,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .build(file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.PROJECT)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
                         .setRelatedEntityUniqueId(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.CONTACT, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null))
-                        .setIsDynamicFilterValue(false)
+                        .setIsDynamicFilterValue(true)
                         .setIsDynamicDataLoad(false)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL)
                         .setIsExtractCriterion(false));
@@ -226,7 +226,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                     this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.EXPERIMENT)
                         .setRelatedEntityUniqueId(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.PROJECT, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null))
-                        .setIsDynamicFilterValue(false)
+                        .setIsDynamicFilterValue(true)
                         .setIsDynamicDataLoad(false)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL)

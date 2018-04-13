@@ -358,12 +358,12 @@ export class FileItemService {
                 // However, when the user selects "All <entity name>" at any level, it _should_ cascade. The
                 // effects action handler will have set the filter value to null when All <endity name> is the
                 // item that was selected. Hence we do recurse in that case.
-                let recurse: boolean = filterParamsToProcess.getIsDynamicFilterValue() ? true : parentFilterValue === null;
+                //let recurse: boolean = filterParamsToProcess.getIsDynamicFilterValue() ? true : parentFilterValue === null;
 
                 returnVal = this.recurseFilters(gobiiExtractFilterType,
                     filterParamsToProcess,
                     parentFilterValue,
-                    recurse);
+                    filterParamsToProcess.getIsDynamicFilterValue());
             }
 
 
@@ -696,7 +696,7 @@ export class FileItemService {
                                                         && fi.getParentItemId() === filterParamsToLoad.getRelatedEntityFilterValue()
                                                     );
 
-                                                let childItemsFilterValue: string = "0";
+                                                let childItemsFilterValue: string = null;
                                                 if (candidateParentFileItems.length > 0) {
                                                     childItemsFilterValue = candidateParentFileItems[0].getItemId();
                                                 }
@@ -745,10 +745,9 @@ export class FileItemService {
 
         return Observable.create(observer => {
 
-            filterParamsToLoad.setRelatedEntityFilterValue(filterValue);
-
-            if( !filterValue ) {
-                filterParamsToLoad.setTargetEntityFilterValue(filterValue);
+            if (filterParamsToLoad.getRelatedEntityFilterValue() !== filterValue) {
+                filterParamsToLoad.setRelatedEntityFilterValue(filterValue);
+                filterParamsToLoad.setTargetEntityFilterValue(null);
             }
 
             let loadAction: fileItemActions.LoadFilterAction = new fileItemActions.LoadFilterAction(
@@ -809,14 +808,14 @@ export class FileItemService {
                                 allFileItems.filter(fi =>
                                     filterParamsToLoad.getTargetEtityUniqueId().compoundIdeEquals(fi)
                                     && fi.getRelatedEntityFilterValue(parentEntityCompoundUniqueId) === parentItemFilterValue
+                                    && fi.getItemId() !== this.NONE_ITEM_ITEM_ID
                                 );
 
                             // Now we will set the child filter's fkEntityValue to whatever happens to be the first item
                             // in the list to which we filtered
-                            let childItemsFilterValue: string = "0";
+                            let childItemsFilterValue: string = null;
                             if (candidateParentFileItems.length > 0) {
-                                childItemsFilterValue = candidateParentFileItems[0].getItemId() !==
-                                this.NONE_ITEM_ITEM_ID ? candidateParentFileItems[0].getItemId() : null;
+                                childItemsFilterValue = candidateParentFileItems[0].getItemId();
                             }
 
                             for (let idx: number = 0;
@@ -824,7 +823,9 @@ export class FileItemService {
                                  idx++) {
                                 let rqp: FilterParams = filterParamsToLoad.getChildFileItemParams()[idx];
 //                                if (rqp.getFilterType() === FilterType.NAMES_BY_TYPEID) {
+
                                 rqp.setRelatedEntityFilterValue(childItemsFilterValue);
+                                rqp.setTargetEntityFilterValue(null); //the parent selection invalidates the previous target selection
 
                                 this.recurseFilters(gobiiExtractFilterType,
                                     rqp,
