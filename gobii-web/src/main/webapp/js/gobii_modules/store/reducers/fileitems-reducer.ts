@@ -765,18 +765,18 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
 
 
     // the child filter has the parent fk value
-    let contactId = filters[FilterParamNames.PROJECT_FILTER_OPTIONAL] ?
-        filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].relatedEntityFilterValue : null;
+    let contactId = filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL] ?
+        filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].targetEntityFilterValue: null;
     let compounUniqueIdForContacts: GobiiFileItemCompoundId =
         filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL] ? filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].targetEntityUniqueId : null;
 
-    let projectId = filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL] ?
-        filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].relatedEntityFilterValue : null;
+    let projectId = filters[FilterParamNames.PROJECT_FILTER_OPTIONAL] ?
+        filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].targetEntityFilterValue : null;
     let compounUniqueIdForProjectsByContact: GobiiFileItemCompoundId =
         filters[FilterParamNames.PROJECT_FILTER_OPTIONAL] ? filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].targetEntityUniqueId : null;
 
-    let experimentId = filters[FilterParamNames.DATASET_FILTER_OPTIONAL] ?
-        filters[FilterParamNames.DATASET_FILTER_OPTIONAL].relatedEntityFilterValue : null;
+    let experimentId = filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL] ?
+        filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].targetEntityFilterValue : null;
     let compounUniqueIdForExperimentsByProject: GobiiFileItemCompoundId =
         filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL] ? filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].targetEntityUniqueId : null;
 

@@ -581,14 +581,14 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             exports_1("getDatasetEntities", getDatasetEntities = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
                 var returnVal = [];
                 // the child filter has the parent fk value
-                var contactId = filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL] ?
-                    filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].relatedEntityFilterValue : null;
+                var contactId = filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL] ?
+                    filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].targetEntityFilterValue : null;
                 var compounUniqueIdForContacts = filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL] ? filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].targetEntityUniqueId : null;
-                var projectId = filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL] ?
-                    filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].relatedEntityFilterValue : null;
+                var projectId = filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL] ?
+                    filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].targetEntityFilterValue : null;
                 var compounUniqueIdForProjectsByContact = filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL] ? filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].targetEntityUniqueId : null;
-                var experimentId = filters[file_item_param_names_1.FilterParamNames.DATASET_FILTER_OPTIONAL] ?
-                    filters[file_item_param_names_1.FilterParamNames.DATASET_FILTER_OPTIONAL].relatedEntityFilterValue : null;
+                var experimentId = filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL] ?
+                    filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].targetEntityFilterValue : null;
                 var compounUniqueIdForExperimentsByProject = filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL] ? filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].targetEntityUniqueId : null;
                 var datasetEntitiesFilteredByExperiment = [];
                 datasetEntitiesFilteredByExperiment = fileItems.filter(function (e) {
