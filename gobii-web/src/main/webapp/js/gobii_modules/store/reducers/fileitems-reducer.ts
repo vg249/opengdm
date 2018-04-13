@@ -228,9 +228,18 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
                     gfi.setSelected(false)
                 })
 
-                if (allItemsForFilter[0]) {
-                    if ((!filterPayload.relatedEntityFilterValue || +filterPayload.relatedEntityFilterValue < 1)) {
-                        allItemsForFilter[0].setSelected(true);
+                if (filterPayload.targetEntityFilterValue && +filterPayload.targetEntityFilterValue > 0) {
+
+                    let selectedItem: GobiiFileItem = allItemsForFilter.find(gfi => gfi.getItemId() === filterPayload.targetEntityFilterValue);
+                    if (selectedItem) {
+                        selectedItem.setSelected(true);
+                    }
+
+                } else {
+                    if (allItemsForFilter[0]) {
+                        if ((!filterPayload.relatedEntityFilterValue || +filterPayload.relatedEntityFilterValue < 1)) {
+                            allItemsForFilter[0].setSelected(true);
+                        }
                     }
                 }
             }
@@ -245,7 +254,9 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             break;
         } // LOAD_FILTER
 
-        case gobiiFileItemAction.ADD_TO_EXTRACT: {
+        case
+        gobiiFileItemAction.ADD_TO_EXTRACT
+        : {
 
             const gobiiFileItemPayload: GobiiFileItem = action.payload;
 
@@ -254,7 +265,9 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             break;
         } // ADD_TO_EXTRACT
 
-        case gobiiFileItemAction.ADD_TO_EXTRACT_BY_ITEM_ID: {
+        case
+        gobiiFileItemAction.ADD_TO_EXTRACT_BY_ITEM_ID
+        : {
 
             const fileItemUniqueIdPayload: string = action.payload;
             let gobiiFileItem: GobiiFileItem = state
@@ -267,7 +280,9 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
         } //
 
-        case gobiiFileItemAction.REPLACE_BY_ITEM_ID : {
+        case
+        gobiiFileItemAction.REPLACE_BY_ITEM_ID
+        : {
 
             let itemCurrentlyInExtract: GobiiFileItem = state
                 .allFileItems
@@ -288,7 +303,9 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             break;
         }
 
-        case gobiiFileItemAction.REPLACE_ITEM_OF_SAME_COMPOUND_ID: {
+        case
+        gobiiFileItemAction.REPLACE_ITEM_OF_SAME_COMPOUND_ID
+        : {
 
             let newItemToAdd: GobiiFileItem = action.payload.gobiiFileitemToReplaceWith;
 
@@ -330,7 +347,9 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             break;
         }
 
-        case gobiiFileItemAction.REMOVE_FROM_EXTRACT: {
+        case
+        gobiiFileItemAction.REMOVE_FROM_EXTRACT
+        : {
 
             let gobiiFileItemPayload: GobiiFileItem = action.payload;
             returnVal = removeFromExtractItems(state, gobiiFileItemPayload);
@@ -339,7 +358,9 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
         }
 
 
-        case gobiiFileItemAction.REMOVE_FROM_EXTRACT_BY_ITEM_ID: {
+        case
+        gobiiFileItemAction.REMOVE_FROM_EXTRACT_BY_ITEM_ID
+        : {
 
             const fileItemUniqueIdPayload: string = action.payload;
 
@@ -353,7 +374,9 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
         }
 
-        case gobiiFileItemAction.REMOVE_ALL_FROM_EXTRACT: {
+        case
+        gobiiFileItemAction.REMOVE_ALL_FROM_EXTRACT
+        : {
 
             // only those not of the same extract filter type should remain selected
 
@@ -379,7 +402,9 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             break;
         }
 
-        case gobiiFileItemAction.SET_EXTRACT_TYPE: {
+        case
+        gobiiFileItemAction.SET_EXTRACT_TYPE
+        : {
 
             const gobiiExtractFilterType = action.payload.gobiiExtractFilterType;
 
@@ -885,13 +910,13 @@ export const getExperimentsFilterOptional = createSelector(getFileItems, getFilt
     let returnVal: GobiiFileItem[] = [];
 
     let projectId: string = null;
-    if (filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL]) {
-        projectId = filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].relatedEntityFilterValue;
+    if (filters[FilterParamNames.PROJECT_FILTER_OPTIONAL]) {
+        projectId = filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].targetEntityFilterValue
     }
 
     let contactId: string = null;
-    if (filters[FilterParamNames.PROJECT_FILTER_OPTIONAL]) {
-        contactId = filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].relatedEntityFilterValue;
+    if (filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL]) {
+        contactId = filters[FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].targetEntityFilterValue;
     }
 
 

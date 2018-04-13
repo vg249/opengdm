@@ -561,6 +561,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
                         filterParamsToLoad.setRelatedEntityFilterValue(filterValue);
+                        if (!filterValue) {
+                            filterParamsToLoad.setTargetEntityFilterValue(filterValue);
+                        }
                         var loadAction = new fileItemActions.LoadFilterAction({
                             filterId: filterParamsToLoad.getQueryName(),
                             filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParamsToLoad.getTargetEtityUniqueId(), filterParamsToLoad.getRelatedEntityUniqueId(), filterParamsToLoad.getRelatedEntityFilterValue(), filterParamsToLoad.getTargetEntityFilterValue(), null, //not sure about this

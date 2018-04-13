@@ -747,6 +747,10 @@ export class FileItemService {
 
             filterParamsToLoad.setRelatedEntityFilterValue(filterValue);
 
+            if( !filterValue ) {
+                filterParamsToLoad.setTargetEntityFilterValue(filterValue);
+            }
+
             let loadAction: fileItemActions.LoadFilterAction = new fileItemActions.LoadFilterAction(
                 {
                     filterId: filterParamsToLoad.getQueryName(),
