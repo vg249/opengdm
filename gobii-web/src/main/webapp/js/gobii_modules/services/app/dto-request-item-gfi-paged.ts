@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {DtoRequestItem} from "./../core/dto-request-item";
 import {ProcessType} from "../../model/type-process";
 import {GobiiFileItem} from "../../model/gobii-file-item";
-import {FilterParams} from "../../model/file-item-params";
+import {FilterParams} from "../../model/filter-params";
 import {JsonToGfi} from "./jsontogfi/json-to-gfi";
 import {FilterType} from "../../model/filter-type";
 import {FilterParamNames} from "../../model/file-item-param-names";

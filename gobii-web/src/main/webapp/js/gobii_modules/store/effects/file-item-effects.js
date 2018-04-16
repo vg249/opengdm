@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/operator/switchMap", "rxjs/add/observable/of", "../actions/fileitem-action", "../actions/treenode-action", "../../services/core/tree-structure-service", "../reducers", "../../store/actions/history-action", "../../model/type-extractor-item", "rxjs/Observable", "@ngrx/store", "../../services/core/file-item-service", "../../model/file-item-param-names", "rxjs/add/operator/mergeMap", "../../services/core/filter-params-coll"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/operator/switchMap", "rxjs/add/observable/of", "rxjs/add/operator/concat", "../actions/fileitem-action", "../actions/treenode-action", "../../services/core/tree-structure-service", "../reducers", "../../store/actions/history-action", "../../model/type-extractor-item", "rxjs/Observable", "@ngrx/store", "../../services/core/file-item-service", "../../model/file-item-param-names", "rxjs/add/operator/mergeMap", "../../services/core/filter-params-coll"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -25,6 +25,8 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
             function (_1) {
             },
             function (_2) {
+            },
+            function (_3) {
             },
             function (fileItemActions_1) {
                 fileItemActions = fileItemActions_1;
@@ -56,7 +58,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
             function (file_item_param_names_1_1) {
                 file_item_param_names_1 = file_item_param_names_1_1;
             },
-            function (_3) {
+            function (_4) {
             },
             function (filter_params_coll_1_1) {
                 filter_params_coll_1 = filter_params_coll_1_1;
@@ -183,7 +185,7 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                                 .AddFilterRetrieved({
                                 gobiiExtractFilterType: action.payload.filter.gobiiExtractFilterType,
                                 filterId: action.payload.filterId,
-                                filterValue: action.payload.filter.filterValue,
+                                filterValue: action.payload.filter.relatedEntityFilterValue,
                                 entityLasteUpdated: action.payload.filter.entityLasteUpdated
                             });
                             observer.next(addFilterSubmittedAction);
@@ -304,7 +306,9 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                                 var filterValue = (fileItemToReplaceWith.getItemId() && Number(fileItemToReplaceWith.getItemId()) > 0) ? fileItemToReplaceWith.getItemId() : null;
                                 if (filterParamName !== file_item_param_names_1.FilterParamNames.UNKNOWN) {
                                     _this.fileItemService.makeFileActionsFromFilterParamName(action.payload.gobiiExtractFilterType, filterParamName, filterValue).subscribe(function (loadFileItemListAction) {
-                                        observer.next(loadFileItemListAction);
+                                        if (loadFileItemListAction) {
+                                            observer.next(loadFileItemListAction);
+                                        }
                                     }, function (error) {
                                         _this.store.dispatch(new historyAction.AddStatusMessageAction(error));
                                     });

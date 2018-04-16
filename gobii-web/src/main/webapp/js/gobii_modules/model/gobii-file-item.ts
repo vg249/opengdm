@@ -267,7 +267,13 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
             returnVal = gobiiFileItemEntityRelation.getRelatedEntityId()
         }
         return returnVal;
+
     }
+
+    getRelatedEntities(): GobiiFileItemEntityRelation[] {
+        return this._entityRelations;
+    }
+
 
     setPageNumber(value:number): GobiiFileItem {
         this._pageNumber = value;

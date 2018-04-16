@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-entity", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/file-item-params", "../../store/actions/history-action", "@ngrx/store", "../../model/name-id-label-type", "../../model/filter-type", "../../model/file-item-param-names", "rxjs/add/operator/expand", "../../model/type-extractor-item", "../../store/actions/fileitem-action", "../../model/gobii-file-item-compound-id", "./dto-request.service", "../app/jsontogfi/json-to-gfi-dataset", "../app/dto-request-item-gfi", "../app/dto-request-item-gfi-paged"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-entity", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/filter-params", "../../store/actions/history-action", "@ngrx/store", "../../model/name-id-label-type", "../../model/filter-type", "../../model/file-item-param-names", "rxjs/add/operator/expand", "../../model/type-extractor-item", "../../store/actions/fileitem-action", "../../model/gobii-file-item-compound-id", "./dto-request.service", "../app/jsontogfi/json-to-gfi-dataset", "../app/dto-request-item-gfi", "../app/dto-request-item-gfi-paged", "../../store/actions/action-payload-filter"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_entity_1, type_extractor_filter_1, cv_filter_type_1, file_item_params_1, historyAction, store_1, name_id_label_type_1, filter_type_1, file_item_param_names_1, type_extractor_item_1, fileAction, gobii_file_item_compound_id_1, dto_request_service_1, json_to_gfi_dataset_1, dto_request_item_gfi_1, dto_request_item_gfi_paged_1, FilterParamsColl;
+    var core_1, type_entity_1, type_extractor_filter_1, cv_filter_type_1, filter_params_1, historyAction, store_1, name_id_label_type_1, filter_type_1, file_item_param_names_1, type_extractor_item_1, fileAction, gobii_file_item_compound_id_1, dto_request_service_1, json_to_gfi_dataset_1, dto_request_item_gfi_1, dto_request_item_gfi_paged_1, action_payload_filter_1, FilterParamsColl;
     return {
         setters: [
             function (core_1_1) {
@@ -25,8 +25,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
             function (cv_filter_type_1_1) {
                 cv_filter_type_1 = cv_filter_type_1_1;
             },
-            function (file_item_params_1_1) {
-                file_item_params_1 = file_item_params_1_1;
+            function (filter_params_1_1) {
+                filter_params_1 = filter_params_1_1;
             },
             function (historyAction_1) {
                 historyAction = historyAction_1;
@@ -65,6 +65,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
             },
             function (dto_request_item_gfi_paged_1_1) {
                 dto_request_item_gfi_paged_1 = dto_request_item_gfi_paged_1_1;
+            },
+            function (action_payload_filter_1_1) {
+                action_payload_filter_1 = action_payload_filter_1_1;
             }
         ],
         execute: function () {
@@ -76,51 +79,51 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                     this.filterParams = [];
                     // For non-hierarchically filtered request params, we just create them simply
                     // as we add them to the flat map
-                    this.addFilter(file_item_params_1.FilterParams
+                    this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.CV_DATATYPE, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.CV)
                         .setIsDynamicFilterValue(false)
                         .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE)
                         .setCvFilterValue(cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.DATASET_TYPE))
                         .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPE_NAME)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A));
-                    this.addFilter(file_item_params_1.FilterParams
+                    this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.CV_DATATYPE, type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_entity_1.EntityType.CV)
                         .setIsDynamicFilterValue(false)
                         .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE)
                         .setCvFilterValue(cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.DATASET_TYPE))
                         .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPE_NAME)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A));
-                    this.addFilter(file_item_params_1.FilterParams
+                    this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.MAPSETS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.MAPSET)
                         .setIsDynamicFilterValue(false)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.NO));
-                    this.addFilter(file_item_params_1.FilterParams
+                    this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.MAPSETS, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.MAPSET)
                         .setIsDynamicFilterValue(false)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.NO));
-                    this.addFilter(file_item_params_1.FilterParams
+                    this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.MAPSETS, type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_entity_1.EntityType.MAPSET)
                         .setIsDynamicFilterValue(false)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.NO));
-                    this.addFilter(file_item_params_1.FilterParams
+                    this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.PLATFORMS, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.PLATFORM)
                         .setIsDynamicFilterValue(false));
-                    this.addFilter(file_item_params_1.FilterParams
+                    this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.PLATFORMS, type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_entity_1.EntityType.PLATFORM)
                         .setIsDynamicFilterValue(false));
-                    this.addFilter(file_item_params_1.FilterParams
+                    this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.MARKER_GROUPS, type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_entity_1.EntityType.MARKER_GROUP)
                         .setIsDynamicFilterValue(false));
-                    this.addFilter(file_item_params_1.FilterParams
+                    this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.PROJECTS, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.PROJECT)
                         .setIsDynamicFilterValue(false)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL));
-                    this.addFilter(file_item_params_1.FilterParams
+                    this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.CONTACT_PI_HIERARCHY_ROOT, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.CONTACT)
                         .setIsDynamicFilterValue(false)
                         .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR));
                     var cvJobStatusCompoundUniqueId = new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.CV, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.JOB_STATUS, cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.JOB_STATUS));
-                    this.addFilter(file_item_params_1.FilterParams
+                    this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.CV_JOB_STATUS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, cvJobStatusCompoundUniqueId.getEntityType())
                         .setIsDynamicFilterValue(true)
                         .setCvFilterType(cvJobStatusCompoundUniqueId.getCvFilterType())
@@ -153,34 +156,22 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                             if (completedItem && labelItem) {
                                 returnVal = new fileAction.LoadFilterAction({
                                     filterId: file_item_param_names_1.FilterParamNames.CV_JOB_STATUS,
-                                    filter: {
-                                        gobiiExtractFilterType: type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET,
-                                        gobiiCompoundUniqueId: cvJobStatusCompoundUniqueId,
-                                        filterValue: completedItem.getItemId(),
-                                        entityLasteUpdated: payloadFilter.entityLasteUpdated,
-                                        pagination: payloadFilter.pagination
-                                    }
+                                    filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, cvJobStatusCompoundUniqueId, null, completedItem.getItemId(), null, payloadFilter.entityLasteUpdated, payloadFilter.pagination)
                                 });
                             }
                         }
                         return returnVal;
                     }));
                     var cvDatasetCompoundUniqueId = new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.DATASET, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.UNKNOWN));
-                    this.addFilter(file_item_params_1.FilterParams
+                    this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.DATASET_LIST, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.DATASET)
                         .setFilterType(filter_type_1.FilterType.ENTITY_LIST)
                         .setOnLoadFilteredItemsAction(function (fileItems, payloadFilter) {
                         var returnVal = null;
-                        if (!payloadFilter || !payloadFilter.filterValue) {
+                        if (!payloadFilter || !payloadFilter.relatedEntityFilterValue) {
                             returnVal = new fileAction.LoadFilterAction({
                                 filterId: file_item_param_names_1.FilterParamNames.DATASET_LIST_STATUS,
-                                filter: {
-                                    gobiiExtractFilterType: type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET,
-                                    gobiiCompoundUniqueId: cvDatasetCompoundUniqueId,
-                                    filterValue: "completed",
-                                    entityLasteUpdated: payloadFilter.entityLasteUpdated,
-                                    pagination: payloadFilter.pagination
-                                }
+                                filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, cvDatasetCompoundUniqueId, null, "completed", null, payloadFilter.entityLasteUpdated, payloadFilter.pagination)
                             });
                         }
                         return returnVal;
@@ -190,21 +181,15 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .setDtoRequestItem(new dto_request_item_gfi_1.DtoRequestItemGfi(this.getFilter(file_item_param_names_1.FilterParamNames.DATASET_LIST, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET), null, new json_to_gfi_dataset_1.JsonToGfiDataset(this.getFilter(file_item_param_names_1.FilterParamNames.DATASET_LIST, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET), this)))
                         .setDtoRequestService(this.fileItemRequestService);
                     // same as previous except configured for paging
-                    this.addFilter(file_item_params_1.FilterParams
+                    this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.DATASET_LIST_PAGED, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.DATASET)
                         .setFilterType(filter_type_1.FilterType.ENTITY_LIST)
                         .setOnLoadFilteredItemsAction(function (fileItems, payloadFilter) {
                         var returnVal = null;
-                        if (!payloadFilter || !payloadFilter.filterValue) {
+                        if (!payloadFilter || !payloadFilter.relatedEntityFilterValue) {
                             returnVal = new fileAction.LoadFilterAction({
                                 filterId: file_item_param_names_1.FilterParamNames.DATASET_LIST_STATUS,
-                                filter: {
-                                    gobiiExtractFilterType: type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET,
-                                    gobiiCompoundUniqueId: cvDatasetCompoundUniqueId,
-                                    filterValue: "completed",
-                                    entityLasteUpdated: payloadFilter.entityLasteUpdated,
-                                    pagination: payloadFilter.pagination
-                                }
+                                filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, cvDatasetCompoundUniqueId, null, "completed", null, payloadFilter.entityLasteUpdated, payloadFilter.pagination)
                             });
                         }
                         return returnVal;
@@ -214,13 +199,13 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                     this.getFilter(file_item_param_names_1.FilterParamNames.DATASET_LIST_PAGED, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET)
                         .setDtoRequestItem(new dto_request_item_gfi_paged_1.DtoRequestItemGfiPaged(this.getFilter(file_item_param_names_1.FilterParamNames.DATASET_LIST_PAGED, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET), null, new json_to_gfi_dataset_1.JsonToGfiDataset(this.getFilter(file_item_param_names_1.FilterParamNames.DATASET_LIST_PAGED, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET), this)))
                         .setDtoRequestService(this.pagedDatasetRequestService);
-                    this.addFilter(file_item_params_1.FilterParams
+                    this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.DATASET_BY_DATASET_ID, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.DATASET)
                         .setFilterType(filter_type_1.FilterType.ENTITY_BY_ID));
-                    this.addFilter(file_item_params_1.FilterParams
+                    this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.ANALYSES_BY_DATASET_ID, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.ANALYSIS)
                         .setFilterType(filter_type_1.FilterType.ENTITY_BY_ID));
-                    this.addFilter(file_item_params_1.FilterParams
+                    this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.CONTACT)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
                         .setIsDynamicFilterValue(true)
@@ -229,23 +214,26 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL)
                         .setIsExtractCriterion(false));
                     // relate this filter to CONTACT_PI_FILTER_OPTIONAL as parent
-                    this.addFilter(file_item_params_1.FilterParams
+                    this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.PROJECT)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
+                        .setRelatedEntityUniqueId(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.CONTACT, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null))
                         .setIsDynamicFilterValue(true)
                         .setIsDynamicDataLoad(false)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL)
                         .setIsExtractCriterion(false));
-                    // relate this filter to PROJECT_FILTER_OPTIONAL as parent
-                    this.addFilter(file_item_params_1.FilterParams
+                    // relate this filter to PROJECT_FILTER_OPTIONAL as pa\rent
+                    this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.EXPERIMENT)
+                        .setRelatedEntityUniqueId(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.PROJECT, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null))
                         .setIsDynamicFilterValue(true)
                         .setIsDynamicDataLoad(false)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL)
                         .setIsExtractCriterion(false));
-                    this.addFilter(file_item_params_1.FilterParams
+                    this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.DATASET_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.DATASET)
+                        .setRelatedEntityUniqueId(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.EXPERIMENT, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null))
                         .setIsDynamicFilterValue(true)
                         .setIsDynamicDataLoad(false)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY));
@@ -261,19 +249,19 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                     //for hierarchical items, we need to crate the nameid requests separately from the
                     //flat map: they _will_ need to be in the flat map; however, they all need to be
                     //useed to set up the filtering hierarchy
-                    var nameIdRequestParamsContactsPi = file_item_params_1.FilterParams
+                    var nameIdRequestParamsContactsPi = filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.CONTACT_PI_HIERARCHY_ROOT, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.CONTACT)
                         .setIsDynamicFilterValue(true)
                         .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR);
-                    var nameIdRequestParamsProjectByPiContact = file_item_params_1.FilterParams
+                    var nameIdRequestParamsProjectByPiContact = filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.PROJECTS_BY_CONTACT, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.PROJECT)
                         .setIsDynamicFilterValue(true)
                         .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPEID);
-                    var nameIdRequestParamsExperiments = file_item_params_1.FilterParams
+                    var nameIdRequestParamsExperiments = filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.EXPERIMENTS_BY_PROJECT, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.EXPERIMENT)
                         .setIsDynamicFilterValue(true)
                         .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPEID);
-                    var nameIdRequestParamsDatasets = file_item_params_1.FilterParams
+                    var nameIdRequestParamsDatasets = filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.DATASETS_BY_EXPERIMENT, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.DATASET)
                         .setIsDynamicFilterValue(true)
                         .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPEID);

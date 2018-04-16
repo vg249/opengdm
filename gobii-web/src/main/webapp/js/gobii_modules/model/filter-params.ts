@@ -42,13 +42,13 @@ import {PayloadFilter} from "../store/actions/action-payload-filter";
  * relationships of the tables involved in generating the query. In our example, the PROJECTS_BY_CONTACT FileFilterParams is a
  * child of the CONTACT_PI FileFilterParams. The PROJECTS_BY_CONTACT query will be run along with a
  * contactId value, which will serve to filter the results of the project query. That contactId value
- * will now be the _fkEntityFilterValue of the PROJECTS_BY_CONTACT FilterValues. Moreover, each
+ * will now be the _relatedEntityFilterValue of the PROJECTS_BY_CONTACT FilterValues. Moreover, each
  * GobiiFileItem resulting from the PROJECTS_BY_CONTACT query will be assigned the contactId as its
  * parentItemId value. Thus, once the GobiiFileItems have been retrieved from the server, they can
  * subsequently be retrieved from the store such that the GobiiFileItems of EntityType PROJECT are
- * filtered as follows: the current _fkEntityFilterValue of the PROJECTS_BY_CONTACT filter matches
+ * filtered as follows: the current _relatedEntityFilterValue of the PROJECTS_BY_CONTACT filter matches
  * the parentItemId of the GobiiFileItems of EntityType PROJECT. Thus, the PROJECTS_BY_CONTACT filter,
- * with an arbitrary _fkEntityFilterValue, can be dispatched to the store at any time and the   reby change
+ * with an arbitrary _relatedEntityFilterValue, can be dispatched to the store at any time and the   reby change
  * the set of GobiiFileItems that are filtered in this way. In other words, when we want to get the
  * "currently selected" projects from the store (i.e., the projects filtered for
  * the pi who is currently selected in the UI), the selector returns the file items whose parent id
@@ -72,16 +72,18 @@ import {PayloadFilter} from "../store/actions/action-payload-filter";
  * ngrx/store. Here again you can see this functionality operating depending on the value of _isDynamicLoad.
  *
  *
- * Particular note should be taken of the  _fkEntityFilterValue value for the purpose of retrieving
+ * Particular note should be taken of the  _relatedEntityFilterValue value for the purpose of retrieving
  * names for a given entity when that entity must be filtered according to a foreign key.
  * For example, when retrieving projects by contact_id (i.e., by principle investigator contact
- * id), the _fkEntityFilterValue will be the value of the PI according to which the project names
- * should be filtered. The fact that the filter value corresponds to the PK id of the parent entity
- * by which to filter the target item (i.e., the Project filter's filter value is the contactId) is
- * awkward and difficult to understand. There probably needs to be better semantics for this. Note
- * that in the FileItemService.makeFileActionsFromFilterParamName() method, there is no way to apply a
- * filter value to the leaf of the hierarchy. That doesn't seem to matter for now. But there are cases
- * where it could matter.
+ * id), the _relatedEntityFilterValue will be the value of the PI according to which the project names
+ * should be filtered.
+ *
+ * In recent changes, better semantics have been added for expressing the entities to which FilterParam items
+ * pertain and their respective filter values. Thus, the target unique ID references the compounduniqueid of the
+ * entity filtered by the filter, whilst the related id is the compounduniqueid references the related entity.
+ * Thus, in the case of the project filter, the target is project, and the related id is for principle investigator
+ * contact. The target and related filter values are the actual filter values for these things. See the comment on
+ * makeFileActionsFromFilterParamName() in file item service for further details.
  *
  * Note that there is also an idiom for filtering where you want to retrieve whole entities rather than
  * name ids. This is done with the FileItemService.makeFileItemActionsFromEntities() method. Because whole
@@ -91,16 +93,19 @@ import {PayloadFilter} from "../store/actions/action-payload-filter";
 
  *
  */
-export class FilterParams extends GobiiFileItemCompoundId {
+export class FilterParams {
 
     private constructor(_entityType: EntityType = EntityType.UNKNOWN, //first four args are passed to base class ctor
                         _entitySubType: EntitySubType = EntitySubType.UNKNOWN,
                         _cvFilterType: CvFilterType = CvFilterType.UNKNOWN,
                         _cvFilterValue: string = null,
                         _extractorItemType: ExtractorItemType,
+                        private targetEntityUniqueId: GobiiFileItemCompoundId,
+                        private relatedEntityUniqueId: GobiiFileItemCompoundId,
                         private _queryName: string = null,
                         private _filterType: FilterType = FilterType.NONE,
-                        private _fkEntityFilterValue: string = null,
+                        private _targetEntityFilterValue: string = null,
+                        private _relatedEntityFilterValue: string = null,
                         private _gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN,
                         private _nameIdLabelType: NameIdLabelType,
                         private _parentFileItemParams: FilterParams,
@@ -115,7 +120,7 @@ export class FilterParams extends GobiiFileItemCompoundId {
                         private dtoRequestItem: DtoRequestItem<any>,
                         private dtoRequestService: DtoRequestService<any>) {
 
-        super(_extractorItemType, _entityType, _entitySubType, _cvFilterType, _cvFilterValue);
+        this.targetEntityUniqueId = new GobiiFileItemCompoundId(_extractorItemType, _entityType, _entitySubType, _cvFilterType, _cvFilterValue);
 
 
     }
@@ -129,8 +134,11 @@ export class FilterParams extends GobiiFileItemCompoundId {
             CvFilterType.UNKNOWN,
             null,
             ExtractorItemType.ENTITY,
+            null,
+            null,
             queryName,
             FilterType.NONE,
+            null,
             null,
             gobiiExtractFilterType,
             NameIdLabelType.UNKNOWN,
@@ -153,61 +161,75 @@ export class FilterParams extends GobiiFileItemCompoundId {
 
 
     getExtractorItemType(): ExtractorItemType {
-        return super.getExtractorItemType();
+        return this.targetEntityUniqueId.getExtractorItemType();
     }
 
     setExtractorItemType(value: ExtractorItemType): FilterParams {
 
-        super.setExtractorItemType(value);
+        this.targetEntityUniqueId.setExtractorItemType(value);
         return this;
     }
 
     getEntityType(): EntityType {
-        return super.getEntityType();
+        return this.targetEntityUniqueId.getEntityType();
     }
 
     setEntityType(value: EntityType): FilterParams {
 
-        super.setEntityType(value);
+        this.targetEntityUniqueId.setEntityType(value);
         return this;
     }
 
     getEntitySubType(): EntitySubType {
-        return super.getEntitySubType();
+        return this.targetEntityUniqueId.getEntitySubType();
     }
 
     setEntitySubType(value: EntitySubType): FilterParams {
 
-        super.setEntitySubType(value);
+        this.targetEntityUniqueId.setEntitySubType(value);
         return this;
     }
 
     getCvFilterType(): CvFilterType {
-        return super.getCvFilterType();
+        return this.targetEntityUniqueId.getCvFilterType();
     }
 
     setCvFilterType(value: CvFilterType): FilterParams {
-        super.setCvFilterType(value);
+        this.targetEntityUniqueId.setCvFilterType(value);
         return this;
     }
 
     getCvFilterValue(): string {
-        return super.getCvFilterValue();
+        return this.targetEntityUniqueId.getCvFilterValue();
     }
 
     setCvFilterValue(value: string) {
 
-        super.setCvFilterValue(value);
+        this.targetEntityUniqueId.setCvFilterValue(value);
         return this;
     }
 
     getIsExtractCriterion(): boolean {
-        return super.getIsExtractCriterion();
+        return this.targetEntityUniqueId.getIsExtractCriterion();
     }
 
     setIsExtractCriterion(value: boolean): FilterParams {
-        super.setIsExtractCriterion(value);
+        this.targetEntityUniqueId.setIsExtractCriterion(value);
         return this;
+    }
+
+    getTargetEtityUniqueId(): GobiiFileItemCompoundId {
+        return this.targetEntityUniqueId;
+    }
+
+
+    setRelatedEntityUniqueId(value: GobiiFileItemCompoundId): FilterParams {
+        this.relatedEntityUniqueId = value;
+        return this;
+    }
+
+    getRelatedEntityUniqueId(): GobiiFileItemCompoundId {
+        return this.relatedEntityUniqueId;
     }
 
     getFilterType(): FilterType {
@@ -219,12 +241,21 @@ export class FilterParams extends GobiiFileItemCompoundId {
         return this;
     }
 
-    getFkEntityFilterValue(): string {
-        return this._fkEntityFilterValue;
+    getRelatedEntityFilterValue(): string {
+        return this._relatedEntityFilterValue;
     }
 
-    setFkEntityFilterValue(value: string): FilterParams {
-        this._fkEntityFilterValue = value;
+    setRelatedEntityFilterValue(value: string): FilterParams {
+        this._relatedEntityFilterValue = value;
+        return this;
+    }
+
+    getTargetEntityFilterValue(): string {
+        return this._targetEntityFilterValue;
+    }
+
+    setTargetEntityFilterValue(value: string): FilterParams {
+        this._targetEntityFilterValue = value;
         return this;
     }
 

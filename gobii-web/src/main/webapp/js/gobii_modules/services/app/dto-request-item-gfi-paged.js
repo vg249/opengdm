@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-process", "../../model/file-item-params", "../../model/filter-type", "../../model/file-item-param-names", "../../model/payload/paged-item-list", "../../model/payload/pagination"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-process", "../../model/filter-params", "../../model/filter-type", "../../model/file-item-param-names", "../../model/payload/paged-item-list", "../../model/payload/pagination"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-process", "../../model/file-
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_process_1, file_item_params_1, filter_type_1, file_item_param_names_1, paged_item_list_1, pagination_1, DtoRequestItemGfiPaged;
+    var core_1, type_process_1, filter_params_1, filter_type_1, file_item_param_names_1, paged_item_list_1, pagination_1, DtoRequestItemGfiPaged;
     return {
         setters: [
             function (core_1_1) {
@@ -19,8 +19,8 @@ System.register(["@angular/core", "../../model/type-process", "../../model/file-
             function (type_process_1_1) {
                 type_process_1 = type_process_1_1;
             },
-            function (file_item_params_1_1) {
-                file_item_params_1 = file_item_params_1_1;
+            function (filter_params_1_1) {
+                filter_params_1 = filter_params_1_1;
             },
             function (filter_type_1_1) {
                 filter_type_1 = filter_type_1_1;
@@ -85,7 +85,7 @@ System.register(["@angular/core", "../../model/type-process", "../../model/file-
                 };
                 DtoRequestItemGfiPaged = __decorate([
                     core_1.Injectable(),
-                    __metadata("design:paramtypes", [file_item_params_1.FilterParams, String, Object])
+                    __metadata("design:paramtypes", [filter_params_1.FilterParams, String, Object])
                 ], DtoRequestItemGfiPaged);
                 return DtoRequestItemGfiPaged;
             }());

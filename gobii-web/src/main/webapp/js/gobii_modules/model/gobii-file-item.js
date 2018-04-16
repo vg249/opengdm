@@ -223,6 +223,9 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
                     }
                     return returnVal;
                 };
+                GobiiFileItem.prototype.getRelatedEntities = function () {
+                    return this._entityRelations;
+                };
                 GobiiFileItem.prototype.setPageNumber = function (value) {
                     this._pageNumber = value;
                     return this;

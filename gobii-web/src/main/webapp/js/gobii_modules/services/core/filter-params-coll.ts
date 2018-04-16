@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {EntitySubType, EntityType} from "../../model/type-entity";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 import {CvFilters, CvFilterType} from "../../model/cv-filter-type";
-import {FilterParams} from "../../model/file-item-params";
+import {FilterParams} from "../../model/filter-params";
 import * as historyAction from '../../store/actions/history-action';
 import * as fromRoot from '../../store/reducers';
 import {Store} from "@ngrx/store";
@@ -19,6 +19,7 @@ import {PagedFileItemList} from "../../model/payload/paged-item-list";
 import {JsonToGfiDataset} from "../app/jsontogfi/json-to-gfi-dataset";
 import {DtoRequestItemGfi} from "../app/dto-request-item-gfi";
 import {DtoRequestItemGfiPaged} from "../app/dto-request-item-gfi-paged";
+import {PayloadFilter} from "../../store/actions/action-payload-filter";
 
 
 @Injectable()
@@ -55,8 +56,7 @@ export class FilterParamsColl {
 
     constructor(private store: Store<fromRoot.State>,
                 private pagedDatasetRequestService: DtoRequestService<PagedFileItemList>,
-                private fileItemRequestService: DtoRequestService<GobiiFileItem[]>
-    ) {
+                private fileItemRequestService: DtoRequestService<GobiiFileItem[]>) {
 
         // For non-hierarchically filtered request params, we just create them simply
         // as we add them to the flat map
@@ -203,13 +203,13 @@ export class FilterParamsColl {
                             returnVal = new fileAction.LoadFilterAction(
                                 {
                                     filterId: FilterParamNames.CV_JOB_STATUS,
-                                    filter: {
-                                        gobiiExtractFilterType: GobiiExtractFilterType.WHOLE_DATASET,
-                                        gobiiCompoundUniqueId: cvJobStatusCompoundUniqueId,
-                                        filterValue: completedItem.getItemId(),
-                                        entityLasteUpdated: payloadFilter.entityLasteUpdated,
-                                        pagination: payloadFilter.pagination
-                                    }
+                                    filter: new PayloadFilter(GobiiExtractFilterType.WHOLE_DATASET,
+                                        cvJobStatusCompoundUniqueId,
+                                        null,
+                                        completedItem.getItemId(),
+                                        null,
+                                        payloadFilter.entityLasteUpdated,
+                                        payloadFilter.pagination)
                                 }
                             );
 
@@ -235,18 +235,20 @@ export class FilterParamsColl {
 
                 let returnVal: fileAction.LoadFilterAction = null;
 
-                if (!payloadFilter || !payloadFilter.filterValue) {
+                if (!payloadFilter || !payloadFilter.relatedEntityFilterValue) {
 
                     returnVal = new fileAction.LoadFilterAction(
                         {
                             filterId: FilterParamNames.DATASET_LIST_STATUS,
-                            filter: {
-                                gobiiExtractFilterType: GobiiExtractFilterType.WHOLE_DATASET,
-                                gobiiCompoundUniqueId: cvDatasetCompoundUniqueId,
-                                filterValue: "completed",
-                                entityLasteUpdated: payloadFilter.entityLasteUpdated,
-                                pagination: payloadFilter.pagination
-                            }
+                            filter: new PayloadFilter(
+                                GobiiExtractFilterType.WHOLE_DATASET,
+                                cvDatasetCompoundUniqueId,
+                                null,
+                                "completed",
+                                null,
+                                payloadFilter.entityLasteUpdated,
+                                payloadFilter.pagination
+                            )
                         }
                     );
 
@@ -256,7 +258,7 @@ export class FilterParamsColl {
             }));
 
         // add dto request to DATASET_LIST filter
-        this.getFilter(FilterParamNames.DATASET_LIST,GobiiExtractFilterType.WHOLE_DATASET)
+        this.getFilter(FilterParamNames.DATASET_LIST, GobiiExtractFilterType.WHOLE_DATASET)
             .setDtoRequestItem(new DtoRequestItemGfi(
                 this.getFilter(FilterParamNames.DATASET_LIST,
                     GobiiExtractFilterType.WHOLE_DATASET),
@@ -277,18 +279,20 @@ export class FilterParamsColl {
 
                 let returnVal: fileAction.LoadFilterAction = null;
 
-                if (!payloadFilter || !payloadFilter.filterValue ) {
+                if (!payloadFilter || !payloadFilter.relatedEntityFilterValue) {
 
                     returnVal = new fileAction.LoadFilterAction(
                         {
                             filterId: FilterParamNames.DATASET_LIST_STATUS,
-                            filter: {
-                                gobiiExtractFilterType: GobiiExtractFilterType.WHOLE_DATASET,
-                                gobiiCompoundUniqueId: cvDatasetCompoundUniqueId,
-                                filterValue: "completed",
-                                entityLasteUpdated: payloadFilter.entityLasteUpdated,
-                                pagination: payloadFilter.pagination
-                            }
+                            filter: new PayloadFilter(
+                                GobiiExtractFilterType.WHOLE_DATASET,
+                                cvDatasetCompoundUniqueId,
+                                null,
+                                "completed",
+                                null,
+                                payloadFilter.entityLasteUpdated,
+                                payloadFilter.pagination
+                            )
                         }
                     );
 
@@ -299,14 +303,14 @@ export class FilterParamsColl {
             .setIsPaged(true));
 
         // add dto request to DATASET_LIST_PAGED filter
-        this.getFilter(FilterParamNames.DATASET_LIST_PAGED,GobiiExtractFilterType.WHOLE_DATASET)
+        this.getFilter(FilterParamNames.DATASET_LIST_PAGED, GobiiExtractFilterType.WHOLE_DATASET)
             .setDtoRequestItem(new DtoRequestItemGfiPaged(
                 this.getFilter(FilterParamNames.DATASET_LIST_PAGED,
-                GobiiExtractFilterType.WHOLE_DATASET),
-            null,
-            new JsonToGfiDataset(this.getFilter(FilterParamNames.DATASET_LIST_PAGED,
-                GobiiExtractFilterType.WHOLE_DATASET),
-                this)))
+                    GobiiExtractFilterType.WHOLE_DATASET),
+                null,
+                new JsonToGfiDataset(this.getFilter(FilterParamNames.DATASET_LIST_PAGED,
+                    GobiiExtractFilterType.WHOLE_DATASET),
+                    this)))
             .setDtoRequestService(this.pagedDatasetRequestService);
 
 
@@ -342,17 +346,27 @@ export class FilterParamsColl {
                     GobiiExtractFilterType.WHOLE_DATASET,
                     EntityType.PROJECT)
                 .setExtractorItemType(ExtractorItemType.ENTITY)
+                .setRelatedEntityUniqueId(new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
+                    EntityType.CONTACT,
+                    EntitySubType.UNKNOWN,
+                    CvFilterType.UNKNOWN,
+                    null))
                 .setIsDynamicFilterValue(true)
                 .setIsDynamicDataLoad(false)
                 .setNameIdLabelType(NameIdLabelType.ALL)
                 .setIsExtractCriterion(false));
 
-        // relate this filter to PROJECT_FILTER_OPTIONAL as parent
+        // relate this filter to PROJECT_FILTER_OPTIONAL as pa\rent
         this.addFilter(
             FilterParams
                 .build(FilterParamNames.EXPERIMENT_FILTER_OPTIONAL,
                     GobiiExtractFilterType.WHOLE_DATASET,
                     EntityType.EXPERIMENT)
+                .setRelatedEntityUniqueId(new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
+                    EntityType.PROJECT,
+                    EntitySubType.UNKNOWN,
+                    CvFilterType.UNKNOWN,
+                    null))
                 .setIsDynamicFilterValue(true)
                 .setIsDynamicDataLoad(false)
                 .setExtractorItemType(ExtractorItemType.ENTITY)
@@ -365,6 +379,11 @@ export class FilterParamsColl {
                 .build(FilterParamNames.DATASET_FILTER_OPTIONAL,
                     GobiiExtractFilterType.WHOLE_DATASET,
                     EntityType.DATASET)
+                .setRelatedEntityUniqueId(new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
+                    EntityType.EXPERIMENT,
+                    EntitySubType.UNKNOWN,
+                    CvFilterType.UNKNOWN,
+                    null))
                 .setIsDynamicFilterValue(true)
                 .setIsDynamicDataLoad(false)
                 .setExtractorItemType(ExtractorItemType.ENTITY));

@@ -4,7 +4,7 @@ import {EntityType} from "../../../model/type-entity";
 import {ExtractorItemType} from "../../../model/type-extractor-item";
 import {ProcessType} from "../../../model/type-process";
 import {GobiiExtractFilterType} from "../../../model/type-extractor-filter";
-import {FilterParams} from "../../../model/file-item-params";
+import {FilterParams} from "../../../model/filter-params";
 import {FilterParamsColl} from "../../core/filter-params-coll";
 import {Analysis} from "../../../model/analysis";
 

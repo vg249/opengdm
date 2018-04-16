@@ -97,9 +97,9 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             } // LOAD_FILE_ITEM_LIST_WITH_FILTER
             case gobiiFileItemAction.LOAD_FILTER: {
                 var filterId = action.payload.filterId.toString();
-                var filterPayload = action.payload.filter;
+                var filterPayload_1 = action.payload.filter;
                 var newFilterState = Object.assign({}, state.filters);
-                newFilterState[filterId] = filterPayload;
+                newFilterState[filterId] = filterPayload_1;
                 /***
                  * The following lines are intended to solve an oddly thorny problem.
                  On the dataset tab, if you don't set the selected label item here in state,
@@ -127,8 +127,8 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
     
                  */
                 var newFileItemState = state.allFileItems.slice();
-                if (!newFilterState[filterId].gobiiCompoundUniqueId.getIsExtractCriterion()) {
-                    var gobiiFileItemCompoundId_1 = newFilterState[filterId].gobiiCompoundUniqueId;
+                if (!newFilterState[filterId].targetEntityUniqueId.getIsExtractCriterion()) {
+                    var gobiiFileItemCompoundId_1 = newFilterState[filterId].targetEntityUniqueId;
                     var allItemsForFilter = newFileItemState
                         .filter(function (gfi) {
                         return (gfi.getGobiiExtractFilterType() === state.gobiiExtractFilterType
@@ -140,9 +140,17 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                     allItemsForFilter.forEach(function (gfi) {
                         gfi.setSelected(false);
                     });
-                    if (allItemsForFilter[0]) {
-                        if ((!filterPayload.filterValue || +filterPayload.filterValue < 1)) {
-                            allItemsForFilter[0].setSelected(true);
+                    if (filterPayload_1.targetEntityFilterValue && +filterPayload_1.targetEntityFilterValue > 0) {
+                        var selectedItem = allItemsForFilter.find(function (gfi) { return gfi.getItemId() === filterPayload_1.targetEntityFilterValue; });
+                        if (selectedItem) {
+                            selectedItem.setSelected(true);
+                        }
+                    }
+                    else {
+                        if (allItemsForFilter[0]) {
+                            if ((!filterPayload_1.relatedEntityFilterValue || +filterPayload_1.relatedEntityFilterValue < 1)) {
+                                allItemsForFilter[0].setSelected(true);
+                            }
                         }
                     }
                 }
@@ -154,110 +162,118 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 };
                 break;
             } // LOAD_FILTER
-            case gobiiFileItemAction.ADD_TO_EXTRACT: {
-                var gobiiFileItemPayload = action.payload;
-                returnVal = addToExtractItems(state, gobiiFileItemPayload);
-                break;
-            } // ADD_TO_EXTRACT
-            case gobiiFileItemAction.ADD_TO_EXTRACT_BY_ITEM_ID: {
-                var fileItemUniqueIdPayload_1 = action.payload;
-                var gobiiFileItem = state
-                    .allFileItems
-                    .find(function (fi) { return fi.getFileItemUniqueId() === fileItemUniqueIdPayload_1; });
-                returnVal = addToExtractItems(state, gobiiFileItem);
-                break;
-            } //
-            case gobiiFileItemAction.REPLACE_BY_ITEM_ID: {
-                var itemCurrentlyInExtract = state
-                    .allFileItems
-                    .find(function (fi) { return fi.getFileItemUniqueId() === action.payload.itemIdCurrentlyInExtract; });
-                if (itemCurrentlyInExtract.getIsExtractCriterion()) {
-                    var itemToReplaceItWith = state
+            case gobiiFileItemAction.ADD_TO_EXTRACT:
+                {
+                    var gobiiFileItemPayload = action.payload;
+                    returnVal = addToExtractItems(state, gobiiFileItemPayload);
+                    break;
+                } // ADD_TO_EXTRACT
+            case gobiiFileItemAction.ADD_TO_EXTRACT_BY_ITEM_ID:
+                {
+                    var fileItemUniqueIdPayload_1 = action.payload;
+                    var gobiiFileItem = state
                         .allFileItems
-                        .find(function (fi) { return fi.getFileItemUniqueId() === action.payload.itemIdToReplaceItWith; });
-                    var stateAfterRemove = removeFromExtractItems(state, itemCurrentlyInExtract);
-                    returnVal = addToExtractItems(stateAfterRemove, itemToReplaceItWith);
-                }
-                else {
-                    // there is also an effect that does additional things with this action
-                    return state;
-                }
-                break;
-            }
-            case gobiiFileItemAction.REPLACE_ITEM_OF_SAME_COMPOUND_ID: {
-                var newItemToAdd_1 = action.payload.gobiiFileitemToReplaceWith;
-                var fileItemToReplace_1 = state.allFileItems
-                    .find(function (fi) { return fi.getGobiiExtractFilterType() === newItemToAdd_1.getGobiiExtractFilterType()
-                    && fi.compoundIdeEquals(newItemToAdd_1); });
-                var stateWithNewFileItem = {
-                    gobiiExtractFilterType: state.gobiiExtractFilterType,
-                    allFileItems: state.allFileItems,
-                    uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
-                    filters: state.filters
-                };
-                // remove existing item if applicable
-                if (fileItemToReplace_1) {
-                    stateWithNewFileItem.allFileItems =
-                        stateWithNewFileItem.allFileItems.filter(function (fi) {
-                            return fi.getFileItemUniqueId() !== fileItemToReplace_1.getFileItemUniqueId();
-                        });
-                }
-                // add new item
-                stateWithNewFileItem.allFileItems.push(newItemToAdd_1);
-                // now add new item to selection if applicable
-                var stateWithItemSelection = void 0;
-                if (newItemToAdd_1.getIsExtractCriterion()) {
-                    if (fileItemToReplace_1) {
-                        var oldItemUnselectedState = removeFromExtractItems(stateWithNewFileItem, fileItemToReplace_1);
-                        stateWithItemSelection = addToExtractItems(oldItemUnselectedState, newItemToAdd_1);
+                        .find(function (fi) { return fi.getFileItemUniqueId() === fileItemUniqueIdPayload_1; });
+                    returnVal = addToExtractItems(state, gobiiFileItem);
+                    break;
+                } //
+            case gobiiFileItemAction.REPLACE_BY_ITEM_ID:
+                {
+                    var itemCurrentlyInExtract = state
+                        .allFileItems
+                        .find(function (fi) { return fi.getFileItemUniqueId() === action.payload.itemIdCurrentlyInExtract; });
+                    if (itemCurrentlyInExtract.getIsExtractCriterion()) {
+                        var itemToReplaceItWith = state
+                            .allFileItems
+                            .find(function (fi) { return fi.getFileItemUniqueId() === action.payload.itemIdToReplaceItWith; });
+                        var stateAfterRemove = removeFromExtractItems(state, itemCurrentlyInExtract);
+                        returnVal = addToExtractItems(stateAfterRemove, itemToReplaceItWith);
                     }
                     else {
-                        stateWithItemSelection = addToExtractItems(stateWithNewFileItem, newItemToAdd_1);
+                        // there is also an effect that does additional things with this action
+                        return state;
                     }
+                    break;
                 }
-                returnVal = stateWithItemSelection;
-                break;
-            }
-            case gobiiFileItemAction.REMOVE_FROM_EXTRACT: {
-                var gobiiFileItemPayload = action.payload;
-                returnVal = removeFromExtractItems(state, gobiiFileItemPayload);
-                break;
-            }
-            case gobiiFileItemAction.REMOVE_FROM_EXTRACT_BY_ITEM_ID: {
-                var fileItemUniqueIdPayload_2 = action.payload;
-                var gobiiFileItemPayload = state
-                    .allFileItems
-                    .find(function (fi) { return fi.getFileItemUniqueId() === fileItemUniqueIdPayload_2; });
-                returnVal = removeFromExtractItems(state, gobiiFileItemPayload);
-                break;
-            }
-            case gobiiFileItemAction.REMOVE_ALL_FROM_EXTRACT: {
-                // only those not of the same extract filter type should remain selected
-                var newFIleItemState = state.allFileItems.slice();
-                var itemsToDeselect_1 = newFIleItemState
-                    .filter(function (fi) { return fi.getGobiiExtractFilterType() === action.payload; });
-                itemsToDeselect_1.forEach(function (fi) { return fi.setSelected(false); });
-                var newSelectedItems = state.uniqueIdsOfExtractFileItems
-                    .filter(function (id) { return !itemsToDeselect_1
-                    .find(function (fi) { return fi.getFileItemUniqueId() === id; }); });
-                returnVal = {
-                    gobiiExtractFilterType: state.gobiiExtractFilterType,
-                    allFileItems: newFIleItemState,
-                    uniqueIdsOfExtractFileItems: newSelectedItems,
-                    filters: state.filters
-                };
-                break;
-            }
-            case gobiiFileItemAction.SET_EXTRACT_TYPE: {
-                var gobiiExtractFilterType = action.payload.gobiiExtractFilterType;
-                returnVal = {
-                    gobiiExtractFilterType: gobiiExtractFilterType,
-                    allFileItems: state.allFileItems,
-                    uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
-                    filters: state.filters
-                };
-                break;
-            } //
+            case gobiiFileItemAction.REPLACE_ITEM_OF_SAME_COMPOUND_ID:
+                {
+                    var newItemToAdd_1 = action.payload.gobiiFileitemToReplaceWith;
+                    var fileItemToReplace_1 = state.allFileItems
+                        .find(function (fi) { return fi.getGobiiExtractFilterType() === newItemToAdd_1.getGobiiExtractFilterType()
+                        && fi.compoundIdeEquals(newItemToAdd_1); });
+                    var stateWithNewFileItem = {
+                        gobiiExtractFilterType: state.gobiiExtractFilterType,
+                        allFileItems: state.allFileItems,
+                        uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
+                        filters: state.filters
+                    };
+                    // remove existing item if applicable
+                    if (fileItemToReplace_1) {
+                        stateWithNewFileItem.allFileItems =
+                            stateWithNewFileItem.allFileItems.filter(function (fi) {
+                                return fi.getFileItemUniqueId() !== fileItemToReplace_1.getFileItemUniqueId();
+                            });
+                    }
+                    // add new item
+                    stateWithNewFileItem.allFileItems.push(newItemToAdd_1);
+                    // now add new item to selection if applicable
+                    var stateWithItemSelection = void 0;
+                    if (newItemToAdd_1.getIsExtractCriterion()) {
+                        if (fileItemToReplace_1) {
+                            var oldItemUnselectedState = removeFromExtractItems(stateWithNewFileItem, fileItemToReplace_1);
+                            stateWithItemSelection = addToExtractItems(oldItemUnselectedState, newItemToAdd_1);
+                        }
+                        else {
+                            stateWithItemSelection = addToExtractItems(stateWithNewFileItem, newItemToAdd_1);
+                        }
+                    }
+                    returnVal = stateWithItemSelection;
+                    break;
+                }
+            case gobiiFileItemAction.REMOVE_FROM_EXTRACT:
+                {
+                    var gobiiFileItemPayload = action.payload;
+                    returnVal = removeFromExtractItems(state, gobiiFileItemPayload);
+                    break;
+                }
+            case gobiiFileItemAction.REMOVE_FROM_EXTRACT_BY_ITEM_ID:
+                {
+                    var fileItemUniqueIdPayload_2 = action.payload;
+                    var gobiiFileItemPayload = state
+                        .allFileItems
+                        .find(function (fi) { return fi.getFileItemUniqueId() === fileItemUniqueIdPayload_2; });
+                    returnVal = removeFromExtractItems(state, gobiiFileItemPayload);
+                    break;
+                }
+            case gobiiFileItemAction.REMOVE_ALL_FROM_EXTRACT:
+                {
+                    // only those not of the same extract filter type should remain selected
+                    var newFIleItemState = state.allFileItems.slice();
+                    var itemsToDeselect_1 = newFIleItemState
+                        .filter(function (fi) { return fi.getGobiiExtractFilterType() === action.payload; });
+                    itemsToDeselect_1.forEach(function (fi) { return fi.setSelected(false); });
+                    var newSelectedItems = state.uniqueIdsOfExtractFileItems
+                        .filter(function (id) { return !itemsToDeselect_1
+                        .find(function (fi) { return fi.getFileItemUniqueId() === id; }); });
+                    returnVal = {
+                        gobiiExtractFilterType: state.gobiiExtractFilterType,
+                        allFileItems: newFIleItemState,
+                        uniqueIdsOfExtractFileItems: newSelectedItems,
+                        filters: state.filters
+                    };
+                    break;
+                }
+            case gobiiFileItemAction.SET_EXTRACT_TYPE:
+                {
+                    var gobiiExtractFilterType = action.payload.gobiiExtractFilterType;
+                    returnVal = {
+                        gobiiExtractFilterType: gobiiExtractFilterType,
+                        allFileItems: state.allFileItems,
+                        uniqueIdsOfExtractFileItems: state.uniqueIdsOfExtractFileItems,
+                        filters: state.filters
+                    };
+                    break;
+                } //
         }
         return returnVal;
     }
@@ -498,7 +514,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             exports_1("getProjectsForSelectedPi", getProjectsForSelectedPi = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
                 var returnVal = [];
                 if (filters[file_item_param_names_1.FilterParamNames.PROJECTS_BY_CONTACT]) {
-                    var contactId_1 = filters[file_item_param_names_1.FilterParamNames.PROJECTS_BY_CONTACT].filterValue;
+                    var contactId_1 = filters[file_item_param_names_1.FilterParamNames.PROJECTS_BY_CONTACT].relatedEntityFilterValue;
                     returnVal = fileItems.filter(function (e) {
                         return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY)
                             && (e.getEntityType() === type_entity_1.EntityType.PROJECT)
@@ -520,7 +536,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             exports_1("getExperimentsForSelectedProject", getExperimentsForSelectedProject = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
                 var returnVal = [];
                 if (filters[file_item_param_names_1.FilterParamNames.EXPERIMENTS_BY_PROJECT]) {
-                    var projectId_1 = filters[file_item_param_names_1.FilterParamNames.EXPERIMENTS_BY_PROJECT].filterValue;
+                    var projectId_1 = filters[file_item_param_names_1.FilterParamNames.EXPERIMENTS_BY_PROJECT].relatedEntityFilterValue;
                     returnVal = fileItems.filter(function (e) {
                         return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY)
                             && (e.getEntityType() === type_entity_1.EntityType.EXPERIMENT)
@@ -542,7 +558,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             exports_1("getDatasetsForSelectedExperiment", getDatasetsForSelectedExperiment = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
                 var returnVal = [];
                 if (filters[file_item_param_names_1.FilterParamNames.DATASETS_BY_EXPERIMENT]) {
-                    var experimentId_1 = filters[file_item_param_names_1.FilterParamNames.DATASETS_BY_EXPERIMENT].filterValue;
+                    var experimentId_1 = filters[file_item_param_names_1.FilterParamNames.DATASETS_BY_EXPERIMENT].relatedEntityFilterValue;
                     returnVal = fileItems.filter(function (e) {
                         return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
                             && e.getEntityType() === type_entity_1.EntityType.DATASET
@@ -565,15 +581,15 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             exports_1("getDatasetEntities", getDatasetEntities = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
                 var returnVal = [];
                 // the child filter has the parent fk value
-                var contactId = filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL] ?
-                    filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].filterValue : null;
-                var compounUniqueIdForContacts = filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL] ? filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId : null;
-                var projectId = filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL] ?
-                    filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].filterValue : null;
-                var compounUniqueIdForProjectsByContact = filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL] ? filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId : null;
-                var experimentId = filters[file_item_param_names_1.FilterParamNames.DATASET_FILTER_OPTIONAL] ?
-                    filters[file_item_param_names_1.FilterParamNames.DATASET_FILTER_OPTIONAL].filterValue : null;
-                var compounUniqueIdForExperimentsByProject = filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL] ? filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].gobiiCompoundUniqueId : null;
+                var contactId = filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL] ?
+                    filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].targetEntityFilterValue : null;
+                var compounUniqueIdForContacts = filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL] ? filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].targetEntityUniqueId : null;
+                var projectId = filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL] ?
+                    filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].targetEntityFilterValue : null;
+                var compounUniqueIdForProjectsByContact = filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL] ? filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].targetEntityUniqueId : null;
+                var experimentId = filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL] ?
+                    filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].targetEntityFilterValue : null;
+                var compounUniqueIdForExperimentsByProject = filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL] ? filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].targetEntityUniqueId : null;
                 var datasetEntitiesFilteredByExperiment = [];
                 datasetEntitiesFilteredByExperiment = fileItems.filter(function (e) {
                     return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
@@ -587,9 +603,9 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                     .map(function (fi) { return fi; });
                 var jobStatusFilterParams = filters[file_item_param_names_1.FilterParamNames.DATASET_LIST_STATUS];
                 if (jobStatusFilterParams
-                    && jobStatusFilterParams.filterValue != null) {
+                    && jobStatusFilterParams.relatedEntityFilterValue != null) {
                     returnVal = datasetEntitiesFilteredByExperiment
-                        .filter(function (fi) { return fi.getEntity().jobStatusName === jobStatusFilterParams.filterValue; });
+                        .filter(function (fi) { return fi.getEntity().jobStatusName === jobStatusFilterParams.relatedEntityFilterValue; });
                 }
                 else {
                     returnVal = datasetEntitiesFilteredByExperiment;
@@ -618,7 +634,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 // those projects that have an fk reference to the specified contact.
                 var contactId = null;
                 if (filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL]) {
-                    contactId = filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].filterValue;
+                    contactId = filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].relatedEntityFilterValue;
                 }
                 returnVal = fileItems.filter(function (e) {
                     return (e.getGobiiExtractFilterType() === gobiiExtractFilterType
@@ -627,8 +643,9 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                         && e.getProcessType() !== type_process_1.ProcessType.DUMMY
                         && e.getEntityType() === type_entity_1.EntityType.PROJECT
                         && ((!contactId || (+contactId < 0)) // state is not filtered -- we don't care, or . . .
-                            || (e.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId) // the item has an fk value
-                                && e.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].gobiiCompoundUniqueId) === contactId));
+                            || +e.getItemId() === 0 // Inlcude label "All Projects"
+                            || (e.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].targetEntityUniqueId) // the item has an fk value
+                                && e.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].targetEntityUniqueId) === contactId));
                 } // and it matches
                 ).map(function (fi) { return fi; });
                 if (returnVal.length <= 0) {
@@ -642,11 +659,58 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 }
                 return returnVal;
             }));
+            // export const getExperimentsFilterOptional = createSelector(getFileItems, getFilters, getGobiiExtractFilterType, (fileItems, filters, gobiiExtractFilterType) => {
+            //
+            //     let returnVal: GobiiFileItem[] = [];
+            //
+            //     let projectId: string = null;
+            //     if (filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL]) {
+            //         projectId = filters[FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].relatedEntityFilterValue;
+            //     }
+            //
+            //     returnVal = fileItems.filter(
+            //         e =>
+            //             (e.getGobiiExtractFilterType() == gobiiExtractFilterType
+            //                 && e.getExtractorItemType() === ExtractorItemType.ENTITY
+            //                 || e.getExtractorItemType() === ExtractorItemType.LABEL)
+            //             && e.getProcessType() !== ProcessType.DUMMY
+            //             && e.getEntityType() === EntityType.EXPERIMENT
+            //             && ((!projectId || (+projectId < 0)) // state is not filtered -- we don't care, or . . .
+            //             || +e.getItemId() === 0 // Inlcude label "All Projects"
+            //             || (e.getRelatedEntityFilterValue(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) // the item has an fk value
+            //                 && e.getRelatedEntityFilterValue(filters[FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) === projectId)) // and it matches
+            //     ).map(fi => fi);
+            //
+            //
+            //     if (returnVal.length <= 0) {
+            //         returnVal = fileItems.filter(e =>
+            //             (e.getExtractorItemType() === ExtractorItemType.ENTITY
+            //                 && e.getEntityType() === EntityType.EXPERIMENT
+            //                 && e.getProcessType() === ProcessType.DUMMY))
+            //             .map(fi => fi);
+            //     }
+            //
+            //     return returnVal;
+            // });
             exports_1("getExperimentsFilterOptional", getExperimentsFilterOptional = reselect_1.createSelector(getFileItems, getFilters, getGobiiExtractFilterType, function (fileItems, filters, gobiiExtractFilterType) {
                 var returnVal = [];
                 var projectId = null;
-                if (filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL]) {
-                    projectId = filters[file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL].filterValue;
+                if (filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL]) {
+                    projectId = filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].targetEntityFilterValue;
+                }
+                var contactId = null;
+                if (filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL]) {
+                    contactId = filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].targetEntityFilterValue;
+                }
+                var projectIds = [];
+                if ((projectId && +projectId > 0)) {
+                    projectIds.push(projectId);
+                }
+                else if (contactId && +contactId) {
+                    projectIds = fileItems
+                        .filter(function (fi) { return fi.compoundIdeEquals(filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].targetEntityUniqueId)
+                        && fi.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL].targetEntityUniqueId) === contactId; })
+                        .map(function (fi) { return fi.getItemId(); });
                 }
                 returnVal = fileItems.filter(function (e) {
                     return (e.getGobiiExtractFilterType() == gobiiExtractFilterType
@@ -654,9 +718,10 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                         || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
                         && e.getProcessType() !== type_process_1.ProcessType.DUMMY
                         && e.getEntityType() === type_entity_1.EntityType.EXPERIMENT
-                        && ((!projectId || (+projectId < 0)) // state is not filtered -- we don't care, or . . .
-                            || (e.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) // the item has an fk value
-                                && e.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].gobiiCompoundUniqueId) === projectId));
+                        && ((!projectId && !contactId) // state is not filtered -- we don't care, or . . .
+                            || +e.getItemId() === 0 // Inlcude label "All Projects"
+                            || (e.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].targetEntityUniqueId) // the item has an fk value
+                                && projectIds.find(function (pid) { return e.getRelatedEntityFilterValue(filters[file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL].targetEntityUniqueId) === pid; })));
                 } // and it matches
                 ).map(function (fi) { return fi; });
                 if (returnVal.length <= 0) {

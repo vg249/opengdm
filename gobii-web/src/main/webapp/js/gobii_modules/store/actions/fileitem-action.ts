@@ -1,6 +1,6 @@
 import {Action} from '@ngrx/store';
 import {GobiiFileItem} from "../../model/gobii-file-item";
-import {FilterParams} from "../../model/file-item-params";
+import {FilterParams} from "../../model/filter-params";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 import {FilterParamNames} from "../../model/file-item-param-names";
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";

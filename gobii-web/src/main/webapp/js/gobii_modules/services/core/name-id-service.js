@@ -60,7 +60,7 @@ System.register(["@angular/core", "./dto-request.service", "../../model/filter-t
                         var filterType = filterParams.getFilterType() === filter_type_1.FilterType.NONE ? null : filterParams.getFilterType();
                         var cvFilterValue = null;
                         if (filterType === filter_type_1.FilterType.NAMES_BY_TYPEID) {
-                            cvFilterValue = filterParams.getFkEntityFilterValue();
+                            cvFilterValue = filterParams.getRelatedEntityFilterValue();
                         }
                         else if (filterType === filter_type_1.FilterType.NAMES_BY_TYPE_NAME) {
                             cvFilterValue = filterParams.getCvFilterValue();

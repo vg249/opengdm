@@ -4,7 +4,7 @@ import {DtoRequestService} from "./dto-request.service";
 import {FilterType} from "../../model/filter-type";
 import {CvFilterType, CvFilters} from "../../model/cv-filter-type";
 import {EntityType, EntitySubType} from "../../model/type-entity";
-import {FilterParams} from "../../model/file-item-params";
+import {FilterParams} from "../../model/filter-params";
 import {Observable} from 'rxjs/Observable';
 import {DtoRequestItemNameIds} from "../app/dto-request-item-nameids";
 
@@ -45,7 +45,7 @@ export class NameIdService {
                 let filterType: FilterType = filterParams.getFilterType() === FilterType.NONE ? null : filterParams.getFilterType();
                 let cvFilterValue: string = null;
                 if (filterType === FilterType.NAMES_BY_TYPEID) {
-                    cvFilterValue = filterParams.getFkEntityFilterValue();
+                    cvFilterValue = filterParams.getRelatedEntityFilterValue();
                 } else if (filterType === FilterType.NAMES_BY_TYPE_NAME) {
                     cvFilterValue = filterParams.getCvFilterValue();
                 }
