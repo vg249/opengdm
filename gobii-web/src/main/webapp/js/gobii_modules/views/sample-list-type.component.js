@@ -53,10 +53,10 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../model/ty
                 SampleListTypeComponent.prototype.handleSampleTypeSelected = function (radioValue) {
                     var gobiiSampleListType = type_extractor_sample_list_1.GobiiSampleListType[radioValue];
                     this.fileItemService
-                        .loadFileItem(gobii_file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                        .replaceFileItemByCompoundId(gobii_file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_TYPE)
                         .setItemName(type_extractor_sample_list_1.GobiiSampleListType[gobiiSampleListType])
-                        .setItemId(type_extractor_sample_list_1.GobiiSampleListType[gobiiSampleListType]), true);
+                        .setItemId(type_extractor_sample_list_1.GobiiSampleListType[gobiiSampleListType]));
                 };
                 SampleListTypeComponent.prototype.ngOnInit = function () {
                 };

@@ -54,11 +54,10 @@ export class SampleListTypeComponent implements OnInit, OnChanges {
         let gobiiSampleListType: GobiiSampleListType = GobiiSampleListType[radioValue];
 
         this.fileItemService
-            .loadFileItem(GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
+            .replaceFileItemByCompoundId(GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
                     .setExtractorItemType(ExtractorItemType.SAMPLE_LIST_TYPE)
                     .setItemName(GobiiSampleListType[gobiiSampleListType])
-                    .setItemId(GobiiSampleListType[gobiiSampleListType]),
-                true);
+                    .setItemId(GobiiSampleListType[gobiiSampleListType]));
 
     }
 

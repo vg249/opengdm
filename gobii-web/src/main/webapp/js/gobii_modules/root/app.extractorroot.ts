@@ -606,11 +606,10 @@ export class ExtractorRoot implements OnInit {
 
 
         this.fileItemService
-            .loadFileItem(GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
+            .replaceFileItemByCompoundId(GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
                     .setExtractorItemType(ExtractorItemType.SAMPLE_LIST_TYPE)
                     .setItemName(GobiiSampleListType[GobiiSampleListType.GERMPLASM_NAME])
-                    .setItemId(GobiiSampleListType[GobiiSampleListType.GERMPLASM_NAME]),
-                true);
+                    .setItemId(GobiiSampleListType[GobiiSampleListType.GERMPLASM_NAME]));
 
 
     }
