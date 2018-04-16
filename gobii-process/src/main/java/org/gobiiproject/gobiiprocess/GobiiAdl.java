@@ -59,7 +59,7 @@ import java.util.*;
 /**
  * Created by VCalaminos on 2/21/2017.
  */
-public class GobiiTestData {
+public class GobiiAdl {
 
     private static ServerConfig serverConfig;
 
@@ -1372,7 +1372,7 @@ public class GobiiTestData {
             String instructionFilePath = (String) xPathExpressionFiles.evaluate(document, XPathConstants.STRING);
             Object obj;
             if (!new File(instructionFilePath).exists()) {
-                ClassLoader classLoader = GobiiTestData.class.getClassLoader();
+                ClassLoader classLoader = GobiiAdl.class.getClassLoader();
                 if (classLoader.getResourceAsStream(instructionFilePath) == null) {
                     throw new Exception(" Instruction file template " + instructionFilePath + " not found.");
                 }
