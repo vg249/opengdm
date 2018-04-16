@@ -25,5 +25,13 @@ public enum JobPayloadType {
         return this.cvName;
     }
 
+    public static JobPayloadType byValue(String val) {
+        for (JobPayloadType en : values()) {
+            if (en.getCvName().equals(val)) {
+                return en;
+            }
+        }
+        return null;
+    }
 
 }

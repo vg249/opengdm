@@ -38,6 +38,7 @@ public class GobiiDataSetExtract {
     private GobiiSampleListType gobiiSampleListType;
     private List<PropNameId> markerGroups = new ArrayList<>();
     private List<File> extractedFiles = new ArrayList<>();
+    private String logMessage;
 
     public GobiiExtractFilterType getGobiiExtractFilterType() {
         return gobiiExtractFilterType;
@@ -167,4 +168,9 @@ public class GobiiDataSetExtract {
     public void setExtractedFiles(List<File> extractedFiles) {
         this.extractedFiles = extractedFiles;
     }
+
+    public String getLogMessage() { return logMessage; }
+
+    public void setLogMessage(String logMessage) { this.logMessage = logMessage; }
+
 }
