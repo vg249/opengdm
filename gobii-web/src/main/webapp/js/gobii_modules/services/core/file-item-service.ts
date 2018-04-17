@@ -520,18 +520,18 @@ export class FileItemService {
 
                                                         if (filterParamsToLoad.getParentFileItemParams()) {
                                                             gobiiFileItemCompoundUniqueId = filterParamsToLoad.getParentFileItemParams().getTargetEtityUniqueId();
-                                                        } else {
+                                                            entityRelation = GobiiFileItemEntityRelation
+                                                                .fromGobiiFileItemCompoundId(gobiiFileItemCompoundUniqueId)
+                                                                .setRelatedEntityId(nameIdItem.fkId);
+                                                        } /* else {
                                                             gobiiFileItemCompoundUniqueId = new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
                                                                 nameIdItem.fkEntityType,
                                                                 EntitySubType.UNKNOWN,
                                                                 CvFilterType.UNKNOWN,
                                                                 null);
-                                                        }
+                                                        }*/
 
 
-                                                        entityRelation = GobiiFileItemEntityRelation
-                                                            .fromGobiiFileItemCompoundId(gobiiFileItemCompoundUniqueId)
-                                                            .setRelatedEntityId(nameIdItem.fkId);
                                                     }
 
                                                     let currentFileItem: GobiiFileItem =

@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-entity", "../../views/entity-labels", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/gobii-file-item", "../../model/dto-header-status-message", "../../model/type-process", "./name-id-service", "../../store/actions/history-action", "../../store/actions/fileitem-action", "../../store/reducers", "@ngrx/store", "../../model/name-id-label-type", "../../model/filter-type", "../../model/file-item-param-names", "rxjs/Observable", "rxjs/add/operator/expand", "rxjs/add/operator/concat", "./dto-request.service", "../app/dto-request-item-entity-stats", "./filter-params-coll", "../../model/gobii-file-item-entity-relation", "../../model/gobii-file-item-compound-id", "../../model/type-status-level", "../../store/actions/action-payload-filter"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-entity", "../../views/entity-labels", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/gobii-file-item", "../../model/dto-header-status-message", "../../model/type-process", "./name-id-service", "../../store/actions/history-action", "../../store/actions/fileitem-action", "../../store/reducers", "@ngrx/store", "../../model/name-id-label-type", "../../model/filter-type", "../../model/file-item-param-names", "rxjs/Observable", "rxjs/add/operator/expand", "rxjs/add/operator/concat", "./dto-request.service", "../app/dto-request-item-entity-stats", "./filter-params-coll", "../../model/gobii-file-item-entity-relation", "../../model/type-status-level", "../../store/actions/action-payload-filter"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_entity_1, entity_labels_1, type_extractor_item_1, type_extractor_filter_1, cv_filter_type_1, gobii_file_item_1, dto_header_status_message_1, type_process_1, name_id_service_1, historyAction, fileItemActions, fromRoot, store_1, name_id_label_type_1, filter_type_1, file_item_param_names_1, Observable_1, dto_request_service_1, dto_request_item_entity_stats_1, filter_params_coll_1, gobii_file_item_entity_relation_1, gobii_file_item_compound_id_1, type_status_level_1, action_payload_filter_1, FileItemService;
+    var core_1, type_entity_1, entity_labels_1, type_extractor_item_1, type_extractor_filter_1, cv_filter_type_1, gobii_file_item_1, dto_header_status_message_1, type_process_1, name_id_service_1, historyAction, fileItemActions, fromRoot, store_1, name_id_label_type_1, filter_type_1, file_item_param_names_1, Observable_1, dto_request_service_1, dto_request_item_entity_stats_1, filter_params_coll_1, gobii_file_item_entity_relation_1, type_status_level_1, action_payload_filter_1, FileItemService;
     return {
         setters: [
             function (core_1_1) {
@@ -82,9 +82,6 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
             },
             function (gobii_file_item_entity_relation_1_1) {
                 gobii_file_item_entity_relation_1 = gobii_file_item_entity_relation_1_1;
-            },
-            function (gobii_file_item_compound_id_1_1) {
-                gobii_file_item_compound_id_1 = gobii_file_item_compound_id_1_1;
             },
             function (type_status_level_1_1) {
                 type_status_level_1 = type_status_level_1_1;
@@ -431,13 +428,16 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                                                     var gobiiFileItemCompoundUniqueId = null;
                                                     if (filterParamsToLoad.getParentFileItemParams()) {
                                                         gobiiFileItemCompoundUniqueId = filterParamsToLoad.getParentFileItemParams().getTargetEtityUniqueId();
-                                                    }
-                                                    else {
-                                                        gobiiFileItemCompoundUniqueId = new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, nameIdItem.fkEntityType, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null);
-                                                    }
-                                                    entityRelation = gobii_file_item_entity_relation_1.GobiiFileItemEntityRelation
-                                                        .fromGobiiFileItemCompoundId(gobiiFileItemCompoundUniqueId)
-                                                        .setRelatedEntityId(nameIdItem.fkId);
+                                                        entityRelation = gobii_file_item_entity_relation_1.GobiiFileItemEntityRelation
+                                                            .fromGobiiFileItemCompoundId(gobiiFileItemCompoundUniqueId)
+                                                            .setRelatedEntityId(nameIdItem.fkId);
+                                                    } /* else {
+                                                        gobiiFileItemCompoundUniqueId = new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
+                                                            nameIdItem.fkEntityType,
+                                                            EntitySubType.UNKNOWN,
+                                                            CvFilterType.UNKNOWN,
+                                                            null);
+                                                    }*/
                                                 }
                                                 var currentFileItem = gobii_file_item_1.GobiiFileItem.build(gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
                                                     .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)

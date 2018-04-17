@@ -150,7 +150,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                                                 <label class="the-label">Projects:</label><BR>
                                                                 <name-id-list-box
                                                                         [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                                                        [filterParamName]="nameIdFilterParamTypes.PROJECTS">
+                                                                        [filterParamName]="nameIdFilterParamTypes.PROJECTS_BY_CONTACT">
                                                                 </name-id-list-box>
 
 
@@ -543,9 +543,9 @@ export class ExtractorRoot implements OnInit {
 
             this.fileItemService.loadFilter(this.gobiiExtractFilterType, FilterParamNames.DATASET_FILTER_OPTIONAL, null);
 
-            this.fileItemService.setItemLabelType(this.gobiiExtractFilterType,
-                FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,
-                NameIdLabelType.UNKNOWN);
+            // this.fileItemService.setItemLabelType(this.gobiiExtractFilterType,
+            //     FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,
+            //     NameIdLabelType.UNKNOWN);
 
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
 
@@ -553,23 +553,18 @@ export class ExtractorRoot implements OnInit {
                 FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,
                 null);
 
+            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                FilterParamNames.PROJECTS_BY_CONTACT,
+                null);
 
             this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                 FilterParamNames.CV_DATATYPE,
                 null);
 
             this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                FilterParamNames.PROJECTS,
-                null);
-
-            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                 FilterParamNames.PLATFORMS,
                 null);
 
-
-            this.fileItemService.setItemLabelType(this.gobiiExtractFilterType,
-                FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,
-                NameIdLabelType.ALL);
 
 
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {

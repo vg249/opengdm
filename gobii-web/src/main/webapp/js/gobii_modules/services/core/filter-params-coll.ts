@@ -58,8 +58,18 @@ export class FilterParamsColl {
                 private pagedDatasetRequestService: DtoRequestService<PagedFileItemList>,
                 private fileItemRequestService: DtoRequestService<GobiiFileItem[]>) {
 
-        // For non-hierarchically filtered request params, we just create them simply
-        // as we add them to the flat map
+        // ************************************************************************
+        // **************************** GENERAL  *********************************
+        let cvJobStatusCompoundUniqueId: GobiiFileItemCompoundId =
+            new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
+                EntityType.CV,
+                EntitySubType.UNKNOWN,
+                CvFilterType.JOB_STATUS,
+                CvFilters.get(CvFilterType.JOB_STATUS));
+
+
+        // ************************************************************************
+        // **************************** BY SAMPLE *********************************
         this.addFilter(
             FilterParams
                 .build(FilterParamNames.CV_DATATYPE,
@@ -72,39 +82,10 @@ export class FilterParamsColl {
                 .setNameIdLabelType(NameIdLabelType.SELECT_A)
         );
 
-
-        this.addFilter(
-            FilterParams
-                .build(FilterParamNames.CV_DATATYPE,
-                    GobiiExtractFilterType.BY_MARKER,
-                    EntityType.CV)
-                .setIsDynamicFilterValue(false)
-                .setCvFilterType(CvFilterType.DATASET_TYPE)
-                .setCvFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE))
-                .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
-                .setNameIdLabelType(NameIdLabelType.SELECT_A)
-        );
-
-        this.addFilter(
-            FilterParams
-                .build(FilterParamNames.MAPSETS,
-                    GobiiExtractFilterType.WHOLE_DATASET,
-                    EntityType.MAPSET)
-                .setIsDynamicFilterValue(false)
-                .setNameIdLabelType(NameIdLabelType.NO));
-
         this.addFilter(
             FilterParams
                 .build(FilterParamNames.MAPSETS,
                     GobiiExtractFilterType.BY_SAMPLE,
-                    EntityType.MAPSET)
-                .setIsDynamicFilterValue(false)
-                .setNameIdLabelType(NameIdLabelType.NO));
-
-        this.addFilter(
-            FilterParams
-                .build(FilterParamNames.MAPSETS,
-                    GobiiExtractFilterType.BY_MARKER,
                     EntityType.MAPSET)
                 .setIsDynamicFilterValue(false)
                 .setNameIdLabelType(NameIdLabelType.NO));
@@ -116,6 +97,76 @@ export class FilterParamsColl {
                     EntityType.PLATFORM)
                 .setIsDynamicFilterValue(false)
         );
+
+
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,
+                    GobiiExtractFilterType.BY_SAMPLE,
+                    EntityType.CONTACT)
+                .setExtractorItemType(ExtractorItemType.ENTITY)
+                .setCvFilterType(CvFilterType.UNKNOWN)
+                .setIsDynamicFilterValue(true)
+                .setIsDynamicDataLoad(false)
+                .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
+                .setNameIdLabelType(NameIdLabelType.ALL)
+                .setIsExtractCriterion(true));
+
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.PROJECTS_BY_CONTACT,
+                    GobiiExtractFilterType.BY_SAMPLE,
+                    EntityType.PROJECT)
+                .setExtractorItemType(ExtractorItemType.ENTITY)
+                .setRelatedEntityUniqueId(new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
+                    EntityType.CONTACT,
+                    EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR,
+                    CvFilterType.UNKNOWN,
+                    null).setIsExtractCriterion(true))
+                .setIsDynamicFilterValue(true)
+                .setIsDynamicDataLoad(false)
+                .setNameIdLabelType(NameIdLabelType.ALL)
+                .setIsExtractCriterion(true));
+
+
+        this.getFilter(FilterParamNames.CONTACT_PI_HIERARCHY_ROOT, GobiiExtractFilterType.BY_SAMPLE)
+            .setChildNameIdRequestParams(
+                [this.getFilter(FilterParamNames.PROJECTS_BY_CONTACT, GobiiExtractFilterType.BY_SAMPLE)]
+            );
+
+        this.getFilter(FilterParamNames.PROJECTS_BY_CONTACT, GobiiExtractFilterType.BY_SAMPLE)
+            .setParentFileItemParams(this.getFilter(FilterParamNames.CONTACT_PI_HIERARCHY_ROOT, GobiiExtractFilterType.BY_SAMPLE))
+
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.PROJECTS,
+                    GobiiExtractFilterType.BY_SAMPLE,
+                    EntityType.PROJECT)
+                .setIsDynamicFilterValue(false)
+                .setNameIdLabelType(NameIdLabelType.ALL));
+
+
+        // ************************************************************************
+        // **************************** BY MARKER  *********************************
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.CV_DATATYPE,
+                    GobiiExtractFilterType.BY_MARKER,
+                    EntityType.CV)
+                .setIsDynamicFilterValue(false)
+                .setCvFilterType(CvFilterType.DATASET_TYPE)
+                .setCvFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE))
+                .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
+                .setNameIdLabelType(NameIdLabelType.SELECT_A)
+        );
+
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.MAPSETS,
+                    GobiiExtractFilterType.BY_MARKER,
+                    EntityType.MAPSET)
+                .setIsDynamicFilterValue(false)
+                .setNameIdLabelType(NameIdLabelType.NO));
 
         this.addFilter(
             FilterParams
@@ -133,29 +184,16 @@ export class FilterParamsColl {
                 .setIsDynamicFilterValue(false)
         );
 
+
+        // ************************************************************************
+        // **************************** BY DATASET *********************************
         this.addFilter(
             FilterParams
-                .build(FilterParamNames.PROJECTS,
-                    GobiiExtractFilterType.BY_SAMPLE,
-                    EntityType.PROJECT)
+                .build(FilterParamNames.MAPSETS,
+                    GobiiExtractFilterType.WHOLE_DATASET,
+                    EntityType.MAPSET)
                 .setIsDynamicFilterValue(false)
-                .setNameIdLabelType(NameIdLabelType.ALL));
-
-        this.addFilter(
-            FilterParams
-                .build(FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,
-                    GobiiExtractFilterType.BY_SAMPLE,
-                    EntityType.CONTACT)
-                .setIsDynamicFilterValue(false)
-                .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR));
-
-
-        let cvJobStatusCompoundUniqueId: GobiiFileItemCompoundId =
-            new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
-                EntityType.CV,
-                EntitySubType.UNKNOWN,
-                CvFilterType.JOB_STATUS,
-                CvFilters.get(CvFilterType.JOB_STATUS));
+                .setNameIdLabelType(NameIdLabelType.NO));
 
         this.addFilter(
             FilterParams
@@ -419,13 +457,6 @@ export class FilterParamsColl {
             .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR);
 
 
-        let nameIdRequestParamsProjectByPiContact: FilterParams = FilterParams
-            .build(FilterParamNames.PROJECTS_BY_CONTACT,
-                GobiiExtractFilterType.WHOLE_DATASET,
-                EntityType.PROJECT)
-            .setIsDynamicFilterValue(true)
-            .setFilterType(FilterType.NAMES_BY_TYPEID);
-
         let nameIdRequestParamsExperiments: FilterParams = FilterParams
             .build(FilterParamNames.EXPERIMENTS_BY_PROJECT,
                 GobiiExtractFilterType.WHOLE_DATASET,
@@ -441,23 +472,24 @@ export class FilterParamsColl {
             .setFilterType(FilterType.NAMES_BY_TYPEID);
 
         //add the individual requests to the map
-        this.addFilter(nameIdRequestParamsContactsPi);
-        this.addFilter(nameIdRequestParamsProjectByPiContact);
-        this.addFilter(nameIdRequestParamsExperiments);
-        this.addFilter(nameIdRequestParamsDatasets);
+        // this.addFilter(nameIdRequestParamsContactsPi);
+        // this.addFilter(nameIdRequestParamsProjectByPiContact);
+        // this.addFilter(nameIdRequestParamsExperiments);
+        // this.addFilter(nameIdRequestParamsDatasets);
 
         //build the parent-child request params graph
-        nameIdRequestParamsContactsPi
-            .setChildNameIdRequestParams(
-                [nameIdRequestParamsProjectByPiContact
-                    .setParentFileItemParams(nameIdRequestParamsContactsPi)
-                    .setChildNameIdRequestParams([nameIdRequestParamsExperiments
-                        .setParentFileItemParams(nameIdRequestParamsProjectByPiContact)
-                        .setChildNameIdRequestParams([nameIdRequestParamsDatasets
-                            .setParentFileItemParams(nameIdRequestParamsExperiments)
-                        ])
-                    ])
-                ]);
+        // nameIdRequestParamsContactsPi
+        //     .setChildNameIdRequestParams(
+        //         [nameIdRequestParamsProjectByPiContact
+        //             .setParentFileItemParams(nameIdRequestParamsContactsPi)
+        //             .setChildNameIdRequestParams([nameIdRequestParamsExperiments
+        //                 .setParentFileItemParams(nameIdRequestParamsProjectByPiContact)
+        //                 .setChildNameIdRequestParams([nameIdRequestParamsDatasets
+        //                     .setParentFileItemParams(nameIdRequestParamsExperiments)
+        //                 ])
+        //             ])
+        //         ]);
+
 
     } // constructor
 }
