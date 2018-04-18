@@ -247,7 +247,9 @@ export class FileItemEffects {
                                         filterValue).subscribe(loadFileItemListAction => {
 
                                             if( loadFileItemListAction ) {
-                                                observer.next(loadFileItemListAction);
+                                                if (loadFileItemListAction) {
+                                                    observer.next(loadFileItemListAction);
+                                                }
                                             }
                                         },
                                         error => {

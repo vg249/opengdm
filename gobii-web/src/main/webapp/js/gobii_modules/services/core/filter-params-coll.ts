@@ -123,7 +123,7 @@ export class FilterParamsColl {
                     EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR,
                     CvFilterType.UNKNOWN,
                     null).setIsExtractCriterion(true))
-                .setIsDynamicFilterValue(true)
+                .setIsDynamicFilterValue(false)
                 .setIsDynamicDataLoad(false)
                 .setNameIdLabelType(NameIdLabelType.ALL)
                 .setIsExtractCriterion(true));

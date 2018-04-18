@@ -324,19 +324,28 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                 };
                 FileItemService.prototype.makeChildActions = function (gobiiExtractFilterType, filterParamName, parentFilterValue) {
                     var returnVal;
-                    var filterParams = this.filterParamsColl.getFilter(filterParamName, gobiiExtractFilterType);
-                    if (filterParams) {
+                    var parentFilterParams = this.filterParamsColl.getFilter(filterParamName, gobiiExtractFilterType);
+                    if (parentFilterParams) {
                         // Now we process child filters
-                        var filterParamsToProcess = filterParams;
-                        if (filterParams.getChildFileItemParams()
-                            && filterParams.getChildFileItemParams().length === 1) {
-                            filterParamsToProcess = filterParams.getChildFileItemParams()[0];
-                        }
-                        if (filterParamsToProcess.getIsDynamicDataLoad()) {
-                            returnVal = this.makeFileItemActionsFromNameIds(gobiiExtractFilterType, filterParamsToProcess, parentFilterValue, true);
+                        var filterParamsToProcess = null;
+                        if (parentFilterParams.getIsDynamicFilterValue() || parentFilterParams.getIsDynamicFilterValue()) {
+                            if (parentFilterParams.getChildFileItemParams() && parentFilterParams.getChildFileItemParams().length === 1) {
+                                filterParamsToProcess = parentFilterParams.getChildFileItemParams()[0];
+                                if (filterParamsToProcess.getIsDynamicDataLoad()) {
+                                    returnVal = this.makeFileItemActionsFromNameIds(gobiiExtractFilterType, filterParamsToProcess, parentFilterValue, true);
+                                }
+                                else {
+                                    returnVal = this.recurseFilters(gobiiExtractFilterType, filterParamsToProcess, parentFilterValue, filterParamsToProcess.getIsDynamicFilterValue());
+                                }
+                            }
+                            else {
+                                this.store.dispatch(new historyAction.AddStatusMessageAction("The dynamic filter does not have children: "
+                                    + filterParamName.toString()
+                                    + " for extract type " + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]));
+                            }
                         }
                         else {
-                            returnVal = this.recurseFilters(gobiiExtractFilterType, filterParamsToProcess, parentFilterValue, filterParamsToProcess.getIsDynamicFilterValue());
+                            return Observable_1.Observable.of(null);
                         }
                     }
                     else {

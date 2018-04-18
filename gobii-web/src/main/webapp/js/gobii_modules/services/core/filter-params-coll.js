@@ -109,7 +109,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .build(file_item_param_names_1.FilterParamNames.PROJECTS_BY_CONTACT, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.PROJECT)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
                         .setRelatedEntityUniqueId(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.CONTACT, type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR, cv_filter_type_1.CvFilterType.UNKNOWN, null).setIsExtractCriterion(true))
-                        .setIsDynamicFilterValue(true)
+                        .setIsDynamicFilterValue(false)
                         .setIsDynamicDataLoad(false)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL)
                         .setIsExtractCriterion(true));

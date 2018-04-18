@@ -518,6 +518,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 if (filters[file_item_param_names_1.FilterParamNames.PROJECTS_BY_CONTACT]) {
                     contactId = filters[file_item_param_names_1.FilterParamNames.PROJECTS_BY_CONTACT].relatedEntityFilterValue;
                 }
+                var projectId;
                 returnVal = fileItems.filter(function (e) {
                     return (e.getGobiiExtractFilterType() === gobiiExtractFilterType
                         && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY

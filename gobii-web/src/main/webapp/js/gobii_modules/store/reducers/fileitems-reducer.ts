@@ -685,6 +685,8 @@ export const getProjectsForSelectedPi = createSelector(getFileItems, getFilters,
         contactId = filters[FilterParamNames.PROJECTS_BY_CONTACT].relatedEntityFilterValue;
     }
 
+    let projectId
+
     returnVal = fileItems.filter(
         e =>
             (e.getGobiiExtractFilterType() === gobiiExtractFilterType
