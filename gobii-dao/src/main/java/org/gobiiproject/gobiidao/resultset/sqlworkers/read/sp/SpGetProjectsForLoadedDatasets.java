@@ -37,7 +37,7 @@ public class SpGetProjectsForLoadedDatasets implements Work {
                 "and e.experiment_id = d.experiment_id\n" +
                 "and (\n" +
                 "(j.type_id::text = (select cvid::text from getcvid('load', 'job_type', 1)) and j.status::text = (select cvid::text from getcvid('completed', 'job_status', 1)))\n" +
-                "or (j.type_id::text = (select cvid::text from getcvid('extract', 'job_type', 1)))\n" +
+                "or (j.type_id::text = (select cvid::text from getcvid('extract', 'job_type', 1)) and j.status::text <> (select cvid::text from getcvid('failed', 'job_status', 1)))\n" +
                 ")";
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);

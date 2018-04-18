@@ -46,7 +46,7 @@ public class SpGetExperimentsForLoadedDatasets implements Work {
                 "j.job_id = d.job_id\n" +
                 "where ( \n" +
                 "(j.type_id::text = (select cvid::text from getcvid('load', 'job_type', 1)) and j.status::text = (select cvid::text from getcvid('completed', 'job_status', 1)))\n" +
-                "or (j.type_id::text = (select cvid::text from getcvid('extract', 'job_type', 1)))\n" +
+                "or (j.type_id::text = (select cvid::text from getcvid('extract', 'job_type', 1)) and j.status::text <> (select cvid::text from getcvid('failed', 'job_status', 1)))\n" +
                 ")\n" +
                 "order by e.experiment_id, e.project_id";
 
