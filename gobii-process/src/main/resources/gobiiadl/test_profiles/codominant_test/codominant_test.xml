@@ -191,9 +191,10 @@
 		<Scenario>
 			<Name>codominant_dataset</Name>
 			<Files>
-				<Instruction>D:\GOBII\test profiles from yaw\instructions\test_codominant_dataset.json</Instruction>
-				<Data>D:\GOBII\test profiles from yaw\files\files\test_codominant_dataset\codominant_allele_data.txt</Data>
+				<Instruction>test_profiles\codominant_test\instruction_templates\test_codominant_dataset.json</Instruction>
+				<Data>test_profiles\codominant_test\data_files\test_codominant_dataset\codominant_allele_data.txt</Data>
 			</Files>
+			<PayloadType>matrix</PayloadType>
 
 			<DbFkey entity="Contact">
 				<DbPKeySurrogate>dummy@email.address</DbPKeySurrogate>
@@ -230,9 +231,10 @@
 		<Scenario>
 			<Name>codominant_marker</Name>
 			<Files>
-				<Instruction>D:\GOBII\test profiles from yaw\instructions\test_codominant_marker.json</Instruction>
-				<Data>D:\GOBII\test profiles from yaw\files\files\test_codominant_marker\codominant_markermap.txt</Data>
+				<Instruction>test_profiles\codominant_test\instruction_templates\test_codominant_marker.json</Instruction>
+				<Data>test_profiles\codominant_test\data_files\test_codominant_marker\codominant_markermap.txt</Data>
 			</Files>
+			<PayloadType>markers</PayloadType>
 
 			<DbFkey entity="Contact">
 				<DbPKeySurrogate>dummy@email.address</DbPKeySurrogate>
@@ -269,9 +271,10 @@
 		<Scenario>
 			<Name>codominant_sample</Name>
 			<Files>
-				<Instruction>D:\GOBII\test profiles from yaw\instructions\test_codominant_sample.json</Instruction>
-				<Data>D:\GOBII\test profiles from yaw\files\files\test_codominant_sample\codominant_samples_csv.csv</Data>
+				<Instruction>test_profiles\codominant_test\instruction_templates\test_codominant_sample.json</Instruction>
+				<Data>test_profiles\codominant_test\data_files\test_codominant_sample\codominant_samples_csv.csv</Data>
 			</Files>
+			<PayloadTypes>samples</PayloadTypes>
 
 			<DbFkey entity="Contact">
 				<DbPKeySurrogate>dummy@email.address</DbPKeySurrogate>
