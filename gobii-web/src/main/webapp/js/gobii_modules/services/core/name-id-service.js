@@ -54,13 +54,13 @@ System.register(["@angular/core", "./dto-request.service", "../../model/filter-t
                     }
                     return returnVal;
                 };
-                NameIdService.prototype.get = function (filterParams) {
+                NameIdService.prototype.get = function (filterParams, relatedEntityFilterValue) {
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
                         var filterType = filterParams.getFilterType() === filter_type_1.FilterType.NONE ? null : filterParams.getFilterType();
                         var cvFilterValue = null;
                         if (filterType === filter_type_1.FilterType.NAMES_BY_TYPEID) {
-                            cvFilterValue = filterParams.getRelatedEntityFilterValue();
+                            cvFilterValue = relatedEntityFilterValue;
                         }
                         else if (filterType === filter_type_1.FilterType.NAMES_BY_TYPE_NAME) {
                             cvFilterValue = filterParams.getCvFilterValue();
