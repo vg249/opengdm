@@ -15,6 +15,9 @@ System.register([], function (exports_1, context_1) {
                     this.entityLasteUpdated = entityLasteUpdated;
                     this.pagination = pagination;
                 }
+                PayloadFilter.fromPayloadFilter = function (payloadFilterToCopy) {
+                    return new PayloadFilter(payloadFilterToCopy.gobiiExtractFilterType, payloadFilterToCopy.targetEntityUniqueId, payloadFilterToCopy.relatedEntityUniqueId, payloadFilterToCopy.relatedEntityFilterValue, payloadFilterToCopy.targetEntityFilterValue, payloadFilterToCopy.entityLasteUpdated, payloadFilterToCopy.pagination);
+                };
                 return PayloadFilter;
             }());
             exports_1("PayloadFilter", PayloadFilter);

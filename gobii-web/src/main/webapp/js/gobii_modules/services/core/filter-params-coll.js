@@ -77,8 +77,11 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                     this.pagedDatasetRequestService = pagedDatasetRequestService;
                     this.fileItemRequestService = fileItemRequestService;
                     this.filterParams = [];
-                    // For non-hierarchically filtered request params, we just create them simply
-                    // as we add them to the flat map
+                    // ************************************************************************
+                    // **************************** GENERAL  *********************************
+                    var cvJobStatusCompoundUniqueId = new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.CV, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.JOB_STATUS, cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.JOB_STATUS));
+                    // ************************************************************************
+                    // **************************** BY SAMPLE *********************************
                     this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.CV_DATATYPE, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.CV)
                         .setIsDynamicFilterValue(false)
@@ -87,6 +90,40 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPE_NAME)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A));
                     this.addFilter(filter_params_1.FilterParams
+                        .build(file_item_param_names_1.FilterParamNames.MAPSETS, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.MAPSET)
+                        .setIsDynamicFilterValue(false)
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.NO));
+                    this.addFilter(filter_params_1.FilterParams
+                        .build(file_item_param_names_1.FilterParamNames.PLATFORMS, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.PLATFORM)
+                        .setIsDynamicFilterValue(false));
+                    this.addFilter(filter_params_1.FilterParams
+                        .build(file_item_param_names_1.FilterParamNames.CONTACT_PI_HIERARCHY_ROOT, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.CONTACT)
+                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
+                        .setCvFilterType(cv_filter_type_1.CvFilterType.UNKNOWN)
+                        .setIsDynamicFilterValue(true)
+                        .setIsDynamicDataLoad(false)
+                        .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL)
+                        .setIsExtractCriterion(true));
+                    this.addFilter(filter_params_1.FilterParams
+                        .build(file_item_param_names_1.FilterParamNames.PROJECTS_BY_CONTACT, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.PROJECT)
+                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
+                        .setRelatedEntityUniqueId(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.CONTACT, type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR, cv_filter_type_1.CvFilterType.UNKNOWN, null).setIsExtractCriterion(true))
+                        .setIsDynamicFilterValue(false)
+                        .setIsDynamicDataLoad(false)
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL)
+                        .setIsExtractCriterion(true));
+                    this.getFilter(file_item_param_names_1.FilterParamNames.CONTACT_PI_HIERARCHY_ROOT, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE)
+                        .setChildNameIdRequestParams([this.getFilter(file_item_param_names_1.FilterParamNames.PROJECTS_BY_CONTACT, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE)]);
+                    this.getFilter(file_item_param_names_1.FilterParamNames.PROJECTS_BY_CONTACT, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE)
+                        .setParentFileItemParams(this.getFilter(file_item_param_names_1.FilterParamNames.CONTACT_PI_HIERARCHY_ROOT, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE));
+                    this.addFilter(filter_params_1.FilterParams
+                        .build(file_item_param_names_1.FilterParamNames.PROJECTS, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.PROJECT)
+                        .setIsDynamicFilterValue(false)
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL));
+                    // ************************************************************************
+                    // **************************** BY MARKER  *********************************
+                    this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.CV_DATATYPE, type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_entity_1.EntityType.CV)
                         .setIsDynamicFilterValue(false)
                         .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE)
@@ -94,35 +131,21 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPE_NAME)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A));
                     this.addFilter(filter_params_1.FilterParams
-                        .build(file_item_param_names_1.FilterParamNames.MAPSETS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.MAPSET)
-                        .setIsDynamicFilterValue(false)
-                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.NO));
-                    this.addFilter(filter_params_1.FilterParams
-                        .build(file_item_param_names_1.FilterParamNames.MAPSETS, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.MAPSET)
-                        .setIsDynamicFilterValue(false)
-                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.NO));
-                    this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.MAPSETS, type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_entity_1.EntityType.MAPSET)
                         .setIsDynamicFilterValue(false)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.NO));
-                    this.addFilter(filter_params_1.FilterParams
-                        .build(file_item_param_names_1.FilterParamNames.PLATFORMS, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.PLATFORM)
-                        .setIsDynamicFilterValue(false));
                     this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.PLATFORMS, type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_entity_1.EntityType.PLATFORM)
                         .setIsDynamicFilterValue(false));
                     this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.MARKER_GROUPS, type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_entity_1.EntityType.MARKER_GROUP)
                         .setIsDynamicFilterValue(false));
+                    // ************************************************************************
+                    // **************************** BY DATASET *********************************
                     this.addFilter(filter_params_1.FilterParams
-                        .build(file_item_param_names_1.FilterParamNames.PROJECTS, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.PROJECT)
+                        .build(file_item_param_names_1.FilterParamNames.MAPSETS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.MAPSET)
                         .setIsDynamicFilterValue(false)
-                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL));
-                    this.addFilter(filter_params_1.FilterParams
-                        .build(file_item_param_names_1.FilterParamNames.CONTACT_PI_HIERARCHY_ROOT, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.CONTACT)
-                        .setIsDynamicFilterValue(false)
-                        .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR));
-                    var cvJobStatusCompoundUniqueId = new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.CV, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.JOB_STATUS, cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.JOB_STATUS));
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.NO));
                     this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.CV_JOB_STATUS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, cvJobStatusCompoundUniqueId.getEntityType())
                         .setIsDynamicFilterValue(true)
@@ -253,10 +276,6 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .build(file_item_param_names_1.FilterParamNames.CONTACT_PI_HIERARCHY_ROOT, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.CONTACT)
                         .setIsDynamicFilterValue(true)
                         .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR);
-                    var nameIdRequestParamsProjectByPiContact = filter_params_1.FilterParams
-                        .build(file_item_param_names_1.FilterParamNames.PROJECTS_BY_CONTACT, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.PROJECT)
-                        .setIsDynamicFilterValue(true)
-                        .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPEID);
                     var nameIdRequestParamsExperiments = filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.EXPERIMENTS_BY_PROJECT, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.EXPERIMENT)
                         .setIsDynamicFilterValue(true)
@@ -266,21 +285,22 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .setIsDynamicFilterValue(true)
                         .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPEID);
                     //add the individual requests to the map
-                    this.addFilter(nameIdRequestParamsContactsPi);
-                    this.addFilter(nameIdRequestParamsProjectByPiContact);
-                    this.addFilter(nameIdRequestParamsExperiments);
-                    this.addFilter(nameIdRequestParamsDatasets);
+                    // this.addFilter(nameIdRequestParamsContactsPi);
+                    // this.addFilter(nameIdRequestParamsProjectByPiContact);
+                    // this.addFilter(nameIdRequestParamsExperiments);
+                    // this.addFilter(nameIdRequestParamsDatasets);
                     //build the parent-child request params graph
-                    nameIdRequestParamsContactsPi
-                        .setChildNameIdRequestParams([nameIdRequestParamsProjectByPiContact
-                            .setParentFileItemParams(nameIdRequestParamsContactsPi)
-                            .setChildNameIdRequestParams([nameIdRequestParamsExperiments
-                                .setParentFileItemParams(nameIdRequestParamsProjectByPiContact)
-                                .setChildNameIdRequestParams([nameIdRequestParamsDatasets
-                                    .setParentFileItemParams(nameIdRequestParamsExperiments)
-                            ])
-                        ])
-                    ]);
+                    // nameIdRequestParamsContactsPi
+                    //     .setChildNameIdRequestParams(
+                    //         [nameIdRequestParamsProjectByPiContact
+                    //             .setParentFileItemParams(nameIdRequestParamsContactsPi)
+                    //             .setChildNameIdRequestParams([nameIdRequestParamsExperiments
+                    //                 .setParentFileItemParams(nameIdRequestParamsProjectByPiContact)
+                    //                 .setChildNameIdRequestParams([nameIdRequestParamsDatasets
+                    //                     .setParentFileItemParams(nameIdRequestParamsExperiments)
+                    //                 ])
+                    //             ])
+                    //         ]);
                 } // constructor
                 FilterParamsColl.prototype.addFilter = function (filterParamsToAdd) {
                     var existingFilterParams = this.filterParams

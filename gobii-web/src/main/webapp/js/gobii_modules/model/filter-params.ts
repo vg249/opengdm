@@ -46,10 +46,10 @@ import {PayloadFilter} from "../store/actions/action-payload-filter";
  * GobiiFileItem resulting from the PROJECTS_BY_CONTACT query will be assigned the contactId as its
  * parentItemId value. Thus, once the GobiiFileItems have been retrieved from the server, they can
  * subsequently be retrieved from the store such that the GobiiFileItems of EntityType PROJECT are
- * filtered as follows: the current _relatedEntityFilterValue of the PROJECTS_BY_CONTACT filter matches
- * the parentItemId of the GobiiFileItems of EntityType PROJECT. Thus, the PROJECTS_BY_CONTACT filter,
- * with an arbitrary _relatedEntityFilterValue, can be dispatched to the store at any time and the   reby change
- * the set of GobiiFileItems that are filtered in this way. In other words, when we want to get the
+ * filtered as follows: the current _relatedEntityFilterValue of the PROJECTS_BY_CONTACT filter in the store matches
+ * the parentItemId of the GobiiFileItems of EntityType PROJECT. Thus, a value for the PROJECTS_BY_CONTACT filter ,
+ * with an arbitrary value, can be dispatched to the store at any time and the thereby change
+ * the set of GobiiFileItems that are retrieved from the select methods. In other words, when we want to get the
  * "currently selected" projects from the store (i.e., the projects filtered for
  * the pi who is currently selected in the UI), the selector returns the file items whose parent id
  * matches current contact ID in state.
@@ -72,23 +72,30 @@ import {PayloadFilter} from "../store/actions/action-payload-filter";
  * ngrx/store. Here again you can see this functionality operating depending on the value of _isDynamicLoad.
  *
  *
- * Particular note should be taken of the  _relatedEntityFilterValue value for the purpose of retrieving
+ * Particular note should be taken of the way that the relatedEntityFilterValue value in the store works for the purpose of retrieving
  * names for a given entity when that entity must be filtered according to a foreign key.
  * For example, when retrieving projects by contact_id (i.e., by principle investigator contact
- * id), the _relatedEntityFilterValue will be the value of the PI according to which the project names
+ * id), the relatedEntityFilterValue of the filter in the store will be the value of the PI according to which the project names
  * should be filtered.
  *
  * In recent changes, better semantics have been added for expressing the entities to which FilterParam items
  * pertain and their respective filter values. Thus, the target unique ID references the compounduniqueid of the
  * entity filtered by the filter, whilst the related id is the compounduniqueid references the related entity.
  * Thus, in the case of the project filter, the target is project, and the related id is for principle investigator
- * contact. The target and related filter values are the actual filter values for these things. See the comment on
+ * contact. The target and related filter values in the store are the actual filter values for these things. See the comment on
  * makeFileActionsFromFilterParamName() in file item service for further details.
  *
  * Note that there is also an idiom for filtering where you want to retrieve whole entities rather than
  * name ids. This is done with the FileItemService.makeFileItemActionsFromEntities() method. Because whole
  * entities can have FK relationships to multiple entities, the GobiiFileItemEntityRelation[] array was
  * added to GobiiFileItem. This allows for an arbitrary number of FK relationships to be set up.
+ *
+ * Care must be taken to avoid confusing FilterParams, this class, with the PayloadFilter class, which is used
+ * to store actual target and related filter values. These two classes share some properties in common, particular the
+ * target and related unique IDs. In the version of FilterParams that this current version replaces, I had very mistakenly
+ * stored the related and target filter _values_ here in FilterParams. This is a violation of the sacrosanct rule about
+ * keeping state _only_ in the store. Violating this rule eventually catches up with you. So I have removed these properties
+ * and refactored where necessary.
  *
 
  *
@@ -104,8 +111,8 @@ export class FilterParams {
                         private relatedEntityUniqueId: GobiiFileItemCompoundId,
                         private _queryName: string = null,
                         private _filterType: FilterType = FilterType.NONE,
-                        private _targetEntityFilterValue: string = null,
-                        private _relatedEntityFilterValue: string = null,
+                       // private _targetEntityFilterValue: string = null,
+                       // private _relatedEntityFilterValue: string = null,
                         private _gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN,
                         private _nameIdLabelType: NameIdLabelType,
                         private _parentFileItemParams: FilterParams,
@@ -138,8 +145,8 @@ export class FilterParams {
             null,
             queryName,
             FilterType.NONE,
-            null,
-            null,
+            // null,
+            // null,
             gobiiExtractFilterType,
             NameIdLabelType.UNKNOWN,
             null,
@@ -241,23 +248,23 @@ export class FilterParams {
         return this;
     }
 
-    getRelatedEntityFilterValue(): string {
-        return this._relatedEntityFilterValue;
-    }
+    // getRelatedEntityFilterValue(): string {
+    //     return this._relatedEntityFilterValue;
+    // }
+    //
+    // setRelatedEntityFilterValue(value: string): FilterParams {
+    //     this._relatedEntityFilterValue = value;
+    //     return this;
+    // }
 
-    setRelatedEntityFilterValue(value: string): FilterParams {
-        this._relatedEntityFilterValue = value;
-        return this;
-    }
-
-    getTargetEntityFilterValue(): string {
-        return this._targetEntityFilterValue;
-    }
-
-    setTargetEntityFilterValue(value: string): FilterParams {
-        this._targetEntityFilterValue = value;
-        return this;
-    }
+    // getTargetEntityFilterValue(): string {
+    //     return this._targetEntityFilterValue;
+    // }
+    //
+    // setTargetEntityFilterValue(value: string): FilterParams {
+    //     this._targetEntityFilterValue = value;
+    //     return this;
+    // }
 
     getGobiiExtractFilterType(): GobiiExtractFilterType {
         return this._gobiiExtractFilterType;
