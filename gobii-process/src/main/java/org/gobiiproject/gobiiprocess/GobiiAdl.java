@@ -1282,7 +1282,7 @@ public class GobiiAdl {
         return fileDirectoryName;
     }
 
-    private static LoaderInstructionFilesDTO createInstructionFileDTO(String instructionFilePath) throws Exception {
+    private static LoaderInstructionFilesDTO createInstructionFileDTO(String instructionFilePath, String folderName) throws Exception {
 
         LoaderInstructionFilesDTO loaderInstructionFilesDTO = new LoaderInstructionFilesDTO();
         try {
@@ -1292,7 +1292,7 @@ public class GobiiAdl {
                     instructionInstructionFileAccess.getInstructions(instructionFilePath,
                             GobiiLoaderInstruction[].class);
             if (null != instructions) {
-                loaderInstructionFilesDTO.setInstructionFileName(instructionFile.getName());
+                loaderInstructionFilesDTO.setInstructionFileName(folderName + "_" + instructionFile.getName());
                 loaderInstructionFilesDTO.setGobiiLoaderInstructions(instructions);
             } else {
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
@@ -1300,7 +1300,7 @@ public class GobiiAdl {
                         "The instruction file exists, but could not be read: " + instructionFilePath);
             }
         } catch (Exception e) {
-            throw new Exception("Error creating instruction file DTO");
+            throw new Exception("Error creating instruction file DTO", e);
         }
         return loaderInstructionFilesDTO;
     }
@@ -1451,6 +1451,25 @@ public class GobiiAdl {
                         if (instructionObject.has("dataSetId")) {
                             instructionObject.addProperty("dataSetId", currentEntityId);
                         }
+
+                        // get datasetType ID
+
+                        RestUri datasetGetUri = GobiiClientContext.getInstance(null ,false)
+                                .getUriFactory()
+                                .resourceByUriIdParam(GobiiServiceRequestId.URL_DATASETS);
+                        datasetGetUri.setParamValue("id", currentEntityId);
+                        GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceForDatasetGet = new GobiiEnvelopeRestResource<>(datasetGetUri);
+                        PayloadEnvelope<DataSetDTO> resultEnvelopeForDatasetGet = gobiiEnvelopeRestResourceForDatasetGet.get(DataSetDTO.class);
+                        checkStatus(resultEnvelopeForDatasetGet);
+
+                        DataSetDTO dataSetDTOGetResponse = resultEnvelopeForDatasetGet.getPayload().getData().get(0);
+
+                        // set datasetType fields in instruction file template
+                        JsonObject datasetTypeObj = (JsonObject) instructionObject.get("datasetType");
+                        datasetTypeObj.addProperty("name", dataSetDTOGetResponse.getDatatypeName());
+                        datasetTypeObj.addProperty("id", dataSetDTOGetResponse.getDatatypeId());
+
+                        instructionObject.add("datasetType", datasetTypeObj);
                     }
 
                     JsonObject tempObject = (JsonObject) instructionObject.get(entityName);
@@ -1532,8 +1551,9 @@ public class GobiiAdl {
                     uploadFiles(jobName, sourcePath, filesPath);
                 }
 
+
                 // CREATE LOADER INSTRUCTION FILE
-                LoaderInstructionFilesDTO loaderInstructionFilesDTO = createInstructionFileDTO(instructionFilePath);
+                LoaderInstructionFilesDTO loaderInstructionFilesDTO = createInstructionFileDTO(instructionFilePath, folderName);
 
                 // SUBMIT INSTRUCTION FILE DTO
                 submitInstructionFile(loaderInstructionFilesDTO, jobPayloadType);
