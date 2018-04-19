@@ -125,10 +125,7 @@ System.register(["@angular/core", "ng2-file-upload", "../services/core/authentic
                     });
                     this.store.select(fromRoot.getUploadFiles)
                         .subscribe(function (fileFileItems) {
-                        var uploadItem = fileFileItems.find(function (fi) {
-                            return fi.getProcessType() === type_process_1.ProcessType.DELETE;
-                        });
-                        if (uploadItem) {
+                        if (fileFileItems && fileFileItems.length > 0) {
                             _this.clearSelectedFile();
                             _this.uploadComplete = false;
                         }

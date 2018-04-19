@@ -260,11 +260,10 @@ export class UploaderComponent implements OnInit {
 
         this.store.select(fromRoot.getUploadFiles)
             .subscribe( fileFileItems =>  {
-            let uploadItem:GobiiFileItem = fileFileItems.find( fi =>
-                fi.getProcessType() === ProcessType.DELETE
-            )
 
-            if( uploadItem) {
+
+
+            if( fileFileItems && fileFileItems.length > 0 ) {
                 this.clearSelectedFile();
                 this.uploadComplete = false;
             }
