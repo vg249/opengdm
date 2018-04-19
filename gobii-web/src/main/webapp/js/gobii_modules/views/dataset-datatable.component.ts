@@ -35,7 +35,7 @@ import {PayloadFilter} from "../store/actions/action-payload-filter";
         <div style="border: 1px solid #336699; padding-left: 5px">
             <BR>
             <p-checkbox binary="true"
-                        [ngModel]="filterToExtractReady"
+                        [(ngModel)]="filterToExtractReady"
                         (onChange)="handleFilterToExtractReadyChecked($event)"
                         [disabled]="disableFilterToExtractReadyCheckbox">
             </p-checkbox>
@@ -461,6 +461,7 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
 
                 if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
+                    this.filterToExtractReady = true;
                     if (this.doPaging) {
                         this.fileItemService.loadPagedEntityList(this.gobiiExtractFilterType,
                             FilterParamNames.DATASET_LIST_PAGED,
