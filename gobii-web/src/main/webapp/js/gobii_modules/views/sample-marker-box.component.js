@@ -88,7 +88,8 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                                     .loadFileItem(gobii_file_item_1.GobiiFileItem.build(_this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
                                     .setExtractorItemType(listItemType_1)
                                     .setItemId(listItem)
-                                    .setItemName(listItem), true);
+                                    .setItemName(listItem)
+                                    .setIsEphemeral(true), true);
                             }
                         });
                     }

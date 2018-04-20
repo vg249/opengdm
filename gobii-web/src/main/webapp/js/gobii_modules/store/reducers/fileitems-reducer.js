@@ -28,9 +28,13 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
         if (idx > -1) {
             newSelectedUniqueIdsState.splice(idx, 1);
         }
+        var newFileItemState = state.allFileItems.slice();
+        if (gobiiFileItem.getIsEphemeral()) {
+            newFileItemState = newFileItemState.filter(function (fi) { return !fi.getIsEphemeral(); });
+        }
         var returnVal = {
             gobiiExtractFilterType: state.gobiiExtractFilterType,
-            allFileItems: state.allFileItems,
+            allFileItems: newFileItemState,
             uniqueIdsOfExtractFileItems: newSelectedUniqueIdsState,
             filters: state.filters
         };
@@ -250,6 +254,9 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 var newSelectedItems = state.uniqueIdsOfExtractFileItems
                     .filter(function (id) { return !itemsToDeselect_1
                     .find(function (fi) { return fi.getFileItemUniqueId() === id; }); });
+                // remove emphemeral items from state
+                newFIleItemState = newFIleItemState
+                    .filter(function (fi) { return !fi.getIsEphemeral(); });
                 returnVal = {
                     gobiiExtractFilterType: state.gobiiExtractFilterType,
                     allFileItems: newFIleItemState,

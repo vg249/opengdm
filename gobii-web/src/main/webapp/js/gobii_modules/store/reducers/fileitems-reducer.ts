@@ -78,9 +78,15 @@ function removeFromExtractItems(state: State, gobiiFileItem: GobiiFileItem): Sta
         newSelectedUniqueIdsState.splice(idx, 1);
     }
 
+    let newFileItemState:GobiiFileItem[] = state.allFileItems.slice();
+    if(gobiiFileItem.getIsEphemeral()) {
+        newFileItemState = newFileItemState.filter(fi => ! fi.getIsEphemeral());
+    }
+
+
     let returnVal: State = {
         gobiiExtractFilterType: state.gobiiExtractFilterType,
-        allFileItems: state.allFileItems,
+        allFileItems: newFileItemState,
         uniqueIdsOfExtractFileItems: newSelectedUniqueIdsState,
         filters: state.filters
     };
@@ -381,6 +387,9 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
                     .find(fi => fi.getFileItemUniqueId() === id));
 
 
+            // remove emphemeral items from state
+            newFIleItemState = newFIleItemState
+                .filter(fi => !fi.getIsEphemeral());
 
             returnVal = {
                 gobiiExtractFilterType: state.gobiiExtractFilterType,
