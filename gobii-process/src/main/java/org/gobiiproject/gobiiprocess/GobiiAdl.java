@@ -852,13 +852,68 @@ public class GobiiAdl {
         PayloadEnvelope<ExperimentDTO> resultEnvelope = gobiiEnvelopeRestResourceGet.get(ExperimentDTO.class);
         checkStatus(resultEnvelope);
         List<ExperimentDTO> experimentDTOSList = resultEnvelope.getPayload().getData();
+
+        // get project Id from XML
+
+        XPathExpression exprParentKey = xPath.compile("//" + "Project" + "/parent::*");
+        Element ancestor = (Element) exprParentKey.evaluate(document, XPathConstants.NODE);
+
+        String fkeyPKey = ancestor.getAttribute("DbPKeysurrogate");
+        Integer projectId = null;
+        if (fkeyPKey.isEmpty()) {
+            projectId = null;
+        } else {
+
+            Element currentFkeyElement = null;
+
+            if (fkeys != null && fkeys.getLength() > 0) {
+
+                for (int fkeysI = 0; fkeysI< fkeys.getLength(); fkeysI++) {
+
+                    currentFkeyElement = (Element) fkeys.item(fkeysI);
+                    String currentEntity = currentFkeyElement.getAttribute("entity");
+
+                    if(currentEntity.equals("Project")) {
+                        break;
+                    }
+                }
+
+            }
+
+            if(currentFkeyElement.equals(null)) {
+                projectId = null;
+            } else {
+                String currentProjfKeyDbPkeyValue = currentFkeyElement.getElementsByTagName("DbPKeySurrogate").item(0).getTextContent();
+                String exprCheckIfFKeyExists = "//Entities/" + ancestor.getNodeName() + "/" + "Project" + "/Properties[" + fkeyPKey + "='" + currentProjfKeyDbPkeyValue + "']";
+                XPathExpression xPathExprNodeFKey = xPath.compile(exprCheckIfFKeyExists);
+                Element nodeFKey = (Element) xPathExprNodeFKey.evaluate(document, XPathConstants.NODE);
+                Element parentNode = (Element) nodeFKey.getParentNode();
+                Element dbPkeyNode = ((Element) parentNode.getElementsByTagName("Keys").item(0));
+                validateNode(dbPkeyNode, parentElement.getTagName(), "Keys");
+
+                String projDbPkeyValue = dbPkeyNode.getElementsByTagName("DbPKey").item(0).getTextContent();
+
+                if (!projDbPkeyValue.isEmpty()) {
+                    projectId = Integer.parseInt(projDbPkeyValue);
+                }
+            }
+
+        }
+
         for (ExperimentDTO currentExperimentDTO : experimentDTOSList) {
             if (currentExperimentDTO.getExperimentName().equals(dbPkeysurrogateValue)) {
-                System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") already exists in the database. Return current entity ID.\n");
 
-                /* set fkey dbpkey for entity */
-                setFKeyDbPKeyForExistingEntity(fkeys, ExperimentDTO.class, currentExperimentDTO);
-                return currentExperimentDTO.getId();
+                if (!projectId.equals(null) && currentExperimentDTO.getProjectId().equals(projectId)) {
+
+
+                    System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") already exists in the database. Return current entity ID.\n");
+
+                    /* set fkey dbpkey for entity */
+                    setFKeyDbPKeyForExistingEntity(fkeys, ExperimentDTO.class, currentExperimentDTO);
+                    return currentExperimentDTO.getId();
+
+                }
+
             }
         }
 
