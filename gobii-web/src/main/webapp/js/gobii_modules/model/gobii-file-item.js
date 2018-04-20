@@ -42,10 +42,11 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
         execute: function () {
             GobiiFileItem = (function (_super) {
                 __extends(GobiiFileItem, _super);
-                function GobiiFileItem(_gobiiExtractFilterType, _processType, _extractorItemType, _entityType, _entitySubType, _cvFilterType, _cvFilterValue, _itemId, _itemName, _selected, _required, _parentItemId, _entity, _entityRelations, _hasEntity, _pageNumber) {
+                function GobiiFileItem(_gobiiExtractFilterType, _processType, _extractorItemType, _entityType, _entitySubType, _cvFilterType, _cvFilterValue, _itemId, _itemName, _selected, _required, _parentItemId, _entity, _entityRelations, _hasEntity, _pageNumber, _isEphemeral) {
                     if (_entity === void 0) { _entity = null; }
                     if (_entityRelations === void 0) { _entityRelations = []; }
                     if (_hasEntity === void 0) { _hasEntity = false; }
+                    if (_isEphemeral === void 0) { _isEphemeral = false; }
                     var _this = _super.call(this, _extractorItemType, _entityType, _entitySubType, _cvFilterType, _cvFilterValue) || this;
                     _this._gobiiExtractFilterType = _gobiiExtractFilterType;
                     _this._processType = _processType;
@@ -58,6 +59,7 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
                     _this._entityRelations = _entityRelations;
                     _this._hasEntity = _hasEntity;
                     _this._pageNumber = _pageNumber;
+                    _this._isEphemeral = _isEphemeral;
                     _this._gobiiExtractFilterType = _gobiiExtractFilterType;
                     _this._processType = _processType;
                     _this._itemId = _itemId;
@@ -69,11 +71,12 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
                     _this._entity = _entity;
                     _this._hasEntity = _hasEntity;
                     _this._pageNumber = _pageNumber;
+                    _this._isEphemeral = _isEphemeral;
                     _this._fileItemUniqueId = guid_1.Guid.generateUUID();
                     return _this;
                 }
                 GobiiFileItem.build = function (gobiiExtractFilterType, processType) {
-                    var returnVal = new GobiiFileItem(gobiiExtractFilterType, processType, type_extractor_item_1.ExtractorItemType.UNKNOWN, type_entity_1.EntityType.UNKNOWN, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null, null, null, null, null, null, [], [], false, 0);
+                    var returnVal = new GobiiFileItem(gobiiExtractFilterType, processType, type_extractor_item_1.ExtractorItemType.UNKNOWN, type_entity_1.EntityType.UNKNOWN, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null, null, null, null, null, null, [], [], false, 0, false);
                     return returnVal;
                 };
                 GobiiFileItem.prototype.setFileItemUniqueId = function (fileItemUniqueId) {
@@ -232,6 +235,13 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
                 };
                 GobiiFileItem.prototype.getPageNumber = function () {
                     return this._pageNumber;
+                };
+                GobiiFileItem.prototype.getIsEphemeral = function () {
+                    return this._isEphemeral;
+                };
+                GobiiFileItem.prototype.setIsEphemeral = function (value) {
+                    this._isEphemeral = value;
+                    return this;
                 };
                 return GobiiFileItem;
             }(gobii_file_item_compound_id_1.GobiiFileItemCompoundId)); // GobiiFileItem()

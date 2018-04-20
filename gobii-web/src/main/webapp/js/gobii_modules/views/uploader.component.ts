@@ -20,136 +20,148 @@ const URL = 'gobii/v1/files/{gobiiJobId}/EXTRACTOR_INSTRUCTIONS?fileName=';
     selector: 'uploader',
     inputs: ['gobiiExtractFilterType'],
     outputs: ['onUploaderError', 'onClickBrowse'],
-    template: `<style>
-    .my-drop-zone { border: dotted 3px lightgray; }
-    .nv-file-over { border: dotted 3px red; } /* Default class applied to drop zones on over */
-    .another-file-over-class { border: dotted 3px green; }
+    template: `
+        <style>
+            .my-drop-zone {
+                border: dotted 3px lightgray;
+            }
 
-    html, body { height: 100%; }
-</style>
+            .nv-file-over {
+                border: dotted 3px red;
+            }
 
-<div class="container">
+            /* Default class applied to drop zones on over */
+            .another-file-over-class {
+                border: dotted 3px green;
+            }
 
-    <div class="row">
+            html, body {
+                height: 100%;
+            }
+        </style>
 
-        <div class="col-md-3">
+        <div class="container">
 
-            <!-- DROP ZONES AND MULTI-FILE SELECT, UNUSED FOR NOW ====================== 
-            <h3>Select files</h3>
+            <div class="row">
 
-            <div ng2FileDrop
-                 [ngClass]="{'nv-file-over': hasBaseDropZoneOver}"
-                 (fileOver)="fileOverBase($event)"
-                 [uploader]="uploader"
-                 class="well my-drop-zone">
-                Base drop zone
-            </div>
+                <div class="col-md-3">
 
-            <div ng2FileDrop
-                 [ngClass]="{'another-file-over-class': hasAnotherDropZoneOver}"
-                 (fileOver)="fileOverAnother($event)"
-                 [uploader]="uploader"
-                 class="well my-drop-zone">
-                Another drop zone
-            </div>
-
-            Multiple
-            <input type="file" ng2FileSelect [uploader]="uploader" multiple /><br/>
-            ================================================================================ -->
-
-            
-            <input #selectedFile 
-                type="file" 
-                ng2FileSelect 
-                [uploader]="uploader"
-                 [disabled]="uploadComplete"
-                (click)="handleClickBrowse($event)"/>
-            <!--  IF YOU REINSTATE THE QUEUES BELOW THIS BUTTON WILL BE SUPERFLUOUS -->
-            <BR>
-            <button type="button" class="btn btn-success"
-                        (click)="uploader.uploadAll()" 
-                        [disabled]="!uploader.getNotUploadedItems().length">
-                    Upload
-            </button>
-        </div>
-
-        <div class="col-md-9" style="margin-bottom: 40px">
-
-
-            <!-- UPLOAD QUEUE UNUSED FOR NOW =========================================================
-            <h3>Upload queue</h3>
-            <p>Queue length: {{ uploader?.queue?.length }}</p>
-
-            <table class="table">
-                <thead>
-                <tr>
-                    <th width="50%">Name</th>
-                    <th>Size</th>
-                    <th>Progress</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let item of uploader.queue">
-                    <td><strong>{{ item?.file?.name }}</strong></td>
-                    <td *ngIf="uploader.isHTML5" nowrap>{{ item?.file?.size/1024/1024 | number:'.2' }} MB</td>
-                    <td *ngIf="uploader.isHTML5">
-                        <div class="progress" style="margin-bottom: 0;">
-                            <div class="progress-bar" role="progressbar" [ngStyle]="{ 'width': item.progress + '%' }"></div>
-                        </div>
-                    </td>
-                    <td class="text-center">
-                        <span *ngIf="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
-                        <span *ngIf="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
-                        <span *ngIf="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
-                    </td>
-                    <td nowrap>
-                        <button type="button" class="btn btn-success btn-xs"
-                                (click)="item.upload()" [disabled]="item.isReady || item.isUploading || item.isSuccess">
-                            <span class="glyphicon glyphicon-upload"></span> Upload
-                        </button>
-                        <button type="button" class="btn btn-warning btn-xs"
-                                (click)="item.cancel()" [disabled]="!item.isUploading">
-                            <span class="glyphicon glyphicon-ban-circle"></span> Cancel
-                        </button>
-                        <button type="button" class="btn btn-danger btn-xs"
-                                (click)="item.remove()">
-                            <span class="glyphicon glyphicon-trash"></span> Remove
-                        </button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-
-            <div>
-                <div>
-                    Queue progress:
-                    <div class="progress" style="">
-                        <div class="progress-bar" role="progressbar" [ngStyle]="{ 'width': uploader.progress + '%' }"></div>
+                    <!-- DROP ZONES AND MULTI-FILE SELECT, UNUSED FOR NOW ====================== 
+                    <h3>Select files</h3>
+        
+                    <div ng2FileDrop
+                         [ngClass]="{'nv-file-over': hasBaseDropZoneOver}"
+                         (fileOver)="fileOverBase($event)"
+                         [uploader]="uploader"
+                         class="well my-drop-zone">
+                        Base drop zone
                     </div>
+        
+                    <div ng2FileDrop
+                         [ngClass]="{'another-file-over-class': hasAnotherDropZoneOver}"
+                         (fileOver)="fileOverAnother($event)"
+                         [uploader]="uploader"
+                         class="well my-drop-zone">
+                        Another drop zone
+                    </div>
+        
+                    Multiple
+                    <input type="file" ng2FileSelect [uploader]="uploader" multiple /><br/>
+                    ================================================================================ -->
+
+
+                    <input #selectedFile
+                           type="file"
+                           ng2FileSelect
+                           [uploader]="uploader"
+                           [disabled]="uploadComplete"
+                           (click)="handleClickBrowse($event)"/>
+                    <!--  IF YOU REINSTATE THE QUEUES BELOW THIS BUTTON WILL BE SUPERFLUOUS -->
+                    <BR>
+                    <button type="button" class="btn btn-success"
+                            (click)="uploader.uploadAll()"
+                            [disabled]="!uploader.getNotUploadedItems().length">
+                        Upload
+                    </button>
                 </div>
-                <button type="button" class="btn btn-success btn-s"
-                        (click)="uploader.uploadAll()" [disabled]="!uploader.getNotUploadedItems().length">
-                    <span class="glyphicon glyphicon-upload"></span> Upload all
-                </button>
-                <button type="button" class="btn btn-warning btn-s"
-                        (click)="uploader.cancelAll()" [disabled]="!uploader.isUploading">
-                    <span class="glyphicon glyphicon-ban-circle"></span> Cancel all
-                </button>
-                <button type="button" class="btn btn-danger btn-s"
-                        (click)="uploader.clearQueue()" [disabled]="!uploader.queue.length">
-                    <span class="glyphicon glyphicon-trash"></span> Remove all
-                </button>
+
+                <div class="col-md-9" style="margin-bottom: 40px">
+
+
+                    <!-- UPLOAD QUEUE UNUSED FOR NOW =========================================================
+                    <h3>Upload queue</h3>
+                    <p>Queue length: {{ uploader?.queue?.length }}</p>
+        
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th width="50%">Name</th>
+                            <th>Size</th>
+                            <th>Progress</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let item of uploader.queue">
+                            <td><strong>{{ item?.file?.name }}</strong></td>
+                            <td *ngIf="uploader.isHTML5" nowrap>{{ item?.file?.size/1024/1024 | number:'.2' }} MB</td>
+                            <td *ngIf="uploader.isHTML5">
+                                <div class="progress" style="margin-bottom: 0;">
+                                    <div class="progress-bar" role="progressbar" [ngStyle]="{ 'width': item.progress + '%' }"></div>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <span *ngIf="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
+                                <span *ngIf="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
+                                <span *ngIf="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
+                            </td>
+                            <td nowrap>
+                                <button type="button" class="btn btn-success btn-xs"
+                                        (click)="item.upload()" [disabled]="item.isReady || item.isUploading || item.isSuccess">
+                                    <span class="glyphicon glyphicon-upload"></span> Upload
+                                </button>
+                                <button type="button" class="btn btn-warning btn-xs"
+                                        (click)="item.cancel()" [disabled]="!item.isUploading">
+                                    <span class="glyphicon glyphicon-ban-circle"></span> Cancel
+                                </button>
+                                <button type="button" class="btn btn-danger btn-xs"
+                                        (click)="item.remove()">
+                                    <span class="glyphicon glyphicon-trash"></span> Remove
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+        
+                    <div>
+                        <div>
+                            Queue progress:
+                            <div class="progress" style="">
+                                <div class="progress-bar" role="progressbar" [ngStyle]="{ 'width': uploader.progress + '%' }"></div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-success btn-s"
+                                (click)="uploader.uploadAll()" [disabled]="!uploader.getNotUploadedItems().length">
+                            <span class="glyphicon glyphicon-upload"></span> Upload all
+                        </button>
+                        <button type="button" class="btn btn-warning btn-s"
+                                (click)="uploader.cancelAll()" [disabled]="!uploader.isUploading">
+                            <span class="glyphicon glyphicon-ban-circle"></span> Cancel all
+                        </button>
+                        <button type="button" class="btn btn-danger btn-s"
+                                (click)="uploader.clearQueue()" [disabled]="!uploader.queue.length">
+                            <span class="glyphicon glyphicon-trash"></span> Remove all
+                        </button>
+                    </div>
+                    == UPLOAD QUEUE UNUSED FOR NOW ========================================================= -->
+
+
+                </div>
+
             </div>
-            == UPLOAD QUEUE UNUSED FOR NOW ========================================================= -->
 
-
-        </div>
-
-    </div>
-
-</div>`
+        </div>`
 
 })
 
@@ -161,8 +173,7 @@ export class UploaderComponent implements OnInit {
 
     constructor(private _authenticationService: AuthenticationService,
                 private store: Store<fromRoot.State>,
-                private fileItemService: FileItemService,
-    ) {
+                private fileItemService: FileItemService,) {
 
 
     } // ctor
@@ -197,14 +208,14 @@ export class UploaderComponent implements OnInit {
 
     ngOnInit(): any {
 
-        let JobId$:Observable<GobiiFileItem> = this.store.select(fromRoot.getJobId);
-        
+        let JobId$: Observable<GobiiFileItem> = this.store.select(fromRoot.getJobId);
+
         JobId$.subscribe(
             fileItemJobId => {
-               
+
                 let jobId: string = fileItemJobId.getItemId();
                 let fileUploaderOptions: FileUploaderOptions = {}
-                let url:string = URL.replace("{gobiiJobId}", jobId);
+                let url: string = URL.replace("{gobiiJobId}", jobId);
                 let fileName = FileName.makeFileNameFromJobId(this.gobiiExtractFilterType, jobId);
 
                 url += fileName;
@@ -238,10 +249,11 @@ export class UploaderComponent implements OnInit {
                                     ExtractorItemType.MARKER_FILE : ExtractorItemType.SAMPLE_FILE;
 
                             this.fileItemService.loadFileItem(GobiiFileItem
-                                .build(this.gobiiExtractFilterType, ProcessType.CREATE)
-                                .setExtractorItemType(listItemType)
-                                .setItemId(item.file.name)
-                                .setItemName(item.file.name),
+                                    .build(this.gobiiExtractFilterType, ProcessType.CREATE)
+                                    .setExtractorItemType(listItemType)
+                                    .setItemId(item.file.name)
+                                    .setItemName(item.file.name)
+                                    .setIsEphemeral(true),
                                 true);
 
                         } else {
@@ -257,17 +269,15 @@ export class UploaderComponent implements OnInit {
             });
 
 
-
         this.store.select(fromRoot.getUploadFiles)
-            .subscribe( fileFileItems =>  {
+            .subscribe(fileFileItems => {
 
 
-
-            if( fileFileItems && fileFileItems.length > 0 ) {
-                this.clearSelectedFile();
-                this.uploadComplete = false;
-            }
-        }, errorMessage => {
+                if (fileFileItems && fileFileItems.length > 0) {
+                    this.clearSelectedFile();
+                    this.uploadComplete = false;
+                }
+            }, errorMessage => {
                 this.store.dispatch(new historyAction.AddStatusMessageAction(errorMessage));
 
             });

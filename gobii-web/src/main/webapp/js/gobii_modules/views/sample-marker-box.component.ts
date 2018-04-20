@@ -101,7 +101,7 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
 
     }
 
-    public nameIdFilterParamTypesMarkerGroup:FilterParamNames = FilterParamNames.MARKER_GROUPS;
+    public nameIdFilterParamTypesMarkerGroup: FilterParamNames = FilterParamNames.MARKER_GROUPS;
 
 
     public maxListItems: number = 200;
@@ -137,7 +137,7 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
             let nonDuplicateItems: string[] = [];
             items.forEach(item => {
 
-                if( !nonDuplicateItems.find(ii => ii === item)) {
+                if (!nonDuplicateItems.find(ii => ii === item)) {
                     nonDuplicateItems.push(item);
                 }
 
@@ -156,7 +156,8 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
                         .loadFileItem(GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
                             .setExtractorItemType(listItemType)
                             .setItemId(listItem)
-                            .setItemName(listItem), true);
+                            .setItemName(listItem)
+                            .setIsEphemeral(true), true);
                 }
             });
 
@@ -198,8 +199,8 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
                     }
 
                     this.currentFileItems = fileItems.filter(item => {
-                        return ( ( item.getExtractorItemType() === extractorItemTypeListToFind ) ||
-                            (item.getExtractorItemType() === extractorItemTypeFileToFind) )
+                        return ((item.getExtractorItemType() === extractorItemTypeListToFind) ||
+                            (item.getExtractorItemType() === extractorItemTypeFileToFind))
                     });
 
                     if (this.currentFileItems.length > 0) {
@@ -338,7 +339,7 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
 
     ngOnInit(): any {
 
-        if( this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER ) {
+        if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
             this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                 FilterParamNames.MARKER_GROUPS,
                 null);
@@ -351,8 +352,8 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
     ngOnChanges(changes: { [propName: string]: SimpleChange }) {
 
         if (changes['gobiiExtractFilterType']
-            && ( changes['gobiiExtractFilterType'].currentValue != null )
-            && ( changes['gobiiExtractFilterType'].currentValue != undefined )) {
+            && (changes['gobiiExtractFilterType'].currentValue != null)
+            && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
 
             if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
 
