@@ -1033,13 +1033,67 @@ public class GobiiAdl {
         PayloadEnvelope<DataSetDTO> resultEnvelope = gobiiEnvelopeRestResourceGet.get(DataSetDTO.class);
         checkStatus(resultEnvelope);
         List<DataSetDTO> datasetDTOSList = resultEnvelope.getPayload().getData();
+
+        // get experiment ID from XML
+
+        XPathExpression exprParentKey = xPath.compile("//" + "Experiment" + "/parent::*");
+        Element ancestor = (Element) exprParentKey.evaluate(document, XPathConstants.NODE);
+
+        String fkeyPkey = ancestor.getAttribute("DbPKeysurrogate");
+        Integer experimentId = null;
+
+        if (fkeyPkey.isEmpty()) {
+            experimentId = null;
+        } else {
+
+            Element currentFkeyElement = null;
+
+            if (fkeys != null && fkeys.getLength() > 0) {
+
+                for (int fkeysI = 0; fkeysI < fkeys.getLength(); fkeysI++) {
+
+                    currentFkeyElement = (Element) fkeys.item(fkeysI);
+                    String currentEntity = currentFkeyElement.getAttribute("entity");
+
+                    if (currentEntity.equals("Experiment")){
+                        break;
+                    }
+
+                }
+
+            }
+
+            if (currentFkeyElement.equals(null)) {
+                experimentId = null;
+            } else {
+                String currentExpfKeyDbPkeyValue = currentFkeyElement.getElementsByTagName("DbPKeySurrogate").item(0).getTextContent();
+                String exprCheckIfFKeyExists = "//Entities/" + ancestor.getNodeName() + "/" + "Experiment" + "/Properties[" +fkeyPkey + "='" + currentExpfKeyDbPkeyValue + "']";
+                XPathExpression xPathExprNodeFKey = xPath.compile(exprCheckIfFKeyExists);
+                Element nodeFKey = (Element) xPathExprNodeFKey.evaluate(document, XPathConstants.NODE);
+                Element parentNode = (Element) nodeFKey.getParentNode();
+                Element dbPkeyNode = ((Element) parentNode.getElementsByTagName("Keys").item(0));
+                validateNode(dbPkeyNode, parentElement.getTagName(), "Keys");
+
+                String exprDbPkeyValue = dbPkeyNode.getElementsByTagName("DbPKey").item(0).getTextContent();
+
+                if (!exprDbPkeyValue.isEmpty()) {
+                    experimentId = Integer.parseInt(exprDbPkeyValue);
+                }
+            }
+
+        }
+
         for (DataSetDTO currentDatasetDTO : datasetDTOSList) {
             if (currentDatasetDTO.getDatasetName().equals(dbPkeysurrogateValue)) {
-                System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") already exists in the database. Return current entity ID.\n");
 
-                /* set fkey dbpkey for entity */
-                setFKeyDbPKeyForExistingEntity(fkeys, DataSetDTO.class, currentDatasetDTO);
-                return currentDatasetDTO.getId();
+                if (!experimentId.equals(null) && currentDatasetDTO.getExperimentId().equals(experimentId)) {
+
+                    System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") already exists in the database. Return current entity ID.\n");
+
+                    /* set fkey dbpkey for entity */
+                    setFKeyDbPKeyForExistingEntity(fkeys, DataSetDTO.class, currentDatasetDTO);
+                    return currentDatasetDTO.getId();
+                }
             }
         }
 
