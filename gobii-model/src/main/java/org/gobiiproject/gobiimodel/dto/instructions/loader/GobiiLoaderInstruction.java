@@ -2,6 +2,7 @@ package org.gobiiproject.gobiimodel.dto.instructions.loader;
 
 
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
+import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 
 import java.util.ArrayList;
@@ -196,5 +197,26 @@ public class GobiiLoaderInstruction {
 
     public void setMapset(PropNameId mapset) {
         this.mapset = mapset;
+    }
+
+    //Descriptive name of the data set. Used in reporting
+    private JobProgressStatusType gobiiJobStatus;
+
+    public JobProgressStatusType getGobiiJobStatus() {
+        return gobiiJobStatus;
+    }
+
+    public void setGobiiJobStatus(JobProgressStatusType gobiiJobStatus) {
+        this.gobiiJobStatus = gobiiJobStatus;
+    }
+
+    private String logMessage;
+
+    public String getLogMessage() {
+        return logMessage;
+    }
+
+    public void setLogMessage(String logMessage) {
+        this.logMessage = logMessage;
     }
 }

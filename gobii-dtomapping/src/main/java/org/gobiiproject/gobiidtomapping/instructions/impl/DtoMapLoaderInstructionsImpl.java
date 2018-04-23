@@ -2,6 +2,8 @@ package org.gobiiproject.gobiidtomapping.instructions.impl;
 
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
+import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.utils.InstructionFileAccess;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapDataSet;
@@ -357,7 +359,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
     } // writeInstructions
 
     @Override
-    public LoaderInstructionFilesDTO getInstruction(String cropType, String instructionFileName) throws GobiiDtoMappingException {
+    public LoaderInstructionFilesDTO getStatus(String cropType, String instructionFileName) throws GobiiDtoMappingException {
 
         LoaderInstructionFilesDTO returnVal = new LoaderInstructionFilesDTO();
 
@@ -377,8 +379,18 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
                 if (null != instructions) {
                     returnVal.setInstructionFileName(instructionFileName);
-                    returnVal.setGobiiLoaderInstructions(instructions);
 
+                    // Instruction file path exists and it was read properly so lets add the job status.
+                    JobStatusReporter jobStatusReporter = new JobStatusReporter(instructionFileName, dtoMapJob, INSTRUCTION_FILE_EXT);
+                    JobProgressStatusType jobProgressStatus = jobStatusReporter.getJobProgressStatusType();
+                    for (GobiiLoaderInstruction instruction:instructions) {
+                        instruction.setGobiiJobStatus(jobProgressStatus);
+                        if (jobProgressStatus.equals(JobProgressStatusType.CV_PROGRESSSTATUS_FAILED)) {
+                            instruction.setLogMessage(jobStatusReporter.getLogErrorMessage());
+                        }
+                    }
+
+                    returnVal.setGobiiLoaderInstructions(instructions);
                 } else {
 
                     throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,

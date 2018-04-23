@@ -13,5 +13,5 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFile
 public interface DtoMapLoaderInstructions {
 
     LoaderInstructionFilesDTO createInstruction(String cropType, LoaderInstructionFilesDTO loaderInstructionFilesDTO) throws GobiiDtoMappingException, GobiiDaoException;
-    LoaderInstructionFilesDTO getInstruction(String cropType, String getInstructions) throws GobiiDtoMappingException;
+    LoaderInstructionFilesDTO getStatus(String cropType, String getInstructions) throws GobiiDtoMappingException;
 }

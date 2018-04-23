@@ -70,7 +70,7 @@ public class JobStatusReporter {
      * @return
      * @throws Exception
      */
-    public String getExtractorEinstructionFileFqpn(String cropType) throws Exception {
+    public String getExtractorInstructionFileFqpn(String cropType) throws Exception {
 
 
         String returnVal = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS)

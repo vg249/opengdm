@@ -1544,7 +1544,7 @@ public class GOBIIControllerV1 {
         try {
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-            LoaderInstructionFilesDTO loaderInstructionFilesDTO = loaderInstructionFilesService.getInstruction(cropType, instructionFileName);
+            LoaderInstructionFilesDTO loaderInstructionFilesDTO = loaderInstructionFilesService.getStatus(cropType, instructionFileName);
 
             PayloadWriter<LoaderInstructionFilesDTO> payloadWriter = new PayloadWriter<>(request, response,
                     LoaderInstructionFilesDTO.class);
