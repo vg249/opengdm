@@ -42,7 +42,7 @@ public class GobiiLoaderInstruction {
     private Integer contactId;
     //Email of the primary contact for this action
     private String contactEmail;
-    private JobProgressStatusType gobiiJobStatus;
+    private JobProgressStatusType gobiiJobStatus = JobProgressStatusType.CV_PROGRESSSTATUS_NOSTATUS;
     private String logMessage;
 
     private boolean qcCheck;
