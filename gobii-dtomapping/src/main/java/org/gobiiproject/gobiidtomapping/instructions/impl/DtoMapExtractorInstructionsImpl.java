@@ -419,7 +419,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
             returnVal.setJobId(instructionFileName);
 
             returnVal.setInstructionFileName(instructionFileName);
-            String fileDirExtractorDoneFqpn = jobStatusReporter.getExtractorEinstructionFileFqpn(cropType);
+            String fileDirExtractorDoneFqpn = jobStatusReporter.getExtractorInstructionFileFqpn(cropType);
 
 
             //All we care about here is getting the instruction file and we let the JobStatusReporter figure that

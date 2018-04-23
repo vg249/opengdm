@@ -18,6 +18,7 @@ import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestContactTest;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestDataSetTest;
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
+import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
@@ -272,6 +273,12 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                             .getGobiiLoaderInstructions().get(0)
                             .getColumnsByTableName().containsKey(currentLoaderInstructionSent.getTable()));
 
+            Assert.assertNotNull("The job status field should not be null: " + currentLoaderInstructionSent.getGobiiJobStatus(),
+                    currentLoaderInstructionSent.getGobiiJobStatus());
+
+            Assert.assertTrue("The default reported status should not be " + JobProgressStatusType.CV_PROGRESSSTATUS_NOSTATUS.getCvName(),
+                    !currentLoaderInstructionSent.getGobiiJobStatus().equals(JobProgressStatusType.CV_PROGRESSSTATUS_NOSTATUS.getCvName()));
+
 
             for (GobiiFileColumn currentFileColumnSent : currentLoaderInstructionSent.getGobiiFileColumns()) {
 
@@ -353,6 +360,9 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         JobDTO submittedJobDto = resultEnvelopeForJob.getPayload().getData().get(0);
         Assert.assertTrue("The job name of the retrieved DTO for the submitted job does not match the requested job name" + jobName,
                 submittedJobDto.getJobName().equals(jobName));
+
+        Assert.assertTrue("The instruction file's payload type " + payloadTypeToTest.getCvName() + "does not match the retrievedtype " + submittedJobDto.getPayloadType(),
+                submittedJobDto.getPayloadType().equals(payloadTypeToTest.getCvName()));
 
         Assert.assertTrue("The instruction file's payload type " + payloadTypeToTest.getCvName() + "does not match the retrievedtype " + submittedJobDto.getPayloadType(),
                 submittedJobDto.getPayloadType().equals(payloadTypeToTest.getCvName()));

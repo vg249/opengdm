@@ -8,5 +8,5 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFile
  */
 public interface LoaderInstructionFilesService {
     LoaderInstructionFilesDTO createInstruction(String cropType, LoaderInstructionFilesDTO loaderInstructionFilesDTO) throws GobiiDomainException;
-    LoaderInstructionFilesDTO getInstruction(String cropType, String instructionFileName) throws GobiiDomainException;
+    LoaderInstructionFilesDTO getStatus(String cropType, String instructionFileName) throws GobiiDomainException;
 }

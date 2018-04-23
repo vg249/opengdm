@@ -2,6 +2,7 @@ package org.gobiiproject.gobiimodel.dto.instructions.loader;
 
 
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
+import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 
 import java.util.ArrayList;
@@ -41,6 +42,8 @@ public class GobiiLoaderInstruction {
     private Integer contactId;
     //Email of the primary contact for this action
     private String contactEmail;
+    private JobProgressStatusType gobiiJobStatus = JobProgressStatusType.CV_PROGRESSSTATUS_NOSTATUS;
+    private String logMessage;
 
     private boolean qcCheck;
 
@@ -196,5 +199,23 @@ public class GobiiLoaderInstruction {
 
     public void setMapset(PropNameId mapset) {
         this.mapset = mapset;
+    }
+
+
+    public JobProgressStatusType getGobiiJobStatus() {
+        return gobiiJobStatus;
+    }
+
+    public void setGobiiJobStatus(JobProgressStatusType gobiiJobStatus) {
+        this.gobiiJobStatus = gobiiJobStatus;
+    }
+
+
+    public String getLogMessage() {
+        return logMessage;
+    }
+
+    public void setLogMessage(String logMessage) {
+        this.logMessage = logMessage;
     }
 }
