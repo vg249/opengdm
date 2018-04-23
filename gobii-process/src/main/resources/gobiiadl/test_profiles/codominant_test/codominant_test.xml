@@ -159,7 +159,7 @@
 				</Properties>
 			</Analysis>
 		</Analyses>
-		<Datasets DbPKeysurrogate="Name">
+		<Datasets DbPKeysurrogate="DatasetName">
 			<Dataset>
 				<Keys>
 					<DbPKey></DbPKey>
