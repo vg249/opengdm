@@ -273,7 +273,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                             .getGobiiLoaderInstructions().get(0)
                             .getColumnsByTableName().containsKey(currentLoaderInstructionSent.getTable()));
 
-            Assert.assertNotNull("The number of columns for the table does not match: " + currentLoaderInstructionSent.getTable(),
+            Assert.assertNotNull("The job status field should not be null: " + currentLoaderInstructionSent.getGobiiJobStatus(),
                     currentLoaderInstructionSent.getGobiiJobStatus());
 
             Assert.assertTrue("The default reported status should not be " + JobProgressStatusType.CV_PROGRESSSTATUS_NOSTATUS.getCvName(),
