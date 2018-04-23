@@ -385,7 +385,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                     JobProgressStatusType jobProgressStatus = jobStatusReporter.getJobProgressStatusType();
                     for (GobiiLoaderInstruction instruction:instructions) {
                         instruction.setGobiiJobStatus(jobProgressStatus);
-                        if (jobProgressStatus.equals(JobProgressStatusType.CV_PROGRESSSTATUS_FAILED)) {
+                        if (jobProgressStatus.equals(JobProgressStatusType.CV_PROGRESSSTATUS_FAILED.getCvName())) {
                             instruction.setLogMessage(jobStatusReporter.getLogErrorMessage());
                         }
                     }

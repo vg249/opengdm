@@ -42,6 +42,8 @@ public class GobiiLoaderInstruction {
     private Integer contactId;
     //Email of the primary contact for this action
     private String contactEmail;
+    private JobProgressStatusType gobiiJobStatus;
+    private String logMessage;
 
     private boolean qcCheck;
 
@@ -199,8 +201,6 @@ public class GobiiLoaderInstruction {
         this.mapset = mapset;
     }
 
-    //Descriptive name of the data set. Used in reporting
-    private JobProgressStatusType gobiiJobStatus;
 
     public JobProgressStatusType getGobiiJobStatus() {
         return gobiiJobStatus;
@@ -210,7 +210,6 @@ public class GobiiLoaderInstruction {
         this.gobiiJobStatus = gobiiJobStatus;
     }
 
-    private String logMessage;
 
     public String getLogMessage() {
         return logMessage;
