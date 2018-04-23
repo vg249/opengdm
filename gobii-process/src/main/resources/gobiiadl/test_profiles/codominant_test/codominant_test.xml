@@ -159,7 +159,7 @@
 				</Properties>
 			</Analysis>
 		</Analyses>
-		<Datasets DbPKeysurrogate="Name">
+		<Datasets DbPKeysurrogate="DatasetName">
 			<Dataset>
 				<Keys>
 					<DbPKey></DbPKey>
@@ -173,7 +173,7 @@
 					</Fkey>
 				</Keys>
 				<Properties>
-					<Name>sim_codominant</Name>
+					<DatasetName>sim_codominant</DatasetName>
 					<DataTable>sim_codominant_datatable</DataTable>
 					<DataFile>sim_codominant_datafile</DataFile>
 					<QualityTable>sim_codominant_qualitytable</QualityTable>
