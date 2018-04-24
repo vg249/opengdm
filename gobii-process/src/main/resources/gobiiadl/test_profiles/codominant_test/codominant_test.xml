@@ -159,7 +159,7 @@
 				</Properties>
 			</Analysis>
 		</Analyses>
-		<Datasets DbPKeysurrogate="Name">
+		<Datasets DbPKeysurrogate="DatasetName">
 			<Dataset>
 				<Keys>
 					<DbPKey></DbPKey>
@@ -173,7 +173,7 @@
 					</Fkey>
 				</Keys>
 				<Properties>
-					<Name>sim_codominant</Name>
+					<DatasetName>sim_codominant</DatasetName>
 					<DataTable>sim_codominant_datatable</DataTable>
 					<DataFile>sim_codominant_datafile</DataFile>
 					<QualityTable>sim_codominant_qualitytable</QualityTable>
@@ -274,7 +274,7 @@
 				<Instruction>test_profiles\codominant_test\instruction_templates\test_codominant_sample.json</Instruction>
 				<Data>test_profiles\codominant_test\data_files\test_codominant_sample\codominant_samples_csv.csv</Data>
 			</Files>
-			<PayloadTypes>samples</PayloadTypes>
+			<PayloadType>samples</PayloadType>
 
 			<DbFkey entity="Contact">
 				<DbPKeySurrogate>dummy@email.address</DbPKeySurrogate>
