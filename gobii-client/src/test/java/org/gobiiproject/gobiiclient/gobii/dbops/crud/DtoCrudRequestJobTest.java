@@ -70,8 +70,8 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
     }
 
     /* This unit test should test the creation of a matrix job with dataset ID is not specified
-    *  The exception should be tested in this function
-    * */
+     *  The exception should be tested in this function
+     * */
     @Test
     public void createFailMatrixJob() throws Exception {
 
@@ -89,12 +89,12 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
 
         Assert.assertTrue("The error message should contain 'Matrix load job does not have a dataset id'",
                 resultEnvelope.getHeader()
-                    .getStatus()
-                    .getStatusMessages()
-                    .stream()
-                    .filter(m -> m.getMessage().contains("Matrix load job does not have a dataset id"))
-                    .count()
-                    > 0);
+                        .getStatus()
+                        .getStatusMessages()
+                        .stream()
+                        .filter(m -> m.getMessage().contains("Matrix load job does not have a dataset id"))
+                        .count()
+                        > 0);
 
         Assert.assertTrue(resultEnvelope.getPayload().getData().size() == 0);
 
@@ -197,16 +197,16 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
         Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == jobDTOList.size());
 
         List<Integer> itemToTest = new ArrayList<>();
-        if(jobDTOList.size() > 50) {
+        if (jobDTOList.size() > 50) {
             itemToTest = TestUtils.makeListOfIntegersInRange(10, jobDTOList.size());
         } else {
             for (int idx = 0; idx < jobDTOList.size(); idx++) {
                 itemToTest.add(idx);
             }
         }
-        
+
         for (Integer currentIdx : itemToTest) {
-            
+
             JobDTO currentJobDto = jobDTOList.get(currentIdx);
 
             Link currentLink = linkCollection.getLinksPerDataItem().get(currentIdx);
@@ -278,8 +278,8 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
 
             payloadEnvelopeAnalysis = new PayloadEnvelope<>(currentAnalysis, GobiiProcessType.CREATE);
             gobiiEnvelopeRestResourceAnalysis = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
-                .getUriFactory()
-                .resourceColl(GobiiServiceRequestId.URL_ANALYSIS));
+                    .getUriFactory()
+                    .resourceColl(GobiiServiceRequestId.URL_ANALYSIS));
             analysisDTOResponseEnvelope = gobiiEnvelopeRestResourceAnalysis.post(AnalysisDTO.class,
                     payloadEnvelopeAnalysis);
             AnalysisDTO createdAnalysis = analysisDTOResponseEnvelope.getPayload().getData().get(0);
@@ -358,6 +358,42 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
         Assert.assertNotNull(jobDTOResponseByDataSetID.getJobName());
         Assert.assertTrue(jobDTOResponse.getJobName().equals(jobDTOResponseByDataSetID.getJobName()));
 
+        // reretrieve dataset to verify JobId
+        Integer jobId = jobDTOResponseByDataSetID.getJobId();
+        Integer datasetId = newDataSetDtoResponse.getDataSetId();
+
+        RestUri projectsUri = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_DATASETS)
+                .setParamValue("id", datasetId.toString());
+        GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceForProjects = new GobiiEnvelopeRestResource<>(projectsUri);
+        PayloadEnvelope<DataSetDTO> datsetReretrieveRsultEnvelope = gobiiEnvelopeRestResourceForProjects
+                .get(DataSetDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        DataSetDTO dataSetDTOResponse = datsetReretrieveRsultEnvelope.getPayload().getData().get(0);
+        Assert.assertTrue("The job ID on the dataset does not match the one for the job DTO",
+                dataSetDTOResponse.getJobId().equals(jobId));
+
+        //now update a different field in the dataset
+        String newDatasetName = UUID.randomUUID().toString();
+        dataSetDTOResponse.setDatasetName(newDatasetName);
+        PayloadEnvelope<DataSetDTO> datsetUpdatedRsultEnvelope = gobiiEnvelopeRestResourceForProjects
+                .put(DataSetDTO.class, new PayloadEnvelope<>(dataSetDTOResponse,GobiiProcessType.UPDATE));
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(datsetUpdatedRsultEnvelope.getHeader()));
+
+        // now examine the result of having updated the dto
+        PayloadEnvelope<DataSetDTO> datsetPostUpdateEnvelope = gobiiEnvelopeRestResourceForProjects
+                .get(DataSetDTO.class);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(datsetPostUpdateEnvelope.getHeader()));
+        DataSetDTO dataSetDTOPostUpdate = datsetPostUpdateEnvelope.getPayload().getData().get(0);
+
+        Assert.assertTrue("dataset dto was not updated",
+                dataSetDTOPostUpdate.getDatasetName().equals(newDatasetName));
+
+        Assert.assertEquals("The job ID of the datset was changed by an unrelated field update",
+                jobId,
+                dataSetDTOPostUpdate.getJobId());
 
     }
 
@@ -377,13 +413,12 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         Assert.assertNotNull(resultEnvelope.getPayload());
         Assert.assertNotNull(resultEnvelope.getPayload().getData());
-        Assert.assertTrue(resultEnvelope.getPayload().getData().size() == 0 );
+        Assert.assertTrue(resultEnvelope.getPayload().getData().size() == 0);
     }
 
 
-
     @Test
-    public void testLoadedDataWorkflow() throws Exception{
+    public void testLoadedDataWorkflow() throws Exception {
         /*
             Per GP1-1534, and until GP1-1539 is implemented, the modified_by and modified_date columns
             of the dataset table are reserved for the user and date on which a dataset was succesfully
@@ -391,12 +426,10 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
          */
 
 
-
-
         // Verify that new and modified datasets have null modified_date and modified_by colu7mns
         Integer arbitraryDatasetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>())
                 .getFreshPkVals(DtoCrudRequestDataSetTest.class,
-                GobiiEntityNameType.DATASET,
+                        GobiiEntityNameType.DATASET,
                         1).get(0);
 
 
@@ -454,7 +487,7 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
 
 
         JobDTO newJobDto = TestDtoFactory.makePopulateJobDTO();
-        Integer jobContactId =  (new GlobalPkColl<DtoCrudRequestContactTest>())
+        Integer jobContactId = (new GlobalPkColl<DtoCrudRequestContactTest>())
                 .getAPkVal(DtoCrudRequestContactTest.class,
                         GobiiEntityNameType.CONTACT);
 
@@ -534,7 +567,6 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
         Assert.assertEquals("The modified_by value of the modified and reretrieved dataset should still match that the submitted by user of the job",
                 reRetrievedDatasetDto.getModifiedBy(),
                 newJobDto.getSubmittedBy());
-
 
 
     }
