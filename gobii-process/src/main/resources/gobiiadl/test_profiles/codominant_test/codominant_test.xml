@@ -274,7 +274,7 @@
 				<Instruction>test_profiles\codominant_test\instruction_templates\test_codominant_sample.json</Instruction>
 				<Data>test_profiles\codominant_test\data_files\test_codominant_sample\codominant_samples_csv.csv</Data>
 			</Files>
-			<PayloadTypes>samples</PayloadTypes>
+			<PayloadType>samples</PayloadType>
 
 			<DbFkey entity="Contact">
 				<DbPKeySurrogate>dummy@email.address</DbPKeySurrogate>
