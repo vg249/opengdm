@@ -296,6 +296,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
 
                                     <button type="submit"
                                             [class]="submitButtonStyle"
+                                            [disabled]="submitButtonStyle === buttonStyleSubmitNotReady"
                                             (mouseenter)="handleOnMouseOverSubmit($event,true)"
                                             (mouseleave)="handleOnMouseOverSubmit($event,false)"
                                             (click)="handleExtractSubmission()">Submit
