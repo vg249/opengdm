@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnChanges, OnInit, SimpleChange} from "@angular/core";
+import {Component, EventEmitter, OnChanges, OnInit, SimpleChange, ViewEncapsulation} from "@angular/core";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {GobiiFileItem} from "../model/gobii-file-item";
@@ -16,29 +16,35 @@ import {Observable} from "rxjs/Observable";
     selector: 'sample-marker-box',
     inputs: ['gobiiExtractFilterType'],
     outputs: ['onSampleMarkerError'],
+    encapsulation: ViewEncapsulation.Native,
+    styleUrls: ["js/node_modules/primeng/resources/themes/omega/theme.css",
+        "js/node_modules/primeng/resources/primeng.css",
+        "js/node_modules/bootswatch/cerulean/bootstrap.min.css"],
     template: `
         <div class="container-fluid">
 
             <div class="row">
 
-                <input type="radio"
-                       (click)="handleOnClickBrowse($event)"
-                       name="listType"
-                       value="itemFile"
-                       [(ngModel)]="selectedListType">
+                <p-radioButton
+                        (click)="handleOnClickBrowse($event)"
+                        name="listType"
+                        value="itemFile"
+                        [(ngModel)]="selectedListType">
+                </p-radioButton>
                 <label class="the-legend">File&nbsp;</label>
-                <input type="radio"
+                <p-radioButton
                        (click)="handleTextBoxChanged($event)"
                        name="listType"
                        value="itemArray"
                        [(ngModel)]="selectedListType">
+                </p-radioButton>
                 <label class="the-legend">List&nbsp;</label>
-                <input *ngIf="displayMarkerGroupRadio"
-                       type="radio"
+                <p-radioButton *ngIf="displayMarkerGroupRadio"
                        (click)="handleMarkerGroupChanged($event)"
                        name="listType"
                        value="markerGroupsType"
                        [(ngModel)]="selectedListType">
+                </p-radioButton>
                 <label *ngIf="displayMarkerGroupRadio"
                        class="the-legend">Marker Groups&nbsp;</label>
 
