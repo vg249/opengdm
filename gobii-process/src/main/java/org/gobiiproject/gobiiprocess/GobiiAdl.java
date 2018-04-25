@@ -397,8 +397,7 @@ public class GobiiAdl {
             if (propKeyLocalName.equals("properties")) {
                 propertiesElement = propKey;
                 continue;
-            }
-            else if (propKeyLocalName.equals("typeId")) {
+            } else if (propKeyLocalName.equals("typeId")) {
                 Integer typeId = platformTypeMap.get(propKey.getTextContent().toLowerCase());
                 newPlatformDTO.setTypeId(typeId);
                 continue;
@@ -868,19 +867,19 @@ public class GobiiAdl {
 
             if (fkeys != null && fkeys.getLength() > 0) {
 
-                for (int fkeysI = 0; fkeysI< fkeys.getLength(); fkeysI++) {
+                for (int fkeysI = 0; fkeysI < fkeys.getLength(); fkeysI++) {
 
                     currentFkeyElement = (Element) fkeys.item(fkeysI);
                     String currentEntity = currentFkeyElement.getAttribute("entity");
 
-                    if(currentEntity.equals("Project")) {
+                    if (currentEntity.equals("Project")) {
                         break;
                     }
                 }
 
             }
 
-            if(currentFkeyElement.equals(null)) {
+            if (currentFkeyElement.equals(null)) {
                 projectId = null;
             } else {
                 String currentProjfKeyDbPkeyValue = currentFkeyElement.getElementsByTagName("DbPKeySurrogate").item(0).getTextContent();
@@ -1055,7 +1054,7 @@ public class GobiiAdl {
                     currentFkeyElement = (Element) fkeys.item(fkeysI);
                     String currentEntity = currentFkeyElement.getAttribute("entity");
 
-                    if (currentEntity.equals("Experiment")){
+                    if (currentEntity.equals("Experiment")) {
                         break;
                     }
 
@@ -1067,7 +1066,7 @@ public class GobiiAdl {
                 experimentId = null;
             } else {
                 String currentExpfKeyDbPkeyValue = currentFkeyElement.getElementsByTagName("DbPKeySurrogate").item(0).getTextContent();
-                String exprCheckIfFKeyExists = "//Entities/" + ancestor.getNodeName() + "/" + "Experiment" + "/Properties[" +fkeyPkey + "='" + currentExpfKeyDbPkeyValue + "']";
+                String exprCheckIfFKeyExists = "//Entities/" + ancestor.getNodeName() + "/" + "Experiment" + "/Properties[" + fkeyPkey + "='" + currentExpfKeyDbPkeyValue + "']";
                 XPathExpression xPathExprNodeFKey = xPath.compile(exprCheckIfFKeyExists);
                 Element nodeFKey = (Element) xPathExprNodeFKey.evaluate(document, XPathConstants.NODE);
                 Element parentNode = (Element) nodeFKey.getParentNode();
@@ -1401,7 +1400,9 @@ public class GobiiAdl {
                     instructionInstructionFileAccess.getInstructions(instructionFilePath,
                             GobiiLoaderInstruction[].class);
             if (null != instructions) {
-                loaderInstructionFilesDTO.setInstructionFileName(folderName + "_" + instructionFile.getName());
+                String instructionFileName = instructionFile.getName();
+                String justName = instructionFileName.replaceFirst("[.][^.]+$", "");
+                loaderInstructionFilesDTO.setInstructionFileName(folderName + "_" + justName);
                 loaderInstructionFilesDTO.setGobiiLoaderInstructions(instructions);
             } else {
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
@@ -1563,7 +1564,7 @@ public class GobiiAdl {
 
                         // get datasetType ID
 
-                        RestUri datasetGetUri = GobiiClientContext.getInstance(null ,false)
+                        RestUri datasetGetUri = GobiiClientContext.getInstance(null, false)
                                 .getUriFactory()
                                 .resourceByUriIdParam(GobiiServiceRequestId.URL_DATASETS);
                         datasetGetUri.setParamValue("id", currentEntityId);
