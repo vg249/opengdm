@@ -53,10 +53,13 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                     this.store = store;
                     this.fileItemService = fileItemService;
                     this.nameIdFilterParamTypesMarkerGroup = file_item_param_names_1.FilterParamNames.MARKER_GROUPS;
+                    this.ITEM_FILE_TYPE = "ITEM_FILE_TYPE";
+                    this.ITEM_LIST_TYPE = "ITEM_LIST_TYPE";
+                    this.MARKER_GROUP_TYPE = "MARKER_GROUP_TYPE";
                     this.maxListItems = 200;
                     this.displayMaxItemsExceeded = false;
                     this.displayChoicePrompt = false;
-                    this.selectedListType = "itemFile";
+                    this.selectedListType = this.ITEM_FILE_TYPE;
                     this.displayUploader = true;
                     this.displayListBox = false;
                     this.displayMarkerGroupRadio = false;
@@ -162,13 +165,13 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                             || this.currentFileItems[0].getExtractorItemType() === type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_ITEM) {
                             this.displayListBox = false;
                             this.displayUploader = true;
-                            this.selectedListType = "itemFile";
+                            this.selectedListType = this.ITEM_FILE_TYPE;
                         }
                         else if (this.currentFileItems[0].getExtractorItemType() === type_extractor_item_1.ExtractorItemType.MARKER_FILE
                             || this.currentFileItems[0].getExtractorItemType() === type_extractor_item_1.ExtractorItemType.SAMPLE_FILE) {
                             this.displayListBox = true;
                             this.displayUploader = false;
-                            this.selectedListType = "itemArray";
+                            this.selectedListType = this.ITEM_LIST_TYPE;
                         }
                         this.currentFileItems.forEach(function (currentFileItem) {
                             currentFileItem.setProcessType(type_process_1.ProcessType.DELETE);
@@ -179,15 +182,15 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                     else {
                         // we leave things as they are; however, because the user clicked a radio button,
                         // we have to reset it to match the currently displayed list selector
-                        if (this.selectedListType === "itemFile") {
+                        if (this.selectedListType === this.ITEM_FILE_TYPE) {
                             this.displayListBox = true;
                             this.displayUploader = false;
-                            this.selectedListType = "itemArray";
+                            this.selectedListType = this.ITEM_LIST_TYPE;
                         }
-                        else if (this.selectedListType === "itemArray") {
+                        else if (this.selectedListType === this.ITEM_LIST_TYPE) {
                             this.displayListBox = false;
                             this.displayUploader = true;
-                            this.selectedListType = "itemFile";
+                            this.selectedListType = this.ITEM_FILE_TYPE;
                         }
                     } // if-else user answered "yes"
                 };
@@ -247,7 +250,7 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                         styleUrls: ["js/node_modules/primeng/resources/themes/omega/theme.css",
                             "js/node_modules/primeng/resources/primeng.css",
                             "js/node_modules/bootswatch/cerulean/bootstrap.min.css"],
-                        template: "\n        <div class=\"container-fluid\">\n\n            <div class=\"row\">\n\n                <p-radioButton\n                        (click)=\"handleOnClickBrowse($event)\"\n                        name=\"listType\"\n                        value=\"itemFile\"\n                        [(ngModel)]=\"selectedListType\">\n                </p-radioButton>\n                <label class=\"the-legend\">File&nbsp;</label>\n                <p-radioButton\n                       (click)=\"handleTextBoxChanged($event)\"\n                       name=\"listType\"\n                       value=\"itemArray\"\n                       [(ngModel)]=\"selectedListType\">\n                </p-radioButton>\n                <label class=\"the-legend\">List&nbsp;</label>\n                <p-radioButton *ngIf=\"displayMarkerGroupRadio\"\n                       (click)=\"handleMarkerGroupChanged($event)\"\n                       name=\"listType\"\n                       value=\"markerGroupsType\"\n                       [(ngModel)]=\"selectedListType\">\n                </p-radioButton>\n                <label *ngIf=\"displayMarkerGroupRadio\"\n                       class=\"the-legend\">Marker Groups&nbsp;</label>\n\n            </div>\n\n            <div class=\"row\">\n\n                <div *ngIf=\"displayUploader\" class=\"col-md-8\">\n                    <uploader\n                            [gobiiExtractFilterType]=\"gobiiExtractFilterType\"\n                            (onUploaderError)=\"handleStatusHeaderMessage($event)\"></uploader>\n                </div>\n\n                <div *ngIf=\"displayListBox\" class=\"col-md-8\">\n                    <text-area\n                            (onTextboxDataComplete)=\"handleTextBoxDataSubmitted($event)\"></text-area>\n                </div>\n                <div *ngIf=\"displayListBox\" class=\"col-md-4\">\n                    <p class=\"text-warning\">{{maxListItems}} maximum</p>\n                </div>\n\n                <div *ngIf=\"selectedListType == 'markerGroupsType'\" class=\"col-md-8\">\n                    <checklist-box\n                            [filterParamName]=\"nameIdFilterParamTypesMarkerGroup\"\n                            [gobiiExtractFilterType]=\"gobiiExtractFilterType\">\n                    </checklist-box>\n                </div>\n\n            </div>\n\n            <div>\n                <p-dialog header=\"{{extractTypeLabelExisting}} Already Selelected\" [(visible)]=\"displayChoicePrompt\"\n                          modal=\"modal\" width=\"300\" height=\"300\" responsive=\"true\">\n                    <p>A {{extractTypeLabelExisting}} is already selected. Do you want to remove it and specify a {{extractTypeLabelProposed}}\n                        instead?</p>\n                    <p-footer>\n                        <div class=\"ui-dialog-buttonpane ui-widget-content ui-helper-clearfix\">\n                            <button type=\"button\" pButton icon=\"fa-close\" (click)=\"handleUserChoice(false)\"\n                                    label=\"No\"></button>\n                            <button type=\"button\" pButton icon=\"fa-check\" (click)=\"handleUserChoice(true)\"\n                                    label=\"Yes\"></button>\n                        </div>\n                    </p-footer>\n                </p-dialog>\n            </div>\n            <div>\n                <p-dialog header=\"Maximum {{maxExceededTypeLabel}} Items Exceeded\" [(visible)]=\"displayMaxItemsExceeded\"\n                          modal=\"modal\" width=\"300\" height=\"300\" responsive=\"true\">\n                    <p>You attempted to paste more than {{maxListItems}} {{maxExceededTypeLabel}} items; Please reduce\n                        the size of the list</p>\n                </p-dialog>\n            </div>"
+                        template: "\n        <div class=\"container-fluid\">\n\n            <div class=\"row\">\n\n                <p-radioButton\n                        (click)=\"handleOnClickBrowse($event)\"\n                        name=\"listType\"\n                        value=\"ITEM_FILE_TYPE\"\n                        [(ngModel)]=\"selectedListType\">\n                </p-radioButton>\n                <label class=\"the-legend\">File&nbsp;</label>\n                <p-radioButton\n                       (click)=\"handleTextBoxChanged($event)\"\n                       name=\"listType\"\n                       value=\"ITEM_LIST_TYPE\"\n                       [(ngModel)]=\"selectedListType\">\n                </p-radioButton>\n                <label class=\"the-legend\">List&nbsp;</label>\n                <p-radioButton *ngIf=\"displayMarkerGroupRadio\"\n                       (click)=\"handleMarkerGroupChanged($event)\"\n                       name=\"listType\"\n                       value=\"MARKER_GROUP_TYPE\"\n                       [(ngModel)]=\"selectedListType\">\n                </p-radioButton>\n                <label *ngIf=\"displayMarkerGroupRadio\"\n                       class=\"the-legend\">Marker Groups&nbsp;</label>\n\n            </div>\n\n            <div class=\"row\">\n\n                <div *ngIf=\"displayUploader\" class=\"col-md-8\">\n                    <uploader\n                            [gobiiExtractFilterType]=\"gobiiExtractFilterType\"\n                            (onUploaderError)=\"handleStatusHeaderMessage($event)\"></uploader>\n                </div>\n\n                <div *ngIf=\"displayListBox\" class=\"col-md-8\">\n                    <text-area\n                            (onTextboxDataComplete)=\"handleTextBoxDataSubmitted($event)\"></text-area>\n                </div>\n                <div *ngIf=\"displayListBox\" class=\"col-md-4\">\n                    <p class=\"text-warning\">{{maxListItems}} maximum</p>\n                </div>\n\n                <div *ngIf=\"selectedListType == MARKER_GROUP_TYPE\" class=\"col-md-8\">\n                    <checklist-box\n                            [filterParamName]=\"nameIdFilterParamTypesMarkerGroup\"\n                            [gobiiExtractFilterType]=\"gobiiExtractFilterType\">\n                    </checklist-box>\n                </div>\n\n            </div>\n\n            <div>\n                <p-dialog header=\"{{extractTypeLabelExisting}} Already Selelected\" [(visible)]=\"displayChoicePrompt\"\n                          modal=\"modal\" width=\"300\" height=\"300\" responsive=\"true\">\n                    <p>A {{extractTypeLabelExisting}} is already selected. Do you want to remove it and specify a {{extractTypeLabelProposed}}\n                        instead?</p>\n                    <p-footer>\n                        <div class=\"ui-dialog-buttonpane ui-widget-content ui-helper-clearfix\">\n                            <button type=\"button\" pButton icon=\"fa-close\" (click)=\"handleUserChoice(false)\"\n                                    label=\"No\"></button>\n                            <button type=\"button\" pButton icon=\"fa-check\" (click)=\"handleUserChoice(true)\"\n                                    label=\"Yes\"></button>\n                        </div>\n                    </p-footer>\n                </p-dialog>\n            </div>\n            <div>\n                <p-dialog header=\"Maximum {{maxExceededTypeLabel}} Items Exceeded\" [(visible)]=\"displayMaxItemsExceeded\"\n                          modal=\"modal\" width=\"300\" height=\"300\" responsive=\"true\">\n                    <p>You attempted to paste more than {{maxListItems}} {{maxExceededTypeLabel}} items; Please reduce\n                        the size of the list</p>\n                </p-dialog>\n            </div>"
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
                         file_item_service_1.FileItemService])

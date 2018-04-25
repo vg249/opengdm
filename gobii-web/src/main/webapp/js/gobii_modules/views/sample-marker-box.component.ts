@@ -28,21 +28,21 @@ import {Observable} from "rxjs/Observable";
                 <p-radioButton
                         (click)="handleOnClickBrowse($event)"
                         name="listType"
-                        value="itemFile"
+                        value="ITEM_FILE_TYPE"
                         [(ngModel)]="selectedListType">
                 </p-radioButton>
                 <label class="the-legend">File&nbsp;</label>
                 <p-radioButton
                        (click)="handleTextBoxChanged($event)"
                        name="listType"
-                       value="itemArray"
+                       value="ITEM_LIST_TYPE"
                        [(ngModel)]="selectedListType">
                 </p-radioButton>
                 <label class="the-legend">List&nbsp;</label>
                 <p-radioButton *ngIf="displayMarkerGroupRadio"
                        (click)="handleMarkerGroupChanged($event)"
                        name="listType"
-                       value="markerGroupsType"
+                       value="MARKER_GROUP_TYPE"
                        [(ngModel)]="selectedListType">
                 </p-radioButton>
                 <label *ngIf="displayMarkerGroupRadio"
@@ -66,7 +66,7 @@ import {Observable} from "rxjs/Observable";
                     <p class="text-warning">{{maxListItems}} maximum</p>
                 </div>
 
-                <div *ngIf="selectedListType == 'markerGroupsType'" class="col-md-8">
+                <div *ngIf="selectedListType == MARKER_GROUP_TYPE" class="col-md-8">
                     <checklist-box
                             [filterParamName]="nameIdFilterParamTypesMarkerGroup"
                             [gobiiExtractFilterType]="gobiiExtractFilterType">
@@ -110,12 +110,16 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
     public nameIdFilterParamTypesMarkerGroup: FilterParamNames = FilterParamNames.MARKER_GROUPS;
 
 
+    public readonly ITEM_FILE_TYPE = "ITEM_FILE_TYPE";
+    public readonly ITEM_LIST_TYPE = "ITEM_LIST_TYPE";
+    public readonly MARKER_GROUP_TYPE = "MARKER_GROUP_TYPE";
+
     public maxListItems: number = 200;
     public displayMaxItemsExceeded: boolean = false;
     public maxExceededTypeLabel: string;
 
     public displayChoicePrompt: boolean = false;
-    public selectedListType: string = "itemFile";
+    public selectedListType: string = this.ITEM_FILE_TYPE;
 
     public displayUploader: boolean = true;
     public displayListBox: boolean = false;
@@ -262,7 +266,7 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
                 this.displayListBox = false;
                 this.displayUploader = true;
 
-                this.selectedListType = "itemFile";
+                this.selectedListType = this.ITEM_FILE_TYPE;
 
             } else if (this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.MARKER_FILE
                 || this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.SAMPLE_FILE) {
@@ -270,7 +274,7 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
                 this.displayListBox = true;
                 this.displayUploader = false;
 
-                this.selectedListType = "itemArray";
+                this.selectedListType = this.ITEM_LIST_TYPE;
 
             }
 
@@ -283,19 +287,19 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
         } else {
             // we leave things as they are; however, because the user clicked a radio button,
             // we have to reset it to match the currently displayed list selector
-            if (this.selectedListType === "itemFile") {
+            if (this.selectedListType === this.ITEM_FILE_TYPE) {
 
                 this.displayListBox = true;
                 this.displayUploader = false;
 
-                this.selectedListType = "itemArray"
+                this.selectedListType = this.ITEM_LIST_TYPE
 
-            } else if (this.selectedListType === "itemArray") {
+            } else if (this.selectedListType === this.ITEM_LIST_TYPE) {
 
                 this.displayListBox = false;
                 this.displayUploader = true;
 
-                this.selectedListType = "itemFile"
+                this.selectedListType = this.ITEM_FILE_TYPE;
 
             }
 
