@@ -18,7 +18,7 @@ import {UploaderComponent} from "../views/uploader.component";
 import {SampleListTypeComponent} from "../views/sample-list-type.component";
 import {
     CheckboxModule, DataTableModule, PanelModule, SharedModule, TreeModule, OverlayPanelModule,
-    AccordionModule, ListboxModule, FieldsetModule, TabViewModule, DialogModule, TooltipModule
+    AccordionModule, ListboxModule, FieldsetModule, TabViewModule, DialogModule, TooltipModule, RadioButtonModule
 } from 'primeng/primeng';
 import {StatusDisplayTreeComponent} from "../views/status-display-tree.component";
 import {NameIdListBoxComponent} from "../views/name-id-list-box.component";
@@ -60,6 +60,7 @@ import {FilterParamsColl} from "../services/core/filter-params-coll";
         TabViewModule,
         DialogModule,
         TooltipModule,
+        RadioButtonModule,
         routing,
         BrowserAnimationsModule,
         StoreModule.forRoot(reducers),

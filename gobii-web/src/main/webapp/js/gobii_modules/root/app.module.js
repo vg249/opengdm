@@ -153,6 +153,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/http", "@angular/p
                             primeng_1.TabViewModule,
                             primeng_1.DialogModule,
                             primeng_1.TooltipModule,
+                            primeng_1.RadioButtonModule,
                             app_routing_1.routing,
                             animations_1.BrowserAnimationsModule,
                             store_1.StoreModule.forRoot(reducers_1.reducers),
