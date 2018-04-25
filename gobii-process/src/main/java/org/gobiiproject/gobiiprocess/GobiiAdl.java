@@ -852,13 +852,68 @@ public class GobiiAdl {
         PayloadEnvelope<ExperimentDTO> resultEnvelope = gobiiEnvelopeRestResourceGet.get(ExperimentDTO.class);
         checkStatus(resultEnvelope);
         List<ExperimentDTO> experimentDTOSList = resultEnvelope.getPayload().getData();
+
+        // get project Id from XML
+
+        XPathExpression exprParentKey = xPath.compile("//" + "Project" + "/parent::*");
+        Element ancestor = (Element) exprParentKey.evaluate(document, XPathConstants.NODE);
+
+        String fkeyPKey = ancestor.getAttribute("DbPKeysurrogate");
+        Integer projectId = null;
+        if (fkeyPKey.isEmpty()) {
+            projectId = null;
+        } else {
+
+            Element currentFkeyElement = null;
+
+            if (fkeys != null && fkeys.getLength() > 0) {
+
+                for (int fkeysI = 0; fkeysI< fkeys.getLength(); fkeysI++) {
+
+                    currentFkeyElement = (Element) fkeys.item(fkeysI);
+                    String currentEntity = currentFkeyElement.getAttribute("entity");
+
+                    if(currentEntity.equals("Project")) {
+                        break;
+                    }
+                }
+
+            }
+
+            if(currentFkeyElement.equals(null)) {
+                projectId = null;
+            } else {
+                String currentProjfKeyDbPkeyValue = currentFkeyElement.getElementsByTagName("DbPKeySurrogate").item(0).getTextContent();
+                String exprCheckIfFKeyExists = "//Entities/" + ancestor.getNodeName() + "/" + "Project" + "/Properties[" + fkeyPKey + "='" + currentProjfKeyDbPkeyValue + "']";
+                XPathExpression xPathExprNodeFKey = xPath.compile(exprCheckIfFKeyExists);
+                Element nodeFKey = (Element) xPathExprNodeFKey.evaluate(document, XPathConstants.NODE);
+                Element parentNode = (Element) nodeFKey.getParentNode();
+                Element dbPkeyNode = ((Element) parentNode.getElementsByTagName("Keys").item(0));
+                validateNode(dbPkeyNode, parentElement.getTagName(), "Keys");
+
+                String projDbPkeyValue = dbPkeyNode.getElementsByTagName("DbPKey").item(0).getTextContent();
+
+                if (!projDbPkeyValue.isEmpty()) {
+                    projectId = Integer.parseInt(projDbPkeyValue);
+                }
+            }
+
+        }
+
         for (ExperimentDTO currentExperimentDTO : experimentDTOSList) {
             if (currentExperimentDTO.getExperimentName().equals(dbPkeysurrogateValue)) {
-                System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") already exists in the database. Return current entity ID.\n");
 
-                /* set fkey dbpkey for entity */
-                setFKeyDbPKeyForExistingEntity(fkeys, ExperimentDTO.class, currentExperimentDTO);
-                return currentExperimentDTO.getId();
+                if (!projectId.equals(null) && currentExperimentDTO.getProjectId().equals(projectId)) {
+
+
+                    System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") already exists in the database. Return current entity ID.\n");
+
+                    /* set fkey dbpkey for entity */
+                    setFKeyDbPKeyForExistingEntity(fkeys, ExperimentDTO.class, currentExperimentDTO);
+                    return currentExperimentDTO.getId();
+
+                }
+
             }
         }
 
@@ -978,13 +1033,67 @@ public class GobiiAdl {
         PayloadEnvelope<DataSetDTO> resultEnvelope = gobiiEnvelopeRestResourceGet.get(DataSetDTO.class);
         checkStatus(resultEnvelope);
         List<DataSetDTO> datasetDTOSList = resultEnvelope.getPayload().getData();
+
+        // get experiment ID from XML
+
+        XPathExpression exprParentKey = xPath.compile("//" + "Experiment" + "/parent::*");
+        Element ancestor = (Element) exprParentKey.evaluate(document, XPathConstants.NODE);
+
+        String fkeyPkey = ancestor.getAttribute("DbPKeysurrogate");
+        Integer experimentId = null;
+
+        if (fkeyPkey.isEmpty()) {
+            experimentId = null;
+        } else {
+
+            Element currentFkeyElement = null;
+
+            if (fkeys != null && fkeys.getLength() > 0) {
+
+                for (int fkeysI = 0; fkeysI < fkeys.getLength(); fkeysI++) {
+
+                    currentFkeyElement = (Element) fkeys.item(fkeysI);
+                    String currentEntity = currentFkeyElement.getAttribute("entity");
+
+                    if (currentEntity.equals("Experiment")){
+                        break;
+                    }
+
+                }
+
+            }
+
+            if (currentFkeyElement.equals(null)) {
+                experimentId = null;
+            } else {
+                String currentExpfKeyDbPkeyValue = currentFkeyElement.getElementsByTagName("DbPKeySurrogate").item(0).getTextContent();
+                String exprCheckIfFKeyExists = "//Entities/" + ancestor.getNodeName() + "/" + "Experiment" + "/Properties[" +fkeyPkey + "='" + currentExpfKeyDbPkeyValue + "']";
+                XPathExpression xPathExprNodeFKey = xPath.compile(exprCheckIfFKeyExists);
+                Element nodeFKey = (Element) xPathExprNodeFKey.evaluate(document, XPathConstants.NODE);
+                Element parentNode = (Element) nodeFKey.getParentNode();
+                Element dbPkeyNode = ((Element) parentNode.getElementsByTagName("Keys").item(0));
+                validateNode(dbPkeyNode, parentElement.getTagName(), "Keys");
+
+                String exprDbPkeyValue = dbPkeyNode.getElementsByTagName("DbPKey").item(0).getTextContent();
+
+                if (!exprDbPkeyValue.isEmpty()) {
+                    experimentId = Integer.parseInt(exprDbPkeyValue);
+                }
+            }
+
+        }
+
         for (DataSetDTO currentDatasetDTO : datasetDTOSList) {
             if (currentDatasetDTO.getDatasetName().equals(dbPkeysurrogateValue)) {
-                System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") already exists in the database. Return current entity ID.\n");
 
-                /* set fkey dbpkey for entity */
-                setFKeyDbPKeyForExistingEntity(fkeys, DataSetDTO.class, currentDatasetDTO);
-                return currentDatasetDTO.getId();
+                if (!experimentId.equals(null) && currentDatasetDTO.getExperimentId().equals(experimentId)) {
+
+                    System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") already exists in the database. Return current entity ID.\n");
+
+                    /* set fkey dbpkey for entity */
+                    setFKeyDbPKeyForExistingEntity(fkeys, DataSetDTO.class, currentDatasetDTO);
+                    return currentDatasetDTO.getId();
+                }
             }
         }
 
@@ -1282,7 +1391,7 @@ public class GobiiAdl {
         return fileDirectoryName;
     }
 
-    private static LoaderInstructionFilesDTO createInstructionFileDTO(String instructionFilePath) throws Exception {
+    private static LoaderInstructionFilesDTO createInstructionFileDTO(String instructionFilePath, String folderName) throws Exception {
 
         LoaderInstructionFilesDTO loaderInstructionFilesDTO = new LoaderInstructionFilesDTO();
         try {
@@ -1292,7 +1401,7 @@ public class GobiiAdl {
                     instructionInstructionFileAccess.getInstructions(instructionFilePath,
                             GobiiLoaderInstruction[].class);
             if (null != instructions) {
-                loaderInstructionFilesDTO.setInstructionFileName(instructionFile.getName());
+                loaderInstructionFilesDTO.setInstructionFileName(folderName + "_" + instructionFile.getName());
                 loaderInstructionFilesDTO.setGobiiLoaderInstructions(instructions);
             } else {
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
@@ -1300,7 +1409,7 @@ public class GobiiAdl {
                         "The instruction file exists, but could not be read: " + instructionFilePath);
             }
         } catch (Exception e) {
-            throw new Exception("Error creating instruction file DTO");
+            throw new Exception("Error creating instruction file DTO", e);
         }
         return loaderInstructionFilesDTO;
     }
@@ -1451,6 +1560,25 @@ public class GobiiAdl {
                         if (instructionObject.has("dataSetId")) {
                             instructionObject.addProperty("dataSetId", currentEntityId);
                         }
+
+                        // get datasetType ID
+
+                        RestUri datasetGetUri = GobiiClientContext.getInstance(null ,false)
+                                .getUriFactory()
+                                .resourceByUriIdParam(GobiiServiceRequestId.URL_DATASETS);
+                        datasetGetUri.setParamValue("id", currentEntityId);
+                        GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceForDatasetGet = new GobiiEnvelopeRestResource<>(datasetGetUri);
+                        PayloadEnvelope<DataSetDTO> resultEnvelopeForDatasetGet = gobiiEnvelopeRestResourceForDatasetGet.get(DataSetDTO.class);
+                        checkStatus(resultEnvelopeForDatasetGet);
+
+                        DataSetDTO dataSetDTOGetResponse = resultEnvelopeForDatasetGet.getPayload().getData().get(0);
+
+                        // set datasetType fields in instruction file template
+                        JsonObject datasetTypeObj = (JsonObject) instructionObject.get("datasetType");
+                        datasetTypeObj.addProperty("name", dataSetDTOGetResponse.getDatatypeName());
+                        datasetTypeObj.addProperty("id", dataSetDTOGetResponse.getDatatypeId());
+
+                        instructionObject.add("datasetType", datasetTypeObj);
                     }
 
                     JsonObject tempObject = (JsonObject) instructionObject.get(entityName);
@@ -1532,8 +1660,9 @@ public class GobiiAdl {
                     uploadFiles(jobName, sourcePath, filesPath);
                 }
 
+
                 // CREATE LOADER INSTRUCTION FILE
-                LoaderInstructionFilesDTO loaderInstructionFilesDTO = createInstructionFileDTO(instructionFilePath);
+                LoaderInstructionFilesDTO loaderInstructionFilesDTO = createInstructionFileDTO(instructionFilePath, folderName);
 
                 // SUBMIT INSTRUCTION FILE DTO
                 submitInstructionFile(loaderInstructionFilesDTO, jobPayloadType);
