@@ -10,7 +10,14 @@ import * as fromRoot from '../store/reducers';
 import {Store} from "@ngrx/store";
 import {FileItemService} from "../services/core/file-item-service";
 
-
+/***
+ * The RadioButton module is not compatabile with font-awesome. So
+ * we have to turn out native ViewEncapsulation (i.e., put a protective
+ * CSS bubble around our component's corner of the DOM) and manually include our
+ * style sheets. Yes, I tried removing front-awesome from index.html and including it
+ * explicitly in the status-display-tree-component, which is the only place it is used.
+ * There should be a way to get that to work, but I was not able to.
+ */
 @Component({
     selector: 'sample-list-type',
     inputs: ['gobiiExtractFilterType'],
