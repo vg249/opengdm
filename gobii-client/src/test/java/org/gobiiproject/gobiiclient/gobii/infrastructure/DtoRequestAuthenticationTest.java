@@ -32,6 +32,7 @@ import org.junit.Test;
 
 import java.net.URL;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DtoRequestAuthenticationTest {
 
@@ -310,13 +311,13 @@ public class DtoRequestAuthenticationTest {
 
         String testUserName = gobiiTestConfiguration.getConfigSettings().getTestExecConfig().getLdapUserForUnitTest();
         String testPassword = gobiiTestConfiguration.getConfigSettings().getTestExecConfig().getLdapPasswordForUnitTest();
-        Assert.assertFalse("Login should have failed", newGobiiClientContext.login(cropId,testUserName, testPassword));
+        Assert.assertFalse("Login should have failed", newGobiiClientContext.login(cropId, testUserName, testPassword));
         Assert.assertTrue("Message does not contain expected error: " + newGobiiClientContext.getLoginFailure(),
                 newGobiiClientContext.getLoginFailure().toLowerCase().contains("missing contact info for user"));
 
         // restore user name
         // re-set the token to the valid one we had -- otherwise we won't have permission to reset the contact record!
-        GobiiClientContext.getInstance(null,false).setUserToken(validToken);
+        GobiiClientContext.getInstance(null, false).setUserToken(validToken);
         contactDTOFromGet.setUserName(testUserName);
         PayloadEnvelope<ContactDTO> contactDTOPayloadEnvelopeRestore = gobiiEnvelopeRestResourceForPut.put(ContactDTO.class, payloadEnvelopeForPut);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOPayloadEnvelopeRestore.getHeader()));
@@ -348,30 +349,48 @@ public class DtoRequestAuthenticationTest {
             if (configSettings.getLdapUserForBackendProcs().equals(knownRunAsBackendUserName) &&
                     configSettings.getLdapPasswordForBackendProcs().equals(knownRunAsBackendPassword)) {
 
-                //STEP ONE -- create a contact with the backend user user name
                 Assert.assertTrue(GobiiClientContextAuth.authenticate());
 
-                Integer contactId = (new GlobalPkColl<DtoCrudRequestContactTest>()).getAPkVal(DtoCrudRequestContactTest.class,
-                        GobiiEntityNameType.CONTACT);
-
-                RestUri restUriContact = GobiiClientContext.getInstance(null, false)
+                //STEP ONE -- if we don't ahve a a contact with the backend user user name, create one
+                RestUri restUriContactForAll = GobiiClientContext.getInstance(null, false)
                         .getUriFactory()
-                        .resourceByUriIdParam(GobiiServiceRequestId.URL_CONTACTS);
-                restUriContact.setParamValue("id", contactId.toString());
-                GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResourceGet = new GobiiEnvelopeRestResource<>(restUriContact);
-                PayloadEnvelope<ContactDTO> resultEnvelope = gobiiEnvelopeRestResourceGet
+                        .resourceColl(GobiiServiceRequestId.URL_CONTACTS);
+                GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResourceGetAll = new GobiiEnvelopeRestResource<>(restUriContactForAll);
+                PayloadEnvelope<ContactDTO> resultEnvelopeAll = gobiiEnvelopeRestResourceGetAll
                         .get(ContactDTO.class);
-                Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+                Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeAll.getHeader()));
 
-                ContactDTO contactDTO = resultEnvelope.getPayload().getData().get(0);
+                Integer contactId;
+                if( resultEnvelopeAll.getPayload().getData()
+                        .stream()
+                        .anyMatch(ci -> ci.getUserName().equals(knownRunAsBackendUserName) )) {
+                    contactId = resultEnvelopeAll.getPayload().getData()
+                            .stream()
+                            .filter(ci -> ci.getUserName().equals(knownRunAsBackendUserName))
+                            .collect(Collectors.toList())
+                            .get(0).getContactId();
+                } else {
+                    contactId = (new GlobalPkColl<DtoCrudRequestContactTest>()).getAPkVal(DtoCrudRequestContactTest.class,
+                            GobiiEntityNameType.CONTACT);
+                    RestUri restUriContactForUpdate = GobiiClientContext.getInstance(null, false)
+                            .getUriFactory()
+                            .resourceByUriIdParam(GobiiServiceRequestId.URL_CONTACTS)
+                            .setParamValue("id", contactId.toString());
+                    GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResourceGetForUpdate = new GobiiEnvelopeRestResource<>(restUriContactForUpdate);
+                    PayloadEnvelope<ContactDTO> resultEnvelope = gobiiEnvelopeRestResourceGetForUpdate
+                            .get(ContactDTO.class);
+                    Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
 
-                contactDTO.setUserName(knownRunAsBackendUserName);
+                    ContactDTO contactDTO = resultEnvelope.getPayload().getData().get(0);
 
-                GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResourceContactById = new GobiiEnvelopeRestResource<>(restUriContact);
-                PayloadEnvelope<ContactDTO> gobiiEnvelopeRestResourceUpdate = gobiiEnvelopeRestResourceContactById
-                        .put(ContactDTO.class, resultEnvelope);
+                    contactDTO.setUserName(knownRunAsBackendUserName);
 
-                Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(gobiiEnvelopeRestResourceUpdate.getHeader()));
+                    GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResourceContactById = new GobiiEnvelopeRestResource<>(restUriContactForUpdate);
+                    PayloadEnvelope<ContactDTO> gobiiEnvelopeRestResourceUpdate = gobiiEnvelopeRestResourceContactById
+                            .put(ContactDTO.class, resultEnvelope);
+
+                    Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(gobiiEnvelopeRestResourceUpdate.getHeader()));
+                }
 
 
                 // VERIFY THAT RAW LOGIN NOW WORKS
@@ -399,11 +418,16 @@ public class DtoRequestAuthenticationTest {
                 // authenticated now. But just to be sure, let's do another simple request (against
                 // /contacts because that's the URI we've got handy) and verify that we can hit
                 // resources that require authentication
+                RestUri restUriContactForGet = GobiiClientContext.getInstance(null, false)
+                        .getUriFactory()
+                        .resourceByUriIdParam(GobiiServiceRequestId.URL_CONTACTS)
+                        .setParamValue("id", contactId.toString());
+                GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResourceGet = new GobiiEnvelopeRestResource<>(restUriContactForGet);
                 PayloadEnvelope<ContactDTO> resultEnvelopePostRunAsAuthentication = gobiiEnvelopeRestResourceGet
                         .get(ContactDTO.class);
                 Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopePostRunAsAuthentication.getHeader()));
 
-                ContactDTO contactDTOPostRunAsAuthentication = resultEnvelope.getPayload().getData().get(0);
+                ContactDTO contactDTOPostRunAsAuthentication = resultEnvelopePostRunAsAuthentication.getPayload().getData().get(0);
                 Assert.assertTrue("The contact retrieved post run as authenticaiton is not the same as the one before",
                         contactDTOPostRunAsAuthentication.getUserName().equals(knownRunAsBackendUserName));
 
