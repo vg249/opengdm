@@ -123,9 +123,7 @@ class ConfigValues {
     private boolean isAuthenticateBrapi = true;
 
     @Element(required = false)
-    private Integer maxUploadSizeMbytes = 1000;
-
-
+    private Integer maxUploadSizeMbytes = 10;
 
     public TestExecConfig getTestExecConfig() {
         return testExecConfig;
