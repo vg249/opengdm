@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnChanges, OnInit, SimpleChange} from "@angular/core";
+import {Component, EventEmitter, OnChanges, OnInit, SimpleChange, ViewEncapsulation} from "@angular/core";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {GobiiFileItem} from "../model/gobii-file-item";
@@ -10,35 +10,44 @@ import * as fromRoot from '../store/reducers';
 import {FileItemService} from "../services/core/file-item-service";
 import {Store} from "@ngrx/store";
 import {Observable} from "rxjs/Observable";
+import {StatusLevel} from "../model/type-status-level";
+import * as historyAction from "../store/actions/history-action";
+import {EntityType} from "../model/type-entity";
 
 
 @Component({
     selector: 'sample-marker-box',
     inputs: ['gobiiExtractFilterType'],
     outputs: ['onSampleMarkerError'],
+    encapsulation: ViewEncapsulation.Native,
+    styleUrls: ["js/node_modules/primeng/resources/themes/omega/theme.css",
+        "js/node_modules/primeng/resources/primeng.css",
+        "js/node_modules/bootswatch/cerulean/bootstrap.min.css"],
     template: `
         <div class="container-fluid">
 
             <div class="row">
 
-                <input type="radio"
-                       (click)="handleOnClickBrowse($event)"
-                       name="listType"
-                       value="itemFile"
-                       [(ngModel)]="selectedListType">
+                <p-radioButton
+                        (click)="handleOnClickBrowse($event)"
+                        name="listType"
+                        value="ITEM_FILE_TYPE"
+                        [(ngModel)]="selectedListType">
+                </p-radioButton>
                 <label class="the-legend">File&nbsp;</label>
-                <input type="radio"
-                       (click)="handleTextBoxChanged($event)"
-                       name="listType"
-                       value="itemArray"
-                       [(ngModel)]="selectedListType">
+                <p-radioButton
+                        (click)="handleTextBoxChanged($event)"
+                        name="listType"
+                        value="ITEM_LIST_TYPE"
+                        [(ngModel)]="selectedListType">
+                </p-radioButton>
                 <label class="the-legend">List&nbsp;</label>
-                <input *ngIf="displayMarkerGroupRadio"
-                       type="radio"
-                       (click)="handleMarkerGroupChanged($event)"
-                       name="listType"
-                       value="markerGroupsType"
-                       [(ngModel)]="selectedListType">
+                <p-radioButton *ngIf="displayMarkerGroupRadio"
+                               (click)="handleMarkerGroupChanged($event)"
+                               name="listType"
+                               value="MARKER_GROUP_TYPE"
+                               [(ngModel)]="selectedListType">
+                </p-radioButton>
                 <label *ngIf="displayMarkerGroupRadio"
                        class="the-legend">Marker Groups&nbsp;</label>
 
@@ -60,7 +69,7 @@ import {Observable} from "rxjs/Observable";
                     <p class="text-warning">{{maxListItems}} maximum</p>
                 </div>
 
-                <div *ngIf="selectedListType == 'markerGroupsType'" class="col-md-8">
+                <div *ngIf="selectedListType == MARKER_GROUP_TYPE" class="col-md-8">
                     <checklist-box
                             [filterParamName]="nameIdFilterParamTypesMarkerGroup"
                             [gobiiExtractFilterType]="gobiiExtractFilterType">
@@ -72,7 +81,7 @@ import {Observable} from "rxjs/Observable";
             <div>
                 <p-dialog header="{{extractTypeLabelExisting}} Already Selelected" [(visible)]="displayChoicePrompt"
                           modal="modal" width="300" height="300" responsive="true">
-                    <p>A {{extractTypeLabelExisting}} is already selected. Do you want to remove it and specify a {{extractTypeLabelProposed}}
+                    <p>{{extractTypeLabelExisting}} already selected. Specify {{extractTypeLabelProposed}}
                         instead?</p>
                     <p-footer>
                         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
@@ -104,15 +113,20 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
     public nameIdFilterParamTypesMarkerGroup: FilterParamNames = FilterParamNames.MARKER_GROUPS;
 
 
+    public readonly ITEM_FILE_TYPE = "ITEM_FILE_TYPE";
+    public readonly ITEM_LIST_TYPE = "ITEM_LIST_TYPE";
+    public readonly MARKER_GROUP_TYPE = "MARKER_GROUP_TYPE";
+
     public maxListItems: number = 200;
     public displayMaxItemsExceeded: boolean = false;
     public maxExceededTypeLabel: string;
 
     public displayChoicePrompt: boolean = false;
-    public selectedListType: string = "itemFile";
+    public selectedListType: string = this.ITEM_FILE_TYPE;
 
     public displayUploader: boolean = true;
     public displayListBox: boolean = false;
+    public displayMarkerGroupBox: boolean = false;
     public displayMarkerGroupRadio: boolean = false;
 
     public gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
@@ -178,13 +192,74 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
     }
 
 
+    private makeLabel(inputType: string) {
+
+        let returnVal: string;
+
+
+        if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
+
+            if (inputType === this.ITEM_FILE_TYPE) {
+
+                returnVal = Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_FILE];
+
+            } else if (inputType === this.ITEM_LIST_TYPE) {
+                returnVal = Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_ITEM];
+
+            } else {
+
+                this.store.dispatch(new historyAction.AddStatusAction(new HeaderStatusMessage(
+                    "Unhandled input type making input type label "
+                    + inputType
+                    + " for extract type "
+                    + GobiiExtractFilterType[this.gobiiExtractFilterType],
+                    StatusLevel.ERROR,
+                    null)));
+            }
+
+        } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
+
+            if (inputType === this.ITEM_FILE_TYPE) {
+
+                returnVal = Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_FILE];
+
+            } else if (inputType === this.ITEM_LIST_TYPE) {
+
+                returnVal = Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST_ITEM];
+
+            } else if (inputType === this.MARKER_GROUP_TYPE) {
+
+                returnVal = Labels.instance().entityNodeLabels[EntityType.MARKER_GROUP];
+
+            } else {
+
+                this.store.dispatch(new historyAction.AddStatusAction(new HeaderStatusMessage(
+                    "Unhandled input type making input type label "
+                    + inputType
+                    + " for extract type "
+                    + GobiiExtractFilterType[this.gobiiExtractFilterType],
+                    StatusLevel.ERROR,
+                    null)));
+            }
+
+        } else {
+            this.store.dispatch(new historyAction.AddStatusAction(new HeaderStatusMessage(
+                "This component is not intended to be used in extract type: " + GobiiExtractFilterType[this.gobiiExtractFilterType],
+                StatusLevel.ERROR,
+                null)));
+        }
+
+
+        return returnVal;
+    }
+
     private currentFileItems: GobiiFileItem[] = [];
 
-    handleSampleMarkerChoicesExist(): boolean {
+    handleSampleMarkerChoicesExist(previousInputType: string, proposedInputType: string): boolean {
 
         let returnVal: boolean = false;
 
-        this.store.select(fromRoot.getAllFileItems)
+        this.store.select(fromRoot.getSelectedFileItems)
             .subscribe(fileItems => {
 
                     let extractorItemTypeListToFind: ExtractorItemType = ExtractorItemType.UNKNOWN;
@@ -194,43 +269,27 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
                         extractorItemTypeListToFind = ExtractorItemType.SAMPLE_LIST_ITEM;
                         extractorItemTypeFileToFind = ExtractorItemType.SAMPLE_FILE;
                     } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
+
                         extractorItemTypeListToFind = ExtractorItemType.MARKER_LIST_ITEM;
                         extractorItemTypeFileToFind = ExtractorItemType.MARKER_FILE;
                     }
 
                     this.currentFileItems = fileItems.filter(item => {
                         return ((item.getExtractorItemType() === extractorItemTypeListToFind) ||
-                            (item.getExtractorItemType() === extractorItemTypeFileToFind))
+                            (item.getExtractorItemType() === extractorItemTypeFileToFind) ||
+                            (item.getExtractorItemType() === ExtractorItemType.ENTITY &&
+                                item.getEntityType() === EntityType.MARKER_GROUP))
                     });
 
                     if (this.currentFileItems.length > 0) {
 
-                        this.extractTypeLabelExisting = Labels.instance().treeExtractorTypeLabels[this.currentFileItems[0].getExtractorItemType()];
-
-                        if (this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_ITEM) {
-
-                            this.extractTypeLabelProposed = Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_FILE];
-
-                        } else if (this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.MARKER_LIST_ITEM) {
-
-                            this.extractTypeLabelProposed = Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_FILE];
-
-                        } else if (this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.SAMPLE_FILE) {
-
-                            this.extractTypeLabelProposed = Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_ITEM];
-
-                        } else if (this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.MARKER_FILE) {
-
-                            this.extractTypeLabelProposed = Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST_ITEM];
-                        }
-
+                        this.extractTypeLabelProposed = this.makeLabel(proposedInputType);
+                        this.extractTypeLabelExisting = this.makeLabel(previousInputType);
                         this.displayChoicePrompt = true;
                         returnVal = true;
                         // it does not seem that the PrimeNG dialog really blocks in the usual sense;
                         // so we have to chain what we do next off of the click events on the dialog.
                         // see handleUserChoice()
-
-                    } else {
 
                     }
                 },
@@ -249,60 +308,91 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
 
         if (this.currentFileItems.length > 0 && userChoice === true) {
 
-            // based on what _was_ the current item, we now make the current selection the other one
-            if (this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.MARKER_LIST_ITEM
-                || this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_ITEM) {
-
-                this.displayListBox = false;
-                this.displayUploader = true;
-
-                this.selectedListType = "itemFile";
-
-            } else if (this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.MARKER_FILE
-                || this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.SAMPLE_FILE) {
-
-                this.displayListBox = true;
-                this.displayUploader = false;
-
-                this.selectedListType = "itemArray";
-
-            }
-
+            this.setDisplayFlags(this.extractTypeLabelProposed);
             this.currentFileItems.forEach(currentFileItem => {
 
                 currentFileItem.setProcessType(ProcessType.DELETE);
                 this.fileItemService
                     .unloadFileItemFromExtract(currentFileItem);
             });
+
         } else {
-            // we leave things as they are; however, because the user clicked a radio button,
-            // we have to reset it to match the currently displayed list selector
-            if (this.selectedListType === "itemFile") {
 
-                this.displayListBox = true;
-                this.displayUploader = false;
 
-                this.selectedListType = "itemArray"
-
-            } else if (this.selectedListType === "itemArray") {
-
-                this.displayListBox = false;
-                this.displayUploader = true;
-
-                this.selectedListType = "itemFile"
-
-            }
+            this.setDisplayFlags(this.extractTypeLabelExisting);
 
         } // if-else user answered "yes"
+    }
+
+
+    private setDisplayFlags(labelValue: string) {
+
+
+        if (labelValue === this.makeLabel(this.ITEM_LIST_TYPE)) {
+
+            this.displayListBox = true;
+            this.displayUploader = false;
+            this.displayMarkerGroupBox = false;
+
+            this.selectedListType = this.ITEM_LIST_TYPE;
+
+        } else if (labelValue === this.makeLabel(this.ITEM_FILE_TYPE)) {
+
+            this.displayListBox = false;
+            this.displayUploader = true;
+            this.displayMarkerGroupBox = false;
+
+            this.selectedListType = this.ITEM_FILE_TYPE;
+
+        } else if (labelValue === this.makeLabel(this.MARKER_GROUP_TYPE)) {
+            this.displayListBox = false;
+            this.displayUploader = false;
+            this.displayMarkerGroupBox = true;
+
+            this.selectedListType = this.MARKER_GROUP_TYPE;
+
+        } else {
+
+            this.store.dispatch(new historyAction.AddStatusAction(new HeaderStatusMessage(
+                "Unhandled input type setting display flags for label type "
+                + labelValue
+                + " for extract type "
+                + GobiiExtractFilterType[this.gobiiExtractFilterType],
+                StatusLevel.ERROR,
+                null)));
+        }
+
+    } // setDisplayFlags()
+
+    private getPreviousInputType(): string {
+
+        let returnVal: string;
+
+        if (this.displayListBox) {
+
+            returnVal = this.ITEM_LIST_TYPE;
+
+        } else if (this.displayUploader) {
+
+            returnVal = this.ITEM_FILE_TYPE;
+
+        } else if (this.displayMarkerGroupBox) {
+
+            returnVal = this.MARKER_GROUP_TYPE;
+
+        }
+
+        return returnVal;
     }
 
     private handleTextBoxChanged(event) {
 
         // if there is no existing selected list or file, then this is just a simple setting
-        if (this.handleSampleMarkerChoicesExist() === false) {
+        if (this.handleSampleMarkerChoicesExist(this.getPreviousInputType(), this.ITEM_LIST_TYPE) === false) {
 
             this.displayListBox = true;
             this.displayUploader = false;
+            this.displayMarkerGroupBox = false;
 
             // this.displayListBox = true;
             // this.displayUploader = false;
@@ -312,10 +402,11 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
 
     private handleOnClickBrowse($event) {
 
-        if (this.handleSampleMarkerChoicesExist() === false) {
+        if (this.handleSampleMarkerChoicesExist(this.getPreviousInputType(), this.ITEM_FILE_TYPE) === false) {
 
             this.displayListBox = false;
             this.displayUploader = true;
+            this.displayMarkerGroupBox = false;
 
             // this.displayListBox = false;
             // this.displayUploader = true;
@@ -324,10 +415,12 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
     }
 
     handleMarkerGroupChanged($event) {
-        if (this.handleSampleMarkerChoicesExist() === false) {
+
+        if (this.handleSampleMarkerChoicesExist(this.getPreviousInputType(), this.MARKER_GROUP_TYPE) === false) {
 
             this.displayListBox = false;
             this.displayUploader = false;
+            this.displayMarkerGroupBox = true;
         }
     }
 

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnChanges, OnInit, SimpleChange} from '@angular/core';
+import {Component, EventEmitter, OnChanges, OnInit, SimpleChange, ViewEncapsulation} from '@angular/core';
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {GobiiSampleListType} from "../model/type-extractor-sample-list";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
@@ -10,32 +10,53 @@ import * as fromRoot from '../store/reducers';
 import {Store} from "@ngrx/store";
 import {FileItemService} from "../services/core/file-item-service";
 
-
+/***
+ * The RadioButton module is not compatabile with font-awesome. So
+ * we have to turn out native ViewEncapsulation (i.e., put a protective
+ * CSS bubble around our component's corner of the DOM) and manually include our
+ * style sheets. Yes, I tried removing front-awesome from index.html and including it
+ * explicitly in the status-display-tree-component, which is the only place it is used.
+ * There should be a way to get that to work, but I was not able to.
+ */
 @Component({
     selector: 'sample-list-type',
     inputs: ['gobiiExtractFilterType'],
     outputs: ['onHeaderStatusMessage'],
+    encapsulation: ViewEncapsulation.Native,
+    styleUrls: ["js/node_modules/primeng/resources/themes/omega/theme.css",
+        "js/node_modules/primeng/resources/primeng.css",
+        "js/node_modules/bootswatch/cerulean/bootstrap.min.css"],
     template: `
         <form>
             <label class="the-legend">List Item Type:&nbsp;</label>
-            <BR><input type="radio"
-                       (ngModelChange)="handleSampleTypeSelected($event)"
-                       [ngModel]="(sampleListType$ | async).getItemId()"
-                       name="listType"
-                       value="GERMPLASM_NAME">
-            <label for="GERMPLASM_NAME" class="the-legend">Germplasm Name</label>
-            <BR><input type="radio"
-                       (ngModelChange)="handleSampleTypeSelected($event)"
-                       [ngModel]="(sampleListType$ | async).getItemId()"
-                       name="listType"
-                       value="EXTERNAL_CODE">
-            <label for="EXTERNAL_CODE" class="the-legend">External Code</label>
-            <BR><input type="radio"
-                       (ngModelChange)="handleSampleTypeSelected($event)"
-                       [ngModel]="(sampleListType$ | async).getItemId()"
-                       name="listType"
-                       value="DNA_SAMPLE">
-            <label for="DNA_SAMPLE" class="the-legend">DNA Sample</label>
+            <BR>
+            <div class="ui-g" style="width:250px;margin-bottom:5px">
+                <div class="ui-g-12" style="height:30px">
+                    <p-radioButton
+                            (ngModelChange)="handleSampleTypeSelected($event)"
+                            [ngModel]="(sampleListType$ | async).getItemId()"
+                            name="listType"
+                            value="GERMPLASM_NAME"
+                            label="Germplasm Name">
+                    </p-radioButton>
+                </div>
+                <div class="ui-g-12" style="height:30px">
+                    <p-radioButton
+                            (ngModelChange)="handleSampleTypeSelected($event)"
+                            [ngModel]="(sampleListType$ | async).getItemId()"
+                            name="listType"
+                            value="EXTERNAL_CODE"
+                            label="External Code"></p-radioButton>
+                </div>
+                <div class="ui-g-12" style="height:30px">
+                    <p-radioButton
+                            (ngModelChange)="handleSampleTypeSelected($event)"
+                            [ngModel]="(sampleListType$ | async).getItemId()"
+                            name="listType"
+                            value="DNA_SAMPLE"
+                            label="DNA Sample"></p-radioButton>
+                </div>
+            </div>
         </form>` // end template
 })
 
@@ -55,9 +76,9 @@ export class SampleListTypeComponent implements OnInit, OnChanges {
 
         this.fileItemService
             .replaceFileItemByCompoundId(GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
-                    .setExtractorItemType(ExtractorItemType.SAMPLE_LIST_TYPE)
-                    .setItemName(GobiiSampleListType[gobiiSampleListType])
-                    .setItemId(GobiiSampleListType[gobiiSampleListType]));
+                .setExtractorItemType(ExtractorItemType.SAMPLE_LIST_TYPE)
+                .setItemName(GobiiSampleListType[gobiiSampleListType])
+                .setItemId(GobiiSampleListType[gobiiSampleListType]));
 
     }
 

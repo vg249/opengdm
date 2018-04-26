@@ -32,6 +32,13 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
         if (gobiiFileItem.getIsEphemeral()) {
             newFileItemState = newFileItemState.filter(function (fi) { return !fi.getIsEphemeral(); });
         }
+        else {
+            var fileItemInNewState = newFileItemState
+                .find(function (fi) { return fi.getFileItemUniqueId() === gobiiFileItem.getFileItemUniqueId(); });
+            if (fileItemInNewState) {
+                fileItemInNewState.setSelected(false);
+            }
+        }
         var returnVal = {
             gobiiExtractFilterType: state.gobiiExtractFilterType,
             allFileItems: newFileItemState,

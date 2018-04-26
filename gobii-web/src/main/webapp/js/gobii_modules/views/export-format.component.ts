@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, SimpleChange} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, SimpleChange, ViewEncapsulation} from '@angular/core';
 import {GobiiExtractFormat} from "../model/type-extract-format";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import {ProcessType} from "../model/type-process";
@@ -15,29 +15,43 @@ import {Observable} from "rxjs/Observable";
     selector: 'export-format',
     outputs: ['onFormatSelected', 'onError'],
     inputs: ['gobiiExtractFilterType'],
-    //directives: [RADIO_GROUP_DIRECTIVES]
-//  directives: [Alert]
+    encapsulation: ViewEncapsulation.Native,
+    styleUrls: ["js/node_modules/primeng/resources/themes/omega/theme.css",
+        "js/node_modules/primeng/resources/primeng.css",
+        "js/node_modules/bootswatch/cerulean/bootstrap.min.css"],
     template: `
         <form>
             <label class="the-legend">Select Format:&nbsp;</label>
-            <BR><input type="radio"
-                       (ngModelChange)="handleFormatSelected($event)"
-                       [ngModel]="(fileFormat$  | async).getItemId()"
-                       name="fileFormat"
-                       value="HAPMAP">
-            <label for="HAPMAP" class="the-legend">Hapmap</label>
-            <BR><input type="radio"
-                       (ngModelChange)="handleFormatSelected($event)"
-                       [ngModel]="(fileFormat$  | async).getItemId()"
-                       name="fileFormat"
-                       value="FLAPJACK">
-            <label for="FLAPJACK" class="the-legend">Flapjack</label>
-            <BR><input type="radio"
-                       (ngModelChange)="handleFormatSelected($event)"
-                       [ngModel]="(fileFormat$  | async).getItemId()"
-                       name="fileFormat"
-                       value="META_DATA_ONLY">
-            <label for="META_DATA_ONLY" class="the-legend">{{metaDataExtractname}}</label>
+            <BR>
+            <div class="ui-g" style="width:250px;margin-bottom:5px">
+                <div class="ui-g-12" style="height:30px">
+                    <p-radioButton
+                            (ngModelChange)="handleFormatSelected($event)"
+                            [ngModel]="(fileFormat$  | async).getItemId()"
+                            name="fileFormat"
+                            value="HAPMAP"
+                            label="Hapmap">
+                    </p-radioButton>
+                </div>
+                <div class="ui-g-12" style="height:30px">
+                    <p-radioButton
+                            (ngModelChange)="handleFormatSelected($event)"
+                            [ngModel]="(fileFormat$  | async).getItemId()"
+                            name="fileFormat"
+                            label="Flapjack"
+                            value="FLAPJACK">
+                    </p-radioButton>
+                </div>
+                <div class="ui-g-12" style="height:30px">
+                    <p-radioButton
+                            (ngModelChange)="handleFormatSelected($event)"
+                            [ngModel]="(fileFormat$  | async).getItemId()"
+                            name="fileFormat"
+                            label="Sample Metadata"
+                            value="META_DATA_ONLY">
+                    </p-radioButton>
+                </div>
+            </div>
         </form>` // end template
 })
 
@@ -100,8 +114,8 @@ export class ExportFormatComponent implements OnInit, OnChanges {
     ngOnChanges(changes: { [propName: string]: SimpleChange }) {
 
         if (changes['gobiiExtractFilterType']
-            && ( changes['gobiiExtractFilterType'].currentValue != null )
-            && ( changes['gobiiExtractFilterType'].currentValue != undefined )) {
+            && (changes['gobiiExtractFilterType'].currentValue != null)
+            && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
 
             if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
 

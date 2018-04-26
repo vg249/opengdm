@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/dto-header-status-message", "../model/type-extractor-filter", "../model/gobii-file-item", "../model/type-process", "../model//type-extractor-item", "./entity-labels", "../model/file-item-param-names", "../store/reducers", "../services/core/file-item-service", "@ngrx/store"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/dto-header-status-message", "../model/type-extractor-filter", "../model/gobii-file-item", "../model/type-process", "../model//type-extractor-item", "./entity-labels", "../model/file-item-param-names", "../store/reducers", "../services/core/file-item-service", "@ngrx/store", "../model/type-status-level", "../store/actions/history-action", "../model/type-entity"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, dto_header_status_message_1, type_extractor_filter_1, gobii_file_item_1, type_process_1, type_extractor_item_1, entity_labels_1, file_item_param_names_1, fromRoot, file_item_service_1, store_1, SampleMarkerBoxComponent;
+    var core_1, dto_header_status_message_1, type_extractor_filter_1, gobii_file_item_1, type_process_1, type_extractor_item_1, entity_labels_1, file_item_param_names_1, fromRoot, file_item_service_1, store_1, type_status_level_1, historyAction, type_entity_1, SampleMarkerBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -45,6 +45,15 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
             },
             function (store_1_1) {
                 store_1 = store_1_1;
+            },
+            function (type_status_level_1_1) {
+                type_status_level_1 = type_status_level_1_1;
+            },
+            function (historyAction_1) {
+                historyAction = historyAction_1;
+            },
+            function (type_entity_1_1) {
+                type_entity_1 = type_entity_1_1;
             }
         ],
         execute: function () {
@@ -53,12 +62,16 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                     this.store = store;
                     this.fileItemService = fileItemService;
                     this.nameIdFilterParamTypesMarkerGroup = file_item_param_names_1.FilterParamNames.MARKER_GROUPS;
+                    this.ITEM_FILE_TYPE = "ITEM_FILE_TYPE";
+                    this.ITEM_LIST_TYPE = "ITEM_LIST_TYPE";
+                    this.MARKER_GROUP_TYPE = "MARKER_GROUP_TYPE";
                     this.maxListItems = 200;
                     this.displayMaxItemsExceeded = false;
                     this.displayChoicePrompt = false;
-                    this.selectedListType = "itemFile";
+                    this.selectedListType = this.ITEM_FILE_TYPE;
                     this.displayUploader = true;
                     this.displayListBox = false;
+                    this.displayMarkerGroupBox = false;
                     this.displayMarkerGroupRadio = false;
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.onSampleMarkerError = new core_1.EventEmitter();
@@ -107,10 +120,48 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                         this.displayMaxItemsExceeded = true;
                     }
                 };
-                SampleMarkerBoxComponent.prototype.handleSampleMarkerChoicesExist = function () {
+                SampleMarkerBoxComponent.prototype.makeLabel = function (inputType) {
+                    var returnVal;
+                    if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
+                        if (inputType === this.ITEM_FILE_TYPE) {
+                            returnVal = entity_labels_1.Labels.instance().treeExtractorTypeLabels[type_extractor_item_1.ExtractorItemType.SAMPLE_FILE];
+                        }
+                        else if (inputType === this.ITEM_LIST_TYPE) {
+                            returnVal = entity_labels_1.Labels.instance().treeExtractorTypeLabels[type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_ITEM];
+                        }
+                        else {
+                            this.store.dispatch(new historyAction.AddStatusAction(new dto_header_status_message_1.HeaderStatusMessage("Unhandled input type making input type label "
+                                + inputType
+                                + " for extract type "
+                                + type_extractor_filter_1.GobiiExtractFilterType[this.gobiiExtractFilterType], type_status_level_1.StatusLevel.ERROR, null)));
+                        }
+                    }
+                    else if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
+                        if (inputType === this.ITEM_FILE_TYPE) {
+                            returnVal = entity_labels_1.Labels.instance().treeExtractorTypeLabels[type_extractor_item_1.ExtractorItemType.MARKER_FILE];
+                        }
+                        else if (inputType === this.ITEM_LIST_TYPE) {
+                            returnVal = entity_labels_1.Labels.instance().treeExtractorTypeLabels[type_extractor_item_1.ExtractorItemType.MARKER_LIST_ITEM];
+                        }
+                        else if (inputType === this.MARKER_GROUP_TYPE) {
+                            returnVal = entity_labels_1.Labels.instance().entityNodeLabels[type_entity_1.EntityType.MARKER_GROUP];
+                        }
+                        else {
+                            this.store.dispatch(new historyAction.AddStatusAction(new dto_header_status_message_1.HeaderStatusMessage("Unhandled input type making input type label "
+                                + inputType
+                                + " for extract type "
+                                + type_extractor_filter_1.GobiiExtractFilterType[this.gobiiExtractFilterType], type_status_level_1.StatusLevel.ERROR, null)));
+                        }
+                    }
+                    else {
+                        this.store.dispatch(new historyAction.AddStatusAction(new dto_header_status_message_1.HeaderStatusMessage("This component is not intended to be used in extract type: " + type_extractor_filter_1.GobiiExtractFilterType[this.gobiiExtractFilterType], type_status_level_1.StatusLevel.ERROR, null)));
+                    }
+                    return returnVal;
+                };
+                SampleMarkerBoxComponent.prototype.handleSampleMarkerChoicesExist = function (previousInputType, proposedInputType) {
                     var _this = this;
                     var returnVal = false;
-                    this.store.select(fromRoot.getAllFileItems)
+                    this.store.select(fromRoot.getSelectedFileItems)
                         .subscribe(function (fileItems) {
                         var extractorItemTypeListToFind = type_extractor_item_1.ExtractorItemType.UNKNOWN;
                         var extractorItemTypeFileToFind = type_extractor_item_1.ExtractorItemType.UNKNOWN;
@@ -124,29 +175,18 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                         }
                         _this.currentFileItems = fileItems.filter(function (item) {
                             return ((item.getExtractorItemType() === extractorItemTypeListToFind) ||
-                                (item.getExtractorItemType() === extractorItemTypeFileToFind));
+                                (item.getExtractorItemType() === extractorItemTypeFileToFind) ||
+                                (item.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY &&
+                                    item.getEntityType() === type_entity_1.EntityType.MARKER_GROUP));
                         });
                         if (_this.currentFileItems.length > 0) {
-                            _this.extractTypeLabelExisting = entity_labels_1.Labels.instance().treeExtractorTypeLabels[_this.currentFileItems[0].getExtractorItemType()];
-                            if (_this.currentFileItems[0].getExtractorItemType() === type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_ITEM) {
-                                _this.extractTypeLabelProposed = entity_labels_1.Labels.instance().treeExtractorTypeLabels[type_extractor_item_1.ExtractorItemType.SAMPLE_FILE];
-                            }
-                            else if (_this.currentFileItems[0].getExtractorItemType() === type_extractor_item_1.ExtractorItemType.MARKER_LIST_ITEM) {
-                                _this.extractTypeLabelProposed = entity_labels_1.Labels.instance().treeExtractorTypeLabels[type_extractor_item_1.ExtractorItemType.MARKER_FILE];
-                            }
-                            else if (_this.currentFileItems[0].getExtractorItemType() === type_extractor_item_1.ExtractorItemType.SAMPLE_FILE) {
-                                _this.extractTypeLabelProposed = entity_labels_1.Labels.instance().treeExtractorTypeLabels[type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_ITEM];
-                            }
-                            else if (_this.currentFileItems[0].getExtractorItemType() === type_extractor_item_1.ExtractorItemType.MARKER_FILE) {
-                                _this.extractTypeLabelProposed = entity_labels_1.Labels.instance().treeExtractorTypeLabels[type_extractor_item_1.ExtractorItemType.MARKER_LIST_ITEM];
-                            }
+                            _this.extractTypeLabelProposed = _this.makeLabel(proposedInputType);
+                            _this.extractTypeLabelExisting = _this.makeLabel(previousInputType);
                             _this.displayChoicePrompt = true;
                             returnVal = true;
                             // it does not seem that the PrimeNG dialog really blocks in the usual sense;
                             // so we have to chain what we do next off of the click events on the dialog.
                             // see handleUserChoice()
-                        }
-                        else {
                         }
                     }, function (hsm) {
                         _this.handleStatusHeaderMessage(hsm);
@@ -157,19 +197,7 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                     var _this = this;
                     this.displayChoicePrompt = false;
                     if (this.currentFileItems.length > 0 && userChoice === true) {
-                        // based on what _was_ the current item, we now make the current selection the other one
-                        if (this.currentFileItems[0].getExtractorItemType() === type_extractor_item_1.ExtractorItemType.MARKER_LIST_ITEM
-                            || this.currentFileItems[0].getExtractorItemType() === type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_ITEM) {
-                            this.displayListBox = false;
-                            this.displayUploader = true;
-                            this.selectedListType = "itemFile";
-                        }
-                        else if (this.currentFileItems[0].getExtractorItemType() === type_extractor_item_1.ExtractorItemType.MARKER_FILE
-                            || this.currentFileItems[0].getExtractorItemType() === type_extractor_item_1.ExtractorItemType.SAMPLE_FILE) {
-                            this.displayListBox = true;
-                            this.displayUploader = false;
-                            this.selectedListType = "itemArray";
-                        }
+                        this.setDisplayFlags(this.extractTypeLabelProposed);
                         this.currentFileItems.forEach(function (currentFileItem) {
                             currentFileItem.setProcessType(type_process_1.ProcessType.DELETE);
                             _this.fileItemService
@@ -177,41 +205,72 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                         });
                     }
                     else {
-                        // we leave things as they are; however, because the user clicked a radio button,
-                        // we have to reset it to match the currently displayed list selector
-                        if (this.selectedListType === "itemFile") {
-                            this.displayListBox = true;
-                            this.displayUploader = false;
-                            this.selectedListType = "itemArray";
-                        }
-                        else if (this.selectedListType === "itemArray") {
-                            this.displayListBox = false;
-                            this.displayUploader = true;
-                            this.selectedListType = "itemFile";
-                        }
+                        this.setDisplayFlags(this.extractTypeLabelExisting);
                     } // if-else user answered "yes"
+                };
+                SampleMarkerBoxComponent.prototype.setDisplayFlags = function (labelValue) {
+                    if (labelValue === this.makeLabel(this.ITEM_LIST_TYPE)) {
+                        this.displayListBox = true;
+                        this.displayUploader = false;
+                        this.displayMarkerGroupBox = false;
+                        this.selectedListType = this.ITEM_LIST_TYPE;
+                    }
+                    else if (labelValue === this.makeLabel(this.ITEM_FILE_TYPE)) {
+                        this.displayListBox = false;
+                        this.displayUploader = true;
+                        this.displayMarkerGroupBox = false;
+                        this.selectedListType = this.ITEM_FILE_TYPE;
+                    }
+                    else if (labelValue === this.makeLabel(this.MARKER_GROUP_TYPE)) {
+                        this.displayListBox = false;
+                        this.displayUploader = false;
+                        this.displayMarkerGroupBox = true;
+                        this.selectedListType = this.MARKER_GROUP_TYPE;
+                    }
+                    else {
+                        this.store.dispatch(new historyAction.AddStatusAction(new dto_header_status_message_1.HeaderStatusMessage("Unhandled input type setting display flags for label type "
+                            + labelValue
+                            + " for extract type "
+                            + type_extractor_filter_1.GobiiExtractFilterType[this.gobiiExtractFilterType], type_status_level_1.StatusLevel.ERROR, null)));
+                    }
+                }; // setDisplayFlags()
+                SampleMarkerBoxComponent.prototype.getPreviousInputType = function () {
+                    var returnVal;
+                    if (this.displayListBox) {
+                        returnVal = this.ITEM_LIST_TYPE;
+                    }
+                    else if (this.displayUploader) {
+                        returnVal = this.ITEM_FILE_TYPE;
+                    }
+                    else if (this.displayMarkerGroupBox) {
+                        returnVal = this.MARKER_GROUP_TYPE;
+                    }
+                    return returnVal;
                 };
                 SampleMarkerBoxComponent.prototype.handleTextBoxChanged = function (event) {
                     // if there is no existing selected list or file, then this is just a simple setting
-                    if (this.handleSampleMarkerChoicesExist() === false) {
+                    if (this.handleSampleMarkerChoicesExist(this.getPreviousInputType(), this.ITEM_LIST_TYPE) === false) {
                         this.displayListBox = true;
                         this.displayUploader = false;
+                        this.displayMarkerGroupBox = false;
                         // this.displayListBox = true;
                         // this.displayUploader = false;
                     }
                 };
                 SampleMarkerBoxComponent.prototype.handleOnClickBrowse = function ($event) {
-                    if (this.handleSampleMarkerChoicesExist() === false) {
+                    if (this.handleSampleMarkerChoicesExist(this.getPreviousInputType(), this.ITEM_FILE_TYPE) === false) {
                         this.displayListBox = false;
                         this.displayUploader = true;
+                        this.displayMarkerGroupBox = false;
                         // this.displayListBox = false;
                         // this.displayUploader = true;
                     }
                 };
                 SampleMarkerBoxComponent.prototype.handleMarkerGroupChanged = function ($event) {
-                    if (this.handleSampleMarkerChoicesExist() === false) {
+                    if (this.handleSampleMarkerChoicesExist(this.getPreviousInputType(), this.MARKER_GROUP_TYPE) === false) {
                         this.displayListBox = false;
                         this.displayUploader = false;
+                        this.displayMarkerGroupBox = true;
                     }
                 };
                 SampleMarkerBoxComponent.prototype.handleStatusHeaderMessage = function (statusMessage) {
@@ -243,7 +302,11 @@ System.register(["@angular/core", "../model/dto-header-status-message", "../mode
                         selector: 'sample-marker-box',
                         inputs: ['gobiiExtractFilterType'],
                         outputs: ['onSampleMarkerError'],
-                        template: "\n        <div class=\"container-fluid\">\n\n            <div class=\"row\">\n\n                <input type=\"radio\"\n                       (click)=\"handleOnClickBrowse($event)\"\n                       name=\"listType\"\n                       value=\"itemFile\"\n                       [(ngModel)]=\"selectedListType\">\n                <label class=\"the-legend\">File&nbsp;</label>\n                <input type=\"radio\"\n                       (click)=\"handleTextBoxChanged($event)\"\n                       name=\"listType\"\n                       value=\"itemArray\"\n                       [(ngModel)]=\"selectedListType\">\n                <label class=\"the-legend\">List&nbsp;</label>\n                <input *ngIf=\"displayMarkerGroupRadio\"\n                       type=\"radio\"\n                       (click)=\"handleMarkerGroupChanged($event)\"\n                       name=\"listType\"\n                       value=\"markerGroupsType\"\n                       [(ngModel)]=\"selectedListType\">\n                <label *ngIf=\"displayMarkerGroupRadio\"\n                       class=\"the-legend\">Marker Groups&nbsp;</label>\n\n            </div>\n\n            <div class=\"row\">\n\n                <div *ngIf=\"displayUploader\" class=\"col-md-8\">\n                    <uploader\n                            [gobiiExtractFilterType]=\"gobiiExtractFilterType\"\n                            (onUploaderError)=\"handleStatusHeaderMessage($event)\"></uploader>\n                </div>\n\n                <div *ngIf=\"displayListBox\" class=\"col-md-8\">\n                    <text-area\n                            (onTextboxDataComplete)=\"handleTextBoxDataSubmitted($event)\"></text-area>\n                </div>\n                <div *ngIf=\"displayListBox\" class=\"col-md-4\">\n                    <p class=\"text-warning\">{{maxListItems}} maximum</p>\n                </div>\n\n                <div *ngIf=\"selectedListType == 'markerGroupsType'\" class=\"col-md-8\">\n                    <checklist-box\n                            [filterParamName]=\"nameIdFilterParamTypesMarkerGroup\"\n                            [gobiiExtractFilterType]=\"gobiiExtractFilterType\">\n                    </checklist-box>\n                </div>\n\n            </div>\n\n            <div>\n                <p-dialog header=\"{{extractTypeLabelExisting}} Already Selelected\" [(visible)]=\"displayChoicePrompt\"\n                          modal=\"modal\" width=\"300\" height=\"300\" responsive=\"true\">\n                    <p>A {{extractTypeLabelExisting}} is already selected. Do you want to remove it and specify a {{extractTypeLabelProposed}}\n                        instead?</p>\n                    <p-footer>\n                        <div class=\"ui-dialog-buttonpane ui-widget-content ui-helper-clearfix\">\n                            <button type=\"button\" pButton icon=\"fa-close\" (click)=\"handleUserChoice(false)\"\n                                    label=\"No\"></button>\n                            <button type=\"button\" pButton icon=\"fa-check\" (click)=\"handleUserChoice(true)\"\n                                    label=\"Yes\"></button>\n                        </div>\n                    </p-footer>\n                </p-dialog>\n            </div>\n            <div>\n                <p-dialog header=\"Maximum {{maxExceededTypeLabel}} Items Exceeded\" [(visible)]=\"displayMaxItemsExceeded\"\n                          modal=\"modal\" width=\"300\" height=\"300\" responsive=\"true\">\n                    <p>You attempted to paste more than {{maxListItems}} {{maxExceededTypeLabel}} items; Please reduce\n                        the size of the list</p>\n                </p-dialog>\n            </div>"
+                        encapsulation: core_1.ViewEncapsulation.Native,
+                        styleUrls: ["js/node_modules/primeng/resources/themes/omega/theme.css",
+                            "js/node_modules/primeng/resources/primeng.css",
+                            "js/node_modules/bootswatch/cerulean/bootstrap.min.css"],
+                        template: "\n        <div class=\"container-fluid\">\n\n            <div class=\"row\">\n\n                <p-radioButton\n                        (click)=\"handleOnClickBrowse($event)\"\n                        name=\"listType\"\n                        value=\"ITEM_FILE_TYPE\"\n                        [(ngModel)]=\"selectedListType\">\n                </p-radioButton>\n                <label class=\"the-legend\">File&nbsp;</label>\n                <p-radioButton\n                        (click)=\"handleTextBoxChanged($event)\"\n                        name=\"listType\"\n                        value=\"ITEM_LIST_TYPE\"\n                        [(ngModel)]=\"selectedListType\">\n                </p-radioButton>\n                <label class=\"the-legend\">List&nbsp;</label>\n                <p-radioButton *ngIf=\"displayMarkerGroupRadio\"\n                               (click)=\"handleMarkerGroupChanged($event)\"\n                               name=\"listType\"\n                               value=\"MARKER_GROUP_TYPE\"\n                               [(ngModel)]=\"selectedListType\">\n                </p-radioButton>\n                <label *ngIf=\"displayMarkerGroupRadio\"\n                       class=\"the-legend\">Marker Groups&nbsp;</label>\n\n            </div>\n\n            <div class=\"row\">\n\n                <div *ngIf=\"displayUploader\" class=\"col-md-8\">\n                    <uploader\n                            [gobiiExtractFilterType]=\"gobiiExtractFilterType\"\n                            (onUploaderError)=\"handleStatusHeaderMessage($event)\"></uploader>\n                </div>\n\n                <div *ngIf=\"displayListBox\" class=\"col-md-8\">\n                    <text-area\n                            (onTextboxDataComplete)=\"handleTextBoxDataSubmitted($event)\"></text-area>\n                </div>\n                <div *ngIf=\"displayListBox\" class=\"col-md-4\">\n                    <p class=\"text-warning\">{{maxListItems}} maximum</p>\n                </div>\n\n                <div *ngIf=\"selectedListType == MARKER_GROUP_TYPE\" class=\"col-md-8\">\n                    <checklist-box\n                            [filterParamName]=\"nameIdFilterParamTypesMarkerGroup\"\n                            [gobiiExtractFilterType]=\"gobiiExtractFilterType\">\n                    </checklist-box>\n                </div>\n\n            </div>\n\n            <div>\n                <p-dialog header=\"{{extractTypeLabelExisting}} Already Selelected\" [(visible)]=\"displayChoicePrompt\"\n                          modal=\"modal\" width=\"300\" height=\"300\" responsive=\"true\">\n                    <p>{{extractTypeLabelExisting}} already selected. Specify {{extractTypeLabelProposed}}\n                        instead?</p>\n                    <p-footer>\n                        <div class=\"ui-dialog-buttonpane ui-widget-content ui-helper-clearfix\">\n                            <button type=\"button\" pButton icon=\"fa-close\" (click)=\"handleUserChoice(false)\"\n                                    label=\"No\"></button>\n                            <button type=\"button\" pButton icon=\"fa-check\" (click)=\"handleUserChoice(true)\"\n                                    label=\"Yes\"></button>\n                        </div>\n                    </p-footer>\n                </p-dialog>\n            </div>\n            <div>\n                <p-dialog header=\"Maximum {{maxExceededTypeLabel}} Items Exceeded\" [(visible)]=\"displayMaxItemsExceeded\"\n                          modal=\"modal\" width=\"300\" height=\"300\" responsive=\"true\">\n                    <p>You attempted to paste more than {{maxListItems}} {{maxExceededTypeLabel}} items; Please reduce\n                        the size of the list</p>\n                </p-dialog>\n            </div>"
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
                         file_item_service_1.FileItemService])
