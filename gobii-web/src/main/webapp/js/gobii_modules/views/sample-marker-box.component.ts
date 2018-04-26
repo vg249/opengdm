@@ -81,7 +81,7 @@ import {EntityType} from "../model/type-entity";
             <div>
                 <p-dialog header="{{extractTypeLabelExisting}} Already Selelected" [(visible)]="displayChoicePrompt"
                           modal="modal" width="300" height="300" responsive="true">
-                    <p>A {{extractTypeLabelExisting}} is already selected. Do you want to remove it and specify a {{extractTypeLabelProposed}}
+                    <p>{{extractTypeLabelExisting}} already selected. Specify {{extractTypeLabelProposed}}
                         instead?</p>
                     <p-footer>
                         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
