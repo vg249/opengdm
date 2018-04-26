@@ -78,9 +78,16 @@ function removeFromExtractItems(state: State, gobiiFileItem: GobiiFileItem): Sta
         newSelectedUniqueIdsState.splice(idx, 1);
     }
 
-    let newFileItemState:GobiiFileItem[] = state.allFileItems.slice();
-    if(gobiiFileItem.getIsEphemeral()) {
-        newFileItemState = newFileItemState.filter(fi => ! fi.getIsEphemeral());
+    let newFileItemState: GobiiFileItem[] = state.allFileItems.slice();
+    if (gobiiFileItem.getIsEphemeral()) {
+        newFileItemState = newFileItemState.filter(fi => !fi.getIsEphemeral());
+    } else {
+        let fileItemInNewState:GobiiFileItem = newFileItemState
+            .find(fi => fi.getFileItemUniqueId() === gobiiFileItem.getFileItemUniqueId());
+
+        if(fileItemInNewState ) {
+            fileItemInNewState.setSelected( false );
+        }
     }
 
 
