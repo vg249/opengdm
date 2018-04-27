@@ -180,7 +180,12 @@ public class GobiiAdl {
         return type.cast(value);
     }
 
+
     private static void checkStatus(PayloadEnvelope payloadEnvelope) throws Exception {
+        checkStatus(payloadEnvelope, false);
+    } // checkStatus()
+
+    private static void checkStatus(PayloadEnvelope payloadEnvelope, boolean verifyResultExists) throws Exception {
 
         Header header = payloadEnvelope.getHeader();
         if (!header.getStatus().isSucceeded() ||
@@ -197,6 +202,12 @@ public class GobiiAdl {
                 message = message + "\n" + currentStatusMessage.getMessage();
             }
             throw new Exception(message);
+        } else {
+            if (verifyResultExists) {
+                if (payloadEnvelope.getPayload().getData().size() <= 0) {
+                    throw new Exception("Request succeeded but there is no payload data");
+                }
+            }
         }
     }
 
@@ -1414,7 +1425,7 @@ public class GobiiAdl {
         return loaderInstructionFilesDTO;
     }
 
-    private static boolean submitInstructionFile(LoaderInstructionFilesDTO loaderInstructionFilesDTO, String jobPayloadType) throws Exception {
+    private static void submitInstructionFile(LoaderInstructionFilesDTO loaderInstructionFilesDTO, String jobPayloadType) throws Exception {
         InstructionFileValidator instructionFileValidator = new InstructionFileValidator(loaderInstructionFilesDTO.getGobiiLoaderInstructions());
         instructionFileValidator.processInstructionFile();
         String validationStatus = instructionFileValidator.validate();
@@ -1441,11 +1452,10 @@ public class GobiiAdl {
                 Payload<LoaderInstructionFilesDTO> payload = loaderInstructionFileDTOResponseEnvelope.getPayload();
                 if (payload.getData() == null || payload.getData().size() < 1) {
                     System.out.println("Could not get a valid response from server. Please try again.");
-                    return false;
                 } else {
                     String instructionFileName = payload.getData().get(0).getInstructionFileName();
                     System.out.println("Request " + instructionFileName + " submitted.");
-                    return checkJobStatus(instructionFileName);
+                    checkJobStatus(instructionFileName);
                 }
             } catch (Exception err) {
                 throw new Exception("Error submitting instruction file: " + err.getMessage());
@@ -1469,6 +1479,9 @@ public class GobiiAdl {
             System.out.print(".");
 
             PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFilesDTOPayloadEnvelope = loaderJobResponseEnvolope.get(LoaderInstructionFilesDTO.class);
+            checkStatus(loaderInstructionFilesDTOPayloadEnvelope, true);
+
+            // because we called checkStatus() with second parameter true, we know that there is at least one payload item
             List<LoaderInstructionFilesDTO> data = loaderInstructionFilesDTOPayloadEnvelope.getPayload().getData();
             GobiiLoaderInstruction gobiiLoaderInstruction = data.get(0).getGobiiLoaderInstructions().get(0);
 
@@ -1711,7 +1724,7 @@ public class GobiiAdl {
                 LoaderInstructionFilesDTO loaderInstructionFilesDTO = createInstructionFileDTO(instructionFilePath, folderName);
 
                 // SUBMIT INSTRUCTION FILE DTO
-                boolean status = submitInstructionFile(loaderInstructionFilesDTO, jobPayloadType);
+                submitInstructionFile(loaderInstructionFilesDTO, jobPayloadType);
             }
         } // iterate scenarios
     }
