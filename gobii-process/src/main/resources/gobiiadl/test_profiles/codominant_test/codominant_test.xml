@@ -188,45 +188,7 @@
 	</Entities>
 
 	<Scenarios>
-		<Scenario>
-			<Name>codominant_dataset</Name>
-			<Files>
-				<Instruction>test_profiles\codominant_test\instruction_templates\test_codominant_dataset.json</Instruction>
-				<Data>test_profiles\codominant_test\data_files\test_codominant_dataset\codominant_allele_data.txt</Data>
-			</Files>
-			<PayloadType>matrix</PayloadType>
 
-			<DbFkey entity="Contact">
-				<DbPKeySurrogate>dummy@email.address</DbPKeySurrogate>
-				<DbPKey></DbPKey>
-			</DbFkey>
-
-			<DbFkey entity="Project">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey/>
-			</DbFkey>
-
-			<DbFkey entity="Experiment">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey/>
-			</DbFkey>
-
-			<DbFkey entity="Dataset">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey/>
-			</DbFkey>
-
-			<DbFkey entity="Mapset">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey></DbPKey>
-			</DbFkey>
-
-			<DbFkey entity="Platform">
-				<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
-				<DbPKey></DbPKey>
-			</DbFkey>
-
-		</Scenario>
 
 		<Scenario>
 			<Name>codominant_marker</Name>
@@ -308,6 +270,46 @@
 
 		</Scenario>
 
+		<Scenario>
+			<Name>codominant_dataset</Name>
+			<Files>
+				<Instruction>test_profiles\codominant_test\instruction_templates\test_codominant_dataset.json</Instruction>
+				<Data>test_profiles\codominant_test\data_files\test_codominant_dataset\codominant_allele_data.txt</Data>
+			</Files>
+			<PayloadType>matrix</PayloadType>
+
+			<DbFkey entity="Contact">
+				<DbPKeySurrogate>dummy@email.address</DbPKeySurrogate>
+				<DbPKey></DbPKey>
+			</DbFkey>
+
+			<DbFkey entity="Project">
+				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+				<DbPKey/>
+			</DbFkey>
+
+			<DbFkey entity="Experiment">
+				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+				<DbPKey/>
+			</DbFkey>
+
+			<DbFkey entity="Dataset">
+				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+				<DbPKey/>
+			</DbFkey>
+
+			<DbFkey entity="Mapset">
+				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+				<DbPKey></DbPKey>
+			</DbFkey>
+
+			<DbFkey entity="Platform">
+				<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
+				<DbPKey></DbPKey>
+			</DbFkey>
+
+		</Scenario>
+		
 	</Scenarios>
 
 </GobiiTestData>
