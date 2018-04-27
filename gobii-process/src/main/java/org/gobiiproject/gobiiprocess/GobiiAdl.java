@@ -1454,27 +1454,43 @@ public class GobiiAdl {
     }
 
     private static boolean checkJobStatus(String instructionFileName) throws Exception {
+
+        boolean returnVal = false;
+
         GobiiEnvelopeRestResource<LoaderInstructionFilesDTO> loaderJobResponseEnvolope = new GobiiEnvelopeRestResource<>(
                 GobiiClientContext.getInstance(null, false)
                         .getUriFactory()
                         .resourceColl(GobiiServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS)
                         .addUriParam("instructionFileName", instructionFileName));
-        while (true) {
+
+        boolean statusDetermined = false;
+        while (!statusDetermined) {
+
             System.out.print(".");
+
             PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFilesDTOPayloadEnvelope = loaderJobResponseEnvolope.get(LoaderInstructionFilesDTO.class);
             List<LoaderInstructionFilesDTO> data = loaderInstructionFilesDTOPayloadEnvelope.getPayload().getData();
             GobiiLoaderInstruction gobiiLoaderInstruction = data.get(0).getGobiiLoaderInstructions().get(0);
+
             if (gobiiLoaderInstruction.getGobiiJobStatus().getCvName().equalsIgnoreCase("failed") ||
                     gobiiLoaderInstruction.getGobiiJobStatus().getCvName().equalsIgnoreCase("aborted")) {
+
                 System.out.println("\nJob " + instructionFileName + " failed. \n" + gobiiLoaderInstruction.getLogMessage());
-                return false;
+                returnVal = false;
+                statusDetermined = true;
+
             } else if (gobiiLoaderInstruction.getGobiiJobStatus().getCvName().equalsIgnoreCase("completed")) {
                 //Required dont delete
+
+                System.out.println("\nJob " + instructionFileName + " completed at " + new Date().getTime());
                 System.out.println();
-                return true;
+                returnVal = true;
+                statusDetermined = true;
             }
-            Thread.sleep(5000);
+            Thread.sleep(2000);
         }
+
+        return returnVal;
     }
 
     private static void parseScenarios(NodeList nodeList, XPath xPath, Document document, File fXmlFile) throws Exception {
@@ -1670,7 +1686,7 @@ public class GobiiAdl {
                     instructionObject.add("gobiiFileColumns", gobiiFileColumnsArr);
                     jsonArray.set(k, instructionObject);
                 }
-            }
+            } // iterate instruciton file json
 
             // update instruction file
             System.out.println("\nWriting instruction file for " + scenarioName + "\n");
@@ -1697,7 +1713,7 @@ public class GobiiAdl {
                 // SUBMIT INSTRUCTION FILE DTO
                 boolean status = submitInstructionFile(loaderInstructionFilesDTO, jobPayloadType);
             }
-        }
+        } // iterate scenarios
     }
 
     private static void setOption(Options options,
