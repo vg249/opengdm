@@ -24,13 +24,15 @@ public class DigestMatrix {
         startTime = System.currentTimeMillis();
         try (BufferedReader buffIn=new BufferedReader(new FileReader(inFile))){
             String iLine;
+            int lineNumber=0;
             String errorBase;
             while ((iLine = buffIn.readLine()) != null) {
+                lineNumber++;
                 if(iLine.equals("matrix")) continue;
                 String[] iNucl = iLine.split(fSep);
                 errorBase = validateDatasetList(iNucl,dataSetType);
                 if(errorBase!= null){
-                    ErrorLogger.logError("Validate Dataset Matrix", "Invalid data found in the matrix - '" + errorBase + "'");
+                    ErrorLogger.logError("Validate Dataset Matrix", "Invalid data found in matrix line " + lineNumber+ " column "+iLine.indexOf(errorBase)+" - '" + errorBase + "'");
                     return false;
                 }
             }
@@ -90,7 +92,6 @@ public class DigestMatrix {
                     boolean isDigit=base.matches("\\d+");
                     boolean isEightCharatersLong=base.length() == 8;
                     if(!(isDigit && isEightCharatersLong))return base; // Only accept strings of exactly eight characters
-                    return null;
                 }
                 return null;
             case VCF:
