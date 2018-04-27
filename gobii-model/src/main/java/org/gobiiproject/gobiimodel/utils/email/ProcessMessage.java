@@ -14,6 +14,7 @@ import static org.gobiiproject.gobiimodel.utils.HelperFunctions.sizeToReadable;
 /*
  *  GOBII - Process mail message format.  (Hopefully to replace DigesterMessage.java)
  */
+@SuppressWarnings({"UnusedReturnValue", "WeakerAccess"})
 public class ProcessMessage extends MailMessage {
     private String statusLine;
     private String errorLine;
@@ -37,7 +38,6 @@ public class ProcessMessage extends MailMessage {
     List<HTMLTableEntity> extractCriteria=new ArrayList<>();
     List<HTMLTableEntity> entities=new ArrayList<>();
     List<HTMLTableEntity> paths=new ArrayList<>();
-    private List<String> names;
 
 
     /**
@@ -46,7 +46,7 @@ public class ProcessMessage extends MailMessage {
      * @param shortError error message, 100 or less charectors
      * @param success If the job is success/failed (true/false)
      * @param longError Long error message
-     * @return
+     * @return handle to this object
      */
     public ProcessMessage setBody(String jobName, String type, long time, String shortError,boolean success, String longError){
         this.setStatus(success);
@@ -158,22 +158,6 @@ public class ProcessMessage extends MailMessage {
         extractCriteria.add(new HTMLTableEntity(type, criteria.getName().toString()));
         return this;
     }
-    
-
-    public ProcessMessage addCriteria(String type, List<PropNameId> criterias){
-        String name = "";
-        if(criterias == null)return this;
-        for (PropNameId criteria :criterias){
-            name.concat(", " + criteria.getName());
-        }
-        extractCriteria.add(new HTMLTableEntity(type, name));
-        return this;
-    }
-
-    public ProcessMessage addEntity(String type, PropNameId entity){
-        if(entity==null)return this;//Don't add a null ID to the table
-        return addEntity(type,escapeHTML(entity.getName())+"");
-    }
 
     public ProcessMessage addFolderPath(String type,String path) {
         paths.add(new HTMLTableEntity(type,path,""));
@@ -183,6 +167,7 @@ public class ProcessMessage extends MailMessage {
          * Add item to the filepaths entry
          * @param type type of file
          * @param path filepath
+         * #param alwaysShow to always show the path, even if no object is there
          * @return this object
          */
     public ProcessMessage addPath(String type,String path, boolean alwaysShow){
@@ -197,28 +182,14 @@ public class ProcessMessage extends MailMessage {
 
     /**
      * As ProcessMessage(type,path,False)
-     * @param type
-     * @param path
+     * @param type type of file
+     * @param path filepath
      * @return
      */
     public ProcessMessage addPath(String type, String path){
         return addPath(type,path,false);
     }
 
-    /***
-     * Get destination path for instruction file (done directory)
-     * @param type type of file
-     * @param path current path to get the file length
-     * @param donePath Destination path (final path or instruction file)
-     * @return
-     */
-    public ProcessMessage addPath(String type, String path, String donePath){
-        String pathFinal = donePath + new File(path).getName();
-        if(new File(path).length() > 1){
-            paths.add(new HTMLTableEntity(type, escapeHTML(pathFinal), HelperFunctions.sizeToReadable(new File(path).length())));
-        }
-        return this;
-    }
     
     /**
      * Set status line in HTML format. format includes font size and color
