@@ -159,6 +159,7 @@ public class GobiiExtractor {
 			ErrorLogger.logError("GobiiFileReader", "Error Checking Status",e);
 		}
 		jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS.getCvName(),"Beginning Extract");
+
 		for (GobiiExtractorInstruction inst : list) {
 			String crop = inst.getGobiiCropType();
 			String extractType="";
@@ -197,7 +198,6 @@ public class GobiiExtractor {
 				}
 				jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_METADATAEXTRACT.getCvName(),"Extracting Metadata");
 				for (GobiiDataSetExtract extract : inst.getDataSetExtracts()) {
-
 					String jobReadableIdentifier = getJobReadableIdentifier(crop, extract);
 					String jobUser=inst.getContactEmail();
 					pm.setUser(jobUser);
@@ -379,8 +379,30 @@ public class GobiiExtractor {
 					ErrorLogger.logInfo("Extractor", "Executing MDEs");
 					tryExec(gobiiMDE, extractDir + "mdeOut", errorFile);
 
+					pm.addCriteria("Crop", inst.getGobiiCropType());
+					pm.addCriteria("Email", inst.getContactEmail());
+					pm.addCriteria("Job ID", jobFileName);
+					pm.addCriteria("Principle Investigator", extract.getPrincipleInvestigator());
+					pm.addCriteria("Project", extract.getProject());
+					pm.addCriteria("Dataset", extract.getDataSet());
+					pm.addCriteria("Dataset Type",extract.getGobiiDatasetType());
+					pm.addCriteria("Mapset", (mapId!=null?mapId.toString():"No Mapset info available"));
+					pm.addCriteria("Format", uppercaseFirstLetter(extract.getGobiiFileType().toString().toLowerCase()));
+					pm.addCriteria("Platforms", getPlatformNames(extract.getPlatforms()));
+					pm.addCriteria("Sample ListType", uppercaseFirstLetter(extract.getGobiiSampleListType().toString().toLowerCase()));
+					pm.addCriteria("Sample List", (sampleListFile==null?"No Sample list provided":sampleListFile));
+					if(extract.getMarkerList() != null) {
+						pm.addCriteria("Marker List", String.join("<BR>", extract.getMarkerList()));
+					}
+					if(extract.getSampleList() != null && !extract.getSampleList().isEmpty()){
+						pm.addCriteria("Sample List", String.join("<BR>", extract.getSampleList()));
+					}
+					if(inst.getMapsetIds() != null && !inst.getMapsetIds().isEmpty()) {
+						pm.addCriteria("Mapset List", String.join("<BR>", inst.getMapsetIds().toString()));
+					}
 
 					//Email Identifiers part 2
+/*
 					pm.addIdentifier("PI",extract.getPrincipleInvestigator());
 					pm.addIdentifier("Project",extract.getProject());
 					pm.addIdentifier("Dataset", extract.getDataSet());
@@ -391,18 +413,19 @@ public class GobiiExtractor {
 						pm.addIdentifier("Sample List Type", uppercaseFirstLetter(extract.getGobiiSampleListType().toString().toLowerCase()), null);
 						pm.addIdentifier("Sample List", (sampleListFile==null?"No Sample list provided":sampleListFile), null);
 					}
-					if(filterType==GobiiExtractFilterType.BY_MARKER){
+*/
+/*					if(filterType==GobiiExtractFilterType.BY_MARKER){
 						for (Integer platformId: platforms) {
 							pm.addIdentifier("Platform", (platformId != null ? platformId.toString() : "No Platform info available"), platformId.toString());
 						}
-							pm.addIdentifier("Marker List", markerListLocation, null); //TODO - marker list has an 'on empty,
-						}
-						pm.addPath("Instruction File",new File(instructionFile).getAbsolutePath(),true);
-						pm.addFolderPath("Output Directory", extractDir);
-						pm.addPath("Error Log", logFile,true);
-						pm.addPath("Summary File", new File(projectFile).getAbsolutePath());
-						pm.addPath("Sample File", new File(sampleFile).getAbsolutePath());
-						pm.addPath("Marker File", new File(markerFile).getAbsolutePath());
+						pm.addIdentifier("Marker List", markerListLocation, null); //TODO - marker list has an 'on empty,
+					}*/
+					pm.addPath("Instruction File",new File(instructionFile).getAbsolutePath(),true);
+					pm.addFolderPath("Output Directory", extractDir);
+					pm.addPath("Error Log", logFile,true);
+					pm.addPath("Summary File", new File(projectFile).getAbsolutePath());
+					pm.addPath("Sample File", new File(sampleFile).getAbsolutePath());
+					pm.addPath("Marker File", new File(markerFile).getAbsolutePath());
 					if(checkFileExistence(mapsetFile)) {
 						pm.addPath("Mapset File", new File(mapsetFile).getAbsolutePath());
 					}
@@ -534,6 +557,14 @@ public class GobiiExtractor {
 		}
 	}
 
+	private static String getPlatformNames(List<PropNameId> platforms) {
+		String names = "";
+		for(int i=0;i<platforms.size();i++){
+			String tmpName = platforms.get(i).getName();
+			names+=tmpName+"<BR>";
+		}
+		return names;
+	}
 
 	/**
 	 * Convert a list of gobiiFilePropNameIds to a list of IDs.
@@ -1001,4 +1032,6 @@ public class GobiiExtractor {
 				return -1;
 		}
 	}
+
+
 }
