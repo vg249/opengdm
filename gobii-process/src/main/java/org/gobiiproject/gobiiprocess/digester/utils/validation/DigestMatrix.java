@@ -10,7 +10,7 @@ import static org.apache.commons.lang.StringUtils.reverse;
 
 
 public class DigestMatrix {
-
+    private static int maxInvalidWarnings=20; //Or reasonable number of choice
     private static long startTime, endTime, duration;
     private static String fSep="\t";
 
@@ -18,10 +18,11 @@ public class DigestMatrix {
      * Validating digest.matrix(output of CSVReaderV2) for invalid data types.
      * @param inFile - digest.matrix
      * @param dataSetType - loaderInstruction dataset type
-     * @return
+     * @return If the validation was successful. If False, ErrorLogger will already have the problem
      */
     public static boolean validatematrix (File inFile, String dataSetType){
         startTime = System.currentTimeMillis();
+        int errorCount=0;
         try (BufferedReader buffIn=new BufferedReader(new FileReader(inFile))){
             String iLine;
             int lineNumber=0;
@@ -32,8 +33,12 @@ public class DigestMatrix {
                 String[] iNucl = iLine.split(fSep);
                 errorBase = validateDatasetList(iNucl,dataSetType);
                 if(errorBase!= null){
-                    ErrorLogger.logError("Validate Dataset Matrix", "Invalid data found in matrix line " + lineNumber+ " column "+iLine.indexOf(errorBase)+" - '" + errorBase + "'");
-                    return false;
+                    ErrorLogger.logError("Validate Dataset Matrix", "Invalid data found in psot-processed matrix line " + lineNumber+ " column "+iLine.indexOf(errorBase)+" - '" + errorBase + "'");
+                    //Don't fail on first error, give a reasonable number of lines of warnings
+                    if(++errorCount>=maxInvalidWarnings){
+                        ErrorLogger.logError("Validate Dataset Matrix", "Reached max warnings for Invalid data");
+                        return false;
+                    }
                 }
             }
             buffIn.close();
@@ -50,7 +55,7 @@ public class DigestMatrix {
         catch(Exception e){
             ErrorLogger.logError("Digest Matrix",e);
         }
-        return true;
+        return (errorCount==0);//true if no Invalid Data warnings
     }
 
     /**
@@ -90,7 +95,7 @@ public class DigestMatrix {
                     else{
                         */
                     boolean isDigit=base.matches("\\d+");
-                    boolean isEightCharatersLong=base.length() == 8;
+                    boolean isEightCharatersLong=(base.length() == 8);
                     if(!(isDigit && isEightCharatersLong))return base; // Only accept strings of exactly eight characters
                 }
                 return null;
