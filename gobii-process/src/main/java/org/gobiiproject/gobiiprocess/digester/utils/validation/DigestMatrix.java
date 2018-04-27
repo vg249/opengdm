@@ -51,7 +51,12 @@ public class DigestMatrix {
         return true;
     }
 
-
+    /**
+     * Checks a dataset list based on data set type
+     * @param rowList List of rows
+     * @param dataSetType The dataset type expected for teh data
+     * @return the string value of the first invalid element in the list
+     */
     private static String validateDatasetList(String[] rowList, String dataSetType){
         List<String> elements = null;
         DataSetType dataSetTypeE = DataSetType.valueOf(dataSetType);
@@ -70,6 +75,8 @@ public class DigestMatrix {
                  * since ssr data has only digits (upto 8)
                  */
                 for (String base : rowList){
+                    /*
+                    TODO - Since no filtering on {1-4}d/{1-4}d, don't support that format now
                     if (base.contains("/")){
                         String[] bases = base.split("/");
                         for(String digit: bases){
@@ -79,10 +86,10 @@ public class DigestMatrix {
                         }
                     }
                     else{
-                        if(!base.matches("\\d+") && !base.equals("N") && (base.length() > 8)){ //Checks of the data length if more that 8 digits. (to save it from HDF5)
-                            return base;
-                        }
-                    }
+                        */
+                    boolean isDigit=base.matches("\\d+");
+                    boolean isEightCharatersLong=base.length() == 8;
+                    if(!(isDigit && isEightCharatersLong))return base; // Only accept strings of exactly eight characters
                     return null;
                 }
                 return null;
