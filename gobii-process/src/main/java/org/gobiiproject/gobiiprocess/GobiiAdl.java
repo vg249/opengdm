@@ -1473,10 +1473,10 @@ public class GobiiAdl {
                         .resourceColl(GobiiServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS)
                         .addUriParam("instructionFileName", instructionFileName));
 
+
         boolean statusDetermined = false;
         while (!statusDetermined) {
 
-            System.out.print(".");
 
             PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFilesDTOPayloadEnvelope = loaderJobResponseEnvolope.get(LoaderInstructionFilesDTO.class);
             checkStatus(loaderInstructionFilesDTOPayloadEnvelope, true);
@@ -1484,6 +1484,12 @@ public class GobiiAdl {
             // because we called checkStatus() with second parameter true, we know that there is at least one payload item
             List<LoaderInstructionFilesDTO> data = loaderInstructionFilesDTOPayloadEnvelope.getPayload().getData();
             GobiiLoaderInstruction gobiiLoaderInstruction = data.get(0).getGobiiLoaderInstructions().get(0);
+
+            String currentStatus = null;
+            if (!currentStatus.equals((gobiiLoaderInstruction.getGobiiJobStatus().getCvName()))) {
+                currentStatus = gobiiLoaderInstruction.getGobiiJobStatus().getCvName();
+                System.out.println("\nJob " + instructionFileName + " current status: " + currentStatus + " at " + new Date().getTime());
+            }
 
             if (gobiiLoaderInstruction.getGobiiJobStatus().getCvName().equalsIgnoreCase("failed") ||
                     gobiiLoaderInstruction.getGobiiJobStatus().getCvName().equalsIgnoreCase("aborted")) {
@@ -1500,6 +1506,7 @@ public class GobiiAdl {
                 returnVal = true;
                 statusDetermined = true;
             }
+            System.out.print(".");
             Thread.sleep(2000);
         }
 
@@ -1723,6 +1730,7 @@ public class GobiiAdl {
                 // CREATE LOADER INSTRUCTION FILE
                 LoaderInstructionFilesDTO loaderInstructionFilesDTO = createInstructionFileDTO(instructionFilePath, folderName);
 
+                System.out.println("Submitting file " + instructionFilePath + " - " + folderName);
                 // SUBMIT INSTRUCTION FILE DTO
                 submitInstructionFile(loaderInstructionFilesDTO, jobPayloadType);
             }

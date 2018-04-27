@@ -188,8 +188,6 @@
 	</Entities>
 
 	<Scenarios>
-
-
 		<Scenario>
 			<Name>codominant_marker</Name>
 			<Files>
@@ -309,7 +307,7 @@
 			</DbFkey>
 
 		</Scenario>
-		
+
 	</Scenarios>
 
 </GobiiTestData>
