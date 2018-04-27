@@ -380,7 +380,6 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
             }
         } catch (Exception e) {
             LOGGER.error("Gobii Maping Error", e);
-            System.out.println(e);
         }
         return returnVal;
     }
