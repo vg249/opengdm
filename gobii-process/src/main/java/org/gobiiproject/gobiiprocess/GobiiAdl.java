@@ -4,6 +4,7 @@ import com.google.gson.*;
 import org.apache.commons.cli.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
+import org.gobiiproject.gobiiapimodel.payload.Payload;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
@@ -179,7 +180,12 @@ public class GobiiAdl {
         return type.cast(value);
     }
 
+
     private static void checkStatus(PayloadEnvelope payloadEnvelope) throws Exception {
+        checkStatus(payloadEnvelope, false);
+    } // checkStatus()
+
+    private static void checkStatus(PayloadEnvelope payloadEnvelope, boolean verifyResultExists) throws Exception {
 
         Header header = payloadEnvelope.getHeader();
         if (!header.getStatus().isSucceeded() ||
@@ -196,6 +202,12 @@ public class GobiiAdl {
                 message = message + "\n" + currentStatusMessage.getMessage();
             }
             throw new Exception(message);
+        } else {
+            if (verifyResultExists) {
+                if (payloadEnvelope.getPayload().getData().size() <= 0) {
+                    throw new Exception("Request succeeded but there is no payload data");
+                }
+            }
         }
     }
 
@@ -397,8 +409,7 @@ public class GobiiAdl {
             if (propKeyLocalName.equals("properties")) {
                 propertiesElement = propKey;
                 continue;
-            }
-            else if (propKeyLocalName.equals("typeId")) {
+            } else if (propKeyLocalName.equals("typeId")) {
                 Integer typeId = platformTypeMap.get(propKey.getTextContent().toLowerCase());
                 newPlatformDTO.setTypeId(typeId);
                 continue;
@@ -868,19 +879,19 @@ public class GobiiAdl {
 
             if (fkeys != null && fkeys.getLength() > 0) {
 
-                for (int fkeysI = 0; fkeysI< fkeys.getLength(); fkeysI++) {
+                for (int fkeysI = 0; fkeysI < fkeys.getLength(); fkeysI++) {
 
                     currentFkeyElement = (Element) fkeys.item(fkeysI);
                     String currentEntity = currentFkeyElement.getAttribute("entity");
 
-                    if(currentEntity.equals("Project")) {
+                    if (currentEntity.equals("Project")) {
                         break;
                     }
                 }
 
             }
 
-            if(currentFkeyElement.equals(null)) {
+            if (currentFkeyElement == null) {
                 projectId = null;
             } else {
                 String currentProjfKeyDbPkeyValue = currentFkeyElement.getElementsByTagName("DbPKeySurrogate").item(0).getTextContent();
@@ -897,14 +908,12 @@ public class GobiiAdl {
                     projectId = Integer.parseInt(projDbPkeyValue);
                 }
             }
-
         }
 
         for (ExperimentDTO currentExperimentDTO : experimentDTOSList) {
             if (currentExperimentDTO.getExperimentName().equals(dbPkeysurrogateValue)) {
 
-                if (!projectId.equals(null) && currentExperimentDTO.getProjectId().equals(projectId)) {
-
+                if (projectId != null && currentExperimentDTO.getProjectId().equals(projectId)) {
 
                     System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") already exists in the database. Return current entity ID.\n");
 
@@ -1055,7 +1064,7 @@ public class GobiiAdl {
                     currentFkeyElement = (Element) fkeys.item(fkeysI);
                     String currentEntity = currentFkeyElement.getAttribute("entity");
 
-                    if (currentEntity.equals("Experiment")){
+                    if (currentEntity.equals("Experiment")) {
                         break;
                     }
 
@@ -1063,11 +1072,11 @@ public class GobiiAdl {
 
             }
 
-            if (currentFkeyElement.equals(null)) {
+            if (currentFkeyElement == null) {
                 experimentId = null;
             } else {
                 String currentExpfKeyDbPkeyValue = currentFkeyElement.getElementsByTagName("DbPKeySurrogate").item(0).getTextContent();
-                String exprCheckIfFKeyExists = "//Entities/" + ancestor.getNodeName() + "/" + "Experiment" + "/Properties[" +fkeyPkey + "='" + currentExpfKeyDbPkeyValue + "']";
+                String exprCheckIfFKeyExists = "//Entities/" + ancestor.getNodeName() + "/" + "Experiment" + "/Properties[" + fkeyPkey + "='" + currentExpfKeyDbPkeyValue + "']";
                 XPathExpression xPathExprNodeFKey = xPath.compile(exprCheckIfFKeyExists);
                 Element nodeFKey = (Element) xPathExprNodeFKey.evaluate(document, XPathConstants.NODE);
                 Element parentNode = (Element) nodeFKey.getParentNode();
@@ -1086,7 +1095,7 @@ public class GobiiAdl {
         for (DataSetDTO currentDatasetDTO : datasetDTOSList) {
             if (currentDatasetDTO.getDatasetName().equals(dbPkeysurrogateValue)) {
 
-                if (!experimentId.equals(null) && currentDatasetDTO.getExperimentId().equals(experimentId)) {
+                if (experimentId != null && currentDatasetDTO.getExperimentId().equals(experimentId)) {
 
                     System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") already exists in the database. Return current entity ID.\n");
 
@@ -1401,7 +1410,9 @@ public class GobiiAdl {
                     instructionInstructionFileAccess.getInstructions(instructionFilePath,
                             GobiiLoaderInstruction[].class);
             if (null != instructions) {
-                loaderInstructionFilesDTO.setInstructionFileName(folderName + "_" + instructionFile.getName());
+                String instructionFileName = instructionFile.getName();
+                String justName = instructionFileName.replaceFirst("[.][^.]+$", "");
+                loaderInstructionFilesDTO.setInstructionFileName(folderName + "_" + justName);
                 loaderInstructionFilesDTO.setGobiiLoaderInstructions(instructions);
             } else {
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
@@ -1438,19 +1449,67 @@ public class GobiiAdl {
                 PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResource.post(LoaderInstructionFilesDTO.class,
                         payloadEnvelope);
                 checkStatus(loaderInstructionFileDTOResponseEnvelope);
+                Payload<LoaderInstructionFilesDTO> payload = loaderInstructionFileDTOResponseEnvelope.getPayload();
+                if (payload.getData() == null || payload.getData().size() < 1) {
+                    System.out.println("Could not get a valid response from server. Please try again.");
+                } else {
+                    String instructionFileName = payload.getData().get(0).getInstructionFileName();
+                    System.out.println("Request " + instructionFileName + " submitted.");
+                    checkJobStatus(instructionFileName);
+                }
             } catch (Exception err) {
                 throw new Exception("Error submitting instruction file: " + err.getMessage());
             }
         }
     }
 
+    private static boolean checkJobStatus(String instructionFileName) throws Exception {
+
+        boolean returnVal = false;
+
+        GobiiEnvelopeRestResource<LoaderInstructionFilesDTO> loaderJobResponseEnvolope = new GobiiEnvelopeRestResource<>(
+                GobiiClientContext.getInstance(null, false)
+                        .getUriFactory()
+                        .resourceColl(GobiiServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS)
+                        .addUriParam("instructionFileName", instructionFileName));
+
+        boolean statusDetermined = false;
+        while (!statusDetermined) {
+
+            System.out.print(".");
+
+            PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFilesDTOPayloadEnvelope = loaderJobResponseEnvolope.get(LoaderInstructionFilesDTO.class);
+            checkStatus(loaderInstructionFilesDTOPayloadEnvelope, true);
+
+            // because we called checkStatus() with second parameter true, we know that there is at least one payload item
+            List<LoaderInstructionFilesDTO> data = loaderInstructionFilesDTOPayloadEnvelope.getPayload().getData();
+            GobiiLoaderInstruction gobiiLoaderInstruction = data.get(0).getGobiiLoaderInstructions().get(0);
+
+            if (gobiiLoaderInstruction.getGobiiJobStatus().getCvName().equalsIgnoreCase("failed") ||
+                    gobiiLoaderInstruction.getGobiiJobStatus().getCvName().equalsIgnoreCase("aborted")) {
+
+                System.out.println("\nJob " + instructionFileName + " failed. \n" + gobiiLoaderInstruction.getLogMessage());
+                returnVal = false;
+                statusDetermined = true;
+
+            } else if (gobiiLoaderInstruction.getGobiiJobStatus().getCvName().equalsIgnoreCase("completed")) {
+                //Required dont delete
+
+                System.out.println("\nJob " + instructionFileName + " completed at " + new Date().getTime());
+                System.out.println();
+                returnVal = true;
+                statusDetermined = true;
+            }
+            Thread.sleep(2000);
+        }
+
+        return returnVal;
+    }
+
     private static void parseScenarios(NodeList nodeList, XPath xPath, Document document, File fXmlFile) throws Exception {
 
         JsonParser parser = new JsonParser();
-        String folderName = null;
-        String filesPath = null;
-        String digestPath = null;
-        String jobId = null;
+        String folderName, filesPath, digestPath, jobId;
 
         Map<GobiiFileProcessDir, String> fileLocations = serverConfig.getFileLocations();
         for (int i = 0; i < nodeList.getLength(); i++) {
@@ -1563,7 +1622,7 @@ public class GobiiAdl {
 
                         // get datasetType ID
 
-                        RestUri datasetGetUri = GobiiClientContext.getInstance(null ,false)
+                        RestUri datasetGetUri = GobiiClientContext.getInstance(null, false)
                                 .getUriFactory()
                                 .resourceByUriIdParam(GobiiServiceRequestId.URL_DATASETS);
                         datasetGetUri.setParamValue("id", currentEntityId);
@@ -1640,7 +1699,7 @@ public class GobiiAdl {
                     instructionObject.add("gobiiFileColumns", gobiiFileColumnsArr);
                     jsonArray.set(k, instructionObject);
                 }
-            }
+            } // iterate instruciton file json
 
             // update instruction file
             System.out.println("\nWriting instruction file for " + scenarioName + "\n");
@@ -1667,13 +1726,8 @@ public class GobiiAdl {
                 // SUBMIT INSTRUCTION FILE DTO
                 submitInstructionFile(loaderInstructionFilesDTO, jobPayloadType);
             }
-        }
+        } // iterate scenarios
     }
-
-    private static String INPUT_XML = "wxml";
-    private static String INPUT_HOST = "h";
-    private static String INPUT_USER = "u";
-    private static String INPUT_PASSWORD = "p";
 
     private static void setOption(Options options,
                                   String argument,
@@ -1695,7 +1749,7 @@ public class GobiiAdl {
     private static String getMessageForMissingOption(String optionName, Options options) {
 
         Option option = options.getOption(optionName);
-        if (option.equals(null)) {
+        if (option == null) {
             return "Invalid argument: " + optionName;
         }
         return "Value is required: " + option.getArgName() + ", " + option.getDescription();
@@ -1710,9 +1764,13 @@ public class GobiiAdl {
 
         // define commandline options
         Options options = new Options();
+        String INPUT_XML = "wxml";
         setOption(options, INPUT_XML, true, "The XML file containing the entities and scenarios", "input xml");
+        String INPUT_HOST = "h";
         setOption(options, INPUT_HOST, true, "The URL of the gobii server to connect to", "gobii server");
+        String INPUT_USER = "u";
         setOption(options, INPUT_USER, true, "Username of the user doing the load", "username");
+        String INPUT_PASSWORD = "p";
         setOption(options, INPUT_PASSWORD, true, "Password of the user doing the load", "password");
 
         // parse the commandline
@@ -1775,7 +1833,7 @@ public class GobiiAdl {
                 }
             }
 
-            if (crop.isEmpty()) {
+            if (crop == null || crop.isEmpty()) {
                 throw new Exception("Undefined crop for server: " + url);
             }
 
