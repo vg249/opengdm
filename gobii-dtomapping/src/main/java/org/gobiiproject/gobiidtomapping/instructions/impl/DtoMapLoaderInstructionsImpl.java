@@ -116,7 +116,6 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                     + INSTRUCTION_FILE_EXT;
 
 
-
             GobiiLoaderInstruction primaryLoaderInstruction = loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0);
 
 
@@ -124,10 +123,9 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                     .getGobiiLoaderInstructions()) {
 
                 if (StringUtils.isNotEmpty(currentInstruction.getTable())) {
-                    primaryLoaderInstruction.getColumnsByTableName().put(currentInstruction.getTable(),currentInstruction.getGobiiFileColumns());
+                    primaryLoaderInstruction.getColumnsByTableName().put(currentInstruction.getTable(), currentInstruction.getGobiiFileColumns());
                 }
             }
-
 
 
             primaryLoaderInstruction.setColumnsByTableName(
@@ -360,59 +358,29 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
     @Override
     public LoaderInstructionFilesDTO getStatus(String cropType, String instructionFileName) throws GobiiDtoMappingException {
-
         LoaderInstructionFilesDTO returnVal = new LoaderInstructionFilesDTO();
-
+        JobStatusReporter jobStatusReporter = new JobStatusReporter(instructionFileName, dtoMapJob, INSTRUCTION_FILE_EXT);
+        JobProgressStatusType jobProgressStatus = jobStatusReporter.getJobProgressStatusType();
         try {
-            ConfigSettings configSettings = new ConfigSettings();
-            String instructionFile = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.LOADER_INSTRUCTIONS)
-                    + instructionFileName
-                    + INSTRUCTION_FILE_EXT;
+            returnVal.setInstructionFileName(instructionFileName);
 
-
-            if (instructionFileAccess.doesPathExist(instructionFile)) {
-
-                InstructionFileAccess<GobiiLoaderInstruction> instructionFileAccessGobiiLoaderInstruction = new InstructionFileAccess<>(GobiiLoaderInstruction.class);
-                List<GobiiLoaderInstruction> instructions =
-                        instructionFileAccessGobiiLoaderInstruction.getInstructions(instructionFile,
-                                GobiiLoaderInstruction[].class);
-
-                if (null != instructions) {
-                    returnVal.setInstructionFileName(instructionFileName);
-
-                    // Instruction file path exists and it was read properly so lets add the job status.
-                    JobStatusReporter jobStatusReporter = new JobStatusReporter(instructionFileName, dtoMapJob, INSTRUCTION_FILE_EXT);
-                    JobProgressStatusType jobProgressStatus = jobStatusReporter.getJobProgressStatusType();
-                    for (GobiiLoaderInstruction instruction:instructions) {
-                        instruction.setGobiiJobStatus(jobProgressStatus);
-                        if (jobProgressStatus.equals(JobProgressStatusType.CV_PROGRESSSTATUS_FAILED.getCvName())) {
-                            instruction.setLogMessage(jobStatusReporter.getLogErrorMessage());
-                        }
-                    }
-
-                    returnVal.setGobiiLoaderInstructions(instructions);
-                } else {
-
-                    throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
-                            GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                            "The instruction file exists, but could not be read: " +
-                                    instructionFile);
-
+            InstructionFileAccess<GobiiLoaderInstruction> loaderInstructionFileAccess = new InstructionFileAccess<>(GobiiLoaderInstruction.class);
+            List<GobiiLoaderInstruction> instructions = loaderInstructionFileAccess.getInstructions(jobStatusReporter.getLoaderInstructionFileFqpn(cropType), GobiiLoaderInstruction[].class);
+            for (GobiiLoaderInstruction instruction : instructions) {
+                instruction.setGobiiJobStatus(jobProgressStatus);
+                if (jobProgressStatus.equals(JobProgressStatusType.CV_PROGRESSSTATUS_FAILED.getCvName())) {
+                    instruction.setLogMessage(jobStatusReporter.getLogErrorMessage());
                 }
+            }
+            returnVal.setGobiiLoaderInstructions(instructions);
 
-            } else {
-                throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
-                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                        "The specified instruction file does not exist: " +
-                                instructionFile);
-
-            } // if-else instruction file exists
-
+            if (instructions == null || instructions.size() == 0) {
+                throw new GobiiDtoMappingException(
+                        GobiiStatusLevel.ERROR, GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST, "The specified instruction file does not exist: " + instructionFileName);
+            }
         } catch (Exception e) {
             LOGGER.error("Gobii Maping Error", e);
-            System.out.println(e);
         }
-
         return returnVal;
     }
 }
