@@ -239,6 +239,108 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                             </div> <!-- container  -->
                                         </ng-template> <!-- lazy-load controls -->
                                     </p-tabPanel> <!-- tab panel -- markers -->
+                                    <p-tabPanel header="Flex Query">
+                                        <ng-template pTemplate="content"> <!-- lazy-load controls -->
+                                            <div class="container-fluid">
+                                                <div class="row">
+                                                    <div class="col-md-3"> <!-- inner column 1 of row 1: Filter 1 -->
+                                                        <div class="panel panel-primary"> 
+                                                            <div class="panel-heading">
+                                                                <h3 class="panel-title">Filters</h3>
+                                                            </div>
+                                                            <div class="panel-body">
+                                                                <label class="the-label">Dataset Types:</label><BR>
+                                                                <name-id-list-box
+                                                                        [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                                                        [filterParamName]="nameIdFilterParamTypes.CV_DATATYPE">
+                                                                </name-id-list-box>
+
+                                                                <BR>
+                                                                <BR>
+                                                                <label class="the-label">Platforms:</label><BR>
+                                                                <checklist-box
+                                                                        [filterParamName]="nameIdFilterParamTypes.PLATFORMS"
+                                                                        [gobiiExtractFilterType]="gobiiExtractFilterType">
+                                                                </checklist-box>
+
+                                                            </div> <!-- panel body by sample filters filters -->
+                                                        </div> <!-- panel by sample filters -->
+                                                    </div> <!-- inner column 1 of row 1: fitler 1 -->
+                                                    <div class="col-md-3"> <!-- inner column 1 of row 1: Filter 1 -->
+                                                        <div class="panel panel-primary">
+                                                            <div class="panel-heading">
+                                                                <h3 class="panel-title">Filters</h3>
+                                                            </div>
+                                                            <div class="panel-body">
+                                                                <label class="the-label">Dataset Types:</label><BR>
+                                                                <name-id-list-box
+                                                                        [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                                                        [filterParamName]="nameIdFilterParamTypes.CV_DATATYPE">
+                                                                </name-id-list-box>
+
+                                                                <BR>
+                                                                <BR>
+                                                                <label class="the-label">Platforms:</label><BR>
+                                                                <checklist-box
+                                                                        [filterParamName]="nameIdFilterParamTypes.PLATFORMS"
+                                                                        [gobiiExtractFilterType]="gobiiExtractFilterType">
+                                                                </checklist-box>
+
+                                                            </div> <!-- panel body by sample filters filters -->
+                                                        </div> <!-- panel by sample filters -->
+                                                    </div> <!-- inner column 2 of row 1: fitler 2 -->
+                                                    <div class="col-md-3"> <!-- inner column 1 of row 1: Filter 1 -->
+                                                        <div class="panel panel-primary">
+                                                            <div class="panel-heading">
+                                                                <h3 class="panel-title">Filters</h3>
+                                                            </div>
+                                                            <div class="panel-body">
+                                                                <label class="the-label">Dataset Types:</label><BR>
+                                                                <name-id-list-box
+                                                                        [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                                                        [filterParamName]="nameIdFilterParamTypes.CV_DATATYPE">
+                                                                </name-id-list-box>
+
+                                                                <BR>
+                                                                <BR>
+                                                                <label class="the-label">Platforms:</label><BR>
+                                                                <checklist-box
+                                                                        [filterParamName]="nameIdFilterParamTypes.PLATFORMS"
+                                                                        [gobiiExtractFilterType]="gobiiExtractFilterType">
+                                                                </checklist-box>
+
+                                                            </div> <!-- panel body by sample filters filters -->
+                                                        </div> <!-- panel by sample filters -->
+                                                    </div> <!-- inner column 3 of row 1: fitler 3 -->
+                                                    <div class="col-md-3"> <!-- inner column 1 of row 1: Filter 1 -->
+                                                        <div class="panel panel-primary">
+                                                            <div class="panel-heading">
+                                                                <h3 class="panel-title">Filters</h3>
+                                                            </div>
+                                                            <div class="panel-body">
+                                                                <label class="the-label">Dataset Types:</label><BR>
+                                                                <name-id-list-box
+                                                                        [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                                                        [filterParamName]="nameIdFilterParamTypes.CV_DATATYPE">
+                                                                </name-id-list-box>
+
+                                                                <BR>
+                                                                <BR>
+                                                                <label class="the-label">Platforms:</label><BR>
+                                                                <checklist-box
+                                                                        [filterParamName]="nameIdFilterParamTypes.PLATFORMS"
+                                                                        [gobiiExtractFilterType]="gobiiExtractFilterType">
+                                                                </checklist-box>
+
+                                                            </div> <!-- panel body by sample filters filters -->
+                                                        </div> <!-- panel by sample filters -->
+                                                    </div> <!-- inner column 4 of row 1: fitler 4 -->
+
+                                                </div> <!-- ROW filters -->
+                                                <div class ="row">MAERK/SAMPLE TINGIES</div><!-- ROW marker/sample lists-->
+                                            </div> <!-- container  -->
+                                        </ng-template> <!-- lazy-load controls -->
+                                    </p-tabPanel> <!-- tab panel -- flex query -->
                                 </p-tabView> <!-- tabview -->
                             </p-panel> <!-- panel -->
 
