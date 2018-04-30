@@ -1477,7 +1477,6 @@ public class GobiiAdl {
         boolean statusDetermined = false;
         while (!statusDetermined) {
 
-
             PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFilesDTOPayloadEnvelope = loaderJobResponseEnvolope.get(LoaderInstructionFilesDTO.class);
             checkStatus(loaderInstructionFilesDTOPayloadEnvelope, true);
 
@@ -1485,8 +1484,8 @@ public class GobiiAdl {
             List<LoaderInstructionFilesDTO> data = loaderInstructionFilesDTOPayloadEnvelope.getPayload().getData();
             GobiiLoaderInstruction gobiiLoaderInstruction = data.get(0).getGobiiLoaderInstructions().get(0);
 
-            String currentStatus = null;
-            if (!currentStatus.equals((gobiiLoaderInstruction.getGobiiJobStatus().getCvName()))) {
+            String currentStatus = "";
+            if (!currentStatus.equals(gobiiLoaderInstruction.getGobiiJobStatus().getCvName())) {
                 currentStatus = gobiiLoaderInstruction.getGobiiJobStatus().getCvName();
                 System.out.println("\nJob " + instructionFileName + " current status: " + currentStatus + " at " + new Date().getTime());
             }
@@ -1506,6 +1505,7 @@ public class GobiiAdl {
                 returnVal = true;
                 statusDetermined = true;
             }
+
             System.out.print(".");
             Thread.sleep(2000);
         }
