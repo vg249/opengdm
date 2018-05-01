@@ -14,6 +14,7 @@ import {FileItemService} from "../services/core/file-item-service";
     selector: 'flex-query-filter',
     inputs: ['gobiiExtractFilterType', 'filterParamNameEntities', 'filterParamNameEntityValues'],
     outputs: [],
+    styleUrls: ["css/extractor-ui.css"],
     template: `
         <div class="panel panel-primary">
             <div class="panel-heading">
@@ -23,13 +24,15 @@ import {FileItemService} from "../services/core/file-item-service";
                 <label class="the-label">Entity:</label><BR>
                 <p-dropdown [options]="fileItemsEntityNames$ | async"
                             [(ngModel)]="selectedAllowableEntities"
+                            [style]="{'width': '100%'}"
                             optionLabel="_itemName"></p-dropdown>
 
                 <BR>
                 <BR>
                 <label class="the-label">Select Entity Values</label><BR>
                 <p-listbox [options]="fileItemsEntityValues$ | async"
-                           [(ngModel)]="selectedEntityValues" [style]="{'width':'200px'}"
+                           [multiple]="true" 
+                           [(ngModel)]="selectedEntityValues" [style]="{'width':'100%'}"
                            optionLabel="_itemName"></p-listbox>
             </div>
         </div>` // end template

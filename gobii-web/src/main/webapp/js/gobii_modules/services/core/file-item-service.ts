@@ -146,12 +146,42 @@ export class FileItemService {
                 returnVal = this.store.select(fromRoot.getExperimentsFilterOptional);
                 break;
 
-            // these are temporary selectors
+            //***************************
+            // the FQ filters are for now just placeholders
+
+            //------- F1 --------------------------------------
             case FilterParamNames.FQ_F1_ENTITIES:
                 returnVal = this.store.select(fromRoot.getCvTermsDataType);
                 break;
 
             case FilterParamNames.FQ_F1_ENTITY_VALUES:
+                returnVal = this.store.select(fromRoot.getPlatforms);
+                break;
+
+            //------- F2 --------------------------------------
+            case FilterParamNames.FQ_F2_ENTITIES:
+                returnVal = this.store.select(fromRoot.getCvTermsDataType);
+                break;
+
+            case FilterParamNames.FQ_F2_ENTITY_VALUES:
+                returnVal = this.store.select(fromRoot.getPlatforms);
+                break;
+
+            //------- F3 --------------------------------------
+            case FilterParamNames.FQ_F3_ENTITIES:
+                returnVal = this.store.select(fromRoot.getCvTermsDataType);
+                break;
+
+            case FilterParamNames.FQ_F3_ENTITY_VALUES:
+                returnVal = this.store.select(fromRoot.getPlatforms);
+                break;
+
+            //------- F4 --------------------------------------
+            case FilterParamNames.FQ_F4_ENTITIES:
+                returnVal = this.store.select(fromRoot.getCvTermsDataType);
+                break;
+
+            case FilterParamNames.FQ_F4_ENTITY_VALUES:
                 returnVal = this.store.select(fromRoot.getPlatforms);
                 break;
 
@@ -342,9 +372,9 @@ export class FileItemService {
                 .select(fromRoot.getFileItemsFilters)
                 .subscribe(filters => {
 
-                    let relatedEntityFiltervalueFromState:string = null;
-                    let stateFilter:PayloadFilter = filters[filterParamName.toString()];
-                    if( stateFilter ) {
+                    let relatedEntityFiltervalueFromState: string = null;
+                    let stateFilter: PayloadFilter = filters[filterParamName.toString()];
+                    if (stateFilter) {
                         relatedEntityFiltervalueFromState = stateFilter.relatedEntityFilterValue;
                     }
 

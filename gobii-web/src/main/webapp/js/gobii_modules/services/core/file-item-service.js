@@ -165,11 +165,34 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                         case file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL:
                             returnVal = this.store.select(fromRoot.getExperimentsFilterOptional);
                             break;
-                        // these are temporary selectors
+                        //***************************
+                        // the FQ filters are for now just placeholders
+                        //------- F1 --------------------------------------
                         case file_item_param_names_1.FilterParamNames.FQ_F1_ENTITIES:
                             returnVal = this.store.select(fromRoot.getCvTermsDataType);
                             break;
                         case file_item_param_names_1.FilterParamNames.FQ_F1_ENTITY_VALUES:
+                            returnVal = this.store.select(fromRoot.getPlatforms);
+                            break;
+                        //------- F2 --------------------------------------
+                        case file_item_param_names_1.FilterParamNames.FQ_F2_ENTITIES:
+                            returnVal = this.store.select(fromRoot.getCvTermsDataType);
+                            break;
+                        case file_item_param_names_1.FilterParamNames.FQ_F2_ENTITY_VALUES:
+                            returnVal = this.store.select(fromRoot.getPlatforms);
+                            break;
+                        //------- F3 --------------------------------------
+                        case file_item_param_names_1.FilterParamNames.FQ_F3_ENTITIES:
+                            returnVal = this.store.select(fromRoot.getCvTermsDataType);
+                            break;
+                        case file_item_param_names_1.FilterParamNames.FQ_F3_ENTITY_VALUES:
+                            returnVal = this.store.select(fromRoot.getPlatforms);
+                            break;
+                        //------- F4 --------------------------------------
+                        case file_item_param_names_1.FilterParamNames.FQ_F4_ENTITIES:
+                            returnVal = this.store.select(fromRoot.getCvTermsDataType);
+                            break;
+                        case file_item_param_names_1.FilterParamNames.FQ_F4_ENTITY_VALUES:
                             returnVal = this.store.select(fromRoot.getPlatforms);
                             break;
                         default:

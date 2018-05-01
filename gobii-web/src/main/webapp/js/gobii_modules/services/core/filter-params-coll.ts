@@ -483,6 +483,7 @@ export class FilterParamsColl {
                 .setNameIdLabelType(NameIdLabelType.NO));
 
 
+        // ******* F1
         this.addFilter(
             FilterParams
                 .build(FilterParamNames.FQ_F1_ENTITIES,
@@ -502,6 +503,71 @@ export class FilterParamsColl {
                     EntityType.PLATFORM)
                 .setIsDynamicFilterValue(false)
         );
+
+        // ******* F2
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.FQ_F2_ENTITIES,
+                    GobiiExtractFilterType.FLEX_QUERY,
+                    EntityType.CV)
+                .setIsDynamicFilterValue(false)
+                .setCvFilterType(CvFilterType.DATASET_TYPE)
+                .setCvFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE))
+                .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
+                .setNameIdLabelType(NameIdLabelType.SELECT_A)
+        );
+
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.FQ_F2_ENTITY_VALUES,
+                    GobiiExtractFilterType.FLEX_QUERY,
+                    EntityType.PLATFORM)
+                .setIsDynamicFilterValue(false)
+        );
+
+        // ******* F3
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.FQ_F3_ENTITIES,
+                    GobiiExtractFilterType.FLEX_QUERY,
+                    EntityType.CV)
+                .setIsDynamicFilterValue(false)
+                .setCvFilterType(CvFilterType.DATASET_TYPE)
+                .setCvFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE))
+                .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
+                .setNameIdLabelType(NameIdLabelType.SELECT_A)
+        );
+
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.FQ_F3_ENTITY_VALUES,
+                    GobiiExtractFilterType.FLEX_QUERY,
+                    EntityType.PLATFORM)
+                .setIsDynamicFilterValue(false)
+        );
+
+        // ******* F4
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.FQ_F4_ENTITIES,
+                    GobiiExtractFilterType.FLEX_QUERY,
+                    EntityType.CV)
+                .setIsDynamicFilterValue(false)
+                .setCvFilterType(CvFilterType.DATASET_TYPE)
+                .setCvFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE))
+                .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
+                .setNameIdLabelType(NameIdLabelType.SELECT_A)
+        );
+
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.FQ_F4_ENTITY_VALUES,
+                    GobiiExtractFilterType.FLEX_QUERY,
+                    EntityType.PLATFORM)
+                .setIsDynamicFilterValue(false)
+        );
+
+
 
     } // constructor
 }

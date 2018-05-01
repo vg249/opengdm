@@ -289,6 +289,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .build(file_item_param_names_1.FilterParamNames.MAPSETS, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.MAPSET)
                         .setIsDynamicFilterValue(false)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.NO));
+                    // ******* F1
                     this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.FQ_F1_ENTITIES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.CV)
                         .setIsDynamicFilterValue(false)
@@ -298,6 +299,39 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A));
                     this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.FQ_F1_ENTITY_VALUES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.PLATFORM)
+                        .setIsDynamicFilterValue(false));
+                    // ******* F2
+                    this.addFilter(filter_params_1.FilterParams
+                        .build(file_item_param_names_1.FilterParamNames.FQ_F2_ENTITIES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.CV)
+                        .setIsDynamicFilterValue(false)
+                        .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE)
+                        .setCvFilterValue(cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.DATASET_TYPE))
+                        .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPE_NAME)
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A));
+                    this.addFilter(filter_params_1.FilterParams
+                        .build(file_item_param_names_1.FilterParamNames.FQ_F2_ENTITY_VALUES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.PLATFORM)
+                        .setIsDynamicFilterValue(false));
+                    // ******* F3
+                    this.addFilter(filter_params_1.FilterParams
+                        .build(file_item_param_names_1.FilterParamNames.FQ_F3_ENTITIES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.CV)
+                        .setIsDynamicFilterValue(false)
+                        .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE)
+                        .setCvFilterValue(cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.DATASET_TYPE))
+                        .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPE_NAME)
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A));
+                    this.addFilter(filter_params_1.FilterParams
+                        .build(file_item_param_names_1.FilterParamNames.FQ_F3_ENTITY_VALUES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.PLATFORM)
+                        .setIsDynamicFilterValue(false));
+                    // ******* F4
+                    this.addFilter(filter_params_1.FilterParams
+                        .build(file_item_param_names_1.FilterParamNames.FQ_F4_ENTITIES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.CV)
+                        .setIsDynamicFilterValue(false)
+                        .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE)
+                        .setCvFilterValue(cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.DATASET_TYPE))
+                        .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPE_NAME)
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A));
+                    this.addFilter(filter_params_1.FilterParams
+                        .build(file_item_param_names_1.FilterParamNames.FQ_F4_ENTITY_VALUES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.PLATFORM)
                         .setIsDynamicFilterValue(false));
                 } // constructor
                 FilterParamsColl.prototype.addFilter = function (filterParamsToAdd) {
