@@ -381,6 +381,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
             }
         } catch (Exception e) {
             LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiException(e);
         }
         return returnVal;
     }
