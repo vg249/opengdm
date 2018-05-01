@@ -31,9 +31,14 @@ import {FileItemService} from "../services/core/file-item-service";
                 <BR>
                 <label class="the-label">Select Entity Values</label><BR>
                 <p-listbox [options]="fileItemsEntityValues$ | async"
-                           [multiple]="true" 
+                           [multiple]="true"
                            [(ngModel)]="selectedEntityValues" [style]="{'width':'100%'}"
                            optionLabel="_itemName"></p-listbox>
+            </div>
+
+            <div class="container">
+                <p>Count: {{totalValues}} </p>
+                <p>Selected: {{selectedEntityValues ? selectedEntityValues.length : 0}}</p>
             </div>
         </div>` // end template
 
@@ -44,6 +49,7 @@ export class FlexQueryFilterComponent {
     //these are dummy place holders for now
     public selectedAllowableEntities: GobiiFileItem;
 
+    public totalValues: string = "0";
     public selectedEntityValues: GobiiFileItem[];
 
     public fileItemsEntityNames$: Observable<GobiiFileItem[]>;
@@ -64,7 +70,7 @@ export class FlexQueryFilterComponent {
     ngOnInit(): any {
 
         this.fileItemsEntityNames$ = this.fileItemService.getForFilter(this.filterParamNameEntities)
-        this.fileItemsEntityValues$= this.fileItemService.getForFilter(this.filterParamNameEntityValues)
+        this.fileItemsEntityValues$ = this.fileItemService.getForFilter(this.filterParamNameEntityValues)
 
         this
             .fileItemsEntityNames$
@@ -78,6 +84,11 @@ export class FlexQueryFilterComponent {
                     this.store.dispatch(new historyAction.AddStatusMessageAction(error))
                 });
 
+        this
+            .fileItemsEntityValues$
+            .subscribe(items => {
+                this.totalValues = items.length.toString()
+            });
     }
 
     previousSelectedItemId: string = null;

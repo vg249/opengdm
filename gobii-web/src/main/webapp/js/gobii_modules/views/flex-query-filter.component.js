@@ -34,6 +34,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
                 function FlexQueryFilterComponent(store, fileItemService) {
                     this.store = store;
                     this.fileItemService = fileItemService;
+                    this.totalValues = "0";
                     this.previousSelectedItemId = null;
                 } // ctor
                 FlexQueryFilterComponent.prototype.ngOnInit = function () {
@@ -48,6 +49,11 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
                         }
                     }, function (error) {
                         _this.store.dispatch(new historyAction.AddStatusMessageAction(error));
+                    });
+                    this
+                        .fileItemsEntityValues$
+                        .subscribe(function (items) {
+                        _this.totalValues = items.length.toString();
                     });
                 };
                 FlexQueryFilterComponent.prototype.handleFileItemSelected = function (arg) {
@@ -70,7 +76,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
                         inputs: ['gobiiExtractFilterType', 'filterParamNameEntities', 'filterParamNameEntityValues'],
                         outputs: [],
                         styleUrls: ["css/extractor-ui.css"],
-                        template: "\n        <div class=\"panel panel-primary\">\n            <div class=\"panel-heading\">\n                <h3 class=\"panel-title\">Filters</h3>\n            </div>\n            <div class=\"panel-body\">\n                <label class=\"the-label\">Entity:</label><BR>\n                <p-dropdown [options]=\"fileItemsEntityNames$ | async\"\n                            [(ngModel)]=\"selectedAllowableEntities\"\n                            [style]=\"{'width': '100%'}\"\n                            optionLabel=\"_itemName\"></p-dropdown>\n\n                <BR>\n                <BR>\n                <label class=\"the-label\">Select Entity Values</label><BR>\n                <p-listbox [options]=\"fileItemsEntityValues$ | async\"\n                           [multiple]=\"true\" \n                           [(ngModel)]=\"selectedEntityValues\" [style]=\"{'width':'100%'}\"\n                           optionLabel=\"_itemName\"></p-listbox>\n            </div>\n        </div>" // end template
+                        template: "\n        <div class=\"panel panel-primary\">\n            <div class=\"panel-heading\">\n                <h3 class=\"panel-title\">Filters</h3>\n            </div>\n            <div class=\"panel-body\">\n                <label class=\"the-label\">Entity:</label><BR>\n                <p-dropdown [options]=\"fileItemsEntityNames$ | async\"\n                            [(ngModel)]=\"selectedAllowableEntities\"\n                            [style]=\"{'width': '100%'}\"\n                            optionLabel=\"_itemName\"></p-dropdown>\n\n                <BR>\n                <BR>\n                <label class=\"the-label\">Select Entity Values</label><BR>\n                <p-listbox [options]=\"fileItemsEntityValues$ | async\"\n                           [multiple]=\"true\"\n                           [(ngModel)]=\"selectedEntityValues\" [style]=\"{'width':'100%'}\"\n                           optionLabel=\"_itemName\"></p-listbox>\n            </div>\n\n            <div class=\"container\">\n                <p>Count: {{totalValues}} </p>\n                <p>Selected: {{selectedEntityValues ? selectedEntityValues.length : 0}}</p>\n            </div>\n        </div>" // end template
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
                         file_item_service_1.FileItemService])
