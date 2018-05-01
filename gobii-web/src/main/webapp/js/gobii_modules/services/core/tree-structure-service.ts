@@ -106,8 +106,11 @@ export class TreeStructureService {
                     GobiiTreeNode.build(GobiiExtractFilterType.BY_MARKER, ExtractorItemType.ENTITY)
                         .setEntityType(EntityType.MARKER_GROUP)
                         .setContainerType(ContainerType.DATA)
-                ])
-        ];
+                ]),
+            // BY FLEX QUERY
+            ...this.makeCommonNodes(GobiiExtractFilterType.FLEX_QUERY),
+
+        ]; // array of gobii tree nodes
 
         // we know we only have to go one level deep in this case -- no need to recurse
         returnVal.forEach(function (currentNode, idx, nodes) {

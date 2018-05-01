@@ -273,7 +273,6 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                                     </div> <!-- inner column 4 of row 1: fitler 4 -->
 
                                                 </div> <!-- ROW filters -->
-                                                <div class="row">MAERK/SAMPLE TINGIES</div>
                                                 <!-- ROW marker/sample lists-->
                                             </div> <!-- container  -->
                                         </ng-template> <!-- lazy-load controls -->
