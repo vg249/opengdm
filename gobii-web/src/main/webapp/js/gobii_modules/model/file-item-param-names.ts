@@ -26,5 +26,15 @@ export class FilterParamNames {
     public static PROJECT_FILTER_OPTIONAL = "Project-Filter-Optional";
     public static EXPERIMENT_FILTER_OPTIONAL = "Experiment-Filter-Optional";
     public static DATASET_FILTER_OPTIONAL = "Dataset-Filter-Optional";
+    public static FQ_F1_ENTITIES = "Flex-Query_F1_Entities";
+    public static FQ_F1_ENTITY_VALUES = "Flex-Query_F1_EntityValues";
+    public static FQ_F2_ENTITIES = "Flex-Query_F2_Entities";
+    public static FQ_F2_ENTITY_VALUES = "Flex-Query_F2_EntityValues";
+    public static FQ_F3_ENTITIES = "Flex-Query_F3_Entities";
+    public static FQ_F3_ENTITY_VALUES = "Flex-Query_F3_EntityValues";
+    public static FQ_F4_ENTITIES = "Flex-Query_F4_Entities";
+    public static FQ_F4_ENTITY_VALUES = "Flex-Query_F4_EntityValues";
+
+
 }
 

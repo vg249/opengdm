@@ -18,7 +18,8 @@ import {UploaderComponent} from "../views/uploader.component";
 import {SampleListTypeComponent} from "../views/sample-list-type.component";
 import {
     CheckboxModule, DataTableModule, PanelModule, SharedModule, TreeModule, OverlayPanelModule,
-    AccordionModule, ListboxModule, FieldsetModule, TabViewModule, DialogModule, TooltipModule, RadioButtonModule
+    AccordionModule, ListboxModule, FieldsetModule, TabViewModule, DialogModule, TooltipModule, RadioButtonModule,
+    DropdownModule
 } from 'primeng/primeng';
 import {StatusDisplayTreeComponent} from "../views/status-display-tree.component";
 import {NameIdListBoxComponent} from "../views/name-id-list-box.component";
@@ -41,6 +42,7 @@ import {FileItemService} from "../services/core/file-item-service";
 import {InstructionSubmissionService} from "../services/core/instruction-submission-service";
 import {DatasetDatatableComponent} from "../views/dataset-datatable.component";
 import {FilterParamsColl} from "../services/core/filter-params-coll";
+import {FlexQueryFilterComponent} from "../views/flex-query-filter.component";
 
 
 @NgModule({
@@ -61,6 +63,8 @@ import {FilterParamsColl} from "../services/core/filter-params-coll";
         DialogModule,
         TooltipModule,
         RadioButtonModule,
+        ListboxModule,
+        DropdownModule,
         routing,
         BrowserAnimationsModule,
         StoreModule.forRoot(reducers),
@@ -88,7 +92,8 @@ import {FilterParamsColl} from "../services/core/filter-params-coll";
         StatusDisplayTreeComponent,
         Button,
         SearchCriteriaBySamplesComponent,
-        DatasetDatatableComponent],
+        DatasetDatatableComponent,
+        FlexQueryFilterComponent],
     providers: [AuthGuard,
         AuthenticationService,
         DtoRequestService,

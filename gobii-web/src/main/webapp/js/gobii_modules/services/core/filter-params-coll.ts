@@ -471,25 +471,37 @@ export class FilterParamsColl {
             .setIsDynamicFilterValue(true)
             .setFilterType(FilterType.NAMES_BY_TYPEID);
 
-        //add the individual requests to the map
-        // this.addFilter(nameIdRequestParamsContactsPi);
-        // this.addFilter(nameIdRequestParamsProjectByPiContact);
-        // this.addFilter(nameIdRequestParamsExperiments);
-        // this.addFilter(nameIdRequestParamsDatasets);
 
-        //build the parent-child request params graph
-        // nameIdRequestParamsContactsPi
-        //     .setChildNameIdRequestParams(
-        //         [nameIdRequestParamsProjectByPiContact
-        //             .setParentFileItemParams(nameIdRequestParamsContactsPi)
-        //             .setChildNameIdRequestParams([nameIdRequestParamsExperiments
-        //                 .setParentFileItemParams(nameIdRequestParamsProjectByPiContact)
-        //                 .setChildNameIdRequestParams([nameIdRequestParamsDatasets
-        //                     .setParentFileItemParams(nameIdRequestParamsExperiments)
-        //                 ])
-        //             ])
-        //         ]);
+        // **************************** FLEX QUERY
 
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.MAPSETS,
+                    GobiiExtractFilterType.FLEX_QUERY,
+                    EntityType.MAPSET)
+                .setIsDynamicFilterValue(false)
+                .setNameIdLabelType(NameIdLabelType.NO));
+
+
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.FQ_F1_ENTITIES,
+                    GobiiExtractFilterType.FLEX_QUERY,
+                    EntityType.CV)
+                .setIsDynamicFilterValue(false)
+                .setCvFilterType(CvFilterType.DATASET_TYPE)
+                .setCvFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE))
+                .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
+                .setNameIdLabelType(NameIdLabelType.SELECT_A)
+        );
+
+        this.addFilter(
+            FilterParams
+                .build(FilterParamNames.FQ_F1_ENTITY_VALUES,
+                    GobiiExtractFilterType.FLEX_QUERY,
+                    EntityType.PLATFORM)
+                .setIsDynamicFilterValue(false)
+        );
 
     } // constructor
 }

@@ -244,50 +244,18 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                             <div class="container-fluid">
                                                 <div class="row">
                                                     <div class="col-md-3"> <!-- inner column 1 of row 1: Filter 1 -->
-                                                        <div class="panel panel-primary"> 
-                                                            <div class="panel-heading">
-                                                                <h3 class="panel-title">Filters</h3>
-                                                            </div>
-                                                            <div class="panel-body">
-                                                                <label class="the-label">Dataset Types:</label><BR>
-                                                                <name-id-list-box
-                                                                        [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                                                        [filterParamName]="nameIdFilterParamTypes.CV_DATATYPE">
-                                                                </name-id-list-box>
-
-                                                                <BR>
-                                                                <BR>
-                                                                <label class="the-label">Platforms:</label><BR>
-                                                                <checklist-box
-                                                                        [filterParamName]="nameIdFilterParamTypes.PLATFORMS"
-                                                                        [gobiiExtractFilterType]="gobiiExtractFilterType">
-                                                                </checklist-box>
-
-                                                            </div> <!-- panel body by sample filters filters -->
-                                                        </div> <!-- panel by sample filters -->
+                                                        <flex-query-filter
+                                                                [filterParamNameEntities]="nameIdFilterParamTypes.FQ_F1_ENTITIES"
+                                                                [filterParamNameEntityValues]="nameIdFilterParamTypes.FQ_F1_ENTITY_VALUES"
+                                                                [gobiiExtractFilterType]="gobiiExtractFilterType">
+                                                        </flex-query-filter>
                                                     </div> <!-- inner column 1 of row 1: fitler 1 -->
                                                     <div class="col-md-3"> <!-- inner column 1 of row 1: Filter 1 -->
-                                                        <div class="panel panel-primary">
-                                                            <div class="panel-heading">
-                                                                <h3 class="panel-title">Filters</h3>
-                                                            </div>
-                                                            <div class="panel-body">
-                                                                <label class="the-label">Dataset Types:</label><BR>
-                                                                <name-id-list-box
-                                                                        [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                                                        [filterParamName]="nameIdFilterParamTypes.CV_DATATYPE">
-                                                                </name-id-list-box>
-
-                                                                <BR>
-                                                                <BR>
-                                                                <label class="the-label">Platforms:</label><BR>
-                                                                <checklist-box
-                                                                        [filterParamName]="nameIdFilterParamTypes.PLATFORMS"
-                                                                        [gobiiExtractFilterType]="gobiiExtractFilterType">
-                                                                </checklist-box>
-
-                                                            </div> <!-- panel body by sample filters filters -->
-                                                        </div> <!-- panel by sample filters -->
+                                                        <flex-query-filter
+                                                                [filterParamNameEntities]="nameIdFilterParamTypes.FQ_F2_ENTITIES"
+                                                                [filterParamNameEntityValues]="nameIdFilterParamTypes.FQ_F2_ENTITY_VALUES"
+                                                                [gobiiExtractFilterType]="gobiiExtractFilterType">
+                                                        </flex-query-filter>
                                                     </div> <!-- inner column 2 of row 1: fitler 2 -->
                                                     <div class="col-md-3"> <!-- inner column 1 of row 1: Filter 1 -->
                                                         <div class="panel panel-primary">
@@ -337,7 +305,8 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                                     </div> <!-- inner column 4 of row 1: fitler 4 -->
 
                                                 </div> <!-- ROW filters -->
-                                                <div class ="row">MAERK/SAMPLE TINGIES</div><!-- ROW marker/sample lists-->
+                                                <div class="row">MAERK/SAMPLE TINGIES</div>
+                                                <!-- ROW marker/sample lists-->
                                             </div> <!-- container  -->
                                         </ng-template> <!-- lazy-load controls -->
                                     </p-tabPanel> <!-- tab panel -- flex query -->
@@ -560,21 +529,6 @@ export class ExtractorRoot implements OnInit {
         //   _dtoRequestServiceContact
     }
 
-    public handleServerSelected(arg) {
-        this.selectedServerConfig = arg;
-        let currentPath = window.location.pathname;
-        let currentPage: string = currentPath.substr(currentPath.lastIndexOf('/') + 1, currentPath.length);
-        let newDestination = "http://"
-            + this.selectedServerConfig.domain
-            + ":"
-            + this.selectedServerConfig.port
-            + this.selectedServerConfig.contextRoot
-            + currentPage;
-
-        window.location.href = newDestination;
-    } // handleServerSelected()
-
-
 // ********************************************************************
 // ********************************************** EXPORT TYPE SELECTION AND FLAGS
 
@@ -605,6 +559,14 @@ export class ExtractorRoot implements OnInit {
         } else if (tabIndex == 2) {
 
             this.gobiiExtractFilterType = GobiiExtractFilterType.BY_MARKER;
+
+        } else if (tabIndex == 3) {
+
+            this.gobiiExtractFilterType = GobiiExtractFilterType.FLEX_QUERY;
+
+        } else {
+            this.store.dispatch(new historyAction.AddStatusMessageAction(
+                "Unknown tab index for extract filter type " + tabIndex));
 
         }
 
@@ -669,7 +631,6 @@ export class ExtractorRoot implements OnInit {
                 null);
 
 
-
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
 
             this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
@@ -679,6 +640,21 @@ export class ExtractorRoot implements OnInit {
             this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                 FilterParamNames.PLATFORMS,
                 null);
+
+        } else if( this.gobiiExtractFilterType === GobiiExtractFilterType.FLEX_QUERY ) {
+
+            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                FilterParamNames.FQ_F1_ENTITIES,
+                null);
+
+            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                FilterParamNames.FQ_F1_ENTITY_VALUES,
+                null);
+
+
+        } else {
+            this.store.dispatch(new historyAction.AddStatusMessageAction(
+                "Unhandled export filter type: " + GobiiExtractFilterType[this.gobiiExtractFilterType]));
 
         }
 
@@ -705,9 +681,9 @@ export class ExtractorRoot implements OnInit {
 
         this.fileItemService
             .replaceFileItemByCompoundId(GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
-                    .setExtractorItemType(ExtractorItemType.SAMPLE_LIST_TYPE)
-                    .setItemName(GobiiSampleListType[GobiiSampleListType.GERMPLASM_NAME])
-                    .setItemId(GobiiSampleListType[GobiiSampleListType.GERMPLASM_NAME]));
+                .setExtractorItemType(ExtractorItemType.SAMPLE_LIST_TYPE)
+                .setItemName(GobiiSampleListType[GobiiSampleListType.GERMPLASM_NAME])
+                .setItemId(GobiiSampleListType[GobiiSampleListType.GERMPLASM_NAME]));
 
 
     }

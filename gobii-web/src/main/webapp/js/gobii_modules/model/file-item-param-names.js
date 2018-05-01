@@ -34,6 +34,14 @@ System.register([], function (exports_1, context_1) {
                 FilterParamNames.PROJECT_FILTER_OPTIONAL = "Project-Filter-Optional";
                 FilterParamNames.EXPERIMENT_FILTER_OPTIONAL = "Experiment-Filter-Optional";
                 FilterParamNames.DATASET_FILTER_OPTIONAL = "Dataset-Filter-Optional";
+                FilterParamNames.FQ_F1_ENTITIES = "Flex-Query_F1_Entities";
+                FilterParamNames.FQ_F1_ENTITY_VALUES = "Flex-Query_F1_EntityValues";
+                FilterParamNames.FQ_F2_ENTITIES = "Flex-Query_F2_Entities";
+                FilterParamNames.FQ_F2_ENTITY_VALUES = "Flex-Query_F2_EntityValues";
+                FilterParamNames.FQ_F3_ENTITIES = "Flex-Query_F3_Entities";
+                FilterParamNames.FQ_F3_ENTITY_VALUES = "Flex-Query_F3_EntityValues";
+                FilterParamNames.FQ_F4_ENTITIES = "Flex-Query_F4_Entities";
+                FilterParamNames.FQ_F4_ENTITY_VALUES = "Flex-Query_F4_EntityValues";
                 return FilterParamNames;
             }());
             exports_1("FilterParamNames", FilterParamNames);

@@ -146,8 +146,18 @@ export class FileItemService {
                 returnVal = this.store.select(fromRoot.getExperimentsFilterOptional);
                 break;
 
+            // these are temporary selectors
+            case FilterParamNames.FQ_F1_ENTITIES:
+                returnVal = this.store.select(fromRoot.getCvTermsDataType);
+                break;
+
+            case FilterParamNames.FQ_F1_ENTITY_VALUES:
+                returnVal = this.store.select(fromRoot.getPlatforms);
+                break;
+
             default:
-                returnVal = this.store.select(fromRoot.getAllFileItems);
+                this.store.dispatch(new historyAction.AddStatusMessageAction("There is no selector for filter "
+                    + filterParamName));
                 break;
 
         }

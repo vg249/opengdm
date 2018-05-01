@@ -165,8 +165,16 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                         case file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL:
                             returnVal = this.store.select(fromRoot.getExperimentsFilterOptional);
                             break;
+                        // these are temporary selectors
+                        case file_item_param_names_1.FilterParamNames.FQ_F1_ENTITIES:
+                            returnVal = this.store.select(fromRoot.getCvTermsDataType);
+                            break;
+                        case file_item_param_names_1.FilterParamNames.FQ_F1_ENTITY_VALUES:
+                            returnVal = this.store.select(fromRoot.getPlatforms);
+                            break;
                         default:
-                            returnVal = this.store.select(fromRoot.getAllFileItems);
+                            this.store.dispatch(new historyAction.AddStatusMessageAction("There is no selector for filter "
+                                + filterParamName));
                             break;
                     }
                     return returnVal;

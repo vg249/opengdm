@@ -284,23 +284,21 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .build(file_item_param_names_1.FilterParamNames.DATASETS_BY_EXPERIMENT, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.DATASET)
                         .setIsDynamicFilterValue(true)
                         .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPEID);
-                    //add the individual requests to the map
-                    // this.addFilter(nameIdRequestParamsContactsPi);
-                    // this.addFilter(nameIdRequestParamsProjectByPiContact);
-                    // this.addFilter(nameIdRequestParamsExperiments);
-                    // this.addFilter(nameIdRequestParamsDatasets);
-                    //build the parent-child request params graph
-                    // nameIdRequestParamsContactsPi
-                    //     .setChildNameIdRequestParams(
-                    //         [nameIdRequestParamsProjectByPiContact
-                    //             .setParentFileItemParams(nameIdRequestParamsContactsPi)
-                    //             .setChildNameIdRequestParams([nameIdRequestParamsExperiments
-                    //                 .setParentFileItemParams(nameIdRequestParamsProjectByPiContact)
-                    //                 .setChildNameIdRequestParams([nameIdRequestParamsDatasets
-                    //                     .setParentFileItemParams(nameIdRequestParamsExperiments)
-                    //                 ])
-                    //             ])
-                    //         ]);
+                    // **************************** FLEX QUERY
+                    this.addFilter(filter_params_1.FilterParams
+                        .build(file_item_param_names_1.FilterParamNames.MAPSETS, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.MAPSET)
+                        .setIsDynamicFilterValue(false)
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.NO));
+                    this.addFilter(filter_params_1.FilterParams
+                        .build(file_item_param_names_1.FilterParamNames.FQ_F1_ENTITIES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.CV)
+                        .setIsDynamicFilterValue(false)
+                        .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE)
+                        .setCvFilterValue(cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.DATASET_TYPE))
+                        .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPE_NAME)
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A));
+                    this.addFilter(filter_params_1.FilterParams
+                        .build(file_item_param_names_1.FilterParamNames.FQ_F1_ENTITY_VALUES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.PLATFORM)
+                        .setIsDynamicFilterValue(false));
                 } // constructor
                 FilterParamsColl.prototype.addFilter = function (filterParamsToAdd) {
                     var existingFilterParams = this.filterParams
