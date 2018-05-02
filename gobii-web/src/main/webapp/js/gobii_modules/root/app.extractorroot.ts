@@ -273,7 +273,18 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                                     </div> <!-- inner column 4 of row 1: fitler 4 -->
 
                                                 </div> <!-- ROW filters -->
-                                                <!-- ROW marker/sample lists-->
+
+                                                <div clas="row"><!-- ROW marker/sample lists-->
+                                                    <p-panel header="Intersect With" [style]="{'text-align':'center'}">
+                                                        <!-- intersect controls -->
+                                                        <div class="col-md-6"> <!-- intersect markers -->
+                                                            INTERSECT MARKERS
+                                                        </div><!-- intersect markers -->
+                                                        <div class="col-md-6"> <!-- intersect samples -->
+                                                            INTERSECT SAMPLES
+                                                        </div><!-- intersect samples -->
+                                                    </p-panel><!-- intersect controls -->
+                                                </div><!-- ROW marker/sample lists-->
                                             </div> <!-- container  -->
                                         </ng-template> <!-- lazy-load controls -->
                                     </p-tabPanel> <!-- tab panel -- flex query -->
@@ -608,7 +619,7 @@ export class ExtractorRoot implements OnInit {
                 FilterParamNames.PLATFORMS,
                 null);
 
-        } else if( this.gobiiExtractFilterType === GobiiExtractFilterType.FLEX_QUERY ) {
+        } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.FLEX_QUERY) {
 
             this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                 FilterParamNames.FQ_F1_ENTITIES,
