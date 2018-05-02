@@ -123,7 +123,7 @@ import {PayloadFilter} from "../store/actions/action-payload-filter";
                           [style]="{'width': '18%'}"
                           [sortable]="true">
                     <ng-template let-col let-fi="rowData" pTemplate="body">
-                        {{fi._entity.loadedDate | date:'yyyy-MM-dd HH:mm' }}
+                        {{fi._entity.loadedDate | date:'yyyy-MM-dd' }}
                     </ng-template>
                 </p-column>
             </p-dataTable>
@@ -154,6 +154,12 @@ import {PayloadFilter} from "../store/actions/action-payload-filter";
                             <td>{{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.loaderLastName : null}}
                                 {{ (selectedDatasetDetailEntity && selectedDatasetDetailEntity.loaderFirstName) ? ", " : null}}
                                 {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.loaderFirstName : null}}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td><b>Loaded Date</b></td>
+                            <td>{{ selectedDatasetDetailEntity ? ( selectedDatasetDetailEntity.loadedDate | date:'yyyy-MM-dd' ): null}} 
                             </td>
                         </tr>
 
