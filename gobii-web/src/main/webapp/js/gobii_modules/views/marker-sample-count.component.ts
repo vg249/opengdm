@@ -7,7 +7,7 @@ import {FilterParamNames} from "../model/file-item-param-names";
     outputs: [],
     inputs: ['gobiiExtractFilterType'],
     template: `
-        <p-panel *ngIf="displayPanel" header="Estimated marker/Sample Count"
+        <p-panel *ngIf="displayPanel" header="Estimated Marker/Sample Count"
                  [(toggleable)]="displayPanel"
                  [(collapsed)]="panelCollapsed"
                  (onBeforeToggle)="onBeforeToggle($event)"
