@@ -377,7 +377,11 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                             [class]="clearButtonStyle"
                                             (click)="handleClearTree()">Clear
                                     </button>
-
+                                    <BR>
+                                    <BR>
+                                    <marker-sample-count
+                                            [gobiiExtractFilterType]="gobiiExtractFilterType">
+                                    </marker-sample-count>
                                 </div> <!-- panel body -->
                             </div> <!-- panel primary -->
 

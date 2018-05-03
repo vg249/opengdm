@@ -19,7 +19,7 @@ import {SampleListTypeComponent} from "../views/sample-list-type.component";
 import {
     CheckboxModule, DataTableModule, PanelModule, SharedModule, TreeModule, OverlayPanelModule,
     AccordionModule, ListboxModule, FieldsetModule, TabViewModule, DialogModule, TooltipModule, RadioButtonModule,
-    DropdownModule
+    DropdownModule, ProgressSpinnerModule
 } from 'primeng/primeng';
 import {StatusDisplayTreeComponent} from "../views/status-display-tree.component";
 import {NameIdListBoxComponent} from "../views/name-id-list-box.component";
@@ -43,6 +43,7 @@ import {InstructionSubmissionService} from "../services/core/instruction-submiss
 import {DatasetDatatableComponent} from "../views/dataset-datatable.component";
 import {FilterParamsColl} from "../services/core/filter-params-coll";
 import {FlexQueryFilterComponent} from "../views/flex-query-filter.component";
+import {MarkerSampleCountComponent} from "../views/marker-sample-count.component";
 
 
 @NgModule({
@@ -65,6 +66,7 @@ import {FlexQueryFilterComponent} from "../views/flex-query-filter.component";
         RadioButtonModule,
         ListboxModule,
         DropdownModule,
+        ProgressSpinnerModule,
         routing,
         BrowserAnimationsModule,
         StoreModule.forRoot(reducers),
@@ -93,7 +95,8 @@ import {FlexQueryFilterComponent} from "../views/flex-query-filter.component";
         Button,
         SearchCriteriaBySamplesComponent,
         DatasetDatatableComponent,
-        FlexQueryFilterComponent],
+        FlexQueryFilterComponent,
+        MarkerSampleCountComponent],
     providers: [AuthGuard,
         AuthenticationService,
         DtoRequestService,
