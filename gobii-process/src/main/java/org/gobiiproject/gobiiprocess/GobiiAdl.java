@@ -1647,7 +1647,7 @@ public class GobiiAdl {
 
                         // set datasetType fields in instruction file template
                         JsonObject datasetTypeObj = (JsonObject) instructionObject.get("datasetType");
-                        datasetTypeObj.addProperty("name", dataSetDTOGetResponse.getDatatypeName());
+                        datasetTypeObj.addProperty("name", dataSetDTOGetResponse.getDatatypeName().toUpperCase());
                         datasetTypeObj.addProperty("id", dataSetDTOGetResponse.getDatatypeId());
 
                         instructionObject.add("datasetType", datasetTypeObj);

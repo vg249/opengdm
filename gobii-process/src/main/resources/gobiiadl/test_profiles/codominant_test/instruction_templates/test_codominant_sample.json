@@ -140,8 +140,8 @@
     },
     "jobPayloadType": "CV_PAYLOADTYPE_SAMPLES",
     "gobiiFile": {
-      "source": "/data/gobii_bundle/crops/zoan/files/data_20180503_150609_codominant_sample",
-      "destination": "/data/gobii_bundle/crops/zoan/loader/digest/data_20180503_150609_codominant_sample",
+      "source": "/data/gobii_bundle/crops/zoan/files/data_20180503_230008_codominant_sample",
+      "destination": "/data/gobii_bundle/crops/zoan/loader/digest/data_20180503_230008_codominant_sample",
       "delimiter": ",",
       "gobiiFileType": "GENERIC",
       "requireDirectoriesToExist": false,
@@ -209,7 +209,7 @@
     },
     "datasetType": {
       "id": 100,
-      "name": "co_dominant_non_nucleotide"
+      "name": "CO_DOMINANT_NON_NUCLEOTIDE"
     },
     "mapset": {
       "id": "1",
@@ -223,8 +223,8 @@
   {
     "columnsByTableName": {},
     "gobiiFile": {
-      "source": "/data/gobii_bundle/crops/zoan/files/data_20180503_150609_codominant_sample",
-      "destination": "/data/gobii_bundle/crops/zoan/loader/digest/data_20180503_150609_codominant_sample",
+      "source": "/data/gobii_bundle/crops/zoan/files/data_20180503_230008_codominant_sample",
+      "destination": "/data/gobii_bundle/crops/zoan/loader/digest/data_20180503_230008_codominant_sample",
       "delimiter": ",",
       "gobiiFileType": "GENERIC",
       "requireDirectoriesToExist": false,
@@ -309,7 +309,7 @@
     },
     "datasetType": {
       "id": 100,
-      "name": "co_dominant_non_nucleotide"
+      "name": "CO_DOMINANT_NON_NUCLEOTIDE"
     },
     "mapset": {
       "id": "1",
@@ -323,8 +323,8 @@
   {
     "columnsByTableName": {},
     "gobiiFile": {
-      "source": "/data/gobii_bundle/crops/zoan/files/data_20180503_150609_codominant_sample",
-      "destination": "/data/gobii_bundle/crops/zoan/loader/digest/data_20180503_150609_codominant_sample",
+      "source": "/data/gobii_bundle/crops/zoan/files/data_20180503_230008_codominant_sample",
+      "destination": "/data/gobii_bundle/crops/zoan/loader/digest/data_20180503_230008_codominant_sample",
       "delimiter": ",",
       "gobiiFileType": "GENERIC",
       "requireDirectoriesToExist": false,
@@ -400,7 +400,7 @@
     },
     "datasetType": {
       "id": 100,
-      "name": "co_dominant_non_nucleotide"
+      "name": "CO_DOMINANT_NON_NUCLEOTIDE"
     },
     "mapset": {
       "id": "1",
