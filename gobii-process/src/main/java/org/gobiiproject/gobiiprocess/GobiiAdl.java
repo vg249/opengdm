@@ -63,6 +63,7 @@ import java.util.*;
 public class GobiiAdl {
 
     private static ServerConfig serverConfig;
+    private static String crop = null;
 
     private static void validateKeys(NodeList nodeList, XPath xPath, Document document) throws Exception {
         for (int i = 0; i < nodeList.getLength(); i++) {
@@ -1612,6 +1613,11 @@ public class GobiiAdl {
 
                 for (int k = 0; k < jsonArray.size(); k++) {
                     JsonObject instructionObject = (JsonObject) jsonArray.get(k);
+
+                    if (instructionObject.has("gobiiCropType")) {
+                        instructionObject.addProperty("gobiiCropType", crop);
+                    }
+
                     if (entityName.equals("contact")) {
                         if (instructionObject.has("contactId")) {
                             instructionObject.addProperty("contactId", currentEntityId);
@@ -1817,7 +1823,6 @@ public class GobiiAdl {
         String url = commandLine.getOptionValue(INPUT_HOST);
         String username = commandLine.getOptionValue(INPUT_USER);
         String password = commandLine.getOptionValue(INPUT_PASSWORD);
-        String crop = null;
 
         try {
             GobiiClientContext.getInstance(url, true).getCurrentClientCropType();
