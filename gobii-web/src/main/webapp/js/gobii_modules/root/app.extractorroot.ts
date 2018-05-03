@@ -275,15 +275,37 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                                 </div> <!-- ROW filters -->
 
                                                 <div clas="row"><!-- ROW marker/sample lists-->
-                                                    <p-panel header="Intersect With" [style]="{'text-align':'center'}">
                                                         <!-- intersect controls -->
                                                         <div class="col-md-6"> <!-- intersect markers -->
-                                                            INTERSECT MARKERS
-                                                        </div><!-- intersect markers -->
+                                                            <div class="panel panel-primary"> <!-- intersect pamel -->
+                                                                <div class="panel-heading">
+                                                                    <h3 class="panel-title">Intersect Markers</h3>
+                                                                </div>
+                                                                <div class="panel-body">
+                                                                    <sample-marker-box
+                                                                            [gobiiExtractFilterType]="gobiiExtractFilterTypes.BY_MARKER"
+                                                                            (onSampleMarkerError)="handleHeaderStatusMessage($event)">
+                                                                    </sample-marker-box>
+                                                                </div> <!-- panel body dataset datatable -->
+                                                            </div> <!-- intersect pamel -->                                                        </div><!-- intersect markers -->
                                                         <div class="col-md-6"> <!-- intersect samples -->
-                                                            INTERSECT SAMPLES
+                                                            <div class="panel panel-primary"> <!-- intersect pamel -->
+                                                                <div class="panel-heading">
+                                                                    <h3 class="panel-title">Intersect Samples</h3>
+                                                                </div>
+                                                                <div class="panel-body">
+                                                                    <sample-list-type
+                                                                            [gobiiExtractFilterType]="gobiiExtractFilterTypes.BY_SAMPLE"
+                                                                            (onHeaderStatusMessage)="handleHeaderStatusMessage($event)">
+                                                                    </sample-list-type>
+                                                                    <hr style="width: 100%; color: black; height: 1px; background-color:black;"/>
+                                                                    <sample-marker-box
+                                                                            [gobiiExtractFilterType]="gobiiExtractFilterTypes.BY_SAMPLE"
+                                                                            (onSampleMarkerError)="handleHeaderStatusMessage($event)">
+                                                                    </sample-marker-box>
+                                                                </div> <!-- panel body dataset datatable -->
+                                                            </div> <!-- intersect pamel -->
                                                         </div><!-- intersect samples -->
-                                                    </p-panel><!-- intersect controls -->
                                                 </div><!-- ROW marker/sample lists-->
                                             </div> <!-- container  -->
                                         </ng-template> <!-- lazy-load controls -->
@@ -380,6 +402,7 @@ export class ExtractorRoot implements OnInit {
     //
 
     nameIdFilterParamTypes: any = Object.assign({}, FilterParamNames);
+    gobiiExtractFilterTypes:any = Object.assign({},GobiiExtractFilterType);
 
     selectedExtractFormat$: Observable<GobiiFileItem> = this.store.select(fromRoot.getSelectedFileFormat);
 
