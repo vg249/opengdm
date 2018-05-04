@@ -358,6 +358,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
     @Override
     public LoaderInstructionFilesDTO getStatus(String cropType, String instructionFileName) throws GobiiDtoMappingException {
+
         LoaderInstructionFilesDTO returnVal = new LoaderInstructionFilesDTO();
         JobStatusReporter jobStatusReporter = new JobStatusReporter(instructionFileName, dtoMapJob, INSTRUCTION_FILE_EXT);
         JobProgressStatusType jobProgressStatus = jobStatusReporter.getJobProgressStatusType();
@@ -380,6 +381,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
             }
         } catch (Exception e) {
             LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiException(e);
         }
         return returnVal;
     }
