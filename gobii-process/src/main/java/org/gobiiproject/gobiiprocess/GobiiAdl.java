@@ -1500,16 +1500,12 @@ public class GobiiAdl {
                 statusDetermined = true;
 
             } else if (gobiiLoaderInstruction.getGobiiJobStatus().getCvName().equalsIgnoreCase("completed")) {
-                //Required dont delete
-
-                System.out.println("\nJob " + instructionFileName + " completed at " + dateFormat.format(new Date()));
-                System.out.println();
                 returnVal = true;
                 statusDetermined = true;
             }
 
             System.out.print(".");
-            Thread.sleep(2000);
+            Thread.sleep(1000);
         }
 
         return returnVal;
