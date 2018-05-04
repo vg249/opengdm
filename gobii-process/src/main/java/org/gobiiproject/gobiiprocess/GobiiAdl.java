@@ -1541,6 +1541,7 @@ public class GobiiAdl {
             boolean writeSourcePath = true;
             if (!(new File(sourcePath).exists())) {
                 writeSourcePath = false;
+                throw new Exception( "Data file " + sourcePath + " for scenario "+ scenarioName +" not found.");
             }
 
             String fileExpr = "//Scenario[Name='" + scenarioName + "']/Files/Instruction";

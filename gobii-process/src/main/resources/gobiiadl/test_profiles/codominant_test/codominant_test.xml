@@ -271,7 +271,7 @@
 			<Name>codominant_dataset</Name>
 			<Files>
 				<Instruction>test_profiles\codominant_test\instruction_templates\test_codominant_dataset.json</Instruction>
-				<Data>test_profiles\codominant_test\data_files\data_files\test_codominant_dataset\codominant_allele_data.txt</Data>
+				<Data>test_profiles\codominant_test\data_files\test_codominant_dataset\codominant_allele_data.txt</Data>
 			</Files>
 			<PayloadType>matrix</PayloadType>
 
