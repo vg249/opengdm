@@ -1476,6 +1476,8 @@ public class GobiiAdl {
 
 
         boolean statusDetermined = false;
+        String currentStatus = "";
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         while (!statusDetermined) {
 
             PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFilesDTOPayloadEnvelope = loaderJobResponseEnvolope.get(LoaderInstructionFilesDTO.class);
@@ -1485,10 +1487,9 @@ public class GobiiAdl {
             List<LoaderInstructionFilesDTO> data = loaderInstructionFilesDTOPayloadEnvelope.getPayload().getData();
             GobiiLoaderInstruction gobiiLoaderInstruction = data.get(0).getGobiiLoaderInstructions().get(0);
 
-            String currentStatus = "";
             if (!currentStatus.equals(gobiiLoaderInstruction.getGobiiJobStatus().getCvName())) {
                 currentStatus = gobiiLoaderInstruction.getGobiiJobStatus().getCvName();
-                System.out.println("\nJob " + instructionFileName + " current status: " + currentStatus + " at " + new Date().getTime());
+                System.out.println("\nJob " + instructionFileName + " current status: " + currentStatus + " at " + dateFormat.format(new Date()));
             }
 
             if (gobiiLoaderInstruction.getGobiiJobStatus().getCvName().equalsIgnoreCase("failed") ||
@@ -1501,7 +1502,7 @@ public class GobiiAdl {
             } else if (gobiiLoaderInstruction.getGobiiJobStatus().getCvName().equalsIgnoreCase("completed")) {
                 //Required dont delete
 
-                System.out.println("\nJob " + instructionFileName + " completed at " + new Date().getTime());
+                System.out.println("\nJob " + instructionFileName + " completed at " + dateFormat.format(new Date()));
                 System.out.println();
                 returnVal = true;
                 statusDetermined = true;
