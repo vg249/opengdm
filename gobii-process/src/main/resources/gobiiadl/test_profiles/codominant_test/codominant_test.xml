@@ -3,7 +3,7 @@
 		<Organizations DbPKeysurrogate="Name">
 			<Organization>
 				<Keys>
-					<DbPKey>34</DbPKey>
+					<DbPKey></DbPKey>
 				</Keys>
 				<Properties>
 					<Name>sim_Cornell</Name>
@@ -15,10 +15,10 @@
 		<Contacts DbPKeysurrogate="Email">
 			<Contact>
 				<Keys>
-					<DbPKey>41</DbPKey>
+					<DbPKey></DbPKey>
 					<Fkey entity="Organization" fkproperty="organizationId">
 						<DbPKeySurrogate>sim_Cornell</DbPKeySurrogate>
-						<DbPKey>17</DbPKey>
+						<DbPKey></DbPKey>
 					</Fkey>
 				</Keys>
 				<Properties>
@@ -36,7 +36,7 @@
 		<Platforms DbPKeysurrogate="PlatformName">
 			<Platform>
 				<Keys>
-					<DbPKey>34</DbPKey>
+					<DbPKey></DbPKey>
 				</Keys>
 				<Properties>
 					<PlatformName>sim_SSR</PlatformName>
@@ -51,10 +51,10 @@
 		<Protocols DbPKeysurrogate="Name">
 			<Protocol>
 				<Keys>
-					<DbPKey>34</DbPKey>
+					<DbPKey></DbPKey>
 					<Fkey entity="Platform" fkproperty="platformId">
 						<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
-						<DbPKey>34</DbPKey>
+						<DbPKey></DbPKey>
 					</Fkey>
 				</Keys>
 				<Properties>
@@ -70,14 +70,14 @@
 		<VendorProtocols DbPKeysurrogate="Name">
 			<VendorProtocol>
 				<Keys>
-					<DbPKey>1</DbPKey>
+					<DbPKey></DbPKey>
 					<Fkey entity="Organization" fkproperty="organizationId">
 						<DbPKeySurrogate>sim_Cornell</DbPKeySurrogate>
-						<DbPKey>34</DbPKey>
+						<DbPKey></DbPKey>
 					</Fkey>
 					<Fkey entity="Protocol" fkproperty="protocolId">
 						<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
-						<DbPKey>34</DbPKey>
+						<DbPKey></DbPKey>
 					</Fkey>
 				</Keys>
 				<Properties>
@@ -89,7 +89,7 @@
 		<Mapsets DbPKeysurrogate="Name">
 			<Mapset>
 				<Keys>
-					<DbPKey>1</DbPKey>
+					<DbPKey></DbPKey>
 				</Keys>
 				<Properties>
 					<Name>sim_codominant</Name>
@@ -104,10 +104,10 @@
 		<Projects DbPKeysurrogate="ProjectName">
 			<Project>
 				<Keys>
-					<DbPKey>2</DbPKey>
+					<DbPKey></DbPKey>
 					<Fkey entity="Contact" fkproperty="piContact">
 						<DbPKeySurrogate>dummy@email.address</DbPKeySurrogate>
-						<DbPKey>41</DbPKey>
+						<DbPKey></DbPKey>
 					</Fkey>
 				</Keys>
 				<Properties>
@@ -121,14 +121,14 @@
 		<Experiments DbPKeysurrogate="ExperimentName">
 			<Experiment>
 				<Keys>
-					<DbPKey>8</DbPKey>
+					<DbPKey></DbPKey>
 					<Fkey entity="Project" fkproperty="projectId">
 						<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-						<DbPKey>2</DbPKey>
+						<DbPKey></DbPKey>
 					</Fkey>
 					<Fkey entity="VendorProtocol" fkproperty="vendorProtocolId">
 						<DbPKeySurrogate>sim_Cornell_SSR</DbPKeySurrogate>
-						<DbPKey>1</DbPKey>
+						<DbPKey></DbPKey>
 					</Fkey>
 				</Keys>
 				<Properties>
@@ -141,7 +141,7 @@
 		<Analyses DbPKeysurrogate="AnalysisName">
 			<Analysis>
 				<Keys>
-					<DbPKey>1</DbPKey>
+					<DbPKey></DbPKey>
 				</Keys>
 				<Properties>
 					<AnalysisName>sim_none</AnalysisName>
@@ -161,14 +161,14 @@
 		<Datasets DbPKeysurrogate="DatasetName">
 			<Dataset>
 				<Keys>
-					<DbPKey>9</DbPKey>
+					<DbPKey></DbPKey>
 					<Fkey entity="Experiment" fkproperty="experimentId">
 						<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-						<DbPKey>8</DbPKey>
+						<DbPKey></DbPKey>
 					</Fkey>
 					<Fkey entity="Analysis" fkproperty="callingAnalysisId">
 						<DbPKeySurrogate>sim_none</DbPKeySurrogate>
-						<DbPKey>1</DbPKey>
+						<DbPKey></DbPKey>
 					</Fkey>
 				</Keys>
 				<Properties>
@@ -190,39 +190,39 @@
 		<Scenario>
 			<Name>codominant_marker</Name>
 			<Files>
-				<Instruction>C:\Users\VCalaminos\Documents\gobii\adl\test_profiles\codominant_test\instruction_templates\test_codominant_marker.json</Instruction>
-				<Data>C:\Users\VCalaminos\Documents\gobii\adl\test_profiles\codominant_test\data_files\test_codominant_marker\codominant_markermap.txt</Data>
+				<Instruction>test_profiles\codominant_test\instruction_templates\test_codominant_marker.json</Instruction>
+				<Data>test_profiles\codominant_test\data_files\test_codominant_marker\codominant_markermap.txt</Data>
 			</Files>
 			<PayloadType>markers</PayloadType>
 
 			<DbFkey entity="Contact">
 				<DbPKeySurrogate>dummy@email.address</DbPKeySurrogate>
-				<DbPKey>41</DbPKey>
+				<DbPKey></DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Project">
 				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey>2</DbPKey>
+				<DbPKey></DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Experiment">
 				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey>8</DbPKey>
+				<DbPKey></DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Dataset">
 				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey>9</DbPKey>
+				<DbPKey></DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Mapset">
 				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey>1</DbPKey>
+				<DbPKey></DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Platform">
 				<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
-				<DbPKey>34</DbPKey>
+				<DbPKey></DbPKey>
 			</DbFkey>
 
 		</Scenario>
@@ -230,39 +230,39 @@
 		<Scenario>
 			<Name>codominant_sample</Name>
 			<Files>
-				<Instruction>C:\Users\VCalaminos\Documents\gobii\adl\test_profiles\codominant_test\instruction_templates\test_codominant_sample.json</Instruction>
-				<Data>C:\Users\VCalaminos\Documents\gobii\adl\test_profiles\codominant_test\data_files\test_codominant_sample\codominant_samples_csv.csv</Data>
+				<Instruction>test_profiles\codominant_test\instruction_templates\test_codominant_sample.json</Instruction>
+				<Data>test_profiles\codominant_test\data_files\test_codominant_sample\codominant_samples_csv.csv</Data>
 			</Files>
 			<PayloadType>samples</PayloadType>
 
 			<DbFkey entity="Contact">
 				<DbPKeySurrogate>dummy@email.address</DbPKeySurrogate>
-				<DbPKey>41</DbPKey>
+				<DbPKey></DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Project">
 				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey>2</DbPKey>
+				<DbPKey></DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Experiment">
 				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey>8</DbPKey>
+				<DbPKey></DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Dataset">
 				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey>9</DbPKey>
+				<DbPKey></DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Mapset">
 				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey>1</DbPKey>
+				<DbPKey></DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Platform">
 				<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
-				<DbPKey>34</DbPKey>
+				<DbPKey></DbPKey>
 			</DbFkey>
 
 		</Scenario>
@@ -270,39 +270,39 @@
 		<Scenario>
 			<Name>codominant_dataset</Name>
 			<Files>
-				<Instruction>C:\Users\VCalaminos\Documents\gobii\adl\test_profiles\codominant_test\instruction_templates\test_codominant_dataset.json</Instruction>
-				<Data>C:\Users\VCalaminos\Documents\gobii\adl\test_profiles\codominant_test\data_files\data_files\test_codominant_dataset\codominant_allele_data.txt</Data>
+				<Instruction>test_profiles\codominant_test\instruction_templates\test_codominant_dataset.json</Instruction>
+				<Data>test_profiles\codominant_test\data_files\data_files\test_codominant_dataset\codominant_allele_data.txt</Data>
 			</Files>
 			<PayloadType>matrix</PayloadType>
 
 			<DbFkey entity="Contact">
 				<DbPKeySurrogate>dummy@email.address</DbPKeySurrogate>
-				<DbPKey>41</DbPKey>
+				<DbPKey></DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Project">
 				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey>2</DbPKey>
+				<DbPKey></DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Experiment">
 				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey>8</DbPKey>
+				<DbPKey></DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Dataset">
 				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey>9</DbPKey>
+				<DbPKey></DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Mapset">
 				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey>1</DbPKey>
+				<DbPKey></DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Platform">
 				<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
-				<DbPKey>34</DbPKey>
+				<DbPKey></DbPKey>
 			</DbFkey>
 
 		</Scenario>
