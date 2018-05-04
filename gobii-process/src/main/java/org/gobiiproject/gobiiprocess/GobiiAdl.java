@@ -63,6 +63,7 @@ import java.util.*;
 public class GobiiAdl {
 
     private static ServerConfig serverConfig;
+    private static String crop = null;
 
     private static void validateKeys(NodeList nodeList, XPath xPath, Document document) throws Exception {
         for (int i = 0; i < nodeList.getLength(); i++) {
@@ -1473,10 +1474,11 @@ public class GobiiAdl {
                         .resourceColl(GobiiServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS)
                         .addUriParam("instructionFileName", instructionFileName));
 
-        boolean statusDetermined = false;
-        while (!statusDetermined) {
 
-            System.out.print(".");
+        boolean statusDetermined = false;
+        String currentStatus = "";
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        while (!statusDetermined) {
 
             PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFilesDTOPayloadEnvelope = loaderJobResponseEnvolope.get(LoaderInstructionFilesDTO.class);
             checkStatus(loaderInstructionFilesDTOPayloadEnvelope, true);
@@ -1484,6 +1486,11 @@ public class GobiiAdl {
             // because we called checkStatus() with second parameter true, we know that there is at least one payload item
             List<LoaderInstructionFilesDTO> data = loaderInstructionFilesDTOPayloadEnvelope.getPayload().getData();
             GobiiLoaderInstruction gobiiLoaderInstruction = data.get(0).getGobiiLoaderInstructions().get(0);
+
+            if (!currentStatus.equals(gobiiLoaderInstruction.getGobiiJobStatus().getCvName())) {
+                currentStatus = gobiiLoaderInstruction.getGobiiJobStatus().getCvName();
+                System.out.println("\nJob " + instructionFileName + " current status: " + currentStatus + " at " + dateFormat.format(new Date()));
+            }
 
             if (gobiiLoaderInstruction.getGobiiJobStatus().getCvName().equalsIgnoreCase("failed") ||
                     gobiiLoaderInstruction.getGobiiJobStatus().getCvName().equalsIgnoreCase("aborted")) {
@@ -1493,14 +1500,12 @@ public class GobiiAdl {
                 statusDetermined = true;
 
             } else if (gobiiLoaderInstruction.getGobiiJobStatus().getCvName().equalsIgnoreCase("completed")) {
-                //Required dont delete
-
-                System.out.println("\nJob " + instructionFileName + " completed at " + new Date().getTime());
-                System.out.println();
                 returnVal = true;
                 statusDetermined = true;
             }
-            Thread.sleep(2000);
+
+            System.out.print(".");
+            Thread.sleep(1000);
         }
 
         return returnVal;
@@ -1533,6 +1538,7 @@ public class GobiiAdl {
             boolean writeSourcePath = true;
             if (!(new File(sourcePath).exists())) {
                 writeSourcePath = false;
+                throw new Exception( "Data file " + sourcePath + " for scenario "+ scenarioName +" not found.");
             }
 
             String fileExpr = "//Scenario[Name='" + scenarioName + "']/Files/Instruction";
@@ -1605,6 +1611,11 @@ public class GobiiAdl {
 
                 for (int k = 0; k < jsonArray.size(); k++) {
                     JsonObject instructionObject = (JsonObject) jsonArray.get(k);
+
+                    if (instructionObject.has("gobiiCropType")) {
+                        instructionObject.addProperty("gobiiCropType", crop);
+                    }
+
                     if (entityName.equals("contact")) {
                         if (instructionObject.has("contactId")) {
                             instructionObject.addProperty("contactId", currentEntityId);
@@ -1634,7 +1645,7 @@ public class GobiiAdl {
 
                         // set datasetType fields in instruction file template
                         JsonObject datasetTypeObj = (JsonObject) instructionObject.get("datasetType");
-                        datasetTypeObj.addProperty("name", dataSetDTOGetResponse.getDatatypeName());
+                        datasetTypeObj.addProperty("name", dataSetDTOGetResponse.getDatatypeName().toUpperCase());
                         datasetTypeObj.addProperty("id", dataSetDTOGetResponse.getDatatypeId());
 
                         instructionObject.add("datasetType", datasetTypeObj);
@@ -1723,6 +1734,7 @@ public class GobiiAdl {
                 // CREATE LOADER INSTRUCTION FILE
                 LoaderInstructionFilesDTO loaderInstructionFilesDTO = createInstructionFileDTO(instructionFilePath, folderName);
 
+                System.out.println("Submitting file " + instructionFilePath + " - " + folderName);
                 // SUBMIT INSTRUCTION FILE DTO
                 submitInstructionFile(loaderInstructionFilesDTO, jobPayloadType);
             }
@@ -1809,7 +1821,6 @@ public class GobiiAdl {
         String url = commandLine.getOptionValue(INPUT_HOST);
         String username = commandLine.getOptionValue(INPUT_USER);
         String password = commandLine.getOptionValue(INPUT_PASSWORD);
-        String crop = null;
 
         try {
             GobiiClientContext.getInstance(url, true).getCurrentClientCropType();
