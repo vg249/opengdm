@@ -13,8 +13,21 @@ import java.util.List;
 public class Vertex {
 
 
+    public Vertex() {}
+
+
+    public Vertex(Integer vertexId, String vertexName, GobiiEntityNameType gobiiEntityNameType, String cvGroupName) {
+        this.vertexId = vertexId;
+        this.vertexName = vertexName;
+        this.gobiiEntityNameType = gobiiEntityNameType;
+        this.cvGroupName = cvGroupName;
+    }
+
     private Integer vertexId = 0;
+    private String vertexName;
     private List<Integer> filterVals = new ArrayList<>();
+    GobiiEntityNameType gobiiEntityNameType;
+    String cvGroupName;
 
 
     public Integer getVertexId() {
@@ -25,11 +38,27 @@ public class Vertex {
         this.vertexId = vertexId;
     }
 
+    public String getVertexName() {
+        return vertexName;
+    }
+
+    public void setVertexName(String vertexName) {
+        this.vertexName = vertexName;
+    }
+
     public List<Integer> getFilterVals() {
         return filterVals;
     }
 
     public void setFilterVals(List<Integer> filterVals) {
         this.filterVals = filterVals;
+    }
+
+    public GobiiEntityNameType getGobiiEntityNameType() {
+        return gobiiEntityNameType;
+    }
+
+    public void setGobiiEntityNameType(GobiiEntityNameType gobiiEntityNameType) {
+        this.gobiiEntityNameType = gobiiEntityNameType;
     }
 }
