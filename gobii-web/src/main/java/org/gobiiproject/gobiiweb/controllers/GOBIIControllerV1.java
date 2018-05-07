@@ -18,6 +18,7 @@ import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMap
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.entity.flex.VertexDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.DisplayDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO;
@@ -167,6 +168,10 @@ public class GOBIIControllerV1 {
 
     @Autowired
     private EntityStatsService entityStatsService = null;
+
+    @Autowired
+    private FlexQueryService flexQueryService = null;
+
 
     @RequestMapping(value = "/ping", method = RequestMethod.POST)
     @ResponseBody
@@ -2460,12 +2465,12 @@ public class GOBIIControllerV1 {
     // *************************** MAPSET METHODS
     // *********************************************
     /*
-    * NOTE: this implementation is incorrect: it is using getAllmapsetNames;
-    * There needs to be a getAllMapset() method added. For now, the funcitonality
-    * Provided by the LoadControlle remains in place and the client side tets have
-    * not been modified. This funcitonality will have to be built out later.
-    * Also note that the resource name /maps is correct but does not match
-    * what is being used in ResourceBuilder on the client side*/
+     * NOTE: this implementation is incorrect: it is using getAllmapsetNames;
+     * There needs to be a getAllMapset() method added. For now, the funcitonality
+     * Provided by the LoadControlle remains in place and the client side tets have
+     * not been modified. This funcitonality will have to be built out later.
+     * Also note that the resource name /maps is correct but does not match
+     * what is being used in ResourceBuilder on the client side*/
     @RequestMapping(value = "/maps", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<MapsetDTO> getMaps(HttpServletRequest request,
@@ -4344,6 +4349,44 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     null,
                     entityStatsDTO);
+
+        } catch (GobiiException e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        } catch (Exception e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+
+    @RequestMapping(value = "/entities/vertices", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<VertexDTO> getVertices(HttpServletRequest request,
+                                                  HttpServletResponse response) {
+
+        PayloadEnvelope<VertexDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+
+            VertexDTO vertexDTO = this.flexQueryService.getVertices();
+
+            PayloadWriter<VertexDTO> payloadWriter = new PayloadWriter<>(request, response,
+                    VertexDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    null,
+                    vertexDTO);
 
         } catch (GobiiException e) {
 
