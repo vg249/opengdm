@@ -20,6 +20,7 @@ import {JsonToGfiDataset} from "../app/jsontogfi/json-to-gfi-dataset";
 import {DtoRequestItemGfi} from "../app/dto-request-item-gfi";
 import {DtoRequestItemGfiPaged} from "../app/dto-request-item-gfi-paged";
 import {PayloadFilter} from "../../store/actions/action-payload-filter";
+import {JsonToGfiVertex} from "../app/jsontogfi/json-to-gfi-vertex";
 
 
 @Injectable()
@@ -488,13 +489,21 @@ export class FilterParamsColl {
             FilterParams
                 .build(FilterParamNames.FQ_F1_VERTICES,
                     GobiiExtractFilterType.FLEX_QUERY,
-                    EntityType.CV)
+                    EntityType.UNKNOWN)
+                .setExtractorItemType(ExtractorItemType.VERTEX)
                 .setIsDynamicFilterValue(false)
-                .setCvFilterType(CvFilterType.DATASET_TYPE)
-                .setCvFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE))
-                .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
-                .setNameIdLabelType(NameIdLabelType.SELECT_A)
-        );
+                .setFilterType(FilterType.ENTITY_LIST)
+                .setNameIdLabelType(NameIdLabelType.SELECT_A));
+
+        this.getFilter(FilterParamNames.FQ_F1_VERTICES, GobiiExtractFilterType.FLEX_QUERY)
+            .setDtoRequestItem(new DtoRequestItemGfi(
+                this.getFilter(FilterParamNames.FQ_F1_VERTICES,
+                    GobiiExtractFilterType.FLEX_QUERY),
+                null,
+                new JsonToGfiVertex(this.getFilter(FilterParamNames.FQ_F1_VERTICES,
+                    GobiiExtractFilterType.FLEX_QUERY),
+                    this)))
+            .setDtoRequestService(this.fileItemRequestService);
 
         this.addFilter(
             FilterParams
@@ -516,7 +525,6 @@ export class FilterParamsColl {
                 .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
                 .setNameIdLabelType(NameIdLabelType.SELECT_A)
         );
-
 
 
         this.addFilter(
@@ -572,41 +580,41 @@ export class FilterParamsColl {
 
         // FLEX QUERY FILTER OBJECT GRAPH
         // *** F1
-        this.getFilter(FilterParamNames.FQ_F1_VERTICES,GobiiExtractFilterType.FLEX_QUERY)
-            .setNextSiblingNameIdRequestParams(this.getFilter(FilterParamNames.FQ_F1_VERTICES,GobiiExtractFilterType.FLEX_QUERY))
-            .getChildFileItemParams().push(this.getFilter(FilterParamNames.FQ_F1_VERTEX_VALUES,GobiiExtractFilterType.FLEX_QUERY));
+        this.getFilter(FilterParamNames.FQ_F1_VERTICES, GobiiExtractFilterType.FLEX_QUERY)
+            .setNextSiblingNameIdRequestParams(this.getFilter(FilterParamNames.FQ_F1_VERTICES, GobiiExtractFilterType.FLEX_QUERY))
+            .getChildFileItemParams().push(this.getFilter(FilterParamNames.FQ_F1_VERTEX_VALUES, GobiiExtractFilterType.FLEX_QUERY));
 
-        this.getFilter(FilterParamNames.FQ_F1_VERTEX_VALUES,GobiiExtractFilterType.FLEX_QUERY)
-            .setParentFileItemParams(this.getFilter(FilterParamNames.FQ_F1_VERTICES,GobiiExtractFilterType.FLEX_QUERY));
+        this.getFilter(FilterParamNames.FQ_F1_VERTEX_VALUES, GobiiExtractFilterType.FLEX_QUERY)
+            .setParentFileItemParams(this.getFilter(FilterParamNames.FQ_F1_VERTICES, GobiiExtractFilterType.FLEX_QUERY));
 
 
         // *** F2
-        this.getFilter(FilterParamNames.FQ_F2_VERTICES,GobiiExtractFilterType.FLEX_QUERY)
-            .setPreviousSiblingNameIdRequestParams(this.getFilter(FilterParamNames.FQ_F1_VERTICES,GobiiExtractFilterType.FLEX_QUERY))
-            .setNextSiblingNameIdRequestParams(this.getFilter(FilterParamNames.FQ_F3_VERTICES,GobiiExtractFilterType.FLEX_QUERY))
-            .getChildFileItemParams().push(this.getFilter(FilterParamNames.FQ_F2_VERTEX_VALUES,GobiiExtractFilterType.FLEX_QUERY));
+        this.getFilter(FilterParamNames.FQ_F2_VERTICES, GobiiExtractFilterType.FLEX_QUERY)
+            .setPreviousSiblingNameIdRequestParams(this.getFilter(FilterParamNames.FQ_F1_VERTICES, GobiiExtractFilterType.FLEX_QUERY))
+            .setNextSiblingNameIdRequestParams(this.getFilter(FilterParamNames.FQ_F3_VERTICES, GobiiExtractFilterType.FLEX_QUERY))
+            .getChildFileItemParams().push(this.getFilter(FilterParamNames.FQ_F2_VERTEX_VALUES, GobiiExtractFilterType.FLEX_QUERY));
 
-        this.getFilter(FilterParamNames.FQ_F2_VERTEX_VALUES,GobiiExtractFilterType.FLEX_QUERY)
-            .setParentFileItemParams(this.getFilter(FilterParamNames.FQ_F2_VERTICES,GobiiExtractFilterType.FLEX_QUERY));
+        this.getFilter(FilterParamNames.FQ_F2_VERTEX_VALUES, GobiiExtractFilterType.FLEX_QUERY)
+            .setParentFileItemParams(this.getFilter(FilterParamNames.FQ_F2_VERTICES, GobiiExtractFilterType.FLEX_QUERY));
 
 
         // *** F3
-        this.getFilter(FilterParamNames.FQ_F3_VERTICES,GobiiExtractFilterType.FLEX_QUERY)
-            .setPreviousSiblingNameIdRequestParams(this.getFilter(FilterParamNames.FQ_F2_VERTICES,GobiiExtractFilterType.FLEX_QUERY))
-            .setNextSiblingNameIdRequestParams(this.getFilter(FilterParamNames.FQ_F4_VERTICES,GobiiExtractFilterType.FLEX_QUERY))
-            .getChildFileItemParams().push(this.getFilter(FilterParamNames.FQ_F3_VERTEX_VALUES,GobiiExtractFilterType.FLEX_QUERY));
+        this.getFilter(FilterParamNames.FQ_F3_VERTICES, GobiiExtractFilterType.FLEX_QUERY)
+            .setPreviousSiblingNameIdRequestParams(this.getFilter(FilterParamNames.FQ_F2_VERTICES, GobiiExtractFilterType.FLEX_QUERY))
+            .setNextSiblingNameIdRequestParams(this.getFilter(FilterParamNames.FQ_F4_VERTICES, GobiiExtractFilterType.FLEX_QUERY))
+            .getChildFileItemParams().push(this.getFilter(FilterParamNames.FQ_F3_VERTEX_VALUES, GobiiExtractFilterType.FLEX_QUERY));
 
-        this.getFilter(FilterParamNames.FQ_F3_VERTEX_VALUES,GobiiExtractFilterType.FLEX_QUERY)
-            .setParentFileItemParams(this.getFilter(FilterParamNames.FQ_F3_VERTICES,GobiiExtractFilterType.FLEX_QUERY));
+        this.getFilter(FilterParamNames.FQ_F3_VERTEX_VALUES, GobiiExtractFilterType.FLEX_QUERY)
+            .setParentFileItemParams(this.getFilter(FilterParamNames.FQ_F3_VERTICES, GobiiExtractFilterType.FLEX_QUERY));
 
 
         // *** F4
-        this.getFilter(FilterParamNames.FQ_F4_VERTICES,GobiiExtractFilterType.FLEX_QUERY)
-            .setPreviousSiblingNameIdRequestParams(this.getFilter(FilterParamNames.FQ_F3_VERTICES,GobiiExtractFilterType.FLEX_QUERY))
-            .getChildFileItemParams().push(this.getFilter(FilterParamNames.FQ_F4_VERTEX_VALUES,GobiiExtractFilterType.FLEX_QUERY));
+        this.getFilter(FilterParamNames.FQ_F4_VERTICES, GobiiExtractFilterType.FLEX_QUERY)
+            .setPreviousSiblingNameIdRequestParams(this.getFilter(FilterParamNames.FQ_F3_VERTICES, GobiiExtractFilterType.FLEX_QUERY))
+            .getChildFileItemParams().push(this.getFilter(FilterParamNames.FQ_F4_VERTEX_VALUES, GobiiExtractFilterType.FLEX_QUERY));
 
-        this.getFilter(FilterParamNames.FQ_F4_VERTEX_VALUES,GobiiExtractFilterType.FLEX_QUERY)
-            .setParentFileItemParams(this.getFilter(FilterParamNames.FQ_F4_VERTICES,GobiiExtractFilterType.FLEX_QUERY));
+        this.getFilter(FilterParamNames.FQ_F4_VERTEX_VALUES, GobiiExtractFilterType.FLEX_QUERY)
+            .setParentFileItemParams(this.getFilter(FilterParamNames.FQ_F4_VERTICES, GobiiExtractFilterType.FLEX_QUERY));
 
     } // constructor
 }

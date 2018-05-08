@@ -21,6 +21,7 @@ System.register([], function (exports_1, context_1) {
                 ExtractorItemType[ExtractorItemType["CLEAR_TREE"] = 12] = "CLEAR_TREE";
                 ExtractorItemType[ExtractorItemType["MARKER_GROUP_LIST_ITEM"] = 13] = "MARKER_GROUP_LIST_ITEM";
                 ExtractorItemType[ExtractorItemType["TREE_STRUCTURE"] = 14] = "TREE_STRUCTURE";
+                ExtractorItemType[ExtractorItemType["VERTEX"] = 15] = "VERTEX";
             })(ExtractorItemType || (ExtractorItemType = {}));
             exports_1("ExtractorItemType", ExtractorItemType);
         }

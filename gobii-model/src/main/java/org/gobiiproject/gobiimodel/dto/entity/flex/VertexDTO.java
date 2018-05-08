@@ -1,77 +1,83 @@
 package org.gobiiproject.gobiimodel.dto.entity.flex;
 
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
-import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-public class VertexDTO extends DTOBase {
+/**
+ * Created by Phil on 4/8/2016.
+ */
+public class VertexDTO extends DTOBase{
+
+
+    public VertexDTO() {}
+
+
+    public VertexDTO(Integer vertexId, String vertexName, GobiiEntityNameType gobiiEntityNameType, String cvGroupName) {
+        this.vertexId = vertexId;
+        this.vertexName = vertexName;
+        this.gobiiEntityNameType = gobiiEntityNameType;
+        this.cvGroupName = cvGroupName;
+    }
 
     @Override
     public Integer getId() {
-        return this.getDestinationVertex().getVertexId();
+        return this.getVertexId();
     }
 
     @Override
     public void setId(Integer id) {
-
-        this.getDestinationVertex().setVertexId(id);
+        this.vertexId = id;
     }
 
-    // the vertex for which values are being retrieved
-    // for a list of available vertices, will be empty
-    private Vertex destinationVertex = new Vertex();
 
-    // will be populated when requesting a list of available vertices
-    private List<Vertex> vertices = new ArrayList<>();
-
-    // will be populated when requesting values for a vertex and its path
-    private List<NameIdDTO> vertexValues = new ArrayList<>();
-
-    // marker and sample counts given a path (the destination vertex is by definition the marker,sample tables
-    Integer markerCount = 0;
-    Integer sampleCount = 0;
+    private Integer vertexId = 0;
+    private String vertexName;
+    private List<Integer> filterVals = new ArrayList<>();
+    GobiiEntityNameType gobiiEntityNameType;
+    private String cvGroupName;
 
 
-
-    public Vertex getDestinationVertex() {
-        return destinationVertex;
+    public Integer getVertexId() {
+        return vertexId;
     }
 
-    public void setDestinationVertex(Vertex destinationVertex) {
-        this.destinationVertex = destinationVertex;
+    public void setVertexId(Integer vertexId) {
+        this.vertexId = vertexId;
     }
 
-    public List<Vertex> getVertices() {
-        return vertices;
+    public String getVertexName() {
+        return vertexName;
     }
 
-    public void setVertices(List<Vertex> vertices) {
-        this.vertices = vertices;
+    public void setVertexName(String vertexName) {
+        this.vertexName = vertexName;
     }
 
-    public List<NameIdDTO> getVertexValues() {
-        return vertexValues;
+    public List<Integer> getFilterVals() {
+        return filterVals;
     }
 
-    public void setVertexValues(List<NameIdDTO> vertexValues) {
-        this.vertexValues = vertexValues;
+    public void setFilterVals(List<Integer> filterVals) {
+        this.filterVals = filterVals;
     }
 
-    public Integer getMarkerCount() {
-        return markerCount;
+    public GobiiEntityNameType getGobiiEntityNameType() {
+        return gobiiEntityNameType;
     }
 
-    public void setMarkerCount(Integer markerCount) {
-        this.markerCount = markerCount;
+    public void setGobiiEntityNameType(GobiiEntityNameType gobiiEntityNameType) {
+        this.gobiiEntityNameType = gobiiEntityNameType;
     }
 
-    public Integer getSampleCount() {
-        return sampleCount;
+    public String getCvGroupName() {
+        return cvGroupName;
     }
 
-    public void setSampleCount(Integer sampleCount) {
-        this.sampleCount = sampleCount;
+    public void setCvGroupName(String cvGroupName) {
+        this.cvGroupName = cvGroupName;
     }
 }

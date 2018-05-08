@@ -26,6 +26,7 @@ import {NameIdFileItemService} from "../services/core/nameid-file-item-service";
 import {Observable} from "rxjs/Observable";
 import {InstructionSubmissionService} from "../services/core/instruction-submission-service";
 import {GobiiSampleListType} from "../model/type-extractor-sample-list";
+import {EntityFileItemService} from "../services/core/entity-file-item-service";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -426,7 +427,8 @@ export class ExtractorRoot implements OnInit {
                 private _authenticationService: AuthenticationService,
                 private _dtoRequestServiceServerConfigs: DtoRequestService<ServerConfig[]>,
                 private store: Store<fromRoot.State>,
-                private fileItemService: NameIdFileItemService,
+                private nameIdFileItemService: NameIdFileItemService,
+                private entityFileItemService: EntityFileItemService,
                 private instructionSubmissionService: InstructionSubmissionService,
                 private changeDetectorRef: ChangeDetectorRef) {
 
@@ -513,7 +515,7 @@ export class ExtractorRoot implements OnInit {
                 if (contact && contact.contactId && contact.contactId > 0) {
 
                     //loggedInUser
-                    this.fileItemService.loadFileItem(GobiiFileItem.build(scope$.gobiiExtractFilterType, ProcessType.CREATE)
+                    this.nameIdFileItemService.loadFileItem(GobiiFileItem.build(scope$.gobiiExtractFilterType, ProcessType.CREATE)
                             .setEntityType(EntityType.CONTACT)
                             .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
                             .setCvFilterType(CvFilterType.UNKNOWN)
@@ -544,7 +546,7 @@ export class ExtractorRoot implements OnInit {
     private refreshJobId() {
 
         let jobId: string = FileName.makeUniqueFileId();
-        this.fileItemService.replaceFileItemByCompoundId(
+        this.nameIdFileItemService.replaceFileItemByCompoundId(
             GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
                 .setExtractorItemType(ExtractorItemType.JOB_ID)
                 .setItemId(jobId)
@@ -600,60 +602,61 @@ export class ExtractorRoot implements OnInit {
 
         if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
-            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+            this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                 FilterParamNames.CONTACT_PI_FILTER_OPTIONAL,
                 null);
 
-            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+            this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                 FilterParamNames.PROJECT_FILTER_OPTIONAL,
                 null);
 
-            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+            this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                 FilterParamNames.EXPERIMENT_FILTER_OPTIONAL,
                 null);
 
-            this.fileItemService.loadFilter(this.gobiiExtractFilterType, FilterParamNames.DATASET_FILTER_OPTIONAL, null);
+            this.nameIdFileItemService.loadFilter(this.gobiiExtractFilterType, FilterParamNames.DATASET_FILTER_OPTIONAL, null);
 
-            // this.fileItemService.setItemLabelType(this.gobiiExtractFilterType,
+            // this.nameIdFileItemService.setItemLabelType(this.gobiiExtractFilterType,
             //     FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,
             //     NameIdLabelType.UNKNOWN);
 
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
 
-            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+            this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                 FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,
                 null);
 
-            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+            this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                 FilterParamNames.PROJECTS_BY_CONTACT,
                 null);
 
-            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+            this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                 FilterParamNames.CV_DATATYPE,
                 null);
 
-            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+            this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                 FilterParamNames.PLATFORMS,
                 null);
 
 
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
 
-            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+            this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                 FilterParamNames.CV_DATATYPE,
                 null);
 
-            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+            this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                 FilterParamNames.PLATFORMS,
                 null);
 
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.FLEX_QUERY) {
 
-            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                FilterParamNames.FQ_F1_VERTICES,
-                null);
+            // this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+            //     FilterParamNames.FQ_F1_VERTICES,
+            //     null);
 
-            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+            this.entityFileItemService.loadEntityList(this.gobiiExtractFilterType,FilterParamNames.FQ_F1_VERTICES);
+            this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
                 FilterParamNames.FQ_F1_VERTEX_VALUES,
                 null);
 
@@ -668,10 +671,10 @@ export class ExtractorRoot implements OnInit {
         this.initializeSubmissionContact();
 
 
-        // this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
+        // this.nameIdFileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
         //     this.nameIdRequestParamsExperiments);
 
-        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+        this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
             FilterParamNames.MAPSETS,
             null);
 
@@ -682,10 +685,10 @@ export class ExtractorRoot implements OnInit {
             .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
             .setItemId(GobiiExtractFormat[GobiiExtractFormat.HAPMAP])
             .setItemName(GobiiExtractFormat[GobiiExtractFormat[GobiiExtractFormat.HAPMAP]]);
-        this.fileItemService.replaceFileItemByCompoundId(formatItem);
+        this.nameIdFileItemService.replaceFileItemByCompoundId(formatItem);
 
 
-        this.fileItemService
+        this.nameIdFileItemService
             .replaceFileItemByCompoundId(GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
                 .setExtractorItemType(ExtractorItemType.SAMPLE_LIST_TYPE)
                 .setItemName(GobiiSampleListType[GobiiSampleListType.GERMPLASM_NAME])

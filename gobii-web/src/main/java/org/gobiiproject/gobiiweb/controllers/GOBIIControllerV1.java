@@ -19,6 +19,7 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexDTO;
+import org.gobiiproject.gobiimodel.dto.entity.flex.VertexFilterDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.DisplayDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO;
@@ -71,6 +72,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import sun.security.provider.certpath.Vertex;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -4379,14 +4381,14 @@ public class GOBIIControllerV1 {
         try {
 
 
-            VertexDTO vertexDTO = this.flexQueryService.getVertices();
+            List<VertexDTO> vertices = this.flexQueryService.getVertices();
 
             PayloadWriter<VertexDTO> payloadWriter = new PayloadWriter<>(request, response,
                     VertexDTO.class);
 
-            payloadWriter.writeSingleItemForDefaultId(returnVal,
+            payloadWriter.writeList(returnVal,
                     null,
-                    vertexDTO);
+                    vertices);
 
         } catch (GobiiException e) {
 

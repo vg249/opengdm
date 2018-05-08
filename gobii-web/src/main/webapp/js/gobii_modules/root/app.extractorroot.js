@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../services/core/dto-request.service", "../model/type-process", "../model/gobii-file-item", "../model/server-config", "../model/type-entity", "../services/app/dto-request-item-serverconfigs", "../model/type-extractor-filter", "../model/cv-filter-type", "../model/type-extractor-item", "../model/type-extract-format", "../model/dto-header-status-message", "../model/file_name", "../services/app/dto-request-item-contact", "../services/core/authentication.service", "../model/type-status-level", "@ngrx/store", "../store/reducers", "../store/actions/fileitem-action", "../store/actions/history-action", "../model/file-item-param-names", "../services/core/nameid-file-item-service", "../services/core/instruction-submission-service", "../model/type-extractor-sample-list"], function (exports_1, context_1) {
+System.register(["@angular/core", "../services/core/dto-request.service", "../model/type-process", "../model/gobii-file-item", "../model/server-config", "../model/type-entity", "../services/app/dto-request-item-serverconfigs", "../model/type-extractor-filter", "../model/cv-filter-type", "../model/type-extractor-item", "../model/type-extract-format", "../model/dto-header-status-message", "../model/file_name", "../services/app/dto-request-item-contact", "../services/core/authentication.service", "../model/type-status-level", "@ngrx/store", "../store/reducers", "../store/actions/fileitem-action", "../store/actions/history-action", "../model/file-item-param-names", "../services/core/nameid-file-item-service", "../services/core/instruction-submission-service", "../model/type-extractor-sample-list", "../services/core/entity-file-item-service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, dto_request_service_1, type_process_1, gobii_file_item_1, server_config_1, type_entity_1, dto_request_item_serverconfigs_1, type_extractor_filter_1, cv_filter_type_1, type_extractor_item_1, type_extract_format_1, dto_header_status_message_1, file_name_1, dto_request_item_contact_1, authentication_service_1, type_status_level_1, store_1, fromRoot, fileItemAction, historyAction, file_item_param_names_1, nameid_file_item_service_1, instruction_submission_service_1, type_extractor_sample_list_1, ExtractorRoot;
+    var core_1, dto_request_service_1, type_process_1, gobii_file_item_1, server_config_1, type_entity_1, dto_request_item_serverconfigs_1, type_extractor_filter_1, cv_filter_type_1, type_extractor_item_1, type_extract_format_1, dto_header_status_message_1, file_name_1, dto_request_item_contact_1, authentication_service_1, type_status_level_1, store_1, fromRoot, fileItemAction, historyAction, file_item_param_names_1, nameid_file_item_service_1, instruction_submission_service_1, type_extractor_sample_list_1, entity_file_item_service_1, ExtractorRoot;
     return {
         setters: [
             function (core_1_1) {
@@ -84,17 +84,21 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
             },
             function (type_extractor_sample_list_1_1) {
                 type_extractor_sample_list_1 = type_extractor_sample_list_1_1;
+            },
+            function (entity_file_item_service_1_1) {
+                entity_file_item_service_1 = entity_file_item_service_1_1;
             }
         ],
         execute: function () {
             ExtractorRoot = (function () {
-                function ExtractorRoot(_dtoRequestServiceContact, _authenticationService, _dtoRequestServiceServerConfigs, store, fileItemService, instructionSubmissionService, changeDetectorRef) {
+                function ExtractorRoot(_dtoRequestServiceContact, _authenticationService, _dtoRequestServiceServerConfigs, store, nameIdFileItemService, entityFileItemService, instructionSubmissionService, changeDetectorRef) {
                     var _this = this;
                     this._dtoRequestServiceContact = _dtoRequestServiceContact;
                     this._authenticationService = _authenticationService;
                     this._dtoRequestServiceServerConfigs = _dtoRequestServiceServerConfigs;
                     this.store = store;
-                    this.fileItemService = fileItemService;
+                    this.nameIdFileItemService = nameIdFileItemService;
+                    this.entityFileItemService = entityFileItemService;
                     this.instructionSubmissionService = instructionSubmissionService;
                     this.changeDetectorRef = changeDetectorRef;
                     this.title = 'Gobii Web';
@@ -168,7 +172,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         var foo = "foo";
                         if (contact && contact.contactId && contact.contactId > 0) {
                             //loggedInUser
-                            _this.fileItemService.loadFileItem(gobii_file_item_1.GobiiFileItem.build(scope$.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                            _this.nameIdFileItemService.loadFileItem(gobii_file_item_1.GobiiFileItem.build(scope$.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
                                 .setEntityType(type_entity_1.EntityType.CONTACT)
                                 .setEntitySubType(type_entity_1.EntitySubType.CONTACT_SUBMITED_BY)
                                 .setCvFilterType(cv_filter_type_1.CvFilterType.UNKNOWN)
@@ -187,7 +191,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 };
                 ExtractorRoot.prototype.refreshJobId = function () {
                     var jobId = file_name_1.FileName.makeUniqueFileId();
-                    this.fileItemService.replaceFileItemByCompoundId(gobii_file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                    this.nameIdFileItemService.replaceFileItemByCompoundId(gobii_file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.JOB_ID)
                         .setItemId(jobId)
                         .setItemName(jobId)
@@ -225,43 +229,46 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     });
                     this.refreshJobId();
                     if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
-                        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL, null);
-                        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL, null);
-                        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL, null);
-                        this.fileItemService.loadFilter(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.DATASET_FILTER_OPTIONAL, null);
-                        // this.fileItemService.setItemLabelType(this.gobiiExtractFilterType,
+                        this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL, null);
+                        this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL, null);
+                        this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL, null);
+                        this.nameIdFileItemService.loadFilter(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.DATASET_FILTER_OPTIONAL, null);
+                        // this.nameIdFileItemService.setItemLabelType(this.gobiiExtractFilterType,
                         //     FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,
                         //     NameIdLabelType.UNKNOWN);
                     }
                     else if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
-                        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.CONTACT_PI_HIERARCHY_ROOT, null);
-                        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.PROJECTS_BY_CONTACT, null);
-                        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.CV_DATATYPE, null);
-                        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.PLATFORMS, null);
+                        this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.CONTACT_PI_HIERARCHY_ROOT, null);
+                        this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.PROJECTS_BY_CONTACT, null);
+                        this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.CV_DATATYPE, null);
+                        this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.PLATFORMS, null);
                     }
                     else if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
-                        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.CV_DATATYPE, null);
-                        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.PLATFORMS, null);
+                        this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.CV_DATATYPE, null);
+                        this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.PLATFORMS, null);
                     }
                     else if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY) {
-                        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.FQ_F1_VERTICES, null);
-                        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.FQ_F1_VERTEX_VALUES, null);
+                        // this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                        //     FilterParamNames.FQ_F1_VERTICES,
+                        //     null);
+                        this.entityFileItemService.loadEntityList(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.FQ_F1_VERTICES);
+                        this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.FQ_F1_VERTEX_VALUES, null);
                     }
                     else {
                         this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled export filter type: " + type_extractor_filter_1.GobiiExtractFilterType[this.gobiiExtractFilterType]));
                     }
                     this.initializeSubmissionContact();
-                    // this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
+                    // this.nameIdFileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
                     //     this.nameIdRequestParamsExperiments);
-                    this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.MAPSETS, null);
+                    this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.MAPSETS, null);
                     //changing modes will have nuked the submit as item in the tree, so we need to re-event (sic.) it:
                     var formatItem = gobii_file_item_1.GobiiFileItem
                         .build(this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.EXPORT_FORMAT)
                         .setItemId(type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat.HAPMAP])
                         .setItemName(type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat.HAPMAP]]);
-                    this.fileItemService.replaceFileItemByCompoundId(formatItem);
-                    this.fileItemService
+                    this.nameIdFileItemService.replaceFileItemByCompoundId(formatItem);
+                    this.nameIdFileItemService
                         .replaceFileItemByCompoundId(gobii_file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_TYPE)
                         .setItemName(type_extractor_sample_list_1.GobiiSampleListType[type_extractor_sample_list_1.GobiiSampleListType.GERMPLASM_NAME])
@@ -317,6 +324,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         dto_request_service_1.DtoRequestService,
                         store_1.Store,
                         nameid_file_item_service_1.NameIdFileItemService,
+                        entity_file_item_service_1.EntityFileItemService,
                         instruction_submission_service_1.InstructionSubmissionService,
                         core_1.ChangeDetectorRef])
                 ], ExtractorRoot);

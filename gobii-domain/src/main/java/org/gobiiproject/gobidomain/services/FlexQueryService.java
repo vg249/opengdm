@@ -1,10 +1,8 @@
 package org.gobiiproject.gobidomain.services;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexDTO;
-import org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO;
-import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
+import org.gobiiproject.gobiimodel.dto.entity.flex.VertexFilterDTO;
 
 import java.util.List;
 
@@ -14,5 +12,5 @@ import java.util.List;
  */
 public interface FlexQueryService {
 
-    VertexDTO getVertices() throws GobiiDomainException;
+    List<VertexDTO> getVertices() throws GobiiDomainException;
 }

@@ -13,4 +13,6 @@ export enum ExtractorItemType {
     LABEL,
     CLEAR_TREE,
     MARKER_GROUP_LIST_ITEM,
-    TREE_STRUCTURE}
+    TREE_STRUCTURE,
+    VERTEX
+}
