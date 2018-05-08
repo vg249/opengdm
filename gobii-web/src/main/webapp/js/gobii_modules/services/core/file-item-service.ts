@@ -150,38 +150,38 @@ export class FileItemService {
             // the FQ filters are for now just placeholders
 
             //------- F1 --------------------------------------
-            case FilterParamNames.FQ_F1_ENTITIES:
+            case FilterParamNames.FQ_F1_VERTICES:
                 returnVal = this.store.select(fromRoot.getCvTermsDataType);
                 break;
 
-            case FilterParamNames.FQ_F1_ENTITY_VALUES:
+            case FilterParamNames.FQ_F1_VERTEX_VALUES:
                 returnVal = this.store.select(fromRoot.getPlatforms);
                 break;
 
             //------- F2 --------------------------------------
-            case FilterParamNames.FQ_F2_ENTITIES:
+            case FilterParamNames.FQ_F2_VERTICES:
                 returnVal = this.store.select(fromRoot.getCvTermsDataType);
                 break;
 
-            case FilterParamNames.FQ_F2_ENTITY_VALUES:
+            case FilterParamNames.FQ_F2_VERTEX_VALUES:
                 returnVal = this.store.select(fromRoot.getPlatforms);
                 break;
 
             //------- F3 --------------------------------------
-            case FilterParamNames.FQ_F3_ENTITIES:
+            case FilterParamNames.FQ_F3_VERTICES:
                 returnVal = this.store.select(fromRoot.getCvTermsDataType);
                 break;
 
-            case FilterParamNames.FQ_F3_ENTITY_VALUES:
+            case FilterParamNames.FQ_F3_VERTEX_VALUES:
                 returnVal = this.store.select(fromRoot.getPlatforms);
                 break;
 
             //------- F4 --------------------------------------
-            case FilterParamNames.FQ_F4_ENTITIES:
+            case FilterParamNames.FQ_F4_VERTICES:
                 returnVal = this.store.select(fromRoot.getCvTermsDataType);
                 break;
 
-            case FilterParamNames.FQ_F4_ENTITY_VALUES:
+            case FilterParamNames.FQ_F4_VERTEX_VALUES:
                 returnVal = this.store.select(fromRoot.getPlatforms);
                 break;
 

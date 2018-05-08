@@ -486,7 +486,7 @@ export class FilterParamsColl {
         // ******* F1
         this.addFilter(
             FilterParams
-                .build(FilterParamNames.FQ_F1_ENTITIES,
+                .build(FilterParamNames.FQ_F1_VERTICES,
                     GobiiExtractFilterType.FLEX_QUERY,
                     EntityType.CV)
                 .setIsDynamicFilterValue(false)
@@ -498,7 +498,7 @@ export class FilterParamsColl {
 
         this.addFilter(
             FilterParams
-                .build(FilterParamNames.FQ_F1_ENTITY_VALUES,
+                .build(FilterParamNames.FQ_F1_VERTEX_VALUES,
                     GobiiExtractFilterType.FLEX_QUERY,
                     EntityType.PLATFORM)
                 .setIsDynamicFilterValue(false)
@@ -507,7 +507,7 @@ export class FilterParamsColl {
         // ******* F2
         this.addFilter(
             FilterParams
-                .build(FilterParamNames.FQ_F2_ENTITIES,
+                .build(FilterParamNames.FQ_F2_VERTICES,
                     GobiiExtractFilterType.FLEX_QUERY,
                     EntityType.CV)
                 .setIsDynamicFilterValue(false)
@@ -519,7 +519,7 @@ export class FilterParamsColl {
 
         this.addFilter(
             FilterParams
-                .build(FilterParamNames.FQ_F2_ENTITY_VALUES,
+                .build(FilterParamNames.FQ_F2_VERTEX_VALUES,
                     GobiiExtractFilterType.FLEX_QUERY,
                     EntityType.PLATFORM)
                 .setIsDynamicFilterValue(false)
@@ -528,7 +528,7 @@ export class FilterParamsColl {
         // ******* F3
         this.addFilter(
             FilterParams
-                .build(FilterParamNames.FQ_F3_ENTITIES,
+                .build(FilterParamNames.FQ_F3_VERTICES,
                     GobiiExtractFilterType.FLEX_QUERY,
                     EntityType.CV)
                 .setIsDynamicFilterValue(false)
@@ -540,7 +540,7 @@ export class FilterParamsColl {
 
         this.addFilter(
             FilterParams
-                .build(FilterParamNames.FQ_F3_ENTITY_VALUES,
+                .build(FilterParamNames.FQ_F3_VERTEX_VALUES,
                     GobiiExtractFilterType.FLEX_QUERY,
                     EntityType.PLATFORM)
                 .setIsDynamicFilterValue(false)
@@ -549,7 +549,7 @@ export class FilterParamsColl {
         // ******* F4
         this.addFilter(
             FilterParams
-                .build(FilterParamNames.FQ_F4_ENTITIES,
+                .build(FilterParamNames.FQ_F4_VERTICES,
                     GobiiExtractFilterType.FLEX_QUERY,
                     EntityType.CV)
                 .setIsDynamicFilterValue(false)
@@ -561,7 +561,7 @@ export class FilterParamsColl {
 
         this.addFilter(
             FilterParams
-                .build(FilterParamNames.FQ_F4_ENTITY_VALUES,
+                .build(FilterParamNames.FQ_F4_VERTEX_VALUES,
                     GobiiExtractFilterType.FLEX_QUERY,
                     EntityType.PLATFORM)
                 .setIsDynamicFilterValue(false)

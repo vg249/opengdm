@@ -245,29 +245,29 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                                 <div class="row">
                                                     <div class="col-md-3"> <!-- inner column 1 of row 1: Filter 1 -->
                                                         <flex-query-filter
-                                                                [filterParamNameEntities]="nameIdFilterParamTypes.FQ_F1_ENTITIES"
-                                                                [filterParamNameEntityValues]="nameIdFilterParamTypes.FQ_F1_ENTITY_VALUES"
+                                                                [filterParamNameEntities]="nameIdFilterParamTypes.FQ_F1_VERTICES"
+                                                                [filterParamNameEntityValues]="nameIdFilterParamTypes.FQ_F1_VERTEX_VALUES"
                                                                 [gobiiExtractFilterType]="gobiiExtractFilterType">
                                                         </flex-query-filter>
                                                     </div> <!-- inner column 1 of row 1: fitler 1 -->
                                                     <div class="col-md-3"> <!-- inner column 1 of row 1: Filter 1 -->
                                                         <flex-query-filter
-                                                                [filterParamNameEntities]="nameIdFilterParamTypes.FQ_F2_ENTITIES"
-                                                                [filterParamNameEntityValues]="nameIdFilterParamTypes.FQ_F2_ENTITY_VALUES"
+                                                                [filterParamNameEntities]="nameIdFilterParamTypes.FQ_F2_VERTICES"
+                                                                [filterParamNameEntityValues]="nameIdFilterParamTypes.FQ_F2_VERTEX_VALUES"
                                                                 [gobiiExtractFilterType]="gobiiExtractFilterType">
                                                         </flex-query-filter>
                                                     </div> <!-- inner column 2 of row 1: fitler 2 -->
                                                     <div class="col-md-3"> <!-- inner column 1 of row 1: Filter 1 -->
                                                         <flex-query-filter
-                                                                [filterParamNameEntities]="nameIdFilterParamTypes.FQ_F3_ENTITIES"
-                                                                [filterParamNameEntityValues]="nameIdFilterParamTypes.FQ_F3_ENTITY_VALUES"
+                                                                [filterParamNameEntities]="nameIdFilterParamTypes.FQ_F3_VERTICES"
+                                                                [filterParamNameEntityValues]="nameIdFilterParamTypes.FQ_F3_VERTEX_VALUES"
                                                                 [gobiiExtractFilterType]="gobiiExtractFilterType">
                                                         </flex-query-filter>
                                                     </div> <!-- inner column 3 of row 1: fitler 3 -->
                                                     <div class="col-md-3"> <!-- inner column 1 of row 1: Filter 1 -->
                                                         <flex-query-filter
-                                                                [filterParamNameEntities]="nameIdFilterParamTypes.FQ_F4_ENTITIES"
-                                                                [filterParamNameEntityValues]="nameIdFilterParamTypes.FQ_F4_ENTITY_VALUES"
+                                                                [filterParamNameEntities]="nameIdFilterParamTypes.FQ_F4_VERTICES"
+                                                                [filterParamNameEntityValues]="nameIdFilterParamTypes.FQ_F4_VERTEX_VALUES"
                                                                 [gobiiExtractFilterType]="gobiiExtractFilterType">
                                                         </flex-query-filter>
                                                     </div> <!-- inner column 4 of row 1: fitler 4 -->
@@ -275,37 +275,38 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                                 </div> <!-- ROW filters -->
 
                                                 <div clas="row"><!-- ROW marker/sample lists-->
-                                                        <!-- intersect controls -->
-                                                        <div class="col-md-6"> <!-- intersect markers -->
-                                                            <div class="panel panel-primary"> <!-- intersect pamel -->
-                                                                <div class="panel-heading">
-                                                                    <h3 class="panel-title">Intersect Markers</h3>
-                                                                </div>
-                                                                <div class="panel-body">
-                                                                    <sample-marker-box
-                                                                            [gobiiExtractFilterType]="gobiiExtractFilterTypes.BY_MARKER"
-                                                                            (onSampleMarkerError)="handleHeaderStatusMessage($event)">
-                                                                    </sample-marker-box>
-                                                                </div> <!-- panel body dataset datatable -->
-                                                            </div> <!-- intersect pamel -->                                                        </div><!-- intersect markers -->
-                                                        <div class="col-md-6"> <!-- intersect samples -->
-                                                            <div class="panel panel-primary"> <!-- intersect pamel -->
-                                                                <div class="panel-heading">
-                                                                    <h3 class="panel-title">Intersect Samples</h3>
-                                                                </div>
-                                                                <div class="panel-body">
-                                                                    <sample-list-type
-                                                                            [gobiiExtractFilterType]="gobiiExtractFilterTypes.BY_SAMPLE"
-                                                                            (onHeaderStatusMessage)="handleHeaderStatusMessage($event)">
-                                                                    </sample-list-type>
-                                                                    <hr style="width: 100%; color: black; height: 1px; background-color:black;"/>
-                                                                    <sample-marker-box
-                                                                            [gobiiExtractFilterType]="gobiiExtractFilterTypes.BY_SAMPLE"
-                                                                            (onSampleMarkerError)="handleHeaderStatusMessage($event)">
-                                                                    </sample-marker-box>
-                                                                </div> <!-- panel body dataset datatable -->
-                                                            </div> <!-- intersect pamel -->
-                                                        </div><!-- intersect samples -->
+                                                    <!-- intersect controls -->
+                                                    <div class="col-md-6"> <!-- intersect markers -->
+                                                        <div class="panel panel-primary"> <!-- intersect pamel -->
+                                                            <div class="panel-heading">
+                                                                <h3 class="panel-title">Intersect Markers</h3>
+                                                            </div>
+                                                            <div class="panel-body">
+                                                                <sample-marker-box
+                                                                        [gobiiExtractFilterType]="gobiiExtractFilterTypes.BY_MARKER"
+                                                                        (onSampleMarkerError)="handleHeaderStatusMessage($event)">
+                                                                </sample-marker-box>
+                                                            </div> <!-- panel body dataset datatable -->
+                                                        </div> <!-- intersect pamel -->
+                                                    </div><!-- intersect markers -->
+                                                    <div class="col-md-6"> <!-- intersect samples -->
+                                                        <div class="panel panel-primary"> <!-- intersect pamel -->
+                                                            <div class="panel-heading">
+                                                                <h3 class="panel-title">Intersect Samples</h3>
+                                                            </div>
+                                                            <div class="panel-body">
+                                                                <sample-list-type
+                                                                        [gobiiExtractFilterType]="gobiiExtractFilterTypes.BY_SAMPLE"
+                                                                        (onHeaderStatusMessage)="handleHeaderStatusMessage($event)">
+                                                                </sample-list-type>
+                                                                <hr style="width: 100%; color: black; height: 1px; background-color:black;"/>
+                                                                <sample-marker-box
+                                                                        [gobiiExtractFilterType]="gobiiExtractFilterTypes.BY_SAMPLE"
+                                                                        (onSampleMarkerError)="handleHeaderStatusMessage($event)">
+                                                                </sample-marker-box>
+                                                            </div> <!-- panel body dataset datatable -->
+                                                        </div> <!-- intersect pamel -->
+                                                    </div><!-- intersect samples -->
                                                 </div><!-- ROW marker/sample lists-->
                                             </div> <!-- container  -->
                                         </ng-template> <!-- lazy-load controls -->
@@ -649,11 +650,11 @@ export class ExtractorRoot implements OnInit {
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.FLEX_QUERY) {
 
             this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                FilterParamNames.FQ_F1_ENTITIES,
+                FilterParamNames.FQ_F1_VERTICES,
                 null);
 
             this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                FilterParamNames.FQ_F1_ENTITY_VALUES,
+                FilterParamNames.FQ_F1_VERTEX_VALUES,
                 null);
 
 
