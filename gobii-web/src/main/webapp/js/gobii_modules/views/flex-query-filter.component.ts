@@ -7,7 +7,7 @@ import * as fileAction from '../store/actions/fileitem-action';
 import * as historyAction from '../store/actions/history-action';
 import {Observable} from "rxjs/Observable";
 import {FilterParamNames} from "../model/file-item-param-names";
-import {FileItemService} from "../services/core/file-item-service";
+import {NameIdFileItemService} from "../services/core/nameid-file-item-service";
 
 
 @Component({
@@ -61,7 +61,7 @@ export class FlexQueryFilterComponent {
     private filterParamNameEntityValues: FilterParamNames;
 
     constructor(private store: Store<fromRoot.State>,
-                private fileItemService: FileItemService) {
+                private fileItemService: NameIdFileItemService) {
 
 
     } // ctor

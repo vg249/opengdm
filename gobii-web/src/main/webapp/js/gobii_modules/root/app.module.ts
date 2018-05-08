@@ -38,7 +38,7 @@ import {EffectsModule} from "@ngrx/effects";
 import {TreeEffects} from "../store/effects/tree-effects";
 import {TreeStructureService} from "../services/core/tree-structure-service";
 import {FileItemEffects} from "../store/effects/file-item-effects";
-import {FileItemService} from "../services/core/file-item-service";
+import {NameIdFileItemService} from "../services/core/nameid-file-item-service";
 import {InstructionSubmissionService} from "../services/core/instruction-submission-service";
 import {DatasetDatatableComponent} from "../views/dataset-datatable.component";
 import {FilterParamsColl} from "../services/core/filter-params-coll";
@@ -103,7 +103,7 @@ import {EntityFileItemService} from "../services/core/entity-file-item-service";
         DtoRequestService,
         NameIdService,
         TreeStructureService,
-        FileItemService,
+        NameIdFileItemService,
         EntityFileItemService,
         InstructionSubmissionService,
         FilterParamsColl,

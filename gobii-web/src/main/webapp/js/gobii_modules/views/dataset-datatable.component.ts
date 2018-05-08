@@ -3,7 +3,7 @@ import {Store} from "@ngrx/store";
 import * as fromRoot from '../store/reducers';
 import * as historyAction from '../store/actions/history-action';
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
-import {FileItemService} from "../services/core/file-item-service";
+import {NameIdFileItemService} from "../services/core/nameid-file-item-service";
 import {FilterParamNames} from "../model/file-item-param-names";
 import {Observable} from "rxjs/Observable";
 import {DataSet} from "../model/dataset";
@@ -259,7 +259,7 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
     public onClickForNextPage$ = new Subject<Pagination>();
 
     constructor(private store: Store<fromRoot.State>,
-                private fileItemService: FileItemService,
+                private fileItemService: NameIdFileItemService,
                 private entityFileItemService: EntityFileItemService,
                 private filterParamsColl: FilterParamsColl,
                 private fileItemRequestService: DtoRequestService<GobiiFileItem[]>) {

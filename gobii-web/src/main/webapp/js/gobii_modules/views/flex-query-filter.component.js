@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-action", "../store/actions/history-action", "../services/core/file-item-service"], function (exports_1, context_1) {
+System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-action", "../store/actions/history-action", "../services/core/nameid-file-item-service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, store_1, fileAction, historyAction, file_item_service_1, FlexQueryFilterComponent;
+    var core_1, store_1, fileAction, historyAction, nameid_file_item_service_1, FlexQueryFilterComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -25,8 +25,8 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
             function (historyAction_1) {
                 historyAction = historyAction_1;
             },
-            function (file_item_service_1_1) {
-                file_item_service_1 = file_item_service_1_1;
+            function (nameid_file_item_service_1_1) {
+                nameid_file_item_service_1 = nameid_file_item_service_1_1;
             }
         ],
         execute: function () {
@@ -79,7 +79,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
                         template: "\n        <div class=\"panel panel-primary\">\n            <div class=\"panel-heading\">\n                <h3 class=\"panel-title\">Filters</h3>\n            </div>\n            <div class=\"panel-body\">\n                <label class=\"the-label\">Entity:</label><BR>\n                <p-dropdown [options]=\"fileItemsEntityNames$ | async\"\n                            [(ngModel)]=\"selectedAllowableEntities\"\n                            [style]=\"{'width': '100%'}\"\n                            optionLabel=\"_itemName\"></p-dropdown>\n\n                <BR>\n                <BR>\n                <label class=\"the-label\">Select Entity Values</label><BR>\n                <p-listbox [options]=\"fileItemsEntityValues$ | async\"\n                           [multiple]=\"true\"\n                           [(ngModel)]=\"selectedEntityValues\" [style]=\"{'width':'100%'}\"\n                           optionLabel=\"_itemName\"></p-listbox>\n            </div>\n\n            <div class=\"container\">\n                <p>Count: {{totalValues}} </p>\n                <p>Selected: {{selectedEntityValues ? selectedEntityValues.length : 0}}</p>\n            </div>\n        </div>" // end template
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
-                        file_item_service_1.FileItemService])
+                        nameid_file_item_service_1.NameIdFileItemService])
                 ], FlexQueryFilterComponent);
                 return FlexQueryFilterComponent;
             }());

@@ -36,7 +36,7 @@ import {Pagination} from "../../model/payload/pagination";
 import {PayloadFilter} from "../../store/actions/action-payload-filter";
 
 @Injectable()
-export class FileItemService {
+export class NameIdFileItemService {
 
     private readonly NONE_ITEM_ITEM_ID: string = "-1";
 

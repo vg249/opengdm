@@ -15,7 +15,7 @@ import {ExtractorItemType} from "../../model/type-extractor-item";
 import {GobiiFileItem} from "../../model/gobii-file-item";
 import {Observable} from "rxjs/Observable";
 import {Store} from "@ngrx/store";
-import {FileItemService} from "../../services/core/file-item-service";
+import {NameIdFileItemService} from "../../services/core/nameid-file-item-service";
 import {FilterParamNames} from "../../model/file-item-param-names";
 import "rxjs/add/operator/mergeMap"
 import {AddFilterRetrieved} from "../actions/history-action";
@@ -420,7 +420,7 @@ export class FileItemEffects {
 
     constructor(private actions$: Actions,
                 private treeStructureService: TreeStructureService,
-                private fileItemService: FileItemService,
+                private fileItemService: NameIdFileItemService,
                 private store: Store<fromRoot.State>,
                 private filterParamsColl: FilterParamsColl,
                 private router: Router) {
