@@ -8,6 +8,7 @@ import * as historyAction from '../store/actions/history-action';
 import {Observable} from "rxjs/Observable";
 import {FilterParamNames} from "../model/file-item-param-names";
 import {NameIdFileItemService} from "../services/core/nameid-file-item-service";
+import {FilterService} from "../services/core/filter-service";
 
 
 @Component({
@@ -61,7 +62,8 @@ export class FlexQueryFilterComponent {
     private filterParamNameEntityValues: FilterParamNames;
 
     constructor(private store: Store<fromRoot.State>,
-                private fileItemService: NameIdFileItemService) {
+                private fileItemService: NameIdFileItemService,
+                private filterService:FilterService) {
 
 
     } // ctor
@@ -69,8 +71,8 @@ export class FlexQueryFilterComponent {
 
     ngOnInit(): any {
 
-        this.fileItemsEntityNames$ = this.fileItemService.getForFilter(this.filterParamNameEntities)
-        this.fileItemsEntityValues$ = this.fileItemService.getForFilter(this.filterParamNameEntityValues)
+        this.fileItemsEntityNames$ = this.filterService.getForFilter(this.filterParamNameEntities)
+        this.fileItemsEntityValues$ = this.filterService.getForFilter(this.filterParamNameEntityValues)
 
         this
             .fileItemsEntityNames$

@@ -10,6 +10,7 @@ import {Store} from "@ngrx/store";
 import {Observable} from "rxjs/Observable";
 import {NameIdFileItemService} from "../services/core/nameid-file-item-service";
 import {FilterParamNames} from "../model/file-item-param-names";
+import {FilterService} from "../services/core/filter-service";
 
 
 @Component({
@@ -40,6 +41,7 @@ export class CheckListBoxComponent  {
 
     constructor(private store: Store<fromRoot.State>,
                 private fileItemService:NameIdFileItemService,
+                private filterService:FilterService,
                 private differs: KeyValueDiffers) {
 
         this.differ = differs.find({}).create(null);
@@ -48,7 +50,7 @@ export class CheckListBoxComponent  {
     } // ctor
 
     ngOnInit(): any {
-        this.gobiiFileItems$ = this.fileItemService.getForFilter(this.filterParamName);
+        this.gobiiFileItems$ = this.filterService.getForFilter(this.filterParamName);
     }
 
     private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;

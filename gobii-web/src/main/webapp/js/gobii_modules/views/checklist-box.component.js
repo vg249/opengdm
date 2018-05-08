@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/type-extractor-filter", "../store/actions/fileitem-action", "@ngrx/store", "../services/core/nameid-file-item-service"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/type-extractor-filter", "../store/actions/fileitem-action", "@ngrx/store", "../services/core/nameid-file-item-service", "../services/core/filter-service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../store/ac
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_extractor_filter_1, fileAction, store_1, nameid_file_item_service_1, CheckListBoxComponent;
+    var core_1, type_extractor_filter_1, fileAction, store_1, nameid_file_item_service_1, filter_service_1, CheckListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -27,20 +27,24 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../store/ac
             },
             function (nameid_file_item_service_1_1) {
                 nameid_file_item_service_1 = nameid_file_item_service_1_1;
+            },
+            function (filter_service_1_1) {
+                filter_service_1 = filter_service_1_1;
             }
         ],
         execute: function () {
             CheckListBoxComponent = (function () {
-                function CheckListBoxComponent(store, fileItemService, differs) {
+                function CheckListBoxComponent(store, fileItemService, filterService, differs) {
                     this.store = store;
                     this.fileItemService = fileItemService;
+                    this.filterService = filterService;
                     this.differs = differs;
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.onError = new core_1.EventEmitter();
                     this.differ = differs.find({}).create(null);
                 } // ctor
                 CheckListBoxComponent.prototype.ngOnInit = function () {
-                    this.gobiiFileItems$ = this.fileItemService.getForFilter(this.filterParamName);
+                    this.gobiiFileItems$ = this.filterService.getForFilter(this.filterParamName);
                 };
                 CheckListBoxComponent.prototype.handleItemChecked = function (arg) {
                     var currentFileItemUniqueId = arg.currentTarget.value;
@@ -67,6 +71,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../store/ac
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
                         nameid_file_item_service_1.NameIdFileItemService,
+                        filter_service_1.FilterService,
                         core_1.KeyValueDiffers])
                 ], CheckListBoxComponent);
                 return CheckListBoxComponent;

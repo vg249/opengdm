@@ -27,6 +27,7 @@ import {Observable} from "rxjs/Observable";
 import {InstructionSubmissionService} from "../services/core/instruction-submission-service";
 import {GobiiSampleListType} from "../model/type-extractor-sample-list";
 import {EntityFileItemService} from "../services/core/entity-file-item-service";
+import {FilterService} from "../services/core/filter-service";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -430,7 +431,8 @@ export class ExtractorRoot implements OnInit {
                 private nameIdFileItemService: NameIdFileItemService,
                 private entityFileItemService: EntityFileItemService,
                 private instructionSubmissionService: InstructionSubmissionService,
-                private changeDetectorRef: ChangeDetectorRef) {
+                private changeDetectorRef: ChangeDetectorRef,
+                private filterService:FilterService) {
 
         this.messages$.subscribe(
             messages => {
@@ -614,7 +616,7 @@ export class ExtractorRoot implements OnInit {
                 FilterParamNames.EXPERIMENT_FILTER_OPTIONAL,
                 null);
 
-            this.nameIdFileItemService.loadFilter(this.gobiiExtractFilterType, FilterParamNames.DATASET_FILTER_OPTIONAL, null);
+            this.filterService.loadFilter(this.gobiiExtractFilterType, FilterParamNames.DATASET_FILTER_OPTIONAL, null);
 
             // this.nameIdFileItemService.setItemLabelType(this.gobiiExtractFilterType,
             //     FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,

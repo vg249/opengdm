@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-entity", "../../views/entity-labels", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/gobii-file-item", "../../model/dto-header-status-message", "../../model/type-process", "./name-id-service", "../../store/actions/history-action", "../../store/actions/fileitem-action", "../../store/reducers", "@ngrx/store", "../../model/name-id-label-type", "../../model/filter-type", "../../model/file-item-param-names", "rxjs/Observable", "rxjs/add/operator/expand", "rxjs/add/operator/concat", "./dto-request.service", "../app/dto-request-item-entity-stats", "./filter-params-coll", "../../model/gobii-file-item-entity-relation", "../../store/actions/action-payload-filter"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-entity", "../../views/entity-labels", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/gobii-file-item", "../../model/dto-header-status-message", "../../model/type-process", "./name-id-service", "../../store/actions/history-action", "../../store/actions/fileitem-action", "../../store/reducers", "@ngrx/store", "../../model/name-id-label-type", "../../model/filter-type", "rxjs/Observable", "rxjs/add/operator/expand", "rxjs/add/operator/concat", "./dto-request.service", "../app/dto-request-item-entity-stats", "./filter-params-coll", "../../model/gobii-file-item-entity-relation", "../../store/actions/action-payload-filter"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_entity_1, entity_labels_1, type_extractor_item_1, type_extractor_filter_1, cv_filter_type_1, gobii_file_item_1, dto_header_status_message_1, type_process_1, name_id_service_1, historyAction, fileItemActions, fromRoot, store_1, name_id_label_type_1, filter_type_1, file_item_param_names_1, Observable_1, dto_request_service_1, dto_request_item_entity_stats_1, filter_params_coll_1, gobii_file_item_entity_relation_1, action_payload_filter_1, NameIdFileItemService;
+    var core_1, type_entity_1, entity_labels_1, type_extractor_item_1, type_extractor_filter_1, cv_filter_type_1, gobii_file_item_1, dto_header_status_message_1, type_process_1, name_id_service_1, historyAction, fileItemActions, fromRoot, store_1, name_id_label_type_1, filter_type_1, Observable_1, dto_request_service_1, dto_request_item_entity_stats_1, filter_params_coll_1, gobii_file_item_entity_relation_1, action_payload_filter_1, NameIdFileItemService;
     return {
         setters: [
             function (core_1_1) {
@@ -61,9 +61,6 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
             function (filter_type_1_1) {
                 filter_type_1 = filter_type_1_1;
             },
-            function (file_item_param_names_1_1) {
-                file_item_param_names_1 = file_item_param_names_1_1;
-            },
             function (Observable_1_1) {
                 Observable_1 = Observable_1_1;
             },
@@ -99,147 +96,6 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     this.filterParamsColl = filterParamsColl;
                     this.NONE_ITEM_ITEM_ID = "-1";
                 } // constructor
-                NameIdFileItemService.prototype.loadFilter = function (gobiiExtractFilterType, filterParamsName, filterValue) {
-                    var filterParams = this.filterParamsColl.getFilter(filterParamsName, gobiiExtractFilterType);
-                    if (filterParams) {
-                        var loadAction = new fileItemActions.LoadFilterAction({
-                            filterId: filterParams.getQueryName(),
-                            filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParams.getTargetEtityUniqueId(), filterParams.getRelatedEntityUniqueId(), filterValue, null, null, null)
-                        });
-                        this.store.dispatch(loadAction);
-                    }
-                    else {
-                        this.store.dispatch(new historyAction.AddStatusMessageAction("Error loading filter: there is no query params object for query "
-                            + filterParamsName
-                            + " with extract filter type "
-                            + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]));
-                    }
-                };
-                NameIdFileItemService.prototype.getForFilter = function (filterParamName) {
-                    //Wrapping an Observable around the select functions just doesn't work. So at leaset this
-                    //function can encapsualte getting the correct selector for the filter
-                    var returnVal;
-                    switch (filterParamName) {
-                        case file_item_param_names_1.FilterParamNames.MARKER_GROUPS:
-                            returnVal = this.store.select(fromRoot.getMarkerGroups);
-                            break;
-                        case file_item_param_names_1.FilterParamNames.PROJECTS:
-                            returnVal = this.store.select(fromRoot.getProjects);
-                            break;
-                        case file_item_param_names_1.FilterParamNames.PROJECTS_BY_CONTACT:
-                            returnVal = this.store.select(fromRoot.getProjectsByPI);
-                            break;
-                        case file_item_param_names_1.FilterParamNames.EXPERIMENTS_BY_PROJECT:
-                            returnVal = this.store.select(fromRoot.getExperimentsByProject);
-                            break;
-                        case file_item_param_names_1.FilterParamNames.EXPERIMENTS:
-                            returnVal = this.store.select(fromRoot.getExperiments);
-                            break;
-                        case file_item_param_names_1.FilterParamNames.DATASETS_BY_EXPERIMENT:
-                            returnVal = this.store.select(fromRoot.getDatasetsByExperiment);
-                            break;
-                        case file_item_param_names_1.FilterParamNames.PLATFORMS:
-                            returnVal = this.store.select(fromRoot.getPlatforms);
-                            break;
-                        case file_item_param_names_1.FilterParamNames.CV_DATATYPE:
-                            returnVal = this.store.select(fromRoot.getCvTermsDataType);
-                            break;
-                        case file_item_param_names_1.FilterParamNames.CV_JOB_STATUS:
-                            returnVal = this.store.select(fromRoot.getCvTermsJobStatus);
-                            break;
-                        case file_item_param_names_1.FilterParamNames.MAPSETS:
-                            returnVal = this.store.select(fromRoot.getMapsets);
-                            break;
-                        case file_item_param_names_1.FilterParamNames.CONTACT_PI_HIERARCHY_ROOT:
-                            returnVal = this.store.select(fromRoot.getPiContacts);
-                            break;
-                        case file_item_param_names_1.FilterParamNames.CONTACT_PI_FILTER_OPTIONAL:
-                            returnVal = this.store.select(fromRoot.getPiContactsFilterOptional);
-                            break;
-                        case file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL:
-                            returnVal = this.store.select(fromRoot.getProjectsFilterOptional);
-                            break;
-                        case file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL:
-                            returnVal = this.store.select(fromRoot.getExperimentsFilterOptional);
-                            break;
-                        //***************************
-                        // the FQ filters are for now just placeholders
-                        //------- F1 --------------------------------------
-                        case file_item_param_names_1.FilterParamNames.FQ_F1_VERTICES:
-                            returnVal = this.store.select(fromRoot.getCvTermsDataType);
-                            break;
-                        case file_item_param_names_1.FilterParamNames.FQ_F1_VERTEX_VALUES:
-                            returnVal = this.store.select(fromRoot.getPlatforms);
-                            break;
-                        //------- F2 --------------------------------------
-                        case file_item_param_names_1.FilterParamNames.FQ_F2_VERTICES:
-                            returnVal = this.store.select(fromRoot.getCvTermsDataType);
-                            break;
-                        case file_item_param_names_1.FilterParamNames.FQ_F2_VERTEX_VALUES:
-                            returnVal = this.store.select(fromRoot.getPlatforms);
-                            break;
-                        //------- F3 --------------------------------------
-                        case file_item_param_names_1.FilterParamNames.FQ_F3_VERTICES:
-                            returnVal = this.store.select(fromRoot.getCvTermsDataType);
-                            break;
-                        case file_item_param_names_1.FilterParamNames.FQ_F3_VERTEX_VALUES:
-                            returnVal = this.store.select(fromRoot.getPlatforms);
-                            break;
-                        //------- F4 --------------------------------------
-                        case file_item_param_names_1.FilterParamNames.FQ_F4_VERTICES:
-                            returnVal = this.store.select(fromRoot.getCvTermsDataType);
-                            break;
-                        case file_item_param_names_1.FilterParamNames.FQ_F4_VERTEX_VALUES:
-                            returnVal = this.store.select(fromRoot.getPlatforms);
-                            break;
-                        default:
-                            this.store.dispatch(new historyAction.AddStatusMessageAction("There is no selector for filter "
-                                + filterParamName));
-                            break;
-                    }
-                    return returnVal;
-                    // THIS IS THE THING THAT DIDN'T WORK; IT'S WORTH KEEPING IT AROUND FOR REFERENCE.
-                    // return Observable.create(observer => {
-                    //     let filteredItems: GobiiFileItem[] = [];
-                    //     this.store
-                    //         .select(fromRoot.getAllFileItems)
-                    //         .subscribe(fileItems => {
-                    //                 let nameIdRequestParams: FileItemParams = this.nameIdRequestParams.get(filterParamNames);
-                    //                 if (nameIdRequestParams) {
-                    //                     if (!nameIdRequestParams.getIsDynamicFilterValue()) {
-                    //                         filteredItems = fileItems.filter(fi => fi.compoundIdeEquals(nameIdRequestParams))
-                    //                     } else {
-                    //                         this.store.select(fromRoot.getFileItemsFilters)
-                    //                             .subscribe(filters => {
-                    //                                 if (filters[nameIdRequestParams.getQueryName()]) {
-                    //                                     let filterValue: string = filters[nameIdRequestParams.getQueryName()].filterValue;
-                    //                                     filteredItems = fileItems.filter(
-                    //                                         fi =>
-                    //                                             fi.compoundIdeEquals(nameIdRequestParams)
-                    //                                             && fi.getParentItemId() === filterValue);
-                    //
-                    //                                     if (filteredItems.length <= 0) {
-                    //                                         filteredItems = fileItems.filter(e =>
-                    //                                             ( e.getExtractorItemType() === ExtractorItemType.ENTITY
-                    //                                                 && e.getEntityType() === EntityType.DATASET
-                    //                                                 //                    && e.getParentItemId() === experimentId
-                    //                                                 && e.getProcessType() === ProcessType.DUMMY))
-                    //                                             .map(fi => fi);
-                    //
-                    //                                     }
-                    //                                     observer.next(filteredItems)
-                    //                                 } // if filters have been populated
-                    //                             });
-                    //
-                    //                     }
-                    //                 }
-                    //             } //Store.subscribe
-                    //         );
-                    //
-                    //
-                    //
-                    // }) //Observable.create()
-                };
                 NameIdFileItemService.prototype.setItemLabelType = function (gobiiExtractFilterType, filterParamNames, nameIdLabelType) {
                     var nameIdRequestParamsFromType = this.filterParamsColl.getFilter(filterParamNames, gobiiExtractFilterType);
                     if (nameIdRequestParamsFromType) {
