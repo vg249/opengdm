@@ -179,7 +179,7 @@
 					<QualityTable>sim_2letternuc_qualitytable</QualityTable>
 					<QualityFile>sim_2letternuc_qualityfile</QualityFile>
 					<StatusId>1</StatusId>
-					<TypeId>CO_DOMINANT_NON_NUCLEOTIDE</TypeId>
+					<TypeId>NUCLEOTIDE_2_LETTER</TypeId>
 					<AnalysesIds/>
 					<Scores/>
 				</Properties>
