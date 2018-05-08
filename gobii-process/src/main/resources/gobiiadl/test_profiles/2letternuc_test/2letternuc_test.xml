@@ -93,9 +93,9 @@
 					<DbPKey></DbPKey>
 				</Keys>
 				<Properties>
-					<Name>sim_codominant</Name>
-					<Code>sim_codominant_code</Code>
-					<Description>sim_codominant</Description>
+					<Name>sim_2letternuc</Name>
+					<Code>sim_2letternuc_code</Code>
+					<Description>sim_2letternuc</Description>
 					<MapType>Physical</MapType>
 					<StatusId>1</StatusId>
 					<Properties/>
@@ -112,9 +112,9 @@
 					</Fkey>
 				</Keys>
 				<Properties>
-					<ProjectName>sim_codominant</ProjectName>
-					<ProjectCode>sim_codominant_code</ProjectCode>
-					<ProjectDescription>sim_codominant</ProjectDescription>
+					<ProjectName>sim_2letternuc</ProjectName>
+					<ProjectCode>sim_2letternuc_code</ProjectCode>
+					<ProjectDescription>sim_2letternuc</ProjectDescription>
 					<ProjectStatus>1</ProjectStatus>
 				</Properties>
 			</Project>
@@ -124,7 +124,7 @@
 				<Keys>
 					<DbPKey></DbPKey>
 					<Fkey entity="Project" fkproperty="projectId">
-						<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+						<DbPKeySurrogate>sim_2letternuc</DbPKeySurrogate>
 						<DbPKey></DbPKey>
 					</Fkey>
 					<Fkey entity="VendorProtocol" fkproperty="vendorProtocolId">
@@ -133,8 +133,8 @@
 					</Fkey>
 				</Keys>
 				<Properties>
-					<ExperimentName>sim_codominant</ExperimentName>
-					<ExperimentCode>sim_codominant_code</ExperimentCode>
+					<ExperimentName>sim_2letternuc</ExperimentName>
+					<ExperimentCode>sim_2letternuc_code</ExperimentCode>
 					<StatusId>1</StatusId>
 				</Properties>
 			</Experiment>
@@ -164,7 +164,7 @@
 				<Keys>
 					<DbPKey></DbPKey>
 					<Fkey entity="Experiment" fkproperty="experimentId">
-						<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+						<DbPKeySurrogate>sim_2letternuc</DbPKeySurrogate>
 						<DbPKey></DbPKey>
 					</Fkey>
 					<Fkey entity="Analysis" fkproperty="callingAnalysisId">
@@ -173,13 +173,13 @@
 					</Fkey>
 				</Keys>
 				<Properties>
-					<DatasetName>sim_codominant</DatasetName>
-					<DataTable>sim_codominant_datatable</DataTable>
-					<DataFile>sim_codominant_datafile</DataFile>
-					<QualityTable>sim_codominant_qualitytable</QualityTable>
-					<QualityFile>sim_codominant_qualityfile</QualityFile>
+					<DatasetName>sim_2letternuc</DatasetName>
+					<DataTable>sim_2letternuc_datatable</DataTable>
+					<DataFile>sim_2letternuc_datafile</DataFile>
+					<QualityTable>sim_2letternuc_qualitytable</QualityTable>
+					<QualityFile>sim_2letternuc_qualityfile</QualityFile>
 					<StatusId>1</StatusId>
-					<TypeId>CO_DOMINANT_NON_NUCLEOTIDE</TypeId>
+					<TypeId>NUCLEOTIDE_2_LETTER</TypeId>
 					<AnalysesIds/>
 					<Scores/>
 				</Properties>
@@ -189,10 +189,10 @@
 
 	<Scenarios>
 		<Scenario>
-			<Name>codominant_marker</Name>
+			<Name>2letternuc_marker</Name>
 			<Files>
-				<Instruction>test_profiles\codominant_test\instruction_templates\test_codominant_marker.json</Instruction>
-				<Data>test_profiles\codominant_test\data_files\test_codominant_marker\codominant_markermap.txt</Data>
+				<Instruction>test_profiles\2letternuc_test\instruction_templates\test_2letternuc_marker.json</Instruction>
+				<Data>test_profiles\2letternuc_test\data_files\test_2letternuc_marker\2letternuc_markers_m1-m10.txt</Data>
 			</Files>
 			<PayloadType>markers</PayloadType>
 
@@ -202,22 +202,22 @@
 			</DbFkey>
 
 			<DbFkey entity="Project">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+				<DbPKeySurrogate>sim_2letternuc</DbPKeySurrogate>
 				<DbPKey></DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Experiment">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+				<DbPKeySurrogate>sim_2letternuc</DbPKeySurrogate>
 				<DbPKey></DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Dataset">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+				<DbPKeySurrogate>sim_2letternuc</DbPKeySurrogate>
 				<DbPKey></DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Mapset">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+				<DbPKeySurrogate>sim_2letternuc</DbPKeySurrogate>
 				<DbPKey></DbPKey>
 			</DbFkey>
 
@@ -229,10 +229,10 @@
 		</Scenario>
 
 		<Scenario>
-			<Name>codominant_sample</Name>
+			<Name>2letternuc_sample</Name>
 			<Files>
-				<Instruction>test_profiles\codominant_test\instruction_templates\test_codominant_sample.json</Instruction>
-				<Data>test_profiles\codominant_test\data_files\test_codominant_sample\codominant_samples_csv.csv</Data>
+				<Instruction>test_profiles\2letternuc_test\instruction_templates\test_2letternuc_sample.json</Instruction>
+				<Data>test_profiles\2letternuc_test\data_files\test_2letternuc_sample\2letternuc_samples1-10.txt</Data>
 			</Files>
 			<PayloadType>samples</PayloadType>
 
@@ -242,22 +242,22 @@
 			</DbFkey>
 
 			<DbFkey entity="Project">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+				<DbPKeySurrogate>sim_2letternuc</DbPKeySurrogate>
 				<DbPKey></DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Experiment">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+				<DbPKeySurrogate>sim_2letternuc</DbPKeySurrogate>
 				<DbPKey></DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Dataset">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+				<DbPKeySurrogate>sim_2letternuc</DbPKeySurrogate>
 				<DbPKey></DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Mapset">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+				<DbPKeySurrogate>sim_2letternuc</DbPKeySurrogate>
 				<DbPKey></DbPKey>
 			</DbFkey>
 
@@ -269,10 +269,10 @@
 		</Scenario>
 		
 		<Scenario>
-			<Name>codominant_dataset</Name>
+			<Name>2letternuc_dataset</Name>
 			<Files>
-				<Instruction>test_profiles\codominant_test\instruction_templates\test_codominant_dataset.json</Instruction>
-				<Data>test_profiles\codominant_test\data_files\test_codominant_dataset\codominant_allele_data.txt</Data>
+				<Instruction>test_profiles\2letternuc_test\instruction_templates\test_2letternuc_dataset.json</Instruction>
+				<Data>test_profiles\2letternuc_test\data_files\test_2letternuc_dataset\2letternuc_alleles1-10.txt</Data>
 			</Files>
 			<PayloadType>matrix</PayloadType>
 
@@ -282,22 +282,22 @@
 			</DbFkey>
 
 			<DbFkey entity="Project">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+				<DbPKeySurrogate>sim_2letternuc</DbPKeySurrogate>
 				<DbPKey></DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Experiment">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+				<DbPKeySurrogate>sim_2letternuc</DbPKeySurrogate>
 				<DbPKey></DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Dataset">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+				<DbPKeySurrogate>sim_2letternuc</DbPKeySurrogate>
 				<DbPKey></DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Mapset">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+				<DbPKeySurrogate>sim_2letternuc</DbPKeySurrogate>
 				<DbPKey></DbPKey>
 			</DbFkey>
 
