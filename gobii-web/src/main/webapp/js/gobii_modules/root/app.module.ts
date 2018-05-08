@@ -44,6 +44,7 @@ import {DatasetDatatableComponent} from "../views/dataset-datatable.component";
 import {FilterParamsColl} from "../services/core/filter-params-coll";
 import {FlexQueryFilterComponent} from "../views/flex-query-filter.component";
 import {MarkerSampleCountComponent} from "../views/marker-sample-count.component";
+import {EntityFileItemService} from "../services/core/entity-file-item-service";
 
 
 @NgModule({
@@ -103,6 +104,7 @@ import {MarkerSampleCountComponent} from "../views/marker-sample-count.component
         NameIdService,
         TreeStructureService,
         FileItemService,
+        EntityFileItemService,
         InstructionSubmissionService,
         FilterParamsColl,
         {provide: APP_BASE_HREF, useValue: './'}],
