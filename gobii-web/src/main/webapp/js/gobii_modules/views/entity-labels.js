@@ -35,6 +35,7 @@ System.register(["../model/type-entity", "../model/cv-filter-type", "../model/ty
                     this.entityNodeLabels[type_entity_1.EntityType.PROJECT] = "Project";
                     this.entityNodeLabels[type_entity_1.EntityType.EXPERIMENT] = "Experiment";
                     this.entityNodeLabels[type_entity_1.EntityType.MARKER_GROUP] = "Marker Groups";
+                    this.entityNodeLabels[type_entity_1.EntityType.UNKNOWN] = "UNKNOWN";
                     this.cvFilterNodeLabels[cv_filter_type_1.CvFilterType.DATASET_TYPE] = "Dataset Type";
                     this.cvFilterNodeLabels[cv_filter_type_1.CvFilterType.JOB_STATUS] = "Job Status";
                     this.entitySubtypeNodeLabels[type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR] = "Principle Investigator";
@@ -50,6 +51,7 @@ System.register(["../model/type-entity", "../model/cv-filter-type", "../model/ty
                     this.treeExtractorTypeLabels[type_extractor_item_1.ExtractorItemType.EXPORT_FORMAT] = "Format";
                     this.treeExtractorTypeLabels[type_extractor_item_1.ExtractorItemType.JOB_ID] = "Job ID";
                     this.treeExtractorTypeLabels[type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_TYPE] = "List Type";
+                    this.treeExtractorTypeLabels[type_extractor_item_1.ExtractorItemType.VERTEX] = "Entity Type";
                     this.extractFormatTypeLabels[type_extract_format_1.GobiiExtractFormat.HAPMAP] = "Hapmap";
                     this.extractFormatTypeLabels[type_extract_format_1.GobiiExtractFormat.FLAPJACK] = "Flapjack";
                     this.extractFormatTypeLabels[type_extract_format_1.GobiiExtractFormat.META_DATA_ONLY] = "Meta Data";

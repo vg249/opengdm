@@ -185,8 +185,11 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../mo
                         else if (filterParamsToLoad.getEntitySubType() !== type_entity_1.EntitySubType.UNKNOWN) {
                             entityName += entity_labels_1.Labels.instance().entitySubtypeNodeLabels[filterParamsToLoad.getEntitySubType()];
                         }
-                        else {
+                        else if (filterParamsToLoad.getEntityType() != type_entity_1.EntityType.UNKNOWN) {
                             entityName += entity_labels_1.Labels.instance().entityNodeLabels[filterParamsToLoad.getEntityType()];
+                        }
+                        else {
+                            entityName += entity_labels_1.Labels.instance().treeExtractorTypeLabels[filterParamsToLoad.getExtractorItemType()];
                         }
                         var label = "";
                         switch (filterParamsToLoad.getMameIdLabelType()) {

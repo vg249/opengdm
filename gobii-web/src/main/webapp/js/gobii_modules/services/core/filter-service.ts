@@ -21,7 +21,7 @@ import {Labels} from "../../views/entity-labels";
 import {HeaderStatusMessage} from "../../model/dto-header-status-message";
 import {ProcessType} from "../../model/type-process";
 import {ExtractorItemType} from "../../model/type-extractor-item";
-import {EntitySubType} from "../../model/type-entity";
+import {EntitySubType, EntityType} from "../../model/type-entity";
 import {NameIdLabelType} from "../../model/name-id-label-type";
 
 @Injectable()
@@ -188,8 +188,10 @@ export class FilterService {
                 entityName += Labels.instance().cvFilterNodeLabels[filterParamsToLoad.getCvFilterType()];
             } else if (filterParamsToLoad.getEntitySubType() !== EntitySubType.UNKNOWN) {
                 entityName += Labels.instance().entitySubtypeNodeLabels[filterParamsToLoad.getEntitySubType()];
-            } else {
+            } else if (filterParamsToLoad.getEntityType() != EntityType.UNKNOWN ) {
                 entityName += Labels.instance().entityNodeLabels[filterParamsToLoad.getEntityType()];
+            } else {
+                entityName += Labels.instance().treeExtractorTypeLabels[filterParamsToLoad.getExtractorItemType()];
             }
 
             let label: string = "";
