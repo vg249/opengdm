@@ -75,6 +75,8 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
             MarkerDTO markerDTOResponse = resultEnvelope.getPayload().getData().get(0);
 
             returnVal = markerDTOResponse;
+        } else {
+            returnVal = resultEnvelope.getPayload().getData().get(0);
         }
 
         return returnVal;
@@ -115,20 +117,7 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
 
         // get platform name
 
-        RestUri restUriPlatform = GobiiClientContext.getInstance(null, false)
-                .getUriFactory()
-                .resourceColl(GobiiServiceRequestId.URL_PLATFORM);
-        GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResourcePlatform = new GobiiEnvelopeRestResource<>(restUriPlatform);
-        PayloadEnvelope<PlatformDTO> resultEnvelopePlatform = gobiiEnvelopeRestResourcePlatform
-                .get(PlatformDTO.class);
-
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopePlatform.getHeader()));
-        List<PlatformDTO> platformDTOList = resultEnvelopePlatform.getPayload().getData();
-        Assert.assertNotNull(platformDTOList);
-        Assert.assertTrue(platformDTOList.size() > 0);
-
-
-        markerGroupMarkerDTOToAdd.setPlatformName(platformDTOList.get(0).getPlatformName());
+        markerGroupMarkerDTOToAdd.setPlatformName(newMarkerDto.getPlatformName());
 
 
         List<MarkerGroupMarkerDTO> markerGroupMarkerDTOS = new ArrayList<>();
@@ -222,26 +211,14 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
 
         // make pre-requisite marker
         String testMarkerName = "40539";
-        makeMarker(testMarkerName);
+        MarkerDTO newMarkerDto = makeMarker(testMarkerName);
         MarkerGroupMarkerDTO markerGroupMarkerDTOToAdd = new MarkerGroupMarkerDTO(GobiiProcessType.CREATE);
         markerGroupMarkerDTOToAdd.setMarkerName(testMarkerName);
         markerGroupMarkerDTOToAdd.setFavorableAllele("N");
 
         // get platform name
 
-        RestUri restUriPlatform = GobiiClientContext.getInstance(null, false)
-                .getUriFactory()
-                .resourceColl(GobiiServiceRequestId.URL_PLATFORM);
-        GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResourcePlatform = new GobiiEnvelopeRestResource<>(restUriPlatform);
-        PayloadEnvelope<PlatformDTO> resultEnvelopePlatform = gobiiEnvelopeRestResourcePlatform
-                .get(PlatformDTO.class);
-
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopePlatform.getHeader()));
-        List<PlatformDTO> platformDTOList = resultEnvelopePlatform.getPayload().getData();
-        Assert.assertNotNull(platformDTOList);
-        Assert.assertTrue(platformDTOList.size() > 0);
-
-        markerGroupMarkerDTOToAdd.setPlatformName(platformDTOList.get(0).getPlatformName());
+        markerGroupMarkerDTOToAdd.setPlatformName(newMarkerDto.getPlatformName());
 
         List<MarkerGroupMarkerDTO> markerGroupMarkerDTOS = new ArrayList<>();
 
@@ -280,7 +257,7 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
         MarkerGroupMarkerDTO newMarkerGroupMarkerDTOToAdd = new MarkerGroupMarkerDTO(GobiiProcessType.CREATE);
         newMarkerGroupMarkerDTOToAdd.setMarkerName(testMarkerName);
         newMarkerGroupMarkerDTOToAdd.setFavorableAllele("T");
-        newMarkerGroupMarkerDTOToAdd.setPlatformName("1New Platform");
+        newMarkerGroupMarkerDTOToAdd.setPlatformName(newMarkerDto.getPlatformName());
 
         List<MarkerGroupMarkerDTO> newMarkerGroupMarkerDTOS = new ArrayList<>();
 
