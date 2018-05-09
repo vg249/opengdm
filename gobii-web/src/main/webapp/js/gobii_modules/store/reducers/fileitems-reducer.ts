@@ -984,18 +984,18 @@ export const getFqF2Vertices = createSelector(getFileItems, getFilters, getGobii
 
     let returnVal: GobiiFileItem[] = [];
 
-    let v1VertexId: string = null;
+    let f1VertexId: string = null;
     if (filters[FilterParamNames.FQ_F1_VERTICES]) {
-        v1VertexId = filters[FilterParamNames.FQ_F1_VERTICES].targetEntityFilterValue;
+        f1VertexId = filters[FilterParamNames.FQ_F1_VERTICES].targetEntityFilterValue;
     }
 
 
-    if( v1VertexId ) {
+    if( f1VertexId ) {
 
         returnVal = fileItems.filter(
             e =>
                 (e.getGobiiExtractFilterType() == gobiiExtractFilterType
-                    && e.getEntity().vertexId != v1VertexId
+                    && e.getEntity().vertexId != f1VertexId
                     && e.getExtractorItemType() === ExtractorItemType.VERTEX
                     || e.getNameIdLabelType() !== NameIdLabelType.UNKNOWN)
                 && e.getProcessType() !== ProcessType.DUMMY
@@ -1019,13 +1019,32 @@ export const getFqF3Vertices = createSelector(getFileItems, getFilters, getGobii
 
     let returnVal: GobiiFileItem[] = [];
 
-    returnVal = fileItems.filter(
-        e =>
-            (e.getGobiiExtractFilterType() == gobiiExtractFilterType
-                && e.getExtractorItemType() === ExtractorItemType.VERTEX
-                || e.getNameIdLabelType() !== NameIdLabelType.UNKNOWN)
-            && e.getProcessType() !== ProcessType.DUMMY
-    ).map(fi => fi);
+    let f2VertexId: string = null;
+    if (filters[FilterParamNames.FQ_F2_VERTICES]) {
+        f2VertexId = filters[FilterParamNames.FQ_F2_VERTICES].targetEntityFilterValue;
+    }
+
+
+    if( f2VertexId ) {
+
+        returnVal = fileItems.filter(
+            e =>
+                (e.getGobiiExtractFilterType() == gobiiExtractFilterType
+                    && e.getEntity().vertexId != f2VertexId
+                    && e.getExtractorItemType() === ExtractorItemType.VERTEX
+                    || e.getNameIdLabelType() !== NameIdLabelType.UNKNOWN)
+                && e.getProcessType() !== ProcessType.DUMMY
+        ).map(fi => fi);
+
+    } else {
+        returnVal = fileItems.filter(
+            e =>
+                (e.getGobiiExtractFilterType() == gobiiExtractFilterType
+                    && e.getExtractorItemType() === ExtractorItemType.VERTEX
+                    && e.getNameIdLabelType() !== NameIdLabelType.UNKNOWN)
+                && e.getProcessType() !== ProcessType.DUMMY
+        ).map(fi => fi);
+    }
 
     return returnVal;
 });
@@ -1034,13 +1053,32 @@ export const getFqF4Vertices = createSelector(getFileItems, getFilters, getGobii
 
     let returnVal: GobiiFileItem[] = [];
 
-    returnVal = fileItems.filter(
-        e =>
-            (e.getGobiiExtractFilterType() == gobiiExtractFilterType
-                && e.getExtractorItemType() === ExtractorItemType.VERTEX
-                || e.getNameIdLabelType() !== NameIdLabelType.UNKNOWN)
-            && e.getProcessType() !== ProcessType.DUMMY
-    ).map(fi => fi);
+    let f3VertexId: string = null;
+    if (filters[FilterParamNames.FQ_F3_VERTICES]) {
+        f3VertexId = filters[FilterParamNames.FQ_F3_VERTICES].targetEntityFilterValue;
+    }
+
+
+    if( f3VertexId ) {
+
+        returnVal = fileItems.filter(
+            e =>
+                (e.getGobiiExtractFilterType() == gobiiExtractFilterType
+                    && e.getEntity().vertexId != f3VertexId
+                    && e.getExtractorItemType() === ExtractorItemType.VERTEX
+                    || e.getNameIdLabelType() !== NameIdLabelType.UNKNOWN)
+                && e.getProcessType() !== ProcessType.DUMMY
+        ).map(fi => fi);
+
+    } else {
+        returnVal = fileItems.filter(
+            e =>
+                (e.getGobiiExtractFilterType() == gobiiExtractFilterType
+                    && e.getExtractorItemType() === ExtractorItemType.VERTEX
+                    && e.getNameIdLabelType() !== NameIdLabelType.UNKNOWN)
+                && e.getProcessType() !== ProcessType.DUMMY
+        ).map(fi => fi);
+    }
 
     return returnVal;
 });
