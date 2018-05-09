@@ -36,6 +36,9 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/history-actio
                     this.fileItemService = fileItemService;
                     this.filterService = filterService;
                     this.totalValues = "0";
+                    this.enabledStyle = null;
+                    this.disabledStyle = { 'background': '#dddddd' };
+                    this.currentStyle = this.disabledStyle;
                     this.previousSelectedItemId = null;
                 } // ctor
                 FlexQueryFilterComponent.prototype.ngOnInit = function () {
@@ -47,6 +50,12 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/history-actio
                         .subscribe(function (items) {
                         if (_this.previousSelectedItemId === null && items && items.length > 0) {
                             _this.previousSelectedItemId = items[0].getFileItemUniqueId();
+                        }
+                        if (items.length > 1) {
+                            _this.currentStyle = _this.enabledStyle;
+                        }
+                        else {
+                            _this.currentStyle = _this.disabledStyle;
                         }
                     }, function (error) {
                         _this.store.dispatch(new historyAction.AddStatusMessageAction(error));
@@ -69,7 +78,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/history-actio
                         inputs: ['gobiiExtractFilterType', 'filterParamNameVertices', 'filterParamNameVertexValues'],
                         outputs: [],
                         styleUrls: ["css/extractor-ui.css"],
-                        template: "\n        <div class=\"panel panel-primary\">\n            <div class=\"panel-heading\">\n                <h3 class=\"panel-title\">Filters</h3>\n            </div>\n            <div class=\"panel-body\">\n                <label class=\"the-label\">Entity:</label><BR>\n                <p-dropdown [options]=\"fileItemsEntityNames$ | async\"\n                            [(ngModel)]=\"selectedAllowableEntities\"\n                            [style]=\"{'width': '100%'}\"\n                            optionLabel=\"_itemName\"\n                            (onChange)=\"handleFileItemSelected($event)\">\n                </p-dropdown>\n\n                <BR>\n                <BR>\n                <label class=\"the-label\">Select Entity Values</label><BR>\n                <p-listbox [options]=\"fileItemsEntityValues$ | async\"\n                           [multiple]=\"true\"\n                           [(ngModel)]=\"selectedEntityValues\" [style]=\"{'width':'100%'}\"\n                           optionLabel=\"_itemName\"></p-listbox>\n            </div>\n\n            <div class=\"container\">\n                <p>Count: {{totalValues}} </p>\n                <p>Selected: {{selectedEntityValues ? selectedEntityValues.length : 0}}</p>\n            </div>\n        </div>" // end template
+                        template: "\n        <div class=\"panel panel-primary\" [ngStyle]=\"currentStyle\">\n            <div class=\"panel-heading\">\n                <h3 class=\"panel-title\">Filters</h3>\n            </div>\n            <div class=\"panel-body\">\n                <label class=\"the-label\">Entity:</label><BR>\n                <p-dropdown [options]=\"fileItemsEntityNames$ | async\"\n                            [(ngModel)]=\"selectedAllowableEntities\"\n                            [style]=\"{'width': '100%'}\"\n                            optionLabel=\"_itemName\"\n                            (onChange)=\"handleFileItemSelected($event)\"\n                            [disabled]=\"currentStyle===disabledStyle\">\n                </p-dropdown>\n\n                <BR>\n                <BR>\n                <label class=\"the-label\">Select Entity Values</label><BR>\n                <p-listbox [options]=\"fileItemsEntityValues$ | async\"\n                           [multiple]=\"true\"\n                           [(ngModel)]=\"selectedEntityValues\" [style]=\"{'width':'100%'}\"\n                           optionLabel=\"_itemName\"\n                           [disabled]=\"currentStyle===disabledStyle\"></p-listbox>\n            </div>\n\n            <div class=\"container\">\n                <p>Count: {{totalValues}} </p>\n                <p>Selected: {{selectedEntityValues ? selectedEntityValues.length : 0}}</p>\n            </div>\n        </div>" // end template
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
                         nameid_file_item_service_1.NameIdFileItemService,

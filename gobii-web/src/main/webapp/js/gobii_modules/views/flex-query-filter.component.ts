@@ -17,7 +17,7 @@ import {FilterService} from "../services/core/filter-service";
     outputs: [],
     styleUrls: ["css/extractor-ui.css"],
     template: `
-        <div class="panel panel-primary">
+        <div class="panel panel-primary" [ngStyle]="currentStyle">
             <div class="panel-heading">
                 <h3 class="panel-title">Filters</h3>
             </div>
@@ -27,7 +27,8 @@ import {FilterService} from "../services/core/filter-service";
                             [(ngModel)]="selectedAllowableEntities"
                             [style]="{'width': '100%'}"
                             optionLabel="_itemName"
-                            (onChange)="handleFileItemSelected($event)">
+                            (onChange)="handleFileItemSelected($event)"
+                            [disabled]="currentStyle===disabledStyle">
                 </p-dropdown>
 
                 <BR>
@@ -36,7 +37,8 @@ import {FilterService} from "../services/core/filter-service";
                 <p-listbox [options]="fileItemsEntityValues$ | async"
                            [multiple]="true"
                            [(ngModel)]="selectedEntityValues" [style]="{'width':'100%'}"
-                           optionLabel="_itemName"></p-listbox>
+                           optionLabel="_itemName"
+                           [disabled]="currentStyle===disabledStyle"></p-listbox>
             </div>
 
             <div class="container">
@@ -63,6 +65,10 @@ export class FlexQueryFilterComponent {
     private filterParamNameVertices: FilterParamNames;
     private filterParamNameVertexValues: FilterParamNames;
 
+    public enabledStyle = null;
+    public disabledStyle = {'background': '#dddddd'};
+    public currentStyle = this.disabledStyle;
+
     constructor(private store: Store<fromRoot.State>,
                 private fileItemService: NameIdFileItemService,
                 private filterService: FilterService) {
@@ -81,6 +87,12 @@ export class FlexQueryFilterComponent {
             .subscribe(items => {
                     if (this.previousSelectedItemId === null && items && items.length > 0) {
                         this.previousSelectedItemId = items[0].getFileItemUniqueId()
+                    }
+
+                    if (items.length > 1) {
+                        this.currentStyle = this.enabledStyle;
+                    } else {
+                        this.currentStyle = this.disabledStyle;
                     }
 
                 },
