@@ -104,6 +104,38 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
             "20215");
 
 
+    private static MarkerDTO checkPlatformName(MarkerDTO markerDTO) throws Exception{
+
+        MarkerDTO returnVal = markerDTO;
+        // get platform name
+
+        if (markerDTO.getPlatformName() == null) {
+
+            Assert.assertTrue(markerDTO.getPlatformId() > 0);
+
+            // get platform name
+
+            Integer platformId = markerDTO.getPlatformId();
+            RestUri restUriPlatformForGetById = GobiiClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .resourceByUriIdParam(GobiiServiceRequestId.URL_PLATFORM);
+            restUriPlatformForGetById.setParamValue("id", platformId.toString());
+            GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriPlatformForGetById);
+            PayloadEnvelope<PlatformDTO> resultEnvelopeForGetByID = gobiiEnvelopeRestResourceForGetById
+                    .get(PlatformDTO.class);
+
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
+            PlatformDTO platformDTO = resultEnvelopeForGetByID.getPayload().getData().get(0);
+            Assert.assertTrue(platformDTO.getPlatformId() > 0);
+            Assert.assertNotNull(platformDTO.getPlatformName());
+
+            returnVal.setPlatformName(platformDTO.getPlatformName());
+
+        }
+
+        return returnVal;
+    }
+
     @Test
     @Override
     public void create() throws Exception {
@@ -115,7 +147,10 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
         markerGroupMarkerDTOToAdd.setMarkerName(testMarkerName);
         markerGroupMarkerDTOToAdd.setFavorableAllele("N");
 
-        // get platform name
+        //check platform name
+
+        newMarkerDto = checkPlatformName(newMarkerDto);
+
 
         markerGroupMarkerDTOToAdd.setPlatformName(newMarkerDto.getPlatformName());
 
@@ -216,7 +251,9 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
         markerGroupMarkerDTOToAdd.setMarkerName(testMarkerName);
         markerGroupMarkerDTOToAdd.setFavorableAllele("N");
 
-        // get platform name
+        //check platform name
+
+        newMarkerDto = checkPlatformName(newMarkerDto);
 
         markerGroupMarkerDTOToAdd.setPlatformName(newMarkerDto.getPlatformName());
 
