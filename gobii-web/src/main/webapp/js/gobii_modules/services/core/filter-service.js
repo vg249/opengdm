@@ -56,7 +56,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                     if (filterParams) {
                         var loadAction = new fileItemActions.LoadFilterAction({
                             filterId: filterParams.getQueryName(),
-                            filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParams.getTargetEtityUniqueId(), filterParams.getRelatedEntityUniqueId(), filterValue, null, null, null)
+                            filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParams.getTargetEtityUniqueId(), filterParams.getRelatedEntityUniqueId(), null, filterValue, null, null)
                         });
                         this.store.dispatch(loadAction);
                     }

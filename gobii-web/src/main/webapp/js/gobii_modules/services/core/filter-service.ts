@@ -38,8 +38,8 @@ export class FilterService {
                         gobiiExtractFilterType,
                         filterParams.getTargetEtityUniqueId(),
                         filterParams.getRelatedEntityUniqueId(),
-                        filterValue,
                         null,
+                        filterValue,
                         null,
                         null
                     )

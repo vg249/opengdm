@@ -13,7 +13,7 @@ import {FilterService} from "../services/core/filter-service";
 
 @Component({
     selector: 'flex-query-filter',
-    inputs: ['gobiiExtractFilterType', 'filterParamNameEntities', 'filterParamNameEntityValues'],
+    inputs: ['gobiiExtractFilterType', 'filterParamNameVertices', 'filterParamNameVertexValues'],
     outputs: [],
     styleUrls: ["css/extractor-ui.css"],
     template: `
@@ -26,7 +26,9 @@ import {FilterService} from "../services/core/filter-service";
                 <p-dropdown [options]="fileItemsEntityNames$ | async"
                             [(ngModel)]="selectedAllowableEntities"
                             [style]="{'width': '100%'}"
-                            optionLabel="_itemName"></p-dropdown>
+                            optionLabel="_itemName"
+                            (onChange)="handleFileItemSelected($event)">
+                </p-dropdown>
 
                 <BR>
                 <BR>
@@ -58,12 +60,12 @@ export class FlexQueryFilterComponent {
 
     public gobiiExtractFilterType: GobiiExtractFilterType;
 
-    private filterParamNameEntities: FilterParamNames;
-    private filterParamNameEntityValues: FilterParamNames;
+    private filterParamNameVertices: FilterParamNames;
+    private filterParamNameVertexValues: FilterParamNames;
 
     constructor(private store: Store<fromRoot.State>,
                 private fileItemService: NameIdFileItemService,
-                private filterService:FilterService) {
+                private filterService: FilterService) {
 
 
     } // ctor
@@ -71,8 +73,8 @@ export class FlexQueryFilterComponent {
 
     ngOnInit(): any {
 
-        this.fileItemsEntityNames$ = this.filterService.getForFilter(this.filterParamNameEntities)
-        this.fileItemsEntityValues$ = this.filterService.getForFilter(this.filterParamNameEntityValues)
+        this.fileItemsEntityNames$ = this.filterService.getForFilter(this.filterParamNameVertices)
+        this.fileItemsEntityValues$ = this.filterService.getForFilter(this.filterParamNameVertexValues)
 
         this
             .fileItemsEntityNames$
@@ -97,22 +99,13 @@ export class FlexQueryFilterComponent {
 
     public handleFileItemSelected(arg) {
 
+        this.filterService.loadFilter(this.gobiiExtractFilterType,
+            this.filterParamNameVertices,
+            arg.value._entity.vertexId);
+
         if (!this.gobiiExtractFilterType) {
             this.store.dispatch(new historyAction.AddStatusMessageAction("The gobiiExtractFilterType property is not set"))
         }
-
-
-        let newFileItemUniqueId: string = arg.currentTarget.value;
-        let previousFileItemUniqueId: string = this.previousSelectedItemId;
-
-        this.store.dispatch(new fileAction.ReplaceByItemIdAction({
-            filterParamName: this.filterParamNameEntities,
-            gobiiExtractFilterType: this.gobiiExtractFilterType,
-            itemIdCurrentlyInExtract: previousFileItemUniqueId,
-            itemIdToReplaceItWith: newFileItemUniqueId
-        }));
-
-        this.previousSelectedItemId = newFileItemUniqueId;
 
     }
 

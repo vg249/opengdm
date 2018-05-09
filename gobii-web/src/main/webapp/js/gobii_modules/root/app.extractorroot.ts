@@ -247,29 +247,29 @@ import {FilterService} from "../services/core/filter-service";
                                                 <div class="row">
                                                     <div class="col-md-3"> <!-- inner column 1 of row 1: Filter 1 -->
                                                         <flex-query-filter
-                                                                [filterParamNameEntities]="nameIdFilterParamTypes.FQ_F1_VERTICES"
-                                                                [filterParamNameEntityValues]="nameIdFilterParamTypes.FQ_F1_VERTEX_VALUES"
+                                                                [filterParamNameVertices]="nameIdFilterParamTypes.FQ_F1_VERTICES"
+                                                                [filterParamNameVertexValues]="nameIdFilterParamTypes.FQ_F1_VERTEX_VALUES"
                                                                 [gobiiExtractFilterType]="gobiiExtractFilterType">
                                                         </flex-query-filter>
                                                     </div> <!-- inner column 1 of row 1: fitler 1 -->
                                                     <div class="col-md-3"> <!-- inner column 1 of row 1: Filter 1 -->
                                                         <flex-query-filter
-                                                                [filterParamNameEntities]="nameIdFilterParamTypes.FQ_F2_VERTICES"
-                                                                [filterParamNameEntityValues]="nameIdFilterParamTypes.FQ_F2_VERTEX_VALUES"
+                                                                [filterParamNameVertices]="nameIdFilterParamTypes.FQ_F2_VERTICES"
+                                                                [filterParamNameVertexValues]="nameIdFilterParamTypes.FQ_F2_VERTEX_VALUES"
                                                                 [gobiiExtractFilterType]="gobiiExtractFilterType">
                                                         </flex-query-filter>
                                                     </div> <!-- inner column 2 of row 1: fitler 2 -->
                                                     <div class="col-md-3"> <!-- inner column 1 of row 1: Filter 1 -->
                                                         <flex-query-filter
-                                                                [filterParamNameEntities]="nameIdFilterParamTypes.FQ_F3_VERTICES"
-                                                                [filterParamNameEntityValues]="nameIdFilterParamTypes.FQ_F3_VERTEX_VALUES"
+                                                                [filterParamNameVertices]="nameIdFilterParamTypes.FQ_F3_VERTICES"
+                                                                [filterParamNameVertexValues]="nameIdFilterParamTypes.FQ_F3_VERTEX_VALUES"
                                                                 [gobiiExtractFilterType]="gobiiExtractFilterType">
                                                         </flex-query-filter>
                                                     </div> <!-- inner column 3 of row 1: fitler 3 -->
                                                     <div class="col-md-3"> <!-- inner column 1 of row 1: Filter 1 -->
                                                         <flex-query-filter
-                                                                [filterParamNameEntities]="nameIdFilterParamTypes.FQ_F4_VERTICES"
-                                                                [filterParamNameEntityValues]="nameIdFilterParamTypes.FQ_F4_VERTEX_VALUES"
+                                                                [filterParamNameVertices]="nameIdFilterParamTypes.FQ_F4_VERTICES"
+                                                                [filterParamNameVertexValues]="nameIdFilterParamTypes.FQ_F4_VERTEX_VALUES"
                                                                 [gobiiExtractFilterType]="gobiiExtractFilterType">
                                                         </flex-query-filter>
                                                     </div> <!-- inner column 4 of row 1: fitler 4 -->
