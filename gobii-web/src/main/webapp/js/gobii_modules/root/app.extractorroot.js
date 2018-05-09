@@ -252,11 +252,10 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.PLATFORMS, null);
                     }
                     else if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY) {
-                        // this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                        //     FilterParamNames.FQ_F1_VERTICES,
-                        //     null);
                         this.entityFileItemService.loadEntityList(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.FQ_F1_VERTICES);
-                        this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.FQ_F1_VERTEX_VALUES, null);
+                        // this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                        //     FilterParamNames.FQ_F1_VERTEX_VALUES,
+                        //     null);
                     }
                     else {
                         this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled export filter type: " + type_extractor_filter_1.GobiiExtractFilterType[this.gobiiExtractFilterType]));

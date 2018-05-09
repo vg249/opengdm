@@ -118,28 +118,28 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                         // the FQ filters are for now just placeholders
                         //------- F1 --------------------------------------
                         case file_item_param_names_1.FilterParamNames.FQ_F1_VERTICES:
-                            returnVal = this.store.select(fromRoot.getCvTermsDataType);
+                            returnVal = this.store.select(fromRoot.getFqF1Vertices);
                             break;
                         case file_item_param_names_1.FilterParamNames.FQ_F1_VERTEX_VALUES:
                             returnVal = this.store.select(fromRoot.getPlatforms);
                             break;
                         //------- F2 --------------------------------------
                         case file_item_param_names_1.FilterParamNames.FQ_F2_VERTICES:
-                            returnVal = this.store.select(fromRoot.getCvTermsDataType);
+                            returnVal = this.store.select(fromRoot.getFqF2Vertices);
                             break;
                         case file_item_param_names_1.FilterParamNames.FQ_F2_VERTEX_VALUES:
                             returnVal = this.store.select(fromRoot.getPlatforms);
                             break;
                         //------- F3 --------------------------------------
                         case file_item_param_names_1.FilterParamNames.FQ_F3_VERTICES:
-                            returnVal = this.store.select(fromRoot.getCvTermsDataType);
+                            returnVal = this.store.select(fromRoot.getFqF3Vertices);
                             break;
                         case file_item_param_names_1.FilterParamNames.FQ_F3_VERTEX_VALUES:
                             returnVal = this.store.select(fromRoot.getPlatforms);
                             break;
                         //------- F4 --------------------------------------
                         case file_item_param_names_1.FilterParamNames.FQ_F4_VERTICES:
-                            returnVal = this.store.select(fromRoot.getCvTermsDataType);
+                            returnVal = this.store.select(fromRoot.getFqF4Vertices);
                             break;
                         case file_item_param_names_1.FilterParamNames.FQ_F4_VERTEX_VALUES:
                             returnVal = this.store.select(fromRoot.getPlatforms);

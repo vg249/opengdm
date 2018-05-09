@@ -125,7 +125,7 @@ export class FilterService {
 
             //------- F1 --------------------------------------
             case FilterParamNames.FQ_F1_VERTICES:
-                returnVal = this.store.select(fromRoot.getCvTermsDataType);
+                returnVal = this.store.select(fromRoot.getFqF1Vertices);
                 break;
 
             case FilterParamNames.FQ_F1_VERTEX_VALUES:
@@ -134,7 +134,7 @@ export class FilterService {
 
             //------- F2 --------------------------------------
             case FilterParamNames.FQ_F2_VERTICES:
-                returnVal = this.store.select(fromRoot.getCvTermsDataType);
+                returnVal = this.store.select(fromRoot.getFqF2Vertices);
                 break;
 
             case FilterParamNames.FQ_F2_VERTEX_VALUES:
@@ -143,7 +143,7 @@ export class FilterService {
 
             //------- F3 --------------------------------------
             case FilterParamNames.FQ_F3_VERTICES:
-                returnVal = this.store.select(fromRoot.getCvTermsDataType);
+                returnVal = this.store.select(fromRoot.getFqF3Vertices);
                 break;
 
             case FilterParamNames.FQ_F3_VERTEX_VALUES:
@@ -152,7 +152,7 @@ export class FilterService {
 
             //------- F4 --------------------------------------
             case FilterParamNames.FQ_F4_VERTICES:
-                returnVal = this.store.select(fromRoot.getCvTermsDataType);
+                returnVal = this.store.select(fromRoot.getFqF4Vertices);
                 break;
 
             case FilterParamNames.FQ_F4_VERTEX_VALUES:
