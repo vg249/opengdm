@@ -22,6 +22,7 @@ import {AddFilterRetrieved} from "../actions/history-action";
 import {FilterParamsColl} from "../../services/core/filter-params-coll";
 import {FilterParams} from "../../model/filter-params";
 import {PayloadFilter} from "../actions/action-payload-filter";
+import {NameIdLabelType} from "../../model/name-id-label-type";
 
 @Injectable()
 export class FileItemEffects {
@@ -262,7 +263,7 @@ export class FileItemEffects {
 
                                 // LOAD THE CORRESPONDING TREE NODE FOR THE SELECTED ITEM
                                 if (fileItemToReplaceWith.getIsExtractCriterion()) {
-                                    if (fileItemToReplaceWith.getExtractorItemType() != ExtractorItemType.LABEL) {
+                                    if (fileItemToReplaceWith.getNameIdLabelType() === NameIdLabelType.UNKNOWN) {
                                         let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(fileItemToReplaceWith);
                                         observer.next(new treeNodeActions.PlaceTreeNodeAction(treeNode));
 

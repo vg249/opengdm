@@ -178,7 +178,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         var returnVal = null;
                         if (!payloadFilter) {
                             var completedItem = fileItems.find(function (fi) { return fi.getItemName() === "completed"; });
-                            var labelItem = fileItems.find(function (fi) { return fi.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL; });
+                            var labelItem = fileItems.find(function (fi) { return fi.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN; });
                             if (completedItem && labelItem) {
                                 returnVal = new fileAction.LoadFilterAction({
                                     filterId: file_item_param_names_1.FilterParamNames.CV_JOB_STATUS,

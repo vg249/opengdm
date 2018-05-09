@@ -1,4 +1,4 @@
-System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem-action", "../../model/type-extractor-item", "../../model/type-entity", "../../model/file-item-param-names", "../../model/type-process", "../../views/entity-labels", "../../model/type-extractor-filter", "../../model/type-extract-format", "../../model/cv-filter-type", "../../model/type-extractor-sample-list"], function (exports_1, context_1) {
+System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem-action", "../../model/type-extractor-item", "../../model/type-entity", "../../model/file-item-param-names", "../../model/type-process", "../../views/entity-labels", "../../model/type-extractor-filter", "../../model/type-extract-format", "../../model/cv-filter-type", "../../model/type-extractor-sample-list", "../../model/name-id-label-type"], function (exports_1, context_1) {
     "use strict";
     _this = this;
     var __moduleName = context_1 && context_1.id;
@@ -144,7 +144,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                         .filter(function (gfi) {
                         return (gfi.getGobiiExtractFilterType() === state.gobiiExtractFilterType
                             && gfi.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                            || gfi.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
+                            || gfi.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
                             && gfi.getProcessType() !== type_process_1.ProcessType.DUMMY
                             && gfi.getEntityType() === gobiiFileItemCompoundId_1.getEntityType();
                     });
@@ -286,7 +286,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
         return returnVal;
     }
     exports_1("fileItemsReducer", fileItemsReducer);
-    var _this, reselect_1, gobii_file_item_1, gobiiFileItemAction, type_extractor_item_1, type_entity_1, file_item_param_names_1, type_process_1, entity_labels_1, type_extractor_filter_1, type_extract_format_1, cv_filter_type_1, type_extractor_sample_list_1, initialState, getGobiiExtractFilterType, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getSelectedFileFormat, getSelectedSampleType, getJobId, getUploadFiles, getPiContacts, getProjects, getExperiments, getDatasets, getCvTermsDataType, getCvTermsJobStatus, getMapsets, getPlatforms, getMarkerGroups, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment, getDatasetEntities, getDatasetEntitiesPaged, getPiContactsFilterOptional, getProjectsFilterOptional, getExperimentsFilterOptional, getFqF1Vertices, getFqF2Vertices, getFqF3Vertices, getFqF4Vertices;
+    var _this, reselect_1, gobii_file_item_1, gobiiFileItemAction, type_extractor_item_1, type_entity_1, file_item_param_names_1, type_process_1, entity_labels_1, type_extractor_filter_1, type_extract_format_1, cv_filter_type_1, type_extractor_sample_list_1, name_id_label_type_1, initialState, getGobiiExtractFilterType, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getSelectedFileFormat, getSelectedSampleType, getJobId, getUploadFiles, getPiContacts, getProjects, getExperiments, getDatasets, getCvTermsDataType, getCvTermsJobStatus, getMapsets, getPlatforms, getMarkerGroups, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment, getDatasetEntities, getDatasetEntitiesPaged, getPiContactsFilterOptional, getProjectsFilterOptional, getExperimentsFilterOptional, getFqF1Vertices, getFqF2Vertices, getFqF3Vertices, getFqF4Vertices;
     return {
         setters: [
             function (reselect_1_1) {
@@ -324,6 +324,9 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             },
             function (type_extractor_sample_list_1_1) {
                 type_extractor_sample_list_1 = type_extractor_sample_list_1_1;
+            },
+            function (name_id_label_type_1_1) {
+                name_id_label_type_1 = name_id_label_type_1_1;
             }
         ],
         execute: function () {
@@ -423,7 +426,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             exports_1("getPiContacts", getPiContacts = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
                 var returnVal = fileItems.filter(function (e) {
                     return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
+                        || e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
                         && e.getEntityType() === type_entity_1.EntityType.CONTACT
                         && e.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR;
                 })
@@ -434,7 +437,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 var returnVal = [];
                 returnVal = fileItems.filter(function (e) {
                     return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
+                        || e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
                         && e.getEntityType() === type_entity_1.EntityType.PROJECT
                         && e.getProcessType() !== type_process_1.ProcessType.DUMMY;
                 })
@@ -452,7 +455,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             exports_1("getExperiments", getExperiments = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
                 return fileItems.filter(function (e) {
                     return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
+                        || e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
                         && e.getEntityType() === type_entity_1.EntityType.EXPERIMENT;
                 })
                     .map(function (fi) { return fi; });
@@ -460,7 +463,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             exports_1("getDatasets", getDatasets = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
                 return fileItems.filter(function (e) {
                     return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
+                        || e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
                         && e.getEntityType() === type_entity_1.EntityType.DATASET;
                 })
                     .map(function (fi) { return fi; });
@@ -468,7 +471,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             exports_1("getCvTermsDataType", getCvTermsDataType = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
                 var returnVal = fileItems.filter(function (e) {
                     return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
+                        || e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
                         && e.getEntityType() === type_entity_1.EntityType.CV
                         && e.getCvFilterType() === cv_filter_type_1.CvFilterType.DATASET_TYPE;
                 })
@@ -478,7 +481,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             exports_1("getCvTermsJobStatus", getCvTermsJobStatus = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
                 var returnVal = fileItems.filter(function (e) {
                     return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
+                        || e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
                         && e.getEntityType() === type_entity_1.EntityType.CV
                         && e.getCvFilterType() === cv_filter_type_1.CvFilterType.JOB_STATUS;
                 })
@@ -488,7 +491,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             exports_1("getMapsets", getMapsets = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
                 return fileItems.filter(function (e) {
                     return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
+                        || e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
                         && e.getEntityType() === type_entity_1.EntityType.MAPSET;
                 })
                     .map(function (fi) { return fi; });
@@ -496,7 +499,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             exports_1("getPlatforms", getPlatforms = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
                 return fileItems.filter(function (e) {
                     return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
+                        || e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
                         && e.getEntityType() === type_entity_1.EntityType.PLATFORM;
                 })
                     .map(function (fi) { return fi; });
@@ -504,7 +507,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             exports_1("getMarkerGroups", getMarkerGroups = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
                 return fileItems.filter(function (e) {
                     return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
+                        || e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
                         && e.getEntityType() === type_entity_1.EntityType.MARKER_GROUP;
                 })
                     .map(function (fi) { return fi; });
@@ -530,7 +533,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 returnVal = fileItems.filter(function (e) {
                     return (e.getGobiiExtractFilterType() === gobiiExtractFilterType
                         && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
+                        || e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
                         && e.getProcessType() !== type_process_1.ProcessType.DUMMY
                         && e.getEntityType() === type_entity_1.EntityType.PROJECT
                         && ((!contactId || (+contactId < 0)) // state is not filtered -- we don't care, or . . .
@@ -663,7 +666,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 return fileItems.filter(function (e) {
                     return (e.getGobiiExtractFilterType() === gobiiExtractFilterType
                         && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
+                        || e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
                         && e.getEntityType() === type_entity_1.EntityType.CONTACT
                         && e.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR;
                 })
@@ -680,7 +683,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 returnVal = fileItems.filter(function (e) {
                     return (e.getGobiiExtractFilterType() === gobiiExtractFilterType
                         && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
+                        || e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
                         && e.getProcessType() !== type_process_1.ProcessType.DUMMY
                         && e.getEntityType() === type_entity_1.EntityType.PROJECT
                         && ((!contactId || (+contactId < 0)) // state is not filtered -- we don't care, or . . .
@@ -723,7 +726,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 returnVal = fileItems.filter(function (e) {
                     return (e.getGobiiExtractFilterType() == gobiiExtractFilterType
                         && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
-                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
+                        || e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
                         && e.getProcessType() !== type_process_1.ProcessType.DUMMY
                         && e.getEntityType() === type_entity_1.EntityType.EXPERIMENT
                         && ((!projectId && !contactId) // state is not filtered -- we don't care, or . . .
@@ -747,19 +750,34 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 returnVal = fileItems.filter(function (e) {
                     return (e.getGobiiExtractFilterType() == gobiiExtractFilterType
                         && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.VERTEX
-                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
+                        || e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
                         && e.getProcessType() !== type_process_1.ProcessType.DUMMY;
                 }).map(function (fi) { return fi; });
                 return returnVal;
             }));
             exports_1("getFqF2Vertices", getFqF2Vertices = reselect_1.createSelector(getFileItems, getFilters, getGobiiExtractFilterType, function (fileItems, filters, gobiiExtractFilterType) {
                 var returnVal = [];
-                returnVal = fileItems.filter(function (e) {
-                    return (e.getGobiiExtractFilterType() == gobiiExtractFilterType
-                        && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.VERTEX
-                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
-                        && e.getProcessType() !== type_process_1.ProcessType.DUMMY;
-                }).map(function (fi) { return fi; });
+                var v1VertexId = null;
+                if (filters[file_item_param_names_1.FilterParamNames.FQ_F1_VERTICES]) {
+                    v1VertexId = filters[file_item_param_names_1.FilterParamNames.FQ_F1_VERTICES].targetEntityFilterValue;
+                }
+                if (v1VertexId) {
+                    returnVal = fileItems.filter(function (e) {
+                        return (e.getGobiiExtractFilterType() == gobiiExtractFilterType
+                            && e.getEntity().vertexId != v1VertexId
+                            && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.VERTEX
+                            || e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
+                            && e.getProcessType() !== type_process_1.ProcessType.DUMMY;
+                    }).map(function (fi) { return fi; });
+                }
+                else {
+                    returnVal = fileItems.filter(function (e) {
+                        return (e.getGobiiExtractFilterType() == gobiiExtractFilterType
+                            && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.VERTEX
+                            && e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
+                            && e.getProcessType() !== type_process_1.ProcessType.DUMMY;
+                    }).map(function (fi) { return fi; });
+                }
                 return returnVal;
             }));
             exports_1("getFqF3Vertices", getFqF3Vertices = reselect_1.createSelector(getFileItems, getFilters, getGobiiExtractFilterType, function (fileItems, filters, gobiiExtractFilterType) {
@@ -767,7 +785,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 returnVal = fileItems.filter(function (e) {
                     return (e.getGobiiExtractFilterType() == gobiiExtractFilterType
                         && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.VERTEX
-                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
+                        || e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
                         && e.getProcessType() !== type_process_1.ProcessType.DUMMY;
                 }).map(function (fi) { return fi; });
                 return returnVal;
@@ -777,7 +795,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 returnVal = fileItems.filter(function (e) {
                     return (e.getGobiiExtractFilterType() == gobiiExtractFilterType
                         && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.VERTEX
-                        || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
+                        || e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
                         && e.getProcessType() !== type_process_1.ProcessType.DUMMY;
                 }).map(function (fi) { return fi; });
                 return returnVal;

@@ -235,7 +235,7 @@ export class FilterParamsColl {
                             fileItems.find(fi => fi.getItemName() === "completed");
 
                         let labelItem: GobiiFileItem =
-                            fileItems.find(fi => fi.getExtractorItemType() === ExtractorItemType.LABEL);
+                            fileItems.find(fi => fi.getNameIdLabelType() !== NameIdLabelType.UNKNOWN);
 
                         if (completedItem && labelItem) {
 

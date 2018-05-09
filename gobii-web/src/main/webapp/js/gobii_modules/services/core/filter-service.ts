@@ -222,7 +222,8 @@ export class FilterService {
                 .setEntityType(filterParamsToLoad.getEntityType())
                 .setEntitySubType(filterParamsToLoad.getEntitySubType())
                 .setCvFilterType(filterParamsToLoad.getCvFilterType())
-                .setExtractorItemType(ExtractorItemType.LABEL)
+                .setExtractorItemType(ExtractorItemType.VERTEX)
+                .setNameIdLabelType(filterParamsToLoad.getMameIdLabelType())
                 .setItemName(label)
                 .setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())
                 .setItemId("0");
