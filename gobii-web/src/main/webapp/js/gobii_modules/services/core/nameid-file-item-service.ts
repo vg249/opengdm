@@ -28,6 +28,7 @@ import {FilterParamsColl} from "./filter-params-coll";
 import {GobiiFileItemEntityRelation} from "../../model/gobii-file-item-entity-relation";
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 import {PayloadFilter} from "../../store/actions/action-payload-filter";
+import {FilterService} from "./filter-service";
 
 @Injectable()
 export class NameIdFileItemService {
@@ -37,6 +38,7 @@ export class NameIdFileItemService {
     constructor(private nameIdService: NameIdService,
                 private entityStatsService: DtoRequestService<EntityStats>,
                 private fileItemRequestService: DtoRequestService<GobiiFileItem[]>,
+                private filterService: FilterService,
                 private store: Store<fromRoot.State>,
                 private filterParamsColl: FilterParamsColl) {
 
@@ -389,15 +391,6 @@ export class NameIdFileItemService {
                                                                 .fromGobiiFileItemCompoundId(gobiiFileItemCompoundUniqueId)
                                                                 .setRelatedEntityId(nameIdItem.fkId);
                                                         }
-                                                        /* else {
-                                                                                                                   gobiiFileItemCompoundUniqueId = new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
-                                                                                                                       nameIdItem.fkEntityType,
-                                                                                                                       EntitySubType.UNKNOWN,
-                                                                                                                       CvFilterType.UNKNOWN,
-                                                                                                                       null);
-                                                                                                               }*/
-
-
                                                     }
 
                                                     let currentFileItem: GobiiFileItem =
@@ -423,62 +416,14 @@ export class NameIdFileItemService {
                                                 minEntityLastUpdated = new Date(Math.min.apply(null, nameIds
                                                     .map(nameId => nameId.entityLasetModified)));
 
-                                                let temp: string = "foo";
 
-                                                temp = "bar";
-
-                                                if (filterParamsToLoad.getMameIdLabelType() != NameIdLabelType.UNKNOWN) {
-
-                                                    let entityName: string = "";
-                                                    if (filterParamsToLoad.getCvFilterType() !== CvFilterType.UNKNOWN) {
-                                                        entityName += Labels.instance().cvFilterNodeLabels[filterParamsToLoad.getCvFilterType()];
-                                                    } else if (filterParamsToLoad.getEntitySubType() !== EntitySubType.UNKNOWN) {
-                                                        entityName += Labels.instance().entitySubtypeNodeLabels[filterParamsToLoad.getEntitySubType()];
-                                                    } else {
-                                                        entityName += Labels.instance().entityNodeLabels[filterParamsToLoad.getEntityType()];
-                                                    }
-
-                                                    let label: string = "";
-                                                    switch (filterParamsToLoad.getMameIdLabelType()) {
-
-                                                        case NameIdLabelType.SELECT_A:
-                                                            label = "Select a " + entityName;
-                                                            break;
-
-                                                        // we require that these entity labels all be in the singular
-                                                        case NameIdLabelType.ALL:
-                                                            label = "All " + entityName + "s";
-                                                            break;
-
-                                                        case NameIdLabelType.NO:
-                                                            label = "No " + entityName;
-                                                            break;
-
-                                                        default:
-                                                            this.store.dispatch(new historyAction.AddStatusAction(new HeaderStatusMessage("Unknown label type "
-                                                                + NameIdLabelType[filterParamsToLoad.getMameIdLabelType()], null, null)));
-
-                                                    }
-
-
-                                                    let labelFileItem: GobiiFileItem = GobiiFileItem
-                                                        .build(gobiiExtractFilterType, ProcessType.CREATE)
-                                                        .setEntityType(filterParamsToLoad.getEntityType())
-                                                        .setEntitySubType(filterParamsToLoad.getEntitySubType())
-                                                        .setCvFilterType(filterParamsToLoad.getCvFilterType())
-                                                        .setExtractorItemType(ExtractorItemType.LABEL)
-                                                        .setItemName(label)
-                                                        .setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())
-                                                        .setParentItemId(filterValue)
-                                                        .setItemId("0");
-
-
+                                                let labelFileItem: GobiiFileItem = this.filterService.makeLabelItem(gobiiExtractFilterType,filterParamsToLoad);
+                                                if (labelFileItem) {
+                                                    labelFileItem.setParentItemId(filterValue);
                                                     fileItems.unshift(labelFileItem);
-                                                    //.selectedFileItemId = "0";
-
                                                 }
 
-                                            }
+                                            } // if nameIds were retrieved
 
 
                                             let noneFileItem: GobiiFileItem = GobiiFileItem

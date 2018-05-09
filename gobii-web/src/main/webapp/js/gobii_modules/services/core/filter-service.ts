@@ -16,6 +16,13 @@ import {EntityStats} from "../../model/entity-stats";
 import {DtoRequestService} from "./dto-request.service";
 import {FilterParamsColl} from "./filter-params-coll";
 import {PayloadFilter} from "../../store/actions/action-payload-filter";
+import {CvFilterType} from "../../model/cv-filter-type";
+import {Labels} from "../../views/entity-labels";
+import {HeaderStatusMessage} from "../../model/dto-header-status-message";
+import {ProcessType} from "../../model/type-process";
+import {ExtractorItemType} from "../../model/type-extractor-item";
+import {EntitySubType} from "../../model/type-entity";
+import {NameIdLabelType} from "../../model/name-id-label-type";
 
 @Injectable()
 export class FilterService {
@@ -168,6 +175,59 @@ export class FilterService {
 
         return returnVal;
 
-    }
+    } // getForFilter()
+
+    public makeLabelItem(gobiiExtractFilterType: GobiiExtractFilterType, filterParamsToLoad: FilterParams): GobiiFileItem {
+
+        let returnVal: GobiiFileItem;
+
+        if (filterParamsToLoad.getMameIdLabelType() != NameIdLabelType.UNKNOWN) {
+
+            let entityName: string = "";
+            if (filterParamsToLoad.getCvFilterType() !== CvFilterType.UNKNOWN) {
+                entityName += Labels.instance().cvFilterNodeLabels[filterParamsToLoad.getCvFilterType()];
+            } else if (filterParamsToLoad.getEntitySubType() !== EntitySubType.UNKNOWN) {
+                entityName += Labels.instance().entitySubtypeNodeLabels[filterParamsToLoad.getEntitySubType()];
+            } else {
+                entityName += Labels.instance().entityNodeLabels[filterParamsToLoad.getEntityType()];
+            }
+
+            let label: string = "";
+            switch (filterParamsToLoad.getMameIdLabelType()) {
+
+                case NameIdLabelType.SELECT_A:
+                    label = "Select a " + entityName;
+                    break;
+
+                // we require that these entity labels all be in the singular
+                case NameIdLabelType.ALL:
+                    label = "All " + entityName + "s";
+                    break;
+
+                case NameIdLabelType.NO:
+                    label = "No " + entityName;
+                    break;
+
+                default:
+                    this.store.dispatch(new historyAction.AddStatusAction(new HeaderStatusMessage("Unknown label type "
+                        + NameIdLabelType[filterParamsToLoad.getMameIdLabelType()], null, null)));
+
+            }
+
+
+            returnVal = GobiiFileItem
+                .build(gobiiExtractFilterType, ProcessType.CREATE)
+                .setEntityType(filterParamsToLoad.getEntityType())
+                .setEntitySubType(filterParamsToLoad.getEntitySubType())
+                .setCvFilterType(filterParamsToLoad.getCvFilterType())
+                .setExtractorItemType(ExtractorItemType.LABEL)
+                .setItemName(label)
+                .setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())
+                .setItemId("0");
+
+        } // if we have a label item type that requires a label item
+
+        return returnVal;
+    } // makeLabelItem()
 
 }

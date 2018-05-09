@@ -1,12 +1,7 @@
 import {Injectable} from "@angular/core";
-import {EntitySubType} from "../../model/type-entity";
-import {Labels} from "../../views/entity-labels";
-import {ExtractorItemType} from "../../model/type-extractor-item";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
-import {CvFilterType} from "../../model/cv-filter-type";
 import {GobiiFileItem} from "../../model/gobii-file-item";
 import {HeaderStatusMessage} from "../../model/dto-header-status-message";
-import {ProcessType} from "../../model/type-process";
 import {NameIdService} from "./name-id-service";
 import {FilterParams} from "../../model/filter-params";
 import * as historyAction from '../../store/actions/history-action';
@@ -14,7 +9,6 @@ import * as fileItemActions from '../../store/actions/fileitem-action'
 import * as fromRoot from '../../store/reducers';
 
 import {Store} from "@ngrx/store";
-import {NameIdLabelType} from "../../model/name-id-label-type";
 import {FilterType} from "../../model/filter-type";
 import {FilterParamNames} from "../../model/file-item-param-names";
 import {Observable} from "rxjs/Observable";
@@ -22,18 +16,12 @@ import "rxjs/add/operator/expand"
 import "rxjs/add/operator/concat"
 import {EntityStats} from "../../model/entity-stats";
 import {DtoRequestService} from "./dto-request.service";
-import {DtoRequestItemEntityStats, EntityRequestType} from "../app/dto-request-item-entity-stats";
-import {FilterHistory} from "../../store/reducers/history-reducer";
-import {DtoRequestItemGfi} from "../app/dto-request-item-gfi";
-import {JsonToGfiDataset} from "../app/jsontogfi/json-to-gfi-dataset";
 import {FilterParamsColl} from "./filter-params-coll";
-import {GobiiFileItemEntityRelation} from "../../model/gobii-file-item-entity-relation";
-import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 import {StatusLevel} from "../../model/type-status-level";
 import {DtoRequestItem} from "./dto-request-item";
-import {PagedFileItemList} from "../../model/payload/paged-item-list";
 import {Pagination} from "../../model/payload/pagination";
 import {PayloadFilter} from "../../store/actions/action-payload-filter";
+import {FilterService} from "./filter-service";
 
 @Injectable()
 export class EntityFileItemService {
@@ -43,6 +31,7 @@ export class EntityFileItemService {
     constructor(private nameIdService: NameIdService,
                 private entityStatsService: DtoRequestService<EntityStats>,
                 private fileItemRequestService: DtoRequestService<GobiiFileItem[]>,
+                private filterService:FilterService,
                 private store: Store<fromRoot.State>,
                 private filterParamsColl: FilterParamsColl) {
 
@@ -142,6 +131,11 @@ export class EntityFileItemService {
                                 entityItems.forEach(fi => {
                                     fi.setGobiiExtractFilterType(gobiiExtractFilterType);
                                 });
+
+                                let labelFileItem: GobiiFileItem = this.filterService.makeLabelItem(gobiiExtractFilterType, filterParams);
+                                if (labelFileItem) {
+                                    entityItems.unshift(labelFileItem);
+                                }
 
                                 let date: Date = new Date();
                                 let loadAction: fileItemActions.LoadFileItemListWithFilterAction =

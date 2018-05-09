@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-extractor-filter", "../../model/dto-header-status-message", "./name-id-service", "../../store/actions/history-action", "../../store/actions/fileitem-action", "@ngrx/store", "../../model/filter-type", "rxjs/Observable", "rxjs/add/operator/expand", "rxjs/add/operator/concat", "./dto-request.service", "./filter-params-coll", "../../model/type-status-level", "../../store/actions/action-payload-filter"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-extractor-filter", "../../model/dto-header-status-message", "./name-id-service", "../../store/actions/history-action", "../../store/actions/fileitem-action", "@ngrx/store", "../../model/filter-type", "rxjs/Observable", "rxjs/add/operator/expand", "rxjs/add/operator/concat", "./dto-request.service", "./filter-params-coll", "../../model/type-status-level", "../../store/actions/action-payload-filter", "./filter-service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../mo
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_extractor_filter_1, dto_header_status_message_1, name_id_service_1, historyAction, fileItemActions, store_1, filter_type_1, Observable_1, dto_request_service_1, filter_params_coll_1, type_status_level_1, action_payload_filter_1, EntityFileItemService;
+    var core_1, type_extractor_filter_1, dto_header_status_message_1, name_id_service_1, historyAction, fileItemActions, store_1, filter_type_1, Observable_1, dto_request_service_1, filter_params_coll_1, type_status_level_1, action_payload_filter_1, filter_service_1, EntityFileItemService;
     return {
         setters: [
             function (core_1_1) {
@@ -55,16 +55,20 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../mo
             },
             function (action_payload_filter_1_1) {
                 action_payload_filter_1 = action_payload_filter_1_1;
+            },
+            function (filter_service_1_1) {
+                filter_service_1 = filter_service_1_1;
             }
         ],
         execute: function () {
             EntityFileItemService = (function () {
-                function EntityFileItemService(nameIdService, entityStatsService, fileItemRequestService, store, filterParamsColl) {
+                function EntityFileItemService(nameIdService, entityStatsService, fileItemRequestService, filterService, store, filterParamsColl) {
                     // For non-hierarchically filtered request params, we just create them simply
                     // as we add them to the flat map
                     this.nameIdService = nameIdService;
                     this.entityStatsService = entityStatsService;
                     this.fileItemRequestService = fileItemRequestService;
+                    this.filterService = filterService;
                     this.store = store;
                     this.filterParamsColl = filterParamsColl;
                     this.NONE_ITEM_ITEM_ID = "-1";
@@ -130,6 +134,10 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../mo
                                     entityItems.forEach(function (fi) {
                                         fi.setGobiiExtractFilterType(gobiiExtractFilterType);
                                     });
+                                    var labelFileItem = _this.filterService.makeLabelItem(gobiiExtractFilterType, filterParams);
+                                    if (labelFileItem) {
+                                        entityItems.unshift(labelFileItem);
+                                    }
                                     var date = new Date();
                                     var loadAction = new fileItemActions.LoadFileItemListWithFilterAction({
                                         gobiiFileItems: entityItems,
@@ -164,6 +172,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../mo
                     __metadata("design:paramtypes", [name_id_service_1.NameIdService,
                         dto_request_service_1.DtoRequestService,
                         dto_request_service_1.DtoRequestService,
+                        filter_service_1.FilterService,
                         store_1.Store,
                         filter_params_coll_1.FilterParamsColl])
                 ], EntityFileItemService);
