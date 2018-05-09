@@ -1024,6 +1024,10 @@ export const getFqF3Vertices = createSelector(getFileItems, getFilters, getGobii
         f2VertexId = filters[FilterParamNames.FQ_F2_VERTICES].targetEntityFilterValue;
     }
 
+    let f1VertexId: string = null;
+    if (filters[FilterParamNames.FQ_F1_VERTICES]) {
+        f1VertexId = filters[FilterParamNames.FQ_F1_VERTICES].targetEntityFilterValue;
+    }
 
     if( f2VertexId ) {
 
@@ -1031,6 +1035,7 @@ export const getFqF3Vertices = createSelector(getFileItems, getFilters, getGobii
             e =>
                 (e.getGobiiExtractFilterType() == gobiiExtractFilterType
                     && e.getEntity().vertexId != f2VertexId
+                    && e.getEntity().vertexId != f1VertexId
                     && e.getExtractorItemType() === ExtractorItemType.VERTEX
                     || e.getNameIdLabelType() !== NameIdLabelType.UNKNOWN)
                 && e.getProcessType() !== ProcessType.DUMMY
@@ -1058,6 +1063,16 @@ export const getFqF4Vertices = createSelector(getFileItems, getFilters, getGobii
         f3VertexId = filters[FilterParamNames.FQ_F3_VERTICES].targetEntityFilterValue;
     }
 
+    let f2VertexId: string = null;
+    if (filters[FilterParamNames.FQ_F2_VERTICES]) {
+        f2VertexId = filters[FilterParamNames.FQ_F2_VERTICES].targetEntityFilterValue;
+    }
+
+    let f1VertexId: string = null;
+    if (filters[FilterParamNames.FQ_F1_VERTICES]) {
+        f1VertexId = filters[FilterParamNames.FQ_F1_VERTICES].targetEntityFilterValue;
+    }
+
 
     if( f3VertexId ) {
 
@@ -1065,6 +1080,8 @@ export const getFqF4Vertices = createSelector(getFileItems, getFilters, getGobii
             e =>
                 (e.getGobiiExtractFilterType() == gobiiExtractFilterType
                     && e.getEntity().vertexId != f3VertexId
+                    && e.getEntity().vertexId != f2VertexId
+                    && e.getEntity().vertexId != f1VertexId
                     && e.getExtractorItemType() === ExtractorItemType.VERTEX
                     || e.getNameIdLabelType() !== NameIdLabelType.UNKNOWN)
                 && e.getProcessType() !== ProcessType.DUMMY

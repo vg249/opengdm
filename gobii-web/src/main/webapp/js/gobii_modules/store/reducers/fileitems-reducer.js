@@ -786,10 +786,15 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 if (filters[file_item_param_names_1.FilterParamNames.FQ_F2_VERTICES]) {
                     f2VertexId = filters[file_item_param_names_1.FilterParamNames.FQ_F2_VERTICES].targetEntityFilterValue;
                 }
+                var f1VertexId = null;
+                if (filters[file_item_param_names_1.FilterParamNames.FQ_F1_VERTICES]) {
+                    f1VertexId = filters[file_item_param_names_1.FilterParamNames.FQ_F1_VERTICES].targetEntityFilterValue;
+                }
                 if (f2VertexId) {
                     returnVal = fileItems.filter(function (e) {
                         return (e.getGobiiExtractFilterType() == gobiiExtractFilterType
                             && e.getEntity().vertexId != f2VertexId
+                            && e.getEntity().vertexId != f1VertexId
                             && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.VERTEX
                             || e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
                             && e.getProcessType() !== type_process_1.ProcessType.DUMMY;
@@ -811,10 +816,20 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 if (filters[file_item_param_names_1.FilterParamNames.FQ_F3_VERTICES]) {
                     f3VertexId = filters[file_item_param_names_1.FilterParamNames.FQ_F3_VERTICES].targetEntityFilterValue;
                 }
+                var f2VertexId = null;
+                if (filters[file_item_param_names_1.FilterParamNames.FQ_F2_VERTICES]) {
+                    f2VertexId = filters[file_item_param_names_1.FilterParamNames.FQ_F2_VERTICES].targetEntityFilterValue;
+                }
+                var f1VertexId = null;
+                if (filters[file_item_param_names_1.FilterParamNames.FQ_F1_VERTICES]) {
+                    f1VertexId = filters[file_item_param_names_1.FilterParamNames.FQ_F1_VERTICES].targetEntityFilterValue;
+                }
                 if (f3VertexId) {
                     returnVal = fileItems.filter(function (e) {
                         return (e.getGobiiExtractFilterType() == gobiiExtractFilterType
                             && e.getEntity().vertexId != f3VertexId
+                            && e.getEntity().vertexId != f2VertexId
+                            && e.getEntity().vertexId != f1VertexId
                             && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.VERTEX
                             || e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
                             && e.getProcessType() !== type_process_1.ProcessType.DUMMY;
