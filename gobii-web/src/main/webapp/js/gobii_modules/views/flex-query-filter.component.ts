@@ -95,6 +95,10 @@ export class FlexQueryFilterComponent {
                         this.currentStyle = this.disabledStyle;
                     }
 
+                    if(items[0]) {
+                        this.selectedAllowableEntities = items[0];
+                    }
+
                 },
                 error => {
                     this.store.dispatch(new historyAction.AddStatusMessageAction(error))
@@ -111,9 +115,16 @@ export class FlexQueryFilterComponent {
 
     public handleFileItemSelected(arg) {
 
+        let vertexId: string = null;
+        if (arg.value._entity && arg.value._entity.vertexId) {
+            vertexId = arg.value._entity.vertexId;
+        } else {
+            this.selectedAllowableEntities = null;
+        }
+
         this.filterService.loadFilter(this.gobiiExtractFilterType,
             this.filterParamNameVertices,
-            arg.value._entity.vertexId);
+            vertexId);
 
         if (!this.gobiiExtractFilterType) {
             this.store.dispatch(new historyAction.AddStatusMessageAction("The gobiiExtractFilterType property is not set"))

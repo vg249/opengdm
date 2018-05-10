@@ -1029,7 +1029,7 @@ export const getFqF3Vertices = createSelector(getFileItems, getFilters, getGobii
         f1VertexId = filters[FilterParamNames.FQ_F1_VERTICES].targetEntityFilterValue;
     }
 
-    if( f2VertexId ) {
+    if( f1VertexId && f2VertexId ) {
 
         returnVal = fileItems.filter(
             e =>
@@ -1074,7 +1074,7 @@ export const getFqF4Vertices = createSelector(getFileItems, getFilters, getGobii
     }
 
 
-    if( f3VertexId ) {
+    if( f1VertexId && f2VertexId && f3VertexId ) {
 
         returnVal = fileItems.filter(
             e =>

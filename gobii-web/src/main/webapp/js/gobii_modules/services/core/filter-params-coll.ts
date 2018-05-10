@@ -581,7 +581,7 @@ export class FilterParamsColl {
         // FLEX QUERY FILTER OBJECT GRAPH
         // *** F1
         this.getFilter(FilterParamNames.FQ_F1_VERTICES, GobiiExtractFilterType.FLEX_QUERY)
-            .setNextSiblingNameIdRequestParams(this.getFilter(FilterParamNames.FQ_F1_VERTICES, GobiiExtractFilterType.FLEX_QUERY))
+            .setNextSiblingNameIdRequestParams(this.getFilter(FilterParamNames.FQ_F2_VERTICES, GobiiExtractFilterType.FLEX_QUERY))
             .getChildFileItemParams().push(this.getFilter(FilterParamNames.FQ_F1_VERTEX_VALUES, GobiiExtractFilterType.FLEX_QUERY));
 
         this.getFilter(FilterParamNames.FQ_F1_VERTEX_VALUES, GobiiExtractFilterType.FLEX_QUERY)

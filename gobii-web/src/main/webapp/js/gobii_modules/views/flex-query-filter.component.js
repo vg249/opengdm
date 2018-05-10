@@ -57,6 +57,9 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/history-actio
                         else {
                             _this.currentStyle = _this.disabledStyle;
                         }
+                        if (items[0]) {
+                            _this.selectedAllowableEntities = items[0];
+                        }
                     }, function (error) {
                         _this.store.dispatch(new historyAction.AddStatusMessageAction(error));
                     });
@@ -67,7 +70,14 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/history-actio
                     });
                 };
                 FlexQueryFilterComponent.prototype.handleFileItemSelected = function (arg) {
-                    this.filterService.loadFilter(this.gobiiExtractFilterType, this.filterParamNameVertices, arg.value._entity.vertexId);
+                    var vertexId = null;
+                    if (arg.value._entity && arg.value._entity.vertexId) {
+                        vertexId = arg.value._entity.vertexId;
+                    }
+                    else {
+                        this.selectedAllowableEntities = null;
+                    }
+                    this.filterService.loadFilter(this.gobiiExtractFilterType, this.filterParamNameVertices, vertexId);
                     if (!this.gobiiExtractFilterType) {
                         this.store.dispatch(new historyAction.AddStatusMessageAction("The gobiiExtractFilterType property is not set"));
                     }

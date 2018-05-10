@@ -341,7 +341,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                     // FLEX QUERY FILTER OBJECT GRAPH
                     // *** F1
                     this.getFilter(file_item_param_names_1.FilterParamNames.FQ_F1_VERTICES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY)
-                        .setNextSiblingNameIdRequestParams(this.getFilter(file_item_param_names_1.FilterParamNames.FQ_F1_VERTICES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY))
+                        .setNextSiblingNameIdRequestParams(this.getFilter(file_item_param_names_1.FilterParamNames.FQ_F2_VERTICES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY))
                         .getChildFileItemParams().push(this.getFilter(file_item_param_names_1.FilterParamNames.FQ_F1_VERTEX_VALUES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY));
                     this.getFilter(file_item_param_names_1.FilterParamNames.FQ_F1_VERTEX_VALUES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY)
                         .setParentFileItemParams(this.getFilter(file_item_param_names_1.FilterParamNames.FQ_F1_VERTICES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY));

@@ -36,7 +36,15 @@ export class FilterService {
 
         let filterParams: FilterParams = this.filterParamsColl.getFilter(filterParamsName, gobiiExtractFilterType);
 
-        if (filterParams) {
+        // the filterParams passed in should exist
+        if (!filterParams) {
+            this.store.dispatch(new historyAction.AddStatusMessageAction("Error loading filter: there is no query params object for query "
+                + filterParamsName
+                + " with extract filter type "
+                + GobiiExtractFilterType[gobiiExtractFilterType]));
+        }
+
+        while (filterParams) {
 
             let loadAction: fileItemActions.LoadFilterAction = new fileItemActions.LoadFilterAction(
                 {
@@ -55,11 +63,14 @@ export class FilterService {
 
             this.store.dispatch(loadAction)
 
-        } else {
-            this.store.dispatch(new historyAction.AddStatusMessageAction("Error loading filter: there is no query params object for query "
-                + filterParamsName
-                + " with extract filter type "
-                + GobiiExtractFilterType[gobiiExtractFilterType]));
+            // if the current filter is getting nulled, we need to null the siblings as well
+            // but we dont' need to cascade filter values here
+            // note that for now this is only really relevant to FlexQuery filters
+            if( !filterValue ) {
+                filterParams = filterParams.getNextSiblingFileItemParams();
+            } else {
+                filterParams = null;
+            }
         }
     }
 
@@ -188,7 +199,7 @@ export class FilterService {
                 entityName += Labels.instance().cvFilterNodeLabels[filterParamsToLoad.getCvFilterType()];
             } else if (filterParamsToLoad.getEntitySubType() !== EntitySubType.UNKNOWN) {
                 entityName += Labels.instance().entitySubtypeNodeLabels[filterParamsToLoad.getEntitySubType()];
-            } else if (filterParamsToLoad.getEntityType() != EntityType.UNKNOWN ) {
+            } else if (filterParamsToLoad.getEntityType() != EntityType.UNKNOWN) {
                 entityName += Labels.instance().entityNodeLabels[filterParamsToLoad.getEntityType()];
             } else {
                 entityName += Labels.instance().treeExtractorTypeLabels[filterParamsToLoad.getExtractorItemType()];
