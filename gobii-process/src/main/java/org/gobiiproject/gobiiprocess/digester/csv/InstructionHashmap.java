@@ -5,97 +5,153 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class InstructionHashmap<String, String, String> {
+public class InstructionHashmap<K1, K2, V> {
 
-    private Map<String,Map<String,String>> mkMap;
+    private Map<K1,Map<K2,V>> mkMap;
 
     public InstructionHashmap(){
-        mkMap = new HashMap<String,Map<String,String>>();
+        mkMap = new HashMap<K1,Map<K2,V>>();
     }
 
-    public String put(String k1, String k2, String v) {
-        Map<String,String> k2Map = null;
+    /**
+     * Puts the value object based on the (super)key K1 and (sub)key K2
+     * @param k1 key1 (super-key)
+     * @param k2 key2 (sub-key)
+     * @param v value object
+     * @return previous value associated with specified key, or <tt>null</tt>
+     *         if there was no mapping for key.
+     */
+    public V put(K1 k1, K2 k2, V v) {
+        Map<K2,V> k2Map = null;
         if(mkMap.containsKey(k1)) {
             k2Map = mkMap.get(k1);
         }else {
-            k2Map = new HashMap<String,String>();
+            k2Map = new HashMap<K2,V>();
             mkMap.put(k1, k2Map);
         }
         return k2Map.put(k2, v);
     }
 
-    public boolean containsKey(String k1, String k2) {
+    /**
+     * Returns <tt>true</tt> if value object is present for the specified (super)key K1 and (sub)key K2
+     * @param k1 key1 (super-key)
+     * @param k2 key2 (sub-key)
+     * @return <tt>true</tt> if value object present
+     */
+    public boolean containsKey(K1 k1, K2 k2) {
         if(mkMap.containsKey(k1)) {
-            Map<String,String> k2Map = mkMap.get(k1);
+            Map<K2,V> k2Map = mkMap.get(k1);
             return k2Map.containsKey(k2);
         }
         return false;
     }
 
-    public boolean containsKey(String k1) {
+    /**
+     * Returns <tt>true</tt> if value object is present for the specified (super)key K1
+     * @param k1 key1 (super-key)
+     * @return <tt>true</tt> if value object present
+     */
+    public boolean containsKey(K1 k1) {
         return mkMap.containsKey(k1);
     }
 
-        public String get(String k1, String k2) {
+    /**
+     * Gets the value object for the specified (super)key K1 and (sub)key K2
+     * @param k1 key1 (super-key)
+     * @param k2 key2 (sub-key)
+     * @return value object if exists or <tt>null</tt> if does not exists
+     */
+    public V get(K1 k1, K2 k2) {
         if(mkMap.containsKey(k1)) {
-            Map<String,String> k2Map = mkMap.get(k1);
+            Map<K2,V> k2Map = mkMap.get(k1);
             return k2Map.get(k2);
         }
         return null;
     }
 
-    public Map<String,String> get(String k1) {
+    /**
+     * Gets the value object for the specified (super)key K1
+     * @param k1 key1 (super-key)
+     * @return HashMap structure contains the values for the key k1 if exists
+     *         or <tt>null</tt> if does not exists
+     */
+    public Map<K2,V> get(K1 k1) {
         return mkMap.get(k1);
     }
 
-
-    public String getBySubKey(String k2) {
-        for(Map<String,String> m : mkMap.values()) {
+    /**
+     * Gets the value object for the specified (sub)key K2
+     * @param k2 key2 (sub-key)
+     * @return value object if exists or <tt>null</tt> if does not exists
+     */
+    public V getBySubKey(K2 k2) {
+        for(Map<K2,V> m : mkMap.values()) {
             if(m.containsKey(k2))
                 return m.get(k2);
         }
         return null;
     }
 
-    public String remove(String k1, String k2) {
+    /**
+     * Removes the value object for the specified (super)key K1 and (sub)key K2
+     * @param k1 key1 (super-key)
+     * @param k2 key2 (sub-key)
+     * @return previous value associated with specified key, or <tt>null</tt>
+     *         if there was no mapping for key.
+     */
+    public V remove(K1 k1, K2 k2) {
         if(mkMap.containsKey(k1)) {
-            Map<String,String> k2Map = mkMap.get(k1);
+            Map<K2,V> k2Map = mkMap.get(k1);
             return k2Map.remove(k2);
         }
         return null;
     }
 
-
-    private Map<String,String> remove(String k1) {
+    /**
+     * Removes the value object(s) for the specified (super)key K1
+     * @param k1 key1 (super-key)
+     * @return previous value (HashMap structure) associated with specified key, or <tt>null</tt>
+     *         if there was no mapping for key.
+     */
+    //This might remove the contents of sub-map without user-knowledge
+    private Map<K2,V> remove(K1 k1) {
         return mkMap.remove(k1);
     }
 
+    /**
+     * Size of MultiKeyHashMap
+     * @return MultiKeyHashMap size
+     */
     public int size() {
         int size = 0;
-        for(Map<String,String> m : mkMap.values()) {
+        for(Map<K2,V> m : mkMap.values()) {
             size++;
             size += m.size();
         }
         return size;
     }
 
-
-    public List<String> getAllItems(){
-        List<String> items = new ArrayList<String>();
-        for(Map<String,String> m : mkMap.values()) {
-            for(String v : m.values()) {
+    /**
+     * Returns all the value objects in the MultiKeyHashMap
+     * @return value objects as List
+     */
+    public List<V> getAllItems(){
+        List<V> items = new ArrayList<V>();
+        for(Map<K2,V> m : mkMap.values()) {
+            for(V v : m.values()) {
                 items.add(v);
             }
         }
         return items;
     }
 
-
+    /**
+     * Clears the entire hash map
+     */
     public void clear() {
-        for(Map<String,String> m : mkMap.values())
+        for(Map<K2,V> m : mkMap.values())
             m.clear();
 
         mkMap.clear();
     }
-
 }
