@@ -120,6 +120,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                             _this.treeStructureService.unMarkTreeItemMissing(gobiiExtractFilterType, _this.platformCriterion);
                             _this.treeStructureService.unMarkTreeItemMissing(gobiiExtractFilterType, _this.datasetTypesCriterion);
                         }
+                        else if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY) {
+                        }
                         else {
                             _this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]));
                         }
@@ -153,6 +155,23 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                                 }
                             }
                             else if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
+                                if (!_this.isItemPresent(all, _this.markerListItemCriterion)) {
+                                    _this.treeStructureService.markTreeItemMissing(gobiiExtractFilterType, _this.markerListItemCriterion);
+                                }
+                                if (!_this.isItemPresent(all, _this.markerListFileCriterion)) {
+                                    _this.treeStructureService.markTreeItemMissing(gobiiExtractFilterType, _this.markerListFileCriterion);
+                                }
+                                if (!_this.isItemPresent(all, _this.markergGroupCriterion)) {
+                                    _this.treeStructureService.markTreeItemMissing(gobiiExtractFilterType, _this.markergGroupCriterion);
+                                }
+                                if (!_this.isItemPresent(all, _this.platformCriterion)) {
+                                    _this.treeStructureService.markTreeItemMissing(gobiiExtractFilterType, _this.platformCriterion);
+                                }
+                                if (!_this.isItemPresent(all, _this.datasetTypesCriterion)) {
+                                    _this.treeStructureService.markTreeItemMissing(gobiiExtractFilterType, _this.datasetTypesCriterion);
+                                }
+                            }
+                            else if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY) {
                                 if (!_this.isItemPresent(all, _this.markerListItemCriterion)) {
                                     _this.treeStructureService.markTreeItemMissing(gobiiExtractFilterType, _this.markerListItemCriterion);
                                 }
@@ -203,6 +222,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                                 && (markersArePresent
                                     || markerGroupIsPresent
                                     || platformIsPresent);
+                    }
+                    else if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY) {
+                        returnVal = false;
                     }
                     else {
                         this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]));
@@ -354,6 +376,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                             }
                             else if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
                                 gobiiDataSetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(gobiiFileType, false, null, gobiiExtractFilterType, null, sampleList, sampleFileName, sampleListType, datasetType, platforms, principleInvestigator, project, null, null));
+                            }
+                            else if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY) {
                             }
                             else {
                                 _this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]));

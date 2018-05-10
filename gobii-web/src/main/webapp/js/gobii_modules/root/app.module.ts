@@ -18,7 +18,8 @@ import {UploaderComponent} from "../views/uploader.component";
 import {SampleListTypeComponent} from "../views/sample-list-type.component";
 import {
     CheckboxModule, DataTableModule, PanelModule, SharedModule, TreeModule, OverlayPanelModule,
-    AccordionModule, ListboxModule, FieldsetModule, TabViewModule, DialogModule, TooltipModule, RadioButtonModule
+    AccordionModule, ListboxModule, FieldsetModule, TabViewModule, DialogModule, TooltipModule, RadioButtonModule,
+    DropdownModule, ProgressSpinnerModule
 } from 'primeng/primeng';
 import {StatusDisplayTreeComponent} from "../views/status-display-tree.component";
 import {NameIdListBoxComponent} from "../views/name-id-list-box.component";
@@ -37,10 +38,14 @@ import {EffectsModule} from "@ngrx/effects";
 import {TreeEffects} from "../store/effects/tree-effects";
 import {TreeStructureService} from "../services/core/tree-structure-service";
 import {FileItemEffects} from "../store/effects/file-item-effects";
-import {FileItemService} from "../services/core/file-item-service";
+import {NameIdFileItemService} from "../services/core/nameid-file-item-service";
 import {InstructionSubmissionService} from "../services/core/instruction-submission-service";
 import {DatasetDatatableComponent} from "../views/dataset-datatable.component";
 import {FilterParamsColl} from "../services/core/filter-params-coll";
+import {FlexQueryFilterComponent} from "../views/flex-query-filter.component";
+import {MarkerSampleCountComponent} from "../views/marker-sample-count.component";
+import {EntityFileItemService} from "../services/core/entity-file-item-service";
+import {FilterService} from "../services/core/filter-service";
 
 
 @NgModule({
@@ -61,6 +66,9 @@ import {FilterParamsColl} from "../services/core/filter-params-coll";
         DialogModule,
         TooltipModule,
         RadioButtonModule,
+        ListboxModule,
+        DropdownModule,
+        ProgressSpinnerModule,
         routing,
         BrowserAnimationsModule,
         StoreModule.forRoot(reducers),
@@ -88,13 +96,17 @@ import {FilterParamsColl} from "../services/core/filter-params-coll";
         StatusDisplayTreeComponent,
         Button,
         SearchCriteriaBySamplesComponent,
-        DatasetDatatableComponent],
+        DatasetDatatableComponent,
+        FlexQueryFilterComponent,
+        MarkerSampleCountComponent],
     providers: [AuthGuard,
         AuthenticationService,
         DtoRequestService,
         NameIdService,
         TreeStructureService,
-        FileItemService,
+        NameIdFileItemService,
+        EntityFileItemService,
+        FilterService,
         InstructionSubmissionService,
         FilterParamsColl,
         {provide: APP_BASE_HREF, useValue: './'}],

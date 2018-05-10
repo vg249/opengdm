@@ -122,7 +122,7 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
                                 .setEntityType(type_entity_1.EntityType.MARKER_GROUP)
                                 .setContainerType(GobiiTreeNode_1.ContainerType.DATA)
                         ])
-                    ]);
+                    ], this.makeCommonNodes(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY)); // array of gobii tree nodes
                     // we know we only have to go one level deep in this case -- no need to recurse
                     returnVal.forEach(function (currentNode, idx, nodes) {
                         currentNode.getChildren().forEach(function (currentChild) {
