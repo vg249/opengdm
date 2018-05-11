@@ -125,6 +125,9 @@ class ConfigValues {
     @Element(required = false)
     private Integer maxUploadSizeMbytes = 10;
 
+    @Element(required = false)
+    private boolean isProvidesBackend = true;
+
     public TestExecConfig getTestExecConfig() {
         return testExecConfig;
     }
@@ -515,4 +518,11 @@ class ConfigValues {
         this.maxUploadSizeMbytes = maxUploadSizeMbytes;
     }
 
+    public boolean isProvidesBackend() {
+        return isProvidesBackend;
+    }
+
+    public void setProvidesBackend(boolean providesBackend) {
+        isProvidesBackend = providesBackend;
+    }
 }

@@ -5,6 +5,7 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
@@ -54,6 +55,7 @@ public class GobiiConfig {
     private static String CONFIG_REMOVE_CROP = "cR";
     private static String CONFIG_GLOBAL_FILESYS_ROOT = "gR";
     private static String CONFIG_GLOBAL_FILESYS_LOG = "gL";
+    private static String CONFIG_GLOBAL_PROVIDES_BACKEND = "gB";
 
 
     private static String CONFIG_SVR_GLOBAL_EMAIL = "stE"; // does not require -c
@@ -88,6 +90,7 @@ public class GobiiConfig {
     private static String CONFIG_TST_GLOBAL_LDAP_USER = "gtldu";
     private static String CONFIG_TST_GLOBAL_LDAP_PASSWORD = "gtldp";
     private static String CONFIG_TST_GLOBAL_DOWNLOAD_DIR = "dldr";
+    private static String CONFIG_TST_GLOBAL_ASYNCH_OP_TIMEOUT = "gtat";
 
 
     private static String CONFIG_CROP_ID = "c";
@@ -223,6 +226,7 @@ public class GobiiConfig {
 
             setOption(options, CONFIG_GLOBAL_FILESYS_ROOT, true, "Absolute path to the gobii file system root (global)", "gobii root fqpn");
             setOption(options, CONFIG_GLOBAL_FILESYS_LOG, true, "Log file directory (global)", "log directory");
+            setOption(options, CONFIG_GLOBAL_PROVIDES_BACKEND, true, "Specifies whether or not (true|false) MDE functionality is supported", "backend provided");
 
             setOption(options, CONFIG_CROP_ID, true, "Identifier of crop to add or modify; must be accompanied by a server specifier and its options", "crop ID");
 
@@ -271,6 +275,7 @@ public class GobiiConfig {
             setOption(options, CONFIG_TST_GLOBAL_LDAP_USER, true, "LDAP user as which unit tests authenticate (if Authentication requires LDAP)", "LDAP test user");
             setOption(options, CONFIG_TST_GLOBAL_LDAP_PASSWORD, true, "LDAP password with which LDAP unit test user authenticates (if Authentication requires LDAP)", "LDAP test user password");
             setOption(options, CONFIG_TST_GLOBAL_DOWNLOAD_DIR, true, "Destination directory for downloaded files)", "Download Directory");
+            setOption(options, CONFIG_TST_GLOBAL_ASYNCH_OP_TIMEOUT, true, "Timeout value, in minutes, for asynch ops such as digest/extract", "Asynch Timeout Minutes");
             setOption(options, VALIDATE_CONFIGURATION, false, "Verify that the specified configuration has all the values necessary for the system to function (does not test that the servers exist); requires " + PROP_FILE_FQPN, "validate");
 
             setOption(options, SVR_KDC, false, "KDC server to add or modify; must be accompanied by a server options and KDC options", "KDC Server options");
@@ -477,7 +482,7 @@ public class GobiiConfig {
                 if (commandLine.hasOption(PROP_FILE_FQPN) &&
                         (null != (propFileFqpn = commandLine.getOptionValue(PROP_FILE_FQPN)))) {
                     if (validateGobiiConfiguration(propFileFqpn, options, commandLine)) {
-                        System.out.print("File " + propFileFqpn + " is valid.");
+                        System.out.println("File " + propFileFqpn + " is valid.");
                         exitCode = 0;
                     }
                 } else {
@@ -745,6 +750,19 @@ public class GobiiConfig {
                         Arrays.asList(fileSysLog),
                         null);
 
+            } else if (commandLine.hasOption(CONFIG_GLOBAL_PROVIDES_BACKEND)) {
+                String flagAsString = commandLine.getOptionValue(CONFIG_GLOBAL_PROVIDES_BACKEND);
+                boolean flag = flagAsString.equalsIgnoreCase("true");
+
+                configSettings.setProvidesBackend(flag);
+                configSettings.commit();
+
+                writeConfigSettingsMessage(options,
+                        propFileFqpn,
+                        Arrays.asList(CONFIG_GLOBAL_PROVIDES_BACKEND),
+                        Arrays.asList(flag ? "true" : "false"),
+                        null);
+
             } else if (commandLine.hasOption(CONFIG_MARK_CROP_ACTIVE) &&
                     commandLine.hasOption(CONFIG_CROP_ID)) {
 
@@ -896,6 +914,17 @@ public class GobiiConfig {
                     argsSet.add(CONFIG_TST_GLOBAL_DOWNLOAD_DIR);
                     valsSet.add(testDownloadDirectory);
                     configSettings.getTestExecConfig().setTestFileDownloadDirectory(testDownloadDirectory);
+                }
+
+                if (commandLine.hasOption(CONFIG_TST_GLOBAL_ASYNCH_OP_TIMEOUT)) {
+                    String asycnTimeOutValAsString = commandLine.getOptionValue(CONFIG_TST_GLOBAL_ASYNCH_OP_TIMEOUT);
+                    if( ! StringUtils.isNumeric(asycnTimeOutValAsString) ) {
+                        throw new Exception("Value provided for option " + CONFIG_TST_GLOBAL_ASYNCH_OP_TIMEOUT + "is not a number");
+                    }
+                    Integer asycnTimeout = Integer.parseInt(asycnTimeOutValAsString);
+                    argsSet.add(CONFIG_TST_GLOBAL_ASYNCH_OP_TIMEOUT);
+                    valsSet.add(asycnTimeout.toString());
+                    configSettings.getTestExecConfig().setAsynchOpTimeoutMinutes(asycnTimeout);
                 }
 
                 configSettings.commit();
@@ -1359,13 +1388,13 @@ public class GobiiConfig {
                         returnVal = returnVal && verifyDbConfig(gobiiCropDbConfigPostGres);
                     }
 
-                    GobiiCropDbConfig gobiiCropDbConfigMonetDB = currentGobiiCropConfig.getCropDbConfig(GobiiDbType.MONETDB);
-                    if (gobiiCropDbConfigMonetDB == null) {
-                        messages.add("The monetdb for the crop (" + currentGobiiCropConfig.getGobiiCropType() + ") is not defined");
-                        returnVal = false;
-                    } else {
-                        returnVal = returnVal && verifyDbConfig(gobiiCropDbConfigMonetDB);
-                    }
+//                    GobiiCropDbConfig gobiiCropDbConfigMonetDB = currentGobiiCropConfig.getCropDbConfig(GobiiDbType.MONETDB);
+//                    if (gobiiCropDbConfigMonetDB == null) {
+//                        messages.add("The monetdb for the crop (" + currentGobiiCropConfig.getGobiiCropType() + ") is not defined");
+//                        returnVal = false;
+//                    } else {
+//                        returnVal = returnVal && verifyDbConfig(gobiiCropDbConfigMonetDB);
+//                    }
                 }
 
 

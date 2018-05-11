@@ -85,15 +85,18 @@ public class TestGobiiConfig {
     } //
 
     @Test
-    public void testSetFileSystemRoot() throws Exception {
+    public void testSetGlobals() throws Exception {
 
         String testFileFqpn = makeTestFileFqpn("filesystemroot");
+        boolean isProvidesBackend = true; // this is not the default
 
         String fsSystemRoot = "/nowhere/subnowhere";
         String commandLine = makeCommandline("-a -wfqpn "
                 + testFileFqpn
                 + " -gR "
-                + fsSystemRoot);
+                + fsSystemRoot
+        + " -gB "
+        + (isProvidesBackend ? "true" : "false"));
 
         boolean succeeded = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
         Assert.assertTrue("Command failed: " + commandLine, succeeded);
@@ -106,6 +109,9 @@ public class TestGobiiConfig {
         ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
         Assert.assertTrue("The file system root value read from the file does not match the input",
                 configSettings.getFileSystemRoot().equals(fsSystemRoot));
+
+        Assert.assertTrue("The provides-backedn setting read from the file doe snot match the input",
+                isProvidesBackend == configSettings.isProvidesBackend());
     }
 
     @Test
@@ -844,6 +850,7 @@ public class TestGobiiConfig {
         String ldapUserForUnitTest = "ldapUnitTestUser_" + UUID.randomUUID().toString();
         String ldapPasswordForUnitTest = "ldapUnitTestPassword_" + UUID.randomUUID().toString();
         String testDownloadDir = "/tmp/dir";
+        Integer asynchTimeoutMinutes = 23;
 
 
         String commandLine = makeCommandline("-a -wfqpn "
@@ -871,6 +878,8 @@ public class TestGobiiConfig {
                 + ldapPasswordForUnitTest
                 + " -dldr "
                 + testDownloadDir
+                + " -gtat "
+                + asynchTimeoutMinutes.toString()
         );
 
 
@@ -879,7 +888,6 @@ public class TestGobiiConfig {
 
 
         ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
-
 
         Assert.assertTrue("Config test value does not match: test directory", configSettings.getTestExecConfig().getConfigFileTestDirectory().equals(configFileTestDirectory));
         Assert.assertTrue("Config test value does not match: commandline stem", configSettings.getTestExecConfig().getConfigUtilCommandlineStem().equals(configUtilCommandlineStem));
@@ -893,6 +901,7 @@ public class TestGobiiConfig {
         Assert.assertTrue("Config test value does not match: ldap password", configSettings.getTestExecConfig().getLdapPasswordForUnitTest().equals(ldapPasswordForUnitTest));
         Assert.assertTrue("Config test value does not match: ldap password", configSettings.getTestExecConfig().getLdapPasswordForUnitTest().equals(ldapPasswordForUnitTest));
         Assert.assertTrue("Config test value does not match: download directory", configSettings.getTestExecConfig().getTestFileDownloadDirectory().equals(testDownloadDir));
+        Assert.assertTrue("Config test value does not match: asych timeout minutes", configSettings.getTestExecConfig().getAsynchOpTimeoutMinutes().equals(asynchTimeoutMinutes));
     }
 
     @Test

@@ -103,6 +103,8 @@ public class ConfigSettings {
             returnVal.put(ServerCapabilityType.KDC, false);
         }
 
+        returnVal.put(ServerCapabilityType.GOBII_BACKEND, this.configValues.isProvidesBackend());
+
         // for now we are not controlling this value though configuraiton
         returnVal.put(ServerCapabilityType.BRAPI, true);
 
@@ -367,4 +369,13 @@ public class ConfigSettings {
     public void setMaxUploadSizeMbytes(Integer maxUploadSizeMbytes) {
         this.configValues.setMaxUploadSizeMbytes(maxUploadSizeMbytes);
     }
+    public boolean isProvidesBackend() {
+        return this.configValues.isProvidesBackend();
+    }
+
+    public void setProvidesBackend(boolean providesBackend) {
+        this.configValues.setProvidesBackend(providesBackend);
+    }
+
+
 }
