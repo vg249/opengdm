@@ -56,6 +56,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by VCalaminos on 2/21/2017.
@@ -64,6 +65,7 @@ public class GobiiAdl {
 
     private static ServerConfig serverConfig;
     private static String crop = null;
+    private static Long timeout = null;
 
     private static void validateKeys(NodeList nodeList, XPath xPath, Document document) throws Exception {
         for (int i = 0; i < nodeList.getLength(); i++) {
@@ -1478,7 +1480,10 @@ public class GobiiAdl {
         boolean statusDetermined = false;
         String currentStatus = "";
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        while (!statusDetermined) {
+        long startTime = System.currentTimeMillis();
+        long timeoutInMillis = TimeUnit.MINUTES.toMillis(timeout);
+
+        while (!statusDetermined && (System.currentTimeMillis()-startTime) <= timeoutInMillis) {
 
             PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFilesDTOPayloadEnvelope = loaderJobResponseEnvolope.get(LoaderInstructionFilesDTO.class);
             checkStatus(loaderInstructionFilesDTOPayloadEnvelope, true);
@@ -1506,6 +1511,10 @@ public class GobiiAdl {
 
             System.out.print(".");
             Thread.sleep(1000);
+        }
+
+        if (!statusDetermined) {
+            throw new Exception("\n Maximum execution time of " + timeout + " minute/s exceeded");
         }
 
         return returnVal;
@@ -1784,6 +1793,8 @@ public class GobiiAdl {
         setOption(options, INPUT_USER, true, "Username of the user doing the load", "username");
         String INPUT_PASSWORD = "p";
         setOption(options, INPUT_PASSWORD, true, "Password of the user doing the load", "password");
+        String INPUT_TIMEOUT = "t";
+        setOption(options, INPUT_TIMEOUT, true, "Maximum waiting time in minutes.", "timeout");
 
         // parse the commandline
         CommandLineParser parser = new DefaultParser();
@@ -1812,6 +1823,24 @@ public class GobiiAdl {
             System.out.println(message);
             System.exit(1);
         }
+
+        //set default to 10minutes;
+        Integer timeoutInt = 600000;
+
+        if (commandLine.hasOption(INPUT_TIMEOUT)) {
+
+            String inputTimeout = commandLine.getOptionValue(INPUT_TIMEOUT);
+
+            // check if valid integer
+            try {
+                timeoutInt = Integer.parseInt(inputTimeout);
+            } catch (NumberFormatException e) {
+                throw new Exception("Invalid input for timeout: " + inputTimeout);
+            }
+
+        }
+
+        timeout = timeoutInt.longValue();
 
         fXmlFile = new File(commandLine.getOptionValue(INPUT_XML));
         if (!fXmlFile.exists()) {
