@@ -232,57 +232,33 @@ public class DtoRequestConfigSettingsPropsTest {
     } // testInitContextFromConfigSettings()
 
 
-    @Ignore
-    /***
-     * TODO: This test has to be redesigned so that it doesn't rely on a local config file:
-     * as currently constructed, this test fails in the integration test environment.
-     * Not sure how to do this better
-     */
+    @Test
     public void testGetServerCapabilities() throws Exception {
+
+        // it is not possible for this test to verify the actual values against a
+        // configuration file because the test may be running on a different sytem from the
+        // one that the server is running on. So we are just going to verify that the
+        // keys exist
 
         GobiiClientContext.resetConfiguration();
         ConfigSettings configSettings = new GobiiTestConfiguration().getConfigSettings();
-        Map<ServerCapabilityType, Boolean> serverCapabilitiesFromConfigFile = configSettings.getServerCapabilities();
-
-        Assert.assertNotNull("There is no KDC configuration to test with",
-                configSettings.getKDCConfig());
-
-        Boolean kdcIsActiveFromLocalFile = configSettings.getKDCConfig().isActive();
-
-
-        Map<ServerCapabilityType, Boolean> serverCapabilitiesFromServer = getConfigSettingsFromServer()
-                .getPayload()
-                .getData()
-                .get(0)
-                .getServerCapabilities();
-
-        Assert.assertEquals("The KDC setting from the server is not the same as from the local config file",
-                kdcIsActiveFromLocalFile,
-                serverCapabilitiesFromServer.get(ServerCapabilityType.KDC));
-
-        Assert.assertTrue("The locally derived map and the remote map are not equal",
-                serverCapabilitiesFromServer.equals(serverCapabilitiesFromConfigFile));
-
         String initConfigUrl = configSettings.getTestExecConfig().getInitialConfigUrl();
 
         Map<ServerCapabilityType, Boolean> serverCapabilities = GobiiClientContext.getInstance(initConfigUrl, true)
                 .getServerCapabilities();
 
-        Assert.assertNotNull("There is no KDC capability setting",
-                serverCapabilities.get(ServerCapabilityType.KDC));
+        Assert.assertTrue("There is no capability setting for KDC",
+                serverCapabilities.containsKey(ServerCapabilityType.KDC)
+        );
 
-        Assert.assertTrue(
-                serverCapabilities.get(ServerCapabilityType.KDC)
-                        .equals(serverCapabilitiesFromConfigFile.get(ServerCapabilityType.KDC)));
+        Assert.assertTrue("There is no capability setting for GOBII Backend",
+                serverCapabilities.containsKey(ServerCapabilityType.GOBII_BACKEND)
+        );
 
-        Assert.assertNotNull("There is no maxupload size",
-                GobiiClientContext.getInstance(null,false).getMaxUploadSizeMbytes());
-
-        Assert.assertTrue("Max upload size is not greather than zero",
-                GobiiClientContext.getInstance(null,false).getMaxUploadSizeMbytes() > 0);
-
+        Assert.assertTrue("There is no capability setting for BRAPI",
+                serverCapabilities.containsKey(ServerCapabilityType.BRAPI)
+        );
 
     }
-
 
 }

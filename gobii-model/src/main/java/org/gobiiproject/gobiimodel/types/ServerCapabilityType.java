@@ -5,5 +5,6 @@ package org.gobiiproject.gobiimodel.types;
  */
 public enum ServerCapabilityType {
     KDC,
-    BRAPI
+    BRAPI,
+    GOBII_BACKEND
 }

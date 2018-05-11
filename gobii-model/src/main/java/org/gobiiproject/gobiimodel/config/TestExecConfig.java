@@ -44,6 +44,9 @@ public class TestExecConfig {
     @Element(required = false)
     private String testFileDownloadDirectory = null;
 
+    @Element(required = false)
+    private Integer asynchOpTimeoutMinutes = 15;
+
     public String getTestCrop() {
         return testCrop;
     }
@@ -165,4 +168,11 @@ public class TestExecConfig {
         this.testFileDownloadDirectory = testFileDownloadDirectory;
     }
 
+    public Integer getAsynchOpTimeoutMinutes() {
+        return asynchOpTimeoutMinutes;
+    }
+
+    public void setAsynchOpTimeoutMinutes(Integer asynchOpTimeoutMinutes) {
+        this.asynchOpTimeoutMinutes = asynchOpTimeoutMinutes;
+    }
 }
