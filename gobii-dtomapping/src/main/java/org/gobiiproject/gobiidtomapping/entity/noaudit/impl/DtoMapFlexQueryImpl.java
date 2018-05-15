@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapDataSetImpl;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapFlexQuery;
@@ -49,4 +50,28 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
 
     }
 
+    @Override
+    public List<VertexDTO> getVertexValues(VertexFilterDTO vertexFilterDTO) throws GobiiDtoMappingException {
+
+        List<VertexDTO> returnVal = new ArrayList<>();
+
+        if( vertexFilterDTO.getDestinationVertexDTO() == null || vertexFilterDTO.getDestinationVertexDTO().getGobiiEntityNameType() == GobiiEntityNameType.UNKNOWN ) {
+            throw new GobiiDtoMappingException("Unspecified destination vertex entity type");
+        }
+
+        GobiiEntityNameType gobiiEntityNameType = vertexFilterDTO.getDestinationVertexDTO().getGobiiEntityNameType();
+
+        for(Integer idx=0; idx < 20; idx ++ ) {
+
+            returnVal.add(
+                    new VertexDTO(idx,
+                            String.valueOf(gobiiEntityNameType).toLowerCase() + ": " + idx,
+                            gobiiEntityNameType,
+                            null )
+            );
+        }
+
+        return returnVal;
+
+    } // getVertexValues()
 }

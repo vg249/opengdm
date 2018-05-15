@@ -72,7 +72,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import sun.security.provider.certpath.Vertex;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -4382,6 +4381,45 @@ public class GOBIIControllerV1 {
 
 
             List<VertexDTO> vertices = this.flexQueryService.getVertices();
+
+            PayloadWriter<VertexDTO> payloadWriter = new PayloadWriter<>(request, response,
+                    VertexDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    null,
+                    vertices);
+
+        } catch (GobiiException e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        } catch (Exception e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+    @RequestMapping(value = "/entities/vertices/values", method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope<VertexDTO> getVerticesValues(HttpServletRequest request,
+                                                  HttpServletResponse response,
+                                                        @RequestBody PayloadEnvelope<VertexFilterDTO> vertexFilterDTOPayloadEnvelope) {
+
+        PayloadEnvelope<VertexDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+
+
+            List<VertexDTO> vertices = this.flexQueryService.getVerticesValues(vertexFilterDTOPayloadEnvelope.getPayload().getData().get(0));
 
             PayloadWriter<VertexDTO> payloadWriter = new PayloadWriter<>(request, response,
                     VertexDTO.class);
