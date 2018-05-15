@@ -119,7 +119,7 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
                     _entitySubType, _cvFilterType, _cvFilterValue, _extractorItemType, targetEntityUniqueId, relatedEntityUniqueId, _queryName, _filterType, 
                     // private _targetEntityFilterValue: string = null,
                     // private _relatedEntityFilterValue: string = null,
-                    _gobiiExtractFilterType, _nameIdLabelType, _parentFileItemParams, _childFileItemParams, _isDynamicFilterValue, _isDynamicDataLoad, _isPaged, _pageSize, _pageNum, _pagedQueryId, onLoadFilteredItemsAction, dtoRequestItem, dtoRequestService) {
+                    _gobiiExtractFilterType, _nameIdLabelType, _parentFileItemParams, _childFileItemParams, _previousSiblingFileItemParams, _nextSiblingFileItemParams, _isDynamicFilterValue, _isDynamicDataLoad, _isPaged, _pageSize, _pageNum, _pagedQueryId, onLoadFilteredItemsAction, dtoRequestItem, dtoRequestService) {
                     if (_entityType === void 0) { _entityType = type_entity_1.EntityType.UNKNOWN; }
                     if (_entitySubType === void 0) { _entitySubType = type_entity_1.EntitySubType.UNKNOWN; }
                     if (_cvFilterType === void 0) { _cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN; }
@@ -135,6 +135,8 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
                     this._nameIdLabelType = _nameIdLabelType;
                     this._parentFileItemParams = _parentFileItemParams;
                     this._childFileItemParams = _childFileItemParams;
+                    this._previousSiblingFileItemParams = _previousSiblingFileItemParams;
+                    this._nextSiblingFileItemParams = _nextSiblingFileItemParams;
                     this._isDynamicFilterValue = _isDynamicFilterValue;
                     this._isDynamicDataLoad = _isDynamicDataLoad;
                     this._isPaged = _isPaged;
@@ -150,7 +152,7 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
                     return (new FilterParams(entityType, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null, type_extractor_item_1.ExtractorItemType.ENTITY, null, null, queryName, filter_type_1.FilterType.NONE, 
                     // null,
                     // null,
-                    gobiiExtractFilterType, name_id_label_type_1.NameIdLabelType.UNKNOWN, null, [], true, true, false, null, null, null, null, null, null));
+                    gobiiExtractFilterType, name_id_label_type_1.NameIdLabelType.UNKNOWN, null, [], null, null, true, true, false, null, null, null, null, null, null));
                 };
                 FilterParams.prototype.getQueryName = function () {
                     return this._queryName;
@@ -256,6 +258,20 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
                 };
                 FilterParams.prototype.setChildNameIdRequestParams = function (childNameIdRequestParams) {
                     this._childFileItemParams = childNameIdRequestParams;
+                    return this;
+                };
+                FilterParams.prototype.getPreviousSiblingFileItemParams = function () {
+                    return this._previousSiblingFileItemParams;
+                };
+                FilterParams.prototype.setPreviousSiblingNameIdRequestParams = function (previousSiblingNameIdRequestParams) {
+                    this._previousSiblingFileItemParams = previousSiblingNameIdRequestParams;
+                    return this;
+                };
+                FilterParams.prototype.getNextSiblingFileItemParams = function () {
+                    return this._nextSiblingFileItemParams;
+                };
+                FilterParams.prototype.setNextSiblingNameIdRequestParams = function (NextSiblingNameIdRequestParams) {
+                    this._nextSiblingFileItemParams = NextSiblingNameIdRequestParams;
                     return this;
                 };
                 FilterParams.prototype.setIsDynamicFilterValue = function (dynamicFilterValue) {

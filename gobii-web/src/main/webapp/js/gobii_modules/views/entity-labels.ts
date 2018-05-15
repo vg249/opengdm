@@ -25,6 +25,7 @@ export class Labels {
         this.entityNodeLabels[EntityType.PROJECT] = "Project";
         this.entityNodeLabels[EntityType.EXPERIMENT] = "Experiment";
         this.entityNodeLabels[EntityType.MARKER_GROUP] = "Marker Groups";
+        this.entityNodeLabels[EntityType.UNKNOWN] = "UNKNOWN";
 
 
         this.cvFilterNodeLabels[CvFilterType.DATASET_TYPE] = "Dataset Type";
@@ -45,6 +46,7 @@ export class Labels {
         this.treeExtractorTypeLabels[ExtractorItemType.EXPORT_FORMAT] = "Format";
         this.treeExtractorTypeLabels[ExtractorItemType.JOB_ID] = "Job ID";
         this.treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_TYPE] = "List Type";
+        this.treeExtractorTypeLabels[ExtractorItemType.VERTEX] = "Entity Type";
 
         this.extractFormatTypeLabels[GobiiExtractFormat.HAPMAP] = "Hapmap";
         this.extractFormatTypeLabels[GobiiExtractFormat.FLAPJACK] = "Flapjack";
