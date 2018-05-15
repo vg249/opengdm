@@ -4407,19 +4407,19 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
-    @RequestMapping(value = "/entities/vertices/values", method = RequestMethod.POST)
+    @RequestMapping(value = "/entities/vertices/{jobId}/values", method = RequestMethod.POST)
     @ResponseBody
     public PayloadEnvelope<VertexDTO> getVerticesValues(HttpServletRequest request,
-                                                  HttpServletResponse response,
-                                                        @RequestBody PayloadEnvelope<VertexFilterDTO> vertexFilterDTOPayloadEnvelope) {
+                                                        HttpServletResponse response,
+                                                        @RequestBody PayloadEnvelope<VertexFilterDTO> vertexFilterDTOPayloadEnvelope,
+                                                        @PathVariable String jobId) {
 
         PayloadEnvelope<VertexDTO> returnVal = new PayloadEnvelope<>();
 
         try {
 
 
-
-            List<VertexDTO> vertices = this.flexQueryService.getVerticesValues(vertexFilterDTOPayloadEnvelope.getPayload().getData().get(0));
+            List<VertexDTO> vertices = this.flexQueryService.getVerticesValues(jobId,vertexFilterDTOPayloadEnvelope.getPayload().getData().get(0));
 
             PayloadWriter<VertexDTO> payloadWriter = new PayloadWriter<>(request, response,
                     VertexDTO.class);
@@ -4445,4 +4445,46 @@ public class GOBIIControllerV1 {
 
         return (returnVal);
     }
+
+
+    @RequestMapping(value = "/entities/vertices/{jobId}/counts", method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope<VertexFilterDTO> getVerticesValuesCounts(HttpServletRequest request,
+                                                        HttpServletResponse response,
+                                                        @RequestBody PayloadEnvelope<VertexFilterDTO> vertexFilterDTOPayloadEnvelope,
+                                                        @PathVariable String jobId) {
+
+        PayloadEnvelope<VertexFilterDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+
+            VertexFilterDTO vertexFilterDTO = this.flexQueryService.getVertexValuesCounts(jobId, vertexFilterDTOPayloadEnvelope.getPayload().getData().get(0));
+
+            PayloadWriter<VertexFilterDTO> payloadWriter = new PayloadWriter<>(request, response,
+                    VertexFilterDTO.class);
+
+            payloadWriter.writeSingleItemForId(returnVal,
+                    null,
+                    vertexFilterDTO,
+                    jobId);
+
+        } catch (GobiiException e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        } catch (Exception e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
 }// GOBIIController

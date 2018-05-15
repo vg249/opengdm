@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Phil on 4/22/2016.
@@ -51,7 +52,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
     }
 
     @Override
-    public List<VertexDTO> getVertexValues(VertexFilterDTO vertexFilterDTO) throws GobiiDtoMappingException {
+    public List<VertexDTO> getVertexValues(String jobId, VertexFilterDTO vertexFilterDTO) throws GobiiDtoMappingException {
 
         List<VertexDTO> returnVal = new ArrayList<>();
 
@@ -74,4 +75,15 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
         return returnVal;
 
     } // getVertexValues()
+
+    public VertexFilterDTO getVertexValuesCounts(String jobId, VertexFilterDTO vertexFilterDTO) throws GobiiDtoMappingException {
+
+        VertexFilterDTO returnVal = vertexFilterDTO;
+
+        vertexFilterDTO.setMarkerCount(new Random().nextInt());
+        vertexFilterDTO.setSampleCount(new Random().nextInt());
+
+        return returnVal;
+    }
+
 }
