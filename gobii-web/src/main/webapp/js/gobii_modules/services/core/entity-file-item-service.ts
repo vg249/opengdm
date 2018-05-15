@@ -26,8 +26,6 @@ import {FilterService} from "./filter-service";
 @Injectable()
 export class EntityFileItemService {
 
-    private readonly NONE_ITEM_ITEM_ID: string = "-1";
-
     constructor(private nameIdService: NameIdService,
                 private entityStatsService: DtoRequestService<EntityStats>,
                 private fileItemRequestService: DtoRequestService<GobiiFileItem[]>,
