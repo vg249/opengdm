@@ -1,4 +1,3 @@
-import {ProcessType} from "../../model/type-process";
 import {GobiiExtractorInstruction} from "./gobii-extractor-instruction";
 
 export class ExtractorInstructionFilesDTO {

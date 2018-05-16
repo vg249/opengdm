@@ -570,7 +570,7 @@ export class InstructionSubmissionService {
             this.dtoRequestServiceExtractorFile.post(new DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))
                 .subscribe(extractorInstructionFilesDTO => {
                         extractorInstructionFilesDTOResponse = extractorInstructionFilesDTO;
-                        this.store.dispatch(new historyAction
+                        this.store.dispatch(new  historyAction
                             .AddStatusMessageAction("Extractor instruction file created on server: "
                                 + extractorInstructionFilesDTOResponse.getInstructionFileName()));
 

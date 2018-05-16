@@ -71,7 +71,6 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../mo
                     this.filterService = filterService;
                     this.store = store;
                     this.filterParamsColl = filterParamsColl;
-                    this.NONE_ITEM_ITEM_ID = "-1";
                 } // constructor
                 EntityFileItemService.prototype.loadEntityList = function (gobiiExtractFilterType, fileItemParamName) {
                     var _this = this;
