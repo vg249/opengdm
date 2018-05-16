@@ -24,6 +24,9 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class DtoRequestFlexTest {
 
 
@@ -64,7 +67,8 @@ public class DtoRequestFlexTest {
                 vertexDTO.getVertexId() > 0);
         Assert.assertFalse("The vertex name is empty",
                 vertexDTO.getVertexName().isEmpty());
-    }
+
+    } // testGetVertices()
 
     @Test
     public void testGetVerticesValues() throws Exception {
@@ -117,6 +121,79 @@ public class DtoRequestFlexTest {
                                 .stream()
                                 .filter(vv -> !vv.getName().isEmpty())
                                 .count());
-    }
+
+    } // testGetVerticesValues()
+
+
+    @Test
+    public void testGetVerticesMarkerSampleCount() throws Exception {
+
+        String jobId = DateUtils.makeDateIdString() + "_test";
+        RestUri restUriVerticesValuesCount = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_VERTICES)
+                .addUriParam("jobId", jobId)
+                .appendSegment(GobiiServiceRequestId.URL_COUNT);
+
+
+        VertexFilterDTO vertexFilterDTO = new VertexFilterDTO();
+        // *********************** destination vertex
+        GobiiEntityNameType gobiiDestinationEntityNameTypeToTest = GobiiEntityNameType.PROJECT;
+        VertexDTO destinationVertexDTO =
+                new VertexDTO(
+                        0,
+                        null,
+                        gobiiDestinationEntityNameTypeToTest,
+                        null
+                );
+
+        vertexFilterDTO.setDestinationVertexDTO(destinationVertexDTO);
+
+
+        // *********************** filter vertices -- these are totally bogus values to start with
+        GobiiEntityNameType gobiiFilterEntityTypeF1 = GobiiEntityNameType.CONTACT;
+        VertexDTO filterF1VertexDTO =
+                new VertexDTO(
+                        0,
+                        null,
+                        gobiiFilterEntityTypeF1,
+                        null
+                );
+        filterF1VertexDTO.setFilterVals(new ArrayList<>(Arrays.asList(1,2,3)));
+
+        GobiiEntityNameType gobiiFilterEntityTypeF2 = GobiiEntityNameType.DATASET;
+        VertexDTO filterF2VertexDTO =
+                new VertexDTO(
+                        0,
+                        null,
+                        gobiiFilterEntityTypeF2,
+                        null
+                );
+        filterF2VertexDTO.setFilterVals(new ArrayList<>(Arrays.asList(1,2,3)));
+
+        vertexFilterDTO.getFilterVertices().add(filterF1VertexDTO);
+        vertexFilterDTO.getFilterVertices().add(filterF2VertexDTO);
+
+
+
+
+        GobiiEnvelopeRestResource<VertexFilterDTO> gobiiEnvelopeRestResourceContacts = new GobiiEnvelopeRestResource<>(restUriVerticesValuesCount);
+        PayloadEnvelope<VertexFilterDTO> resultEnvelopeVertexFilter = gobiiEnvelopeRestResourceContacts.post(VertexFilterDTO.class,
+                new PayloadEnvelope<>(vertexFilterDTO, GobiiProcessType.CREATE));
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeVertexFilter.getHeader()));
+
+        Assert.assertTrue("No vertex filter value was received",
+                resultEnvelopeVertexFilter.getPayload().getData().size() > 0);
+
+        VertexFilterDTO vertexFilterDTOReceived = resultEnvelopeVertexFilter.getPayload().getData().get(0);
+
+        Assert.assertTrue("There is no marker count value",
+                vertexFilterDTOReceived.getMarkerCount() > 0);
+
+        Assert.assertTrue("There is no sample count value",
+                vertexFilterDTOReceived.getSampleCount() > 0);
+
+    } // testGetVerticesValues()
 
 }

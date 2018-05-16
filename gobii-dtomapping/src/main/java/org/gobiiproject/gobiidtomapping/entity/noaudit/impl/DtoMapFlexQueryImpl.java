@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Phil on 4/22/2016.
@@ -80,8 +81,9 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
 
         VertexFilterDTO returnVal = vertexFilterDTO;
 
-        vertexFilterDTO.setMarkerCount(new Random().nextInt());
-        vertexFilterDTO.setSampleCount(new Random().nextInt());
+
+        vertexFilterDTO.setMarkerCount(ThreadLocalRandom.current().nextInt(1,1000));
+        vertexFilterDTO.setSampleCount(ThreadLocalRandom.current().nextInt(1,1000));
 
         return returnVal;
     }
