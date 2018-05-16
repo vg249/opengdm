@@ -4370,7 +4370,7 @@ public class GOBIIControllerV1 {
     }
 
 
-    @RequestMapping(value = "/entities/vertices", method = RequestMethod.GET)
+    @RequestMapping(value = "/vertices", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<VertexDTO> getVertices(HttpServletRequest request,
                                                   HttpServletResponse response) {
@@ -4407,7 +4407,7 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
-    @RequestMapping(value = "/entities/vertices/{jobId}/values", method = RequestMethod.POST)
+    @RequestMapping(value = "/vertices/{jobId}/values", method = RequestMethod.POST)
     @ResponseBody
     public PayloadEnvelope<VertexDTO> getVerticesValues(HttpServletRequest request,
                                                         HttpServletResponse response,
@@ -4447,7 +4447,7 @@ public class GOBIIControllerV1 {
     }
 
 
-    @RequestMapping(value = "/entities/vertices/{jobId}/counts", method = RequestMethod.POST)
+    @RequestMapping(value = "/vertices/{jobId}/count", method = RequestMethod.POST)
     @ResponseBody
     public PayloadEnvelope<VertexFilterDTO> getVerticesValuesCounts(HttpServletRequest request,
                                                         HttpServletResponse response,
