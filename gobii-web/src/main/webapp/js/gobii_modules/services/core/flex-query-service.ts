@@ -18,6 +18,7 @@ import {PayloadFilter} from "../../store/actions/action-payload-filter";
 import {FilterParamsColl} from "./filter-params-coll";
 import {FilterParams} from "../../model/filter-params";
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
+import {EntityType, entityTypefromString} from "../../model/type-entity";
 
 @Injectable()
 export class FlexQueryService {
@@ -71,7 +72,7 @@ export class FlexQueryService {
                                     GobiiExtractFilterType.FLEX_QUERY,
                                     ProcessType.CREATE)
                                     .setExtractorItemType(ExtractorItemType.VERTEX_VALUE)
-                                    .setEntityType(targetVertex.entityType)
+                                    .setEntityType(entityTypefromString(targetVertex.gobiiEntityNameTypeName))
                                     // .setEntitySubType(filterParamsToLoad.getEntitySubType())
                                     // .setCvFilterType(filterParamsToLoad.getCvFilterType())
                                     .setItemId(item.id)
@@ -89,7 +90,7 @@ export class FlexQueryService {
                     let filterParams: FilterParams = this.filterParamsColl.getFilter(filterParamName, GobiiExtractFilterType.FLEX_QUERY);
                     let targetCompoundUniqueId :GobiiFileItemCompoundId =  filterParams.getTargetEntityUniqueId();
                     targetCompoundUniqueId.setExtractorItemType(ExtractorItemType.VERTEX_VALUE);
-                    targetCompoundUniqueId.setEntityType(targetVertex.entityType);
+                    targetCompoundUniqueId.setEntityType( entityTypefromString( targetVertex.gobiiEntityNameTypeName) );
                     let loadAction: fileItemActions.LoadFileItemListWithFilterAction =
                         new fileItemActions.LoadFileItemListWithFilterAction(
                             {

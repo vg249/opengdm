@@ -4,7 +4,6 @@ import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -16,10 +15,10 @@ public class VertexDTO extends DTOBase{
     public VertexDTO() {}
 
 
-    public VertexDTO(Integer vertexId, String vertexName, GobiiEntityNameType gobiiEntityNameType, String cvGroupName) {
+    public VertexDTO(Integer vertexId, String vertexName, String gobiiEntityNameTypeName, String cvGroupName) {
         this.vertexId = vertexId;
         this.vertexName = vertexName;
-        this.gobiiEntityNameType = gobiiEntityNameType;
+        this.gobiiEntityNameTypeName = gobiiEntityNameTypeName;
         this.cvGroupName = cvGroupName;
     }
 
@@ -37,7 +36,7 @@ public class VertexDTO extends DTOBase{
     private Integer vertexId = 0;
     private String vertexName;
     private List<Integer> filterVals = new ArrayList<>();
-    GobiiEntityNameType gobiiEntityNameType;
+    String gobiiEntityNameTypeName;
     private String cvGroupName;
 
 
@@ -65,12 +64,12 @@ public class VertexDTO extends DTOBase{
         this.filterVals = filterVals;
     }
 
-    public GobiiEntityNameType getGobiiEntityNameType() {
-        return gobiiEntityNameType;
+    public String getGobiiEntityNameTypeName() {
+        return gobiiEntityNameTypeName;
     }
 
-    public void setGobiiEntityNameType(GobiiEntityNameType gobiiEntityNameType) {
-        this.gobiiEntityNameType = gobiiEntityNameType;
+    public void setGobiiEntityNameTypeName(String gobiiEntityNameTypeName) {
+        this.gobiiEntityNameTypeName = gobiiEntityNameTypeName;
     }
 
     public String getCvGroupName() {

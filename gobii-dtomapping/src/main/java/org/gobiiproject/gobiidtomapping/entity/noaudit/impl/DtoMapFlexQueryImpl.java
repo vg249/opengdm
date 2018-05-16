@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit.impl;
 
-import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapDataSetImpl;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapFlexQuery;
@@ -14,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -31,15 +29,15 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
         List<VertexDTO> returnVal = new ArrayList<>();
 
         // mock values
-        returnVal.add(new VertexDTO(1,"Projects", GobiiEntityNameType.PROJECT,null));
-        returnVal.add(new VertexDTO(2,"Experiment", GobiiEntityNameType.EXPERIMENT,null));
-        returnVal.add(new VertexDTO(3,"Dataset Types", GobiiEntityNameType.CV, CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName()));
-        returnVal.add(new VertexDTO(5,"Analyses", GobiiEntityNameType.CV,CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName()));
-        returnVal.add(new VertexDTO(6,"Vendor Protocols", GobiiEntityNameType.VENDOR_PROTOCOL,null));
-        returnVal.add(new VertexDTO(7,"Platforms", GobiiEntityNameType.PLATFORM,null));
-        returnVal.add(new VertexDTO(8,"Mapset/Linkage group", GobiiEntityNameType.MAPSET,null));
-        returnVal.add(new VertexDTO(9,"Germplasm", GobiiEntityNameType.GERMPLASM,null));
-        returnVal.add(new VertexDTO(10,"Principle Investigators", GobiiEntityNameType.CONTACT,null));
+        returnVal.add(new VertexDTO(1,"Projects", GobiiEntityNameType.PROJECT.name(),null));
+        returnVal.add(new VertexDTO(2,"Experiment", GobiiEntityNameType.EXPERIMENT.name(),null));
+        returnVal.add(new VertexDTO(3,"Dataset Types", GobiiEntityNameType.CV.name(), CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName()));
+        returnVal.add(new VertexDTO(5,"Analyses", GobiiEntityNameType.CV.name(),CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName()));
+        returnVal.add(new VertexDTO(6,"Vendor Protocols", GobiiEntityNameType.VENDOR_PROTOCOL.name(),null));
+        returnVal.add(new VertexDTO(7,"Platforms", GobiiEntityNameType.PLATFORM.name(),null));
+        returnVal.add(new VertexDTO(8,"Mapset/Linkage group", GobiiEntityNameType.MAPSET.name(),null));
+        returnVal.add(new VertexDTO(9,"Germplasm", GobiiEntityNameType.GERMPLASM.name(),null));
+        returnVal.add(new VertexDTO(10,"Principle Investigators", GobiiEntityNameType.CONTACT.name(),null));
 
 //        try {
 //
@@ -58,18 +56,17 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
 
         VertexFilterDTO returnVal = vertexFilterDTO;
 
-        if( vertexFilterDTO.getDestinationVertexDTO() == null || vertexFilterDTO.getDestinationVertexDTO().getGobiiEntityNameType() == GobiiEntityNameType.UNKNOWN ) {
+        if( vertexFilterDTO.getDestinationVertexDTO() == null || vertexFilterDTO.getDestinationVertexDTO().getGobiiEntityNameTypeName().isEmpty() ) {
             throw new GobiiDtoMappingException("Unspecified destination vertex entity type");
         }
 
-        GobiiEntityNameType gobiiEntityNameType = vertexFilterDTO.getDestinationVertexDTO().getGobiiEntityNameType();
 
         for(Integer idx=0; idx < 20; idx ++ ) {
 
             returnVal.getVertexValues().add(
-                    new NameIdDTO(gobiiEntityNameType,
+                    new NameIdDTO(GobiiEntityNameType.valueOf(vertexFilterDTO.getDestinationVertexDTO().getGobiiEntityNameTypeName()),
                             idx,
-                            String.valueOf(gobiiEntityNameType).toLowerCase() + ": " + idx)
+                            vertexFilterDTO.getDestinationVertexDTO().getGobiiEntityNameTypeName().toLowerCase() + ": " + idx)
             );
         }
 

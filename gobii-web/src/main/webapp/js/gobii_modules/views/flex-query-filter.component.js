@@ -90,7 +90,9 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                         this.selectedAllowableEntities = null;
                     }
                     this.JobId$.subscribe(function (fileItemJobId) {
-                        _this.flexQueryService.loadVertexValues(fileItemJobId.getItemId(), arg.value._entity, _this.filterParamNameVertexValues);
+                        var destinationVertex = arg.value._entity;
+                        //                destinationVertex.entityType = destinationVertex.entityType;
+                        _this.flexQueryService.loadVertexValues(fileItemJobId.getItemId(), destinationVertex, _this.filterParamNameVertexValues);
                     });
                     // this.filterService.loadFilter(this.gobiiExtractFilterType,
                     //     this.filterParamNameVertices,

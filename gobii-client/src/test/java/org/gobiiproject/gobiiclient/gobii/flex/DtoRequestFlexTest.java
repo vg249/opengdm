@@ -62,11 +62,22 @@ public class DtoRequestFlexTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         Assert.assertTrue("No vertices were retrieved",
                 resultEnvelope.getPayload().getData().size() > 0);
-        VertexDTO vertexDTO = resultEnvelope.getPayload().getData().get(0);
-        Assert.assertTrue("The vertex does not have a vertexId",
-                vertexDTO.getVertexId() > 0);
-        Assert.assertFalse("The vertex name is empty",
-                vertexDTO.getVertexName().isEmpty());
+
+        resultEnvelope.getPayload().getData().forEach(
+                vertexDTO -> {
+
+                    Assert.assertFalse("The vertex does not have an entity typename",
+                            vertexDTO.getGobiiEntityNameTypeName().isEmpty());
+
+                    Assert.assertTrue("The vertex does not have a vertexId",
+                            vertexDTO.getVertexId() > 0);
+
+                    Assert.assertFalse("The vertex name is empty",
+                            vertexDTO.getVertexName().isEmpty());
+                }
+
+        );
+
 
     } // testGetVertices()
 
@@ -87,7 +98,7 @@ public class DtoRequestFlexTest {
                 new VertexDTO(
                         0,
                         null,
-                        gobiiEntityNameTypeToTest,
+                        gobiiEntityNameTypeToTest.name(),
                         null
                 )
         );
@@ -143,7 +154,7 @@ public class DtoRequestFlexTest {
                 new VertexDTO(
                         0,
                         null,
-                        gobiiDestinationEntityNameTypeToTest,
+                        gobiiDestinationEntityNameTypeToTest.name(),
                         null
                 );
 
@@ -156,26 +167,23 @@ public class DtoRequestFlexTest {
                 new VertexDTO(
                         0,
                         null,
-                        gobiiFilterEntityTypeF1,
+                        gobiiFilterEntityTypeF1.name(),
                         null
                 );
-        filterF1VertexDTO.setFilterVals(new ArrayList<>(Arrays.asList(1,2,3)));
+        filterF1VertexDTO.setFilterVals(new ArrayList<>(Arrays.asList(1, 2, 3)));
 
         GobiiEntityNameType gobiiFilterEntityTypeF2 = GobiiEntityNameType.DATASET;
         VertexDTO filterF2VertexDTO =
                 new VertexDTO(
                         0,
                         null,
-                        gobiiFilterEntityTypeF2,
+                        gobiiFilterEntityTypeF2.name(),
                         null
                 );
-        filterF2VertexDTO.setFilterVals(new ArrayList<>(Arrays.asList(1,2,3)));
+        filterF2VertexDTO.setFilterVals(new ArrayList<>(Arrays.asList(1, 2, 3)));
 
         vertexFilterDTO.getFilterVertices().add(filterF1VertexDTO);
         vertexFilterDTO.getFilterVertices().add(filterF2VertexDTO);
-
-
-
 
         GobiiEnvelopeRestResource<VertexFilterDTO> gobiiEnvelopeRestResourceContacts = new GobiiEnvelopeRestResource<>(restUriVerticesValuesCount);
         PayloadEnvelope<VertexFilterDTO> resultEnvelopeVertexFilter = gobiiEnvelopeRestResourceContacts.post(VertexFilterDTO.class,

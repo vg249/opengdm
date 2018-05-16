@@ -10,6 +10,8 @@ import {FilterParamNames} from "../model/file-item-param-names";
 import {NameIdFileItemService} from "../services/core/nameid-file-item-service";
 import {FilterService} from "../services/core/filter-service";
 import {FlexQueryService} from "../services/core/flex-query-service";
+import {Vertex} from "../model/vertex";
+import {EntityType} from "../model/type-entity";
 
 
 @Component({
@@ -128,14 +130,14 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
         }
 
         this.JobId$.subscribe(
-
             fileItemJobId => {
+                let destinationVertex: Vertex = arg.value._entity;
+//                destinationVertex.entityType = destinationVertex.entityType;
                 this.flexQueryService.loadVertexValues(fileItemJobId.getItemId(),
-                    arg.value._entity,
+                    destinationVertex,
                     this.filterParamNameVertexValues);
             }
         );
-
 
 
         // this.filterService.loadFilter(this.gobiiExtractFilterType,

@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-extractor-filter", "../../store/actions/history-action", "../../store/actions/fileitem-action", "@ngrx/store", "./dto-request.service", "../../model/vertex-filter", "./entity-file-item-service", "../app/dto-request-item-vertex-filter", "../../model/gobii-file-item", "../../model/type-process", "../../model/type-extractor-item", "../../store/actions/action-payload-filter", "./filter-params-coll"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-extractor-filter", "../../store/actions/history-action", "../../store/actions/fileitem-action", "@ngrx/store", "./dto-request.service", "../../model/vertex-filter", "./entity-file-item-service", "../app/dto-request-item-vertex-filter", "../../model/gobii-file-item", "../../model/type-process", "../../model/type-extractor-item", "../../store/actions/action-payload-filter", "./filter-params-coll", "../../model/type-entity"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_extractor_filter_1, historyAction, fileItemActions, store_1, dto_request_service_1, vertex_filter_1, entity_file_item_service_1, dto_request_item_vertex_filter_1, gobii_file_item_1, type_process_1, type_extractor_item_1, action_payload_filter_1, filter_params_coll_1, FlexQueryService;
+    var core_1, type_extractor_filter_1, historyAction, fileItemActions, store_1, dto_request_service_1, vertex_filter_1, entity_file_item_service_1, dto_request_item_vertex_filter_1, gobii_file_item_1, type_process_1, type_extractor_item_1, action_payload_filter_1, filter_params_coll_1, type_entity_1, FlexQueryService;
     return {
         setters: [
             function (core_1_1) {
@@ -54,6 +54,9 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
             },
             function (filter_params_coll_1_1) {
                 filter_params_coll_1 = filter_params_coll_1_1;
+            },
+            function (type_entity_1_1) {
+                type_entity_1 = type_entity_1_1;
             }
         ],
         execute: function () {
@@ -82,7 +85,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                         vertexFilterDto.vertexValues.forEach(function (item) {
                             var currentFileItem = gobii_file_item_1.GobiiFileItem.build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_process_1.ProcessType.CREATE)
                                 .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE)
-                                .setEntityType(targetVertex.entityType)
+                                .setEntityType(type_entity_1.entityTypefromString(targetVertex.gobiiEntityNameTypeName))
                                 .setItemId(item.id)
                                 .setItemName(item.name)
                                 .setRequired(false);
@@ -94,7 +97,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                         var filterParams = _this.filterParamsColl.getFilter(filterParamName, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
                         var targetCompoundUniqueId = filterParams.getTargetEntityUniqueId();
                         targetCompoundUniqueId.setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE);
-                        targetCompoundUniqueId.setEntityType(targetVertex.entityType);
+                        targetCompoundUniqueId.setEntityType(type_entity_1.entityTypefromString(targetVertex.gobiiEntityNameTypeName));
                         var loadAction = new fileItemActions.LoadFileItemListWithFilterAction({
                             gobiiFileItems: vertexFileItems,
                             filterId: filterParams.getQueryName(),

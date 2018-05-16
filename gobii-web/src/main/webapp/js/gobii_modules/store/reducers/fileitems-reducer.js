@@ -765,7 +765,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                     returnVal = fileItems.filter(function (e) {
                         return (e.getGobiiExtractFilterType() == type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY
                             && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.VERTEX_VALUE
-                            || e.getEntityType() !== entityType);
+                            && e.getEntityType() !== entityType);
                     }).map(function (fi) { return fi; });
                 }
                 return returnVal;

@@ -32,7 +32,7 @@ System.register(["../../../model/gobii-file-item", "../../../model/type-entity",
                     this._filterParamsColl = _filterParamsColl;
                 } //ctor
                 JsonToGfiVertex.prototype.convert = function (jsonItem) {
-                    var vertex = new vertex_1.Vertex(jsonItem.vertexId, jsonItem.vertexName, type_entity_1.entityTypefromString(jsonItem.gobiiEntityNameType), jsonItem.cvGroupName, []);
+                    var vertex = new vertex_1.Vertex(jsonItem.vertexId, jsonItem.vertexName, jsonItem.gobiiEntityNameTypeName, jsonItem.cvGroupName, []);
                     var returnVal = gobii_file_item_1.GobiiFileItem.build(type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN, type_process_1.ProcessType.READ)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX)
                         .setEntityType(type_entity_1.EntityType.UNKNOWN)

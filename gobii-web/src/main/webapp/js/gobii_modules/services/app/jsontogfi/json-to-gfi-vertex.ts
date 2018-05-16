@@ -25,7 +25,7 @@ export class JsonToGfiVertex implements JsonToGfi {
         let vertex:Vertex = new Vertex(
             jsonItem.vertexId,
             jsonItem.vertexName,
-            entityTypefromString(jsonItem.gobiiEntityNameType),
+            jsonItem.gobiiEntityNameTypeName,
             jsonItem.cvGroupName,
             []
         );
