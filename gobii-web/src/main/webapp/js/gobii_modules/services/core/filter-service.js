@@ -87,7 +87,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../mo
                     while (filterParams) {
                         var loadAction = new fileItemActions.LoadFilterAction({
                             filterId: filterParams.getQueryName(),
-                            filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParams.getTargetEtityUniqueId(), filterParams.getRelatedEntityUniqueId(), null, filterValue, null, null)
+                            filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParams.getTargetEntityUniqueId(), filterParams.getRelatedEntityUniqueId(), null, filterValue, null, null)
                         });
                         this.store.dispatch(loadAction);
                         // if the current filter is getting nulled, we need to null the siblings as well
@@ -155,7 +155,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../mo
                             returnVal = this.store.select(fromRoot.getFqF1Vertices);
                             break;
                         case file_item_param_names_1.FilterParamNames.FQ_F1_VERTEX_VALUES:
-                            returnVal = this.store.select(fromRoot.getPlatforms);
+                            returnVal = this.store.select(fromRoot.getFqF1VerticesValues);
                             break;
                         //------- F2 --------------------------------------
                         case file_item_param_names_1.FilterParamNames.FQ_F2_VERTICES:

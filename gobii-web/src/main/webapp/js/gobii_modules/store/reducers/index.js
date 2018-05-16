@@ -1,7 +1,7 @@
 System.register(["@ngrx/store", "ngrx-store-freeze", "./fileitems-reducer", "./treenode-reducer", "./history-reducer"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var store_1, store_2, ngrx_store_freeze_1, store_3, fromFileItems, fromGobiiTreeNodes, fromHistory, reducers, developmentReducer, productionReducer, getFileItemsState, getFileItemsFilters, getAllFileItems, getSelectedFileItems, getPiContacts, getProjects, getExperiments, getDatasets, getCvTermsDataType, getCvTermsJobStatus, getMapsets, getPlatforms, getMarkerGroups, getProjectsByPI, getExperimentsByProject, getDatasetsByExperiment, getSelectedPiContacts, getDatsetEntities, getDatsetEntitiesPaged, getPiContactsFilterOptional, getProjectsFilterOptional, getExperimentsFilterOptional, getSelectedFileFormat, getSelectedSampleType, getJobId, getUploadFiles, getGobiiTreeNodesState, getAllGobiiTreeNodes, getGobiiTreeNodesForExtractFilter, getSelectedGobiiTreeNodes, getSelectedGobiiTreeNodeIds, getIdsOfActivatedGobiiTreeNodes, gobiiHistoryState, getStatusMessages, getLasetStatusMessage, getFiltersRetrieved, getFqF1Vertices, getFqF2Vertices, getFqF3Vertices, getFqF4Vertices;
+    var store_1, store_2, ngrx_store_freeze_1, store_3, fromFileItems, fromGobiiTreeNodes, fromHistory, reducers, developmentReducer, productionReducer, getFileItemsState, getFileItemsFilters, getAllFileItems, getSelectedFileItems, getPiContacts, getProjects, getExperiments, getDatasets, getCvTermsDataType, getCvTermsJobStatus, getMapsets, getPlatforms, getMarkerGroups, getProjectsByPI, getExperimentsByProject, getDatasetsByExperiment, getSelectedPiContacts, getDatsetEntities, getDatsetEntitiesPaged, getPiContactsFilterOptional, getProjectsFilterOptional, getExperimentsFilterOptional, getSelectedFileFormat, getSelectedSampleType, getJobId, getUploadFiles, getGobiiTreeNodesState, getAllGobiiTreeNodes, getGobiiTreeNodesForExtractFilter, getSelectedGobiiTreeNodes, getSelectedGobiiTreeNodeIds, getIdsOfActivatedGobiiTreeNodes, gobiiHistoryState, getStatusMessages, getLasetStatusMessage, getFiltersRetrieved, getFqF1Vertices, getFqF1VerticesValues, getFqF2Vertices, getFqF3Vertices, getFqF4Vertices;
     return {
         setters: [
             function (store_1_1) {
@@ -113,6 +113,7 @@ System.register(["@ngrx/store", "ngrx-store-freeze", "./fileitems-reducer", "./t
             exports_1("getLasetStatusMessage", getLasetStatusMessage = store_1.createSelector(gobiiHistoryState, fromHistory.getLastMessage));
             exports_1("getFiltersRetrieved", getFiltersRetrieved = store_1.createSelector(gobiiHistoryState, fromHistory.getFiltersRetrieved));
             exports_1("getFqF1Vertices", getFqF1Vertices = store_1.createSelector(getFileItemsState, fromFileItems.getFqF1Vertices));
+            exports_1("getFqF1VerticesValues", getFqF1VerticesValues = store_1.createSelector(getFileItemsState, fromFileItems.getFqF1VerticesValues));
             exports_1("getFqF2Vertices", getFqF2Vertices = store_1.createSelector(getFileItemsState, fromFileItems.getFqF2Vertices));
             exports_1("getFqF3Vertices", getFqF3Vertices = store_1.createSelector(getFileItemsState, fromFileItems.getFqF3Vertices));
             exports_1("getFqF4Vertices", getFqF4Vertices = store_1.createSelector(getFileItemsState, fromFileItems.getFqF4Vertices));

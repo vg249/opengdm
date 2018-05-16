@@ -509,8 +509,10 @@ export class FilterParamsColl {
             FilterParams
                 .build(FilterParamNames.FQ_F1_VERTEX_VALUES,
                     GobiiExtractFilterType.FLEX_QUERY,
-                    EntityType.PLATFORM)
+                    EntityType.UNKNOWN)
                 .setIsDynamicFilterValue(false)
+                .setExtractorItemType(ExtractorItemType.VERTEX_VALUE)
+                .setNameIdLabelType(NameIdLabelType.UNKNOWN)
         );
 
         // ******* F2

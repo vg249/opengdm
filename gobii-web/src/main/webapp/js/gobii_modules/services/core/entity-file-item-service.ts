@@ -143,7 +143,7 @@ export class EntityFileItemService {
                                             filterId: filterParams.getQueryName(),
                                             filter: new PayloadFilter(
                                                 gobiiExtractFilterType,
-                                                filterParams.getTargetEtityUniqueId(),
+                                                filterParams.getTargetEntityUniqueId(),
                                                 filterParams.getRelatedEntityUniqueId(),
                                                 filterValue,
                                                 filterValue,

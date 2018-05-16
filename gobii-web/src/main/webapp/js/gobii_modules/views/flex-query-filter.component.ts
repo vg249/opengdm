@@ -1,4 +1,4 @@
-import {Component} from "@angular/core";
+import {Component, OnChanges, OnInit, SimpleChange} from "@angular/core";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {Store} from "@ngrx/store";
@@ -9,6 +9,7 @@ import {Observable} from "rxjs/Observable";
 import {FilterParamNames} from "../model/file-item-param-names";
 import {NameIdFileItemService} from "../services/core/nameid-file-item-service";
 import {FilterService} from "../services/core/filter-service";
+import {FlexQueryService} from "../services/core/flex-query-service";
 
 
 @Component({
@@ -27,7 +28,7 @@ import {FilterService} from "../services/core/filter-service";
                             [(ngModel)]="selectedAllowableEntities"
                             [style]="{'width': '100%'}"
                             optionLabel="_itemName"
-                            (onChange)="handleFileItemSelected($event)"
+                            (onChange)="handleVertexSelected($event)"
                             [disabled]="currentStyle===disabledStyle">
                 </p-dropdown>
 
@@ -48,7 +49,7 @@ import {FilterService} from "../services/core/filter-service";
         </div>` // end template
 
 })
-export class FlexQueryFilterComponent {
+export class FlexQueryFilterComponent implements OnInit, OnChanges {
 
 
     //these are dummy place holders for now
@@ -59,6 +60,7 @@ export class FlexQueryFilterComponent {
 
     public fileItemsEntityNames$: Observable<GobiiFileItem[]>;
     public fileItemsEntityValues$: Observable<GobiiFileItem[]>;
+    public JobId$: Observable<GobiiFileItem>;
 
     public gobiiExtractFilterType: GobiiExtractFilterType;
 
@@ -71,7 +73,8 @@ export class FlexQueryFilterComponent {
 
     constructor(private store: Store<fromRoot.State>,
                 private fileItemService: NameIdFileItemService,
-                private filterService: FilterService) {
+                private filterService: FilterService,
+                private flexQueryService: FlexQueryService) {
 
 
     } // ctor
@@ -79,8 +82,10 @@ export class FlexQueryFilterComponent {
 
     ngOnInit(): any {
 
-        this.fileItemsEntityNames$ = this.filterService.getForFilter(this.filterParamNameVertices)
-        this.fileItemsEntityValues$ = this.filterService.getForFilter(this.filterParamNameVertexValues)
+        this.fileItemsEntityNames$ = this.filterService.getForFilter(this.filterParamNameVertices);
+        this.fileItemsEntityValues$ = this.filterService.getForFilter(this.filterParamNameVertexValues);
+        this.JobId$ = this.store.select(fromRoot.getJobId);
+
 
         this
             .fileItemsEntityNames$
@@ -95,7 +100,7 @@ export class FlexQueryFilterComponent {
                         this.currentStyle = this.disabledStyle;
                     }
 
-                    if(items[0]) {
+                    if (items[0]) {
                         this.selectedAllowableEntities = items[0];
                     }
 
@@ -113,7 +118,7 @@ export class FlexQueryFilterComponent {
 
     previousSelectedItemId: string = null;
 
-    public handleFileItemSelected(arg) {
+    public handleVertexSelected(arg) {
 
         let vertexId: string = null;
         if (arg.value._entity && arg.value._entity.vertexId) {
@@ -122,9 +127,20 @@ export class FlexQueryFilterComponent {
             this.selectedAllowableEntities = null;
         }
 
-        this.filterService.loadFilter(this.gobiiExtractFilterType,
-            this.filterParamNameVertices,
-            vertexId);
+        this.JobId$.subscribe(
+
+            fileItemJobId => {
+                this.flexQueryService.loadVertexValues(fileItemJobId.getItemId(),
+                    arg.value._entity,
+                    this.filterParamNameVertexValues);
+            }
+        );
+
+
+
+        // this.filterService.loadFilter(this.gobiiExtractFilterType,
+        //     this.filterParamNameVertices,
+        //     vertexId);
 
         if (!this.gobiiExtractFilterType) {
             this.store.dispatch(new historyAction.AddStatusMessageAction("The gobiiExtractFilterType property is not set"))
@@ -132,5 +148,26 @@ export class FlexQueryFilterComponent {
 
     }
 
+
+    ngOnChanges(changes: { [propName: string]: SimpleChange }) {
+
+        if (changes['gobiiExtractFilterType']
+            && (changes['gobiiExtractFilterType'].currentValue != null)
+            && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
+
+            if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
+
+                if (this.gobiiExtractFilterType === GobiiExtractFilterType.FLEX_QUERY) {
+
+                    this.flexQueryService.loadVertices(this.filterParamNameVertices);
+
+                }
+
+            } // if we have a new filter type
+
+        } // if filter type changed
+
+
+    } // ngonChanges
 
 } // class

@@ -303,8 +303,10 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .setDtoRequestItem(new dto_request_item_gfi_1.DtoRequestItemGfi(this.getFilter(file_item_param_names_1.FilterParamNames.FQ_F1_VERTICES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY), null, new json_to_gfi_vertex_1.JsonToGfiVertex(this.getFilter(file_item_param_names_1.FilterParamNames.FQ_F1_VERTICES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY), this)))
                         .setDtoRequestService(this.fileItemRequestService);
                     this.addFilter(filter_params_1.FilterParams
-                        .build(file_item_param_names_1.FilterParamNames.FQ_F1_VERTEX_VALUES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.PLATFORM)
-                        .setIsDynamicFilterValue(false));
+                        .build(file_item_param_names_1.FilterParamNames.FQ_F1_VERTEX_VALUES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.UNKNOWN)
+                        .setIsDynamicFilterValue(false)
+                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE)
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.UNKNOWN));
                     // ******* F2
                     this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.FQ_F2_VERTICES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.CV)

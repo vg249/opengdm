@@ -61,7 +61,7 @@ System.register(["@angular/core", "../../model/type-process", "../../model/filte
                         returnVal += "/datasets/" + this.id + "/analyses";
                     }
                     else if (this.fileItemParams.getQueryName() === file_item_param_names_1.FilterParamNames.FQ_F1_VERTICES) {
-                        returnVal += "/entities/vertices";
+                        returnVal += "/vertices";
                     }
                     return returnVal;
                 }; // getUrl()

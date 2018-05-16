@@ -141,7 +141,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../mo
                                     var loadAction = new fileItemActions.LoadFileItemListWithFilterAction({
                                         gobiiFileItems: entityItems,
                                         filterId: filterParams.getQueryName(),
-                                        filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParams.getTargetEtityUniqueId(), filterParams.getRelatedEntityUniqueId(), filterValue, filterValue, date, pagination)
+                                        filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParams.getTargetEntityUniqueId(), filterParams.getRelatedEntityUniqueId(), filterValue, filterValue, date, pagination)
                                     });
                                     observer.next(loadAction);
                                 }, function (responseHeader) {

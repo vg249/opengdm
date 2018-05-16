@@ -653,12 +653,7 @@ export class ExtractorRoot implements OnInit {
 
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.FLEX_QUERY) {
 
-            this.entityFileItemService.loadEntityList(this.gobiiExtractFilterType,FilterParamNames.FQ_F1_VERTICES);
-
-            // this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-            //     FilterParamNames.FQ_F1_VERTEX_VALUES,
-            //     null);
-
+//            this.entityFileItemService.loadEntityList(this.gobiiExtractFilterType,FilterParamNames.FQ_F1_VERTICES);
 
         } else {
             this.store.dispatch(new historyAction.AddStatusMessageAction(

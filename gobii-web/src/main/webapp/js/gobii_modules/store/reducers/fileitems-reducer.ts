@@ -980,6 +980,31 @@ export const getFqF1Vertices = createSelector(getFileItems, getFilters, getGobii
 });
 
 
+export const getFqF1VerticesValues = createSelector(getFileItems, getFilters, getGobiiExtractFilterType, (fileItems, filters, gobiiExtractFilterType) => {
+
+    let returnVal: GobiiFileItem[] = [];
+
+    let entityType: EntityType = EntityType.UNKNOWN;
+    if (filters[FilterParamNames.FQ_F1_VERTEX_VALUES]) {
+        entityType = filters[FilterParamNames.FQ_F1_VERTEX_VALUES].targetEntityUniqueId.getEntityType();
+    }
+
+
+    if( entityType != EntityType.UNKNOWN ) {
+
+        returnVal = fileItems.filter(
+            e =>
+                (e.getGobiiExtractFilterType() == GobiiExtractFilterType.FLEX_QUERY
+                    && e.getExtractorItemType() === ExtractorItemType.VERTEX_VALUE
+                    || e.getEntityType() !== entityType)
+        ).map(fi => fi);
+    }
+
+    return returnVal;
+});
+
+
+
 export const getFqF2Vertices = createSelector(getFileItems, getFilters, getGobiiExtractFilterType, (fileItems, filters, gobiiExtractFilterType) => {
 
     let returnVal: GobiiFileItem[] = [];

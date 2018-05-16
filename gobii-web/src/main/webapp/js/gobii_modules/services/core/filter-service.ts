@@ -51,7 +51,7 @@ export class FilterService {
                     filterId: filterParams.getQueryName(),
                     filter: new PayloadFilter(
                         gobiiExtractFilterType,
-                        filterParams.getTargetEtityUniqueId(),
+                        filterParams.getTargetEntityUniqueId(),
                         filterParams.getRelatedEntityUniqueId(),
                         null,
                         filterValue,
@@ -147,7 +147,7 @@ export class FilterService {
                 break;
 
             case FilterParamNames.FQ_F1_VERTEX_VALUES:
-                returnVal = this.store.select(fromRoot.getPlatforms);
+                returnVal = this.store.select(fromRoot.getFqF1VerticesValues);
                 break;
 
             //------- F2 --------------------------------------
