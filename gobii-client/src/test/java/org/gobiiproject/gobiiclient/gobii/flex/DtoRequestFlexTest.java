@@ -13,7 +13,12 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexDTO;
+import org.gobiiproject.gobiimodel.dto.entity.flex.VertexFilterDTO;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
+import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -42,6 +47,7 @@ public class DtoRequestFlexTest {
 
     @Test
     public void testGetVertices() throws Exception {
+
         RestUri restUriVertices = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(GobiiServiceRequestId.URL_VERTICES);
@@ -58,6 +64,59 @@ public class DtoRequestFlexTest {
                 vertexDTO.getVertexId() > 0);
         Assert.assertFalse("The vertex name is empty",
                 vertexDTO.getVertexName().isEmpty());
+    }
+
+    @Test
+    public void testGetVerticesValues() throws Exception {
+
+        String jobId = DateUtils.makeDateIdString() + "_test";
+        RestUri restUriVerticesValues = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_VERTICES)
+                .addUriParam("jobId", jobId)
+                .appendSegment(GobiiServiceRequestId.URL_VALUES);
+
+
+        GobiiEntityNameType gobiiEntityNameTypeToTest = GobiiEntityNameType.PROJECT;
+        VertexFilterDTO vertexFilterDTO = new VertexFilterDTO();
+        vertexFilterDTO.setDestinationVertexDTO(
+                new VertexDTO(
+                        0,
+                        null,
+                        gobiiEntityNameTypeToTest,
+                        null
+                )
+        );
+
+        GobiiEnvelopeRestResource<VertexFilterDTO> gobiiEnvelopeRestResourceContacts = new GobiiEnvelopeRestResource<>(restUriVerticesValues);
+        PayloadEnvelope<VertexFilterDTO> resultEnvelopeVertexFilter = gobiiEnvelopeRestResourceContacts.post(VertexFilterDTO.class,
+                new PayloadEnvelope<>(vertexFilterDTO, GobiiProcessType.CREATE));
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeVertexFilter.getHeader()));
+
+        Assert.assertTrue("No vertex filter value was received",
+                resultEnvelopeVertexFilter.getPayload().getData().size() > 0);
+
+        VertexFilterDTO vertexFilterDTOReceived = resultEnvelopeVertexFilter.getPayload().getData().get(0);
+
+        Assert.assertTrue("No vertex values were received",
+                vertexFilterDTOReceived.getVertexValues().size() > 0);
+
+        Assert.assertTrue("Not all values have the correct entity types",
+                vertexFilterDTOReceived.getVertexValues().size() ==
+                        vertexFilterDTOReceived
+                                .getVertexValues()
+                                .stream()
+                                .filter(vv -> vv.getGobiiEntityNameType().equals(gobiiEntityNameTypeToTest))
+                                .count());
+
+        Assert.assertTrue("Not all values have a non-null name",
+                vertexFilterDTOReceived.getVertexValues().size() ==
+                        vertexFilterDTOReceived
+                                .getVertexValues()
+                                .stream()
+                                .filter(vv -> !vv.getName().isEmpty())
+                                .count());
     }
 
 }

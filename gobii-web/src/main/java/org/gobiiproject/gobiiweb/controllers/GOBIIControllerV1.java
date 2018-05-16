@@ -4409,24 +4409,25 @@ public class GOBIIControllerV1 {
 
     @RequestMapping(value = "/vertices/{jobId}/values", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<VertexDTO> getVerticesValues(HttpServletRequest request,
+    public PayloadEnvelope<VertexFilterDTO> getVerticesValues(HttpServletRequest request,
                                                         HttpServletResponse response,
                                                         @RequestBody PayloadEnvelope<VertexFilterDTO> vertexFilterDTOPayloadEnvelope,
                                                         @PathVariable String jobId) {
 
-        PayloadEnvelope<VertexDTO> returnVal = new PayloadEnvelope<>();
+        PayloadEnvelope<VertexFilterDTO> returnVal = new PayloadEnvelope<>();
 
         try {
 
 
-            List<VertexDTO> vertices = this.flexQueryService.getVerticesValues(jobId,vertexFilterDTOPayloadEnvelope.getPayload().getData().get(0));
+            VertexFilterDTO vertexFilterDTO = this.flexQueryService.getVerticesValues(jobId,vertexFilterDTOPayloadEnvelope.getPayload().getData().get(0));
 
-            PayloadWriter<VertexDTO> payloadWriter = new PayloadWriter<>(request, response,
-                    VertexDTO.class);
+            PayloadWriter<VertexFilterDTO> payloadWriter = new PayloadWriter<>(request, response,
+                    VertexFilterDTO.class);
 
-            payloadWriter.writeList(returnVal,
+            payloadWriter.writeSingleItemForId(returnVal,
                     null,
-                    vertices);
+                    vertexFilterDTO,
+                    vertexFilterDTO.getId().toString());
 
         } catch (GobiiException e) {
 

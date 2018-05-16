@@ -5,6 +5,7 @@ import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapDataSetImpl;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapFlexQuery;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexFilterDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -52,9 +53,9 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
     }
 
     @Override
-    public List<VertexDTO> getVertexValues(String jobId, VertexFilterDTO vertexFilterDTO) throws GobiiDtoMappingException {
+    public VertexFilterDTO getVertexValues(String jobId, VertexFilterDTO vertexFilterDTO) throws GobiiDtoMappingException {
 
-        List<VertexDTO> returnVal = new ArrayList<>();
+        VertexFilterDTO returnVal = vertexFilterDTO;
 
         if( vertexFilterDTO.getDestinationVertexDTO() == null || vertexFilterDTO.getDestinationVertexDTO().getGobiiEntityNameType() == GobiiEntityNameType.UNKNOWN ) {
             throw new GobiiDtoMappingException("Unspecified destination vertex entity type");
@@ -64,11 +65,10 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
 
         for(Integer idx=0; idx < 20; idx ++ ) {
 
-            returnVal.add(
-                    new VertexDTO(idx,
-                            String.valueOf(gobiiEntityNameType).toLowerCase() + ": " + idx,
-                            gobiiEntityNameType,
-                            null )
+            returnVal.getVertexValues().add(
+                    new NameIdDTO(gobiiEntityNameType,
+                            idx,
+                            String.valueOf(gobiiEntityNameType).toLowerCase() + ": " + idx)
             );
         }
 
