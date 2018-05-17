@@ -121,28 +121,13 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
 
     public handleVertexSelected(arg) {
 
-        let vertexId: string = null;
-        if (arg.value._entity && arg.value._entity.vertexId) {
-            vertexId = arg.value._entity.vertexId;
-        }
-        // else {
-        //     this.selectedAllowableEntities = null;
-        // }
-
         this.JobId$.subscribe(
             fileItemJobId => {
-                let destinationVertex: Vertex = arg.value._entity;
-//                destinationVertex.entityType = destinationVertex.entityType;
                 this.flexQueryService.loadVertexValues(fileItemJobId.getItemId(),
-                    destinationVertex,
+                    arg.value,
                     this.filterParamNameVertexValues);
             }
         );
-
-
-        // this.filterService.loadFilter(this.gobiiExtractFilterType,
-        //     this.filterParamNameVertices,
-        //     vertexId);
 
         if (!this.gobiiExtractFilterType) {
             this.store.dispatch(new historyAction.AddStatusMessageAction("The gobiiExtractFilterType property is not set"))

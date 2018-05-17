@@ -82,21 +82,9 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                 };
                 FlexQueryFilterComponent.prototype.handleVertexSelected = function (arg) {
                     var _this = this;
-                    var vertexId = null;
-                    if (arg.value._entity && arg.value._entity.vertexId) {
-                        vertexId = arg.value._entity.vertexId;
-                    }
-                    // else {
-                    //     this.selectedAllowableEntities = null;
-                    // }
                     this.JobId$.subscribe(function (fileItemJobId) {
-                        var destinationVertex = arg.value._entity;
-                        //                destinationVertex.entityType = destinationVertex.entityType;
-                        _this.flexQueryService.loadVertexValues(fileItemJobId.getItemId(), destinationVertex, _this.filterParamNameVertexValues);
+                        _this.flexQueryService.loadVertexValues(fileItemJobId.getItemId(), arg.value, _this.filterParamNameVertexValues);
                     });
-                    // this.filterService.loadFilter(this.gobiiExtractFilterType,
-                    //     this.filterParamNameVertices,
-                    //     vertexId);
                     if (!this.gobiiExtractFilterType) {
                         this.store.dispatch(new historyAction.AddStatusMessageAction("The gobiiExtractFilterType property is not set"));
                     }

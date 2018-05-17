@@ -18,7 +18,9 @@ import {PayloadFilter} from "../../store/actions/action-payload-filter";
 import {FilterParamsColl} from "./filter-params-coll";
 import {FilterParams} from "../../model/filter-params";
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
-import {EntityType, entityTypefromString} from "../../model/type-entity";
+import {EntitySubType, EntityType, entityTypefromString} from "../../model/type-entity";
+import {NameIdLabelType} from "../../model/name-id-label-type";
+import {CvFilters, CvFilterType} from "../../model/cv-filter-type";
 
 @Injectable()
 export class FlexQueryService {
@@ -39,11 +41,13 @@ export class FlexQueryService {
 
     } // loadVertices()
 
-    public loadVertexValues(jobId: string, targetVertex: Vertex, filterParamName:FilterParamNames) {
+    public loadVertexValues(jobId: string, vertexFileItem: GobiiFileItem, filterParamName: FilterParamNames) {
 
 //        return Observable.create(observer => {
 
+        if (vertexFileItem.getNameIdLabelType() == NameIdLabelType.UNKNOWN) {
 
+            let targetVertex: Vertex = vertexFileItem.getEntity();
             let vertexFilterDTO: VertexFilterDTO = new VertexFilterDTO(
                 targetVertex,
                 [],
@@ -87,10 +91,12 @@ export class FlexQueryService {
                     );
 
 
+                    // for flex query the "filter value" is not an actua id but a new entity type
+                    // our selectors "just know" to look for the filter's target entity type as the thing to filter on
                     let filterParams: FilterParams = this.filterParamsColl.getFilter(filterParamName, GobiiExtractFilterType.FLEX_QUERY);
-                    let targetCompoundUniqueId :GobiiFileItemCompoundId =  filterParams.getTargetEntityUniqueId();
+                    let targetCompoundUniqueId: GobiiFileItemCompoundId = filterParams.getTargetEntityUniqueId();
                     targetCompoundUniqueId.setExtractorItemType(ExtractorItemType.VERTEX_VALUE);
-                    targetCompoundUniqueId.setEntityType( entityTypefromString( targetVertex.gobiiEntityNameTypeName) );
+                    targetCompoundUniqueId.setEntityType(entityTypefromString(targetVertex.gobiiEntityNameTypeName));
                     let loadAction: fileItemActions.LoadFileItemListWithFilterAction =
                         new fileItemActions.LoadFileItemListWithFilterAction(
                             {
@@ -119,6 +125,27 @@ export class FlexQueryService {
                     });
                     //observer.complete();
                 });
+
+        } else {
+            this.store.dispatch(new fileItemActions.LoadFilterAction(
+                {
+                    filterId: filterParamName,
+                    filter: new PayloadFilter(
+                        GobiiExtractFilterType.FLEX_QUERY,
+                        new GobiiFileItemCompoundId(ExtractorItemType.VERTEX_VALUE,
+                            EntityType.UNKNOWN, // effectively "null out" the selected entity type
+                            EntitySubType.UNKNOWN,
+                            CvFilterType.UNKNOWN,
+                            CvFilters.get(CvFilterType.UNKNOWN)),
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                    )
+                }
+            ))
+        } // if-else file item type was label
 
         //} );//return observer create
     }
