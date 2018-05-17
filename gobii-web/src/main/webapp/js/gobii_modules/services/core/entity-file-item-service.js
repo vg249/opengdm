@@ -135,6 +135,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../mo
                                     });
                                     var labelFileItem = _this.filterService.makeLabelItem(gobiiExtractFilterType, filterParams);
                                     if (labelFileItem) {
+                                        labelFileItem.setExtractorItemType(filterParams.getExtractorItemType());
                                         entityItems.unshift(labelFileItem);
                                     }
                                     var date = new Date();

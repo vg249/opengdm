@@ -972,7 +972,7 @@ export const getFqF1Vertices = createSelector(getFileItems, getFilters, getGobii
         e =>
             (e.getGobiiExtractFilterType() == gobiiExtractFilterType
                 && e.getExtractorItemType() === ExtractorItemType.VERTEX
-                || e.getNameIdLabelType() !== NameIdLabelType.UNKNOWN)
+                || e.getNameIdLabelType() === NameIdLabelType.SELECT_A)
             && e.getProcessType() !== ProcessType.DUMMY
     ).map(fi => fi);
 
@@ -999,7 +999,7 @@ export const getFqF2Vertices = createSelector(getFileItems, getFilters, getGobii
                 (e.getGobiiExtractFilterType() == gobiiExtractFilterType
                     && e.getEntity().vertexId != f1VertexId
                     && e.getExtractorItemType() === ExtractorItemType.VERTEX
-                    || e.getNameIdLabelType() !== NameIdLabelType.UNKNOWN)
+                    || e.getNameIdLabelType() === NameIdLabelType.SELECT_A)
                 && e.getProcessType() !== ProcessType.DUMMY
         ).map(fi => fi);
 

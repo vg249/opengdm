@@ -309,37 +309,40 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.UNKNOWN));
                     // ******* F2
                     this.addFilter(filter_params_1.FilterParams
-                        .build(file_item_param_names_1.FilterParamNames.FQ_F2_VERTICES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.CV)
+                        .build(file_item_param_names_1.FilterParamNames.FQ_F2_VERTICES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.UNKNOWN)
+                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX)
                         .setIsDynamicFilterValue(false)
-                        .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE)
-                        .setCvFilterValue(cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.DATASET_TYPE))
-                        .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPE_NAME)
+                        .setFilterType(filter_type_1.FilterType.ENTITY_LIST)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A));
                     this.addFilter(filter_params_1.FilterParams
-                        .build(file_item_param_names_1.FilterParamNames.FQ_F2_VERTEX_VALUES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.PLATFORM)
-                        .setIsDynamicFilterValue(false));
+                        .build(file_item_param_names_1.FilterParamNames.FQ_F2_VERTEX_VALUES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.UNKNOWN)
+                        .setIsDynamicFilterValue(false)
+                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE)
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.UNKNOWN));
                     // ******* F3
                     this.addFilter(filter_params_1.FilterParams
-                        .build(file_item_param_names_1.FilterParamNames.FQ_F3_VERTICES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.CV)
+                        .build(file_item_param_names_1.FilterParamNames.FQ_F3_VERTICES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.UNKNOWN)
+                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX)
                         .setIsDynamicFilterValue(false)
-                        .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE)
-                        .setCvFilterValue(cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.DATASET_TYPE))
-                        .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPE_NAME)
+                        .setFilterType(filter_type_1.FilterType.ENTITY_LIST)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A));
                     this.addFilter(filter_params_1.FilterParams
-                        .build(file_item_param_names_1.FilterParamNames.FQ_F3_VERTEX_VALUES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.PLATFORM)
-                        .setIsDynamicFilterValue(false));
+                        .build(file_item_param_names_1.FilterParamNames.FQ_F3_VERTEX_VALUES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.UNKNOWN)
+                        .setIsDynamicFilterValue(false)
+                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE)
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.UNKNOWN));
                     // ******* F4
                     this.addFilter(filter_params_1.FilterParams
-                        .build(file_item_param_names_1.FilterParamNames.FQ_F4_VERTICES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.CV)
+                        .build(file_item_param_names_1.FilterParamNames.FQ_F4_VERTICES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.UNKNOWN)
+                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX)
                         .setIsDynamicFilterValue(false)
-                        .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE)
-                        .setCvFilterValue(cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.DATASET_TYPE))
-                        .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPE_NAME)
+                        .setFilterType(filter_type_1.FilterType.ENTITY_LIST)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A));
                     this.addFilter(filter_params_1.FilterParams
-                        .build(file_item_param_names_1.FilterParamNames.FQ_F4_VERTEX_VALUES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.PLATFORM)
-                        .setIsDynamicFilterValue(false));
+                        .build(file_item_param_names_1.FilterParamNames.FQ_F4_VERTEX_VALUES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.UNKNOWN)
+                        .setIsDynamicFilterValue(false)
+                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE)
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.UNKNOWN));
                     // FLEX QUERY FILTER OBJECT GRAPH
                     // *** F1
                     this.getFilter(file_item_param_names_1.FilterParamNames.FQ_F1_VERTICES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY)

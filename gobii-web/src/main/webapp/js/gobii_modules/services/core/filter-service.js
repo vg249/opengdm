@@ -222,7 +222,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../mo
                             .setEntityType(filterParamsToLoad.getEntityType())
                             .setEntitySubType(filterParamsToLoad.getEntitySubType())
                             .setCvFilterType(filterParamsToLoad.getCvFilterType())
-                            .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX)
+                            .setExtractorItemType(type_extractor_item_1.ExtractorItemType.UNKNOWN)
                             .setNameIdLabelType(filterParamsToLoad.getMameIdLabelType())
                             .setItemName(label)
                             .setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())

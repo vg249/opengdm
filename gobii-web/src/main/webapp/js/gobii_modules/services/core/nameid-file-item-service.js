@@ -341,6 +341,7 @@ System.register(["@angular/core", "../../model/type-extractor-item", "../../mode
                                                 .map(function (nameId) { return nameId.entityLasetModified; })));
                                             var labelFileItem = _this.filterService.makeLabelItem(gobiiExtractFilterType, filterParamsToLoad);
                                             if (labelFileItem) {
+                                                labelFileItem.setExtractorItemType(filterParamsToLoad.getExtractorItemType());
                                                 labelFileItem.setParentItemId(filterValue);
                                                 fileItems.unshift(labelFileItem);
                                             }

@@ -419,6 +419,7 @@ export class NameIdFileItemService {
 
                                                 let labelFileItem: GobiiFileItem = this.filterService.makeLabelItem(gobiiExtractFilterType,filterParamsToLoad);
                                                 if (labelFileItem) {
+                                                    labelFileItem.setExtractorItemType(filterParamsToLoad.getExtractorItemType());
                                                     labelFileItem.setParentItemId(filterValue);
                                                     fileItems.unshift(labelFileItem);
                                                 }

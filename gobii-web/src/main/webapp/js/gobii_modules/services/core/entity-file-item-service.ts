@@ -132,6 +132,7 @@ export class EntityFileItemService {
 
                                 let labelFileItem: GobiiFileItem = this.filterService.makeLabelItem(gobiiExtractFilterType, filterParams);
                                 if (labelFileItem) {
+                                    labelFileItem.setExtractorItemType(filterParams.getExtractorItemType());
                                     entityItems.unshift(labelFileItem);
                                 }
 

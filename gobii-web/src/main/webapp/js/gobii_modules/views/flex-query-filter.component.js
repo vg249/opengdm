@@ -53,11 +53,11 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                 } // ctor
                 FlexQueryFilterComponent.prototype.ngOnInit = function () {
                     var _this = this;
-                    this.fileItemsEntityNames$ = this.filterService.getForFilter(this.filterParamNameVertices);
+                    this.fileItemsVertexNames$ = this.filterService.getForFilter(this.filterParamNameVertices);
                     this.fileItemsEntityValues$ = this.filterService.getForFilter(this.filterParamNameVertexValues);
                     this.JobId$ = this.store.select(fromRoot.getJobId);
                     this
-                        .fileItemsEntityNames$
+                        .fileItemsVertexNames$
                         .subscribe(function (items) {
                         if (_this.previousSelectedItemId === null && items && items.length > 0) {
                             _this.previousSelectedItemId = items[0].getFileItemUniqueId();
@@ -85,6 +85,10 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                     this.JobId$.subscribe(function (fileItemJobId) {
                         _this.flexQueryService.loadVertexValues(fileItemJobId.getItemId(), arg.value, _this.filterParamNameVertexValues);
                     });
+                    if (arg.value._entity && arg.value._entity.vertexId) {
+                        var vertexId = arg.value._entity.vertexId;
+                        this.filterService.loadFilter(this.gobiiExtractFilterType, this.filterParamNameVertices, vertexId);
+                    }
                     if (!this.gobiiExtractFilterType) {
                         this.store.dispatch(new historyAction.AddStatusMessageAction("The gobiiExtractFilterType property is not set"));
                     }
@@ -95,7 +99,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                         && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
                         if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
                             if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY) {
-                                this.flexQueryService.loadVertices(this.filterParamNameVertices);
+                                // this.flexQueryService.loadVertices(this.filterParamNameVertices);
                             }
                         } // if we have a new filter type
                     } // if filter type changed
@@ -106,7 +110,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                         inputs: ['gobiiExtractFilterType', 'filterParamNameVertices', 'filterParamNameVertexValues'],
                         outputs: [],
                         styleUrls: ["css/extractor-ui.css"],
-                        template: "\n        <div class=\"panel panel-primary\" [ngStyle]=\"currentStyle\">\n            <div class=\"panel-heading\">\n                <h3 class=\"panel-title\">Filters</h3>\n            </div>\n            <div class=\"panel-body\">\n                <label class=\"the-label\">Entity:</label><BR>\n                <p-dropdown [options]=\"fileItemsEntityNames$ | async\"\n                            [style]=\"{'width': '100%'}\"\n                            optionLabel=\"_itemName\"\n                            (onChange)=\"handleVertexSelected($event)\"\n                            [disabled]=\"currentStyle===disabledStyle\">\n                </p-dropdown>\n\n                <BR>\n                <BR>\n                <label class=\"the-label\">Select Entity Values</label><BR>\n                <p-listbox [options]=\"fileItemsEntityValues$ | async\"\n                           [multiple]=\"true\"\n                           [(ngModel)]=\"selectedEntityValues\" [style]=\"{'width':'100%'}\"\n                           optionLabel=\"_itemName\"\n                           [disabled]=\"currentStyle===disabledStyle\"></p-listbox>\n            </div>\n\n            <div class=\"container\">\n                <p>Count: {{totalValues}} </p>\n                <p>Selected: {{selectedEntityValues ? selectedEntityValues.length : 0}}</p>\n            </div>\n        </div>" // end template
+                        template: "\n        <div class=\"panel panel-primary\" [ngStyle]=\"currentStyle\">\n            <div class=\"panel-heading\">\n                <h3 class=\"panel-title\">Filters</h3>\n            </div>\n            <div class=\"panel-body\">\n                <label class=\"the-label\">Entity:</label><BR>\n                <p-dropdown [options]=\"fileItemsVertexNames$ | async\"\n                            [style]=\"{'width': '100%'}\"\n                            optionLabel=\"_itemName\"\n                            (onChange)=\"handleVertexSelected($event)\"\n                            [disabled]=\"currentStyle===disabledStyle\">\n                </p-dropdown>\n\n                <BR>\n                <BR>\n                <label class=\"the-label\">Select Entity Values</label><BR>\n                <p-listbox [options]=\"fileItemsEntityValues$ | async\"\n                           [multiple]=\"true\"\n                           [(ngModel)]=\"selectedEntityValues\" [style]=\"{'width':'100%'}\"\n                           optionLabel=\"_itemName\"\n                           [disabled]=\"currentStyle===disabledStyle\"></p-listbox>\n            </div>\n\n            <div class=\"container\">\n                <p>Count: {{totalValues}} </p>\n                <p>Selected: {{selectedEntityValues ? selectedEntityValues.length : 0}}</p>\n            </div>\n        </div>" // end template
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
                         nameid_file_item_service_1.NameIdFileItemService,

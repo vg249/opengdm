@@ -750,7 +750,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 returnVal = fileItems.filter(function (e) {
                     return (e.getGobiiExtractFilterType() == gobiiExtractFilterType
                         && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.VERTEX
-                        || e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
+                        || e.getNameIdLabelType() === name_id_label_type_1.NameIdLabelType.SELECT_A)
                         && e.getProcessType() !== type_process_1.ProcessType.DUMMY;
                 }).map(function (fi) { return fi; });
                 return returnVal;
@@ -766,7 +766,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                         return (e.getGobiiExtractFilterType() == gobiiExtractFilterType
                             && e.getEntity().vertexId != f1VertexId
                             && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.VERTEX
-                            || e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
+                            || e.getNameIdLabelType() === name_id_label_type_1.NameIdLabelType.SELECT_A)
                             && e.getProcessType() !== type_process_1.ProcessType.DUMMY;
                     }).map(function (fi) { return fi; });
                 }

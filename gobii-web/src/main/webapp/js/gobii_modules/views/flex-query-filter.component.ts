@@ -26,7 +26,7 @@ import {EntityType} from "../model/type-entity";
             </div>
             <div class="panel-body">
                 <label class="the-label">Entity:</label><BR>
-                <p-dropdown [options]="fileItemsEntityNames$ | async"
+                <p-dropdown [options]="fileItemsVertexNames$ | async"
                             [style]="{'width': '100%'}"
                             optionLabel="_itemName"
                             (onChange)="handleVertexSelected($event)"
@@ -59,7 +59,7 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
     public totalValues: string = "0";
     public selectedEntityValues: GobiiFileItem[];
 
-    public fileItemsEntityNames$: Observable<GobiiFileItem[]>;
+    public fileItemsVertexNames$: Observable<GobiiFileItem[]>;
     public fileItemsEntityValues$: Observable<GobiiFileItem[]>;
     public JobId$: Observable<GobiiFileItem>;
 
@@ -83,13 +83,13 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
 
     ngOnInit(): any {
 
-        this.fileItemsEntityNames$ = this.filterService.getForFilter(this.filterParamNameVertices);
+        this.fileItemsVertexNames$ = this.filterService.getForFilter(this.filterParamNameVertices);
         this.fileItemsEntityValues$ = this.filterService.getForFilter(this.filterParamNameVertexValues);
         this.JobId$ = this.store.select(fromRoot.getJobId);
 
 
         this
-            .fileItemsEntityNames$
+            .fileItemsVertexNames$
             .subscribe(items => {
                     if (this.previousSelectedItemId === null && items && items.length > 0) {
                         this.previousSelectedItemId = items[0].getFileItemUniqueId()
@@ -129,6 +129,14 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
             }
         );
 
+
+        if (arg.value._entity && arg.value._entity.vertexId) {
+            let vertexId:string = arg.value._entity.vertexId;
+            this.filterService.loadFilter(this.gobiiExtractFilterType,
+                this.filterParamNameVertices,
+                vertexId);
+        }
+
         if (!this.gobiiExtractFilterType) {
             this.store.dispatch(new historyAction.AddStatusMessageAction("The gobiiExtractFilterType property is not set"))
         }
@@ -146,7 +154,7 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
 
                 if (this.gobiiExtractFilterType === GobiiExtractFilterType.FLEX_QUERY) {
 
-                    this.flexQueryService.loadVertices(this.filterParamNameVertices);
+                    // this.flexQueryService.loadVertices(this.filterParamNameVertices);
 
                 }
 
