@@ -156,7 +156,7 @@ export class FilterService {
                 break;
 
             case FilterParamNames.FQ_F2_VERTEX_VALUES:
-                returnVal = this.store.select(fromRoot.getPlatforms);
+                returnVal = this.store.select(fromRoot.getFqF3VerticesValues);
                 break;
 
             //------- F3 --------------------------------------
@@ -165,7 +165,7 @@ export class FilterService {
                 break;
 
             case FilterParamNames.FQ_F3_VERTEX_VALUES:
-                returnVal = this.store.select(fromRoot.getPlatforms);
+                returnVal = this.store.select(fromRoot.getFqF3VerticesValues);
                 break;
 
             //------- F4 --------------------------------------
@@ -174,7 +174,7 @@ export class FilterService {
                 break;
 
             case FilterParamNames.FQ_F4_VERTEX_VALUES:
-                returnVal = this.store.select(fromRoot.getPlatforms);
+                returnVal = this.store.select(fromRoot.getFqF4VerticesValues);
                 break;
 
             default:

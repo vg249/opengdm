@@ -162,21 +162,21 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../mo
                             returnVal = this.store.select(fromRoot.getFqF2Vertices);
                             break;
                         case file_item_param_names_1.FilterParamNames.FQ_F2_VERTEX_VALUES:
-                            returnVal = this.store.select(fromRoot.getPlatforms);
+                            returnVal = this.store.select(fromRoot.getFqF3VerticesValues);
                             break;
                         //------- F3 --------------------------------------
                         case file_item_param_names_1.FilterParamNames.FQ_F3_VERTICES:
                             returnVal = this.store.select(fromRoot.getFqF3Vertices);
                             break;
                         case file_item_param_names_1.FilterParamNames.FQ_F3_VERTEX_VALUES:
-                            returnVal = this.store.select(fromRoot.getPlatforms);
+                            returnVal = this.store.select(fromRoot.getFqF3VerticesValues);
                             break;
                         //------- F4 --------------------------------------
                         case file_item_param_names_1.FilterParamNames.FQ_F4_VERTICES:
                             returnVal = this.store.select(fromRoot.getFqF4Vertices);
                             break;
                         case file_item_param_names_1.FilterParamNames.FQ_F4_VERTEX_VALUES:
-                            returnVal = this.store.select(fromRoot.getPlatforms);
+                            returnVal = this.store.select(fromRoot.getFqF4VerticesValues);
                             break;
                         default:
                             this.store.dispatch(new historyAction.AddStatusMessageAction("There is no selector for filter "
