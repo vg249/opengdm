@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store", "../store/reducers", "../store/actions/history-action", "../services/core/nameid-file-item-service", "../services/core/filter-service", "../services/core/flex-query-service"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store", "../store/reducers", "../store/actions/history-action", "../services/core/nameid-file-item-service", "../services/core/filter-service", "../services/core/flex-query-service", "../model/name-id-label-type"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_extractor_filter_1, store_1, fromRoot, historyAction, nameid_file_item_service_1, filter_service_1, flex_query_service_1, FlexQueryFilterComponent;
+    var core_1, type_extractor_filter_1, store_1, fromRoot, historyAction, nameid_file_item_service_1, filter_service_1, flex_query_service_1, name_id_label_type_1, FlexQueryFilterComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -36,6 +36,9 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
             },
             function (flex_query_service_1_1) {
                 flex_query_service_1 = flex_query_service_1_1;
+            },
+            function (name_id_label_type_1_1) {
+                name_id_label_type_1 = name_id_label_type_1_1;
             }
         ],
         execute: function () {
@@ -85,8 +88,14 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                     this.JobId$.subscribe(function (fileItemJobId) {
                         _this.flexQueryService.loadVertexValues(fileItemJobId.getItemId(), arg.value, _this.filterParamNameVertexValues);
                     });
-                    if (arg.value._entity && arg.value._entity.vertexId) {
-                        var vertexId = arg.value._entity.vertexId;
+                    if (arg.value && arg.value._entity) {
+                        var vertexId = void 0;
+                        if (arg.value.getNameIdLabelType() === name_id_label_type_1.NameIdLabelType.UNKNOWN) {
+                            vertexId = arg.value.getItemId();
+                        }
+                        else {
+                            vertexId = null;
+                        }
                         this.filterService.loadFilter(this.gobiiExtractFilterType, this.filterParamNameVertices, vertexId);
                     }
                     if (!this.gobiiExtractFilterType) {

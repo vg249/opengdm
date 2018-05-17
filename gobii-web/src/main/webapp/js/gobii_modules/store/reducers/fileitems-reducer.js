@@ -749,8 +749,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 var returnVal = [];
                 returnVal = fileItems.filter(function (e) {
                     return (e.getGobiiExtractFilterType() == gobiiExtractFilterType
-                        && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.VERTEX
-                        || e.getNameIdLabelType() === name_id_label_type_1.NameIdLabelType.SELECT_A)
+                        && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.VERTEX)
                         && e.getProcessType() !== type_process_1.ProcessType.DUMMY;
                 }).map(function (fi) { return fi; });
                 return returnVal;
@@ -764,9 +763,9 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 if (f1VertexId) {
                     returnVal = fileItems.filter(function (e) {
                         return (e.getGobiiExtractFilterType() == gobiiExtractFilterType
-                            && e.getEntity().vertexId != f1VertexId
                             && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.VERTEX
-                            || e.getNameIdLabelType() === name_id_label_type_1.NameIdLabelType.SELECT_A)
+                            && (e.getEntity().vertexId != f1VertexId
+                                || e.getNameIdLabelType() === name_id_label_type_1.NameIdLabelType.SELECT_A))
                             && e.getProcessType() !== type_process_1.ProcessType.DUMMY;
                     }).map(function (fi) { return fi; });
                 }

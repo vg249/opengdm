@@ -12,6 +12,7 @@ import {FilterService} from "../services/core/filter-service";
 import {FlexQueryService} from "../services/core/flex-query-service";
 import {Vertex} from "../model/vertex";
 import {EntityType} from "../model/type-entity";
+import {NameIdLabelType} from "../model/name-id-label-type";
 
 
 @Component({
@@ -130,8 +131,14 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
         );
 
 
-        if (arg.value._entity && arg.value._entity.vertexId) {
-            let vertexId:string = arg.value._entity.vertexId;
+        if (arg.value && arg.value._entity) {
+            let vertexId: string;
+            if (arg.value.getNameIdLabelType() === NameIdLabelType.UNKNOWN) {
+                vertexId = arg.value.getItemId();
+            } else {
+                vertexId = null;
+            }
+
             this.filterService.loadFilter(this.gobiiExtractFilterType,
                 this.filterParamNameVertices,
                 vertexId);
@@ -144,7 +151,10 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
     }
 
 
-    ngOnChanges(changes: { [propName: string]: SimpleChange }) {
+    ngOnChanges(changes: {
+        [propName: string
+            ]: SimpleChange
+    }) {
 
         if (changes['gobiiExtractFilterType']
             && (changes['gobiiExtractFilterType'].currentValue != null)
