@@ -110,6 +110,9 @@ public class GobiiProcessedInstruction {
 //		columnList = loaderInstruction.getGobiiFileColumns();
 		fileLine = new ArrayList<FileLineEntry>();
 		requiredRows = new ArrayList<ArrayList<String>>();
+		hasCSV_ROW = false;
+		hasCSV_BOTH = false;
+		hasCSV_COL = false;
 		for (GobiiFileColumn gobiiFileColumn : columnList) {
 			switch (gobiiFileColumn.getGobiiColumnType()) {
 				case CONSTANT:
