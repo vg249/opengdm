@@ -996,7 +996,7 @@ export const getFqF1VerticesValues = createSelector(getFileItems, getFilters, ge
             e =>
                 (e.getGobiiExtractFilterType() == GobiiExtractFilterType.FLEX_QUERY
                     && e.getExtractorItemType() === ExtractorItemType.VERTEX_VALUE
-                    && e.getEntityType() !== entityType)
+                    && e.getEntityType() === entityType)
         ).map(fi => fi);
     }
 
