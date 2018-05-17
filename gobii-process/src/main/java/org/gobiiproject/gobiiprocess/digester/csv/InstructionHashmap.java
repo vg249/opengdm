@@ -15,7 +15,7 @@ public class InstructionHashmap<K1, K2, V> {
 
     /**
      * Puts the value object based on the (super)key K1 and (sub)key K2
-     * @param k1 key1 (super-key)
+     * @paramInstructionHashmap<K1, K2, V> k1 key1 (super-key)
      * @param k2 key2 (sub-key)
      * @param v value object
      * @return previous value associated with specified key, or <tt>null</tt>

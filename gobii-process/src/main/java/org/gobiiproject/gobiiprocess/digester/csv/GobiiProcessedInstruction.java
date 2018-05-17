@@ -104,6 +104,40 @@ public class GobiiProcessedInstruction {
 			columnNo++;
 		}
 	}
+
+	public void parseGobiiFileColumns(List<GobiiFileColumn> columnList) {
+		int columnNo = 0;
+//		columnList = loaderInstruction.getGobiiFileColumns();
+		fileLine = new ArrayList<FileLineEntry>();
+		requiredRows = new ArrayList<ArrayList<String>>();
+		for (GobiiFileColumn gobiiFileColumn : columnList) {
+			switch (gobiiFileColumn.getGobiiColumnType()) {
+				case CONSTANT:
+					fileLine.add(new FileLineEntry(GobiiColumnType.CONSTANT, gobiiFileColumn.getConstantValue(), columnNo));
+					break;
+				case AUTOINCREMENT:
+					fileLine.add(new FileLineEntry(GobiiColumnType.AUTOINCREMENT, AUTO_INCREMENT_START_VALUE, columnNo));
+					break;
+				case CSV_ROW:
+					fileLine.add(new FileLineEntry(GobiiColumnType.CSV_ROW, "", columnNo));
+					requiredRows.add(new ArrayList<String>());
+					hasCSV_ROW = true;
+					break;
+				case CSV_COLUMN:
+					fileLine.add(new FileLineEntry(GobiiColumnType.CSV_COLUMN, "", columnNo));
+					hasCSV_COL = true;
+					break;
+				case CSV_BOTH:
+					fileLine.add(new FileLineEntry(GobiiColumnType.CSV_BOTH, "", columnNo));
+					hasCSV_BOTH = true;
+					break;
+				default:
+					ErrorLogger.logError("CSVReader", "Unable to deal with file type"+gobiiFileColumn.getGobiiColumnType().name(), new Throwable());
+					break;
+			}
+			columnNo++;
+		}
+	}
 }
 
 class FileLineEntry{

@@ -33,7 +33,6 @@ import org.gobiiproject.gobiiprocess.JobStatus;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.*;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderV2;
 import org.gobiiproject.gobiiprocess.digester.csv.Instruction2HashMap;
-import org.gobiiproject.gobiiprocess.digester.csv.InstructionHashmap;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestMatrix;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFFileReader;
 
@@ -298,10 +297,8 @@ public class GobiiFileReader {
 			case VCF:
 				//INTENTIONAL FALLTHROUGH
 			case GENERIC:
-				HashMap<String, InstructionHashmap<Integer, String, String>> map = new HashMap<>();
-				map = Instruction2HashMap.getMap(instructionFile);
 				CSVFileReaderV2.parseInstructionFile(list);
-				CSVFileReaderV2.processMap(map);
+//				CSVFileReaderV2.processMap(map);
 				break;
 			default:
 				System.err.println("Unable to deal with file type " + zero.getGobiiFile().getGobiiFileType());

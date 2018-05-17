@@ -4,10 +4,7 @@ package org.gobiiproject.gobiimodel.dto.instructions.loader;
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
 import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A loader instruction containing all the details nessisary to create a digest file.
@@ -53,6 +50,9 @@ public class GobiiLoaderInstruction {
 
 
     public Map<String, List<GobiiFileColumn>> getColumnsByTableName() {
+        Set<String> strings = columnsByTableName.keySet();
+
+        Collection<List<GobiiFileColumn>> values = columnsByTableName.values();
         return columnsByTableName;
     }
 
