@@ -66,6 +66,12 @@ public class GobiiAdl {
     private static ServerConfig serverConfig;
     private static String crop = null;
     private static Long timeout = null;
+    private static File xmlFile = null;
+    private static File dataFiles = null;
+    private static File instructionTemplates = null;
+    private static boolean hasXmlFile = false;
+    private static boolean hasDataFilesDir = false;
+    private static boolean hasInstructionTemplatesDir = false;
 
     private static void validateKeys(NodeList nodeList, XPath xPath, Document document) throws Exception {
         for (int i = 0; i < nodeList.getLength(); i++) {
@@ -1815,17 +1821,144 @@ public class GobiiAdl {
         return "Value is required: " + option.getArgName() + ", " + option.getDescription();
     }
 
-    public static void main(String[] args) throws Exception {
+    private static void checkIfDirectory(File fileName) {
+
+        if (!fileName.isDirectory()) {
+            System.out.println("\nFile " + fileName + " is not directory.");
+            System.exit(1);
+        }
+
+    }
+
+    private static File[] getChildrenFiles(File fileName) {
+
+        File[] directoryListing = null;
+
+        if (fileName.list().length == 0) {
+
+            System.out.println("\nDirectory "+fileName.getName()+" is empty!");
+            System.exit(1);
+
+        }
+
+        directoryListing = fileName.listFiles();
+
+        return directoryListing;
+
+    }
+
+    private static void processSubDirectory(File currentSubDir) {
+
+        File[] subDirFiles = getChildrenFiles(currentSubDir);
+
+        /** check if directory has
+         * 1 XML file
+         * subdirectory called data_files
+         * subdirectory called instruction_templates
+         * **/
+
+        xmlFile = null;
+        dataFiles = null;
+        instructionTemplates = null;
+        hasXmlFile = false;
+        hasDataFilesDir = false;
+        hasInstructionTemplatesDir = false;
+
+        for (File currentFile : subDirFiles) {
+            String fileName = currentFile.getName();
+            if (fileName.endsWith(".xml") || fileName.endsWith(".XML")) {
+
+                if (!hasXmlFile) {
+                    hasXmlFile = true;
+                    xmlFile = currentFile;
+                } else {
+                    System.out.println("\nDirectory "+currentSubDir.getName()+" has more than one (1) XML file.");
+                    System.exit(1);
+                }
+
+            }
+
+            if (fileName.equals("data_files")) {
+
+                if (!hasDataFilesDir) {
+                    hasDataFilesDir = true;
+                    dataFiles = currentFile;
+                } else {
+                    System.out.println("\nDirectory " + currentSubDir.getName()+" has more than one (1) data_files directory.");
+                    System.exit(1);
+                }
+
+            }
+
+            if (fileName.equals("instruction_templates")) {
+
+                if (!hasInstructionTemplatesDir) {
+                    hasInstructionTemplatesDir = true;
+                    instructionTemplates = currentFile;
+                } else {
+                    System.out.println("\nDirectory " + currentSubDir.getName()+" has more than one (1) instruction_templates.");
+                    System.exit(1);
+                }
+
+            }
+        }
+
+        if (!hasXmlFile) {
+            System.out.println("\nDirectory "+currentSubDir.getName()+" does not have an XML file.");
+            System.exit(1);
+        }
+
+        if (!hasDataFilesDir) {
+            System.out.println("\nDirectory "+currentSubDir.getName()+" does not have a subdirectory data_files.");
+            System.exit(1);
+        }
+
+        if (!hasInstructionTemplatesDir) {
+            System.out.println("\nDirectory " + currentSubDir.getName()+" does not have a subdirectory instruction_templates.");
+            System.exit(1);
+        }
+
+        // check if data_files and instruction templates are directory and if empty
+        checkIfDirectory(dataFiles);
+        checkIfDirectory(instructionTemplates);
+
+        File[] dataFilesChildren = getChildrenFiles(dataFiles);
+        File[] instructionTemplatesChildren = getChildrenFiles(instructionTemplates);
+
+    }
+
+    private static void processXMLScenario(File xmlFile) throws Exception {
 
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
 
-        File fXmlFile;
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        Document document = documentBuilder.parse(xmlFile);
+        XPath xPath = XPathFactory.newInstance().newXPath();
+
+        //check if all DbPKeysurrogate value is unique for each entity
+        String getAllNotesExpr = "//Entities/*";
+        XPathExpression xPathExpression = xPath.compile(getAllNotesExpr);
+        NodeList nodeList = (NodeList) xPathExpression.evaluate(document, XPathConstants.NODESET);
+        validateKeys(nodeList, xPath, document);
+        System.out.println("\nFile passed key checks...\n");
+
+        getEntities(xPath, document, xmlFile);
+        System.out.println("\n\n\nSuccessfully saved DbPKeys to file\n");
+        System.out.println("\nParsing Scenarios...\n");
+        String getAllScenarios = "//Scenarios/*";
+        xPathExpression = xPath.compile(getAllScenarios);
+        nodeList = (NodeList) xPathExpression.evaluate(document, XPathConstants.NODESET);
+        parseScenarios(nodeList, xPath, document, xmlFile);
+        
+
+    }
+
+    public static void main(String[] args) throws Exception {
+
 
         // define commandline options
         Options options = new Options();
-        String INPUT_XML = "wxml";
-        setOption(options, INPUT_XML, true, "The XML file containing the entities and scenarios", "input xml");
         String INPUT_HOST = "h";
         setOption(options, INPUT_HOST, true, "The URL of the gobii server to connect to", "gobii server");
         String INPUT_USER = "u";
@@ -1834,16 +1967,12 @@ public class GobiiAdl {
         setOption(options, INPUT_PASSWORD, true, "Password of the user doing the load", "password");
         String INPUT_TIMEOUT = "t";
         setOption(options, INPUT_TIMEOUT, true, "Maximum waiting time in minutes.", "timeout");
+        String INPUT_SCENARIO = "s";
+        setOption(options, INPUT_SCENARIO, true, "Specifies the name of one subdirectory under test_profiles. When specified, tool in run in single-scenario mode", "scenario");
 
         // parse the commandline
         CommandLineParser parser = new DefaultParser();
         CommandLine commandLine = parser.parse(options, args);
-
-        if (!commandLine.hasOption(INPUT_XML)) {
-            String message = getMessageForMissingOption(INPUT_XML, options);
-            System.out.println(message);
-            System.exit(1);
-        }
 
         if (!commandLine.hasOption(INPUT_HOST)) {
             String message = getMessageForMissingOption(INPUT_HOST, options);
@@ -1882,11 +2011,29 @@ public class GobiiAdl {
 
         timeout = timeoutInt.longValue();
 
-        fXmlFile = new File(commandLine.getOptionValue(INPUT_XML));
-        if (!fXmlFile.exists()) {
-            System.out.println("The XML file doesn't exists. Path: " + commandLine.getOptionValue(INPUT_XML));
+        /** check if scenario is specified **/
+
+        String mode = "batch";
+        String inputScenario = null;
+
+        if (commandLine.hasOption(INPUT_SCENARIO)) {
+
+            mode = "single-scenario";
+            inputScenario = commandLine.getOptionValue(INPUT_SCENARIO);
+        }
+
+        File testProfiles = new File("test_profiles");
+
+        if (!testProfiles.exists()) {
+            System.out.println("\nThe directory, test_profiles,  does not exist. ");
             System.exit(1);
         }
+
+        // check if directory
+        checkIfDirectory(testProfiles);
+
+
+        /** log in to specified host **/
 
         String url = commandLine.getOptionValue(INPUT_HOST);
         String username = commandLine.getOptionValue(INPUT_USER);
@@ -1932,22 +2079,55 @@ public class GobiiAdl {
             System.exit(1);
         }
 
-        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        Document document = documentBuilder.parse(fXmlFile);
-        XPath xPath = XPathFactory.newInstance().newXPath();
 
-        //check if all DbPKeysurrogate value is unique for each entity
-        String getAllNotesExpr = "//Entities/*";
-        XPathExpression xPathExpression = xPath.compile(getAllNotesExpr);
-        NodeList nodeList = (NodeList) xPathExpression.evaluate(document, XPathConstants.NODESET);
-        validateKeys(nodeList, xPath, document);
-        System.out.println("\nFile passed key checks...\n");
-        getEntities(xPath, document, fXmlFile);
-        System.out.println("\n\n\nSuccessfully saved DbPKeys to file\n");
-        System.out.println("\nParsing Scenarios...\n");
-        String getAllScenarios = "//Scenarios/*";
-        xPathExpression = xPath.compile(getAllScenarios);
-        nodeList = (NodeList) xPathExpression.evaluate(document, XPathConstants.NODESET);
-        parseScenarios(nodeList, xPath, document, fXmlFile);
+        if (mode.equals("batch")) {
+
+            File[] directoryListing = getChildrenFiles(testProfiles);
+
+            for (File currentSubDir : directoryListing) {
+
+                if (!currentSubDir.isDirectory()) {
+                    System.out.println("\nWarning: "+currentSubDir.getName() + " is not a directory. Skipping...");
+                    continue;
+                }
+
+                /** Do load process for each scenario file ***/
+
+
+                System.out.println("\nChecking files for " + currentSubDir.getName());
+
+                processSubDirectory(currentSubDir);
+
+                /***Process XML file for current subdirectory**/
+                System.out.println("\nProcessing XML: " + xmlFile.getName() + " for subdirectory: " + currentSubDir.getName());
+                processXMLScenario(xmlFile);
+
+            }
+        } else {
+
+            if (inputScenario == null) {
+
+                System.out.println("\nScenario name is empty!");
+                System.exit(1);
+            }
+
+            File scenarioDir = new File(testProfiles.getAbsoluteFile() + "\\" + inputScenario);
+
+            if (!scenarioDir.exists()) {
+                System.out.println("\nThe directory with path: " + scenarioDir.getAbsolutePath() + " does not exist.");
+                System.exit(1);
+            }
+
+            checkIfDirectory(scenarioDir);
+            System.out.println("\nChecking files for " + scenarioDir.getName());
+
+            processSubDirectory(scenarioDir);
+
+            /***Process XML file for current subdirectory**/
+            System.out.println("\nProcessing XML: " + xmlFile.getName() + " for subdirectory: " + scenarioDir.getName());
+            processXMLScenario(xmlFile);
+
+
+        }
     }
 }
