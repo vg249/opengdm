@@ -27,7 +27,6 @@ import {EntityType} from "../model/type-entity";
             <div class="panel-body">
                 <label class="the-label">Entity:</label><BR>
                 <p-dropdown [options]="fileItemsEntityNames$ | async"
-                            [(ngModel)]="selectedAllowableEntities"
                             [style]="{'width': '100%'}"
                             optionLabel="_itemName"
                             (onChange)="handleVertexSelected($event)"
@@ -102,9 +101,9 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
                         this.currentStyle = this.disabledStyle;
                     }
 
-                    if (items[0]) {
-                        this.selectedAllowableEntities = items[0];
-                    }
+                    // if (items[0]) {
+                    //     this.selectedAllowableEntities = items[0];
+                    // }
 
                 },
                 error => {
@@ -125,9 +124,10 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
         let vertexId: string = null;
         if (arg.value._entity && arg.value._entity.vertexId) {
             vertexId = arg.value._entity.vertexId;
-        } else {
-            this.selectedAllowableEntities = null;
         }
+        // else {
+        //     this.selectedAllowableEntities = null;
+        // }
 
         this.JobId$.subscribe(
             fileItemJobId => {
