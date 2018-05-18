@@ -401,13 +401,17 @@ public class GobiiExtractor {
 					pm.addCriteria("Platforms", getPlatformNames(extract.getPlatforms()));
 					GobiiSampleListType type = extract.getGobiiSampleListType();
 
+					//turns /data/gobii_bundle/crops/zoan/extractor/instructions/2018_05_15_13_32_12_samples.txt into 2018_05_15_13_32_12_samples.txt
+					//We're moving it into the extract directory when we're done now, so lets be vague as to its location.
+					//They'll find it if they want to
+					String listFileName=new File(extract.getListFileName()).getName();
 
 					//Marker List or List File (see above for selection logic)
 					if(extract.getMarkerList() != null && !extract.getMarkerList().isEmpty()) {
 						pm.addCriteria("Marker List", String.join("<BR>", extract.getMarkerList()));
 					}
 					else if(filterType==BY_MARKER && extract.getListFileName() != null){
-						pm.addCriteria("Marker List", extract.getListFileName());
+						pm.addCriteria("Marker List", listFileName);
 					}
 
 					if(type!=null){
@@ -418,7 +422,7 @@ public class GobiiExtractor {
 					if(extract.getSampleList() != null && !extract.getSampleList().isEmpty()){
 						pm.addCriteria("Sample List", String.join("<BR>", extract.getSampleList()));
 					}else if(filterType==BY_SAMPLE && extract.getListFileName() != null){
-						pm.addCriteria("Sample List", sampleListFile);
+						pm.addCriteria("Sample List", listFileName);
 					}
 
 					List<Integer> mapsetIds=inst.getMapsetIds();
@@ -527,13 +531,14 @@ public class GobiiExtractor {
                     }
 
                     //Clean Temporary Files
-                    rmIfExist(genoFile);
+					rmIfExist(genoFile);
                     rmIfExist(chrLengthFile);
 					rmIfExist(markerPosFile);
 					rmIfExist(extendedMarkerFile);
-					rmIfExist(extractDir + extract.getListFileName()); //remove the list
 					rmIfExist(extractDir + "mdeOut");//remove mde output file
 					rmIfExist("position.file");
+
+					mv(extract.getListFileName(),extractDir); //Move the list file to the extract directory
 
 					ErrorLogger.logDebug("Extractor", "DataSet " + datasetName + " Created");
 
