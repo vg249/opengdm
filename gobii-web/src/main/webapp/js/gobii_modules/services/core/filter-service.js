@@ -162,7 +162,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../mo
                             returnVal = this.store.select(fromRoot.getFqF2Vertices);
                             break;
                         case file_item_param_names_1.FilterParamNames.FQ_F2_VERTEX_VALUES:
-                            returnVal = this.store.select(fromRoot.getFqF3VerticesValues);
+                            returnVal = this.store.select(fromRoot.getFqF2VerticesValues);
                             break;
                         //------- F3 --------------------------------------
                         case file_item_param_names_1.FilterParamNames.FQ_F3_VERTICES:

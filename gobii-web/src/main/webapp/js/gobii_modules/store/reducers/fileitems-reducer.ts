@@ -1142,6 +1142,7 @@ export const getFqF2VerticesValues = createSelector(getFileItems, getFilters, ge
     }
 
     return returnVal;
+
 });
 
 export const getFqF3VerticesValues = createSelector(getFileItems, getFilters, getGobiiExtractFilterType, (fileItems, filters, gobiiExtractFilterType) => {
