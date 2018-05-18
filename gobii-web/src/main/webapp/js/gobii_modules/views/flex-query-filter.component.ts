@@ -128,6 +128,13 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
 
 
                     let thisControlVertexfilterParams: FilterParams = this.filterParamsColl.getFilter(this.filterParamNameVertices, GobiiExtractFilterType.FLEX_QUERY);
+                    let currentVertexFilter: PayloadFilter = filters[thisControlVertexfilterParams.getQueryName()];
+                    if( currentVertexFilter ) {
+                        if(! currentVertexFilter.targetEntityFilterValue) {
+                            this.selectedVertexValues = null;
+                        }
+                    }
+
 
                     if (!thisControlVertexfilterParams.getPreviousSiblingFileItemParams()) {
                         this.setControlState(true);

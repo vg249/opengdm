@@ -90,6 +90,12 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                     this.store.select(fromRoot.getFileItemsFilters)
                         .subscribe(function (filters) {
                         var thisControlVertexfilterParams = _this.filterParamsColl.getFilter(_this.filterParamNameVertices, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
+                        var currentVertexFilter = filters[thisControlVertexfilterParams.getQueryName()];
+                        if (currentVertexFilter) {
+                            if (!currentVertexFilter.targetEntityFilterValue) {
+                                _this.selectedVertexValues = null;
+                            }
+                        }
                         if (!thisControlVertexfilterParams.getPreviousSiblingFileItemParams()) {
                             _this.setControlState(true);
                         }
