@@ -161,8 +161,6 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
         }
     }
 
-    previousSelectedItemId: string = null;
-
     public handleVertexSelected(arg) {
 
         if (arg.value && arg.value._entity) {

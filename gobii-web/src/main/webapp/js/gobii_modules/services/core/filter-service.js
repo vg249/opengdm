@@ -77,28 +77,18 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../mo
                 } // constructor
                 FilterService.prototype.loadFilter = function (gobiiExtractFilterType, filterParamsName, filterValue) {
                     var filterParams = this.filterParamsColl.getFilter(filterParamsName, gobiiExtractFilterType);
-                    // the filterParams passed in should exist
-                    if (!filterParams) {
-                        this.store.dispatch(new historyAction.AddStatusMessageAction("Error loading filter: there is no query params object for query "
-                            + filterParamsName
-                            + " with extract filter type "
-                            + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]));
-                    }
-                    while (filterParams) {
+                    if (filterParams) {
                         var loadAction = new fileItemActions.LoadFilterAction({
                             filterId: filterParams.getQueryName(),
                             filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParams.getTargetEntityUniqueId(), filterParams.getRelatedEntityUniqueId(), null, filterValue, null, null)
                         });
                         this.store.dispatch(loadAction);
-                        // if the current filter is getting nulled, we need to null the siblings as well
-                        // but we dont' need to cascade filter values here
-                        // note that for now this is only really relevant to FlexQuery filters
-                        if (!filterValue) {
-                            filterParams = filterParams.getNextSiblingFileItemParams();
-                        }
-                        else {
-                            filterParams = null;
-                        }
+                    }
+                    else {
+                        this.store.dispatch(new historyAction.AddStatusMessageAction("Error loading filter: there is no query params object for query "
+                            + filterParamsName
+                            + " with extract filter type "
+                            + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]));
                     }
                 };
                 FilterService.prototype.getForFilter = function (filterParamName) {

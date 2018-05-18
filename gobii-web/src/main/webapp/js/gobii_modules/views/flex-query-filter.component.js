@@ -54,7 +54,6 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                     this.enabledStyle = null;
                     this.disabledStyle = { 'background': '#dddddd' };
                     this.currentStyle = this.disabledStyle;
-                    this.previousSelectedItemId = null;
                 } // ctor
                 FlexQueryFilterComponent.prototype.ngOnInit = function () {
                     var _this = this;
