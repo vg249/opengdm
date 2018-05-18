@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-extractor-filter", "../../store/actions/history-action", "../../store/actions/fileitem-action", "@ngrx/store", "./dto-request.service", "../../model/vertex-filter", "./entity-file-item-service", "../app/dto-request-item-vertex-filter", "../../model/gobii-file-item", "../../model/type-process", "../../model/type-extractor-item", "../../store/actions/action-payload-filter", "./filter-params-coll", "../../model/gobii-file-item-compound-id", "../../model/type-entity", "../../model/name-id-label-type", "../../model/cv-filter-type"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-extractor-filter", "../../store/actions/history-action", "../../store/actions/fileitem-action", "../../store/reducers", "@ngrx/store", "./dto-request.service", "../../model/vertex-filter", "./entity-file-item-service", "../../model/file-item-param-names", "../app/dto-request-item-vertex-filter", "../../model/gobii-file-item", "../../model/type-process", "../../model/type-extractor-item", "../../store/actions/action-payload-filter", "./filter-params-coll", "../../model/gobii-file-item-compound-id", "../../model/type-entity", "../../model/name-id-label-type", "../../model/cv-filter-type", "./filter-service", "rxjs/Observable"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_extractor_filter_1, historyAction, fileItemActions, store_1, dto_request_service_1, vertex_filter_1, entity_file_item_service_1, dto_request_item_vertex_filter_1, gobii_file_item_1, type_process_1, type_extractor_item_1, action_payload_filter_1, filter_params_coll_1, gobii_file_item_compound_id_1, type_entity_1, name_id_label_type_1, cv_filter_type_1, FlexQueryService;
+    var core_1, type_extractor_filter_1, historyAction, fileItemActions, fromRoot, store_1, dto_request_service_1, vertex_filter_1, entity_file_item_service_1, file_item_param_names_1, dto_request_item_vertex_filter_1, gobii_file_item_1, type_process_1, type_extractor_item_1, action_payload_filter_1, filter_params_coll_1, gobii_file_item_compound_id_1, type_entity_1, name_id_label_type_1, cv_filter_type_1, filter_service_1, Observable_1, FlexQueryService;
     return {
         setters: [
             function (core_1_1) {
@@ -25,6 +25,9 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
             function (fileItemActions_1) {
                 fileItemActions = fileItemActions_1;
             },
+            function (fromRoot_1) {
+                fromRoot = fromRoot_1;
+            },
             function (store_1_1) {
                 store_1 = store_1_1;
             },
@@ -36,6 +39,9 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
             },
             function (entity_file_item_service_1_1) {
                 entity_file_item_service_1 = entity_file_item_service_1_1;
+            },
+            function (file_item_param_names_1_1) {
+                file_item_param_names_1 = file_item_param_names_1_1;
             },
             function (dto_request_item_vertex_filter_1_1) {
                 dto_request_item_vertex_filter_1 = dto_request_item_vertex_filter_1_1;
@@ -66,19 +72,70 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
             },
             function (cv_filter_type_1_1) {
                 cv_filter_type_1 = cv_filter_type_1_1;
+            },
+            function (filter_service_1_1) {
+                filter_service_1 = filter_service_1_1;
+            },
+            function (Observable_1_1) {
+                Observable_1 = Observable_1_1;
             }
         ],
         execute: function () {
             FlexQueryService = (function () {
-                function FlexQueryService(store, entityFileItemService, dtoRequestServiceVertexFilterDTO, filterParamsColl) {
+                function FlexQueryService(store, entityFileItemService, dtoRequestServiceVertexFilterDTO, filterParamsColl, filterService) {
                     this.store = store;
                     this.entityFileItemService = entityFileItemService;
                     this.dtoRequestServiceVertexFilterDTO = dtoRequestServiceVertexFilterDTO;
                     this.filterParamsColl = filterParamsColl;
+                    this.filterService = filterService;
                 }
                 FlexQueryService.prototype.loadVertices = function (filterParamNames) {
                     this.entityFileItemService.loadEntityList(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, filterParamNames);
                 }; // loadVertices()
+                FlexQueryService.prototype.loadSelectedVertexFilter = function (filterParamsName, vertexId) {
+                    this.filterService.loadFilter(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, filterParamsName, vertexId);
+                };
+                FlexQueryService.prototype.loadSelectedVertexValueFilters = function (filterParamsName, vertexValues) {
+                    var vertexValueIdsCsv = null;
+                    if (vertexValues && vertexValues.length > 0) {
+                        vertexValueIdsCsv = "";
+                        vertexValues.forEach(function (vv) { return vertexValueIdsCsv += vv + ","; });
+                    }
+                    var foo = "foo";
+                    this.filterService.loadFilter(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, filterParamsName, vertexValueIdsCsv);
+                };
+                FlexQueryService.prototype.doesPreviousFilterAllowSelection = function (filterParamName) {
+                    var _this = this;
+                    var foo = "foo";
+                    return Observable_1.Observable.create(function (observer) {
+                        var returnVal = false;
+                        if ((filterParamName === file_item_param_names_1.FilterParamNames.FQ_F1_VERTICES)
+                            || (filterParamName === file_item_param_names_1.FilterParamNames.FQ_F2_VERTICES)
+                            || (filterParamName === file_item_param_names_1.FilterParamNames.FQ_F3_VERTICES)
+                            || (filterParamName === file_item_param_names_1.FilterParamNames.FQ_F4_VERTICES)) {
+                            var filterParams = _this.filterParamsColl.getFilter(filterParamName, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
+                            if (!filterParams.getPreviousSiblingFileItemParams()) {
+                                returnVal = true;
+                            }
+                            else {
+                                if (filterParams.getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
+                                    var childOfPreviousSiblingsParams_1 = filterParams.getPreviousSiblingFileItemParams().getChildFileItemParams()[0];
+                                    _this.store.select(fromRoot.getFileItemsFilters)
+                                        .subscribe(function (filters) {
+                                        var currentFilter = filters[childOfPreviousSiblingsParams_1.getQueryName()];
+                                        if (currentFilter && currentFilter.targetEntityFilterValue) {
+                                            returnVal = true;
+                                        }
+                                    }); // subscribe to select filters()
+                                } // if the previous sibling has children
+                            } // if-else there are previous sibling params
+                        }
+                        else {
+                            _this.store.dispatch(new historyAction.AddStatusMessageAction("This method is only to be used with VERTICES filters; current filter is " + filterParamName));
+                        } // if-else filter is of type VERTEX_VALUES
+                        observer.next(returnVal);
+                    }); // create observer
+                }; // doesPreviousFilterAllowSelection()
                 FlexQueryService.prototype.loadVertexValues = function (jobId, vertexFileItem, filterParamName) {
                     //        return Observable.create(observer => {
                     var _this = this;
@@ -140,7 +197,8 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                     __metadata("design:paramtypes", [store_1.Store,
                         entity_file_item_service_1.EntityFileItemService,
                         dto_request_service_1.DtoRequestService,
-                        filter_params_coll_1.FilterParamsColl])
+                        filter_params_coll_1.FilterParamsColl,
+                        filter_service_1.FilterService])
                 ], FlexQueryService);
                 return FlexQueryService;
             }());

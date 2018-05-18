@@ -21,6 +21,8 @@ import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 import {EntitySubType, EntityType, entityTypefromString} from "../../model/type-entity";
 import {NameIdLabelType} from "../../model/name-id-label-type";
 import {CvFilters, CvFilterType} from "../../model/cv-filter-type";
+import {FilterService} from "./filter-service";
+import {Observable} from "rxjs/Observable";
 
 @Injectable()
 export class FlexQueryService {
@@ -29,7 +31,8 @@ export class FlexQueryService {
     constructor(private store: Store<fromRoot.State>,
                 private entityFileItemService: EntityFileItemService,
                 private dtoRequestServiceVertexFilterDTO: DtoRequestService<VertexFilterDTO>,
-                private filterParamsColl: FilterParamsColl) {
+                private filterParamsColl: FilterParamsColl,
+                private filterService: FilterService) {
 
 
     }
@@ -40,6 +43,80 @@ export class FlexQueryService {
         this.entityFileItemService.loadEntityList(GobiiExtractFilterType.FLEX_QUERY, filterParamNames);
 
     } // loadVertices()
+
+    public loadSelectedVertexFilter(filterParamsName: FilterParamNames, vertexId: string) {
+
+        this.filterService.loadFilter(GobiiExtractFilterType.FLEX_QUERY,
+            filterParamsName,
+            vertexId);
+    }
+
+    public loadSelectedVertexValueFilters(filterParamsName: FilterParamNames, vertexValues: string[]) {
+
+        let vertexValueIdsCsv: string = null;
+
+        if( vertexValues && vertexValues.length > 0) {
+
+            vertexValueIdsCsv = "";
+            vertexValues.forEach(
+                vv => vertexValueIdsCsv += vv + ","
+            );
+        }
+
+        let foo:string = "foo";
+        this.filterService.loadFilter(GobiiExtractFilterType.FLEX_QUERY,
+            filterParamsName,
+            vertexValueIdsCsv);
+
+    }
+
+    public doesPreviousFilterAllowSelection(filterParamName: FilterParamNames): Observable<boolean> {
+
+        let foo:string = "foo";
+
+        return Observable.create(observer => {
+
+            let returnVal:boolean = false;
+
+            if (( filterParamName === FilterParamNames.FQ_F1_VERTICES )
+                || ( filterParamName === FilterParamNames.FQ_F2_VERTICES )
+                || ( filterParamName === FilterParamNames.FQ_F3_VERTICES )
+                || ( filterParamName === FilterParamNames.FQ_F4_VERTICES)) {
+
+                let filterParams: FilterParams = this.filterParamsColl.getFilter(filterParamName, GobiiExtractFilterType.FLEX_QUERY);
+
+                if (!filterParams.getPreviousSiblingFileItemParams()) {
+                    returnVal = true;
+                } else {
+
+                    if( filterParams.getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0 ) {
+                        let childOfPreviousSiblingsParams: FilterParams = filterParams.getPreviousSiblingFileItemParams().getChildFileItemParams()[0];
+
+                        this.store.select(fromRoot.getFileItemsFilters)
+                            .subscribe(
+                                filters => {
+                                    let currentFilter: PayloadFilter = filters[childOfPreviousSiblingsParams.getQueryName()];
+                                    if (currentFilter && currentFilter.targetEntityFilterValue) {
+                                        returnVal = true;
+                                    }
+                                }
+                            ); // subscribe to select filters()
+                    } // if the previous sibling has children
+                } // if-else there are previous sibling params
+            } else {
+
+                this.store.dispatch(new historyAction.AddStatusMessageAction(
+                    "This method is only to be used with VERTICES filters; current filter is " + filterParamName)
+                );
+
+            } // if-else filter is of type VERTEX_VALUES
+
+            observer.next(returnVal);
+
+        }); // create observer
+
+    } // doesPreviousFilterAllowSelection()
+
 
     public loadVertexValues(jobId: string, vertexFileItem: GobiiFileItem, filterParamName: FilterParamNames) {
 
