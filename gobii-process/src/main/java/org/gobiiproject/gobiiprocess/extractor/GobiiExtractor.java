@@ -15,13 +15,20 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.commons.cli.*;
 import org.apache.http.HttpStatus;
+import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
+import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
+import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
+import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.GenericClientContext;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.ServerBase;
 import org.gobiiproject.gobiimodel.config.ServerConfigKDC;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.*;
@@ -378,6 +385,10 @@ public class GobiiExtractor {
 					ErrorLogger.logInfo("Extractor", "Executing MDEs");
 					tryExec(gobiiMDE, extractDir + "mdeOut", errorFile);
 
+					String mapName="No Mapset info available";
+					String postgresName=(mapId==null)?null:getMapNameFromId(mapId,configuration); //Get name from postgres
+					if(postgresName!=null)mapName=postgresName;
+
 					pm.addCriteria("Crop", inst.getGobiiCropType());
 					pm.addCriteria("Email", inst.getContactEmail());
 					pm.addCriteria("Job ID", jobFileName);
@@ -385,7 +396,7 @@ public class GobiiExtractor {
 					pm.addCriteria("Project", extract.getProject());
 					pm.addCriteria("Dataset", extract.getDataSet());
 					pm.addCriteria("Dataset Type",extract.getGobiiDatasetType());
-					pm.addCriteria("Mapset", (mapId!=null?mapId.toString():"No Mapset info available"));
+					pm.addCriteria("Mapset", mapName);
 					pm.addCriteria("Format", uppercaseFirstLetter(extract.getGobiiFileType().toString().toLowerCase()));
 					pm.addCriteria("Platforms", getPlatformNames(extract.getPlatforms()));
 					GobiiSampleListType type = extract.getGobiiSampleListType();
@@ -1011,5 +1022,53 @@ public class GobiiExtractor {
 		}
 	}
 
+	/**
+	 * Gets a map name from an ID
+	 * @param mapId ID of map, if null, returns null
+	 * @param config Configuration master object
+	 * @return name, or null if error
+	 */
+	private static String getMapNameFromId(Integer mapId, ConfigSettings config) {
+		String cropName=config.getCurrentGobiiCropType();
+		if (mapId == null) return null;
 
+		try {
+			// set up authentication and so forth
+			// you'll need to get the current from the instruction file
+			GobiiClientContext context = GobiiClientContext.getInstance(config, cropName, GobiiAutoLoginType.USER_RUN_AS);
+			//context.setCurrentCropId(cropName);
+
+			if (LineUtils.isNullOrEmpty(context.getUserToken())) {
+				logError("Digester", "Unable to login with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
+				return null;
+			}
+
+			String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
+			GobiiUriFactory gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
+
+			RestUri mapUri = gobiiUriFactory
+					.resourceByUriIdParam(GobiiServiceRequestId.URL_MAPSET);
+			mapUri.setParamValue("id", mapId.toString());
+			GobiiEnvelopeRestResource<MapsetDTO> gobiiEnvelopeRestResourceForDatasets = new GobiiEnvelopeRestResource<>(mapUri);
+			PayloadEnvelope<MapsetDTO> resultEnvelope = gobiiEnvelopeRestResourceForDatasets
+					.get(MapsetDTO.class);
+
+			MapsetDTO dataSetResponse;
+			if (!resultEnvelope.getHeader().getStatus().isSucceeded()) {
+				System.out.println();
+				logError("Extractor", "Map set response response errors");
+				for (HeaderStatusMessage currentStatusMesage : resultEnvelope.getHeader().getStatus().getStatusMessages()) {
+					logError("HeaderError", currentStatusMesage.getMessage());
+				}
+				return null;
+			} else {
+				dataSetResponse = resultEnvelope.getPayload().getData().get(0);
+			}
+			return dataSetResponse.getName();
+
+		} catch (Exception e) {
+			logError("Extractor", "Exception while referencing map sets in Postgresql", e);
+			return null;
+		}
+	}
 }
