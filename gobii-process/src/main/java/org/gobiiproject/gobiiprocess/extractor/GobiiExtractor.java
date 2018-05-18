@@ -38,6 +38,8 @@ import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInst
 
 import javax.ws.rs.core.MediaType;
 
+import static org.gobiiproject.gobiimodel.types.GobiiExtractFilterType.BY_MARKER;
+import static org.gobiiproject.gobiimodel.types.GobiiExtractFilterType.BY_SAMPLE;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.*;
@@ -201,7 +203,7 @@ public class GobiiExtractor {
 
 					GobiiExtractFilterType filterType = extract.getGobiiExtractFilterType();
 					if (filterType == null) filterType = GobiiExtractFilterType.WHOLE_DATASET;
-					if (markerListOverrideLocation != null) filterType = GobiiExtractFilterType.BY_MARKER;
+					if (markerListOverrideLocation != null) filterType = BY_MARKER;
 					String extractDir = extract.getExtractDestinationDirectory() + "/";
 					tryExec("rm -f " + extractDir + "*");
 
@@ -379,7 +381,7 @@ public class GobiiExtractor {
 					pm.addCriteria("Crop", inst.getGobiiCropType());
 					pm.addCriteria("Email", inst.getContactEmail());
 					pm.addCriteria("Job ID", jobFileName);
-					pm.addCriteria("Principle Investigator", extract.getPrincipleInvestigator());
+					pm.addCriteria("Principal Investigator", extract.getPrincipleInvestigator());
 					pm.addCriteria("Project", extract.getProject());
 					pm.addCriteria("Dataset", extract.getDataSet());
 					pm.addCriteria("Dataset Type",extract.getGobiiDatasetType());
@@ -387,18 +389,33 @@ public class GobiiExtractor {
 					pm.addCriteria("Format", uppercaseFirstLetter(extract.getGobiiFileType().toString().toLowerCase()));
 					pm.addCriteria("Platforms", getPlatformNames(extract.getPlatforms()));
 					GobiiSampleListType type = extract.getGobiiSampleListType();
+
+
+					//Marker List or List File (see above for selection logic)
+					if(extract.getMarkerList() != null && !extract.getMarkerList().isEmpty()) {
+						pm.addCriteria("Marker List", String.join("<BR>", extract.getMarkerList()));
+					}
+					else if(filterType==BY_MARKER && extract.getListFileName() != null){
+						pm.addCriteria("Marker List", extract.getListFileName());
+					}
+
 					if(type!=null){
 						pm.addCriteria("Sample ListType", uppercaseFirstLetter(type.toString().toLowerCase()));
 					}
-					pm.addCriteria("Sample List", (sampleListFile==null?"No Sample list provided":sampleListFile));
-					if(extract.getMarkerList() != null) {
-						pm.addCriteria("Marker List", String.join("<BR>", extract.getMarkerList()));
-					}
+
+					//Sample List or Sample List File (See above for selection logic)
 					if(extract.getSampleList() != null && !extract.getSampleList().isEmpty()){
 						pm.addCriteria("Sample List", String.join("<BR>", extract.getSampleList()));
+					}else if(filterType==BY_SAMPLE && extract.getListFileName() != null){
+						pm.addCriteria("Sample List", sampleListFile);
 					}
-					if(inst.getMapsetIds() != null && !inst.getMapsetIds().isEmpty()) {
-						pm.addCriteria("Mapset List", String.join("<BR>", inst.getMapsetIds().toString()));
+
+					List<Integer> mapsetIds=inst.getMapsetIds();
+					//If the only mapset in the list is the mapset displayed above, lets not display it twice...
+					boolean mapsetIsAlreadyDisplayed = (mapsetIds.size()==1) && mapsetIds.contains(mapId);
+
+					if(inst.getMapsetIds() != null && !inst.getMapsetIds().isEmpty() && !mapsetIsAlreadyDisplayed) {
+						pm.addCriteria("Mapset List", String.join("<BR>", inst.getMapsetIds().toString())); //This should never happen
 					}
 
 					pm.addPath("Instruction File",new File(instructionFile).getAbsolutePath(),true);
