@@ -696,15 +696,21 @@ public class GobiiExtractor {
 							status = jsonPayload.get("status").getAsString();
 						} while ((status.equals("NEW")) || (status.equals("RUNNING")));
 
-						ProcessMessage qcStatusPm = new ProcessMessage();
+
+					ProcessMessage qcStatusPm = new ProcessMessage();
 						qcStatusPm.setUser(inst.getContactEmail());
 						qcStatusPm.setSubject(new StringBuilder("QC Job #").append(qcJobID).append(" status").toString());
 						qcStatusPm.addIdentifier("QC Job Identifier", String.valueOf(qcJobID), String.valueOf(qcJobID));
 						qcStatusPm.addIdentifier("Dataset Identifier", String.valueOf(datasetId), String.valueOf(qcJobID));
 
+						int qcDuration=0;
+					if (jsonPayload == null) {
+						ErrorLogger.logInfo("QC", "Null JSON payload");
+					}else {
 						int start = jsonPayload.get("start").getAsInt();
-						int	end = jsonPayload.get("end").getAsInt();
-						int qcDuration = end - start;
+						int end = jsonPayload.get("end").getAsInt();
+						qcDuration = end - start;
+					}
 
                         if ((status.equals("COMPLETED")) || (status.equals("FAILED"))) {
 							// If the extract directory does not exist or is not writable, it always makes the last qcDownload method crashing and
@@ -777,27 +783,6 @@ public class GobiiExtractor {
 						}
 						mailInterface.send(qcStatusPm);
 
-						//purge data
-//                    ErrorLogger.logInfo("QC", "Calling QC Purge");
-//                    RestUri restUriGetPurge = new RestUri("/",
-//                            configuration.getKDCConfig().getContextPath(),
-//                            configuration.getKDCConfig().getPath(ServerConfigKDC.KDCResource.QC_PURGE))
-//                            .addQueryParam("jobid", String.valueOf(qcJobID))
-//                            .withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT, MediaType.WILDCARD);
-//
-//                    httpMethodResult = genericClientContext
-//                            .get(restUriGetPurge);
-//                    if (httpMethodResult.getResponseCode() != HttpStatus.SC_OK) {
-//                        ErrorLogger.logInfo("QC", "The qcPurge method failed: "
-//									+ httpMethodResult.getUri().toString()
-//									+ "; failure mode: "
-//									+ Integer.toString(httpMethodResult.getResponseCode())
-//									+ " ("
-//									+ httpMethodResult.getReasonPhrase()
-//									+ ")");
-//						} else {
-//							ErrorLogger.logInfo("QC", "qcPurge method is successful.");
-//						}
 
 					}
 				}
@@ -853,11 +838,6 @@ public class GobiiExtractor {
 		int fromIndex=upper.indexOf(from)+from.length();
 		String crop=upper.substring(fromIndex,upper.indexOf('/',fromIndex));
 		return crop;
-	}
-
-
-	private static String getLogName(GobiiExtractorInstruction gli, GobiiCropConfig config, Integer dsid) {
-		return getLogName(gli.getDataSetExtracts().get(0),config,dsid);
 	}
 
 	private static String getLogName(GobiiDataSetExtract gli, GobiiCropConfig config, Integer dsid) {
