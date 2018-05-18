@@ -33,6 +33,7 @@ import {FilterParamsColl} from "../services/core/filter-params-coll";
                 <p-dropdown [options]="fileItemsVertexNames$ | async"
                             [style]="{'width': '100%'}"
                             optionLabel="_itemName"
+                            [(ngModel)]="selectedVertex"
                             (onChange)="handleVertexSelected($event)"
                             [disabled]="currentStyle===disabledStyle">
                 </p-dropdown>
@@ -42,7 +43,8 @@ import {FilterParamsColl} from "../services/core/filter-params-coll";
                 <label class="the-label">Select Entity Values</label><BR>
                 <p-listbox [options]="fileItemsEntityValues$ | async"
                            [multiple]="true"
-                           [(ngModel)]="selectedVertexValues" [style]="{'width':'100%'}"
+                           [(ngModel)]="selectedVertexValues" 
+                           [style]="{'width':'100%'}"
                            (onChange)="handleVertexValueSelected($event)"
                            optionLabel="_itemName"
                            [disabled]="currentStyle===disabledStyle"></p-listbox>
@@ -60,6 +62,7 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
 
     //these are dummy place holders for now
     public totalValues: string = "0";
+    public selectedVertex: GobiiFileItem;
     public selectedVertexValues: GobiiFileItem[];
 
     public fileItemsVertexNames$: Observable<GobiiFileItem[]>;
@@ -127,10 +130,13 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
                 filters => {
 
 
+                    // you have to reset from state because this control won't see the sibling control's
+                    // change event
                     let thisControlVertexfilterParams: FilterParams = this.filterParamsColl.getFilter(this.filterParamNameVertices, GobiiExtractFilterType.FLEX_QUERY);
                     let currentVertexFilter: PayloadFilter = filters[thisControlVertexfilterParams.getQueryName()];
                     if( currentVertexFilter ) {
                         if(! currentVertexFilter.targetEntityFilterValue) {
+                            this.selectedVertex = null;
                             this.selectedVertexValues = null;
                         }
                     }
