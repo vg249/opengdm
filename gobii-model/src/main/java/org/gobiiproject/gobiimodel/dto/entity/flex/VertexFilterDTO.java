@@ -20,7 +20,7 @@ public class VertexFilterDTO extends DTOBase {
     }
 
 
-    
+
 
     // the vertex for which values are being retrieved
     // for a list of available filterVertices, will be empty
