@@ -1530,7 +1530,7 @@ public class GobiiAdl {
         return returnVal;
     }
 
-    private static void parseScenarios(NodeList nodeList, XPath xPath, Document document, File fXmlFile) throws Exception {
+    private static void parseScenarios(NodeList nodeList, XPath xPath, Document document, File fXmlFile, String subDirectoryName) throws Exception {
 
         JsonParser parser = new JsonParser();
         String folderName, filesPath, digestPath, jobId;
@@ -1553,7 +1553,8 @@ public class GobiiAdl {
 
             String dataExpr = "//Scenario[Name='" + scenarioName + "']/Files/Data";
             XPathExpression xPathExpressionData = xPath.compile(dataExpr);
-            String sourcePath = (String) xPathExpressionData.evaluate(document, XPathConstants.STRING);
+            String dataFileName = (String) xPathExpressionData.evaluate(document, XPathConstants.STRING);
+            String sourcePath = "test_profiles/" + subDirectoryName + "/data_files/" + dataFileName;
             boolean writeSourcePath = true;
             if (!(new File(sourcePath).exists())) {
                 writeSourcePath = false;
@@ -1562,7 +1563,8 @@ public class GobiiAdl {
 
             String fileExpr = "//Scenario[Name='" + scenarioName + "']/Files/Instruction";
             XPathExpression xPathExpressionFiles = xPath.compile(fileExpr);
-            String instructionFilePath = (String) xPathExpressionFiles.evaluate(document, XPathConstants.STRING);
+            String instructionFileName = (String) xPathExpressionFiles.evaluate(document, XPathConstants.STRING);
+            String instructionFilePath = "test_profiles/" + subDirectoryName + "/instruction_templates/" + instructionFileName;
             Object obj;
             if (!new File(instructionFilePath).exists()) {
                 ClassLoader classLoader = GobiiAdl.class.getClassLoader();
@@ -1896,7 +1898,7 @@ public class GobiiAdl {
 
     }
 
-    private static void processXMLScenario(File xmlFile) throws Exception {
+    private static void processXMLScenario(File xmlFile, String subDirectoryName) throws Exception {
 
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
@@ -1918,7 +1920,7 @@ public class GobiiAdl {
         String getAllScenarios = "//Scenarios/*";
         xPathExpression = xPath.compile(getAllScenarios);
         nodeList = (NodeList) xPathExpression.evaluate(document, XPathConstants.NODESET);
-        parseScenarios(nodeList, xPath, document, xmlFile);
+        parseScenarios(nodeList, xPath, document, xmlFile, subDirectoryName);
         
 
     }
@@ -2062,7 +2064,7 @@ public class GobiiAdl {
 
                 /***Process XML file for current subdirectory**/
                 System.out.println("\nProcessing XML: " + xmlFile.getName() + " for subdirectory: " + currentSubDir.getName());
-                processXMLScenario(xmlFile);
+                processXMLScenario(xmlFile, currentSubDir.getName());
 
             }
         } else {
@@ -2087,7 +2089,7 @@ public class GobiiAdl {
 
             /***Process XML file for current subdirectory**/
             System.out.println("\nProcessing XML: " + xmlFile.getName() + " for subdirectory: " + scenarioDir.getName());
-            processXMLScenario(xmlFile);
+            processXMLScenario(xmlFile, scenarioDir.getName());
 
 
         }
