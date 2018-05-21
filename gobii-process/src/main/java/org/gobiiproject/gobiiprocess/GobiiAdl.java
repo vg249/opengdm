@@ -1760,8 +1760,6 @@ public class GobiiAdl {
                 submitInstructionFile(loaderInstructionFilesDTO, jobPayloadType);
             }
         } // iterate scenarios
-
-        System.exit(0);
     }
 
     private static void setOption(Options options,
@@ -2093,5 +2091,8 @@ public class GobiiAdl {
 
 
         }
+
+        System.out.println("ADL uploading successfully finished!");
+        System.exit(0);
     }
 }
