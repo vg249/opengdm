@@ -404,13 +404,16 @@ public class GobiiExtractor {
 					//turns /data/gobii_bundle/crops/zoan/extractor/instructions/2018_05_15_13_32_12_samples.txt into 2018_05_15_13_32_12_samples.txt
 					//We're moving it into the extract directory when we're done now, so lets be vague as to its location.
 					//They'll find it if they want to
-					String listFileName=new File(extract.getListFileName()).getName();
+					String listFileName=null;
+					if(extract.getListFileName() != null){
+						listFileName=new File(extract.getListFileName()).getName();
+					}
 
 					//Marker List or List File (see above for selection logic)
 					if(extract.getMarkerList() != null && !extract.getMarkerList().isEmpty()) {
 						pm.addCriteria("Marker List", String.join("<BR>", extract.getMarkerList()));
 					}
-					else if(filterType==BY_MARKER && extract.getListFileName() != null){
+					else if(filterType==BY_MARKER && listFileName != null){
 						pm.addCriteria("Marker List", listFileName);
 					}
 
@@ -421,7 +424,7 @@ public class GobiiExtractor {
 					//Sample List or Sample List File (See above for selection logic)
 					if(extract.getSampleList() != null && !extract.getSampleList().isEmpty()){
 						pm.addCriteria("Sample List", String.join("<BR>", extract.getSampleList()));
-					}else if(filterType==BY_SAMPLE && extract.getListFileName() != null){
+					}else if(filterType==BY_SAMPLE && listFileName != null){
 						pm.addCriteria("Sample List", listFileName);
 					}
 
