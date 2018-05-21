@@ -1,8 +1,6 @@
 import {Action} from '@ngrx/store';
 import {GobiiTreeNode} from "../../model/GobiiTreeNode";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
-import {ClearTextStream} from "tls";
-import {TypeTreeNodeStatus} from "../../model/type-tree-node-status";
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 
 export const INIT = '[GobiiTreeNode] Init';
