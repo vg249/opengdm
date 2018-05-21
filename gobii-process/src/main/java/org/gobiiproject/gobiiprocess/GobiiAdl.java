@@ -56,6 +56,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by VCalaminos on 2/21/2017.
@@ -64,6 +65,8 @@ public class GobiiAdl {
 
     private static ServerConfig serverConfig;
     private static String crop = null;
+    private static long timeout;
+    private static long timeoutInMillis;
 
     private static void validateKeys(NodeList nodeList, XPath xPath, Document document) throws Exception {
         for (int i = 0; i < nodeList.getLength(); i++) {
@@ -71,8 +74,8 @@ public class GobiiAdl {
             Element element = (Element) nodeList.item(i);
             String DbPKeysurrogate = element.getAttribute("DbPKeysurrogate");
             if (DbPKeysurrogate.isEmpty()) {
-                throw new Exception("DbPKeysurrogate (" + DbPKeysurrogate + ") attribute for " +
-                        element.getLocalName() + " entity cannot be empty.");
+                processError("DbPKeysurrogate (" + DbPKeysurrogate + ") attribute for " +
+                        element.getLocalName() + " entity cannot be empty.", GobiiStatusLevel.ERROR);
             }
 
             System.out.println("\nChecking DbPKeysurrogate (" + DbPKeysurrogate + ") for " + parentName + "......\n");
@@ -96,8 +99,8 @@ public class GobiiAdl {
                 System.out.println("\nChecking for value....\n");
 
                 if (dbPkeysurrogateValue.isEmpty()) {
-                    throw new Exception("DbPKeysurrogate (" + DbPKeysurrogate + ") attribute for " +
-                            childName + " entity cannot be empty.");
+                    processError("DbPKeysurrogate (" + DbPKeysurrogate + ") attribute for " +
+                            childName + " entity cannot be empty.", GobiiStatusLevel.ERROR);
                 }
 
                 System.out.println("\nChecking for duplicates...\n");
@@ -107,8 +110,8 @@ public class GobiiAdl {
                 Double countDuplicate = (Double) xPathExpressionCount.evaluate(document, XPathConstants.NUMBER);
 
                 if (countDuplicate > 1) {
-                    throw new Exception("Duplicate DbPKeysurrogate (" + DbPKeysurrogate + ") value (" + dbPkeysurrogateValue + ") " +
-                            "for " + childName + " entity.");
+                    processError("Duplicate DbPKeysurrogate (" + DbPKeysurrogate + ") value (" + dbPkeysurrogateValue + ") " +
+                            "for " + childName + " entity.", GobiiStatusLevel.ERROR);
                 }
 
                 System.out.println("\nChecking for foreign keys...\n");
@@ -121,17 +124,17 @@ public class GobiiAdl {
                     Element fkey = (Element) fkeys.item(k);
                     String entity = fkey.getAttribute("entity");
                     if (entity == null || entity.isEmpty()) {
-                        throw new Exception("Entity attribute for Fkey of " + childName + " (" + dbPkeysurrogateValue + ") cannot be empty.");
+                        processError("Entity attribute for Fkey of " + childName + " (" + dbPkeysurrogateValue + ") cannot be empty.", GobiiStatusLevel.ERROR);
                     }
 
                     NodeList fkeyDbPkey = fkey.getElementsByTagName("DbPKeySurrogate");
                     if (fkeyDbPkey.getLength() < 1) {
-                        throw new Exception("FKey property for " + childName + " (" + dbPkeysurrogateValue + ") should have <DbPKeySurrogate> tag.");
+                        processError("FKey property for " + childName + " (" + dbPkeysurrogateValue + ") should have <DbPKeySurrogate> tag.", GobiiStatusLevel.ERROR);
                     }
 
                     String fkeyDbPkeyValue = fkeyDbPkey.item(0).getTextContent();
                     if (fkeyDbPkeyValue == null || fkeyDbPkeyValue.isEmpty()) {
-                        throw new Exception("DbPKeySurrogate property for " + entity + " FKey of " + childName + " (" + dbPkeysurrogateValue + ") cannot be empty.");
+                        processError("DbPKeySurrogate property for " + entity + " FKey of " + childName + " (" + dbPkeysurrogateValue + ") cannot be empty.", GobiiStatusLevel.ERROR);
                     }
 
                     // get parent node of fkey entity
@@ -145,9 +148,9 @@ public class GobiiAdl {
                     Double countIfExists = (Double) xPathExpressionCountFkey.evaluate(document, XPathConstants.NUMBER);
 
                     if (countIfExists < 1) {
-                        throw new Exception(entity + " (" + fkeyDbPkeyValue + ") fkey value for "
+                        processError(entity + " (" + fkeyDbPkeyValue + ") fkey value for "
                                 + childName + "(" + dbPkeysurrogateValue + ")" +
-                                " doesn't exist in the file.");
+                                " doesn't exist in the file.", GobiiStatusLevel.ERROR);
                     }
                 }
             }
@@ -156,8 +159,7 @@ public class GobiiAdl {
 
     private static void validateNode(Node props, String element, String property) {
         if (props == null) {
-            System.out.println("Could not find " + property + " in element " + element);
-            System.exit(1);
+            processError("Could not find " + property + " in element " + element, GobiiStatusLevel.ERROR);
         }
     }
 
@@ -202,11 +204,11 @@ public class GobiiAdl {
             for (HeaderStatusMessage currentStatusMessage : header.getStatus().getStatusMessages()) {
                 message = message + "\n" + currentStatusMessage.getMessage();
             }
-            throw new Exception(message);
+            processError(message, GobiiStatusLevel.ERROR);
         } else {
             if (verifyResultExists) {
                 if (payloadEnvelope.getPayload().getData().size() <= 0) {
-                    throw new Exception("Request succeeded but there is no payload data");
+                    processError("Request succeeded but there is no payload data", GobiiStatusLevel.ERROR);
                 }
             }
         }
@@ -356,7 +358,7 @@ public class GobiiAdl {
 
         /* check roles */
         if (newContactDTO.getRoles().size() <= 0) {
-            throw new Exception("Roles are required to create a contact. Please add role/s for Contact (" + newContactDTO.getEmail() + ").");
+            processError("Roles are required to create a contact. Please add role/s for Contact (" + newContactDTO.getEmail() + ").", GobiiStatusLevel.ERROR);
         }
 
         setFKeyDbPKeyForNewEntity(fkeys, ContactDTO.class, newContactDTO, parentElement, dbPkeysurrogateValue, document, xPath);
@@ -1167,7 +1169,7 @@ public class GobiiAdl {
         validateNode(props, parentElement.getTagName(), "Properties");
         NodeList propKeyList = props.getElementsByTagName("*");
         if (propKeyList.getLength() < 1) {
-            throw new Exception("Properies for " + parentElement.getLocalName() + " entity cannot be empty.");
+            processError("Properies for " + parentElement.getLocalName() + " entity cannot be empty.", GobiiStatusLevel.ERROR);
         }
         Integer returnVal = null;
         switch (entityName) {
@@ -1221,9 +1223,10 @@ public class GobiiAdl {
             for (int i = 0; i < fkeys.getLength(); i++) {
                 Element currentFkeyElement = (Element) fkeys.item(i);
                 String fkproperty = currentFkeyElement.getAttribute("fkproperty");
-                if (fkproperty.isEmpty())
-                    throw new Exception("FkProperty attribute for "
-                            + currentFkeyElement.getParentNode().getParentNode().getLocalName() + " does not exist.");
+                if (fkproperty.isEmpty()) {
+                    processError("FkProperty attribute for "
+                            + currentFkeyElement.getParentNode().getParentNode().getLocalName() + " does not exist.", GobiiStatusLevel.ERROR);
+                }
                 Integer fKeyDbPkey = getFKeyDbPKey(currentFkeyElement, parentElement, dbPkeysurrogateValue, document, xPath);
                 Field field = currentClass.getDeclaredField(fkproperty);
                 field.setAccessible(true);
@@ -1238,9 +1241,10 @@ public class GobiiAdl {
             for (int i = 0; i < fkeys.getLength(); i++) {
                 Element currentFkeyElement = (Element) fkeys.item(i);
                 String fkproperty = currentFkeyElement.getAttribute("fkproperty");
-                if (fkproperty.isEmpty())
-                    throw new Exception("FkProperty attribute for "
-                            + currentFkeyElement.getParentNode().getParentNode().getLocalName() + " does not exist.");
+                if (fkproperty.isEmpty()) {
+                    processError("FkProperty attribute for "
+                            + currentFkeyElement.getParentNode().getParentNode().getLocalName() + " does not exist.", GobiiStatusLevel.ERROR);
+                }
                 Field field = currentClass.getDeclaredField(fkproperty);
                 field.setAccessible(true);
 
@@ -1254,14 +1258,15 @@ public class GobiiAdl {
     private static Integer getFKeyDbPKey(Element currentFkeyElement, Element parentElement, String dbPkeysurrogateValue, Document document, XPath xPath) throws Exception {
 
         String entity = currentFkeyElement.getAttribute("entity");
-        if (entity.isEmpty())
-            throw new Exception("Entity attribute for "
-                    + currentFkeyElement.getParentNode().getParentNode().getLocalName() + " does not exist.");
-
+        if (entity.isEmpty()) {
+            processError("Entity attribute for "
+                    + currentFkeyElement.getParentNode().getParentNode().getLocalName() + " does not exist.", GobiiStatusLevel.ERROR);
+        }
         String fKeyDbPkeyValue = currentFkeyElement.getElementsByTagName("DbPKeySurrogate").item(0).getTextContent();
-        if (fKeyDbPkeyValue.isEmpty())
-            throw new Exception("DbPKeySurrogate attribute for "
-                    + currentFkeyElement.getParentNode().getParentNode().getLocalName() + " does not exist.");
+        if (fKeyDbPkeyValue.isEmpty()) {
+            processError("DbPKeySurrogate attribute for "
+                    + currentFkeyElement.getParentNode().getParentNode().getLocalName() + " does not exist.", GobiiStatusLevel.ERROR);
+        }
 
         System.out.println("\nWriting " + entity + " (" + fKeyDbPkeyValue + ") FkeyDbPkey for " + parentElement.getLocalName() +
                 "  (" + dbPkeysurrogateValue + " ) to file...\n");
@@ -1270,8 +1275,9 @@ public class GobiiAdl {
         Element ancestor = (Element) exprParentFkey.evaluate(document, XPathConstants.NODE);
 
         String fkeyPKey = ancestor.getAttribute("DbPKeysurrogate");
-        if (fkeyPKey.isEmpty())
-            throw new Exception("DbPKeySurrogate attribute for " + ancestor.getLocalName() + " does not exist.");
+        if (fkeyPKey.isEmpty()) {
+            processError("DbPKeySurrogate attribute for " + ancestor.getLocalName() + " does not exist.", GobiiStatusLevel.ERROR);
+        }
 
         String exprCheckIfFKeyExists = "//Entities/" + ancestor.getNodeName() + "/" + entity + "/Properties[" + fkeyPKey + "='" + fKeyDbPkeyValue + "']";
         XPathExpression xPathExprNodeFKey = xPath.compile(exprCheckIfFKeyExists);
@@ -1281,8 +1287,9 @@ public class GobiiAdl {
         validateNode(dbPkeyNode, parentElement.getTagName(), "Keys");
 
         String dbPkeyValue = dbPkeyNode.getElementsByTagName("DbPKey").item(0).getTextContent();
-        if (dbPkeyValue.isEmpty())
-            throw new Exception("DbPKey attribute for " + dbPkeyNode.getLocalName() + " does not exist.");
+        if (dbPkeyValue.isEmpty()) {
+            processError("DbPKey attribute for " + dbPkeyNode.getLocalName() + " does not exist.", GobiiStatusLevel.ERROR);
+        }
 
         // set to <FKey><DbPkey></DbPkey></Fkey>
 
@@ -1301,8 +1308,8 @@ public class GobiiAdl {
             Element rootElement = (Element) parentElement.getParentNode();
             String DBPKeysurrogateName = rootElement.getAttribute("DbPKeysurrogate");
             if (DBPKeysurrogateName.isEmpty()) {
-                throw new Exception("DbPKeysurrogate (" + DBPKeysurrogateName + ") attribute for " +
-                        rootElement.getLocalName() + " entity cannot be empty.");
+                processError("DbPKeysurrogate (" + DBPKeysurrogateName + ") attribute for " +
+                        rootElement.getLocalName() + " entity cannot be empty.", GobiiStatusLevel.ERROR);
             }
             Element props = (Element) parentElement.getElementsByTagName("Properties").item(0);
             validateNode(props, parentElement.getTagName(), "Properties");
@@ -1380,7 +1387,7 @@ public class GobiiAdl {
 
     private static String uploadFiles(String jobName, String sourcePath, String filesPath) throws Exception {
 
-        String fileDirectoryName;
+        String fileDirectoryName = null;
         File file = new File(sourcePath);
         try {
             RestUri restUri = GobiiClientContext.getInstance(null, false)
@@ -1390,13 +1397,13 @@ public class GobiiAdl {
                     .getHttp()
                     .upload(restUri, file);
             if (httpMethodResult.getResponseCode() != HttpStatus.SC_OK) {
-                throw new Exception("Error uploading data: " + file.getName());
+                processError("Error uploading data: " + file.getName(), GobiiStatusLevel.ERROR);
             } else {
                 fileDirectoryName = filesPath;
                 System.out.println("\nSuccessfully uploaded file.");
             }
         } catch (Exception e) {
-            throw new Exception("Error uploading data: " + file.getName());
+            processError("Error uploading data: " + file.getName(), GobiiStatusLevel.ERROR);
         }
         return fileDirectoryName;
     }
@@ -1421,7 +1428,7 @@ public class GobiiAdl {
                         "The instruction file exists, but could not be read: " + instructionFilePath);
             }
         } catch (Exception e) {
-            throw new Exception("Error creating instruction file DTO", e);
+            processError("Error creating instruction file DTO: " + e.getMessage(), GobiiStatusLevel.ERROR);
         }
         return loaderInstructionFilesDTO;
     }
@@ -1431,7 +1438,7 @@ public class GobiiAdl {
         instructionFileValidator.processInstructionFile();
         String validationStatus = instructionFileValidator.validate();
         if (validationStatus != null) {
-            throw new Exception("Instruction file validation failed. " + validationStatus);
+            processError("Instruction file validation failed. " + validationStatus, GobiiStatusLevel.ERROR);
         } else {
             try {
                 if (jobPayloadType.equals(JobPayloadType.CV_PAYLOADTYPE_MARKERS.getCvName())) {
@@ -1459,7 +1466,7 @@ public class GobiiAdl {
                     checkJobStatus(instructionFileName);
                 }
             } catch (Exception err) {
-                throw new Exception("Error submitting instruction file: " + err.getMessage());
+                processError("Error submitting instruction file: " + err.getMessage(), GobiiStatusLevel.ERROR);
             }
         }
     }
@@ -1478,7 +1485,9 @@ public class GobiiAdl {
         boolean statusDetermined = false;
         String currentStatus = "";
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        while (!statusDetermined) {
+        long startTime = System.currentTimeMillis();
+
+        while (!statusDetermined && ((System.currentTimeMillis()-startTime) <= timeoutInMillis)) {
 
             PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFilesDTOPayloadEnvelope = loaderJobResponseEnvolope.get(LoaderInstructionFilesDTO.class);
             checkStatus(loaderInstructionFilesDTOPayloadEnvelope, true);
@@ -1506,6 +1515,10 @@ public class GobiiAdl {
 
             System.out.print(".");
             Thread.sleep(1000);
+        }
+
+        if (!statusDetermined) {
+            processError("\n\nMaximum execution time of " + timeout + " minute/s exceeded\n", GobiiStatusLevel.ERROR);
         }
 
         return returnVal;
@@ -1538,7 +1551,7 @@ public class GobiiAdl {
             boolean writeSourcePath = true;
             if (!(new File(sourcePath).exists())) {
                 writeSourcePath = false;
-                throw new Exception( "Data file " + sourcePath + " for scenario "+ scenarioName +" not found.");
+                processError( "Data file " + sourcePath + " for scenario "+ scenarioName +" not found.", GobiiStatusLevel.ERROR);
             }
 
             String fileExpr = "//Scenario[Name='" + scenarioName + "']/Files/Instruction";
@@ -1548,7 +1561,7 @@ public class GobiiAdl {
             if (!new File(instructionFilePath).exists()) {
                 ClassLoader classLoader = GobiiAdl.class.getClassLoader();
                 if (classLoader.getResourceAsStream(instructionFilePath) == null) {
-                    throw new Exception(" Instruction file template " + instructionFilePath + " not found.");
+                    processError(" Instruction file template " + instructionFilePath + " not found.", GobiiStatusLevel.ERROR);
                 }
 
                 InputStream inputStream = classLoader.getResourceAsStream(instructionFilePath);
@@ -1568,14 +1581,14 @@ public class GobiiAdl {
                 Element currentDbPkeyElement = (Element) dbPkeys.item(j);
                 String entityName = currentDbPkeyElement.getAttribute("entity");
                 if (entityName.isEmpty()) {
-                    throw new Exception("Entity attribute for " + currentElement.getLocalName() + " entity cannot be empty.");
+                    processError("Entity attribute for " + currentElement.getLocalName() + " entity cannot be empty.", GobiiStatusLevel.ERROR);
                 }
 
                 Element dbPkeySurrogateElement = (Element) currentDbPkeyElement.getElementsByTagName("DbPKeySurrogate").item(0);
                 validateNode(dbPkeySurrogateElement, currentElement.getTagName(), "DbPKeySurrogate");
                 String dbPkeySurrogateValue = dbPkeySurrogateElement.getTextContent();
                 if (dbPkeySurrogateValue.isEmpty()) {
-                    throw new Exception("DbPKeySurrogate attribute for " + currentElement.getLocalName() + " entity cannot be empty.");
+                    processError("DbPKeySurrogate attribute for " + currentElement.getLocalName() + " entity cannot be empty.", GobiiStatusLevel.ERROR);
                 }
                 // get DbPKeysurrogate attribute of entity (ie Contacts - Email)
                 String expr = "//" + entityName + "s/@DbPKeysurrogate";
@@ -1586,14 +1599,14 @@ public class GobiiAdl {
                 xPathExpression = xPath.compile(expr);
                 Double count = (Double) xPathExpression.evaluate(document, XPathConstants.NUMBER);
                 if (count <= 0) {
-                    throw new Exception(entityName + ": " + dbPkeySurrogateValue + " does not exist in the file.");
+                    processError(entityName + ": " + dbPkeySurrogateValue + " does not exist in the file.", GobiiStatusLevel.ERROR);
                 }
 
                 expr = "//" + entityName + "[Properties/" + refAttr + "='" + dbPkeySurrogateValue + "']/Keys/DbPKey";
                 xPathExpression = xPath.compile(expr);
                 Element currentEntity = (Element) xPathExpression.evaluate(document, XPathConstants.NODE);
                 if (currentEntity.getTextContent().isEmpty()) {
-                    throw new Exception("The primary DB key of " + entityName + ": " + dbPkeySurrogateValue + " is not written in the file");
+                    processError("The primary DB key of " + entityName + ": " + dbPkeySurrogateValue + " is not written in the file", GobiiStatusLevel.ERROR);
                 }
 
                 Element dbPkeyElement = (Element) currentDbPkeyElement.getElementsByTagName("DbPKey").item(0);
@@ -1739,6 +1752,8 @@ public class GobiiAdl {
                 submitInstructionFile(loaderInstructionFilesDTO, jobPayloadType);
             }
         } // iterate scenarios
+
+        System.exit(0);
     }
 
     private static void setOption(Options options,
@@ -1748,7 +1763,7 @@ public class GobiiAdl {
                                   String shortName) throws Exception {
 
         if (options.getOption(argument) != null) {
-            throw new Exception("Option is already defined: " + argument);
+            processError("Option is already defined: " + argument, GobiiStatusLevel.ERROR);
         }
 
         //There does not appear to be a way to set argument name with the variants on addOption()
@@ -1765,6 +1780,16 @@ public class GobiiAdl {
             return "Invalid argument: " + optionName;
         }
         return "Value is required: " + option.getArgName() + ", " + option.getDescription();
+    }
+
+    private static void processError(String message, GobiiStatusLevel gobiiStatusLevel){
+
+        System.out.println(message);
+
+        if (gobiiStatusLevel.equals(GobiiStatusLevel.ERROR)) {
+            System.exit(1);
+        }
+
     }
 
     public static void main(String[] args) throws Exception {
@@ -1784,6 +1809,8 @@ public class GobiiAdl {
         setOption(options, INPUT_USER, true, "Username of the user doing the load", "username");
         String INPUT_PASSWORD = "p";
         setOption(options, INPUT_PASSWORD, true, "Password of the user doing the load", "password");
+        String INPUT_TIMEOUT = "t";
+        setOption(options, INPUT_TIMEOUT, true, "Maximum waiting time in minutes.", "timeout");
 
         // parse the commandline
         CommandLineParser parser = new DefaultParser();
@@ -1791,31 +1818,46 @@ public class GobiiAdl {
 
         if (!commandLine.hasOption(INPUT_XML)) {
             String message = getMessageForMissingOption(INPUT_XML, options);
-            System.out.println(message);
-            System.exit(1);
+            processError(message, GobiiStatusLevel.ERROR);
         }
 
         if (!commandLine.hasOption(INPUT_HOST)) {
             String message = getMessageForMissingOption(INPUT_HOST, options);
-            System.out.println(message);
-            System.exit(1);
+            processError(message, GobiiStatusLevel.ERROR);
         }
 
         if (!commandLine.hasOption(INPUT_USER)) {
             String message = getMessageForMissingOption(INPUT_USER, options);
-            System.out.println(message);
-            System.exit(1);
+            processError(message, GobiiStatusLevel.ERROR);
         }
 
         if (!commandLine.hasOption(INPUT_PASSWORD)) {
             String message = getMessageForMissingOption(INPUT_PASSWORD, options);
-            System.out.println(message);
-            System.exit(1);
+            processError(message, GobiiStatusLevel.ERROR);
         }
+
+        //set default to 10minutes;
+        Integer timeoutInt = 600000;
+
+        if (commandLine.hasOption(INPUT_TIMEOUT)) {
+
+            String inputTimeout = commandLine.getOptionValue(INPUT_TIMEOUT);
+
+            // check if valid integer
+            try {
+                timeoutInt = Integer.parseInt(inputTimeout);
+            } catch (NumberFormatException e) {
+                processError("Invalid input for timeout: " + inputTimeout, GobiiStatusLevel.ERROR);
+            }
+
+        }
+
+        timeout = timeoutInt.longValue();
+        timeoutInMillis = TimeUnit.MINUTES.toMillis(timeout);
 
         fXmlFile = new File(commandLine.getOptionValue(INPUT_XML));
         if (!fXmlFile.exists()) {
-            throw new Exception("The XML file doesn't exists. Path: " + commandLine.getOptionValue(INPUT_XML));
+            processError("The XML file doesn't exists. Path: " + commandLine.getOptionValue(INPUT_XML), GobiiStatusLevel.ERROR);
         }
 
         String url = commandLine.getOptionValue(INPUT_HOST);
@@ -1845,18 +1887,18 @@ public class GobiiAdl {
             }
 
             if (crop == null || crop.isEmpty()) {
-                throw new Exception("Undefined crop for server: " + url);
+                processError("Undefined crop for server: " + url, GobiiStatusLevel.ERROR);
             }
 
             System.out.println("Logging in to " + url + " ...");
             boolean login = GobiiClientContext.getInstance(url, true).login(crop, username, password);
             if (!login) {
                 String failureMessage = GobiiClientContext.getInstance(null, false).getLoginFailure();
-                throw new Exception("Error logging in: " + failureMessage);
+                processError("Error logging in: " + failureMessage, GobiiStatusLevel.ERROR);
             }
             System.out.println("\nSuccessfully logged in!");
         } catch (IOException e) {
-            throw new Exception("Initialization and authentication error: " + e.getMessage());
+            processError("Initialization and authentication error: " + e.getMessage(), GobiiStatusLevel.ERROR);
         }
 
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
