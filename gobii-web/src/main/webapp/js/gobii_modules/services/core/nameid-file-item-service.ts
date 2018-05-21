@@ -195,7 +195,7 @@ export class NameIdFileItemService {
                                 filterId: parentFilterParams.getQueryName(),
                                 filter: new PayloadFilter(
                                     gobiiExtractFilterType,
-                                    parentFilterParams.getTargetEtityUniqueId(),
+                                    parentFilterParams.getTargetEntityUniqueId(),
                                     parentFilterParams.getRelatedEntityUniqueId(),
                                     relatedEntityFiltervalueFromState,
                                     newTargetFilterValue,
@@ -386,7 +386,7 @@ export class NameIdFileItemService {
                                                         let gobiiFileItemCompoundUniqueId: GobiiFileItemCompoundId = null;
 
                                                         if (filterParamsToLoad.getParentFileItemParams()) {
-                                                            gobiiFileItemCompoundUniqueId = filterParamsToLoad.getParentFileItemParams().getTargetEtityUniqueId();
+                                                            gobiiFileItemCompoundUniqueId = filterParamsToLoad.getParentFileItemParams().getTargetEntityUniqueId();
                                                             entityRelation = GobiiFileItemEntityRelation
                                                                 .fromGobiiFileItemCompoundId(gobiiFileItemCompoundUniqueId)
                                                                 .setRelatedEntityId(nameIdItem.fkId);
@@ -419,6 +419,7 @@ export class NameIdFileItemService {
 
                                                 let labelFileItem: GobiiFileItem = this.filterService.makeLabelItem(gobiiExtractFilterType,filterParamsToLoad);
                                                 if (labelFileItem) {
+                                                    labelFileItem.setExtractorItemType(filterParamsToLoad.getExtractorItemType());
                                                     labelFileItem.setParentItemId(filterValue);
                                                     fileItems.unshift(labelFileItem);
                                                 }
@@ -446,7 +447,7 @@ export class NameIdFileItemService {
                                                     filterId: filterParamsToLoad.getQueryName(),
                                                     filter: new PayloadFilter(
                                                         gobiiExtractFilterType,
-                                                        filterParamsToLoad.getTargetEtityUniqueId(),
+                                                        filterParamsToLoad.getTargetEntityUniqueId(),
                                                         filterParamsToLoad.getRelatedEntityUniqueId(),
                                                         filterValue,
                                                         targetEntityFilterValue,
@@ -502,7 +503,7 @@ export class NameIdFileItemService {
                                         filterId: filterParamsToLoad.getQueryName(),
                                         filter: new PayloadFilter(
                                             gobiiExtractFilterType,
-                                            filterParamsToLoad.getTargetEtityUniqueId(),
+                                            filterParamsToLoad.getTargetEntityUniqueId(),
                                             filterParamsToLoad.getRelatedEntityUniqueId(),
                                             filterValue,
                                             null,
@@ -533,7 +534,7 @@ export class NameIdFileItemService {
                                                 // already.
                                                 let candidateParentFileItems: GobiiFileItem[] =
                                                     allFileItems.filter(fi =>
-                                                        filterParamsToLoad.getTargetEtityUniqueId().compoundIdeEquals(fi)
+                                                        filterParamsToLoad.getTargetEntityUniqueId().compoundIdeEquals(fi)
                                                         && fi.getParentItemId() === filterValue
                                                     );
 
@@ -596,7 +597,7 @@ export class NameIdFileItemService {
                     filterId: filterParamsToLoad.getQueryName(),
                     filter: new PayloadFilter(
                         gobiiExtractFilterType,
-                        filterParamsToLoad.getTargetEtityUniqueId(),
+                        filterParamsToLoad.getTargetEntityUniqueId(),
                         filterParamsToLoad.getRelatedEntityUniqueId(),
                         parentFilterValue,
                         null,
@@ -635,7 +636,7 @@ export class NameIdFileItemService {
                             let parentEntityCompoundUniqueId: GobiiFileItemCompoundId = this.filterParamsColl.getFilter(
                                 filterParamsToLoad.getParentFileItemParams().getQueryName(),
                                 gobiiExtractFilterType
-                            ).getTargetEtityUniqueId();
+                            ).getTargetEntityUniqueId();
 
 
                             // for example, filter to only those file items that:
@@ -645,7 +646,7 @@ export class NameIdFileItemService {
                             //      b) the relatedEntityId of the parentFilterValue (the contactId) (
                             let candidateParentFileItems: GobiiFileItem[] =
                                 allFileItems.filter(fi =>
-                                    filterParamsToLoad.getTargetEtityUniqueId().compoundIdeEquals(fi)
+                                    filterParamsToLoad.getTargetEntityUniqueId().compoundIdeEquals(fi)
                                     && fi.getRelatedEntityFilterValue(parentEntityCompoundUniqueId) === parentFilterValue
                                     && fi.getItemId() !== this.NONE_ITEM_ITEM_ID
                                 );

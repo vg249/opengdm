@@ -229,7 +229,7 @@ export class FilterParams {
         return this;
     }
 
-    getTargetEtityUniqueId(): GobiiFileItemCompoundId {
+    getTargetEntityUniqueId(): GobiiFileItemCompoundId {
         return this.targetEntityUniqueId;
     }
 

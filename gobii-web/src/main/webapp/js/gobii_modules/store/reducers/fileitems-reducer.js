@@ -286,7 +286,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
         return returnVal;
     }
     exports_1("fileItemsReducer", fileItemsReducer);
-    var _this, reselect_1, gobii_file_item_1, gobiiFileItemAction, type_extractor_item_1, type_entity_1, file_item_param_names_1, type_process_1, entity_labels_1, type_extractor_filter_1, type_extract_format_1, cv_filter_type_1, type_extractor_sample_list_1, name_id_label_type_1, initialState, getGobiiExtractFilterType, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getSelectedFileFormat, getSelectedSampleType, getJobId, getUploadFiles, getPiContacts, getProjects, getExperiments, getDatasets, getCvTermsDataType, getCvTermsJobStatus, getMapsets, getPlatforms, getMarkerGroups, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment, getDatasetEntities, getDatasetEntitiesPaged, getPiContactsFilterOptional, getProjectsFilterOptional, getExperimentsFilterOptional, getFqF1Vertices, getFqF2Vertices, getFqF3Vertices, getFqF4Vertices;
+    var _this, reselect_1, gobii_file_item_1, gobiiFileItemAction, type_extractor_item_1, type_entity_1, file_item_param_names_1, type_process_1, entity_labels_1, type_extractor_filter_1, type_extract_format_1, cv_filter_type_1, type_extractor_sample_list_1, name_id_label_type_1, initialState, getGobiiExtractFilterType, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getSelectedFileFormat, getSelectedSampleType, getJobId, getUploadFiles, getPiContacts, getProjects, getExperiments, getDatasets, getCvTermsDataType, getCvTermsJobStatus, getMapsets, getPlatforms, getMarkerGroups, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment, getDatasetEntities, getDatasetEntitiesPaged, getPiContactsFilterOptional, getProjectsFilterOptional, getExperimentsFilterOptional, getFqF1Vertices, getFqF2Vertices, getFqF3Vertices, getFqF4Vertices, getFqF1VerticesValues, getFqF2VerticesValues, getFqF3VerticesValues, getFqF4VerticesValues;
     return {
         setters: [
             function (reselect_1_1) {
@@ -749,8 +749,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 var returnVal = [];
                 returnVal = fileItems.filter(function (e) {
                     return (e.getGobiiExtractFilterType() == gobiiExtractFilterType
-                        && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.VERTEX
-                        || e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
+                        && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.VERTEX)
                         && e.getProcessType() !== type_process_1.ProcessType.DUMMY;
                 }).map(function (fi) { return fi; });
                 return returnVal;
@@ -764,9 +763,9 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 if (f1VertexId) {
                     returnVal = fileItems.filter(function (e) {
                         return (e.getGobiiExtractFilterType() == gobiiExtractFilterType
-                            && e.getEntity().vertexId != f1VertexId
                             && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.VERTEX
-                            || e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
+                            && (e.getEntity().vertexId != f1VertexId
+                                || e.getNameIdLabelType() === name_id_label_type_1.NameIdLabelType.SELECT_A))
                             && e.getProcessType() !== type_process_1.ProcessType.DUMMY;
                     }).map(function (fi) { return fi; });
                 }
@@ -841,6 +840,66 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                             && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.VERTEX
                             && e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
                             && e.getProcessType() !== type_process_1.ProcessType.DUMMY;
+                    }).map(function (fi) { return fi; });
+                }
+                return returnVal;
+            }));
+            exports_1("getFqF1VerticesValues", getFqF1VerticesValues = reselect_1.createSelector(getFileItems, getFilters, getGobiiExtractFilterType, function (fileItems, filters, gobiiExtractFilterType) {
+                var returnVal = [];
+                var entityType = type_entity_1.EntityType.UNKNOWN;
+                if (filters[file_item_param_names_1.FilterParamNames.FQ_F1_VERTEX_VALUES]) {
+                    entityType = filters[file_item_param_names_1.FilterParamNames.FQ_F1_VERTEX_VALUES].targetEntityUniqueId.getEntityType();
+                }
+                if (entityType != type_entity_1.EntityType.UNKNOWN) {
+                    returnVal = fileItems.filter(function (e) {
+                        return (e.getGobiiExtractFilterType() == type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY
+                            && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.VERTEX_VALUE
+                            && e.getEntityType() === entityType);
+                    }).map(function (fi) { return fi; });
+                }
+                return returnVal;
+            }));
+            exports_1("getFqF2VerticesValues", getFqF2VerticesValues = reselect_1.createSelector(getFileItems, getFilters, getGobiiExtractFilterType, function (fileItems, filters, gobiiExtractFilterType) {
+                var returnVal = [];
+                var entityType = type_entity_1.EntityType.UNKNOWN;
+                if (filters[file_item_param_names_1.FilterParamNames.FQ_F2_VERTEX_VALUES]) {
+                    entityType = filters[file_item_param_names_1.FilterParamNames.FQ_F2_VERTEX_VALUES].targetEntityUniqueId.getEntityType();
+                }
+                if (entityType != type_entity_1.EntityType.UNKNOWN) {
+                    returnVal = fileItems.filter(function (e) {
+                        return (e.getGobiiExtractFilterType() == type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY
+                            && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.VERTEX_VALUE
+                            && e.getEntityType() === entityType);
+                    }).map(function (fi) { return fi; });
+                }
+                return returnVal;
+            }));
+            exports_1("getFqF3VerticesValues", getFqF3VerticesValues = reselect_1.createSelector(getFileItems, getFilters, getGobiiExtractFilterType, function (fileItems, filters, gobiiExtractFilterType) {
+                var returnVal = [];
+                var entityType = type_entity_1.EntityType.UNKNOWN;
+                if (filters[file_item_param_names_1.FilterParamNames.FQ_F3_VERTEX_VALUES]) {
+                    entityType = filters[file_item_param_names_1.FilterParamNames.FQ_F3_VERTEX_VALUES].targetEntityUniqueId.getEntityType();
+                }
+                if (entityType != type_entity_1.EntityType.UNKNOWN) {
+                    returnVal = fileItems.filter(function (e) {
+                        return (e.getGobiiExtractFilterType() == type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY
+                            && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.VERTEX_VALUE
+                            && e.getEntityType() === entityType);
+                    }).map(function (fi) { return fi; });
+                }
+                return returnVal;
+            }));
+            exports_1("getFqF4VerticesValues", getFqF4VerticesValues = reselect_1.createSelector(getFileItems, getFilters, getGobiiExtractFilterType, function (fileItems, filters, gobiiExtractFilterType) {
+                var returnVal = [];
+                var entityType = type_entity_1.EntityType.UNKNOWN;
+                if (filters[file_item_param_names_1.FilterParamNames.FQ_F4_VERTEX_VALUES]) {
+                    entityType = filters[file_item_param_names_1.FilterParamNames.FQ_F4_VERTEX_VALUES].targetEntityUniqueId.getEntityType();
+                }
+                if (entityType != type_entity_1.EntityType.UNKNOWN) {
+                    returnVal = fileItems.filter(function (e) {
+                        return (e.getGobiiExtractFilterType() == type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY
+                            && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.VERTEX_VALUE
+                            && e.getEntityType() === entityType);
                     }).map(function (fi) { return fi; });
                 }
                 return returnVal;

@@ -61,7 +61,7 @@ public class PayloadWriter<T extends DTOBase> {
         if ((null != itemToWrite) &&
                 !LineUtils.isNullOrEmpty(id) &&
                 (itemToWrite.getId() != null) &&
-                (itemToWrite.getId() >= 0)) {
+                (itemToWrite.getId() > 0)) {
 
             if (itemToWrite.getClass() == this.dtoType) {
 

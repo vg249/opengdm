@@ -1,4 +1,4 @@
-import {Component} from "@angular/core";
+import {Component, OnChanges, OnInit, SimpleChange} from "@angular/core";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {Store} from "@ngrx/store";
@@ -9,6 +9,13 @@ import {Observable} from "rxjs/Observable";
 import {FilterParamNames} from "../model/file-item-param-names";
 import {NameIdFileItemService} from "../services/core/nameid-file-item-service";
 import {FilterService} from "../services/core/filter-service";
+import {FlexQueryService} from "../services/core/flex-query-service";
+import {Vertex} from "../model/vertex";
+import {EntityType} from "../model/type-entity";
+import {NameIdLabelType} from "../model/name-id-label-type";
+import {PayloadFilter} from "../store/actions/action-payload-filter";
+import {FilterParams} from "../model/filter-params";
+import {FilterParamsColl} from "../services/core/filter-params-coll";
 
 
 @Component({
@@ -23,11 +30,11 @@ import {FilterService} from "../services/core/filter-service";
             </div>
             <div class="panel-body">
                 <label class="the-label">Entity:</label><BR>
-                <p-dropdown [options]="fileItemsEntityNames$ | async"
-                            [(ngModel)]="selectedAllowableEntities"
+                <p-dropdown [options]="fileItemsVertexNames$ | async"
                             [style]="{'width': '100%'}"
                             optionLabel="_itemName"
-                            (onChange)="handleFileItemSelected($event)"
+                            [(ngModel)]="selectedVertex"
+                            (onChange)="handleVertexSelected($event)"
                             [disabled]="currentStyle===disabledStyle">
                 </p-dropdown>
 
@@ -36,29 +43,31 @@ import {FilterService} from "../services/core/filter-service";
                 <label class="the-label">Select Entity Values</label><BR>
                 <p-listbox [options]="fileItemsEntityValues$ | async"
                            [multiple]="true"
-                           [(ngModel)]="selectedEntityValues" [style]="{'width':'100%'}"
+                           [(ngModel)]="selectedVertexValues" 
+                           [style]="{'width':'100%'}"
+                           (onChange)="handleVertexValueSelected($event)"
                            optionLabel="_itemName"
                            [disabled]="currentStyle===disabledStyle"></p-listbox>
             </div>
 
             <div class="container">
                 <p>Count: {{totalValues}} </p>
-                <p>Selected: {{selectedEntityValues ? selectedEntityValues.length : 0}}</p>
+                <p>Selected: {{selectedVertexValues ? selectedVertexValues.length : 0}}</p>
             </div>
         </div>` // end template
 
 })
-export class FlexQueryFilterComponent {
+export class FlexQueryFilterComponent implements OnInit, OnChanges {
 
 
     //these are dummy place holders for now
-    public selectedAllowableEntities: GobiiFileItem;
-
     public totalValues: string = "0";
-    public selectedEntityValues: GobiiFileItem[];
+    public selectedVertex: GobiiFileItem;
+    public selectedVertexValues: GobiiFileItem[];
 
-    public fileItemsEntityNames$: Observable<GobiiFileItem[]>;
+    public fileItemsVertexNames$: Observable<GobiiFileItem[]>;
     public fileItemsEntityValues$: Observable<GobiiFileItem[]>;
+    public JobId$: Observable<GobiiFileItem>;
 
     public gobiiExtractFilterType: GobiiExtractFilterType;
 
@@ -71,7 +80,9 @@ export class FlexQueryFilterComponent {
 
     constructor(private store: Store<fromRoot.State>,
                 private fileItemService: NameIdFileItemService,
-                private filterService: FilterService) {
+                private filterService: FilterService,
+                private filterParamsColl: FilterParamsColl,
+                private flexQueryService: FlexQueryService) {
 
 
     } // ctor
@@ -79,58 +90,143 @@ export class FlexQueryFilterComponent {
 
     ngOnInit(): any {
 
-        this.fileItemsEntityNames$ = this.filterService.getForFilter(this.filterParamNameVertices)
-        this.fileItemsEntityValues$ = this.filterService.getForFilter(this.filterParamNameVertexValues)
+        this.fileItemsVertexNames$ = this.filterService.getForFilter(this.filterParamNameVertices);
+        this.fileItemsEntityValues$ = this.filterService.getForFilter(this.filterParamNameVertexValues);
+        this.JobId$ = this.store.select(fromRoot.getJobId);
 
-        this
-            .fileItemsEntityNames$
-            .subscribe(items => {
-                    if (this.previousSelectedItemId === null && items && items.length > 0) {
-                        this.previousSelectedItemId = items[0].getFileItemUniqueId()
-                    }
 
-                    if (items.length > 1) {
-                        this.currentStyle = this.enabledStyle;
-                    } else {
-                        this.currentStyle = this.disabledStyle;
-                    }
+        // this
+        //     .fileItemsVertexNames$
+        //     .subscribe(items => {
+        //             if (this.previousSelectedItemId === null && items && items.length > 0) {
+        //                 this.previousSelectedItemId = items[0].getFileItemUniqueId()
+        //             }
+        //
+        //             if (items.length > 1) {
+        //                 this.currentStyle = this.enabledStyle;
+        //             } else {
+        //                 this.currentStyle = this.disabledStyle;
+        //             }
+        //
+        //             // if (items[0]) {
+        //             //     this.selectedAllowableEntities = items[0];
+        //             // }
+        //
+        //         },
+        //         error => {
+        //             this.store.dispatch(new historyAction.AddStatusMessageAction(error))
+        //         });
 
-                    if(items[0]) {
-                        this.selectedAllowableEntities = items[0];
-                    }
-
-                },
-                error => {
-                    this.store.dispatch(new historyAction.AddStatusMessageAction(error))
-                });
 
         this
             .fileItemsEntityValues$
             .subscribe(items => {
                 this.totalValues = items.length.toString()
             });
-    }
 
-    previousSelectedItemId: string = null;
+        this.setControlState(false);
+        this.store.select(fromRoot.getFileItemsFilters)
+            .subscribe(
+                filters => {
 
-    public handleFileItemSelected(arg) {
 
-        let vertexId: string = null;
-        if (arg.value._entity && arg.value._entity.vertexId) {
-            vertexId = arg.value._entity.vertexId;
+                    // you have to reset from state because this control won't see the sibling control's
+                    // change event
+                    let thisControlVertexfilterParams: FilterParams = this.filterParamsColl.getFilter(this.filterParamNameVertices, GobiiExtractFilterType.FLEX_QUERY);
+                    let currentVertexFilter: PayloadFilter = filters[thisControlVertexfilterParams.getQueryName()];
+                    if( currentVertexFilter ) {
+                        if(! currentVertexFilter.targetEntityFilterValue) {
+                            this.selectedVertex = null;
+                            this.selectedVertexValues = null;
+                        }
+                    }
+
+
+                    if (!thisControlVertexfilterParams.getPreviousSiblingFileItemParams()) {
+                        this.setControlState(true);
+                    } else if (thisControlVertexfilterParams.getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
+
+
+                        let vertexValuePreviousVertexSelectorParamName: string = thisControlVertexfilterParams
+                            .getPreviousSiblingFileItemParams()
+                            .getChildFileItemParams()[0].getQueryName();
+
+                        let previousVertexValuesFilter: PayloadFilter = filters[vertexValuePreviousVertexSelectorParamName];
+                        if (previousVertexValuesFilter && previousVertexValuesFilter.targetEntityFilterValue) {
+                            this.setControlState(true)
+                        } else {
+                            this.setControlState(false)
+                        }
+
+                    } // if-else there are previous sibling params
+
+                }); // subscribe to select filters()
+
+    } // ngInit()
+
+
+    private setControlState(enabled: boolean) {
+
+        if (enabled) {
+            this.currentStyle = this.enabledStyle;
         } else {
-            this.selectedAllowableEntities = null;
+            this.currentStyle = this.disabledStyle;
+        }
+    }
+
+    public handleVertexSelected(arg) {
+
+        if (arg.value && arg.value._entity) {
+            let vertexId: string;
+            if (arg.value.getNameIdLabelType() === NameIdLabelType.UNKNOWN) {
+                vertexId = arg.value.getItemId();
+            } else {
+                vertexId = null;
+            }
+
+            this.flexQueryService.loadSelectedVertexFilter(this.filterParamNameVertices, vertexId);
         }
 
-        this.filterService.loadFilter(this.gobiiExtractFilterType,
-            this.filterParamNameVertices,
-            vertexId);
-
-        if (!this.gobiiExtractFilterType) {
-            this.store.dispatch(new historyAction.AddStatusMessageAction("The gobiiExtractFilterType property is not set"))
-        }
+        this.JobId$.subscribe(
+            fileItemJobId => {
+                this.flexQueryService.loadVertexValues(fileItemJobId.getItemId(),
+                    arg.value,
+                    this.filterParamNameVertexValues);
+            }
+        );
 
     }
 
+
+    public handleVertexValueSelected(arg) {
+
+        let selectedVertexValueIds: string[] = this.selectedVertexValues.map(gfi => gfi.getItemId())
+        this.flexQueryService.loadSelectedVertexValueFilters(this.filterParamNameVertexValues, selectedVertexValueIds);
+    }
+
+
+    ngOnChanges(changes: {
+        [propName: string
+            ]: SimpleChange
+    }) {
+
+        if (changes['gobiiExtractFilterType']
+            && (changes['gobiiExtractFilterType'].currentValue != null)
+            && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
+
+            if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
+
+                if (this.gobiiExtractFilterType === GobiiExtractFilterType.FLEX_QUERY) {
+
+                    // this.flexQueryService.loadVertices(this.filterParamNameVertices);
+
+                }
+
+            } // if we have a new filter type
+
+        } // if filter type changed
+
+
+    } // ngonChanges
 
 } // class

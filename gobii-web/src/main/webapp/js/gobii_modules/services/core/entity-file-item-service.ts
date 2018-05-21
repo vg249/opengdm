@@ -26,8 +26,6 @@ import {FilterService} from "./filter-service";
 @Injectable()
 export class EntityFileItemService {
 
-    private readonly NONE_ITEM_ITEM_ID: string = "-1";
-
     constructor(private nameIdService: NameIdService,
                 private entityStatsService: DtoRequestService<EntityStats>,
                 private fileItemRequestService: DtoRequestService<GobiiFileItem[]>,
@@ -134,6 +132,7 @@ export class EntityFileItemService {
 
                                 let labelFileItem: GobiiFileItem = this.filterService.makeLabelItem(gobiiExtractFilterType, filterParams);
                                 if (labelFileItem) {
+                                    labelFileItem.setExtractorItemType(filterParams.getExtractorItemType());
                                     entityItems.unshift(labelFileItem);
                                 }
 
@@ -145,7 +144,7 @@ export class EntityFileItemService {
                                             filterId: filterParams.getQueryName(),
                                             filter: new PayloadFilter(
                                                 gobiiExtractFilterType,
-                                                filterParams.getTargetEtityUniqueId(),
+                                                filterParams.getTargetEntityUniqueId(),
                                                 filterParams.getRelatedEntityUniqueId(),
                                                 filterValue,
                                                 filterValue,

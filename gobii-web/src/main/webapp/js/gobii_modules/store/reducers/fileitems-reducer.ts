@@ -78,11 +78,11 @@ function removeFromExtractItems(state: State, gobiiFileItem: GobiiFileItem): Sta
     if (gobiiFileItem.getIsEphemeral()) {
         newFileItemState = newFileItemState.filter(fi => !fi.getIsEphemeral());
     } else {
-        let fileItemInNewState:GobiiFileItem = newFileItemState
+        let fileItemInNewState: GobiiFileItem = newFileItemState
             .find(fi => fi.getFileItemUniqueId() === gobiiFileItem.getFileItemUniqueId());
 
-        if(fileItemInNewState ) {
-            fileItemInNewState.setSelected( false );
+        if (fileItemInNewState) {
+            fileItemInNewState.setSelected(false);
         }
     }
 
@@ -911,7 +911,6 @@ export const getProjectsFilterOptional = createSelector(getFileItems, getFilters
 });
 
 
-
 export const getExperimentsFilterOptional = createSelector(getFileItems, getFilters, getGobiiExtractFilterType, (fileItems, filters, gobiiExtractFilterType) => {
 
     let returnVal: GobiiFileItem[] = [];
@@ -971,8 +970,7 @@ export const getFqF1Vertices = createSelector(getFileItems, getFilters, getGobii
     returnVal = fileItems.filter(
         e =>
             (e.getGobiiExtractFilterType() == gobiiExtractFilterType
-                && e.getExtractorItemType() === ExtractorItemType.VERTEX
-                || e.getNameIdLabelType() !== NameIdLabelType.UNKNOWN)
+                && e.getExtractorItemType() === ExtractorItemType.VERTEX)
             && e.getProcessType() !== ProcessType.DUMMY
     ).map(fi => fi);
 
@@ -990,14 +988,14 @@ export const getFqF2Vertices = createSelector(getFileItems, getFilters, getGobii
     }
 
 
-    if( f1VertexId ) {
+    if (f1VertexId) {
 
         returnVal = fileItems.filter(
             e =>
                 (e.getGobiiExtractFilterType() == gobiiExtractFilterType
-                    && e.getEntity().vertexId != f1VertexId
                     && e.getExtractorItemType() === ExtractorItemType.VERTEX
-                    || e.getNameIdLabelType() !== NameIdLabelType.UNKNOWN)
+                    && (e.getEntity().vertexId != f1VertexId
+                        || e.getNameIdLabelType() === NameIdLabelType.SELECT_A) )
                 && e.getProcessType() !== ProcessType.DUMMY
         ).map(fi => fi);
 
@@ -1029,7 +1027,7 @@ export const getFqF3Vertices = createSelector(getFileItems, getFilters, getGobii
         f1VertexId = filters[FilterParamNames.FQ_F1_VERTICES].targetEntityFilterValue;
     }
 
-    if( f1VertexId && f2VertexId ) {
+    if (f1VertexId && f2VertexId) {
 
         returnVal = fileItems.filter(
             e =>
@@ -1074,7 +1072,7 @@ export const getFqF4Vertices = createSelector(getFileItems, getFilters, getGobii
     }
 
 
-    if( f1VertexId && f2VertexId && f3VertexId ) {
+    if (f1VertexId && f2VertexId && f3VertexId) {
 
         returnVal = fileItems.filter(
             e =>
@@ -1099,4 +1097,98 @@ export const getFqF4Vertices = createSelector(getFileItems, getFilters, getGobii
 
     return returnVal;
 });
+
+export const getFqF1VerticesValues = createSelector(getFileItems, getFilters, getGobiiExtractFilterType, (fileItems, filters, gobiiExtractFilterType) => {
+
+    let returnVal: GobiiFileItem[] = [];
+
+    let entityType: EntityType = EntityType.UNKNOWN;
+    if (filters[FilterParamNames.FQ_F1_VERTEX_VALUES]) {
+        entityType = filters[FilterParamNames.FQ_F1_VERTEX_VALUES].targetEntityUniqueId.getEntityType();
+    }
+
+
+    if (entityType != EntityType.UNKNOWN) {
+
+        returnVal = fileItems.filter(
+            e =>
+                (e.getGobiiExtractFilterType() == GobiiExtractFilterType.FLEX_QUERY
+                    && e.getExtractorItemType() === ExtractorItemType.VERTEX_VALUE
+                    && e.getEntityType() === entityType)
+        ).map(fi => fi);
+    }
+
+    return returnVal;
+});
+
+export const getFqF2VerticesValues = createSelector(getFileItems, getFilters, getGobiiExtractFilterType, (fileItems, filters, gobiiExtractFilterType) => {
+
+    let returnVal: GobiiFileItem[] = [];
+
+    let entityType: EntityType = EntityType.UNKNOWN;
+    if (filters[FilterParamNames.FQ_F2_VERTEX_VALUES]) {
+        entityType = filters[FilterParamNames.FQ_F2_VERTEX_VALUES].targetEntityUniqueId.getEntityType();
+    }
+
+
+    if (entityType != EntityType.UNKNOWN) {
+
+        returnVal = fileItems.filter(
+            e =>
+                (e.getGobiiExtractFilterType() == GobiiExtractFilterType.FLEX_QUERY
+                    && e.getExtractorItemType() === ExtractorItemType.VERTEX_VALUE
+                    && e.getEntityType() === entityType)
+        ).map(fi => fi);
+    }
+
+    return returnVal;
+
+});
+
+export const getFqF3VerticesValues = createSelector(getFileItems, getFilters, getGobiiExtractFilterType, (fileItems, filters, gobiiExtractFilterType) => {
+
+    let returnVal: GobiiFileItem[] = [];
+
+    let entityType: EntityType = EntityType.UNKNOWN;
+    if (filters[FilterParamNames.FQ_F3_VERTEX_VALUES]) {
+        entityType = filters[FilterParamNames.FQ_F3_VERTEX_VALUES].targetEntityUniqueId.getEntityType();
+    }
+
+
+    if (entityType != EntityType.UNKNOWN) {
+
+        returnVal = fileItems.filter(
+            e =>
+                (e.getGobiiExtractFilterType() == GobiiExtractFilterType.FLEX_QUERY
+                    && e.getExtractorItemType() === ExtractorItemType.VERTEX_VALUE
+                    && e.getEntityType() === entityType)
+        ).map(fi => fi);
+    }
+
+    return returnVal;
+});
+
+export const getFqF4VerticesValues = createSelector(getFileItems, getFilters, getGobiiExtractFilterType, (fileItems, filters, gobiiExtractFilterType) => {
+
+    let returnVal: GobiiFileItem[] = [];
+
+    let entityType: EntityType = EntityType.UNKNOWN;
+    if (filters[FilterParamNames.FQ_F4_VERTEX_VALUES]) {
+        entityType = filters[FilterParamNames.FQ_F4_VERTEX_VALUES].targetEntityUniqueId.getEntityType();
+    }
+
+
+    if (entityType != EntityType.UNKNOWN) {
+
+        returnVal = fileItems.filter(
+            e =>
+                (e.getGobiiExtractFilterType() == GobiiExtractFilterType.FLEX_QUERY
+                    && e.getExtractorItemType() === ExtractorItemType.VERTEX_VALUE
+                    && e.getEntityType() === entityType)
+        ).map(fi => fi);
+    }
+
+    return returnVal;
+});
+
 

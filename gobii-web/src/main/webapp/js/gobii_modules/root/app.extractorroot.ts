@@ -28,6 +28,7 @@ import {InstructionSubmissionService} from "../services/core/instruction-submiss
 import {GobiiSampleListType} from "../model/type-extractor-sample-list";
 import {EntityFileItemService} from "../services/core/entity-file-item-service";
 import {FilterService} from "../services/core/filter-service";
+import {FlexQueryService} from "../services/core/flex-query-service";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -432,7 +433,8 @@ export class ExtractorRoot implements OnInit {
                 private entityFileItemService: EntityFileItemService,
                 private instructionSubmissionService: InstructionSubmissionService,
                 private changeDetectorRef: ChangeDetectorRef,
-                private filterService:FilterService) {
+                private filterService:FilterService,
+                private flexQueryService:FlexQueryService) {
 
         this.messages$.subscribe(
             messages => {
@@ -653,12 +655,7 @@ export class ExtractorRoot implements OnInit {
 
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.FLEX_QUERY) {
 
-            this.entityFileItemService.loadEntityList(this.gobiiExtractFilterType,FilterParamNames.FQ_F1_VERTICES);
-
-            // this.nameIdFileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-            //     FilterParamNames.FQ_F1_VERTEX_VALUES,
-            //     null);
-
+            this.flexQueryService.loadVertices(FilterParamNames.FQ_F1_VERTICES);
 
         } else {
             this.store.dispatch(new historyAction.AddStatusMessageAction(

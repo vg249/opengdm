@@ -26,6 +26,7 @@ System.register([], function (exports_1, context_1) {
                 EntityType[EntityType["MARKER"] = 16] = "MARKER";
                 EntityType[EntityType["PROTOCOL"] = 17] = "PROTOCOL";
                 EntityType[EntityType["VENDORS_PROTOCOL"] = 18] = "VENDORS_PROTOCOL";
+                EntityType[EntityType["GERMPLASM"] = 19] = "GERMPLASM";
             })(EntityType || (EntityType = {}));
             exports_1("EntityType", EntityType);
             exports_1("entityTypefromString", entityTypefromString = function (entityTypeName) {
@@ -84,6 +85,9 @@ System.register([], function (exports_1, context_1) {
                         break;
                     case "VENDOR_PROTOCOL":
                         returnVal = EntityType.VENDORS_PROTOCOL;
+                        break;
+                    case "GERMPLASM":
+                        returnVal = EntityType.GERMPLASM;
                         break;
                 }
                 return returnVal;

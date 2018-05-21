@@ -18,6 +18,7 @@ System.register([], function (exports_1, context_1) {
                 ExtractorItemType[ExtractorItemType["SAMPLE_LIST_TYPE"] = 9] = "SAMPLE_LIST_TYPE";
                 ExtractorItemType[ExtractorItemType["TREE_STRUCTURE"] = 10] = "TREE_STRUCTURE";
                 ExtractorItemType[ExtractorItemType["VERTEX"] = 11] = "VERTEX";
+                ExtractorItemType[ExtractorItemType["VERTEX_VALUE"] = 12] = "VERTEX_VALUE";
             })(ExtractorItemType || (ExtractorItemType = {}));
             exports_1("ExtractorItemType", ExtractorItemType);
         }

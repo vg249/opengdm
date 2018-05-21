@@ -13,4 +13,6 @@ import java.util.List;
 public interface FlexQueryService {
 
     List<VertexDTO> getVertices() throws GobiiDomainException;
+    VertexFilterDTO getVerticesValues(String jobId, VertexFilterDTO vertexFilterDTO) throws GobiiDomainException;
+    VertexFilterDTO getVertexValuesCounts(String jobId, VertexFilterDTO vertexFilterDTO) throws GobiiDomainException;
 }

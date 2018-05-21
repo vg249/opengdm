@@ -46,6 +46,7 @@ import {FlexQueryFilterComponent} from "../views/flex-query-filter.component";
 import {MarkerSampleCountComponent} from "../views/marker-sample-count.component";
 import {EntityFileItemService} from "../services/core/entity-file-item-service";
 import {FilterService} from "../services/core/filter-service";
+import {FlexQueryService} from "../services/core/flex-query-service";
 
 
 @NgModule({
@@ -109,6 +110,7 @@ import {FilterService} from "../services/core/filter-service";
         FilterService,
         InstructionSubmissionService,
         FilterParamsColl,
+        FlexQueryService,
         {provide: APP_BASE_HREF, useValue: './'}],
     bootstrap: [AppComponent]
 })

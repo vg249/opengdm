@@ -11,7 +11,6 @@ import {TreeStructureService} from "../../services/core/tree-structure-service";
 import {GobiiTreeNode} from "../../model/GobiiTreeNode";
 import * as fromRoot from '../reducers';
 import * as historyAction from '../../store/actions/history-action';
-import {ExtractorItemType} from "../../model/type-extractor-item";
 import {GobiiFileItem} from "../../model/gobii-file-item";
 import {Observable} from "rxjs/Observable";
 import {Store} from "@ngrx/store";

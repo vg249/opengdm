@@ -170,6 +170,10 @@ export const getFqF2Vertices = createSelector(getFileItemsState, fromFileItems.g
 export const getFqF3Vertices = createSelector(getFileItemsState, fromFileItems.getFqF3Vertices);
 export const getFqF4Vertices = createSelector(getFileItemsState, fromFileItems.getFqF4Vertices);
 
+export const getFqF1VerticesValues = createSelector(getFileItemsState, fromFileItems.getFqF1VerticesValues);
+export const getFqF2VerticesValues = createSelector(getFileItemsState, fromFileItems.getFqF2VerticesValues);
+export const getFqF3VerticesValues = createSelector(getFileItemsState, fromFileItems.getFqF3VerticesValues);
+export const getFqF4VerticesValues = createSelector(getFileItemsState, fromFileItems.getFqF4VerticesValues);
 
 /**
  * Just like with the books selectors, we also have to compose the search

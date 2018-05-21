@@ -509,73 +509,81 @@ export class FilterParamsColl {
             FilterParams
                 .build(FilterParamNames.FQ_F1_VERTEX_VALUES,
                     GobiiExtractFilterType.FLEX_QUERY,
-                    EntityType.PLATFORM)
+                    EntityType.UNKNOWN)
                 .setIsDynamicFilterValue(false)
+                .setExtractorItemType(ExtractorItemType.VERTEX_VALUE)
+                .setNameIdLabelType(NameIdLabelType.UNKNOWN)
         );
+
 
         // ******* F2
         this.addFilter(
             FilterParams
                 .build(FilterParamNames.FQ_F2_VERTICES,
                     GobiiExtractFilterType.FLEX_QUERY,
-                    EntityType.CV)
+                    EntityType.UNKNOWN)
+                .setExtractorItemType(ExtractorItemType.VERTEX)
                 .setIsDynamicFilterValue(false)
-                .setCvFilterType(CvFilterType.DATASET_TYPE)
-                .setCvFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE))
-                .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
-                .setNameIdLabelType(NameIdLabelType.SELECT_A)
-        );
-
+                .setFilterType(FilterType.ENTITY_LIST)
+                .setNameIdLabelType(NameIdLabelType.SELECT_A));
 
         this.addFilter(
             FilterParams
                 .build(FilterParamNames.FQ_F2_VERTEX_VALUES,
                     GobiiExtractFilterType.FLEX_QUERY,
-                    EntityType.PLATFORM)
+                    EntityType.UNKNOWN)
                 .setIsDynamicFilterValue(false)
+                .setExtractorItemType(ExtractorItemType.VERTEX_VALUE)
+                .setNameIdLabelType(NameIdLabelType.UNKNOWN)
         );
+
 
         // ******* F3
         this.addFilter(
             FilterParams
                 .build(FilterParamNames.FQ_F3_VERTICES,
                     GobiiExtractFilterType.FLEX_QUERY,
-                    EntityType.CV)
+                    EntityType.UNKNOWN)
+                .setExtractorItemType(ExtractorItemType.VERTEX)
                 .setIsDynamicFilterValue(false)
-                .setCvFilterType(CvFilterType.DATASET_TYPE)
-                .setCvFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE))
-                .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
-                .setNameIdLabelType(NameIdLabelType.SELECT_A)
-        );
+                .setFilterType(FilterType.ENTITY_LIST)
+                .setNameIdLabelType(NameIdLabelType.SELECT_A));
+
 
         this.addFilter(
             FilterParams
                 .build(FilterParamNames.FQ_F3_VERTEX_VALUES,
                     GobiiExtractFilterType.FLEX_QUERY,
-                    EntityType.PLATFORM)
+                    EntityType.UNKNOWN)
                 .setIsDynamicFilterValue(false)
+                .setExtractorItemType(ExtractorItemType.VERTEX_VALUE)
+                .setNameIdLabelType(NameIdLabelType.UNKNOWN)
         );
+
+
 
         // ******* F4
         this.addFilter(
             FilterParams
                 .build(FilterParamNames.FQ_F4_VERTICES,
                     GobiiExtractFilterType.FLEX_QUERY,
-                    EntityType.CV)
+                    EntityType.UNKNOWN)
+                .setExtractorItemType(ExtractorItemType.VERTEX)
                 .setIsDynamicFilterValue(false)
-                .setCvFilterType(CvFilterType.DATASET_TYPE)
-                .setCvFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE))
-                .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
-                .setNameIdLabelType(NameIdLabelType.SELECT_A)
-        );
+                .setFilterType(FilterType.ENTITY_LIST)
+                .setNameIdLabelType(NameIdLabelType.SELECT_A));
+
 
         this.addFilter(
             FilterParams
                 .build(FilterParamNames.FQ_F4_VERTEX_VALUES,
                     GobiiExtractFilterType.FLEX_QUERY,
-                    EntityType.PLATFORM)
+                    EntityType.UNKNOWN)
                 .setIsDynamicFilterValue(false)
+                .setExtractorItemType(ExtractorItemType.VERTEX_VALUE)
+                .setNameIdLabelType(NameIdLabelType.UNKNOWN)
         );
+
 
 
         // FLEX QUERY FILTER OBJECT GRAPH

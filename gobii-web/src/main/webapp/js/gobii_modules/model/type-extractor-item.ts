@@ -10,5 +10,6 @@ export enum ExtractorItemType {
     JOB_ID,
     SAMPLE_LIST_TYPE,
     TREE_STRUCTURE,
-    VERTEX
+    VERTEX,
+    VERTEX_VALUE
 }

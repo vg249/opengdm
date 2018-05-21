@@ -41,7 +41,7 @@ export class DtoRequestItemGfi implements DtoRequestItem<GobiiFileItem[]> {
         } else if (this.fileItemParams.getQueryName() === FilterParamNames.ANALYSES_BY_DATASET_ID) {
             returnVal += "/datasets/" + this.id + "/analyses";
         } else if (this.fileItemParams.getQueryName() === FilterParamNames.FQ_F1_VERTICES) {
-            returnVal += "/entities/vertices";
+            returnVal += "/vertices";
         }
 
         return returnVal;

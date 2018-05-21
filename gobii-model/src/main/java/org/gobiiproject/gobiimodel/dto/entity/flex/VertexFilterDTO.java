@@ -10,21 +10,24 @@ public class VertexFilterDTO extends DTOBase {
 
     @Override
     public Integer getId() {
-        return this.getDestinationVertexDTO().getVertexId();
+        return this.id;
     }
 
     @Override
     public void setId(Integer id) {
 
-        this.getDestinationVertexDTO().setVertexId(id);
+        this.id = id;
     }
 
+
+
+
     // the vertex for which values are being retrieved
-    // for a list of available vertices, will be empty
+    // for a list of available filterVertices, will be empty
     private VertexDTO destinationVertexDTO = new VertexDTO();
 
-    // will be populated when requesting a list of available vertices
-    private List<VertexDTO> vertices = new ArrayList<>();
+    // will be populated when requesting a list of available filterVertices
+    private List<VertexDTO> filterVertices = new ArrayList<>();
 
     // will be populated when requesting values for a vertex and its path
     private List<NameIdDTO> vertexValues = new ArrayList<>();
@@ -32,6 +35,7 @@ public class VertexFilterDTO extends DTOBase {
     // marker and sample counts given a path (the destination vertex is by definition the marker,sample tables
     Integer markerCount = 0;
     Integer sampleCount = 0;
+    Integer id = 1;
 
 
 
@@ -43,12 +47,12 @@ public class VertexFilterDTO extends DTOBase {
         this.destinationVertexDTO = destinationVertexDTO;
     }
 
-    public List<VertexDTO> getVertices() {
-        return vertices;
+    public List<VertexDTO> getFilterVertices() {
+        return filterVertices;
     }
 
-    public void setVertices(List<VertexDTO> vertices) {
-        this.vertices = vertices;
+    public void setFilterVertices(List<VertexDTO> filterVertices) {
+        this.filterVertices = filterVertices;
     }
 
     public List<NameIdDTO> getVertexValues() {

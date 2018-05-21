@@ -36,22 +36,14 @@ export class FilterService {
 
         let filterParams: FilterParams = this.filterParamsColl.getFilter(filterParamsName, gobiiExtractFilterType);
 
-        // the filterParams passed in should exist
-        if (!filterParams) {
-            this.store.dispatch(new historyAction.AddStatusMessageAction("Error loading filter: there is no query params object for query "
-                + filterParamsName
-                + " with extract filter type "
-                + GobiiExtractFilterType[gobiiExtractFilterType]));
-        }
-
-        while (filterParams) {
+        if (filterParams) {
 
             let loadAction: fileItemActions.LoadFilterAction = new fileItemActions.LoadFilterAction(
                 {
                     filterId: filterParams.getQueryName(),
                     filter: new PayloadFilter(
                         gobiiExtractFilterType,
-                        filterParams.getTargetEtityUniqueId(),
+                        filterParams.getTargetEntityUniqueId(),
                         filterParams.getRelatedEntityUniqueId(),
                         null,
                         filterValue,
@@ -63,14 +55,11 @@ export class FilterService {
 
             this.store.dispatch(loadAction)
 
-            // if the current filter is getting nulled, we need to null the siblings as well
-            // but we dont' need to cascade filter values here
-            // note that for now this is only really relevant to FlexQuery filters
-            if( !filterValue ) {
-                filterParams = filterParams.getNextSiblingFileItemParams();
-            } else {
-                filterParams = null;
-            }
+        } else {
+            this.store.dispatch(new historyAction.AddStatusMessageAction("Error loading filter: there is no query params object for query "
+                + filterParamsName
+                + " with extract filter type "
+                + GobiiExtractFilterType[gobiiExtractFilterType]));
         }
     }
 
@@ -147,7 +136,7 @@ export class FilterService {
                 break;
 
             case FilterParamNames.FQ_F1_VERTEX_VALUES:
-                returnVal = this.store.select(fromRoot.getPlatforms);
+                returnVal = this.store.select(fromRoot.getFqF1VerticesValues);
                 break;
 
             //------- F2 --------------------------------------
@@ -156,7 +145,7 @@ export class FilterService {
                 break;
 
             case FilterParamNames.FQ_F2_VERTEX_VALUES:
-                returnVal = this.store.select(fromRoot.getPlatforms);
+                returnVal = this.store.select(fromRoot.getFqF2VerticesValues);
                 break;
 
             //------- F3 --------------------------------------
@@ -165,7 +154,7 @@ export class FilterService {
                 break;
 
             case FilterParamNames.FQ_F3_VERTEX_VALUES:
-                returnVal = this.store.select(fromRoot.getPlatforms);
+                returnVal = this.store.select(fromRoot.getFqF3VerticesValues);
                 break;
 
             //------- F4 --------------------------------------
@@ -174,7 +163,7 @@ export class FilterService {
                 break;
 
             case FilterParamNames.FQ_F4_VERTEX_VALUES:
-                returnVal = this.store.select(fromRoot.getPlatforms);
+                returnVal = this.store.select(fromRoot.getFqF4VerticesValues);
                 break;
 
             default:
@@ -233,7 +222,7 @@ export class FilterService {
                 .setEntityType(filterParamsToLoad.getEntityType())
                 .setEntitySubType(filterParamsToLoad.getEntitySubType())
                 .setCvFilterType(filterParamsToLoad.getCvFilterType())
-                .setExtractorItemType(ExtractorItemType.VERTEX)
+                .setExtractorItemType(ExtractorItemType.UNKNOWN)
                 .setNameIdLabelType(filterParamsToLoad.getMameIdLabelType())
                 .setItemName(label)
                 .setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())

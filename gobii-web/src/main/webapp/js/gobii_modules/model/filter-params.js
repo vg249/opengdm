@@ -199,7 +199,7 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
                     this.targetEntityUniqueId.setIsExtractCriterion(value);
                     return this;
                 };
-                FilterParams.prototype.getTargetEtityUniqueId = function () {
+                FilterParams.prototype.getTargetEntityUniqueId = function () {
                     return this.targetEntityUniqueId;
                 };
                 FilterParams.prototype.setRelatedEntityUniqueId = function (value) {

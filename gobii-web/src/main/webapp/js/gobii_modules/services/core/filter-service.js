@@ -77,28 +77,18 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../mo
                 } // constructor
                 FilterService.prototype.loadFilter = function (gobiiExtractFilterType, filterParamsName, filterValue) {
                     var filterParams = this.filterParamsColl.getFilter(filterParamsName, gobiiExtractFilterType);
-                    // the filterParams passed in should exist
-                    if (!filterParams) {
+                    if (filterParams) {
+                        var loadAction = new fileItemActions.LoadFilterAction({
+                            filterId: filterParams.getQueryName(),
+                            filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParams.getTargetEntityUniqueId(), filterParams.getRelatedEntityUniqueId(), null, filterValue, null, null)
+                        });
+                        this.store.dispatch(loadAction);
+                    }
+                    else {
                         this.store.dispatch(new historyAction.AddStatusMessageAction("Error loading filter: there is no query params object for query "
                             + filterParamsName
                             + " with extract filter type "
                             + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]));
-                    }
-                    while (filterParams) {
-                        var loadAction = new fileItemActions.LoadFilterAction({
-                            filterId: filterParams.getQueryName(),
-                            filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParams.getTargetEtityUniqueId(), filterParams.getRelatedEntityUniqueId(), null, filterValue, null, null)
-                        });
-                        this.store.dispatch(loadAction);
-                        // if the current filter is getting nulled, we need to null the siblings as well
-                        // but we dont' need to cascade filter values here
-                        // note that for now this is only really relevant to FlexQuery filters
-                        if (!filterValue) {
-                            filterParams = filterParams.getNextSiblingFileItemParams();
-                        }
-                        else {
-                            filterParams = null;
-                        }
                     }
                 };
                 FilterService.prototype.getForFilter = function (filterParamName) {
@@ -155,28 +145,28 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../mo
                             returnVal = this.store.select(fromRoot.getFqF1Vertices);
                             break;
                         case file_item_param_names_1.FilterParamNames.FQ_F1_VERTEX_VALUES:
-                            returnVal = this.store.select(fromRoot.getPlatforms);
+                            returnVal = this.store.select(fromRoot.getFqF1VerticesValues);
                             break;
                         //------- F2 --------------------------------------
                         case file_item_param_names_1.FilterParamNames.FQ_F2_VERTICES:
                             returnVal = this.store.select(fromRoot.getFqF2Vertices);
                             break;
                         case file_item_param_names_1.FilterParamNames.FQ_F2_VERTEX_VALUES:
-                            returnVal = this.store.select(fromRoot.getPlatforms);
+                            returnVal = this.store.select(fromRoot.getFqF2VerticesValues);
                             break;
                         //------- F3 --------------------------------------
                         case file_item_param_names_1.FilterParamNames.FQ_F3_VERTICES:
                             returnVal = this.store.select(fromRoot.getFqF3Vertices);
                             break;
                         case file_item_param_names_1.FilterParamNames.FQ_F3_VERTEX_VALUES:
-                            returnVal = this.store.select(fromRoot.getPlatforms);
+                            returnVal = this.store.select(fromRoot.getFqF3VerticesValues);
                             break;
                         //------- F4 --------------------------------------
                         case file_item_param_names_1.FilterParamNames.FQ_F4_VERTICES:
                             returnVal = this.store.select(fromRoot.getFqF4Vertices);
                             break;
                         case file_item_param_names_1.FilterParamNames.FQ_F4_VERTEX_VALUES:
-                            returnVal = this.store.select(fromRoot.getPlatforms);
+                            returnVal = this.store.select(fromRoot.getFqF4VerticesValues);
                             break;
                         default:
                             this.store.dispatch(new historyAction.AddStatusMessageAction("There is no selector for filter "
@@ -222,7 +212,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../mo
                             .setEntityType(filterParamsToLoad.getEntityType())
                             .setEntitySubType(filterParamsToLoad.getEntitySubType())
                             .setCvFilterType(filterParamsToLoad.getCvFilterType())
-                            .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX)
+                            .setExtractorItemType(type_extractor_item_1.ExtractorItemType.UNKNOWN)
                             .setNameIdLabelType(filterParamsToLoad.getMameIdLabelType())
                             .setItemName(label)
                             .setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())

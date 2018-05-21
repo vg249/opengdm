@@ -71,7 +71,6 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../mo
                     this.filterService = filterService;
                     this.store = store;
                     this.filterParamsColl = filterParamsColl;
-                    this.NONE_ITEM_ITEM_ID = "-1";
                 } // constructor
                 EntityFileItemService.prototype.loadEntityList = function (gobiiExtractFilterType, fileItemParamName) {
                     var _this = this;
@@ -136,13 +135,14 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../mo
                                     });
                                     var labelFileItem = _this.filterService.makeLabelItem(gobiiExtractFilterType, filterParams);
                                     if (labelFileItem) {
+                                        labelFileItem.setExtractorItemType(filterParams.getExtractorItemType());
                                         entityItems.unshift(labelFileItem);
                                     }
                                     var date = new Date();
                                     var loadAction = new fileItemActions.LoadFileItemListWithFilterAction({
                                         gobiiFileItems: entityItems,
                                         filterId: filterParams.getQueryName(),
-                                        filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParams.getTargetEtityUniqueId(), filterParams.getRelatedEntityUniqueId(), filterValue, filterValue, date, pagination)
+                                        filter: new action_payload_filter_1.PayloadFilter(gobiiExtractFilterType, filterParams.getTargetEntityUniqueId(), filterParams.getRelatedEntityUniqueId(), filterValue, filterValue, date, pagination)
                                     });
                                     observer.next(loadAction);
                                 }, function (responseHeader) {
