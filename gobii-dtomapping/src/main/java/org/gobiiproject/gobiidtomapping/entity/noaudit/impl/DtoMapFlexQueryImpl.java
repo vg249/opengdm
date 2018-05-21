@@ -39,14 +39,6 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
         returnVal.add(new VertexDTO(9,"Germplasm", GobiiEntityNameType.GERMPLASM.name(),null));
         returnVal.add(new VertexDTO(10,"Principle Investigators", GobiiEntityNameType.CONTACT.name(),null));
 
-//        try {
-//
-//
-//        } catch (SQLException e) {
-//            LOGGER.error("Gobii Mapping Error", e);
-//            throw new GobiiDtoMappingException(e);
-//        }
-
         return returnVal;
 
     }
@@ -61,7 +53,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
         }
 
 
-        for(Integer idx=0; idx < 20; idx ++ ) {
+        for(Integer idx=1; idx <= 20; idx ++ ) {
 
             returnVal.getVertexValues().add(
                     new NameIdDTO(GobiiEntityNameType.valueOf(vertexFilterDTO.getDestinationVertexDTO().getGobiiEntityNameTypeName()),

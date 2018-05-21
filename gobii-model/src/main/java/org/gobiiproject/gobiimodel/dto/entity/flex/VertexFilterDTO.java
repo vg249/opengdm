@@ -10,14 +10,17 @@ public class VertexFilterDTO extends DTOBase {
 
     @Override
     public Integer getId() {
-        return this.getDestinationVertexDTO().getVertexId();
+        return this.id;
     }
 
     @Override
     public void setId(Integer id) {
 
-        this.getDestinationVertexDTO().setVertexId(id);
+        this.id = id;
     }
+
+
+    
 
     // the vertex for which values are being retrieved
     // for a list of available filterVertices, will be empty
@@ -32,6 +35,7 @@ public class VertexFilterDTO extends DTOBase {
     // marker and sample counts given a path (the destination vertex is by definition the marker,sample tables
     Integer markerCount = 0;
     Integer sampleCount = 0;
+    Integer id = 1;
 
 
 
