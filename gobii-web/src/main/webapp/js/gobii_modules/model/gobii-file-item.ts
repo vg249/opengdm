@@ -6,6 +6,7 @@ import {GobiiExtractFilterType} from "./type-extractor-filter";
 import {ExtractorItemType} from "./type-extractor-item";
 import {GobiiFileItemCompoundId} from "./gobii-file-item-compound-id";
 import {GobiiFileItemEntityRelation} from "./gobii-file-item-entity-relation";
+import {NameIdLabelType} from "./name-id-label-type";
 
 export class GobiiFileItem extends GobiiFileItemCompoundId {
 
@@ -27,7 +28,8 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
                           private _entityRelations: GobiiFileItemEntityRelation[] = [],
                           private _hasEntity:boolean = false,
                           private _pageNumber:number,
-                          private _isEphemeral:boolean = false) {
+                          private _isEphemeral:boolean = false,
+                          private _nameIdLabelType:NameIdLabelType) {
 
         super(_extractorItemType, _entityType, _entitySubType, _cvFilterType,_cvFilterValue);
 
@@ -43,6 +45,7 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
         this._hasEntity = _hasEntity;
         this._pageNumber = _pageNumber;
         this._isEphemeral = _isEphemeral;
+        this._nameIdLabelType = _nameIdLabelType;
 
         this._fileItemUniqueId = Guid.generateUUID();
     }
@@ -67,7 +70,8 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
             [],
             false,
             0,
-            false
+            false,
+            NameIdLabelType.UNKNOWN
         );
 
 
@@ -293,6 +297,15 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
 
     setIsEphemeral(value: boolean): GobiiFileItem {
         this._isEphemeral = value;
+        return this;
+    }
+
+    getNameIdLabelType() :NameIdLabelType {
+        return this._nameIdLabelType;
+    }
+
+    setNameIdLabelType(value:NameIdLabelType): GobiiFileItem {
+        this._nameIdLabelType = value;
         return this;
     }
 

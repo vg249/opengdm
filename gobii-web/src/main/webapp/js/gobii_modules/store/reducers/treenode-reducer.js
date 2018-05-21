@@ -200,33 +200,7 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
                     gtn.getChildren().forEach(find);
                 });
                 return returnVal;
-                // this needs to be done in a more filterish way. For now it works
-                // let returnVal: GobiiTreeNode[] =
-                //     gobiiTreeNodes
-                //         .filter(gtn => gtn.getGobiiExtractFilterType() === getExtractFilterType)
-                //         .filter(function find(gtn) {
-                //             let returnVal: boolean = selectedUniqueIds.filter(id => id === gtn.getId()).length > 0;
-                //             if (!returnVal) {
-                //                 returnVal = ( gtn.getContainerType() != ContainerType.STRUCTURE )
-                //                     && (gtn.getChildren().filter(find).length > 0);
-                //             }
-                //
-                //             return returnVal;
-                //         });
-                //
-                // return returnVal;
             }));
-            //    let returnVal: GobiiTreeNode[] = [];
-            // gobiiTreeNodes
-            //     .filter(gtn => gtn.getGobiiExtractFilterType() === getExtractFilterType )
-            //     .forEach(n => {
-            //         selectedUniqueIds.forEach(i => {
-            //             if (n.getId() === i)
-            //                 returnVal.push(n);
-            //         })
-            //
-            //     }
-            // );
             exports_1("getAll", getAll = reselect_1.createSelector(getGobiiTreeNodes, getGobiiTreeItemIds, function (treeItems, ids) {
                 return ids.map(function (id) { return treeItems[id]; });
             }));

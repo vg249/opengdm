@@ -3,7 +3,7 @@ import {Store} from "@ngrx/store";
 import * as fromRoot from '../store/reducers';
 import * as historyAction from '../store/actions/history-action';
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
-import {FileItemService} from "../services/core/file-item-service";
+import {NameIdFileItemService} from "../services/core/nameid-file-item-service";
 import {FilterParamNames} from "../model/file-item-param-names";
 import {Observable} from "rxjs/Observable";
 import {DataSet} from "../model/dataset";
@@ -26,6 +26,7 @@ import {Pagination} from "../model/payload/pagination";
 import {Subject} from "rxjs/Subject";
 import 'rxjs/add/operator/withLatestFrom'
 import {PayloadFilter} from "../store/actions/action-payload-filter";
+import {EntityFileItemService} from "../services/core/entity-file-item-service";
 
 @Component({
     selector: 'dataset-datatable',
@@ -264,7 +265,8 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
     public onClickForNextPage$ = new Subject<Pagination>();
 
     constructor(private store: Store<fromRoot.State>,
-                private fileItemService: FileItemService,
+                private fileItemService: NameIdFileItemService,
+                private entityFileItemService: EntityFileItemService,
                 private filterParamsColl: FilterParamsColl,
                 private fileItemRequestService: DtoRequestService<GobiiFileItem[]>) {
 
@@ -280,7 +282,7 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
                 if (state.fileItems.filters[FilterParamNames.DATASET_LIST_PAGED]) {
                     let pagination: Pagination = state.fileItems.filters[FilterParamNames.DATASET_LIST_PAGED].pagination;
                     if (pagination) {
-                        this.fileItemService.loadPagedEntityList(this.gobiiExtractFilterType,
+                        this.entityFileItemService.loadPagedEntityList(this.gobiiExtractFilterType,
                             FilterParamNames.DATASET_LIST_PAGED,
                             pagination.pagedQueryId,
                             pagination.pageSize,
@@ -469,14 +471,14 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
 
                     this.filterToExtractReady = true;
                     if (this.doPaging) {
-                        this.fileItemService.loadPagedEntityList(this.gobiiExtractFilterType,
+                        this.entityFileItemService.loadPagedEntityList(this.gobiiExtractFilterType,
                             FilterParamNames.DATASET_LIST_PAGED,
                             null,
                             5,
                             0);
 
                     } else {
-                        this.fileItemService.loadEntityList(this.gobiiExtractFilterType, FilterParamNames.DATASET_LIST);
+                        this.entityFileItemService.loadEntityList(this.gobiiExtractFilterType, FilterParamNames.DATASET_LIST);
                     }
 
                     this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,

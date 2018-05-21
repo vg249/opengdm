@@ -106,8 +106,11 @@ export class TreeStructureService {
                     GobiiTreeNode.build(GobiiExtractFilterType.BY_MARKER, ExtractorItemType.ENTITY)
                         .setEntityType(EntityType.MARKER_GROUP)
                         .setContainerType(ContainerType.DATA)
-                ])
-        ];
+                ]),
+            // BY FLEX QUERY
+            ...this.makeCommonNodes(GobiiExtractFilterType.FLEX_QUERY),
+
+        ]; // array of gobii tree nodes
 
         // we know we only have to go one level deep in this case -- no need to recurse
         returnVal.forEach(function (currentNode, idx, nodes) {
@@ -120,7 +123,20 @@ export class TreeStructureService {
         this.setTreeNodeProperties(returnVal);
         return returnVal;
 
+    } // getInitialTree()
+
+    private setTreeNodeProperties(treeNodes: GobiiTreeNode[]) {
+
+        treeNodes.forEach(tn => {
+            if (( tn.children === null ) || ( tn.children.length <= 0  )) {
+                this.addIconsToNode(tn, false);
+                this.applyLabel(tn);
+            } else {
+                this.setTreeNodeProperties(tn.children);
+            }
+        })
     }
+
 
     private applyLabel(gobiiTreeNode: GobiiTreeNode) {
 
@@ -148,19 +164,6 @@ export class TreeStructureService {
 
     }
 
-    private setTreeNodeProperties(treeNodes: GobiiTreeNode[]) {
-
-        treeNodes.forEach(tn => {
-            if (( tn.children === null ) || ( tn.children.length <= 0  )) {
-                this.addIconsToNode(tn, false);
-                this.applyLabel(tn);
-            } else {
-                this.setTreeNodeProperties(tn.children);
-            }
-        })
-
-    }
-    
     private getEntityIcon(gobiiFileItemCompoundId:GobiiFileItemCompoundId):{ icon: string, expandedIcon: string, collapsedIcon: string } {
 
         let icon: string;
@@ -345,59 +348,6 @@ export class TreeStructureService {
         treeNode.expandedIcon = icons.expandedIcon;
         treeNode.collapsedIcon = icons.collapsedIcon;
 
-        // if (treeNode.getEntityType() != null
-        //     && treeNode.getEntityType() != EntityType.UNKNOWN) {
-        //
-        //     this.addEntityIconToNode(treeNode.getEntityType(), treeNode.getCvFilterType(), treeNode);
-        //
-        // } else if (treeNode.getItemType() === ExtractorItemType.EXPORT_FORMAT) {
-        //     treeNode.icon = "fa-columns";
-        //     treeNode.expandedIcon = "fa-columns";
-        //     treeNode.collapsedIcon = "fa-columns";
-        // } else if (treeNode.getItemType() === ExtractorItemType.SAMPLE_FILE) {
-        //     treeNode.icon = "fa-file-text-o";
-        //     treeNode.expandedIcon = "fa-file-text-o";
-        //     treeNode.collapsedIcon = "fa-file-text-o";
-        // } else if (treeNode.getItemType() === ExtractorItemType.SAMPLE_LIST_ITEM) {
-        //     if (isParent) {
-        //         treeNode.icon = "fa-list-ul";
-        //         treeNode.expandedIcon = "fa-list-ul";
-        //         treeNode.collapsedIcon = "fa-list-ul";
-        //     } else {
-        //         treeNode.icon = "fa-eyedropper";
-        //         treeNode.expandedIcon = "fa-eyedropper";
-        //         treeNode.collapsedIcon = "fa-eyedropper";
-        //     }
-        // } else if (treeNode.getItemType() === ExtractorItemType.MARKER_FILE) {
-        //     treeNode.icon = "fa-file-text-o";
-        //     treeNode.expandedIcon = "fa-file-text-o";
-        //     treeNode.collapsedIcon = "fa-file-text-o";
-        // } else if (treeNode.getItemType() === ExtractorItemType.MARKER_LIST_ITEM) {
-        //
-        //     if (isParent) {
-        //         treeNode.icon = "fa-list-ul";
-        //         treeNode.expandedIcon = "fa-list-ul";
-        //         treeNode.collapsedIcon = "fa-list-ul";
-        //     } else {
-        //         treeNode.icon = "fa-map-marker";
-        //         treeNode.expandedIcon = "fa-map-marker";
-        //         treeNode.collapsedIcon = "fa-map-marker";
-        //     }
-        // } else if (treeNode.getItemType() === ExtractorItemType.JOB_ID) {
-        //     treeNode.icon = "fa-info-circle";
-        //     treeNode.expandedIcon = "fa-info-circle";
-        //     treeNode.collapsedIcon = "fa-info-circle";
-        // } else if (treeNode.getItemType() === ExtractorItemType.SAMPLE_LIST_TYPE) {
-        //     treeNode.icon = "fa-info-circle";
-        //     treeNode.expandedIcon = "fa-info-circle";
-        //     treeNode.collapsedIcon = "fa-info-circle";
-        // } else {
-        //     //     }
-        //     // } else if (fileModelNode.getItemType() == ExtractorItemType.CATEGORY ) {
-        //     treeNode.icon = "fa-folder";
-        //     treeNode.expandedIcon = "fa-folder-expanded";
-        //     treeNode.collapsedIcon = "fa-folder";
-        // }
     }
 
     public makeTreeNodeFromFileItem(gobiiFileItem: GobiiFileItem): GobiiTreeNode {
@@ -417,7 +367,7 @@ export class TreeStructureService {
         return returnVal;
     }
 
-    addFileItemNameToNode(gobiiTreeNode: GobiiTreeNode, gobiiFileItem: GobiiFileItem) {
+    private addFileItemNameToNode(gobiiTreeNode: GobiiTreeNode, gobiiFileItem: GobiiFileItem) {
 
         if (gobiiTreeNode.getContainerType() === ContainerType.DATA) {
             gobiiTreeNode.label = gobiiFileItem.getItemName();
@@ -441,9 +391,7 @@ export class TreeStructureService {
     public markTreeItemMissing(gobiiExtractFilterType: GobiiExtractFilterType, gobiiFileItemCompoundId: GobiiFileItemCompoundId) {
 
 
-        //let icon: string = "fa-chevron-circle-right";
         let icon: string = "fa-share";
-        //let icon: string = "fa-chevron-right";
 
         this.store.dispatch(new treeNodeActions.SetTreeNodeLook(
             {
