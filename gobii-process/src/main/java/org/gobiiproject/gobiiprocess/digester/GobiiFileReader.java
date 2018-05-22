@@ -32,7 +32,6 @@ import org.gobiiproject.gobiiprocess.HDF5Interface;
 import org.gobiiproject.gobiiprocess.JobStatus;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.*;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderV2;
-import org.gobiiproject.gobiiprocess.digester.csv.Instruction2HashMap;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestMatrix;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFFileReader;
 
@@ -297,8 +296,8 @@ public class GobiiFileReader {
 			case VCF:
 				//INTENTIONAL FALLTHROUGH
 			case GENERIC:
-				CSVFileReaderV2.parseInstructionFile(list);
-//				CSVFileReaderV2.processMap(map);
+				List <GobiiLoaderInstruction> tableListInstruction = parseInstructionList(list);
+				CSVFileReaderV2.parseInstructionFile(tableListInstruction);
 				break;
 			default:
 				System.err.println("Unable to deal with file type " + zero.getGobiiFile().getGobiiFileType());
@@ -512,7 +511,29 @@ public class GobiiFileReader {
         HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
     }
 
-    private static void uploadToMonet(Integer dataSetId, GobiiCropConfig gobiiCropConfig, String errorPath, File variantFile, String markerFileLoc, String sampleFileLoc) {
+	/**
+	 * GP1-1201 - CSVFilereader takes a list of instruction as input while the loader instruction has all the table MAP in the first instruction.
+	 * This method should populate the Table MAP and make list of instructions.
+	 * @param list
+	 * @return list of intructions
+	 */
+    private static List<GobiiLoaderInstruction> parseInstructionList(List<GobiiLoaderInstruction> list) {
+		List <GobiiLoaderInstruction> tableList = new ArrayList<>();
+		for (GobiiLoaderInstruction i: list){
+			Map<String, List<GobiiFileColumn>> tableMap = i.getColumnsByTableName();
+			for (Map.Entry<String, List<GobiiFileColumn>> entry : tableMap.entrySet()) {
+				GobiiLoaderInstruction tempInstruction = new GobiiLoaderInstruction();
+				tempInstruction.setGobiiFileColumns(entry.getValue());
+				tempInstruction.setTable(entry.getKey());
+				tempInstruction.setGobiiFile(i.getGobiiFile());
+				tempInstruction.setContactEmail(i.getContactEmail());
+				tableList.add(tempInstruction);
+			}
+		}
+		return tableList;
+	}
+
+	private static void uploadToMonet(Integer dataSetId, GobiiCropConfig gobiiCropConfig, String errorPath, File variantFile, String markerFileLoc, String sampleFileLoc) {
         String loadVariantMatrix = loaderScriptPath + "monet/loadVariantMatrix.py";
         //python loadVariantMatrix.py <Dataset Name> <Dataset_Identifier.variant> <Dataset_Identifier.marker_id> <Dataset_Identifier.dnarun_id> <hostname> <port> <dbuser> <dbpass> <dbname>
 

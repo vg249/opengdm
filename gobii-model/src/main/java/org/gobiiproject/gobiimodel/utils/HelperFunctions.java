@@ -238,15 +238,6 @@ public class HelperFunctions {
 	 }
 	 else return destination+"/"+"digest."+instruction.getTable();
  }
-	public static String getDestinationFile(GobiiLoaderInstruction instruction, String tableName){
-		String destination=instruction.getGobiiFile().getDestination();
-		char last = destination.charAt(destination.length()-1);
-		if(last == '\\' || last =='/'){
-			return destination+"digest."+tableName;
-		}
-		else return destination+"/"+"digest."+tableName;
-	}
-
 	public static String getPostgresConnectionString(GobiiCropConfig config){
 	 GobiiCropDbConfig crop=config.getCropDbConfig(GobiiDbType.POSTGRESQL);
 	 String ret = "postgresql://"
