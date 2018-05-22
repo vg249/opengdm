@@ -73,6 +73,7 @@ public class GobiiAdl {
     private static boolean hasXmlFile = false;
     private static boolean hasDataFilesDir = false;
     private static boolean hasInstructionTemplatesDir = false;
+    private static File parentDirectoryPath;
 
     private static void validateKeys(NodeList nodeList, XPath xPath, Document document) throws Exception {
         for (int i = 0; i < nodeList.getLength(); i++) {
@@ -1554,7 +1555,7 @@ public class GobiiAdl {
             String dataExpr = "//Scenario[Name='" + scenarioName + "']/Files/Data";
             XPathExpression xPathExpressionData = xPath.compile(dataExpr);
             String dataFileName = (String) xPathExpressionData.evaluate(document, XPathConstants.STRING);
-            String sourcePath = "test_profiles/" + subDirectoryName + "/data_files/" + dataFileName;
+            String sourcePath = parentDirectoryPath.getAbsoluteFile() + "/" + subDirectoryName + "/data_files/" + dataFileName;
             boolean writeSourcePath = true;
             if (!(new File(sourcePath).exists())) {
                 writeSourcePath = false;
@@ -1564,7 +1565,7 @@ public class GobiiAdl {
             String fileExpr = "//Scenario[Name='" + scenarioName + "']/Files/Instruction";
             XPathExpression xPathExpressionFiles = xPath.compile(fileExpr);
             String instructionFileName = (String) xPathExpressionFiles.evaluate(document, XPathConstants.STRING);
-            String instructionFilePath = "test_profiles/" + subDirectoryName + "/instruction_templates/" + instructionFileName;
+            String instructionFilePath = parentDirectoryPath.getAbsoluteFile() + "/" + subDirectoryName + "/instruction_templates/" + instructionFileName;
             Object obj;
             if (!new File(instructionFilePath).exists()) {
                 ClassLoader classLoader = GobiiAdl.class.getClassLoader();
@@ -1937,29 +1938,37 @@ public class GobiiAdl {
         String INPUT_TIMEOUT = "t";
         setOption(options, INPUT_TIMEOUT, true, "Maximum waiting time in minutes.", "timeout");
         String INPUT_SCENARIO = "s";
-        setOption(options, INPUT_SCENARIO, true, "Specifies the name of one subdirectory under test_profiles. When specified, tool in run in single-scenario mode", "scenario");
+        setOption(options, INPUT_SCENARIO, true, "Specifies the name of one subdirectory under the main directory. When specified, tool in run in single-scenario mode", "scenario");
+        String INPUT_DIRECTORY = "d";
+        setOption(options, INPUT_DIRECTORY, true, "Specifies the path to the directory where the files are in.", "directory");
 
         // parse the commandline
         CommandLineParser parser = new DefaultParser();
         CommandLine commandLine = parser.parse(options, args);
+        String message = "";
 
         if (!commandLine.hasOption(INPUT_HOST)) {
-            String message = getMessageForMissingOption(INPUT_HOST, options);
+            message = getMessageForMissingOption(INPUT_HOST, options);
             processError(message, GobiiStatusLevel.ERROR);
         }
 
         if (!commandLine.hasOption(INPUT_USER)) {
-            String message = getMessageForMissingOption(INPUT_USER, options);
+            message = getMessageForMissingOption(INPUT_USER, options);
             processError(message, GobiiStatusLevel.ERROR);
         }
 
         if (!commandLine.hasOption(INPUT_PASSWORD)) {
-            String message = getMessageForMissingOption(INPUT_PASSWORD, options);
+            message = getMessageForMissingOption(INPUT_PASSWORD, options);
+            processError(message, GobiiStatusLevel.ERROR);
+        }
+
+        if (!commandLine.hasOption(INPUT_DIRECTORY)) {
+            message = getMessageForMissingOption(INPUT_DIRECTORY, options);
             processError(message, GobiiStatusLevel.ERROR);
         }
 
         //set default to 10minutes;
-        Integer timeoutInt = 600000;
+        Integer timeoutInt = 10;
 
         if (commandLine.hasOption(INPUT_TIMEOUT)) {
 
@@ -1988,14 +1997,19 @@ public class GobiiAdl {
             inputScenario = commandLine.getOptionValue(INPUT_SCENARIO);
         }
 
-        File testProfiles = new File("test_profiles");
+        /** Check if specified directory exists **/
 
-        if (!testProfiles.exists()) {
-            processError("\nThe directory, test_profiles,  does not exist. ", GobiiStatusLevel.ERROR);
+        String directory = commandLine.getOptionValue(INPUT_DIRECTORY);
+        File parentDirectory = new File(directory);
+
+        if (!parentDirectory.exists()) {
+            processError("\nThe directory, "+parentDirectory.getName()+" ,  does not exist. ", GobiiStatusLevel.ERROR);
         }
 
         // check if directory
-        checkIfDirectory(testProfiles);
+        checkIfDirectory(parentDirectory);
+
+        parentDirectoryPath = parentDirectory;
 
 
         /** log in to specified host **/
@@ -2044,7 +2058,7 @@ public class GobiiAdl {
 
         if (mode.equals("batch")) {
 
-            File[] directoryListing = getChildrenFiles(testProfiles);
+            File[] directoryListing = getChildrenFiles(parentDirectory);
 
             for (File currentSubDir : directoryListing) {
 
@@ -2073,7 +2087,7 @@ public class GobiiAdl {
                 System.exit(1);
             }
 
-            File scenarioDir = new File(testProfiles.getAbsoluteFile() + "\\" + inputScenario);
+            File scenarioDir = new File(parentDirectory.getAbsoluteFile() + "\\" + inputScenario);
 
             if (!scenarioDir.exists()) {
                 System.out.println("\nThe directory with path: " + scenarioDir.getAbsolutePath() + " does not exist.");
