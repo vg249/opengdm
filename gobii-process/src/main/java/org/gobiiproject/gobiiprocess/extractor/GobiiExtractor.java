@@ -37,6 +37,7 @@ import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.HDF5Interface;
 import org.gobiiproject.gobiiprocess.JobStatus;
+import org.gobiiproject.gobiiprocess.digester.utils.ExtractSummaryWriter;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
 import org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformer;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
@@ -219,7 +220,8 @@ public class GobiiExtractor {
 					String mapsetFile = extractDir + "mapset.file";
 					String markerPosFile = markerFile + ".pos";
 					String sampleFile = extractDir + "sample.file";
-					String projectFile = extractDir + "summary.file";
+					String projectFile = extractDir + "project.file";
+					String extractSummaryFile = extractDir+"summary.file";
 					String chrLengthFile = markerFile + ".chr";
 					Path mdePath = FileSystems.getDefault().getPath(extractorScriptPath + "postgres/gobii_mde/gobii_mde.py");
 					if (!mdePath.toFile().isFile()) {
@@ -385,21 +387,44 @@ public class GobiiExtractor {
 					ErrorLogger.logInfo("Extractor", "Executing MDEs");
 					tryExec(gobiiMDE, extractDir + "mdeOut", errorFile);
 
-					String mapName="No Mapset info available";
+					//Clean some variables ahead of declaration
+					final String defaultMapName="No Mapset info available";
+					String mapName=defaultMapName;
 					String postgresName=(mapId==null)?null:getMapNameFromId(mapId,configuration); //Get name from postgres
 					if(postgresName!=null)mapName=postgresName;
+					GobiiSampleListType type = extract.getGobiiSampleListType();
+
+					String formatName=uppercaseFirstLetter(extract.getGobiiFileType().toString().toLowerCase());
+
+					ExtractSummaryWriter esw=new ExtractSummaryWriter();
 
 					pm.addCriteria("Crop", inst.getGobiiCropType());
 					pm.addCriteria("Email", inst.getContactEmail());
 					pm.addCriteria("Job ID", jobFileName);
+					esw.addItem("Job ID",jobFileName);
+					esw.addItem("Submit as",inst.getContactEmail());
+					esw.addItem("Format",formatName);
+					if(!mapName.equals(defaultMapName)){
+						esw.addItem("Mapset",mapName);
+					}
 					pm.addCriteria("Principal Investigator", extract.getPrincipleInvestigator());
+
 					pm.addCriteria("Project", extract.getProject());
 					pm.addCriteria("Dataset", extract.getDataSet());
 					pm.addCriteria("Dataset Type",extract.getGobiiDatasetType());
+					esw.addItem("Data Set",extract.getDataSet());
+					esw.addItem("Dataset Type",extract.getGobiiDatasetType());
+					esw.addPropList("Platform",extract.getPlatforms());
+					if(type!=null){
+						esw.addItem("List Type", uppercaseFirstLetter(type.toString().toLowerCase()));
+					}
+
 					pm.addCriteria("Mapset", mapName);
-					pm.addCriteria("Format", uppercaseFirstLetter(extract.getGobiiFileType().toString().toLowerCase()));
+					pm.addCriteria("Format", formatName);
 					pm.addCriteria("Platforms", getPlatformNames(extract.getPlatforms()));
-					GobiiSampleListType type = extract.getGobiiSampleListType();
+
+					esw.addItem("Principal Investigator", extract.getPrincipleInvestigator());
+					esw.addItem("Project",extract.getProject());
 
 					//turns /data/gobii_bundle/crops/zoan/extractor/instructions/2018_05_15_13_32_12_samples.txt into 2018_05_15_13_32_12_samples.txt
 					//We're moving it into the extract directory when we're done now, so lets be vague as to its location.
@@ -412,20 +437,24 @@ public class GobiiExtractor {
 					//Marker List or List File (see above for selection logic)
 					if(extract.getMarkerList() != null && !extract.getMarkerList().isEmpty()) {
 						pm.addCriteria("Marker List", String.join("<BR>", extract.getMarkerList()));
+						esw.addItem("Marker List",extract.getMarkerList());
 					}
 					else if(filterType==BY_MARKER && listFileName != null){
 						pm.addCriteria("Marker List", listFileName);
+						esw.addItem("Marker File",listFileName);
 					}
 
 					if(type!=null){
-						pm.addCriteria("Sample ListType", uppercaseFirstLetter(type.toString().toLowerCase()));
+						pm.addCriteria("Sample List Type", uppercaseFirstLetter(type.toString().toLowerCase()));
 					}
 
 					//Sample List or Sample List File (See above for selection logic)
 					if(extract.getSampleList() != null && !extract.getSampleList().isEmpty()){
 						pm.addCriteria("Sample List", String.join("<BR>", extract.getSampleList()));
+						esw.addItem("Sample List",extract.getSampleList());
 					}else if(filterType==BY_SAMPLE && listFileName != null){
 						pm.addCriteria("Sample List", listFileName);
+						esw.addItem("Sample File",listFileName);
 					}
 
 					List<Integer> mapsetIds=inst.getMapsetIds();
@@ -446,6 +475,7 @@ public class GobiiExtractor {
 						pm.addPath("Mapset File", new File(mapsetFile).getAbsolutePath());
 					}
 
+					esw.writeToFile(new File(extractSummaryFile));
 
 					//HDF5
 					//noinspection UnnecessaryLocalVariable - Used to clarify use
