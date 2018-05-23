@@ -1,20 +1,19 @@
 [
   {
     "columnsByTableName": {
-      "dnasample": [
+      "marker_linkage_group": [
         {
           "gobiiColumnType": "CONSTANT",
-          "name": "project_id",
-          "constantValue": "8",
+          "name": "platform_id",
+          "constantValue": "34",
           "subcolumn": false,
           "dataSetType": "IUPAC",
           "dataSetOrientationType": "MARKER_FAST"
         },
         {
-          "gobiiColumnType": "CSV_COLUMN",
-          "rCoord": 1,
-          "cCoord": 5,
-          "name": "num",
+          "gobiiColumnType": "CONSTANT",
+          "name": "map_id",
+          "constantValue": "1",
           "subcolumn": false,
           "dataSetType": "IUPAC",
           "dataSetOrientationType": "MARKER_FAST"
@@ -23,7 +22,25 @@
           "gobiiColumnType": "CSV_COLUMN",
           "rCoord": 1,
           "cCoord": 2,
-          "name": "name",
+          "name": "stop",
+          "subcolumn": false,
+          "dataSetType": "IUPAC",
+          "dataSetOrientationType": "MARKER_FAST"
+        },
+        {
+          "gobiiColumnType": "CSV_COLUMN",
+          "rCoord": 1,
+          "cCoord": 0,
+          "name": "marker_name",
+          "subcolumn": false,
+          "dataSetType": "IUPAC",
+          "dataSetOrientationType": "MARKER_FAST"
+        },
+        {
+          "gobiiColumnType": "CSV_COLUMN",
+          "rCoord": 1,
+          "cCoord": 2,
+          "name": "start",
           "subcolumn": false,
           "dataSetType": "IUPAC",
           "dataSetOrientationType": "MARKER_FAST"
@@ -32,33 +49,17 @@
           "gobiiColumnType": "CSV_COLUMN",
           "rCoord": 1,
           "cCoord": 1,
-          "name": "external_code",
-          "subcolumn": false,
-          "dataSetType": "IUPAC",
-          "dataSetOrientationType": "MARKER_FAST"
-        },
-        {
-          "gobiiColumnType": "CONSTANT",
-          "name": "status",
-          "constantValue": "57",
+          "name": "linkage_group_name",
           "subcolumn": false,
           "dataSetType": "IUPAC",
           "dataSetOrientationType": "MARKER_FAST"
         }
       ],
-      "dnarun": [
+      "linkage_group": [
         {
           "gobiiColumnType": "CONSTANT",
-          "name": "project_id",
-          "constantValue": "8",
-          "subcolumn": false,
-          "dataSetType": "IUPAC",
-          "dataSetOrientationType": "MARKER_FAST"
-        },
-        {
-          "gobiiColumnType": "CONSTANT",
-          "name": "experiment_id",
-          "constantValue": "8",
+          "name": "map_id",
+          "constantValue": "1",
           "subcolumn": false,
           "dataSetType": "IUPAC",
           "dataSetOrientationType": "MARKER_FAST"
@@ -66,36 +67,34 @@
         {
           "gobiiColumnType": "CSV_COLUMN",
           "rCoord": 1,
-          "cCoord": 2,
-          "name": "dnasample_name",
-          "subcolumn": false,
-          "dataSetType": "IUPAC",
-          "dataSetOrientationType": "MARKER_FAST"
-        },
-        {
-          "gobiiColumnType": "CSV_COLUMN",
-          "rCoord": 1,
-          "cCoord": 5,
-          "name": "num",
-          "subcolumn": false,
-          "dataSetType": "IUPAC",
-          "dataSetOrientationType": "MARKER_FAST"
-        },
-        {
-          "gobiiColumnType": "CSV_COLUMN",
-          "rCoord": 1,
-          "cCoord": 3,
+          "cCoord": 1,
           "name": "name",
           "subcolumn": false,
           "dataSetType": "IUPAC",
           "dataSetOrientationType": "MARKER_FAST"
-        }
-      ],
-      "germplasm": [
+        },
         {
           "gobiiColumnType": "CONSTANT",
-          "name": "status",
-          "constantValue": "57",
+          "name": "start",
+          "constantValue": "0",
+          "subcolumn": false,
+          "dataSetType": "IUPAC",
+          "dataSetOrientationType": "MARKER_FAST"
+        },
+        {
+          "gobiiColumnType": "CONSTANT",
+          "name": "stop",
+          "constantValue": "0",
+          "subcolumn": false,
+          "dataSetType": "IUPAC",
+          "dataSetOrientationType": "MARKER_FAST"
+        }
+      ],
+      "marker": [
+        {
+          "gobiiColumnType": "CONSTANT",
+          "name": "platform_id",
+          "constantValue": "34",
           "subcolumn": false,
           "dataSetType": "IUPAC",
           "dataSetOrientationType": "MARKER_FAST"
@@ -110,31 +109,30 @@
           "dataSetOrientationType": "MARKER_FAST"
         },
         {
-          "gobiiColumnType": "CSV_COLUMN",
-          "rCoord": 1,
-          "cCoord": 1,
-          "name": "external_code",
+          "gobiiColumnType": "CONSTANT",
+          "name": "status",
+          "constantValue": "55",
           "subcolumn": false,
           "dataSetType": "IUPAC",
           "dataSetOrientationType": "MARKER_FAST"
         }
       ]
     },
-    "jobPayloadType": "CV_PAYLOADTYPE_SAMPLES",
+    "jobPayloadType": "CV_PAYLOADTYPE_MARKERS",
     "gobiiFile": {
-      "source": "/data/gobii_bundle/crops/zoan/files/data_20180508_114008_2letternuc_sample",
-      "destination": "/data/gobii_bundle/crops/zoan/loader/digest/data_20180508_114008_2letternuc_sample",
+      "source": "c:/users/vcalaminos/documents/gobii/shared_data/gobii/crops/arbitrary-id-0/files/data_20180522_172233_codominant_marker",
+      "destination": "c:/users/vcalaminos/documents/gobii/shared_data/gobii/crops/arbitrary-id-0/loader/digest/data_20180522_172233_codominant_marker",
       "delimiter": "\\t",
       "gobiiFileType": "GENERIC",
       "requireDirectoriesToExist": false,
       "createSource": false
     },
-    "table": "germplasm",
+    "table": "marker",
     "gobiiFileColumns": [
       {
         "gobiiColumnType": "CONSTANT",
-        "name": "status",
-        "constantValue": "57",
+        "name": "platform_id",
+        "constantValue": "22",
         "subcolumn": false,
         "dataSetType": "IUPAC",
         "dataSetOrientationType": "MARKER_FAST"
@@ -149,101 +147,9 @@
         "dataSetOrientationType": "MARKER_FAST"
       },
       {
-        "gobiiColumnType": "CSV_COLUMN",
-        "rCoord": 1,
-        "cCoord": 1,
-        "name": "external_code",
-        "subcolumn": false,
-        "dataSetType": "IUPAC",
-        "dataSetOrientationType": "MARKER_FAST"
-      }
-    ],
-    "vcfParameters": {
-      "removeIndels": false,
-      "toIupac": false
-    },
-    "dataSetId": "1",
-    "gobiiCropType": "zoan",
-    "contactId": "67",
-    "contactEmail": "dummy@email.address",
-    "gobiiJobStatus": "CV_PROGRESSSTATUS_NOSTATUS",
-    "qcCheck": false,
-    "project": {
-      "id": "1",
-      "name": "sim_2letternuc"
-    },
-    "platform": {
-      "id": "34",
-      "name": "sim_SSR"
-    },
-    "dataSet": {
-      "id": "1",
-      "name": "sim_2letternuc"
-    },
-    "datasetType": {
-      "id": 97,
-      "name": "NUCLEOTIDE_2_LETTER"
-    },
-    "mapset": {
-      "id": "1",
-      "name": "sim_2letternuc"
-    },
-    "experiment": {
-      "id": "1",
-      "name": "sim_2letternuc"
-    }
-  },
-  {
-    "columnsByTableName": {},
-    "gobiiFile": {
-      "source": "/data/gobii_bundle/crops/zoan/files/data_20180508_114008_2letternuc_sample",
-      "destination": "/data/gobii_bundle/crops/zoan/loader/digest/data_20180508_114008_2letternuc_sample",
-      "delimiter": "\\t",
-      "gobiiFileType": "GENERIC",
-      "requireDirectoriesToExist": false,
-      "createSource": false
-    },
-    "table": "dnasample",
-    "gobiiFileColumns": [
-      {
-        "gobiiColumnType": "CONSTANT",
-        "name": "project_id",
-        "constantValue": "1",
-        "subcolumn": false,
-        "dataSetType": "IUPAC",
-        "dataSetOrientationType": "MARKER_FAST"
-      },
-      {
-        "gobiiColumnType": "CSV_COLUMN",
-        "rCoord": 1,
-        "cCoord": 5,
-        "name": "num",
-        "subcolumn": false,
-        "dataSetType": "IUPAC",
-        "dataSetOrientationType": "MARKER_FAST"
-      },
-      {
-        "gobiiColumnType": "CSV_COLUMN",
-        "rCoord": 1,
-        "cCoord": 2,
-        "name": "name",
-        "subcolumn": false,
-        "dataSetType": "IUPAC",
-        "dataSetOrientationType": "MARKER_FAST"
-      },
-      {
-        "gobiiColumnType": "CSV_COLUMN",
-        "rCoord": 1,
-        "cCoord": 1,
-        "name": "external_code",
-        "subcolumn": false,
-        "dataSetType": "IUPAC",
-        "dataSetOrientationType": "MARKER_FAST"
-      },
-      {
         "gobiiColumnType": "CONSTANT",
         "name": "status",
-        "constantValue": "57",
+        "constantValue": "55",
         "subcolumn": false,
         "dataSetType": "IUPAC",
         "dataSetOrientationType": "MARKER_FAST"
@@ -254,59 +160,140 @@
       "toIupac": false
     },
     "dataSetId": "1",
-    "gobiiCropType": "zoan",
-    "contactId": "67",
+    "gobiiCropType": "arbitrary-id-0",
+    "contactId": "4",
     "contactEmail": "dummy@email.address",
     "gobiiJobStatus": "CV_PROGRESSSTATUS_NOSTATUS",
     "qcCheck": false,
     "project": {
       "id": "1",
-      "name": "sim_2letternuc"
+      "name": "sim_codominant"
     },
     "platform": {
-      "id": "34",
+      "id": "22",
       "name": "sim_SSR"
     },
     "dataSet": {
       "id": "1",
-      "name": "sim_2letternuc"
+      "name": "sim_codominant"
     },
     "datasetType": {
-      "id": 97,
-      "name": "NUCLEOTIDE_2_LETTER"
+      "id": 100,
+      "name": "CO_DOMINANT_NON_NUCLEOTIDE"
     },
     "mapset": {
       "id": "1",
-      "name": "sim_2letternuc"
+      "name": "sim_codominant"
     },
     "experiment": {
       "id": "1",
-      "name": "sim_2letternuc"
+      "name": "sim_codominant"
     }
   },
   {
     "columnsByTableName": {},
     "gobiiFile": {
-      "source": "/data/gobii_bundle/crops/zoan/files/data_20180508_114008_2letternuc_sample",
-      "destination": "/data/gobii_bundle/crops/zoan/loader/digest/data_20180508_114008_2letternuc_sample",
+      "source": "c:/users/vcalaminos/documents/gobii/shared_data/gobii/crops/arbitrary-id-0/files/data_20180522_172233_codominant_marker",
+      "destination": "c:/users/vcalaminos/documents/gobii/shared_data/gobii/crops/arbitrary-id-0/loader/digest/data_20180522_172233_codominant_marker",
       "delimiter": "\\t",
       "gobiiFileType": "GENERIC",
       "requireDirectoriesToExist": false,
       "createSource": false
     },
-    "table": "dnarun",
+    "table": "linkage_group",
     "gobiiFileColumns": [
       {
         "gobiiColumnType": "CONSTANT",
-        "name": "project_id",
+        "name": "map_id",
         "constantValue": "1",
         "subcolumn": false,
         "dataSetType": "IUPAC",
         "dataSetOrientationType": "MARKER_FAST"
       },
       {
+        "gobiiColumnType": "CSV_COLUMN",
+        "rCoord": 1,
+        "cCoord": 1,
+        "name": "name",
+        "subcolumn": false,
+        "dataSetType": "IUPAC",
+        "dataSetOrientationType": "MARKER_FAST"
+      },
+      {
         "gobiiColumnType": "CONSTANT",
-        "name": "experiment_id",
+        "name": "start",
+        "constantValue": "0",
+        "subcolumn": false,
+        "dataSetType": "IUPAC",
+        "dataSetOrientationType": "MARKER_FAST"
+      },
+      {
+        "gobiiColumnType": "CONSTANT",
+        "name": "stop",
+        "constantValue": "0",
+        "subcolumn": false,
+        "dataSetType": "IUPAC",
+        "dataSetOrientationType": "MARKER_FAST"
+      }
+    ],
+    "vcfParameters": {
+      "removeIndels": false,
+      "toIupac": false
+    },
+    "dataSetId": "1",
+    "gobiiCropType": "arbitrary-id-0",
+    "contactId": "4",
+    "contactEmail": "dummy@email.address",
+    "gobiiJobStatus": "CV_PROGRESSSTATUS_NOSTATUS",
+    "qcCheck": false,
+    "project": {
+      "id": "1",
+      "name": "sim_codominant"
+    },
+    "platform": {
+      "id": "22",
+      "name": "sim_SSR"
+    },
+    "dataSet": {
+      "id": "1",
+      "name": "sim_codominant"
+    },
+    "datasetType": {
+      "id": 100,
+      "name": "CO_DOMINANT_NON_NUCLEOTIDE"
+    },
+    "mapset": {
+      "id": "1",
+      "name": "sim_codominant"
+    },
+    "experiment": {
+      "id": "1",
+      "name": "sim_codominant"
+    }
+  },
+  {
+    "columnsByTableName": {},
+    "gobiiFile": {
+      "source": "c:/users/vcalaminos/documents/gobii/shared_data/gobii/crops/arbitrary-id-0/files/data_20180522_172233_codominant_marker",
+      "destination": "c:/users/vcalaminos/documents/gobii/shared_data/gobii/crops/arbitrary-id-0/loader/digest/data_20180522_172233_codominant_marker",
+      "delimiter": "\\t",
+      "gobiiFileType": "GENERIC",
+      "requireDirectoriesToExist": false,
+      "createSource": false
+    },
+    "table": "marker_linkage_group",
+    "gobiiFileColumns": [
+      {
+        "gobiiColumnType": "CONSTANT",
+        "name": "platform_id",
+        "constantValue": "22",
+        "subcolumn": false,
+        "dataSetType": "IUPAC",
+        "dataSetOrientationType": "MARKER_FAST"
+      },
+      {
+        "gobiiColumnType": "CONSTANT",
+        "name": "map_id",
         "constantValue": "1",
         "subcolumn": false,
         "dataSetType": "IUPAC",
@@ -316,7 +303,7 @@
         "gobiiColumnType": "CSV_COLUMN",
         "rCoord": 1,
         "cCoord": 2,
-        "name": "dnasample_name",
+        "name": "stop",
         "subcolumn": false,
         "dataSetType": "IUPAC",
         "dataSetOrientationType": "MARKER_FAST"
@@ -324,8 +311,8 @@
       {
         "gobiiColumnType": "CSV_COLUMN",
         "rCoord": 1,
-        "cCoord": 5,
-        "name": "num",
+        "cCoord": 0,
+        "name": "marker_name",
         "subcolumn": false,
         "dataSetType": "IUPAC",
         "dataSetOrientationType": "MARKER_FAST"
@@ -333,8 +320,17 @@
       {
         "gobiiColumnType": "CSV_COLUMN",
         "rCoord": 1,
-        "cCoord": 3,
-        "name": "name",
+        "cCoord": 2,
+        "name": "start",
+        "subcolumn": false,
+        "dataSetType": "IUPAC",
+        "dataSetOrientationType": "MARKER_FAST"
+      },
+      {
+        "gobiiColumnType": "CSV_COLUMN",
+        "rCoord": 1,
+        "cCoord": 1,
+        "name": "linkage_group_name",
         "subcolumn": false,
         "dataSetType": "IUPAC",
         "dataSetOrientationType": "MARKER_FAST"
@@ -345,34 +341,34 @@
       "toIupac": false
     },
     "dataSetId": "1",
-    "gobiiCropType": "zoan",
-    "contactId": "67",
+    "gobiiCropType": "arbitrary-id-0",
+    "contactId": "4",
     "contactEmail": "dummy@email.address",
     "gobiiJobStatus": "CV_PROGRESSSTATUS_NOSTATUS",
     "qcCheck": false,
     "project": {
       "id": "1",
-      "name": "sim_2letternuc"
+      "name": "sim_codominant"
     },
     "platform": {
-      "id": "34",
+      "id": "22",
       "name": "sim_SSR"
     },
     "dataSet": {
       "id": "1",
-      "name": "sim_2letternuc"
+      "name": "sim_codominant"
     },
     "datasetType": {
-      "id": 97,
-      "name": "NUCLEOTIDE_2_LETTER"
+      "id": 100,
+      "name": "CO_DOMINANT_NON_NUCLEOTIDE"
     },
     "mapset": {
       "id": "1",
-      "name": "sim_2letternuc"
+      "name": "sim_codominant"
     },
     "experiment": {
       "id": "1",
-      "name": "sim_2letternuc"
+      "name": "sim_codominant"
     }
   }
 ]

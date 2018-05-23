@@ -68,11 +68,7 @@ public class GobiiAdl {
     private static long timeoutInMillis;
     private static Long timeout = null;
     private static File xmlFile = null;
-    private static File dataFiles = null;
-    private static File instructionTemplates = null;
     private static boolean hasXmlFile = false;
-    private static boolean hasDataFilesDir = false;
-    private static boolean hasInstructionTemplatesDir = false;
     private static File parentDirectoryPath;
 
     private static void validateKeys(NodeList nodeList, XPath xPath, Document document) throws Exception {
@@ -1555,7 +1551,7 @@ public class GobiiAdl {
             String dataExpr = "//Scenario[Name='" + scenarioName + "']/Files/Data";
             XPathExpression xPathExpressionData = xPath.compile(dataExpr);
             String dataFileName = (String) xPathExpressionData.evaluate(document, XPathConstants.STRING);
-            String sourcePath = parentDirectoryPath.getAbsoluteFile() + "/" + subDirectoryName + "/data_files/" + dataFileName;
+            String sourcePath = parentDirectoryPath.getAbsoluteFile() + "/" + subDirectoryName + "/" + dataFileName;
             boolean writeSourcePath = true;
             if (!(new File(sourcePath).exists())) {
                 writeSourcePath = false;
@@ -1565,7 +1561,7 @@ public class GobiiAdl {
             String fileExpr = "//Scenario[Name='" + scenarioName + "']/Files/Instruction";
             XPathExpression xPathExpressionFiles = xPath.compile(fileExpr);
             String instructionFileName = (String) xPathExpressionFiles.evaluate(document, XPathConstants.STRING);
-            String instructionFilePath = parentDirectoryPath.getAbsoluteFile() + "/" + subDirectoryName + "/instruction_templates/" + instructionFileName;
+            String instructionFilePath = parentDirectoryPath.getAbsoluteFile() + "/" + subDirectoryName + "/" + instructionFileName;
             Object obj;
             if (!new File(instructionFilePath).exists()) {
                 ClassLoader classLoader = GobiiAdl.class.getClassLoader();
@@ -1823,7 +1819,7 @@ public class GobiiAdl {
 
     }
 
-    private static void processSubDirectory(File currentSubDir) {
+    private static void processSubDirectory(File currentSubDir) throws Exception {
 
         File[] subDirFiles = getChildrenFiles(currentSubDir);
 
@@ -1834,11 +1830,7 @@ public class GobiiAdl {
          * **/
 
         xmlFile = null;
-        dataFiles = null;
-        instructionTemplates = null;
         hasXmlFile = false;
-        hasDataFilesDir = false;
-        hasInstructionTemplatesDir = false;
 
         for (File currentFile : subDirFiles) {
             String fileName = currentFile.getName();
@@ -1853,47 +1845,46 @@ public class GobiiAdl {
 
             }
 
-            if (fileName.equals("data_files")) {
-
-                if (!hasDataFilesDir) {
-                    hasDataFilesDir = true;
-                    dataFiles = currentFile;
-                } else {
-                    processError("\nDirectory " + currentSubDir.getName()+" has more than one (1) data_files directory.", GobiiStatusLevel.ERROR);
-                }
-
-            }
-
-            if (fileName.equals("instruction_templates")) {
-
-                if (!hasInstructionTemplatesDir) {
-                    hasInstructionTemplatesDir = true;
-                    instructionTemplates = currentFile;
-                } else {
-                    processError("\nDirectory " + currentSubDir.getName()+" has more than one (1) instruction_templates.", GobiiStatusLevel.ERROR);
-                }
-
-            }
         }
 
         if (!hasXmlFile) {
             processError("\nDirectory "+currentSubDir.getName()+" does not have an XML file.", GobiiStatusLevel.ERROR);
         }
 
-        if (!hasDataFilesDir) {
-            processError("\nDirectory "+currentSubDir.getName()+" does not have a subdirectory data_files.", GobiiStatusLevel.ERROR);
+        /** check if the files in scenarios in the XML file exists **/
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        documentBuilderFactory.setNamespaceAware(true);
+
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        Document document = documentBuilder.parse(xmlFile);
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        String getAllScenarios = "//Scenarios/*";
+        XPathExpression xPathExpression = xPath.compile(getAllScenarios);
+        NodeList nodeList = (NodeList) xPathExpression.evaluate(document, XPathConstants.NODESET);
+
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Element currentElement = (Element) nodeList.item(i);
+            Node scenarioNode = currentElement.getElementsByTagName("Name").item(0);
+            validateNode(scenarioNode, currentElement.getTagName(), "Name");
+            String scenarioName = scenarioNode.getTextContent();
+            String dataExpr = "//Scenario[Name='" + scenarioName + "']/Files/Data";
+            XPathExpression xPathExpressionData = xPath.compile(dataExpr);
+            String dataFileName = (String) xPathExpressionData.evaluate(document, XPathConstants.STRING);
+            String sourcePath = parentDirectoryPath.getAbsoluteFile() + "/" + currentSubDir.getName() + "/" + dataFileName;
+
+            if (!(new File(sourcePath).exists())) {
+                processError( "Data file " + sourcePath + " for scenario "+ scenarioName +" not found.", GobiiStatusLevel.ERROR);
+            }
+
+            String fileExpr = "//Scenario[Name='" + scenarioName + "']/Files/Instruction";
+            XPathExpression xPathExpressionFiles = xPath.compile(fileExpr);
+            String instructionFileName = (String) xPathExpressionFiles.evaluate(document, XPathConstants.STRING);
+            String instructionFilePath = parentDirectoryPath.getAbsoluteFile() + "/" + currentSubDir.getName() + "/" + instructionFileName;
+            if (!new File(instructionFilePath).exists()) {
+                processError(" Instruction file template " + instructionFilePath + " not found.", GobiiStatusLevel.ERROR);
+            }
+
         }
-
-        if (!hasInstructionTemplatesDir) {
-            processError("\nDirectory " + currentSubDir.getName()+" does not have a subdirectory instruction_templates.", GobiiStatusLevel.ERROR);
-        }
-
-        // check if data_files and instruction templates are directory and if empty
-        checkIfDirectory(dataFiles);
-        checkIfDirectory(instructionTemplates);
-
-        File[] dataFilesChildren = getChildrenFiles(dataFiles);
-        File[] instructionTemplatesChildren = getChildrenFiles(instructionTemplates);
 
     }
 

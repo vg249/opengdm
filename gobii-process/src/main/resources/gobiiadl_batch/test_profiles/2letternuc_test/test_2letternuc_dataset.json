@@ -207,8 +207,8 @@
     },
     "jobPayloadType": "CV_PAYLOADTYPE_MATRIX",
     "gobiiFile": {
-      "source": "/data/gobii_bundle/crops/zoan/files/data_20180508_114408_2letternuc_dataset",
-      "destination": "/data/gobii_bundle/crops/zoan/loader/digest/data_20180508_114408_2letternuc_dataset",
+      "source": "c:/users/vcalaminos/documents/gobii/shared_data/gobii/crops/arbitrary-id-0/files/data_20180522_172226_2letternuc_dataset",
+      "destination": "c:/users/vcalaminos/documents/gobii/shared_data/gobii/crops/arbitrary-id-0/loader/digest/data_20180522_172226_2letternuc_dataset",
       "delimiter": "\\t",
       "gobiiFileType": "GENERIC",
       "requireDirectoriesToExist": false,
@@ -219,7 +219,7 @@
       {
         "gobiiColumnType": "CONSTANT",
         "name": "platform_id",
-        "constantValue": "34",
+        "constantValue": "22",
         "subcolumn": false,
         "dataSetType": "IUPAC",
         "dataSetOrientationType": "MARKER_FAST"
@@ -246,22 +246,22 @@
       "removeIndels": false,
       "toIupac": false
     },
-    "dataSetId": "1",
-    "gobiiCropType": "zoan",
-    "contactId": "67",
+    "dataSetId": "3",
+    "gobiiCropType": "arbitrary-id-0",
+    "contactId": "4",
     "contactEmail": "dummy@email.address",
     "gobiiJobStatus": "CV_PROGRESSSTATUS_NOSTATUS",
     "qcCheck": false,
     "project": {
-      "id": "1",
+      "id": "3",
       "name": "sim_2letternuc"
     },
     "platform": {
-      "id": "34",
+      "id": "22",
       "name": "sim_SSR"
     },
     "dataSet": {
-      "id": "1",
+      "id": "3",
       "name": "sim_2letternuc"
     },
     "datasetType": {
@@ -269,19 +269,19 @@
       "name": "NUCLEOTIDE_2_LETTER"
     },
     "mapset": {
-      "id": "1",
+      "id": "3",
       "name": "sim_2letternuc"
     },
     "experiment": {
-      "id": "1",
+      "id": "3",
       "name": "sim_2letternuc"
     }
   },
   {
     "columnsByTableName": {},
     "gobiiFile": {
-      "source": "/data/gobii_bundle/crops/zoan/files/data_20180508_114408_2letternuc_dataset",
-      "destination": "/data/gobii_bundle/crops/zoan/loader/digest/data_20180508_114408_2letternuc_dataset",
+      "source": "c:/users/vcalaminos/documents/gobii/shared_data/gobii/crops/arbitrary-id-0/files/data_20180522_172226_2letternuc_dataset",
+      "destination": "c:/users/vcalaminos/documents/gobii/shared_data/gobii/crops/arbitrary-id-0/loader/digest/data_20180522_172226_2letternuc_dataset",
       "delimiter": "\\t",
       "gobiiFileType": "GENERIC",
       "requireDirectoriesToExist": false,
@@ -292,7 +292,7 @@
       {
         "gobiiColumnType": "CONSTANT",
         "name": "map_id",
-        "constantValue": "1",
+        "constantValue": "3",
         "subcolumn": false,
         "dataSetType": "IUPAC",
         "dataSetOrientationType": "MARKER_FAST"
@@ -327,22 +327,22 @@
       "removeIndels": false,
       "toIupac": false
     },
-    "dataSetId": "1",
-    "gobiiCropType": "zoan",
-    "contactId": "67",
+    "dataSetId": "3",
+    "gobiiCropType": "arbitrary-id-0",
+    "contactId": "4",
     "contactEmail": "dummy@email.address",
     "gobiiJobStatus": "CV_PROGRESSSTATUS_NOSTATUS",
     "qcCheck": false,
     "project": {
-      "id": "1",
+      "id": "3",
       "name": "sim_2letternuc"
     },
     "platform": {
-      "id": "34",
+      "id": "22",
       "name": "sim_SSR"
     },
     "dataSet": {
-      "id": "1",
+      "id": "3",
       "name": "sim_2letternuc"
     },
     "datasetType": {
@@ -350,19 +350,19 @@
       "name": "NUCLEOTIDE_2_LETTER"
     },
     "mapset": {
-      "id": "1",
+      "id": "3",
       "name": "sim_2letternuc"
     },
     "experiment": {
-      "id": "1",
+      "id": "3",
       "name": "sim_2letternuc"
     }
   },
   {
     "columnsByTableName": {},
     "gobiiFile": {
-      "source": "/data/gobii_bundle/crops/zoan/files/data_20180508_114408_2letternuc_dataset",
-      "destination": "/data/gobii_bundle/crops/zoan/loader/digest/data_20180508_114408_2letternuc_dataset",
+      "source": "c:/users/vcalaminos/documents/gobii/shared_data/gobii/crops/arbitrary-id-0/files/data_20180522_172226_2letternuc_dataset",
+      "destination": "c:/users/vcalaminos/documents/gobii/shared_data/gobii/crops/arbitrary-id-0/loader/digest/data_20180522_172226_2letternuc_dataset",
       "delimiter": "\\t",
       "gobiiFileType": "GENERIC",
       "requireDirectoriesToExist": false,
@@ -373,7 +373,7 @@
       {
         "gobiiColumnType": "CONSTANT",
         "name": "platform_id",
-        "constantValue": "34",
+        "constantValue": "22",
         "subcolumn": false,
         "dataSetType": "IUPAC",
         "dataSetOrientationType": "MARKER_FAST"
@@ -381,7 +381,7 @@
       {
         "gobiiColumnType": "CONSTANT",
         "name": "map_id",
-        "constantValue": "1",
+        "constantValue": "3",
         "subcolumn": false,
         "dataSetType": "IUPAC",
         "dataSetOrientationType": "MARKER_FAST"
@@ -427,22 +427,22 @@
       "removeIndels": false,
       "toIupac": false
     },
-    "dataSetId": "1",
-    "gobiiCropType": "zoan",
-    "contactId": "67",
+    "dataSetId": "3",
+    "gobiiCropType": "arbitrary-id-0",
+    "contactId": "4",
     "contactEmail": "dummy@email.address",
     "gobiiJobStatus": "CV_PROGRESSSTATUS_NOSTATUS",
     "qcCheck": false,
     "project": {
-      "id": "1",
+      "id": "3",
       "name": "sim_2letternuc"
     },
     "platform": {
-      "id": "34",
+      "id": "22",
       "name": "sim_SSR"
     },
     "dataSet": {
-      "id": "1",
+      "id": "3",
       "name": "sim_2letternuc"
     },
     "datasetType": {
@@ -450,19 +450,19 @@
       "name": "NUCLEOTIDE_2_LETTER"
     },
     "mapset": {
-      "id": "1",
+      "id": "3",
       "name": "sim_2letternuc"
     },
     "experiment": {
-      "id": "1",
+      "id": "3",
       "name": "sim_2letternuc"
     }
   },
   {
     "columnsByTableName": {},
     "gobiiFile": {
-      "source": "/data/gobii_bundle/crops/zoan/files/data_20180508_114408_2letternuc_dataset",
-      "destination": "/data/gobii_bundle/crops/zoan/loader/digest/data_20180508_114408_2letternuc_dataset",
+      "source": "c:/users/vcalaminos/documents/gobii/shared_data/gobii/crops/arbitrary-id-0/files/data_20180522_172226_2letternuc_dataset",
+      "destination": "c:/users/vcalaminos/documents/gobii/shared_data/gobii/crops/arbitrary-id-0/loader/digest/data_20180522_172226_2letternuc_dataset",
       "delimiter": "\\t",
       "gobiiFileType": "GENERIC",
       "requireDirectoriesToExist": false,
@@ -473,7 +473,7 @@
       {
         "gobiiColumnType": "CONSTANT",
         "name": "platform_id",
-        "constantValue": "34",
+        "constantValue": "22",
         "subcolumn": false,
         "dataSetType": "IUPAC",
         "dataSetOrientationType": "MARKER_FAST"
@@ -481,7 +481,7 @@
       {
         "gobiiColumnType": "CONSTANT",
         "name": "dataset_id",
-        "constantValue": "1",
+        "constantValue": "3",
         "subcolumn": false,
         "dataSetType": "IUPAC",
         "dataSetOrientationType": "MARKER_FAST"
@@ -507,22 +507,22 @@
       "removeIndels": false,
       "toIupac": false
     },
-    "dataSetId": "1",
-    "gobiiCropType": "zoan",
-    "contactId": "67",
+    "dataSetId": "3",
+    "gobiiCropType": "arbitrary-id-0",
+    "contactId": "4",
     "contactEmail": "dummy@email.address",
     "gobiiJobStatus": "CV_PROGRESSSTATUS_NOSTATUS",
     "qcCheck": false,
     "project": {
-      "id": "1",
+      "id": "3",
       "name": "sim_2letternuc"
     },
     "platform": {
-      "id": "34",
+      "id": "22",
       "name": "sim_SSR"
     },
     "dataSet": {
-      "id": "1",
+      "id": "3",
       "name": "sim_2letternuc"
     },
     "datasetType": {
@@ -530,19 +530,19 @@
       "name": "NUCLEOTIDE_2_LETTER"
     },
     "mapset": {
-      "id": "1",
+      "id": "3",
       "name": "sim_2letternuc"
     },
     "experiment": {
-      "id": "1",
+      "id": "3",
       "name": "sim_2letternuc"
     }
   },
   {
     "columnsByTableName": {},
     "gobiiFile": {
-      "source": "/data/gobii_bundle/crops/zoan/files/data_20180508_114408_2letternuc_dataset",
-      "destination": "/data/gobii_bundle/crops/zoan/loader/digest/data_20180508_114408_2letternuc_dataset",
+      "source": "c:/users/vcalaminos/documents/gobii/shared_data/gobii/crops/arbitrary-id-0/files/data_20180522_172226_2letternuc_dataset",
+      "destination": "c:/users/vcalaminos/documents/gobii/shared_data/gobii/crops/arbitrary-id-0/loader/digest/data_20180522_172226_2letternuc_dataset",
       "delimiter": "\\t",
       "gobiiFileType": "GENERIC",
       "requireDirectoriesToExist": false,
@@ -553,7 +553,7 @@
       {
         "gobiiColumnType": "CONSTANT",
         "name": "platform_id",
-        "constantValue": "34",
+        "constantValue": "22",
         "subcolumn": false,
         "dataSetType": "IUPAC",
         "dataSetOrientationType": "MARKER_FAST"
@@ -561,7 +561,7 @@
       {
         "gobiiColumnType": "CONSTANT",
         "name": "experiment_id",
-        "constantValue": "1",
+        "constantValue": "3",
         "subcolumn": false,
         "dataSetType": "IUPAC",
         "dataSetOrientationType": "MARKER_FAST"
@@ -569,7 +569,7 @@
       {
         "gobiiColumnType": "CONSTANT",
         "name": "dataset_id",
-        "constantValue": "1",
+        "constantValue": "3",
         "subcolumn": false,
         "dataSetType": "IUPAC",
         "dataSetOrientationType": "MARKER_FAST"
@@ -595,22 +595,22 @@
       "removeIndels": false,
       "toIupac": false
     },
-    "dataSetId": "1",
-    "gobiiCropType": "zoan",
-    "contactId": "67",
+    "dataSetId": "3",
+    "gobiiCropType": "arbitrary-id-0",
+    "contactId": "4",
     "contactEmail": "dummy@email.address",
     "gobiiJobStatus": "CV_PROGRESSSTATUS_NOSTATUS",
     "qcCheck": false,
     "project": {
-      "id": "1",
+      "id": "3",
       "name": "sim_2letternuc"
     },
     "platform": {
-      "id": "34",
+      "id": "22",
       "name": "sim_SSR"
     },
     "dataSet": {
-      "id": "1",
+      "id": "3",
       "name": "sim_2letternuc"
     },
     "datasetType": {
@@ -618,19 +618,19 @@
       "name": "NUCLEOTIDE_2_LETTER"
     },
     "mapset": {
-      "id": "1",
+      "id": "3",
       "name": "sim_2letternuc"
     },
     "experiment": {
-      "id": "1",
+      "id": "3",
       "name": "sim_2letternuc"
     }
   },
   {
     "columnsByTableName": {},
     "gobiiFile": {
-      "source": "/data/gobii_bundle/crops/zoan/files/data_20180508_114408_2letternuc_dataset",
-      "destination": "/data/gobii_bundle/crops/zoan/loader/digest/data_20180508_114408_2letternuc_dataset",
+      "source": "c:/users/vcalaminos/documents/gobii/shared_data/gobii/crops/arbitrary-id-0/files/data_20180522_172226_2letternuc_dataset",
+      "destination": "c:/users/vcalaminos/documents/gobii/shared_data/gobii/crops/arbitrary-id-0/loader/digest/data_20180522_172226_2letternuc_dataset",
       "delimiter": "\\t",
       "gobiiFileType": "GENERIC",
       "requireDirectoriesToExist": false,
@@ -652,22 +652,22 @@
       "removeIndels": false,
       "toIupac": false
     },
-    "dataSetId": "1",
-    "gobiiCropType": "zoan",
-    "contactId": "67",
+    "dataSetId": "3",
+    "gobiiCropType": "arbitrary-id-0",
+    "contactId": "4",
     "contactEmail": "dummy@email.address",
     "gobiiJobStatus": "CV_PROGRESSSTATUS_NOSTATUS",
     "qcCheck": false,
     "project": {
-      "id": "1",
+      "id": "3",
       "name": "sim_2letternuc"
     },
     "platform": {
-      "id": "34",
+      "id": "22",
       "name": "sim_SSR"
     },
     "dataSet": {
-      "id": "1",
+      "id": "3",
       "name": "sim_2letternuc"
     },
     "datasetType": {
@@ -675,11 +675,11 @@
       "name": "NUCLEOTIDE_2_LETTER"
     },
     "mapset": {
-      "id": "1",
+      "id": "3",
       "name": "sim_2letternuc"
     },
     "experiment": {
-      "id": "1",
+      "id": "3",
       "name": "sim_2letternuc"
     }
   }

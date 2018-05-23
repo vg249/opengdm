@@ -238,7 +238,7 @@
 
 			<DbFkey entity="Contact">
 				<DbPKeySurrogate>dummy@email.address</DbPKeySurrogate>
-				<DbPKey>67</DbPKey>
+				<DbPKey>4</DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Project">
@@ -263,7 +263,7 @@
 
 			<DbFkey entity="Platform">
 				<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
-				<DbPKey>34</DbPKey>
+				<DbPKey>22</DbPKey>
 			</DbFkey>
 
 		</Scenario>
@@ -278,7 +278,7 @@
 
 			<DbFkey entity="Contact">
 				<DbPKeySurrogate>dummy@email.address</DbPKeySurrogate>
-				<DbPKey>67</DbPKey>
+				<DbPKey>4</DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Project">
@@ -303,7 +303,7 @@
 
 			<DbFkey entity="Platform">
 				<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
-				<DbPKey>34</DbPKey>
+				<DbPKey>22</DbPKey>
 			</DbFkey>
 
 		</Scenario>

@@ -238,32 +238,32 @@
 
 			<DbFkey entity="Contact">
 				<DbPKeySurrogate>dummy@email.address</DbPKeySurrogate>
-				<DbPKey>67</DbPKey>
+				<DbPKey>4</DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Project">
 				<DbPKeySurrogate>sim_2letternuc</DbPKeySurrogate>
-				<DbPKey>1</DbPKey>
+				<DbPKey>3</DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Experiment">
 				<DbPKeySurrogate>sim_2letternuc</DbPKeySurrogate>
-				<DbPKey>1</DbPKey>
+				<DbPKey>3</DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Dataset">
 				<DbPKeySurrogate>sim_2letternuc</DbPKeySurrogate>
-				<DbPKey>1</DbPKey>
+				<DbPKey>3</DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Mapset">
 				<DbPKeySurrogate>sim_2letternuc</DbPKeySurrogate>
-				<DbPKey>1</DbPKey>
+				<DbPKey>3</DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Platform">
 				<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
-				<DbPKey>34</DbPKey>
+				<DbPKey>22</DbPKey>
 			</DbFkey>
 
 		</Scenario>
@@ -278,32 +278,32 @@
 
 			<DbFkey entity="Contact">
 				<DbPKeySurrogate>dummy@email.address</DbPKeySurrogate>
-				<DbPKey>67</DbPKey>
+				<DbPKey>4</DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Project">
 				<DbPKeySurrogate>sim_2letternuc</DbPKeySurrogate>
-				<DbPKey>1</DbPKey>
+				<DbPKey>3</DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Experiment">
 				<DbPKeySurrogate>sim_2letternuc</DbPKeySurrogate>
-				<DbPKey>1</DbPKey>
+				<DbPKey>3</DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Dataset">
 				<DbPKeySurrogate>sim_2letternuc</DbPKeySurrogate>
-				<DbPKey>1</DbPKey>
+				<DbPKey>3</DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Mapset">
 				<DbPKeySurrogate>sim_2letternuc</DbPKeySurrogate>
-				<DbPKey>1</DbPKey>
+				<DbPKey>3</DbPKey>
 			</DbFkey>
 
 			<DbFkey entity="Platform">
 				<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
-				<DbPKey>34</DbPKey>
+				<DbPKey>22</DbPKey>
 			</DbFkey>
 
 		</Scenario>
