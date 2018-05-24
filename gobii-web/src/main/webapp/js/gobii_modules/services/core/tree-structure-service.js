@@ -122,7 +122,16 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
                                 .setEntityType(type_entity_1.EntityType.MARKER_GROUP)
                                 .setContainerType(GobiiTreeNode_1.ContainerType.DATA)
                         ])
-                    ], this.makeCommonNodes(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY)); // array of gobii tree nodes
+                    ], this.makeCommonNodes(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY), [
+                        GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_extractor_item_1.ExtractorItemType.VERTEX)
+                            .setLabel("Filter 1")
+                            .setContainerType(GobiiTreeNode_1.ContainerType.DATA).setChildren([
+                            GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_extractor_item_1.ExtractorItemType.VERTEX_VALUE)
+                                .setEntityType(type_entity_1.EntityType.UNKNOWN)
+                                .setEntitySubType(type_entity_1.EntitySubType.UNKNOWN)
+                                .setContainerType(GobiiTreeNode_1.ContainerType.NONE)
+                        ]),
+                    ]); // array of gobii tree nodes
                     // we know we only have to go one level deep in this case -- no need to recurse
                     returnVal.forEach(function (currentNode, idx, nodes) {
                         currentNode.getChildren().forEach(function (currentChild) {

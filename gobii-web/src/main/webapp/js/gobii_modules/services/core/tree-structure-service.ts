@@ -109,6 +109,14 @@ export class TreeStructureService {
                 ]),
             // BY FLEX QUERY
             ...this.makeCommonNodes(GobiiExtractFilterType.FLEX_QUERY),
+            GobiiTreeNode.build(GobiiExtractFilterType.FLEX_QUERY, ExtractorItemType.VERTEX)
+                .setLabel("Filter 1")
+                .setContainerType(ContainerType.DATA).setChildren([
+                GobiiTreeNode.build(GobiiExtractFilterType.FLEX_QUERY, ExtractorItemType.VERTEX_VALUE)
+                    .setEntityType(EntityType.UNKNOWN)
+                    .setEntitySubType(EntitySubType.UNKNOWN)
+                    .setContainerType(ContainerType.NONE)
+            ]),
 
         ]; // array of gobii tree nodes
 
