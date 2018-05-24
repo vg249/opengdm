@@ -16,19 +16,21 @@ System.register(["./type-entity", "./cv-filter-type", "./type-extractor-item"], 
         ],
         execute: function () {
             GobiiFileItemCompoundId = (function () {
-                function GobiiFileItemCompoundId(_extractorItemType, _entityType, _entitySubType, _cvFilterType, _cvFilterValue, _isExtractCriterion) {
+                function GobiiFileItemCompoundId(_extractorItemType, _entityType, _entitySubType, _cvFilterType, _cvFilterValue, _isExtractCriterion, _sequenceNum) {
                     if (_extractorItemType === void 0) { _extractorItemType = type_extractor_item_1.ExtractorItemType.UNKNOWN; }
                     if (_entityType === void 0) { _entityType = type_entity_1.EntityType.UNKNOWN; }
                     if (_entitySubType === void 0) { _entitySubType = type_entity_1.EntitySubType.UNKNOWN; }
                     if (_cvFilterType === void 0) { _cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN; }
                     if (_cvFilterValue === void 0) { _cvFilterValue = null; }
                     if (_isExtractCriterion === void 0) { _isExtractCriterion = true; }
+                    if (_sequenceNum === void 0) { _sequenceNum = 0; }
                     this._extractorItemType = _extractorItemType;
                     this._entityType = _entityType;
                     this._entitySubType = _entitySubType;
                     this._cvFilterType = _cvFilterType;
                     this._cvFilterValue = _cvFilterValue;
                     this._isExtractCriterion = _isExtractCriterion;
+                    this._sequenceNum = _sequenceNum;
                     if (this._cvFilterType === null) {
                         this._cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN;
                     }
@@ -47,7 +49,8 @@ System.register(["./type-entity", "./cv-filter-type", "./type-extractor-item"], 
                         && this.getEntityType() === gobiiFileItemCompoundId.getEntityType()
                         && this.getEntitySubType() === gobiiFileItemCompoundId.getEntitySubType()
                         && this.getCvFilterType() === gobiiFileItemCompoundId.getCvFilterType()
-                        && this.getCvFilterValue() === gobiiFileItemCompoundId.getCvFilterValue();
+                        && this.getCvFilterValue() === gobiiFileItemCompoundId.getCvFilterValue()
+                        && this.getSequenceNum() === gobiiFileItemCompoundId.getSequenceNum();
                 };
                 GobiiFileItemCompoundId.prototype.getExtractorItemType = function () {
                     return this._extractorItemType;
@@ -109,6 +112,13 @@ System.register(["./type-entity", "./cv-filter-type", "./type-extractor-item"], 
                 };
                 GobiiFileItemCompoundId.prototype.setIsExtractCriterion = function (value) {
                     this._isExtractCriterion = value;
+                    return this;
+                };
+                GobiiFileItemCompoundId.prototype.getSequenceNum = function () {
+                    return this._sequenceNum;
+                };
+                GobiiFileItemCompoundId.prototype.setSequenceNum = function (value) {
+                    this._sequenceNum = value;
                     return this;
                 };
                 return GobiiFileItemCompoundId;

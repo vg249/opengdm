@@ -96,6 +96,16 @@ export class GobiiTreeNode extends GobiiFileItemCompoundId implements TreeNode {
         return this;
     }
 
+
+    getSequenceNum(): number {
+        return super.getSequenceNum();
+    }
+
+    setSequenceNum(value:number) {
+        super.setSequenceNum(value);
+        return this;
+    }
+
     getIsExtractCriterion(): boolean {
         return super.getIsExtractCriterion();
     }

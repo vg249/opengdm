@@ -141,8 +141,8 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                     });
                 };
                 FlexQueryFilterComponent.prototype.handleVertexValueSelected = function (arg) {
-                    var selectedVertexValueIds = this.selectedVertexValues.map(function (gfi) { return gfi.getItemId(); });
-                    this.flexQueryService.loadSelectedVertexValueFilters(this.filterParamNameVertexValues, selectedVertexValueIds);
+                    var selectedVertexValueGfis = this.selectedVertexValues;
+                    this.flexQueryService.loadSelectedVertexValueFilters(this.filterParamNameVertexValues, selectedVertexValueGfis);
                 };
                 FlexQueryFilterComponent.prototype.ngOnChanges = function (changes) {
                     if (changes['gobiiExtractFilterType']

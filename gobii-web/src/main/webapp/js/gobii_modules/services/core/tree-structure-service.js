@@ -124,13 +124,21 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
                         ])
                     ], this.makeCommonNodes(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY), [
                         GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_extractor_item_1.ExtractorItemType.VERTEX)
-                            .setLabel("Filter 1")
-                            .setContainerType(GobiiTreeNode_1.ContainerType.DATA).setChildren([
-                            GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_extractor_item_1.ExtractorItemType.VERTEX_VALUE)
-                                .setEntityType(type_entity_1.EntityType.UNKNOWN)
-                                .setEntitySubType(type_entity_1.EntitySubType.UNKNOWN)
-                                .setContainerType(GobiiTreeNode_1.ContainerType.NONE)
-                        ]),
+                            .setSequenceNum(1)
+                            .setEntityType(type_entity_1.EntityType.PROJECT)
+                            .setContainerType(GobiiTreeNode_1.ContainerType.DATA),
+                        GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_extractor_item_1.ExtractorItemType.VERTEX)
+                            .setSequenceNum(2)
+                            .setEntityType(type_entity_1.EntityType.PROJECT)
+                            .setContainerType(GobiiTreeNode_1.ContainerType.DATA),
+                        GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_extractor_item_1.ExtractorItemType.VERTEX)
+                            .setSequenceNum(3)
+                            .setEntityType(type_entity_1.EntityType.PROJECT)
+                            .setContainerType(GobiiTreeNode_1.ContainerType.DATA),
+                        GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_extractor_item_1.ExtractorItemType.VERTEX)
+                            .setSequenceNum(4)
+                            .setEntityType(type_entity_1.EntityType.PROJECT)
+                            .setContainerType(GobiiTreeNode_1.ContainerType.DATA),
                     ]); // array of gobii tree nodes
                     // we know we only have to go one level deep in this case -- no need to recurse
                     returnVal.forEach(function (currentNode, idx, nodes) {
@@ -167,6 +175,9 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
                         else {
                             labelValue = entity_labels_1.Labels.instance().entitySubtypeNodeLabels[gobiiTreeNode.getEntitySubType()];
                         }
+                    }
+                    else if (gobiiTreeNode.getItemType() === type_extractor_item_1.ExtractorItemType.VERTEX) {
+                        labelValue = "Filter " + gobiiTreeNode.getSequenceNum().toString();
                     }
                     else {
                         labelValue = entity_labels_1.Labels.instance().treeExtractorTypeLabels[gobiiTreeNode.getItemType()];

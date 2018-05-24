@@ -94,6 +94,13 @@ System.register(["./guid", "./type-extractor-filter", "./gobii-file-item-compoun
                     _super.prototype.setCvFilterValue.call(this, value);
                     return this;
                 };
+                GobiiTreeNode.prototype.getSequenceNum = function () {
+                    return _super.prototype.getSequenceNum.call(this);
+                };
+                GobiiTreeNode.prototype.setSequenceNum = function (value) {
+                    _super.prototype.setSequenceNum.call(this, value);
+                    return this;
+                };
                 GobiiTreeNode.prototype.getIsExtractCriterion = function () {
                     return _super.prototype.getIsExtractCriterion.call(this);
                 };

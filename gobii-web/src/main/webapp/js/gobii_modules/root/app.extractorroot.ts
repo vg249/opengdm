@@ -410,7 +410,7 @@ export class ExtractorRoot implements OnInit {
     //
 
     nameIdFilterParamTypes: any = Object.assign({}, FilterParamNames);
-    gobiiExtractFilterTypes:any = Object.assign({},GobiiExtractFilterType);
+    gobiiExtractFilterTypes: any = Object.assign({}, GobiiExtractFilterType);
 
     selectedExtractFormat$: Observable<GobiiFileItem> = this.store.select(fromRoot.getSelectedFileFormat);
 
@@ -433,8 +433,8 @@ export class ExtractorRoot implements OnInit {
                 private entityFileItemService: EntityFileItemService,
                 private instructionSubmissionService: InstructionSubmissionService,
                 private changeDetectorRef: ChangeDetectorRef,
-                private filterService:FilterService,
-                private flexQueryService:FlexQueryService) {
+                private filterService: FilterService,
+                private flexQueryService: FlexQueryService) {
 
         this.messages$.subscribe(
             messages => {

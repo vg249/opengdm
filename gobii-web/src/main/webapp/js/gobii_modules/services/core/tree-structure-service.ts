@@ -110,14 +110,21 @@ export class TreeStructureService {
             // BY FLEX QUERY
             ...this.makeCommonNodes(GobiiExtractFilterType.FLEX_QUERY),
             GobiiTreeNode.build(GobiiExtractFilterType.FLEX_QUERY, ExtractorItemType.VERTEX)
-                .setLabel("Filter 1")
-                .setContainerType(ContainerType.DATA).setChildren([
-                GobiiTreeNode.build(GobiiExtractFilterType.FLEX_QUERY, ExtractorItemType.VERTEX_VALUE)
-                    .setEntityType(EntityType.UNKNOWN)
-                    .setEntitySubType(EntitySubType.UNKNOWN)
-                    .setContainerType(ContainerType.NONE)
-            ]),
-
+                .setSequenceNum(1)
+                .setEntityType(EntityType.PROJECT)
+                .setContainerType(ContainerType.DATA),
+            GobiiTreeNode.build(GobiiExtractFilterType.FLEX_QUERY, ExtractorItemType.VERTEX)
+                .setSequenceNum(2)
+                .setEntityType(EntityType.PROJECT)
+                .setContainerType(ContainerType.DATA),
+            GobiiTreeNode.build(GobiiExtractFilterType.FLEX_QUERY, ExtractorItemType.VERTEX)
+                .setSequenceNum(3)
+                .setEntityType(EntityType.PROJECT)
+                .setContainerType(ContainerType.DATA),
+            GobiiTreeNode.build(GobiiExtractFilterType.FLEX_QUERY, ExtractorItemType.VERTEX)
+                .setSequenceNum(4)
+                .setEntityType(EntityType.PROJECT)
+                .setContainerType(ContainerType.DATA),
         ]; // array of gobii tree nodes
 
         // we know we only have to go one level deep in this case -- no need to recurse
@@ -163,6 +170,10 @@ export class TreeStructureService {
                 labelValue = Labels.instance().entitySubtypeNodeLabels[gobiiTreeNode.getEntitySubType()];
             }
 
+        } else if (gobiiTreeNode.getItemType() === ExtractorItemType.VERTEX) {
+
+            labelValue = "Filter " + gobiiTreeNode.getSequenceNum().toString();
+
         } else {
             labelValue = Labels.instance().treeExtractorTypeLabels[gobiiTreeNode.getItemType()];
         }
@@ -172,12 +183,12 @@ export class TreeStructureService {
 
     }
 
-    private getEntityIcon(gobiiFileItemCompoundId:GobiiFileItemCompoundId):{ icon: string, expandedIcon: string, collapsedIcon: string } {
+    private getEntityIcon(gobiiFileItemCompoundId: GobiiFileItemCompoundId): { icon: string, expandedIcon: string, collapsedIcon: string } {
 
         let icon: string;
         let expandedIcon: string;
         let collapsedIcon: string;
-        
+
         if (gobiiFileItemCompoundId.getEntityType() === EntityType.DATASET) {
 
             icon = "fa-database";
@@ -275,11 +286,11 @@ export class TreeStructureService {
             treeNode.icon = "fa-pencil";
             treeNode.expandedIcon = "fa-pencil";
             treeNode.collapsedIcon = "fa-pencil";
-          
+
         }
     }
 
-    private getIcons(gobiiFileItemCompoundId: GobiiFileItemCompoundId, isParent:boolean): { icon: string, expandedIcon: string, collapsedIcon: string } {
+    private getIcons(gobiiFileItemCompoundId: GobiiFileItemCompoundId, isParent: boolean): { icon: string, expandedIcon: string, collapsedIcon: string } {
 
 
         let icon: string;
@@ -351,7 +362,7 @@ export class TreeStructureService {
 
     private addIconsToNode(treeNode: GobiiTreeNode, isParent: boolean) {
 
-        let icons = this.getIcons(treeNode,isParent);
+        let icons = this.getIcons(treeNode, isParent);
         treeNode.icon = icons.icon;
         treeNode.expandedIcon = icons.expandedIcon;
         treeNode.collapsedIcon = icons.collapsedIcon;
