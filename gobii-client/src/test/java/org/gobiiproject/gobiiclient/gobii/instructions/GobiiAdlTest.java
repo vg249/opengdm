@@ -5,6 +5,14 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.gobii.instructions;
 
+import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
+import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
+import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiTestConfiguration;
+import org.gobiiproject.gobiimodel.dto.system.ConfigSettingsDTO;
+import org.gobiiproject.gobiimodel.types.ServerCapabilityType;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
@@ -39,6 +47,35 @@ public class GobiiAdlTest {
         servercommand += PASSWORD + SPACE + "q" + SPACE;
         copyFolder(new File("src/test/resources/gobiiAdl"), new File(gobiiAdlRoot));
         System.out.println("YELLOW");
+
+
+        // EXAMPLE CONFIG USAGE:
+        GobiiTestConfiguration gobiiTestConfiguration = new GobiiTestConfiguration();
+
+
+        String initialConfigUrl = gobiiTestConfiguration.getConfigSettings().getTestExecConfig().getInitialConfigUrl();
+        String userName = gobiiTestConfiguration.getConfigSettings().getTestExecConfig().getLdapUserForUnitTest();
+        String password = gobiiTestConfiguration.getConfigSettings().getTestExecConfig().getLdapPasswordForUnitTest();
+
+        RestUri confgSettingsUri = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_CONFIGSETTINGS);
+        GobiiEnvelopeRestResource<ConfigSettingsDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(confgSettingsUri);
+        PayloadEnvelope<ConfigSettingsDTO> resultEnvelope = gobiiEnvelopeRestResource
+                .get(ConfigSettingsDTO.class);
+
+        if (resultEnvelope.getHeader().getStatus().isSucceeded()) {
+
+            ConfigSettingsDTO configSettingsDTOResponse = resultEnvelope.getPayload().getData().get(0);
+            boolean backendSupoorted = configSettingsDTOResponse.getServerCapabilities().containsKey(ServerCapabilityType.GOBII_BACKEND)
+                    && configSettingsDTOResponse.getServerCapabilities().containsKey(ServerCapabilityType.GOBII_BACKEND);
+
+        } else {
+            // report error
+        }
+
+
+
     }
 
     private static void copyFolder(File src, File dest) throws IOException {
