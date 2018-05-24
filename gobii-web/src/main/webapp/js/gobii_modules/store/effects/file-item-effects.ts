@@ -8,7 +8,7 @@ import "rxjs/add/operator/concat"
 import * as fileItemActions from '../actions/fileitem-action'
 import * as treeNodeActions from '../actions/treenode-action'
 import {TreeStructureService} from "../../services/core/tree-structure-service";
-import {GobiiTreeNode} from "../../model/GobiiTreeNode";
+import {GobiiTreeNode} from "../../model/gobii-tree-node";
 import * as fromRoot from '../reducers';
 import * as historyAction from '../../store/actions/history-action';
 import {GobiiFileItem} from "../../model/gobii-file-item";

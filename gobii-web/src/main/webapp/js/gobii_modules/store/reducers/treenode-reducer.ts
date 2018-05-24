@@ -1,6 +1,6 @@
 import {createSelector} from 'reselect';
 import * as gobiiTreeNodeAction from "../actions/treenode-action";
-import {ContainerType, GobiiTreeNode} from "../../model/GobiiTreeNode";
+import {ContainerType, GobiiTreeNode} from "../../model/gobii-tree-node";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 

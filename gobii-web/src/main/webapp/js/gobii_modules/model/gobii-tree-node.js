@@ -229,4 +229,4 @@ System.register(["./guid", "./type-extractor-filter", "./gobii-file-item-compoun
         }
     };
 });
-//# sourceMappingURL=GobiiTreeNode.js.map
+//# sourceMappingURL=gobii-tree-node.js.map

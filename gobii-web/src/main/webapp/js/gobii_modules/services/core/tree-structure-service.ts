@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {ContainerType, GobiiTreeNode} from "../../model/GobiiTreeNode";
+import {ContainerType, GobiiTreeNode} from "../../model/gobii-tree-node";
 import {EntitySubType, EntityType} from "../../model/type-entity";
 import {Labels} from "../../views/entity-labels";
 import {ExtractorItemType} from "../../model/type-extractor-item";

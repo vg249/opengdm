@@ -24,7 +24,7 @@ import {NameIdLabelType} from "../../model/name-id-label-type";
 import {CvFilters, CvFilterType} from "../../model/cv-filter-type";
 import {FilterService} from "./filter-service";
 import {TreeStructureService} from "./tree-structure-service";
-import {GobiiTreeNode} from "../../model/GobiiTreeNode";
+import {GobiiTreeNode} from "../../model/gobii-tree-node";
 
 @Injectable()
 export class FlexQueryService {
