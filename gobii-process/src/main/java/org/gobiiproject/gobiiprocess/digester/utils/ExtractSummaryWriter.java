@@ -29,11 +29,15 @@ public class ExtractSummaryWriter {
 	}
 	//Always choose name
 	public void addItem(String key, PropNameId value){
-		this.addItem(key,value.getName());
+		if(value!=null) {
+			this.addItem(key, value.getName());
+		}
 	}
 	public void addPropList(String key, List<PropNameId> values){
-		List<String> svals=values.stream().map(PropNameId::getName).collect(Collectors.toList());
-		this.addItem(key,svals);
+		if(values !=null) {
+			List<String> svals = values.stream().map(PropNameId::getName).collect(Collectors.toList());
+			this.addItem(key, svals);
+		}
 	}
 
 	public void writeToFile(File outFile){
