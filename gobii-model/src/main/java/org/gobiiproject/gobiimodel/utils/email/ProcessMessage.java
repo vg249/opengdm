@@ -9,13 +9,17 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.gobiiproject.gobiimodel.utils.HelperFunctions.sizeToReadable;
+
 /*
  *  GOBII - Process mail message format.  (Hopefully to replace DigesterMessage.java)
  */
+@SuppressWarnings({"UnusedReturnValue", "WeakerAccess"})
 public class ProcessMessage extends MailMessage {
     private String statusLine;
     private String errorLine;
     private String tableLine;
+    private String extractCriteriaLine;
     private String entityLine;
     private String identifierLine;
     private String pathsLine;
@@ -27,9 +31,11 @@ public class ProcessMessage extends MailMessage {
     final String tableLineWidth = "40";
     final String entityLineWidth = "40";
     final String identifierLineWidth = "40";
+    final String extractCriteriaLineWidth = "40";
     final String pathsLineWidth = "65";
     List<HTMLTableEntity> entries=new ArrayList<>();
     List<HTMLTableEntity> identifiers=new ArrayList<>();
+    List<HTMLTableEntity> extractCriteria=new ArrayList<>();
     List<HTMLTableEntity> entities=new ArrayList<>();
     List<HTMLTableEntity> paths=new ArrayList<>();
 
@@ -40,7 +46,7 @@ public class ProcessMessage extends MailMessage {
      * @param shortError error message, 100 or less charectors
      * @param success If the job is success/failed (true/false)
      * @param longError Long error message
-     * @return
+     * @return handle to this object
      */
     public ProcessMessage setBody(String jobName, String type, long time, String shortError,boolean success, String longError){
         this.setStatus(success);
@@ -55,6 +61,9 @@ public class ProcessMessage extends MailMessage {
             identifierLine = HTMLTableEntity.getHTMLTable(identifiers, identifierLineWidth,"Identifier Type","Name","ID");
             identifiers.clear();
         }
+        if(!extractCriteria.isEmpty()) {
+            extractCriteriaLine = HTMLTableEntity.getHTMLTable(extractCriteria, extractCriteriaLineWidth, "Extraction Criteria");
+        }
         if(!entities.isEmpty()) {
             entityLine = HTMLTableEntity.getHTMLTable(entities, entityLineWidth,"Type","Count");
             entities.clear();
@@ -64,21 +73,22 @@ public class ProcessMessage extends MailMessage {
             paths.clear();
         }
 
-        String line="<br>";
+        String line="<br/>";
         StringBuilder body=new StringBuilder();
         body.append("<html><head><style>table{font-family:arial,sans-serif;border-collapse:collapse;width:60%;}th{background-color:" + color + ";border:1px solid #dddddd;text-align:left;padding:8px;}td{border:1px solid #dddddd;text-align:left;padding:8px;}tr:nth-child(even){background-color:lightblue;}</style></head><body>");
 
         if(type!=null){
-            body.append("<font size = 4><b>"+type+"</b></font> (Duration: "+(time>=1000?time/1000+"secs":time+"ms")+")<br><br>");
+            body.append("<font size = 4><b>"+type+"</b></font> (Duration: "+(time>=1000?time/1000+"secs":time+"ms")+")<br/><br/>");
         }
         else{
-            body.append("<br><br>");
+            body.append("<br/><br/>");
         }
 
         body.append(statusLine+line);
         if(errorLine!=null)body.append(errorLine+line);
         body.append(line);
         if(identifierLine!=null)body.append(identifierLine+line);
+        if(extractCriteriaLine!=null)body.append(extractCriteriaLine+line);
         if(entityLine!=null)body.append(entityLine+line);
         if(tableLine!=null)body.append(tableLine+line);
         if(pathsLine!=null)body.append(pathsLine+line);
@@ -137,9 +147,16 @@ public class ProcessMessage extends MailMessage {
         return this;
     }
 
-    public ProcessMessage addEntity(String type, PropNameId entity){
-        if(entity==null)return this;//Don't add a null ID to the table
-        return addEntity(type,escapeHTML(entity.getName())+"");
+    public ProcessMessage addCriteria(String type, String name){
+        if(name == null)return this;
+        extractCriteria.add(new HTMLTableEntity(type, name));
+        return this;
+    }
+
+    public ProcessMessage addCriteria(String type, PropNameId criteria){
+        if(criteria == null)return this;
+        extractCriteria.add(new HTMLTableEntity(type, criteria.getName().toString()));
+        return this;
     }
 
     public ProcessMessage addFolderPath(String type,String path) {
@@ -150,6 +167,7 @@ public class ProcessMessage extends MailMessage {
          * Add item to the filepaths entry
          * @param type type of file
          * @param path filepath
+         * #param alwaysShow to always show the path, even if no object is there
          * @return this object
          */
     public ProcessMessage addPath(String type,String path, boolean alwaysShow){
@@ -164,28 +182,14 @@ public class ProcessMessage extends MailMessage {
 
     /**
      * As ProcessMessage(type,path,False)
-     * @param type
-     * @param path
+     * @param type type of file
+     * @param path filepath
      * @return
      */
     public ProcessMessage addPath(String type, String path){
         return addPath(type,path,false);
     }
 
-    /***
-     * Get destination path for instruction file (done directory)
-     * @param type type of file
-     * @param path current path to get the file length
-     * @param donePath Destination path (final path or instruction file)
-     * @return
-     */
-    public ProcessMessage addPath(String type, String path, String donePath){
-        String pathFinal = donePath + new File(path).getName();
-        if(new File(path).length() > 1){
-            paths.add(new HTMLTableEntity(type, escapeHTML(pathFinal), HelperFunctions.sizeToReadable(new File(path).length())));
-        }
-        return this;
-    }
     
     /**
      * Set status line in HTML format. format includes font size and color

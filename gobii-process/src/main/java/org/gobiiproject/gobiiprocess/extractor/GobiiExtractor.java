@@ -15,14 +15,20 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.commons.cli.*;
 import org.apache.http.HttpStatus;
+import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
+import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
+import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.GenericClientContext;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.ServerBase;
 import org.gobiiproject.gobiimodel.config.ServerConfigKDC;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.*;
@@ -31,15 +37,17 @@ import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.HDF5Interface;
 import org.gobiiproject.gobiiprocess.JobStatus;
+import org.gobiiproject.gobiiprocess.digester.utils.ExtractSummaryWriter;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
 import org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformer;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 
-import javax.validation.constraints.Null;
 import javax.ws.rs.core.MediaType;
 
+import static org.gobiiproject.gobiimodel.types.GobiiExtractFilterType.BY_MARKER;
+import static org.gobiiproject.gobiimodel.types.GobiiExtractFilterType.BY_SAMPLE;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.*;
@@ -50,9 +58,9 @@ import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.*;
  *
  * @author jdl232
  */
+@SuppressWarnings("WeakerAccess")
 public class GobiiExtractor {
 	private static String propertiesFile;
-	private static GobiiUriFactory gobiiUriFactory;
 	private static boolean verbose;
 	private static String rootDir="../";
 	private static String markerListOverrideLocation=null;
@@ -61,9 +69,8 @@ public class GobiiExtractor {
 	 * Main class of Extractor. Takes optional arguments + location of a json-based instruction file
      *
 	 * @param args Command line arguments
-	 * @throws Exception If a critical exception occurs.
 	 */
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args){
 
 		Options o = new Options()
 				.addOption("v", "verbose", false, "Verbose output")
@@ -112,7 +119,7 @@ public class GobiiExtractor {
 		ProcessMessage pm = new ProcessMessage();
 
 		MailInterface mailInterface=new MailInterface(configuration);
-		String instructionFile=null;
+		String instructionFile;
 		if(args.length==0 ||args[0].equals("")){
 			Scanner s=new Scanner(System.in);
 			System.out.println("Enter Extractor Instruction File Location:");
@@ -159,6 +166,7 @@ public class GobiiExtractor {
 			ErrorLogger.logError("GobiiFileReader", "Error Checking Status",e);
 		}
 		jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS.getCvName(),"Beginning Extract");
+
 		for (GobiiExtractorInstruction inst : list) {
 			String crop = inst.getGobiiCropType();
 			String extractType="";
@@ -170,7 +178,7 @@ public class GobiiExtractor {
 					ErrorLogger.logError("Extractor", "Unknown Crop Type: " + crop);
 					return;
 				}
-				GobiiCropConfig gobiiCropConfig = null;
+				GobiiCropConfig gobiiCropConfig;
 				try {
 					gobiiCropConfig = configuration.getCropConfig(crop);
 				} catch (Exception e) {
@@ -197,14 +205,13 @@ public class GobiiExtractor {
 				}
 				jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_METADATAEXTRACT.getCvName(),"Extracting Metadata");
 				for (GobiiDataSetExtract extract : inst.getDataSetExtracts()) {
-
 					String jobReadableIdentifier = getJobReadableIdentifier(crop, extract);
 					String jobUser=inst.getContactEmail();
 					pm.setUser(jobUser);
 
 					GobiiExtractFilterType filterType = extract.getGobiiExtractFilterType();
 					if (filterType == null) filterType = GobiiExtractFilterType.WHOLE_DATASET;
-					if (markerListOverrideLocation != null) filterType = GobiiExtractFilterType.BY_MARKER;
+					if (markerListOverrideLocation != null) filterType = BY_MARKER;
 					String extractDir = extract.getExtractDestinationDirectory() + "/";
 					tryExec("rm -f " + extractDir + "*");
 
@@ -213,7 +220,8 @@ public class GobiiExtractor {
 					String mapsetFile = extractDir + "mapset.file";
 					String markerPosFile = markerFile + ".pos";
 					String sampleFile = extractDir + "sample.file";
-					String projectFile = extractDir + "summary.file";
+					String projectFile = extractDir + "project.file";
+					String extractSummaryFile = extractDir+"summary.file";
 					String chrLengthFile = markerFile + ".chr";
 					Path mdePath = FileSystems.getDefault().getPath(extractorScriptPath + "postgres/gobii_mde/gobii_mde.py");
 					if (!mdePath.toFile().isFile()) {
@@ -225,13 +233,13 @@ public class GobiiExtractor {
 
 					GobiiFileType fileType=extract.getGobiiFileType();
 
-					String confidentialityMessage="";
+					String confidentialityMessage;
 					String confidentialityLoc=configuration.getFileNoticePath(crop,GobiiFileNoticeType.CONFIDENTIALITY);
 					File confidentialityFile=new File(confidentialityLoc);
 					if(confidentialityFile.exists()){
 						StringBuilder sb=new StringBuilder();
 						for(String line:Files.readAllLines(Paths.get(confidentialityFile.toURI()))){
-							sb.append(line + " ");
+							sb.append(line).append(" ");
 						}
 						confidentialityMessage=sb.toString().trim();
 						pm.addConfidentialityMessage(confidentialityMessage);
@@ -239,12 +247,12 @@ public class GobiiExtractor {
 
 					//Common terms
 					String platformTerm, mapIdTerm, markerListLocation, sampleListLocation, verboseTerm;
-					String samplePosFile = "";//Location of sample position indices (see markerList for an example
+					String samplePosFile;//Location of sample position indices (see markerList for an example
 					platformTerm = mapIdTerm = markerListLocation = sampleListLocation = verboseTerm = "";
 					List<Integer> platforms = extract
 							.getPlatforms()
 							.stream()
-							.map(gobiiFilePropNameId -> gobiiFilePropNameId.getId() )
+							.map(PropNameId::getId)
 							.collect(Collectors.toList());
 					if (platforms != null && !platforms.isEmpty()) {
 						platformTerm = " --platformList " + commaFormat(platforms);
@@ -379,36 +387,98 @@ public class GobiiExtractor {
 					ErrorLogger.logInfo("Extractor", "Executing MDEs");
 					tryExec(gobiiMDE, extractDir + "mdeOut", errorFile);
 
+					//Clean some variables ahead of declaration
+					final String defaultMapName="No Mapset info available";
+					String mapName=defaultMapName;
+					String postgresName=(mapId==null)?null:getMapNameFromId(mapId,configuration); //Get name from postgres
+					if(postgresName!=null)mapName=postgresName;
+					GobiiSampleListType type = extract.getGobiiSampleListType();
 
-					//Email Identifiers part 2
-					pm.addIdentifier("PI",extract.getPrincipleInvestigator());
-					pm.addIdentifier("Project",extract.getProject());
-					pm.addIdentifier("Dataset", extract.getDataSet());
-					pm.addIdentifier("Dataset Type",extract.getGobiiDatasetType());
-					pm.addIdentifier("Mapset", (mapId!=null?mapId.toString():"No Mapset info available"), null);
-					pm.addIdentifier("Export Type", uppercaseFirstLetter(extract.getGobiiFileType().toString().toLowerCase()), null);
-					if(filterType==GobiiExtractFilterType.BY_SAMPLE){
-						pm.addIdentifier("Sample List Type", uppercaseFirstLetter(extract.getGobiiSampleListType().toString().toLowerCase()), null);
-						pm.addIdentifier("Sample List", (sampleListFile==null?"No Sample list provided":sampleListFile), null);
+					String formatName=uppercaseFirstLetter(extract.getGobiiFileType().toString().toLowerCase());
+
+					ExtractSummaryWriter esw=new ExtractSummaryWriter();
+
+					pm.addCriteria("Crop", inst.getGobiiCropType());
+					pm.addCriteria("Email", inst.getContactEmail());
+					pm.addCriteria("Job ID", jobFileName);
+					esw.addItem("Job ID",jobFileName);
+					esw.addItem("Submit as",inst.getContactEmail());
+					esw.addItem("Format",formatName);
+					if(!mapName.equals(defaultMapName)){
+						esw.addItem("Mapset",mapName);
 					}
-					if(filterType==GobiiExtractFilterType.BY_MARKER){
-						for (Integer platformId: platforms) {
-							pm.addIdentifier("Platform", (platformId != null ? platformId.toString() : "No Platform info available"), platformId.toString());
-						}
-							pm.addIdentifier("Marker List", markerListLocation, null); //TODO - marker list has an 'on empty,
-						}
-						pm.addPath("Instruction File",new File(instructionFile).getAbsolutePath(),true);
-						pm.addFolderPath("Output Directory", extractDir);
-						pm.addPath("Error Log", logFile,true);
-						pm.addPath("Summary File", new File(projectFile).getAbsolutePath());
-						pm.addPath("Sample File", new File(sampleFile).getAbsolutePath());
-						pm.addPath("Marker File", new File(markerFile).getAbsolutePath());
+					pm.addCriteria("Principal Investigator", extract.getPrincipleInvestigator());
+
+					pm.addCriteria("Project", extract.getProject());
+					pm.addCriteria("Dataset", extract.getDataSet());
+					pm.addCriteria("Dataset Type",extract.getGobiiDatasetType());
+					esw.addItem("Data Set",extract.getDataSet());
+					esw.addItem("Dataset Type",extract.getGobiiDatasetType());
+					esw.addPropList("Platform",extract.getPlatforms());
+					if(type!=null){
+						esw.addItem("List Type", uppercaseFirstLetter(type.toString().toLowerCase()));
+					}
+
+					pm.addCriteria("Mapset", mapName);
+					pm.addCriteria("Format", formatName);
+					pm.addCriteria("Platforms", getPlatformNames(extract.getPlatforms()));
+
+					esw.addItem("Principal Investigator", extract.getPrincipleInvestigator());
+					esw.addItem("Project",extract.getProject());
+
+					//turns /data/gobii_bundle/crops/zoan/extractor/instructions/2018_05_15_13_32_12_samples.txt into 2018_05_15_13_32_12_samples.txt
+					//We're moving it into the extract directory when we're done now, so lets be vague as to its location.
+					//They'll find it if they want to
+					String listFileName=null;
+					if(extract.getListFileName() != null){
+						listFileName=new File(extract.getListFileName()).getName();
+					}
+
+					//Marker List or List File (see above for selection logic)
+					if(extract.getMarkerList() != null && !extract.getMarkerList().isEmpty()) {
+						pm.addCriteria("Marker List", String.join("<BR>", extract.getMarkerList()));
+						esw.addItem("Marker List",extract.getMarkerList());
+					}
+					else if(filterType==BY_MARKER && listFileName != null){
+						pm.addCriteria("Marker List", listFileName);
+						esw.addItem("Marker File",listFileName);
+					}
+
+					if(type!=null){
+						pm.addCriteria("Sample List Type", uppercaseFirstLetter(type.toString().toLowerCase()));
+					}
+
+					//Sample List or Sample List File (See above for selection logic)
+					if(extract.getSampleList() != null && !extract.getSampleList().isEmpty()){
+						pm.addCriteria("Sample List", String.join("<BR>", extract.getSampleList()));
+						esw.addItem("Sample List",extract.getSampleList());
+					}else if(filterType==BY_SAMPLE && listFileName != null){
+						pm.addCriteria("Sample List", listFileName);
+						esw.addItem("Sample File",listFileName);
+					}
+
+					List<Integer> mapsetIds=inst.getMapsetIds();
+					//If the only mapset in the list is the mapset displayed above, lets not display it twice...
+					boolean mapsetIsAlreadyDisplayed = (mapsetIds.size()==1) && mapsetIds.contains(mapId);
+
+					if(inst.getMapsetIds() != null && !inst.getMapsetIds().isEmpty() && !mapsetIsAlreadyDisplayed) {
+						pm.addCriteria("Mapset List", String.join("<BR>", inst.getMapsetIds().toString())); //This should never happen
+					}
+
+					pm.addPath("Instruction File",new File(instructionFile).getAbsolutePath(),true);
+					pm.addFolderPath("Output Directory", extractDir);
+					pm.addPath("Error Log", logFile,true);
+					pm.addPath("Summary File", new File(projectFile).getAbsolutePath());
+					pm.addPath("Sample File", new File(sampleFile).getAbsolutePath());
+					pm.addPath("Marker File", new File(markerFile).getAbsolutePath());
 					if(checkFileExistence(mapsetFile)) {
 						pm.addPath("Mapset File", new File(mapsetFile).getAbsolutePath());
 					}
 
+					esw.writeToFile(new File(extractSummaryFile));
 
 					//HDF5
+					//noinspection UnnecessaryLocalVariable - Used to clarify use
 					String tempFolder = extractDir;
 					String genoFile = null;
 					if (!extract.getGobiiFileType().equals(GobiiFileType.META_DATA)) {
@@ -494,13 +564,14 @@ public class GobiiExtractor {
                     }
 
                     //Clean Temporary Files
-                    rmIfExist(genoFile);
+					rmIfExist(genoFile);
                     rmIfExist(chrLengthFile);
 					rmIfExist(markerPosFile);
 					rmIfExist(extendedMarkerFile);
-					rmIfExist(extractDir + extract.getListFileName()); //remove the list
 					rmIfExist(extractDir + "mdeOut");//remove mde output file
 					rmIfExist("position.file");
+
+					mv(extract.getListFileName(),extractDir); //Move the list file to the extract directory
 
 					ErrorLogger.logDebug("Extractor", "DataSet " + datasetName + " Created");
 
@@ -534,6 +605,14 @@ public class GobiiExtractor {
 		}
 	}
 
+	private static String getPlatformNames(List<PropNameId> platforms) {
+		StringBuilder names = new StringBuilder();
+		for (PropNameId platform : platforms) {
+			String tmpName = platform.getName();
+			names.append(tmpName).append("<BR>");
+		}
+		return names.toString();
+	}
 
 	/**
 	 * Convert a list of gobiiFilePropNameIds to a list of IDs.
@@ -570,14 +649,14 @@ public class GobiiExtractor {
 	/**
 	 * Extractor QC subsection 1
      *
-	 * @param configuration
-	 * @param inst
-	 * @param crop
-	 * @param datasetId
-	 * @param extractDir
-	 * @param mailInterface
-	 * @param extractType
-     * @throws Exception
+	 * @param configuration configuration object for system
+	 * @param inst instruction being processed
+	 * @param crop name of crop being processed (unused
+	 * @param datasetId ID of the dataset being used
+	 * @param extractDir directory of the extract to be called on the load
+	 * @param mailInterface the email interface object
+	 * @param extractType type of extract being performed
+     * @throws Exception when an exception has occurred (all of them)
      */
     private static void performQC(ConfigSettings configuration, GobiiExtractorInstruction inst, String crop, Integer datasetId, String extractDir, MailInterface mailInterface, String extractType) throws Exception {
         if (configuration.getKDCConfig().getHost() == null) {
@@ -598,7 +677,7 @@ public class GobiiExtractor {
                 return;
             }
         }
-        if (configuration.getKDCConfig().isActive() == false) {
+        if (!configuration.getKDCConfig().isActive()) {
             ErrorLogger.logInfo("QC", "Unable to continue QC with the KDC server inactive");
 			return;
 		}
@@ -640,7 +719,7 @@ public class GobiiExtractor {
                     ErrorLogger.logInfo("QC", "New QC job id: " + qcJobID);
 					ProcessMessage qcStartPm = new ProcessMessage();
 					qcStartPm.setUser(inst.getContactEmail());
-					qcStartPm.setSubject(new StringBuilder("new QC Job #").append(qcJobID).toString());
+					qcStartPm.setSubject("new QC Job #"+qcJobID);
 					qcStartPm.addIdentifier("QC Job Identifier", String.valueOf(qcJobID), String.valueOf(qcJobID));
 					qcStartPm.addIdentifier("Dataset Identifier", String.valueOf(datasetId), String.valueOf(qcJobID));
 					qcStartPm.addPath("Output Extraction/QC Directory", extractDir);
@@ -683,15 +762,21 @@ public class GobiiExtractor {
 							status = jsonPayload.get("status").getAsString();
 						} while ((status.equals("NEW")) || (status.equals("RUNNING")));
 
-						ProcessMessage qcStatusPm = new ProcessMessage();
+
+					ProcessMessage qcStatusPm = new ProcessMessage();
 						qcStatusPm.setUser(inst.getContactEmail());
 						qcStatusPm.setSubject(new StringBuilder("QC Job #").append(qcJobID).append(" status").toString());
 						qcStatusPm.addIdentifier("QC Job Identifier", String.valueOf(qcJobID), String.valueOf(qcJobID));
 						qcStatusPm.addIdentifier("Dataset Identifier", String.valueOf(datasetId), String.valueOf(qcJobID));
 
+						int qcDuration=0;
+					if (jsonPayload == null) {
+						ErrorLogger.logInfo("QC", "Null JSON payload");
+					}else {
 						int start = jsonPayload.get("start").getAsInt();
-						int	end = jsonPayload.get("end").getAsInt();
-						int qcDuration = end - start;
+						int end = jsonPayload.get("end").getAsInt();
+						qcDuration = end - start;
+					}
 
                         if ((status.equals("COMPLETED")) || (status.equals("FAILED"))) {
 							// If the extract directory does not exist or is not writable, it always makes the last qcDownload method crashing and
@@ -764,27 +849,6 @@ public class GobiiExtractor {
 						}
 						mailInterface.send(qcStatusPm);
 
-						//purge data
-//                    ErrorLogger.logInfo("QC", "Calling QC Purge");
-//                    RestUri restUriGetPurge = new RestUri("/",
-//                            configuration.getKDCConfig().getContextPath(),
-//                            configuration.getKDCConfig().getPath(ServerConfigKDC.KDCResource.QC_PURGE))
-//                            .addQueryParam("jobid", String.valueOf(qcJobID))
-//                            .withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT, MediaType.WILDCARD);
-//
-//                    httpMethodResult = genericClientContext
-//                            .get(restUriGetPurge);
-//                    if (httpMethodResult.getResponseCode() != HttpStatus.SC_OK) {
-//                        ErrorLogger.logInfo("QC", "The qcPurge method failed: "
-//									+ httpMethodResult.getUri().toString()
-//									+ "; failure mode: "
-//									+ Integer.toString(httpMethodResult.getResponseCode())
-//									+ " ("
-//									+ httpMethodResult.getReasonPhrase()
-//									+ ")");
-//						} else {
-//							ErrorLogger.logInfo("QC", "qcPurge method is successful.");
-//						}
 
 					}
 				}
@@ -803,8 +867,7 @@ public class GobiiExtractor {
 	private static String getJobReadableIdentifier(String cropName, GobiiDataSetExtract extract) {
 		//@Siva get confirmation on lowercase crop name?
 		cropName=cropName.charAt(0)+cropName.substring(1).toLowerCase();
-		String jobName="[GOBII - Extractor]: " + cropName + " - extraction of \"" + extract.getGobiiFileType() + "\"";
-		return jobName;
+		return "[GOBII - Extractor]: " + cropName + " - extraction of \"" + extract.getGobiiFileType() + "\"";
 	}
 
 
@@ -841,11 +904,6 @@ public class GobiiExtractor {
 		int fromIndex=upper.indexOf(from)+from.length();
 		String crop=upper.substring(fromIndex,upper.indexOf('/',fromIndex));
 		return crop;
-	}
-
-
-	private static String getLogName(GobiiExtractorInstruction gli, GobiiCropConfig config, Integer dsid) {
-		return getLogName(gli.getDataSetExtracts().get(0),config,dsid);
 	}
 
 	private static String getLogName(GobiiDataSetExtract gli, GobiiCropConfig config, Integer dsid) {
@@ -999,6 +1057,56 @@ public class GobiiExtractor {
 				return 1;
 			default:
 				return -1;
+		}
+	}
+
+	/**
+	 * Gets a map name from an ID
+	 * @param mapId ID of map, if null, returns null
+	 * @param config Configuration master object
+	 * @return name, or null if error
+	 */
+	private static String getMapNameFromId(Integer mapId, ConfigSettings config) {
+		String cropName=config.getCurrentGobiiCropType();
+		if (mapId == null) return null;
+
+		try {
+			// set up authentication and so forth
+			// you'll need to get the current from the instruction file
+			GobiiClientContext context = GobiiClientContext.getInstance(config, cropName, GobiiAutoLoginType.USER_RUN_AS);
+			//context.setCurrentCropId(cropName);
+
+			if (LineUtils.isNullOrEmpty(context.getUserToken())) {
+				logError("Digester", "Unable to login with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
+				return null;
+			}
+
+			String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
+			GobiiUriFactory gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
+
+			RestUri mapUri = gobiiUriFactory
+					.resourceByUriIdParam(GobiiServiceRequestId.URL_MAPSET);
+			mapUri.setParamValue("id", mapId.toString());
+			GobiiEnvelopeRestResource<MapsetDTO> gobiiEnvelopeRestResourceForDatasets = new GobiiEnvelopeRestResource<>(mapUri);
+			PayloadEnvelope<MapsetDTO> resultEnvelope = gobiiEnvelopeRestResourceForDatasets
+					.get(MapsetDTO.class);
+
+			MapsetDTO dataSetResponse;
+			if (!resultEnvelope.getHeader().getStatus().isSucceeded()) {
+				System.out.println();
+				logError("Extractor", "Map set response response errors");
+				for (HeaderStatusMessage currentStatusMesage : resultEnvelope.getHeader().getStatus().getStatusMessages()) {
+					logError("HeaderError", currentStatusMesage.getMessage());
+				}
+				return null;
+			} else {
+				dataSetResponse = resultEnvelope.getPayload().getData().get(0);
+			}
+			return dataSetResponse.getName();
+
+		} catch (Exception e) {
+			logError("Extractor", "Exception while referencing map sets in Postgresql", e);
+			return null;
 		}
 	}
 }
