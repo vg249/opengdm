@@ -1,7 +1,6 @@
 import {Injectable} from "@angular/core";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 import {GobiiFileItem} from "../../model/gobii-file-item";
-import {NameIdService} from "./name-id-service";
 import {FilterParams} from "../../model/filter-params";
 import * as historyAction from '../../store/actions/history-action';
 import * as fileItemActions from '../../store/actions/fileitem-action'
@@ -12,8 +11,6 @@ import {FilterParamNames} from "../../model/file-item-param-names";
 import {Observable} from "rxjs/Observable";
 import "rxjs/add/operator/expand"
 import "rxjs/add/operator/concat"
-import {EntityStats} from "../../model/entity-stats";
-import {DtoRequestService} from "./dto-request.service";
 import {FilterParamsColl} from "./filter-params-coll";
 import {PayloadFilter} from "../../store/actions/action-payload-filter";
 import {CvFilterType} from "../../model/cv-filter-type";
@@ -32,7 +29,9 @@ export class FilterService {
 
     } // constructor
 
-    public loadFilter(gobiiExtractFilterType: GobiiExtractFilterType, filterParamsName: FilterParamNames, filterValue: string) {
+    public loadFilter(gobiiExtractFilterType: GobiiExtractFilterType,
+                      filterParamsName: FilterParamNames,
+                      filterValue: string) {
 
         let filterParams: FilterParams = this.filterParamsColl.getFilter(filterParamsName, gobiiExtractFilterType);
 

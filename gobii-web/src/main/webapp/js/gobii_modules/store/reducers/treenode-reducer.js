@@ -1,4 +1,4 @@
-System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTreeNode", "../../model/type-extractor-filter"], function (exports_1, context_1) {
+System.register(["reselect", "../actions/treenode-action", "../../model/gobii-tree-node", "../../model/type-extractor-filter"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     function placeNodeInTree(nodeToPlace, treeNodes, gobiiExtractFilterType) {
@@ -7,11 +7,11 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
             var currentTreenode = treeNodes[idx];
             if (currentTreenode.getGobiiExtractFilterType() === gobiiExtractFilterType &&
                 currentTreenode.compoundIdeEquals(nodeToPlace)
-                && currentTreenode.getContainerType() !== GobiiTreeNode_1.ContainerType.STRUCTURE) {
-                if (currentTreenode.getContainerType() === GobiiTreeNode_1.ContainerType.NONE) {
+                && currentTreenode.getContainerType() !== gobii_tree_node_1.ContainerType.STRUCTURE) {
+                if (currentTreenode.getContainerType() === gobii_tree_node_1.ContainerType.NONE) {
                     treeNodes[idx] = nodeToPlace;
                 }
-                else if (currentTreenode.getContainerType() === GobiiTreeNode_1.ContainerType.DATA) {
+                else if (currentTreenode.getContainerType() === gobii_tree_node_1.ContainerType.DATA) {
                     var containerNode = treeNodes[idx];
                     nodeToPlace.parent = containerNode;
                     containerNode.getChildren().push(nodeToPlace);
@@ -97,9 +97,9 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
                 if (gobiiTreeNodeToDeActivate_1) {
                     var containerType = gobiiTreeNodeToDeActivate_1.parent ?
                         gobiiTreeNodeToDeActivate_1.parent.getContainerType() :
-                        GobiiTreeNode_1.ContainerType.NONE;
-                    if (containerType === GobiiTreeNode_1.ContainerType.NONE
-                        || containerType === GobiiTreeNode_1.ContainerType.STRUCTURE) {
+                        gobii_tree_node_1.ContainerType.NONE;
+                    if (containerType === gobii_tree_node_1.ContainerType.NONE
+                        || containerType === gobii_tree_node_1.ContainerType.STRUCTURE) {
                         gobiiTreeNodeToDeActivate_1.resetLabel();
                     }
                     else {
@@ -163,7 +163,7 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
         return returnVal;
     }
     exports_1("gobiiTreeNodesReducer", gobiiTreeNodesReducer);
-    var reselect_1, gobiiTreeNodeAction, GobiiTreeNode_1, type_extractor_filter_1, initialState, getGobiiTreeNodes, getGobiiTreeItemIds, getIdsOfActivated, getExtractFilterType, getSelected, getAll, getForSelectedFilter;
+    var reselect_1, gobiiTreeNodeAction, gobii_tree_node_1, type_extractor_filter_1, initialState, getGobiiTreeNodes, getGobiiTreeItemIds, getIdsOfActivated, getExtractFilterType, getSelected, getAll, getForSelectedFilter;
     return {
         setters: [
             function (reselect_1_1) {
@@ -172,8 +172,8 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
             function (gobiiTreeNodeAction_1) {
                 gobiiTreeNodeAction = gobiiTreeNodeAction_1;
             },
-            function (GobiiTreeNode_1_1) {
-                GobiiTreeNode_1 = GobiiTreeNode_1_1;
+            function (gobii_tree_node_1_1) {
+                gobii_tree_node_1 = gobii_tree_node_1_1;
             },
             function (type_extractor_filter_1_1) {
                 type_extractor_filter_1 = type_extractor_filter_1_1;

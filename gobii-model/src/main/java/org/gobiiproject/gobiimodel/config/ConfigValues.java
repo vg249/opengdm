@@ -24,7 +24,8 @@ import java.util.stream.Collectors;
  * are global to the configuration. There will be one GobiiCropConfig instance for every crop supported
  * by a given deployment.
  */
-class ConfigValues {
+class
+ConfigValues {
 
     @Element(required = false)
     private TestExecConfig testExecConfig = new TestExecConfig();

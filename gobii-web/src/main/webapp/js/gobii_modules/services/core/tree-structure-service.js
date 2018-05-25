@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type-entity", "../../views/entity-labels", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/type-extract-format", "../../model/type-process", "../../store/actions/treenode-action", "@ngrx/store"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/type-entity", "../../views/entity-labels", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/type-extract-format", "../../model/type-process", "../../store/actions/treenode-action", "@ngrx/store"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,14 +10,14 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, GobiiTreeNode_1, type_entity_1, entity_labels_1, type_extractor_item_1, type_extractor_filter_1, cv_filter_type_1, type_extract_format_1, type_process_1, treeNodeActions, store_1, TreeStructureService;
+    var core_1, gobii_tree_node_1, type_entity_1, entity_labels_1, type_extractor_item_1, type_extractor_filter_1, cv_filter_type_1, type_extract_format_1, type_process_1, treeNodeActions, store_1, TreeStructureService;
     return {
         setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
             },
-            function (GobiiTreeNode_1_1) {
-                GobiiTreeNode_1 = GobiiTreeNode_1_1;
+            function (gobii_tree_node_1_1) {
+                gobii_tree_node_1 = gobii_tree_node_1_1;
             },
             function (type_entity_1_1) {
                 type_entity_1 = type_entity_1_1;
@@ -54,15 +54,15 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
                 }
                 TreeStructureService.prototype.makeCommonNodes = function (gobiiExtractFilterType) {
                     var returnVal = [
-                        GobiiTreeNode_1.GobiiTreeNode.build(gobiiExtractFilterType, type_extractor_item_1.ExtractorItemType.JOB_ID)
+                        gobii_tree_node_1.GobiiTreeNode.build(gobiiExtractFilterType, type_extractor_item_1.ExtractorItemType.JOB_ID)
                             .setGenericLabel(entity_labels_1.Labels.instance().treeExtractorTypeLabels[type_extractor_item_1.ExtractorItemType.JOB_ID]),
-                        GobiiTreeNode_1.GobiiTreeNode.build(gobiiExtractFilterType, type_extractor_item_1.ExtractorItemType.ENTITY)
+                        gobii_tree_node_1.GobiiTreeNode.build(gobiiExtractFilterType, type_extractor_item_1.ExtractorItemType.ENTITY)
                             .setEntityType(type_entity_1.EntityType.CONTACT)
                             .setEntitySubType(type_entity_1.EntitySubType.CONTACT_SUBMITED_BY)
                             .setGenericLabel(entity_labels_1.Labels.instance().entityNodeLabels[type_entity_1.EntitySubType.CONTACT_SUBMITED_BY]),
-                        GobiiTreeNode_1.GobiiTreeNode.build(gobiiExtractFilterType, type_extractor_item_1.ExtractorItemType.EXPORT_FORMAT)
+                        gobii_tree_node_1.GobiiTreeNode.build(gobiiExtractFilterType, type_extractor_item_1.ExtractorItemType.EXPORT_FORMAT)
                             .setGenericLabel(entity_labels_1.Labels.instance().treeExtractorTypeLabels[type_extractor_item_1.ExtractorItemType.EXPORT_FORMAT]),
-                        GobiiTreeNode_1.GobiiTreeNode.build(gobiiExtractFilterType, type_extractor_item_1.ExtractorItemType.ENTITY)
+                        gobii_tree_node_1.GobiiTreeNode.build(gobiiExtractFilterType, type_extractor_item_1.ExtractorItemType.ENTITY)
                             .setEntityType(type_entity_1.EntityType.MAPSET)
                             .setGenericLabel(entity_labels_1.Labels.instance().entityNodeLabels[type_entity_1.EntityType.MAPSET]),
                     ];
@@ -76,53 +76,70 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
                 // container types are actually used
                 TreeStructureService.prototype.getInitialTree = function () {
                     var returnVal = this.makeCommonNodes(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET).concat([
-                        GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_extractor_item_1.ExtractorItemType.ENTITY)
+                        gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_extractor_item_1.ExtractorItemType.ENTITY)
                             .setEntityType(type_entity_1.EntityType.DATASET)
-                            .setContainerType(GobiiTreeNode_1.ContainerType.DATA)
+                            .setContainerType(gobii_tree_node_1.ContainerType.DATA)
                     ], this.makeCommonNodes(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE), [
-                        GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_extractor_item_1.ExtractorItemType.ENTITY)
+                        gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_extractor_item_1.ExtractorItemType.ENTITY)
                             .setEntityType(type_entity_1.EntityType.CV)
                             .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE),
-                        GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_TYPE),
-                        GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_extractor_item_1.ExtractorItemType.ENTITY)
+                        gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_TYPE),
+                        gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_extractor_item_1.ExtractorItemType.ENTITY)
                             .setEntityType(type_entity_1.EntityType.PLATFORM)
-                            .setContainerType(GobiiTreeNode_1.ContainerType.DATA),
-                        GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_extractor_item_1.ExtractorItemType.TREE_STRUCTURE)
-                            .setContainerType(GobiiTreeNode_1.ContainerType.STRUCTURE)
+                            .setContainerType(gobii_tree_node_1.ContainerType.DATA),
+                        gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_extractor_item_1.ExtractorItemType.TREE_STRUCTURE)
+                            .setContainerType(gobii_tree_node_1.ContainerType.STRUCTURE)
                             .setLabel("Samples Criteria")
                             .setExpanded(true)
                             .setChildren([
-                            GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_extractor_item_1.ExtractorItemType.ENTITY)
+                            gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_extractor_item_1.ExtractorItemType.ENTITY)
                                 .setEntityType(type_entity_1.EntityType.CONTACT)
                                 .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
-                                .setContainerType(GobiiTreeNode_1.ContainerType.NONE),
-                            GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_extractor_item_1.ExtractorItemType.ENTITY)
+                                .setContainerType(gobii_tree_node_1.ContainerType.NONE),
+                            gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_extractor_item_1.ExtractorItemType.ENTITY)
                                 .setEntityType(type_entity_1.EntityType.PROJECT)
-                                .setContainerType(GobiiTreeNode_1.ContainerType.NONE),
-                            GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_extractor_item_1.ExtractorItemType.SAMPLE_FILE),
-                            GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_ITEM)
-                                .setContainerType(GobiiTreeNode_1.ContainerType.DATA),
+                                .setContainerType(gobii_tree_node_1.ContainerType.NONE),
+                            gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_extractor_item_1.ExtractorItemType.SAMPLE_FILE),
+                            gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_extractor_item_1.ExtractorItemType.SAMPLE_LIST_ITEM)
+                                .setContainerType(gobii_tree_node_1.ContainerType.DATA),
                         ])
                     ], this.makeCommonNodes(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER), [
-                        GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_extractor_item_1.ExtractorItemType.ENTITY)
+                        gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_extractor_item_1.ExtractorItemType.ENTITY)
                             .setEntityType(type_entity_1.EntityType.CV)
                             .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE),
-                        GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_extractor_item_1.ExtractorItemType.TREE_STRUCTURE)
-                            .setContainerType(GobiiTreeNode_1.ContainerType.STRUCTURE)
+                        gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_extractor_item_1.ExtractorItemType.TREE_STRUCTURE)
+                            .setContainerType(gobii_tree_node_1.ContainerType.STRUCTURE)
                             .setLabel("Markers Criteria")
                             .setExpanded(true)
                             .setChildren([
-                            GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_extractor_item_1.ExtractorItemType.ENTITY)
+                            gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_extractor_item_1.ExtractorItemType.ENTITY)
                                 .setEntityType(type_entity_1.EntityType.PLATFORM)
-                                .setContainerType(GobiiTreeNode_1.ContainerType.DATA),
-                            GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_extractor_item_1.ExtractorItemType.MARKER_FILE),
-                            GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_extractor_item_1.ExtractorItemType.MARKER_LIST_ITEM)
-                                .setContainerType(GobiiTreeNode_1.ContainerType.DATA),
-                            GobiiTreeNode_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_extractor_item_1.ExtractorItemType.ENTITY)
+                                .setContainerType(gobii_tree_node_1.ContainerType.DATA),
+                            gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_extractor_item_1.ExtractorItemType.MARKER_FILE),
+                            gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_extractor_item_1.ExtractorItemType.MARKER_LIST_ITEM)
+                                .setContainerType(gobii_tree_node_1.ContainerType.DATA),
+                            gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_extractor_item_1.ExtractorItemType.ENTITY)
                                 .setEntityType(type_entity_1.EntityType.MARKER_GROUP)
-                                .setContainerType(GobiiTreeNode_1.ContainerType.DATA)
+                                .setContainerType(gobii_tree_node_1.ContainerType.DATA)
                         ])
-                    ], this.makeCommonNodes(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY)); // array of gobii tree nodes
+                    ], this.makeCommonNodes(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY), [
+                        gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_extractor_item_1.ExtractorItemType.VERTEX)
+                            .setSequenceNum(1)
+                            .setEntityType(type_entity_1.EntityType.PROJECT)
+                            .setContainerType(gobii_tree_node_1.ContainerType.DATA),
+                        gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_extractor_item_1.ExtractorItemType.VERTEX)
+                            .setSequenceNum(2)
+                            .setEntityType(type_entity_1.EntityType.PROJECT)
+                            .setContainerType(gobii_tree_node_1.ContainerType.DATA),
+                        gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_extractor_item_1.ExtractorItemType.VERTEX)
+                            .setSequenceNum(3)
+                            .setEntityType(type_entity_1.EntityType.PROJECT)
+                            .setContainerType(gobii_tree_node_1.ContainerType.DATA),
+                        gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_extractor_item_1.ExtractorItemType.VERTEX)
+                            .setSequenceNum(4)
+                            .setEntityType(type_entity_1.EntityType.PROJECT)
+                            .setContainerType(gobii_tree_node_1.ContainerType.DATA),
+                    ]); // array of gobii tree nodes
                     // we know we only have to go one level deep in this case -- no need to recurse
                     returnVal.forEach(function (currentNode, idx, nodes) {
                         currentNode.getChildren().forEach(function (currentChild) {
@@ -158,6 +175,9 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
                         else {
                             labelValue = entity_labels_1.Labels.instance().entitySubtypeNodeLabels[gobiiTreeNode.getEntitySubType()];
                         }
+                    }
+                    else if (gobiiTreeNode.getItemType() === type_extractor_item_1.ExtractorItemType.VERTEX) {
+                        labelValue = "Filter " + gobiiTreeNode.getSequenceNum().toString();
                     }
                     else {
                         labelValue = entity_labels_1.Labels.instance().treeExtractorTypeLabels[gobiiTreeNode.getItemType()];
@@ -326,7 +346,7 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
                     treeNode.collapsedIcon = icons.collapsedIcon;
                 };
                 TreeStructureService.prototype.makeTreeNodeFromFileItem = function (gobiiFileItem) {
-                    var returnVal = GobiiTreeNode_1.GobiiTreeNode
+                    var returnVal = gobii_tree_node_1.GobiiTreeNode
                         .build(gobiiFileItem.getGobiiExtractFilterType(), gobiiFileItem.getExtractorItemType())
                         .setFileItemId(gobiiFileItem.getFileItemUniqueId())
                         .setEntityType(gobiiFileItem.getEntityType())
@@ -338,7 +358,7 @@ System.register(["@angular/core", "../../model/GobiiTreeNode", "../../model/type
                     return returnVal;
                 };
                 TreeStructureService.prototype.addFileItemNameToNode = function (gobiiTreeNode, gobiiFileItem) {
-                    if (gobiiTreeNode.getContainerType() === GobiiTreeNode_1.ContainerType.DATA) {
+                    if (gobiiTreeNode.getContainerType() === gobii_tree_node_1.ContainerType.DATA) {
                         gobiiTreeNode.label = gobiiFileItem.getItemName();
                     }
                     else {

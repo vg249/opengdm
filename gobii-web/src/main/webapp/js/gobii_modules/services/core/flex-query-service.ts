@@ -1,5 +1,6 @@
 import {Injectable} from "@angular/core";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
+import * as treeNodeActions from '../../store/actions/treenode-action'
 import * as historyAction from '../../store/actions/history-action';
 import * as fileItemActions from '../../store/actions/fileitem-action'
 import * as fromRoot from '../../store/reducers';
@@ -22,7 +23,8 @@ import {EntitySubType, EntityType, entityTypefromString} from "../../model/type-
 import {NameIdLabelType} from "../../model/name-id-label-type";
 import {CvFilters, CvFilterType} from "../../model/cv-filter-type";
 import {FilterService} from "./filter-service";
-import {Observable} from "rxjs/Observable";
+import {TreeStructureService} from "./tree-structure-service";
+import {GobiiTreeNode} from "../../model/gobii-tree-node";
 
 @Injectable()
 export class FlexQueryService {
@@ -32,7 +34,8 @@ export class FlexQueryService {
                 private entityFileItemService: EntityFileItemService,
                 private dtoRequestServiceVertexFilterDTO: DtoRequestService<VertexFilterDTO>,
                 private filterParamsColl: FilterParamsColl,
-                private filterService: FilterService) {
+                private filterService: FilterService,
+                private treeStructureService: TreeStructureService) {
 
 
     }
@@ -112,11 +115,13 @@ export class FlexQueryService {
 
     }
 
-    public loadSelectedVertexValueFilters(filterParamsName: FilterParamNames, vertexValues: string[]) {
+    public loadSelectedVertexValueFilters(filterParamsName: FilterParamNames, vertexValuesGfis: GobiiFileItem[]) {
 
+
+        let vertexValues: string[] = vertexValuesGfis.map(gfi => gfi.getItemId());
         let vertexValueIdsCsv: string = null;
 
-        if( vertexValues && vertexValues.length > 0) {
+        if (vertexValues && vertexValues.length > 0) {
 
             vertexValueIdsCsv = "";
             vertexValues.forEach(
@@ -127,6 +132,14 @@ export class FlexQueryService {
         this.filterService.loadFilter(GobiiExtractFilterType.FLEX_QUERY,
             filterParamsName,
             vertexValueIdsCsv);
+
+
+        let gobiiTreeNodes: GobiiTreeNode[] = vertexValuesGfis
+            .map(gfi => this.treeStructureService.makeTreeNodeFromFileItem(gfi));
+
+        gobiiTreeNodes.forEach(tn => {
+            this.store.dispatch(new treeNodeActions.PlaceTreeNodeAction(tn));
+        });
 
     }
 

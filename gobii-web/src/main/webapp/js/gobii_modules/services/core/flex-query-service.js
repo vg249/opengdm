@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-extractor-filter", "../../store/actions/history-action", "../../store/actions/fileitem-action", "@ngrx/store", "./dto-request.service", "../../model/vertex-filter", "./entity-file-item-service", "../app/dto-request-item-vertex-filter", "../../model/gobii-file-item", "../../model/type-process", "../../model/type-extractor-item", "../../store/actions/action-payload-filter", "./filter-params-coll", "../../model/gobii-file-item-compound-id", "../../model/type-entity", "../../model/name-id-label-type", "../../model/cv-filter-type", "./filter-service"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-extractor-filter", "../../store/actions/treenode-action", "../../store/actions/history-action", "../../store/actions/fileitem-action", "@ngrx/store", "./dto-request.service", "../../model/vertex-filter", "./entity-file-item-service", "../app/dto-request-item-vertex-filter", "../../model/gobii-file-item", "../../model/type-process", "../../model/type-extractor-item", "../../store/actions/action-payload-filter", "./filter-params-coll", "../../model/gobii-file-item-compound-id", "../../model/type-entity", "../../model/name-id-label-type", "../../model/cv-filter-type", "./filter-service", "./tree-structure-service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_extractor_filter_1, historyAction, fileItemActions, store_1, dto_request_service_1, vertex_filter_1, entity_file_item_service_1, dto_request_item_vertex_filter_1, gobii_file_item_1, type_process_1, type_extractor_item_1, action_payload_filter_1, filter_params_coll_1, gobii_file_item_compound_id_1, type_entity_1, name_id_label_type_1, cv_filter_type_1, filter_service_1, FlexQueryService;
+    var core_1, type_extractor_filter_1, treeNodeActions, historyAction, fileItemActions, store_1, dto_request_service_1, vertex_filter_1, entity_file_item_service_1, dto_request_item_vertex_filter_1, gobii_file_item_1, type_process_1, type_extractor_item_1, action_payload_filter_1, filter_params_coll_1, gobii_file_item_compound_id_1, type_entity_1, name_id_label_type_1, cv_filter_type_1, filter_service_1, tree_structure_service_1, FlexQueryService;
     return {
         setters: [
             function (core_1_1) {
@@ -18,6 +18,9 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
             },
             function (type_extractor_filter_1_1) {
                 type_extractor_filter_1 = type_extractor_filter_1_1;
+            },
+            function (treeNodeActions_1) {
+                treeNodeActions = treeNodeActions_1;
             },
             function (historyAction_1) {
                 historyAction = historyAction_1;
@@ -69,16 +72,20 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
             },
             function (filter_service_1_1) {
                 filter_service_1 = filter_service_1_1;
+            },
+            function (tree_structure_service_1_1) {
+                tree_structure_service_1 = tree_structure_service_1_1;
             }
         ],
         execute: function () {
             FlexQueryService = (function () {
-                function FlexQueryService(store, entityFileItemService, dtoRequestServiceVertexFilterDTO, filterParamsColl, filterService) {
+                function FlexQueryService(store, entityFileItemService, dtoRequestServiceVertexFilterDTO, filterParamsColl, filterService, treeStructureService) {
                     this.store = store;
                     this.entityFileItemService = entityFileItemService;
                     this.dtoRequestServiceVertexFilterDTO = dtoRequestServiceVertexFilterDTO;
                     this.filterParamsColl = filterParamsColl;
                     this.filterService = filterService;
+                    this.treeStructureService = treeStructureService;
                 }
                 FlexQueryService.prototype.loadVertices = function (filterParamNames) {
                     this.entityFileItemService.loadEntityList(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, filterParamNames);
@@ -120,13 +127,20 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                         }
                     } // while we have another filter value
                 };
-                FlexQueryService.prototype.loadSelectedVertexValueFilters = function (filterParamsName, vertexValues) {
+                FlexQueryService.prototype.loadSelectedVertexValueFilters = function (filterParamsName, vertexValuesGfis) {
+                    var _this = this;
+                    var vertexValues = vertexValuesGfis.map(function (gfi) { return gfi.getItemId(); });
                     var vertexValueIdsCsv = null;
                     if (vertexValues && vertexValues.length > 0) {
                         vertexValueIdsCsv = "";
                         vertexValues.forEach(function (vv) { return vertexValueIdsCsv += vv + ","; });
                     }
                     this.filterService.loadFilter(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, filterParamsName, vertexValueIdsCsv);
+                    var gobiiTreeNodes = vertexValuesGfis
+                        .map(function (gfi) { return _this.treeStructureService.makeTreeNodeFromFileItem(gfi); });
+                    gobiiTreeNodes.forEach(function (tn) {
+                        _this.store.dispatch(new treeNodeActions.PlaceTreeNodeAction(tn));
+                    });
                 };
                 FlexQueryService.prototype.loadVertexValues = function (jobId, vertexFileItem, filterParamName) {
                     //        return Observable.create(observer => {
@@ -190,7 +204,8 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                         entity_file_item_service_1.EntityFileItemService,
                         dto_request_service_1.DtoRequestService,
                         filter_params_coll_1.FilterParamsColl,
-                        filter_service_1.FilterService])
+                        filter_service_1.FilterService,
+                        tree_structure_service_1.TreeStructureService])
                 ], FlexQueryService);
                 return FlexQueryService;
             }());

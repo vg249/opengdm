@@ -200,8 +200,8 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
 
     public handleVertexValueSelected(arg) {
 
-        let selectedVertexValueIds: string[] = this.selectedVertexValues.map(gfi => gfi.getItemId())
-        this.flexQueryService.loadSelectedVertexValueFilters(this.filterParamNameVertexValues, selectedVertexValueIds);
+        let selectedVertexValueGfis: GobiiFileItem[] = this.selectedVertexValues;
+        this.flexQueryService.loadSelectedVertexValueFilters(this.filterParamNameVertexValues, selectedVertexValueGfis);
     }
 
 

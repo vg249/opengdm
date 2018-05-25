@@ -10,7 +10,8 @@ export class GobiiFileItemCompoundId {
                 private _entitySubType: EntitySubType = EntitySubType.UNKNOWN,
                 private _cvFilterType: CvFilterType = CvFilterType.UNKNOWN,
                 private _cvFilterValue: string = null,
-                private _isExtractCriterion: boolean = true) {
+                private _isExtractCriterion: boolean = true,
+                private _sequenceNum: number = 0) {
 
         if (this._cvFilterType === null) {
             this._cvFilterType = CvFilterType.UNKNOWN;
@@ -36,6 +37,7 @@ export class GobiiFileItemCompoundId {
             && this.getEntitySubType() === gobiiFileItemCompoundId.getEntitySubType()
             && this.getCvFilterType() === gobiiFileItemCompoundId.getCvFilterType()
             && this.getCvFilterValue() === gobiiFileItemCompoundId.getCvFilterValue()
+            && this.getSequenceNum() === gobiiFileItemCompoundId.getSequenceNum()
     }
 
 
@@ -113,6 +115,15 @@ export class GobiiFileItemCompoundId {
 
     setIsExtractCriterion(value: boolean): GobiiFileItemCompoundId {
         this._isExtractCriterion = value;
+        return this;
+    }
+
+    getSequenceNum(): number {
+        return this._sequenceNum;
+    }
+
+    setSequenceNum(value: number): GobiiFileItemCompoundId {
+        this._sequenceNum = value;
         return this;
     }
 }

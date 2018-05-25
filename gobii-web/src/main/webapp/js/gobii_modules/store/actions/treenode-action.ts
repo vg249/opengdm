@@ -1,5 +1,5 @@
 import {Action} from '@ngrx/store';
-import {GobiiTreeNode} from "../../model/GobiiTreeNode";
+import {GobiiTreeNode} from "../../model/gobii-tree-node";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 
