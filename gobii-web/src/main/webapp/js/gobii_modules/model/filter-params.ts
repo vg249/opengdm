@@ -1,14 +1,12 @@
 import {FilterType} from "./filter-type";
-import {EntityType, EntitySubType} from "./type-entity";
+import {EntitySubType, EntityType} from "./type-entity";
 import {CvFilterType} from "./cv-filter-type";
 import {GobiiExtractFilterType} from "./type-extractor-filter";
 import {NameIdLabelType} from "./name-id-label-type";
 import {ExtractorItemType} from "./type-extractor-item";
 import {GobiiFileItemCompoundId} from "./gobii-file-item-compound-id";
 import {GobiiFileItem} from "./gobii-file-item";
-import * as fileAction from '../store/actions/fileitem-action';
 import {DtoRequestService} from "../services/core/dto-request.service";
-import {JsonToGfi} from "../services/app/jsontogfi/json-to-gfi";
 import {DtoRequestItem} from "../services/core/dto-request-item";
 import {PayloadFilter} from "../store/actions/action-payload-filter";
 
@@ -220,6 +218,16 @@ export class FilterParams {
         return this;
     }
 
+    getSequenceNum():number{
+        return this.targetEntityUniqueId.getSequenceNum();
+    }
+
+    setSequenceNum(value:number): FilterParams {
+        this.targetEntityUniqueId.setSequenceNum(value);
+        return this;
+    }
+
+
     getIsExtractCriterion(): boolean {
         return this.targetEntityUniqueId.getIsExtractCriterion();
     }
@@ -252,23 +260,7 @@ export class FilterParams {
         return this;
     }
 
-    // getRelatedEntityFilterValue(): string {
-    //     return this._relatedEntityFilterValue;
-    // }
-    //
-    // setRelatedEntityFilterValue(value: string): FilterParams {
-    //     this._relatedEntityFilterValue = value;
-    //     return this;
-    // }
 
-    // getTargetEntityFilterValue(): string {
-    //     return this._targetEntityFilterValue;
-    // }
-    //
-    // setTargetEntityFilterValue(value: string): FilterParams {
-    //     this._targetEntityFilterValue = value;
-    //     return this;
-    // }
 
     getGobiiExtractFilterType(): GobiiExtractFilterType {
         return this._gobiiExtractFilterType;

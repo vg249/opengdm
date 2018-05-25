@@ -66,54 +66,6 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
         ],
         execute: function () {
             FileItemEffects = (function () {
-                // @Effect()
-                // setEntityFilter$ = this.actions$
-                //     .ofType(fileItemActions.SET_FILTER_VALUE)
-                //     .switchMap((action: fileItemActions.SetFilterValueAction)  => {
-                //
-                //         let payload = action.payload;
-                //
-                //         return Observable.create(observer => {
-                //
-                //
-                //             this.nameIdService.get(payload.nameIdRequestParams)
-                //                 .subscribe(nameIds => {
-                //                         if (nameIds && ( nameIds.length > 0 )) {
-                //
-                //
-                //                             nameIds.forEach(n => {
-                //                                 let currentFileItem: GobiiFileItem =
-                //                                     GobiiFileItem.build(
-                //                                         payload.gobiiExtractFilterType,
-                //                                         ProcessType.CREATE)
-                //                                         .setExtractorItemType(ExtractorItemType.ENTITY)
-                //                                         .setEntityType(payload.nameIdRequestParams.getEntityType())
-                //                                         .setCvFilterType(CvFilterType.UNKNOWN)
-                //                                         .setItemId(n.id)
-                //                                         .setItemName(n.name)
-                //                                         .setSelected(false)
-                //                                         .setRequired(false)
-                //                                         .setParentEntityType(payload.nameIdRequestParams.getRefTargetEntityType())
-                //                                         .setParentItemId(payload.nameIdRequestParams.getFkEntityFilterValue());
-                //
-                //                                 //fileItems.push(currentFileItem);
-                //                                 observer.next(currentFileItem);
-                //
-                //                             });
-                //
-                //                             //new fileItemActions.LoadAction(fileItems);
-                //                         }
-                //                     },
-                //                     responseHeader => {
-                //                         console.log(responseHeader);
-                //                     });
-                //
-                //         }).map( gfi => {
-                //             return new fileItemActions.LoadAction([gfi]);
-                //         })
-                //
-                //
-                //     }); //switch map
                 function FileItemEffects(actions$, treeStructureService, fileItemService, store, filterParamsColl, router) {
                     var _this = this;
                     this.actions$ = actions$;
@@ -390,6 +342,12 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                         .map(function (action) {
                         return new treeNodeActions.SelectExtractType(action.payload.gobiiExtractFilterType);
                     });
+                    this.loadFilter = this.actions$
+                        .ofType(fileItemActions.LOAD_FILTER)
+                        .switchMap(function (action) {
+                        //set tree node
+                        return _this.treeStructureService.makeUpdateTreeNodeAction(action.payload.filter.gobiiExtractFilterType, action.payload.filter.targetEntityUniqueId);
+                    });
                 }
                 __decorate([
                     effects_1.Effect(),
@@ -431,6 +389,10 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                     effects_1.Effect(),
                     __metadata("design:type", Object)
                 ], FileItemEffects.prototype, "setExtractType", void 0);
+                __decorate([
+                    effects_1.Effect(),
+                    __metadata("design:type", Object)
+                ], FileItemEffects.prototype, "loadFilter", void 0);
                 FileItemEffects = __decorate([
                     core_1.Injectable(),
                     __metadata("design:paramtypes", [effects_1.Actions,
@@ -443,50 +405,6 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                 return FileItemEffects;
             }());
             exports_1("FileItemEffects", FileItemEffects);
-            /*
-            
-            
-                @Effect()
-                setEntityFilter$ = this.actions$
-                    .ofType(fileItemActions.SET_FILTER_VALUE)
-                    .map((action: fileItemActions.SetFilterValueAction) => {
-            
-                        }
-                    );
-            
-            *
-            *                 this.nameIdService.get(nameIdRequestParams)
-                            .subscribe(nameIds => {
-                                    if (nameIds && ( nameIds.length > 0 )) {
-            
-                                        let fileItems: GobiiFileItem[] = [];
-            
-                                        nameIds.forEach(n => {
-                                            let currentFileItem: GobiiFileItem =
-                                                GobiiFileItem.build(
-                                                    gobiiExtractFilterType,
-                                                    ProcessType.CREATE)
-                                                    .setExtractorItemType(ExtractorItemType.ENTITY)
-                                                    .setEntityType(nameIdRequestParams.getEntityType())
-                                                    .setCvFilterType(CvFilterType.UNKNOWN)
-                                                    .setItemId(n.id)
-                                                    .setItemName(n.name)
-                                                    .setSelected(false)
-                                                    .setRequired(false)
-                                                    .setParentEntityType(nameIdRequestParams.getRefTargetEntityType())
-                                                    .setParentItemId(nameIdRequestParams.getFkEntityFilterValue());
-            
-                                            fileItems.push(currentFileItem);
-            
-                                        });
-            
-                                        return new fileItemActions.LoadAction(fileItems);
-                                    }
-                                },
-                                responseHeader => {
-                                    console.log(responseHeader);
-                                });
-            */
         }
     };
 });

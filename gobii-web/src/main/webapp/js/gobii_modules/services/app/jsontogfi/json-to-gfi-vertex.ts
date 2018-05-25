@@ -25,7 +25,7 @@ export class JsonToGfiVertex implements JsonToGfi {
         let vertex:Vertex = new Vertex(
             jsonItem.vertexId,
             jsonItem.vertexName,
-            jsonItem.gobiiEntityNameTypeName,
+            jsonItem.entityType,
             jsonItem.cvGroupName,
             []
         );
@@ -34,7 +34,7 @@ export class JsonToGfiVertex implements JsonToGfi {
         let returnVal:GobiiFileItem =
             GobiiFileItem.build(GobiiExtractFilterType.UNKNOWN, ProcessType.READ)
                 .setExtractorItemType(ExtractorItemType.VERTEX)
-                .setEntityType(EntityType.UNKNOWN)
+                .setEntityType(vertex.entityType)
                 .setItemName(vertex.vertexName)
                 .setItemId(vertex.vertexId.toString())
                 .setEntity(vertex);

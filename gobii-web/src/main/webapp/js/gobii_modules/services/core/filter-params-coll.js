@@ -298,7 +298,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX)
                         .setIsDynamicFilterValue(false)
                         .setFilterType(filter_type_1.FilterType.ENTITY_LIST)
-                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A));
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A)
+                        .setSequenceNum(1));
                     this.getFilter(file_item_param_names_1.FilterParamNames.FQ_F1_VERTICES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY)
                         .setDtoRequestItem(new dto_request_item_gfi_1.DtoRequestItemGfi(this.getFilter(file_item_param_names_1.FilterParamNames.FQ_F1_VERTICES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY), null, new json_to_gfi_vertex_1.JsonToGfiVertex(this.getFilter(file_item_param_names_1.FilterParamNames.FQ_F1_VERTICES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY), this)))
                         .setDtoRequestService(this.fileItemRequestService);
@@ -306,43 +307,50 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .build(file_item_param_names_1.FilterParamNames.FQ_F1_VERTEX_VALUES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.UNKNOWN)
                         .setIsDynamicFilterValue(false)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE)
-                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.UNKNOWN));
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.UNKNOWN)
+                        .setSequenceNum(1));
                     // ******* F2
                     this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.FQ_F2_VERTICES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.UNKNOWN)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX)
                         .setIsDynamicFilterValue(false)
                         .setFilterType(filter_type_1.FilterType.ENTITY_LIST)
-                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A));
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A)
+                        .setSequenceNum(2));
                     this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.FQ_F2_VERTEX_VALUES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.UNKNOWN)
                         .setIsDynamicFilterValue(false)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE)
-                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.UNKNOWN));
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.UNKNOWN)
+                        .setSequenceNum(2));
                     // ******* F3
                     this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.FQ_F3_VERTICES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.UNKNOWN)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX)
                         .setIsDynamicFilterValue(false)
                         .setFilterType(filter_type_1.FilterType.ENTITY_LIST)
-                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A));
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A)
+                        .setSequenceNum(3));
                     this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.FQ_F3_VERTEX_VALUES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.UNKNOWN)
                         .setIsDynamicFilterValue(false)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE)
-                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.UNKNOWN));
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.UNKNOWN)
+                        .setSequenceNum(3));
                     // ******* F4
                     this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.FQ_F4_VERTICES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.UNKNOWN)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX)
                         .setIsDynamicFilterValue(false)
                         .setFilterType(filter_type_1.FilterType.ENTITY_LIST)
-                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A));
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A)
+                        .setSequenceNum(4));
                     this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.FQ_F4_VERTEX_VALUES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_entity_1.EntityType.UNKNOWN)
                         .setIsDynamicFilterValue(false)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE)
-                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.UNKNOWN));
+                        .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.UNKNOWN)
+                        .setSequenceNum(4));
                     // FLEX QUERY FILTER OBJECT GRAPH
                     // *** F1
                     this.getFilter(file_item_param_names_1.FilterParamNames.FQ_F1_VERTICES, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY)

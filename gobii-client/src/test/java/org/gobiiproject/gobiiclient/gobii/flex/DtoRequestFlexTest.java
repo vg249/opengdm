@@ -13,7 +13,6 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexFilterDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -66,8 +65,8 @@ public class DtoRequestFlexTest {
         resultEnvelope.getPayload().getData().forEach(
                 vertexDTO -> {
 
-                    Assert.assertFalse("The vertex does not have an entity typename",
-                            vertexDTO.getGobiiEntityNameTypeName().isEmpty());
+//                    Assert.assertFalse("The vertex does not have an entity typename",
+//                            vertexDTO.getEntityType().isEmpty());
 
                     Assert.assertTrue("The vertex does not have a vertexId",
                             vertexDTO.getVertexId() > 0);
@@ -98,7 +97,7 @@ public class DtoRequestFlexTest {
                 new VertexDTO(
                         0,
                         null,
-                        gobiiEntityNameTypeToTest.name(),
+                        gobiiEntityNameTypeToTest,
                         null
                 )
         );
@@ -154,7 +153,7 @@ public class DtoRequestFlexTest {
                 new VertexDTO(
                         0,
                         null,
-                        gobiiDestinationEntityNameTypeToTest.name(),
+                        gobiiDestinationEntityNameTypeToTest,
                         null
                 );
 
@@ -167,7 +166,7 @@ public class DtoRequestFlexTest {
                 new VertexDTO(
                         0,
                         null,
-                        gobiiFilterEntityTypeF1.name(),
+                        gobiiFilterEntityTypeF1,
                         null
                 );
         filterF1VertexDTO.setFilterVals(new ArrayList<>(Arrays.asList(1, 2, 3)));
@@ -177,7 +176,7 @@ public class DtoRequestFlexTest {
                 new VertexDTO(
                         0,
                         null,
-                        gobiiFilterEntityTypeF2.name(),
+                        gobiiFilterEntityTypeF2,
                         null
                 );
         filterF2VertexDTO.setFilterVals(new ArrayList<>(Arrays.asList(1, 2, 3)));

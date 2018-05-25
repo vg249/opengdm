@@ -178,13 +178,17 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
 
         if (arg.value && arg.value._entity) {
             let vertexId: string;
+            let entityType:EntityType = EntityType.UNKNOWN;
             if (arg.value.getNameIdLabelType() === NameIdLabelType.UNKNOWN) {
                 vertexId = arg.value.getItemId();
+                entityType = arg.value.getEntityType();
             } else {
                 vertexId = null;
             }
 
-            this.flexQueryService.loadSelectedVertexFilter(this.filterParamNameVertices, vertexId);
+            this.flexQueryService.loadSelectedVertexFilter(this.filterParamNameVertices,
+                vertexId,
+                entityType);
         }
 
         this.JobId$.subscribe(

@@ -192,6 +192,13 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
                     this.targetEntityUniqueId.setCvFilterValue(value);
                     return this;
                 };
+                FilterParams.prototype.getSequenceNum = function () {
+                    return this.targetEntityUniqueId.getSequenceNum();
+                };
+                FilterParams.prototype.setSequenceNum = function (value) {
+                    this.targetEntityUniqueId.setSequenceNum(value);
+                    return this;
+                };
                 FilterParams.prototype.getIsExtractCriterion = function () {
                     return this.targetEntityUniqueId.getIsExtractCriterion();
                 };
@@ -216,22 +223,6 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
                     this._filterType = value;
                     return this;
                 };
-                // getRelatedEntityFilterValue(): string {
-                //     return this._relatedEntityFilterValue;
-                // }
-                //
-                // setRelatedEntityFilterValue(value: string): FilterParams {
-                //     this._relatedEntityFilterValue = value;
-                //     return this;
-                // }
-                // getTargetEntityFilterValue(): string {
-                //     return this._targetEntityFilterValue;
-                // }
-                //
-                // setTargetEntityFilterValue(value: string): FilterParams {
-                //     this._targetEntityFilterValue = value;
-                //     return this;
-                // }
                 FilterParams.prototype.getGobiiExtractFilterType = function () {
                     return this._gobiiExtractFilterType;
                 };

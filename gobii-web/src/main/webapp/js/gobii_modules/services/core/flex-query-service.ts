@@ -47,7 +47,7 @@ export class FlexQueryService {
 
     } // loadVertices()
 
-    public loadSelectedVertexFilter(filterParamsName: FilterParamNames, vertexId: string) {
+    public loadSelectedVertexFilter(filterParamsName: FilterParamNames, vertexId: string,entityType:EntityType) {
 
         let filterParams: FilterParams = this.filterParamsColl.getFilter(filterParamsName, GobiiExtractFilterType.FLEX_QUERY);
 
@@ -60,6 +60,10 @@ export class FlexQueryService {
         }
 
         while (filterParams) {
+
+
+            filterParams.getTargetEntityUniqueId().setEntityType(entityType);
+
 
             let targetFilterloadAction: fileItemActions.LoadFilterAction = new fileItemActions.LoadFilterAction(
                 {
@@ -77,6 +81,7 @@ export class FlexQueryService {
             );
 
             this.store.dispatch(targetFilterloadAction);
+
 
             // propagate null filter to child
             if (!vertexId
@@ -179,7 +184,7 @@ export class FlexQueryService {
                                     GobiiExtractFilterType.FLEX_QUERY,
                                     ProcessType.CREATE)
                                     .setExtractorItemType(ExtractorItemType.VERTEX_VALUE)
-                                    .setEntityType(entityTypefromString(targetVertex.gobiiEntityNameTypeName))
+                                    .setEntityType(targetVertex.entityType)
                                     // .setEntitySubType(filterParamsToLoad.getEntitySubType())
                                     // .setCvFilterType(filterParamsToLoad.getCvFilterType())
                                     .setItemId(item.id)
@@ -199,7 +204,7 @@ export class FlexQueryService {
                     let filterParams: FilterParams = this.filterParamsColl.getFilter(filterParamName, GobiiExtractFilterType.FLEX_QUERY);
                     let targetCompoundUniqueId: GobiiFileItemCompoundId = filterParams.getTargetEntityUniqueId();
                     targetCompoundUniqueId.setExtractorItemType(ExtractorItemType.VERTEX_VALUE);
-                    targetCompoundUniqueId.setEntityType(entityTypefromString(targetVertex.gobiiEntityNameTypeName));
+                    targetCompoundUniqueId.setEntityType(targetVertex.entityType);
                     let loadAction: fileItemActions.LoadFileItemListWithFilterAction =
                         new fileItemActions.LoadFileItemListWithFilterAction(
                             {
