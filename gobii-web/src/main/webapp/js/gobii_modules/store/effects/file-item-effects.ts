@@ -22,6 +22,7 @@ import {FilterParamsColl} from "../../services/core/filter-params-coll";
 import {FilterParams} from "../../model/filter-params";
 import {PayloadFilter} from "../actions/action-payload-filter";
 import {NameIdLabelType} from "../../model/name-id-label-type";
+import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 
 @Injectable()
 export class FileItemEffects {
@@ -367,55 +368,16 @@ export class FileItemEffects {
             }
         );
 
+    @Effect()
+    loadFilter = this.actions$
+        .ofType(fileItemActions.LOAD_FILTER)
+        .switchMap((action: fileItemActions.LoadFilterAction) => {
+                //set tree node
+                return this.treeStructureService.makeUpdateTreeNodeAction(action.payload.filter.gobiiExtractFilterType,
+                    action.payload.filter.targetEntityUniqueId);
+            }
+        );
 
-    // @Effect()
-    // setEntityFilter$ = this.actions$
-    //     .ofType(fileItemActions.SET_FILTER_VALUE)
-    //     .switchMap((action: fileItemActions.SetFilterValueAction)  => {
-    //
-    //         let payload = action.payload;
-    //
-    //         return Observable.create(observer => {
-    //
-    //
-    //             this.nameIdService.get(payload.nameIdRequestParams)
-    //                 .subscribe(nameIds => {
-    //                         if (nameIds && ( nameIds.length > 0 )) {
-    //
-    //
-    //                             nameIds.forEach(n => {
-    //                                 let currentFileItem: GobiiFileItem =
-    //                                     GobiiFileItem.build(
-    //                                         payload.gobiiExtractFilterType,
-    //                                         ProcessType.CREATE)
-    //                                         .setExtractorItemType(ExtractorItemType.ENTITY)
-    //                                         .setEntityType(payload.nameIdRequestParams.getEntityType())
-    //                                         .setCvFilterType(CvFilterType.UNKNOWN)
-    //                                         .setItemId(n.id)
-    //                                         .setItemName(n.name)
-    //                                         .setSelected(false)
-    //                                         .setRequired(false)
-    //                                         .setParentEntityType(payload.nameIdRequestParams.getRefTargetEntityType())
-    //                                         .setParentItemId(payload.nameIdRequestParams.getFkEntityFilterValue());
-    //
-    //                                 //fileItems.push(currentFileItem);
-    //                                 observer.next(currentFileItem);
-    //
-    //                             });
-    //
-    //                             //new fileItemActions.LoadAction(fileItems);
-    //                         }
-    //                     },
-    //                     responseHeader => {
-    //                         console.log(responseHeader);
-    //                     });
-    //
-    //         }).map( gfi => {
-    //             return new fileItemActions.LoadAction([gfi]);
-    //         })
-    //
-    //
-    //     }); //switch map
 
 
     constructor(private actions$: Actions,
@@ -428,48 +390,3 @@ export class FileItemEffects {
 
 }
 
-
-/*
-
-
-    @Effect()
-    setEntityFilter$ = this.actions$
-        .ofType(fileItemActions.SET_FILTER_VALUE)
-        .map((action: fileItemActions.SetFilterValueAction) => {
-
-            }
-        );
-
-*
-*                 this.nameIdService.get(nameIdRequestParams)
-                .subscribe(nameIds => {
-                        if (nameIds && ( nameIds.length > 0 )) {
-
-                            let fileItems: GobiiFileItem[] = [];
-
-                            nameIds.forEach(n => {
-                                let currentFileItem: GobiiFileItem =
-                                    GobiiFileItem.build(
-                                        gobiiExtractFilterType,
-                                        ProcessType.CREATE)
-                                        .setExtractorItemType(ExtractorItemType.ENTITY)
-                                        .setEntityType(nameIdRequestParams.getEntityType())
-                                        .setCvFilterType(CvFilterType.UNKNOWN)
-                                        .setItemId(n.id)
-                                        .setItemName(n.name)
-                                        .setSelected(false)
-                                        .setRequired(false)
-                                        .setParentEntityType(nameIdRequestParams.getRefTargetEntityType())
-                                        .setParentItemId(nameIdRequestParams.getFkEntityFilterValue());
-
-                                fileItems.push(currentFileItem);
-
-                            });
-
-                            return new fileItemActions.LoadAction(fileItems);
-                        }
-                    },
-                    responseHeader => {
-                        console.log(responseHeader);
-                    });
-*/

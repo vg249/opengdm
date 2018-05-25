@@ -29,15 +29,15 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
         List<VertexDTO> returnVal = new ArrayList<>();
 
         // mock values
-        returnVal.add(new VertexDTO(1,"Projects", GobiiEntityNameType.PROJECT.name(),null));
-        returnVal.add(new VertexDTO(2,"Experiment", GobiiEntityNameType.EXPERIMENT.name(),null));
-        returnVal.add(new VertexDTO(3,"Dataset Types", GobiiEntityNameType.CV.name(), CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName()));
-        returnVal.add(new VertexDTO(5,"Analyses", GobiiEntityNameType.CV.name(),CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName()));
-        returnVal.add(new VertexDTO(6,"Vendor Protocols", GobiiEntityNameType.VENDOR_PROTOCOL.name(),null));
-        returnVal.add(new VertexDTO(7,"Platforms", GobiiEntityNameType.PLATFORM.name(),null));
-        returnVal.add(new VertexDTO(8,"Mapset/Linkage group", GobiiEntityNameType.MAPSET.name(),null));
-        returnVal.add(new VertexDTO(9,"Germplasm", GobiiEntityNameType.GERMPLASM.name(),null));
-        returnVal.add(new VertexDTO(10,"Principle Investigators", GobiiEntityNameType.CONTACT.name(),null));
+        returnVal.add(new VertexDTO(1,"Projects", GobiiEntityNameType.PROJECT,null));
+        returnVal.add(new VertexDTO(2,"Experiment", GobiiEntityNameType.EXPERIMENT,null));
+        returnVal.add(new VertexDTO(3,"Dataset Types", GobiiEntityNameType.CV, CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName()));
+        returnVal.add(new VertexDTO(5,"Analyses", GobiiEntityNameType.CV,CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName()));
+        returnVal.add(new VertexDTO(6,"Vendor Protocols", GobiiEntityNameType.VENDOR_PROTOCOL,null));
+        returnVal.add(new VertexDTO(7,"Platforms", GobiiEntityNameType.PLATFORM,null));
+        returnVal.add(new VertexDTO(8,"Mapset/Linkage group", GobiiEntityNameType.MAPSET,null));
+        returnVal.add(new VertexDTO(9,"Germplasm", GobiiEntityNameType.GERMPLASM,null));
+        returnVal.add(new VertexDTO(10,"Principle Investigators", GobiiEntityNameType.CONTACT,null));
 
         return returnVal;
 
@@ -48,17 +48,17 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
 
         VertexFilterDTO returnVal = vertexFilterDTO;
 
-        if( vertexFilterDTO.getDestinationVertexDTO() == null || vertexFilterDTO.getDestinationVertexDTO().getGobiiEntityNameTypeName().isEmpty() ) {
-            throw new GobiiDtoMappingException("Unspecified destination vertex entity type");
-        }
-
+//        if( vertexFilterDTO.getDestinationVertexDTO() == null || vertexFilterDTO.getDestinationVertexDTO().getEntityType().isEmpty() ) {
+//            throw new GobiiDtoMappingException("Unspecified destination vertex entity type");
+//        }
+//
 
         for(Integer idx=1; idx <= 20; idx ++ ) {
 
             returnVal.getVertexValues().add(
-                    new NameIdDTO(GobiiEntityNameType.valueOf(vertexFilterDTO.getDestinationVertexDTO().getGobiiEntityNameTypeName()),
+                    new NameIdDTO(GobiiEntityNameType.valueOf(vertexFilterDTO.getDestinationVertexDTO().getEntityType().name()),
                             idx,
-                            vertexFilterDTO.getDestinationVertexDTO().getGobiiEntityNameTypeName().toLowerCase() + ": " + idx)
+                            vertexFilterDTO.getDestinationVertexDTO().getEntityType().name() + ": " + idx)
             );
         }
 

@@ -493,7 +493,8 @@ export class FilterParamsColl {
                 .setExtractorItemType(ExtractorItemType.VERTEX)
                 .setIsDynamicFilterValue(false)
                 .setFilterType(FilterType.ENTITY_LIST)
-                .setNameIdLabelType(NameIdLabelType.SELECT_A));
+                .setNameIdLabelType(NameIdLabelType.SELECT_A)
+                .setSequenceNum(1));
 
         this.getFilter(FilterParamNames.FQ_F1_VERTICES, GobiiExtractFilterType.FLEX_QUERY)
             .setDtoRequestItem(new DtoRequestItemGfi(
@@ -513,6 +514,7 @@ export class FilterParamsColl {
                 .setIsDynamicFilterValue(false)
                 .setExtractorItemType(ExtractorItemType.VERTEX_VALUE)
                 .setNameIdLabelType(NameIdLabelType.UNKNOWN)
+                .setSequenceNum(1)
         );
 
 
@@ -525,7 +527,8 @@ export class FilterParamsColl {
                 .setExtractorItemType(ExtractorItemType.VERTEX)
                 .setIsDynamicFilterValue(false)
                 .setFilterType(FilterType.ENTITY_LIST)
-                .setNameIdLabelType(NameIdLabelType.SELECT_A));
+                .setNameIdLabelType(NameIdLabelType.SELECT_A)
+                .setSequenceNum(2));
 
         this.addFilter(
             FilterParams
@@ -535,6 +538,7 @@ export class FilterParamsColl {
                 .setIsDynamicFilterValue(false)
                 .setExtractorItemType(ExtractorItemType.VERTEX_VALUE)
                 .setNameIdLabelType(NameIdLabelType.UNKNOWN)
+                .setSequenceNum(2)
         );
 
 
@@ -547,7 +551,8 @@ export class FilterParamsColl {
                 .setExtractorItemType(ExtractorItemType.VERTEX)
                 .setIsDynamicFilterValue(false)
                 .setFilterType(FilterType.ENTITY_LIST)
-                .setNameIdLabelType(NameIdLabelType.SELECT_A));
+                .setNameIdLabelType(NameIdLabelType.SELECT_A)
+                .setSequenceNum(3));
 
 
         this.addFilter(
@@ -558,6 +563,7 @@ export class FilterParamsColl {
                 .setIsDynamicFilterValue(false)
                 .setExtractorItemType(ExtractorItemType.VERTEX_VALUE)
                 .setNameIdLabelType(NameIdLabelType.UNKNOWN)
+                .setSequenceNum(3)
         );
 
 
@@ -571,7 +577,8 @@ export class FilterParamsColl {
                 .setExtractorItemType(ExtractorItemType.VERTEX)
                 .setIsDynamicFilterValue(false)
                 .setFilterType(FilterType.ENTITY_LIST)
-                .setNameIdLabelType(NameIdLabelType.SELECT_A));
+                .setNameIdLabelType(NameIdLabelType.SELECT_A)
+                .setSequenceNum(4));
 
 
         this.addFilter(
@@ -582,6 +589,7 @@ export class FilterParamsColl {
                 .setIsDynamicFilterValue(false)
                 .setExtractorItemType(ExtractorItemType.VERTEX_VALUE)
                 .setNameIdLabelType(NameIdLabelType.UNKNOWN)
+                .setSequenceNum(4)
         );
 
 

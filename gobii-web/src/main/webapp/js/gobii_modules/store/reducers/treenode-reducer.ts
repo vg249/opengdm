@@ -3,6 +3,7 @@ import * as gobiiTreeNodeAction from "../actions/treenode-action";
 import {ContainerType, GobiiTreeNode} from "../../model/gobii-tree-node";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
+import {EntityType} from "../../model/type-entity";
 
 
 export interface State {
@@ -150,7 +151,7 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
                 gobiiFileItemUniqueId);
 
             // not all file items are in the tree
-            if( gobiiTreeNodeToDeActivate ) {
+            if (gobiiTreeNodeToDeActivate) {
 
                 let containerType: ContainerType = gobiiTreeNodeToDeActivate.parent ?
                     gobiiTreeNodeToDeActivate.parent.getContainerType() :
@@ -201,7 +202,11 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
 
             const gobiiExtractFilterType: GobiiExtractFilterType = action.payload.gobiiExtractFilterType;
             const gobiiFileItemCompoundId: GobiiFileItemCompoundId = action.payload.gobiiFileItemCompoundId;
-            const icon: string = action.payload.icon;
+            const icon: string = action.payload.icons.icon;
+            const expandedIcon: string = action.payload.icons.expandedIcon;
+            const collapsedIcon: string = action.payload.icons.collapsedIcon;
+            const label: string = action.payload.label;
+            const entityType: EntityType = action.payload.entityType;
 
             const newTreeNodesState = state.gobiiTreeNodes.slice();
 
@@ -210,6 +215,10 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
                 gobiiFileItemCompoundId);
 
             treeNodeToMutate.icon = icon;
+            treeNodeToMutate.expandedIcon = expandedIcon;
+            treeNodeToMutate.collapsedIcon = collapsedIcon;
+            treeNodeToMutate.label = label ? label : treeNodeToMutate.label;
+            treeNodeToMutate.setEntityType(entityType ? entityType : treeNodeToMutate.getEntityType());
 
             returnVal = {
                 gobiiExtractFilterType: state.gobiiExtractFilterType,

@@ -90,7 +90,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                 FlexQueryService.prototype.loadVertices = function (filterParamNames) {
                     this.entityFileItemService.loadEntityList(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, filterParamNames);
                 }; // loadVertices()
-                FlexQueryService.prototype.loadSelectedVertexFilter = function (filterParamsName, vertexId) {
+                FlexQueryService.prototype.loadSelectedVertexFilter = function (filterParamsName, vertexId, entityType) {
                     var filterParams = this.filterParamsColl.getFilter(filterParamsName, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
                     // the filterParams passed in should exist
                     if (!filterParams) {
@@ -100,6 +100,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                             + type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY[type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY]));
                     }
                     while (filterParams) {
+                        filterParams.getTargetEntityUniqueId().setEntityType(entityType);
                         var targetFilterloadAction = new fileItemActions.LoadFilterAction({
                             filterId: filterParams.getQueryName(),
                             filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, filterParams.getTargetEntityUniqueId(), filterParams.getRelatedEntityUniqueId(), null, vertexId, null, null)
@@ -159,7 +160,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                             vertexFilterDto.vertexValues.forEach(function (item) {
                                 var currentFileItem = gobii_file_item_1.GobiiFileItem.build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_process_1.ProcessType.CREATE)
                                     .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE)
-                                    .setEntityType(type_entity_1.entityTypefromString(targetVertex_1.gobiiEntityNameTypeName))
+                                    .setEntityType(targetVertex_1.entityType)
                                     .setItemId(item.id)
                                     .setItemName(item.name)
                                     .setRequired(false);
@@ -173,7 +174,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                             var filterParams = _this.filterParamsColl.getFilter(filterParamName, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
                             var targetCompoundUniqueId = filterParams.getTargetEntityUniqueId();
                             targetCompoundUniqueId.setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE);
-                            targetCompoundUniqueId.setEntityType(type_entity_1.entityTypefromString(targetVertex_1.gobiiEntityNameTypeName));
+                            targetCompoundUniqueId.setEntityType(targetVertex_1.entityType);
                             var loadAction = new fileItemActions.LoadFileItemListWithFilterAction({
                                 gobiiFileItems: vertexFileItems,
                                 filterId: filterParams.getQueryName(),

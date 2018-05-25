@@ -109,7 +109,7 @@ export const entityTypefromString = function (entityTypeName: String): EntityTyp
     return returnVal;
 }
 
-export enum EntitySubType {
+export enum  EntitySubType {
     UNKNOWN,
     CONTACT_PRINCIPLE_INVESTIGATOR,
     CONTACT_SUBMITED_BY

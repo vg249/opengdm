@@ -45,12 +45,13 @@ System.register(["./type-entity", "./cv-filter-type", "./type-extractor-item"], 
                     }
                 }
                 GobiiFileItemCompoundId.prototype.compoundIdeEquals = function (gobiiFileItemCompoundId) {
-                    return this.getExtractorItemType() === gobiiFileItemCompoundId.getExtractorItemType()
+                    return (this.getExtractorItemType() === gobiiFileItemCompoundId.getExtractorItemType()
                         && this.getEntityType() === gobiiFileItemCompoundId.getEntityType()
                         && this.getEntitySubType() === gobiiFileItemCompoundId.getEntitySubType()
                         && this.getCvFilterType() === gobiiFileItemCompoundId.getCvFilterType()
-                        && this.getCvFilterValue() === gobiiFileItemCompoundId.getCvFilterValue()
-                        && this.getSequenceNum() === gobiiFileItemCompoundId.getSequenceNum();
+                        && this.getCvFilterValue() === gobiiFileItemCompoundId.getCvFilterValue())
+                        || (this.getExtractorItemType() === gobiiFileItemCompoundId.getExtractorItemType() // for FlexQuery filter items
+                            && this.getSequenceNum() === gobiiFileItemCompoundId.getSequenceNum()); // semantics may not be explicit enough
                 };
                 GobiiFileItemCompoundId.prototype.getExtractorItemType = function () {
                     return this._extractorItemType;

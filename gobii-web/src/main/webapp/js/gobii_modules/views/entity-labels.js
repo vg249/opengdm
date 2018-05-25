@@ -38,6 +38,7 @@ System.register(["../model/type-entity", "../model/cv-filter-type", "../model/ty
                     this.entityNodeLabels[type_entity_1.EntityType.UNKNOWN] = "UNKNOWN";
                     this.cvFilterNodeLabels[cv_filter_type_1.CvFilterType.DATASET_TYPE] = "Dataset Type";
                     this.cvFilterNodeLabels[cv_filter_type_1.CvFilterType.JOB_STATUS] = "Job Status";
+                    this.entitySubtypeNodeLabels[type_entity_1.EntitySubType.UNKNOWN] = "UNKOWN";
                     this.entitySubtypeNodeLabels[type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR] = "Principle Investigator";
                     this.entitySubtypeNodeLabels[type_entity_1.EntitySubType.CONTACT_SUBMITED_BY] = "Submit As";
                     this.extractorFilterTypeLabels[type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET] = "By Dataset";

@@ -15,10 +15,10 @@ public class VertexDTO extends DTOBase{
     public VertexDTO() {}
 
 
-    public VertexDTO(Integer vertexId, String vertexName, String gobiiEntityNameTypeName, String cvGroupName) {
+    public VertexDTO(Integer vertexId, String vertexName, GobiiEntityNameType entityType, String cvGroupName) {
         this.vertexId = vertexId;
         this.vertexName = vertexName;
-        this.gobiiEntityNameTypeName = gobiiEntityNameTypeName;
+        this.entityType = entityType;
         this.cvGroupName = cvGroupName;
     }
 
@@ -36,7 +36,7 @@ public class VertexDTO extends DTOBase{
     private Integer vertexId = 0;
     private String vertexName;
     private List<Integer> filterVals = new ArrayList<>();
-    String gobiiEntityNameTypeName;
+    GobiiEntityNameType entityType;
     private String cvGroupName;
 
 
@@ -64,12 +64,12 @@ public class VertexDTO extends DTOBase{
         this.filterVals = filterVals;
     }
 
-    public String getGobiiEntityNameTypeName() {
-        return gobiiEntityNameTypeName;
+    public GobiiEntityNameType getEntityType() {
+        return entityType;
     }
 
-    public void setGobiiEntityNameTypeName(String gobiiEntityNameTypeName) {
-        this.gobiiEntityNameTypeName = gobiiEntityNameTypeName;
+    public void setEntityType(GobiiEntityNameType entityType) {
+        this.entityType = entityType;
     }
 
     public String getCvGroupName() {

@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/type-entity", "../../views/entity-labels", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/type-extract-format", "../../model/type-process", "../../store/actions/treenode-action", "@ngrx/store"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/type-entity", "../../views/entity-labels", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/type-extract-format", "../../model/type-process", "../../store/actions/treenode-action", "@ngrx/store", "rxjs/Observable"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, gobii_tree_node_1, type_entity_1, entity_labels_1, type_extractor_item_1, type_extractor_filter_1, cv_filter_type_1, type_extract_format_1, type_process_1, treeNodeActions, store_1, TreeStructureService;
+    var core_1, gobii_tree_node_1, type_entity_1, entity_labels_1, type_extractor_item_1, type_extractor_filter_1, cv_filter_type_1, type_extract_format_1, type_process_1, treeNodeActions, store_1, Observable_1, TreeStructureService;
     return {
         setters: [
             function (core_1_1) {
@@ -45,6 +45,9 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
             },
             function (store_1_1) {
                 store_1 = store_1_1;
+            },
+            function (Observable_1_1) {
+                Observable_1 = Observable_1_1;
             }
         ],
         execute: function () {
@@ -125,19 +128,19 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
                     ], this.makeCommonNodes(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY), [
                         gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_extractor_item_1.ExtractorItemType.VERTEX)
                             .setSequenceNum(1)
-                            .setEntityType(type_entity_1.EntityType.PROJECT)
+                            .setEntityType(type_entity_1.EntityType.UNKNOWN)
                             .setContainerType(gobii_tree_node_1.ContainerType.DATA),
                         gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_extractor_item_1.ExtractorItemType.VERTEX)
                             .setSequenceNum(2)
-                            .setEntityType(type_entity_1.EntityType.PROJECT)
+                            .setEntityType(type_entity_1.EntityType.UNKNOWN)
                             .setContainerType(gobii_tree_node_1.ContainerType.DATA),
                         gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_extractor_item_1.ExtractorItemType.VERTEX)
                             .setSequenceNum(3)
-                            .setEntityType(type_entity_1.EntityType.PROJECT)
+                            .setEntityType(type_entity_1.EntityType.UNKNOWN)
                             .setContainerType(gobii_tree_node_1.ContainerType.DATA),
                         gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_extractor_item_1.ExtractorItemType.VERTEX)
                             .setSequenceNum(4)
-                            .setEntityType(type_entity_1.EntityType.PROJECT)
+                            .setEntityType(type_entity_1.EntityType.UNKNOWN)
                             .setContainerType(gobii_tree_node_1.ContainerType.DATA),
                     ]); // array of gobii tree nodes
                     // we know we only have to go one level deep in this case -- no need to recurse
@@ -154,74 +157,68 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
                     treeNodes.forEach(function (tn) {
                         if ((tn.children === null) || (tn.children.length <= 0)) {
                             _this.addIconsToNode(tn, false);
-                            _this.applyLabel(tn);
+                            var label = _this.getLabel(tn.getItemType(), tn.getEntityType(), tn.getEntitySubType(), tn.getCvFilterType(), tn.getSequenceNum());
+                            tn.setLabel(label);
+                            tn.setGenericLabel(label);
                         }
                         else {
                             _this.setTreeNodeProperties(tn.children);
                         }
                     });
                 };
-                TreeStructureService.prototype.applyLabel = function (gobiiTreeNode) {
+                TreeStructureService.prototype.getLabel = function (itemType, entityType, entitySubType, cvFilterType, sequenceNum) {
                     var labelValue = null;
-                    if (gobiiTreeNode.getItemType() === type_extractor_item_1.ExtractorItemType.ENTITY) {
-                        if (gobiiTreeNode.getEntitySubType() === type_entity_1.EntitySubType.UNKNOWN) {
-                            if (gobiiTreeNode.getEntityType() !== type_entity_1.EntityType.CV) {
-                                labelValue = entity_labels_1.Labels.instance().entityNodeLabels[gobiiTreeNode.getEntityType()];
-                            }
-                            else {
-                                labelValue = entity_labels_1.Labels.instance().cvFilterNodeLabels[gobiiTreeNode.getCvFilterType()];
-                            }
-                        }
-                        else {
-                            labelValue = entity_labels_1.Labels.instance().entitySubtypeNodeLabels[gobiiTreeNode.getEntitySubType()];
-                        }
+                    if (itemType === type_extractor_item_1.ExtractorItemType.ENTITY) {
+                        labelValue = this.getEntityLabel(entityType, entitySubType, cvFilterType);
                     }
-                    else if (gobiiTreeNode.getItemType() === type_extractor_item_1.ExtractorItemType.VERTEX) {
-                        labelValue = "Filter " + gobiiTreeNode.getSequenceNum().toString();
+                    else if (itemType === type_extractor_item_1.ExtractorItemType.VERTEX) {
+                        labelValue = "Filter " + sequenceNum.toString();
+                        if (entityType !== null && entityType !== type_entity_1.EntityType.UNKNOWN) {
+                            labelValue += ": " + this.getEntityLabel(entityType, entitySubType, cvFilterType);
+                        }
                     }
                     else {
-                        labelValue = entity_labels_1.Labels.instance().treeExtractorTypeLabels[gobiiTreeNode.getItemType()];
+                        labelValue = entity_labels_1.Labels.instance().treeExtractorTypeLabels[itemType];
                     }
-                    gobiiTreeNode.setGenericLabel(labelValue);
-                    gobiiTreeNode.setLabel(labelValue);
+                    return labelValue;
                 };
-                TreeStructureService.prototype.getEntityIcon = function (gobiiFileItemCompoundId) {
+                TreeStructureService.prototype.getEntityIcon = function (entityType, cvFilterType) {
                     var icon;
                     var expandedIcon;
                     var collapsedIcon;
-                    if (gobiiFileItemCompoundId.getEntityType() === type_entity_1.EntityType.DATASET) {
+                    if (entityType === type_entity_1.EntityType.DATASET) {
                         icon = "fa-database";
                         expandedIcon = "fa-folder-expanded";
                         collapsedIcon = "fa-database";
                     }
-                    else if (gobiiFileItemCompoundId.getEntityType() === type_entity_1.EntityType.CONTACT) {
+                    else if (entityType === type_entity_1.EntityType.CONTACT) {
                         icon = "fa-user-o";
                         expandedIcon = "fa-user-o";
                         collapsedIcon = "fa-user-o";
                     }
-                    else if (gobiiFileItemCompoundId.getEntityType() === type_entity_1.EntityType.MAPSET) {
+                    else if (entityType === type_entity_1.EntityType.MAPSET) {
                         icon = "fa-map-o";
                         expandedIcon = "fa-map-o";
                         collapsedIcon = "fa-map-o";
                     }
-                    else if (gobiiFileItemCompoundId.getEntityType() === type_entity_1.EntityType.PLATFORM) {
+                    else if (entityType === type_entity_1.EntityType.PLATFORM) {
                         icon = "fa-calculator";
                         expandedIcon = "fa-calculator";
                         collapsedIcon = "fa-calculator";
                     }
-                    else if (gobiiFileItemCompoundId.getEntityType() === type_entity_1.EntityType.PROJECT) {
+                    else if (entityType === type_entity_1.EntityType.PROJECT) {
                         icon = "fa-clipboard";
                         expandedIcon = "fa-clipboard";
                         collapsedIcon = "fa-clipboard";
                     }
-                    else if (gobiiFileItemCompoundId.getEntityType() === type_entity_1.EntityType.CV) {
-                        if (gobiiFileItemCompoundId.getCvFilterType() === cv_filter_type_1.CvFilterType.DATASET_TYPE) {
+                    else if (entityType === type_entity_1.EntityType.CV && cvFilterType !== null) {
+                        if (cvFilterType === cv_filter_type_1.CvFilterType.DATASET_TYPE) {
                             icon = "fa-file-excel-o";
                             expandedIcon = "fa-file-excel-o";
                             collapsedIcon = "fa-file-excel-o";
                         }
                     }
-                    else if (gobiiFileItemCompoundId.getEntityType() === type_entity_1.EntityType.MARKER_GROUP) {
+                    else if (entityType === type_entity_1.EntityType.MARKER_GROUP) {
                         // if (isParent) {
                         icon = "fa-pencil";
                         expandedIcon = "fa-pencil";
@@ -229,45 +226,20 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
                     }
                     return { icon: icon, expandedIcon: expandedIcon, collapsedIcon: collapsedIcon };
                 };
-                TreeStructureService.prototype.addEntityIconToNode = function (entityType, cvFilterType, treeNode) {
-                    if (entityType === type_entity_1.EntityType.DATASET) {
-                        treeNode.icon = "fa-database";
-                        treeNode.expandedIcon = "fa-folder-expanded";
-                        treeNode.collapsedIcon = "fa-database";
-                    }
-                    else if (entityType === type_entity_1.EntityType.CONTACT) {
-                        treeNode.icon = "fa-user-o";
-                        treeNode.expandedIcon = "fa-user-o";
-                        treeNode.collapsedIcon = "fa-user-o";
-                    }
-                    else if (entityType === type_entity_1.EntityType.MAPSET) {
-                        treeNode.icon = "fa-map-o";
-                        treeNode.expandedIcon = "fa-map-o";
-                        treeNode.collapsedIcon = "fa-map-o";
-                    }
-                    else if (entityType === type_entity_1.EntityType.PLATFORM) {
-                        treeNode.icon = "fa-calculator";
-                        treeNode.expandedIcon = "fa-calculator";
-                        treeNode.collapsedIcon = "fa-calculator";
-                    }
-                    else if (entityType === type_entity_1.EntityType.PROJECT) {
-                        treeNode.icon = "fa-clipboard";
-                        treeNode.expandedIcon = "fa-clipboard";
-                        treeNode.collapsedIcon = "fa-clipboard";
-                    }
-                    else if (entityType === type_entity_1.EntityType.CV) {
-                        if (cvFilterType === cv_filter_type_1.CvFilterType.DATASET_TYPE) {
-                            treeNode.icon = "fa-file-excel-o";
-                            treeNode.expandedIcon = "fa-file-excel-o";
-                            treeNode.collapsedIcon = "fa-file-excel-o";
+                TreeStructureService.prototype.getEntityLabel = function (entityType, entitySubType, cvFilterType) {
+                    var returnVal;
+                    if (entitySubType === type_entity_1.EntitySubType.UNKNOWN) {
+                        if (entityType !== type_entity_1.EntityType.CV) {
+                            returnVal = entity_labels_1.Labels.instance().entityNodeLabels[entityType];
+                        }
+                        else {
+                            returnVal = entity_labels_1.Labels.instance().cvFilterNodeLabels[cvFilterType];
                         }
                     }
-                    else if (entityType === type_entity_1.EntityType.MARKER_GROUP) {
-                        // if (isParent) {
-                        treeNode.icon = "fa-pencil";
-                        treeNode.expandedIcon = "fa-pencil";
-                        treeNode.collapsedIcon = "fa-pencil";
+                    else {
+                        returnVal = entity_labels_1.Labels.instance().entitySubtypeNodeLabels[entitySubType];
                     }
+                    return returnVal;
                 };
                 TreeStructureService.prototype.getIcons = function (gobiiFileItemCompoundId, isParent) {
                     var icon;
@@ -275,7 +247,7 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
                     var collapsedIcon;
                     if (gobiiFileItemCompoundId.getEntityType() != null
                         && gobiiFileItemCompoundId.getEntityType() != type_entity_1.EntityType.UNKNOWN) {
-                        var entityIcons = this.getEntityIcon(gobiiFileItemCompoundId);
+                        var entityIcons = this.getEntityIcon(gobiiFileItemCompoundId.getEntityType(), gobiiFileItemCompoundId.getCvFilterType());
                         icon = entityIcons.icon;
                         expandedIcon = entityIcons.expandedIcon;
                         collapsedIcon = entityIcons.collapsedIcon;
@@ -353,7 +325,9 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
                         .setEntitySubType(gobiiFileItem.getEntitySubType())
                         .setCvFilterType(gobiiFileItem.getCvFilterType());
                     this.addIconsToNode(returnVal, false);
-                    this.applyLabel(returnVal);
+                    var label = this.getLabel(returnVal.getItemType(), returnVal.getEntityType(), returnVal.getEntitySubType(), returnVal.getCvFilterType(), returnVal.getSequenceNum());
+                    returnVal.setLabel(label);
+                    returnVal.setGenericLabel(label);
                     this.addFileItemNameToNode(returnVal, gobiiFileItem);
                     return returnVal;
                 };
@@ -380,12 +354,28 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
                         }
                     }
                 };
+                TreeStructureService.prototype.makeUpdateTreeNodeAction = function (gobiiExtractFilterType, gobiiFileItemCompoundId) {
+                    var _this = this;
+                    return Observable_1.Observable.create(function (observer) {
+                        var label = _this.getLabel(gobiiFileItemCompoundId.getExtractorItemType(), gobiiFileItemCompoundId.getEntityType(), gobiiFileItemCompoundId.getEntitySubType(), gobiiFileItemCompoundId.getCvFilterType(), gobiiFileItemCompoundId.getSequenceNum());
+                        var icons = _this.getIcons(gobiiFileItemCompoundId, false);
+                        observer.next(new treeNodeActions.SetTreeNodeLook({
+                            gobiiExtractFilterType: gobiiExtractFilterType,
+                            gobiiFileItemCompoundId: gobiiFileItemCompoundId,
+                            icons: icons,
+                            label: label,
+                            entityType: gobiiFileItemCompoundId.getEntityType()
+                        }));
+                    });
+                };
                 TreeStructureService.prototype.markTreeItemMissing = function (gobiiExtractFilterType, gobiiFileItemCompoundId) {
                     var icon = "fa-share";
                     this.store.dispatch(new treeNodeActions.SetTreeNodeLook({
                         gobiiExtractFilterType: gobiiExtractFilterType,
                         gobiiFileItemCompoundId: gobiiFileItemCompoundId,
-                        icon: icon
+                        icons: icon,
+                        label: null,
+                        entityType: null
                     }));
                 };
                 TreeStructureService.prototype.unMarkTreeItemMissing = function (gobiiExtractFilterType, gobiiFileItemCompoundId) {
@@ -393,7 +383,9 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
                     this.store.dispatch(new treeNodeActions.SetTreeNodeLook({
                         gobiiExtractFilterType: gobiiExtractFilterType,
                         gobiiFileItemCompoundId: gobiiFileItemCompoundId,
-                        icon: icons.icon
+                        icons: icons.icon,
+                        label: null,
+                        entityType: null
                     }));
                 };
                 TreeStructureService = __decorate([

@@ -4,7 +4,7 @@ export class Vertex {
 
     constructor(public vertexId:number,
                 public vertexName:string,
-                public gobiiEntityNameTypeName:String,
+                public entityType:EntityType,
                 public cvGroupname:string,
                 public filterVals:string[]
                 ) {
