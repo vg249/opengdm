@@ -109,8 +109,6 @@ export class FilterParams {
                         private relatedEntityUniqueId: GobiiFileItemCompoundId,
                         private _queryName: string = null,
                         private _filterType: FilterType = FilterType.NONE,
-                       // private _targetEntityFilterValue: string = null,
-                       // private _relatedEntityFilterValue: string = null,
                         private _gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN,
                         private _nameIdLabelType: NameIdLabelType,
                         private _parentFileItemParams: FilterParams,

@@ -116,10 +116,7 @@ System.register(["./filter-type", "./type-entity", "./cv-filter-type", "./type-e
              */
             FilterParams = (function () {
                 function FilterParams(_entityType, //first four args are passed to base class ctor
-                    _entitySubType, _cvFilterType, _cvFilterValue, _extractorItemType, targetEntityUniqueId, relatedEntityUniqueId, _queryName, _filterType, 
-                    // private _targetEntityFilterValue: string = null,
-                    // private _relatedEntityFilterValue: string = null,
-                    _gobiiExtractFilterType, _nameIdLabelType, _parentFileItemParams, _childFileItemParams, _previousSiblingFileItemParams, _nextSiblingFileItemParams, _isDynamicFilterValue, _isDynamicDataLoad, _isPaged, _pageSize, _pageNum, _pagedQueryId, onLoadFilteredItemsAction, dtoRequestItem, dtoRequestService) {
+                    _entitySubType, _cvFilterType, _cvFilterValue, _extractorItemType, targetEntityUniqueId, relatedEntityUniqueId, _queryName, _filterType, _gobiiExtractFilterType, _nameIdLabelType, _parentFileItemParams, _childFileItemParams, _previousSiblingFileItemParams, _nextSiblingFileItemParams, _isDynamicFilterValue, _isDynamicDataLoad, _isPaged, _pageSize, _pageNum, _pagedQueryId, onLoadFilteredItemsAction, dtoRequestItem, dtoRequestService) {
                     if (_entityType === void 0) { _entityType = type_entity_1.EntityType.UNKNOWN; }
                     if (_entitySubType === void 0) { _entitySubType = type_entity_1.EntitySubType.UNKNOWN; }
                     if (_cvFilterType === void 0) { _cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN; }
