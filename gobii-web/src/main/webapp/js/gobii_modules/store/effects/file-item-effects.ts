@@ -368,15 +368,15 @@ export class FileItemEffects {
             }
         );
 
-    @Effect()
-    loadFilter = this.actions$
-        .ofType(fileItemActions.LOAD_FILTER)
-        .switchMap((action: fileItemActions.LoadFilterAction) => {
-                //set tree node
-                return this.treeStructureService.makeUpdateTreeNodeAction(action.payload.filter.gobiiExtractFilterType,
-                    action.payload.filter.targetEntityUniqueId);
-            }
-        );
+    // @Effect()
+    // loadFilter = this.actions$
+    //     .ofType(fileItemActions.LOAD_FILTER)
+    //     .switchMap((action: fileItemActions.LoadFilterAction) => {
+    //             //set tree node
+    //             return this.treeStructureService.makeUpdateTreeNodeAction(action.payload.filter.gobiiExtractFilterType,
+    //                 action.payload.filter.targetEntityUniqueId);
+    //         }
+    //     );
 
 
 

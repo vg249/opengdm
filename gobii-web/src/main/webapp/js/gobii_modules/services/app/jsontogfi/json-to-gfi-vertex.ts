@@ -22,16 +22,17 @@ export class JsonToGfiVertex implements JsonToGfi {
     public convert(jsonItem): GobiiFileItem {
 
 
-        let vertex:Vertex = new Vertex(
+        let entityType: EntityType = entityTypefromString(jsonItem.entityType);
+        let vertex: Vertex = new Vertex(
             jsonItem.vertexId,
             jsonItem.vertexName,
-            jsonItem.entityType,
+            entityType,
             jsonItem.cvGroupName,
             []
         );
 
 
-        let returnVal:GobiiFileItem =
+        let returnVal: GobiiFileItem =
             GobiiFileItem.build(GobiiExtractFilterType.UNKNOWN, ProcessType.READ)
                 .setExtractorItemType(ExtractorItemType.VERTEX)
                 .setEntityType(vertex.entityType)

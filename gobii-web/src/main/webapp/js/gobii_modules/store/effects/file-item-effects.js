@@ -66,6 +66,15 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
         ],
         execute: function () {
             FileItemEffects = (function () {
+                // @Effect()
+                // loadFilter = this.actions$
+                //     .ofType(fileItemActions.LOAD_FILTER)
+                //     .switchMap((action: fileItemActions.LoadFilterAction) => {
+                //             //set tree node
+                //             return this.treeStructureService.makeUpdateTreeNodeAction(action.payload.filter.gobiiExtractFilterType,
+                //                 action.payload.filter.targetEntityUniqueId);
+                //         }
+                //     );
                 function FileItemEffects(actions$, treeStructureService, fileItemService, store, filterParamsColl, router) {
                     var _this = this;
                     this.actions$ = actions$;
@@ -342,12 +351,6 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                         .map(function (action) {
                         return new treeNodeActions.SelectExtractType(action.payload.gobiiExtractFilterType);
                     });
-                    this.loadFilter = this.actions$
-                        .ofType(fileItemActions.LOAD_FILTER)
-                        .switchMap(function (action) {
-                        //set tree node
-                        return _this.treeStructureService.makeUpdateTreeNodeAction(action.payload.filter.gobiiExtractFilterType, action.payload.filter.targetEntityUniqueId);
-                    });
                 }
                 __decorate([
                     effects_1.Effect(),
@@ -389,10 +392,6 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                     effects_1.Effect(),
                     __metadata("design:type", Object)
                 ], FileItemEffects.prototype, "setExtractType", void 0);
-                __decorate([
-                    effects_1.Effect(),
-                    __metadata("design:type", Object)
-                ], FileItemEffects.prototype, "loadFilter", void 0);
                 FileItemEffects = __decorate([
                     core_1.Injectable(),
                     __metadata("design:paramtypes", [effects_1.Actions,

@@ -368,6 +368,17 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
                         }));
                     });
                 };
+                TreeStructureService.prototype.updateTreeNode = function (gobiiExtractFilterType, gobiiFileItemCompoundId) {
+                    var label = this.getLabel(gobiiFileItemCompoundId.getExtractorItemType(), gobiiFileItemCompoundId.getEntityType(), gobiiFileItemCompoundId.getEntitySubType(), gobiiFileItemCompoundId.getCvFilterType(), gobiiFileItemCompoundId.getSequenceNum());
+                    var icons = this.getIcons(gobiiFileItemCompoundId, false);
+                    this.store.dispatch(new treeNodeActions.SetTreeNodeLook({
+                        gobiiExtractFilterType: gobiiExtractFilterType,
+                        gobiiFileItemCompoundId: gobiiFileItemCompoundId,
+                        icons: icons,
+                        label: label,
+                        entityType: gobiiFileItemCompoundId.getEntityType()
+                    }));
+                };
                 TreeStructureService.prototype.markTreeItemMissing = function (gobiiExtractFilterType, gobiiFileItemCompoundId) {
                     var icon = "fa-share";
                     this.store.dispatch(new treeNodeActions.SetTreeNodeLook({

@@ -36,7 +36,7 @@ public class VertexDTO extends DTOBase{
     private Integer vertexId = 0;
     private String vertexName;
     private List<Integer> filterVals = new ArrayList<>();
-    GobiiEntityNameType entityType;
+    private GobiiEntityNameType entityType;
     private String cvGroupName;
 
 

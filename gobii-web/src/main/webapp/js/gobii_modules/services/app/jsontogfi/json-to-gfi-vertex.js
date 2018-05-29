@@ -1,11 +1,14 @@
-System.register(["../../../model/gobii-file-item", "../../../model/type-extractor-item", "../../../model/type-process", "../../../model/type-extractor-filter", "../../../model/vertex"], function (exports_1, context_1) {
+System.register(["../../../model/gobii-file-item", "../../../model/type-entity", "../../../model/type-extractor-item", "../../../model/type-process", "../../../model/type-extractor-filter", "../../../model/vertex"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var gobii_file_item_1, type_extractor_item_1, type_process_1, type_extractor_filter_1, vertex_1, JsonToGfiVertex;
+    var gobii_file_item_1, type_entity_1, type_extractor_item_1, type_process_1, type_extractor_filter_1, vertex_1, JsonToGfiVertex;
     return {
         setters: [
             function (gobii_file_item_1_1) {
                 gobii_file_item_1 = gobii_file_item_1_1;
+            },
+            function (type_entity_1_1) {
+                type_entity_1 = type_entity_1_1;
             },
             function (type_extractor_item_1_1) {
                 type_extractor_item_1 = type_extractor_item_1_1;
@@ -29,7 +32,8 @@ System.register(["../../../model/gobii-file-item", "../../../model/type-extracto
                     this._filterParamsColl = _filterParamsColl;
                 } //ctor
                 JsonToGfiVertex.prototype.convert = function (jsonItem) {
-                    var vertex = new vertex_1.Vertex(jsonItem.vertexId, jsonItem.vertexName, jsonItem.entityType, jsonItem.cvGroupName, []);
+                    var entityType = type_entity_1.entityTypefromString(jsonItem.entityType);
+                    var vertex = new vertex_1.Vertex(jsonItem.vertexId, jsonItem.vertexName, entityType, jsonItem.cvGroupName, []);
                     var returnVal = gobii_file_item_1.GobiiFileItem.build(type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN, type_process_1.ProcessType.READ)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX)
                         .setEntityType(vertex.entityType)

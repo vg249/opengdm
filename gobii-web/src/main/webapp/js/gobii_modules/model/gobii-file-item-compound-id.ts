@@ -32,13 +32,19 @@ export class GobiiFileItemCompoundId {
     }
 
     public compoundIdeEquals(gobiiFileItemCompoundId: GobiiFileItemCompoundId): boolean {
-        return ( this.getExtractorItemType() === gobiiFileItemCompoundId.getExtractorItemType()
-            && this.getEntityType() === gobiiFileItemCompoundId.getEntityType()
-            && this.getEntitySubType() === gobiiFileItemCompoundId.getEntitySubType()
-            && this.getCvFilterType() === gobiiFileItemCompoundId.getCvFilterType()
-            && this.getCvFilterValue() === gobiiFileItemCompoundId.getCvFilterValue() )
-            && (this.getExtractorItemType() === gobiiFileItemCompoundId.getExtractorItemType() // for FlexQuery filter items
-                || this.getSequenceNum() === gobiiFileItemCompoundId.getSequenceNum() )        // semantics may not be explicit enough
+        return (
+
+            (this.getExtractorItemType() === gobiiFileItemCompoundId.getExtractorItemType() // for FlexQuery filter items
+                && this.getSequenceNum() > 0
+                && this.getSequenceNum() === gobiiFileItemCompoundId.getSequenceNum()
+            )
+
+            || (this.getExtractorItemType() === gobiiFileItemCompoundId.getExtractorItemType()
+                && this.getEntityType() === gobiiFileItemCompoundId.getEntityType()
+                && this.getEntitySubType() === gobiiFileItemCompoundId.getEntitySubType()
+                && this.getCvFilterType() === gobiiFileItemCompoundId.getCvFilterType()
+                && this.getCvFilterValue() === gobiiFileItemCompoundId.getCvFilterValue())
+        )
     }
 
 

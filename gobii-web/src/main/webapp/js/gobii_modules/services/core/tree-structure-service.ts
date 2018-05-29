@@ -144,7 +144,7 @@ export class TreeStructureService {
     private setTreeNodeProperties(treeNodes: GobiiTreeNode[]) {
 
         treeNodes.forEach(tn => {
-            if (( tn.children === null ) || ( tn.children.length <= 0  )) {
+            if ((tn.children === null) || (tn.children.length <= 0)) {
                 this.addIconsToNode(tn, false);
                 let label: string = this.getLabel(tn.getItemType(), tn.getEntityType(), tn.getEntitySubType(), tn.getCvFilterType(), tn.getSequenceNum());
                 tn.setLabel(label);
@@ -399,6 +399,28 @@ export class TreeStructureService {
                 }
             ));
         });
+    }
+
+
+    public updateTreeNode(gobiiExtractFilterType: GobiiExtractFilterType,
+                          gobiiFileItemCompoundId: GobiiFileItemCompoundId) {
+
+
+        let label: string = this.getLabel(gobiiFileItemCompoundId.getExtractorItemType(),
+            gobiiFileItemCompoundId.getEntityType(),
+            gobiiFileItemCompoundId.getEntitySubType(),
+            gobiiFileItemCompoundId.getCvFilterType(),
+            gobiiFileItemCompoundId.getSequenceNum());
+
+        let icons: any = this.getIcons(gobiiFileItemCompoundId, false);
+
+        this.store.dispatch(new treeNodeActions.SetTreeNodeLook({
+            gobiiExtractFilterType: gobiiExtractFilterType,
+            gobiiFileItemCompoundId: gobiiFileItemCompoundId,
+            icons: icons,
+            label: label,
+            entityType: gobiiFileItemCompoundId.getEntityType()
+        }));
     }
 
     public markTreeItemMissing(gobiiExtractFilterType: GobiiExtractFilterType, gobiiFileItemCompoundId: GobiiFileItemCompoundId) {

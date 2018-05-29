@@ -81,6 +81,8 @@ export class FlexQueryService {
             );
 
             this.store.dispatch(targetFilterloadAction);
+            this.treeStructureService.updateTreeNode(GobiiExtractFilterType.FLEX_QUERY,
+                filterParams.getTargetEntityUniqueId());
 
 
             // propagate null filter to child
