@@ -373,7 +373,7 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
                     this.store.dispatch(new treeNodeActions.SetTreeNodeLook({
                         gobiiExtractFilterType: gobiiExtractFilterType,
                         gobiiFileItemCompoundId: gobiiFileItemCompoundId,
-                        icons: icon,
+                        icons: { icon: icon },
                         label: null,
                         entityType: null
                     }));
@@ -383,7 +383,7 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
                     this.store.dispatch(new treeNodeActions.SetTreeNodeLook({
                         gobiiExtractFilterType: gobiiExtractFilterType,
                         gobiiFileItemCompoundId: gobiiFileItemCompoundId,
-                        icons: icons.icon,
+                        icons: icons,
                         label: null,
                         entityType: null
                     }));

@@ -410,7 +410,7 @@ export class TreeStructureService {
             {
                 gobiiExtractFilterType: gobiiExtractFilterType,
                 gobiiFileItemCompoundId: gobiiFileItemCompoundId,
-                icons: icon,
+                icons: {icon: icon},
                 label: null,
                 entityType: null
             }
@@ -425,7 +425,7 @@ export class TreeStructureService {
             {
                 gobiiExtractFilterType: gobiiExtractFilterType,
                 gobiiFileItemCompoundId: gobiiFileItemCompoundId,
-                icons: icons.icon,
+                icons: icons,
                 label: null,
                 entityType: null
             }

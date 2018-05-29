@@ -362,6 +362,8 @@ import {FlexQueryService} from "../services/core/flex-query-service";
                                 </div>
                                 <div class="panel-body">
                                     <status-display-tree
+                                            (mouseenter)="handleOnMouseOverSubmit($event,true)"
+                                            (mouseleave)="handleOnMouseOverSubmit($event,false)"
                                             [fileItemEventChange]="treeFileItemEvent"
                                             [gobiiExtractFilterTypeEvent]="gobiiExtractFilterType"
                                             (onAddMessage)="handleHeaderStatusMessage($event)">
@@ -372,6 +374,7 @@ import {FlexQueryService} from "../services/core/flex-query-service";
                                     <button type="submit"
                                             [class]="submitButtonStyle"
                                             [disabled]="submitButtonStyle === buttonStyleSubmitNotReady"
+                                            (mouseover)="handleOnMouseOverSubmit($event,true)"
                                             (mouseenter)="handleOnMouseOverSubmit($event,true)"
                                             (mouseleave)="handleOnMouseOverSubmit($event,false)"
                                             (click)="handleExtractSubmission()">Submit

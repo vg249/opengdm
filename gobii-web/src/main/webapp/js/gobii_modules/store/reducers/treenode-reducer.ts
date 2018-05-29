@@ -202,29 +202,41 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
 
             const gobiiExtractFilterType: GobiiExtractFilterType = action.payload.gobiiExtractFilterType;
             const gobiiFileItemCompoundId: GobiiFileItemCompoundId = action.payload.gobiiFileItemCompoundId;
-            const icon: string = action.payload.icons.icon;
-            const expandedIcon: string = action.payload.icons.expandedIcon;
-            const collapsedIcon: string = action.payload.icons.collapsedIcon;
-            const label: string = action.payload.label;
-            const entityType: EntityType = action.payload.entityType;
-
             const newTreeNodesState = state.gobiiTreeNodes.slice();
-
             let treeNodeToMutate: GobiiTreeNode = findTreeNodeByCompoundId(newTreeNodesState,
                 gobiiExtractFilterType,
                 gobiiFileItemCompoundId);
 
-            treeNodeToMutate.icon = icon;
-            treeNodeToMutate.expandedIcon = expandedIcon;
-            treeNodeToMutate.collapsedIcon = collapsedIcon;
-            treeNodeToMutate.label = label ? label : treeNodeToMutate.label;
-            treeNodeToMutate.setEntityType(entityType ? entityType : treeNodeToMutate.getEntityType());
+            if( treeNodeToMutate ) {
 
-            returnVal = {
-                gobiiExtractFilterType: state.gobiiExtractFilterType,
-                gobiiTreeNodesActive: state.gobiiTreeNodesActive,
-                gobiiTreeNodes: newTreeNodesState
-            };
+                const icon: string = action.payload.icons.icon;
+                const expandedIcon: string = action.payload.icons.expandedIcon;
+                const collapsedIcon: string = action.payload.icons.collapsedIcon;
+                const label: string = action.payload.label;
+                const entityType: EntityType = action.payload.entityType;
+
+
+                treeNodeToMutate.icon = icon ? icon : treeNodeToMutate.icon;
+                treeNodeToMutate.expandedIcon = expandedIcon ? expandedIcon : treeNodeToMutate.expandedIcon;
+                treeNodeToMutate.collapsedIcon = collapsedIcon ? collapsedIcon : treeNodeToMutate.collapsedIcon;
+                treeNodeToMutate.label = label ? label : treeNodeToMutate.label;
+                treeNodeToMutate.setEntityType(entityType ? entityType : treeNodeToMutate.getEntityType());
+
+                returnVal = {
+                    gobiiExtractFilterType: state.gobiiExtractFilterType,
+                    gobiiTreeNodesActive: state.gobiiTreeNodesActive,
+                    gobiiTreeNodes: newTreeNodesState
+                };
+
+            } else {
+
+                returnVal = {
+                    gobiiExtractFilterType: state.gobiiExtractFilterType,
+                    gobiiTreeNodesActive: state.gobiiTreeNodesActive,
+                    gobiiTreeNodes: state.gobiiTreeNodes
+                };
+
+            }
 
             break;
 
