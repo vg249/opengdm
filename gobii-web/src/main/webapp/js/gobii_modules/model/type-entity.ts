@@ -19,7 +19,9 @@ export enum EntityType {
     MARKER,
     PROTOCOL,
     VENDORS_PROTOCOL,
-    GERMPLASM
+    GERMPLASM,
+    LINKAGE_GROUP,
+    DNA_SAMPLE
 }
 
 export const entityTypefromString = function (entityTypeName: String): EntityType {
