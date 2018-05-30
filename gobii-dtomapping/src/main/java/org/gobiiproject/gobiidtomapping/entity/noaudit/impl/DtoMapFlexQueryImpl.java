@@ -31,8 +31,8 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
         // mock values
         returnVal.add(new VertexDTO(1,"Projects", GobiiEntityNameType.PROJECT,null));
         returnVal.add(new VertexDTO(2,"Experiment", GobiiEntityNameType.EXPERIMENT,null));
-        returnVal.add(new VertexDTO(3,"Dataset Types", GobiiEntityNameType.CV, CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName()));
-        returnVal.add(new VertexDTO(5,"Analyses", GobiiEntityNameType.CV,CvGroup.CVGROUP_ANALYSIS_TYPE.getCvGroupName()));
+        returnVal.add(new VertexDTO(3,"Dataset Types", GobiiEntityNameType.CV, CvGroup.ANALYSIS_TYPE.getCvGroupName()));
+        returnVal.add(new VertexDTO(5,"Analyses", GobiiEntityNameType.CV,CvGroup.ANALYSIS_TYPE.getCvGroupName()));
         returnVal.add(new VertexDTO(6,"Vendor Protocols", GobiiEntityNameType.VENDOR_PROTOCOL,null));
         returnVal.add(new VertexDTO(7,"Platforms", GobiiEntityNameType.PLATFORM,null));
         returnVal.add(new VertexDTO(8,"Mapset/Linkage group", GobiiEntityNameType.MAPSET,null));

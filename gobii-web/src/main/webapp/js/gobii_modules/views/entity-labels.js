@@ -37,7 +37,7 @@ System.register(["../model/type-entity", "../model/cv-group", "../model/type-ext
                     this.entityNodeLabels[type_entity_1.EntityType.MARKER_GROUP] = "Marker Groups";
                     this.entityNodeLabels[type_entity_1.EntityType.UNKNOWN] = "UNKNOWN";
                     this.cvGroupLabels[cv_group_1.CvGroup.DATASET_TYPE] = "Dataset Type";
-                    this.cvGroupLabels[cv_group_1.CvGroup.JOB_STATUS] = "Job Status";
+                    this.cvGroupLabels[cv_group_1.CvGroup.JOBSTATUS] = "Job Status";
                     this.entitySubtypeNodeLabels[type_entity_1.EntitySubType.UNKNOWN] = "UNKOWN";
                     this.entitySubtypeNodeLabels[type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR] = "Principle Investigator";
                     this.entitySubtypeNodeLabels[type_entity_1.EntitySubType.CONTACT_SUBMITED_BY] = "Submit As";

@@ -1,9 +1,23 @@
 import {EntityType} from "./type-entity";
 
 export enum CvGroup {UNKNOWN,
-ANALYSIS_TYPE,
-DATASET_TYPE,
-JOB_STATUS};
+    JOBTYPE,
+    PAYLOADTYPE,
+    JOBSTATUS,
+    ANALYSIS_TYPE,
+    DATASET_TYPE,
+    DNARUN_PROP,
+    DNASAMPLE_PROP,
+    GERMPLASM_PROP,
+    GERMPLASM_SPECIES,
+    GERMPLASM_TYPE,
+    GOBII_DATAWAREHOUSE,
+    MAPSET_TYPE,
+    MARKER_PROP,
+    MARKER_STRAND,
+    PLATFORM_TYPE,
+    PROJECT_PROP,
+    STATUS};
 
 
 
@@ -19,7 +33,7 @@ export const getCvGroupName = function (cvGroup:CvGroup): string {
 
         returnVal = "dataset_type";
 
-    } else if(cvGroup === CvGroup.JOB_STATUS ) {
+    } else if(cvGroup === CvGroup.JOBSTATUS ) {
 
         returnVal = "job_status";
 

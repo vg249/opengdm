@@ -82,7 +82,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                     this.filterParams = [];
                     // ************************************************************************
                     // **************************** GENERAL  *********************************
-                    var cvJobStatusCompoundUniqueId = new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.CV, type_entity_1.EntitySubType.UNKNOWN, cv_group_1.CvGroup.JOB_STATUS, cv_group_1.getCvGroupName(cv_group_1.CvGroup.JOB_STATUS));
+                    var cvJobStatusCompoundUniqueId = new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.CV, type_entity_1.EntitySubType.UNKNOWN, cv_group_1.CvGroup.JOBSTATUS, cv_group_1.getCvGroupName(cv_group_1.CvGroup.JOBSTATUS));
                     // ************************************************************************
                     // **************************** BY SAMPLE *********************************
                     this.addFilter(filter_params_1.FilterParams

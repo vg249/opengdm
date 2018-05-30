@@ -65,8 +65,8 @@ export class FilterParamsColl {
             new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
                 EntityType.CV,
                 EntitySubType.UNKNOWN,
-                CvGroup.JOB_STATUS,
-                getCvGroupName(CvGroup.JOB_STATUS));
+                CvGroup.JOBSTATUS,
+                getCvGroupName(CvGroup.JOBSTATUS));
 
 
         // ************************************************************************

@@ -627,7 +627,7 @@ export const getCvTermsJobStatus = createSelector(getFileItems, getUniqueIds, (f
         (e.getExtractorItemType() === ExtractorItemType.ENTITY
             || e.getNameIdLabelType() !== NameIdLabelType.UNKNOWN)
         && e.getEntityType() === EntityType.CV
-        && e.getCvGroup() === CvGroup.JOB_STATUS)
+        && e.getCvGroup() === CvGroup.JOBSTATUS)
         .map(fi => fi);
 
     return returnVal;

@@ -483,7 +483,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                     return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
                         || e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
                         && e.getEntityType() === type_entity_1.EntityType.CV
-                        && e.getCvGroup() === cv_group_1.CvGroup.JOB_STATUS;
+                        && e.getCvGroup() === cv_group_1.CvGroup.JOBSTATUS;
                 })
                     .map(function (fi) { return fi; });
                 return returnVal;

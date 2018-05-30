@@ -29,7 +29,7 @@ export class Labels {
 
 
         this.cvGroupLabels[CvGroup.DATASET_TYPE] = "Dataset Type";
-        this.cvGroupLabels[CvGroup.JOB_STATUS] = "Job Status";
+        this.cvGroupLabels[CvGroup.JOBSTATUS] = "Job Status";
 
         this.entitySubtypeNodeLabels[EntitySubType.UNKNOWN] = "UNKOWN";
         this.entitySubtypeNodeLabels[EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR] = "Principle Investigator";
