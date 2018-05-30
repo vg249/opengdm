@@ -13,7 +13,7 @@ import "rxjs/add/operator/expand"
 import "rxjs/add/operator/concat"
 import {FilterParamsColl} from "./filter-params-coll";
 import {PayloadFilter} from "../../store/actions/action-payload-filter";
-import {CvFilterType} from "../../model/cv-filter-type";
+import {CvGroup} from "../../model/cv-group";
 import {Labels} from "../../views/entity-labels";
 import {HeaderStatusMessage} from "../../model/dto-header-status-message";
 import {ProcessType} from "../../model/type-process";
@@ -183,8 +183,8 @@ export class FilterService {
         if (filterParamsToLoad.getMameIdLabelType() != NameIdLabelType.UNKNOWN) {
 
             let entityName: string = "";
-            if (filterParamsToLoad.getCvFilterType() !== CvFilterType.UNKNOWN) {
-                entityName += Labels.instance().cvFilterNodeLabels[filterParamsToLoad.getCvFilterType()];
+            if (filterParamsToLoad.getCvGroup() !== CvGroup.UNKNOWN) {
+                entityName += Labels.instance().cvGroupLabels[filterParamsToLoad.getCvGroup()];
             } else if (filterParamsToLoad.getEntitySubType() !== EntitySubType.UNKNOWN) {
                 entityName += Labels.instance().entitySubtypeNodeLabels[filterParamsToLoad.getEntitySubType()];
             } else if (filterParamsToLoad.getEntityType() != EntityType.UNKNOWN) {
@@ -220,7 +220,7 @@ export class FilterService {
                 .build(gobiiExtractFilterType, ProcessType.CREATE)
                 .setEntityType(filterParamsToLoad.getEntityType())
                 .setEntitySubType(filterParamsToLoad.getEntitySubType())
-                .setCvFilterType(filterParamsToLoad.getCvFilterType())
+                .setCvGroup(filterParamsToLoad.getCvGroup())
                 .setExtractorItemType(ExtractorItemType.UNKNOWN)
                 .setNameIdLabelType(filterParamsToLoad.getMameIdLabelType())
                 .setItemName(label)

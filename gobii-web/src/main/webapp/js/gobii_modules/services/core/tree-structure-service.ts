@@ -4,7 +4,7 @@ import {EntitySubType, EntityType} from "../../model/type-entity";
 import {Labels} from "../../views/entity-labels";
 import {ExtractorItemType} from "../../model/type-extractor-item";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
-import {CvFilterType} from "../../model/cv-filter-type";
+import {CvGroup} from "../../model/cv-group";
 import {GobiiFileItem} from "../../model/gobii-file-item";
 import {GobiiExtractFormat} from "../../model/type-extract-format";
 import {ProcessType} from "../../model/type-process";
@@ -65,7 +65,7 @@ export class TreeStructureService {
             ...this.makeCommonNodes(GobiiExtractFilterType.BY_SAMPLE),
             GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.ENTITY)
                 .setEntityType(EntityType.CV)
-                .setCvFilterType(CvFilterType.DATASET_TYPE),
+                .setCvGroup(CvGroup.DATASET_TYPE),
             GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.SAMPLE_LIST_TYPE),
             GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.ENTITY)
                 .setEntityType(EntityType.PLATFORM)
@@ -92,7 +92,7 @@ export class TreeStructureService {
             ...this.makeCommonNodes(GobiiExtractFilterType.BY_MARKER),
             GobiiTreeNode.build(GobiiExtractFilterType.BY_MARKER, ExtractorItemType.ENTITY)
                 .setEntityType(EntityType.CV)
-                .setCvFilterType(CvFilterType.DATASET_TYPE),
+                .setCvGroup(CvGroup.DATASET_TYPE),
             GobiiTreeNode.build(GobiiExtractFilterType.BY_MARKER, ExtractorItemType.TREE_STRUCTURE)
                 .setContainerType(ContainerType.STRUCTURE)
                 .setLabel("Markers Criteria")
@@ -146,7 +146,7 @@ export class TreeStructureService {
         treeNodes.forEach(tn => {
             if ((tn.children === null) || (tn.children.length <= 0)) {
                 this.addIconsToNode(tn, false);
-                let label: string = this.getLabel(tn.getItemType(), tn.getEntityType(), tn.getEntitySubType(), tn.getCvFilterType(), tn.getSequenceNum());
+                let label: string = this.getLabel(tn.getItemType(), tn.getEntityType(), tn.getEntitySubType(), tn.getCvGroup(), tn.getSequenceNum());
                 tn.setLabel(label);
                 tn.setGenericLabel(label);
             } else {
@@ -159,7 +159,7 @@ export class TreeStructureService {
     private getLabel(itemType: ExtractorItemType,
                      entityType: EntityType,
                      entitySubType: EntitySubType,
-                     cvFilterType: CvFilterType,
+                     cvFilterType: CvGroup,
                      sequenceNum: number): string {
 
         let labelValue: string = null;
@@ -183,7 +183,7 @@ export class TreeStructureService {
 
     }
 
-    private getEntityIcon(entityType: EntityType, cvFilterType: CvFilterType): { icon: string, expandedIcon: string, collapsedIcon: string } {
+    private getEntityIcon(entityType: EntityType, cvFilterType: CvGroup): { icon: string, expandedIcon: string, collapsedIcon: string } {
 
         let icon: string;
         let expandedIcon: string;
@@ -221,7 +221,7 @@ export class TreeStructureService {
 
         } else if (entityType === EntityType.CV && cvFilterType !== null) {
 
-            if (cvFilterType === CvFilterType.DATASET_TYPE) {
+            if (cvFilterType === CvGroup.DATASET_TYPE) {
                 icon = "fa-file-excel-o";
                 expandedIcon = "fa-file-excel-o";
                 collapsedIcon = "fa-file-excel-o";
@@ -240,7 +240,7 @@ export class TreeStructureService {
     }
 
 
-    private getEntityLabel(entityType: EntityType, entitySubType: EntitySubType, cvFilterType: CvFilterType) {
+    private getEntityLabel(entityType: EntityType, entitySubType: EntitySubType, cvFilterType: CvGroup) {
 
         let returnVal: string;
 
@@ -249,7 +249,7 @@ export class TreeStructureService {
             if (entityType !== EntityType.CV) {
                 returnVal = Labels.instance().entityNodeLabels[entityType];
             } else {
-                returnVal = Labels.instance().cvFilterNodeLabels[cvFilterType];
+                returnVal = Labels.instance().cvGroupLabels[cvFilterType];
             }
         } else {
             returnVal = Labels.instance().entitySubtypeNodeLabels[entitySubType];
@@ -268,7 +268,7 @@ export class TreeStructureService {
         if (gobiiFileItemCompoundId.getEntityType() != null
             && gobiiFileItemCompoundId.getEntityType() != EntityType.UNKNOWN) {
 
-            let entityIcons = this.getEntityIcon(gobiiFileItemCompoundId.getEntityType(), gobiiFileItemCompoundId.getCvFilterType());
+            let entityIcons = this.getEntityIcon(gobiiFileItemCompoundId.getEntityType(), gobiiFileItemCompoundId.getCvGroup());
             icon = entityIcons.icon;
             expandedIcon = entityIcons.expandedIcon;
             collapsedIcon = entityIcons.collapsedIcon;
@@ -345,10 +345,10 @@ export class TreeStructureService {
             .setFileItemId(gobiiFileItem.getFileItemUniqueId())
             .setEntityType(gobiiFileItem.getEntityType())
             .setEntitySubType(gobiiFileItem.getEntitySubType())
-            .setCvFilterType(gobiiFileItem.getCvFilterType());
+            .setCvGroup(gobiiFileItem.getCvGroup());
 
         this.addIconsToNode(returnVal, false);
-        let label: string = this.getLabel(returnVal.getItemType(), returnVal.getEntityType(), returnVal.getEntitySubType(), returnVal.getCvFilterType(), returnVal.getSequenceNum())
+        let label: string = this.getLabel(returnVal.getItemType(), returnVal.getEntityType(), returnVal.getEntitySubType(), returnVal.getCvGroup(), returnVal.getSequenceNum())
         returnVal.setLabel(label);
         returnVal.setGenericLabel(label)
         this.addFileItemNameToNode(returnVal, gobiiFileItem);
@@ -385,7 +385,7 @@ export class TreeStructureService {
             let label: string = this.getLabel(gobiiFileItemCompoundId.getExtractorItemType(),
                 gobiiFileItemCompoundId.getEntityType(),
                 gobiiFileItemCompoundId.getEntitySubType(),
-                gobiiFileItemCompoundId.getCvFilterType(),
+                gobiiFileItemCompoundId.getCvGroup(),
                 gobiiFileItemCompoundId.getSequenceNum());
 
             let icons: any = this.getIcons(gobiiFileItemCompoundId, false);
@@ -409,7 +409,7 @@ export class TreeStructureService {
         let label: string = this.getLabel(gobiiFileItemCompoundId.getExtractorItemType(),
             gobiiFileItemCompoundId.getEntityType(),
             gobiiFileItemCompoundId.getEntitySubType(),
-            gobiiFileItemCompoundId.getCvFilterType(),
+            gobiiFileItemCompoundId.getCvGroup(),
             gobiiFileItemCompoundId.getSequenceNum());
 
         let icons: any = this.getIcons(gobiiFileItemCompoundId, false);

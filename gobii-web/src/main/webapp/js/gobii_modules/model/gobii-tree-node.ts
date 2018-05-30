@@ -1,6 +1,6 @@
 import {TreeNode} from "primeng/components/common/api";
 import {EntitySubType, EntityType} from "./type-entity";
-import {CvFilterType} from "./cv-filter-type";
+import {CvGroup} from "./cv-group";
 import {Guid} from "./guid";
 import {GobiiExtractFilterType} from "./type-extractor-filter";
 import {ExtractorItemType} from "./type-extractor-item";
@@ -77,12 +77,12 @@ export class GobiiTreeNode extends GobiiFileItemCompoundId implements TreeNode {
         return this;
     }
 
-    getCvFilterType(): CvFilterType {
-        return super.getCvFilterType();
+    getCvGroup(): CvGroup {
+        return super.getCvGroup();
     }
 
-    setCvFilterType(value: CvFilterType): GobiiTreeNode {
-        super.setCvFilterType(value);
+    setCvGroup(value: CvGroup): GobiiTreeNode {
+        super.setCvGroup(value);
         return this;
     }
 

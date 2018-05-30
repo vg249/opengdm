@@ -1,14 +1,14 @@
-System.register(["../model/type-entity", "../model/cv-filter-type", "../model/type-extractor-filter", "../model//type-extractor-item", "../model/type-extract-format"], function (exports_1, context_1) {
+System.register(["../model/type-entity", "../model/cv-group", "../model/type-extractor-filter", "../model//type-extractor-item", "../model/type-extract-format"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var type_entity_1, cv_filter_type_1, type_extractor_filter_1, type_extractor_item_1, type_extract_format_1, Labels;
+    var type_entity_1, cv_group_1, type_extractor_filter_1, type_extractor_item_1, type_extract_format_1, Labels;
     return {
         setters: [
             function (type_entity_1_1) {
                 type_entity_1 = type_entity_1_1;
             },
-            function (cv_filter_type_1_1) {
-                cv_filter_type_1 = cv_filter_type_1_1;
+            function (cv_group_1_1) {
+                cv_group_1 = cv_group_1_1;
             },
             function (type_extractor_filter_1_1) {
                 type_extractor_filter_1 = type_extractor_filter_1_1;
@@ -25,7 +25,7 @@ System.register(["../model/type-entity", "../model/cv-filter-type", "../model/ty
                 function Labels() {
                     this.entityNodeLabels = new Map();
                     this.entitySubtypeNodeLabels = new Map();
-                    this.cvFilterNodeLabels = new Map();
+                    this.cvGroupLabels = new Map();
                     this.extractorFilterTypeLabels = new Map();
                     this.treeExtractorTypeLabels = new Map();
                     this.extractFormatTypeLabels = new Map();
@@ -36,8 +36,8 @@ System.register(["../model/type-entity", "../model/cv-filter-type", "../model/ty
                     this.entityNodeLabels[type_entity_1.EntityType.EXPERIMENT] = "Experiment";
                     this.entityNodeLabels[type_entity_1.EntityType.MARKER_GROUP] = "Marker Groups";
                     this.entityNodeLabels[type_entity_1.EntityType.UNKNOWN] = "UNKNOWN";
-                    this.cvFilterNodeLabels[cv_filter_type_1.CvFilterType.DATASET_TYPE] = "Dataset Type";
-                    this.cvFilterNodeLabels[cv_filter_type_1.CvFilterType.JOB_STATUS] = "Job Status";
+                    this.cvGroupLabels[cv_group_1.CvGroup.DATASET_TYPE] = "Dataset Type";
+                    this.cvGroupLabels[cv_group_1.CvGroup.JOB_STATUS] = "Job Status";
                     this.entitySubtypeNodeLabels[type_entity_1.EntitySubType.UNKNOWN] = "UNKOWN";
                     this.entitySubtypeNodeLabels[type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR] = "Principle Investigator";
                     this.entitySubtypeNodeLabels[type_entity_1.EntitySubType.CONTACT_SUBMITED_BY] = "Submit As";

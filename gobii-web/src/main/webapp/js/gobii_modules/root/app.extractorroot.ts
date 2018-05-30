@@ -7,7 +7,7 @@ import {ServerConfig} from "../model/server-config";
 import {EntitySubType, EntityType} from "../model/type-entity";
 import {DtoRequestItemServerConfigs} from "../services/app/dto-request-item-serverconfigs";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
-import {CvFilterType} from "../model/cv-filter-type";
+import {CvGroup} from "../model/cv-group";
 import {ExtractorItemType} from "../model/type-extractor-item";
 import {GobiiExtractFormat} from "../model/type-extract-format";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
@@ -374,9 +374,6 @@ import {FlexQueryService} from "../services/core/flex-query-service";
                                     <button type="submit"
                                             [class]="submitButtonStyle"
                                             [disabled]="submitButtonStyle === buttonStyleSubmitNotReady"
-                                            (mouseover)="handleOnMouseOverSubmit($event,true)"
-                                            (mouseenter)="handleOnMouseOverSubmit($event,true)"
-                                            (mouseleave)="handleOnMouseOverSubmit($event,false)"
                                             (click)="handleExtractSubmission()">Submit
                                     </button>
 
@@ -525,7 +522,7 @@ export class ExtractorRoot implements OnInit {
                     this.nameIdFileItemService.loadFileItem(GobiiFileItem.build(scope$.gobiiExtractFilterType, ProcessType.CREATE)
                             .setEntityType(EntityType.CONTACT)
                             .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
-                            .setCvFilterType(CvFilterType.UNKNOWN)
+                            .setCvGroup(CvGroup.UNKNOWN)
                             .setExtractorItemType(ExtractorItemType.ENTITY)
                             .setItemName(contact.email)
                             .setItemId(contact.contactId.toLocaleString()),

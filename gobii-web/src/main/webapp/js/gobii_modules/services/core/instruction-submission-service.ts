@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {EntitySubType, EntityType} from "../../model/type-entity";
 import {ExtractorItemType} from "../../model/type-extractor-item";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
-import {CvFilterType} from "../../model/cv-filter-type";
+import {CvGroup} from "../../model/cv-group";
 import {GobiiFileItem} from "../../model/gobii-file-item";
 import {GobiiExtractFormat} from "../../model/type-extract-format";
 import * as fromRoot from '../../store/reducers';
@@ -32,7 +32,7 @@ export class InstructionSubmissionService {
         ExtractorItemType.ENTITY,
         EntityType.DATASET,
         EntitySubType.UNKNOWN,
-        CvFilterType.UNKNOWN,
+        CvGroup.UNKNOWN,
         null
     ), false);
 
@@ -40,7 +40,7 @@ export class InstructionSubmissionService {
         ExtractorItemType.SAMPLE_LIST_ITEM,
         EntityType.UNKNOWN,
         EntitySubType.UNKNOWN,
-        CvFilterType.UNKNOWN,
+        CvGroup.UNKNOWN,
         null
     ), false);
 
@@ -48,7 +48,7 @@ export class InstructionSubmissionService {
         ExtractorItemType.SAMPLE_FILE,
         EntityType.UNKNOWN,
         EntitySubType.UNKNOWN,
-        CvFilterType.UNKNOWN,
+        CvGroup.UNKNOWN,
         null
     ), false);
 
@@ -56,7 +56,7 @@ export class InstructionSubmissionService {
         ExtractorItemType.ENTITY,
         EntityType.CONTACT,
         EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR,
-        CvFilterType.UNKNOWN,
+        CvGroup.UNKNOWN,
         null
     ), false);
 
@@ -64,7 +64,7 @@ export class InstructionSubmissionService {
         ExtractorItemType.ENTITY,
         EntityType.PROJECT,
         EntitySubType.UNKNOWN,
-        CvFilterType.UNKNOWN,
+        CvGroup.UNKNOWN,
         null
     ), false);
 
@@ -72,7 +72,7 @@ export class InstructionSubmissionService {
         ExtractorItemType.ENTITY,
         EntityType.CV,
         EntitySubType.UNKNOWN,
-        CvFilterType.DATASET_TYPE,
+        CvGroup.DATASET_TYPE,
         null
     ), false);
 
@@ -81,7 +81,7 @@ export class InstructionSubmissionService {
         ExtractorItemType.MARKER_LIST_ITEM,
         EntityType.UNKNOWN,
         EntitySubType.UNKNOWN,
-        CvFilterType.UNKNOWN,
+        CvGroup.UNKNOWN,
         null
     ), false);
 
@@ -90,7 +90,7 @@ export class InstructionSubmissionService {
         ExtractorItemType.MARKER_FILE,
         EntityType.UNKNOWN,
         EntitySubType.UNKNOWN,
-        CvFilterType.UNKNOWN,
+        CvGroup.UNKNOWN,
         null
     ), false);
 
@@ -99,7 +99,7 @@ export class InstructionSubmissionService {
         ExtractorItemType.ENTITY,
         EntityType.MARKER_GROUP,
         EntitySubType.UNKNOWN,
-        CvFilterType.UNKNOWN,
+        CvGroup.UNKNOWN,
         null
     ), false);
 
@@ -107,7 +107,7 @@ export class InstructionSubmissionService {
         ExtractorItemType.ENTITY,
         EntityType.PLATFORM,
         EntitySubType.UNKNOWN,
-        CvFilterType.UNKNOWN,
+        CvGroup.UNKNOWN,
         null
     ), false);
 
@@ -408,7 +408,7 @@ export class InstructionSubmissionService {
                         // ******** DATA SET TYPE
                         let dataTypeFileItem: GobiiFileItem = fileItems.find(item => {
                             return item.getEntityType() === EntityType.CV
-                                && item.getCvFilterType() === CvFilterType.DATASET_TYPE
+                                && item.getCvGroup() === CvGroup.DATASET_TYPE
                         });
                         let datasetType: NameId = dataTypeFileItem != null ? new NameId(dataTypeFileItem.getItemId(), null,
                             dataTypeFileItem.getItemName(), EntityType.CV, null, null) : null;

@@ -21,7 +21,7 @@ import {FilterParams} from "../../model/filter-params";
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 import {EntitySubType, EntityType, entityTypefromString} from "../../model/type-entity";
 import {NameIdLabelType} from "../../model/name-id-label-type";
-import {CvFilters, CvFilterType} from "../../model/cv-filter-type";
+import {CvGroup, getCvGroupName} from "../../model/cv-group";
 import {FilterService} from "./filter-service";
 import {TreeStructureService} from "./tree-structure-service";
 import {GobiiTreeNode} from "../../model/gobii-tree-node";
@@ -245,8 +245,8 @@ export class FlexQueryService {
                         new GobiiFileItemCompoundId(ExtractorItemType.VERTEX_VALUE,
                             EntityType.UNKNOWN, // effectively "null out" the selected entity type
                             EntitySubType.UNKNOWN,
-                            CvFilterType.UNKNOWN,
-                            CvFilters.get(CvFilterType.UNKNOWN)),
+                            CvGroup.UNKNOWN,
+                            getCvGroupName(CvGroup.UNKNOWN)),
                         null,
                         null,
                         null,

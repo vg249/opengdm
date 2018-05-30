@@ -1,4 +1,4 @@
-System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem-action", "../../model/type-extractor-item", "../../model/type-entity", "../../model/file-item-param-names", "../../model/type-process", "../../views/entity-labels", "../../model/type-extractor-filter", "../../model/type-extract-format", "../../model/cv-filter-type", "../../model/type-extractor-sample-list", "../../model/name-id-label-type"], function (exports_1, context_1) {
+System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem-action", "../../model/type-extractor-item", "../../model/type-entity", "../../model/file-item-param-names", "../../model/type-process", "../../views/entity-labels", "../../model/type-extractor-filter", "../../model/type-extract-format", "../../model/cv-group", "../../model/type-extractor-sample-list", "../../model/name-id-label-type"], function (exports_1, context_1) {
     "use strict";
     _this = this;
     var __moduleName = context_1 && context_1.id;
@@ -286,7 +286,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
         return returnVal;
     }
     exports_1("fileItemsReducer", fileItemsReducer);
-    var _this, reselect_1, gobii_file_item_1, gobiiFileItemAction, type_extractor_item_1, type_entity_1, file_item_param_names_1, type_process_1, entity_labels_1, type_extractor_filter_1, type_extract_format_1, cv_filter_type_1, type_extractor_sample_list_1, name_id_label_type_1, initialState, getGobiiExtractFilterType, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getSelectedFileFormat, getSelectedSampleType, getJobId, getUploadFiles, getPiContacts, getProjects, getExperiments, getDatasets, getCvTermsDataType, getCvTermsJobStatus, getMapsets, getPlatforms, getMarkerGroups, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment, getDatasetEntities, getDatasetEntitiesPaged, getPiContactsFilterOptional, getProjectsFilterOptional, getExperimentsFilterOptional, getFqF1Vertices, getFqF2Vertices, getFqF3Vertices, getFqF4Vertices, getFqF1VerticesValues, getFqF2VerticesValues, getFqF3VerticesValues, getFqF4VerticesValues;
+    var _this, reselect_1, gobii_file_item_1, gobiiFileItemAction, type_extractor_item_1, type_entity_1, file_item_param_names_1, type_process_1, entity_labels_1, type_extractor_filter_1, type_extract_format_1, cv_group_1, type_extractor_sample_list_1, name_id_label_type_1, initialState, getGobiiExtractFilterType, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getSelectedFileFormat, getSelectedSampleType, getJobId, getUploadFiles, getPiContacts, getProjects, getExperiments, getDatasets, getCvTermsDataType, getCvTermsJobStatus, getMapsets, getPlatforms, getMarkerGroups, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment, getDatasetEntities, getDatasetEntitiesPaged, getPiContactsFilterOptional, getProjectsFilterOptional, getExperimentsFilterOptional, getFqF1Vertices, getFqF2Vertices, getFqF3Vertices, getFqF4Vertices, getFqF1VerticesValues, getFqF2VerticesValues, getFqF3VerticesValues, getFqF4VerticesValues;
     return {
         setters: [
             function (reselect_1_1) {
@@ -319,8 +319,8 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
             function (type_extract_format_1_1) {
                 type_extract_format_1 = type_extract_format_1_1;
             },
-            function (cv_filter_type_1_1) {
-                cv_filter_type_1 = cv_filter_type_1_1;
+            function (cv_group_1_1) {
+                cv_group_1 = cv_group_1_1;
             },
             function (type_extractor_sample_list_1_1) {
                 type_extractor_sample_list_1 = type_extractor_sample_list_1_1;
@@ -473,7 +473,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                     return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
                         || e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
                         && e.getEntityType() === type_entity_1.EntityType.CV
-                        && e.getCvFilterType() === cv_filter_type_1.CvFilterType.DATASET_TYPE;
+                        && e.getCvGroup() === cv_group_1.CvGroup.DATASET_TYPE;
                 })
                     .map(function (fi) { return fi; });
                 return returnVal;
@@ -483,7 +483,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                     return (e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
                         || e.getNameIdLabelType() !== name_id_label_type_1.NameIdLabelType.UNKNOWN)
                         && e.getEntityType() === type_entity_1.EntityType.CV
-                        && e.getCvFilterType() === cv_filter_type_1.CvFilterType.JOB_STATUS;
+                        && e.getCvGroup() === cv_group_1.CvGroup.JOB_STATUS;
                 })
                     .map(function (fi) { return fi; });
                 return returnVal;

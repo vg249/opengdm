@@ -1,5 +1,5 @@
 import {EntitySubType, EntityType} from "./type-entity";
-import {CvFilterType} from "./cv-filter-type";
+import {CvGroup} from "./cv-group";
 import {GobiiExtractFilterType} from "./type-extractor-filter";
 import {ExtractorItemType} from "./type-extractor-item";
 
@@ -8,13 +8,13 @@ export class GobiiFileItemCompoundId {
     constructor(private _extractorItemType: ExtractorItemType = ExtractorItemType.UNKNOWN,
                 private _entityType: EntityType = EntityType.UNKNOWN,
                 private _entitySubType: EntitySubType = EntitySubType.UNKNOWN,
-                private _cvFilterType: CvFilterType = CvFilterType.UNKNOWN,
+                private _cvGroup: CvGroup = CvGroup.UNKNOWN,
                 private _cvFilterValue: string = null,
                 private _isExtractCriterion: boolean = true,
                 private _sequenceNum: number = 0) {
 
-        if (this._cvFilterType === null) {
-            this._cvFilterType = CvFilterType.UNKNOWN;
+        if (this._cvGroup === null) {
+            this._cvGroup = CvGroup.UNKNOWN;
         }
 
         if (this._extractorItemType == null) {
@@ -42,7 +42,7 @@ export class GobiiFileItemCompoundId {
             || (this.getExtractorItemType() === gobiiFileItemCompoundId.getExtractorItemType()
                 && this.getEntityType() === gobiiFileItemCompoundId.getEntityType()
                 && this.getEntitySubType() === gobiiFileItemCompoundId.getEntitySubType()
-                && this.getCvFilterType() === gobiiFileItemCompoundId.getCvFilterType()
+                && this.getCvGroup() === gobiiFileItemCompoundId.getCvGroup()
                 && this.getCvFilterValue() === gobiiFileItemCompoundId.getCvFilterValue())
         )
     }
@@ -92,15 +92,15 @@ export class GobiiFileItemCompoundId {
         return this;
     }
 
-    getCvFilterType(): CvFilterType {
-        return this._cvFilterType;
+    getCvGroup(): CvGroup {
+        return this._cvGroup;
     }
 
-    setCvFilterType(value: CvFilterType): GobiiFileItemCompoundId {
+    setCvGroup(value: CvGroup): GobiiFileItemCompoundId {
         if (value != null) {
-            this._cvFilterType = value;
+            this._cvGroup = value;
         } else {
-            this._cvFilterType = CvFilterType.UNKNOWN;
+            this._cvGroup = CvGroup.UNKNOWN;
         }
         return this;
     }

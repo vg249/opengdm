@@ -3,7 +3,7 @@ import {EntitySubType} from "../../model/type-entity";
 import {Labels} from "../../views/entity-labels";
 import {ExtractorItemType} from "../../model/type-extractor-item";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
-import {CvFilterType} from "../../model/cv-filter-type";
+import {CvGroup} from "../../model/cv-group";
 import {GobiiFileItem} from "../../model/gobii-file-item";
 import {HeaderStatusMessage} from "../../model/dto-header-status-message";
 import {ProcessType} from "../../model/type-process";
@@ -400,7 +400,7 @@ export class NameIdFileItemService {
                                                             .setExtractorItemType(ExtractorItemType.ENTITY)
                                                             .setEntityType(filterParamsToLoad.getEntityType())
                                                             .setEntitySubType(filterParamsToLoad.getEntitySubType())
-                                                            .setCvFilterType(filterParamsToLoad.getCvFilterType())
+                                                            .setCvGroup(filterParamsToLoad.getCvGroup())
                                                             .setItemId(nameIdItem.id)
                                                             .setItemName(nameIdItem.name)
                                                             //.setSelected(false)

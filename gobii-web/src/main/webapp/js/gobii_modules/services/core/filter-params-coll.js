@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-entity", "../../model/type-extractor-filter", "../../model/cv-filter-type", "../../model/filter-params", "../../store/actions/history-action", "@ngrx/store", "../../model/name-id-label-type", "../../model/filter-type", "../../model/file-item-param-names", "rxjs/add/operator/expand", "../../model/type-extractor-item", "../../store/actions/fileitem-action", "../../model/gobii-file-item-compound-id", "./dto-request.service", "../app/jsontogfi/json-to-gfi-dataset", "../app/dto-request-item-gfi", "../app/dto-request-item-gfi-paged", "../../store/actions/action-payload-filter", "../app/jsontogfi/json-to-gfi-vertex"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-entity", "../../model/type-extractor-filter", "../../model/cv-group", "../../model/filter-params", "../../store/actions/history-action", "@ngrx/store", "../../model/name-id-label-type", "../../model/filter-type", "../../model/file-item-param-names", "rxjs/add/operator/expand", "../../model/type-extractor-item", "../../store/actions/fileitem-action", "../../model/gobii-file-item-compound-id", "./dto-request.service", "../app/jsontogfi/json-to-gfi-dataset", "../app/dto-request-item-gfi", "../app/dto-request-item-gfi-paged", "../../store/actions/action-payload-filter", "../app/jsontogfi/json-to-gfi-vertex"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_entity_1, type_extractor_filter_1, cv_filter_type_1, filter_params_1, historyAction, store_1, name_id_label_type_1, filter_type_1, file_item_param_names_1, type_extractor_item_1, fileAction, gobii_file_item_compound_id_1, dto_request_service_1, json_to_gfi_dataset_1, dto_request_item_gfi_1, dto_request_item_gfi_paged_1, action_payload_filter_1, json_to_gfi_vertex_1, FilterParamsColl;
+    var core_1, type_entity_1, type_extractor_filter_1, cv_group_1, filter_params_1, historyAction, store_1, name_id_label_type_1, filter_type_1, file_item_param_names_1, type_extractor_item_1, fileAction, gobii_file_item_compound_id_1, dto_request_service_1, json_to_gfi_dataset_1, dto_request_item_gfi_1, dto_request_item_gfi_paged_1, action_payload_filter_1, json_to_gfi_vertex_1, FilterParamsColl;
     return {
         setters: [
             function (core_1_1) {
@@ -22,8 +22,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
             function (type_extractor_filter_1_1) {
                 type_extractor_filter_1 = type_extractor_filter_1_1;
             },
-            function (cv_filter_type_1_1) {
-                cv_filter_type_1 = cv_filter_type_1_1;
+            function (cv_group_1_1) {
+                cv_group_1 = cv_group_1_1;
             },
             function (filter_params_1_1) {
                 filter_params_1 = filter_params_1_1;
@@ -82,14 +82,14 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                     this.filterParams = [];
                     // ************************************************************************
                     // **************************** GENERAL  *********************************
-                    var cvJobStatusCompoundUniqueId = new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.CV, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.JOB_STATUS, cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.JOB_STATUS));
+                    var cvJobStatusCompoundUniqueId = new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.CV, type_entity_1.EntitySubType.UNKNOWN, cv_group_1.CvGroup.JOB_STATUS, cv_group_1.getCvGroupName(cv_group_1.CvGroup.JOB_STATUS));
                     // ************************************************************************
                     // **************************** BY SAMPLE *********************************
                     this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.CV_DATATYPE, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.CV)
                         .setIsDynamicFilterValue(false)
-                        .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE)
-                        .setCvFilterValue(cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.DATASET_TYPE))
+                        .setCvGroup(cv_group_1.CvGroup.DATASET_TYPE)
+                        .setCvFilterValue(cv_group_1.getCvGroupName(cv_group_1.CvGroup.DATASET_TYPE))
                         .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPE_NAME)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A));
                     this.addFilter(filter_params_1.FilterParams
@@ -102,7 +102,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                     this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.CONTACT_PI_HIERARCHY_ROOT, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.CONTACT)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
-                        .setCvFilterType(cv_filter_type_1.CvFilterType.UNKNOWN)
+                        .setCvGroup(cv_group_1.CvGroup.UNKNOWN)
                         .setIsDynamicFilterValue(true)
                         .setIsDynamicDataLoad(false)
                         .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
@@ -111,7 +111,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                     this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.PROJECTS_BY_CONTACT, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.PROJECT)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
-                        .setRelatedEntityUniqueId(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.CONTACT, type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR, cv_filter_type_1.CvFilterType.UNKNOWN, null).setIsExtractCriterion(true))
+                        .setRelatedEntityUniqueId(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.CONTACT, type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR, cv_group_1.CvGroup.UNKNOWN, null).setIsExtractCriterion(true))
                         .setIsDynamicFilterValue(false)
                         .setIsDynamicDataLoad(false)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL)
@@ -129,8 +129,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                     this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.CV_DATATYPE, type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, type_entity_1.EntityType.CV)
                         .setIsDynamicFilterValue(false)
-                        .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE)
-                        .setCvFilterValue(cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.DATASET_TYPE))
+                        .setCvGroup(cv_group_1.CvGroup.DATASET_TYPE)
+                        .setCvFilterValue(cv_group_1.getCvGroupName(cv_group_1.CvGroup.DATASET_TYPE))
                         .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPE_NAME)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.SELECT_A));
                     this.addFilter(filter_params_1.FilterParams
@@ -152,7 +152,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                     this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.CV_JOB_STATUS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, cvJobStatusCompoundUniqueId.getEntityType())
                         .setIsDynamicFilterValue(true)
-                        .setCvFilterType(cvJobStatusCompoundUniqueId.getCvFilterType())
+                        .setCvGroup(cvJobStatusCompoundUniqueId.getCvGroup())
                         .setCvFilterValue(cvJobStatusCompoundUniqueId.getCvFilterValue())
                         .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPE_NAME)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL)
@@ -188,7 +188,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         }
                         return returnVal;
                     }));
-                    var cvDatasetCompoundUniqueId = new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.DATASET, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.UNKNOWN));
+                    var cvDatasetCompoundUniqueId = new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.DATASET, type_entity_1.EntitySubType.UNKNOWN, cv_group_1.CvGroup.UNKNOWN, cv_group_1.getCvGroupName(cv_group_1.CvGroup.UNKNOWN));
                     this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.DATASET_LIST, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.DATASET)
                         .setFilterType(filter_type_1.FilterType.ENTITY_LIST)
@@ -243,7 +243,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                     this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.PROJECT)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
-                        .setRelatedEntityUniqueId(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.CONTACT, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null))
+                        .setRelatedEntityUniqueId(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.CONTACT, type_entity_1.EntitySubType.UNKNOWN, cv_group_1.CvGroup.UNKNOWN, null))
                         .setIsDynamicFilterValue(true)
                         .setIsDynamicDataLoad(false)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL)
@@ -251,7 +251,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                     // relate this filter to PROJECT_FILTER_OPTIONAL as pa\rent
                     this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.EXPERIMENT)
-                        .setRelatedEntityUniqueId(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.PROJECT, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null))
+                        .setRelatedEntityUniqueId(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.PROJECT, type_entity_1.EntitySubType.UNKNOWN, cv_group_1.CvGroup.UNKNOWN, null))
                         .setIsDynamicFilterValue(true)
                         .setIsDynamicDataLoad(false)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
@@ -259,7 +259,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .setIsExtractCriterion(false));
                     this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.DATASET_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.DATASET)
-                        .setRelatedEntityUniqueId(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.EXPERIMENT, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null))
+                        .setRelatedEntityUniqueId(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.EXPERIMENT, type_entity_1.EntitySubType.UNKNOWN, cv_group_1.CvGroup.UNKNOWN, null))
                         .setIsDynamicFilterValue(true)
                         .setIsDynamicDataLoad(false)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY));

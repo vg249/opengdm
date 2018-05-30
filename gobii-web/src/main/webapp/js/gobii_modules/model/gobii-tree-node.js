@@ -80,11 +80,11 @@ System.register(["./guid", "./type-extractor-filter", "./gobii-file-item-compoun
                     _super.prototype.setEntitySubType.call(this, value);
                     return this;
                 };
-                GobiiTreeNode.prototype.getCvFilterType = function () {
-                    return _super.prototype.getCvFilterType.call(this);
+                GobiiTreeNode.prototype.getCvGroup = function () {
+                    return _super.prototype.getCvGroup.call(this);
                 };
-                GobiiTreeNode.prototype.setCvFilterType = function (value) {
-                    _super.prototype.setCvFilterType.call(this, value);
+                GobiiTreeNode.prototype.setCvGroup = function (value) {
+                    _super.prototype.setCvGroup.call(this, value);
                     return this;
                 };
                 GobiiTreeNode.prototype.getCvFilterValue = function () {

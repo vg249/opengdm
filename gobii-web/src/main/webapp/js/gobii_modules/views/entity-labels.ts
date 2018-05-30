@@ -1,5 +1,5 @@
 import {EntityType, EntitySubType} from "../model/type-entity";
-import {CvFilterType} from "../model/cv-filter-type";
+import {CvGroup} from "../model/cv-group";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {ExtractorItemType} from "../model//type-extractor-item";
 import {GobiiExtractFormat} from "../model/type-extract-format";
@@ -28,8 +28,8 @@ export class Labels {
         this.entityNodeLabels[EntityType.UNKNOWN] = "UNKNOWN";
 
 
-        this.cvFilterNodeLabels[CvFilterType.DATASET_TYPE] = "Dataset Type";
-        this.cvFilterNodeLabels[CvFilterType.JOB_STATUS] = "Job Status";
+        this.cvGroupLabels[CvGroup.DATASET_TYPE] = "Dataset Type";
+        this.cvGroupLabels[CvGroup.JOB_STATUS] = "Job Status";
 
         this.entitySubtypeNodeLabels[EntitySubType.UNKNOWN] = "UNKOWN";
         this.entitySubtypeNodeLabels[EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR] = "Principle Investigator";
@@ -58,7 +58,7 @@ export class Labels {
 
     public entityNodeLabels: Map < EntityType, string > = new Map<EntityType,string>();
     public entitySubtypeNodeLabels: Map < EntitySubType, string > = new Map<EntitySubType,string>();
-    public cvFilterNodeLabels: Map < CvFilterType, string > = new Map<CvFilterType,string>();
+    public cvGroupLabels: Map < CvGroup, string > = new Map<CvGroup,string>();
     public extractorFilterTypeLabels: Map < GobiiExtractFilterType, string > = new Map<GobiiExtractFilterType, string>();
     public treeExtractorTypeLabels: Map<ExtractorItemType,string> = new Map<ExtractorItemType,string>();
     public extractFormatTypeLabels: Map<GobiiExtractFormat,string> = new Map<GobiiExtractFormat,string>();

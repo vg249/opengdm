@@ -1,7 +1,7 @@
 import {ProcessType} from "./type-process";
 import {Guid} from "./guid";
 import {EntitySubType, EntityType} from "./type-entity";
-import {CvFilterType} from "./cv-filter-type";
+import {CvGroup} from "./cv-group";
 import {GobiiExtractFilterType} from "./type-extractor-filter";
 import {ExtractorItemType} from "./type-extractor-item";
 import {GobiiFileItemCompoundId} from "./gobii-file-item-compound-id";
@@ -17,7 +17,7 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
                           _extractorItemType: ExtractorItemType,
                           _entityType: EntityType,
                           _entitySubType: EntitySubType,
-                          _cvFilterType: CvFilterType,
+                          _cvFilterType: CvGroup,
                           _cvFilterValue: string,
                           private _itemId: string,
                           private _itemName: string,
@@ -59,7 +59,7 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
             ExtractorItemType.UNKNOWN,
             EntityType.UNKNOWN,
             EntitySubType.UNKNOWN,
-            CvFilterType.UNKNOWN,
+            CvGroup.UNKNOWN,
             null,
             null,
             null,
@@ -148,12 +148,12 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
         return this;
     }
 
-    getCvFilterType(): CvFilterType {
-        return super.getCvFilterType();
+    getCvGroup(): CvGroup {
+        return super.getCvGroup();
     }
 
-    setCvFilterType(value: CvFilterType): GobiiFileItem {
-        super.setCvFilterType(value);
+    setCvGroup(value: CvGroup): GobiiFileItem {
+        super.setCvGroup(value);
         return this;
     }
 

@@ -1,6 +1,6 @@
 import {FilterType} from "./filter-type";
 import {EntitySubType, EntityType} from "./type-entity";
-import {CvFilterType} from "./cv-filter-type";
+import {CvGroup} from "./cv-group";
 import {GobiiExtractFilterType} from "./type-extractor-filter";
 import {NameIdLabelType} from "./name-id-label-type";
 import {ExtractorItemType} from "./type-extractor-item";
@@ -102,7 +102,7 @@ export class FilterParams {
 
     private constructor(_entityType: EntityType = EntityType.UNKNOWN, //first four args are passed to base class ctor
                         _entitySubType: EntitySubType = EntitySubType.UNKNOWN,
-                        _cvFilterType: CvFilterType = CvFilterType.UNKNOWN,
+                        _cvCvGroup: CvGroup = CvGroup.UNKNOWN,
                         _cvFilterValue: string = null,
                         _extractorItemType: ExtractorItemType,
                         private targetEntityUniqueId: GobiiFileItemCompoundId,
@@ -125,7 +125,7 @@ export class FilterParams {
                         private dtoRequestItem: DtoRequestItem<any>,
                         private dtoRequestService: DtoRequestService<any>) {
 
-        this.targetEntityUniqueId = new GobiiFileItemCompoundId(_extractorItemType, _entityType, _entitySubType, _cvFilterType, _cvFilterValue);
+        this.targetEntityUniqueId = new GobiiFileItemCompoundId(_extractorItemType, _entityType, _entitySubType, _cvCvGroup, _cvFilterValue);
 
 
     }
@@ -136,7 +136,7 @@ export class FilterParams {
         return (new FilterParams(
             entityType,
             EntitySubType.UNKNOWN,
-            CvFilterType.UNKNOWN,
+            CvGroup.UNKNOWN,
             null,
             ExtractorItemType.ENTITY,
             null,
@@ -197,12 +197,12 @@ export class FilterParams {
         return this;
     }
 
-    getCvFilterType(): CvFilterType {
-        return this.targetEntityUniqueId.getCvFilterType();
+    getCvGroup(): CvGroup {
+        return this.targetEntityUniqueId.getCvGroup();
     }
 
-    setCvFilterType(value: CvFilterType): FilterParams {
-        this.targetEntityUniqueId.setCvFilterType(value);
+    setCvGroup(value: CvGroup): FilterParams {
+        this.targetEntityUniqueId.setCvGroup(value);
         return this;
     }
 

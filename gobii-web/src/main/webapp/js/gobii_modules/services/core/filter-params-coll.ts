@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {EntitySubType, EntityType} from "../../model/type-entity";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
-import {CvFilters, CvFilterType} from "../../model/cv-filter-type";
+import {CvGroup, getCvGroupName} from "../../model/cv-group";
 import {FilterParams} from "../../model/filter-params";
 import * as historyAction from '../../store/actions/history-action';
 import * as fromRoot from '../../store/reducers';
@@ -65,8 +65,8 @@ export class FilterParamsColl {
             new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
                 EntityType.CV,
                 EntitySubType.UNKNOWN,
-                CvFilterType.JOB_STATUS,
-                CvFilters.get(CvFilterType.JOB_STATUS));
+                CvGroup.JOB_STATUS,
+                getCvGroupName(CvGroup.JOB_STATUS));
 
 
         // ************************************************************************
@@ -77,8 +77,8 @@ export class FilterParamsColl {
                     GobiiExtractFilterType.BY_SAMPLE,
                     EntityType.CV)
                 .setIsDynamicFilterValue(false)
-                .setCvFilterType(CvFilterType.DATASET_TYPE)
-                .setCvFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE))
+                .setCvGroup(CvGroup.DATASET_TYPE)
+                .setCvFilterValue(getCvGroupName(CvGroup.DATASET_TYPE))
                 .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
                 .setNameIdLabelType(NameIdLabelType.SELECT_A)
         );
@@ -106,7 +106,7 @@ export class FilterParamsColl {
                     GobiiExtractFilterType.BY_SAMPLE,
                     EntityType.CONTACT)
                 .setExtractorItemType(ExtractorItemType.ENTITY)
-                .setCvFilterType(CvFilterType.UNKNOWN)
+                .setCvGroup(CvGroup.UNKNOWN)
                 .setIsDynamicFilterValue(true)
                 .setIsDynamicDataLoad(false)
                 .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
@@ -122,7 +122,7 @@ export class FilterParamsColl {
                 .setRelatedEntityUniqueId(new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
                     EntityType.CONTACT,
                     EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR,
-                    CvFilterType.UNKNOWN,
+                    CvGroup.UNKNOWN,
                     null).setIsExtractCriterion(true))
                 .setIsDynamicFilterValue(false)
                 .setIsDynamicDataLoad(false)
@@ -155,8 +155,8 @@ export class FilterParamsColl {
                     GobiiExtractFilterType.BY_MARKER,
                     EntityType.CV)
                 .setIsDynamicFilterValue(false)
-                .setCvFilterType(CvFilterType.DATASET_TYPE)
-                .setCvFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE))
+                .setCvGroup(CvGroup.DATASET_TYPE)
+                .setCvFilterValue(getCvGroupName(CvGroup.DATASET_TYPE))
                 .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
                 .setNameIdLabelType(NameIdLabelType.SELECT_A)
         );
@@ -202,7 +202,7 @@ export class FilterParamsColl {
                     GobiiExtractFilterType.WHOLE_DATASET,
                     cvJobStatusCompoundUniqueId.getEntityType())
                 .setIsDynamicFilterValue(true)
-                .setCvFilterType(cvJobStatusCompoundUniqueId.getCvFilterType())
+                .setCvGroup(cvJobStatusCompoundUniqueId.getCvGroup())
                 .setCvFilterValue(cvJobStatusCompoundUniqueId.getCvFilterValue())
                 .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
                 .setNameIdLabelType(NameIdLabelType.ALL)
@@ -263,8 +263,8 @@ export class FilterParamsColl {
             new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
                 EntityType.DATASET,
                 EntitySubType.UNKNOWN,
-                CvFilterType.UNKNOWN,
-                CvFilters.get(CvFilterType.UNKNOWN));
+                CvGroup.UNKNOWN,
+                getCvGroupName(CvGroup.UNKNOWN));
         this.addFilter(FilterParams
             .build(FilterParamNames.DATASET_LIST,
                 GobiiExtractFilterType.WHOLE_DATASET,
@@ -388,7 +388,7 @@ export class FilterParamsColl {
                 .setRelatedEntityUniqueId(new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
                     EntityType.CONTACT,
                     EntitySubType.UNKNOWN,
-                    CvFilterType.UNKNOWN,
+                    CvGroup.UNKNOWN,
                     null))
                 .setIsDynamicFilterValue(true)
                 .setIsDynamicDataLoad(false)
@@ -404,7 +404,7 @@ export class FilterParamsColl {
                 .setRelatedEntityUniqueId(new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
                     EntityType.PROJECT,
                     EntitySubType.UNKNOWN,
-                    CvFilterType.UNKNOWN,
+                    CvGroup.UNKNOWN,
                     null))
                 .setIsDynamicFilterValue(true)
                 .setIsDynamicDataLoad(false)
@@ -421,7 +421,7 @@ export class FilterParamsColl {
                 .setRelatedEntityUniqueId(new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
                     EntityType.EXPERIMENT,
                     EntitySubType.UNKNOWN,
-                    CvFilterType.UNKNOWN,
+                    CvGroup.UNKNOWN,
                     null))
                 .setIsDynamicFilterValue(true)
                 .setIsDynamicDataLoad(false)
