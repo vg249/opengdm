@@ -5,16 +5,9 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.gobii.instructions;
 
-import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
-import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
-import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.Helper;
-import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
-import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiTestConfiguration;
 import org.gobiiproject.gobiimodel.config.TestExecConfig;
-import org.gobiiproject.gobiimodel.dto.system.ConfigSettingsDTO;
-import org.gobiiproject.gobiimodel.types.ServerCapabilityType;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.junit.*;
 
@@ -41,7 +34,6 @@ public class GobiiAdlTest {
         servercommand += USERNAME + SPACE + testExecConfig.getLdapUserForUnitTest() + SPACE;
         servercommand += PASSWORD + SPACE + testExecConfig.getLdapPasswordForUnitTest() + SPACE;
         servercommand += TIMEOUT + SPACE + testExecConfig.getAsynchOpTimeoutMinutes() + SPACE;
-
         backendSupoorted = Helper.isBackEndSupported();
     }
 

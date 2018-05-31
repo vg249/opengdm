@@ -2,16 +2,20 @@ package org.gobiiproject.gobiiclient;
 
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
+import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.dto.system.ConfigSettingsDTO;
 import org.gobiiproject.gobiimodel.types.ServerCapabilityType;
+import org.junit.Assert;
 
 public class Helper {
     public static boolean isBackEndSupported() {
         boolean backendSupoorted = false;
         try {
+            Assert.assertTrue(GobiiClientContextAuth.authenticate());
             RestUri confgSettingsUri = GobiiClientContext.getInstance(null, false)
                     .getUriFactory()
                     .resourceColl(GobiiServiceRequestId.URL_CONFIGSETTINGS);
