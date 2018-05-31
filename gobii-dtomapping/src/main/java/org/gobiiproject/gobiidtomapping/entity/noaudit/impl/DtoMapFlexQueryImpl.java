@@ -48,7 +48,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
                 null));
 
         returnVal.add(new VertexDTO(3,
-                GobiiVertexType.CVTERM,
+                GobiiVertexType.CVGROUP,
                 "Dataset Type",
                 GobiiEntityNameType.CV,
                 GobiiEntitySubType.UNKNOWN,
@@ -56,7 +56,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
                 null));
 
         returnVal.add(new VertexDTO(4,
-                GobiiVertexType.CVTERM,
+                GobiiVertexType.CVGROUP,
                 "Mapset Type",
                 GobiiEntityNameType.CV,
                 GobiiEntitySubType.UNKNOWN,

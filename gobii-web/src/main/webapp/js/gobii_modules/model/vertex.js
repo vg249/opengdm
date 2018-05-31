@@ -6,11 +6,14 @@ System.register([], function (exports_1, context_1) {
         setters: [],
         execute: function () {
             Vertex = (function () {
-                function Vertex(vertexId, vertexName, entityType, cvGroupname, filterVals) {
+                function Vertex(vertexId, gobiiVertexType, vertexName, entityType, entitySubType, cvGroup, cvTerm, filterVals) {
                     this.vertexId = vertexId;
+                    this.gobiiVertexType = gobiiVertexType;
                     this.vertexName = vertexName;
                     this.entityType = entityType;
-                    this.cvGroupname = cvGroupname;
+                    this.entitySubType = entitySubType;
+                    this.cvGroup = cvGroup;
+                    this.cvTerm = cvTerm;
                     this.filterVals = filterVals;
                 }
                 return Vertex;

@@ -27,6 +27,8 @@ System.register([], function (exports_1, context_1) {
                 EntityType[EntityType["PROTOCOL"] = 17] = "PROTOCOL";
                 EntityType[EntityType["VENDORS_PROTOCOL"] = 18] = "VENDORS_PROTOCOL";
                 EntityType[EntityType["GERMPLASM"] = 19] = "GERMPLASM";
+                EntityType[EntityType["LINKAGE_GROUP"] = 20] = "LINKAGE_GROUP";
+                EntityType[EntityType["DNA_SAMPLE"] = 21] = "DNA_SAMPLE";
             })(EntityType || (EntityType = {}));
             exports_1("EntityType", EntityType);
             exports_1("entityTypefromString", entityTypefromString = function (entityTypeName) {

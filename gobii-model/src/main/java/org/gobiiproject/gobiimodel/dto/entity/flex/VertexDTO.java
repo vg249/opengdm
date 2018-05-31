@@ -22,7 +22,7 @@ public class VertexDTO extends DTOBase{
                      GobiiVertexType gobiiVertexType,
                      String vertexName,
                      GobiiEntityNameType entityType,
-                     GobiiEntitySubType entitySubType ,
+                     GobiiEntitySubType entitySubType,
                      CvGroup cvGroup,
                      String cvTerm) {
         this.vertexId = vertexId;
