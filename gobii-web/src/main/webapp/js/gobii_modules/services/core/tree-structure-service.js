@@ -157,7 +157,7 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
                     treeNodes.forEach(function (tn) {
                         if ((tn.children === null) || (tn.children.length <= 0)) {
                             _this.addIconsToNode(tn, false);
-                            var label = _this.getLabel(tn.getItemType(), tn.getEntityType(), tn.getEntitySubType(), tn.getCvGroup(), tn.getSequenceNum());
+                            var label = _this.getLabel(tn.getItemType(), tn.getEntityType(), tn.getEntitySubType(), tn.getCvGroup(), tn.getCvTerm(), tn.getSequenceNum());
                             tn.setLabel(label);
                             tn.setGenericLabel(label);
                         }
@@ -166,15 +166,21 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
                         }
                     });
                 };
-                TreeStructureService.prototype.getLabel = function (itemType, entityType, entitySubType, cvFilterType, sequenceNum) {
+                TreeStructureService.prototype.getLabel = function (itemType, entityType, entitySubType, cvGroup, cvTerm, sequenceNum) {
                     var labelValue = null;
                     if (itemType === type_extractor_item_1.ExtractorItemType.ENTITY) {
-                        labelValue = this.getEntityLabel(entityType, entitySubType, cvFilterType);
+                        labelValue = this.getEntityLabel(entityType, entitySubType, cvGroup);
                     }
                     else if (itemType === type_extractor_item_1.ExtractorItemType.VERTEX) {
                         labelValue = "Filter " + sequenceNum.toString();
-                        if (entityType !== null && entityType !== type_entity_1.EntityType.UNKNOWN) {
-                            labelValue += ": " + this.getEntityLabel(entityType, entitySubType, cvFilterType);
+                        if (cvTerm) {
+                            var entityLabel = this.getEntityLabel(entityType, entitySubType, cvGroup);
+                            labelValue += ": " + entityLabel + " " + cvTerm;
+                        }
+                        else if (entityType !== type_entity_1.EntityType.UNKNOWN
+                            || entitySubType !== type_entity_1.EntitySubType.UNKNOWN
+                            || cvGroup !== cv_group_1.CvGroup.UNKNOWN) {
+                            labelValue += ": " + this.getEntityLabel(entityType, entitySubType, cvGroup);
                         }
                     }
                     else {
@@ -325,7 +331,7 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
                         .setEntitySubType(gobiiFileItem.getEntitySubType())
                         .setCvGroup(gobiiFileItem.getCvGroup());
                     this.addIconsToNode(returnVal, false);
-                    var label = this.getLabel(returnVal.getItemType(), returnVal.getEntityType(), returnVal.getEntitySubType(), returnVal.getCvGroup(), returnVal.getSequenceNum());
+                    var label = this.getLabel(returnVal.getItemType(), returnVal.getEntityType(), returnVal.getEntitySubType(), returnVal.getCvGroup(), returnVal.getCvTerm(), returnVal.getSequenceNum());
                     returnVal.setLabel(label);
                     returnVal.setGenericLabel(label);
                     this.addFileItemNameToNode(returnVal, gobiiFileItem);
@@ -357,7 +363,7 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
                 TreeStructureService.prototype.makeUpdateTreeNodeAction = function (gobiiExtractFilterType, gobiiFileItemCompoundId) {
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
-                        var label = _this.getLabel(gobiiFileItemCompoundId.getExtractorItemType(), gobiiFileItemCompoundId.getEntityType(), gobiiFileItemCompoundId.getEntitySubType(), gobiiFileItemCompoundId.getCvGroup(), gobiiFileItemCompoundId.getSequenceNum());
+                        var label = _this.getLabel(gobiiFileItemCompoundId.getExtractorItemType(), gobiiFileItemCompoundId.getEntityType(), gobiiFileItemCompoundId.getEntitySubType(), gobiiFileItemCompoundId.getCvGroup(), gobiiFileItemCompoundId.getCvTerm(), gobiiFileItemCompoundId.getSequenceNum());
                         var icons = _this.getIcons(gobiiFileItemCompoundId, false);
                         observer.next(new treeNodeActions.SetTreeNodeLook({
                             gobiiExtractFilterType: gobiiExtractFilterType,
@@ -369,7 +375,7 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
                     });
                 };
                 TreeStructureService.prototype.updateTreeNode = function (gobiiExtractFilterType, gobiiFileItemCompoundId) {
-                    var label = this.getLabel(gobiiFileItemCompoundId.getExtractorItemType(), gobiiFileItemCompoundId.getEntityType(), gobiiFileItemCompoundId.getEntitySubType(), gobiiFileItemCompoundId.getCvGroup(), gobiiFileItemCompoundId.getSequenceNum());
+                    var label = this.getLabel(gobiiFileItemCompoundId.getExtractorItemType(), gobiiFileItemCompoundId.getEntityType(), gobiiFileItemCompoundId.getEntitySubType(), gobiiFileItemCompoundId.getCvGroup(), gobiiFileItemCompoundId.getCvTerm(), gobiiFileItemCompoundId.getSequenceNum());
                     var icons = this.getIcons(gobiiFileItemCompoundId, false);
                     this.store.dispatch(new treeNodeActions.SetTreeNodeLook({
                         gobiiExtractFilterType: gobiiExtractFilterType,

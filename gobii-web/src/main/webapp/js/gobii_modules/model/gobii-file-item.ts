@@ -157,6 +157,15 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
         return this;
     }
 
+    getCvTerm(): string {
+        return super.getCvTerm();
+    }
+
+    setCvTerm(value: string): GobiiFileItem {
+        super.setCvTerm(value);
+        return this;
+    }
+
     getCvFilterValue(): string {
         return super.getCvFilterValue();
     }

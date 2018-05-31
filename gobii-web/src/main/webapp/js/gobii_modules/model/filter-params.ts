@@ -206,6 +206,15 @@ export class FilterParams {
         return this;
     }
 
+    getcvTerm(): string {
+        return this.targetEntityUniqueId.getCvTerm();
+    }
+
+    setcvTerm(value: string): FilterParams {
+        this.targetEntityUniqueId.setCvTerm(value);
+        return this;
+    }
+
     getCvFilterValue(): string {
         return this.targetEntityUniqueId.getCvFilterValue();
     }

@@ -11,11 +11,12 @@ import {NameIdFileItemService} from "../services/core/nameid-file-item-service";
 import {FilterService} from "../services/core/filter-service";
 import {FlexQueryService} from "../services/core/flex-query-service";
 import {Vertex} from "../model/vertex";
-import {EntityType} from "../model/type-entity";
+import {EntitySubType, EntityType} from "../model/type-entity";
 import {NameIdLabelType} from "../model/name-id-label-type";
 import {PayloadFilter} from "../store/actions/action-payload-filter";
 import {FilterParams} from "../model/filter-params";
 import {FilterParamsColl} from "../services/core/filter-params-coll";
+import {CvGroup} from "../model/cv-group";
 
 
 @Component({
@@ -179,16 +180,25 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
         if (arg.value && arg.value._entity) {
             let vertexId: string;
             let entityType:EntityType = EntityType.UNKNOWN;
+            let entitySubType:EntitySubType = EntitySubType.UNKNOWN;
+            let cvGroup:CvGroup = CvGroup.UNKNOWN;
+            let cvTerm:string = null;
             if (arg.value.getNameIdLabelType() === NameIdLabelType.UNKNOWN) {
                 vertexId = arg.value.getItemId();
                 entityType = arg.value.getEntityType();
+                entitySubType = arg.value.getEntitySubType();
+                cvGroup = arg.value.getCvGroup();
+                cvTerm = arg.value.getCvTerm();
             } else {
                 vertexId = null;
             }
 
             this.flexQueryService.loadSelectedVertexFilter(this.filterParamNameVertices,
                 vertexId,
-                entityType);
+                entityType,
+                entitySubType,
+                cvGroup,
+                cvTerm);
         }
 
         this.JobId$.subscribe(

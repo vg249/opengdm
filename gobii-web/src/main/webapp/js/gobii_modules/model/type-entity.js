@@ -25,7 +25,7 @@ System.register([], function (exports_1, context_1) {
                 EntityType[EntityType["DISPLAY"] = 15] = "DISPLAY";
                 EntityType[EntityType["MARKER"] = 16] = "MARKER";
                 EntityType[EntityType["PROTOCOL"] = 17] = "PROTOCOL";
-                EntityType[EntityType["VENDORS_PROTOCOL"] = 18] = "VENDORS_PROTOCOL";
+                EntityType[EntityType["VENDOR_PROTOCOL"] = 18] = "VENDOR_PROTOCOL";
                 EntityType[EntityType["GERMPLASM"] = 19] = "GERMPLASM";
                 EntityType[EntityType["LINKAGE_GROUP"] = 20] = "LINKAGE_GROUP";
                 EntityType[EntityType["DNA_SAMPLE"] = 21] = "DNA_SAMPLE";
@@ -86,7 +86,7 @@ System.register([], function (exports_1, context_1) {
                         returnVal = EntityType.PROTOCOL;
                         break;
                     case "VENDOR_PROTOCOL":
-                        returnVal = EntityType.VENDORS_PROTOCOL;
+                        returnVal = EntityType.VENDOR_PROTOCOL;
                         break;
                     case "GERMPLASM":
                         returnVal = EntityType.GERMPLASM;

@@ -9,6 +9,7 @@ export class GobiiFileItemCompoundId {
                 private _entityType: EntityType = EntityType.UNKNOWN,
                 private _entitySubType: EntitySubType = EntitySubType.UNKNOWN,
                 private _cvGroup: CvGroup = CvGroup.UNKNOWN,
+                private _cvTerm:string = null,
                 private _cvFilterValue: string = null,
                 private _isExtractCriterion: boolean = true,
                 private _sequenceNum: number = 0) {
@@ -43,7 +44,8 @@ export class GobiiFileItemCompoundId {
                 && this.getEntityType() === gobiiFileItemCompoundId.getEntityType()
                 && this.getEntitySubType() === gobiiFileItemCompoundId.getEntitySubType()
                 && this.getCvGroup() === gobiiFileItemCompoundId.getCvGroup()
-                && this.getCvFilterValue() === gobiiFileItemCompoundId.getCvFilterValue())
+                && this.getCvFilterValue() === gobiiFileItemCompoundId.getCvFilterValue()
+            )
         )
     }
 
@@ -102,6 +104,15 @@ export class GobiiFileItemCompoundId {
         } else {
             this._cvGroup = CvGroup.UNKNOWN;
         }
+        return this;
+    }
+
+    getCvTerm(): string {
+        return this._cvTerm;
+    }
+
+    setCvTerm(value:string): GobiiFileItemCompoundId {
+        this._cvTerm = value;
         return this;
     }
 

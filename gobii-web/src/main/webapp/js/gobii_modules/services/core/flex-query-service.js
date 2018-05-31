@@ -90,7 +90,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                 FlexQueryService.prototype.loadVertices = function (filterParamNames) {
                     this.entityFileItemService.loadEntityList(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, filterParamNames);
                 }; // loadVertices()
-                FlexQueryService.prototype.loadSelectedVertexFilter = function (filterParamsName, vertexId, entityType) {
+                FlexQueryService.prototype.loadSelectedVertexFilter = function (filterParamsName, vertexId, entityType, entitySubType, cvGroup, cvTerm) {
                     var filterParams = this.filterParamsColl.getFilter(filterParamsName, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
                     // the filterParams passed in should exist
                     if (!filterParams) {
@@ -101,6 +101,9 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                     }
                     while (filterParams) {
                         filterParams.getTargetEntityUniqueId().setEntityType(entityType);
+                        filterParams.getTargetEntityUniqueId().setEntitySubType(entitySubType);
+                        filterParams.getTargetEntityUniqueId().setCvGroup(cvGroup);
+                        filterParams.getTargetEntityUniqueId().setCvTerm(cvTerm);
                         var targetFilterloadAction = new fileItemActions.LoadFilterAction({
                             filterId: filterParams.getQueryName(),
                             filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, filterParams.getTargetEntityUniqueId(), filterParams.getRelatedEntityUniqueId(), null, vertexId, null, null)

@@ -143,6 +143,13 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-group", "./t
                     _super.prototype.setCvGroup.call(this, value);
                     return this;
                 };
+                GobiiFileItem.prototype.getCvTerm = function () {
+                    return _super.prototype.getCvTerm.call(this);
+                };
+                GobiiFileItem.prototype.setCvTerm = function (value) {
+                    _super.prototype.setCvTerm.call(this, value);
+                    return this;
+                };
                 GobiiFileItem.prototype.getCvFilterValue = function () {
                     return _super.prototype.getCvFilterValue.call(this);
                 };

@@ -19,17 +19,48 @@ export class Labels {
     }
 
     private constructor() {
-        this.entityNodeLabels[EntityType.DATASET] = "Data Set";
-        this.entityNodeLabels[EntityType.PLATFORM] = "Platform";
-        this.entityNodeLabels[EntityType.MAPSET] = "Mapset";
-        this.entityNodeLabels[EntityType.PROJECT] = "Project";
-        this.entityNodeLabels[EntityType.EXPERIMENT] = "Experiment";
-        this.entityNodeLabels[EntityType.MARKER_GROUP] = "Marker Groups";
         this.entityNodeLabels[EntityType.UNKNOWN] = "UNKNOWN";
-
-
-        this.cvGroupLabels[CvGroup.DATASET_TYPE] = "Dataset Type";
+        this.entityNodeLabels[EntityType.ANALYSIS] = "Analysis";
+        this.entityNodeLabels[EntityType.CONTACT] = "Contact";
+        this.entityNodeLabels[EntityType.DATASET] = "Dataset";
+        this.entityNodeLabels[EntityType.CV] = "CV Term";
+        this.entityNodeLabels[EntityType.CVGROUP] = "CV Group";
+        this.entityNodeLabels[EntityType.PROJECT] = "Project";
+        this.entityNodeLabels[EntityType.ORGANIZATION] = "Organization";
+        this.entityNodeLabels[EntityType.PLATFORM] = "Platform";
+        this.entityNodeLabels[EntityType.MANIFEST] = "Manifest";
+        this.entityNodeLabels[EntityType.MAPSET] = "Mapset";
+        this.entityNodeLabels[EntityType.MARKER_GROUP] = "Marker Group";
+        this.entityNodeLabels[EntityType.EXPERIMENT] = "Experiment";
+        this.entityNodeLabels[EntityType.REFERENCE] = "Reference";
+        this.entityNodeLabels[EntityType.ROLE] = "Role";
+        this.entityNodeLabels[EntityType.DISPLAY] = "Display";
+        this.entityNodeLabels[EntityType.MARKER] = "Marker";
+        this.entityNodeLabels[EntityType.PROTOCOL] = "Protocol";
+        this.entityNodeLabels[EntityType.VENDOR_PROTOCOL] = "Vendor-Protocol";
+        this.entityNodeLabels[EntityType.GERMPLASM] = "Germplasm";
+        this.entityNodeLabels[EntityType.LINKAGE_GROUP] = "Linkage Group";
+        this.entityNodeLabels[EntityType.DNA_SAMPLE] = "DNA Sample";
+        
+        
+        this.cvGroupLabels[CvGroup.JOBTYPE] = "Job Type";
+        this.cvGroupLabels[CvGroup.PAYLOADTYPE] = "Payload Type";
         this.cvGroupLabels[CvGroup.JOBSTATUS] = "Job Status";
+        this.cvGroupLabels[CvGroup.ANALYSIS_TYPE] = "Calling Analysis";
+        this.cvGroupLabels[CvGroup.DATASET_TYPE] = "Dataset Type";
+        this.cvGroupLabels[CvGroup.DNARUN_PROP] = "DNA Run Prop";
+        this.cvGroupLabels[CvGroup.DNASAMPLE_PROP] = "DNA Sample Prop";
+        this.cvGroupLabels[CvGroup.GERMPLASM_PROP] = "Germplasm Prop";
+        this.cvGroupLabels[CvGroup.GERMPLASM_SPECIES] = "Germplasm Species";
+        this.cvGroupLabels[CvGroup.GERMPLASM_TYPE] = "Germplasm Type";
+        this.cvGroupLabels[CvGroup.GOBII_DATAWAREHOUSE] = "GOBii Datawarehouse";
+        this.cvGroupLabels[CvGroup.MAPSET_TYPE] = "Mapset Type";
+        this.cvGroupLabels[CvGroup.MARKER_PROP] = "Marker Prop";
+        this.cvGroupLabels[CvGroup.MARKER_STRAND] = "Marker Strand";
+        this.cvGroupLabels[CvGroup.PLATFORM_TYPE] = "Platform Type";
+        this.cvGroupLabels[CvGroup.PROJECT_PROP] = "Project Prop";
+        this.cvGroupLabels[CvGroup.STATUS] = "Status";
+
 
         this.entitySubtypeNodeLabels[EntitySubType.UNKNOWN] = "UNKOWN";
         this.entitySubtypeNodeLabels[EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR] = "Principle Investigator";

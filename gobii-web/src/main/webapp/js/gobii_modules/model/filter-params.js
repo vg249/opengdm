@@ -182,6 +182,13 @@ System.register(["./filter-type", "./type-entity", "./cv-group", "./type-extract
                     this.targetEntityUniqueId.setCvGroup(value);
                     return this;
                 };
+                FilterParams.prototype.getcvTerm = function () {
+                    return this.targetEntityUniqueId.getCvTerm();
+                };
+                FilterParams.prototype.setcvTerm = function (value) {
+                    this.targetEntityUniqueId.setCvTerm(value);
+                    return this;
+                };
                 FilterParams.prototype.getCvFilterValue = function () {
                     return this.targetEntityUniqueId.getCvFilterValue();
                 };

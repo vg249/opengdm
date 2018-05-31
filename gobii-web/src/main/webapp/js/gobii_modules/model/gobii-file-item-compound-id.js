@@ -16,11 +16,12 @@ System.register(["./type-entity", "./cv-group", "./type-extractor-item"], functi
         ],
         execute: function () {
             GobiiFileItemCompoundId = (function () {
-                function GobiiFileItemCompoundId(_extractorItemType, _entityType, _entitySubType, _cvGroup, _cvFilterValue, _isExtractCriterion, _sequenceNum) {
+                function GobiiFileItemCompoundId(_extractorItemType, _entityType, _entitySubType, _cvGroup, _cvTerm, _cvFilterValue, _isExtractCriterion, _sequenceNum) {
                     if (_extractorItemType === void 0) { _extractorItemType = type_extractor_item_1.ExtractorItemType.UNKNOWN; }
                     if (_entityType === void 0) { _entityType = type_entity_1.EntityType.UNKNOWN; }
                     if (_entitySubType === void 0) { _entitySubType = type_entity_1.EntitySubType.UNKNOWN; }
                     if (_cvGroup === void 0) { _cvGroup = cv_group_1.CvGroup.UNKNOWN; }
+                    if (_cvTerm === void 0) { _cvTerm = null; }
                     if (_cvFilterValue === void 0) { _cvFilterValue = null; }
                     if (_isExtractCriterion === void 0) { _isExtractCriterion = true; }
                     if (_sequenceNum === void 0) { _sequenceNum = 0; }
@@ -28,6 +29,7 @@ System.register(["./type-entity", "./cv-group", "./type-extractor-item"], functi
                     this._entityType = _entityType;
                     this._entitySubType = _entitySubType;
                     this._cvGroup = _cvGroup;
+                    this._cvTerm = _cvTerm;
                     this._cvFilterValue = _cvFilterValue;
                     this._isExtractCriterion = _isExtractCriterion;
                     this._sequenceNum = _sequenceNum;
@@ -100,6 +102,13 @@ System.register(["./type-entity", "./cv-group", "./type-extractor-item"], functi
                     else {
                         this._cvGroup = cv_group_1.CvGroup.UNKNOWN;
                     }
+                    return this;
+                };
+                GobiiFileItemCompoundId.prototype.getCvTerm = function () {
+                    return this._cvTerm;
+                };
+                GobiiFileItemCompoundId.prototype.setCvTerm = function (value) {
+                    this._cvTerm = value;
                     return this;
                 };
                 GobiiFileItemCompoundId.prototype.getCvFilterValue = function () {

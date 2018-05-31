@@ -134,7 +134,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
         returnVal.add(new VertexDTO(13,
                 GobiiVertexType.CVGROUP,
                 "Germplasm Type",
-                GobiiEntityNameType.GERMPLASM,
+                GobiiEntityNameType.CV,
                 GobiiEntitySubType.UNKNOWN,
                 CvGroup.GERMPLASM_TYPE,
                 null));

@@ -38,11 +38,13 @@ System.register(["../../../model/gobii-file-item", "../../../model/type-entity",
                     this._filterParamsColl = _filterParamsColl;
                 } //ctor
                 JsonToGfiVertex.prototype.convert = function (jsonItem) {
-                    var entityType = type_entity_1.entityTypefromString(jsonItem.entityType);
                     var vertex = new vertex_1.Vertex(jsonItem.vertexId, type_vertex_1.VertexType[jsonItem.gobiiVertexType], jsonItem.vertexName, type_entity_1.EntityType[jsonItem.entityType], type_entity_1.EntitySubType[jsonItem.entitySubType], cv_group_1.CvGroup[jsonItem.cvGroup], jsonItem.cvTerm, []);
                     var returnVal = gobii_file_item_1.GobiiFileItem.build(type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN, type_process_1.ProcessType.READ)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX)
                         .setEntityType(vertex.entityType)
+                        .setEntitySubType(vertex.entitySubType)
+                        .setCvGroup(vertex.cvGroup)
+                        .setCvTerm(jsonItem.cvTerm)
                         .setItemName(vertex.vertexName)
                         .setItemId(vertex.vertexId.toString())
                         .setEntity(vertex);

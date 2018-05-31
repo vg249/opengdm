@@ -47,7 +47,12 @@ export class FlexQueryService {
 
     } // loadVertices()
 
-    public loadSelectedVertexFilter(filterParamsName: FilterParamNames, vertexId: string,entityType:EntityType) {
+    public loadSelectedVertexFilter(filterParamsName: FilterParamNames,
+                                    vertexId: string,
+                                    entityType:EntityType,
+                                    entitySubType:EntitySubType,
+                                    cvGroup:CvGroup,
+                                    cvTerm:string) {
 
         let filterParams: FilterParams = this.filterParamsColl.getFilter(filterParamsName, GobiiExtractFilterType.FLEX_QUERY);
 
@@ -61,9 +66,10 @@ export class FlexQueryService {
 
         while (filterParams) {
 
-
             filterParams.getTargetEntityUniqueId().setEntityType(entityType);
-
+            filterParams.getTargetEntityUniqueId().setEntitySubType(entitySubType);
+            filterParams.getTargetEntityUniqueId().setCvGroup(cvGroup);
+            filterParams.getTargetEntityUniqueId().setCvTerm(cvTerm);
 
             let targetFilterloadAction: fileItemActions.LoadFilterAction = new fileItemActions.LoadFilterAction(
                 {
