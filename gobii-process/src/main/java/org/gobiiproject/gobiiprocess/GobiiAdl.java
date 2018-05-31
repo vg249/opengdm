@@ -8,6 +8,7 @@ import org.gobiiproject.gobiiapimodel.payload.Payload;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
+import org.gobiiproject.gobiiclient.core.common.GenericClientContext;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
@@ -36,6 +37,8 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFile
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.InstructionFileAccess;
 import org.gobiiproject.gobiimodel.utils.InstructionFileValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -70,7 +73,7 @@ public class GobiiAdl {
     private static File xmlFile = null;
     private static boolean hasXmlFile = false;
     private static File parentDirectoryPath;
-
+    static Logger LOGGER = LoggerFactory.getLogger(GobiiAdl.class);
     private static void validateKeys(NodeList nodeList, XPath xPath, Document document) throws Exception {
         for (int i = 0; i < nodeList.getLength(); i++) {
             String parentName = nodeList.item(i).getLocalName();
@@ -1788,7 +1791,7 @@ public class GobiiAdl {
     private static void processError(String message, GobiiStatusLevel gobiiStatusLevel){
 
         System.out.println(message);
-
+        LOGGER.error(message);
         if (gobiiStatusLevel.equals(GobiiStatusLevel.ERROR)) {
             System.exit(1);
         }
