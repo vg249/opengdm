@@ -143,6 +143,13 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                     this.filterService.loadFilter(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, filterParamsName, vertexValueIdsCsv);
                     var gobiiTreeNodes = vertexValuesGfis
                         .map(function (gfi) { return _this.treeStructureService.makeTreeNodeFromFileItem(gfi); });
+                    var filterParams = this.filterParamsColl.getFilter(filterParamsName, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
+                    gobiiTreeNodes.forEach(function (gtn) {
+                        gtn.setSequenceNum(filterParams.getSequenceNum());
+                        gtn.setItemType(type_extractor_item_1.ExtractorItemType.VERTEX); // the three node we're adding has to be of type VERTEX
+                        // in order to added to the VERTEX nodes
+                        // this is probably bad
+                    });
                     gobiiTreeNodes.forEach(function (tn) {
                         _this.store.dispatch(new treeNodeActions.PlaceTreeNodeAction(tn));
                     });

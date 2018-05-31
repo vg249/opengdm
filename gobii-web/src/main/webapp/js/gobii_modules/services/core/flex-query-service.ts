@@ -128,7 +128,8 @@ export class FlexQueryService {
 
     }
 
-    public loadSelectedVertexValueFilters(filterParamsName: FilterParamNames, vertexValuesGfis: GobiiFileItem[]) {
+    public loadSelectedVertexValueFilters(filterParamsName: FilterParamNames,
+                                          vertexValuesGfis: GobiiFileItem[]) {
 
 
         let vertexValues: string[] = vertexValuesGfis.map(gfi => gfi.getItemId());
@@ -149,6 +150,14 @@ export class FlexQueryService {
 
         let gobiiTreeNodes: GobiiTreeNode[] = vertexValuesGfis
             .map(gfi => this.treeStructureService.makeTreeNodeFromFileItem(gfi));
+
+        let filterParams: FilterParams = this.filterParamsColl.getFilter(filterParamsName, GobiiExtractFilterType.FLEX_QUERY);
+        gobiiTreeNodes.forEach(gtn => {
+           gtn.setSequenceNum(filterParams.getSequenceNum());
+           gtn.setItemType(ExtractorItemType.VERTEX); // the three node we're adding has to be of type VERTEX
+                                                      // in order to added to the VERTEX nodes
+                                                      // this is probably bad
+        });
 
         gobiiTreeNodes.forEach(tn => {
             this.store.dispatch(new treeNodeActions.PlaceTreeNodeAction(tn));
