@@ -170,12 +170,33 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
 //        }
 //
 
+        VertexDTO destinationVertex = vertexFilterDTO.getDestinationVertexDTO();
         for(Integer idx=1; idx <= 20; idx ++ ) {
+
+
+            String name = "";
+            if(destinationVertex.getGobiiVertexType().equals(GobiiVertexType.ENTITY)) {
+
+                name = destinationVertex.getEntityType().toString().toLowerCase() + ": " + idx;
+
+            } else if(destinationVertex.getGobiiVertexType().equals(GobiiVertexType.CVGROUP)) {
+
+                name = destinationVertex.getCvGroup().toString().toLowerCase() + ": " + idx;
+
+            } else if(destinationVertex.getGobiiVertexType().equals(GobiiVertexType.SUBENTITY)) {
+
+                name = destinationVertex.getEntitySubType().toString().toLowerCase() + ": " + idx;
+
+            } else if(destinationVertex.getGobiiVertexType().equals(GobiiVertexType.CVTERM)) {
+
+                name = destinationVertex.getCvTerm() + ": " + idx;
+
+            }
 
             returnVal.getVertexValues().add(
                     new NameIdDTO(GobiiEntityNameType.valueOf(vertexFilterDTO.getDestinationVertexDTO().getEntityType().name()),
                             idx,
-                            vertexFilterDTO.getDestinationVertexDTO().getEntityType().name() + ": " + idx)
+                            name)
             );
         }
 
