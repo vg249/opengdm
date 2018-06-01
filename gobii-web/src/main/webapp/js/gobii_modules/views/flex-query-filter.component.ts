@@ -3,14 +3,11 @@ import {GobiiFileItem} from "../model/gobii-file-item";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {Store} from "@ngrx/store";
 import * as fromRoot from '../store/reducers';
-import * as fileAction from '../store/actions/fileitem-action';
-import * as historyAction from '../store/actions/history-action';
 import {Observable} from "rxjs/Observable";
 import {FilterParamNames} from "../model/file-item-param-names";
 import {NameIdFileItemService} from "../services/core/nameid-file-item-service";
 import {FilterService} from "../services/core/filter-service";
 import {FlexQueryService} from "../services/core/flex-query-service";
-import {Vertex} from "../model/vertex";
 import {EntitySubType, EntityType} from "../model/type-entity";
 import {NameIdLabelType} from "../model/name-id-label-type";
 import {PayloadFilter} from "../store/actions/action-payload-filter";
@@ -94,29 +91,6 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
         this.fileItemsVertexNames$ = this.filterService.getForFilter(this.filterParamNameVertices);
         this.fileItemsEntityValues$ = this.filterService.getForFilter(this.filterParamNameVertexValues);
         this.JobId$ = this.store.select(fromRoot.getJobId);
-
-
-        // this
-        //     .fileItemsVertexNames$
-        //     .subscribe(items => {
-        //             if (this.previousSelectedItemId === null && items && items.length > 0) {
-        //                 this.previousSelectedItemId = items[0].getFileItemUniqueId()
-        //             }
-        //
-        //             if (items.length > 1) {
-        //                 this.currentStyle = this.enabledStyle;
-        //             } else {
-        //                 this.currentStyle = this.disabledStyle;
-        //             }
-        //
-        //             // if (items[0]) {
-        //             //     this.selectedAllowableEntities = items[0];
-        //             // }
-        //
-        //         },
-        //         error => {
-        //             this.store.dispatch(new historyAction.AddStatusMessageAction(error))
-        //         });
 
 
         this

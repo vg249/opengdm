@@ -66,27 +66,6 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                     this.fileItemsVertexNames$ = this.filterService.getForFilter(this.filterParamNameVertices);
                     this.fileItemsEntityValues$ = this.filterService.getForFilter(this.filterParamNameVertexValues);
                     this.JobId$ = this.store.select(fromRoot.getJobId);
-                    // this
-                    //     .fileItemsVertexNames$
-                    //     .subscribe(items => {
-                    //             if (this.previousSelectedItemId === null && items && items.length > 0) {
-                    //                 this.previousSelectedItemId = items[0].getFileItemUniqueId()
-                    //             }
-                    //
-                    //             if (items.length > 1) {
-                    //                 this.currentStyle = this.enabledStyle;
-                    //             } else {
-                    //                 this.currentStyle = this.disabledStyle;
-                    //             }
-                    //
-                    //             // if (items[0]) {
-                    //             //     this.selectedAllowableEntities = items[0];
-                    //             // }
-                    //
-                    //         },
-                    //         error => {
-                    //             this.store.dispatch(new historyAction.AddStatusMessageAction(error))
-                    //         });
                     this
                         .fileItemsEntityValues$
                         .subscribe(function (items) {
