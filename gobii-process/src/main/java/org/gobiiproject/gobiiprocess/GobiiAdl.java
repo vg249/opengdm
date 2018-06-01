@@ -8,7 +8,6 @@ import org.gobiiproject.gobiiapimodel.payload.Payload;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
-import org.gobiiproject.gobiiclient.core.common.GenericClientContext;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
@@ -37,8 +36,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFile
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.InstructionFileAccess;
 import org.gobiiproject.gobiimodel.utils.InstructionFileValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -73,7 +71,7 @@ public class GobiiAdl {
     private static File xmlFile = null;
     private static boolean hasXmlFile = false;
     private static File parentDirectoryPath;
-    static Logger LOGGER = LoggerFactory.getLogger(GobiiAdl.class);
+
     private static void validateKeys(NodeList nodeList, XPath xPath, Document document) throws Exception {
         for (int i = 0; i < nodeList.getLength(); i++) {
             String parentName = nodeList.item(i).getLocalName();
@@ -1493,7 +1491,7 @@ public class GobiiAdl {
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         long startTime = System.currentTimeMillis();
 
-        while (!statusDetermined && ((System.currentTimeMillis()-startTime) <= timeoutInMillis)) {
+        while (!statusDetermined && ((System.currentTimeMillis() - startTime) <= timeoutInMillis)) {
 
             PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFilesDTOPayloadEnvelope = loaderJobResponseEnvolope.get(LoaderInstructionFilesDTO.class);
             checkStatus(loaderInstructionFilesDTOPayloadEnvelope, true);
@@ -1558,7 +1556,7 @@ public class GobiiAdl {
             boolean writeSourcePath = true;
             if (!(new File(sourcePath).exists())) {
                 writeSourcePath = false;
-                processError( "Data file " + sourcePath + " for scenario "+ scenarioName +" not found.", GobiiStatusLevel.ERROR);
+                processError("Data file " + sourcePath + " for scenario " + scenarioName + " not found.", GobiiStatusLevel.ERROR);
             }
 
             String fileExpr = "//Scenario[Name='" + scenarioName + "']/Files/Instruction";
@@ -1788,11 +1786,11 @@ public class GobiiAdl {
         return "Value is required: " + option.getArgName() + ", " + option.getDescription();
     }
 
-    private static void processError(String message, GobiiStatusLevel gobiiStatusLevel){
+    private static void processError(String message, GobiiStatusLevel gobiiStatusLevel) {
 
         System.out.println(message);
-        LOGGER.error(message);
         if (gobiiStatusLevel.equals(GobiiStatusLevel.ERROR)) {
+            ErrorLogger.logError("GobiiADL", message);
             System.exit(1);
         }
 
@@ -1812,7 +1810,7 @@ public class GobiiAdl {
 
         if (fileName.list().length == 0) {
 
-            processError("\nDirectory "+fileName.getName()+" is empty!", GobiiStatusLevel.ERROR);
+            processError("\nDirectory " + fileName.getName() + " is empty!", GobiiStatusLevel.ERROR);
 
         }
 
@@ -1843,7 +1841,7 @@ public class GobiiAdl {
                     hasXmlFile = true;
                     xmlFile = currentFile;
                 } else {
-                    processError("\nDirectory "+currentSubDir.getName()+" has more than one (1) XML file.", GobiiStatusLevel.ERROR);
+                    processError("\nDirectory " + currentSubDir.getName() + " has more than one (1) XML file.", GobiiStatusLevel.ERROR);
                 }
 
             }
@@ -1851,7 +1849,7 @@ public class GobiiAdl {
         }
 
         if (!hasXmlFile) {
-            processError("\nDirectory "+currentSubDir.getName()+" does not have an XML file.", GobiiStatusLevel.ERROR);
+            processError("\nDirectory " + currentSubDir.getName() + " does not have an XML file.", GobiiStatusLevel.ERROR);
         }
 
         /** check if the files in scenarios in the XML file exists **/
@@ -1876,7 +1874,7 @@ public class GobiiAdl {
             String sourcePath = parentDirectoryPath.getAbsoluteFile() + "/" + currentSubDir.getName() + "/" + dataFileName;
 
             if (!(new File(sourcePath).exists())) {
-                processError( "Data file " + sourcePath + " for scenario "+ scenarioName +" not found.", GobiiStatusLevel.ERROR);
+                processError("Data file " + sourcePath + " for scenario " + scenarioName + " not found.", GobiiStatusLevel.ERROR);
             }
 
             String fileExpr = "//Scenario[Name='" + scenarioName + "']/Files/Instruction";
@@ -1914,7 +1912,7 @@ public class GobiiAdl {
         xPathExpression = xPath.compile(getAllScenarios);
         nodeList = (NodeList) xPathExpression.evaluate(document, XPathConstants.NODESET);
         parseScenarios(nodeList, xPath, document, xmlFile, subDirectoryName);
-        
+
 
     }
 
@@ -1997,7 +1995,7 @@ public class GobiiAdl {
         File parentDirectory = new File(directory);
 
         if (!parentDirectory.exists()) {
-            processError("\nThe directory, "+parentDirectory.getName()+" ,  does not exist. ", GobiiStatusLevel.ERROR);
+            processError("\nThe directory, " + parentDirectory.getName() + " ,  does not exist. ", GobiiStatusLevel.ERROR);
         }
 
         // check if directory
@@ -2057,7 +2055,7 @@ public class GobiiAdl {
             for (File currentSubDir : directoryListing) {
 
                 if (!currentSubDir.isDirectory()) {
-                    System.out.println("\nWarning: "+currentSubDir.getName() + " is not a directory. Skipping...");
+                    System.out.println("\nWarning: " + currentSubDir.getName() + " is not a directory. Skipping...");
                     continue;
                 }
 

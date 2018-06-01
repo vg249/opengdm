@@ -11,7 +11,7 @@ import org.gobiiproject.gobiimodel.dto.system.ConfigSettingsDTO;
 import org.gobiiproject.gobiimodel.types.ServerCapabilityType;
 import org.junit.Assert;
 
-public class Helper {
+public class HelperFunctions {
     public static boolean isBackEndSupported() {
         boolean backendSupoorted = false;
         try {
