@@ -158,7 +158,7 @@ export class InstructionSubmissionService {
 
 
                     } else {
-                        this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + GobiiExtractFilterType[gobiiExtractFilterType]));
+                        this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + GobiiExtractFilterType[gobiiExtractFilterType ? gobiiExtractFilterType : GobiiExtractFilterType.UNKNOWN]));
 
                     }
                 });
@@ -167,6 +167,7 @@ export class InstructionSubmissionService {
     }
 
     public markMissingItems(gobiiExtractFilterType: GobiiExtractFilterType) {
+
 
         if (gobiiExtractFilterType) {
 
@@ -252,7 +253,7 @@ export class InstructionSubmissionService {
                             }
 
                         } else {
-                            this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + GobiiExtractFilterType[gobiiExtractFilterType]));
+                            this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + GobiiExtractFilterType[gobiiExtractFilterType ? gobiiExtractFilterType : GobiiExtractFilterType.UNKNOWN]));
 
                         }
 
@@ -308,7 +309,7 @@ export class InstructionSubmissionService {
 
             } else {
 
-                this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + GobiiExtractFilterType[gobiiExtractFilterType]));
+                this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + GobiiExtractFilterType[gobiiExtractFilterType ? gobiiExtractFilterType : GobiiExtractFilterType.UNKNOWN]));
 
             }
 

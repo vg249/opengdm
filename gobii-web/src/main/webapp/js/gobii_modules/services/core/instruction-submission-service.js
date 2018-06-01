@@ -124,7 +124,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                             else if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY) {
                             }
                             else {
-                                _this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]));
+                                _this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType ? gobiiExtractFilterType : type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN]));
                             }
                         });
                     } // if we have an extract filter type
@@ -192,7 +192,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                                     }
                                 }
                                 else {
-                                    _this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]));
+                                    _this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType ? gobiiExtractFilterType : type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN]));
                                 }
                             }
                         });
@@ -232,7 +232,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                             returnVal = false;
                         }
                         else {
-                            this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]));
+                            this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType ? gobiiExtractFilterType : type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN]));
                         }
                     } // if we have an extract type
                     return returnVal;
