@@ -60,6 +60,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                     this.enabledStyle = null;
                     this.disabledStyle = { 'background': '#dddddd' };
                     this.currentStyle = this.disabledStyle;
+                    this.previousSelectedVertices = [];
                 } // ctor
                 FlexQueryFilterComponent.prototype.ngOnInit = function () {
                     var _this = this;
@@ -134,8 +135,12 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                     });
                 };
                 FlexQueryFilterComponent.prototype.handleVertexValueSelected = function (arg) {
-                    var selectedVertexValueGfis = this.selectedVertexValues;
-                    this.flexQueryService.loadSelectedVertexValueFilters(this.filterParamNameVertexValues, selectedVertexValueGfis);
+                    var _this = this;
+                    var newItems = this.selectedVertexValues
+                        .filter(function (gfi) { return !_this.previousSelectedVertices.find(function (igfi) { return igfi.getFileItemUniqueId() === gfi.getFileItemUniqueId(); }); });
+                    var deselectedItems = this.previousSelectedVertices.filter(function (gfi) { return !_this.selectedVertexValues.find(function (igfi) { return igfi.getFileItemUniqueId() === gfi.getFileItemUniqueId(); }); });
+                    this.flexQueryService.loadSelectedVertexValueFilters(this.filterParamNameVertexValues, newItems, deselectedItems);
+                    this.previousSelectedVertices = this.selectedVertexValues;
                 };
                 FlexQueryFilterComponent.prototype.ngOnChanges = function (changes) {
                     if (changes['gobiiExtractFilterType']
@@ -154,7 +159,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                         inputs: ['gobiiExtractFilterType', 'filterParamNameVertices', 'filterParamNameVertexValues'],
                         outputs: [],
                         styleUrls: ["css/extractor-ui.css"],
-                        template: "\n        <div class=\"panel panel-primary\" [ngStyle]=\"currentStyle\">\n            <div class=\"panel-heading\">\n                <h3 class=\"panel-title\">Filters</h3>\n            </div>\n            <div class=\"panel-body\">\n                <label class=\"the-label\">Entity:</label><BR>\n                <p-dropdown [options]=\"fileItemsVertexNames$ | async\"\n                            [style]=\"{'width': '100%'}\"\n                            optionLabel=\"_itemName\"\n                            [(ngModel)]=\"selectedVertex\"\n                            (onChange)=\"handleVertexSelected($event)\"\n                            [disabled]=\"currentStyle===disabledStyle\">\n                </p-dropdown>\n\n                <BR>\n                <BR>\n                <label class=\"the-label\">Select Entity Values</label><BR>\n                <p-listbox [options]=\"fileItemsEntityValues$ | async\"\n                           [multiple]=\"true\"\n                           [(ngModel)]=\"selectedVertexValues\" \n                           [style]=\"{'width':'100%'}\"\n                           (onChange)=\"handleVertexValueSelected($event)\"\n                           optionLabel=\"_itemName\"\n                           [disabled]=\"currentStyle===disabledStyle\"></p-listbox>\n            </div>\n\n            <div class=\"container\">\n                <p>Count: {{totalValues}} </p>\n                <p>Selected: {{selectedVertexValues ? selectedVertexValues.length : 0}}</p>\n            </div>\n        </div>" // end template
+                        template: "\n        <div class=\"panel panel-primary\" [ngStyle]=\"currentStyle\">\n            <div class=\"panel-heading\">\n                <h3 class=\"panel-title\">Filters</h3>\n            </div>\n            <div class=\"panel-body\">\n                <label class=\"the-label\">Entity:</label><BR>\n                <p-dropdown [options]=\"fileItemsVertexNames$ | async\"\n                            [style]=\"{'width': '100%'}\"\n                            optionLabel=\"_itemName\"\n                            [(ngModel)]=\"selectedVertex\"\n                            (onChange)=\"handleVertexSelected($event)\"\n                            [disabled]=\"currentStyle===disabledStyle\">\n                </p-dropdown>\n\n                <BR>\n                <BR>\n                <label class=\"the-label\">Select Entity Values</label><BR>\n                <p-listbox [options]=\"fileItemsEntityValues$ | async\"\n                           [multiple]=\"true\"\n                           [(ngModel)]=\"selectedVertexValues\"\n                           [style]=\"{'width':'100%'}\"\n                           (onChange)=\"handleVertexValueSelected($event)\"\n                           optionLabel=\"_itemName\"\n                           [disabled]=\"currentStyle===disabledStyle\"></p-listbox>\n            </div>\n\n            <div class=\"container\">\n                <p>Count: {{totalValues}} </p>\n                <p>Selected: {{selectedVertexValues ? selectedVertexValues.length : 0}}</p>\n            </div>\n        </div>" // end template
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
                         nameid_file_item_service_1.NameIdFileItemService,

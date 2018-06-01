@@ -129,10 +129,11 @@ export class FlexQueryService {
     }
 
     public loadSelectedVertexValueFilters(filterParamsName: FilterParamNames,
-                                          vertexValuesGfis: GobiiFileItem[]) {
+                                          currentValuesGfis: GobiiFileItem[],
+                                          previousValuesGfis: GobiiFileItem[]) {
 
 
-        let vertexValues: string[] = vertexValuesGfis.map(gfi => gfi.getItemId());
+        let vertexValues: string[] = currentValuesGfis.map(gfi => gfi.getItemId());
         let vertexValueIdsCsv: string = null;
         let filterParams: FilterParams = this.filterParamsColl.getFilter(filterParamsName, GobiiExtractFilterType.FLEX_QUERY);
 
@@ -144,28 +145,36 @@ export class FlexQueryService {
             );
 
 
-            this.store.select(fromRoot.getSelectedFileItems)
-                .subscribe(selectedItems => {
-
-                    let selectedVertexValueItemsNotNowAlsoSelected: GobiiFileItem[] =
-                        selectedItems
-                            .filter(gfi =>
-                                gfi.compoundIdeEquals(vertexValuesGfis[0])
-                                && vertexValuesGfis.filter(vvgfi => vvgfi.getFileItemUniqueId() !== gfi.getFileItemUniqueId()).length > 0
-                            );  // should match arbitrary item
-
-                    let size:number = selectedVertexValueItemsNotNowAlsoSelected.length;
-                    selectedVertexValueItemsNotNowAlsoSelected.forEach(gfi => {
-
-                        let loadAction: fileItemActions.RemoveFromExtractAction = new fileItemActions.RemoveFromExtractAction(gfi);
-                        this.store.dispatch(loadAction);
-                    })
-
-                }).unsubscribe(); // subscribe to selecteed file items
+            // this.store.select(fromRoot.getSelectedFileItems)
+            //     .subscribe(selectedItems => {
+            //
+            //         let selectedVertexValueItemsNotNowAlsoSelected: GobiiFileItem[] =
+            //             selectedItems
+            //                 .filter(gfi =>
+            //                     gfi.compoundIdeEquals(currentValuesGfis[0])
+            //                     && currentValuesGfis.filter(vvgfi => vvgfi.getFileItemUniqueId() !== gfi.getFileItemUniqueId()).length > 0
+            //                 );  // should match arbitrary item
+            //
+            //         let size:number = selectedVertexValueItemsNotNowAlsoSelected.length;
+            //         selectedVertexValueItemsNotNowAlsoSelected.forEach(gfi => {
+            //
+            //             let loadAction: fileItemActions.RemoveFromExtractAction = new fileItemActions.RemoveFromExtractAction(gfi);
+            //             this.store.dispatch(loadAction);
+            //         })
+            //
+            //     }).unsubscribe(); // subscribe to selecteed file items
 
         } // if we have new vertex values
 
-        vertexValuesGfis.forEach( gfi => {
+
+        previousValuesGfis.forEach(gfi => {
+
+            let loadAction: fileItemActions.RemoveFromExtractAction = new fileItemActions.RemoveFromExtractAction(gfi);
+            this.store.dispatch(loadAction);
+
+        });
+
+        currentValuesGfis.forEach(gfi => {
 
             let loadAction: fileItemActions.LoadFileItemtAction = new fileItemActions.LoadFileItemtAction(
                 {
@@ -182,7 +191,7 @@ export class FlexQueryService {
             vertexValueIdsCsv);
 
 
-        let gobiiTreeNodes: GobiiTreeNode[] = vertexValuesGfis
+        let gobiiTreeNodes: GobiiTreeNode[] = currentValuesGfis
             .map(gfi => this.treeStructureService.makeTreeNodeFromFileItem(gfi));
 
         gobiiTreeNodes.forEach(gtn => {
