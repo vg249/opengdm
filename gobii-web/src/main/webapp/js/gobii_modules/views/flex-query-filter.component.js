@@ -60,6 +60,9 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                     this.enabledStyle = null;
                     this.disabledStyle = { 'background': '#dddddd' };
                     this.currentStyle = this.disabledStyle;
+                    // Technically, we should not be keeping state in this control in this way;
+                    // However, it turns out to be a lot more complicated and error prone to
+                    // rely purely on the store
                     this.previousSelectedVertices = [];
                 } // ctor
                 FlexQueryFilterComponent.prototype.ngOnInit = function () {
@@ -127,6 +130,9 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                         }
                         else {
                             vertexId = null;
+                            this.flexQueryService.loadSelectedVertexValueFilters(this.filterParamNameVertexValues, [], this.selectedVertexValues);
+                            this.selectedVertexValues = [];
+                            this.previousSelectedVertices = [];
                         }
                         this.flexQueryService.loadSelectedVertexFilter(this.filterParamNameVertices, vertexId, entityType, entitySubType, cvGroup, cvTerm);
                     }

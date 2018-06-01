@@ -166,6 +166,10 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
                 cvTerm = arg.value.getCvTerm();
             } else {
                 vertexId = null;
+                this.flexQueryService.loadSelectedVertexValueFilters(this.filterParamNameVertexValues, [], this.selectedVertexValues);
+                this.selectedVertexValues = [];
+                this.previousSelectedVertices = [];
+
             }
 
             this.flexQueryService.loadSelectedVertexFilter(this.filterParamNameVertices,
@@ -189,7 +193,7 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
 
     // Technically, we should not be keeping state in this control in this way;
     // However, it turns out to be a lot more complicated and error prone to
-    // rely purely on the store 
+    // rely purely on the store
     private previousSelectedVertices: GobiiFileItem[] = [];
     public handleVertexValueSelected(arg) {
 
