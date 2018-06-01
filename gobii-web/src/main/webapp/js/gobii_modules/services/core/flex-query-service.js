@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-extractor-filter", "../../store/actions/treenode-action", "../../store/actions/history-action", "../../store/actions/fileitem-action", "@ngrx/store", "./dto-request.service", "../../model/vertex-filter", "./entity-file-item-service", "../app/dto-request-item-vertex-filter", "../../model/gobii-file-item", "../../model/type-process", "../../model/type-extractor-item", "../../store/actions/action-payload-filter", "./filter-params-coll", "../../model/gobii-file-item-compound-id", "../../model/type-entity", "../../model/name-id-label-type", "../../model/cv-group", "./filter-service", "./tree-structure-service"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-extractor-filter", "../../store/actions/treenode-action", "../../store/actions/history-action", "../../store/actions/fileitem-action", "../../store/reducers", "@ngrx/store", "./dto-request.service", "../../model/vertex-filter", "./entity-file-item-service", "../app/dto-request-item-vertex-filter", "../../model/gobii-file-item", "../../model/type-process", "../../model/type-extractor-item", "../../store/actions/action-payload-filter", "./filter-params-coll", "../../model/gobii-file-item-compound-id", "../../model/type-entity", "../../model/name-id-label-type", "../../model/cv-group", "./filter-service", "./tree-structure-service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_extractor_filter_1, treeNodeActions, historyAction, fileItemActions, store_1, dto_request_service_1, vertex_filter_1, entity_file_item_service_1, dto_request_item_vertex_filter_1, gobii_file_item_1, type_process_1, type_extractor_item_1, action_payload_filter_1, filter_params_coll_1, gobii_file_item_compound_id_1, type_entity_1, name_id_label_type_1, cv_group_1, filter_service_1, tree_structure_service_1, FlexQueryService;
+    var core_1, type_extractor_filter_1, treeNodeActions, historyAction, fileItemActions, fromRoot, store_1, dto_request_service_1, vertex_filter_1, entity_file_item_service_1, dto_request_item_vertex_filter_1, gobii_file_item_1, type_process_1, type_extractor_item_1, action_payload_filter_1, filter_params_coll_1, gobii_file_item_compound_id_1, type_entity_1, name_id_label_type_1, cv_group_1, filter_service_1, tree_structure_service_1, FlexQueryService;
     return {
         setters: [
             function (core_1_1) {
@@ -27,6 +27,9 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
             },
             function (fileItemActions_1) {
                 fileItemActions = fileItemActions_1;
+            },
+            function (fromRoot_1) {
+                fromRoot = fromRoot_1;
             },
             function (store_1_1) {
                 store_1 = store_1_1;
@@ -136,14 +139,34 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                     var _this = this;
                     var vertexValues = vertexValuesGfis.map(function (gfi) { return gfi.getItemId(); });
                     var vertexValueIdsCsv = null;
-                    if (vertexValues && vertexValues.length > 0) {
+                    var filterParams = this.filterParamsColl.getFilter(filterParamsName, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
+                    if (filterParams && vertexValues && vertexValues.length > 0) {
                         vertexValueIdsCsv = "";
                         vertexValues.forEach(function (vv) { return vertexValueIdsCsv += vv + ","; });
-                    }
+                        this.store.select(fromRoot.getSelectedFileItems)
+                            .subscribe(function (selectedItems) {
+                            var selectedVertexValueItemsNotNowAlsoSelected = selectedItems
+                                .filter(function (gfi) {
+                                return gfi.compoundIdeEquals(vertexValuesGfis[0])
+                                    && vertexValuesGfis.filter(function (vvgfi) { return vvgfi.getFileItemUniqueId() !== gfi.getFileItemUniqueId(); }).length > 0;
+                            }); // should match arbitrary item
+                            var size = selectedVertexValueItemsNotNowAlsoSelected.length;
+                            selectedVertexValueItemsNotNowAlsoSelected.forEach(function (gfi) {
+                                var loadAction = new fileItemActions.RemoveFromExtractAction(gfi);
+                                _this.store.dispatch(loadAction);
+                            });
+                        }).unsubscribe(); // subscribe to selecteed file items
+                    } // if we have new vertex values
+                    vertexValuesGfis.forEach(function (gfi) {
+                        var loadAction = new fileItemActions.LoadFileItemtAction({
+                            gobiiFileItem: gfi,
+                            selectForExtract: true
+                        });
+                        _this.store.dispatch(loadAction);
+                    });
                     this.filterService.loadFilter(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, filterParamsName, vertexValueIdsCsv);
                     var gobiiTreeNodes = vertexValuesGfis
                         .map(function (gfi) { return _this.treeStructureService.makeTreeNodeFromFileItem(gfi); });
-                    var filterParams = this.filterParamsColl.getFilter(filterParamsName, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
                     gobiiTreeNodes.forEach(function (gtn) {
                         gtn.setSequenceNum(filterParams.getSequenceNum());
                         gtn.setItemType(type_extractor_item_1.ExtractorItemType.VERTEX); // the three node we're adding has to be of type VERTEX

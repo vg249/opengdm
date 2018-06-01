@@ -1115,7 +1115,10 @@ export const getFqF1VerticesValues = createSelector(getFileItems, getFilters, ge
                 (e.getGobiiExtractFilterType() == GobiiExtractFilterType.FLEX_QUERY
                     && e.getExtractorItemType() === ExtractorItemType.VERTEX_VALUE
                     && e.getEntityType() === entityType)
-        ).map(fi => fi);
+        ).map(fi => fi)
+            .sort((gfi_a,gfi_b) => {
+                return gfi_a.getItemName().localeCompare(gfi_b.getItemName());
+            });
     }
 
     return returnVal;
@@ -1138,7 +1141,10 @@ export const getFqF2VerticesValues = createSelector(getFileItems, getFilters, ge
                 (e.getGobiiExtractFilterType() == GobiiExtractFilterType.FLEX_QUERY
                     && e.getExtractorItemType() === ExtractorItemType.VERTEX_VALUE
                     && e.getEntityType() === entityType)
-        ).map(fi => fi);
+        ).map(fi => fi)
+            .sort((gfi_a,gfi_b) => {
+            return gfi_a.getItemName().localeCompare(gfi_b.getItemName());
+        });;
     }
 
     return returnVal;
@@ -1162,7 +1168,10 @@ export const getFqF3VerticesValues = createSelector(getFileItems, getFilters, ge
                 (e.getGobiiExtractFilterType() == GobiiExtractFilterType.FLEX_QUERY
                     && e.getExtractorItemType() === ExtractorItemType.VERTEX_VALUE
                     && e.getEntityType() === entityType)
-        ).map(fi => fi);
+        ).map(fi => fi)
+            .sort((gfi_a,gfi_b) => {
+                return gfi_a.getItemName().localeCompare(gfi_b.getItemName());
+            });;
     }
 
     return returnVal;
@@ -1185,7 +1194,10 @@ export const getFqF4VerticesValues = createSelector(getFileItems, getFilters, ge
                 (e.getGobiiExtractFilterType() == GobiiExtractFilterType.FLEX_QUERY
                     && e.getExtractorItemType() === ExtractorItemType.VERTEX_VALUE
                     && e.getEntityType() === entityType)
-        ).map(fi => fi);
+        ).map(fi => fi)
+            .sort((gfi_a,gfi_b) => {
+                return gfi_a.getItemName().localeCompare(gfi_b.getItemName());
+            });;
     }
 
     return returnVal;
