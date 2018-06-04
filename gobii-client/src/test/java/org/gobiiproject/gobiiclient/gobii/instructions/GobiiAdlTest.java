@@ -22,11 +22,13 @@ public class GobiiAdlTest {
         backendSupoorted = org.gobiiproject.gobiiclient.HelperFunctions.isBackEndSupported();
         GobiiTestConfiguration gobiiTestConfiguration = new GobiiTestConfiguration();
         testExecConfig = gobiiTestConfiguration.getConfigSettings().getTestExecConfig();
+        backendSupoorted = gobiiTestConfiguration.getConfigSettings().isProvidesBackend();
     }
 
 
     @Test
     public void testADLBatchProcessing() {
+        System.out.println(backendSupoorted);
         if (backendSupoorted) {
             ADLEncapsulator adlEncapsulator = new ADLEncapsulator();
             String configUtilCommandlineStem = testExecConfig.getConfigUtilCommandlineStem();
@@ -38,7 +40,7 @@ public class GobiiAdlTest {
             adlEncapsulator.setInputPassword(testExecConfig.getLdapPasswordForUnitTest());
             adlEncapsulator.setInputTimeout(testExecConfig.getAsynchOpTimeoutMinutes());
             adlEncapsulator.setInputDirectory(new File("src/test/resources/gobiiAdl").getAbsolutePath());
-            Assert.assertEquals(adlEncapsulator.executeBatchGobiiADL(), "SUCCESS");
+            Assert.assertTrue(adlEncapsulator.getErrorMsg(), adlEncapsulator.executeBatchGobiiADL());
         }
     }
 }

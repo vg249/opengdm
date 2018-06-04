@@ -19,13 +19,8 @@ public class ADLEncapsulator {
     private static final String OUTPUT = "output.txt";
     private static final String ERROR = "error.txt";
 
-    private String inputHost;
-    private String inputUser;
-    private String inputPassword;
+    private String inputHost, inputUser, inputPassword, inputScenario, inputDirectory, adlJarPath, errorMsg;
     private Integer inputTimeout;
-    private String inputScenario;
-    private String inputDirectory;
-    private String adlJarPath;
 
     private String getInputHost() {
         return inputHost;
@@ -83,6 +78,14 @@ public class ADLEncapsulator {
         this.adlJarPath = adlJarPath;
     }
 
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    private void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg;
+    }
+
     private String getBasicCommand() {
         String servercommand = JAVA_COMMAND + SPACE;
         servercommand += getAdlJarPath() + SPACE;
@@ -105,21 +108,23 @@ public class ADLEncapsulator {
         return servercommand;
     }
 
-    public String executeBatchGobiiADL() {
+    public boolean executeBatchGobiiADL() {
         if (getAdlJarPath() == null || getInputHost() == null || getInputUser() == null || getInputPassword() == null || getInputTimeout() == null || getInputDirectory() == null) {
-            return "Please set all the input parameters and try again.";
+            setErrorMsg("Please set all the input parameters and try again.");
+            return false;
         }
         boolean status = HelperFunctions.tryExec(getBatchAdlCommand(), getInputDirectory() + OUTPUT, getInputDirectory() + ERROR);
         if (status) {
-            return "SUCCESS";
+            return true;
         } else {
-            final String[] msg = {getBatchAdlCommand()};
+            final String[] msg = new String[0];
             try (Stream<String> stream = Files.lines(Paths.get(getInputDirectory() + ERROR))) {
                 stream.forEach(s -> msg[0] += s + SPACE);
             } catch (IOException e) {
-                msg[0] += e.getMessage();
+                setErrorMsg(e.getMessage());
             }
-            return msg[0];
+            setErrorMsg(msg[0]);
+            return false;
         }
     }
 }
