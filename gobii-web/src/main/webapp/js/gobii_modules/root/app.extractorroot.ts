@@ -489,7 +489,13 @@ export class ExtractorRoot implements OnInit {
                             )[0];
                     this.handleExportTypeSelected(GobiiExtractFilterType.WHOLE_DATASET);
 //                    scope$.initializeSubmissionContact();
-                    scope$.currentStatus = "GOBII Server " + gobiiVersion;
+
+                    this.store.select(fromRoot.getAllFileItems).subscribe(
+                        all => {
+                            scope$.currentStatus = "GOBII Server " + gobiiVersion + " ( "+ all.length +" )";
+                        }
+                    );
+
                     //scope$.handleAddMessage("Connected to crop config: " + scope$.selectedServerConfig.crop);
 
                 } else {

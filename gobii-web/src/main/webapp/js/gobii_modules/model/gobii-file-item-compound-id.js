@@ -50,17 +50,14 @@ System.register(["./type-entity", "./cv-group", "./type-extractor-item"], functi
                     return new GobiiFileItemCompoundId(gobiiFileItemCompoundId.getExtractorItemType(), gobiiFileItemCompoundId.getEntityType(), gobiiFileItemCompoundId.getEntitySubType(), gobiiFileItemCompoundId.getCvGroup(), gobiiFileItemCompoundId.getCvTerm(), gobiiFileItemCompoundId.getCvFilterValue(), gobiiFileItemCompoundId.getIsExtractCriterion(), gobiiFileItemCompoundId.getSequenceNum());
                 };
                 GobiiFileItemCompoundId.prototype.compoundIdeEquals = function (gobiiFileItemCompoundId) {
-                    return ((this.getExtractorItemType() === gobiiFileItemCompoundId.getExtractorItemType() // for FlexQuery filter items
-                        && this.getSequenceNum() > 0
-                        && this.getSequenceNum() === gobiiFileItemCompoundId.getSequenceNum())
-                        || (this.getExtractorItemType() === gobiiFileItemCompoundId.getExtractorItemType()
-                            && (this.getEntityType() === gobiiFileItemCompoundId.getEntityType()
-                                || this.getEntityType() === type_entity_1.EntityType.ANY)
-                            && (this.getEntitySubType() === gobiiFileItemCompoundId.getEntitySubType()
-                                || this.getEntitySubType() === type_entity_1.EntitySubType.ANY)
-                            && (this.getCvGroup() === gobiiFileItemCompoundId.getCvGroup()
-                                || this.getCvGroup() === cv_group_1.CvGroup.ANY)
-                            && this.getCvFilterValue() === gobiiFileItemCompoundId.getCvFilterValue()));
+                    return ((this.getSequenceNum() > 0 &&
+                        this.getSequenceNum() === gobiiFileItemCompoundId.getSequenceNum())
+                        ||
+                            (this.getExtractorItemType() === gobiiFileItemCompoundId.getExtractorItemType() // for FlexQuery filter items
+                                && (this.getEntityType() === gobiiFileItemCompoundId.getEntityType())
+                                && (this.getEntitySubType() === gobiiFileItemCompoundId.getEntitySubType())
+                                && (this.getCvGroup() === gobiiFileItemCompoundId.getCvGroup())
+                                && this.getCvFilterValue() === gobiiFileItemCompoundId.getCvFilterValue()));
                 };
                 GobiiFileItemCompoundId.prototype.getExtractorItemType = function () {
                     return this._extractorItemType;

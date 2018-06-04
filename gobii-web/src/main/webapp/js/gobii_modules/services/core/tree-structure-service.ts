@@ -375,7 +375,8 @@ export class TreeStructureService {
             .setFileItemId(gobiiFileItem.getFileItemUniqueId())
             .setEntityType(gobiiFileItem.getEntityType())
             .setEntitySubType(gobiiFileItem.getEntitySubType())
-            .setCvGroup(gobiiFileItem.getCvGroup());
+            .setCvGroup(gobiiFileItem.getCvGroup())
+            .setSequenceNum(gobiiFileItem.getSequenceNum());
 
         this.addIconsToNode(returnVal, false);
         let label: string = this.getLabel(returnVal.getItemType(), returnVal.getEntityType(), returnVal.getEntitySubType(), returnVal.getCvGroup(), returnVal.getCvTerm(), returnVal.getSequenceNum())

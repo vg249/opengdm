@@ -32,7 +32,7 @@ export class GobiiFileItemCompoundId {
 
     }
 
-    public static fromGobiiFileItemCompoundId(gobiiFileItemCompoundId:GobiiFileItemCompoundId): GobiiFileItemCompoundId {
+    public static fromGobiiFileItemCompoundId(gobiiFileItemCompoundId: GobiiFileItemCompoundId): GobiiFileItemCompoundId {
 
         return new GobiiFileItemCompoundId(
             gobiiFileItemCompoundId.getExtractorItemType(),
@@ -50,23 +50,16 @@ export class GobiiFileItemCompoundId {
     public compoundIdeEquals(gobiiFileItemCompoundId: GobiiFileItemCompoundId): boolean {
         return (
 
+            (this.getSequenceNum() > 0 &&
+                this.getSequenceNum() === gobiiFileItemCompoundId.getSequenceNum())
+            ||
             (this.getExtractorItemType() === gobiiFileItemCompoundId.getExtractorItemType() // for FlexQuery filter items
-                && this.getSequenceNum() > 0
-                && this.getSequenceNum() === gobiiFileItemCompoundId.getSequenceNum()
-            )
-
-            || (this.getExtractorItemType() === gobiiFileItemCompoundId.getExtractorItemType()
-                && (this.getEntityType() === gobiiFileItemCompoundId.getEntityType()
-                    || this.getEntityType() === EntityType.ANY)
-                && (this.getEntitySubType() === gobiiFileItemCompoundId.getEntitySubType()
-                    || this.getEntitySubType() === EntitySubType.ANY)
-                && (this.getCvGroup() === gobiiFileItemCompoundId.getCvGroup()
-                    || this.getCvGroup() === CvGroup.ANY)
-                && this.getCvFilterValue() === gobiiFileItemCompoundId.getCvFilterValue()
-            )
+                && (this.getEntityType() === gobiiFileItemCompoundId.getEntityType())
+                && (this.getEntitySubType() === gobiiFileItemCompoundId.getEntitySubType())
+                && (this.getCvGroup() === gobiiFileItemCompoundId.getCvGroup())
+                && this.getCvFilterValue() === gobiiFileItemCompoundId.getCvFilterValue())
         )
     }
-
 
     getExtractorItemType(): ExtractorItemType {
         return this._extractorItemType;

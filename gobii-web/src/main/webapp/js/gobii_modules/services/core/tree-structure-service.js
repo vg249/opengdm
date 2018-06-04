@@ -352,7 +352,8 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
                         .setFileItemId(gobiiFileItem.getFileItemUniqueId())
                         .setEntityType(gobiiFileItem.getEntityType())
                         .setEntitySubType(gobiiFileItem.getEntitySubType())
-                        .setCvGroup(gobiiFileItem.getCvGroup());
+                        .setCvGroup(gobiiFileItem.getCvGroup())
+                        .setSequenceNum(gobiiFileItem.getSequenceNum());
                     this.addIconsToNode(returnVal, false);
                     var label = this.getLabel(returnVal.getItemType(), returnVal.getEntityType(), returnVal.getEntitySubType(), returnVal.getCvGroup(), returnVal.getCvTerm(), returnVal.getSequenceNum());
                     returnVal.setLabel(label);
