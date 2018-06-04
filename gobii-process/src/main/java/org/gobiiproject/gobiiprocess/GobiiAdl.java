@@ -1796,14 +1796,6 @@ public class GobiiAdl {
 
     }
 
-    private static void checkIfDirectory(File fileName) {
-
-        if (!fileName.isDirectory()) {
-            processError("\nFile " + fileName + " is not directory.", GobiiStatusLevel.ERROR);
-        }
-
-    }
-
     private static File[] getChildrenFiles(File fileName) {
 
         File[] directoryListing = null;
@@ -1932,6 +1924,20 @@ public class GobiiAdl {
 
     }
 
+    private static void processDirectory(File currentDir) throws Exception {
+
+        System.out.println("\nChecking files for " + currentDir.getName());
+
+        validateSubDirectory(currentDir);
+
+        /*** Process XML file ***/
+
+        System.out.println("\nProcessing XML: " + xmlFile.getName() + " for subdirectory: " + currentDir.getName());
+        processXMLScenario(xmlFile, currentDir.getName());
+
+
+    }
+
     public static void main(String[] args) throws Exception {
 
 
@@ -2007,7 +2013,7 @@ public class GobiiAdl {
             parentDirectory = new File(directory);
 
         } else {
-            processError("\n Either -d (path to director) or -s (path to subdirectory) should be specified.", GobiiStatusLevel.ERROR);
+            processError("\n Either -d (path to directory) or -s (path to subdirectory) should be specified.", GobiiStatusLevel.ERROR);
         }
 
 
@@ -2016,7 +2022,10 @@ public class GobiiAdl {
         }
 
         // check if directory
-        checkIfDirectory(parentDirectory);
+
+        if (!parentDirectory.isDirectory()) {
+            processError("\nFile " + parentDirectory.getName() + " is not directory.", GobiiStatusLevel.ERROR);
+        }
 
         parentDirectoryPath = parentDirectory;
 
@@ -2078,30 +2087,16 @@ public class GobiiAdl {
 
                 /** Do load process for each scenario file ***/
 
-
-                System.out.println("\nChecking files for " + currentSubDir.getName());
-
-                validateSubDirectory(currentSubDir);
-
-                /***Process XML file for current subdirectory**/
-                System.out.println("\nProcessing XML: " + xmlFile.getName() + " for subdirectory: " + currentSubDir.getName());
-                processXMLScenario(xmlFile, currentSubDir.getName());
+                processDirectory(currentSubDir);
 
             }
         } else {
 
-            System.out.println("\nChecking files for " + parentDirectory.getName());
-
-            validateSubDirectory(parentDirectory);
-
-            /***Process XML file for current subdirectory**/
-            System.out.println("\nProcessing XML: " + xmlFile.getName() + " for subdirectory: " + parentDirectory.getName());
-            processXMLScenario(xmlFile, parentDirectory.getName());
-
+            processDirectory(parentDirectory);
 
         }
 
-        System.out.println("ADL uploading successfully finished!");
+        System.out.println("\nADL uploading successfully finished!");
         System.exit(0);
     }
 }
