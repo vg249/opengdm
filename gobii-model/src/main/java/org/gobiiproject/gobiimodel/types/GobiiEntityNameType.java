@@ -5,6 +5,7 @@ package org.gobiiproject.gobiimodel.types;
  */
 public enum GobiiEntityNameType {
     UNKNOWN,
+    ANY,
     ANALYSIS,
     CONTACT,
     DATASET,

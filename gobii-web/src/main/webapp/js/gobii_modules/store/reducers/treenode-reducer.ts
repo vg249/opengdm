@@ -9,7 +9,7 @@ import {EntityType} from "../../model/type-entity";
 export interface State {
     gobiiExtractFilterType: GobiiExtractFilterType;
     gobiiTreeNodesActive: string[];
-    gobiiTreeNodes: GobiiTreeNode[] ;
+    gobiiTreeNodes: GobiiTreeNode[];
 };
 
 export const initialState: State = {
@@ -27,7 +27,8 @@ function placeNodeInTree(nodeToPlace: GobiiTreeNode, treeNodes: GobiiTreeNode[],
 
         let currentTreenode: GobiiTreeNode = treeNodes[idx];
         if (currentTreenode.getGobiiExtractFilterType() === gobiiExtractFilterType &&
-            currentTreenode.compoundIdeEquals(nodeToPlace)
+            (currentTreenode.compoundIdeEquals(nodeToPlace)
+                || currentTreenode.getChildCompoundUniqueId().compoundIdeEquals(nodeToPlace))
             && currentTreenode.getContainerType() !== ContainerType.STRUCTURE
         ) {
             if (currentTreenode.getContainerType() === ContainerType.NONE) {
@@ -207,7 +208,7 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
                 gobiiExtractFilterType,
                 gobiiFileItemCompoundId);
 
-            if( treeNodeToMutate ) {
+            if (treeNodeToMutate) {
 
                 const icon: string = action.payload.icons.icon;
                 const expandedIcon: string = action.payload.icons.expandedIcon;

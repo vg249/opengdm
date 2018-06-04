@@ -6,7 +6,8 @@ System.register(["reselect", "../actions/treenode-action", "../../model/gobii-tr
         for (var idx = 0; !returnVal && (idx < treeNodes.length); idx++) {
             var currentTreenode = treeNodes[idx];
             if (currentTreenode.getGobiiExtractFilterType() === gobiiExtractFilterType &&
-                currentTreenode.compoundIdeEquals(nodeToPlace)
+                (currentTreenode.compoundIdeEquals(nodeToPlace)
+                    || currentTreenode.getChildCompoundUniqueId().compoundIdeEquals(nodeToPlace))
                 && currentTreenode.getContainerType() !== gobii_tree_node_1.ContainerType.STRUCTURE) {
                 if (currentTreenode.getContainerType() === gobii_tree_node_1.ContainerType.NONE) {
                     treeNodes[idx] = nodeToPlace;

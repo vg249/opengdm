@@ -1,6 +1,7 @@
 // these have to match what's on the server
 export enum EntityType {
     UNKNOWN,
+    ANY,
     ANALYSIS,
     CONTACT,
     DATASET,
@@ -113,6 +114,7 @@ export const entityTypefromString = function (entityTypeName: String): EntityTyp
 
 export enum  EntitySubType {
     UNKNOWN,
+    ANY,
     CONTACT_PRINCIPLE_INVESTIGATOR,
     CONTACT_SUBMITED_BY
 }

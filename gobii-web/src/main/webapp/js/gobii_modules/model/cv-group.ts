@@ -1,6 +1,8 @@
 import {EntityType} from "./type-entity";
 
-export enum CvGroup {UNKNOWN,
+export enum CvGroup {
+    UNKNOWN,
+    ANY,
     JOBTYPE,
     PAYLOADTYPE,
     JOBSTATUS,
@@ -17,23 +19,23 @@ export enum CvGroup {UNKNOWN,
     MARKER_STRAND,
     PLATFORM_TYPE,
     PROJECT_PROP,
-    STATUS};
+    STATUS
+};
 
 
-
-export const getCvGroupName = function (cvGroup:CvGroup): string {
+export const getCvGroupName = function (cvGroup: CvGroup): string {
 
     let returnVal: string;
 
-    if(cvGroup === CvGroup.ANALYSIS_TYPE) {
+    if (cvGroup === CvGroup.ANALYSIS_TYPE) {
 
         returnVal = "analysis_type";
 
-    } else if(cvGroup === CvGroup.DATASET_TYPE) {
+    } else if (cvGroup === CvGroup.DATASET_TYPE) {
 
         returnVal = "dataset_type";
 
-    } else if(cvGroup === CvGroup.JOBSTATUS ) {
+    } else if (cvGroup === CvGroup.JOBSTATUS) {
 
         returnVal = "job_status";
 

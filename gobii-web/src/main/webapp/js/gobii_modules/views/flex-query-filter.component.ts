@@ -166,10 +166,8 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
                 cvTerm = arg.value.getCvTerm();
             } else {
                 vertexId = null;
-                this.flexQueryService.loadSelectedVertexValueFilters(this.filterParamNameVertexValues, [], this.selectedVertexValues);
                 this.selectedVertexValues = [];
                 this.previousSelectedVertices = [];
-
             }
 
             this.flexQueryService.loadSelectedVertexFilter(this.filterParamNameVertices,
@@ -203,7 +201,9 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
 
         let deselectedItems:GobiiFileItem[] = this.previousSelectedVertices.filter(gfi=> ! this.selectedVertexValues.find(igfi => igfi.getFileItemUniqueId() === gfi.getFileItemUniqueId() ));
 
-        this.flexQueryService.loadSelectedVertexValueFilters(this.filterParamNameVertexValues, newItems, deselectedItems);
+        this.flexQueryService.loadSelectedVertexValueFilters(this.filterParamNameVertexValues,
+            newItems ? newItems : [], // find() can return null
+            deselectedItems);
 
         this.previousSelectedVertices = this.selectedVertexValues;
     }

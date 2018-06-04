@@ -130,7 +130,6 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                         }
                         else {
                             vertexId = null;
-                            this.flexQueryService.loadSelectedVertexValueFilters(this.filterParamNameVertexValues, [], this.selectedVertexValues);
                             this.selectedVertexValues = [];
                             this.previousSelectedVertices = [];
                         }
@@ -145,7 +144,8 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                     var newItems = this.selectedVertexValues
                         .filter(function (gfi) { return !_this.previousSelectedVertices.find(function (igfi) { return igfi.getFileItemUniqueId() === gfi.getFileItemUniqueId(); }); });
                     var deselectedItems = this.previousSelectedVertices.filter(function (gfi) { return !_this.selectedVertexValues.find(function (igfi) { return igfi.getFileItemUniqueId() === gfi.getFileItemUniqueId(); }); });
-                    this.flexQueryService.loadSelectedVertexValueFilters(this.filterParamNameVertexValues, newItems, deselectedItems);
+                    this.flexQueryService.loadSelectedVertexValueFilters(this.filterParamNameVertexValues, newItems ? newItems : [], // find() can return null
+                    deselectedItems);
                     this.previousSelectedVertices = this.selectedVertexValues;
                 };
                 FlexQueryFilterComponent.prototype.ngOnChanges = function (changes) {

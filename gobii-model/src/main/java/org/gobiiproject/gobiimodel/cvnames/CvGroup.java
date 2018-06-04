@@ -9,6 +9,7 @@ public enum CvGroup {
 
     // corrrelate enum with known-cvgroup values from seed data
     UNKNOWN("unknown"),
+    ANY("any"),
     JOBTYPE("job_type"),
     PAYLOADTYPE("payload_type"),
     JOBSTATUS("job_status"),

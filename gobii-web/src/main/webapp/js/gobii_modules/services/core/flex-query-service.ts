@@ -113,7 +113,11 @@ export class FlexQueryService {
                 );
 
                 this.store.dispatch(childFilterLoadAction);
-            }
+
+                // clear any selected nodes from selected items collection and from tree
+                this.deSelectVertexValueFilters(filterParams.getTargetEntityUniqueId());
+
+            } // if the vertexId is null
 
 
             // if the current filter is getting nulled, we need to null the siblings as well
@@ -144,26 +148,6 @@ export class FlexQueryService {
                 vv => vertexValueIdsCsv += vv + ","
             );
 
-
-            // this.store.select(fromRoot.getSelectedFileItems)
-            //     .subscribe(selectedItems => {
-            //
-            //         let selectedVertexValueItemsNotNowAlsoSelected: GobiiFileItem[] =
-            //             selectedItems
-            //                 .filter(gfi =>
-            //                     gfi.compoundIdeEquals(currentValuesGfis[0])
-            //                     && currentValuesGfis.filter(vvgfi => vvgfi.getFileItemUniqueId() !== gfi.getFileItemUniqueId()).length > 0
-            //                 );  // should match arbitrary item
-            //
-            //         let size:number = selectedVertexValueItemsNotNowAlsoSelected.length;
-            //         selectedVertexValueItemsNotNowAlsoSelected.forEach(gfi => {
-            //
-            //             let loadAction: fileItemActions.RemoveFromExtractAction = new fileItemActions.RemoveFromExtractAction(gfi);
-            //             this.store.dispatch(loadAction);
-            //         })
-            //
-            //     }).unsubscribe(); // subscribe to selecteed file items
-
         } // if we have new vertex values
 
 
@@ -191,19 +175,20 @@ export class FlexQueryService {
             vertexValueIdsCsv);
 
 
-        let gobiiTreeNodes: GobiiTreeNode[] = currentValuesGfis
-            .map(gfi => this.treeStructureService.makeTreeNodeFromFileItem(gfi));
-
-        gobiiTreeNodes.forEach(gtn => {
-            gtn.setSequenceNum(filterParams.getSequenceNum());
-            gtn.setItemType(ExtractorItemType.VERTEX); // the three node we're adding has to be of type VERTEX
-                                                       // in order to added to the VERTEX nodes
-                                                       // this is probably bad
-        });
-
-        gobiiTreeNodes.forEach(tn => {
-            this.store.dispatch(new treeNodeActions.PlaceTreeNodeAction(tn));
-        });
+        // let gobiiTreeNodes: GobiiTreeNode[] = currentValuesGfis
+        //     .map(gfi => this.treeStructureService.makeTreeNodeFromFileItem(gfi));
+        //
+        // gobiiTreeNodes.forEach(gtn => {
+        //     gtn.setSequenceNum(filterParams.getSequenceNum());
+        //     gtn.setItemType(ExtractorItemType.VERTEX_VALUE);
+        //     // gtn.setItemType(ExtractorItemType.VERTEX); // the three node we're adding has to be of type VERTEX
+        //     //                                            // in order to added to the VERTEX nodes
+        //     //                                            // this is probably bad
+        // });
+        //
+        // gobiiTreeNodes.forEach(tn => {
+        //     this.store.dispatch(new treeNodeActions.PlaceTreeNodeAction(tn));
+        // });
 
     }
 
@@ -230,10 +215,6 @@ export class FlexQueryService {
                 false
             )).subscribe(vertexFilterDto => {
                     vertexFilterDtoResponse = vertexFilterDto;
-                    // this.store.dispatch(new  historyAction
-                    //     .AddStatusMessageAction("Extractor instruction file created on server: "
-                    //         + extractorInstructionFilesDTOResponse.getInstructionFileName()));
-                    //
 
                     let vertexFileItems: GobiiFileItem[] = [];
                     vertexFilterDto.vertexValues.forEach(item => {
@@ -258,7 +239,7 @@ export class FlexQueryService {
                     );
 
 
-                    // for flex query the "filter value" is not an actua id but a new entity type
+                    // for flex query the "filter value" is not an actual id but a new entity type
                     // our selectors "just know" to look for the filter's target entity type as the thing to filter on
                     let filterParams: FilterParams = this.filterParamsColl.getFilter(filterParamName, GobiiExtractFilterType.FLEX_QUERY);
                     let targetCompoundUniqueId: GobiiFileItemCompoundId = filterParams.getTargetEntityUniqueId();
@@ -317,4 +298,17 @@ export class FlexQueryService {
         //} );//return observer create
     }
 
+
+    private deSelectVertexValueFilters(compoundUniquueId:GobiiFileItemCompoundId) {
+
+        this.store.select(fromRoot.getSelectedFileItems)
+            .subscribe( gfi => {
+                let itemsToDeselect:GobiiFileItem[] = gfi.filter(sgfi => sgfi.compoundIdeEquals(compoundUniquueId));
+                itemsToDeselect.forEach( itr => {
+                    let loadAction: fileItemActions.RemoveFromExtractAction = new fileItemActions.RemoveFromExtractAction(itr);
+                    this.store.dispatch(loadAction);
+                });
+            } ).unsubscribe();
+
+    }
 }

@@ -9,7 +9,7 @@ export class GobiiFileItemCompoundId {
                 private _entityType: EntityType = EntityType.UNKNOWN,
                 private _entitySubType: EntitySubType = EntitySubType.UNKNOWN,
                 private _cvGroup: CvGroup = CvGroup.UNKNOWN,
-                private _cvTerm:string = null,
+                private _cvTerm: string = null,
                 private _cvFilterValue: string = null,
                 private _isExtractCriterion: boolean = true,
                 private _sequenceNum: number = 0) {
@@ -32,6 +32,21 @@ export class GobiiFileItemCompoundId {
 
     }
 
+    public static fromGobiiFileItemCompoundId(gobiiFileItemCompoundId:GobiiFileItemCompoundId): GobiiFileItemCompoundId {
+
+        return new GobiiFileItemCompoundId(
+            gobiiFileItemCompoundId.getExtractorItemType(),
+            gobiiFileItemCompoundId.getEntityType(),
+            gobiiFileItemCompoundId.getEntitySubType(),
+            gobiiFileItemCompoundId.getCvGroup(),
+            gobiiFileItemCompoundId.getCvTerm(),
+            gobiiFileItemCompoundId.getCvFilterValue(),
+            gobiiFileItemCompoundId.getIsExtractCriterion(),
+            gobiiFileItemCompoundId.getSequenceNum()
+        );
+
+    }
+
     public compoundIdeEquals(gobiiFileItemCompoundId: GobiiFileItemCompoundId): boolean {
         return (
 
@@ -41,9 +56,12 @@ export class GobiiFileItemCompoundId {
             )
 
             || (this.getExtractorItemType() === gobiiFileItemCompoundId.getExtractorItemType()
-                && this.getEntityType() === gobiiFileItemCompoundId.getEntityType()
-                && this.getEntitySubType() === gobiiFileItemCompoundId.getEntitySubType()
-                && this.getCvGroup() === gobiiFileItemCompoundId.getCvGroup()
+                && (this.getEntityType() === gobiiFileItemCompoundId.getEntityType()
+                    || this.getEntityType() === EntityType.ANY)
+                && (this.getEntitySubType() === gobiiFileItemCompoundId.getEntitySubType()
+                    || this.getEntitySubType() === EntitySubType.ANY)
+                && (this.getCvGroup() === gobiiFileItemCompoundId.getCvGroup()
+                    || this.getCvGroup() === CvGroup.ANY)
                 && this.getCvFilterValue() === gobiiFileItemCompoundId.getCvFilterValue()
             )
         )
@@ -111,7 +129,7 @@ export class GobiiFileItemCompoundId {
         return this._cvTerm;
     }
 
-    setCvTerm(value:string): GobiiFileItemCompoundId {
+    setCvTerm(value: string): GobiiFileItemCompoundId {
         this._cvTerm = value;
         return this;
     }

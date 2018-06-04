@@ -113,19 +113,39 @@ export class TreeStructureService {
             GobiiTreeNode.build(GobiiExtractFilterType.FLEX_QUERY, ExtractorItemType.VERTEX)
                 .setSequenceNum(1)
                 .setEntityType(EntityType.UNKNOWN)
-                .setContainerType(ContainerType.DATA),
+                .setContainerType(ContainerType.DATA)
+                .setChildCompoundUniqueId(new GobiiFileItemCompoundId()
+                    .setExtractorItemType(ExtractorItemType.VERTEX_VALUE)
+                    .setEntityType(EntityType.ANY)
+                    .setEntitySubType(EntitySubType.ANY)
+                    .setCvGroup(CvGroup.ANY)),
             GobiiTreeNode.build(GobiiExtractFilterType.FLEX_QUERY, ExtractorItemType.VERTEX)
                 .setSequenceNum(2)
                 .setEntityType(EntityType.UNKNOWN)
-                .setContainerType(ContainerType.DATA),
+                .setContainerType(ContainerType.DATA)
+                .setChildCompoundUniqueId(new GobiiFileItemCompoundId()
+                    .setExtractorItemType(ExtractorItemType.VERTEX_VALUE)
+                    .setEntityType(EntityType.ANY)
+                    .setEntitySubType(EntitySubType.ANY)
+                    .setCvGroup(CvGroup.ANY)),
             GobiiTreeNode.build(GobiiExtractFilterType.FLEX_QUERY, ExtractorItemType.VERTEX)
                 .setSequenceNum(3)
                 .setEntityType(EntityType.UNKNOWN)
-                .setContainerType(ContainerType.DATA),
+                .setContainerType(ContainerType.DATA)
+                .setChildCompoundUniqueId(new GobiiFileItemCompoundId()
+                    .setExtractorItemType(ExtractorItemType.VERTEX_VALUE)
+                    .setEntityType(EntityType.ANY)
+                    .setEntitySubType(EntitySubType.ANY)
+                    .setCvGroup(CvGroup.ANY)),
             GobiiTreeNode.build(GobiiExtractFilterType.FLEX_QUERY, ExtractorItemType.VERTEX)
                 .setSequenceNum(4)
                 .setEntityType(EntityType.UNKNOWN)
-                .setContainerType(ContainerType.DATA),
+                .setContainerType(ContainerType.DATA)
+                .setChildCompoundUniqueId(new GobiiFileItemCompoundId()
+                    .setExtractorItemType(ExtractorItemType.VERTEX_VALUE)
+                    .setEntityType(EntityType.ANY)
+                    .setEntitySubType(EntitySubType.ANY)
+                    .setCvGroup(CvGroup.ANY)),
         ]; // array of gobii tree nodes
 
         // we know we only have to go one level deep in this case -- no need to recurse

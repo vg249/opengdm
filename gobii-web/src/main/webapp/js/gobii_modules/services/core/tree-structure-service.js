@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/type-entity", "../../views/entity-labels", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-group", "../../model/type-extract-format", "../../model/type-process", "../../store/actions/treenode-action", "@ngrx/store", "rxjs/Observable"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/type-entity", "../../views/entity-labels", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-group", "../../model/type-extract-format", "../../model/type-process", "../../model/gobii-file-item-compound-id", "../../store/actions/treenode-action", "@ngrx/store", "rxjs/Observable"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, gobii_tree_node_1, type_entity_1, entity_labels_1, type_extractor_item_1, type_extractor_filter_1, cv_group_1, type_extract_format_1, type_process_1, treeNodeActions, store_1, Observable_1, TreeStructureService;
+    var core_1, gobii_tree_node_1, type_entity_1, entity_labels_1, type_extractor_item_1, type_extractor_filter_1, cv_group_1, type_extract_format_1, type_process_1, gobii_file_item_compound_id_1, treeNodeActions, store_1, Observable_1, TreeStructureService;
     return {
         setters: [
             function (core_1_1) {
@@ -39,6 +39,9 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
             },
             function (type_process_1_1) {
                 type_process_1 = type_process_1_1;
+            },
+            function (gobii_file_item_compound_id_1_1) {
+                gobii_file_item_compound_id_1 = gobii_file_item_compound_id_1_1;
             },
             function (treeNodeActions_1) {
                 treeNodeActions = treeNodeActions_1;
@@ -129,19 +132,39 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
                         gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_extractor_item_1.ExtractorItemType.VERTEX)
                             .setSequenceNum(1)
                             .setEntityType(type_entity_1.EntityType.UNKNOWN)
-                            .setContainerType(gobii_tree_node_1.ContainerType.DATA),
+                            .setContainerType(gobii_tree_node_1.ContainerType.DATA)
+                            .setChildCompoundUniqueId(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId()
+                            .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE)
+                            .setEntityType(type_entity_1.EntityType.ANY)
+                            .setEntitySubType(type_entity_1.EntitySubType.ANY)
+                            .setCvGroup(cv_group_1.CvGroup.ANY)),
                         gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_extractor_item_1.ExtractorItemType.VERTEX)
                             .setSequenceNum(2)
                             .setEntityType(type_entity_1.EntityType.UNKNOWN)
-                            .setContainerType(gobii_tree_node_1.ContainerType.DATA),
+                            .setContainerType(gobii_tree_node_1.ContainerType.DATA)
+                            .setChildCompoundUniqueId(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId()
+                            .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE)
+                            .setEntityType(type_entity_1.EntityType.ANY)
+                            .setEntitySubType(type_entity_1.EntitySubType.ANY)
+                            .setCvGroup(cv_group_1.CvGroup.ANY)),
                         gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_extractor_item_1.ExtractorItemType.VERTEX)
                             .setSequenceNum(3)
                             .setEntityType(type_entity_1.EntityType.UNKNOWN)
-                            .setContainerType(gobii_tree_node_1.ContainerType.DATA),
+                            .setContainerType(gobii_tree_node_1.ContainerType.DATA)
+                            .setChildCompoundUniqueId(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId()
+                            .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE)
+                            .setEntityType(type_entity_1.EntityType.ANY)
+                            .setEntitySubType(type_entity_1.EntitySubType.ANY)
+                            .setCvGroup(cv_group_1.CvGroup.ANY)),
                         gobii_tree_node_1.GobiiTreeNode.build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_extractor_item_1.ExtractorItemType.VERTEX)
                             .setSequenceNum(4)
                             .setEntityType(type_entity_1.EntityType.UNKNOWN)
-                            .setContainerType(gobii_tree_node_1.ContainerType.DATA),
+                            .setContainerType(gobii_tree_node_1.ContainerType.DATA)
+                            .setChildCompoundUniqueId(new gobii_file_item_compound_id_1.GobiiFileItemCompoundId()
+                            .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE)
+                            .setEntityType(type_entity_1.EntityType.ANY)
+                            .setEntitySubType(type_entity_1.EntitySubType.ANY)
+                            .setCvGroup(cv_group_1.CvGroup.ANY)),
                     ]); // array of gobii tree nodes
                     // we know we only have to go one level deep in this case -- no need to recurse
                     returnVal.forEach(function (currentNode, idx, nodes) {

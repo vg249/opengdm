@@ -5,6 +5,7 @@ package org.gobiiproject.gobiimodel.types;
  */
 public enum GobiiEntitySubType {
     UNKNOWN,
+    ANY,
     CONTACT_PRINCIPLE_INVESTIGATOR,
     CONTACT_SUBMITED_BY
 }

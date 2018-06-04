@@ -41,6 +41,7 @@ System.register(["./guid", "./type-extractor-filter", "./gobii-file-item-compoun
                     _this.required = false;
                     _this.active = false;
                     _this.containerType = ContainerType.NONE;
+                    _this.childCompoundUniqueId = null;
                     _this.id = guid_1.Guid.generateUUID();
                     _this.parent = parent;
                     _this.fileItemId = fileItemId;
@@ -228,6 +229,16 @@ System.register(["./guid", "./type-extractor-filter", "./gobii-file-item-compoun
                 };
                 GobiiTreeNode.prototype.setContainerType = function (value) {
                     this.containerType = value;
+                    return this;
+                };
+                GobiiTreeNode.prototype.getChildCompoundUniqueId = function () {
+                    if (!this.childCompoundUniqueId) {
+                        this.childCompoundUniqueId = gobii_file_item_compound_id_1.GobiiFileItemCompoundId.fromGobiiFileItemCompoundId(this);
+                    }
+                    return this.childCompoundUniqueId;
+                };
+                GobiiTreeNode.prototype.setChildCompoundUniqueId = function (value) {
+                    this.childCompoundUniqueId = value;
                     return this;
                 };
                 return GobiiTreeNode;

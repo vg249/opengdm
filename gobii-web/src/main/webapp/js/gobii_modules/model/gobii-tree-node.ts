@@ -11,6 +11,35 @@ export enum ContainerType {NONE, STRUCTURE, DATA}
 
 export class GobiiTreeNode extends GobiiFileItemCompoundId implements TreeNode {
 
+
+    private id: string;
+
+    //NG properties
+    public label?: string;
+    public data?: any;
+    public icon?: any;
+    public expandedIcon?: any;
+    public collapsedIcon?: any;
+    public children?: GobiiTreeNode[] = [];
+    public leaf?: boolean;
+    public expanded?: boolean;
+    public type?: string;
+    public parent?: GobiiTreeNode;
+    public partialSelected?: boolean;
+    public styleClass?: string;
+    public draggable?: boolean;
+    public droppable?: boolean;
+    public selectable?: boolean;
+
+    //GOBII UI properties
+    private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
+    public genericLabel: string;
+    public fileItemId: string;
+    public required: boolean = false;
+    public active: boolean = false;
+    private containerType: ContainerType = ContainerType.NONE;
+    private childCompoundUniqueId:GobiiFileItemCompoundId = null;
+
     constructor(parent: GobiiTreeNode,
                 fileItemId: string,
                 required: boolean) {
@@ -126,33 +155,6 @@ export class GobiiTreeNode extends GobiiFileItemCompoundId implements TreeNode {
 
 
 
-    private id: string;
-
-
-//NG properties
-    public label?: string;
-    public data?: any;
-    public icon?: any;
-    public expandedIcon?: any;
-    public collapsedIcon?: any;
-    public children?: GobiiTreeNode[] = [];
-    public leaf?: boolean;
-    public expanded?: boolean;
-    public type?: string;
-    public parent?: GobiiTreeNode;
-    public partialSelected?: boolean;
-    public styleClass?: string;
-    public draggable?: boolean;
-    public droppable?: boolean;
-    public selectable?: boolean;
-
-//GOBII UI properties
-    private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
-    public genericLabel: string;
-    public fileItemId: string;
-    public required: boolean = false;
-    public active: boolean = false;
-    private containerType: ContainerType = ContainerType.NONE;
 
 
     setGobiiExtractFilterType(gobiiExtractFilterType: GobiiExtractFilterType): GobiiTreeNode {
@@ -308,5 +310,17 @@ export class GobiiTreeNode extends GobiiFileItemCompoundId implements TreeNode {
         return this;
     }
 
+    getChildCompoundUniqueId():GobiiFileItemCompoundId {
 
+        if(!this.childCompoundUniqueId) {
+            this.childCompoundUniqueId = GobiiFileItemCompoundId.fromGobiiFileItemCompoundId(this);
+        }
+
+        return this.childCompoundUniqueId;
+    }
+
+    setChildCompoundUniqueId(value:GobiiFileItemCompoundId) {
+        this.childCompoundUniqueId = value;
+        return this;
+    }
 }
