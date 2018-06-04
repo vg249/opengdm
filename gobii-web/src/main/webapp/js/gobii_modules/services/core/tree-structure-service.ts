@@ -192,6 +192,7 @@ export class TreeStructureService {
         } else if (itemType === ExtractorItemType.VERTEX) {
 
             labelValue = "Filter " + sequenceNum.toString();
+
             if (cvTerm) {
 
                 let entityLabel: string = this.getEntityLabel(entityType, entitySubType, cvGroup);
@@ -379,9 +380,16 @@ export class TreeStructureService {
             .setSequenceNum(gobiiFileItem.getSequenceNum());
 
         this.addIconsToNode(returnVal, false);
-        let label: string = this.getLabel(returnVal.getItemType(), returnVal.getEntityType(), returnVal.getEntitySubType(), returnVal.getCvGroup(), returnVal.getCvTerm(), returnVal.getSequenceNum())
+
+
+        let label:string = "";
+        if( gobiiFileItem.getExtractorItemType() !== ExtractorItemType.VERTEX_VALUE) {
+            label = this.getLabel(returnVal.getItemType(), returnVal.getEntityType(), returnVal.getEntitySubType(), returnVal.getCvGroup(), returnVal.getCvTerm(), returnVal.getSequenceNum());
+        } // otherwise just use item name
+
         returnVal.setLabel(label);
         returnVal.setGenericLabel(label)
+
         this.addFileItemNameToNode(returnVal, gobiiFileItem);
 
         return returnVal;
