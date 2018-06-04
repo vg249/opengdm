@@ -458,6 +458,9 @@ export const getSelected = createSelector(getFileItems, getSelectedUniqueIds, (f
                 .find(uniqueId => fileItem.getFileItemUniqueId() === uniqueId)
         );
 
+
+    let foo:string = "foo";
+
     return returnVal;
 });
 

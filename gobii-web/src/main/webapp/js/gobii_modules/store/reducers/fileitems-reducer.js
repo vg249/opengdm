@@ -362,6 +362,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                     return selectedUniqueIds
                         .find(function (uniqueId) { return fileItem.getFileItemUniqueId() === uniqueId; });
                 });
+                var foo = "foo";
                 return returnVal;
             }));
             exports_1("getAll", getAll = reselect_1.createSelector(getFileItems, getUniqueIds, function (entities, ids) {

@@ -97,6 +97,9 @@ export class FlexQueryService {
                 && filterParams.getChildFileItemParams().length > 0) {
 
                 let childFilterParams: FilterParams = filterParams.getChildFileItemParams()[0];
+                // clear any selected nodes from selected items collection and from tree
+                this.deSelectVertexValueFilters(childFilterParams.getTargetEntityUniqueId());
+
                 let childFilterLoadAction: fileItemActions.LoadFilterAction = new fileItemActions.LoadFilterAction(
                     {
                         filterId: childFilterParams.getQueryName(),
@@ -114,8 +117,6 @@ export class FlexQueryService {
 
                 this.store.dispatch(childFilterLoadAction);
 
-                // clear any selected nodes from selected items collection and from tree
-                this.deSelectVertexValueFilters(filterParams.getTargetEntityUniqueId());
 
             } // if the vertexId is null
 
@@ -196,7 +197,7 @@ export class FlexQueryService {
     public loadVertexValues(jobId: string, vertexFileItem: GobiiFileItem, filterParamName: FilterParamNames) {
 
 //        return Observable.create(observer => {
-
+        let filterParams: FilterParams = this.filterParamsColl.getFilter(filterParamName, GobiiExtractFilterType.FLEX_QUERY);
         if (vertexFileItem.getNameIdLabelType() == NameIdLabelType.UNKNOWN) {
 
             let targetVertex: Vertex = vertexFileItem.getEntity();
@@ -230,7 +231,8 @@ export class FlexQueryService {
                                     .setItemId(item.id)
                                     .setItemName(item.name)
                                     //.setSelected(false)
-                                    .setRequired(false);
+                                    .setRequired(false)
+                                    .setSequenceNum(filterParams.getSequenceNum());
                             //.setParentItemId(filterValue)
                             //.setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())
                             //.withRelatedEntity(entityRelation);
@@ -241,7 +243,6 @@ export class FlexQueryService {
 
                     // for flex query the "filter value" is not an actual id but a new entity type
                     // our selectors "just know" to look for the filter's target entity type as the thing to filter on
-                    let filterParams: FilterParams = this.filterParamsColl.getFilter(filterParamName, GobiiExtractFilterType.FLEX_QUERY);
                     let targetCompoundUniqueId: GobiiFileItemCompoundId = filterParams.getTargetEntityUniqueId();
                     targetCompoundUniqueId.setExtractorItemType(ExtractorItemType.VERTEX_VALUE);
                     targetCompoundUniqueId.setEntityType(targetVertex.entityType);

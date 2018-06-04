@@ -164,6 +164,13 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-group", "./t
                     _super.prototype.setIsExtractCriterion.call(this, value);
                     return this;
                 };
+                GobiiFileItem.prototype.getSequenceNum = function () {
+                    return _super.prototype.getSequenceNum.call(this);
+                };
+                GobiiFileItem.prototype.setSequenceNum = function (value) {
+                    _super.prototype.setSequenceNum.call(this, value);
+                    return this;
+                };
                 GobiiFileItem.prototype.getItemId = function () {
                     return this._itemId;
                 };

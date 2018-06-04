@@ -115,13 +115,13 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                             && filterParams.getChildFileItemParams()
                             && filterParams.getChildFileItemParams().length > 0) {
                             var childFilterParams = filterParams.getChildFileItemParams()[0];
+                            // clear any selected nodes from selected items collection and from tree
+                            this.deSelectVertexValueFilters(childFilterParams.getTargetEntityUniqueId());
                             var childFilterLoadAction = new fileItemActions.LoadFilterAction({
                                 filterId: childFilterParams.getQueryName(),
                                 filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, childFilterParams.getTargetEntityUniqueId().setEntityType(type_entity_1.EntityType.UNKNOWN), childFilterParams.getRelatedEntityUniqueId(), null, vertexId, null, null)
                             });
                             this.store.dispatch(childFilterLoadAction);
-                            // clear any selected nodes from selected items collection and from tree
-                            this.deSelectVertexValueFilters(filterParams.getTargetEntityUniqueId());
                         } // if the vertexId is null
                         // if the current filter is getting nulled, we need to null the siblings as well
                         // but we dont' need to cascade filter values here
@@ -171,8 +171,9 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                     // });
                 };
                 FlexQueryService.prototype.loadVertexValues = function (jobId, vertexFileItem, filterParamName) {
-                    //        return Observable.create(observer => {
                     var _this = this;
+                    //        return Observable.create(observer => {
+                    var filterParams = this.filterParamsColl.getFilter(filterParamName, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
                     if (vertexFileItem.getNameIdLabelType() == name_id_label_type_1.NameIdLabelType.UNKNOWN) {
                         var targetVertex_1 = vertexFileItem.getEntity();
                         var vertexFilterDTO = new vertex_filter_1.VertexFilterDTO(targetVertex_1, [], [], null, null);
@@ -186,7 +187,8 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                                     .setEntityType(targetVertex_1.entityType)
                                     .setItemId(item.id)
                                     .setItemName(item.name)
-                                    .setRequired(false);
+                                    .setRequired(false)
+                                    .setSequenceNum(filterParams.getSequenceNum());
                                 //.setParentItemId(filterValue)
                                 //.setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())
                                 //.withRelatedEntity(entityRelation);
@@ -194,7 +196,6 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                             });
                             // for flex query the "filter value" is not an actual id but a new entity type
                             // our selectors "just know" to look for the filter's target entity type as the thing to filter on
-                            var filterParams = _this.filterParamsColl.getFilter(filterParamName, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
                             var targetCompoundUniqueId = filterParams.getTargetEntityUniqueId();
                             targetCompoundUniqueId.setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE);
                             targetCompoundUniqueId.setEntityType(targetVertex_1.entityType);

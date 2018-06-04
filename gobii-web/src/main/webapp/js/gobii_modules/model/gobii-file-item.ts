@@ -185,6 +185,16 @@ export class GobiiFileItem extends GobiiFileItemCompoundId {
         return this;
     }
 
+    getSequenceNum(): number {
+        return super.getSequenceNum();
+    }
+
+    setSequenceNum(value: number): GobiiFileItem {
+        super.setSequenceNum(value);
+        return this;
+    }
+
+
     getItemId(): string {
         return this._itemId;
     }
