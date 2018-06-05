@@ -44,6 +44,10 @@ System.register(["reselect", "../actions/treenode-action", "../../model/gobii-tr
         var returnVal = null;
         for (var idx = 0; (idx < treeNodes.length) && !returnVal; idx++) {
             var currentTreeNode = treeNodes[idx];
+            // in the condition, we are using the sequence number to distinguish the flex query
+            // parent filter nodes from all other nodes. This is not a great way to express these
+            // semantics. Ideally, there should be an explicit category property to indicate that the
+            // node is this type of node. But for now this works reasonably well. 
             if ((currentTreeNode.getSequenceNum() === 0
                 && currentTreeNode.getGobiiExtractFilterType() === gobiiExtractFilterType
                 && gobiiFileItemCompoundId.compoundIdeEquals(currentTreeNode))
