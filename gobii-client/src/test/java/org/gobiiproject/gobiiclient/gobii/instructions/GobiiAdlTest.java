@@ -22,13 +22,11 @@ public class GobiiAdlTest {
         backendSupoorted = org.gobiiproject.gobiiclient.HelperFunctions.isBackEndSupported();
         GobiiTestConfiguration gobiiTestConfiguration = new GobiiTestConfiguration();
         testExecConfig = gobiiTestConfiguration.getConfigSettings().getTestExecConfig();
-        backendSupoorted = gobiiTestConfiguration.getConfigSettings().isProvidesBackend();
     }
 
 
     @Test
     public void testADLBatchProcessing() {
-        System.out.println(backendSupoorted);
         if (backendSupoorted) {
             ADLEncapsulator adlEncapsulator = new ADLEncapsulator();
             String configUtilCommandlineStem = testExecConfig.getConfigUtilCommandlineStem();

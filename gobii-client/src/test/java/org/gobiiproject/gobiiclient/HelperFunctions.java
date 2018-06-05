@@ -15,7 +15,8 @@ public class HelperFunctions {
     public static boolean isBackEndSupported() {
         boolean backendSupoorted = false;
         try {
-            Assert.assertTrue(GobiiClientContextAuth.authenticate());
+            boolean authenticate = GobiiClientContextAuth.authenticate();
+            if (!authenticate) return backendSupoorted;
             RestUri confgSettingsUri = GobiiClientContext.getInstance(null, false)
                     .getUriFactory()
                     .resourceColl(GobiiServiceRequestId.URL_CONFIGSETTINGS);
