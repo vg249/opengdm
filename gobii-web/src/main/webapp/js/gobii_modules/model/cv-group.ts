@@ -10,6 +10,7 @@ export enum CvGroup {
     DATASET_TYPE,
     DNARUN_PROP,
     DNASAMPLE_PROP,
+    PROJECT_PROP,
     GERMPLASM_PROP,
     GERMPLASM_SPECIES,
     GERMPLASM_TYPE,
@@ -18,7 +19,6 @@ export enum CvGroup {
     MARKER_PROP,
     MARKER_STRAND,
     PLATFORM_TYPE,
-    PROJECT_PROP,
     STATUS
 };
 

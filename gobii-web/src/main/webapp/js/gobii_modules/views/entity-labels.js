@@ -51,6 +51,7 @@ System.register(["../model/type-entity", "../model/cv-group", "../model/type-ext
                     this.entityNodeLabels[type_entity_1.EntityType.GERMPLASM] = "Germplasm";
                     this.entityNodeLabels[type_entity_1.EntityType.LINKAGE_GROUP] = "Linkage Group";
                     this.entityNodeLabels[type_entity_1.EntityType.DNA_SAMPLE] = "DNA Sample";
+                    this.entityNodeLabels[type_entity_1.EntityType.VENDOR] = "Vendor";
                     this.cvGroupLabels[cv_group_1.CvGroup.JOBTYPE] = "Job Type";
                     this.cvGroupLabels[cv_group_1.CvGroup.PAYLOADTYPE] = "Payload Type";
                     this.cvGroupLabels[cv_group_1.CvGroup.JOBSTATUS] = "Job Status";
@@ -58,6 +59,7 @@ System.register(["../model/type-entity", "../model/cv-group", "../model/type-ext
                     this.cvGroupLabels[cv_group_1.CvGroup.DATASET_TYPE] = "Dataset Type";
                     this.cvGroupLabels[cv_group_1.CvGroup.DNARUN_PROP] = "DNA Run Prop";
                     this.cvGroupLabels[cv_group_1.CvGroup.DNASAMPLE_PROP] = "DNA Sample Prop";
+                    this.cvGroupLabels[cv_group_1.CvGroup.PROJECT_PROP] = "Project Prop Prop";
                     this.cvGroupLabels[cv_group_1.CvGroup.GERMPLASM_PROP] = "Germplasm Prop";
                     this.cvGroupLabels[cv_group_1.CvGroup.GERMPLASM_SPECIES] = "Germplasm Species";
                     this.cvGroupLabels[cv_group_1.CvGroup.GERMPLASM_TYPE] = "Germplasm Type";

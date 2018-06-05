@@ -17,6 +17,7 @@ public enum CvGroup {
     DATASET_TYPE("dataset_type"),
     DNARUN_PROP("dnarun_prop"),
     DNASAMPLE_PROP("dnasample_prop"),
+    PROJECT_PROP("project_prop"),
     GERMPLASM_PROP("germplasm_prop"),
     GERMPLASM_SPECIES("germplasm_species"),
     GERMPLASM_TYPE("germplasm_type"),
@@ -25,7 +26,6 @@ public enum CvGroup {
     MARKER_PROP("marker_prop"),
     MARKER_STRAND("marker_strand"),
     PLATFORM_TYPE("platform_type"),
-    PROJECT_PROP("project_prop"),
     STATUS("status");
 
 

@@ -30,6 +30,7 @@ System.register([], function (exports_1, context_1) {
                 EntityType[EntityType["GERMPLASM"] = 20] = "GERMPLASM";
                 EntityType[EntityType["LINKAGE_GROUP"] = 21] = "LINKAGE_GROUP";
                 EntityType[EntityType["DNA_SAMPLE"] = 22] = "DNA_SAMPLE";
+                EntityType[EntityType["VENDOR"] = 23] = "VENDOR";
             })(EntityType || (EntityType = {}));
             exports_1("EntityType", EntityType);
             exports_1("entityTypefromString", entityTypefromString = function (entityTypeName) {

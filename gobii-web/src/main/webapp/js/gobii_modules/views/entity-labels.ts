@@ -41,7 +41,8 @@ export class Labels {
         this.entityNodeLabels[EntityType.GERMPLASM] = "Germplasm";
         this.entityNodeLabels[EntityType.LINKAGE_GROUP] = "Linkage Group";
         this.entityNodeLabels[EntityType.DNA_SAMPLE] = "DNA Sample";
-        
+        this.entityNodeLabels[EntityType.VENDOR] = "Vendor";
+
         
         this.cvGroupLabels[CvGroup.JOBTYPE] = "Job Type";
         this.cvGroupLabels[CvGroup.PAYLOADTYPE] = "Payload Type";
@@ -50,6 +51,7 @@ export class Labels {
         this.cvGroupLabels[CvGroup.DATASET_TYPE] = "Dataset Type";
         this.cvGroupLabels[CvGroup.DNARUN_PROP] = "DNA Run Prop";
         this.cvGroupLabels[CvGroup.DNASAMPLE_PROP] = "DNA Sample Prop";
+        this.cvGroupLabels[CvGroup.PROJECT_PROP] = "Project Prop Prop";
         this.cvGroupLabels[CvGroup.GERMPLASM_PROP] = "Germplasm Prop";
         this.cvGroupLabels[CvGroup.GERMPLASM_SPECIES] = "Germplasm Species";
         this.cvGroupLabels[CvGroup.GERMPLASM_TYPE] = "Germplasm Type";
