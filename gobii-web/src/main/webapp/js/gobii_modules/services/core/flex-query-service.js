@@ -185,11 +185,19 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                         var vertexFilterDtoResponse_1 = null;
                         this.dtoRequestServiceVertexFilterDTO.post(new dto_request_item_vertex_filter_1.DtoRequestItemVertexFilterDTO(vertexFilterDTO, jobId, false)).subscribe(function (vertexFilterDto) {
                             vertexFilterDtoResponse_1 = vertexFilterDto;
+                            // note that we are setting the entity type, sub type, cvgroup, and cvterm
+                            // based on our request -- on the target vertex. In theory, the server could
+                            // be responding with NameId items that do not fit this. But this is the
+                            // way we handle other types of requests, basing our entity types and so forth
+                            // largely on the content of the request request.
                             var vertexFileItems = [];
                             vertexFilterDto.vertexValues.forEach(function (item) {
                                 var currentFileItem = gobii_file_item_1.GobiiFileItem.build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_process_1.ProcessType.CREATE)
                                     .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE)
                                     .setEntityType(targetVertex_1.entityType)
+                                    .setEntitySubType(targetVertex_1.entitySubType)
+                                    .setCvGroup(targetVertex_1.cvGroup)
+                                    .setCvTerm(targetVertex_1.cvTerm)
                                     .setItemId(item.id)
                                     .setItemName(item.name)
                                     .setRequired(false)

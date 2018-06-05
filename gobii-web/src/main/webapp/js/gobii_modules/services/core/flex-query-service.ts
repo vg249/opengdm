@@ -223,6 +223,11 @@ export class FlexQueryService {
             )).subscribe(vertexFilterDto => {
                     vertexFilterDtoResponse = vertexFilterDto;
 
+                    // note that we are setting the entity type, sub type, cvgroup, and cvterm
+                    // based on our request -- on the target vertex. In theory, the server could
+                    // be responding with NameId items that do not fit this. But this is the
+                    // way we handle other types of requests, basing our entity types and so forth
+                    // largely on the content of the request request.
                     let vertexFileItems: GobiiFileItem[] = [];
                     vertexFilterDto.vertexValues.forEach(item => {
 
@@ -232,11 +237,11 @@ export class FlexQueryService {
                                     ProcessType.CREATE)
                                     .setExtractorItemType(ExtractorItemType.VERTEX_VALUE)
                                     .setEntityType(targetVertex.entityType)
-                                    // .setEntitySubType(filterParamsToLoad.getEntitySubType())
-                                    // .setCvFilterType(filterParamsToLoad.getCvFilterType())
+                                    .setEntitySubType(targetVertex.entitySubType)
+                                    .setCvGroup(targetVertex.cvGroup)
+                                    .setCvTerm(targetVertex.cvTerm)
                                     .setItemId(item.id)
                                     .setItemName(item.name)
-                                    //.setSelected(false)
                                     .setRequired(false)
                                     .setSequenceNum(filterParams.getSequenceNum());
                             //.setParentItemId(filterValue)
