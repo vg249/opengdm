@@ -88,7 +88,13 @@ export class FlexQueryService {
 
             this.store.dispatch(targetFilterloadAction);
             this.treeStructureService.updateTreeNode(GobiiExtractFilterType.FLEX_QUERY,
-                filterParams.getTargetEntityUniqueId());
+                filterParams.getTargetEntityUniqueId(),
+            new GobiiFileItemCompoundId()
+                .setExtractorItemType(ExtractorItemType.VERTEX_VALUE)
+                .setEntityType(entityType)
+                .setEntitySubType(entitySubType)
+                .setCvGroup(cvGroup)
+                .setCvTerm(cvTerm));
 
 
             // propagate null filter to child

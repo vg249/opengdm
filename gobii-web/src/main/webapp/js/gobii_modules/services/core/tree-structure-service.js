@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/type-entity", "../../views/entity-labels", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-group", "../../model/type-extract-format", "../../model/type-process", "../../model/gobii-file-item-compound-id", "../../store/actions/treenode-action", "@ngrx/store", "rxjs/Observable"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/type-entity", "../../views/entity-labels", "../../model/type-extractor-item", "../../model/type-extractor-filter", "../../model/cv-group", "../../model/type-extract-format", "../../model/type-process", "../../model/gobii-file-item-compound-id", "../../store/actions/treenode-action", "@ngrx/store"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, gobii_tree_node_1, type_entity_1, entity_labels_1, type_extractor_item_1, type_extractor_filter_1, cv_group_1, type_extract_format_1, type_process_1, gobii_file_item_compound_id_1, treeNodeActions, store_1, Observable_1, TreeStructureService;
+    var core_1, gobii_tree_node_1, type_entity_1, entity_labels_1, type_extractor_item_1, type_extractor_filter_1, cv_group_1, type_extract_format_1, type_process_1, gobii_file_item_compound_id_1, treeNodeActions, store_1, TreeStructureService;
     return {
         setters: [
             function (core_1_1) {
@@ -48,9 +48,6 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
             },
             function (store_1_1) {
                 store_1 = store_1_1;
-            },
-            function (Observable_1_1) {
-                Observable_1 = Observable_1_1;
             }
         ],
         execute: function () {
@@ -384,36 +381,24 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
                         }
                     }
                 };
-                TreeStructureService.prototype.makeUpdateTreeNodeAction = function (gobiiExtractFilterType, gobiiFileItemCompoundId) {
-                    var _this = this;
-                    return Observable_1.Observable.create(function (observer) {
-                        var label = _this.getLabel(gobiiFileItemCompoundId.getExtractorItemType(), gobiiFileItemCompoundId.getEntityType(), gobiiFileItemCompoundId.getEntitySubType(), gobiiFileItemCompoundId.getCvGroup(), gobiiFileItemCompoundId.getCvTerm(), gobiiFileItemCompoundId.getSequenceNum());
-                        var icons = _this.getIcons(gobiiFileItemCompoundId, false);
-                        observer.next(new treeNodeActions.SetTreeNodeLook({
-                            gobiiExtractFilterType: gobiiExtractFilterType,
-                            gobiiFileItemCompoundId: gobiiFileItemCompoundId,
-                            icons: icons,
-                            label: label,
-                            entityType: gobiiFileItemCompoundId.getEntityType()
-                        }));
-                    });
-                };
-                TreeStructureService.prototype.updateTreeNode = function (gobiiExtractFilterType, gobiiFileItemCompoundId) {
-                    var label = this.getLabel(gobiiFileItemCompoundId.getExtractorItemType(), gobiiFileItemCompoundId.getEntityType(), gobiiFileItemCompoundId.getEntitySubType(), gobiiFileItemCompoundId.getCvGroup(), gobiiFileItemCompoundId.getCvTerm(), gobiiFileItemCompoundId.getSequenceNum());
-                    var icons = this.getIcons(gobiiFileItemCompoundId, false);
+                TreeStructureService.prototype.updateTreeNode = function (gobiiExtractFilterType, targetGobiiFileItemCompoundId, childGobiiFileItemCompoundId) {
+                    var label = this.getLabel(targetGobiiFileItemCompoundId.getExtractorItemType(), targetGobiiFileItemCompoundId.getEntityType(), targetGobiiFileItemCompoundId.getEntitySubType(), targetGobiiFileItemCompoundId.getCvGroup(), targetGobiiFileItemCompoundId.getCvTerm(), targetGobiiFileItemCompoundId.getSequenceNum());
+                    var icons = this.getIcons(targetGobiiFileItemCompoundId, false);
                     this.store.dispatch(new treeNodeActions.SetTreeNodeLook({
                         gobiiExtractFilterType: gobiiExtractFilterType,
-                        gobiiFileItemCompoundId: gobiiFileItemCompoundId,
+                        targetCompoundId: targetGobiiFileItemCompoundId,
+                        childCompoundId: childGobiiFileItemCompoundId,
                         icons: icons,
                         label: label,
-                        entityType: gobiiFileItemCompoundId.getEntityType()
+                        entityType: targetGobiiFileItemCompoundId.getEntityType()
                     }));
                 };
                 TreeStructureService.prototype.markTreeItemMissing = function (gobiiExtractFilterType, gobiiFileItemCompoundId) {
                     var icon = "fa-share";
                     this.store.dispatch(new treeNodeActions.SetTreeNodeLook({
                         gobiiExtractFilterType: gobiiExtractFilterType,
-                        gobiiFileItemCompoundId: gobiiFileItemCompoundId,
+                        targetCompoundId: gobiiFileItemCompoundId,
+                        childCompoundId: null,
                         icons: { icon: icon },
                         label: null,
                         entityType: null
@@ -423,7 +408,8 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
                     var icons = this.getIcons(gobiiFileItemCompoundId, false);
                     this.store.dispatch(new treeNodeActions.SetTreeNodeLook({
                         gobiiExtractFilterType: gobiiExtractFilterType,
-                        gobiiFileItemCompoundId: gobiiFileItemCompoundId,
+                        targetCompoundId: gobiiFileItemCompoundId,
+                        childCompoundId: null,
                         icons: icons,
                         label: null,
                         entityType: null

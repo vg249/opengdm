@@ -44,8 +44,10 @@ System.register(["reselect", "../actions/treenode-action", "../../model/gobii-tr
         var returnVal = null;
         for (var idx = 0; (idx < treeNodes.length) && !returnVal; idx++) {
             var currentTreeNode = treeNodes[idx];
-            if (currentTreeNode.getGobiiExtractFilterType() === gobiiExtractFilterType
-                && gobiiFileItemCompoundId.compoundIdeEquals(currentTreeNode)) {
+            if ((currentTreeNode.getGobiiExtractFilterType() === gobiiExtractFilterType
+                && gobiiFileItemCompoundId.compoundIdeEquals(currentTreeNode))
+                || (currentTreeNode.getSequenceNum() > 0 &&
+                    currentTreeNode.getSequenceNum() === gobiiFileItemCompoundId.getSequenceNum())) {
                 returnVal = currentTreeNode;
             }
             else {
@@ -134,7 +136,7 @@ System.register(["reselect", "../actions/treenode-action", "../../model/gobii-tr
             } // SELECT_EXTRACT_TYPE
             case gobiiTreeNodeAction.SET_NODE_STATUS: {
                 var gobiiExtractFilterType = action.payload.gobiiExtractFilterType;
-                var gobiiFileItemCompoundId = action.payload.gobiiFileItemCompoundId;
+                var gobiiFileItemCompoundId = action.payload.targetCompoundId;
                 var newTreeNodesState = state.gobiiTreeNodes.slice();
                 var treeNodeToMutate = findTreeNodeByCompoundId(newTreeNodesState, gobiiExtractFilterType, gobiiFileItemCompoundId);
                 if (treeNodeToMutate) {
@@ -147,7 +149,10 @@ System.register(["reselect", "../actions/treenode-action", "../../model/gobii-tr
                     treeNodeToMutate.expandedIcon = expandedIcon ? expandedIcon : treeNodeToMutate.expandedIcon;
                     treeNodeToMutate.collapsedIcon = collapsedIcon ? collapsedIcon : treeNodeToMutate.collapsedIcon;
                     treeNodeToMutate.label = label ? label : treeNodeToMutate.label;
-                    treeNodeToMutate.setEntityType(entityType ? entityType : treeNodeToMutate.getEntityType());
+                    //treeNodeToMutate.setEntityType(entityType ? entityType : treeNodeToMutate.getEntityType());
+                    if (action.payload.childCompoundId) {
+                        treeNodeToMutate.setChildCompoundUniqueId(action.payload.childCompoundId);
+                    }
                     returnVal = {
                         gobiiExtractFilterType: state.gobiiExtractFilterType,
                         gobiiTreeNodesActive: state.gobiiTreeNodesActive,

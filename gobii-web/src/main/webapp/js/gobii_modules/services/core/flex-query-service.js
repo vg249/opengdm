@@ -109,7 +109,12 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                             filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, filterParams.getTargetEntityUniqueId(), filterParams.getRelatedEntityUniqueId(), null, vertexId, null, null)
                         });
                         this.store.dispatch(targetFilterloadAction);
-                        this.treeStructureService.updateTreeNode(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, filterParams.getTargetEntityUniqueId());
+                        this.treeStructureService.updateTreeNode(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, filterParams.getTargetEntityUniqueId(), new gobii_file_item_compound_id_1.GobiiFileItemCompoundId()
+                            .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE)
+                            .setEntityType(entityType)
+                            .setEntitySubType(entitySubType)
+                            .setCvGroup(cvGroup)
+                            .setCvTerm(cvTerm));
                         // propagate null filter to child
                         if (!vertexId
                             && filterParams.getChildFileItemParams()

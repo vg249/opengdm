@@ -76,7 +76,8 @@ export class SetTreeNodeLook implements Action {
 
     constructor(public payload: {
         gobiiExtractFilterType: GobiiExtractFilterType,
-        gobiiFileItemCompoundId: GobiiFileItemCompoundId,
+        targetCompoundId: GobiiFileItemCompoundId,
+        childCompoundId: GobiiFileItemCompoundId,
         icons: any,
         label: string,
         entityType: EntityType

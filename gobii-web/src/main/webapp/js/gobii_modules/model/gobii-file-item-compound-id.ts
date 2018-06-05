@@ -50,9 +50,9 @@ export class GobiiFileItemCompoundId {
     public compoundIdeEquals(gobiiFileItemCompoundId: GobiiFileItemCompoundId): boolean {
         return (
 
-            (this.getSequenceNum() > 0 &&
-                this.getSequenceNum() === gobiiFileItemCompoundId.getSequenceNum())
-            ||
+            // (this.getSequenceNum() > 0 &&
+            //     this.getSequenceNum() === gobiiFileItemCompoundId.getSequenceNum())
+            // ||
             (this.getExtractorItemType() === gobiiFileItemCompoundId.getExtractorItemType() // for FlexQuery filter items
                 && (this.getEntityType() === gobiiFileItemCompoundId.getEntityType())
                 && (this.getEntitySubType() === gobiiFileItemCompoundId.getEntitySubType())
