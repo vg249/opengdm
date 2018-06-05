@@ -78,7 +78,9 @@ function findTreeNodeByCompoundId(treeNodes: GobiiTreeNode[],
     for (let idx: number = 0; (idx < treeNodes.length) && !returnVal; idx++) {
 
         let currentTreeNode: GobiiTreeNode = treeNodes[idx];
-        if ((currentTreeNode.getGobiiExtractFilterType() === gobiiExtractFilterType
+        if ((
+                currentTreeNode.getSequenceNum() === 0
+                && currentTreeNode.getGobiiExtractFilterType() === gobiiExtractFilterType
                 && gobiiFileItemCompoundId.compoundIdeEquals(currentTreeNode))
             || (
                 currentTreeNode.getSequenceNum() > 0 &&
@@ -225,6 +227,7 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
                 treeNodeToMutate.expandedIcon = expandedIcon ? expandedIcon : treeNodeToMutate.expandedIcon;
                 treeNodeToMutate.collapsedIcon = collapsedIcon ? collapsedIcon : treeNodeToMutate.collapsedIcon;
                 treeNodeToMutate.label = label ? label : treeNodeToMutate.label;
+                treeNodeToMutate.genericLabel = treeNodeToMutate.label;
                 //treeNodeToMutate.setEntityType(entityType ? entityType : treeNodeToMutate.getEntityType());
 
                 if (action.payload.childCompoundId) {

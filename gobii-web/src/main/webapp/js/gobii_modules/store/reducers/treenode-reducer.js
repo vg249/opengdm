@@ -44,7 +44,8 @@ System.register(["reselect", "../actions/treenode-action", "../../model/gobii-tr
         var returnVal = null;
         for (var idx = 0; (idx < treeNodes.length) && !returnVal; idx++) {
             var currentTreeNode = treeNodes[idx];
-            if ((currentTreeNode.getGobiiExtractFilterType() === gobiiExtractFilterType
+            if ((currentTreeNode.getSequenceNum() === 0
+                && currentTreeNode.getGobiiExtractFilterType() === gobiiExtractFilterType
                 && gobiiFileItemCompoundId.compoundIdeEquals(currentTreeNode))
                 || (currentTreeNode.getSequenceNum() > 0 &&
                     currentTreeNode.getSequenceNum() === gobiiFileItemCompoundId.getSequenceNum())) {
@@ -149,6 +150,7 @@ System.register(["reselect", "../actions/treenode-action", "../../model/gobii-tr
                     treeNodeToMutate.expandedIcon = expandedIcon ? expandedIcon : treeNodeToMutate.expandedIcon;
                     treeNodeToMutate.collapsedIcon = collapsedIcon ? collapsedIcon : treeNodeToMutate.collapsedIcon;
                     treeNodeToMutate.label = label ? label : treeNodeToMutate.label;
+                    treeNodeToMutate.genericLabel = treeNodeToMutate.label;
                     //treeNodeToMutate.setEntityType(entityType ? entityType : treeNodeToMutate.getEntityType());
                     if (action.payload.childCompoundId) {
                         treeNodeToMutate.setChildCompoundUniqueId(action.payload.childCompoundId);
