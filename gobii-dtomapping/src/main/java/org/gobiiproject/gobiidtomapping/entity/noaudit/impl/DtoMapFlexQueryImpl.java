@@ -177,19 +177,19 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
             String name = "";
             if(destinationVertex.getGobiiVertexType().equals(GobiiVertexType.ENTITY)) {
 
-                name = destinationVertex.getEntityType().toString().toLowerCase() + ": " + idx;
+                name = destinationVertex.getEntityType().toString().toLowerCase() + " (" + idx + ")";
 
             } else if(destinationVertex.getGobiiVertexType().equals(GobiiVertexType.CVGROUP)) {
 
-                name = destinationVertex.getCvGroup().toString().toLowerCase() + ": " + idx;
+                name = destinationVertex.getCvGroup().toString().toLowerCase()  + " (" + idx + ")";
 
             } else if(destinationVertex.getGobiiVertexType().equals(GobiiVertexType.SUBENTITY)) {
 
-                name = destinationVertex.getEntitySubType().toString().toLowerCase() + ": " + idx;
+                name = destinationVertex.getEntitySubType().toString().toLowerCase()  + " (" + idx + ")";
 
             } else if(destinationVertex.getGobiiVertexType().equals(GobiiVertexType.CVTERM)) {
 
-                name = destinationVertex.getCvTerm() + ": " + idx;
+                name = destinationVertex.getCvTerm() +  " (" + idx + ")";
 
             }
 

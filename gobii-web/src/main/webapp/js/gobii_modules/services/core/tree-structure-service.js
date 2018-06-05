@@ -207,7 +207,7 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
                         }
                     }
                     else {
-                        labelValue = entity_labels_1.Labels.instance().treeExtractorTypeLabels[itemType];
+                        labelValue = this.getEntityLabel(entityType, entitySubType, cvGroup);
                     }
                     return labelValue;
                 };
@@ -355,10 +355,7 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
                         .setCvGroup(gobiiFileItem.getCvGroup())
                         .setSequenceNum(gobiiFileItem.getSequenceNum());
                     this.addIconsToNode(returnVal, false);
-                    var label = "";
-                    if (gobiiFileItem.getExtractorItemType() !== type_extractor_item_1.ExtractorItemType.VERTEX_VALUE) {
-                        label = this.getLabel(returnVal.getItemType(), returnVal.getEntityType(), returnVal.getEntitySubType(), returnVal.getCvGroup(), returnVal.getCvTerm(), returnVal.getSequenceNum());
-                    } // otherwise just use item name
+                    var label = this.getLabel(returnVal.getItemType(), returnVal.getEntityType(), returnVal.getEntitySubType(), returnVal.getCvGroup(), returnVal.getCvTerm(), returnVal.getSequenceNum());
                     returnVal.setLabel(label);
                     returnVal.setGenericLabel(label);
                     this.addFileItemNameToNode(returnVal, gobiiFileItem);
