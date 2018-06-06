@@ -47,73 +47,94 @@ export class FlexQueryService {
 
     } // loadVertices()
 
-    public loadSelectedVertexFilter(filterParamsName: FilterParamNames,
-                                    vertexId: string,
-                                    entityType: EntityType,
-                                    entitySubType: EntitySubType,
-                                    cvGroup: CvGroup,
-                                    cvTerm: string) {
+    public loadSelectedVertexFilter(eventedFilterParamsName: FilterParamNames,
+                                    eventedVertexId: string,
+                                    eventedEntityType: EntityType,
+                                    eventedEntitySubType: EntitySubType,
+                                    eventedCvGroup: CvGroup,
+                                    eventedCvTerm: string) {
 
-        let filterParams: FilterParams = this.filterParamsColl.getFilter(filterParamsName, GobiiExtractFilterType.FLEX_QUERY);
+
+        let currentVertexId: string = eventedVertexId;
+        let currentVertexFilterParams: FilterParams = this.filterParamsColl.getFilter(eventedFilterParamsName, GobiiExtractFilterType.FLEX_QUERY);
 
         // the filterParams passed in should exist
-        if (!filterParams) {
+        if (!currentVertexFilterParams) {
             this.store.dispatch(new historyAction.AddStatusMessageAction("Error loading filter: there is no query params object for query "
-                + filterParamsName
+                + eventedFilterParamsName
                 + " with extract filter type "
                 + GobiiExtractFilterType.FLEX_QUERY[GobiiExtractFilterType.FLEX_QUERY]));
         }
 
-        while (filterParams) {
+
+        let previousTargetCompoundId: GobiiFileItemCompoundId = GobiiFileItemCompoundId
+            .fromGobiiFileItemCompoundId(currentVertexFilterParams.getTargetEntityUniqueId());
+
+        let newVertexFilterTargetCompoundId: GobiiFileItemCompoundId = GobiiFileItemCompoundId
+            .fromGobiiFileItemCompoundId(currentVertexFilterParams.getTargetEntityUniqueId())
+            .setEntityType(eventedEntityType)
+            .setEntitySubType(eventedEntitySubType)
+            .setCvGroup(eventedCvGroup)
+            .setCvTerm(eventedCvTerm);
+
+        let nullTargetCompoundIdOfVertex: GobiiFileItemCompoundId = GobiiFileItemCompoundId
+            .fromGobiiFileItemCompoundId(currentVertexFilterParams.getTargetEntityUniqueId())
+            .setEntityType(EntityType.UNKNOWN)
+            .setEntitySubType(EntitySubType.UNKNOWN)
+            .setCvGroup(CvGroup.UNKNOWN)
+            .setCvTerm(null);
+
+        let nullTargetCompoundIdOfVertexValue: GobiiFileItemCompoundId = GobiiFileItemCompoundId
+            .fromGobiiFileItemCompoundId(nullTargetCompoundIdOfVertex)
+            .setExtractorItemType(ExtractorItemType.VERTEX_VALUE);
+
+        while (currentVertexFilterParams) {
 
             // dispatch target entity ID values for newly selected vertex
-            filterParams.getTargetEntityUniqueId().setEntityType(entityType);
-            filterParams.getTargetEntityUniqueId().setEntitySubType(entitySubType);
-            filterParams.getTargetEntityUniqueId().setCvGroup(cvGroup);
-            filterParams.getTargetEntityUniqueId().setCvTerm(cvTerm);
-            let targetFilterloadAction: fileItemActions.LoadFilterAction = new fileItemActions.LoadFilterAction(
+            currentVertexFilterParams.setTargetEntityUniqueId(newVertexFilterTargetCompoundId);
+            let loadFilterActionForVertex: fileItemActions.LoadFilterAction = new fileItemActions.LoadFilterAction(
                 {
-                    filterId: filterParams.getQueryName(),
+                    filterId: currentVertexFilterParams.getQueryName(),
                     filter: new PayloadFilter(
                         GobiiExtractFilterType.FLEX_QUERY,
-                        filterParams.getTargetEntityUniqueId(),
-                        filterParams.getRelatedEntityUniqueId(),
+                        newVertexFilterTargetCompoundId,
+                        currentVertexFilterParams.getRelatedEntityUniqueId(),
                         null,
-                        vertexId,
+                        currentVertexId,
                         null,
                         null
                     )
                 }
             );
-            this.store.dispatch(targetFilterloadAction);
+            this.store.dispatch(loadFilterActionForVertex);
 
-            // do the same for the tree node corresponding to the filter
+            // do the same for the filter's tree node
             this.treeStructureService.updateTreeNode(GobiiExtractFilterType.FLEX_QUERY,
-                filterParams.getTargetEntityUniqueId(),
-            new GobiiFileItemCompoundId()
-                .setExtractorItemType(ExtractorItemType.VERTEX_VALUE)
-                .setEntityType(entityType)
-                .setEntitySubType(entitySubType)
-                .setCvGroup(cvGroup)
-                .setCvTerm(cvTerm));
+                newVertexFilterTargetCompoundId,
+                GobiiFileItemCompoundId
+                    .fromGobiiFileItemCompoundId(newVertexFilterTargetCompoundId)
+                    .setExtractorItemType(ExtractorItemType.VERTEX_VALUE));
 
 
-            //
-            if (!vertexId
-                && filterParams.getChildFileItemParams()
-                && filterParams.getChildFileItemParams().length > 0) {
+            //reset the selected vertex's value list
+            if (//!currentVertexId &&
+            currentVertexFilterParams.getChildFileItemParams()
+            && currentVertexFilterParams.getChildFileItemParams().length > 0) {
 
-                let childFilterParams: FilterParams = filterParams.getChildFileItemParams()[0];
+                let currentVertexValuesFilterParams: FilterParams = currentVertexFilterParams.getChildFileItemParams()[0];
+
                 // clear any selected nodes from selected items collection and from tree
-                this.deSelectVertexValueFilters(childFilterParams.getTargetEntityUniqueId());
+                this.deSelectVertexValueFilters(GobiiFileItemCompoundId
+                    .fromGobiiFileItemCompoundId(previousTargetCompoundId)
+                    .setExtractorItemType(ExtractorItemType.VERTEX_VALUE));
 
-                let childFilterLoadAction: fileItemActions.LoadFilterAction = new fileItemActions.LoadFilterAction(
+                let loadFilterActionForVertexValue: fileItemActions.LoadFilterAction = new fileItemActions.LoadFilterAction(
                     {
-                        filterId: childFilterParams.getQueryName(),
+                        filterId: currentVertexValuesFilterParams.getQueryName(),
                         filter: new PayloadFilter(
                             GobiiExtractFilterType.FLEX_QUERY,
-                            childFilterParams.getTargetEntityUniqueId().setEntityType(EntityType.UNKNOWN),
-                            childFilterParams.getRelatedEntityUniqueId(),
+                            nullTargetCompoundIdOfVertexValue,
+                            currentVertexValuesFilterParams.getRelatedEntityUniqueId(),
                             null,
                             null,
                             null,
@@ -122,23 +143,27 @@ export class FlexQueryService {
                     }
                 );
 
-                this.store.dispatch(childFilterLoadAction);
+                this.store.dispatch(loadFilterActionForVertexValue);
 
 
-            } // if the vertexId is null
+            } // if there is a values filter (child filter)
 
 
-            // if the current filter is getting nulled, we need to null the siblings as well
-            // but we dont' need to cascade filter values here
-            // note that for now this is only really relevant to FlexQuery filters
-            if (!vertexId) {
-                filterParams = filterParams.getNextSiblingFileItemParams();
-            } else {
-                filterParams = null;
-            }
+//            if (!currentVertexId) {
+            currentVertexFilterParams = currentVertexFilterParams.getNextSiblingFileItemParams();
+            if (currentVertexFilterParams) {
+                previousTargetCompoundId = currentVertexFilterParams.getTargetEntityUniqueId();
+                newVertexFilterTargetCompoundId = GobiiFileItemCompoundId.fromGobiiFileItemCompoundId(nullTargetCompoundIdOfVertex)
+                    .setSequenceNum(currentVertexFilterParams.getSequenceNum());
+            } // no else necessary because null currentVertexFilterParams will end execution
+
+            currentVertexId = null; // by definition, we always null out the children
+            // } else {
+            //     currentFilterParams = null;
+            // }
         } // while we have another filter value
 
-    }
+    } // end function
 
     public loadSelectedVertexValueFilters(filterParamsName: FilterParamNames,
                                           currentValuesGfis: GobiiFileItem[],
@@ -312,16 +337,16 @@ export class FlexQueryService {
     }
 
 
-    private deSelectVertexValueFilters(compoundUniquueId:GobiiFileItemCompoundId) {
+    private deSelectVertexValueFilters(compoundUniquueId: GobiiFileItemCompoundId) {
 
         this.store.select(fromRoot.getSelectedFileItems)
-            .subscribe( gfi => {
-                let itemsToDeselect:GobiiFileItem[] = gfi.filter(sgfi => sgfi.compoundIdeEquals(compoundUniquueId));
-                itemsToDeselect.forEach( itr => {
+            .subscribe(gfi => {
+                let itemsToDeselect: GobiiFileItem[] = gfi.filter(sgfi => sgfi.compoundIdeEquals(compoundUniquueId));
+                itemsToDeselect.forEach(itr => {
                     let loadAction: fileItemActions.RemoveFromExtractAction = new fileItemActions.RemoveFromExtractAction(itr);
                     this.store.dispatch(loadAction);
                 });
-            } ).unsubscribe();
+            }).unsubscribe();
 
     }
 }

@@ -213,6 +213,10 @@ System.register(["./filter-type", "./type-entity", "./cv-group", "./type-extract
                 FilterParams.prototype.getTargetEntityUniqueId = function () {
                     return this.targetEntityUniqueId;
                 };
+                FilterParams.prototype.setTargetEntityUniqueId = function (value) {
+                    this.targetEntityUniqueId = value;
+                    return this;
+                };
                 FilterParams.prototype.setRelatedEntityUniqueId = function (value) {
                     this.relatedEntityUniqueId = value;
                     return this;

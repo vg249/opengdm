@@ -413,6 +413,12 @@ export class TreeStructureService {
         }
     }
 
+    /***
+     *
+     * @param {GobiiExtractFilterType} gobiiExtractFilterType
+     * @param {GobiiFileItemCompoundId} targetGobiiFileItemCompoundId Determines the node that will be updated
+     * @param {GobiiFileItemCompoundId} childGobiiFileItemCompoundId Determines what types of nodes can be added to the updated node
+     */
     public updateTreeNode(gobiiExtractFilterType: GobiiExtractFilterType,
                           targetGobiiFileItemCompoundId: GobiiFileItemCompoundId,
                           childGobiiFileItemCompoundId: GobiiFileItemCompoundId) {

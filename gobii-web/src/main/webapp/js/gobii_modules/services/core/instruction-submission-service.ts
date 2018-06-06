@@ -161,7 +161,7 @@ export class InstructionSubmissionService {
                         this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + GobiiExtractFilterType[gobiiExtractFilterType ? gobiiExtractFilterType : GobiiExtractFilterType.UNKNOWN]));
 
                     }
-                });
+                }).unsubscribe();
 
         } // if we have an extract filter type
     }
@@ -258,7 +258,7 @@ export class InstructionSubmissionService {
                         }
 
                     }
-                });
+                }).unsubscribe();
 
         } // if we have an extract filter type
 

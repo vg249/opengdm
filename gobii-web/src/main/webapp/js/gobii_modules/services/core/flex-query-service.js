@@ -90,57 +90,72 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                 FlexQueryService.prototype.loadVertices = function (filterParamNames) {
                     this.entityFileItemService.loadEntityList(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, filterParamNames);
                 }; // loadVertices()
-                FlexQueryService.prototype.loadSelectedVertexFilter = function (filterParamsName, vertexId, entityType, entitySubType, cvGroup, cvTerm) {
-                    var filterParams = this.filterParamsColl.getFilter(filterParamsName, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
+                FlexQueryService.prototype.loadSelectedVertexFilter = function (eventedFilterParamsName, eventedVertexId, eventedEntityType, eventedEntitySubType, eventedCvGroup, eventedCvTerm) {
+                    var currentVertexId = eventedVertexId;
+                    var currentVertexFilterParams = this.filterParamsColl.getFilter(eventedFilterParamsName, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
                     // the filterParams passed in should exist
-                    if (!filterParams) {
+                    if (!currentVertexFilterParams) {
                         this.store.dispatch(new historyAction.AddStatusMessageAction("Error loading filter: there is no query params object for query "
-                            + filterParamsName
+                            + eventedFilterParamsName
                             + " with extract filter type "
                             + type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY[type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY]));
                     }
-                    while (filterParams) {
+                    var previousTargetCompoundId = gobii_file_item_compound_id_1.GobiiFileItemCompoundId
+                        .fromGobiiFileItemCompoundId(currentVertexFilterParams.getTargetEntityUniqueId());
+                    var newVertexFilterTargetCompoundId = gobii_file_item_compound_id_1.GobiiFileItemCompoundId
+                        .fromGobiiFileItemCompoundId(currentVertexFilterParams.getTargetEntityUniqueId())
+                        .setEntityType(eventedEntityType)
+                        .setEntitySubType(eventedEntitySubType)
+                        .setCvGroup(eventedCvGroup)
+                        .setCvTerm(eventedCvTerm);
+                    var nullTargetCompoundIdOfVertex = gobii_file_item_compound_id_1.GobiiFileItemCompoundId
+                        .fromGobiiFileItemCompoundId(currentVertexFilterParams.getTargetEntityUniqueId())
+                        .setEntityType(type_entity_1.EntityType.UNKNOWN)
+                        .setEntitySubType(type_entity_1.EntitySubType.UNKNOWN)
+                        .setCvGroup(cv_group_1.CvGroup.UNKNOWN)
+                        .setCvTerm(null);
+                    var nullTargetCompoundIdOfVertexValue = gobii_file_item_compound_id_1.GobiiFileItemCompoundId
+                        .fromGobiiFileItemCompoundId(nullTargetCompoundIdOfVertex)
+                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE);
+                    while (currentVertexFilterParams) {
                         // dispatch target entity ID values for newly selected vertex
-                        filterParams.getTargetEntityUniqueId().setEntityType(entityType);
-                        filterParams.getTargetEntityUniqueId().setEntitySubType(entitySubType);
-                        filterParams.getTargetEntityUniqueId().setCvGroup(cvGroup);
-                        filterParams.getTargetEntityUniqueId().setCvTerm(cvTerm);
-                        var targetFilterloadAction = new fileItemActions.LoadFilterAction({
-                            filterId: filterParams.getQueryName(),
-                            filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, filterParams.getTargetEntityUniqueId(), filterParams.getRelatedEntityUniqueId(), null, vertexId, null, null)
+                        currentVertexFilterParams.setTargetEntityUniqueId(newVertexFilterTargetCompoundId);
+                        var loadFilterActionForVertex = new fileItemActions.LoadFilterAction({
+                            filterId: currentVertexFilterParams.getQueryName(),
+                            filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, newVertexFilterTargetCompoundId, currentVertexFilterParams.getRelatedEntityUniqueId(), null, currentVertexId, null, null)
                         });
-                        this.store.dispatch(targetFilterloadAction);
-                        // do the same for the tree node corresponding to the filter
-                        this.treeStructureService.updateTreeNode(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, filterParams.getTargetEntityUniqueId(), new gobii_file_item_compound_id_1.GobiiFileItemCompoundId()
-                            .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE)
-                            .setEntityType(entityType)
-                            .setEntitySubType(entitySubType)
-                            .setCvGroup(cvGroup)
-                            .setCvTerm(cvTerm));
-                        // 
-                        if (!vertexId
-                            && filterParams.getChildFileItemParams()
-                            && filterParams.getChildFileItemParams().length > 0) {
-                            var childFilterParams = filterParams.getChildFileItemParams()[0];
+                        this.store.dispatch(loadFilterActionForVertex);
+                        // do the same for the filter's tree node
+                        this.treeStructureService.updateTreeNode(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, newVertexFilterTargetCompoundId, gobii_file_item_compound_id_1.GobiiFileItemCompoundId
+                            .fromGobiiFileItemCompoundId(newVertexFilterTargetCompoundId)
+                            .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE));
+                        //reset the selected vertex's value list
+                        if (currentVertexFilterParams.getChildFileItemParams()
+                            && currentVertexFilterParams.getChildFileItemParams().length > 0) {
+                            var currentVertexValuesFilterParams = currentVertexFilterParams.getChildFileItemParams()[0];
                             // clear any selected nodes from selected items collection and from tree
-                            this.deSelectVertexValueFilters(childFilterParams.getTargetEntityUniqueId());
-                            var childFilterLoadAction = new fileItemActions.LoadFilterAction({
-                                filterId: childFilterParams.getQueryName(),
-                                filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, childFilterParams.getTargetEntityUniqueId().setEntityType(type_entity_1.EntityType.UNKNOWN), childFilterParams.getRelatedEntityUniqueId(), null, null, null, null)
+                            this.deSelectVertexValueFilters(gobii_file_item_compound_id_1.GobiiFileItemCompoundId
+                                .fromGobiiFileItemCompoundId(previousTargetCompoundId)
+                                .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE));
+                            var loadFilterActionForVertexValue = new fileItemActions.LoadFilterAction({
+                                filterId: currentVertexValuesFilterParams.getQueryName(),
+                                filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, nullTargetCompoundIdOfVertexValue, currentVertexValuesFilterParams.getRelatedEntityUniqueId(), null, null, null, null)
                             });
-                            this.store.dispatch(childFilterLoadAction);
-                        } // if the vertexId is null
-                        // if the current filter is getting nulled, we need to null the siblings as well
-                        // but we dont' need to cascade filter values here
-                        // note that for now this is only really relevant to FlexQuery filters
-                        if (!vertexId) {
-                            filterParams = filterParams.getNextSiblingFileItemParams();
-                        }
-                        else {
-                            filterParams = null;
-                        }
+                            this.store.dispatch(loadFilterActionForVertexValue);
+                        } // if there is a values filter (child filter)
+                        //            if (!currentVertexId) {
+                        currentVertexFilterParams = currentVertexFilterParams.getNextSiblingFileItemParams();
+                        if (currentVertexFilterParams) {
+                            previousTargetCompoundId = currentVertexFilterParams.getTargetEntityUniqueId();
+                            newVertexFilterTargetCompoundId = gobii_file_item_compound_id_1.GobiiFileItemCompoundId.fromGobiiFileItemCompoundId(nullTargetCompoundIdOfVertex)
+                                .setSequenceNum(currentVertexFilterParams.getSequenceNum());
+                        } // no else necessary because null currentVertexFilterParams will end execution
+                        currentVertexId = null; // by definition, we always null out the children
+                        // } else {
+                        //     currentFilterParams = null;
+                        // }
                     } // while we have another filter value
-                };
+                }; // end function
                 FlexQueryService.prototype.loadSelectedVertexValueFilters = function (filterParamsName, currentValuesGfis, previousValuesGfis) {
                     var _this = this;
                     var vertexValues = currentValuesGfis.map(function (gfi) { return gfi.getItemId(); });

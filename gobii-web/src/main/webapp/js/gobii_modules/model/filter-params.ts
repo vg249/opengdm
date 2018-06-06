@@ -248,6 +248,11 @@ export class FilterParams {
         return this.targetEntityUniqueId;
     }
 
+    setTargetEntityUniqueId(value:GobiiFileItemCompoundId): FilterParams {
+        this.targetEntityUniqueId = value;
+        return this;
+    }
+
 
     setRelatedEntityUniqueId(value: GobiiFileItemCompoundId): FilterParams {
         this.relatedEntityUniqueId = value;

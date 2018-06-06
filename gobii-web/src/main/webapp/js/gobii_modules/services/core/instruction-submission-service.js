@@ -126,7 +126,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                             else {
                                 _this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType ? gobiiExtractFilterType : type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN]));
                             }
-                        });
+                        }).unsubscribe();
                     } // if we have an extract filter type
                 };
                 InstructionSubmissionService.prototype.markMissingItems = function (gobiiExtractFilterType) {
@@ -195,7 +195,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                                     _this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType ? gobiiExtractFilterType : type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN]));
                                 }
                             }
-                        });
+                        }).unsubscribe();
                     } // if we have an extract filter type
                 }; // markMissingItems()
                 InstructionSubmissionService.prototype.areCriteriaMet = function (all, gobiiExtractFilterType) {

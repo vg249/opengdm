@@ -381,6 +381,12 @@ System.register(["@angular/core", "../../model/gobii-tree-node", "../../model/ty
                         }
                     }
                 };
+                /***
+                 *
+                 * @param {GobiiExtractFilterType} gobiiExtractFilterType
+                 * @param {GobiiFileItemCompoundId} targetGobiiFileItemCompoundId Determines the node that will be updated
+                 * @param {GobiiFileItemCompoundId} childGobiiFileItemCompoundId Determines what types of nodes can be added to the updated node
+                 */
                 TreeStructureService.prototype.updateTreeNode = function (gobiiExtractFilterType, targetGobiiFileItemCompoundId, childGobiiFileItemCompoundId) {
                     var label = this.getLabel(targetGobiiFileItemCompoundId.getExtractorItemType(), targetGobiiFileItemCompoundId.getEntityType(), targetGobiiFileItemCompoundId.getEntitySubType(), targetGobiiFileItemCompoundId.getCvGroup(), targetGobiiFileItemCompoundId.getCvTerm(), targetGobiiFileItemCompoundId.getSequenceNum());
                     var icons = this.getIcons(targetGobiiFileItemCompoundId, false);
