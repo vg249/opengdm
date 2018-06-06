@@ -70,6 +70,7 @@ public class GobiiAdl {
     private static File xmlFile = null;
     private static boolean hasXmlFile = false;
     private static File parentDirectoryPath;
+    private static boolean batchMode = true;
 
     private static void validateKeys(NodeList nodeList, XPath xPath, Document document) throws Exception {
         for (int i = 0; i < nodeList.getLength(); i++) {
@@ -1551,7 +1552,7 @@ public class GobiiAdl {
             String dataExpr = "//Scenario[Name='" + scenarioName + "']/Files/Data";
             XPathExpression xPathExpressionData = xPath.compile(dataExpr);
             String dataFileName = (String) xPathExpressionData.evaluate(document, XPathConstants.STRING);
-            String sourcePath = parentDirectoryPath.getAbsoluteFile() + "/" + subDirectoryName + "/" + dataFileName;
+            String sourcePath = getParentSourcePath(subDirectoryName) + "/" + dataFileName;
             boolean writeSourcePath = true;
             if (!(new File(sourcePath).exists())) {
                 writeSourcePath = false;
@@ -1561,7 +1562,7 @@ public class GobiiAdl {
             String fileExpr = "//Scenario[Name='" + scenarioName + "']/Files/Instruction";
             XPathExpression xPathExpressionFiles = xPath.compile(fileExpr);
             String instructionFileName = (String) xPathExpressionFiles.evaluate(document, XPathConstants.STRING);
-            String instructionFilePath = parentDirectoryPath.getAbsoluteFile() + "/" + subDirectoryName + "/" + instructionFileName;
+            String instructionFilePath = getParentSourcePath(subDirectoryName) + "/" + instructionFileName;
             Object obj;
             if (!new File(instructionFilePath).exists()) {
                 ClassLoader classLoader = GobiiAdl.class.getClassLoader();
@@ -1795,14 +1796,6 @@ public class GobiiAdl {
 
     }
 
-    private static void checkIfDirectory(File fileName) {
-
-        if (!fileName.isDirectory()) {
-            processError("\nFile " + fileName + " is not directory.", GobiiStatusLevel.ERROR);
-        }
-
-    }
-
     private static File[] getChildrenFiles(File fileName) {
 
         File[] directoryListing = null;
@@ -1819,7 +1812,7 @@ public class GobiiAdl {
 
     }
 
-    private static void processSubDirectory(File currentSubDir) throws Exception {
+    private static void validateSubDirectory(File currentSubDir) throws Exception {
 
         File[] subDirFiles = getChildrenFiles(currentSubDir);
 
@@ -1862,6 +1855,8 @@ public class GobiiAdl {
         XPathExpression xPathExpression = xPath.compile(getAllScenarios);
         NodeList nodeList = (NodeList) xPathExpression.evaluate(document, XPathConstants.NODESET);
 
+
+
         for (int i = 0; i < nodeList.getLength(); i++) {
             Element currentElement = (Element) nodeList.item(i);
             Node scenarioNode = currentElement.getElementsByTagName("Name").item(0);
@@ -1870,7 +1865,7 @@ public class GobiiAdl {
             String dataExpr = "//Scenario[Name='" + scenarioName + "']/Files/Data";
             XPathExpression xPathExpressionData = xPath.compile(dataExpr);
             String dataFileName = (String) xPathExpressionData.evaluate(document, XPathConstants.STRING);
-            String sourcePath = parentDirectoryPath.getAbsoluteFile() + "/" + currentSubDir.getName() + "/" + dataFileName;
+            String sourcePath = getParentSourcePath(currentSubDir.getName()) + "/" + dataFileName;
 
             if (!(new File(sourcePath).exists())) {
                 processError( "Data file " + sourcePath + " for scenario "+ scenarioName +" not found.", GobiiStatusLevel.ERROR);
@@ -1879,12 +1874,26 @@ public class GobiiAdl {
             String fileExpr = "//Scenario[Name='" + scenarioName + "']/Files/Instruction";
             XPathExpression xPathExpressionFiles = xPath.compile(fileExpr);
             String instructionFileName = (String) xPathExpressionFiles.evaluate(document, XPathConstants.STRING);
-            String instructionFilePath = parentDirectoryPath.getAbsoluteFile() + "/" + currentSubDir.getName() + "/" + instructionFileName;
+            String instructionFilePath = getParentSourcePath(currentSubDir.getName()) + "/" + instructionFileName;
             if (!new File(instructionFilePath).exists()) {
                 processError(" Instruction file template " + instructionFilePath + " not found.", GobiiStatusLevel.ERROR);
             }
 
         }
+
+    }
+
+    private static String getParentSourcePath(String subDirectoryName) {
+
+
+        String parentSourcePath;
+        if (batchMode) {
+            parentSourcePath = parentDirectoryPath.getAbsolutePath() + "/" + subDirectoryName;
+        } else {
+            parentSourcePath = parentDirectoryPath.getAbsolutePath();
+        }
+
+        return parentSourcePath;
 
     }
 
@@ -1915,6 +1924,20 @@ public class GobiiAdl {
 
     }
 
+    private static void processDirectory(File currentDir) throws Exception {
+
+        System.out.println("\nChecking files for " + currentDir.getName());
+
+        validateSubDirectory(currentDir);
+
+        /*** Process XML file ***/
+
+        System.out.println("\nProcessing XML: " + xmlFile.getName() + " for subdirectory: " + currentDir.getName());
+        processXMLScenario(xmlFile, currentDir.getName());
+
+
+    }
+
     public static void main(String[] args) throws Exception {
 
 
@@ -1929,14 +1952,14 @@ public class GobiiAdl {
         String INPUT_TIMEOUT = "t";
         setOption(options, INPUT_TIMEOUT, true, "Maximum waiting time in minutes.", "timeout");
         String INPUT_SCENARIO = "s";
-        setOption(options, INPUT_SCENARIO, true, "Specifies the name of one subdirectory under the main directory. When specified, tool in run in single-scenario mode", "scenario");
+        setOption(options, INPUT_SCENARIO, true, "Specifies the path of one subdirectory under the main directory. When specified, tool in run in single-scenario mode", "scenario");
         String INPUT_DIRECTORY = "d";
         setOption(options, INPUT_DIRECTORY, true, "Specifies the path to the directory where the files are in.", "directory");
 
         // parse the commandline
         CommandLineParser parser = new DefaultParser();
         CommandLine commandLine = parser.parse(options, args);
-        String message = "";
+        String message;
 
         if (!commandLine.hasOption(INPUT_HOST)) {
             message = getMessageForMissingOption(INPUT_HOST, options);
@@ -1953,10 +1976,6 @@ public class GobiiAdl {
             processError(message, GobiiStatusLevel.ERROR);
         }
 
-        if (!commandLine.hasOption(INPUT_DIRECTORY)) {
-            message = getMessageForMissingOption(INPUT_DIRECTORY, options);
-            processError(message, GobiiStatusLevel.ERROR);
-        }
 
         //set default to 10minutes;
         Integer timeoutInt = 10;
@@ -1977,28 +1996,36 @@ public class GobiiAdl {
         timeout = timeoutInt.longValue();
         timeoutInMillis = TimeUnit.MINUTES.toMillis(timeout);
 
-        /** check if scenario is specified **/
+        String directory;
+        File parentDirectory = null;
 
-        String mode = "batch";
-        String inputScenario = null;
+        if (commandLine.hasOption(INPUT_DIRECTORY)){
 
-        if (commandLine.hasOption(INPUT_SCENARIO)) {
+            /** Check if specified directory exists **/
 
-            mode = "single-scenario";
-            inputScenario = commandLine.getOptionValue(INPUT_SCENARIO);
+            directory = commandLine.getOptionValue(INPUT_DIRECTORY);
+            parentDirectory = new File(directory);
+
+        } else if (commandLine.hasOption(INPUT_SCENARIO)) {
+
+            batchMode = false;
+            directory = commandLine.getOptionValue(INPUT_SCENARIO);
+            parentDirectory = new File(directory);
+
+        } else {
+            processError("\n Either -d (path to directory) or -s (path to subdirectory) should be specified.", GobiiStatusLevel.ERROR);
         }
 
-        /** Check if specified directory exists **/
-
-        String directory = commandLine.getOptionValue(INPUT_DIRECTORY);
-        File parentDirectory = new File(directory);
 
         if (!parentDirectory.exists()) {
             processError("\nThe directory, "+parentDirectory.getName()+" ,  does not exist. ", GobiiStatusLevel.ERROR);
         }
 
         // check if directory
-        checkIfDirectory(parentDirectory);
+
+        if (!parentDirectory.isDirectory()) {
+            processError("\nFile " + parentDirectory.getName() + " is not directory.", GobiiStatusLevel.ERROR);
+        }
 
         parentDirectoryPath = parentDirectory;
 
@@ -2047,7 +2074,7 @@ public class GobiiAdl {
         }
 
 
-        if (mode.equals("batch")) {
+        if (batchMode) {
 
             File[] directoryListing = getChildrenFiles(parentDirectory);
 
@@ -2060,44 +2087,16 @@ public class GobiiAdl {
 
                 /** Do load process for each scenario file ***/
 
-
-                System.out.println("\nChecking files for " + currentSubDir.getName());
-
-                processSubDirectory(currentSubDir);
-
-                /***Process XML file for current subdirectory**/
-                System.out.println("\nProcessing XML: " + xmlFile.getName() + " for subdirectory: " + currentSubDir.getName());
-                processXMLScenario(xmlFile, currentSubDir.getName());
+                processDirectory(currentSubDir);
 
             }
         } else {
 
-            if (inputScenario == null) {
-
-                System.out.println("\nScenario name is empty!");
-                System.exit(1);
-            }
-
-            File scenarioDir = new File(parentDirectory.getAbsoluteFile() + "\\" + inputScenario);
-
-            if (!scenarioDir.exists()) {
-                System.out.println("\nThe directory with path: " + scenarioDir.getAbsolutePath() + " does not exist.");
-                System.exit(1);
-            }
-
-            checkIfDirectory(scenarioDir);
-            System.out.println("\nChecking files for " + scenarioDir.getName());
-
-            processSubDirectory(scenarioDir);
-
-            /***Process XML file for current subdirectory**/
-            System.out.println("\nProcessing XML: " + xmlFile.getName() + " for subdirectory: " + scenarioDir.getName());
-            processXMLScenario(xmlFile, scenarioDir.getName());
-
+            processDirectory(parentDirectory);
 
         }
 
-        System.out.println("ADL uploading successfully finished!");
+        System.out.println("\nADL uploading successfully finished!");
         System.exit(0);
     }
 }
