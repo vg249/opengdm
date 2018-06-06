@@ -100,6 +100,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                             + type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY[type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY]));
                     }
                     while (filterParams) {
+                        // dispatch target entity ID values for newly selected vertex
                         filterParams.getTargetEntityUniqueId().setEntityType(entityType);
                         filterParams.getTargetEntityUniqueId().setEntitySubType(entitySubType);
                         filterParams.getTargetEntityUniqueId().setCvGroup(cvGroup);
@@ -109,13 +110,14 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                             filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, filterParams.getTargetEntityUniqueId(), filterParams.getRelatedEntityUniqueId(), null, vertexId, null, null)
                         });
                         this.store.dispatch(targetFilterloadAction);
+                        // do the same for the tree node corresponding to the filter
                         this.treeStructureService.updateTreeNode(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, filterParams.getTargetEntityUniqueId(), new gobii_file_item_compound_id_1.GobiiFileItemCompoundId()
                             .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE)
                             .setEntityType(entityType)
                             .setEntitySubType(entitySubType)
                             .setCvGroup(cvGroup)
                             .setCvTerm(cvTerm));
-                        // propagate null filter to child
+                        // 
                         if (!vertexId
                             && filterParams.getChildFileItemParams()
                             && filterParams.getChildFileItemParams().length > 0) {
@@ -124,7 +126,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                             this.deSelectVertexValueFilters(childFilterParams.getTargetEntityUniqueId());
                             var childFilterLoadAction = new fileItemActions.LoadFilterAction({
                                 filterId: childFilterParams.getQueryName(),
-                                filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, childFilterParams.getTargetEntityUniqueId().setEntityType(type_entity_1.EntityType.UNKNOWN), childFilterParams.getRelatedEntityUniqueId(), null, vertexId, null, null)
+                                filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, childFilterParams.getTargetEntityUniqueId().setEntityType(type_entity_1.EntityType.UNKNOWN), childFilterParams.getRelatedEntityUniqueId(), null, null, null, null)
                             });
                             this.store.dispatch(childFilterLoadAction);
                         } // if the vertexId is null

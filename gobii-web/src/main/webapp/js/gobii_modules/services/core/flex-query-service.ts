@@ -66,11 +66,11 @@ export class FlexQueryService {
 
         while (filterParams) {
 
+            // dispatch target entity ID values for newly selected vertex
             filterParams.getTargetEntityUniqueId().setEntityType(entityType);
             filterParams.getTargetEntityUniqueId().setEntitySubType(entitySubType);
             filterParams.getTargetEntityUniqueId().setCvGroup(cvGroup);
             filterParams.getTargetEntityUniqueId().setCvTerm(cvTerm);
-
             let targetFilterloadAction: fileItemActions.LoadFilterAction = new fileItemActions.LoadFilterAction(
                 {
                     filterId: filterParams.getQueryName(),
@@ -85,8 +85,9 @@ export class FlexQueryService {
                     )
                 }
             );
-
             this.store.dispatch(targetFilterloadAction);
+
+            // do the same for the tree node corresponding to the filter
             this.treeStructureService.updateTreeNode(GobiiExtractFilterType.FLEX_QUERY,
                 filterParams.getTargetEntityUniqueId(),
             new GobiiFileItemCompoundId()
@@ -97,7 +98,7 @@ export class FlexQueryService {
                 .setCvTerm(cvTerm));
 
 
-            // propagate null filter to child
+            //
             if (!vertexId
                 && filterParams.getChildFileItemParams()
                 && filterParams.getChildFileItemParams().length > 0) {
@@ -114,7 +115,7 @@ export class FlexQueryService {
                             childFilterParams.getTargetEntityUniqueId().setEntityType(EntityType.UNKNOWN),
                             childFilterParams.getRelatedEntityUniqueId(),
                             null,
-                            vertexId,
+                            null,
                             null,
                             null
                         )

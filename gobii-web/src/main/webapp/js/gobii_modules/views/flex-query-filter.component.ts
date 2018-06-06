@@ -164,6 +164,7 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
                 entitySubType = arg.value.getEntitySubType();
                 cvGroup = arg.value.getCvGroup();
                 cvTerm = arg.value.getCvTerm();
+
             } else {
                 vertexId = null;
                 this.selectedVertexValues = [];
