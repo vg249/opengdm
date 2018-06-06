@@ -137,8 +137,8 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                     }
                     this.JobId$.subscribe(function (fileItemJobId) {
                         _this.flexQueryService.loadVertexValues(fileItemJobId.getItemId(), arg.value, _this.filterParamNameVertexValues);
-                    });
-                };
+                    }).unsubscribe();
+                }; // end function
                 FlexQueryFilterComponent.prototype.handleVertexValueSelected = function (arg) {
                     var _this = this;
                     var newItems = this.selectedVertexValues

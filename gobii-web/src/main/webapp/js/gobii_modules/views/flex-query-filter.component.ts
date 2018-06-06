@@ -184,9 +184,9 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
                     arg.value,
                     this.filterParamNameVertexValues);
             }
-        );
+        ).unsubscribe();
 
-    }
+    } // end function
 
 
     // Technically, we should not be keeping state in this control in this way;
