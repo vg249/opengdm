@@ -10,7 +10,7 @@ import static org.apache.commons.lang.StringUtils.reverse;
 
 
 public class DigestMatrix {
-
+    private static int maxInvalidWarnings=20; //Or reasonable number of choice
     private static long startTime, endTime, duration;
     private static String fSep="\t";
 
@@ -18,20 +18,27 @@ public class DigestMatrix {
      * Validating digest.matrix(output of CSVReaderV2) for invalid data types.
      * @param inFile - digest.matrix
      * @param dataSetType - loaderInstruction dataset type
-     * @return
+     * @return If the validation was successful. If False, ErrorLogger will already have the problem
      */
     public static boolean validatematrix (File inFile, String dataSetType){
         startTime = System.currentTimeMillis();
+        int errorCount=0;
         try (BufferedReader buffIn=new BufferedReader(new FileReader(inFile))){
             String iLine;
+            int lineNumber=0;
             String errorBase;
             while ((iLine = buffIn.readLine()) != null) {
+                lineNumber++;
                 if(iLine.equals("matrix")) continue;
                 String[] iNucl = iLine.split(fSep);
                 errorBase = validateDatasetList(iNucl,dataSetType);
                 if(errorBase!= null){
-                    ErrorLogger.logError("Validate Dataset Matrix", "Invalid data found in the matrix - '" + errorBase + "'");
-                    return false;
+                    ErrorLogger.logError("Validate Dataset Matrix", "Invalid data found in psot-processed matrix line " + lineNumber+ " column "+iLine.indexOf(errorBase)+" - '" + errorBase + "'");
+                    //Don't fail on first error, give a reasonable number of lines of warnings
+                    if(++errorCount>=maxInvalidWarnings){
+                        ErrorLogger.logError("Validate Dataset Matrix", "Reached max warnings for Invalid data");
+                        return false;
+                    }
                 }
             }
             buffIn.close();
@@ -48,10 +55,15 @@ public class DigestMatrix {
         catch(Exception e){
             ErrorLogger.logError("Digest Matrix",e);
         }
-        return true;
+        return (errorCount==0);//true if no Invalid Data warnings
     }
 
-
+    /**
+     * Checks a dataset list based on data set type
+     * @param rowList List of rows
+     * @param dataSetType The dataset type expected for teh data
+     * @return the string value of the first invalid element in the list
+     */
     private static String validateDatasetList(String[] rowList, String dataSetType){
         List<String> elements = null;
         DataSetType dataSetTypeE = DataSetType.valueOf(dataSetType);
@@ -70,6 +82,8 @@ public class DigestMatrix {
                  * since ssr data has only digits (upto 8)
                  */
                 for (String base : rowList){
+                    /*
+                    TODO - Since no filtering on {1-4}d/{1-4}d, don't support that format now
                     if (base.contains("/")){
                         String[] bases = base.split("/");
                         for(String digit: bases){
@@ -79,11 +93,10 @@ public class DigestMatrix {
                         }
                     }
                     else{
-                        if(!base.matches("\\d+") && !base.equals("N") && (base.length() > 8)){ //Checks of the data length if more that 8 digits. (to save it from HDF5)
-                            return base;
-                        }
-                    }
-                    return null;
+                        */
+                    boolean isDigit=base.matches("\\d+");
+                    boolean isEightCharatersLong=(base.length() == 8);
+                    if(!(isDigit && isEightCharatersLong))return base; // Only accept strings of exactly eight characters
                 }
                 return null;
             case VCF:
