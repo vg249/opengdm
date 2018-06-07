@@ -23,12 +23,16 @@ import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
  * d) . from the matrix cell -> N
  **/
 public class VCFTransformer {
+
+	//Bi-allelic unknown character state
+	private static final String BI_UNKNOWN="N";
 	/**
 	 * Creates a new VCFTransformer using the path arguments of the ".mref" and "matrix" files to capture all their data
 	 * as well as the path argument of the new "bimatrix" file to dump the transformed VCF data
 	 */
 	public VCFTransformer(String mrefFilePath, String matrixFilePath, String bimatrixFilePath) {
 		String mrefLine,matrixLine;
+		int lineNumber=0;
 		try {
 			BufferedReader mrefFileBufferedReader = new BufferedReader(new FileReader(new File(mrefFilePath)));
 			// Omitting the .mref header
@@ -41,6 +45,7 @@ public class VCFTransformer {
 			bimatrixFileBufferedWriter.newLine();
 			while (((mrefLine = mrefFileBufferedReader.readLine()) != null) &&
 				   ((matrixLine = matrixFileBufferedReader.readLine()) != null)) {
+				lineNumber++;
 				String[] mrefLineRawData = mrefLine.trim().toUpperCase().split("\\s+");
 				String[] mrefAltData = mrefLineRawData[1].split("[^A-Za-z\\-]+");//Split on non-alphabetic, may be jsonified already
 
@@ -55,11 +60,11 @@ public class VCFTransformer {
 				//Fix - to N
 				for(int i =0;i< mrefLineData.length;i++) {
 					if (mrefLineData[i].equals("-"))mrefLineData[i]="N";// - is technically not valid
-					if(mrefLineData[i].equals("*"))mrefLineData[i]="N";// * is upstream deletion
+					if(mrefLineData[i].equals("*"))mrefLineData[i]=BI_UNKNOWN;// * is upstream deletion
 					if(mrefLineData[i].equals("INS"))mrefLineData[i]="+";// Technically, all these are supposed to be info fields
 					if(mrefLineData[i].equals("DEL"))mrefLineData[i]="-";
-					if(mrefLineData[i].equals("DUP"))mrefLineData[i]="N";
-					if(mrefLineData[i].equals("INV"))mrefLineData[i]="N";
+					if(mrefLineData[i].equals("DUP"))mrefLineData[i]=BI_UNKNOWN;
+					if(mrefLineData[i].equals("INV"))mrefLineData[i]=BI_UNKNOWN;
 				}
 
 				String[] matrixLineData = matrixLine.trim().split("\\s+");
@@ -69,37 +74,13 @@ public class VCFTransformer {
 						bimatrixFileBufferedWriter.write("\t");
 					}
 					matrixLineData[i] = matrixLineData[i].split(":")[0];
-					String[] terms = matrixLineData[i].split("/");
-					if (terms.length != 2) {
+					String bimatrixCell = getBiallelicEntry( lineNumber,  mrefLineData, matrixLineData[i], i);
+					if (bimatrixCell == null) {
 						mrefFileBufferedReader.close();
 						matrixFileBufferedReader.close();
 						bimatrixFileBufferedWriter.flush();
 						bimatrixFileBufferedWriter.close();
-						ErrorLogger.logError("VCFTransformer", "Incorrect number of alleles: " + matrixLineData[i]
-								+ "\n Line "+ matrixLine, new Exception());
 						return;
-					}
-					String bimatrixCell = "";
-					for (int k = 0; k < 2; k++) {
-						switch (terms[k]) {
-							case "0": case "1": case "2": case "3": case "4": case "5": case "6": case "7": case "8": case "9":
-								int value=Integer.parseInt(terms[k]);
-								if(k >= mrefLineData.length) {
-									throw new IOException("Referenced alternate number is greater than alt list length: " + terms[k] + " > " + mrefLineData.length);
-								}
-								bimatrixCell = bimatrixCell + mrefLineData[value];
-								break;
-							case ".":
-								bimatrixCell = bimatrixCell + "N";
-								break;
-							default: 
-								mrefFileBufferedReader.close();
-								matrixFileBufferedReader.close();
-								bimatrixFileBufferedWriter.flush();
-								bimatrixFileBufferedWriter.close();
-								ErrorLogger.logError("VCFTransformer", "Unsupported alternate: " + terms[k], new Exception());
-								return;
-						}
 					}
 					bimatrixFileBufferedWriter.write(bimatrixCell);
 				}
@@ -114,7 +95,48 @@ public class VCFTransformer {
 		}
 	}
 
-    /**
+
+	/**
+	 *
+	 * @param lineNumber line processed
+	 * @param mrefLineData contains reference and alternates
+	 * @param matrixLineDatum single entry (eg: 0/0) of the bi-allelic datum
+	 * @param col column processed
+	 * @return unseparated bi-allelic closest approximation of the VCF line data
+	 */
+	//TODO - need to add some separation to appropriately deal with multi-allelic alternates downstream - potentially wrapper class
+	@SuppressWarnings("StringConcatenationInLoop")
+	private String getBiallelicEntry(int lineNumber,  String[] mrefLineData, String matrixLineDatum, int col){
+		String[] terms = matrixLineDatum.split("/");
+		if (terms.length != 2) {
+			ErrorLogger.logError("VCFTransformer", "Incorrect number of alleles: " + matrixLineDatum
+					+ "\n Data line " + lineNumber + " column " + col);
+			return null;
+		}
+		String bimatrixCell = "";
+		for (int k = 0; k < 2; k++) {
+			switch (terms[k]) {
+				case "0": case "1": case "2": case "3": case "4": case "5": case "6": case "7": case "8": case "9":
+					int value=Integer.parseInt(terms[k]);
+					if(value >= mrefLineData.length) {
+						ErrorLogger.logError("VCFTransformer", "Alternate number " + terms[k] + " exceeds the length of the alternates list on data line " + lineNumber + " column " + col);
+						bimatrixCell += BI_UNKNOWN;
+					}else {
+						bimatrixCell += mrefLineData[value];
+					}
+					break;
+				case ".":
+					bimatrixCell += BI_UNKNOWN;
+					break;
+				default:
+					ErrorLogger.logError("VCFTransformer", "Unsupported alternate: " + terms[k] + " on data line " + lineNumber + " column " + col);
+					return null;
+			}
+		}
+		return bimatrixCell;
+	}
+
+	/**
      * Generates a marker reference file from a marker file
      * If input is name ref alt blah blah
      * output is ref alt
