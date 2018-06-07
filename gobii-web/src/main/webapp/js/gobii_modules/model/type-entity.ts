@@ -18,7 +18,8 @@ export enum EntityType {
     DISPLAY,
     MARKER,
     PROTOCOL,
-    VENDORS_PROTOCOL
+    VENDORS_PROTOCOL,
+    GERMPLASM
 }
 
 export const entityTypefromString = function (entityTypeName: String): EntityType {
@@ -97,6 +98,10 @@ export const entityTypefromString = function (entityTypeName: String): EntityTyp
 
         case "VENDOR_PROTOCOL":
             returnVal = EntityType.VENDORS_PROTOCOL;
+            break;
+
+        case "GERMPLASM":
+            returnVal = EntityType.GERMPLASM;
             break;
 
     }

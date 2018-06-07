@@ -117,6 +117,8 @@ export class FilterParams {
                         private _nameIdLabelType: NameIdLabelType,
                         private _parentFileItemParams: FilterParams,
                         private _childFileItemParams: FilterParams[],
+                        private _previousSiblingFileItemParams: FilterParams,
+                        private _nextSiblingFileItemParams: FilterParams,
                         private _isDynamicFilterValue: boolean,
                         private _isDynamicDataLoad: boolean,
                         private _isPaged: boolean,
@@ -151,6 +153,8 @@ export class FilterParams {
             NameIdLabelType.UNKNOWN,
             null,
             [],
+            null,
+            null,
             true,
             true,
             false,
@@ -225,7 +229,7 @@ export class FilterParams {
         return this;
     }
 
-    getTargetEtityUniqueId(): GobiiFileItemCompoundId {
+    getTargetEntityUniqueId(): GobiiFileItemCompoundId {
         return this.targetEntityUniqueId;
     }
 
@@ -301,6 +305,24 @@ export class FilterParams {
 
     setChildNameIdRequestParams(childNameIdRequestParams: FilterParams[]): FilterParams {
         this._childFileItemParams = childNameIdRequestParams;
+        return this;
+    }
+
+    getPreviousSiblingFileItemParams(): FilterParams {
+        return this._previousSiblingFileItemParams;
+    }
+
+    setPreviousSiblingNameIdRequestParams(previousSiblingNameIdRequestParams: FilterParams): FilterParams {
+        this._previousSiblingFileItemParams= previousSiblingNameIdRequestParams;
+        return this;
+    }
+
+    getNextSiblingFileItemParams(): FilterParams {
+        return this._nextSiblingFileItemParams;
+    }
+
+    setNextSiblingNameIdRequestParams(NextSiblingNameIdRequestParams: FilterParams): FilterParams {
+        this._nextSiblingFileItemParams= NextSiblingNameIdRequestParams;
         return this;
     }
 
