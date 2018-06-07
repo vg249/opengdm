@@ -1,6 +1,5 @@
 import {Injectable} from "@angular/core";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
-import * as treeNodeActions from '../../store/actions/treenode-action'
 import * as historyAction from '../../store/actions/history-action';
 import * as fileItemActions from '../../store/actions/fileitem-action'
 import * as fromRoot from '../../store/reducers';
@@ -19,12 +18,11 @@ import {PayloadFilter} from "../../store/actions/action-payload-filter";
 import {FilterParamsColl} from "./filter-params-coll";
 import {FilterParams} from "../../model/filter-params";
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
-import {EntitySubType, EntityType, entityTypefromString} from "../../model/type-entity";
+import {EntitySubType, EntityType} from "../../model/type-entity";
 import {NameIdLabelType} from "../../model/name-id-label-type";
 import {CvGroup, getCvGroupName} from "../../model/cv-group";
 import {FilterService} from "./filter-service";
 import {TreeStructureService} from "./tree-structure-service";
-import {GobiiTreeNode} from "../../model/gobii-tree-node";
 
 @Injectable()
 export class FlexQueryService {
@@ -47,6 +45,67 @@ export class FlexQueryService {
 
     } // loadVertices()
 
+    /***
+     * Recall that in the FlexQuery universe of discourse, there are two focii of interest: vertices, and vertex values.
+     * Each of the four flex query controls consists of a list of vertices and a list of corresponding vertex values
+     * that is populated  when the user selects a vertex value. The tree is affected in two ways by by the control:
+     *  1) When a new value is selected, the node corresponding to the filter in the tree is updated to receive a name
+     *     that indicates the type (e.g., Analysis, Dataset, etc.);
+     *  2) When a user clicks a value from the value list, the selected value is added under the corresponding tree
+     *     node (e.g., if the user had selected Analysis as the vertex for filter 2, such that the Filter 2 node in the
+     *     the tree will now say "Filter 2: Analysis," when the user now selects "My fine analysis" from the value list,
+     *     it (and any others that are selected) will also be added under the "Filter 2: Aanlysis" node.
+     * The tree will be updated in this way as the user selects vertices and vertex values for each of the filters.
+     * When the user selects a new value on a flilter to the left of any other filter (i.e., filters 1 through 3),
+     * all the filter to right need to be "cleared" in the following way:
+     *  1) The filter's tree node needs to be reset for the newly selected entity;
+     *  2) The child filters of the filter's tree node need to be cleared;
+     *  3) The filter control's vertex selector needs to be reset to "Select A";
+     *  4) The filter control's vertex values need to be cleared.
+     * A word should be said here about the way that the FilterParam objects underlying this mechanism are organized.
+     * Each FlexQuery filter control is associated with two FilterParams object -- one for the vertices and another
+     * for the vertex values. The vertex values are arranged as a list, such that there are previous and next sibling
+     * methods: given a FilterParams instance, you can figure out whether you have a filter to the left or right.
+     * (FlexQuery so far is the only feature that uses sibling filter relationships). Each vertex filter params's object
+     * has a child filter, which is the filter for the vertex values.
+     * With all that as background, it will now be intelligible to explain that this method is called by the FlexQuery
+     * filter component when a vertex value change, and that it is responsible for ensuring that the filter control and
+     * tree behaviors described are carried out.
+     * This method conceives of two different vertices:
+     *      * the "evented" vertex is the one that was selected by the user's actions, and the values of which are passed
+     *        in as the method's parameter values;
+     *       * the "sibling" vertices are the ones to the right of the the evented vertex, as identified by vertex filter's
+     *         "next sibling"
+     * What this method does is as follows:
+     *   * For the evented vertex:
+     *      * Set the vertex's filter to the id of the evented vertex so that the vertex value list controlled
+     *        by that filter is reset (if the user selected "Select A", the vertexId will be null and so no vertex values
+     *        will be displayed;
+     *      * change the label of the filter node for the filter to the newly selected vertex value (or blank if null);
+     *    * For the sibling vertices:
+     *       * Set the vertex's filter to null;
+     *       * Clear the filter node's label
+     *   * For the evented and sibling vertices: remove the previously selected vertex values from the tree;
+     *
+     *   The algorithm is otherwise self-documenting. However, a few points should be kept in mind:
+     *      * We are using the FilterParam objects to maintain the filter's selected entity values, whilst the filter
+     *        value itself is kept in the store so that the selectors for the vertices and vertex value lists will work
+     *        out correctly; technically, all of the filter state should be kept the store. The reason it is not is because
+     *        consuming the store values in this context requir3es a method that generates a series of dispatch actions
+     *        that would increase the complexity of the method; for now, it seems to work; in the future, it may need to
+     *        be refactored;
+     *      * This method relies very heavily on the compound IDs for the entities. Pre FlexQuery functionality does not
+     *        have dynamic entity types and so did not need to operate in this way. It will be noded that the CompoundUnqiueID
+     *        class now has a "from" method to copy an existing one: in this method, we almost always want to make copies
+     *        in this way; otherwise, we are copying references to insteawnces and that does not do what we want.
+     *
+     * @param {FilterParamNames} eventedFilterParamsName
+     * @param {string} eventedVertexId
+     * @param {EntityType} eventedEntityType
+     * @param {EntitySubType} eventedEntitySubType
+     * @param {CvGroup} eventedCvGroup
+     * @param {string} eventedCvTerm
+     */
     public loadSelectedVertexFilter(eventedFilterParamsName: FilterParamNames,
                                     eventedVertexId: string,
                                     eventedEntityType: EntityType,
@@ -148,8 +207,6 @@ export class FlexQueryService {
 
             } // if there is a values filter (child filter)
 
-
-//            if (!currentVertexId) {
             currentVertexFilterParams = currentVertexFilterParams.getNextSiblingFileItemParams();
             if (currentVertexFilterParams) {
                 previousTargetCompoundId = currentVertexFilterParams.getTargetEntityUniqueId();
@@ -158,9 +215,7 @@ export class FlexQueryService {
             } // no else necessary because null currentVertexFilterParams will end execution
 
             currentVertexId = null; // by definition, we always null out the children
-            // } else {
-            //     currentFilterParams = null;
-            // }
+
         } // while we have another filter value
 
     } // end function
