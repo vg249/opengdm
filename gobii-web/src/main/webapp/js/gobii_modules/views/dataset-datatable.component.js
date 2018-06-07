@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/actions/history-action", "../model/type-extractor-filter", "../services/core/nameid-file-item-service", "../model/file-item-param-names", "../store/actions/fileitem-action", "../services/core/dto-request.service", "../services/app/jsontogfi/json-to-gfi-dataset", "../services/core/filter-params-coll", "../services/app/dto-request-item-gfi", "../services/app/jsontogfi/json-to-gfi-analysis", "../model/cv-filter-type", "../model/type-entity", "../model/gobii-file-item-compound-id", "../model/type-extractor-item", "rxjs/Subject", "rxjs/add/operator/withLatestFrom", "../store/actions/action-payload-filter", "../services/core/entity-file-item-service"], function (exports_1, context_1) {
+System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/actions/history-action", "../model/type-extractor-filter", "../services/core/nameid-file-item-service", "../model/file-item-param-names", "../store/actions/fileitem-action", "../services/core/dto-request.service", "../services/app/jsontogfi/json-to-gfi-dataset", "../services/core/filter-params-coll", "../services/app/dto-request-item-gfi", "../services/app/jsontogfi/json-to-gfi-analysis", "../model/cv-group", "../model/type-entity", "../model/gobii-file-item-compound-id", "../model/type-extractor-item", "rxjs/Subject", "rxjs/add/operator/withLatestFrom", "../store/actions/action-payload-filter", "../services/core/entity-file-item-service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, store_1, fromRoot, historyAction, type_extractor_filter_1, nameid_file_item_service_1, file_item_param_names_1, fileAction, dto_request_service_1, json_to_gfi_dataset_1, filter_params_coll_1, dto_request_item_gfi_1, json_to_gfi_analysis_1, cv_filter_type_1, type_entity_1, gobii_file_item_compound_id_1, type_extractor_item_1, Subject_1, action_payload_filter_1, entity_file_item_service_1, DatasetDatatableComponent;
+    var core_1, store_1, fromRoot, historyAction, type_extractor_filter_1, nameid_file_item_service_1, file_item_param_names_1, fileAction, dto_request_service_1, json_to_gfi_dataset_1, filter_params_coll_1, dto_request_item_gfi_1, json_to_gfi_analysis_1, cv_group_1, type_entity_1, gobii_file_item_compound_id_1, type_extractor_item_1, Subject_1, action_payload_filter_1, entity_file_item_service_1, DatasetDatatableComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -52,8 +52,8 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/
             function (json_to_gfi_analysis_1_1) {
                 json_to_gfi_analysis_1 = json_to_gfi_analysis_1_1;
             },
-            function (cv_filter_type_1_1) {
-                cv_filter_type_1 = cv_filter_type_1_1;
+            function (cv_group_1_1) {
+                cv_group_1 = cv_group_1_1;
             },
             function (type_entity_1_1) {
                 type_entity_1 = type_entity_1_1;
@@ -122,7 +122,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/
                     }
                     this.store.dispatch(new fileAction.LoadFilterAction({
                         filterId: file_item_param_names_1.FilterParamNames.DATASET_LIST_STATUS,
-                        filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.DATASET, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.UNKNOWN)), null, filterValue, null, null, null)
+                        filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.DATASET, type_entity_1.EntitySubType.UNKNOWN, cv_group_1.CvGroup.UNKNOWN, cv_group_1.getCvGroupName(cv_group_1.CvGroup.UNKNOWN)), null, filterValue, null, null, null)
                     }));
                 };
                 DatasetDatatableComponent.prototype.handleHideOverlayPanel = function ($event) {

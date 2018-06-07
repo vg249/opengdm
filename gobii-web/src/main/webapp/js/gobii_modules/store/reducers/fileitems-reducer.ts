@@ -8,7 +8,7 @@ import {ProcessType} from "../../model/type-process";
 import {Labels} from "../../views/entity-labels";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 import {GobiiExtractFormat} from "../../model/type-extract-format";
-import {CvFilterType} from "../../model/cv-filter-type";
+import {CvGroup} from "../../model/cv-group";
 import {GobiiSampleListType} from "../../model/type-extractor-sample-list";
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 import {PayloadFilter} from "../actions/action-payload-filter";
@@ -458,6 +458,9 @@ export const getSelected = createSelector(getFileItems, getSelectedUniqueIds, (f
                 .find(uniqueId => fileItem.getFileItemUniqueId() === uniqueId)
         );
 
+
+    let foo:string = "foo";
+
     return returnVal;
 });
 
@@ -614,7 +617,7 @@ export const getCvTermsDataType = createSelector(getFileItems, getUniqueIds, (fi
         (e.getExtractorItemType() === ExtractorItemType.ENTITY
             || e.getNameIdLabelType() !== NameIdLabelType.UNKNOWN)
         && e.getEntityType() === EntityType.CV
-        && e.getCvFilterType() === CvFilterType.DATASET_TYPE)
+        && e.getCvGroup() === CvGroup.DATASET_TYPE)
         .map(fi => fi);
 
     return returnVal;
@@ -627,7 +630,7 @@ export const getCvTermsJobStatus = createSelector(getFileItems, getUniqueIds, (f
         (e.getExtractorItemType() === ExtractorItemType.ENTITY
             || e.getNameIdLabelType() !== NameIdLabelType.UNKNOWN)
         && e.getEntityType() === EntityType.CV
-        && e.getCvFilterType() === CvFilterType.JOB_STATUS)
+        && e.getCvGroup() === CvGroup.JOBSTATUS)
         .map(fi => fi);
 
     return returnVal;
@@ -1115,7 +1118,10 @@ export const getFqF1VerticesValues = createSelector(getFileItems, getFilters, ge
                 (e.getGobiiExtractFilterType() == GobiiExtractFilterType.FLEX_QUERY
                     && e.getExtractorItemType() === ExtractorItemType.VERTEX_VALUE
                     && e.getEntityType() === entityType)
-        ).map(fi => fi);
+        ).map(fi => fi)
+            .sort((gfi_a,gfi_b) => {
+                return gfi_a.getItemName().localeCompare(gfi_b.getItemName());
+            });
     }
 
     return returnVal;
@@ -1138,7 +1144,10 @@ export const getFqF2VerticesValues = createSelector(getFileItems, getFilters, ge
                 (e.getGobiiExtractFilterType() == GobiiExtractFilterType.FLEX_QUERY
                     && e.getExtractorItemType() === ExtractorItemType.VERTEX_VALUE
                     && e.getEntityType() === entityType)
-        ).map(fi => fi);
+        ).map(fi => fi)
+            .sort((gfi_a,gfi_b) => {
+            return gfi_a.getItemName().localeCompare(gfi_b.getItemName());
+        });;
     }
 
     return returnVal;
@@ -1162,7 +1171,10 @@ export const getFqF3VerticesValues = createSelector(getFileItems, getFilters, ge
                 (e.getGobiiExtractFilterType() == GobiiExtractFilterType.FLEX_QUERY
                     && e.getExtractorItemType() === ExtractorItemType.VERTEX_VALUE
                     && e.getEntityType() === entityType)
-        ).map(fi => fi);
+        ).map(fi => fi)
+            .sort((gfi_a,gfi_b) => {
+                return gfi_a.getItemName().localeCompare(gfi_b.getItemName());
+            });;
     }
 
     return returnVal;
@@ -1185,7 +1197,10 @@ export const getFqF4VerticesValues = createSelector(getFileItems, getFilters, ge
                 (e.getGobiiExtractFilterType() == GobiiExtractFilterType.FLEX_QUERY
                     && e.getExtractorItemType() === ExtractorItemType.VERTEX_VALUE
                     && e.getEntityType() === entityType)
-        ).map(fi => fi);
+        ).map(fi => fi)
+            .sort((gfi_a,gfi_b) => {
+                return gfi_a.getItemName().localeCompare(gfi_b.getItemName());
+            });;
     }
 
     return returnVal;

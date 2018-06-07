@@ -3,19 +3,18 @@ import {GobiiFileItem} from "../model/gobii-file-item";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {Store} from "@ngrx/store";
 import * as fromRoot from '../store/reducers';
-import * as fileAction from '../store/actions/fileitem-action';
-import * as historyAction from '../store/actions/history-action';
 import {Observable} from "rxjs/Observable";
 import {FilterParamNames} from "../model/file-item-param-names";
 import {NameIdFileItemService} from "../services/core/nameid-file-item-service";
 import {FilterService} from "../services/core/filter-service";
 import {FlexQueryService} from "../services/core/flex-query-service";
-import {Vertex} from "../model/vertex";
-import {EntityType} from "../model/type-entity";
+import {EntitySubType, EntityType} from "../model/type-entity";
 import {NameIdLabelType} from "../model/name-id-label-type";
 import {PayloadFilter} from "../store/actions/action-payload-filter";
 import {FilterParams} from "../model/filter-params";
 import {FilterParamsColl} from "../services/core/filter-params-coll";
+import {CvGroup} from "../model/cv-group";
+import {filter} from "rxjs/operator/filter";
 
 
 @Component({
@@ -43,7 +42,7 @@ import {FilterParamsColl} from "../services/core/filter-params-coll";
                 <label class="the-label">Select Entity Values</label><BR>
                 <p-listbox [options]="fileItemsEntityValues$ | async"
                            [multiple]="true"
-                           [(ngModel)]="selectedVertexValues" 
+                           [(ngModel)]="selectedVertexValues"
                            [style]="{'width':'100%'}"
                            (onChange)="handleVertexValueSelected($event)"
                            optionLabel="_itemName"
@@ -95,29 +94,6 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
         this.JobId$ = this.store.select(fromRoot.getJobId);
 
 
-        // this
-        //     .fileItemsVertexNames$
-        //     .subscribe(items => {
-        //             if (this.previousSelectedItemId === null && items && items.length > 0) {
-        //                 this.previousSelectedItemId = items[0].getFileItemUniqueId()
-        //             }
-        //
-        //             if (items.length > 1) {
-        //                 this.currentStyle = this.enabledStyle;
-        //             } else {
-        //                 this.currentStyle = this.disabledStyle;
-        //             }
-        //
-        //             // if (items[0]) {
-        //             //     this.selectedAllowableEntities = items[0];
-        //             // }
-        //
-        //         },
-        //         error => {
-        //             this.store.dispatch(new historyAction.AddStatusMessageAction(error))
-        //         });
-
-
         this
             .fileItemsEntityValues$
             .subscribe(items => {
@@ -134,8 +110,8 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
                     // change event
                     let thisControlVertexfilterParams: FilterParams = this.filterParamsColl.getFilter(this.filterParamNameVertices, GobiiExtractFilterType.FLEX_QUERY);
                     let currentVertexFilter: PayloadFilter = filters[thisControlVertexfilterParams.getQueryName()];
-                    if( currentVertexFilter ) {
-                        if(! currentVertexFilter.targetEntityFilterValue) {
+                    if (currentVertexFilter) {
+                        if (!currentVertexFilter.targetEntityFilterValue) {
                             this.selectedVertex = null;
                             this.selectedVertexValues = null;
                         }
@@ -178,13 +154,29 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
 
         if (arg.value && arg.value._entity) {
             let vertexId: string;
+            let entityType: EntityType = EntityType.UNKNOWN;
+            let entitySubType: EntitySubType = EntitySubType.UNKNOWN;
+            let cvGroup: CvGroup = CvGroup.UNKNOWN;
+            let cvTerm: string = null;
             if (arg.value.getNameIdLabelType() === NameIdLabelType.UNKNOWN) {
                 vertexId = arg.value.getItemId();
+                entityType = arg.value.getEntityType();
+                entitySubType = arg.value.getEntitySubType();
+                cvGroup = arg.value.getCvGroup();
+                cvTerm = arg.value.getCvTerm();
+
             } else {
                 vertexId = null;
+                this.selectedVertexValues = [];
+                this.previousSelectedVertices = [];
             }
 
-            this.flexQueryService.loadSelectedVertexFilter(this.filterParamNameVertices, vertexId);
+            this.flexQueryService.loadSelectedVertexFilter(this.filterParamNameVertices,
+                vertexId,
+                entityType,
+                entitySubType,
+                cvGroup,
+                cvTerm);
         }
 
         this.JobId$.subscribe(
@@ -193,15 +185,28 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
                     arg.value,
                     this.filterParamNameVertexValues);
             }
-        );
+        ).unsubscribe();
 
-    }
+    } // end function
 
 
+    // Technically, we should not be keeping state in this control in this way;
+    // However, it turns out to be a lot more complicated and error prone to
+    // rely purely on the store
+    private previousSelectedVertices: GobiiFileItem[] = [];
     public handleVertexValueSelected(arg) {
 
-        let selectedVertexValueIds: string[] = this.selectedVertexValues.map(gfi => gfi.getItemId())
-        this.flexQueryService.loadSelectedVertexValueFilters(this.filterParamNameVertexValues, selectedVertexValueIds);
+
+        let newItems: GobiiFileItem[] = this.selectedVertexValues
+            .filter(gfi => !this.previousSelectedVertices.find(igfi => igfi.getFileItemUniqueId() === gfi.getFileItemUniqueId()));
+
+        let deselectedItems:GobiiFileItem[] = this.previousSelectedVertices.filter(gfi=> ! this.selectedVertexValues.find(igfi => igfi.getFileItemUniqueId() === gfi.getFileItemUniqueId() ));
+
+        this.flexQueryService.loadSelectedVertexValueFilters(this.filterParamNameVertexValues,
+            newItems ? newItems : [], // find() can return null
+            deselectedItems);
+
+        this.previousSelectedVertices = this.selectedVertexValues;
     }
 
 

@@ -16,7 +16,7 @@ import {FilterParamsColl} from "../services/core/filter-params-coll";
 import {DtoRequestItemGfi} from "../services/app/dto-request-item-gfi";
 import {FilterParams} from "../model/filter-params";
 import {JsonToGfiAnalysis} from "../services/app/jsontogfi/json-to-gfi-analysis";
-import {CvFilters, CvFilterType} from "../model/cv-filter-type";
+import {CvGroup, getCvGroupName} from "../model/cv-group";
 import {EntitySubType, EntityType} from "../model/type-entity";
 import {GobiiFileItemCompoundId} from "../model/gobii-file-item-compound-id";
 import {ExtractorItemType} from "../model/type-extractor-item";
@@ -326,8 +326,8 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
                     new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
                         EntityType.DATASET,
                         EntitySubType.UNKNOWN,
-                        CvFilterType.UNKNOWN,
-                        CvFilters.get(CvFilterType.UNKNOWN)),
+                        CvGroup.UNKNOWN,
+                        getCvGroupName(CvGroup.UNKNOWN)),
                     null,
                     filterValue,
                     null,

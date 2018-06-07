@@ -328,7 +328,7 @@ System.register(["@angular/core", "../../model/type-extractor-item", "../../mode
                                                     .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
                                                     .setEntityType(filterParamsToLoad.getEntityType())
                                                     .setEntitySubType(filterParamsToLoad.getEntitySubType())
-                                                    .setCvFilterType(filterParamsToLoad.getCvFilterType())
+                                                    .setCvGroup(filterParamsToLoad.getCvGroup())
                                                     .setItemId(nameIdItem.id)
                                                     .setItemName(nameIdItem.name)
                                                     .setRequired(false)

@@ -7,7 +7,7 @@ import {ServerConfig} from "../model/server-config";
 import {EntitySubType, EntityType} from "../model/type-entity";
 import {DtoRequestItemServerConfigs} from "../services/app/dto-request-item-serverconfigs";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
-import {CvFilterType} from "../model/cv-filter-type";
+import {CvGroup} from "../model/cv-group";
 import {ExtractorItemType} from "../model/type-extractor-item";
 import {GobiiExtractFormat} from "../model/type-extract-format";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
@@ -362,6 +362,8 @@ import {FlexQueryService} from "../services/core/flex-query-service";
                                 </div>
                                 <div class="panel-body">
                                     <status-display-tree
+                                            (mouseenter)="handleOnMouseOverSubmit($event,true)"
+                                            (mouseleave)="handleOnMouseOverSubmit($event,false)"
                                             [fileItemEventChange]="treeFileItemEvent"
                                             [gobiiExtractFilterTypeEvent]="gobiiExtractFilterType"
                                             (onAddMessage)="handleHeaderStatusMessage($event)">
@@ -372,8 +374,6 @@ import {FlexQueryService} from "../services/core/flex-query-service";
                                     <button type="submit"
                                             [class]="submitButtonStyle"
                                             [disabled]="submitButtonStyle === buttonStyleSubmitNotReady"
-                                            (mouseenter)="handleOnMouseOverSubmit($event,true)"
-                                            (mouseleave)="handleOnMouseOverSubmit($event,false)"
                                             (click)="handleExtractSubmission()">Submit
                                     </button>
 
@@ -410,7 +410,7 @@ export class ExtractorRoot implements OnInit {
     //
 
     nameIdFilterParamTypes: any = Object.assign({}, FilterParamNames);
-    gobiiExtractFilterTypes:any = Object.assign({},GobiiExtractFilterType);
+    gobiiExtractFilterTypes: any = Object.assign({}, GobiiExtractFilterType);
 
     selectedExtractFormat$: Observable<GobiiFileItem> = this.store.select(fromRoot.getSelectedFileFormat);
 
@@ -433,8 +433,8 @@ export class ExtractorRoot implements OnInit {
                 private entityFileItemService: EntityFileItemService,
                 private instructionSubmissionService: InstructionSubmissionService,
                 private changeDetectorRef: ChangeDetectorRef,
-                private filterService:FilterService,
-                private flexQueryService:FlexQueryService) {
+                private filterService: FilterService,
+                private flexQueryService: FlexQueryService) {
 
         this.messages$.subscribe(
             messages => {
@@ -489,7 +489,13 @@ export class ExtractorRoot implements OnInit {
                             )[0];
                     this.handleExportTypeSelected(GobiiExtractFilterType.WHOLE_DATASET);
 //                    scope$.initializeSubmissionContact();
-                    scope$.currentStatus = "GOBII Server " + gobiiVersion;
+
+                    this.store.select(fromRoot.getAllFileItems).subscribe(
+                        all => {
+                            scope$.currentStatus = "GOBII Server " + gobiiVersion + " ( "+ all.length +" )";
+                        }
+                    );
+
                     //scope$.handleAddMessage("Connected to crop config: " + scope$.selectedServerConfig.crop);
 
                 } else {
@@ -522,7 +528,7 @@ export class ExtractorRoot implements OnInit {
                     this.nameIdFileItemService.loadFileItem(GobiiFileItem.build(scope$.gobiiExtractFilterType, ProcessType.CREATE)
                             .setEntityType(EntityType.CONTACT)
                             .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
-                            .setCvFilterType(CvFilterType.UNKNOWN)
+                            .setCvGroup(CvGroup.UNKNOWN)
                             .setExtractorItemType(ExtractorItemType.ENTITY)
                             .setItemName(contact.email)
                             .setItemId(contact.contactId.toLocaleString()),

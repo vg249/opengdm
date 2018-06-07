@@ -1,6 +1,7 @@
 // these have to match what's on the server
 export enum EntityType {
     UNKNOWN,
+    ANY,
     ANALYSIS,
     CONTACT,
     DATASET,
@@ -18,8 +19,11 @@ export enum EntityType {
     DISPLAY,
     MARKER,
     PROTOCOL,
-    VENDORS_PROTOCOL,
-    GERMPLASM
+    VENDOR_PROTOCOL,
+    GERMPLASM,
+    LINKAGE_GROUP,
+    DNA_SAMPLE,
+    VENDOR
 }
 
 export const entityTypefromString = function (entityTypeName: String): EntityType {
@@ -97,7 +101,7 @@ export const entityTypefromString = function (entityTypeName: String): EntityTyp
             break;
 
         case "VENDOR_PROTOCOL":
-            returnVal = EntityType.VENDORS_PROTOCOL;
+            returnVal = EntityType.VENDOR_PROTOCOL;
             break;
 
         case "GERMPLASM":
@@ -109,8 +113,9 @@ export const entityTypefromString = function (entityTypeName: String): EntityTyp
     return returnVal;
 }
 
-export enum EntitySubType {
+export enum  EntitySubType {
     UNKNOWN,
+    ANY,
     CONTACT_PRINCIPLE_INVESTIGATOR,
     CONTACT_SUBMITED_BY
 }

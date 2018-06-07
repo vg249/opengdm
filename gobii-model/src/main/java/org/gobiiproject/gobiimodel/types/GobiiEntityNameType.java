@@ -5,6 +5,7 @@ package org.gobiiproject.gobiimodel.types;
  */
 public enum GobiiEntityNameType {
     UNKNOWN,
+    ANY,
     ANALYSIS,
     CONTACT,
     DATASET,
@@ -23,5 +24,8 @@ public enum GobiiEntityNameType {
     MARKER,
     PROTOCOL,
     VENDOR_PROTOCOL,
-    GERMPLASM
+    GERMPLASM,
+    LINKAGE_GROUP,
+    DNA_SAMPLE,
+    VENDOR
 }

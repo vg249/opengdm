@@ -1,6 +1,6 @@
 import {GobiiFileItem} from "../../../model/gobii-file-item";
 import {JsonToGfi} from "./json-to-gfi";
-import {EntityType, entityTypefromString} from "../../../model/type-entity";
+import {EntitySubType, EntityType, entityTypefromString} from "../../../model/type-entity";
 import {ExtractorItemType} from "../../../model/type-extractor-item";
 import {ProcessType} from "../../../model/type-process";
 import {GobiiExtractFilterType} from "../../../model/type-extractor-filter";
@@ -10,6 +10,8 @@ import {GobiiFileItemEntityRelation} from "../../../model/gobii-file-item-entity
 import {FilterParamsColl} from "../../core/filter-params-coll";
 import {FilterParamNames} from "../../../model/file-item-param-names";
 import {Vertex} from "../../../model/vertex";
+import {VertexType} from "../../../model/type-vertex";
+import {CvGroup} from "../../../model/cv-group";
 
 export class JsonToGfiVertex implements JsonToGfi {
 
@@ -22,19 +24,25 @@ export class JsonToGfiVertex implements JsonToGfi {
     public convert(jsonItem): GobiiFileItem {
 
 
-        let vertex:Vertex = new Vertex(
+        let vertex: Vertex = new Vertex(
             jsonItem.vertexId,
+            (<any>VertexType)[jsonItem.gobiiVertexType],
             jsonItem.vertexName,
-            jsonItem.gobiiEntityNameTypeName,
-            jsonItem.cvGroupName,
+            (<any>EntityType)[jsonItem.entityType],
+            (<any>EntitySubType)[jsonItem.entitySubType],
+            (<any>CvGroup)[jsonItem.cvGroup],
+            jsonItem.cvTerm,
             []
         );
 
 
-        let returnVal:GobiiFileItem =
+        let returnVal: GobiiFileItem =
             GobiiFileItem.build(GobiiExtractFilterType.UNKNOWN, ProcessType.READ)
                 .setExtractorItemType(ExtractorItemType.VERTEX)
-                .setEntityType(EntityType.UNKNOWN)
+                .setEntityType(vertex.entityType)
+                .setEntitySubType(vertex.entitySubType)
+                .setCvGroup(vertex.cvGroup)
+                .setCvTerm(jsonItem.cvTerm)
                 .setItemName(vertex.vertexName)
                 .setItemId(vertex.vertexId.toString())
                 .setEntity(vertex);

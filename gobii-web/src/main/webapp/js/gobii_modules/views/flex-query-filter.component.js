@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store", "../store/reducers", "../services/core/nameid-file-item-service", "../services/core/filter-service", "../services/core/flex-query-service", "../model/name-id-label-type", "../services/core/filter-params-coll"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store", "../store/reducers", "../services/core/nameid-file-item-service", "../services/core/filter-service", "../services/core/flex-query-service", "../model/type-entity", "../model/name-id-label-type", "../services/core/filter-params-coll", "../model/cv-group"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_extractor_filter_1, store_1, fromRoot, nameid_file_item_service_1, filter_service_1, flex_query_service_1, name_id_label_type_1, filter_params_coll_1, FlexQueryFilterComponent;
+    var core_1, type_extractor_filter_1, store_1, fromRoot, nameid_file_item_service_1, filter_service_1, flex_query_service_1, type_entity_1, name_id_label_type_1, filter_params_coll_1, cv_group_1, FlexQueryFilterComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -34,11 +34,17 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
             function (flex_query_service_1_1) {
                 flex_query_service_1 = flex_query_service_1_1;
             },
+            function (type_entity_1_1) {
+                type_entity_1 = type_entity_1_1;
+            },
             function (name_id_label_type_1_1) {
                 name_id_label_type_1 = name_id_label_type_1_1;
             },
             function (filter_params_coll_1_1) {
                 filter_params_coll_1 = filter_params_coll_1_1;
+            },
+            function (cv_group_1_1) {
+                cv_group_1 = cv_group_1_1;
             }
         ],
         execute: function () {
@@ -54,33 +60,16 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                     this.enabledStyle = null;
                     this.disabledStyle = { 'background': '#dddddd' };
                     this.currentStyle = this.disabledStyle;
+                    // Technically, we should not be keeping state in this control in this way;
+                    // However, it turns out to be a lot more complicated and error prone to
+                    // rely purely on the store
+                    this.previousSelectedVertices = [];
                 } // ctor
                 FlexQueryFilterComponent.prototype.ngOnInit = function () {
                     var _this = this;
                     this.fileItemsVertexNames$ = this.filterService.getForFilter(this.filterParamNameVertices);
                     this.fileItemsEntityValues$ = this.filterService.getForFilter(this.filterParamNameVertexValues);
                     this.JobId$ = this.store.select(fromRoot.getJobId);
-                    // this
-                    //     .fileItemsVertexNames$
-                    //     .subscribe(items => {
-                    //             if (this.previousSelectedItemId === null && items && items.length > 0) {
-                    //                 this.previousSelectedItemId = items[0].getFileItemUniqueId()
-                    //             }
-                    //
-                    //             if (items.length > 1) {
-                    //                 this.currentStyle = this.enabledStyle;
-                    //             } else {
-                    //                 this.currentStyle = this.disabledStyle;
-                    //             }
-                    //
-                    //             // if (items[0]) {
-                    //             //     this.selectedAllowableEntities = items[0];
-                    //             // }
-                    //
-                    //         },
-                    //         error => {
-                    //             this.store.dispatch(new historyAction.AddStatusMessageAction(error))
-                    //         });
                     this
                         .fileItemsEntityValues$
                         .subscribe(function (items) {
@@ -128,21 +117,36 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                     var _this = this;
                     if (arg.value && arg.value._entity) {
                         var vertexId = void 0;
+                        var entityType = type_entity_1.EntityType.UNKNOWN;
+                        var entitySubType = type_entity_1.EntitySubType.UNKNOWN;
+                        var cvGroup = cv_group_1.CvGroup.UNKNOWN;
+                        var cvTerm = null;
                         if (arg.value.getNameIdLabelType() === name_id_label_type_1.NameIdLabelType.UNKNOWN) {
                             vertexId = arg.value.getItemId();
+                            entityType = arg.value.getEntityType();
+                            entitySubType = arg.value.getEntitySubType();
+                            cvGroup = arg.value.getCvGroup();
+                            cvTerm = arg.value.getCvTerm();
                         }
                         else {
                             vertexId = null;
+                            this.selectedVertexValues = [];
+                            this.previousSelectedVertices = [];
                         }
-                        this.flexQueryService.loadSelectedVertexFilter(this.filterParamNameVertices, vertexId);
+                        this.flexQueryService.loadSelectedVertexFilter(this.filterParamNameVertices, vertexId, entityType, entitySubType, cvGroup, cvTerm);
                     }
                     this.JobId$.subscribe(function (fileItemJobId) {
                         _this.flexQueryService.loadVertexValues(fileItemJobId.getItemId(), arg.value, _this.filterParamNameVertexValues);
-                    });
-                };
+                    }).unsubscribe();
+                }; // end function
                 FlexQueryFilterComponent.prototype.handleVertexValueSelected = function (arg) {
-                    var selectedVertexValueIds = this.selectedVertexValues.map(function (gfi) { return gfi.getItemId(); });
-                    this.flexQueryService.loadSelectedVertexValueFilters(this.filterParamNameVertexValues, selectedVertexValueIds);
+                    var _this = this;
+                    var newItems = this.selectedVertexValues
+                        .filter(function (gfi) { return !_this.previousSelectedVertices.find(function (igfi) { return igfi.getFileItemUniqueId() === gfi.getFileItemUniqueId(); }); });
+                    var deselectedItems = this.previousSelectedVertices.filter(function (gfi) { return !_this.selectedVertexValues.find(function (igfi) { return igfi.getFileItemUniqueId() === gfi.getFileItemUniqueId(); }); });
+                    this.flexQueryService.loadSelectedVertexValueFilters(this.filterParamNameVertexValues, newItems ? newItems : [], // find() can return null
+                    deselectedItems);
+                    this.previousSelectedVertices = this.selectedVertexValues;
                 };
                 FlexQueryFilterComponent.prototype.ngOnChanges = function (changes) {
                     if (changes['gobiiExtractFilterType']
@@ -161,7 +165,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                         inputs: ['gobiiExtractFilterType', 'filterParamNameVertices', 'filterParamNameVertexValues'],
                         outputs: [],
                         styleUrls: ["css/extractor-ui.css"],
-                        template: "\n        <div class=\"panel panel-primary\" [ngStyle]=\"currentStyle\">\n            <div class=\"panel-heading\">\n                <h3 class=\"panel-title\">Filters</h3>\n            </div>\n            <div class=\"panel-body\">\n                <label class=\"the-label\">Entity:</label><BR>\n                <p-dropdown [options]=\"fileItemsVertexNames$ | async\"\n                            [style]=\"{'width': '100%'}\"\n                            optionLabel=\"_itemName\"\n                            [(ngModel)]=\"selectedVertex\"\n                            (onChange)=\"handleVertexSelected($event)\"\n                            [disabled]=\"currentStyle===disabledStyle\">\n                </p-dropdown>\n\n                <BR>\n                <BR>\n                <label class=\"the-label\">Select Entity Values</label><BR>\n                <p-listbox [options]=\"fileItemsEntityValues$ | async\"\n                           [multiple]=\"true\"\n                           [(ngModel)]=\"selectedVertexValues\" \n                           [style]=\"{'width':'100%'}\"\n                           (onChange)=\"handleVertexValueSelected($event)\"\n                           optionLabel=\"_itemName\"\n                           [disabled]=\"currentStyle===disabledStyle\"></p-listbox>\n            </div>\n\n            <div class=\"container\">\n                <p>Count: {{totalValues}} </p>\n                <p>Selected: {{selectedVertexValues ? selectedVertexValues.length : 0}}</p>\n            </div>\n        </div>" // end template
+                        template: "\n        <div class=\"panel panel-primary\" [ngStyle]=\"currentStyle\">\n            <div class=\"panel-heading\">\n                <h3 class=\"panel-title\">Filters</h3>\n            </div>\n            <div class=\"panel-body\">\n                <label class=\"the-label\">Entity:</label><BR>\n                <p-dropdown [options]=\"fileItemsVertexNames$ | async\"\n                            [style]=\"{'width': '100%'}\"\n                            optionLabel=\"_itemName\"\n                            [(ngModel)]=\"selectedVertex\"\n                            (onChange)=\"handleVertexSelected($event)\"\n                            [disabled]=\"currentStyle===disabledStyle\">\n                </p-dropdown>\n\n                <BR>\n                <BR>\n                <label class=\"the-label\">Select Entity Values</label><BR>\n                <p-listbox [options]=\"fileItemsEntityValues$ | async\"\n                           [multiple]=\"true\"\n                           [(ngModel)]=\"selectedVertexValues\"\n                           [style]=\"{'width':'100%'}\"\n                           (onChange)=\"handleVertexValueSelected($event)\"\n                           optionLabel=\"_itemName\"\n                           [disabled]=\"currentStyle===disabledStyle\"></p-listbox>\n            </div>\n\n            <div class=\"container\">\n                <p>Count: {{totalValues}} </p>\n                <p>Selected: {{selectedVertexValues ? selectedVertexValues.length : 0}}</p>\n            </div>\n        </div>" // end template
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
                         nameid_file_item_service_1.NameIdFileItemService,

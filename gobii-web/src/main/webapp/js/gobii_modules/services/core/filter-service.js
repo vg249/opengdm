@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-extractor-filter", "../../model/gobii-file-item", "../../store/actions/history-action", "../../store/actions/fileitem-action", "../../store/reducers", "@ngrx/store", "../../model/file-item-param-names", "rxjs/add/operator/expand", "rxjs/add/operator/concat", "./filter-params-coll", "../../store/actions/action-payload-filter", "../../model/cv-filter-type", "../../views/entity-labels", "../../model/dto-header-status-message", "../../model/type-process", "../../model/type-extractor-item", "../../model/type-entity", "../../model/name-id-label-type"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-extractor-filter", "../../model/gobii-file-item", "../../store/actions/history-action", "../../store/actions/fileitem-action", "../../store/reducers", "@ngrx/store", "../../model/file-item-param-names", "rxjs/add/operator/expand", "rxjs/add/operator/concat", "./filter-params-coll", "../../store/actions/action-payload-filter", "../../model/cv-group", "../../views/entity-labels", "../../model/dto-header-status-message", "../../model/type-process", "../../model/type-extractor-item", "../../model/type-entity", "../../model/name-id-label-type"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../mo
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_extractor_filter_1, gobii_file_item_1, historyAction, fileItemActions, fromRoot, store_1, file_item_param_names_1, filter_params_coll_1, action_payload_filter_1, cv_filter_type_1, entity_labels_1, dto_header_status_message_1, type_process_1, type_extractor_item_1, type_entity_1, name_id_label_type_1, FilterService;
+    var core_1, type_extractor_filter_1, gobii_file_item_1, historyAction, fileItemActions, fromRoot, store_1, file_item_param_names_1, filter_params_coll_1, action_payload_filter_1, cv_group_1, entity_labels_1, dto_header_status_message_1, type_process_1, type_extractor_item_1, type_entity_1, name_id_label_type_1, FilterService;
     return {
         setters: [
             function (core_1_1) {
@@ -47,8 +47,8 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../mo
             function (action_payload_filter_1_1) {
                 action_payload_filter_1 = action_payload_filter_1_1;
             },
-            function (cv_filter_type_1_1) {
-                cv_filter_type_1 = cv_filter_type_1_1;
+            function (cv_group_1_1) {
+                cv_group_1 = cv_group_1_1;
             },
             function (entity_labels_1_1) {
                 entity_labels_1 = entity_labels_1_1;
@@ -179,8 +179,8 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../mo
                     var returnVal;
                     if (filterParamsToLoad.getMameIdLabelType() != name_id_label_type_1.NameIdLabelType.UNKNOWN) {
                         var entityName = "";
-                        if (filterParamsToLoad.getCvFilterType() !== cv_filter_type_1.CvFilterType.UNKNOWN) {
-                            entityName += entity_labels_1.Labels.instance().cvFilterNodeLabels[filterParamsToLoad.getCvFilterType()];
+                        if (filterParamsToLoad.getCvGroup() !== cv_group_1.CvGroup.UNKNOWN) {
+                            entityName += entity_labels_1.Labels.instance().cvGroupLabels[filterParamsToLoad.getCvGroup()];
                         }
                         else if (filterParamsToLoad.getEntitySubType() !== type_entity_1.EntitySubType.UNKNOWN) {
                             entityName += entity_labels_1.Labels.instance().entitySubtypeNodeLabels[filterParamsToLoad.getEntitySubType()];
@@ -211,7 +211,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../mo
                             .build(gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
                             .setEntityType(filterParamsToLoad.getEntityType())
                             .setEntitySubType(filterParamsToLoad.getEntitySubType())
-                            .setCvFilterType(filterParamsToLoad.getCvFilterType())
+                            .setCvGroup(filterParamsToLoad.getCvGroup())
                             .setExtractorItemType(type_extractor_item_1.ExtractorItemType.UNKNOWN)
                             .setNameIdLabelType(filterParamsToLoad.getMameIdLabelType())
                             .setItemName(label)
