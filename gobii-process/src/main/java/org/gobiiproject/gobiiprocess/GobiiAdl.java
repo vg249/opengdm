@@ -465,13 +465,66 @@ public class GobiiAdl {
         PayloadEnvelope<ProtocolDTO> resultEnvelope = gobiiEnvelopeRestResourceGet.get(ProtocolDTO.class);
         checkStatus(resultEnvelope);
         List<ProtocolDTO> protocolDTOSList = resultEnvelope.getPayload().getData();
+
+        // get platform Id from XML
+
+        XPathExpression exprParentKey = xPath.compile("//" + "Platform" + "/parent::*");
+        Element ancestor = (Element) exprParentKey.evaluate(document, XPathConstants.NODE);
+
+        String fkeyPKey = ancestor.getAttribute("DbPKeysurrogate");
+        Integer platformId = null;
+
+        if (fkeyPKey.isEmpty()) {
+            platformId =null;
+        } else {
+
+            Element currentFkeyElement = null;
+
+            if (fkeys != null && fkeys.getLength() > 0) {
+
+                for (int fkeysI = 0; fkeysI < fkeys.getLength(); fkeysI++) {
+
+                    currentFkeyElement = (Element) fkeys.item(fkeysI);
+                    String currentEntity = currentFkeyElement.getAttribute("entity");
+
+                    if (currentEntity.equals("Platform")) {
+                        break;
+                    }
+                }
+            }
+
+            if (currentFkeyElement == null) {
+                platformId = null;
+            } else {
+                String currentPlatformfKeyDbPkeyValue = currentFkeyElement.getElementsByTagName("DbPKeySurrogate").item(0).getTextContent();
+                String exprCheckIfKeyExists = "//Entities/" + ancestor.getNodeName() + "/" + "Platform" + "/Properties[" + fkeyPKey + "='" + currentPlatformfKeyDbPkeyValue + "']";
+                XPathExpression xPathExprNodeFKey = xPath.compile(exprCheckIfKeyExists);
+                Element nodeFKey = (Element) xPathExprNodeFKey.evaluate(document, XPathConstants.NODE);
+                Element parentNode = (Element) nodeFKey.getParentNode();
+                Element dbPkeyNode = ((Element) parentNode.getElementsByTagName("Keys").item(0));
+                validateNode(dbPkeyNode, parentElement.getTagName(), "Keys");
+
+                String platformDbPkeyValue = dbPkeyNode.getElementsByTagName("DbPKey").item(0).getTextContent();
+
+                if (!platformDbPkeyValue.isEmpty()) {
+                    platformId = Integer.parseInt(platformDbPkeyValue);
+                }
+
+
+            }
+
+        }
+
         for (ProtocolDTO currentProtocolDTO : protocolDTOSList) {
             if (currentProtocolDTO.getName().equals(dbPkeysurrogateValue)) {
-                System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") already exists in the database. Return current entity ID.\n");
 
-                /* set fkey dbpkey for entity */
-                setFKeyDbPKeyForExistingEntity(fkeys, ProtocolDTO.class, currentProtocolDTO);
-                return currentProtocolDTO.getId();
+                if (platformId != null && currentProtocolDTO.getPlatformId().equals(platformId)) {
+                    System.out.println("\n" + entityName + "(" + dbPkeysurrogateValue + ") already exists in the database. Return current entity ID.\n");
+
+                    /* set fkey dbpkey for entity */
+                    setFKeyDbPKeyForExistingEntity(fkeys, ProtocolDTO.class, currentProtocolDTO);
+                    return currentProtocolDTO.getId();
+                }
             }
         }
 

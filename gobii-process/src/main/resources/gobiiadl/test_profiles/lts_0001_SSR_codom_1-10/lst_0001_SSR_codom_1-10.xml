@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GobiiTestData>
+    <Entities>
+        <Organizations DbPKeysurrogate="Name">
+            <Organization>
+                <Keys>
+                    <DbPKey></DbPKey>
+                </Keys>
+                <Properties>
+                    <Name>Cornell</Name>
+                    <Address>Ithaca</Address>
+                    <Website>cornell.edu</Website>
+                </Properties>
+            </Organization>
+        </Organizations>
+        <Contacts DbPKeysurrogate="Email">
+            <Contact>
+                <Keys>
+                    <DbPKey></DbPKey>
+                    <Fkey entity="Organization" fkproperty="organizationId">
+                        <DbPKeySurrogate>Cornell</DbPKeySurrogate>
+                        <DbPKey></DbPKey>
+                    </Fkey>
+                </Keys>
+                <Properties>
+                    <LastName>Calaminos</LastName>
+                    <FirstName>Yanii</FirstName>
+                    <Code>calaminos_yanii</Code>
+                    <Email>dummy@email.address</Email>
+                    <UserName>vcalaminos</UserName>
+                    <Roles>
+                        <Role>PI</Role>
+                        <Role>Curator</Role>
+                    </Roles>
+                </Properties>
+            </Contact>
+        </Contacts>
+        <Platforms DbPKeysurrogate="PlatformName">
+            <Platform>
+                <Keys>
+                    <DbPKey></DbPKey>
+                </Keys>
+                <Properties>
+                    <PlatformName>SSR</PlatformName>
+                    <PlatformCode>SSR</PlatformCode>
+                    <PlatformDescription>SSR</PlatformDescription>
+                    <StatusId>1</StatusId>
+                    <TypeId>SSR</TypeId>
+                    <Properties/>
+                </Properties>
+            </Platform>
+        </Platforms>
+        <Protocols DbPKeysurrogate="Name">
+            <Protocol>
+                <Keys>
+                    <DbPKey></DbPKey>
+                    <Fkey entity="Platform" fkproperty="platformId">
+                        <DbPKeySurrogate>SSR</DbPKeySurrogate>
+                        <DbPKey></DbPKey>
+                    </Fkey>
+                </Keys>
+                <Properties>
+                    <Name>SSR</Name>
+                    <Description>SSR</Description>
+                    <TypeId>1</TypeId>
+                    <Status>1</Status>
+                    <Props/>
+                    <VendorProtocols/>
+                </Properties>
+            </Protocol>
+        </Protocols>
+        <VendorProtocols DbPKeysurrogate="Name">
+            <VendorProtocol>
+                <Keys>
+                    <DbPKey></DbPKey>
+                    <Fkey entity="Organization" fkproperty="organizationId">
+                        <DbPKeySurrogate>Cornell</DbPKeySurrogate>
+                        <DbPKey></DbPKey>
+                    </Fkey>
+                    <Fkey entity="Protocol" fkproperty="protocolId">
+                        <DbPKeySurrogate>SSR</DbPKeySurrogate>
+                        <DbPKey></DbPKey>
+                    </Fkey>
+                </Keys>
+                <Properties>
+                    <Name>Cornell_SSR</Name>
+                    <Status>1</Status>
+                </Properties>
+            </VendorProtocol>
+        </VendorProtocols>
+        <Mapsets DbPKeysurrogate="Name">
+            <Mapset>
+                <Keys>
+                    <DbPKey></DbPKey>
+                </Keys>
+                <Properties>
+                    <Name>Test_Genetic</Name>
+                    <Code>Test_Genetic</Code>
+                    <Description>Test_Genetic</Description>
+                    <MapType>genetic</MapType>
+                    <StatusId>1</StatusId>
+                    <Properties/>
+                </Properties>
+            </Mapset>
+        </Mapsets>
+        <Projects DbPKeysurrogate="ProjectName">
+            <Project>
+                <Keys>
+                    <DbPKey></DbPKey>
+                    <Fkey entity="Contact" fkproperty="piContact">
+                        <DbPKeySurrogate>dummy@email.address</DbPKeySurrogate>
+                        <DbPKey></DbPKey>
+                    </Fkey>
+                </Keys>
+                <Properties>
+                    <ProjectName>Deb_Proj1_FlexQuery</ProjectName>
+                    <ProjectCode>Deb_Proj1_FlexQuery</ProjectCode>
+                    <ProjectDescription>Deb_Proj1_FlexQuery</ProjectDescription>
+                    <ProjectStatus>1</ProjectStatus>
+                </Properties>
+            </Project>
+        </Projects>
+        <Experiments DbPKeysurrogate="ExperimentName">
+            <Experiment>
+                <Keys>
+                    <DbPKey></DbPKey>
+                    <Fkey entity="Project" fkproperty="projectId">
+                        <DbPKeySurrogate>Deb_Proj1_FlexQuery</DbPKeySurrogate>
+                        <DbPKey></DbPKey>
+                    </Fkey>
+                    <Fkey entity="VendorProtocol" fkproperty="vendorProtocolId">
+                        <DbPKeySurrogate>Cornell_SSR</DbPKeySurrogate>
+                        <DbPKey></DbPKey>
+                    </Fkey>
+                </Keys>
+                <Properties>
+                    <ExperimentName>Deb_Proj1_Exp1_SSR_FQ</ExperimentName>
+                    <ExperimentCode>Deb_Proj1_Exp1_SSR_FQ</ExperimentCode>
+                    <StatusId>1</StatusId>
+                </Properties>
+            </Experiment>
+        </Experiments>
+        <Analyses DbPKeysurrogate="AnalysisName">
+            <Analysis>
+                <Keys>
+                    <DbPKey></DbPKey>
+                </Keys>
+                <Properties>
+                    <AnalysisName>Test_Calling</AnalysisName>
+                    <AnalysisDescription>Test_Calling</AnalysisDescription>
+                    <AnlaysisTypeId>Test_Calling</AnlaysisTypeId>
+                    <Program>Test_Calling_program</Program>
+                    <ProgramVersion>Test_Calling_program_version</ProgramVersion>
+                    <Algorithm>Test_Calling_algorithm</Algorithm>
+                    <SourceName>Test_Calling_sourcename</SourceName>
+                    <SourceVersion>Test_Calling_sourceversion</SourceVersion>
+                    <SourceUri>Test_Calling_sourceuri</SourceUri>
+                    <StatusId>1</StatusId>
+                    <Parameters/>
+                </Properties>
+            </Analysis>
+        </Analyses>
+        <Datasets DbPKeysurrogate="DatasetName">
+            <Dataset>
+                <Keys>
+                    <DbPKey>3</DbPKey>
+                    <Fkey entity="Experiment" fkproperty="experimentId">
+                        <DbPKeySurrogate>sim_2letternuc</DbPKeySurrogate>
+                        <DbPKey>3</DbPKey>
+                    </Fkey>
+                    <Fkey entity="Analysis" fkproperty="callingAnalysisId">
+                        <DbPKeySurrogate>sim_none</DbPKeySurrogate>
+                        <DbPKey>1</DbPKey>
+                    </Fkey>
+                </Keys>
+                <Properties>
+                    <DatasetName>Deb_Proj1_Exp1_SSR_FQ_codom_1-10_DS1</DatasetName>
+                    <DataTable>Deb_Proj1_Exp1_SSR_FQ_codom_1-10_DS1_datatable</DataTable>
+                    <DataFile>Deb_Proj1_Exp1_SSR_FQ_codom_1-10_DS1_datafile</DataFile>
+                    <QualityTable>Deb_Proj1_Exp1_SSR_FQ_codom_1-10_DS1_qualitytable</QualityTable>
+                    <QualityFile>Deb_Proj1_Exp1_SSR_FQ_codom_1-10_DS1_qualityfile</QualityFile>
+                    <StatusId>1</StatusId>
+                    <TypeId>CO_DOMINANT_NON_NUCLEOTIDE</TypeId>
+                    <AnalysesIds/>
+                    <Scores/>
+                </Properties>
+            </Dataset>
+        </Datasets>
+    </Entities>
+
+    <Scenarios>
+        <Scenario>
+            <Name>Deb_Proj1_FlexQuery_marker</Name>
+            <Files>
+                <Instruction>data_20180606_143418_daw279.json</Instruction>
+                <Data>Deb_FQ_codom_markermap1-10.txt</Data>
+            </Files>
+            <PayloadType>markers</PayloadType>
+
+            <DbFkey entity="Contact">
+                <DbPKeySurrogate>dummy@email.address</DbPKeySurrogate>
+                <DbPKey></DbPKey>
+            </DbFkey>
+
+            <DbFkey entity="Project">
+                <DbPKeySurrogate>Deb_Proj1_FlexQuery</DbPKeySurrogate>
+                <DbPKey></DbPKey>
+            </DbFkey>
+
+            <DbFkey entity="Experiment">
+                <DbPKeySurrogate>Deb_Proj1_Exp1_SSR_FQ</DbPKeySurrogate>
+                <DbPKey></DbPKey>
+            </DbFkey>
+
+            <DbFkey entity="Dataset">
+                <DbPKeySurrogate>Deb_Proj1_Exp1_SSR_FQ_codom_1-10_DS1</DbPKeySurrogate>
+                <DbPKey></DbPKey>
+            </DbFkey>
+
+            <DbFkey entity="Mapset">
+                <DbPKeySurrogate>Test_Genetic</DbPKeySurrogate>
+                <DbPKey></DbPKey>
+            </DbFkey>
+
+            <DbFkey entity="Platform">
+                <DbPKeySurrogate>SSR</DbPKeySurrogate>
+                <DbPKey></DbPKey>
+            </DbFkey>
+
+        </Scenario>
+
+        <Scenario>
+            <Name>Deb_Proj1_FlexQuery_sample</Name>
+            <Files>
+                <Instruction>data_20180606_144253_daw279.json</Instruction>
+                <Data>Deb_FQ_codom_samples_1-10.txt</Data>
+            </Files>
+            <PayloadType>samples</PayloadType>
+
+            <DbFkey entity="Contact">
+                <DbPKeySurrogate>dummy@email.address</DbPKeySurrogate>
+                <DbPKey></DbPKey>
+            </DbFkey>
+
+            <DbFkey entity="Project">
+                <DbPKeySurrogate>Deb_Proj1_FlexQuery</DbPKeySurrogate>
+                <DbPKey></DbPKey>
+            </DbFkey>
+
+            <DbFkey entity="Experiment">
+                <DbPKeySurrogate>Deb_Proj1_Exp1_SSR_FQ</DbPKeySurrogate>
+                <DbPKey></DbPKey>
+            </DbFkey>
+
+            <DbFkey entity="Dataset">
+                <DbPKeySurrogate>Deb_Proj1_Exp1_SSR_FQ_codom_1-10_DS1</DbPKeySurrogate>
+                <DbPKey></DbPKey>
+            </DbFkey>
+
+            <DbFkey entity="Mapset">
+                <DbPKeySurrogate>Test_Genetic</DbPKeySurrogate>
+                <DbPKey></DbPKey>
+            </DbFkey>
+
+            <DbFkey entity="Platform">
+                <DbPKeySurrogate>SSR</DbPKeySurrogate>
+                <DbPKey></DbPKey>
+            </DbFkey>
+
+        </Scenario>
+
+        <Scenario>
+            <Name>Deb_Proj1_FlexQuery_dataset</Name>
+            <Files>
+                <Instruction>data_20180606_145659_daw279.json</Instruction>
+                <Data>Deb_FQ_codom_alleledata_m1-m10.txt</Data>
+            </Files>
+            <PayloadType>matrix</PayloadType>
+
+            <DbFkey entity="Contact">
+                <DbPKeySurrogate>dummy@email.address</DbPKeySurrogate>
+                <DbPKey></DbPKey>
+            </DbFkey>
+
+            <DbFkey entity="Project">
+                <DbPKeySurrogate>Deb_Proj1_FlexQuery</DbPKeySurrogate>
+                <DbPKey></DbPKey>
+            </DbFkey>
+
+            <DbFkey entity="Experiment">
+                <DbPKeySurrogate>Deb_Proj1_Exp1_SSR_FQ</DbPKeySurrogate>
+                <DbPKey></DbPKey>
+            </DbFkey>
+
+            <DbFkey entity="Dataset">
+                <DbPKeySurrogate>Deb_Proj1_Exp1_SSR_FQ_codom_1-10_DS1</DbPKeySurrogate>
+                <DbPKey></DbPKey>
+            </DbFkey>
+
+            <DbFkey entity="Mapset">
+                <DbPKeySurrogate>Test_Genetic</DbPKeySurrogate>
+                <DbPKey></DbPKey>
+            </DbFkey>
+
+            <DbFkey entity="Platform">
+                <DbPKeySurrogate>SSR</DbPKeySurrogate>
+                <DbPKey></DbPKey>
+            </DbFkey>
+
+        </Scenario>
+
+    </Scenarios>
+
+</GobiiTestData>
