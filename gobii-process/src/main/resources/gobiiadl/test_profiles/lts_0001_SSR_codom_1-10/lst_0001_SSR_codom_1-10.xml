@@ -148,7 +148,7 @@
                 <Properties>
                     <AnalysisName>Test_Calling</AnalysisName>
                     <AnalysisDescription>Test_Calling</AnalysisDescription>
-                    <AnlaysisTypeId>Test_Calling</AnlaysisTypeId>
+                    <AnlaysisTypeId>Calling</AnlaysisTypeId>
                     <Program>Test_Calling_program</Program>
                     <ProgramVersion>Test_Calling_program_version</ProgramVersion>
                     <Algorithm>Test_Calling_algorithm</Algorithm>
@@ -165,11 +165,11 @@
                 <Keys>
                     <DbPKey>3</DbPKey>
                     <Fkey entity="Experiment" fkproperty="experimentId">
-                        <DbPKeySurrogate>sim_2letternuc</DbPKeySurrogate>
+                        <DbPKeySurrogate>Deb_Proj1_Exp1_SSR_FQ</DbPKeySurrogate>
                         <DbPKey>3</DbPKey>
                     </Fkey>
                     <Fkey entity="Analysis" fkproperty="callingAnalysisId">
-                        <DbPKeySurrogate>sim_none</DbPKeySurrogate>
+                        <DbPKeySurrogate>Test_Calling</DbPKeySurrogate>
                         <DbPKey>1</DbPKey>
                     </Fkey>
                 </Keys>
