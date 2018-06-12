@@ -16,6 +16,7 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.VertexNameType;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexFilterDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -151,6 +152,7 @@ public class DtoRequestFlexTest {
         vertexFilterDTO.setDestinationVertexDTO(
                 new VertexDTO(
                         0,
+                        VertexNameType.VERTEX_TYPE_PROJECT,
                         GobiiVertexType.ENTITY,
                         null,
                         gobiiEntityNameTypeToTest,
@@ -210,6 +212,7 @@ public class DtoRequestFlexTest {
         VertexDTO destinationVertexDTO =
                 new VertexDTO(
                         0,
+                        VertexNameType.VERTEX_TYPE_PROJECT,
                         GobiiVertexType.ENTITY,
                         null,
                         gobiiDestinationEntityNameTypeToTest,
@@ -226,6 +229,7 @@ public class DtoRequestFlexTest {
         VertexDTO filterF1VertexDTO =
                 new VertexDTO(
                         0,
+                        VertexNameType.VERTEX_TYPE_PRINCIPLE_INVESTIGATOR,
                         GobiiVertexType.ENTITY,
                         null,
                         gobiiFilterEntityTypeF1,
@@ -239,6 +243,7 @@ public class DtoRequestFlexTest {
         VertexDTO filterF2VertexDTO =
                 new VertexDTO(
                         0,
+                        VertexNameType.VERTEX_TYPE_DATASET,
                         GobiiVertexType.ENTITY,
                         null,
                         gobiiFilterEntityTypeF2,

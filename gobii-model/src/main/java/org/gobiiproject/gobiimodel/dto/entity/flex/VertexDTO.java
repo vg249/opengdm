@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiimodel.dto.entity.flex;
 
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.VertexNameType;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiEntitySubType;
@@ -19,6 +20,7 @@ public class VertexDTO extends DTOBase{
 
 
     public VertexDTO(Integer vertexId,
+                     VertexNameType vertexNameType,
                      GobiiVertexType gobiiVertexType,
                      String vertexName,
                      GobiiEntityNameType entityType,
@@ -26,6 +28,7 @@ public class VertexDTO extends DTOBase{
                      CvGroup cvGroup,
                      String cvTerm) {
         this.vertexId = vertexId;
+        this.vertexNameType = vertexNameType;
         this.gobiiVertexType = gobiiVertexType;
         this.vertexName = vertexName;
         this.entityType = entityType;
@@ -46,6 +49,7 @@ public class VertexDTO extends DTOBase{
 
 
     private Integer vertexId = 0;
+    private VertexNameType vertexNameType;
     private GobiiVertexType gobiiVertexType  = GobiiVertexType.UNKNOWN;
     private String vertexName;
     private List<Integer> filterVals = new ArrayList<>();
@@ -61,6 +65,14 @@ public class VertexDTO extends DTOBase{
 
     public void setVertexId(Integer vertexId) {
         this.vertexId = vertexId;
+    }
+
+    public VertexNameType getVertexNameType() {
+        return vertexNameType;
+    }
+
+    public void setVertexNameType(VertexNameType vertexNameType) {
+        this.vertexNameType = vertexNameType;
     }
 
     public GobiiVertexType getGobiiVertexType() {

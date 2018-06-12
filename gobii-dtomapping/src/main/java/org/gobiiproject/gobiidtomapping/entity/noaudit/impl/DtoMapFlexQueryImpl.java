@@ -4,6 +4,7 @@ import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapDataSetImpl;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapFlexQuery;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.VertexNameType;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexFilterDTO;
@@ -51,6 +52,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
         // for now, until we have an actual vertex table, we are making up the IDs. However, the list of vertices
         // should be complete based on the specification
         returnVal.add(new VertexDTO(1,
+                VertexNameType.VERTEX_TYPE_PROJECT,
                 GobiiVertexType.ENTITY,
                 "Projects",
                 GobiiEntityNameType.PROJECT,
@@ -59,6 +61,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
                 null));
 
         returnVal.add(new VertexDTO(2,
+                VertexNameType.VERTEX_TYPE_EXPERIMENT,
                 GobiiVertexType.ENTITY,
                 "Experiment",
                 GobiiEntityNameType.EXPERIMENT,
@@ -67,6 +70,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
                 null));
 
         returnVal.add(new VertexDTO(3,
+                VertexNameType.VERTEX_TYPE_ANALYSIS,
                 GobiiVertexType.ENTITY,
                 "Analysis",
                 GobiiEntityNameType.ANALYSIS,
@@ -75,6 +79,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
                 null));
 
         returnVal.add(new VertexDTO(4,
+                VertexNameType.VERTEX_TYPE_MAPSET_TYPE,
                 GobiiVertexType.CVGROUP,
                 "Mapset Type",
                 GobiiEntityNameType.CV,
@@ -83,6 +88,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
                 null));
 
         returnVal.add(new VertexDTO(5,
+                VertexNameType.VERTEX_TYPE_ANALYSIS_TYPE,
                 GobiiVertexType.CVGROUP,
                 "Calling Analysis",
                 GobiiEntityNameType.CV,
@@ -91,6 +97,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
                 null));
 
         returnVal.add(new VertexDTO(6,
+                VertexNameType.VERTEX_TYPE_ANALYSIS,
                 GobiiVertexType.ENTITY,
                 "Analysis",
                 GobiiEntityNameType.ANALYSIS,
@@ -99,6 +106,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
                 null));
 
         returnVal.add(new VertexDTO(7,
+                VertexNameType.VERTEX_TYPE_VENDOR_PROTOCOL,
                 GobiiVertexType.ENTITY,
                 "Vendor Protocols",
                 GobiiEntityNameType.VENDOR_PROTOCOL,
@@ -108,6 +116,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
 
 
         returnVal.add(new VertexDTO(8,
+                VertexNameType.VERTEX_TYPE_PLATFORM,
                 GobiiVertexType.ENTITY,
                 "Platforms",
                 GobiiEntityNameType.PLATFORM,
@@ -116,6 +125,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
                 null));
 
         returnVal.add(new VertexDTO(9,
+                VertexNameType.VERTEX_TYPE_MAPSET,
                 GobiiVertexType.ENTITY,
                 "Mapset",
                 GobiiEntityNameType.MAPSET,
@@ -125,6 +135,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
 
 
         returnVal.add(new VertexDTO(10,
+                VertexNameType.VERTEX_TYPE_LINKAGE_GROUP,
                 GobiiVertexType.ENTITY,
                 "Linkage Group",
                 GobiiEntityNameType.LINKAGE_GROUP,
@@ -134,6 +145,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
 
 
         returnVal.add(new VertexDTO(11,
+                VertexNameType.VERTEX_TYPE_PRINCIPLE_INVESTIGATOR,
                 GobiiVertexType.SUBENTITY,
                 "Principle Investigators",
                 GobiiEntityNameType.CONTACT,
@@ -143,6 +155,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
 
 
         returnVal.add(new VertexDTO(12,
+                VertexNameType.VERTEX_TYPE_GERMPLAM_SUBSPECIES,
                 GobiiVertexType.CVTERM,
                 "Germplasm Subspecies",
                 GobiiEntityNameType.GERMPLASM,
@@ -151,6 +164,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
                 "germplasm_subsp"));
 
         returnVal.add(new VertexDTO(13,
+                VertexNameType.VERTEX_TYPE_GERMPLASM_TYPE,
                 GobiiVertexType.CVGROUP,
                 "Germplasm Type",
                 GobiiEntityNameType.CV,
@@ -160,6 +174,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
 
 
         returnVal.add(new VertexDTO(14,
+                VertexNameType.VERTEX_TYPE_REFERENCE_SAMPLE,
                 GobiiVertexType.CVTERM,
                 "DNA Ref Sample",
                 GobiiEntityNameType.DNA_SAMPLE,
@@ -168,6 +183,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
                 "ref_sample"));
 
         returnVal.add(new VertexDTO(15,
+                VertexNameType.VERTEX_TYPE_TRIAL_NAME,
                 GobiiVertexType.CVTERM,
                 "DNA Trial",
                 GobiiEntityNameType.DNA_SAMPLE,
@@ -176,6 +192,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
                 "trial_name"));
 
         returnVal.add(new VertexDTO(16,
+                VertexNameType.VERTEX_TYPE_SAMPLING_DATE,
                 GobiiVertexType.CVTERM,
                 "Date Sampled",
                 GobiiEntityNameType.PROJECT,
@@ -184,6 +201,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
                 "date_sampled"));
 
         returnVal.add(new VertexDTO(17,
+                VertexNameType.VERTEX_TYPE_GENOTYPING_PURPOSE,
                 GobiiVertexType.CVTERM,
                 "Genotyping Purpose",
                 GobiiEntityNameType.PROJECT,
@@ -192,6 +210,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
                 "genotyping_purpose"));
 
         returnVal.add(new VertexDTO(18,
+                VertexNameType.VERTEX_TYPE_DIVISION,
                 GobiiVertexType.CVTERM,
                 "Division",
                 GobiiEntityNameType.PROJECT,
@@ -200,6 +219,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
                 "division"));
 
         returnVal.add(new VertexDTO(19,
+                VertexNameType.VERTEX_TYPE_DATASET_TYPE,
                 GobiiVertexType.CVGROUP,
                 "Dataset Type",
                 GobiiEntityNameType.CV,
@@ -208,6 +228,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
                 null));
 
         returnVal.add(new VertexDTO(20,
+                VertexNameType.VERTEX_TYPE_REFERENCE_SAMPLE,
                 GobiiVertexType.CVTERM,
                 "Reference Sample",
                 GobiiEntityNameType.DNA_SAMPLE,
@@ -216,6 +237,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
                 "ref_sample"));
 
         returnVal.add(new VertexDTO(21,
+                VertexNameType.VERTEX_TYPE_VENDOR,
                 GobiiVertexType.ENTITY,
                 "Vendor",
                 GobiiEntityNameType.VENDOR,
@@ -224,6 +246,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
                 null));
 
         returnVal.add(new VertexDTO(22,
+                VertexNameType.VERTEX_TYPE_PROTOCOL,
                 GobiiVertexType.ENTITY,
                 "Protocol",
                 GobiiEntityNameType.PROTOCOL,
@@ -232,6 +255,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
                 null));
 
         returnVal.add(new VertexDTO(23,
+                VertexNameType.VERTEX_TYPE_GERMPLAM_SUBSPECIES,
                 GobiiVertexType.CVTERM,
                 "Germplasm Species",
                 GobiiEntityNameType.GERMPLASM,
@@ -240,6 +264,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
                 "germplasm_species"));
 
         returnVal.add(new VertexDTO(24,
+                VertexNameType.VERTEX_TYPE_DATASET,
                 GobiiVertexType.ENTITY,
                 "Dataset",
                 GobiiEntityNameType.DATASET,

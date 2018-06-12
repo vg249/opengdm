@@ -12,6 +12,7 @@ import {FilterParamNames} from "../../../model/file-item-param-names";
 import {Vertex} from "../../../model/vertex";
 import {VertexType} from "../../../model/type-vertex";
 import {CvGroup} from "../../../model/cv-group";
+import {VertexNameType} from "../../../model/type-vertex-name";
 
 export class JsonToGfiVertex implements JsonToGfi {
 
@@ -26,6 +27,7 @@ export class JsonToGfiVertex implements JsonToGfi {
 
         let vertex: Vertex = new Vertex(
             jsonItem.vertexId,
+            (<any>VertexNameType)[jsonItem.vertexNameType],
             (<any>VertexType)[jsonItem.gobiiVertexType],
             jsonItem.vertexName,
             (<any>EntityType)[jsonItem.entityType],
