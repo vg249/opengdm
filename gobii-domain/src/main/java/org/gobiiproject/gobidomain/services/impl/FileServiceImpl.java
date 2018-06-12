@@ -63,11 +63,15 @@ public class FileServiceImpl implements FilesService {
 
         } else if (gobiiFileProcessDir.equals(GobiiFileProcessDir.RAW_USER_FILES)) {
 
-            returnVal = configSettings.getProcessingPath(cropType,
+            returnVal = configSettings.getCropProcessingPath(cropType,
                     gobiiFileProcessDir);
             returnVal += jobId;
+        } else if (gobiiFileProcessDir.equals(GobiiFileProcessDir.CODE_EXTRACTORS_POSTGRES_MDE)) {
+
+            returnVal =configSettings.getRootProcessingPath(gobiiFileProcessDir);
+
         } else {
-            returnVal = configSettings.getProcessingPath(cropType,
+            returnVal = configSettings.getCropProcessingPath(cropType,
                     gobiiFileProcessDir);
         }
 
@@ -92,7 +96,9 @@ public class FileServiceImpl implements FilesService {
 //        if( currentPrincipalName != "USER_READER" ) {
         ConfigSettings configSettings = new ConfigSettings();
 
-        String path = configSettings.getProcessingPath(cropType, gobiiFileProcessDir);
+        // more root processing paths may be added later
+        String path = this.getFilePath(cropType,fileName,gobiiFileProcessDir);
+
         instructionFileAccess.writeFile(path, fileName, byteArray);
 //        } else {
 //           throw new GobiiDomainException("Unauthorized access");
@@ -105,7 +111,7 @@ public class FileServiceImpl implements FilesService {
                                          GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
 
         ConfigSettings configSettings = new ConfigSettings();
-        String path = configSettings.getProcessingPath(cropType, gobiiFileProcessDir);
+        String path = this.getFilePath(cropType,fileName,gobiiFileProcessDir);
         String fqpn = instructionFileAccess.makeFileName(path, fileName);
         instructionFileAccess.deleteFile(fqpn);
 

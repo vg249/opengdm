@@ -160,7 +160,7 @@ ConfigValues {
     }
 
 
-    public String getProcessingPath(String cropType, GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
+    public String getCropProcessingPath(String cropType, GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
 
         String returnVal;
 
@@ -179,9 +179,23 @@ ConfigValues {
         return returnVal;
     } //
 
+    public String getRootProcessingPath(GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
+
+        String returnVal;
+
+        String rootPath = this.getFileSystemRoot();
+        String relativePath = LineUtils.terminateDirectoryPath(relativePaths.get(gobiiFileProcessDir));
+
+        returnVal = rootPath + relativePath;
+
+        returnVal = returnVal.toLowerCase();
+
+        return returnVal;
+    } //
+
     public String getFileNoticePath(String cropType, GobiiFileNoticeType gobiiFileNoticeType) throws Exception {
 
-        String returnVal = this.getProcessingPath(cropType, GobiiFileProcessDir.NOTICES)
+        String returnVal = this.getCropProcessingPath(cropType, GobiiFileProcessDir.NOTICES)
                 + this.noticeFileNames.get(gobiiFileNoticeType);
 
         return returnVal;
