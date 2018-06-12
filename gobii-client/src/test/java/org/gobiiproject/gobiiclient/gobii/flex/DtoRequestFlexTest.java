@@ -6,9 +6,11 @@
 package org.gobiiproject.gobiiclient.gobii.flex;
 
 
+import org.apache.http.HttpStatus;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
+import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
@@ -18,6 +20,7 @@ import org.gobiiproject.gobiimodel.dto.entity.flex.VertexDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexFilterDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiEntitySubType;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiVertexType;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
@@ -26,6 +29,9 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.File;
+import java.lang.invoke.MethodHandles;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -35,6 +41,32 @@ public class DtoRequestFlexTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         Assert.assertTrue(GobiiClientContextAuth.authenticate());
+
+
+        // upload dummy python script
+
+        String fileNamePath = "flex_query/gobii_gql_placeholder.py";
+        URL resource = Thread.currentThread().getContextClassLoader().getResource(fileNamePath);
+
+        Assert.assertNotNull("Unable to get resource for file " + fileNamePath,
+                resource);
+
+        File dummyScript = new File(resource.getFile());
+
+        RestUri restUriUpload = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .file(GobiiFileProcessDir.CODE_EXTRACTORS_POSTGRES_MDE, fileNamePath);
+
+        HttpMethodResult httpMethodResultUpload = GobiiClientContext.getInstance(null, false)
+                .getHttp()
+                .upload(restUriUpload, dummyScript);
+        Assert.assertTrue("Expected "
+                        + HttpStatus.SC_OK
+                        + " got: "
+                        + httpMethodResultUpload.getResponseCode()
+                        + ": "
+                        + httpMethodResultUpload.getReasonPhrase() + ": " + httpMethodResultUpload.getPlainPayload(),
+                httpMethodResultUpload.getResponseCode() == HttpStatus.SC_OK);
     }
 
     //
@@ -52,6 +84,10 @@ public class DtoRequestFlexTest {
 
     @Test
     public void testGetVertices() throws Exception {
+
+        URL firstTest = getClass().getClassLoader().getResource("confidentiality.txt");
+        URL test = DtoRequestFlexTest.class.getResource("confidentiality.txt");
+
 
         RestUri restUriVertices = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()

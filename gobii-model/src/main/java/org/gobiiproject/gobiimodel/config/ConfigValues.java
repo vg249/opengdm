@@ -54,6 +54,7 @@ ConfigValues {
         put(GobiiFileProcessDir.EXTRACTOR_OUTPUT, "extractor/output/");
         put(GobiiFileProcessDir.QC_OUTPUT, "loader/qc/");
         put(GobiiFileProcessDir.NOTICES, "notices/");
+        put(GobiiFileProcessDir.CODE_EXTRACTORS_POSTGRES_MDE,"extractors/postgres/gobii_mde/");
 
     }};
 
