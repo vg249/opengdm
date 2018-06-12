@@ -1,8 +1,12 @@
 package org.gobiiproject.gobiimodel.dto.entity.flex;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.cvnames.VertexNameType;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
+import org.gobiiproject.gobiimodel.dto.entity.flex.vertexcolumns.VertexColumns;
+import org.gobiiproject.gobiimodel.dto.entity.flex.vertexcolumns.VertexColumnsNameIdGeneric;
+import org.gobiiproject.gobiimodel.dto.entity.flex.vertexcolumns.VertexColumnsPrincipleInvestigator;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiEntitySubType;
 import org.gobiiproject.gobiimodel.types.GobiiVertexType;
@@ -13,10 +17,11 @@ import java.util.List;
 /**
  * Created by Phil on 4/8/2016.
  */
-public class VertexDTO extends DTOBase{
+public class VertexDTO extends DTOBase {
 
 
-    public VertexDTO() {}
+    public VertexDTO() {
+    }
 
 
     public VertexDTO(Integer vertexId,
@@ -50,7 +55,7 @@ public class VertexDTO extends DTOBase{
 
     private Integer vertexId = 0;
     private VertexNameType vertexNameType;
-    private GobiiVertexType gobiiVertexType  = GobiiVertexType.UNKNOWN;
+    private GobiiVertexType gobiiVertexType = GobiiVertexType.UNKNOWN;
     private String vertexName;
     private List<Integer> filterVals = new ArrayList<>();
     private GobiiEntityNameType entityType;
@@ -129,5 +134,106 @@ public class VertexDTO extends DTOBase{
 
     public void setCvTerm(String cvTerm) {
         this.cvTerm = cvTerm;
+    }
+
+    @JsonIgnore
+    public VertexColumns getVertexColumns() throws Exception{
+
+        VertexColumns returnVal;
+
+        switch (this.vertexNameType) {
+            case VERTEX_TYPE_PROJECT:
+                returnVal = new VertexColumnsNameIdGeneric("project_id", "name");
+                break;
+
+            case VERTEX_TYPE_SAMPLING_DATE:
+                returnVal = new VertexColumnsNameIdGeneric("id", "name");
+                break;
+
+            case VERTEX_TYPE_GENOTYPING_PURPOSE:
+                returnVal = new VertexColumnsNameIdGeneric("id", "name");
+                break;
+
+            case VERTEX_TYPE_DIVISION:
+                returnVal = new VertexColumnsNameIdGeneric("id", "name");
+                break;
+
+            case VERTEX_TYPE_TRIAL_NAME:
+                returnVal = new VertexColumnsNameIdGeneric("id", "name");
+                break;
+
+            case VERTEX_TYPE_EXPERIMENT:
+                returnVal = new VertexColumnsNameIdGeneric("experiment_id", "name");
+                break;
+
+            case VERTEX_TYPE_DATASET:
+                returnVal = new VertexColumnsNameIdGeneric("dataset_id", "name");
+                break;
+
+            case VERTEX_TYPE_DATASET_TYPE:
+                returnVal = new VertexColumnsNameIdGeneric("cv_id", "name");
+                break;
+
+            case VERTEX_TYPE_ANALYSIS:
+                returnVal = new VertexColumnsNameIdGeneric("analysis_id", "name");
+                break;
+
+            case VERTEX_TYPE_ANALYSIS_TYPE:
+                returnVal = new VertexColumnsNameIdGeneric("cv_id", "name");
+                break;
+
+            case VERTEX_TYPE_REFERENCE_SAMPLE:
+                returnVal = new VertexColumnsNameIdGeneric("id", "name");
+                break;
+
+            case VERTEX_TYPE_PLATFORM:
+                returnVal = new VertexColumnsNameIdGeneric("platform_id", "name");
+                break;
+
+            case VERTEX_TYPE_VENDOR:
+                returnVal = new VertexColumnsNameIdGeneric("vendor_id", "name");
+                break;
+
+            case VERTEX_TYPE_PROTOCOL:
+                returnVal = new VertexColumnsNameIdGeneric("protocol_id", "name");
+                break;
+
+            case VERTEX_TYPE_VENDOR_PROTOCOL:
+                returnVal = new VertexColumnsNameIdGeneric("vendor_protocol_d", "name");
+                break;
+
+            case VERTEX_TYPE_MAPSET:
+                returnVal = new VertexColumnsNameIdGeneric("mapset_id", "name");
+                break;
+
+            case VERTEX_TYPE_MAPSET_TYPE:
+                returnVal = new VertexColumnsNameIdGeneric("cv_id", "name");
+                break;
+
+            case VERTEX_TYPE_LINKAGE_GROUP:
+                returnVal = new VertexColumnsNameIdGeneric("linkage_group_id", "name");
+                break;
+
+            case VERTEX_TYPE_GERMPLAM_SUBSPECIES:
+                returnVal = new VertexColumnsNameIdGeneric("cv_id", "name");
+                break;
+
+            case VERTEX_TYPE_GERMPLASM_SPECIES:
+                returnVal = new VertexColumnsNameIdGeneric("cv_id", "name");
+                break;
+
+            case VERTEX_TYPE_GERMPLASM_TYPE:
+                returnVal = new VertexColumnsNameIdGeneric("cv_id", "name");
+                break;
+
+            case VERTEX_TYPE_PRINCIPLE_INVESTIGATOR:
+                returnVal = new VertexColumnsPrincipleInvestigator();
+                break;
+
+            default:
+                throw new Exception("Unknown vertex name type: " + this.vertexNameType.getVertexName() );
+        }
+
+        return returnVal;
     }
 }

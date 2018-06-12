@@ -41,7 +41,8 @@ ConfigValues {
     private Map<GobiiFileProcessDir, String> relativePaths = new EnumMap<GobiiFileProcessDir, String>(GobiiFileProcessDir.class) {{
 
         // these defaults should generally not be changed
-        // note that they will be appended to the crops root directory
+        // note that some of them will be appended in code to the crops root directory
+        // but some of them are off of root
         put(GobiiFileProcessDir.RAW_USER_FILES, "files/");
         put(GobiiFileProcessDir.HDF5_FILES, "hdf5/");
         put(GobiiFileProcessDir.LOADER_INSTRUCTIONS, "loader/instructions/");
@@ -55,6 +56,7 @@ ConfigValues {
         put(GobiiFileProcessDir.QC_OUTPUT, "loader/qc/");
         put(GobiiFileProcessDir.NOTICES, "notices/");
         put(GobiiFileProcessDir.CODE_EXTRACTORS_POSTGRES_MDE,"extractors/postgres/gobii_mde/");
+        put(GobiiFileProcessDir.GQL_PROCESS,"gql");
 
     }};
 
