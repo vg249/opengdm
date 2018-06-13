@@ -1559,7 +1559,7 @@ public class GobiiConfig {
 
                     for (GobiiFileProcessDir currentRelativeDirectory : EnumSet.allOf(GobiiFileProcessDir.class)) {
 
-                        String directoryToMake = configSettings.getCropProcessingPath(currentCrop, currentRelativeDirectory);
+                        String directoryToMake = configSettings.getFullyQualifiedFilePath(currentCrop, currentRelativeDirectory);
 
 
                         File currentFile = new File(directoryToMake);

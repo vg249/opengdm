@@ -107,7 +107,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                 throw new GobiiDtoMappingException("Loader instruction request does not specify a crop");
             }
 
-            String instructionFileDirectory = configSettings.getCropProcessingPath(cropType, GobiiFileProcessDir.LOADER_INSTRUCTIONS);
+            String instructionFileDirectory = configSettings.getFullyQualifiedFilePath(cropType, GobiiFileProcessDir.LOADER_INSTRUCTIONS);
 
             String instructionFileFqpn = instructionFileDirectory
                     + loaderInstructionFilesDTO.getInstructionFileName()

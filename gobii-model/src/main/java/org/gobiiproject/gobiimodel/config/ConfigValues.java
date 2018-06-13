@@ -6,7 +6,6 @@ import org.gobiiproject.gobiimodel.types.GobiiFileNoticeType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.ElementMap;
 
 import java.util.ArrayList;
@@ -204,60 +203,50 @@ ConfigValues {
         return returnVal;
     }
 
-    public String getCropProcessingPath(String cropType, GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
+    public String getFullyQualifiedFilePath(String cropType, GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
 
         String returnVal;
 
-        if (!cropConfigs.containsKey(cropType)) {
-            throw new Exception("Unknown crop type: " + cropType);
-        }
-
-        String cropRoot = this.getFileSysCropsParent();
-        String crop = LineUtils.terminateDirectoryPath(cropType);
 
         DirectorySpec directorySpec = this.getDirectorySpec(gobiiFileProcessDir);
         if (directorySpec == null) {
             throw new GobiiException("There is no directory entry for directory " + gobiiFileProcessDir.toString());
         }
 
+        if( directorySpec.isCropRelative() ) {
 
-        String relativePatFromList = directorySpec.getRelativePath();
-        String relativePath = LineUtils.terminateDirectoryPath(relativePatFromList);
+            if( cropType == null ) {
+                throw new Exception("The crop type specified for for crop-relative directory " + directorySpec.getGobiiFileProcessDir().toString() + " is null");
+            }
 
-        returnVal = cropRoot + crop + relativePath;
+            if (!cropConfigs.containsKey(cropType)) {
+                throw new Exception("Unknown crop type: " + cropType);
+            }
 
-        returnVal = returnVal.toLowerCase();
+            String cropRoot = this.getFileSysCropsParent();
+            String crop = LineUtils.terminateDirectoryPath(cropType);
+            String relativePatFromList = directorySpec.getRelativePath();
+            String relativePath = LineUtils.terminateDirectoryPath(relativePatFromList);
 
-        return returnVal;
-    } //
+            returnVal = cropRoot + crop + relativePath;
 
-    public String getRootProcessingPath(GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
+        } else {
 
-        String returnVal;
+            String rootPath = this.getFileSystemRoot();
+            String relativePatFromList = directorySpec.getRelativePath();
+            String relativePath = LineUtils.terminateDirectoryPath(relativePatFromList);
+            returnVal = rootPath + relativePath;
+        } // if-else directory is relative to crop
 
-        String rootPath = this.getFileSystemRoot();
-
-        DirectorySpec directorySpec = this.getDirectorySpec(gobiiFileProcessDir);
-        if (directorySpec == null) {
-            throw new GobiiException("There is no directory entry for directory " + gobiiFileProcessDir.toString());
-        }
-
-
-        String relativePatFromList = directorySpec.getRelativePath();
-
-        String relativePath = LineUtils.terminateDirectoryPath(relativePatFromList);
-
-        returnVal = rootPath + relativePath;
 
         returnVal = returnVal.toLowerCase();
 
         return returnVal;
-
     } //
 
     public String getFileNoticePath(String cropType, GobiiFileNoticeType gobiiFileNoticeType) throws Exception {
 
-        String returnVal = this.getCropProcessingPath(cropType, GobiiFileProcessDir.NOTICES)
+        String returnVal = this.getFullyQualifiedFilePath(cropType, GobiiFileProcessDir.NOTICES)
                 + this.noticeFileNames.get(gobiiFileNoticeType);
 
         return returnVal;

@@ -92,7 +92,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
             ConfigSettings configSettings = new ConfigSettings();
 
-            String instructionFileDirectory = configSettings.getCropProcessingPath(cropType,
+            String instructionFileDirectory = configSettings.getFullyQualifiedFilePath(cropType,
                     GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS);
 
             instructionFileAccess.createDirectory(instructionFileDirectory);
@@ -228,9 +228,9 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     String extractionFileDestinationPath;
 
                     if (!currentExtractorInstruction.isQcCheck()) {
-                        extractionFileDestinationPath = configSettings.getCropProcessingPath(cropType, GobiiFileProcessDir.EXTRACTOR_OUTPUT);
+                        extractionFileDestinationPath = configSettings.getFullyQualifiedFilePath(cropType, GobiiFileProcessDir.EXTRACTOR_OUTPUT);
                     } else {
-                        extractionFileDestinationPath = configSettings.getCropProcessingPath(cropType, GobiiFileProcessDir.QC_OUTPUT);
+                        extractionFileDestinationPath = configSettings.getFullyQualifiedFilePath(cropType, GobiiFileProcessDir.QC_OUTPUT);
                     }
 
                     extractorFileDestinationLocation = this.makeDestinationDirectoryName(currentExtractorInstruction.getContactEmail(),

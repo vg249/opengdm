@@ -116,12 +116,8 @@ public class ConfigSettings {
         ConfigValuesFactory.commitConfigValues(this.configValues, this.configFileFqpn);
     }
 
-    public String getCropProcessingPath(String cropType, GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
-        return this.configValues.getCropProcessingPath(cropType, gobiiFileProcessDir);
-    }
-
-    public String getRootProcessingPath(GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
-        return this.configValues.getRootProcessingPath(gobiiFileProcessDir);
+    public String getFullyQualifiedFilePath(String cropType, GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
+        return this.configValues.getFullyQualifiedFilePath(cropType, gobiiFileProcessDir);
     }
 
     public String getFileNoticePath(String cropType, GobiiFileNoticeType gobiiFileNoticeType) throws Exception {

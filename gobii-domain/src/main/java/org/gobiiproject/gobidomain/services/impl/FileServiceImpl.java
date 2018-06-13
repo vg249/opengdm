@@ -63,15 +63,15 @@ public class FileServiceImpl implements FilesService {
 
         } else if (gobiiFileProcessDir.equals(GobiiFileProcessDir.RAW_USER_FILES)) {
 
-            returnVal = configSettings.getCropProcessingPath(cropType,
+            returnVal = configSettings.getFullyQualifiedFilePath(cropType,
                     gobiiFileProcessDir);
             returnVal += jobId;
         } else if (gobiiFileProcessDir.equals(GobiiFileProcessDir.CODE_EXTRACTORS_POSTGRES_MDE)) {
 
-            returnVal =configSettings.getRootProcessingPath(gobiiFileProcessDir);
+            returnVal =configSettings.getFullyQualifiedFilePath(null,gobiiFileProcessDir);
 
         } else {
-            returnVal = configSettings.getCropProcessingPath(cropType,
+            returnVal = configSettings.getFullyQualifiedFilePath(cropType,
                     gobiiFileProcessDir);
         }
 

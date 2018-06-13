@@ -14,7 +14,7 @@ public class GqlText {
 
         String returnVal = null;
 
-        returnVal = (new ConfigSettings()).getCropProcessingPath(cropType, GobiiFileProcessDir.GQL_PROCESS);
+        returnVal = (new ConfigSettings()).getFullyQualifiedFilePath(cropType, GobiiFileProcessDir.GQL_PROCESS);
         returnVal += "/" + jobId + "/";
 
         return  returnVal;
@@ -23,10 +23,8 @@ public class GqlText {
 
     public static String makeCommandLine(String fqpn, List<VertexDTO> filterPath, VertexDTO destinationVertex) throws Exception {
 
-        String returnVal = (new ConfigSettings()).getRootProcessingPath(GobiiFileProcessDir.CODE_EXTRACTORS_POSTGRES_MDE);
+        String returnVal = (new ConfigSettings()).getFullyQualifiedFilePath(null, GobiiFileProcessDir.CODE_EXTRACTORS_POSTGRES_MDE);
         returnVal += " python gobii_gql.py ";
-
-
 
         return returnVal;
     }

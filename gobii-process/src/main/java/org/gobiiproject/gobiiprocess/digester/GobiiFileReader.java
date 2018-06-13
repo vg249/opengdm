@@ -507,7 +507,7 @@ public class GobiiFileReader {
 		}catch(Exception e){
 			ErrorLogger.logError("MailInterface","Error Sending Mail",e);
         }
-        HelperFunctions.completeInstruction(instructionFile, configuration.getCropProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
+        HelperFunctions.completeInstruction(instructionFile, configuration.getFullyQualifiedFilePath(crop, GobiiFileProcessDir.LOADER_DONE));
     }
 
     private static void uploadToMonet(Integer dataSetId, GobiiCropConfig gobiiCropConfig, String errorPath, File variantFile, String markerFileLoc, String sampleFileLoc) {

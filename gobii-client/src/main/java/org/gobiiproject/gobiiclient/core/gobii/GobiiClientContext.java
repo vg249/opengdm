@@ -129,13 +129,13 @@ public final class GobiiClientContext {
             for (GobiiCropConfig currentGobiiCropConfig : configSettings.getActiveCropConfigs()) {
 
                 ServerConfig currentServerConfig = new ServerConfig(currentGobiiCropConfig,
-                        configSettings.getCropProcessingPath(currentGobiiCropConfig.getGobiiCropType(),
+                        configSettings.getFullyQualifiedFilePath(currentGobiiCropConfig.getGobiiCropType(),
                                 GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS),
-                        configSettings.getCropProcessingPath(currentGobiiCropConfig.getGobiiCropType(),
+                        configSettings.getFullyQualifiedFilePath(currentGobiiCropConfig.getGobiiCropType(),
                                 GobiiFileProcessDir.LOADER_INSTRUCTIONS),
-                        configSettings.getCropProcessingPath(currentGobiiCropConfig.getGobiiCropType(),
+                        configSettings.getFullyQualifiedFilePath(currentGobiiCropConfig.getGobiiCropType(),
                                 GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES),
-                        configSettings.getCropProcessingPath(currentGobiiCropConfig.getGobiiCropType(),
+                        configSettings.getFullyQualifiedFilePath(currentGobiiCropConfig.getGobiiCropType(),
                                 GobiiFileProcessDir.RAW_USER_FILES),
                         configSettings.getFileNoticePath(currentGobiiCropConfig.getGobiiCropType(), GobiiFileNoticeType.CONFIDENTIALITY)
 
