@@ -18,8 +18,8 @@ public class GqlWrapper {
 
         Integer timeOutSecs = 10;
 
-        String executedProcName = HelperFunctions.makeExecString(execString);
-        Process process = HelperFunctions.initProcecess(executedProcName, outputFileName, errorFileName, null, timeOutSecs);
+        String[] execArray = HelperFunctions.makeExecString(execString);
+        Process process = HelperFunctions.initProcecess(execArray, outputFileName, errorFileName, null, timeOutSecs);
 
         Integer exitValue = process.exitValue();
         if (exitValue != 0) {
@@ -28,7 +28,7 @@ public class GqlWrapper {
             while (br.ready()) {
                 errorText += br.readLine() + "\n";
             }
-            String message = "Error executing gql query " + executedProcName + ": " + errorText;
+            String message = "Error executing gql query " + execString + ": " + errorText;
             LOGGER.error(errorText);
             throw new GobiiDaoException(message);
 

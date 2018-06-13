@@ -159,13 +159,14 @@ public class HelperFunctions {
     }
 
 
-    public static Process initProcecess(String execCommand,
+    public static Process initProcecess(String[] execCommand,
                                         String outputFile,
                                         String errorFile,
                                         String inputFile,
                                         Integer waitSeconds) {
 
         Process returnVal = null;
+        String execCommandProcName = execCommand[0];
 
         ProcessBuilder builder = new ProcessBuilder(execCommand);
         if (outputFile != null) builder.redirectOutput(new File(outputFile));
@@ -180,37 +181,45 @@ public class HelperFunctions {
                 returnVal.waitFor();
             }
         } catch (Exception e) {
-            ErrorLogger.logError(execCommand, "Exception in process", e);
-            ErrorLogger.logError(execCommand, "Error File Contents", errorFile);
+            ErrorLogger.logError(execCommandProcName, "Exception in process", e);
+            ErrorLogger.logError(execCommandProcName, "Error File Contents", errorFile);
         }
 
         return returnVal;
     }
 
-    public static String makeExecString(String execString) {
+    public static String[] makeExecString(String execString) {
 
-        String returnVal;
+        String[] returnVal;
 
-        String[] exec = execString.split(" ");
-        returnVal = exec[0];
-        if (returnVal.equals("python")) {
-            returnVal = exec[1];
-        }
+        returnVal= execString.split(" ");
 
         return returnVal;
 
+    }
+
+    public static String makeProcName(String[] execString) {
+
+        String returnVal = execString[0];
+
+        if(returnVal.equals("python")){
+            returnVal=execString[1];
+        }
+
+        return returnVal;
     }
 
     //Null outputFIle to get output to standard out.
     public static boolean tryExec(String execString, String outputFile, String errorFile, String inputFile) {
 
-        String executedProcName = makeExecString(execString);
-        String[] exec = execString.split(" ");
-        Process p = initProcecess(executedProcName, outputFile, errorFile, inputFile, null);
+        String[] execArray = makeExecString(execString);
+        String executedProcName = makeProcName(execArray);
+
+        Process p = initProcecess(execArray, outputFile, errorFile, inputFile, null);
 
         if (p.exitValue() != 0) {
             if (executedProcName.equals("rm")) { //TODO: Temporary removal of 'RM' errors as 'ERROR' type
-                ErrorLogger.logDebug(executedProcName, "Unable to rm " + exec[1]);
+                ErrorLogger.logDebug(executedProcName, "Unable to rm " + execArray[1]);
                 return false;
             }
             if (executedProcName.contains("gobii_ifl.py")) {
