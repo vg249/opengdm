@@ -203,6 +203,15 @@ ConfigValues {
         return returnVal;
     }
 
+    /***
+     * Retrieves the fully qualified path as identified by the GobiiFileProcessDir value. If the directory
+     * is intended to be relative to a crop directory, the path will be so constructed, as long as a valid
+     * cropType is supplied.
+     * @param cropType
+     * @param gobiiFileProcessDir
+     * @return
+     * @throws Exception
+     */
     public String getFullyQualifiedFilePath(String cropType, GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
 
         String returnVal;

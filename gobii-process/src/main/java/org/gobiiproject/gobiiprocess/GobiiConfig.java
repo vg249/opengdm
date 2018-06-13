@@ -1559,6 +1559,10 @@ public class GobiiConfig {
 
                     for (GobiiFileProcessDir currentRelativeDirectory : EnumSet.allOf(GobiiFileProcessDir.class)) {
 
+                        // so, the path retrieved may actually lie outside of the crop directory; it's really up to how
+                        // ConfigValues configured the specified directory. The point is that the code that follows doesn't care
+                        // if the directory already exists, so it doesn't matter if, in the case of directories that are not
+                        // crop-relative, this loop revisits the same directory
                         String directoryToMake = configSettings.getFullyQualifiedFilePath(currentCrop, currentRelativeDirectory);
 
 
