@@ -4410,16 +4410,17 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/vertices/{jobId}/values", method = RequestMethod.POST)
     @ResponseBody
     public PayloadEnvelope<VertexFilterDTO> getVerticesValues(HttpServletRequest request,
-                                                        HttpServletResponse response,
-                                                        @RequestBody PayloadEnvelope<VertexFilterDTO> vertexFilterDTOPayloadEnvelope,
-                                                        @PathVariable String jobId) {
+                                                              HttpServletResponse response,
+                                                              @RequestBody PayloadEnvelope<VertexFilterDTO> vertexFilterDTOPayloadEnvelope,
+                                                              @PathVariable String jobId) {
 
         PayloadEnvelope<VertexFilterDTO> returnVal = new PayloadEnvelope<>();
 
         try {
 
 
-            VertexFilterDTO vertexFilterDTO = this.flexQueryService.getVerticesValues(jobId,vertexFilterDTOPayloadEnvelope.getPayload().getData().get(0));
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            VertexFilterDTO vertexFilterDTO = this.flexQueryService.getVerticesValues(cropType, jobId, vertexFilterDTOPayloadEnvelope.getPayload().getData().get(0));
 
             PayloadWriter<VertexFilterDTO> payloadWriter = new PayloadWriter<>(request, response,
                     VertexFilterDTO.class);
@@ -4451,16 +4452,16 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/vertices/{jobId}/count", method = RequestMethod.POST)
     @ResponseBody
     public PayloadEnvelope<VertexFilterDTO> getVerticesValuesCounts(HttpServletRequest request,
-                                                        HttpServletResponse response,
-                                                        @RequestBody PayloadEnvelope<VertexFilterDTO> vertexFilterDTOPayloadEnvelope,
-                                                        @PathVariable String jobId) {
+                                                                    HttpServletResponse response,
+                                                                    @RequestBody PayloadEnvelope<VertexFilterDTO> vertexFilterDTOPayloadEnvelope,
+                                                                    @PathVariable String jobId) {
 
         PayloadEnvelope<VertexFilterDTO> returnVal = new PayloadEnvelope<>();
 
         try {
 
-
-            VertexFilterDTO vertexFilterDTO = this.flexQueryService.getVertexValuesCounts(jobId, vertexFilterDTOPayloadEnvelope.getPayload().getData().get(0));
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            VertexFilterDTO vertexFilterDTO = this.flexQueryService.getVertexValuesCounts(cropType, jobId, vertexFilterDTOPayloadEnvelope.getPayload().getData().get(0));
 
             PayloadWriter<VertexFilterDTO> payloadWriter = new PayloadWriter<>(request, response,
                     VertexFilterDTO.class);

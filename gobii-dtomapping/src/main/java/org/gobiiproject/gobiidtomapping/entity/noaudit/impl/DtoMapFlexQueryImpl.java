@@ -1,16 +1,22 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit.impl;
 
+import org.gobiiproject.gobiidao.gql.GqlText;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapDataSetImpl;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapFlexQuery;
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.cvnames.VertexNameType;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexFilterDTO;
+import org.gobiiproject.gobiimodel.dto.entity.flex.Vertices;
+import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiEntitySubType;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiVertexType;
+import org.gobiiproject.gobiimodel.utils.InstructionFileAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +30,10 @@ import java.util.concurrent.ThreadLocalRandom;
 public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
 
 
+    private final String OUTPT_FILE_NAME = "gql_result.txt";
+
     Logger LOGGER = LoggerFactory.getLogger(DtoMapDataSetImpl.class);
+    private InstructionFileAccess<GobiiExtractorInstruction> instructionFileAccess = new InstructionFileAccess<>(GobiiExtractorInstruction.class);
 
 
     /**
@@ -46,284 +55,75 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
      * @throws GobiiDtoMappingException
      */
     public List<VertexDTO> getVertices() throws GobiiDtoMappingException {
-
-        List<VertexDTO> returnVal = new ArrayList<>();
-
-        // for now, until we have an actual vertex table, we are making up the IDs. However, the list of vertices
-        // should be complete based on the specification
-        returnVal.add(new VertexDTO(1,
-                VertexNameType.VERTEX_TYPE_PROJECT,
-                GobiiVertexType.ENTITY,
-                "Projects",
-                GobiiEntityNameType.PROJECT,
-                GobiiEntitySubType.UNKNOWN,
-                CvGroup.UNKNOWN,
-                null));
-
-        returnVal.add(new VertexDTO(2,
-                VertexNameType.VERTEX_TYPE_EXPERIMENT,
-                GobiiVertexType.ENTITY,
-                "Experiment",
-                GobiiEntityNameType.EXPERIMENT,
-                GobiiEntitySubType.UNKNOWN,
-                CvGroup.UNKNOWN,
-                null));
-
-        returnVal.add(new VertexDTO(3,
-                VertexNameType.VERTEX_TYPE_ANALYSIS,
-                GobiiVertexType.ENTITY,
-                "Analysis",
-                GobiiEntityNameType.ANALYSIS,
-                GobiiEntitySubType.UNKNOWN,
-                CvGroup.UNKNOWN,
-                null));
-
-        returnVal.add(new VertexDTO(4,
-                VertexNameType.VERTEX_TYPE_MAPSET_TYPE,
-                GobiiVertexType.CVGROUP,
-                "Mapset Type",
-                GobiiEntityNameType.CV,
-                GobiiEntitySubType.UNKNOWN,
-                CvGroup.MAPSET_TYPE,
-                null));
-
-        returnVal.add(new VertexDTO(5,
-                VertexNameType.VERTEX_TYPE_ANALYSIS_TYPE,
-                GobiiVertexType.CVGROUP,
-                "Calling Analysis",
-                GobiiEntityNameType.CV,
-                GobiiEntitySubType.UNKNOWN,
-                CvGroup.ANALYSIS_TYPE,
-                null));
-
-        returnVal.add(new VertexDTO(6,
-                VertexNameType.VERTEX_TYPE_ANALYSIS,
-                GobiiVertexType.ENTITY,
-                "Analysis",
-                GobiiEntityNameType.ANALYSIS,
-                GobiiEntitySubType.UNKNOWN,
-                CvGroup.UNKNOWN,
-                null));
-
-        returnVal.add(new VertexDTO(7,
-                VertexNameType.VERTEX_TYPE_VENDOR_PROTOCOL,
-                GobiiVertexType.ENTITY,
-                "Vendor Protocols",
-                GobiiEntityNameType.VENDOR_PROTOCOL,
-                GobiiEntitySubType.UNKNOWN,
-                CvGroup.UNKNOWN,
-                null));
-
-
-        returnVal.add(new VertexDTO(8,
-                VertexNameType.VERTEX_TYPE_PLATFORM,
-                GobiiVertexType.ENTITY,
-                "Platforms",
-                GobiiEntityNameType.PLATFORM,
-                GobiiEntitySubType.UNKNOWN,
-                CvGroup.UNKNOWN,
-                null));
-
-        returnVal.add(new VertexDTO(9,
-                VertexNameType.VERTEX_TYPE_MAPSET,
-                GobiiVertexType.ENTITY,
-                "Mapset",
-                GobiiEntityNameType.MAPSET,
-                GobiiEntitySubType.UNKNOWN,
-                CvGroup.UNKNOWN,
-                null));
-
-
-        returnVal.add(new VertexDTO(10,
-                VertexNameType.VERTEX_TYPE_LINKAGE_GROUP,
-                GobiiVertexType.ENTITY,
-                "Linkage Group",
-                GobiiEntityNameType.LINKAGE_GROUP,
-                GobiiEntitySubType.UNKNOWN,
-                CvGroup.UNKNOWN,
-                null));
-
-
-        returnVal.add(new VertexDTO(11,
-                VertexNameType.VERTEX_TYPE_PRINCIPLE_INVESTIGATOR,
-                GobiiVertexType.SUBENTITY,
-                "Principle Investigators",
-                GobiiEntityNameType.CONTACT,
-                GobiiEntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR,
-                CvGroup.UNKNOWN,
-                null));
-
-
-        returnVal.add(new VertexDTO(12,
-                VertexNameType.VERTEX_TYPE_GERMPLAM_SUBSPECIES,
-                GobiiVertexType.CVTERM,
-                "Germplasm Subspecies",
-                GobiiEntityNameType.GERMPLASM,
-                GobiiEntitySubType.UNKNOWN,
-                CvGroup.GERMPLASM_PROP,
-                "germplasm_subsp"));
-
-        returnVal.add(new VertexDTO(13,
-                VertexNameType.VERTEX_TYPE_GERMPLASM_TYPE,
-                GobiiVertexType.CVGROUP,
-                "Germplasm Type",
-                GobiiEntityNameType.CV,
-                GobiiEntitySubType.UNKNOWN,
-                CvGroup.GERMPLASM_TYPE,
-                null));
-
-
-        returnVal.add(new VertexDTO(14,
-                VertexNameType.VERTEX_TYPE_REFERENCE_SAMPLE,
-                GobiiVertexType.CVTERM,
-                "DNA Ref Sample",
-                GobiiEntityNameType.DNA_SAMPLE,
-                GobiiEntitySubType.UNKNOWN,
-                CvGroup.DNASAMPLE_PROP,
-                "ref_sample"));
-
-        returnVal.add(new VertexDTO(15,
-                VertexNameType.VERTEX_TYPE_TRIAL_NAME,
-                GobiiVertexType.CVTERM,
-                "DNA Trial",
-                GobiiEntityNameType.DNA_SAMPLE,
-                GobiiEntitySubType.UNKNOWN,
-                CvGroup.DNASAMPLE_PROP,
-                "trial_name"));
-
-        returnVal.add(new VertexDTO(16,
-                VertexNameType.VERTEX_TYPE_SAMPLING_DATE,
-                GobiiVertexType.CVTERM,
-                "Date Sampled",
-                GobiiEntityNameType.PROJECT,
-                GobiiEntitySubType.UNKNOWN,
-                CvGroup.PROJECT_PROP,
-                "date_sampled"));
-
-        returnVal.add(new VertexDTO(17,
-                VertexNameType.VERTEX_TYPE_GENOTYPING_PURPOSE,
-                GobiiVertexType.CVTERM,
-                "Genotyping Purpose",
-                GobiiEntityNameType.PROJECT,
-                GobiiEntitySubType.UNKNOWN,
-                CvGroup.PROJECT_PROP,
-                "genotyping_purpose"));
-
-        returnVal.add(new VertexDTO(18,
-                VertexNameType.VERTEX_TYPE_DIVISION,
-                GobiiVertexType.CVTERM,
-                "Division",
-                GobiiEntityNameType.PROJECT,
-                GobiiEntitySubType.UNKNOWN,
-                CvGroup.PROJECT_PROP,
-                "division"));
-
-        returnVal.add(new VertexDTO(19,
-                VertexNameType.VERTEX_TYPE_DATASET_TYPE,
-                GobiiVertexType.CVGROUP,
-                "Dataset Type",
-                GobiiEntityNameType.CV,
-                GobiiEntitySubType.UNKNOWN,
-                CvGroup.DATASET_TYPE,
-                null));
-
-        returnVal.add(new VertexDTO(20,
-                VertexNameType.VERTEX_TYPE_REFERENCE_SAMPLE,
-                GobiiVertexType.CVTERM,
-                "Reference Sample",
-                GobiiEntityNameType.DNA_SAMPLE,
-                GobiiEntitySubType.UNKNOWN,
-                CvGroup.DNASAMPLE_PROP,
-                "ref_sample"));
-
-        returnVal.add(new VertexDTO(21,
-                VertexNameType.VERTEX_TYPE_VENDOR,
-                GobiiVertexType.ENTITY,
-                "Vendor",
-                GobiiEntityNameType.VENDOR,
-                GobiiEntitySubType.UNKNOWN,
-                CvGroup.UNKNOWN,
-                null));
-
-        returnVal.add(new VertexDTO(22,
-                VertexNameType.VERTEX_TYPE_PROTOCOL,
-                GobiiVertexType.ENTITY,
-                "Protocol",
-                GobiiEntityNameType.PROTOCOL,
-                GobiiEntitySubType.UNKNOWN,
-                CvGroup.UNKNOWN,
-                null));
-
-        returnVal.add(new VertexDTO(23,
-                VertexNameType.VERTEX_TYPE_GERMPLAM_SUBSPECIES,
-                GobiiVertexType.CVTERM,
-                "Germplasm Species",
-                GobiiEntityNameType.GERMPLASM,
-                GobiiEntitySubType.UNKNOWN,
-                CvGroup.GERMPLASM_PROP,
-                "germplasm_species"));
-
-        returnVal.add(new VertexDTO(24,
-                VertexNameType.VERTEX_TYPE_DATASET,
-                GobiiVertexType.ENTITY,
-                "Dataset",
-                GobiiEntityNameType.DATASET,
-                GobiiEntitySubType.UNKNOWN,
-                CvGroup.UNKNOWN,
-                null));
-
-        return returnVal;
-
+        return Vertices.getAll();
     }
 
     @Override
-    public VertexFilterDTO getVertexValues(String jobId, VertexFilterDTO vertexFilterDTO) throws GobiiDtoMappingException {
+    public VertexFilterDTO getVertexValues(String cropType, String jobId, VertexFilterDTO vertexFilterDTO) throws GobiiDtoMappingException {
 
         VertexFilterDTO returnVal = vertexFilterDTO;
 
-//        if( vertexFilterDTO.getDestinationVertexDTO() == null || vertexFilterDTO.getDestinationVertexDTO().getEntityType().isEmpty() ) {
-//            throw new GobiiDtoMappingException("Unspecified destination vertex entity type");
-//        }
-//
+        try {
 
-        VertexDTO destinationVertex = vertexFilterDTO.getDestinationVertexDTO();
-        for (Integer idx = 1; idx <= 20; idx++) {
+            String outputFileDirectory =  (new ConfigSettings()).getFullyQualifiedFilePath(cropType, GobiiFileProcessDir.GQL_PROCESS);
+            outputFileDirectory += "/" + jobId;
 
+            if (!instructionFileAccess.doesPathExist(outputFileDirectory)) {
 
-            String typeName = "";
+                instructionFileAccess.makeDirectory(outputFileDirectory);
 
-            if (destinationVertex.getGobiiVertexType().equals(GobiiVertexType.ENTITY)) {
-
-                typeName = destinationVertex.getEntityType().toString().toLowerCase();
-
-            } else if (destinationVertex.getGobiiVertexType().equals(GobiiVertexType.CVGROUP)) {
-
-                typeName = destinationVertex.getCvGroup().toString().toLowerCase();
-
-            } else if (destinationVertex.getGobiiVertexType().equals(GobiiVertexType.SUBENTITY)) {
-
-                typeName = destinationVertex.getEntitySubType().toString().toLowerCase();
-
-            } else if (destinationVertex.getGobiiVertexType().equals(GobiiVertexType.CVTERM)) {
-
-                typeName = destinationVertex.getCvTerm();
-
+            } else {
+                instructionFileAccess.verifyDirectoryPermissions(outputFileDirectory);
             }
 
-            String numberString = String.format("%02d", idx);
-            String name = "dummy " + typeName + " # " + numberString;
-            returnVal.getVertexValues().add(
-                    new NameIdDTO(GobiiEntityNameType.valueOf(vertexFilterDTO.getDestinationVertexDTO().getEntityType().name()),
-                            idx,
-                            name)
-            );
+            String outputFileFqpn = outputFileDirectory + "/" + OUTPT_FILE_NAME;
+
+            String gqlScriptCommandLine = GqlText.makeCommandLine(outputFileFqpn,vertexFilterDTO.getFilterVertices(),vertexFilterDTO.getDestinationVertexDTO());
+
+
+            VertexDTO destinationVertex = vertexFilterDTO.getDestinationVertexDTO();
+            for (Integer idx = 1; idx <= 20; idx++) {
+
+
+                String typeName = "";
+
+                if (destinationVertex.getGobiiVertexType().equals(GobiiVertexType.ENTITY)) {
+
+                    typeName = destinationVertex.getEntityType().toString().toLowerCase();
+
+                } else if (destinationVertex.getGobiiVertexType().equals(GobiiVertexType.CVGROUP)) {
+
+                    typeName = destinationVertex.getCvGroup().toString().toLowerCase();
+
+                } else if (destinationVertex.getGobiiVertexType().equals(GobiiVertexType.SUBENTITY)) {
+
+                    typeName = destinationVertex.getEntitySubType().toString().toLowerCase();
+
+                } else if (destinationVertex.getGobiiVertexType().equals(GobiiVertexType.CVTERM)) {
+
+                    typeName = destinationVertex.getCvTerm();
+
+                }
+
+                String numberString = String.format("%02d", idx);
+                String name = "dummy " + typeName + " # " + numberString;
+                returnVal.getVertexValues().add(
+                        new NameIdDTO(GobiiEntityNameType.valueOf(vertexFilterDTO.getDestinationVertexDTO().getEntityType().name()),
+                                idx,
+                                name)
+                );
+            }
+
+        } catch(Exception e) {
+            LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
         }
 
         return returnVal;
 
     } // getVertexValues()
 
-    public VertexFilterDTO getVertexValuesCounts(String jobId, VertexFilterDTO vertexFilterDTO) throws GobiiDtoMappingException {
+    public VertexFilterDTO getVertexValuesCounts(String cropType, String jobId, VertexFilterDTO vertexFilterDTO) throws GobiiDtoMappingException {
 
         VertexFilterDTO returnVal = vertexFilterDTO;
 

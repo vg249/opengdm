@@ -13,8 +13,8 @@ public interface DtoMapFlexQuery {
 
     //DtoMap methods
     List<VertexDTO> getVertices() throws GobiiDtoMappingException;
-    VertexFilterDTO getVertexValues(String jobId, VertexFilterDTO vertexFilterDTO) throws GobiiDtoMappingException;
-    VertexFilterDTO getVertexValuesCounts(String jobId, VertexFilterDTO vertexFilterDTO) throws GobiiDtoMappingException;
+    VertexFilterDTO getVertexValues(String cropType,String jobId, VertexFilterDTO vertexFilterDTO) throws GobiiDtoMappingException;
+    VertexFilterDTO getVertexValuesCounts(String cropType, String jobId, VertexFilterDTO vertexFilterDTO) throws GobiiDtoMappingException;
 
 
 }

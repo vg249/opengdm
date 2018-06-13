@@ -14,11 +14,16 @@ import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
+import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
+import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestAnalysisTest;
+import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestDataSetTest;
+import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestProtocolTest;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.cvnames.VertexNameType;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexFilterDTO;
+import org.gobiiproject.gobiimodel.dto.entity.flex.Vertices;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiEntitySubType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
@@ -35,7 +40,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class DtoRequestFlexTest {
+public class DtoRequestFlexQueryTest {
 
     private static String FQ_DUMMY_SCRIPT_NAME = "gobii_gql_placeholder.py";
 
@@ -103,7 +108,7 @@ public class DtoRequestFlexTest {
     public void testGetVertices() throws Exception {
 
         URL firstTest = getClass().getClassLoader().getResource("confidentiality.txt");
-        URL test = DtoRequestFlexTest.class.getResource("confidentiality.txt");
+        URL test = DtoRequestFlexQueryTest.class.getResource("confidentiality.txt");
 
 
         RestUri restUriVertices = GobiiClientContext.getInstance(null, false)
@@ -146,21 +151,35 @@ public class DtoRequestFlexTest {
                 .addUriParam("jobId", jobId)
                 .appendSegment(GobiiServiceRequestId.URL_VALUES);
 
+        
 
+        // Add destination vertex
         GobiiEntityNameType gobiiEntityNameTypeToTest = GobiiEntityNameType.PROJECT;
         VertexFilterDTO vertexFilterDTO = new VertexFilterDTO();
         vertexFilterDTO.setDestinationVertexDTO(
-                new VertexDTO(
-                        0,
-                        VertexNameType.VERTEX_TYPE_PROJECT,
-                        GobiiVertexType.ENTITY,
-                        null,
-                        gobiiEntityNameTypeToTest,
-                        GobiiEntitySubType.UNKNOWN,
-                        CvGroup.UNKNOWN,
-                        null
-                )
+                Vertices.getByVertexName(VertexNameType.VERTEX_TYPE_PROJECT)
         );
+
+        //Add filter 1 vertex: 
+        VertexDTO analysisVertex = Vertices.getByVertexName(VertexNameType.VERTEX_TYPE_ANALYSIS);
+        analysisVertex.setFilterVals(
+                (new GlobalPkColl<DtoCrudRequestAnalysisTest>()).getPkVals(DtoCrudRequestAnalysisTest.class, GobiiEntityNameType.ANALYSIS, 3)
+        );
+        vertexFilterDTO.getFilterVertices().add(analysisVertex);
+
+        //Add filter 2 vertex:
+        VertexDTO datasetVertex = Vertices.getByVertexName(VertexNameType.VERTEX_TYPE_DATASET);
+        datasetVertex.setFilterVals(
+                (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getPkVals(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET, 5)
+        );
+        vertexFilterDTO.getFilterVertices().add(datasetVertex);
+
+        //Add filter 3 vertex:
+        VertexDTO protocolVertex = Vertices.getByVertexName(VertexNameType.VERTEX_TYPE_PROTOCOL);
+        protocolVertex.setFilterVals(
+                (new GlobalPkColl<DtoCrudRequestProtocolTest>()).getPkVals(DtoCrudRequestProtocolTest.class, GobiiEntityNameType.PROTOCOL, 4)
+        );
+        vertexFilterDTO.getFilterVertices().add(protocolVertex);
 
         GobiiEnvelopeRestResource<VertexFilterDTO> gobiiEnvelopeRestResourceContacts = new GobiiEnvelopeRestResource<>(restUriVerticesValues);
         PayloadEnvelope<VertexFilterDTO> resultEnvelopeVertexFilter = gobiiEnvelopeRestResourceContacts.post(VertexFilterDTO.class,
