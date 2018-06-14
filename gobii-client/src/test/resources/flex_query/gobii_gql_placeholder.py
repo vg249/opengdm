@@ -2,7 +2,7 @@
 import sys
 
 #test data generation script
-# by Phil Glaser 
+# by Phil Glaser
 def main():
 
     return_val = 0

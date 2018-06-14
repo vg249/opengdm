@@ -6,7 +6,9 @@ import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexDTO;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -93,7 +95,19 @@ public class GqlText {
 
         List<NameIdDTO> returnVal = new ArrayList<>();
 
+        File file = new File(fqpn);
+        FileReader fileReader = new FileReader(file);
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
+        StringBuffer stringBuffer = new StringBuffer();
+        String line;
+        bufferedReader.readLine(); // consume first header line
+        while ((line = bufferedReader.readLine()) != null) {
 
+            NameIdDTO currentNameIdDto = destinationVertex.getVertexColumns().vertexValueFromLine(line);
+            currentNameIdDto.setGobiiEntityNameType(destinationVertex.getEntityType());
+            returnVal.add(currentNameIdDto);
+        }
+        fileReader.close();
 
         return returnVal;
 

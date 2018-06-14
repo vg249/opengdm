@@ -88,41 +88,41 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
             GqlWrapper.run(gqlScriptCommandLine,stdOutFileFqpn,stdErrFileFqpn);
 
             List<NameIdDTO> values = GqlText.makeValues(outputFileFqpn,vertexFilterDTO.getDestinationVertexDTO());
+            returnVal.getVertexValues().addAll(values);
 
 
-
-            VertexDTO destinationVertex = vertexFilterDTO.getDestinationVertexDTO();
-            for (Integer idx = 1; idx <= 20; idx++) {
-
-
-                String typeName = "";
-
-                if (destinationVertex.getGobiiVertexType().equals(GobiiVertexType.ENTITY)) {
-
-                    typeName = destinationVertex.getEntityType().toString().toLowerCase();
-
-                } else if (destinationVertex.getGobiiVertexType().equals(GobiiVertexType.CVGROUP)) {
-
-                    typeName = destinationVertex.getCvGroup().toString().toLowerCase();
-
-                } else if (destinationVertex.getGobiiVertexType().equals(GobiiVertexType.SUBENTITY)) {
-
-                    typeName = destinationVertex.getEntitySubType().toString().toLowerCase();
-
-                } else if (destinationVertex.getGobiiVertexType().equals(GobiiVertexType.CVTERM)) {
-
-                    typeName = destinationVertex.getCvTerm();
-
-                }
-
-                String numberString = String.format("%02d", idx);
-                String name = "dummy " + typeName + " # " + numberString;
-                returnVal.getVertexValues().add(
-                        new NameIdDTO(GobiiEntityNameType.valueOf(vertexFilterDTO.getDestinationVertexDTO().getEntityType().name()),
-                                idx,
-                                name)
-                );
-            }
+//            VertexDTO destinationVertex = vertexFilterDTO.getDestinationVertexDTO();
+//            for (Integer idx = 1; idx <= 20; idx++) {
+//
+//
+//                String typeName = "";
+//
+//                if (destinationVertex.getGobiiVertexType().equals(GobiiVertexType.ENTITY)) {
+//
+//                    typeName = destinationVertex.getEntityType().toString().toLowerCase();
+//
+//                } else if (destinationVertex.getGobiiVertexType().equals(GobiiVertexType.CVGROUP)) {
+//
+//                    typeName = destinationVertex.getCvGroup().toString().toLowerCase();
+//
+//                } else if (destinationVertex.getGobiiVertexType().equals(GobiiVertexType.SUBENTITY)) {
+//
+//                    typeName = destinationVertex.getEntitySubType().toString().toLowerCase();
+//
+//                } else if (destinationVertex.getGobiiVertexType().equals(GobiiVertexType.CVTERM)) {
+//
+//                    typeName = destinationVertex.getCvTerm();
+//
+//                }
+//
+//                String numberString = String.format("%02d", idx);
+//                String name = "dummy " + typeName + " # " + numberString;
+//                returnVal.getVertexValues().add(
+//                        new NameIdDTO(GobiiEntityNameType.valueOf(vertexFilterDTO.getDestinationVertexDTO().getEntityType().name()),
+//                                idx,
+//                                name)
+//                );
+//            }
 
         } catch(Exception e) {
             LOGGER.error("Gobii Maping Error", e);
