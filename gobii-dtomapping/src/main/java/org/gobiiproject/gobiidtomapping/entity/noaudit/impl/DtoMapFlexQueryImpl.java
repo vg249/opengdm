@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit.impl;
 
 import org.gobiiproject.gobiidao.gql.GqlText;
+import org.gobiiproject.gobiidao.gql.GqlWrapper;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapDataSetImpl;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapFlexQuery;
@@ -31,6 +32,8 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
 
 
     private final String OUTPT_FILE_NAME = "gql_result.txt";
+    private final String STD_OUTPT_FILE_NAME = "gql.out";
+    private final String ERR_OUTPT_FILE_NAME = "gql.err";
 
     Logger LOGGER = LoggerFactory.getLogger(DtoMapDataSetImpl.class);
     private InstructionFileAccess<GobiiExtractorInstruction> instructionFileAccess = new InstructionFileAccess<>(GobiiExtractorInstruction.class);
@@ -77,8 +80,15 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
             }
 
             String outputFileFqpn = outputFileDirectory + "/" + OUTPT_FILE_NAME;
+            String stdOutFileFqpn = outputFileDirectory + "/" + STD_OUTPT_FILE_NAME;
+            String stdErrFileFqpn = outputFileDirectory + "/" + ERR_OUTPT_FILE_NAME;
 
             String gqlScriptCommandLine = GqlText.makeCommandLine(outputFileFqpn,vertexFilterDTO.getFilterVertices(),vertexFilterDTO.getDestinationVertexDTO());
+
+            GqlWrapper.run(gqlScriptCommandLine,stdOutFileFqpn,stdErrFileFqpn);
+
+            List<NameIdDTO> values = GqlText.makeValues(outputFileFqpn,vertexFilterDTO.getDestinationVertexDTO());
+
 
 
             VertexDTO destinationVertex = vertexFilterDTO.getDestinationVertexDTO();

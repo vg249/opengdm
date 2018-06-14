@@ -12,8 +12,8 @@ import java.io.FileReader;
 
 public class GqlWrapper {
 
-    Logger LOGGER = LoggerFactory.getLogger(GqlWrapper.class);
-    public void run(String execString, String outputFileName, String errorFileName) throws Exception {
+    private static Logger LOGGER = LoggerFactory.getLogger(GqlWrapper.class);
+    public static void run(String execString, String outputFileName, String errorFileName) throws Exception {
 
 
         Integer timeOutSecs = 10;

@@ -6,6 +6,7 @@ import sys
 def main():
     returnVal = 0
 
+    print("Initiated gql placeholder test script with arguments ", sys.argv)
     #print(len(sys.argv))
     #print(sys.argv[1])
     if len(sys.argv) > 0 and str(sys.argv[1]) == "fail":
