@@ -65,8 +65,12 @@ public class GqlText {
         removeFinalCommaDamnIt(commandLineBuilder);
         commandLineBuilder.append("} ");
 
+
         commandLineBuilder.append(" " + destinationVertex.getVertexNameType().getVertexName() + " [");
-        for (String currentColumn : destinationVertex.getVertexColumns().getColumnNames()) {
+        for (Integer idx = 1; // first column should always be ID -- which we don't need in our arg list
+             idx < destinationVertex.getVertexColumns().getColumnNames().size();
+             idx++) {
+            String currentColumn = destinationVertex.getVertexColumns().getColumnNames().get(idx);
             String currentName = "'" + currentColumn + "',";
             commandLineBuilder.append(currentName);
         }
@@ -90,13 +94,6 @@ public class GqlText {
         List<NameIdDTO> returnVal = new ArrayList<>();
 
 
-        // maket target vertex column list
-        String columnList = "[";
-        for (String currentColumn : destinationVertex.getVertexColumns().getColumnNames()) {
-            columnList += "'" + currentColumn + "',";
-        }
-        columnList = columnList.substring(0, columnList.lastIndexOf(','));
-        columnList += "]";
 
         return returnVal;
 

@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class VertexColumns {
+public class VertexColumnsNameIdGeneric implements VertexColumns {
+
 
 
     // this works for almost all cases because the name of the ID field
@@ -15,16 +16,20 @@ public class VertexColumns {
     // The only cases in which we will need a different implementation
     // is when we need to capture different fields in addition to name, such as
     // with principle investigator
+    // this class could almost be made completely general by adding a constructor that
+    // takes in a list of fields. However, there are cases in which the ways in which
+    // the columns are combined for the output (e.g., principal_investigator) have to
+    // be implemented in a specific way
     private final String FIELD_ID = "id";
+    private final String FIELD_NAME = "name";
 
 
     private List<String> columns;
+    public VertexColumnsNameIdGeneric() {
 
-    public VertexColumns(List<String> entityColumns) {
-
-        this.columns = new ArrayList<>();
-        this.columns.add(FIELD_ID);
-        this.columns.addAll(entityColumns);
+        this.columns = new ArrayList<>(Arrays.asList(
+                FIELD_ID,
+                FIELD_NAME));
     }
 
     @Override
@@ -43,7 +48,7 @@ public class VertexColumns {
         String name = values[this.columns.indexOf(FIELD_NAME)];
 
         returnVal.setName(name);
-        returnVal.setId(Integer.parseInt(id));
+        returnVal.setId( Integer.parseInt(id));
 
         return returnVal;
 
