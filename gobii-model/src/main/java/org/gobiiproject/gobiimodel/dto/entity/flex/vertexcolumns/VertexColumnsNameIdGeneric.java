@@ -6,19 +6,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class VertexColumnsNameIdGeneric implements VertexColumns {
+public class VertexColumns {
 
 
-    private List columns;
-    private String idColumnName;
-    private String nameColumnName;
-    public VertexColumnsNameIdGeneric(String idColumnName, String nameColumnName) {
+    // this works for almost all cases because the name of the ID field
+    // will always be "id" even when the actual entity (e.g., dataset) has
+    // a different name (e.g., dataset_id)
+    // The only cases in which we will need a different implementation
+    // is when we need to capture different fields in addition to name, such as
+    // with principle investigator
+    private final String FIELD_ID = "id";
 
-        this.idColumnName = idColumnName;
-        this.nameColumnName = nameColumnName;
-        this.columns = new ArrayList<>(Arrays.asList(
-                this.idColumnName,
-                this.nameColumnName));
+
+    private List<String> columns;
+
+    public VertexColumns(List<String> entityColumns) {
+
+        this.columns = new ArrayList<>();
+        this.columns.add(FIELD_ID);
+        this.columns.addAll(entityColumns);
     }
 
     @Override
@@ -33,11 +39,11 @@ public class VertexColumnsNameIdGeneric implements VertexColumns {
 
         String[] values = line.split("\t", -1);
 
-        String name = values[this.columns.indexOf(this.nameColumnName)];
-        String id = values[this.columns.indexOf(this.idColumnName)];
+        String id = values[this.columns.indexOf(FIELD_ID)];
+        String name = values[this.columns.indexOf(FIELD_NAME)];
 
         returnVal.setName(name);
-        returnVal.setId( Integer.parseInt(id));
+        returnVal.setId(Integer.parseInt(id));
 
         return returnVal;
 

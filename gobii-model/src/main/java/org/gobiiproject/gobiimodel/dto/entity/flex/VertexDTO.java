@@ -143,87 +143,87 @@ public class VertexDTO extends DTOBase {
 
         switch (this.vertexNameType) {
             case VERTEX_TYPE_PROJECT:
-                returnVal = new VertexColumnsNameIdGeneric("project_id", "name");
+                returnVal = new VertexColumnsNameIdGeneric();
                 break;
 
             case VERTEX_TYPE_SAMPLING_DATE:
-                returnVal = new VertexColumnsNameIdGeneric("id", "name");
+                returnVal = new VertexColumnsNameIdGeneric();
                 break;
 
             case VERTEX_TYPE_GENOTYPING_PURPOSE:
-                returnVal = new VertexColumnsNameIdGeneric("id", "name");
+                returnVal = new VertexColumnsNameIdGeneric();
                 break;
 
             case VERTEX_TYPE_DIVISION:
-                returnVal = new VertexColumnsNameIdGeneric("id", "name");
+                returnVal = new VertexColumnsNameIdGeneric();
                 break;
 
             case VERTEX_TYPE_TRIAL_NAME:
-                returnVal = new VertexColumnsNameIdGeneric("id", "name");
+                returnVal = new VertexColumnsNameIdGeneric();
                 break;
 
             case VERTEX_TYPE_EXPERIMENT:
-                returnVal = new VertexColumnsNameIdGeneric("experiment_id", "name");
+                returnVal = new VertexColumnsNameIdGeneric();
                 break;
 
             case VERTEX_TYPE_DATASET:
-                returnVal = new VertexColumnsNameIdGeneric("dataset_id", "name");
+                returnVal = new VertexColumnsNameIdGeneric();
                 break;
 
             case VERTEX_TYPE_DATASET_TYPE:
-                returnVal = new VertexColumnsNameIdGeneric("cv_id", "name");
+                returnVal = new VertexColumnsNameIdGeneric();
                 break;
 
             case VERTEX_TYPE_ANALYSIS:
-                returnVal = new VertexColumnsNameIdGeneric("analysis_id", "name");
+                returnVal = new VertexColumnsNameIdGeneric();
                 break;
 
             case VERTEX_TYPE_ANALYSIS_TYPE:
-                returnVal = new VertexColumnsNameIdGeneric("cv_id", "name");
+                returnVal = new VertexColumnsNameIdGeneric();
                 break;
 
             case VERTEX_TYPE_REFERENCE_SAMPLE:
-                returnVal = new VertexColumnsNameIdGeneric("id", "name");
+                returnVal = new VertexColumnsNameIdGeneric();
                 break;
 
             case VERTEX_TYPE_PLATFORM:
-                returnVal = new VertexColumnsNameIdGeneric("platform_id", "name");
+                returnVal = new VertexColumnsNameIdGeneric();
                 break;
 
             case VERTEX_TYPE_VENDOR:
-                returnVal = new VertexColumnsNameIdGeneric("vendor_id", "name");
+                returnVal = new VertexColumnsNameIdGeneric();
                 break;
 
             case VERTEX_TYPE_PROTOCOL:
-                returnVal = new VertexColumnsNameIdGeneric("protocol_id", "name");
+                returnVal = new VertexColumnsNameIdGeneric();
                 break;
 
             case VERTEX_TYPE_VENDOR_PROTOCOL:
-                returnVal = new VertexColumnsNameIdGeneric("vendor_protocol_d", "name");
+                returnVal = new VertexColumnsNameIdGeneric();
                 break;
 
             case VERTEX_TYPE_MAPSET:
-                returnVal = new VertexColumnsNameIdGeneric("mapset_id", "name");
+                returnVal = new VertexColumnsNameIdGeneric();
                 break;
 
             case VERTEX_TYPE_MAPSET_TYPE:
-                returnVal = new VertexColumnsNameIdGeneric("cv_id", "name");
+                returnVal = new VertexColumnsNameIdGeneric();
                 break;
 
             case VERTEX_TYPE_LINKAGE_GROUP:
-                returnVal = new VertexColumnsNameIdGeneric("linkage_group_id", "name");
+                returnVal = new VertexColumnsNameIdGeneric();
                 break;
 
             case VERTEX_TYPE_GERMPLAM_SUBSPECIES:
-                returnVal = new VertexColumnsNameIdGeneric("cv_id", "name");
+                returnVal = new VertexColumnsNameIdGeneric();
                 break;
 
             case VERTEX_TYPE_GERMPLASM_SPECIES:
-                returnVal = new VertexColumnsNameIdGeneric("cv_id", "name");
+                returnVal = new VertexColumnsNameIdGeneric();
                 break;
 
             case VERTEX_TYPE_GERMPLASM_TYPE:
-                returnVal = new VertexColumnsNameIdGeneric("cv_id", "name");
+                returnVal = new VertexColumnsNameIdGeneric();
                 break;
 
             case VERTEX_TYPE_PRINCIPLE_INVESTIGATOR:
