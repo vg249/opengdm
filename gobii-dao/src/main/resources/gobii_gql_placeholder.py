@@ -15,7 +15,7 @@ def main():
     print("Target vertex is: ", target_vertex_name)
     print("output file is: ", output_file_name)
 
-    with open(output_file_name, 'a') as the_file:
+    with open(output_file_name, 'w') as the_file:
         if target_vertex_name != "principle_investigator":
             the_file.write("id\tname\n")
             idx = 0
