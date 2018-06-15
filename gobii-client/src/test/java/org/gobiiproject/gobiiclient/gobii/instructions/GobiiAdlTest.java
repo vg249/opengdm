@@ -38,7 +38,7 @@ public class GobiiAdlTest {
      * and instead there is an index out of bounds exception.
      */
     @Test
-    public void testADLBatchProcessing() {
+    public void testADLBatchProcessing() throws  Exception{
 
         if (backendSupoorted) {
             ADLEncapsulator adlEncapsulator = new ADLEncapsulator();

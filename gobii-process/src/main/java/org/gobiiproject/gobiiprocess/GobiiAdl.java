@@ -1845,6 +1845,7 @@ public class GobiiAdl {
         System.out.println(message);
         if (gobiiStatusLevel.equals(GobiiStatusLevel.ERROR)) {
             ErrorLogger.logError("GobiiADL", message);
+            System.err.print(message);
             System.exit(1);
         }
 
