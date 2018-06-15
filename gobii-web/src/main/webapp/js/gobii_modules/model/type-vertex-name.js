@@ -28,6 +28,8 @@ System.register([], function (exports_1, context_1) {
                 VertexNameType[VertexNameType["VERTEX_TYPE_GERMPLASM_SPECIES"] = 19] = "VERTEX_TYPE_GERMPLASM_SPECIES";
                 VertexNameType[VertexNameType["VERTEX_TYPE_GERMPLASM_TYPE"] = 20] = "VERTEX_TYPE_GERMPLASM_TYPE";
                 VertexNameType[VertexNameType["VERTEX_TYPE_PRINCIPLE_INVESTIGATOR"] = 21] = "VERTEX_TYPE_PRINCIPLE_INVESTIGATOR";
+                VertexNameType[VertexNameType["MARKER"] = 22] = "MARKER";
+                VertexNameType[VertexNameType["DNASAMPLE"] = 23] = "DNASAMPLE";
             })(VertexNameType || (VertexNameType = {}));
             exports_1("VertexNameType", VertexNameType);
         }

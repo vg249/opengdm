@@ -21,15 +21,27 @@ public class GqlWrapper {
         String[] execArray = HelperFunctions.makeExecString(execString);
         Process process = HelperFunctions.initProcecess(execArray, outputFileName, errorFileName, null, timeOutSecs);
 
-        Integer exitValue = process.exitValue();
-        if (exitValue != 0) {
-            String errorText = "";
-           BufferedReader br = new BufferedReader(new FileReader(errorFileName));
-            while (br.ready()) {
-                errorText += br.readLine() + "\n";
+        if( !process.isAlive()) {
+            Integer exitValue = process.exitValue();
+
+            if (exitValue != 0) {
+                String errorText = "";
+                BufferedReader br = new BufferedReader(new FileReader(errorFileName));
+                while (br.ready()) {
+                    errorText += br.readLine() + "\n";
+                }
+                String message = "Error executing gql query " + execString + ": " + errorText;
+                LOGGER.error(message);
+                throw new GobiiDaoException(message);
             }
-            String message = "Error executing gql query " + execString + ": " + errorText;
-            LOGGER.error(errorText);
+
+        } else {
+            String message = "The shell process for commandline "
+                    +  execString
+                    + " exceeded the maximum wait time of "
+                    + timeOutSecs
+                    + " seconds";
+            LOGGER.error(message);
             throw new GobiiDaoException(message);
 
         }

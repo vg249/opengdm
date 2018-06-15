@@ -216,7 +216,7 @@ public class DtoRequestFlexQueryTest {
 
 
     @Test
-    public void testGetVerticesMarkerSampleCount() throws Exception {
+    public void testGetMarkerSampleCount() throws Exception {
 
         String jobId = DateUtils.makeDateIdString() + "_test";
         RestUri restUriVerticesValuesCount = GobiiClientContext.getInstance(null, false)

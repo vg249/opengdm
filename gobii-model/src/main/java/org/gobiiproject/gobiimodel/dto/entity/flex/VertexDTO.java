@@ -230,8 +230,16 @@ public class VertexDTO extends DTOBase {
                 returnVal = new VertexColumnsPrincipleInvestigator();
                 break;
 
+            case VERTEX_TYPE_MARKER:
+                returnVal = new VertexColumnsNameIdGeneric();
+                break;
+
+            case VERTEX_TYPE_DNASAMPLE:
+                returnVal = new VertexColumnsNameIdGeneric();
+                break;
+
             default:
-                throw new Exception("Unknown vertex name type: " + this.vertexNameType.getVertexName() );
+                throw new Exception("There is no columns object for vertex : " + this.vertexNameType.getVertexName() );
         }
 
         return returnVal;

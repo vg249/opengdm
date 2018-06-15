@@ -228,8 +228,41 @@ public class Vertices {
                             GobiiEntitySubType.UNKNOWN,
                             CvGroup.UNKNOWN,
                             null)
-                    )
+            )
     );
+
+
+    /***
+     * Must be separate from the main collection because it is isEntry=false
+     * @return
+     */
+    public static VertexDTO makeMarkerVertex() {
+
+        return new VertexDTO(25,
+                VertexNameType.VERTEX_TYPE_MARKER,
+                GobiiVertexType.ENTITY,
+                "marker",
+                GobiiEntityNameType.DATASET,
+                GobiiEntitySubType.UNKNOWN,
+                CvGroup.UNKNOWN,
+                null);
+    }
+
+    /***
+     * Must be separate from the main collection because it is isEntry=false
+     * @return
+     */
+    public static VertexDTO makeSampleVertex() {
+
+        return new VertexDTO(26,
+                VertexNameType.VERTEX_TYPE_DNASAMPLE,
+                GobiiVertexType.ENTITY,
+                "dnasample",
+                GobiiEntityNameType.DATASET,
+                GobiiEntitySubType.UNKNOWN,
+                CvGroup.UNKNOWN,
+                null);
+    }
 
     public static List<VertexDTO> getAll() {
         return vertexList;
@@ -241,13 +274,13 @@ public class Vertices {
 
         List<VertexDTO> matching =
                 vertexList.stream()
-                .filter(v -> v.getVertexNameType().getVertexName().equals(vertexNameType.getVertexName()))
-                .collect(Collectors.toList());
+                        .filter(v -> v.getVertexNameType().getVertexName().equals(vertexNameType.getVertexName()))
+                        .collect(Collectors.toList());
 
-        if( matching.size() == 1 ) {
+        if (matching.size() == 1) {
             returnVal = matching.get(0);
-        } else if (matching.size() > 1 ) {
-            throw( new GobiiException("There are more than one vertices defined for type " + vertexNameType.getVertexName()));
+        } else if (matching.size() > 1) {
+            throw (new GobiiException("There are more than one vertices defined for type " + vertexNameType.getVertexName()));
         }
 
         return returnVal;

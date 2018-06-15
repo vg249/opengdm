@@ -5,23 +5,18 @@ import org.gobiiproject.gobiidao.gql.GqlWrapper;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapDataSetImpl;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapFlexQuery;
-import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.cvnames.VertexNameType;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexFilterDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.Vertices;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
-import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
-import org.gobiiproject.gobiimodel.types.GobiiEntitySubType;
-import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
-import org.gobiiproject.gobiimodel.types.GobiiVertexType;
 import org.gobiiproject.gobiimodel.utils.InstructionFileAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -31,7 +26,9 @@ import java.util.concurrent.ThreadLocalRandom;
 public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
 
 
-    private final String OUTPT_FILE_NAME = "gql_result.txt";
+    private final String OUTPT_FILE_NAME_VALUES = "gql_result_values.txt";
+    private final String OUTPT_FILE_NAME_MARKERS = "gql_result_markers.txt";
+    private final String OUTPT_FILE_NAME_SAMPLES = "gql_result_samples.txt";
     private final String STD_OUTPT_FILE_NAME = "gql.out";
     private final String ERR_OUTPT_FILE_NAME = "gql.err";
 
@@ -61,6 +58,18 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
         return Vertices.getAll();
     }
 
+
+    private void makeOutputDirectory(String outputFileDirectory) throws Exception {
+
+        if (!instructionFileAccess.doesPathExist(outputFileDirectory)) {
+
+            instructionFileAccess.makeDirectory(outputFileDirectory);
+
+        } else {
+            instructionFileAccess.verifyDirectoryPermissions(outputFileDirectory);
+        }
+    }
+
     @Override
     public VertexFilterDTO getVertexValues(String cropType, String jobId, VertexFilterDTO vertexFilterDTO) throws GobiiDtoMappingException {
 
@@ -70,59 +79,18 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
 
             GqlText gqlText = new GqlText();
             String outputFileDirectory = gqlText.makePathForGqlJob(cropType, jobId);
+            this.makeOutputDirectory(outputFileDirectory);
 
-            if (!instructionFileAccess.doesPathExist(outputFileDirectory)) {
-
-                instructionFileAccess.makeDirectory(outputFileDirectory);
-
-            } else {
-                instructionFileAccess.verifyDirectoryPermissions(outputFileDirectory);
-            }
-
-            String outputFileFqpn = outputFileDirectory + "/" + OUTPT_FILE_NAME;
+            String outputFileFqpn = outputFileDirectory + "/" + OUTPT_FILE_NAME_VALUES;
             String stdOutFileFqpn = outputFileDirectory + "/" + STD_OUTPT_FILE_NAME;
             String stdErrFileFqpn = outputFileDirectory + "/" + ERR_OUTPT_FILE_NAME;
 
-            String gqlScriptCommandLine = gqlText.makeCommandLine(outputFileFqpn, vertexFilterDTO.getFilterVertices(), vertexFilterDTO.getDestinationVertexDTO());
-
+            String gqlScriptCommandLine = gqlText.makeCommandLine(outputFileFqpn, vertexFilterDTO.getFilterVertices(), vertexFilterDTO.getDestinationVertexDTO(),0);
             GqlWrapper.run(gqlScriptCommandLine, stdOutFileFqpn, stdErrFileFqpn);
 
             List<NameIdDTO> values = gqlText.makeValues(outputFileFqpn, vertexFilterDTO.getDestinationVertexDTO());
             returnVal.getVertexValues().addAll(values);
 
-
-//            VertexDTO destinationVertex = vertexFilterDTO.getDestinationVertexDTO();
-//            for (Integer idx = 1; idx <= 20; idx++) {
-//
-//
-//                String typeName = "";
-//
-//                if (destinationVertex.getGobiiVertexType().equals(GobiiVertexType.ENTITY)) {
-//
-//                    typeName = destinationVertex.getEntityType().toString().toLowerCase();
-//
-//                } else if (destinationVertex.getGobiiVertexType().equals(GobiiVertexType.CVGROUP)) {
-//
-//                    typeName = destinationVertex.getCvGroup().toString().toLowerCase();
-//
-//                } else if (destinationVertex.getGobiiVertexType().equals(GobiiVertexType.SUBENTITY)) {
-//
-//                    typeName = destinationVertex.getEntitySubType().toString().toLowerCase();
-//
-//                } else if (destinationVertex.getGobiiVertexType().equals(GobiiVertexType.CVTERM)) {
-//
-//                    typeName = destinationVertex.getCvTerm();
-//
-//                }
-//
-//                String numberString = String.format("%02d", idx);
-//                String name = "dummy " + typeName + " # " + numberString;
-//                returnVal.getVertexValues().add(
-//                        new NameIdDTO(GobiiEntityNameType.valueOf(vertexFilterDTO.getDestinationVertexDTO().getEntityType().name()),
-//                                idx,
-//                                name)
-//                );
-//            }
 
         } catch (Exception e) {
             LOGGER.error("Gobii Maping Error", e);
@@ -137,9 +105,51 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
 
         VertexFilterDTO returnVal = vertexFilterDTO;
 
+        try {
 
-        vertexFilterDTO.setMarkerCount(ThreadLocalRandom.current().nextInt(1, 1000));
-        vertexFilterDTO.setSampleCount(ThreadLocalRandom.current().nextInt(1, 1000));
+            GqlText gqlText = new GqlText();
+            String outputFileDirectory = gqlText.makePathForGqlJob(cropType, jobId);
+            this.makeOutputDirectory(outputFileDirectory);
+
+            String markerOutputFileFqpn = outputFileDirectory + "/" + OUTPT_FILE_NAME_MARKERS;
+            String sampleOutputFileFqpn = outputFileDirectory + "/" + OUTPT_FILE_NAME_SAMPLES;
+            String stdOutFileFqpnMarkers = outputFileDirectory + "/" + "markers_" + STD_OUTPT_FILE_NAME;
+            String stdErrFileFqpnMarkers = outputFileDirectory + "/" + "markers_" + ERR_OUTPT_FILE_NAME;
+            String stdOutFileFqpnSamples = outputFileDirectory + "/" + "dnasamples_" + STD_OUTPT_FILE_NAME;
+            String stdErrFileFqpnSamples = outputFileDirectory + "/" + "dnasamples_" + ERR_OUTPT_FILE_NAME;
+
+            VertexDTO destinationVertexMarkers = Vertices.makeMarkerVertex();
+            VertexDTO destinationVertexSamples = Vertices.makeSampleVertex();
+
+            // temp values to make unit test past
+            vertexFilterDTO.setMarkerCount(100);
+            vertexFilterDTO.setSampleCount(100);
+
+            Integer maxResult = 1000000;
+            String gqlScriptCommandLineMarkers = gqlText.makeCommandLine(markerOutputFileFqpn, vertexFilterDTO.getFilterVertices(), destinationVertexMarkers,maxResult);
+            GqlWrapper.run(gqlScriptCommandLineMarkers, stdOutFileFqpnMarkers, stdErrFileFqpnMarkers);
+
+            String gqlScriptCommandLineSamples = gqlText.makeCommandLine(sampleOutputFileFqpn, vertexFilterDTO.getFilterVertices(), destinationVertexSamples,maxResult);
+            GqlWrapper.run(gqlScriptCommandLineSamples, stdOutFileFqpnSamples, stdErrFileFqpnSamples);
+
+            Long markerCount = Files.lines(Paths.get(markerOutputFileFqpn)).count();
+            Long sampleCount = Files.lines(Paths.get(sampleOutputFileFqpn)).count();
+
+            if( markerCount > Integer.MAX_VALUE) {
+                throw new GobiiDtoMappingException("Number of markers is too large to fit in an Integer: " + markerCount);
+            }
+
+            if( sampleCount > Integer.MAX_VALUE) {
+                throw new GobiiDtoMappingException("Number of samples is too large to fit in an Integer: " + sampleCount);
+            }
+
+            vertexFilterDTO.setMarkerCount(markerCount.intValue());
+            vertexFilterDTO.setSampleCount(sampleCount.intValue());
+
+        } catch (Exception e) {
+            LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
+        }
 
         return returnVal;
     }

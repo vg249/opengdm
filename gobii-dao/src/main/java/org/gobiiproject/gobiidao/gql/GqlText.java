@@ -68,7 +68,10 @@ public class GqlText {
 
 
     //python gobii_gql.py /temp/filter3.out {principal_investigator:[67,69,70], project:[3,25,30], division:[25,30]} experiment ['name']
-    public String makeCommandLine(String outputFileFqpn, List<VertexDTO> filterPath, VertexDTO destinationVertex) throws Exception {
+    public String makeCommandLine(String outputFileFqpn,
+                                  List<VertexDTO> filterPath,
+                                  VertexDTO destinationVertex,
+                                  Integer maxResult) throws Exception {
 
 
         copyDummyScript();
@@ -119,6 +122,8 @@ public class GqlText {
         }
         removeFinalCommaDamnIt(commandLineBuilder);
         commandLineBuilder.append("]");
+
+        commandLineBuilder.append(" " + maxResult);
 
         return commandLineBuilder.toString();
     }
