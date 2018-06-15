@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiclient.gobii.instructions;
+package org.gobiiproject.gobiiclient.gobii.Helpers;
 
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 

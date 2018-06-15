@@ -6,8 +6,12 @@
 package org.gobiiproject.gobiiclient.gobii.instructions;
 
 import org.gobiiproject.gobiiclient.core.gobii.GobiiTestConfiguration;
+import org.gobiiproject.gobiiclient.gobii.Helpers.ADLEncapsulator;
+import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.config.TestExecConfig;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 
 import java.io.File;
 
@@ -19,7 +23,7 @@ public class GobiiAdlTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        backendSupoorted = org.gobiiproject.gobiiclient.HelperFunctions.isBackEndSupported();
+        backendSupoorted = TestUtils.isBackEndSupported();
         GobiiTestConfiguration gobiiTestConfiguration = new GobiiTestConfiguration();
         testExecConfig = gobiiTestConfiguration.getConfigSettings().getTestExecConfig();
     }
