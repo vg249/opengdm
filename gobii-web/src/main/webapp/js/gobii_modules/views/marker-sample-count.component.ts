@@ -8,7 +8,7 @@ import {FilterParamNames} from "../model/file-item-param-names";
     inputs: ['gobiiExtractFilterType'],
     template: `
         <p-panel *ngIf="displayPanel" header="Estimated Marker/Sample Count"
-                 [(toggleable)]="displayPanel"
+                 [(toggleable)]="panelCollapsed"
                  [(collapsed)]="panelCollapsed"
                  (onBeforeToggle)="onBeforeToggle($event)"
                  (onAfterToggle)="onAfterToggle($event)">
@@ -27,7 +27,7 @@ export class MarkerSampleCountComponent implements OnChanges {
     public gobiiExtractFilterType: GobiiExtractFilterType;
     public displayPanel: boolean = false;
     public displayCounts: boolean = false;
-    public panelCollapsed: boolean = true;
+    public panelCollapsed: boolean = false;
     public markerCount: string = "0";
     public sampleCount: string = "0";
     public displaySpinner: boolean = true;
@@ -65,7 +65,7 @@ export class MarkerSampleCountComponent implements OnChanges {
                 if (this.gobiiExtractFilterType === GobiiExtractFilterType.FLEX_QUERY) {
 
                     this.displayPanel = true;
-                    this.panelCollapsed = true;
+                    // this.panelCollapsed = true;
                     this.initCount();
 
                 } else {

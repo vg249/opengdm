@@ -22,7 +22,7 @@ System.register(["@angular/core", "../model/type-extractor-filter"], function (e
                 function MarkerSampleCountComponent() {
                     this.displayPanel = false;
                     this.displayCounts = false;
-                    this.panelCollapsed = true;
+                    this.panelCollapsed = false;
                     this.markerCount = "0";
                     this.sampleCount = "0";
                     this.displaySpinner = true;
@@ -53,7 +53,7 @@ System.register(["@angular/core", "../model/type-extractor-filter"], function (e
                         if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
                             if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY) {
                                 this.displayPanel = true;
-                                this.panelCollapsed = true;
+                                // this.panelCollapsed = true;
                                 this.initCount();
                             }
                             else {
@@ -67,7 +67,7 @@ System.register(["@angular/core", "../model/type-extractor-filter"], function (e
                         selector: 'marker-sample-count',
                         outputs: [],
                         inputs: ['gobiiExtractFilterType'],
-                        template: "\n        <p-panel *ngIf=\"displayPanel\" header=\"Estimated Marker/Sample Count\"\n                 [(toggleable)]=\"displayPanel\"\n                 [(collapsed)]=\"panelCollapsed\"\n                 (onBeforeToggle)=\"onBeforeToggle($event)\"\n                 (onAfterToggle)=\"onAfterToggle($event)\">\n            <p-progressSpinner *ngIf=\"displaySpinner\" [style]=\"{width: '50px', height: '50px'}\"\n                               strokeWidth=\"8\" fill=\"#EEEEEE\"\n                               animationDuration=\"3s\"></p-progressSpinner>\n            <div *ngIf=\"displayCounts\">\n                <p>Total Markers: {{markerCount}}</p>\n                <p>Total Samples: {{sampleCount}}</p>\n            </div>\n        </p-panel>\n    "
+                        template: "\n        <p-panel *ngIf=\"displayPanel\" header=\"Estimated Marker/Sample Count\"\n                 [(toggleable)]=\"panelCollapsed\"\n                 [(collapsed)]=\"panelCollapsed\"\n                 (onBeforeToggle)=\"onBeforeToggle($event)\"\n                 (onAfterToggle)=\"onAfterToggle($event)\">\n            <p-progressSpinner *ngIf=\"displaySpinner\" [style]=\"{width: '50px', height: '50px'}\"\n                               strokeWidth=\"8\" fill=\"#EEEEEE\"\n                               animationDuration=\"3s\"></p-progressSpinner>\n            <div *ngIf=\"displayCounts\">\n                <p>Total Markers: {{markerCount}}</p>\n                <p>Total Samples: {{sampleCount}}</p>\n            </div>\n        </p-panel>\n    "
                     })
                 ], MarkerSampleCountComponent);
                 return MarkerSampleCountComponent;
