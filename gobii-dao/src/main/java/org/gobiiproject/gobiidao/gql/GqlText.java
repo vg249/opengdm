@@ -1,14 +1,20 @@
 package org.gobiiproject.gobiidao.gql;
 
+import org.apache.commons.io.FileUtils;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexDTO;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
+import org.springframework.util.FileCopyUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -18,22 +24,57 @@ public class GqlText {
 
     //private final static String GQL_SCRIPT_NAME = "python gobii_gql.py";
     private final static String GQL_SCRIPT_NAME = "gobii_gql_placeholder.py";
+    private static String GQL_DUMMY_SCRIPT_NAME = "gobii_gql_placeholder.py";
 
-    public static String makePathForGqlJob(String cropType, String jobId) throws Exception {
+
+    public String makePathForGqlJob(String cropType, String jobId) throws GobiiDaoException {
 
         String returnVal = null;
 
-        returnVal = (new ConfigSettings()).getFullyQualifiedFilePath(cropType, GobiiFileProcessDir.GQL_PROCESS);
-        returnVal += "/" + jobId + "/";
+        try {
+
+            returnVal = (new ConfigSettings()).getFullyQualifiedFilePath(cropType, GobiiFileProcessDir.GQL_PROCESS);
+            returnVal += "/" + jobId + "/";
+        } catch (Exception e) {
+            throw new GobiiDaoException(e);
+        }
 
         return returnVal;
     }
 
+    private void copyDummyScript() throws GobiiDaoException {
+
+        try {
+
+            String mdePathFqpn = (new ConfigSettings()).getFullyQualifiedFilePath(null, GobiiFileProcessDir.CODE_EXTRACTORS_POSTGRES_MDE);
+            mdePathFqpn += GQL_DUMMY_SCRIPT_NAME;
+            File dummyScriptFile = new File(mdePathFqpn);
+
+            if (!dummyScriptFile.exists()) {
+                String resourcePath = GQL_DUMMY_SCRIPT_NAME;
+                InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourcePath);
+                if (inputStream != null) {
+                    FileUtils.copyInputStreamToFile(inputStream, dummyScriptFile);
+                } else {
+                    throw new GobiiDaoException("Unable to make input stream for " + resourcePath);
+                }
+            }
+
+        } catch (Exception e) {
+            throw new GobiiDaoException(e);
+        }
+
+    }
+
 
     //python gobii_gql.py /temp/filter3.out {principal_investigator:[67,69,70], project:[3,25,30], division:[25,30]} experiment ['name']
-    public static String makeCommandLine(String outputFileFqpn, List<VertexDTO> filterPath, VertexDTO destinationVertex) throws Exception {
+    public String makeCommandLine(String outputFileFqpn, List<VertexDTO> filterPath, VertexDTO destinationVertex) throws Exception {
+
+
+        copyDummyScript();
 
         StringBuilder commandLineBuilder = new StringBuilder();
+
 
         // path to gql script
         String mdePath = (new ConfigSettings()).getFullyQualifiedFilePath(null, GobiiFileProcessDir.CODE_EXTRACTORS_POSTGRES_MDE);
@@ -83,7 +124,7 @@ public class GqlText {
     }
 
 
-    private static void removeFinalCommaDamnIt(StringBuilder stringBuilder) {
+    private void removeFinalCommaDamnIt(StringBuilder stringBuilder) {
 
         Integer positionOfFinalComma = stringBuilder.lastIndexOf(",");
         if (positionOfFinalComma > -1) {
@@ -91,7 +132,7 @@ public class GqlText {
         }
     }
 
-    public static List<NameIdDTO> makeValues(String fqpn, VertexDTO destinationVertex) throws Exception {
+    public List<NameIdDTO> makeValues(String fqpn, VertexDTO destinationVertex) throws Exception {
 
         List<NameIdDTO> returnVal = new ArrayList<>();
 

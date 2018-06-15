@@ -49,49 +49,50 @@ public class DtoRequestFlexQueryTest {
 
         Assert.assertTrue(GobiiClientContextAuth.authenticate());
 
-        String fileNamePath = "flex_query/" + FQ_DUMMY_SCRIPT_NAME;
-        URL resource = Thread.currentThread().getContextClassLoader().getResource(fileNamePath);
+//        String fileNamePath = "flex_query/" + FQ_DUMMY_SCRIPT_NAME;
+//        URL resource = Thread.currentThread().getContextClassLoader().getResource(fileNamePath);
+//
+//        Assert.assertNotNull("Unable to get resource for file " + fileNamePath,
+//                resource);
+//
+//        File dummyScript = new File(resource.getFile());
+//
+//        RestUri restUriUpload = GobiiClientContext.getInstance(null, false)
+//                .getUriFactory()
+//                .file(GobiiFileProcessDir.CODE_EXTRACTORS_POSTGRES_MDE, FQ_DUMMY_SCRIPT_NAME);
+//
+//        HttpMethodResult httpMethodResultUpload = GobiiClientContext.getInstance(null, false)
+//                .getHttp()
+//                .upload(restUriUpload, dummyScript);
+//        Assert.assertTrue("Expected "
+//                        + HttpStatus.SC_OK
+//                        + " got: "
+//                        + httpMethodResultUpload.getResponseCode()
+//                        + ": "
+//                        + httpMethodResultUpload.getReasonPhrase() + ": " + httpMethodResultUpload.getPlainPayload(),
+//                httpMethodResultUpload.getResponseCode() == HttpStatus.SC_OK);
 
-        Assert.assertNotNull("Unable to get resource for file " + fileNamePath,
-                resource);
-
-        File dummyScript = new File(resource.getFile());
-
-        RestUri restUriUpload = GobiiClientContext.getInstance(null, false)
-                .getUriFactory()
-                .file(GobiiFileProcessDir.CODE_EXTRACTORS_POSTGRES_MDE, FQ_DUMMY_SCRIPT_NAME);
-
-        HttpMethodResult httpMethodResultUpload = GobiiClientContext.getInstance(null, false)
-                .getHttp()
-                .upload(restUriUpload, dummyScript);
-        Assert.assertTrue("Expected "
-                        + HttpStatus.SC_OK
-                        + " got: "
-                        + httpMethodResultUpload.getResponseCode()
-                        + ": "
-                        + httpMethodResultUpload.getReasonPhrase() + ": " + httpMethodResultUpload.getPlainPayload(),
-                httpMethodResultUpload.getResponseCode() == HttpStatus.SC_OK);
     }
 
     //
     @AfterClass
     public static void tearDownUpClass() throws Exception {
 
-        RestUri restUriDelete = GobiiClientContext.getInstance(null, false)
-                .getUriFactory()
-                .file(GobiiFileProcessDir.CODE_EXTRACTORS_POSTGRES_MDE, FQ_DUMMY_SCRIPT_NAME);
-
-        HttpMethodResult httpMethodResultDelete = GobiiClientContext.getInstance(null, false)
-                .getHttp()
-                .delete(restUriDelete);
-        Assert.assertTrue("Expected "
-                        + HttpStatus.SC_OK
-                        + " got: "
-                        + httpMethodResultDelete.getResponseCode()
-                        + ": "
-                        + httpMethodResultDelete.getReasonPhrase() + ": " + httpMethodResultDelete.getPlainPayload(),
-                httpMethodResultDelete.getResponseCode() == HttpStatus.SC_OK);
-
+//        RestUri restUriDelete = GobiiClientContext.getInstance(null, false)
+//                .getUriFactory()
+//                .file(GobiiFileProcessDir.CODE_EXTRACTORS_POSTGRES_MDE, FQ_DUMMY_SCRIPT_NAME);
+//
+//        HttpMethodResult httpMethodResultDelete = GobiiClientContext.getInstance(null, false)
+//                .getHttp()
+//                .delete(restUriDelete);
+//        Assert.assertTrue("Expected "
+//                        + HttpStatus.SC_OK
+//                        + " got: "
+//                        + httpMethodResultDelete.getResponseCode()
+//                        + ": "
+//                        + httpMethodResultDelete.getReasonPhrase() + ": " + httpMethodResultDelete.getPlainPayload(),
+//                httpMethodResultDelete.getResponseCode() == HttpStatus.SC_OK);
+//
 
         Assert.assertTrue(GobiiClientContextAuth.deAuthenticate());
 

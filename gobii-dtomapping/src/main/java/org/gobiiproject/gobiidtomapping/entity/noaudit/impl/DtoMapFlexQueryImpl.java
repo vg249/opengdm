@@ -68,8 +68,8 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
 
         try {
 
-            String outputFileDirectory =  (new ConfigSettings()).getFullyQualifiedFilePath(cropType, GobiiFileProcessDir.GQL_PROCESS);
-            outputFileDirectory += "/" + jobId;
+            GqlText gqlText = new GqlText();
+            String outputFileDirectory = gqlText.makePathForGqlJob(cropType, jobId);
 
             if (!instructionFileAccess.doesPathExist(outputFileDirectory)) {
 
@@ -83,11 +83,11 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
             String stdOutFileFqpn = outputFileDirectory + "/" + STD_OUTPT_FILE_NAME;
             String stdErrFileFqpn = outputFileDirectory + "/" + ERR_OUTPT_FILE_NAME;
 
-            String gqlScriptCommandLine = GqlText.makeCommandLine(outputFileFqpn,vertexFilterDTO.getFilterVertices(),vertexFilterDTO.getDestinationVertexDTO());
+            String gqlScriptCommandLine = gqlText.makeCommandLine(outputFileFqpn, vertexFilterDTO.getFilterVertices(), vertexFilterDTO.getDestinationVertexDTO());
 
-            GqlWrapper.run(gqlScriptCommandLine,stdOutFileFqpn,stdErrFileFqpn);
+            GqlWrapper.run(gqlScriptCommandLine, stdOutFileFqpn, stdErrFileFqpn);
 
-            List<NameIdDTO> values = GqlText.makeValues(outputFileFqpn,vertexFilterDTO.getDestinationVertexDTO());
+            List<NameIdDTO> values = gqlText.makeValues(outputFileFqpn, vertexFilterDTO.getDestinationVertexDTO());
             returnVal.getVertexValues().addAll(values);
 
 
@@ -124,7 +124,7 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
 //                );
 //            }
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Gobii Maping Error", e);
             throw new GobiiDtoMappingException(e);
         }
