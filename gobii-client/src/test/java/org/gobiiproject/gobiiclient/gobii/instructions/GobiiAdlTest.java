@@ -12,6 +12,7 @@ import org.gobiiproject.gobiimodel.config.TestExecConfig;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.File;
 
@@ -36,8 +37,9 @@ public class GobiiAdlTest {
      * Moreover, when it does run, it times out. However, the error message does not display,
      * and instead there is an index out of bounds exception.
      */
-    @Ignore
+    @Test
     public void testADLBatchProcessing() {
+
         if (backendSupoorted) {
             ADLEncapsulator adlEncapsulator = new ADLEncapsulator();
             String configUtilCommandlineStem = testExecConfig.getConfigUtilCommandlineStem();

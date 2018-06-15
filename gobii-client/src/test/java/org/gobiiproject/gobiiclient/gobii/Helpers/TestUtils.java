@@ -56,30 +56,27 @@ public class TestUtils {
         return returnVal;
     }
 
-    public static boolean isBackEndSupported() {
-        boolean backendSupoorted = false;
-        try {
-            boolean authenticate = GobiiClientContextAuth.authenticate();
-            if (!authenticate) return backendSupoorted;
-            RestUri confgSettingsUri = GobiiClientContext.getInstance(null, false)
-                    .getUriFactory()
-                    .resourceColl(GobiiServiceRequestId.URL_CONFIGSETTINGS);
-            GobiiEnvelopeRestResource<ConfigSettingsDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(confgSettingsUri);
-            PayloadEnvelope<ConfigSettingsDTO> resultEnvelope = gobiiEnvelopeRestResource
-                    .get(ConfigSettingsDTO.class);
+    public static boolean isBackEndSupported() throws Exception {
 
-            if (resultEnvelope.getHeader().getStatus().isSucceeded()) {
-                ConfigSettingsDTO configSettingsDTOResponse = resultEnvelope.getPayload().getData().get(0);
-                backendSupoorted = configSettingsDTOResponse.getServerCapabilities().containsKey(ServerCapabilityType.GOBII_BACKEND)
-                        && configSettingsDTOResponse.getServerCapabilities().containsKey(ServerCapabilityType.GOBII_BACKEND);
-            }
+        boolean returnVal = false;
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        GobiiClientContextAuth.authenticate();
+
+        RestUri confgSettingsUri = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_CONFIGSETTINGS);
+        GobiiEnvelopeRestResource<ConfigSettingsDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(confgSettingsUri);
+        PayloadEnvelope<ConfigSettingsDTO> resultEnvelope = gobiiEnvelopeRestResource
+                .get(ConfigSettingsDTO.class);
+
+        if (resultEnvelope.getHeader().getStatus().isSucceeded()) {
+            ConfigSettingsDTO configSettingsDTOResponse = resultEnvelope.getPayload().getData().get(0);
+            returnVal = configSettingsDTOResponse.getServerCapabilities().containsKey(ServerCapabilityType.GOBII_BACKEND)
+                    && configSettingsDTOResponse.getServerCapabilities().get(ServerCapabilityType.GOBII_BACKEND);
         }
-        return backendSupoorted;
-    }
 
+        return returnVal;
+    }
 
 
     public static List<NameIdDTO> sortNameIdList(List<NameIdDTO> nameIdListDtoResponse) {
