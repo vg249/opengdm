@@ -203,6 +203,22 @@ ConfigValues {
         return returnVal;
     }
 
+    public List<String> getLegalUpdloadDIrectories(String cropType) throws Exception {
+
+        List<String> returnVal = new ArrayList<>();
+
+        for(DirectorySpec currentDirectorySpec : relativePaths.values()) {
+
+            if( currentDirectorySpec.isCropRelative) {
+                String currentDirectory = this.getFullyQualifiedFilePath(cropType,currentDirectorySpec.getGobiiFileProcessDir());
+                returnVal.add(currentDirectory);
+            }
+
+        }
+
+        return returnVal;
+    }
+
     /***
      * Retrieves the fully qualified path as identified by the GobiiFileProcessDir value. If the directory
      * is intended to be relative to a crop directory, the path will be so constructed, as long as a valid

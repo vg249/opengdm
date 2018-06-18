@@ -116,7 +116,13 @@ public class ConfigSettings {
         ConfigValuesFactory.commitConfigValues(this.configValues, this.configFileFqpn);
     }
 
-    public String getFullyQualifiedFilePath(String cropType, GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
+    public List<String> getLegalUpdloadDIrectories(String cropType) throws Exception {
+
+        return this.configValues.getLegalUpdloadDIrectories(cropType);
+
+    }
+
+        public String getFullyQualifiedFilePath(String cropType, GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
         return this.configValues.getFullyQualifiedFilePath(cropType, gobiiFileProcessDir);
     }
 
