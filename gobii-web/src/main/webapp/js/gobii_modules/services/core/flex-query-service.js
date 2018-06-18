@@ -213,20 +213,20 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                         currentVertexId = null; // by definition, we always null out the children
                     } // while we have another filter value
                 }; // end function
-                FlexQueryService.prototype.loadSelectedVertexValueFilters = function (filterParamsName, currentValuesGfis, previousValuesGfis) {
+                FlexQueryService.prototype.loadSelectedVertexValueFilters = function (filterParamsName, allSelectedGfis, newlySelectedValuesGfis, previousValuesGfis) {
                     var _this = this;
-                    var vertexValues = currentValuesGfis.map(function (gfi) { return gfi.getItemId(); });
+                    var currentVertexValues = allSelectedGfis.map(function (gfi) { return gfi.getItemId(); });
                     var vertexValueIdsCsv = null;
                     var filterParams = this.filterParamsColl.getFilter(filterParamsName, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
-                    if (filterParams && vertexValues && vertexValues.length > 0) {
+                    if (filterParams && currentVertexValues && currentVertexValues.length > 0) {
                         vertexValueIdsCsv = "";
-                        vertexValues.forEach(function (vv) { return vertexValueIdsCsv += vv + ","; });
+                        currentVertexValues.forEach(function (vv) { return vertexValueIdsCsv += vv + ","; });
                     } // if we have new vertex values
                     previousValuesGfis.forEach(function (gfi) {
                         var loadAction = new fileItemActions.RemoveFromExtractAction(gfi);
                         _this.store.dispatch(loadAction);
                     });
-                    currentValuesGfis.forEach(function (gfi) {
+                    newlySelectedValuesGfis.forEach(function (gfi) {
                         var loadAction = new fileItemActions.LoadFileItemtAction({
                             gobiiFileItem: gfi,
                             selectForExtract: true

@@ -6,21 +6,21 @@ System.register([], function (exports_1, context_1) {
         setters: [],
         execute: function () {
             VertexFilterDTO = (function () {
-                function VertexFilterDTO(destinationVertex, vertices, vertexValues, markerCount, sampleCount) {
+                function VertexFilterDTO(destinationVertex, filterVertices, vertexValues, markerCount, sampleCount) {
                     this.destinationVertex = destinationVertex;
-                    this.vertices = vertices;
+                    this.filterVertices = filterVertices;
                     this.vertexValues = vertexValues;
                     this.markerCount = markerCount;
                     this.sampleCount = sampleCount;
                 }
                 VertexFilterDTO.fromJson = function (json) {
-                    var returnVal = new VertexFilterDTO(json.destinationVertexDTO, json.vertices, json.vertexValues, json.markerCount, json.sampleCount);
+                    var returnVal = new VertexFilterDTO(json.destinationVertexDTO, json.filterVertices, json.vertexValues, json.markerCount, json.sampleCount);
                     return returnVal;
                 };
                 VertexFilterDTO.prototype.getJson = function () {
                     var returnVal = {};
                     returnVal.destinationVertexDTO = this.destinationVertex;
-                    returnVal.vertices = this.vertices;
+                    returnVal.filterVertices = this.filterVertices;
                     returnVal.vertexValues = this.vertexValues;
                     returnVal.markerCount = this.markerCount;
                     returnVal.sampleCount = this.sampleCount;

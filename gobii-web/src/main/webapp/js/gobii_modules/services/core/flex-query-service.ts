@@ -221,18 +221,19 @@ export class FlexQueryService {
     } // end function
 
     public loadSelectedVertexValueFilters(filterParamsName: FilterParamNames,
-                                          currentValuesGfis: GobiiFileItem[],
+                                          allSelectedGfis:GobiiFileItem[],
+                                          newlySelectedValuesGfis: GobiiFileItem[],
                                           previousValuesGfis: GobiiFileItem[]) {
 
 
-        let vertexValues: string[] = currentValuesGfis.map(gfi => gfi.getItemId());
+        let currentVertexValues: string[] = allSelectedGfis.map(gfi => gfi.getItemId());
         let vertexValueIdsCsv: string = null;
         let filterParams: FilterParams = this.filterParamsColl.getFilter(filterParamsName, GobiiExtractFilterType.FLEX_QUERY);
 
-        if (filterParams && vertexValues && vertexValues.length > 0) {
+        if (filterParams && currentVertexValues && currentVertexValues.length > 0) {
 
             vertexValueIdsCsv = "";
-            vertexValues.forEach(
+            currentVertexValues.forEach(
                 vv => vertexValueIdsCsv += vv + ","
             );
 
@@ -246,7 +247,7 @@ export class FlexQueryService {
 
         });
 
-        currentValuesGfis.forEach(gfi => {
+        newlySelectedValuesGfis.forEach(gfi => {
 
             let loadAction: fileItemActions.LoadFileItemtAction = new fileItemActions.LoadFileItemtAction(
                 {

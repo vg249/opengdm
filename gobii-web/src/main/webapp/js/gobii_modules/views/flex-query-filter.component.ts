@@ -203,6 +203,7 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
         let deselectedItems:GobiiFileItem[] = this.previousSelectedVertices.filter(gfi=> ! this.selectedVertexValues.find(igfi => igfi.getFileItemUniqueId() === gfi.getFileItemUniqueId() ));
 
         this.flexQueryService.loadSelectedVertexValueFilters(this.filterParamNameVertexValues,
+            this.selectedVertexValues,
             newItems ? newItems : [], // find() can return null
             deselectedItems);
 
