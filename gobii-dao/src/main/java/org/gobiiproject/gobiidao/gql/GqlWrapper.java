@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.concurrent.TimeUnit;
 
 
 public class GqlWrapper {
@@ -42,7 +43,18 @@ public class GqlWrapper {
                     + timeOutSecs
                     + " seconds";
             LOGGER.error(message);
+
+            if( process.isAlive()) {
+                process.destroy();
+                process.waitFor(timeOutSecs, TimeUnit.SECONDS);
+                if( process.isAlive()) {
+                    process.destroyForcibly();
+                }
+            }
+
+
             throw new GobiiDaoException(message);
+
 
         }
 

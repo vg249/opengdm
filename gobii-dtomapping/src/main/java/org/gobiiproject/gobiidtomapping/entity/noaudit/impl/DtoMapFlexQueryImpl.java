@@ -5,7 +5,6 @@ import org.gobiiproject.gobiidao.gql.GqlWrapper;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapDataSetImpl;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapFlexQuery;
-import org.gobiiproject.gobiimodel.cvnames.VertexNameType;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexFilterDTO;
@@ -18,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Phil on 4/22/2016.
@@ -31,6 +29,9 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
     private final String OUTPT_FILE_NAME_SAMPLES = "gql_result_samples.txt";
     private final String STD_OUTPT_FILE_NAME = "gql.out";
     private final String ERR_OUTPT_FILE_NAME = "gql.err";
+
+    private Integer maxVertexValues = 500;
+    private Integer maxCount = 100000;
 
     Logger LOGGER = LoggerFactory.getLogger(DtoMapDataSetImpl.class);
     private InstructionFileAccess<GobiiExtractorInstruction> instructionFileAccess = new InstructionFileAccess<>(GobiiExtractorInstruction.class);
@@ -85,7 +86,10 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
             String stdOutFileFqpn = outputFileDirectory + "/" + STD_OUTPT_FILE_NAME;
             String stdErrFileFqpn = outputFileDirectory + "/" + ERR_OUTPT_FILE_NAME;
 
-            String gqlScriptCommandLine = gqlText.makeCommandLine(outputFileFqpn, vertexFilterDTO.getFilterVertices(), vertexFilterDTO.getDestinationVertexDTO(),0);
+            String gqlScriptCommandLine = gqlText.makeCommandLine(outputFileFqpn,
+                    vertexFilterDTO.getFilterVertices(),
+                    vertexFilterDTO.getDestinationVertexDTO(),
+                    maxVertexValues);
             GqlWrapper.run(gqlScriptCommandLine, stdOutFileFqpn, stdErrFileFqpn);
 
             List<NameIdDTO> values = gqlText.makeValues(outputFileFqpn, vertexFilterDTO.getDestinationVertexDTO());
@@ -125,11 +129,10 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
             vertexFilterDTO.setMarkerCount(100);
             vertexFilterDTO.setSampleCount(100);
 
-            Integer maxResult = 1000000;
-            String gqlScriptCommandLineMarkers = gqlText.makeCommandLine(markerOutputFileFqpn, vertexFilterDTO.getFilterVertices(), destinationVertexMarkers,maxResult);
+            String gqlScriptCommandLineMarkers = gqlText.makeCommandLine(markerOutputFileFqpn, vertexFilterDTO.getFilterVertices(), destinationVertexMarkers,maxCount);
             GqlWrapper.run(gqlScriptCommandLineMarkers, stdOutFileFqpnMarkers, stdErrFileFqpnMarkers);
 
-            String gqlScriptCommandLineSamples = gqlText.makeCommandLine(sampleOutputFileFqpn, vertexFilterDTO.getFilterVertices(), destinationVertexSamples,maxResult);
+            String gqlScriptCommandLineSamples = gqlText.makeCommandLine(sampleOutputFileFqpn, vertexFilterDTO.getFilterVertices(), destinationVertexSamples,maxCount);
             GqlWrapper.run(gqlScriptCommandLineSamples, stdOutFileFqpnSamples, stdErrFileFqpnSamples);
 
             Long markerCount = Files.lines(Paths.get(markerOutputFileFqpn)).count();
