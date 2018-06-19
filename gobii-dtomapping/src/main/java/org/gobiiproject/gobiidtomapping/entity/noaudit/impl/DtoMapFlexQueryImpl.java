@@ -126,8 +126,8 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
             VertexDTO destinationVertexSamples = Vertices.makeSampleVertex();
 
             // temp values to make unit test past
-            vertexFilterDTO.setMarkerCount(100);
-            vertexFilterDTO.setSampleCount(100);
+//            vertexFilterDTO.setMarkerCount(100);
+//            vertexFilterDTO.setSampleCount(100);
 
             String gqlScriptCommandLineMarkers = gqlText.makeCommandLine(markerOutputFileFqpn, vertexFilterDTO.getFilterVertices(), destinationVertexMarkers,maxCount);
             GqlWrapper.run(gqlScriptCommandLineMarkers, stdOutFileFqpnMarkers, stdErrFileFqpnMarkers);

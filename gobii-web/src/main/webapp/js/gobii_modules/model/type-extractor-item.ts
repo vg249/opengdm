@@ -11,5 +11,6 @@ export enum ExtractorItemType {
     SAMPLE_LIST_TYPE,
     TREE_STRUCTURE,
     VERTEX,
-    VERTEX_VALUE
+    VERTEX_VALUE,
+    ITEM_COUNT
 }

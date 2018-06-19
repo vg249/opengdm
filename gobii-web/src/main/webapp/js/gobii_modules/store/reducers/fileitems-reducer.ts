@@ -459,7 +459,7 @@ export const getSelected = createSelector(getFileItems, getSelectedUniqueIds, (f
         );
 
 
-    let foo:string = "foo";
+    let foo: string = "foo";
 
     return returnVal;
 });
@@ -998,7 +998,7 @@ export const getFqF2Vertices = createSelector(getFileItems, getFilters, getGobii
                 (e.getGobiiExtractFilterType() == gobiiExtractFilterType
                     && e.getExtractorItemType() === ExtractorItemType.VERTEX
                     && (e.getEntity().vertexId != f1VertexId
-                        || e.getNameIdLabelType() === NameIdLabelType.SELECT_A) )
+                        || e.getNameIdLabelType() === NameIdLabelType.SELECT_A))
                 && e.getProcessType() !== ProcessType.DUMMY
         ).map(fi => fi);
 
@@ -1119,7 +1119,7 @@ export const getFqF1VerticesValues = createSelector(getFileItems, getFilters, ge
                     && e.getExtractorItemType() === ExtractorItemType.VERTEX_VALUE
                     && e.getEntityType() === entityType)
         ).map(fi => fi)
-            .sort((gfi_a,gfi_b) => {
+            .sort((gfi_a, gfi_b) => {
                 return gfi_a.getItemName().localeCompare(gfi_b.getItemName());
             });
     }
@@ -1145,9 +1145,10 @@ export const getFqF2VerticesValues = createSelector(getFileItems, getFilters, ge
                     && e.getExtractorItemType() === ExtractorItemType.VERTEX_VALUE
                     && e.getEntityType() === entityType)
         ).map(fi => fi)
-            .sort((gfi_a,gfi_b) => {
-            return gfi_a.getItemName().localeCompare(gfi_b.getItemName());
-        });;
+            .sort((gfi_a, gfi_b) => {
+                return gfi_a.getItemName().localeCompare(gfi_b.getItemName());
+            });
+        ;
     }
 
     return returnVal;
@@ -1172,9 +1173,10 @@ export const getFqF3VerticesValues = createSelector(getFileItems, getFilters, ge
                     && e.getExtractorItemType() === ExtractorItemType.VERTEX_VALUE
                     && e.getEntityType() === entityType)
         ).map(fi => fi)
-            .sort((gfi_a,gfi_b) => {
+            .sort((gfi_a, gfi_b) => {
                 return gfi_a.getItemName().localeCompare(gfi_b.getItemName());
-            });;
+            });
+        ;
     }
 
     return returnVal;
@@ -1198,12 +1200,48 @@ export const getFqF4VerticesValues = createSelector(getFileItems, getFilters, ge
                     && e.getExtractorItemType() === ExtractorItemType.VERTEX_VALUE
                     && e.getEntityType() === entityType)
         ).map(fi => fi)
-            .sort((gfi_a,gfi_b) => {
+            .sort((gfi_a, gfi_b) => {
                 return gfi_a.getItemName().localeCompare(gfi_b.getItemName());
-            });;
+            });
+        ;
     }
 
     return returnVal;
 });
 
+export const getCurrentMarkerCount = createSelector(getFileItems, getFilters, getGobiiExtractFilterType, (fileItems, filters, gobiiExtractFilterType) => {
+
+    let returnVal: number = -1;
+
+    let countFileItems: GobiiFileItem[] = fileItems.filter(
+        e =>
+            (e.getGobiiExtractFilterType() == GobiiExtractFilterType.FLEX_QUERY
+                && e.getExtractorItemType() === ExtractorItemType.ITEM_COUNT
+                && e.getEntityType() === EntityType.MARKER)
+    )
+
+    if (countFileItems.length > 0) {
+        returnVal = countFileItems[0].getEntity();
+    }
+
+    return returnVal;
+});
+
+export const getCurrentSampleCount = createSelector(getFileItems, getFilters, getGobiiExtractFilterType, (fileItems, filters, gobiiExtractFilterType) => {
+
+    let returnVal: number = -1;
+
+    let countFileItems: GobiiFileItem[] = fileItems.filter(
+        e =>
+            (e.getGobiiExtractFilterType() == GobiiExtractFilterType.FLEX_QUERY
+                && e.getExtractorItemType() === ExtractorItemType.ITEM_COUNT
+                && e.getEntityType() === EntityType.DNA_SAMPLE)
+    )
+
+    if (countFileItems.length > 0) {
+        returnVal = countFileItems[0].getEntity();
+    }
+
+    return returnVal;
+});
 
