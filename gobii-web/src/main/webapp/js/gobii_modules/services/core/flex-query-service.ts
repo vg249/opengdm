@@ -223,25 +223,9 @@ export class FlexQueryService {
     } // end function
 
     public loadSelectedVertexValueFilters(filterParamsName: FilterParamNames,
-                                          allSelectedGfis: GobiiFileItem[],
                                           newlySelectedValuesGfis: GobiiFileItem[],
                                           previousValuesGfis: GobiiFileItem[],
                                           targetValueVertex: Vertex) {
-
-
-        let currentVertexValues: string[] = allSelectedGfis.map(gfi => gfi.getItemId());
-        let filterParams: FilterParams = this.filterParamsColl.getFilter(filterParamsName, GobiiExtractFilterType.FLEX_QUERY);
-
-        let filterVertex: Vertex = null;
-        if (filterParams && currentVertexValues && currentVertexValues.length > 0) {
-
-            filterVertex = Vertex.fromVertex(targetValueVertex);
-            currentVertexValues.forEach(vv => {
-                    filterVertex.filterVals.push(Number(vv));
-                }
-            );
-
-        } // if we have new vertex values
 
 
         previousValuesGfis.forEach(gfi => {
@@ -265,23 +249,7 @@ export class FlexQueryService {
 
         this.filterService.loadFilter(GobiiExtractFilterType.FLEX_QUERY,
             filterParamsName,
-            filterVertex);
-
-
-        // let gobiiTreeNodes: GobiiTreeNode[] = currentValuesGfis
-        //     .map(gfi => this.treeStructureService.makeTreeNodeFromFileItem(gfi));
-        //
-        // gobiiTreeNodes.forEach(gtn => {
-        //     gtn.setSequenceNum(filterParams.getSequenceNum());
-        //     gtn.setItemType(ExtractorItemType.VERTEX_VALUE);
-        //     // gtn.setItemType(ExtractorItemType.VERTEX); // the three node we're adding has to be of type VERTEX
-        //     //                                            // in order to added to the VERTEX nodes
-        //     //                                            // this is probably bad
-        // });
-        //
-        // gobiiTreeNodes.forEach(tn => {
-        //     this.store.dispatch(new treeNodeActions.PlaceTreeNodeAction(tn));
-        // });
+            targetValueVertex);
 
     }
 
