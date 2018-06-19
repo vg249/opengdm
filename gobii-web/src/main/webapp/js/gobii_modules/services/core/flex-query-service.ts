@@ -23,6 +23,8 @@ import {NameIdLabelType} from "../../model/name-id-label-type";
 import {CvGroup, getCvGroupName} from "../../model/cv-group";
 import {FilterService} from "./filter-service";
 import {TreeStructureService} from "./tree-structure-service";
+import {count} from "rxjs/operator/count";
+import {VertexNameType} from "../../model/type-vertex-name";
 
 @Injectable()
 export class FlexQueryService {
@@ -221,20 +223,22 @@ export class FlexQueryService {
     } // end function
 
     public loadSelectedVertexValueFilters(filterParamsName: FilterParamNames,
-                                          allSelectedGfis:GobiiFileItem[],
+                                          allSelectedGfis: GobiiFileItem[],
                                           newlySelectedValuesGfis: GobiiFileItem[],
-                                          previousValuesGfis: GobiiFileItem[]) {
+                                          previousValuesGfis: GobiiFileItem[],
+                                          targetValueVertex: Vertex) {
 
 
         let currentVertexValues: string[] = allSelectedGfis.map(gfi => gfi.getItemId());
-        let vertexValueIdsCsv: string = null;
         let filterParams: FilterParams = this.filterParamsColl.getFilter(filterParamsName, GobiiExtractFilterType.FLEX_QUERY);
 
+        let filterVertex: Vertex = null;
         if (filterParams && currentVertexValues && currentVertexValues.length > 0) {
 
-            vertexValueIdsCsv = "";
-            currentVertexValues.forEach(
-                vv => vertexValueIdsCsv += vv + ","
+            filterVertex = Vertex.fromVertex(targetValueVertex);
+            currentVertexValues.forEach(vv => {
+                    filterVertex.filterVals.push(Number(vv));
+                }
             );
 
         } // if we have new vertex values
@@ -261,7 +265,7 @@ export class FlexQueryService {
 
         this.filterService.loadFilter(GobiiExtractFilterType.FLEX_QUERY,
             filterParamsName,
-            vertexValueIdsCsv);
+            filterVertex);
 
 
         // let gobiiTreeNodes: GobiiTreeNode[] = currentValuesGfis
@@ -282,96 +286,136 @@ export class FlexQueryService {
     }
 
 
-    public loadVertexValues(jobId: string, vertexFileItem: GobiiFileItem, filterParamName: FilterParamNames) {
+    public loadVertexValues(jobId: string, vertexFileItem: GobiiFileItem, vertexValuesFilterPararamName: FilterParamNames) {
 
 //        return Observable.create(observer => {
-        let filterParams: FilterParams = this.filterParamsColl.getFilter(filterParamName, GobiiExtractFilterType.FLEX_QUERY);
+        let targetChildFilterParams: FilterParams = this.filterParamsColl.getFilter(vertexValuesFilterPararamName, GobiiExtractFilterType.FLEX_QUERY);
         if (vertexFileItem.getNameIdLabelType() == NameIdLabelType.UNKNOWN) {
 
-            let targetVertex: Vertex = vertexFileItem.getEntity();
-            let vertexFilterDTO: VertexFilterDTO = new VertexFilterDTO(
-                targetVertex,
-                [],
-                [],
-                null,
-                null
-            );
+            let filtterChildFilterParams: FilterParams;
+            if (targetChildFilterParams.getParentFileItemParams()
+                && targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams()
+                && targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams()
+                && targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
+                filtterChildFilterParams = targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams()[0];
+            }
 
-            let vertexFilterDtoResponse: VertexFilterDTO = null;
-            this.dtoRequestServiceVertexFilterDTO.post(new DtoRequestItemVertexFilterDTO(
-                vertexFilterDTO,
-                jobId,
-                false
-            )).subscribe(vertexFilterDto => {
-                    vertexFilterDtoResponse = vertexFilterDto;
 
-                    // note that we are setting the entity type, sub type, cvgroup, and cvterm
-                    // based on our request -- on the target vertex. In theory, the server could
-                    // be responding with NameId items that do not fit this. But this is the
-                    // way we handle other types of requests, basing our entity types and so forth
-                    // largely on the content of the request request.
-                    let vertexFileItems: GobiiFileItem[] = [];
-                    vertexFilterDto.vertexValues.forEach(item => {
+            this.store
+                .select(fromRoot.getFileItemsFilters)
+                .subscribe(filters => {
 
-                            let currentFileItem: GobiiFileItem =
-                                GobiiFileItem.build(
-                                    GobiiExtractFilterType.FLEX_QUERY,
-                                    ProcessType.CREATE)
-                                    .setExtractorItemType(ExtractorItemType.VERTEX_VALUE)
-                                    .setEntityType(targetVertex.entityType)
-                                    .setEntitySubType(targetVertex.entitySubType)
-                                    .setCvGroup(targetVertex.cvGroup)
-                                    .setCvTerm(targetVertex.cvTerm)
-                                    .setItemId(item.id)
-                                    .setItemName(item.name)
-                                    .setRequired(false)
-                                    .setSequenceNum(filterParams.getSequenceNum());
-                            //.setParentItemId(filterValue)
-                            //.setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())
-                            //.withRelatedEntity(entityRelation);
-                            vertexFileItems.push(currentFileItem);
-                        }
+                    let filterVertices: Vertex[] = [];
+                    let vertexValueFilterFromState: PayloadFilter = filtterChildFilterParams ? filters[filtterChildFilterParams.getQueryName()] : null;
+                    if (vertexValueFilterFromState) {
+
+                        let filterValuesFromState: Vertex = vertexValueFilterFromState.targetEntityFilterValue;
+                        filterVertices.push(filterValuesFromState);
+
+                        // let vertexType:VertexNameType;
+                        // if (!isNaN(filterValuesFromState[0])) {
+                        //     vertexType = VertexNameType[VertexNameType[filterValuesFromState[0]]];
+                        // }
+                        //
+                        // let filterIds:number[];
+                        // filterValuesFromState.slice(1,filterIds.length -1).forEach(id => {
+                        //     filterIds.push(Number(id));
+                        // })
+
+                        // let filterVertex:Vertex = new Vertex(0,
+                        //     vertexType,
+                        //     );
+
+                    } // if we found vertex value filter in state
+
+
+                    let targetVertex: Vertex = vertexFileItem.getEntity();
+                    let vertexFilterDTO: VertexFilterDTO = new VertexFilterDTO(
+                        targetVertex,
+                        filterVertices,
+                        [],
+                        null,
+                        null
                     );
+                    let vertexFilterDtoResponse: VertexFilterDTO = null;
+                    this.dtoRequestServiceVertexFilterDTO.post(new DtoRequestItemVertexFilterDTO(
+                        vertexFilterDTO,
+                        jobId,
+                        false
+                    )).subscribe(vertexFilterDto => {
+                            vertexFilterDtoResponse = vertexFilterDto;
+
+                            // note that we are setting the entity type, sub type, cvgroup, and cvterm
+                            // based on our request -- on the target vertex. In theory, the server could
+                            // be responding with NameId items that do not fit this. But this is the
+                            // way we handle other types of requests, basing our entity types and so forth
+                            // largely on the content of the request request.
+                            let vertexFileItems: GobiiFileItem[] = [];
+                            vertexFilterDto.vertexValues.forEach(item => {
+
+                                    let currentFileItem: GobiiFileItem =
+                                        GobiiFileItem.build(
+                                            GobiiExtractFilterType.FLEX_QUERY,
+                                            ProcessType.CREATE)
+                                            .setExtractorItemType(ExtractorItemType.VERTEX_VALUE)
+                                            .setEntityType(targetVertex.entityType)
+                                            .setEntitySubType(targetVertex.entitySubType)
+                                            .setCvGroup(targetVertex.cvGroup)
+                                            .setCvTerm(targetVertex.cvTerm)
+                                            .setItemId(item.id)
+                                            .setItemName(item.name)
+                                            .setRequired(false)
+                                            .setSequenceNum(targetChildFilterParams.getSequenceNum());
+                                    //.setParentItemId(filterValue)
+                                    //.setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())
+                                    //.withRelatedEntity(entityRelation);
+                                    vertexFileItems.push(currentFileItem);
+                                }
+                            );
 
 
-                    // for flex query the "filter value" is not an actual id but a new entity type
-                    // our selectors "just know" to look for the filter's target entity type as the thing to filter on
-                    let targetCompoundUniqueId: GobiiFileItemCompoundId = filterParams.getTargetEntityUniqueId();
-                    targetCompoundUniqueId.setExtractorItemType(ExtractorItemType.VERTEX_VALUE);
-                    targetCompoundUniqueId.setEntityType(targetVertex.entityType);
-                    let loadAction: fileItemActions.LoadFileItemListWithFilterAction =
-                        new fileItemActions.LoadFileItemListWithFilterAction(
-                            {
-                                gobiiFileItems: vertexFileItems,
-                                filterId: filterParams.getQueryName(),
-                                filter: new PayloadFilter(
-                                    GobiiExtractFilterType.FLEX_QUERY,
-                                    targetCompoundUniqueId,
-                                    filterParams.getRelatedEntityUniqueId(),
-                                    null,
-                                    null,
-                                    null,
-                                    null
-                                )
-                            }
-                        );
+                            // for flex query the "filter value" is not an actual id but a new entity type
+                            // our selectors "just know" to look for the filter's target entity type as the thing to filter on
+                            let targetCompoundUniqueId: GobiiFileItemCompoundId = targetChildFilterParams.getTargetEntityUniqueId();
+                            targetCompoundUniqueId.setExtractorItemType(ExtractorItemType.VERTEX_VALUE);
+                            targetCompoundUniqueId.setEntityType(targetVertex.entityType);
+                            let loadAction: fileItemActions.LoadFileItemListWithFilterAction =
+                                new fileItemActions.LoadFileItemListWithFilterAction(
+                                    {
+                                        gobiiFileItems: vertexFileItems,
+                                        filterId: targetChildFilterParams.getQueryName(),
+                                        filter: new PayloadFilter(
+                                            GobiiExtractFilterType.FLEX_QUERY,
+                                            targetCompoundUniqueId,
+                                            targetChildFilterParams.getRelatedEntityUniqueId(),
+                                            null,
+                                            null,
+                                            null,
+                                            null
+                                        )
+                                    }
+                                );
 
-                    this.store.dispatch(loadAction);
+                            this.store.dispatch(loadAction);
 
-                    //observer.next(vertexFileItems);
-                    //observer.complete();
-                },
-                headerResponse => {
-                    headerResponse.status.statusMessages.forEach(statusMessage => {
-                        this.store.dispatch(new historyAction.AddStatusAction(statusMessage));
-                    });
-                    //observer.complete();
-                });
+                            //observer.next(vertexFileItems);
+                            //observer.complete();
+                        },
+                        headerResponse => {
+                            headerResponse.status.statusMessages.forEach(statusMessage => {
+                                this.store.dispatch(new historyAction.AddStatusAction(statusMessage));
+                            });
+                            //observer.complete();
+                        });
 
-        } else {
+
+                }).unsubscribe();
+
+
+        } else // else label is not UNKNOWN{
             this.store.dispatch(new fileItemActions.LoadFilterAction(
                 {
-                    filterId: filterParamName,
+                    filterId: vertexValuesFilterPararamName,
                     filter: new PayloadFilter(
                         GobiiExtractFilterType.FLEX_QUERY,
                         new GobiiFileItemCompoundId(ExtractorItemType.VERTEX_VALUE,
@@ -387,10 +431,9 @@ export class FlexQueryService {
                     )
                 }
             ))
-        } // if-else file item type was label
+    } // if-else file item type was label
 
-        //} );//return observer create
-    }
+    //} );//return observer create
 
 
     private deSelectVertexValueFilters(compoundUniquueId: GobiiFileItemCompoundId) {

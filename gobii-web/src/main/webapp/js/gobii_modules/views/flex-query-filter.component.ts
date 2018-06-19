@@ -15,6 +15,8 @@ import {FilterParams} from "../model/filter-params";
 import {FilterParamsColl} from "../services/core/filter-params-coll";
 import {CvGroup} from "../model/cv-group";
 import {filter} from "rxjs/operator/filter";
+import {VertexNameType} from "../model/type-vertex-name";
+import {Vertex} from "../model/vertex";
 
 
 @Component({
@@ -194,18 +196,23 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
     // However, it turns out to be a lot more complicated and error prone to
     // rely purely on the store
     private previousSelectedVertices: GobiiFileItem[] = [];
+
     public handleVertexValueSelected(arg) {
 
+        let targetValueVertex: Vertex = (this.selectedVertex && this.selectedVertex.getEntity()) ?
+            this.selectedVertex.getEntity():
+            null;
 
         let newItems: GobiiFileItem[] = this.selectedVertexValues
             .filter(gfi => !this.previousSelectedVertices.find(igfi => igfi.getFileItemUniqueId() === gfi.getFileItemUniqueId()));
 
-        let deselectedItems:GobiiFileItem[] = this.previousSelectedVertices.filter(gfi=> ! this.selectedVertexValues.find(igfi => igfi.getFileItemUniqueId() === gfi.getFileItemUniqueId() ));
+        let deselectedItems: GobiiFileItem[] = this.previousSelectedVertices.filter(gfi => !this.selectedVertexValues.find(igfi => igfi.getFileItemUniqueId() === gfi.getFileItemUniqueId()));
 
         this.flexQueryService.loadSelectedVertexValueFilters(this.filterParamNameVertexValues,
             this.selectedVertexValues,
             newItems ? newItems : [], // find() can return null
-            deselectedItems);
+            deselectedItems,
+            targetValueVertex);
 
         this.previousSelectedVertices = this.selectedVertexValues;
     }

@@ -13,7 +13,21 @@ export class Vertex {
                 public entitySubType:EntitySubType,
                 public cvGroup:CvGroup,
                 public cvTerm:string,
-                public filterVals:string[]
+                public filterVals:number[]
                 ) {
+    }
+
+    static fromVertex(vertexToCopy:Vertex) : Vertex {
+        return new Vertex(
+            vertexToCopy.vertexId,
+            vertexToCopy.vertexNameType,
+            vertexToCopy.gobiiVertexType,
+            vertexToCopy.vertexName,
+            vertexToCopy.entityType,
+            vertexToCopy.entitySubType,
+            vertexToCopy.cvGroup,
+            vertexToCopy.cvTerm,
+            vertexToCopy.filterVals
+        );
     }
 }

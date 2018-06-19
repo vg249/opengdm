@@ -31,7 +31,7 @@ export class FilterService {
 
     public loadFilter(gobiiExtractFilterType: GobiiExtractFilterType,
                       filterParamsName: FilterParamNames,
-                      filterValue: string) {
+                      filterValue: any) {
 
         let filterParams: FilterParams = this.filterParamsColl.getFilter(filterParamsName, gobiiExtractFilterType);
 

@@ -17,6 +17,9 @@ System.register([], function (exports_1, context_1) {
                     this.cvTerm = cvTerm;
                     this.filterVals = filterVals;
                 }
+                Vertex.fromVertex = function (vertexToCopy) {
+                    return new Vertex(vertexToCopy.vertexId, vertexToCopy.vertexNameType, vertexToCopy.gobiiVertexType, vertexToCopy.vertexName, vertexToCopy.entityType, vertexToCopy.entitySubType, vertexToCopy.cvGroup, vertexToCopy.cvTerm, vertexToCopy.filterVals);
+                };
                 return Vertex;
             }());
             exports_1("Vertex", Vertex);

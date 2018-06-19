@@ -141,11 +141,14 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                 }; // end function
                 FlexQueryFilterComponent.prototype.handleVertexValueSelected = function (arg) {
                     var _this = this;
+                    var targetValueVertex = (this.selectedVertex && this.selectedVertex.getEntity()) ?
+                        this.selectedVertex.getEntity() :
+                        null;
                     var newItems = this.selectedVertexValues
                         .filter(function (gfi) { return !_this.previousSelectedVertices.find(function (igfi) { return igfi.getFileItemUniqueId() === gfi.getFileItemUniqueId(); }); });
                     var deselectedItems = this.previousSelectedVertices.filter(function (gfi) { return !_this.selectedVertexValues.find(function (igfi) { return igfi.getFileItemUniqueId() === gfi.getFileItemUniqueId(); }); });
                     this.flexQueryService.loadSelectedVertexValueFilters(this.filterParamNameVertexValues, this.selectedVertexValues, newItems ? newItems : [], // find() can return null
-                    deselectedItems);
+                    deselectedItems, targetValueVertex);
                     this.previousSelectedVertices = this.selectedVertexValues;
                 };
                 FlexQueryFilterComponent.prototype.ngOnChanges = function (changes) {
