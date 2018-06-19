@@ -260,43 +260,40 @@ export class FlexQueryService {
         let targetChildFilterParams: FilterParams = this.filterParamsColl.getFilter(vertexValuesFilterPararamName, GobiiExtractFilterType.FLEX_QUERY);
         if (vertexFileItem.getNameIdLabelType() == NameIdLabelType.UNKNOWN) {
 
-            let filtterChildFilterParams: FilterParams;
-            if (targetChildFilterParams.getParentFileItemParams()
-                && targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams()
-                && targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams()
-                && targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
-                filtterChildFilterParams = targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams()[0];
-            }
-
 
             this.store
                 .select(fromRoot.getFileItemsFilters)
                 .subscribe(filters => {
 
                     let filterVertices: Vertex[] = [];
-                    let vertexValueFilterFromState: PayloadFilter = filtterChildFilterParams ? filters[filtterChildFilterParams.getQueryName()] : null;
-                    if (vertexValueFilterFromState) {
 
-                        let filterValuesFromState: Vertex = vertexValueFilterFromState.targetEntityFilterValue;
-                        filterVertices.push(filterValuesFromState);
+                    let filtterChildFilterParams: FilterParams = null;
+                    let targetChild:FilterParams = targetChildFilterParams;
+                    do {
 
-                        // let vertexType:VertexNameType;
-                        // if (!isNaN(filterValuesFromState[0])) {
-                        //     vertexType = VertexNameType[VertexNameType[filterValuesFromState[0]]];
-                        // }
-                        //
-                        // let filterIds:number[];
-                        // filterValuesFromState.slice(1,filterIds.length -1).forEach(id => {
-                        //     filterIds.push(Number(id));
-                        // })
+                        if (targetChild.getParentFileItemParams()
+                            && targetChild.getParentFileItemParams().getPreviousSiblingFileItemParams()
+                            && targetChild.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams()
+                            && targetChild.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
 
-                        // let filterVertex:Vertex = new Vertex(0,
-                        //     vertexType,
-                        //     );
+                            filtterChildFilterParams = targetChild.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams()[0];
+                            let vertexValueFilterFromState: PayloadFilter = filtterChildFilterParams ? filters[filtterChildFilterParams.getQueryName()] : null;
+                            if (vertexValueFilterFromState) {
 
-                    } // if we found vertex value filter in state
+                                let filterValuesFromState: Vertex = vertexValueFilterFromState.targetEntityFilterValue;
+                                filterVertices.push(filterValuesFromState);
 
+                            } // if we found vertex value filter in state
 
+                            targetChild = filtterChildFilterParams;
+
+                        } else {
+                            filtterChildFilterParams = null; 
+                        }
+    
+                    } while (filtterChildFilterParams);
+
+                    filterVertices.reverse();
                     let targetVertex: Vertex = vertexFileItem.getEntity();
                     let vertexFilterDTO: VertexFilterDTO = new VertexFilterDTO(
                         targetVertex,

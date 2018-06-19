@@ -233,34 +233,30 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                     //        return Observable.create(observer => {
                     var targetChildFilterParams = this.filterParamsColl.getFilter(vertexValuesFilterPararamName, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
                     if (vertexFileItem.getNameIdLabelType() == name_id_label_type_1.NameIdLabelType.UNKNOWN) {
-                        var filtterChildFilterParams_1;
-                        if (targetChildFilterParams.getParentFileItemParams()
-                            && targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams()
-                            && targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams()
-                            && targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
-                            filtterChildFilterParams_1 = targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams()[0];
-                        }
                         this.store
                             .select(fromRoot.getFileItemsFilters)
                             .subscribe(function (filters) {
                             var filterVertices = [];
-                            var vertexValueFilterFromState = filtterChildFilterParams_1 ? filters[filtterChildFilterParams_1.getQueryName()] : null;
-                            if (vertexValueFilterFromState) {
-                                var filterValuesFromState = vertexValueFilterFromState.targetEntityFilterValue;
-                                filterVertices.push(filterValuesFromState);
-                                // let vertexType:VertexNameType;
-                                // if (!isNaN(filterValuesFromState[0])) {
-                                //     vertexType = VertexNameType[VertexNameType[filterValuesFromState[0]]];
-                                // }
-                                //
-                                // let filterIds:number[];
-                                // filterValuesFromState.slice(1,filterIds.length -1).forEach(id => {
-                                //     filterIds.push(Number(id));
-                                // })
-                                // let filterVertex:Vertex = new Vertex(0,
-                                //     vertexType,
-                                //     );
-                            } // if we found vertex value filter in state
+                            var filtterChildFilterParams = null;
+                            var targetChild = targetChildFilterParams;
+                            do {
+                                if (targetChild.getParentFileItemParams()
+                                    && targetChild.getParentFileItemParams().getPreviousSiblingFileItemParams()
+                                    && targetChild.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams()
+                                    && targetChild.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
+                                    filtterChildFilterParams = targetChild.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams()[0];
+                                    var vertexValueFilterFromState = filtterChildFilterParams ? filters[filtterChildFilterParams.getQueryName()] : null;
+                                    if (vertexValueFilterFromState) {
+                                        var filterValuesFromState = vertexValueFilterFromState.targetEntityFilterValue;
+                                        filterVertices.push(filterValuesFromState);
+                                    } // if we found vertex value filter in state
+                                    targetChild = filtterChildFilterParams;
+                                }
+                                else {
+                                    filtterChildFilterParams = null;
+                                }
+                            } while (filtterChildFilterParams);
+                            filterVertices.reverse();
                             var targetVertex = vertexFileItem.getEntity();
                             var vertexFilterDTO = new vertex_filter_1.VertexFilterDTO(targetVertex, filterVertices, [], null, null);
                             var vertexFilterDtoResponse = null;
