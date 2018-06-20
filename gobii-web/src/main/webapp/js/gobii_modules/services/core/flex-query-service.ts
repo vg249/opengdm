@@ -116,6 +116,8 @@ export class FlexQueryService {
                                     eventedCvTerm: string) {
 
 
+        this.invalidateMarkerSampleCount(true);
+
         let currentVertexId: string = eventedVertexId;
         let currentVertexFilterParams: FilterParams = this.filterParamsColl.getFilter(eventedFilterParamsName, GobiiExtractFilterType.FLEX_QUERY);
 
@@ -230,34 +232,8 @@ export class FlexQueryService {
 
 
         //invalidate current counts
-        let markerCountItem:GobiiFileItem = GobiiFileItem
-            .build(GobiiExtractFilterType.FLEX_QUERY, ProcessType.CREATE)
-            .setExtractorItemType(ExtractorItemType.ITEM_COUNT)
-            .setEntityType(EntityType.MARKER)
-            .setItemName("Marker Count")
-            .setEntity(-1);
-        // default count items on load
-        let loadActionMarkerCount: fileItemActions.LoadFileItemtAction = new fileItemActions.LoadFileItemtAction(
-            {
-                gobiiFileItem: markerCountItem,
-                selectForExtract: true
-            }
-        );
-        this.store.dispatch(loadActionMarkerCount);
 
-
-        let loadActionSampleCount: fileItemActions.LoadFileItemtAction = new fileItemActions.LoadFileItemtAction(
-            {
-                gobiiFileItem: GobiiFileItem
-                    .build(GobiiExtractFilterType.FLEX_QUERY, ProcessType.CREATE)
-                    .setExtractorItemType(ExtractorItemType.ITEM_COUNT)
-                    .setEntityType(EntityType.DNA_SAMPLE)
-                    .setItemName("Sample Count")
-                    .setEntity(-1),
-                selectForExtract: true
-            }
-        );
-        this.store.dispatch(loadActionSampleCount);
+        this.invalidateMarkerSampleCount(false);
 
 
 
@@ -531,4 +507,37 @@ export class FlexQueryService {
             }).unsubscribe();
 
     }
+
+
+    private invalidateMarkerSampleCount(setToZero:boolean) {
+        let markerCountItem:GobiiFileItem = GobiiFileItem
+            .build(GobiiExtractFilterType.FLEX_QUERY, ProcessType.CREATE)
+            .setExtractorItemType(ExtractorItemType.ITEM_COUNT)
+            .setEntityType(EntityType.MARKER)
+            .setItemName("Marker Count")
+            .setEntity(setToZero ? 0 : -1);
+        // default count items on load
+        let loadActionMarkerCount: fileItemActions.LoadFileItemtAction = new fileItemActions.LoadFileItemtAction(
+            {
+                gobiiFileItem: markerCountItem,
+                selectForExtract: true
+            }
+        );
+        this.store.dispatch(loadActionMarkerCount);
+
+
+        let loadActionSampleCount: fileItemActions.LoadFileItemtAction = new fileItemActions.LoadFileItemtAction(
+            {
+                gobiiFileItem: GobiiFileItem
+                    .build(GobiiExtractFilterType.FLEX_QUERY, ProcessType.CREATE)
+                    .setExtractorItemType(ExtractorItemType.ITEM_COUNT)
+                    .setEntityType(EntityType.DNA_SAMPLE)
+                    .setItemName("Sample Count")
+                    .setEntity(setToZero ? 0 : -1),
+                selectForExtract: true
+            }
+        );
+        this.store.dispatch(loadActionSampleCount);
+
+    } // function: invalidate marker sample count
 }

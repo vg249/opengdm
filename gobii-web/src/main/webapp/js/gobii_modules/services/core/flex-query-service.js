@@ -152,6 +152,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                  * @param {string} eventedCvTerm
                  */
                 FlexQueryService.prototype.loadSelectedVertexFilter = function (eventedFilterParamsName, eventedVertexId, eventedEntityType, eventedEntitySubType, eventedCvGroup, eventedCvTerm) {
+                    this.invalidateMarkerSampleCount(true);
                     var currentVertexId = eventedVertexId;
                     var currentVertexFilterParams = this.filterParamsColl.getFilter(eventedFilterParamsName, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
                     // the filterParams passed in should exist
@@ -214,30 +215,9 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                     } // while we have another filter value
                 }; // end function
                 FlexQueryService.prototype.loadSelectedVertexValueFilters = function (jobId, filterParamsName, newlySelectedValuesGfis, previousValuesGfis, targetValueVertex) {
-                    var _this = this;
                     //invalidate current counts
-                    var markerCountItem = gobii_file_item_1.GobiiFileItem
-                        .build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_process_1.ProcessType.CREATE)
-                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ITEM_COUNT)
-                        .setEntityType(type_entity_1.EntityType.MARKER)
-                        .setItemName("Marker Count")
-                        .setEntity(-1);
-                    // default count items on load
-                    var loadActionMarkerCount = new fileItemActions.LoadFileItemtAction({
-                        gobiiFileItem: markerCountItem,
-                        selectForExtract: true
-                    });
-                    this.store.dispatch(loadActionMarkerCount);
-                    var loadActionSampleCount = new fileItemActions.LoadFileItemtAction({
-                        gobiiFileItem: gobii_file_item_1.GobiiFileItem
-                            .build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_process_1.ProcessType.CREATE)
-                            .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ITEM_COUNT)
-                            .setEntityType(type_entity_1.EntityType.DNA_SAMPLE)
-                            .setItemName("Sample Count")
-                            .setEntity(-1),
-                        selectForExtract: true
-                    });
-                    this.store.dispatch(loadActionSampleCount);
+                    var _this = this;
+                    this.invalidateMarkerSampleCount(false);
                     previousValuesGfis.forEach(function (gfi) {
                         var loadAction = new fileItemActions.RemoveFromExtractAction(gfi);
                         _this.store.dispatch(loadAction);
@@ -400,6 +380,30 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                         });
                     }).unsubscribe();
                 };
+                FlexQueryService.prototype.invalidateMarkerSampleCount = function (setToZero) {
+                    var markerCountItem = gobii_file_item_1.GobiiFileItem
+                        .build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_process_1.ProcessType.CREATE)
+                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ITEM_COUNT)
+                        .setEntityType(type_entity_1.EntityType.MARKER)
+                        .setItemName("Marker Count")
+                        .setEntity(setToZero ? 0 : -1);
+                    // default count items on load
+                    var loadActionMarkerCount = new fileItemActions.LoadFileItemtAction({
+                        gobiiFileItem: markerCountItem,
+                        selectForExtract: true
+                    });
+                    this.store.dispatch(loadActionMarkerCount);
+                    var loadActionSampleCount = new fileItemActions.LoadFileItemtAction({
+                        gobiiFileItem: gobii_file_item_1.GobiiFileItem
+                            .build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_process_1.ProcessType.CREATE)
+                            .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ITEM_COUNT)
+                            .setEntityType(type_entity_1.EntityType.DNA_SAMPLE)
+                            .setItemName("Sample Count")
+                            .setEntity(setToZero ? 0 : -1),
+                        selectForExtract: true
+                    });
+                    this.store.dispatch(loadActionSampleCount);
+                }; // function: invalidate marker sample count
                 FlexQueryService = __decorate([
                     core_1.Injectable(),
                     __metadata("design:paramtypes", [store_1.Store,
