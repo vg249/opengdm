@@ -34,7 +34,7 @@ export class MarkerSampleCountComponent implements OnChanges, OnInit {
 
     public gobiiExtractFilterType: GobiiExtractFilterType;
     public displayPanel: boolean = false;
-    public displayCounts: boolean = false;
+    public displayCounts: boolean = true;
     public panelCollapsed: boolean = false;
     public markerCount$: Observable<number> = this.store.select(fromRoot.getCurrentMarkerCount);
     public sampleCount$: Observable<number> = this.store.select(fromRoot.getCurrentSampleCount);
@@ -42,10 +42,40 @@ export class MarkerSampleCountComponent implements OnChanges, OnInit {
 
     constructor(private store: Store<fromRoot.State>) {
 
+        this.markerCount$.subscribe(
+            value => {
+
+
+                if ( value >= 0) {
+                    this.displayCounts = true;
+                    this.displaySpinner = false;
+
+                } else {
+                    this.displayCounts = false;
+                    this.displaySpinner = true;
+                }
+
+            }
+        );
+
+        this.sampleCount$.subscribe(
+            value => {
+
+
+                if ( value >= 0) {
+                    this.displayCounts = true;
+                    this.displaySpinner = false;
+                } else {
+                    this.displayCounts = false;
+                    this.displaySpinner = true;
+                }
+
+            }
+        );
+
     }
 
     ngOnInit(): void {
-
 
     }
 
@@ -59,15 +89,15 @@ export class MarkerSampleCountComponent implements OnChanges, OnInit {
 
     public onAfterToggle($event) {
 
-        if ($event.collapsed) {
-
-            this.initCount();
-        } else {
-            setTimeout(() => {
-                this.displayCounts = true;
-                this.displaySpinner = false;
-            }, 3000);
-        }
+        // if ($event.collapsed) {
+        //
+        //     this.initCount();
+        // } else {
+        //     setTimeout(() => {
+        //         this.displayCounts = true;
+        //         this.displaySpinner = false;
+        //     }, 3000);
+        // }
     }
 
     // gobiiExtractType is not set until you get OnChanges
@@ -77,7 +107,11 @@ export class MarkerSampleCountComponent implements OnChanges, OnInit {
             && (changes['gobiiExtractFilterType'].currentValue != null)
             && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
 
-            if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
+            if ((changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) &&
+                (changes['gobiiExtractFilterType'].currentValue === GobiiExtractFilterType.FLEX_QUERY)) {
+
+                this.displayPanel = true;
+                this.displaySpinner = true;
 
                 let markerCountItem:GobiiFileItem = GobiiFileItem
                     .build(GobiiExtractFilterType.FLEX_QUERY, ProcessType.CREATE)
@@ -108,19 +142,13 @@ export class MarkerSampleCountComponent implements OnChanges, OnInit {
                 );
                 this.store.dispatch(loadActionSampleCount);
 
-                if (this.gobiiExtractFilterType === GobiiExtractFilterType.FLEX_QUERY) {
-
-                    this.displayPanel = true;
-                    // this.panelCollapsed = true;
-                    this.initCount();
-
-                } else {
-                    this.displayPanel = false;
-                }
-
             } // if we have a new filter type
 
-        } // if filter type changed
+        } else {
+            this.displayPanel = false;
+            this.displaySpinner = false;
+
+        }// if-else filter type changed
 
 
     } // ngonChanges

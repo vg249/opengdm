@@ -229,6 +229,38 @@ export class FlexQueryService {
                                           targetValueVertex: Vertex) {
 
 
+        //invalidate current counts
+        let markerCountItem:GobiiFileItem = GobiiFileItem
+            .build(GobiiExtractFilterType.FLEX_QUERY, ProcessType.CREATE)
+            .setExtractorItemType(ExtractorItemType.ITEM_COUNT)
+            .setEntityType(EntityType.MARKER)
+            .setItemName("Marker Count")
+            .setEntity(-1);
+        // default count items on load
+        let loadActionMarkerCount: fileItemActions.LoadFileItemtAction = new fileItemActions.LoadFileItemtAction(
+            {
+                gobiiFileItem: markerCountItem,
+                selectForExtract: true
+            }
+        );
+        this.store.dispatch(loadActionMarkerCount);
+
+
+        let loadActionSampleCount: fileItemActions.LoadFileItemtAction = new fileItemActions.LoadFileItemtAction(
+            {
+                gobiiFileItem: GobiiFileItem
+                    .build(GobiiExtractFilterType.FLEX_QUERY, ProcessType.CREATE)
+                    .setExtractorItemType(ExtractorItemType.ITEM_COUNT)
+                    .setEntityType(EntityType.DNA_SAMPLE)
+                    .setItemName("Sample Count")
+                    .setEntity(-1),
+                selectForExtract: true
+            }
+        );
+        this.store.dispatch(loadActionSampleCount);
+
+
+
         previousValuesGfis.forEach(gfi => {
 
             let loadAction: fileItemActions.RemoveFromExtractAction = new fileItemActions.RemoveFromExtractAction(gfi);

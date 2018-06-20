@@ -44,13 +44,34 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../store/ac
         execute: function () {
             MarkerSampleCountComponent = (function () {
                 function MarkerSampleCountComponent(store) {
+                    var _this = this;
                     this.store = store;
                     this.displayPanel = false;
-                    this.displayCounts = false;
+                    this.displayCounts = true;
                     this.panelCollapsed = false;
                     this.markerCount$ = this.store.select(fromRoot.getCurrentMarkerCount);
                     this.sampleCount$ = this.store.select(fromRoot.getCurrentSampleCount);
                     this.displaySpinner = true;
+                    this.markerCount$.subscribe(function (value) {
+                        if (value >= 0) {
+                            _this.displayCounts = true;
+                            _this.displaySpinner = false;
+                        }
+                        else {
+                            _this.displayCounts = false;
+                            _this.displaySpinner = true;
+                        }
+                    });
+                    this.sampleCount$.subscribe(function (value) {
+                        if (value >= 0) {
+                            _this.displayCounts = true;
+                            _this.displaySpinner = false;
+                        }
+                        else {
+                            _this.displayCounts = false;
+                            _this.displaySpinner = true;
+                        }
+                    });
                 }
                 MarkerSampleCountComponent.prototype.ngOnInit = function () {
                 };
@@ -61,23 +82,25 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../store/ac
                     this.displaySpinner = true;
                 };
                 MarkerSampleCountComponent.prototype.onAfterToggle = function ($event) {
-                    var _this = this;
-                    if ($event.collapsed) {
-                        this.initCount();
-                    }
-                    else {
-                        setTimeout(function () {
-                            _this.displayCounts = true;
-                            _this.displaySpinner = false;
-                        }, 3000);
-                    }
+                    // if ($event.collapsed) {
+                    //
+                    //     this.initCount();
+                    // } else {
+                    //     setTimeout(() => {
+                    //         this.displayCounts = true;
+                    //         this.displaySpinner = false;
+                    //     }, 3000);
+                    // }
                 };
                 // gobiiExtractType is not set until you get OnChanges
                 MarkerSampleCountComponent.prototype.ngOnChanges = function (changes) {
                     if (changes['gobiiExtractFilterType']
                         && (changes['gobiiExtractFilterType'].currentValue != null)
                         && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
-                        if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
+                        if ((changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) &&
+                            (changes['gobiiExtractFilterType'].currentValue === type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY)) {
+                            this.displayPanel = true;
+                            this.displaySpinner = true;
                             var markerCountItem = gobii_file_item_1.GobiiFileItem
                                 .build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_process_1.ProcessType.CREATE)
                                 .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ITEM_COUNT)
@@ -100,16 +123,12 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../store/ac
                                 selectForExtract: true
                             });
                             this.store.dispatch(loadActionSampleCount);
-                            if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY) {
-                                this.displayPanel = true;
-                                // this.panelCollapsed = true;
-                                this.initCount();
-                            }
-                            else {
-                                this.displayPanel = false;
-                            }
                         } // if we have a new filter type
-                    } // if filter type changed
+                    }
+                    else {
+                        this.displayPanel = false;
+                        this.displaySpinner = false;
+                    } // if-else filter type changed
                 }; // ngonChanges
                 MarkerSampleCountComponent = __decorate([
                     core_1.Component({

@@ -215,6 +215,29 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                 }; // end function
                 FlexQueryService.prototype.loadSelectedVertexValueFilters = function (jobId, filterParamsName, newlySelectedValuesGfis, previousValuesGfis, targetValueVertex) {
                     var _this = this;
+                    //invalidate current counts
+                    var markerCountItem = gobii_file_item_1.GobiiFileItem
+                        .build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_process_1.ProcessType.CREATE)
+                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ITEM_COUNT)
+                        .setEntityType(type_entity_1.EntityType.MARKER)
+                        .setItemName("Marker Count")
+                        .setEntity(-1);
+                    // default count items on load
+                    var loadActionMarkerCount = new fileItemActions.LoadFileItemtAction({
+                        gobiiFileItem: markerCountItem,
+                        selectForExtract: true
+                    });
+                    this.store.dispatch(loadActionMarkerCount);
+                    var loadActionSampleCount = new fileItemActions.LoadFileItemtAction({
+                        gobiiFileItem: gobii_file_item_1.GobiiFileItem
+                            .build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_process_1.ProcessType.CREATE)
+                            .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ITEM_COUNT)
+                            .setEntityType(type_entity_1.EntityType.DNA_SAMPLE)
+                            .setItemName("Sample Count")
+                            .setEntity(-1),
+                        selectForExtract: true
+                    });
+                    this.store.dispatch(loadActionSampleCount);
                     previousValuesGfis.forEach(function (gfi) {
                         var loadAction = new fileItemActions.RemoveFromExtractAction(gfi);
                         _this.store.dispatch(loadAction);
