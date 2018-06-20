@@ -213,7 +213,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                         currentVertexId = null; // by definition, we always null out the children
                     } // while we have another filter value
                 }; // end function
-                FlexQueryService.prototype.loadSelectedVertexValueFilters = function (filterParamsName, newlySelectedValuesGfis, previousValuesGfis, targetValueVertex) {
+                FlexQueryService.prototype.loadSelectedVertexValueFilters = function (jobId, filterParamsName, newlySelectedValuesGfis, previousValuesGfis, targetValueVertex) {
                     var _this = this;
                     previousValuesGfis.forEach(function (gfi) {
                         var loadAction = new fileItemActions.RemoveFromExtractAction(gfi);
@@ -227,7 +227,60 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                         _this.store.dispatch(loadAction);
                     });
                     this.filterService.loadFilter(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, filterParamsName, targetValueVertex);
-                };
+                    // now get counts per current filter values
+                    this.store
+                        .select(fromRoot.getFileItemsFilters)
+                        .subscribe(function (filters) {
+                        var vertexFiltersForCount = [targetValueVertex]; // initialize with our target vertex
+                        var targetChildFilterParams = _this.filterParamsColl.getFilter(filterParamsName, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
+                        while (targetChildFilterParams) {
+                            if (targetChildFilterParams.getParentFileItemParams()
+                                && targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams()
+                                && targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams()
+                                && targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
+                                var previousSiblingChildFilterParams = targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams()[0];
+                                var vertexValueFilterFromState = previousSiblingChildFilterParams ? filters[previousSiblingChildFilterParams.getQueryName()] : null;
+                                if (vertexValueFilterFromState) {
+                                    var filterValuesFromState = vertexValueFilterFromState.targetEntityFilterValue;
+                                    vertexFiltersForCount.push(filterValuesFromState);
+                                } // if we found vertex value filter in state
+                                targetChildFilterParams = previousSiblingChildFilterParams;
+                            }
+                            else {
+                                targetChildFilterParams = null;
+                            } // if we have a previous sibling child
+                        } // iterate previous sibling children
+                        vertexFiltersForCount.reverse();
+                        var vertexFilterDTO = new vertex_filter_1.VertexFilterDTO(targetValueVertex, // the server should actually ignore this for a count query
+                        vertexFiltersForCount, [], null, null);
+                        var vertexFilterDtoResponse = null;
+                        _this.dtoRequestServiceVertexFilterDTO.post(new dto_request_item_vertex_filter_1.DtoRequestItemVertexFilterDTO(vertexFilterDTO, jobId, true)).subscribe(function (vertexFilterDto) {
+                            vertexFilterDtoResponse = vertexFilterDto;
+                            var markerCountItem = gobii_file_item_1.GobiiFileItem
+                                .build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_process_1.ProcessType.CREATE)
+                                .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ITEM_COUNT)
+                                .setEntityType(type_entity_1.EntityType.MARKER)
+                                .setItemName("Marker Count")
+                                .setEntity(vertexFilterDtoResponse.markerCount);
+                            // default count items on load
+                            var loadActionMarkerCount = new fileItemActions.LoadFileItemtAction({
+                                gobiiFileItem: markerCountItem,
+                                selectForExtract: true
+                            });
+                            _this.store.dispatch(loadActionMarkerCount);
+                            var loadActionSampleCount = new fileItemActions.LoadFileItemtAction({
+                                gobiiFileItem: gobii_file_item_1.GobiiFileItem
+                                    .build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_process_1.ProcessType.CREATE)
+                                    .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ITEM_COUNT)
+                                    .setEntityType(type_entity_1.EntityType.DNA_SAMPLE)
+                                    .setItemName("Sample Count")
+                                    .setEntity(vertexFilterDtoResponse.sampleCount),
+                                selectForExtract: true
+                            });
+                            _this.store.dispatch(loadActionSampleCount);
+                        });
+                    }).unsubscribe(); // subscribe to filters
+                }; // function
                 FlexQueryService.prototype.loadVertexValues = function (jobId, vertexFileItem, vertexValuesFilterPararamName) {
                     var _this = this;
                     //        return Observable.create(observer => {

@@ -222,7 +222,8 @@ export class FlexQueryService {
 
     } // end function
 
-    public loadSelectedVertexValueFilters(filterParamsName: FilterParamNames,
+    public loadSelectedVertexValueFilters(jobId: string,
+                                          filterParamsName: FilterParamNames,
                                           newlySelectedValuesGfis: GobiiFileItem[],
                                           previousValuesGfis: GobiiFileItem[],
                                           targetValueVertex: Vertex) {
@@ -251,7 +252,92 @@ export class FlexQueryService {
             filterParamsName,
             targetValueVertex);
 
-    }
+
+        // now get counts per current filter values
+        this.store
+            .select(fromRoot.getFileItemsFilters)
+            .subscribe(filters => {
+
+                let vertexFiltersForCount: Vertex[] = [targetValueVertex]; // initialize with our target vertex
+                let targetChildFilterParams: FilterParams = this.filterParamsColl.getFilter(filterParamsName, GobiiExtractFilterType.FLEX_QUERY);
+                while (targetChildFilterParams) {
+
+                    if (targetChildFilterParams.getParentFileItemParams()
+                        && targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams()
+                        && targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams()
+                        && targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
+
+                        let previousSiblingChildFilterParams = targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams()[0];
+                        let vertexValueFilterFromState: PayloadFilter = previousSiblingChildFilterParams ? filters[previousSiblingChildFilterParams.getQueryName()] : null;
+                        if (vertexValueFilterFromState) {
+
+                            let filterValuesFromState: Vertex = vertexValueFilterFromState.targetEntityFilterValue;
+                            vertexFiltersForCount.push(filterValuesFromState);
+
+                        } // if we found vertex value filter in state
+
+                        targetChildFilterParams = previousSiblingChildFilterParams;
+
+                    } else {
+                        targetChildFilterParams = null;
+                    }// if we have a previous sibling child
+                } // iterate previous sibling children
+
+
+                vertexFiltersForCount.reverse();
+                let vertexFilterDTO: VertexFilterDTO = new VertexFilterDTO(
+                    targetValueVertex, // the server should actually ignore this for a count query
+                    vertexFiltersForCount,
+                    [],
+                    null,
+                    null
+                );
+                let vertexFilterDtoResponse: VertexFilterDTO = null;
+                this.dtoRequestServiceVertexFilterDTO.post(new DtoRequestItemVertexFilterDTO(
+                    vertexFilterDTO,
+                    jobId,
+                    true
+                )).subscribe(vertexFilterDto => {
+                    vertexFilterDtoResponse = vertexFilterDto;
+
+
+
+                    let markerCountItem:GobiiFileItem = GobiiFileItem
+                        .build(GobiiExtractFilterType.FLEX_QUERY, ProcessType.CREATE)
+                        .setExtractorItemType(ExtractorItemType.ITEM_COUNT)
+                        .setEntityType(EntityType.MARKER)
+                        .setItemName("Marker Count")
+                        .setEntity(vertexFilterDtoResponse.markerCount);
+                    // default count items on load
+                    let loadActionMarkerCount: fileItemActions.LoadFileItemtAction = new fileItemActions.LoadFileItemtAction(
+                        {
+                            gobiiFileItem: markerCountItem,
+                            selectForExtract: true
+                        }
+                    );
+                    this.store.dispatch(loadActionMarkerCount);
+
+
+                    let loadActionSampleCount: fileItemActions.LoadFileItemtAction = new fileItemActions.LoadFileItemtAction(
+                        {
+                            gobiiFileItem: GobiiFileItem
+                                .build(GobiiExtractFilterType.FLEX_QUERY, ProcessType.CREATE)
+                                .setExtractorItemType(ExtractorItemType.ITEM_COUNT)
+                                .setEntityType(EntityType.DNA_SAMPLE)
+                                .setItemName("Sample Count")
+                                .setEntity(vertexFilterDtoResponse.sampleCount),
+                            selectForExtract: true
+                        }
+                    );
+                    this.store.dispatch(loadActionSampleCount);
+
+
+                });
+
+            }).unsubscribe(); // subscribe to filters
+
+
+    } // function
 
 
     public loadVertexValues(jobId: string, vertexFileItem: GobiiFileItem, vertexValuesFilterPararamName: FilterParamNames) {
@@ -268,7 +354,7 @@ export class FlexQueryService {
                     let filterVertices: Vertex[] = [];
 
                     let filtterChildFilterParams: FilterParams = null;
-                    let targetChild:FilterParams = targetChildFilterParams;
+                    let targetChild: FilterParams = targetChildFilterParams;
                     do {
 
                         if (targetChild.getParentFileItemParams()
@@ -288,9 +374,9 @@ export class FlexQueryService {
                             targetChild = filtterChildFilterParams;
 
                         } else {
-                            filtterChildFilterParams = null; 
+                            filtterChildFilterParams = null;
                         }
-    
+
                     } while (filtterChildFilterParams);
 
                     filterVertices.reverse();
