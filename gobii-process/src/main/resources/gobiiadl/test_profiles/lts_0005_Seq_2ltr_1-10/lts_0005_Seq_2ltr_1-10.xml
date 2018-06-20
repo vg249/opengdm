@@ -41,11 +41,11 @@
                     <DbPKey></DbPKey>
                 </Keys>
                 <Properties>
-                    <PlatformName>SSR</PlatformName>
-                    <PlatformCode>SSR</PlatformCode>
-                    <PlatformDescription>SSR</PlatformDescription>
+                    <PlatformName>Sequencing</PlatformName>
+                    <PlatformCode>Sequencing</PlatformCode>
+                    <PlatformDescription>Sequencing</PlatformDescription>
                     <StatusId>1</StatusId>
-                    <TypeId>SSR</TypeId>
+                    <TypeId>Sequencing</TypeId>
                     <Properties/>
                 </Properties>
             </Platform>
@@ -55,13 +55,13 @@
                 <Keys>
                     <DbPKey></DbPKey>
                     <Fkey entity="Platform" fkproperty="platformId">
-                        <DbPKeySurrogate>SSR</DbPKeySurrogate>
+                        <DbPKeySurrogate>Sequencing</DbPKeySurrogate>
                         <DbPKey></DbPKey>
                     </Fkey>
                 </Keys>
                 <Properties>
-                    <Name>SSR</Name>
-                    <Description>SSR</Description>
+                    <Name>Sequencing</Name>
+                    <Description>Sequencing</Description>
                     <TypeId>1</TypeId>
                     <Status>1</Status>
                     <Props/>
@@ -78,12 +78,12 @@
                         <DbPKey></DbPKey>
                     </Fkey>
                     <Fkey entity="Protocol" fkproperty="protocolId">
-                        <DbPKeySurrogate>SSR</DbPKeySurrogate>
+                        <DbPKeySurrogate>Sequencing</DbPKeySurrogate>
                         <DbPKey></DbPKey>
                     </Fkey>
                 </Keys>
                 <Properties>
-                    <Name>Cornell_SSR</Name>
+                    <Name>Cornell_Sequencing</Name>
                     <Status>1</Status>
                 </Properties>
             </VendorProtocol>
@@ -94,10 +94,10 @@
                     <DbPKey></DbPKey>
                 </Keys>
                 <Properties>
-                    <Name>Test_Genetic</Name>
-                    <Code>Test_Genetic</Code>
-                    <Description>Test_Genetic</Description>
-                    <MapType>genetic</MapType>
+                    <Name>Test_Physical</Name>
+                    <Code>Test_Physical</Code>
+                    <Description>Test_Physical</Description>
+                    <MapType>physical</MapType>
                     <StatusId>1</StatusId>
                     <Properties/>
                 </Properties>
@@ -129,13 +129,13 @@
                         <DbPKey></DbPKey>
                     </Fkey>
                     <Fkey entity="VendorProtocol" fkproperty="vendorProtocolId">
-                        <DbPKeySurrogate>Cornell_SSR</DbPKeySurrogate>
+                        <DbPKeySurrogate>Cornell_Sequencing</DbPKeySurrogate>
                         <DbPKey></DbPKey>
                     </Fkey>
                 </Keys>
                 <Properties>
-                    <ExperimentName>Deb_Proj1_Exp1_SSR_FQ</ExperimentName>
-                    <ExperimentCode>Deb_Proj1_Exp1_SSR_FQ</ExperimentCode>
+                    <ExperimentName>Deb_Proj1_Exp3_rAmpSeq_FQ</ExperimentName>
+                    <ExperimentCode>Deb_Proj1_Exp3_rAmpSeq_FQ</ExperimentCode>
                     <StatusId>1</StatusId>
                 </Properties>
             </Experiment>
@@ -165,22 +165,22 @@
                 <Keys>
                     <DbPKey></DbPKey>
                     <Fkey entity="Experiment" fkproperty="experimentId">
-                        <DbPKeySurrogate>Deb_Proj1_Exp1_SSR_FQ</DbPKeySurrogate>
+                        <DbPKeySurrogate>Deb_Proj1_Exp3_rAmpSeq_FQ</DbPKeySurrogate>
                         <DbPKey></DbPKey>
                     </Fkey>
                     <Fkey entity="Analysis" fkproperty="callingAnalysisId">
                         <DbPKeySurrogate>Test_Calling</DbPKeySurrogate>
-                        <DbPKey>1</DbPKey>
+                        <DbPKey></DbPKey>
                     </Fkey>
                 </Keys>
                 <Properties>
-                    <DatasetName>Deb_Proj1_Exp1_SSR_FQ_codom_1-10_DS1</DatasetName>
-                    <DataTable>Deb_Proj1_Exp1_SSR_FQ_codom_1-10_DS1_datatable</DataTable>
-                    <DataFile>Deb_Proj1_Exp1_SSR_FQ_codom_1-10_DS1_datafile</DataFile>
-                    <QualityTable>Deb_Proj1_Exp1_SSR_FQ_codom_1-10_DS1_qualitytable</QualityTable>
-                    <QualityFile>Deb_Proj1_Exp1_SSR_FQ_codom_1-10_DS1_qualityfile</QualityFile>
+                    <DatasetName>Deb_Proj1_Exp3_rAmpSeq_FQ_2ltr_1-10_DS1</DatasetName>
+                    <DataTable>Deb_Proj1_Exp3_rAmpSeq_FQ_2ltr_1-10_DS1_datatable</DataTable>
+                    <DataFile>Deb_Proj1_Exp3_rAmpSeq_FQ_2ltr_1-10_DS1_datafile</DataFile>
+                    <QualityTable>Deb_Proj1_Exp3_rAmpSeq_FQ_2ltr_1-10_DS1_qualitytable</QualityTable>
+                    <QualityFile>Deb_Proj1_Exp3_rAmpSeq_FQ_2ltr_1-10_DS1_qualityfile</QualityFile>
                     <StatusId>1</StatusId>
-                    <TypeId>CO_DOMINANT_NON_NUCLEOTIDE</TypeId>
+                    <TypeId>NUCLEOTIDE_2_LETTER</TypeId>
                     <AnalysesIds/>
                     <Scores/>
                 </Properties>
@@ -192,8 +192,8 @@
         <Scenario>
             <Name>Deb_Proj1_FlexQuery_marker</Name>
             <Files>
-                <Instruction>data_20180606_143418_daw279.json</Instruction>
-                <Data>Deb_FQ_codom_markermap1-10.txt</Data>
+                <Instruction>data_20180614_163622_daw279.json</Instruction>
+                <Data>Deb_FQ_2ltr_markers_m1-m10.txt</Data>
             </Files>
             <PayloadType>markers</PayloadType>
 
@@ -208,22 +208,22 @@
             </DbFkey>
 
             <DbFkey entity="Experiment">
-                <DbPKeySurrogate>Deb_Proj1_Exp1_SSR_FQ</DbPKeySurrogate>
+                <DbPKeySurrogate>Deb_Proj1_Exp3_rAmpSeq_FQ</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
             <DbFkey entity="Dataset">
-                <DbPKeySurrogate>Deb_Proj1_Exp1_SSR_FQ_codom_1-10_DS1</DbPKeySurrogate>
+                <DbPKeySurrogate>Deb_Proj1_Exp3_rAmpSeq_FQ_2ltr_1-10_DS1</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
             <DbFkey entity="Mapset">
-                <DbPKeySurrogate>Test_Genetic</DbPKeySurrogate>
+                <DbPKeySurrogate>Test_Physical</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
             <DbFkey entity="Platform">
-                <DbPKeySurrogate>SSR</DbPKeySurrogate>
+                <DbPKeySurrogate>Sequencing</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
@@ -232,8 +232,8 @@
         <Scenario>
             <Name>Deb_Proj1_FlexQuery_sample</Name>
             <Files>
-                <Instruction>data_20180606_144253_daw279.json</Instruction>
-                <Data>Deb_FQ_codom_samples_1-10.txt</Data>
+                <Instruction>data_20180614_163714_daw279.json</Instruction>
+                <Data>Deb_FQ_2ltr_samples1-10.txt</Data>
             </Files>
             <PayloadType>samples</PayloadType>
 
@@ -248,22 +248,22 @@
             </DbFkey>
 
             <DbFkey entity="Experiment">
-                <DbPKeySurrogate>Deb_Proj1_Exp1_SSR_FQ</DbPKeySurrogate>
+                <DbPKeySurrogate>Deb_Proj1_Exp3_rAmpSeq_FQ</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
             <DbFkey entity="Dataset">
-                <DbPKeySurrogate>Deb_Proj1_Exp1_SSR_FQ_codom_1-10_DS1</DbPKeySurrogate>
+                <DbPKeySurrogate>Deb_Proj1_Exp3_rAmpSeq_FQ_2ltr_1-10_DS1</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
             <DbFkey entity="Mapset">
-                <DbPKeySurrogate>Test_Genetic</DbPKeySurrogate>
+                <DbPKeySurrogate>Test_Physical</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
             <DbFkey entity="Platform">
-                <DbPKeySurrogate>SSR</DbPKeySurrogate>
+                <DbPKeySurrogate>Sequencing</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
@@ -272,8 +272,8 @@
         <Scenario>
             <Name>Deb_Proj1_FlexQuery_dataset</Name>
             <Files>
-                <Instruction>data_20180606_145659_daw279.json</Instruction>
-                <Data>Deb_FQ_codom_alleledata_m1-m10.txt</Data>
+                <Instruction>data_20180614_165023_daw279.json</Instruction>
+                <Data>Deb_FQ_2ltr_alleles1-10.txt</Data>
             </Files>
             <PayloadType>matrix</PayloadType>
 
@@ -288,22 +288,22 @@
             </DbFkey>
 
             <DbFkey entity="Experiment">
-                <DbPKeySurrogate>Deb_Proj1_Exp1_SSR_FQ</DbPKeySurrogate>
+                <DbPKeySurrogate>Deb_Proj1_Exp3_rAmpSeq_FQ</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
             <DbFkey entity="Dataset">
-                <DbPKeySurrogate>Deb_Proj1_Exp1_SSR_FQ_codom_1-10_DS1</DbPKeySurrogate>
+                <DbPKeySurrogate>Deb_Proj1_Exp3_rAmpSeq_FQ_2ltr_1-10_DS1</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
             <DbFkey entity="Mapset">
-                <DbPKeySurrogate>Test_Genetic</DbPKeySurrogate>
+                <DbPKeySurrogate>Test_Physical</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
             <DbFkey entity="Platform">
-                <DbPKeySurrogate>SSR</DbPKeySurrogate>
+                <DbPKeySurrogate>Sequencing</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
