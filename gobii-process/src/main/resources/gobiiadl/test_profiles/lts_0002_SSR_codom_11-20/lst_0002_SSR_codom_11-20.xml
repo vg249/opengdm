@@ -170,15 +170,15 @@
                     </Fkey>
                     <Fkey entity="Analysis" fkproperty="callingAnalysisId">
                         <DbPKeySurrogate>Test_Calling</DbPKeySurrogate>
-                        <DbPKey>1</DbPKey>
+                        <DbPKey></DbPKey>
                     </Fkey>
                 </Keys>
                 <Properties>
-                    <DatasetName>Deb_Proj1_Exp1_SSR_FQ_codom_1-10_DS1</DatasetName>
-                    <DataTable>Deb_Proj1_Exp1_SSR_FQ_codom_1-10_DS1_datatable</DataTable>
-                    <DataFile>Deb_Proj1_Exp1_SSR_FQ_codom_1-10_DS1_datafile</DataFile>
-                    <QualityTable>Deb_Proj1_Exp1_SSR_FQ_codom_1-10_DS1_qualitytable</QualityTable>
-                    <QualityFile>Deb_Proj1_Exp1_SSR_FQ_codom_1-10_DS1_qualityfile</QualityFile>
+                    <DatasetName>Deb_Proj1_Exp1_SSR_FQ_codom_11-20_DS2</DatasetName>
+                    <DataTable>Deb_Proj1_Exp1_SSR_FQ_codom_11-20_DS2_datatable</DataTable>
+                    <DataFile>Deb_Proj1_Exp1_SSR_FQ_codom_11-20_DS2_datafile</DataFile>
+                    <QualityTable>Deb_Proj1_Exp1_SSR_FQ_codom_11-20_DS2_qualitytable</QualityTable>
+                    <QualityFile>Deb_Proj1_Exp1_SSR_FQ_codom_11-20_DS2_qualityfile</QualityFile>
                     <StatusId>1</StatusId>
                     <TypeId>CO_DOMINANT_NON_NUCLEOTIDE</TypeId>
                     <AnalysesIds/>
@@ -192,8 +192,8 @@
         <Scenario>
             <Name>Deb_Proj1_FlexQuery_marker</Name>
             <Files>
-                <Instruction>data_20180606_143418_daw279.json</Instruction>
-                <Data>Deb_FQ_codom_markermap1-10.txt</Data>
+                <Instruction>data_20180611_143609_daw279.json</Instruction>
+                <Data>Deb_FQ_codom_markermap11-20.txt</Data>
             </Files>
             <PayloadType>markers</PayloadType>
 
@@ -213,7 +213,7 @@
             </DbFkey>
 
             <DbFkey entity="Dataset">
-                <DbPKeySurrogate>Deb_Proj1_Exp1_SSR_FQ_codom_1-10_DS1</DbPKeySurrogate>
+                <DbPKeySurrogate>Deb_Proj1_Exp1_SSR_FQ_codom_11-20_DS2</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
@@ -232,8 +232,8 @@
         <Scenario>
             <Name>Deb_Proj1_FlexQuery_sample</Name>
             <Files>
-                <Instruction>data_20180606_144253_daw279.json</Instruction>
-                <Data>Deb_FQ_codom_samples_1-10.txt</Data>
+                <Instruction>data_20180611_143721_daw279.json</Instruction>
+                <Data>Deb_FQ_codom_samples_11-20.txt</Data>
             </Files>
             <PayloadType>samples</PayloadType>
 
@@ -253,7 +253,7 @@
             </DbFkey>
 
             <DbFkey entity="Dataset">
-                <DbPKeySurrogate>Deb_Proj1_Exp1_SSR_FQ_codom_1-10_DS1</DbPKeySurrogate>
+                <DbPKeySurrogate>Deb_Proj1_Exp1_SSR_FQ_codom_11-20_DS2</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
@@ -272,8 +272,8 @@
         <Scenario>
             <Name>Deb_Proj1_FlexQuery_dataset</Name>
             <Files>
-                <Instruction>data_20180606_145659_daw279.json</Instruction>
-                <Data>Deb_FQ_codom_alleledata_m1-m10.txt</Data>
+                <Instruction>data_20180611_145834_daw279.json</Instruction>
+                <Data>Deb_FQ_codom_alleledata_m11-m20.txt</Data>
             </Files>
             <PayloadType>matrix</PayloadType>
 
@@ -293,7 +293,7 @@
             </DbFkey>
 
             <DbFkey entity="Dataset">
-                <DbPKeySurrogate>Deb_Proj1_Exp1_SSR_FQ_codom_1-10_DS1</DbPKeySurrogate>
+                <DbPKeySurrogate>Deb_Proj1_Exp1_SSR_FQ_codom_11-20_DS2</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
