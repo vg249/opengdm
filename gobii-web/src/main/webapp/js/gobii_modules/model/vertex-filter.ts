@@ -4,7 +4,7 @@ import {Vertex} from "./vertex";
 export class VertexFilterDTO {
 
     constructor(public destinationVertex: Vertex,
-                public vertices: Vertex[],
+                public filterVertices: Vertex[],
                 public vertexValues: NameId[],
                 public markerCount: number,
                 public sampleCount: number) {
@@ -14,7 +14,7 @@ export class VertexFilterDTO {
 
         let returnVal: VertexFilterDTO = new VertexFilterDTO(
             json.destinationVertexDTO,
-            json.vertices,
+            json.filterVertices,
             json.vertexValues,
             json.markerCount,
             json.sampleCount
@@ -28,7 +28,7 @@ export class VertexFilterDTO {
         let returnVal: any = {};
 
         returnVal.destinationVertexDTO = this.destinationVertex;
-        returnVal.vertices = this.vertices;
+        returnVal.filterVertices = this.filterVertices;
         returnVal.vertexValues = this.vertexValues;
         returnVal.markerCount = this.markerCount;
         returnVal.sampleCount = this.sampleCount;

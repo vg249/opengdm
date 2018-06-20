@@ -1,7 +1,12 @@
 package org.gobiiproject.gobiimodel.dto.entity.flex;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.VertexNameType;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
+import org.gobiiproject.gobiimodel.dto.entity.flex.vertexcolumns.VertexColumns;
+import org.gobiiproject.gobiimodel.dto.entity.flex.vertexcolumns.VertexColumnsNameIdGeneric;
+import org.gobiiproject.gobiimodel.dto.entity.flex.vertexcolumns.VertexColumnsPrincipleInvestigator;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiEntitySubType;
 import org.gobiiproject.gobiimodel.types.GobiiVertexType;
@@ -12,13 +17,15 @@ import java.util.List;
 /**
  * Created by Phil on 4/8/2016.
  */
-public class VertexDTO extends DTOBase{
+public class VertexDTO extends DTOBase {
 
 
-    public VertexDTO() {}
+    public VertexDTO() {
+    }
 
 
     public VertexDTO(Integer vertexId,
+                     VertexNameType vertexNameType,
                      GobiiVertexType gobiiVertexType,
                      String vertexName,
                      GobiiEntityNameType entityType,
@@ -26,6 +33,7 @@ public class VertexDTO extends DTOBase{
                      CvGroup cvGroup,
                      String cvTerm) {
         this.vertexId = vertexId;
+        this.vertexNameType = vertexNameType;
         this.gobiiVertexType = gobiiVertexType;
         this.vertexName = vertexName;
         this.entityType = entityType;
@@ -46,7 +54,8 @@ public class VertexDTO extends DTOBase{
 
 
     private Integer vertexId = 0;
-    private GobiiVertexType gobiiVertexType  = GobiiVertexType.UNKNOWN;
+    private VertexNameType vertexNameType;
+    private GobiiVertexType gobiiVertexType = GobiiVertexType.UNKNOWN;
     private String vertexName;
     private List<Integer> filterVals = new ArrayList<>();
     private GobiiEntityNameType entityType;
@@ -61,6 +70,14 @@ public class VertexDTO extends DTOBase{
 
     public void setVertexId(Integer vertexId) {
         this.vertexId = vertexId;
+    }
+
+    public VertexNameType getVertexNameType() {
+        return vertexNameType;
+    }
+
+    public void setVertexNameType(VertexNameType vertexNameType) {
+        this.vertexNameType = vertexNameType;
     }
 
     public GobiiVertexType getGobiiVertexType() {
@@ -117,5 +134,114 @@ public class VertexDTO extends DTOBase{
 
     public void setCvTerm(String cvTerm) {
         this.cvTerm = cvTerm;
+    }
+
+    @JsonIgnore
+    public VertexColumns getVertexColumns() throws Exception{
+
+        VertexColumns returnVal;
+
+        switch (this.vertexNameType) {
+            case VERTEX_TYPE_PROJECT:
+                returnVal = new VertexColumnsNameIdGeneric();
+                break;
+
+            case VERTEX_TYPE_SAMPLING_DATE:
+                returnVal = new VertexColumnsNameIdGeneric();
+                break;
+
+            case VERTEX_TYPE_GENOTYPING_PURPOSE:
+                returnVal = new VertexColumnsNameIdGeneric();
+                break;
+
+            case VERTEX_TYPE_DIVISION:
+                returnVal = new VertexColumnsNameIdGeneric();
+                break;
+
+            case VERTEX_TYPE_TRIAL_NAME:
+                returnVal = new VertexColumnsNameIdGeneric();
+                break;
+
+            case VERTEX_TYPE_EXPERIMENT:
+                returnVal = new VertexColumnsNameIdGeneric();
+                break;
+
+            case VERTEX_TYPE_DATASET:
+                returnVal = new VertexColumnsNameIdGeneric();
+                break;
+
+            case VERTEX_TYPE_DATASET_TYPE:
+                returnVal = new VertexColumnsNameIdGeneric();
+                break;
+
+            case VERTEX_TYPE_ANALYSIS:
+                returnVal = new VertexColumnsNameIdGeneric();
+                break;
+
+            case VERTEX_TYPE_ANALYSIS_TYPE:
+                returnVal = new VertexColumnsNameIdGeneric();
+                break;
+
+            case VERTEX_TYPE_REFERENCE_SAMPLE:
+                returnVal = new VertexColumnsNameIdGeneric();
+                break;
+
+            case VERTEX_TYPE_PLATFORM:
+                returnVal = new VertexColumnsNameIdGeneric();
+                break;
+
+            case VERTEX_TYPE_VENDOR:
+                returnVal = new VertexColumnsNameIdGeneric();
+                break;
+
+            case VERTEX_TYPE_PROTOCOL:
+                returnVal = new VertexColumnsNameIdGeneric();
+                break;
+
+            case VERTEX_TYPE_VENDOR_PROTOCOL:
+                returnVal = new VertexColumnsNameIdGeneric();
+                break;
+
+            case VERTEX_TYPE_MAPSET:
+                returnVal = new VertexColumnsNameIdGeneric();
+                break;
+
+            case VERTEX_TYPE_MAPSET_TYPE:
+                returnVal = new VertexColumnsNameIdGeneric();
+                break;
+
+            case VERTEX_TYPE_LINKAGE_GROUP:
+                returnVal = new VertexColumnsNameIdGeneric();
+                break;
+
+            case VERTEX_TYPE_GERMPLAM_SUBSPECIES:
+                returnVal = new VertexColumnsNameIdGeneric();
+                break;
+
+            case VERTEX_TYPE_GERMPLASM_SPECIES:
+                returnVal = new VertexColumnsNameIdGeneric();
+                break;
+
+            case VERTEX_TYPE_GERMPLASM_TYPE:
+                returnVal = new VertexColumnsNameIdGeneric();
+                break;
+
+            case VERTEX_TYPE_PRINCIPLE_INVESTIGATOR:
+                returnVal = new VertexColumnsPrincipleInvestigator();
+                break;
+
+            case VERTEX_TYPE_MARKER:
+                returnVal = new VertexColumnsNameIdGeneric();
+                break;
+
+            case VERTEX_TYPE_DNASAMPLE:
+                returnVal = new VertexColumnsNameIdGeneric();
+                break;
+
+            default:
+                throw new Exception("There is no columns object for vertex : " + this.vertexNameType.getVertexName() );
+        }
+
+        return returnVal;
     }
 }
