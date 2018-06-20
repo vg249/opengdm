@@ -20,13 +20,13 @@ public class FlexQueryServiceImpl implements FlexQueryService {
     }
 
     @Override
-    public VertexFilterDTO getVerticesValues(String jobId, VertexFilterDTO vertexFilterDTO) throws GobiiDomainException {
-        return this.dtoMapFlexQuery.getVertexValues(jobId, vertexFilterDTO);
+    public VertexFilterDTO getVerticesValues(String cropType, String jobId, VertexFilterDTO vertexFilterDTO) throws GobiiDomainException {
+        return this.dtoMapFlexQuery.getVertexValues(cropType, jobId, vertexFilterDTO);
     }
 
     @Override
-    public VertexFilterDTO getVertexValuesCounts(String jobId, VertexFilterDTO vertexFilterDTO) throws GobiiDomainException {
-        return this.dtoMapFlexQuery.getVertexValuesCounts(jobId, vertexFilterDTO);
+    public VertexFilterDTO getVertexValuesCounts(String cropType, String jobId, VertexFilterDTO vertexFilterDTO) throws GobiiDomainException {
+        return this.dtoMapFlexQuery.getVertexValuesCounts(cropType, jobId, vertexFilterDTO);
     }
 
 

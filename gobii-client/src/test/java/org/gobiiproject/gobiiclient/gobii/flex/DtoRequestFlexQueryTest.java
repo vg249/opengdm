@@ -6,18 +6,27 @@
 package org.gobiiproject.gobiiclient.gobii.flex;
 
 
+import org.apache.http.HttpStatus;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
+import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
+import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
+import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestAnalysisTest;
+import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestDataSetTest;
+import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestProtocolTest;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.cvnames.VertexNameType;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexFilterDTO;
+import org.gobiiproject.gobiimodel.dto.entity.flex.Vertices;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiEntitySubType;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiVertexType;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
@@ -26,21 +35,67 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class DtoRequestFlexTest {
+public class DtoRequestFlexQueryTest {
 
+    private static String FQ_DUMMY_SCRIPT_NAME = "gobii_gql_placeholder.py";
 
     @BeforeClass
     public static void setUpClass() throws Exception {
+
         Assert.assertTrue(GobiiClientContextAuth.authenticate());
+
+//        String fileNamePath = "flex_query/" + FQ_DUMMY_SCRIPT_NAME;
+//        URL resource = Thread.currentThread().getContextClassLoader().getResource(fileNamePath);
+//
+//        Assert.assertNotNull("Unable to get resource for file " + fileNamePath,
+//                resource);
+//
+//        File dummyScript = new File(resource.getFile());
+//
+//        RestUri restUriUpload = GobiiClientContext.getInstance(null, false)
+//                .getUriFactory()
+//                .file(GobiiFileProcessDir.CODE_EXTRACTORS_POSTGRES_MDE, FQ_DUMMY_SCRIPT_NAME);
+//
+//        HttpMethodResult httpMethodResultUpload = GobiiClientContext.getInstance(null, false)
+//                .getHttp()
+//                .upload(restUriUpload, dummyScript);
+//        Assert.assertTrue("Expected "
+//                        + HttpStatus.SC_OK
+//                        + " got: "
+//                        + httpMethodResultUpload.getResponseCode()
+//                        + ": "
+//                        + httpMethodResultUpload.getReasonPhrase() + ": " + httpMethodResultUpload.getPlainPayload(),
+//                httpMethodResultUpload.getResponseCode() == HttpStatus.SC_OK);
+
     }
 
     //
     @AfterClass
     public static void tearDownUpClass() throws Exception {
+
+//        RestUri restUriDelete = GobiiClientContext.getInstance(null, false)
+//                .getUriFactory()
+//                .file(GobiiFileProcessDir.CODE_EXTRACTORS_POSTGRES_MDE, FQ_DUMMY_SCRIPT_NAME);
+//
+//        HttpMethodResult httpMethodResultDelete = GobiiClientContext.getInstance(null, false)
+//                .getHttp()
+//                .delete(restUriDelete);
+//        Assert.assertTrue("Expected "
+//                        + HttpStatus.SC_OK
+//                        + " got: "
+//                        + httpMethodResultDelete.getResponseCode()
+//                        + ": "
+//                        + httpMethodResultDelete.getReasonPhrase() + ": " + httpMethodResultDelete.getPlainPayload(),
+//                httpMethodResultDelete.getResponseCode() == HttpStatus.SC_OK);
+//
+
         Assert.assertTrue(GobiiClientContextAuth.deAuthenticate());
+
     }
 
 
@@ -52,6 +107,10 @@ public class DtoRequestFlexTest {
 
     @Test
     public void testGetVertices() throws Exception {
+
+        URL firstTest = getClass().getClassLoader().getResource("confidentiality.txt");
+        URL test = DtoRequestFlexQueryTest.class.getResource("confidentiality.txt");
+
 
         RestUri restUriVertices = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -93,20 +152,35 @@ public class DtoRequestFlexTest {
                 .addUriParam("jobId", jobId)
                 .appendSegment(GobiiServiceRequestId.URL_VALUES);
 
+        
 
+        // Add destination vertex
         GobiiEntityNameType gobiiEntityNameTypeToTest = GobiiEntityNameType.PROJECT;
         VertexFilterDTO vertexFilterDTO = new VertexFilterDTO();
         vertexFilterDTO.setDestinationVertexDTO(
-                new VertexDTO(
-                        0,
-                        GobiiVertexType.ENTITY,
-                        null,
-                        gobiiEntityNameTypeToTest,
-                        GobiiEntitySubType.UNKNOWN,
-                        CvGroup.UNKNOWN,
-                        null
-                )
+                Vertices.getByVertexName(VertexNameType.VERTEX_TYPE_PROJECT)
         );
+
+        //Add filter 1 vertex: 
+        VertexDTO analysisVertex = Vertices.getByVertexName(VertexNameType.VERTEX_TYPE_ANALYSIS);
+        analysisVertex.setFilterVals(
+                (new GlobalPkColl<DtoCrudRequestAnalysisTest>()).getPkVals(DtoCrudRequestAnalysisTest.class, GobiiEntityNameType.ANALYSIS, 3)
+        );
+        vertexFilterDTO.getFilterVertices().add(analysisVertex);
+
+        //Add filter 2 vertex:
+        VertexDTO datasetVertex = Vertices.getByVertexName(VertexNameType.VERTEX_TYPE_DATASET);
+        datasetVertex.setFilterVals(
+                (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getPkVals(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET, 5)
+        );
+        vertexFilterDTO.getFilterVertices().add(datasetVertex);
+
+        //Add filter 3 vertex:
+        VertexDTO protocolVertex = Vertices.getByVertexName(VertexNameType.VERTEX_TYPE_PROTOCOL);
+        protocolVertex.setFilterVals(
+                (new GlobalPkColl<DtoCrudRequestProtocolTest>()).getPkVals(DtoCrudRequestProtocolTest.class, GobiiEntityNameType.PROTOCOL, 4)
+        );
+        vertexFilterDTO.getFilterVertices().add(protocolVertex);
 
         GobiiEnvelopeRestResource<VertexFilterDTO> gobiiEnvelopeRestResourceContacts = new GobiiEnvelopeRestResource<>(restUriVerticesValues);
         PayloadEnvelope<VertexFilterDTO> resultEnvelopeVertexFilter = gobiiEnvelopeRestResourceContacts.post(VertexFilterDTO.class,
@@ -142,7 +216,7 @@ public class DtoRequestFlexTest {
 
 
     @Test
-    public void testGetVerticesMarkerSampleCount() throws Exception {
+    public void testGetMarkerSampleCount() throws Exception {
 
         String jobId = DateUtils.makeDateIdString() + "_test";
         RestUri restUriVerticesValuesCount = GobiiClientContext.getInstance(null, false)
@@ -158,6 +232,7 @@ public class DtoRequestFlexTest {
         VertexDTO destinationVertexDTO =
                 new VertexDTO(
                         0,
+                        VertexNameType.VERTEX_TYPE_PROJECT,
                         GobiiVertexType.ENTITY,
                         null,
                         gobiiDestinationEntityNameTypeToTest,
@@ -174,6 +249,7 @@ public class DtoRequestFlexTest {
         VertexDTO filterF1VertexDTO =
                 new VertexDTO(
                         0,
+                        VertexNameType.VERTEX_TYPE_PRINCIPLE_INVESTIGATOR,
                         GobiiVertexType.ENTITY,
                         null,
                         gobiiFilterEntityTypeF1,
@@ -187,6 +263,7 @@ public class DtoRequestFlexTest {
         VertexDTO filterF2VertexDTO =
                 new VertexDTO(
                         0,
+                        VertexNameType.VERTEX_TYPE_DATASET,
                         GobiiVertexType.ENTITY,
                         null,
                         gobiiFilterEntityTypeF2,

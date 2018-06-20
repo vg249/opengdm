@@ -152,6 +152,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                  * @param {string} eventedCvTerm
                  */
                 FlexQueryService.prototype.loadSelectedVertexFilter = function (eventedFilterParamsName, eventedVertexId, eventedEntityType, eventedEntitySubType, eventedCvGroup, eventedCvTerm) {
+                    this.invalidateMarkerSampleCount(true);
                     var currentVertexId = eventedVertexId;
                     var currentVertexFilterParams = this.filterParamsColl.getFilter(eventedFilterParamsName, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
                     // the filterParams passed in should exist
@@ -213,103 +214,161 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                         currentVertexId = null; // by definition, we always null out the children
                     } // while we have another filter value
                 }; // end function
-                FlexQueryService.prototype.loadSelectedVertexValueFilters = function (filterParamsName, currentValuesGfis, previousValuesGfis) {
+                FlexQueryService.prototype.loadSelectedVertexValueFilters = function (jobId, filterParamsName, newlySelectedValuesGfis, previousValuesGfis, targetValueVertex) {
+                    //invalidate current counts
                     var _this = this;
-                    var vertexValues = currentValuesGfis.map(function (gfi) { return gfi.getItemId(); });
-                    var vertexValueIdsCsv = null;
-                    var filterParams = this.filterParamsColl.getFilter(filterParamsName, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
-                    if (filterParams && vertexValues && vertexValues.length > 0) {
-                        vertexValueIdsCsv = "";
-                        vertexValues.forEach(function (vv) { return vertexValueIdsCsv += vv + ","; });
-                    } // if we have new vertex values
+                    this.invalidateMarkerSampleCount(false);
                     previousValuesGfis.forEach(function (gfi) {
                         var loadAction = new fileItemActions.RemoveFromExtractAction(gfi);
                         _this.store.dispatch(loadAction);
                     });
-                    currentValuesGfis.forEach(function (gfi) {
+                    newlySelectedValuesGfis.forEach(function (gfi) {
                         var loadAction = new fileItemActions.LoadFileItemtAction({
                             gobiiFileItem: gfi,
                             selectForExtract: true
                         });
                         _this.store.dispatch(loadAction);
                     });
-                    this.filterService.loadFilter(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, filterParamsName, vertexValueIdsCsv);
-                    // let gobiiTreeNodes: GobiiTreeNode[] = currentValuesGfis
-                    //     .map(gfi => this.treeStructureService.makeTreeNodeFromFileItem(gfi));
-                    //
-                    // gobiiTreeNodes.forEach(gtn => {
-                    //     gtn.setSequenceNum(filterParams.getSequenceNum());
-                    //     gtn.setItemType(ExtractorItemType.VERTEX_VALUE);
-                    //     // gtn.setItemType(ExtractorItemType.VERTEX); // the three node we're adding has to be of type VERTEX
-                    //     //                                            // in order to added to the VERTEX nodes
-                    //     //                                            // this is probably bad
-                    // });
-                    //
-                    // gobiiTreeNodes.forEach(tn => {
-                    //     this.store.dispatch(new treeNodeActions.PlaceTreeNodeAction(tn));
-                    // });
-                };
-                FlexQueryService.prototype.loadVertexValues = function (jobId, vertexFileItem, filterParamName) {
+                    this.filterService.loadFilter(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, filterParamsName, targetValueVertex);
+                    // now get counts per current filter values
+                    this.store
+                        .select(fromRoot.getFileItemsFilters)
+                        .subscribe(function (filters) {
+                        var vertexFiltersForCount = [targetValueVertex]; // initialize with our target vertex
+                        var targetChildFilterParams = _this.filterParamsColl.getFilter(filterParamsName, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
+                        while (targetChildFilterParams) {
+                            if (targetChildFilterParams.getParentFileItemParams()
+                                && targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams()
+                                && targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams()
+                                && targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
+                                var previousSiblingChildFilterParams = targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams()[0];
+                                var vertexValueFilterFromState = previousSiblingChildFilterParams ? filters[previousSiblingChildFilterParams.getQueryName()] : null;
+                                if (vertexValueFilterFromState) {
+                                    var filterValuesFromState = vertexValueFilterFromState.targetEntityFilterValue;
+                                    vertexFiltersForCount.push(filterValuesFromState);
+                                } // if we found vertex value filter in state
+                                targetChildFilterParams = previousSiblingChildFilterParams;
+                            }
+                            else {
+                                targetChildFilterParams = null;
+                            } // if we have a previous sibling child
+                        } // iterate previous sibling children
+                        vertexFiltersForCount.reverse();
+                        var vertexFilterDTO = new vertex_filter_1.VertexFilterDTO(targetValueVertex, // the server should actually ignore this for a count query
+                        vertexFiltersForCount, [], null, null);
+                        var vertexFilterDtoResponse = null;
+                        _this.dtoRequestServiceVertexFilterDTO.post(new dto_request_item_vertex_filter_1.DtoRequestItemVertexFilterDTO(vertexFilterDTO, jobId, true)).subscribe(function (vertexFilterDto) {
+                            vertexFilterDtoResponse = vertexFilterDto;
+                            var markerCountItem = gobii_file_item_1.GobiiFileItem
+                                .build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_process_1.ProcessType.CREATE)
+                                .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ITEM_COUNT)
+                                .setEntityType(type_entity_1.EntityType.MARKER)
+                                .setItemName("Marker Count")
+                                .setEntity(vertexFilterDtoResponse.markerCount);
+                            // default count items on load
+                            var loadActionMarkerCount = new fileItemActions.LoadFileItemtAction({
+                                gobiiFileItem: markerCountItem,
+                                selectForExtract: true
+                            });
+                            _this.store.dispatch(loadActionMarkerCount);
+                            var loadActionSampleCount = new fileItemActions.LoadFileItemtAction({
+                                gobiiFileItem: gobii_file_item_1.GobiiFileItem
+                                    .build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_process_1.ProcessType.CREATE)
+                                    .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ITEM_COUNT)
+                                    .setEntityType(type_entity_1.EntityType.DNA_SAMPLE)
+                                    .setItemName("Sample Count")
+                                    .setEntity(vertexFilterDtoResponse.sampleCount),
+                                selectForExtract: true
+                            });
+                            _this.store.dispatch(loadActionSampleCount);
+                        });
+                    }).unsubscribe(); // subscribe to filters
+                }; // function
+                FlexQueryService.prototype.loadVertexValues = function (jobId, vertexFileItem, vertexValuesFilterPararamName) {
                     var _this = this;
                     //        return Observable.create(observer => {
-                    var filterParams = this.filterParamsColl.getFilter(filterParamName, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
+                    var targetChildFilterParams = this.filterParamsColl.getFilter(vertexValuesFilterPararamName, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
                     if (vertexFileItem.getNameIdLabelType() == name_id_label_type_1.NameIdLabelType.UNKNOWN) {
-                        var targetVertex_1 = vertexFileItem.getEntity();
-                        var vertexFilterDTO = new vertex_filter_1.VertexFilterDTO(targetVertex_1, [], [], null, null);
-                        var vertexFilterDtoResponse_1 = null;
-                        this.dtoRequestServiceVertexFilterDTO.post(new dto_request_item_vertex_filter_1.DtoRequestItemVertexFilterDTO(vertexFilterDTO, jobId, false)).subscribe(function (vertexFilterDto) {
-                            vertexFilterDtoResponse_1 = vertexFilterDto;
-                            // note that we are setting the entity type, sub type, cvgroup, and cvterm
-                            // based on our request -- on the target vertex. In theory, the server could
-                            // be responding with NameId items that do not fit this. But this is the
-                            // way we handle other types of requests, basing our entity types and so forth
-                            // largely on the content of the request request.
-                            var vertexFileItems = [];
-                            vertexFilterDto.vertexValues.forEach(function (item) {
-                                var currentFileItem = gobii_file_item_1.GobiiFileItem.build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_process_1.ProcessType.CREATE)
-                                    .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE)
-                                    .setEntityType(targetVertex_1.entityType)
-                                    .setEntitySubType(targetVertex_1.entitySubType)
-                                    .setCvGroup(targetVertex_1.cvGroup)
-                                    .setCvTerm(targetVertex_1.cvTerm)
-                                    .setItemId(item.id)
-                                    .setItemName(item.name)
-                                    .setRequired(false)
-                                    .setSequenceNum(filterParams.getSequenceNum());
-                                //.setParentItemId(filterValue)
-                                //.setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())
-                                //.withRelatedEntity(entityRelation);
-                                vertexFileItems.push(currentFileItem);
+                        this.store
+                            .select(fromRoot.getFileItemsFilters)
+                            .subscribe(function (filters) {
+                            var filterVertices = [];
+                            var filtterChildFilterParams = null;
+                            var targetChild = targetChildFilterParams;
+                            do {
+                                if (targetChild.getParentFileItemParams()
+                                    && targetChild.getParentFileItemParams().getPreviousSiblingFileItemParams()
+                                    && targetChild.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams()
+                                    && targetChild.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
+                                    filtterChildFilterParams = targetChild.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams()[0];
+                                    var vertexValueFilterFromState = filtterChildFilterParams ? filters[filtterChildFilterParams.getQueryName()] : null;
+                                    if (vertexValueFilterFromState) {
+                                        var filterValuesFromState = vertexValueFilterFromState.targetEntityFilterValue;
+                                        filterVertices.push(filterValuesFromState);
+                                    } // if we found vertex value filter in state
+                                    targetChild = filtterChildFilterParams;
+                                }
+                                else {
+                                    filtterChildFilterParams = null;
+                                }
+                            } while (filtterChildFilterParams);
+                            filterVertices.reverse();
+                            var targetVertex = vertexFileItem.getEntity();
+                            var vertexFilterDTO = new vertex_filter_1.VertexFilterDTO(targetVertex, filterVertices, [], null, null);
+                            var vertexFilterDtoResponse = null;
+                            _this.dtoRequestServiceVertexFilterDTO.post(new dto_request_item_vertex_filter_1.DtoRequestItemVertexFilterDTO(vertexFilterDTO, jobId, false)).subscribe(function (vertexFilterDto) {
+                                vertexFilterDtoResponse = vertexFilterDto;
+                                // note that we are setting the entity type, sub type, cvgroup, and cvterm
+                                // based on our request -- on the target vertex. In theory, the server could
+                                // be responding with NameId items that do not fit this. But this is the
+                                // way we handle other types of requests, basing our entity types and so forth
+                                // largely on the content of the request request.
+                                var vertexFileItems = [];
+                                vertexFilterDto.vertexValues.forEach(function (item) {
+                                    var currentFileItem = gobii_file_item_1.GobiiFileItem.build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_process_1.ProcessType.CREATE)
+                                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE)
+                                        .setEntityType(targetVertex.entityType)
+                                        .setEntitySubType(targetVertex.entitySubType)
+                                        .setCvGroup(targetVertex.cvGroup)
+                                        .setCvTerm(targetVertex.cvTerm)
+                                        .setItemId(item.id)
+                                        .setItemName(item.name)
+                                        .setRequired(false)
+                                        .setSequenceNum(targetChildFilterParams.getSequenceNum());
+                                    //.setParentItemId(filterValue)
+                                    //.setIsExtractCriterion(filterParamsToLoad.getIsExtractCriterion())
+                                    //.withRelatedEntity(entityRelation);
+                                    vertexFileItems.push(currentFileItem);
+                                });
+                                // for flex query the "filter value" is not an actual id but a new entity type
+                                // our selectors "just know" to look for the filter's target entity type as the thing to filter on
+                                var targetCompoundUniqueId = targetChildFilterParams.getTargetEntityUniqueId();
+                                targetCompoundUniqueId.setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE);
+                                targetCompoundUniqueId.setEntityType(targetVertex.entityType);
+                                var loadAction = new fileItemActions.LoadFileItemListWithFilterAction({
+                                    gobiiFileItems: vertexFileItems,
+                                    filterId: targetChildFilterParams.getQueryName(),
+                                    filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, targetCompoundUniqueId, targetChildFilterParams.getRelatedEntityUniqueId(), null, null, null, null)
+                                });
+                                _this.store.dispatch(loadAction);
+                                //observer.next(vertexFileItems);
+                                //observer.complete();
+                            }, function (headerResponse) {
+                                headerResponse.status.statusMessages.forEach(function (statusMessage) {
+                                    _this.store.dispatch(new historyAction.AddStatusAction(statusMessage));
+                                });
+                                //observer.complete();
                             });
-                            // for flex query the "filter value" is not an actual id but a new entity type
-                            // our selectors "just know" to look for the filter's target entity type as the thing to filter on
-                            var targetCompoundUniqueId = filterParams.getTargetEntityUniqueId();
-                            targetCompoundUniqueId.setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE);
-                            targetCompoundUniqueId.setEntityType(targetVertex_1.entityType);
-                            var loadAction = new fileItemActions.LoadFileItemListWithFilterAction({
-                                gobiiFileItems: vertexFileItems,
-                                filterId: filterParams.getQueryName(),
-                                filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, targetCompoundUniqueId, filterParams.getRelatedEntityUniqueId(), null, null, null, null)
-                            });
-                            _this.store.dispatch(loadAction);
-                            //observer.next(vertexFileItems);
-                            //observer.complete();
-                        }, function (headerResponse) {
-                            headerResponse.status.statusMessages.forEach(function (statusMessage) {
-                                _this.store.dispatch(new historyAction.AddStatusAction(statusMessage));
-                            });
-                            //observer.complete();
-                        });
+                        }).unsubscribe();
                     }
-                    else {
+                    else
                         this.store.dispatch(new fileItemActions.LoadFilterAction({
-                            filterId: filterParamName,
+                            filterId: vertexValuesFilterPararamName,
                             filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, new gobii_file_item_compound_id_1.GobiiFileItemCompoundId(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE, type_entity_1.EntityType.UNKNOWN, // effectively "null out" the selected entity type
                             type_entity_1.EntitySubType.UNKNOWN, cv_group_1.CvGroup.UNKNOWN, cv_group_1.getCvGroupName(cv_group_1.CvGroup.UNKNOWN)), null, null, null, null, null)
                         }));
-                    } // if-else file item type was label
-                    //} );//return observer create
-                };
+                }; // if-else file item type was label
+                //} );//return observer create
                 FlexQueryService.prototype.deSelectVertexValueFilters = function (compoundUniquueId) {
                     var _this = this;
                     this.store.select(fromRoot.getSelectedFileItems)
@@ -321,6 +380,30 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                         });
                     }).unsubscribe();
                 };
+                FlexQueryService.prototype.invalidateMarkerSampleCount = function (setToZero) {
+                    var markerCountItem = gobii_file_item_1.GobiiFileItem
+                        .build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_process_1.ProcessType.CREATE)
+                        .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ITEM_COUNT)
+                        .setEntityType(type_entity_1.EntityType.MARKER)
+                        .setItemName("Marker Count")
+                        .setEntity(setToZero ? 0 : -1);
+                    // default count items on load
+                    var loadActionMarkerCount = new fileItemActions.LoadFileItemtAction({
+                        gobiiFileItem: markerCountItem,
+                        selectForExtract: true
+                    });
+                    this.store.dispatch(loadActionMarkerCount);
+                    var loadActionSampleCount = new fileItemActions.LoadFileItemtAction({
+                        gobiiFileItem: gobii_file_item_1.GobiiFileItem
+                            .build(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, type_process_1.ProcessType.CREATE)
+                            .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ITEM_COUNT)
+                            .setEntityType(type_entity_1.EntityType.DNA_SAMPLE)
+                            .setItemName("Sample Count")
+                            .setEntity(setToZero ? 0 : -1),
+                        selectForExtract: true
+                    });
+                    this.store.dispatch(loadActionSampleCount);
+                }; // function: invalidate marker sample count
                 FlexQueryService = __decorate([
                     core_1.Injectable(),
                     __metadata("design:paramtypes", [store_1.Store,

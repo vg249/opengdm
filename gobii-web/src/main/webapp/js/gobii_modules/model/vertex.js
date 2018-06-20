@@ -6,8 +6,9 @@ System.register([], function (exports_1, context_1) {
         setters: [],
         execute: function () {
             Vertex = (function () {
-                function Vertex(vertexId, gobiiVertexType, vertexName, entityType, entitySubType, cvGroup, cvTerm, filterVals) {
+                function Vertex(vertexId, vertexNameType, gobiiVertexType, vertexName, entityType, entitySubType, cvGroup, cvTerm, filterVals) {
                     this.vertexId = vertexId;
+                    this.vertexNameType = vertexNameType;
                     this.gobiiVertexType = gobiiVertexType;
                     this.vertexName = vertexName;
                     this.entityType = entityType;
@@ -16,6 +17,9 @@ System.register([], function (exports_1, context_1) {
                     this.cvTerm = cvTerm;
                     this.filterVals = filterVals;
                 }
+                Vertex.fromVertex = function (vertexToCopy) {
+                    return new Vertex(vertexToCopy.vertexId, vertexToCopy.vertexNameType, vertexToCopy.gobiiVertexType, vertexToCopy.vertexName, vertexToCopy.entityType, vertexToCopy.entitySubType, vertexToCopy.cvGroup, vertexToCopy.cvTerm, vertexToCopy.filterVals);
+                };
                 return Vertex;
             }());
             exports_1("Vertex", Vertex);
