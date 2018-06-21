@@ -18,6 +18,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class GqlText {
@@ -97,30 +98,28 @@ public class GqlText {
 
         // filter path
         commandLineBuilder.append(" {");
-        for (VertexDTO currentVertex : filterPath) {
+        Iterator<VertexDTO> filterPathIterator = filterPath.iterator();
+        while (filterPathIterator.hasNext()) {
 
-            commandLineBuilder.append(currentVertex.getVertexNameType().getVertexName());
-            commandLineBuilder.append(":");
-            commandLineBuilder.append("[");
-            for (Integer currentFilterVal : currentVertex.getFilterVals()) {
-                commandLineBuilder.append(currentFilterVal + ",");
+            commandLineBuilder.append(filterPathIterator.next().toFIlter());
+            if(filterPathIterator.hasNext()) {
+                commandLineBuilder.append(",");
             }
-            removeFinalCommaDamnIt(commandLineBuilder);
-            commandLineBuilder.append("],");
         }
-        removeFinalCommaDamnIt(commandLineBuilder);
         commandLineBuilder.append("} ");
 
 
         commandLineBuilder.append(" " + destinationVertex.getVertexNameType().getVertexName() + " [");
-        for (Integer idx = 1; // first column should always be ID -- which we don't need in our arg list
-             idx < destinationVertex.getVertexColumns().getColumnNames().size();
-             idx++) {
-            String currentColumn = destinationVertex.getVertexColumns().getColumnNames().get(idx);
-            String currentName = "'" + currentColumn + "',";
-            commandLineBuilder.append(currentName);
+        Iterator<String> columnsIterator = destinationVertex.getVertexColumns().getColumnNames().iterator();
+        if( columnsIterator.hasNext()) {
+            columnsIterator.next(); // first column should always be ID -- which we don't need in our arg list
         }
-        removeFinalCommaDamnIt(commandLineBuilder);
+        while (columnsIterator.hasNext()) {
+            commandLineBuilder.append("'" + columnsIterator.next() + "'");
+            if(columnsIterator.hasNext()) {
+                commandLineBuilder.append(",");
+            }
+        }
         commandLineBuilder.append("]");
 
         commandLineBuilder.append(" " + maxResult);
@@ -128,14 +127,6 @@ public class GqlText {
         return commandLineBuilder.toString();
     }
 
-
-    private void removeFinalCommaDamnIt(StringBuilder stringBuilder) {
-
-        Integer positionOfFinalComma = stringBuilder.lastIndexOf(",");
-        if (positionOfFinalComma > -1) {
-            stringBuilder.replace(positionOfFinalComma, positionOfFinalComma + 1, "");
-        }
-    }
 
     public List<NameIdDTO> makeValues(String fqpn, VertexDTO destinationVertex) throws Exception {
 
