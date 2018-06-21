@@ -520,7 +520,8 @@ export class InstructionSubmissionService {
                                     null,
                                     null,
                                     dataSet,
-                                    null));
+                                    null,
+                                    []));
                             });
                         } else if (gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
                             gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
@@ -536,7 +537,8 @@ export class InstructionSubmissionService {
                                 null,
                                 null,
                                 null,
-                                markerGroups));
+                                markerGroups,
+                                []));
                         } else if (gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
                             gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
                                 false,
@@ -551,9 +553,29 @@ export class InstructionSubmissionService {
                                 principleInvestigator,
                                 project,
                                 null,
-                                null));
+                                null,
+                                []));
                         } else if (gobiiExtractFilterType === GobiiExtractFilterType.FLEX_QUERY) {
 
+
+
+
+
+                            gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
+                                false,
+                                null,
+                                gobiiExtractFilterType,
+                                null,
+                                sampleList,
+                                sampleFileName,
+                                sampleListType,
+                                datasetType,
+                                platforms,
+                                principleInvestigator,
+                                project,
+                                null,
+                                null,
+                                []));
                         } else {
                             this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + GobiiExtractFilterType[gobiiExtractFilterType]));
                         }

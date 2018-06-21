@@ -25,6 +25,8 @@ import {FilterService} from "./filter-service";
 import {TreeStructureService} from "./tree-structure-service";
 import {count} from "rxjs/operator/count";
 import {VertexNameType} from "../../model/type-vertex-name";
+import {Observable} from "rxjs/Observable";
+import {NameId} from "../../model/name-id";
 
 @Injectable()
 export class FlexQueryService {
@@ -236,7 +238,6 @@ export class FlexQueryService {
         this.invalidateMarkerSampleCount(false);
 
 
-
         previousValuesGfis.forEach(gfi => {
 
             let loadAction: fileItemActions.RemoveFromExtractAction = new fileItemActions.RemoveFromExtractAction(gfi);
@@ -262,37 +263,10 @@ export class FlexQueryService {
 
 
         // now get counts per current filter values
-        this.store
-            .select(fromRoot.getFileItemsFilters)
-            .subscribe(filters => {
+        this.getVertexFilters(filterParamsName)
+            .subscribe(vertexFiltersForCount => {
 
-                let vertexFiltersForCount: Vertex[] = [targetValueVertex]; // initialize with our target vertex
-                let targetChildFilterParams: FilterParams = this.filterParamsColl.getFilter(filterParamsName, GobiiExtractFilterType.FLEX_QUERY);
-                while (targetChildFilterParams) {
-
-                    if (targetChildFilterParams.getParentFileItemParams()
-                        && targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams()
-                        && targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams()
-                        && targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
-
-                        let previousSiblingChildFilterParams = targetChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams()[0];
-                        let vertexValueFilterFromState: PayloadFilter = previousSiblingChildFilterParams ? filters[previousSiblingChildFilterParams.getQueryName()] : null;
-                        if (vertexValueFilterFromState) {
-
-                            let filterValuesFromState: Vertex = vertexValueFilterFromState.targetEntityFilterValue;
-                            vertexFiltersForCount.push(filterValuesFromState);
-
-                        } // if we found vertex value filter in state
-
-                        targetChildFilterParams = previousSiblingChildFilterParams;
-
-                    } else {
-                        targetChildFilterParams = null;
-                    }// if we have a previous sibling child
-                } // iterate previous sibling children
-
-
-                vertexFiltersForCount.reverse();
+                vertexFiltersForCount.push(targetValueVertex);
                 let vertexFilterDTO: VertexFilterDTO = new VertexFilterDTO(
                     targetValueVertex, // the server should actually ignore this for a count query
                     vertexFiltersForCount,
@@ -309,8 +283,7 @@ export class FlexQueryService {
                     vertexFilterDtoResponse = vertexFilterDto;
 
 
-
-                    let markerCountItem:GobiiFileItem = GobiiFileItem
+                    let markerCountItem: GobiiFileItem = GobiiFileItem
                         .build(GobiiExtractFilterType.FLEX_QUERY, ProcessType.CREATE)
                         .setExtractorItemType(ExtractorItemType.ITEM_COUNT)
                         .setEntityType(EntityType.MARKER)
@@ -341,20 +314,16 @@ export class FlexQueryService {
 
 
                 });
-
-            }).unsubscribe(); // subscribe to filters
-
-
+            }).unsubscribe();
     } // function
 
 
-    public loadVertexValues(jobId: string, vertexFileItem: GobiiFileItem, vertexValuesFilterPararamName: FilterParamNames) {
-
-//        return Observable.create(observer => {
-        let targetChildFilterParams: FilterParams = this.filterParamsColl.getFilter(vertexValuesFilterPararamName, GobiiExtractFilterType.FLEX_QUERY);
-        if (vertexFileItem.getNameIdLabelType() == NameIdLabelType.UNKNOWN) {
+    public getVertexFilters(vertexValuesFilterPararamName: FilterParamNames): Observable<Vertex[]> {
 
 
+        return Observable.create(observer => {
+
+            let targetChildFilterParams: FilterParams = this.filterParamsColl.getFilter(vertexValuesFilterPararamName, GobiiExtractFilterType.FLEX_QUERY);
             this.store
                 .select(fromRoot.getFileItemsFilters)
                 .subscribe(filters => {
@@ -388,6 +357,24 @@ export class FlexQueryService {
                     } while (filtterChildFilterParams);
 
                     filterVertices.reverse();
+                    observer.next(filterVertices);
+                    observer.complete();
+
+                }) // subscribe get filters
+
+        }); // observable create
+
+    } // get vertex filters
+
+
+    public loadVertexValues(jobId: string, vertexFileItem: GobiiFileItem, vertexValuesFilterPararamName: FilterParamNames) {
+
+
+        let targetChildFilterParams: FilterParams = this.filterParamsColl.getFilter(vertexValuesFilterPararamName, GobiiExtractFilterType.FLEX_QUERY);
+        if (vertexFileItem.getNameIdLabelType() == NameIdLabelType.UNKNOWN) {
+
+            this.getVertexFilters(vertexValuesFilterPararamName)
+                .subscribe(filterVertices => {
                     let targetVertex: Vertex = vertexFileItem.getEntity();
                     let vertexFilterDTO: VertexFilterDTO = new VertexFilterDTO(
                         targetVertex,
@@ -467,9 +454,7 @@ export class FlexQueryService {
                             //observer.complete();
                         });
 
-
-                }).unsubscribe();
-
+                }); // subscribe to get vertex filters
 
         } else // else label is not UNKNOWN{
             this.store.dispatch(new fileItemActions.LoadFilterAction(
@@ -509,8 +494,8 @@ export class FlexQueryService {
     }
 
 
-    private invalidateMarkerSampleCount(setToZero:boolean) {
-        let markerCountItem:GobiiFileItem = GobiiFileItem
+    private invalidateMarkerSampleCount(setToZero: boolean) {
+        let markerCountItem: GobiiFileItem = GobiiFileItem
             .build(GobiiExtractFilterType.FLEX_QUERY, ProcessType.CREATE)
             .setExtractorItemType(ExtractorItemType.ITEM_COUNT)
             .setEntityType(EntityType.MARKER)

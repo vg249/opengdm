@@ -2,6 +2,7 @@ import {GobiiFileType} from "../type-gobii-file"
 import {GobiiExtractFilterType} from "../type-extractor-filter";
 import {GobiiSampleListType} from "../type-extractor-sample-list";
 import {NameId} from "../name-id";
+import {Vertex} from "../vertex";
 
 export class GobiiDataSetExtract {
 
@@ -18,17 +19,10 @@ export class GobiiDataSetExtract {
                        public principleInvestigator: NameId,
                        public project: NameId,
                        public dataSet: NameId,
-                       public markerGroups: NameId[]) {
+                       public markerGroups: NameId[],
+                       public vertices:Vertex[]) {
 
-        // this.setGobiiFileType(gobiiFileType);
-        // this.setAccolate(accolate);
-        // this.setDataSetId(dataSetId);
-        // this.setDataSetName(dataSetName);
-        // this.setExtractDestinationDirectory(extractDestinationDirectory);
-        // this.setGobiiFileType(gobiiExtractFilterType);
-        //
-
-    } // ctor 
+    } // ctor
 
 
     public getgobiiFileType(): GobiiFileType {
@@ -150,7 +144,8 @@ export class GobiiDataSetExtract {
                 json.principleInvestigator,
                 json.project,
                 json.dataSet,
-                json.markerGroups);
+                json.markerGroups,
+                json.vertices);
 
         return returnVal;
     }
