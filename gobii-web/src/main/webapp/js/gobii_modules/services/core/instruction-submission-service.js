@@ -266,7 +266,6 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                 InstructionSubmissionService.prototype.submit = function (gobiiExtractFilterType) {
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
-                        var gobiiExtractorInstructions = [];
                         var gobiiDataSetExtracts = [];
                         var mapsetIds = [];
                         var submitterContactid = null;
@@ -382,6 +381,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                             if (sampleListTypeFileItem != null) {
                                 sampleListType = type_extractor_sample_list_1.GobiiSampleListType[sampleListTypeFileItem.getItemId()];
                             }
+                            // *** NOW PUT TOGETHER THE EXTRACT INSTRUCTIONS
                             if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
                                 var dataSetItems = fileItems
                                     .filter(function (item) {
@@ -390,24 +390,60 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                                 dataSetItems.forEach(function (datsetFileItem) {
                                     var dataSet = new name_id_1.NameId(datsetFileItem.getItemId(), null, datsetFileItem.getItemName(), type_entity_1.EntityType.CV, null, null);
                                     gobiiDataSetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(gobiiFileType, false, null, gobiiExtractFilterType, null, null, markerFileName, null, datasetType, platforms, null, null, dataSet, null, []));
-                                });
+                                }); // iterate dataset items
+                                _this.post(jobId, gobiiDataSetExtracts, submitterContactid, mapsetIds)
+                                    .subscribe(function (extractorInstructions) {
+                                    observer.next(extractorInstructions);
+                                    observer.complete();
+                                })
+                                    .unsubscribe();
                             }
                             else if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
                                 gobiiDataSetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(gobiiFileType, false, null, gobiiExtractFilterType, markerList, null, markerFileName, null, datasetType, platforms, null, null, null, markerGroups, []));
+                                _this.post(jobId, gobiiDataSetExtracts, submitterContactid, mapsetIds)
+                                    .subscribe(function (extractorInstructions) {
+                                    observer.next(extractorInstructions);
+                                    observer.complete();
+                                })
+                                    .unsubscribe();
                             }
                             else if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
                                 gobiiDataSetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(gobiiFileType, false, null, gobiiExtractFilterType, null, sampleList, sampleFileName, sampleListType, datasetType, platforms, principleInvestigator, project, null, null, []));
+                                _this.post(jobId, gobiiDataSetExtracts, submitterContactid, mapsetIds)
+                                    .subscribe(function (extractorInstructions) {
+                                    observer.next(extractorInstructions);
+                                    observer.complete();
+                                })
+                                    .unsubscribe();
                             }
                             else if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY) {
-                                gobiiDataSetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(gobiiFileType, false, null, gobiiExtractFilterType, null, sampleList, sampleFileName, sampleListType, datasetType, platforms, principleInvestigator, project, null, null, []));
+                                _this.flexQueryService.getVertexFilters(file_item_param_names_1.FilterParamNames.FQ_F4_VERTEX_VALUES)
+                                    .subscribe(function (vertices) {
+                                    if (vertices && vertices.length > 0) {
+                                        gobiiDataSetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(gobiiFileType, false, null, gobiiExtractFilterType, null, sampleList, sampleFileName, sampleListType, datasetType, platforms, principleInvestigator, project, null, null, vertices));
+                                        _this.post(jobId, gobiiDataSetExtracts, submitterContactid, mapsetIds)
+                                            .subscribe(function (extractorInstructions) {
+                                            observer.next(extractorInstructions);
+                                            observer.complete();
+                                        })
+                                            .unsubscribe();
+                                    }
+                                })
+                                    .unsubscribe();
                             }
                             else {
                                 _this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType]));
+                                observer.complete();
                             }
                         }).unsubscribe();
-                        gobiiExtractorInstructions.push(new gobii_extractor_instruction_1.GobiiExtractorInstruction(gobiiDataSetExtracts, submitterContactid, null, mapsetIds));
-                        var fileName = jobId;
-                        var extractorInstructionFilesDTORequest = new dto_extractor_instruction_files_1.ExtractorInstructionFilesDTO(gobiiExtractorInstructions, fileName);
+                    }); //return observer create
+                }; // submit()
+                InstructionSubmissionService.prototype.post = function (jobId, gobiiDataSetExtracts, submitterContactId, mapsetIds) {
+                    var _this = this;
+                    var gobiiExtractorInstructions = [];
+                    gobiiExtractorInstructions.push(new gobii_extractor_instruction_1.GobiiExtractorInstruction(gobiiDataSetExtracts, submitterContactId, null, mapsetIds));
+                    return Observable_1.Observable.create(function (observer) {
+                        var extractorInstructionFilesDTORequest = new dto_extractor_instruction_files_1.ExtractorInstructionFilesDTO(gobiiExtractorInstructions, jobId);
                         var extractorInstructionFilesDTOResponse = null;
                         _this.dtoRequestServiceExtractorFile.post(new dto_request_item_extractor_submission_1.DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))
                             .subscribe(function (extractorInstructionFilesDTO) {
@@ -423,8 +459,8 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                             });
                             observer.complete();
                         });
-                    }); //return observer create
-                };
+                    }); // observer
+                }; // post()
                 InstructionSubmissionService = __decorate([
                     core_1.Injectable(),
                     __metadata("design:paramtypes", [store_1.Store,

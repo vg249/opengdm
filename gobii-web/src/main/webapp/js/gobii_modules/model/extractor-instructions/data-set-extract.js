@@ -99,6 +99,7 @@ System.register([], function (exports_1, context_1) {
                     returnVal.project = this.project;
                     returnVal.dataSet = this.dataSet;
                     returnVal.markerGroups = this.markerGroups;
+                    returnVal.vertices = this.vertices;
                     return returnVal;
                 };
                 GobiiDataSetExtract.fromJson = function (json) {

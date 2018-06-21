@@ -218,6 +218,19 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                             }
                         }
 
+                    } else if (currentGobiiDataSetExtract.getGobiiExtractFilterType()
+                            .equals(GobiiExtractFilterType.FLEX_QUERY)) {
+
+                        if(currentGobiiDataSetExtract.getVertices() == null
+                                || currentGobiiDataSetExtract.getVertices().size() <= 0 ) {
+
+                            throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                                    GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
+                                    "The specified extract type is "
+                                            + currentGobiiDataSetExtract.getGobiiExtractFilterType()
+                                            + " but no vertices are specified");
+                        }
+
                     } else {
                         throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                                 GobiiValidationStatusType.UNKNOWN_ENUM_VALUE,
