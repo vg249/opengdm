@@ -284,7 +284,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                                     && targetChild.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
                                     filtterChildFilterParams = targetChild.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams()[0];
                                     var vertexValueFilterFromState = filtterChildFilterParams ? filters[filtterChildFilterParams.getQueryName()] : null;
-                                    if (vertexValueFilterFromState) {
+                                    if (vertexValueFilterFromState && vertexValueFilterFromState.targetEntityFilterValue) {
                                         var filterValuesFromState = vertexValueFilterFromState.targetEntityFilterValue;
                                         filterVertices.push(filterValuesFromState);
                                     } // if we found vertex value filter in state

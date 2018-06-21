@@ -341,7 +341,7 @@ export class FlexQueryService {
 
                             filtterChildFilterParams = targetChild.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams()[0];
                             let vertexValueFilterFromState: PayloadFilter = filtterChildFilterParams ? filters[filtterChildFilterParams.getQueryName()] : null;
-                            if (vertexValueFilterFromState) {
+                            if (vertexValueFilterFromState && vertexValueFilterFromState.targetEntityFilterValue) {
 
                                 let filterValuesFromState: Vertex = vertexValueFilterFromState.targetEntityFilterValue;
                                 filterVertices.push(filterValuesFromState);

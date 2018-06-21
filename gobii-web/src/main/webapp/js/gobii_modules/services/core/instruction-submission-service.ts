@@ -21,6 +21,9 @@ import {DtoRequestService} from "./dto-request.service";
 import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 import {GobiiFileItemCriterion} from "../../model/gobii-file-item-criterion";
 import {TreeStructureService} from "./tree-structure-service";
+import {FlexQueryService} from "./flex-query-service";
+import {FilterParamNames} from "../../model/file-item-param-names";
+import {Vertex} from "../../model/vertex";
 
 @Injectable()
 export class InstructionSubmissionService {
@@ -112,7 +115,8 @@ export class InstructionSubmissionService {
 
     constructor(private store: Store<fromRoot.State>,
                 private dtoRequestServiceExtractorFile: DtoRequestService<ExtractorInstructionFilesDTO>,
-                private treeStructureService: TreeStructureService) {
+                private treeStructureService: TreeStructureService,
+                private flexQueryService: FlexQueryService) {
 
 
     }
@@ -268,7 +272,7 @@ export class InstructionSubmissionService {
 
         let returnVal: boolean = false;
 
-        if( gobiiExtractFilterType ) {
+        if (gobiiExtractFilterType) {
 
             if (gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
@@ -305,7 +309,18 @@ export class InstructionSubmissionService {
 
             } else if (gobiiExtractFilterType === GobiiExtractFilterType.FLEX_QUERY) {
 
-                returnVal = false;
+                this.flexQueryService.getVertexFilters(FilterParamNames.FQ_F4_VERTEX_VALUES)
+                    .subscribe(filters => {
+
+                        if( filters && filters.length > 0 ) {
+                            let filterVals: Vertex[] =
+                                filters
+                                    .filter(vertex => (vertex.filterVals && vertex.filterVals.length > 0));
+
+                            returnVal = filterVals && filterVals.length > 0;
+                        }
+                    })
+                    .unsubscribe();
 
             } else {
 
@@ -556,9 +571,6 @@ export class InstructionSubmissionService {
                                 null,
                                 []));
                         } else if (gobiiExtractFilterType === GobiiExtractFilterType.FLEX_QUERY) {
-
-
-
 
 
                             gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
