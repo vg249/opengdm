@@ -104,7 +104,7 @@ public class Vertices {
                     new VertexDTO(11,
                             VertexNameType.VERTEX_TYPE_PRINCIPLE_INVESTIGATOR,
                             GobiiVertexType.SUBENTITY,
-                            "Principle Investigators",
+                            "Principal Investigator",
                             GobiiEntityNameType.CONTACT,
                             GobiiEntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR,
                             CvGroup.UNKNOWN,
