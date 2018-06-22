@@ -611,7 +611,7 @@ export class InstructionSubmissionService {
                                             // from the filters could theoretically not match the "selected" file items, which would
                                             // mean that the content of the extract would not be the same as what's displayed in the
                                             // tree. This condition _should_ not ever happen. But it's vitally important that this information
-                                            // be reported correctly, so we double check here. 
+                                            // be reported correctly, so we double check here.
                                             let verticesMatchFileItems: boolean = true;
                                             for (let idx: number = 0;
                                                  (idx < vertices.length) && verticesMatchFileItems;
