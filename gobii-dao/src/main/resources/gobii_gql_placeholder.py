@@ -19,7 +19,7 @@ def main():
     print("max result is: ", max_result)
 
     file_lines = []
-    if target_vertex_name != "principle_investigator":
+    if str(target_vertex_name) != str("principal_investigator"):
         total_lines = 20
         if target_vertex_name == "marker":
             total_lines = random.randint(1, max_result)

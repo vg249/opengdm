@@ -248,7 +248,7 @@ ConfigValues {
                 throw new Exception("Unknown crop type: " + cropType);
             }
 
-            String cropRoot = this.getFileSysCropsParent();
+            String cropRoot = LineUtils.terminateDirectoryPath(this.getFileSysCropsParent());
             String crop = LineUtils.terminateDirectoryPath(cropType);
             String relativePatFromList = directorySpec.getRelativePath();
             String relativePath = LineUtils.terminateDirectoryPath(relativePatFromList);
@@ -257,7 +257,7 @@ ConfigValues {
 
         } else {
 
-            String rootPath = this.getFileSystemRoot();
+            String rootPath = LineUtils.terminateDirectoryPath(this.getFileSystemRoot());
             String relativePatFromList = directorySpec.getRelativePath();
             String relativePath = LineUtils.terminateDirectoryPath(relativePatFromList);
             returnVal = rootPath + relativePath;

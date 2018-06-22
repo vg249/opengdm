@@ -12,6 +12,7 @@ import org.gobiiproject.gobiimodel.types.GobiiEntitySubType;
 import org.gobiiproject.gobiimodel.types.GobiiVertexType;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -137,7 +138,7 @@ public class VertexDTO extends DTOBase {
     }
 
     @JsonIgnore
-    public VertexColumns getVertexColumns() throws Exception{
+    public VertexColumns getVertexColumns() throws Exception {
 
         VertexColumns returnVal;
 
@@ -239,9 +240,28 @@ public class VertexDTO extends DTOBase {
                 break;
 
             default:
-                throw new Exception("There is no columns object for vertex : " + this.vertexNameType.getVertexName() );
+                throw new Exception("There is no columns object for vertex : " + this.vertexNameType.getVertexName());
         }
 
         return returnVal;
+    } // function get vertex columns
+
+    public String toFIlter() {
+
+        StringBuilder returnVal = new StringBuilder();
+
+        returnVal.append(this.getVertexNameType().getVertexName());
+        returnVal.append(":");
+        returnVal.append("[");
+        Iterator<Integer> iterator = this.getFilterVals().iterator();
+        while (iterator.hasNext()) {
+            returnVal.append(iterator.next());
+            if (iterator.hasNext()) {
+                returnVal.append(",");
+            }
+        }
+        returnVal.append("]");
+
+        return returnVal.toString();
     }
-}
+} // class

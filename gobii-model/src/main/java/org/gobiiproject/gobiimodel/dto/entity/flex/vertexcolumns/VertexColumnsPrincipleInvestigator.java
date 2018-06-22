@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiimodel.dto.entity.flex.vertexcolumns;
 
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ public class VertexColumnsPrincipleInvestigator implements VertexColumns {
     private final String FIELD_LAST_NAME = "lastname";
     private final String FIELD_FIRST_NAME = "firstname";
 
-    private List columns = new ArrayList<>(Arrays.asList(
+    private List<String> columns = new ArrayList<>(Arrays.asList(
             this.FIELD_CONTACT_ID,
             this.FIELD_LAST_NAME,
             this.FIELD_FIRST_NAME));
@@ -29,12 +30,18 @@ public class VertexColumnsPrincipleInvestigator implements VertexColumns {
 
         String[] values = line.split("\t", -1);
 
+        if (values.length < this.columns.size()) {
+            throw new GobiiException("The parsed line "
+                    + line +
+                    " contains fewer fields than the column list "
+                    + String.join(",", this.columns));
+        }
         String lastName = values[this.columns.indexOf(FIELD_LAST_NAME)];
         String firstName = values[this.columns.indexOf(FIELD_FIRST_NAME)];
         String contactid = values[this.columns.indexOf(FIELD_CONTACT_ID)];
 
         returnVal.setName(lastName + ", " + firstName);
-        returnVal.setId( Integer.parseInt(contactid));
+        returnVal.setId(Integer.parseInt(contactid));
 
         return returnVal;
 
