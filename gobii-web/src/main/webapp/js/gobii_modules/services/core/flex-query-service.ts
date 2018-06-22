@@ -266,7 +266,6 @@ export class FlexQueryService {
         this.getVertexFilters(filterParamsName)
             .subscribe(vertexFiltersForCount => {
 
-                vertexFiltersForCount.push(targetValueVertex);
                 let vertexFilterDTO: VertexFilterDTO = new VertexFilterDTO(
                     targetValueVertex, // the server should actually ignore this for a count query
                     vertexFiltersForCount,
@@ -323,23 +322,21 @@ export class FlexQueryService {
 
         return Observable.create(observer => {
 
-            let targetChildFilterParams: FilterParams = this.filterParamsColl.getFilter(vertexValuesFilterPararamName, GobiiExtractFilterType.FLEX_QUERY);
-            this.store
-                .select(fromRoot.getFileItemsFilters)
-                .subscribe(filters => {
+            // the starting filter params must be for the controls that list the vertex values
+            if (vertexValuesFilterPararamName === FilterParamNames.FQ_F1_VERTEX_VALUES
+                || vertexValuesFilterPararamName === FilterParamNames.FQ_F2_VERTEX_VALUES
+                || vertexValuesFilterPararamName === FilterParamNames.FQ_F3_VERTEX_VALUES
+                || vertexValuesFilterPararamName === FilterParamNames.FQ_F4_VERTEX_VALUES) {
 
-                    let filterVertices: Vertex[] = [];
+                this.store
+                    .select(fromRoot.getFileItemsFilters)
+                    .subscribe(filters => {
 
-                    let filtterChildFilterParams: FilterParams = null;
-                    let targetChild: FilterParams = targetChildFilterParams;
-                    do {
+                        let filterVertices: Vertex[] = [];
 
-                        if (targetChild.getParentFileItemParams()
-                            && targetChild.getParentFileItemParams().getPreviousSiblingFileItemParams()
-                            && targetChild.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams()
-                            && targetChild.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
+                        let filtterChildFilterParams: FilterParams = this.filterParamsColl.getFilter(vertexValuesFilterPararamName, GobiiExtractFilterType.FLEX_QUERY);
+                        while (filtterChildFilterParams) {
 
-                            filtterChildFilterParams = targetChild.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams()[0];
                             let vertexValueFilterFromState: PayloadFilter = filtterChildFilterParams ? filters[filtterChildFilterParams.getQueryName()] : null;
                             if (vertexValueFilterFromState && vertexValueFilterFromState.targetEntityFilterValue) {
 
@@ -348,19 +345,28 @@ export class FlexQueryService {
 
                             } // if we found vertex value filter in state
 
-                            targetChild = filtterChildFilterParams;
+                            if (filtterChildFilterParams.getParentFileItemParams()
+                                && filtterChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams()
+                                && filtterChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams()
+                                && filtterChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
 
-                        } else {
-                            filtterChildFilterParams = null;
-                        }
+                                filtterChildFilterParams = filtterChildFilterParams.getParentFileItemParams().getPreviousSiblingFileItemParams().getChildFileItemParams()[0];
+                            } else {
+                                filtterChildFilterParams = null;
+                            }
+                        } // while there are filter params
 
-                    } while (filtterChildFilterParams);
+                        filterVertices.reverse();
+                        observer.next(filterVertices);
+                        observer.complete();
 
-                    filterVertices.reverse();
-                    observer.next(filterVertices);
-                    observer.complete();
+                    }) // subscribe get filters
 
-                }) // subscribe get filters
+            } else {
+                this.store.dispatch(new historyAction.AddStatusMessageAction("The specified filter is not a child values filter: "
+                    + vertexValuesFilterPararamName));
+
+            }
 
         }); // observable create
 
@@ -374,11 +380,12 @@ export class FlexQueryService {
         if (vertexFileItem.getNameIdLabelType() == NameIdLabelType.UNKNOWN) {
 
             this.getVertexFilters(vertexValuesFilterPararamName)
-                .subscribe(filterVertices => {
+                .subscribe(vertices => {
+
                     let targetVertex: Vertex = vertexFileItem.getEntity();
                     let vertexFilterDTO: VertexFilterDTO = new VertexFilterDTO(
                         targetVertex,
-                        filterVertices,
+                        vertices,
                         [],
                         null,
                         null
