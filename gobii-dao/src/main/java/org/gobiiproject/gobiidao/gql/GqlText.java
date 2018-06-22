@@ -6,15 +6,11 @@ import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexDTO;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
-import org.springframework.util.FileCopyUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -28,7 +24,7 @@ public class GqlText {
     private static String GQL_DUMMY_SCRIPT_NAME = "gobii_gql_placeholder.py";
 
 
-    public String makePathForGqlJob(String cropType, String jobId) throws GobiiDaoException {
+    public String makeGqlJobPath(String cropType, String jobId) throws GobiiDaoException {
 
         String returnVal = null;
 
@@ -38,6 +34,21 @@ public class GqlText {
             returnVal += "/" + jobId + "/";
         } catch (Exception e) {
             throw new GobiiDaoException(e);
+        }
+
+        return returnVal;
+    }
+
+
+    public String makeGqlJobFileFqpn(String cropType, String jobId, GqlOFileType gqlOFileType, GqDestinationFileType gqDestinationFileType) {
+
+        String returnVal = this.makeGqlJobPath(cropType, jobId);
+
+        returnVal += gqDestinationFileType.getDestination();
+        if (gqlOFileType.getIoName().equals(GqlOFileType.NONE.getIoName())) {
+            returnVal += ".txt";
+        } else {
+            returnVal += gqlOFileType.getIoName();
         }
 
         return returnVal;
@@ -102,7 +113,7 @@ public class GqlText {
         while (filterPathIterator.hasNext()) {
 
             commandLineBuilder.append(filterPathIterator.next().toFIlter());
-            if(filterPathIterator.hasNext()) {
+            if (filterPathIterator.hasNext()) {
                 commandLineBuilder.append(",");
             }
         }
@@ -111,12 +122,12 @@ public class GqlText {
 
         commandLineBuilder.append(" " + destinationVertex.getVertexNameType().getVertexName() + " [");
         Iterator<String> columnsIterator = destinationVertex.getVertexColumns().getColumnNames().iterator();
-        if( columnsIterator.hasNext()) {
+        if (columnsIterator.hasNext()) {
             columnsIterator.next(); // first column should always be ID -- which we don't need in our arg list
         }
         while (columnsIterator.hasNext()) {
             commandLineBuilder.append("'" + columnsIterator.next() + "'");
-            if(columnsIterator.hasNext()) {
+            if (columnsIterator.hasNext()) {
                 commandLineBuilder.append(",");
             }
         }

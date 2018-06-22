@@ -27,6 +27,7 @@ public class ExtractorInstructionFilesDTO extends DTOBase {
 
     private List<GobiiExtractorInstruction>  gobiiExtractorInstructions = new ArrayList<>();
     private String instructionFileName = null;
+//    private String instructionFileName = null;
 
     public List<GobiiExtractorInstruction> getGobiiExtractorInstructions() {
         return gobiiExtractorInstructions;
