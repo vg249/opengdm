@@ -353,13 +353,23 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                                                 && dse.getPlatforms().size() > 0).count() > 0)
                                 .count() > 0;
 
+                        boolean thereAreVertices = extractorInstructionFilesDTO
+                                .getGobiiExtractorInstructions()
+                                .stream()
+                                .filter(gei -> gei.getDataSetExtracts()
+                                        .stream()
+                                        .filter(dse -> dse.getVertices() != null
+                                                && dse.getVertices().size() > 0).count() > 0)
+                                .count() > 0;
+
+
                         if (!thereAreMarkers &&
                                 (thereAreSamples || thereIsAProject || thereIsAPi)) {
                             jobPayloadType = JobPayloadType.CV_PAYLOADTYPE_SAMPLES;
                         } else if (!thereAreSamples &&
                                 (thereAreMarkers || thereIsAPlatform)) {
                             jobPayloadType = JobPayloadType.CV_PAYLOADTYPE_MARKERS;
-                        } else if (thereAreSamples && thereAreMarkers) {
+                        } else if ((thereAreSamples && thereAreMarkers) || thereAreVertices) {
                             jobPayloadType = JobPayloadType.CV_PAYLOADTYPE_MARKERSAMPLES;
                         } else if (thereAreSamples && thereAreMarkers) {
                             jobPayloadType = JobPayloadType.CV_PAYLOADTYPE_MARKERSAMPLES;

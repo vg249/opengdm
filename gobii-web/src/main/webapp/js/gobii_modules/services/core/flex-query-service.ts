@@ -365,7 +365,7 @@ export class FlexQueryService {
             } else {
                 this.store.dispatch(new historyAction.AddStatusMessageAction("The specified filter is not a child values filter: "
                     + vertexValuesFilterPararamName));
-
+                observer.complete();
             }
 
         }); // observable create

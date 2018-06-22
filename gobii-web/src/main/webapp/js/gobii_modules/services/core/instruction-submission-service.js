@@ -420,13 +420,37 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                                 _this.flexQueryService.getVertexFilters(file_item_param_names_1.FilterParamNames.FQ_F4_VERTEX_VALUES)
                                     .subscribe(function (vertices) {
                                     if (vertices && vertices.length > 0) {
-                                        gobiiDataSetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(gobiiFileType, false, null, gobiiExtractFilterType, null, sampleList, sampleFileName, sampleListType, datasetType, platforms, principleInvestigator, project, null, null, vertices));
-                                        _this.post(jobId, gobiiDataSetExtracts, submitterContactid, mapsetIds)
-                                            .subscribe(function (extractorInstructions) {
-                                            observer.next(extractorInstructions);
+                                        var verticesMatchFileItems = true;
+                                        var _loop_1 = function (idx) {
+                                            var currentVertex = vertices[idx];
+                                            var valueCompoundId = gobii_file_item_compound_id_1.GobiiFileItemCompoundId.fromGobiiFileItemCompoundId(currentVertex).setExtractorItemType(type_extractor_item_1.ExtractorItemType.VERTEX_VALUE);
+                                            var selectedFileItems = fileItems.filter(function (gfi) { return gfi.compoundIdeEquals(valueCompoundId); });
+                                            if (selectedFileItems && selectedFileItems.length > 0) {
+                                                var itemIds = selectedFileItems
+                                                    .map(function (gfi) { return Number(gfi.getItemId()); });
+                                                verticesMatchFileItems = itemIds.length === currentVertex.filterVals.length && itemIds.every(function (v, i) { return v === currentVertex.filterVals[i]; });
+                                            }
+                                        };
+                                        for (var idx = 0; (idx < vertices.length) && verticesMatchFileItems; idx++) {
+                                            _loop_1(idx);
+                                        }
+                                        if (verticesMatchFileItems) {
+                                            gobiiDataSetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(gobiiFileType, false, null, gobiiExtractFilterType, null, sampleList, sampleFileName, sampleListType, datasetType, platforms, principleInvestigator, project, null, null, vertices));
+                                            _this.post(jobId, gobiiDataSetExtracts, submitterContactid, mapsetIds)
+                                                .subscribe(function (extractorInstructions) {
+                                                observer.next(extractorInstructions);
+                                                observer.complete();
+                                            })
+                                                .unsubscribe();
+                                        }
+                                        else {
+                                            _this.store.dispatch(new historyAction.AddStatusMessageAction("The vertex filter values do not align with the selected vertex file items"));
                                             observer.complete();
-                                        })
-                                            .unsubscribe();
+                                        }
+                                    }
+                                    else {
+                                        _this.store.dispatch(new historyAction.AddStatusMessageAction("There are no vertex filters for this submission"));
+                                        observer.complete();
                                     }
                                 })
                                     .unsubscribe();
