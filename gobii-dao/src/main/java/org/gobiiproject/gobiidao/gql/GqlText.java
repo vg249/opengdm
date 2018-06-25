@@ -40,11 +40,11 @@ public class GqlText {
     }
 
 
-    public String makeGqlJobFileFqpn(String cropType, String jobId, GqlOFileType gqlOFileType, GqDestinationFileType gqDestinationFileType) {
+    public String makeGqlJobFileFqpn(String cropType, String jobId, GqlOFileType gqlOFileType, GqlDestinationFileType gqlDestinationFileType) {
 
         String returnVal = this.makeGqlJobPath(cropType, jobId);
 
-        returnVal += gqDestinationFileType.getDestination();
+        returnVal += gqlDestinationFileType.getDestination();
         if (gqlOFileType.getIoName().equals(GqlOFileType.NONE.getIoName())) {
             returnVal += ".txt";
         } else {

@@ -7,7 +7,7 @@ package org.gobiiproject.gobiidao.gql;
  */
 
 
-public enum GqDestinationFileType {
+public enum GqlDestinationFileType {
 
     DST_VALUES("values"),
     DST_COUNT_MARKER("markers"),
@@ -15,7 +15,7 @@ public enum GqDestinationFileType {
 
     private String destination;
 
-    GqDestinationFileType(String destination) {
+    GqlDestinationFileType(String destination) {
         this.destination = destination;
     }
 
@@ -23,11 +23,11 @@ public enum GqDestinationFileType {
         return this.destination;
     }
 
-    public static GqDestinationFileType byValue(String val) {
+    public static GqlDestinationFileType byValue(String val) {
 
-        GqDestinationFileType returnVal = null;
+        GqlDestinationFileType returnVal = null;
 
-        for (GqDestinationFileType currentVertexNameType : values()) {
+        for (GqlDestinationFileType currentVertexNameType : values()) {
             if (currentVertexNameType.getDestination().equals(val)) {
                 returnVal =  currentVertexNameType;
                 break;

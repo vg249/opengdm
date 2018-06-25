@@ -707,7 +707,7 @@ export class InstructionSubmissionService {
                         extractorInstructionFilesDTOResponse = extractorInstructionFilesDTO;
                         this.store.dispatch(new historyAction
                             .AddStatusMessageAction("Extractor instruction file created on server: "
-                                + extractorInstructionFilesDTOResponse.getInstructionFileName()));
+                                + extractorInstructionFilesDTOResponse.getjobId()));
 
                         observer.next(extractorInstructionFilesDTORequest.getGobiiExtractorInstructions());
                         observer.complete();

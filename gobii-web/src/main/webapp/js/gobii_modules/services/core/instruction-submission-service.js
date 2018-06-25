@@ -420,6 +420,12 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                                 _this.flexQueryService.getVertexFilters(file_item_param_names_1.FilterParamNames.FQ_F4_VERTEX_VALUES)
                                     .subscribe(function (vertices) {
                                     if (vertices && vertices.length > 0) {
+                                        // for the other extract types, fileitems on which the extract is based constitute
+                                        // the content of the extract directly. In the case of flex query, the vertices
+                                        // from the filters could theoretically not match the "selected" file items, which would
+                                        // mean that the content of the extract would not be the same as what's displayed in the
+                                        // tree. This condition _should_ not ever happen. But it's vitally important that this information
+                                        // be reported correctly, so we double check here.
                                         var verticesMatchFileItems = true;
                                         var _loop_1 = function (idx) {
                                             var currentVertex = vertices[idx];
@@ -474,7 +480,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                             extractorInstructionFilesDTOResponse = extractorInstructionFilesDTO;
                             _this.store.dispatch(new historyAction
                                 .AddStatusMessageAction("Extractor instruction file created on server: "
-                                + extractorInstructionFilesDTOResponse.getInstructionFileName()));
+                                + extractorInstructionFilesDTOResponse.getjobId()));
                             observer.next(extractorInstructionFilesDTORequest.getGobiiExtractorInstructions());
                             observer.complete();
                         }, function (headerResponse) {

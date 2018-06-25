@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit.impl;
 
 import org.gobiiproject.gobiidao.gql.GqlOFileType;
-import org.gobiiproject.gobiidao.gql.GqDestinationFileType;
+import org.gobiiproject.gobiidao.gql.GqlDestinationFileType;
 import org.gobiiproject.gobiidao.gql.GqlText;
 import org.gobiiproject.gobiidao.gql.GqlWrapper;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
@@ -78,9 +78,9 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
             String outputFileDirectory = gqlText.makeGqlJobPath(cropType, jobId);
             this.makeOutputDirectory(outputFileDirectory);
 
-            String outputFileFqpn = gqlText.makeGqlJobFileFqpn(cropType,jobId,GqlOFileType.NONE,GqDestinationFileType.DST_VALUES);
-            String stdOutFileFqpn = gqlText.makeGqlJobFileFqpn(cropType,jobId,GqlOFileType.IO_FILE_STD_OUT,GqDestinationFileType.DST_VALUES);
-            String stdErrFileFqpn = gqlText.makeGqlJobFileFqpn(cropType,jobId,GqlOFileType.IO_FILE_STD_ERR,GqDestinationFileType.DST_VALUES);
+            String outputFileFqpn = gqlText.makeGqlJobFileFqpn(cropType,jobId,GqlOFileType.NONE, GqlDestinationFileType.DST_VALUES);
+            String stdOutFileFqpn = gqlText.makeGqlJobFileFqpn(cropType,jobId,GqlOFileType.IO_FILE_STD_OUT, GqlDestinationFileType.DST_VALUES);
+            String stdErrFileFqpn = gqlText.makeGqlJobFileFqpn(cropType,jobId,GqlOFileType.IO_FILE_STD_ERR, GqlDestinationFileType.DST_VALUES);
 
             String gqlScriptCommandLine = gqlText.makeCommandLine(outputFileFqpn,
                     vertexFilterDTO.getFilterVertices(),
@@ -111,12 +111,12 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
             String outputFileDirectory = gqlText.makeGqlJobPath(cropType, jobId);
             this.makeOutputDirectory(outputFileDirectory);
 
-            String markerOutputFileFqpn = gqlText.makeGqlJobFileFqpn(cropType,jobId, GqlOFileType.NONE,GqDestinationFileType.DST_COUNT_MARKER);
-            String sampleOutputFileFqpn = gqlText.makeGqlJobFileFqpn(cropType,jobId, GqlOFileType.NONE,GqDestinationFileType.DST_COUNT_SAMPLE);
-            String stdOutFileFqpnMarkers = gqlText.makeGqlJobFileFqpn(cropType,jobId, GqlOFileType.IO_FILE_STD_OUT,GqDestinationFileType.DST_COUNT_MARKER);
-            String stdErrFileFqpnMarkers = gqlText.makeGqlJobFileFqpn(cropType,jobId, GqlOFileType.IO_FILE_STD_ERR,GqDestinationFileType.DST_COUNT_MARKER);
-            String stdOutFileFqpnSamples = gqlText.makeGqlJobFileFqpn(cropType,jobId, GqlOFileType.IO_FILE_STD_OUT,GqDestinationFileType.DST_COUNT_SAMPLE);
-            String stdErrFileFqpnSamples = gqlText.makeGqlJobFileFqpn(cropType,jobId, GqlOFileType.IO_FILE_STD_ERR,GqDestinationFileType.DST_COUNT_SAMPLE);
+            String markerOutputFileFqpn = gqlText.makeGqlJobFileFqpn(cropType,jobId, GqlOFileType.NONE, GqlDestinationFileType.DST_COUNT_MARKER);
+            String sampleOutputFileFqpn = gqlText.makeGqlJobFileFqpn(cropType,jobId, GqlOFileType.NONE, GqlDestinationFileType.DST_COUNT_SAMPLE);
+            String stdOutFileFqpnMarkers = gqlText.makeGqlJobFileFqpn(cropType,jobId, GqlOFileType.IO_FILE_STD_OUT, GqlDestinationFileType.DST_COUNT_MARKER);
+            String stdErrFileFqpnMarkers = gqlText.makeGqlJobFileFqpn(cropType,jobId, GqlOFileType.IO_FILE_STD_ERR, GqlDestinationFileType.DST_COUNT_MARKER);
+            String stdOutFileFqpnSamples = gqlText.makeGqlJobFileFqpn(cropType,jobId, GqlOFileType.IO_FILE_STD_OUT, GqlDestinationFileType.DST_COUNT_SAMPLE);
+            String stdErrFileFqpnSamples = gqlText.makeGqlJobFileFqpn(cropType,jobId, GqlOFileType.IO_FILE_STD_ERR, GqlDestinationFileType.DST_COUNT_SAMPLE);
 
             VertexDTO destinationVertexMarkers = Vertices.makeMarkerVertex();
             VertexDTO destinationVertexSamples = Vertices.makeSampleVertex();
