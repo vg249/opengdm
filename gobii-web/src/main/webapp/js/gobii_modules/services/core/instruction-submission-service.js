@@ -206,6 +206,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                     } // if we have an extract filter type
                 }; // markMissingItems()
                 InstructionSubmissionService.prototype.areCriteriaMet = function (all, gobiiExtractFilterType) {
+                    var _this = this;
                     var returnVal = false;
                     if (gobiiExtractFilterType) {
                         if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
@@ -236,15 +237,29 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                                         || platformIsPresent);
                         }
                         else if (gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY) {
+                            // submission can only take place when there is at leaset one vertex value filter
+                            // set and when there is a marker sample sample count
                             this.flexQueryService.getVertexFilters(file_item_param_names_1.FilterParamNames.FQ_F4_VERTEX_VALUES)
                                 .subscribe(function (filters) {
                                 if (filters && filters.length > 0) {
                                     var filterVals = filters
                                         .filter(function (vertex) { return (vertex.filterVals && vertex.filterVals.length > 0); });
-                                    returnVal = filterVals && filterVals.length > 0;
+                                    if (filterVals && filterVals.length > 0) {
+                                        _this.store.select(fromRoot.getCurrentMarkerCount)
+                                            .subscribe(function (markerCount) {
+                                            if (markerCount > 0) {
+                                                _this.store.select(fromRoot.getCurrentSampleCount)
+                                                    .subscribe(function (sampleCount) {
+                                                    if (sampleCount > 0) {
+                                                        returnVal = true;
+                                                    } // if there is a sample count
+                                                }).unsubscribe(); // subscribe/unsubscribe to sample count
+                                            } // if there is a marker count
+                                        }).unsubscribe(); // subscribe/unsubscribe to marker count
+                                    } // if there are filters
                                 }
                             })
-                                .unsubscribe();
+                                .unsubscribe(); // subscribe/unsubscribe to vertex filters
                         }
                         else {
                             this.store.dispatch(new historyAction.AddStatusMessageAction("Unhandled extract filter type: " + type_extractor_filter_1.GobiiExtractFilterType[gobiiExtractFilterType ? gobiiExtractFilterType : type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN]));
@@ -420,6 +435,12 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                                 _this.flexQueryService.getVertexFilters(file_item_param_names_1.FilterParamNames.FQ_F4_VERTEX_VALUES)
                                     .subscribe(function (vertices) {
                                     if (vertices && vertices.length > 0) {
+                                        // for the other extract types, fileitems on which the extract is based constitute
+                                        // the content of the extract directly. In the case of flex query, the vertices
+                                        // from the filters could theoretically not match the "selected" file items, which would
+                                        // mean that the content of the extract would not be the same as what's displayed in the
+                                        // tree. This condition _should_ not ever happen. But it's vitally important that this information
+                                        // be reported correctly, so we double check here.
                                         var verticesMatchFileItems = true;
                                         var _loop_1 = function (idx) {
                                             var currentVertex = vertices[idx];
@@ -474,7 +495,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                             extractorInstructionFilesDTOResponse = extractorInstructionFilesDTO;
                             _this.store.dispatch(new historyAction
                                 .AddStatusMessageAction("Extractor instruction file created on server: "
-                                + extractorInstructionFilesDTOResponse.getInstructionFileName()));
+                                + extractorInstructionFilesDTOResponse.getjobId()));
                             observer.next(extractorInstructionFilesDTORequest.getGobiiExtractorInstructions());
                             observer.complete();
                         }, function (headerResponse) {

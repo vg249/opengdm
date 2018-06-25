@@ -1676,7 +1676,7 @@ public class GOBIIControllerV1 {
                     GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
                             GobiiServiceRequestId.URL_FILE_EXTRACTOR_INSTRUCTIONS),
                     extractorInstructionFilesDTO,
-                    extractorInstructionFilesDTO.getInstructionFileName());
+                    extractorInstructionFilesDTO.getJobId());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);

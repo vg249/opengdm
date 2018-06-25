@@ -70,7 +70,7 @@ public class BrapiResponseMapAlleleMatrixSearch {
         extractorInstructionFilesDTO.getGobiiExtractorInstructions().add(gobiiExtractorInstruction);
 
         String jobId = DateUtils.makeDateIdString();
-        extractorInstructionFilesDTO.setInstructionFileName(jobId);
+        extractorInstructionFilesDTO.setJobId(jobId);
 
         ExtractorInstructionFilesDTO extractorInstructionFilesDTONew = extractorInstructionFilesService
                 .createInstruction(crop, extractorInstructionFilesDTO);

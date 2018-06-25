@@ -1,17 +1,36 @@
 #!/usr/bin/python
 import sys
 import random
-
+import getopt
 
 # test data generation script
 # by Phil Glaser
-def main():
+def main(argv):
+
     return_val = 0
 
-    # variables setup
-    output_file_name = sys.argv[1]
-    target_vertex_name = sys.argv[3]
-    max_result = int(sys.argv[5])
+    output_file_name = ""
+    target_vertex_name = ""
+    max_result = 20
+    connection_str = ""
+    sub_graph_path  = ""
+    column_names = ""
+
+    opts, args = getopt.getopt(argv, "hc:o:g:t:f:l:vd", ["connectionString=", "outputFilePath=", "subGraphPath=", "targetVertexName=", "vertexColumnsToFetch=", "verbose", "debug"])
+    for opt, arg in opts:
+        if opt in ("-c", "--connectionString"):
+            connection_str = arg
+        elif opt in ("-o", "--outputFilePath"):
+            output_file_name = arg
+        elif opt in ("-g", "--subGraphPath"):
+            sub_graph_path = arg
+        elif opt in ("-t", "--targetVertexName"):
+            target_vertex_name = arg
+        elif opt in ("-f", "--vertexColumnsToFetch"):
+            column_names = arg
+        elif opt in ("-l", "--limit"):
+            max_result = int(arg)
+
 
     print("Initiated gql placeholder test script with arguments ", sys.argv)
     print("Target vertex is: ", target_vertex_name)
@@ -100,4 +119,5 @@ def main():
     sys.exit(return_val)
 
 
-main()
+if __name__ == "__main__":
+    main(sys.argv[1:])

@@ -41,6 +41,8 @@ public class GobiiDataSetExtract {
     private List<File> extractedFiles = new ArrayList<>();
     private String logMessage;
     private List<VertexDTO> vertices = new ArrayList<>();
+    private String gqlMarkerFileName = null;
+    private String gqlSampleFileName = null;
 
     public GobiiExtractFilterType getGobiiExtractFilterType() {
         return gobiiExtractFilterType;
@@ -183,4 +185,22 @@ public class GobiiDataSetExtract {
     public void setVertices(List<VertexDTO> vertices) {
         this.vertices = vertices;
     }
+
+
+    public String getGqlMarkerFileName() {
+        return gqlMarkerFileName;
+    }
+
+    public void setGqlMarkerFileName(String gqlMarkerFileName) {
+        this.gqlMarkerFileName = gqlMarkerFileName;
+    }
+
+    public String getGqlSampleFileName() {
+        return gqlSampleFileName;
+    }
+
+    public void setGqlSampleFileName(String gqlSampleFileName) {
+        this.gqlSampleFileName = gqlSampleFileName;
+    }
+
 }
