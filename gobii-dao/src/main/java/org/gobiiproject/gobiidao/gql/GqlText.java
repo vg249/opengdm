@@ -3,9 +3,11 @@ package org.gobiiproject.gobiidao.gql;
 import org.apache.commons.io.FileUtils;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexDTO;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
+import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,10 +21,53 @@ import java.util.List;
 
 public class GqlText {
 
-    //private final static String GQL_SCRIPT_NAME = "python gobii_gql.py";
-    private final static String GQL_SCRIPT_NAME = "gobii_gql_placeholder.py";
-    private static String GQL_DUMMY_SCRIPT_NAME = "gobii_gql_placeholder.py";
 
+    private final String connectionString;
+    private String mdePathFqpn;
+
+    public GqlText(String cropType) throws GobiiException {
+        try {
+
+            ConfigSettings configSettings = new ConfigSettings();
+            this.connectionString = HelperFunctions.getPostgresConnectionString(configSettings.getCropConfig(cropType));
+
+            this.mdePathFqpn = configSettings
+                    .getFullyQualifiedFilePath(null, GobiiFileProcessDir.CODE_EXTRACTORS_POSTGRES_MDE)
+                    + GQL_SCRIPT_NAME;
+
+            if (!new File(this.mdePathFqpn).exists()) {
+
+                this.mdePathFqpn = configSettings
+                        .getFullyQualifiedFilePath(null, GobiiFileProcessDir.CODE_EXTRACTORS_POSTGRES_MDE)
+                        + GQL_DUMMY_SCRIPT_NAME;
+
+                File dummyScriptFile = new File(this.mdePathFqpn);
+                if (!dummyScriptFile.exists()) {
+                    String resourcePath = GQL_DUMMY_SCRIPT_NAME;
+                    InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourcePath);
+                    if (inputStream != null) {
+                        FileUtils.copyInputStreamToFile(inputStream, dummyScriptFile);
+                    } else {
+                        throw new GobiiDaoException("Unable to make input stream for " + resourcePath);
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            throw new GobiiException(e);
+        }
+    }
+
+    private final static String GQL_SCRIPT_NAME = "python gobii_gql.py";
+    private final String GQL_DUMMY_SCRIPT_NAME = "gobii_gql_placeholder.py";
+
+
+    private final String GQL_PARM_CONNECTION_STRING = "-c";
+    private final String GQL_PARM_OUTPUT_FILE_PATH = "-o";
+    private final String GQL_PARM_SUB_GRAPH_PATH = "-g"; // OPTIONAL: JSON string of key-value-pairs of this format: {vertex_name1:[value_id1, value_id2], vertex_name2:[value_id1], ...}.
+    private final String GQL_PARM_TARGET_VERTEX_NAME = "-t";
+    private final String GQL_PARM_TARGET_VERTEX_COLUMNS = "-f"; // OPTIONAL
+    private final String GQL_PARM_COUNT_LIMIT = "-l";
 
     public String makeGqlJobPath(String cropType, String jobId) throws GobiiDaoException {
 
@@ -54,30 +99,12 @@ public class GqlText {
         return returnVal;
     }
 
-    private void copyDummyScript() throws GobiiDaoException {
+    private String makeArg(String gqlFlag, String argVal, boolean addSingleQuotes) {
 
-        try {
-
-            String mdePathFqpn = (new ConfigSettings()).getFullyQualifiedFilePath(null, GobiiFileProcessDir.CODE_EXTRACTORS_POSTGRES_MDE);
-            mdePathFqpn += GQL_DUMMY_SCRIPT_NAME;
-            File dummyScriptFile = new File(mdePathFqpn);
-
-            if (!dummyScriptFile.exists()) {
-                String resourcePath = GQL_DUMMY_SCRIPT_NAME;
-                InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourcePath);
-                if (inputStream != null) {
-                    FileUtils.copyInputStreamToFile(inputStream, dummyScriptFile);
-                } else {
-                    throw new GobiiDaoException("Unable to make input stream for " + resourcePath);
-                }
-            }
-
-        } catch (Exception e) {
-            throw new GobiiDaoException(e);
-        }
-
+        String quoteChar = addSingleQuotes ? "'" : "";
+        String space = " ";
+        return gqlFlag + space + quoteChar + argVal + quoteChar + space;
     }
-
 
     //python gobii_gql.py /temp/filter3.out {principal_investigator:[67,69,70], project:[3,25,30], division:[25,30]} experiment ['name']
     public String makeCommandLine(String outputFileFqpn,
@@ -86,18 +113,14 @@ public class GqlText {
                                   Integer maxResult) throws Exception {
 
 
-        copyDummyScript();
-
         StringBuilder commandLineBuilder = new StringBuilder();
 
-
         // path to gql script
-        String mdePath = (new ConfigSettings()).getFullyQualifiedFilePath(null, GobiiFileProcessDir.CODE_EXTRACTORS_POSTGRES_MDE);
-        mdePath += GQL_SCRIPT_NAME;
-        if (!new File(mdePath).exists()) {
-            throw new GobiiDaoException("The python script does not exist at the specified location: " + mdePath);
-        }
-        commandLineBuilder.append("python " + mdePath + " ");
+        commandLineBuilder.append("python " + mdePathFqpn + " ");
+
+        commandLineBuilder.append(this.makeArg(GQL_PARM_CONNECTION_STRING,
+                this.connectionString,
+                false));
 
         // output fqpn
         Path path = Paths.get(outputFileFqpn);
@@ -105,35 +128,53 @@ public class GqlText {
         if (!new File(parent.toUri()).exists()) {
             throw new GobiiDaoException("The specified output directory does not exist: " + parent);
         }
-        commandLineBuilder.append(outputFileFqpn);
+
+
+        commandLineBuilder.append(this.makeArg(GQL_PARM_OUTPUT_FILE_PATH,
+                outputFileFqpn,
+                false));
 
         // filter path
-        commandLineBuilder.append(" {");
+        StringBuilder subGraphPath = new StringBuilder();
+        subGraphPath.append("{");
         Iterator<VertexDTO> filterPathIterator = filterPath.iterator();
         while (filterPathIterator.hasNext()) {
 
-            commandLineBuilder.append(filterPathIterator.next().toFIlter());
+            subGraphPath.append(filterPathIterator.next().toGqlSubPathElement());
             if (filterPathIterator.hasNext()) {
-                commandLineBuilder.append(",");
+                subGraphPath.append(",");
             }
         }
-        commandLineBuilder.append("} ");
+        subGraphPath.append("}");
+        commandLineBuilder.append(this.makeArg(GQL_PARM_SUB_GRAPH_PATH,
+                subGraphPath.toString(),
+                true));
 
+        commandLineBuilder.append(this.makeArg(GQL_PARM_TARGET_VERTEX_NAME,
+                destinationVertex.getVertexNameType().getVertexName(),
+                false));
 
-        commandLineBuilder.append(" " + destinationVertex.getVertexNameType().getVertexName() + " [");
+        StringBuilder columnList = new StringBuilder();
+        columnList.append("[");
         Iterator<String> columnsIterator = destinationVertex.getVertexColumns().getColumnNames().iterator();
         if (columnsIterator.hasNext()) {
             columnsIterator.next(); // first column should always be ID -- which we don't need in our arg list
         }
         while (columnsIterator.hasNext()) {
-            commandLineBuilder.append("'" + columnsIterator.next() + "'");
+            columnList.append("\"" + columnsIterator.next() + "\"");
             if (columnsIterator.hasNext()) {
-                commandLineBuilder.append(",");
+                columnList.append(",");
             }
         }
-        commandLineBuilder.append("]");
+        columnList.append("]");
+        commandLineBuilder.append(this.makeArg(GQL_PARM_TARGET_VERTEX_COLUMNS,
+                columnList.toString(),
+                true));
 
-        commandLineBuilder.append(" " + maxResult);
+
+        commandLineBuilder.append(this.makeArg(GQL_PARM_COUNT_LIMIT,
+                maxResult.toString(),
+                false));
 
         return commandLineBuilder.toString();
     }

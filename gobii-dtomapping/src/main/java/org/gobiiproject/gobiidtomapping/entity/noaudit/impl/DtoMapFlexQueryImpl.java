@@ -74,13 +74,13 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
 
         try {
 
-            GqlText gqlText = new GqlText();
+            GqlText gqlText = new GqlText(cropType);
             String outputFileDirectory = gqlText.makeGqlJobPath(cropType, jobId);
             this.makeOutputDirectory(outputFileDirectory);
 
-            String outputFileFqpn = gqlText.makeGqlJobFileFqpn(cropType,jobId,GqlOFileType.NONE, GqlDestinationFileType.DST_VALUES);
-            String stdOutFileFqpn = gqlText.makeGqlJobFileFqpn(cropType,jobId,GqlOFileType.IO_FILE_STD_OUT, GqlDestinationFileType.DST_VALUES);
-            String stdErrFileFqpn = gqlText.makeGqlJobFileFqpn(cropType,jobId,GqlOFileType.IO_FILE_STD_ERR, GqlDestinationFileType.DST_VALUES);
+            String outputFileFqpn = gqlText.makeGqlJobFileFqpn(cropType, jobId, GqlOFileType.NONE, GqlDestinationFileType.DST_VALUES);
+            String stdOutFileFqpn = gqlText.makeGqlJobFileFqpn(cropType, jobId, GqlOFileType.IO_FILE_STD_OUT, GqlDestinationFileType.DST_VALUES);
+            String stdErrFileFqpn = gqlText.makeGqlJobFileFqpn(cropType, jobId, GqlOFileType.IO_FILE_STD_ERR, GqlDestinationFileType.DST_VALUES);
 
             String gqlScriptCommandLine = gqlText.makeCommandLine(outputFileFqpn,
                     vertexFilterDTO.getFilterVertices(),
@@ -107,34 +107,42 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
 
         try {
 
-            GqlText gqlText = new GqlText();
+            GqlText gqlText = new GqlText(cropType);
             String outputFileDirectory = gqlText.makeGqlJobPath(cropType, jobId);
             this.makeOutputDirectory(outputFileDirectory);
 
-            String markerOutputFileFqpn = gqlText.makeGqlJobFileFqpn(cropType,jobId, GqlOFileType.NONE, GqlDestinationFileType.DST_COUNT_MARKER);
-            String sampleOutputFileFqpn = gqlText.makeGqlJobFileFqpn(cropType,jobId, GqlOFileType.NONE, GqlDestinationFileType.DST_COUNT_SAMPLE);
-            String stdOutFileFqpnMarkers = gqlText.makeGqlJobFileFqpn(cropType,jobId, GqlOFileType.IO_FILE_STD_OUT, GqlDestinationFileType.DST_COUNT_MARKER);
-            String stdErrFileFqpnMarkers = gqlText.makeGqlJobFileFqpn(cropType,jobId, GqlOFileType.IO_FILE_STD_ERR, GqlDestinationFileType.DST_COUNT_MARKER);
-            String stdOutFileFqpnSamples = gqlText.makeGqlJobFileFqpn(cropType,jobId, GqlOFileType.IO_FILE_STD_OUT, GqlDestinationFileType.DST_COUNT_SAMPLE);
-            String stdErrFileFqpnSamples = gqlText.makeGqlJobFileFqpn(cropType,jobId, GqlOFileType.IO_FILE_STD_ERR, GqlDestinationFileType.DST_COUNT_SAMPLE);
+            String markerOutputFileFqpn = gqlText.makeGqlJobFileFqpn(cropType, jobId, GqlOFileType.NONE, GqlDestinationFileType.DST_COUNT_MARKER);
+            String sampleOutputFileFqpn = gqlText.makeGqlJobFileFqpn(cropType, jobId, GqlOFileType.NONE, GqlDestinationFileType.DST_COUNT_SAMPLE);
+            String stdOutFileFqpnMarkers = gqlText.makeGqlJobFileFqpn(cropType, jobId, GqlOFileType.IO_FILE_STD_OUT, GqlDestinationFileType.DST_COUNT_MARKER);
+            String stdErrFileFqpnMarkers = gqlText.makeGqlJobFileFqpn(cropType, jobId, GqlOFileType.IO_FILE_STD_ERR, GqlDestinationFileType.DST_COUNT_MARKER);
+            String stdOutFileFqpnSamples = gqlText.makeGqlJobFileFqpn(cropType, jobId, GqlOFileType.IO_FILE_STD_OUT, GqlDestinationFileType.DST_COUNT_SAMPLE);
+            String stdErrFileFqpnSamples = gqlText.makeGqlJobFileFqpn(cropType, jobId, GqlOFileType.IO_FILE_STD_ERR, GqlDestinationFileType.DST_COUNT_SAMPLE);
 
             VertexDTO destinationVertexMarkers = Vertices.makeMarkerVertex();
             VertexDTO destinationVertexSamples = Vertices.makeSampleVertex();
 
-            String gqlScriptCommandLineMarkers = gqlText.makeCommandLine(markerOutputFileFqpn, vertexFilterDTO.getFilterVertices(), destinationVertexMarkers,maxCount);
+            String gqlScriptCommandLineMarkers = gqlText.makeCommandLine(markerOutputFileFqpn,
+                    vertexFilterDTO.getFilterVertices(),
+                    destinationVertexMarkers,
+                    maxCount);
+
             GqlWrapper.run(gqlScriptCommandLineMarkers, stdOutFileFqpnMarkers, stdErrFileFqpnMarkers);
 
-            String gqlScriptCommandLineSamples = gqlText.makeCommandLine(sampleOutputFileFqpn, vertexFilterDTO.getFilterVertices(), destinationVertexSamples,maxCount);
+            String gqlScriptCommandLineSamples = gqlText.makeCommandLine(sampleOutputFileFqpn,
+                    vertexFilterDTO.getFilterVertices(),
+                    destinationVertexSamples,
+                    maxCount);
+
             GqlWrapper.run(gqlScriptCommandLineSamples, stdOutFileFqpnSamples, stdErrFileFqpnSamples);
 
             Long markerCount = Files.lines(Paths.get(markerOutputFileFqpn)).count();
             Long sampleCount = Files.lines(Paths.get(sampleOutputFileFqpn)).count();
 
-            if( markerCount > Integer.MAX_VALUE) {
+            if (markerCount > Integer.MAX_VALUE) {
                 throw new GobiiDtoMappingException("Number of markers is too large to fit in an Integer: " + markerCount);
             }
 
-            if( sampleCount > Integer.MAX_VALUE) {
+            if (sampleCount > Integer.MAX_VALUE) {
                 throw new GobiiDtoMappingException("Number of samples is too large to fit in an Integer: " + sampleCount);
             }
 

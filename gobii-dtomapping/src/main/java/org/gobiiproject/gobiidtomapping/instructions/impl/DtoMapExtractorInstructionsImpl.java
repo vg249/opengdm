@@ -88,7 +88,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
     private void addQqlFileNames(String cropType, String jobId, GobiiDataSetExtract gobiiDataSetExtract) throws GobiiException {
 
-        GqlText gqlText = new GqlText();
+        GqlText gqlText = new GqlText(cropType);
         String gqlMarkerFileName = gqlText.makeGqlJobFileFqpn(cropType, jobId, GqlOFileType.NONE, GqlDestinationFileType.DST_COUNT_MARKER);
         if (!new File(gqlMarkerFileName).exists()) {
             throw new GobiiException("Gql result marker file does not exist: " + gqlMarkerFileName);
