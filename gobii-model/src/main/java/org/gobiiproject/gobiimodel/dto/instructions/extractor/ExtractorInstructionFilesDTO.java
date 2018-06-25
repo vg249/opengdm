@@ -26,9 +26,6 @@ public class ExtractorInstructionFilesDTO extends DTOBase {
     }
 
     private List<GobiiExtractorInstruction>  gobiiExtractorInstructions = new ArrayList<>();
-//    private String instructionFileName = null;
-    private String gqlMarkerFileName = null;
-    private String gqlSampleFileName = null;
 
 
     public List<GobiiExtractorInstruction> getGobiiExtractorInstructions() {
@@ -37,30 +34,6 @@ public class ExtractorInstructionFilesDTO extends DTOBase {
 
     public void setGobiiExtractorInstructions(List<GobiiExtractorInstruction> gobiiExtractorInstructions) {
         this.gobiiExtractorInstructions = gobiiExtractorInstructions;
-    }
-
-//    public String getInstructionFileName() {
-//        return instructionFileName;
-//    }
-//
-//    public void setInstructionFileName(String instructionFileName) {
-//        this.instructionFileName = instructionFileName;
-//    }
-
-    public String getGqlMarkerFileName() {
-        return gqlMarkerFileName;
-    }
-
-    public void setGqlMarkerFileName(String gqlMarkerFileName) {
-        this.gqlMarkerFileName = gqlMarkerFileName;
-    }
-
-    public String getGqlSampleFileName() {
-        return gqlSampleFileName;
-    }
-
-    public void setGqlSampleFileName(String gqlSampleFileName) {
-        this.gqlSampleFileName = gqlSampleFileName;
     }
 
     public String getJobId() {

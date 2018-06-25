@@ -1,5 +1,8 @@
 package org.gobiiproject.gobiidtomapping.instructions.impl;
 
+import org.gobiiproject.gobiidao.gql.GqlDestinationFileType;
+import org.gobiiproject.gobiidao.gql.GqlOFileType;
+import org.gobiiproject.gobiidao.gql.GqlText;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.utils.InstructionFileAccess;
@@ -82,6 +85,25 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
         return returnVal;
     }
+
+    private void addQqlFileNames(String cropType, String jobId, GobiiDataSetExtract gobiiDataSetExtract) throws GobiiException {
+
+        GqlText gqlText = new GqlText();
+        String gqlMarkerFileName = gqlText.makeGqlJobFileFqpn(cropType, jobId, GqlOFileType.NONE, GqlDestinationFileType.DST_COUNT_MARKER);
+        if (!new File(gqlMarkerFileName).exists()) {
+            throw new GobiiException("Gql result marker file does not exist: " + gqlMarkerFileName);
+        }
+
+        String gqlSampleFileName = gqlText.makeGqlJobFileFqpn(cropType, jobId, GqlOFileType.NONE, GqlDestinationFileType.DST_COUNT_SAMPLE);
+        if (!new File(gqlSampleFileName).exists()) {
+            throw new GobiiException("Gql result sample file does not exist: " + gqlSampleFileName);
+        }
+
+        gobiiDataSetExtract.setGqlMarkerFileName(gqlMarkerFileName);
+        gobiiDataSetExtract.setGqlSampleFileName(gqlSampleFileName);
+
+    }
+
 
     @Override
     public ExtractorInstructionFilesDTO writeInstructions(String cropType,
@@ -223,8 +245,8 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     } else if (currentGobiiDataSetExtract.getGobiiExtractFilterType()
                             .equals(GobiiExtractFilterType.FLEX_QUERY)) {
 
-                        if(currentGobiiDataSetExtract.getVertices() == null
-                                || currentGobiiDataSetExtract.getVertices().size() <= 0 ) {
+                        if (currentGobiiDataSetExtract.getVertices() == null
+                                || currentGobiiDataSetExtract.getVertices().size() <= 0) {
 
                             throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                                     GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
@@ -232,6 +254,10 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                                             + currentGobiiDataSetExtract.getGobiiExtractFilterType()
                                             + " but no vertices are specified");
                         }
+
+                        this.addQqlFileNames(cropType,
+                                extractorInstructionFilesDTO.getJobId(),
+                                currentGobiiDataSetExtract);
 
                     } else {
                         throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
@@ -474,8 +500,8 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
      * Sets the status for a list of gobii extractor instructions
      *
      * @param gobiiExtractorInstructionList list of extractor instructions
-     * @param logMessage content of the log file
-     * @param jobProgressStatus status of the job
+     * @param logMessage                    content of the log file
+     * @param jobProgressStatus             status of the job
      */
 
     private void setStatus(List<GobiiExtractorInstruction> gobiiExtractorInstructionList, String logMessage, JobProgressStatusType jobProgressStatus) {
