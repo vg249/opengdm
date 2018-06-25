@@ -84,7 +84,8 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
     }
 
     @Override
-    public ExtractorInstructionFilesDTO writeInstructions(String cropType, ExtractorInstructionFilesDTO extractorInstructionFilesDTO) throws GobiiException {
+    public ExtractorInstructionFilesDTO writeInstructions(String cropType,
+                                                          ExtractorInstructionFilesDTO extractorInstructionFilesDTO) throws GobiiException {
 
         ExtractorInstructionFilesDTO returnVal = extractorInstructionFilesDTO;
 
