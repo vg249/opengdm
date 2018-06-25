@@ -15,9 +15,13 @@ public enum NucIupacCodes {
     TG,
     TC,
     GC,
-    plusminus;
+    plusminus,
+    plus,
+    minus;
     public String getName(){
         if(this.equals(plusminus))return "+-";
+        else if(this.equals(plus))return "++";
+        else if(this.equals(minus))return "--";
         return this.name();
     }
 }

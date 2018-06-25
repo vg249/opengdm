@@ -21,29 +21,34 @@ import static org.gobiiproject.gobiiprocess.digester.utils.TransposeMatrix.trans
 public abstract class MobileTransform {
     /**
      * Perform transformation from 'from' location to 'to' location optionally making use of the error path provided
+     *
      * @param fromFileLocation String representation of the from location on the filesystem
-     * @param toFileLocation String representation of the to location on the filesystem
-     * @param errorPath place to use for temporary error files
+     * @param toFileLocation   String representation of the to location on the filesystem
+     * @param errorPath        place to use for temporary error files
      */
     public abstract void transform(String fromFileLocation, String toFileLocation, String errorPath);
 
 
-    public static final MobileTransform stripHeader=new MobileTransform(){
-        public void transform(String fromFile, String toFile, String errorPath){
+    public static final MobileTransform stripHeader = new MobileTransform() {
+        public void transform(String fromFile, String toFile, String errorPath) {
             HelperFunctions.tryExec("tail -n +2 ", toFile, errorPath, fromFile);
             FileSystemInterface.rmIfExist(fromFile);
         }
     };
-    public static final MobileTransform IUPACToBI=new MobileTransform(){
 
-        public void transform(String fromFile, String toFile, String errorPath){
+    public static MobileTransform getIUPACToBI(String loaderScriptPath){
+    return new MobileTransform() {
+        public void transform (String fromFile, String toFile, String errorPath){
             try {
-                convertIUPACtoBi("tab", fromFile, toFile);
-            }catch(IOException e){
-                ErrorLogger.logError("IUPACToBI","Exception opening files for IUPAC to BI conversion",e);
+                convertIUPACtoBi("tab", fromFile, toFile, loaderScriptPath);
+            } catch (IOException e) {
+                ErrorLogger.logError("IUPACToBI", "Exception opening files for IUPAC to BI conversion", e);
             }
         }
-    };
+    }
+
+    ;
+}
     public static final MobileTransform PGArray=new MobileTransform(){
 
         public void transform(String fromFile, String toFile, String errorPath){
