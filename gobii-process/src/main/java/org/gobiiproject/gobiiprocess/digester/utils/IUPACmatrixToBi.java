@@ -125,7 +125,7 @@ public class IUPACmatrixToBi {
         hash.put("D",NN);
         hash.put("H",NN);
         hash.put("V",NN);
-        hash.put(".",NN);
+        hash.put(".",minus);//As Per GSD-456
 
         //N (IUPAC for 'any base' is set to NN - unknown
         hash.put("N",NN);

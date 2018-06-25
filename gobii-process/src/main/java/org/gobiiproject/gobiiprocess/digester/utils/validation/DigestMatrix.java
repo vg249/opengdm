@@ -4,6 +4,7 @@ import org.gobiiproject.gobiimodel.types.DataSetType;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import java.io.*;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.reverse;
@@ -118,7 +119,11 @@ public class DigestMatrix {
      * @return
      */
     private static List<String> initNucleotide2letterList(){
-        List<String> elements = Arrays.asList("AA", "TT", "CC", "GG", "AT", "AG", "AC", "TG", "TC", "GC", "NN", "++", "--", "+-","AN","CN","GN","TN");
+        List<String> elements = new LinkedList<String>(Arrays.asList("AA", "TT", "CC", "GG", "AT", "AG", "AC", "TG", "TC", "GC", "NN", "++", "--", "+-","AN","CN","GN","TN"));
+        for(char c:"ACGT".toCharArray()){
+            elements.add(c+"+");
+            elements.add(c+"-");
+        }
         return elements;
     }
 
