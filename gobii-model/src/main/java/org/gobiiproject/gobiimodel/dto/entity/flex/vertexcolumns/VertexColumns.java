@@ -7,5 +7,6 @@ import java.util.List;
 public interface VertexColumns {
 
     List<String> getColumnNames();
+
     NameIdDTO vertexValueFromLine(String line) throws Exception;
 }

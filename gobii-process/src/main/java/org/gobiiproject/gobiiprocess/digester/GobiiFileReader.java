@@ -558,7 +558,7 @@ public class GobiiFileReader {
 		ErrorLogger.logInfo("Digester","Entering into the QC Subsection #3 of 3...");
         ExtractorInstructionFilesDTO extractorInstructionFilesDTOToSend = new ExtractorInstructionFilesDTO();
         extractorInstructionFilesDTOToSend.getGobiiExtractorInstructions().add(qcExtractInstruction);
-        extractorInstructionFilesDTOToSend.setInstructionFileName("extractor_" + DateUtils.makeDateIdString());
+        extractorInstructionFilesDTOToSend.setJobId("extractor_" + DateUtils.makeDateIdString());
         GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, crop, GobiiAutoLoginType.USER_RUN_AS);
         if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
             ErrorLogger.logError("Digester", "Unable to log in with user " + GobiiAutoLoginType.USER_RUN_AS.toString());

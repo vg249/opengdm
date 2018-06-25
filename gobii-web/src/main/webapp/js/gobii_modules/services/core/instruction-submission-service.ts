@@ -310,6 +310,8 @@ export class InstructionSubmissionService {
 
             } else if (gobiiExtractFilterType === GobiiExtractFilterType.FLEX_QUERY) {
 
+                // submission can only take place when there is at leaset one vertex value filter
+                // set and when there is a marker sample sample count
                 this.flexQueryService.getVertexFilters(FilterParamNames.FQ_F4_VERTEX_VALUES)
                     .subscribe(filters => {
 
@@ -318,10 +320,29 @@ export class InstructionSubmissionService {
                                 filters
                                     .filter(vertex => (vertex.filterVals && vertex.filterVals.length > 0));
 
-                            returnVal = filterVals && filterVals.length > 0;
+                            if (filterVals && filterVals.length > 0) {
+
+                                this.store.select(fromRoot.getCurrentMarkerCount)
+                                    .subscribe(markerCount => {
+
+                                        if (markerCount > 0) {
+
+                                            this.store.select(fromRoot.getCurrentSampleCount)
+                                                .subscribe(sampleCount => {
+
+                                                    if (sampleCount > 0) {
+
+                                                        returnVal = true;
+                                                    } // if there is a sample count
+
+                                                }).unsubscribe(); // subscribe/unsubscribe to sample count
+                                        } // if there is a marker count
+
+                                    }).unsubscribe(); // subscribe/unsubscribe to marker count
+                            } // if there are filters
                         }
                     })
-                    .unsubscribe();
+                    .unsubscribe(); // subscribe/unsubscribe to vertex filters
 
             } else {
 
@@ -707,7 +728,7 @@ export class InstructionSubmissionService {
                         extractorInstructionFilesDTOResponse = extractorInstructionFilesDTO;
                         this.store.dispatch(new historyAction
                             .AddStatusMessageAction("Extractor instruction file created on server: "
-                                + extractorInstructionFilesDTOResponse.getInstructionFileName()));
+                                + extractorInstructionFilesDTOResponse.getjobId()));
 
                         observer.next(extractorInstructionFilesDTORequest.getGobiiExtractorInstructions());
                         observer.complete();

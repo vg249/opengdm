@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiimodel.dto.entity.flex;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.cvnames.VertexNameType;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
@@ -138,7 +139,7 @@ public class VertexDTO extends DTOBase {
     }
 
     @JsonIgnore
-    public VertexColumns getVertexColumns() throws Exception {
+    public VertexColumns getVertexColumns() throws GobiiException {
 
         VertexColumns returnVal;
 
@@ -240,13 +241,15 @@ public class VertexDTO extends DTOBase {
                 break;
 
             default:
-                throw new Exception("There is no columns object for vertex : " + this.vertexNameType.getVertexName());
+                throw new GobiiException("There is no columns object for vertex : " + this.vertexNameType.getVertexName());
         }
 
         return returnVal;
     } // function get vertex columns
 
-    public String toFIlter() {
+
+    @JsonIgnore
+    public String toGqlSubPathElement() {
 
         StringBuilder returnVal = new StringBuilder();
 
@@ -264,4 +267,6 @@ public class VertexDTO extends DTOBase {
 
         return returnVal.toString();
     }
+
+
 } // class

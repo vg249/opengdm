@@ -1,5 +1,7 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit.impl;
 
+import org.gobiiproject.gobiidao.gql.GqlOFileType;
+import org.gobiiproject.gobiidao.gql.GqlDestinationFileType;
 import org.gobiiproject.gobiidao.gql.GqlText;
 import org.gobiiproject.gobiidao.gql.GqlWrapper;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
@@ -23,12 +25,6 @@ import java.util.List;
  */
 public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
 
-
-    private final String OUTPT_FILE_NAME_VALUES = "gql_result_values.txt";
-    private final String OUTPT_FILE_NAME_MARKERS = "gql_result_markers.txt";
-    private final String OUTPT_FILE_NAME_SAMPLES = "gql_result_samples.txt";
-    private final String STD_OUTPT_FILE_NAME = "gql.out";
-    private final String ERR_OUTPT_FILE_NAME = "gql.err";
 
     private Integer maxVertexValues = 500;
     private Integer maxCount = 100000;
@@ -78,13 +74,13 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
 
         try {
 
-            GqlText gqlText = new GqlText();
-            String outputFileDirectory = gqlText.makePathForGqlJob(cropType, jobId);
+            GqlText gqlText = new GqlText(cropType);
+            String outputFileDirectory = gqlText.makeGqlJobPath(cropType, jobId);
             this.makeOutputDirectory(outputFileDirectory);
 
-            String outputFileFqpn = outputFileDirectory + "/" + OUTPT_FILE_NAME_VALUES;
-            String stdOutFileFqpn = outputFileDirectory + "/" + STD_OUTPT_FILE_NAME;
-            String stdErrFileFqpn = outputFileDirectory + "/" + ERR_OUTPT_FILE_NAME;
+            String outputFileFqpn = gqlText.makeGqlJobFileFqpn(cropType, jobId, GqlOFileType.NONE, GqlDestinationFileType.DST_VALUES);
+            String stdOutFileFqpn = gqlText.makeGqlJobFileFqpn(cropType, jobId, GqlOFileType.IO_FILE_STD_OUT, GqlDestinationFileType.DST_VALUES);
+            String stdErrFileFqpn = gqlText.makeGqlJobFileFqpn(cropType, jobId, GqlOFileType.IO_FILE_STD_ERR, GqlDestinationFileType.DST_VALUES);
 
             String gqlScriptCommandLine = gqlText.makeCommandLine(outputFileFqpn,
                     vertexFilterDTO.getFilterVertices(),
@@ -111,38 +107,42 @@ public class DtoMapFlexQueryImpl implements DtoMapFlexQuery {
 
         try {
 
-            GqlText gqlText = new GqlText();
-            String outputFileDirectory = gqlText.makePathForGqlJob(cropType, jobId);
+            GqlText gqlText = new GqlText(cropType);
+            String outputFileDirectory = gqlText.makeGqlJobPath(cropType, jobId);
             this.makeOutputDirectory(outputFileDirectory);
 
-            String markerOutputFileFqpn = outputFileDirectory + "/" + OUTPT_FILE_NAME_MARKERS;
-            String sampleOutputFileFqpn = outputFileDirectory + "/" + OUTPT_FILE_NAME_SAMPLES;
-            String stdOutFileFqpnMarkers = outputFileDirectory + "/" + "markers_" + STD_OUTPT_FILE_NAME;
-            String stdErrFileFqpnMarkers = outputFileDirectory + "/" + "markers_" + ERR_OUTPT_FILE_NAME;
-            String stdOutFileFqpnSamples = outputFileDirectory + "/" + "dnasamples_" + STD_OUTPT_FILE_NAME;
-            String stdErrFileFqpnSamples = outputFileDirectory + "/" + "dnasamples_" + ERR_OUTPT_FILE_NAME;
+            String markerOutputFileFqpn = gqlText.makeGqlJobFileFqpn(cropType, jobId, GqlOFileType.NONE, GqlDestinationFileType.DST_COUNT_MARKER);
+            String sampleOutputFileFqpn = gqlText.makeGqlJobFileFqpn(cropType, jobId, GqlOFileType.NONE, GqlDestinationFileType.DST_COUNT_SAMPLE);
+            String stdOutFileFqpnMarkers = gqlText.makeGqlJobFileFqpn(cropType, jobId, GqlOFileType.IO_FILE_STD_OUT, GqlDestinationFileType.DST_COUNT_MARKER);
+            String stdErrFileFqpnMarkers = gqlText.makeGqlJobFileFqpn(cropType, jobId, GqlOFileType.IO_FILE_STD_ERR, GqlDestinationFileType.DST_COUNT_MARKER);
+            String stdOutFileFqpnSamples = gqlText.makeGqlJobFileFqpn(cropType, jobId, GqlOFileType.IO_FILE_STD_OUT, GqlDestinationFileType.DST_COUNT_SAMPLE);
+            String stdErrFileFqpnSamples = gqlText.makeGqlJobFileFqpn(cropType, jobId, GqlOFileType.IO_FILE_STD_ERR, GqlDestinationFileType.DST_COUNT_SAMPLE);
 
             VertexDTO destinationVertexMarkers = Vertices.makeMarkerVertex();
             VertexDTO destinationVertexSamples = Vertices.makeSampleVertex();
 
-            // temp values to make unit test past
-//            vertexFilterDTO.setMarkerCount(100);
-//            vertexFilterDTO.setSampleCount(100);
+            String gqlScriptCommandLineMarkers = gqlText.makeCommandLine(markerOutputFileFqpn,
+                    vertexFilterDTO.getFilterVertices(),
+                    destinationVertexMarkers,
+                    maxCount);
 
-            String gqlScriptCommandLineMarkers = gqlText.makeCommandLine(markerOutputFileFqpn, vertexFilterDTO.getFilterVertices(), destinationVertexMarkers,maxCount);
             GqlWrapper.run(gqlScriptCommandLineMarkers, stdOutFileFqpnMarkers, stdErrFileFqpnMarkers);
 
-            String gqlScriptCommandLineSamples = gqlText.makeCommandLine(sampleOutputFileFqpn, vertexFilterDTO.getFilterVertices(), destinationVertexSamples,maxCount);
+            String gqlScriptCommandLineSamples = gqlText.makeCommandLine(sampleOutputFileFqpn,
+                    vertexFilterDTO.getFilterVertices(),
+                    destinationVertexSamples,
+                    maxCount);
+
             GqlWrapper.run(gqlScriptCommandLineSamples, stdOutFileFqpnSamples, stdErrFileFqpnSamples);
 
             Long markerCount = Files.lines(Paths.get(markerOutputFileFqpn)).count();
             Long sampleCount = Files.lines(Paths.get(sampleOutputFileFqpn)).count();
 
-            if( markerCount > Integer.MAX_VALUE) {
+            if (markerCount > Integer.MAX_VALUE) {
                 throw new GobiiDtoMappingException("Number of markers is too large to fit in an Integer: " + markerCount);
             }
 
-            if( sampleCount > Integer.MAX_VALUE) {
+            if (sampleCount > Integer.MAX_VALUE) {
                 throw new GobiiDtoMappingException("Number of samples is too large to fit in an Integer: " + sampleCount);
             }
 
