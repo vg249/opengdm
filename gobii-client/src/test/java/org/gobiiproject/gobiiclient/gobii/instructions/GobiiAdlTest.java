@@ -6,8 +6,13 @@
 package org.gobiiproject.gobiiclient.gobii.instructions;
 
 import org.gobiiproject.gobiiclient.core.gobii.GobiiTestConfiguration;
+import org.gobiiproject.gobiiclient.gobii.Helpers.ADLEncapsulator;
+import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.config.TestExecConfig;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.File;
 
@@ -19,7 +24,7 @@ public class GobiiAdlTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        backendSupoorted = org.gobiiproject.gobiiclient.HelperFunctions.isBackEndSupported();
+        backendSupoorted = TestUtils.isBackEndSupported();
         GobiiTestConfiguration gobiiTestConfiguration = new GobiiTestConfiguration();
         testExecConfig = gobiiTestConfiguration.getConfigSettings().getTestExecConfig();
     }
@@ -32,8 +37,9 @@ public class GobiiAdlTest {
      * Moreover, when it does run, it times out. However, the error message does not display,
      * and instead there is an index out of bounds exception.
      */
-    @Ignore
-    public void testADLBatchProcessing() {
+    @Test
+    public void testADLBatchProcessing() throws  Exception{
+
         if (backendSupoorted) {
             ADLEncapsulator adlEncapsulator = new ADLEncapsulator();
             String configUtilCommandlineStem = testExecConfig.getConfigUtilCommandlineStem();
