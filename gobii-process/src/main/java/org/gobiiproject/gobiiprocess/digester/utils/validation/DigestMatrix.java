@@ -34,7 +34,7 @@ public class DigestMatrix {
                 String[] iNucl = iLine.split(fSep);
                 errorBase = validateDatasetList(iNucl,dataSetType);
                 if(errorBase!= null){
-                    ErrorLogger.logError("Validate Dataset Matrix", "Invalid data found in psot-processed matrix line " + lineNumber+ " column "+iLine.indexOf(errorBase)+" - '" + errorBase + "'");
+                    ErrorLogger.logError("Validate Dataset Matrix", "Invalid data found in post-processed matrix line " + lineNumber+ " column "+iLine.indexOf(errorBase)+" - '" + errorBase + "'");
                     //Don't fail on first error, give a reasonable number of lines of warnings
                     if(++errorCount>=maxInvalidWarnings){
                         ErrorLogger.logError("Validate Dataset Matrix", "Reached max warnings for Invalid data");
