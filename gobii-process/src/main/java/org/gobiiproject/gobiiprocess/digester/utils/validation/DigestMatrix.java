@@ -120,7 +120,7 @@ public class DigestMatrix {
      */
     private static List<String> initNucleotide2letterList(){
         List<String> elements = new LinkedList<String>(Arrays.asList("AA", "TT", "CC", "GG", "AT", "AG", "AC", "TG", "TC", "GC", "NN", "++", "--", "+-","AN","CN","GN","TN"));
-        for(char c:"ACGT".toCharArray()){
+        for(char c:"ACGTN".toCharArray()){
             elements.add(c+"+");
             elements.add(c+"-");
         }
