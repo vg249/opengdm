@@ -158,7 +158,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                  * @param {string} eventedCvTerm
                  */
                 FlexQueryService.prototype.loadSelectedVertexFilter = function (eventedFilterParamsName, eventedVertexId, eventedEntityType, eventedEntitySubType, eventedCvGroup, eventedCvTerm) {
-                    this.invalidateMarkerSampleCount(true);
+                    //        this.invalidateMarkerSampleCount(true);
                     var currentVertexId = eventedVertexId;
                     var currentVertexFilterParams = this.filterParamsColl.getFilter(eventedFilterParamsName, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
                     // the filterParams passed in should exist

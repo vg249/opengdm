@@ -118,7 +118,7 @@ export class FlexQueryService {
                                     eventedCvTerm: string) {
 
 
-        this.invalidateMarkerSampleCount(true);
+//        this.invalidateMarkerSampleCount(true);
 
         let currentVertexId: string = eventedVertexId;
         let currentVertexFilterParams: FilterParams = this.filterParamsColl.getFilter(eventedFilterParamsName, GobiiExtractFilterType.FLEX_QUERY);
