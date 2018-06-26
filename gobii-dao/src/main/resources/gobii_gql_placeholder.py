@@ -35,7 +35,7 @@ def main(argv):
     print("Initiated gql placeholder test script with arguments ", sys.argv)
     print("output file is: ", output_file_name)
     print("Target vertex is: ", target_vertex_name)
-    print("subgraph path is: ", sub_graph_path)
+    print("subgraph path is: %s " %sub_graph_path)
     print("max result is: ", max_result)
 
     file_lines = []
