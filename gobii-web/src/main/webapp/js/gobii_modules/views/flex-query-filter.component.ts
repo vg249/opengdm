@@ -158,6 +158,8 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
             let entitySubType: EntitySubType = EntitySubType.UNKNOWN;
             let cvGroup: CvGroup = CvGroup.UNKNOWN;
             let cvTerm: string = null;
+            let previousSelectionExisted: boolean = (this.selectedVertexValues && this.selectedVertexValues.length > 0)
+                || (this.previousSelectedVertices && this.previousSelectedVertices.length > 0);
             if (arg.value.getNameIdLabelType() === NameIdLabelType.UNKNOWN) {
                 vertexId = arg.value.getItemId();
                 entityType = arg.value.getEntityType();
@@ -171,21 +173,25 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
                 this.previousSelectedVertices = [];
             }
 
-            this.flexQueryService.loadSelectedVertexFilter(this.filterParamNameVertices,
-                vertexId,
-                entityType,
-                entitySubType,
-                cvGroup,
-                cvTerm);
+            this.JobId$.subscribe(
+                fileItemJobId => {
+                    let jobId: string = fileItemJobId.getItemId();
+                    this.flexQueryService.loadVertexValues(jobId,
+                        arg.value,
+                        this.filterParamNameVertexValues);
+
+                    this.flexQueryService.loadSelectedVertexFilter(this.filterParamNameVertices,
+                        vertexId,
+                        entityType,
+                        entitySubType,
+                        cvGroup,
+                        cvTerm,
+                        jobId,
+                        previousSelectionExisted);
+                }
+            ).unsubscribe();
         }
 
-        this.JobId$.subscribe(
-            fileItemJobId => {
-                this.flexQueryService.loadVertexValues(fileItemJobId.getItemId(),
-                    arg.value,
-                    this.filterParamNameVertexValues);
-            }
-        ).unsubscribe();
 
     } // end function
 
@@ -198,14 +204,14 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
     public handleVertexValueSelected(arg) {
 
         let targetValueVertex: Vertex = (this.selectedVertex && this.selectedVertex.getEntity()) ?
-            this.selectedVertex.getEntity():
+            this.selectedVertex.getEntity() :
             null;
 
-        let filterVertex:Vertex;
-        if( targetValueVertex) {
+        let filterVertex: Vertex;
+        if (targetValueVertex) {
             filterVertex = Vertex.fromVertex(targetValueVertex);
             filterVertex.filterVals = this.selectedVertexValues
-                .map( vv => Number(vv.getItemId()));
+                .map(vv => Number(vv.getItemId()));
         }
 
         let newItems: GobiiFileItem[] = this.selectedVertexValues
@@ -223,7 +229,6 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
                     filterVertex);
             }
         ).unsubscribe();
-
 
 
         this.previousSelectedVertices = this.selectedVertexValues;
