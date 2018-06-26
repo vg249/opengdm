@@ -14,8 +14,6 @@ import {PayloadFilter} from "../store/actions/action-payload-filter";
 import {FilterParams} from "../model/filter-params";
 import {FilterParamsColl} from "../services/core/filter-params-coll";
 import {CvGroup} from "../model/cv-group";
-import {filter} from "rxjs/operator/filter";
-import {VertexNameType} from "../model/type-vertex-name";
 import {Vertex} from "../model/vertex";
 
 

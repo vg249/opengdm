@@ -253,7 +253,7 @@ public class VertexDTO extends DTOBase {
 
         StringBuilder returnVal = new StringBuilder();
 
-        returnVal.append(this.getVertexNameType().getVertexName());
+        returnVal.append("\"" + this.getVertexNameType().getVertexName() + "\"");
         returnVal.append(":");
         returnVal.append("[");
         Iterator<Integer> iterator = this.getFilterVals().iterator();

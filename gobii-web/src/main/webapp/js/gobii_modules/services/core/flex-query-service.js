@@ -236,6 +236,17 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                         _this.store.dispatch(loadAction);
                     });
                     this.filterService.loadFilter(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, filterParamsName, targetValueVertex);
+                    // null out filters to the right
+                    var nextSiblingFilter = this.filterParamsColl
+                        .getFilter(filterParamsName, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY)
+                        .getParentFileItemParams()
+                        .getNextSiblingFileItemParams();
+                    while (nextSiblingFilter) {
+                        this.loadSelectedVertexFilter(nextSiblingFilter.getQueryName(), null, type_entity_1.EntityType.UNKNOWN, type_entity_1.EntitySubType.UNKNOWN, cv_group_1.CvGroup.UNKNOWN, null);
+                        nextSiblingFilter = nextSiblingFilter.getParentFileItemParams() ?
+                            nextSiblingFilter.getParentFileItemParams().getNextSiblingFileItemParams()
+                            : null;
+                    }
                     // now get counts per current filter values
                     this.getVertexFilters(filterParamsName)
                         .subscribe(function (vertexFiltersForCount) {

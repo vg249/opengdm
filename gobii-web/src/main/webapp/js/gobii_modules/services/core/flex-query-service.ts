@@ -261,6 +261,24 @@ export class FlexQueryService {
             filterParamsName,
             targetValueVertex);
 
+        // null out filters to the right
+        let nextSiblingFilter: FilterParams = this.filterParamsColl
+            .getFilter(filterParamsName, GobiiExtractFilterType.FLEX_QUERY)
+            .getParentFileItemParams()
+            .getNextSiblingFileItemParams();
+        while (nextSiblingFilter) {
+
+            this.loadSelectedVertexFilter(nextSiblingFilter.getQueryName(),
+                null,
+                EntityType.UNKNOWN,
+                EntitySubType.UNKNOWN,
+                CvGroup.UNKNOWN,
+                null);
+
+            nextSiblingFilter = nextSiblingFilter.getParentFileItemParams() ?
+                nextSiblingFilter.getParentFileItemParams().getNextSiblingFileItemParams()
+                : null;
+        }
 
         // now get counts per current filter values
         this.getVertexFilters(filterParamsName)
