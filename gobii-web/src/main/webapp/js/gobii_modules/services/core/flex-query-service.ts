@@ -27,6 +27,7 @@ import {count} from "rxjs/operator/count";
 import {VertexNameType} from "../../model/type-vertex-name";
 import {Observable} from "rxjs/Observable";
 import {NameId} from "../../model/name-id";
+import {VertexType} from "../../model/type-vertex";
 
 @Injectable()
 export class FlexQueryService {
@@ -48,6 +49,44 @@ export class FlexQueryService {
         this.entityFileItemService.loadEntityList(GobiiExtractFilterType.FLEX_QUERY, filterParamNames);
 
     } // loadVertices()
+
+
+    public loadSelectedVertexFilter(eventedFilterParamsName: FilterParamNames,
+                                    eventedVertexId: string,
+                                    eventedEntityType: EntityType,
+                                    eventedEntitySubType: EntitySubType,
+                                    eventedCvGroup: CvGroup,
+                                    eventedCvTerm: string,
+                                    jobId: string,
+                                    previousSelectionExisted: boolean) {
+
+        this.resetVertexFilters(eventedFilterParamsName,
+            eventedVertexId,
+            eventedEntityType,
+            eventedEntitySubType,
+            eventedCvGroup,
+            eventedCvTerm,
+            jobId);
+
+        // I am a bit uneasy about recalculating here. In theory, there is a race condition between dispatch of the actions
+        // performed in resetVertexFilters() and retrieving the filter values to do the count. The correct way to do this
+        // is to use an effect. I have now littered the file-item-effects.ts code with yet another attempt to call a web
+        // service (in this case the post() to the vertex service) and commented it out. I have made some progress since
+        // the last time I tried to do this: the core of the problem appears to be that within an observable chain, there
+        // is something I should be doing with the observable around which the http call is wrapped. I commented
+        // more about this where I have the code commented out and there's an article I found that might point int he
+        // direction of a solution.
+        if (previousSelectionExisted) {
+            let currentVertexFilterParams: FilterParams = this.filterParamsColl.getFilter(eventedFilterParamsName, GobiiExtractFilterType.FLEX_QUERY);
+            if (currentVertexFilterParams.getPreviousSiblingFileItemParams()
+                && currentVertexFilterParams.getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
+                this.recalcMarkerSampleCount(currentVertexFilterParams
+                        .getPreviousSiblingFileItemParams()
+                        .getChildFileItemParams()[0].getQueryName(),
+                    jobId);
+            }
+        }
+    } // end function
 
     /***
      * Recall that in the FlexQuery universe of discourse, there are two focii of interest: vertices, and vertex values.
@@ -110,15 +149,14 @@ export class FlexQueryService {
      * @param {CvGroup} eventedCvGroup
      * @param {string} eventedCvTerm
      */
-    public loadSelectedVertexFilter(eventedFilterParamsName: FilterParamNames,
-                                    eventedVertexId: string,
-                                    eventedEntityType: EntityType,
-                                    eventedEntitySubType: EntitySubType,
-                                    eventedCvGroup: CvGroup,
-                                    eventedCvTerm: string) {
+    private resetVertexFilters(eventedFilterParamsName: FilterParamNames,
+                               eventedVertexId: string,
+                               eventedEntityType: EntityType,
+                               eventedEntitySubType: EntitySubType,
+                               eventedCvGroup: CvGroup,
+                               eventedCvTerm: string,
+                               jobId: string) {
 
-
-        this.invalidateMarkerSampleCount(true);
 
         let currentVertexId: string = eventedVertexId;
         let currentVertexFilterParams: FilterParams = this.filterParamsColl.getFilter(eventedFilterParamsName, GobiiExtractFilterType.FLEX_QUERY);
@@ -224,6 +262,7 @@ export class FlexQueryService {
 
         } // while we have another filter value
 
+
     } // end function
 
     public loadSelectedVertexValueFilters(jobId: string,
@@ -231,11 +270,6 @@ export class FlexQueryService {
                                           newlySelectedValuesGfis: GobiiFileItem[],
                                           previousValuesGfis: GobiiFileItem[],
                                           targetValueVertex: Vertex) {
-
-
-        //invalidate current counts
-
-        this.invalidateMarkerSampleCount(false);
 
 
         previousValuesGfis.forEach(gfi => {
@@ -268,24 +302,43 @@ export class FlexQueryService {
             .getNextSiblingFileItemParams();
         while (nextSiblingFilter) {
 
-            this.loadSelectedVertexFilter(nextSiblingFilter.getQueryName(),
+            this.resetVertexFilters(nextSiblingFilter.getQueryName(),
                 null,
                 EntityType.UNKNOWN,
                 EntitySubType.UNKNOWN,
                 CvGroup.UNKNOWN,
-                null);
+                null,
+                jobId);
 
             nextSiblingFilter = nextSiblingFilter.getParentFileItemParams() ?
                 nextSiblingFilter.getParentFileItemParams().getNextSiblingFileItemParams()
                 : null;
         }
 
+        this.recalcMarkerSampleCount(filterParamsName, jobId);
+
+    } // function
+
+    public recalcMarkerSampleCount(filterParamsName: FilterParamNames,
+                                   jobId: string) {
         // now get counts per current filter values
+        this.invalidateMarkerSampleCount(false);
+
         this.getVertexFilters(filterParamsName)
             .subscribe(vertexFiltersForCount => {
 
+                let dummyVertex: Vertex = new Vertex(0,
+                    VertexNameType.MARKER,
+                    VertexType.ENTITY,
+                    "countonly",
+                    EntityType.MARKER,
+                    EntitySubType.UNKNOWN,
+                    CvGroup.UNKNOWN,
+                    null,
+                    []);
+
                 let vertexFilterDTO: VertexFilterDTO = new VertexFilterDTO(
-                    targetValueVertex, // the server should actually ignore this for a count query
+                    dummyVertex, // the server should ignore this because it's a count query
                     vertexFiltersForCount,
                     [],
                     null,
@@ -332,8 +385,7 @@ export class FlexQueryService {
 
                 });
             }).unsubscribe();
-    } // function
-
+    }
 
     public getVertexFilters(vertexValuesFilterPararamName: FilterParamNames): Observable<Vertex[]> {
 

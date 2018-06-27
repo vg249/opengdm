@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-extractor-filter", "../../store/actions/history-action", "../../store/actions/fileitem-action", "../../store/reducers", "@ngrx/store", "./dto-request.service", "../../model/vertex-filter", "./entity-file-item-service", "../../model/file-item-param-names", "../app/dto-request-item-vertex-filter", "../../model/gobii-file-item", "../../model/type-process", "../../model/type-extractor-item", "../../store/actions/action-payload-filter", "./filter-params-coll", "../../model/gobii-file-item-compound-id", "../../model/type-entity", "../../model/name-id-label-type", "../../model/cv-group", "./filter-service", "./tree-structure-service", "rxjs/Observable"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-extractor-filter", "../../store/actions/history-action", "../../store/actions/fileitem-action", "../../store/reducers", "@ngrx/store", "./dto-request.service", "../../model/vertex-filter", "./entity-file-item-service", "../../model/file-item-param-names", "../../model/vertex", "../app/dto-request-item-vertex-filter", "../../model/gobii-file-item", "../../model/type-process", "../../model/type-extractor-item", "../../store/actions/action-payload-filter", "./filter-params-coll", "../../model/gobii-file-item-compound-id", "../../model/type-entity", "../../model/name-id-label-type", "../../model/cv-group", "./filter-service", "./tree-structure-service", "../../model/type-vertex-name", "rxjs/Observable", "../../model/type-vertex"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_extractor_filter_1, historyAction, fileItemActions, fromRoot, store_1, dto_request_service_1, vertex_filter_1, entity_file_item_service_1, file_item_param_names_1, dto_request_item_vertex_filter_1, gobii_file_item_1, type_process_1, type_extractor_item_1, action_payload_filter_1, filter_params_coll_1, gobii_file_item_compound_id_1, type_entity_1, name_id_label_type_1, cv_group_1, filter_service_1, tree_structure_service_1, Observable_1, FlexQueryService;
+    var core_1, type_extractor_filter_1, historyAction, fileItemActions, fromRoot, store_1, dto_request_service_1, vertex_filter_1, entity_file_item_service_1, file_item_param_names_1, vertex_1, dto_request_item_vertex_filter_1, gobii_file_item_1, type_process_1, type_extractor_item_1, action_payload_filter_1, filter_params_coll_1, gobii_file_item_compound_id_1, type_entity_1, name_id_label_type_1, cv_group_1, filter_service_1, tree_structure_service_1, type_vertex_name_1, Observable_1, type_vertex_1, FlexQueryService;
     return {
         setters: [
             function (core_1_1) {
@@ -42,6 +42,9 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
             },
             function (file_item_param_names_1_1) {
                 file_item_param_names_1 = file_item_param_names_1_1;
+            },
+            function (vertex_1_1) {
+                vertex_1 = vertex_1_1;
             },
             function (dto_request_item_vertex_filter_1_1) {
                 dto_request_item_vertex_filter_1 = dto_request_item_vertex_filter_1_1;
@@ -79,8 +82,14 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
             function (tree_structure_service_1_1) {
                 tree_structure_service_1 = tree_structure_service_1_1;
             },
+            function (type_vertex_name_1_1) {
+                type_vertex_name_1 = type_vertex_name_1_1;
+            },
             function (Observable_1_1) {
                 Observable_1 = Observable_1_1;
+            },
+            function (type_vertex_1_1) {
+                type_vertex_1 = type_vertex_1_1;
             }
         ],
         execute: function () {
@@ -96,6 +105,26 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                 FlexQueryService.prototype.loadVertices = function (filterParamNames) {
                     this.entityFileItemService.loadEntityList(type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY, filterParamNames);
                 }; // loadVertices()
+                FlexQueryService.prototype.loadSelectedVertexFilter = function (eventedFilterParamsName, eventedVertexId, eventedEntityType, eventedEntitySubType, eventedCvGroup, eventedCvTerm, jobId, previousSelectionExisted) {
+                    this.resetVertexFilters(eventedFilterParamsName, eventedVertexId, eventedEntityType, eventedEntitySubType, eventedCvGroup, eventedCvTerm, jobId);
+                    // I am a bit uneasy about recalculating here. In theory, there is a race condition between dispatch of the actions
+                    // performed in resetVertexFilters() and retrieving the filter values to do the count. The correct way to do this
+                    // is to use an effect. I have now littered the file-item-effects.ts code with yet another attempt to call a web
+                    // service (in this case the post() to the vertex service) and commented it out. I have made some progress since
+                    // the last time I tried to do this: the core of the problem appears to be that within an observable chain, there
+                    // is something I should be doing with the observable around which the http call is wrapped. I commented
+                    // more about this where I have the code commented out and there's an article I found that might point int he
+                    // direction of a solution.
+                    if (previousSelectionExisted) {
+                        var currentVertexFilterParams = this.filterParamsColl.getFilter(eventedFilterParamsName, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
+                        if (currentVertexFilterParams.getPreviousSiblingFileItemParams()
+                            && currentVertexFilterParams.getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
+                            this.recalcMarkerSampleCount(currentVertexFilterParams
+                                .getPreviousSiblingFileItemParams()
+                                .getChildFileItemParams()[0].getQueryName(), jobId);
+                        }
+                    }
+                }; // end function
                 /***
                  * Recall that in the FlexQuery universe of discourse, there are two focii of interest: vertices, and vertex values.
                  * Each of the four flex query controls consists of a list of vertices and a list of corresponding vertex values
@@ -157,8 +186,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                  * @param {CvGroup} eventedCvGroup
                  * @param {string} eventedCvTerm
                  */
-                FlexQueryService.prototype.loadSelectedVertexFilter = function (eventedFilterParamsName, eventedVertexId, eventedEntityType, eventedEntitySubType, eventedCvGroup, eventedCvTerm) {
-                    this.invalidateMarkerSampleCount(true);
+                FlexQueryService.prototype.resetVertexFilters = function (eventedFilterParamsName, eventedVertexId, eventedEntityType, eventedEntitySubType, eventedCvGroup, eventedCvTerm, jobId) {
                     var currentVertexId = eventedVertexId;
                     var currentVertexFilterParams = this.filterParamsColl.getFilter(eventedFilterParamsName, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
                     // the filterParams passed in should exist
@@ -221,9 +249,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                     } // while we have another filter value
                 }; // end function
                 FlexQueryService.prototype.loadSelectedVertexValueFilters = function (jobId, filterParamsName, newlySelectedValuesGfis, previousValuesGfis, targetValueVertex) {
-                    //invalidate current counts
                     var _this = this;
-                    this.invalidateMarkerSampleCount(false);
                     previousValuesGfis.forEach(function (gfi) {
                         var loadAction = new fileItemActions.RemoveFromExtractAction(gfi);
                         _this.store.dispatch(loadAction);
@@ -242,15 +268,21 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                         .getParentFileItemParams()
                         .getNextSiblingFileItemParams();
                     while (nextSiblingFilter) {
-                        this.loadSelectedVertexFilter(nextSiblingFilter.getQueryName(), null, type_entity_1.EntityType.UNKNOWN, type_entity_1.EntitySubType.UNKNOWN, cv_group_1.CvGroup.UNKNOWN, null);
+                        this.resetVertexFilters(nextSiblingFilter.getQueryName(), null, type_entity_1.EntityType.UNKNOWN, type_entity_1.EntitySubType.UNKNOWN, cv_group_1.CvGroup.UNKNOWN, null, jobId);
                         nextSiblingFilter = nextSiblingFilter.getParentFileItemParams() ?
                             nextSiblingFilter.getParentFileItemParams().getNextSiblingFileItemParams()
                             : null;
                     }
+                    this.recalcMarkerSampleCount(filterParamsName, jobId);
+                }; // function
+                FlexQueryService.prototype.recalcMarkerSampleCount = function (filterParamsName, jobId) {
+                    var _this = this;
                     // now get counts per current filter values
+                    this.invalidateMarkerSampleCount(false);
                     this.getVertexFilters(filterParamsName)
                         .subscribe(function (vertexFiltersForCount) {
-                        var vertexFilterDTO = new vertex_filter_1.VertexFilterDTO(targetValueVertex, // the server should actually ignore this for a count query
+                        var dummyVertex = new vertex_1.Vertex(0, type_vertex_name_1.VertexNameType.MARKER, type_vertex_1.VertexType.ENTITY, "countonly", type_entity_1.EntityType.MARKER, type_entity_1.EntitySubType.UNKNOWN, cv_group_1.CvGroup.UNKNOWN, null, []);
+                        var vertexFilterDTO = new vertex_filter_1.VertexFilterDTO(dummyVertex, // the server should ignore this because it's a count query
                         vertexFiltersForCount, [], null, null);
                         var vertexFilterDtoResponse = null;
                         _this.dtoRequestServiceVertexFilterDTO.post(new dto_request_item_vertex_filter_1.DtoRequestItemVertexFilterDTO(vertexFilterDTO, jobId, true)).subscribe(function (vertexFilterDto) {
@@ -279,7 +311,7 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                             _this.store.dispatch(loadActionSampleCount);
                         });
                     }).unsubscribe();
-                }; // function
+                };
                 FlexQueryService.prototype.getVertexFilters = function (vertexValuesFilterPararamName) {
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {

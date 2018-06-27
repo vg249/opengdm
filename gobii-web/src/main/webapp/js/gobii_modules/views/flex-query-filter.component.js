@@ -119,28 +119,31 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                 FlexQueryFilterComponent.prototype.handleVertexSelected = function (arg) {
                     var _this = this;
                     if (arg.value && arg.value._entity) {
-                        var vertexId = void 0;
-                        var entityType = type_entity_1.EntityType.UNKNOWN;
-                        var entitySubType = type_entity_1.EntitySubType.UNKNOWN;
-                        var cvGroup = cv_group_1.CvGroup.UNKNOWN;
-                        var cvTerm = null;
+                        var vertexId_1;
+                        var entityType_1 = type_entity_1.EntityType.UNKNOWN;
+                        var entitySubType_1 = type_entity_1.EntitySubType.UNKNOWN;
+                        var cvGroup_1 = cv_group_1.CvGroup.UNKNOWN;
+                        var cvTerm_1 = null;
+                        var previousSelectionExisted_1 = (this.selectedVertexValues && this.selectedVertexValues.length > 0)
+                            || (this.previousSelectedVertices && this.previousSelectedVertices.length > 0);
                         if (arg.value.getNameIdLabelType() === name_id_label_type_1.NameIdLabelType.UNKNOWN) {
-                            vertexId = arg.value.getItemId();
-                            entityType = arg.value.getEntityType();
-                            entitySubType = arg.value.getEntitySubType();
-                            cvGroup = arg.value.getCvGroup();
-                            cvTerm = arg.value.getCvTerm();
+                            vertexId_1 = arg.value.getItemId();
+                            entityType_1 = arg.value.getEntityType();
+                            entitySubType_1 = arg.value.getEntitySubType();
+                            cvGroup_1 = arg.value.getCvGroup();
+                            cvTerm_1 = arg.value.getCvTerm();
                         }
                         else {
-                            vertexId = null;
+                            vertexId_1 = null;
                             this.selectedVertexValues = [];
                             this.previousSelectedVertices = [];
                         }
-                        this.flexQueryService.loadSelectedVertexFilter(this.filterParamNameVertices, vertexId, entityType, entitySubType, cvGroup, cvTerm);
+                        this.JobId$.subscribe(function (fileItemJobId) {
+                            var jobId = fileItemJobId.getItemId();
+                            _this.flexQueryService.loadVertexValues(jobId, arg.value, _this.filterParamNameVertexValues);
+                            _this.flexQueryService.loadSelectedVertexFilter(_this.filterParamNameVertices, vertexId_1, entityType_1, entitySubType_1, cvGroup_1, cvTerm_1, jobId, previousSelectionExisted_1);
+                        }).unsubscribe();
                     }
-                    this.JobId$.subscribe(function (fileItemJobId) {
-                        _this.flexQueryService.loadVertexValues(fileItemJobId.getItemId(), arg.value, _this.filterParamNameVertexValues);
-                    }).unsubscribe();
                 }; // end function
                 FlexQueryFilterComponent.prototype.handleVertexValueSelected = function (arg) {
                     var _this = this;
