@@ -243,6 +243,175 @@ System.register(["@angular/core", "@angular/router", "@ngrx/effects", "rxjs/add/
                     //         //     //subscribe --> loadFIleItemsFromFilter()
                     //         // }).map( fileItems => new fileItemActions.LoadFileItemListAction({gobiiFileItems: fileItems}));
                     //     });// switchMap()
+                    //******************************************************************************************************
+                    // What follows is yet another attempt to get a call to a web service working inside an effec.t
+                    // In There are two actions defined here. The second one below is the one that would be the real action.
+                    // It depends on a function that I blew away, but that you can imagine what it does: it is the same as
+                    // recalcMarkerSampleCount() but creates actions instead. The first is my careful attempt to figure out
+                    // where the problem is. I can do all kinds of asynchronous things with the store in the action. The one
+                    // thing where it breaks down is in the post call to get the marker/sample count. This DEFINITELY works
+                    // when it is called outside of an effect. It works now in the recalcMarkerSampleCount() as it is. But
+                    // for some reason, when you call the post() method inside this effect, you can see that the post method
+                    // is getting called with a break point. But some how the result of the call just doesn't get passed through.
+                    // I strongly that the problem is the fact that the web service call is wrapped in an Observable. Even though
+                    // the post() method calls observer.complete and unsubscribes from the actual http call, it just doesn't work.
+                    // There must be _something_  I'm suppposed to be doing. For example, this article seems to imply that you
+                    // have to remap the reseult of the http query. I've just run out of time to experiment with this:
+                    // http://blog.danieleghidoli.it/2016/10/22/http-rxjs-observables-angular/
+                    //
+                    // @Effect()
+                    // loadFileItems$ = this.actions$
+                    //     .ofType(fileItemActions.LOAD_FILTER)
+                    //     .switchMap((action: fileItemActions.LoadFilterAction) => {
+                    //
+                    //             return Observable.create(observer => {
+                    //
+                    //                 let history1 = new historyAction.AddFilterRetrieved(
+                    //                     {
+                    //                         gobiiExtractFilterType: action.payload.filter.gobiiExtractFilterType,
+                    //                         filterId: action.payload.filterId,
+                    //                         filterValue: "HERE 1",
+                    //                         entityLasteUpdated: action.payload.filter.entityLasteUpdated
+                    //                     });
+                    //
+                    //                 observer.next(history1);
+                    //
+                    //                 // this.store.select(fromRoot.getJobId)
+                    //                 //     .subscribe(
+                    //                 //         fileItemJobId => {
+                    //                 //             let history2 = new historyAction.AddFilterRetrieved(
+                    //                 //                 {
+                    //                 //                     gobiiExtractFilterType: action.payload.filter.gobiiExtractFilterType,
+                    //                 //                     filterId: action.payload.filterId,
+                    //                 //                     filterValue: " NEXT: " + fileItemJobId.getItemName(),
+                    //                 //                     entityLasteUpdated: action.payload.filter.entityLasteUpdated
+                    //                 //                 });
+                    //                 //         });// subscribe to job id
+                    //
+                    //                 // this.flexQueryService
+                    //                 //     .getVertexFilters(FilterParamNames.FQ_F1_VERTEX_VALUES)
+                    //                 //     .subscribe(loadFileItemListActions => {
+                    //                 //
+                    //                 //             let history2 = new historyAction.AddFilterRetrieved(
+                    //                 //                 {
+                    //                 //                     gobiiExtractFilterType: action.payload.filter.gobiiExtractFilterType,
+                    //                 //                     filterId: action.payload.filterId,
+                    //                 //                     filterValue: " NEXT: SECOND" ,
+                    //                 //                     entityLasteUpdated: action.payload.filter.entityLasteUpdated
+                    //                 //                 });
+                    //                 //
+                    //                 //             this.store.select(fromRoot.getJobId)
+                    //                 //                 .subscribe(
+                    //                 //                     fileItemJobId => {
+                    //                 //                         observer.next(history2);
+                    //                 //                     });
+                    //                 //         },
+                    //                 //         error => {
+                    //                 //             this.store.dispatch(new historyAction.AddStatusMessageAction(error))
+                    //                 //         }); // subscribe to marker sample count actions
+                    //
+                    //
+                    //                 let dummyVertex: Vertex = new Vertex(0,
+                    //                     VertexNameType.MARKER,
+                    //                     VertexType.ENTITY,
+                    //                     "countonly",
+                    //                     EntityType.MARKER,
+                    //                     EntitySubType.UNKNOWN,
+                    //                     CvGroup.UNKNOWN,
+                    //                     null,
+                    //                     []);
+                    //
+                    //                 let vertexFilterDTO: VertexFilterDTO = new VertexFilterDTO(
+                    //                     dummyVertex, // the server should ignore this because it's a count query
+                    //                     [new Vertex(0, VertexNameType.VERTEX_TYPE_DATASET, VertexType.ENTITY, "foo", EntityType.DATASET, EntitySubType.UNKNOWN, CvGroup.UNKNOWN, null, [1, 2])],
+                    //                     [],
+                    //                     null,
+                    //                     null
+                    //                 );
+                    //                 let vertexFilterDtoResponse: VertexFilterDTO = null;
+                    //                 this.dtoRequestServiceVertexFilterDTO.post(new DtoRequestItemVertexFilterDTO(
+                    //                     vertexFilterDTO,
+                    //                     "foo",
+                    //                     true
+                    //                 )).subscribe(vertexFilterDto => {
+                    //                     vertexFilterDtoResponse = vertexFilterDto;
+                    //                     let history2 = new historyAction.AddFilterRetrieved(
+                    //                         {
+                    //                             gobiiExtractFilterType: action.payload.filter.gobiiExtractFilterType,
+                    //                             filterId: action.payload.filterId,
+                    //                             filterValue: " NEXT: SECOND",
+                    //                             entityLasteUpdated: action.payload.filter.entityLasteUpdated
+                    //                         });
+                    //                     observer.next(history2);
+                    //
+                    //                 }, error => {
+                    //                     this.store.dispatch(new historyAction.AddStatusMessageAction(error))
+                    //                 }).unsubscribe();
+                    //
+                    //
+                    //                 observer.complete();
+                    //
+                    //             }).mergeMap(actions => {
+                    //                 return Observable.of(actions);
+                    //             });
+                    // return Observable.create(observer => {
+                    //
+                    //         let eventedFilterParams: FilterParams = this.filterParamsColl
+                    //             .getFilter(action.payload.filterId,
+                    //                 action.payload.filter.gobiiExtractFilterType);
+                    //         if (action.payload.isEvented && eventedFilterParams) {
+                    //
+                    //             let vertexValuesFilterParams: FilterParams = null;
+                    //             if (eventedFilterParams.getQueryName() === FilterParamNames.FQ_F1_VERTEX_VALUES
+                    //                 || eventedFilterParams.getQueryName() === FilterParamNames.FQ_F2_VERTEX_VALUES
+                    //                 || eventedFilterParams.getQueryName() === FilterParamNames.FQ_F3_VERTEX_VALUES
+                    //                 || eventedFilterParams.getQueryName() === FilterParamNames.FQ_F4_VERTEX_VALUES
+                    //             ) { // if query id is vertex values
+                    //                 vertexValuesFilterParams = eventedFilterParams;
+                    //             } else if (eventedFilterParams.getQueryName() === FilterParamNames.FQ_F4_VERTICES
+                    //                 || eventedFilterParams.getQueryName() === FilterParamNames.FQ_F1_VERTICES
+                    //                 || eventedFilterParams.getQueryName() === FilterParamNames.FQ_F2_VERTICES
+                    //                 || eventedFilterParams.getQueryName() === FilterParamNames.FQ_F3_VERTICES) {
+                    //
+                    //                 if (eventedFilterParams.getChildFileItemParams().length > 0) {
+                    //
+                    //                     vertexValuesFilterParams = eventedFilterParams;
+                    //                 }
+                    //             } // if query id vertices
+                    //
+                    //             if (vertexValuesFilterParams) {
+                    //                 this.store.select(fromRoot.getJobId)
+                    //                     .subscribe(
+                    //                         fileItemJobId => {
+                    //                             let jobId: string = fileItemJobId.getItemId();
+                    //                             this.flexQueryService
+                    //                                 .recalcMarkerSampleCounActions(vertexValuesFilterParams.getQueryName(), jobId)
+                    //                                 .subscribe(loadFileItemListActions => {
+                    //
+                    //                                         if (loadFileItemListActions) {
+                    //                                             loadFileItemListActions.forEach(currentAction => {
+                    //                                                 observer.next(currentAction);
+                    //                                             });
+                    //                                             observer.complete();
+                    //                                         }
+                    //                                     },
+                    //                                     error => {
+                    //                                         this.store.dispatch(new historyAction.AddStatusMessageAction(error))
+                    //                                     }).unsubscribe(); // subscribe to marker sample count actions
+                    //                         }).unsubscribe(); //subscribe to get job id
+                    //             } // if we have a vertex params to process
+                    //
+                    //         } // if action is evented
+                    //     } // observable create
+                    //
+                    // ).mergeMap(actions => {
+                    //
+                    //     return actions;
+                    //     //return Observable.of(actions);
+                    //
+                    // });
+                    //    }//switchmap
+                    //)
                     this.replaceInExtract$ = this.actions$
                         .ofType(fileItemActions.REPLACE_BY_ITEM_ID)
                         .switchMap(function (action) {

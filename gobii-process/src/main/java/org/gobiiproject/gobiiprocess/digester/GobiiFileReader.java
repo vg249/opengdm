@@ -356,7 +356,7 @@ public class GobiiFileReader {
 						transformStripsHeader = true;
                         break;
                     case "IUPAC":
-                        mainTransform = MobileTransform.IUPACToBI;
+                        mainTransform = MobileTransform.getIUPACToBI(loaderScriptPath);
                         break;
                     case "SSR_ALLELE_SIZE":
                     case "DOMINANT_NON_NUCLEOTIDE":

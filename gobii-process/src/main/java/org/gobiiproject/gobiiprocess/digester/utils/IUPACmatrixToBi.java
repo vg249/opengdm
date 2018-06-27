@@ -18,17 +18,20 @@ public class IUPACmatrixToBi {
 
     private static long startTime, endTime, duration;
     private static String fSep;
+    private static int line;
+    private static int decodeErrors=0;
+    private static final int MAX_ERRORS=20;
 
-    public static boolean convertIUPACtoBi(String sep, String iFile, String oFile) throws FileNotFoundException {
+    public static boolean convertIUPACtoBi(String sep, String iFile, String oFile, String loaderScriptPath) throws FileNotFoundException {
 
         if (!checkFileExistence(iFile)) {
-            ErrorLogger.logError("IUPAC to Bi","Input file provided does not exists.\n");
-            throw new FileNotFoundException("IUPAC to Bi:\t" + iFile +"does not exists");
+            ErrorLogger.logError("IUPAC to Bi","Input file provided does not exist.\n");
+            return false;
         }
 
         Map<String, NucIupacCodes> hash = new HashMap<>();
 
-        initNuclHash(hash);
+        initNuclHash(hash, loaderScriptPath);
         switch (sep) {
             case "tab":
                 fSep = "\t";
@@ -42,6 +45,7 @@ public class IUPACmatrixToBi {
         }
         startTime = System.currentTimeMillis();
         BufferedReader buffIn = new BufferedReader(new FileReader(iFile));
+        line=0;
         try (BufferedWriter buffOut=new BufferedWriter(new FileWriter(oFile)))
         {
             String iLine;
@@ -50,17 +54,24 @@ public class IUPACmatrixToBi {
                     buffOut.newLine();
                     continue;
                 }
+                line++;
                 String[] iNucl = iLine.split(fSep,-1);//lim -1 causes blanks at the end and beginning to be registered
                 String[] oNucl;
                 oNucl = new String[(iNucl.length)];
                 for (int i = 0; i < iNucl.length; i++) {
-                    if(iNucl[i].length() > 1){ // takes care of "+/+" or "+/-" or "-/-" cases
-                        oNucl[i] = Character.toString(iNucl[i].charAt(0)) + Character.toString(iNucl[i].charAt(iNucl[i].length()-1));
+                    if(iNucl[i].length() > 1){
+                        char first=iNucl[i].charAt(0);
+                        char last = iNucl[i].charAt(iNucl[i].length()-1);
+                        if((first=='+'||first=='-') &&(last=='+'||last=='-')) {// takes care of "+/+" or "+/-" or "-/-" cases
+                            oNucl[i] = first + "" +last;
+                        }
                     }
                     else{
                         NucIupacCodes code =hash.get(iNucl[i].toUpperCase());
                         if(code == null){
-                            oNucl[i] = iNucl[i] + iNucl[i]; // takes care of "+" or "-" in the input. Converts to "++" and "--" respectively
+                            ErrorLogger.logError("IUPACMatrixToBi","Unknown IUPAC code " + iNucl[i].toUpperCase() + " on data line " +line + " column "+ i);
+                            decodeErrors++;
+                            if(decodeErrors>MAX_ERRORS) return false;
                         }
                         else {
                             oNucl[i] = code.getName();
@@ -85,20 +96,50 @@ public class IUPACmatrixToBi {
 
     /***
      * Initializing IUPAC nucleotide Dictionary
-     * @param hash
+     * @param hash passed in hashmap to be filled with valid values of IUPAC data (I/O)
+     * @param loaderScriptPath Base script directory. Used to calculate where the missing indicators .txt file is to use that for extra
+     *                         null values.
      */
-    private static void initNuclHash(Map<String,NucIupacCodes> hash){
+    private static void initNuclHash(Map<String,NucIupacCodes> hash, String loaderScriptPath){
         hash.put("A",AA);
         hash.put("T",TT);
         hash.put("G",GG);
         hash.put("C",CC);
-        hash.put("N",NN);
+
+        //Two potential alleles are specified as one of each
         hash.put("W",AT);
         hash.put("R",AG);
         hash.put("M",AC);
         hash.put("K",TG);
         hash.put("Y",TC);
         hash.put("S",GC);
+        // deal with 0 by making it +-
         hash.put("0",plusminus);
+
+        //Plus and minus are duplicated
+        hash.put("+",plus);
+        hash.put("-",minus);
+
+        //Three potential alleles become unknown, and are set to NN
+        hash.put("B",NN);
+        hash.put("D",NN);
+        hash.put("H",NN);
+        hash.put("V",NN);
+        hash.put(".",minus);//As Per GSD-456
+
+        //N (IUPAC for 'any base' is set to NN - unknown
+        hash.put("N",NN);
+
+        //NN for anything in 'missing indicators' text file.
+        try {
+            File unknownsFile = new File(loaderScriptPath, "etc/missingIndicators.txt");
+            BufferedReader br = new BufferedReader(new FileReader(unknownsFile));
+            String next;
+            while((next=br.readLine())!=null){
+                hash.put(next,NN);
+            }
+        }catch (Throwable e){
+            ErrorLogger.logWarning("IUPACMatrixToBI",e.getMessage());
+        }
     }
 }

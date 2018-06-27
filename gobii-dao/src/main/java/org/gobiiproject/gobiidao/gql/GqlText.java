@@ -108,7 +108,7 @@ public class GqlText {
 
     //python gobii_gql.py /temp/filter3.out {principal_investigator:[67,69,70], project:[3,25,30], division:[25,30]} experiment ['name']
     public String makeCommandLine(String outputFileFqpn,
-                                  List<VertexDTO> filterPath,
+                                  List<VertexDTO> subGraphVertices,
                                   VertexDTO destinationVertex,
                                   Integer maxResult) throws Exception {
 
@@ -135,20 +135,22 @@ public class GqlText {
                 false));
 
         // filter path
-        StringBuilder subGraphPath = new StringBuilder();
-        subGraphPath.append("{");
-        Iterator<VertexDTO> filterPathIterator = filterPath.iterator();
-        while (filterPathIterator.hasNext()) {
+        if( subGraphVertices.size() > 0 ) {
+            StringBuilder subGraphPath = new StringBuilder();
+            subGraphPath.append("{");
+            Iterator<VertexDTO> filterPathIterator = subGraphVertices.iterator();
+            while (filterPathIterator.hasNext()) {
 
-            subGraphPath.append(filterPathIterator.next().toGqlSubPathElement());
-            if (filterPathIterator.hasNext()) {
-                subGraphPath.append(",");
+                subGraphPath.append(filterPathIterator.next().toGqlSubPathElement());
+                if (filterPathIterator.hasNext()) {
+                    subGraphPath.append(",");
+                }
             }
-        }
-        subGraphPath.append("}");
-        commandLineBuilder.append(this.makeArg(GQL_PARM_SUB_GRAPH_PATH,
-                subGraphPath.toString(),
-                true));
+            subGraphPath.append("}");
+            commandLineBuilder.append(this.makeArg(GQL_PARM_SUB_GRAPH_PATH,
+                    subGraphPath.toString(),
+                    true));
+        } // if there is a filter path
 
         commandLineBuilder.append(this.makeArg(GQL_PARM_TARGET_VERTEX_NAME,
                 destinationVertex.getVertexNameType().getVertexName(),

@@ -1,7 +1,9 @@
-package org.gobiiproject.gobiiclient.gobii.instructions;
+package org.gobiiproject.gobiiclient.gobii.Helpers;
 
+import org.apache.commons.io.FileUtils;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -16,8 +18,8 @@ public class ADLEncapsulator {
     private static final String INPUT_DIRECTORY = "-d";
     private static final String SPACE = " ";
     private static final String JAVA_COMMAND = "java -jar";
-    private static final String OUTPUT = "output.txt";
-    private static final String ERROR = "error.txt";
+    private static final String OUTPUT_FILE_NAME = "output.txt";
+    private static final String ERROR_FILE_NAME = "error.txt";
 
     private String inputHost, inputUser, inputPassword, inputScenario, inputDirectory, adlJarPath, errorMsg;
     private Integer inputTimeout;
@@ -108,23 +110,45 @@ public class ADLEncapsulator {
         return servercommand;
     }
 
-    public boolean executeBatchGobiiADL() {
+    public boolean executeBatchGobiiADL() throws Exception{
+
         if (getAdlJarPath() == null || getInputHost() == null || getInputUser() == null || getInputPassword() == null || getInputTimeout() == null || getInputDirectory() == null) {
             setErrorMsg("Please set all the input parameters and try again.");
-            return false;
         }
-        boolean status = HelperFunctions.tryExec(getBatchAdlCommand(), getInputDirectory() + OUTPUT, getInputDirectory() + ERROR);
-        if (status) {
-            return true;
-        } else {
-            final String[] msg = new String[0];
-            try (Stream<String> stream = Files.lines(Paths.get(getInputDirectory() + ERROR))) {
-                stream.forEach(s -> msg[0] += s + SPACE);
-            } catch (IOException e) {
-                setErrorMsg(e.getMessage());
+
+        String outputFileName = getInputDirectory() + OUTPUT_FILE_NAME;
+        String errorFileName = getInputDirectory() + ERROR_FILE_NAME;
+
+        boolean returnVal = HelperFunctions.tryExec(getBatchAdlCommand(),
+                outputFileName,
+                errorFileName);
+
+        if (!returnVal) {
+
+            String message = "gobiiadl failed but there was no output error file reported";
+            File errorFile = new File(getClass().getClassLoader().getResource(errorFileName).getFile());
+            if( errorFile.exists()) {
+                message = FileUtils.readFileToString(errorFile);
+            } else {
+                File outputFile = new File(getClass().getClassLoader().getResource(outputFileName).getFile());
+                if( outputFile.exists()) {
+                    message = FileUtils.readFileToString(errorFile);
+                }
             }
-            setErrorMsg(msg[0]);
-            return false;
+
+            setErrorMsg(message);
+
+//            final String[] msg = new String[0];
+//            try (Stream<String> stream = Files.lines(Paths.get(getInputDirectory() + ERROR_FILE_NAME))) {
+//                stream.forEach(s -> msg[0] += s + SPACE);
+//            } catch (IOException e) {
+//                setErrorMsg(e.getMessage());
+//            }
+//
+//            setErrorMsg(msg[0]);
         }
-    }
+
+        return returnVal;
+
+    } // func()
 }

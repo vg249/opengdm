@@ -53,6 +53,7 @@ public class Vertices {
                             CvGroup.MAPSET_TYPE,
                             null),
 
+
                     new VertexDTO(5,
                             VertexNameType.VERTEX_TYPE_ANALYSIS_TYPE,
                             GobiiVertexType.CVGROUP,
@@ -89,7 +90,6 @@ public class Vertices {
                             GobiiEntitySubType.UNKNOWN,
                             CvGroup.UNKNOWN,
                             null),
-
 
                     new VertexDTO(10,
                             VertexNameType.VERTEX_TYPE_LINKAGE_GROUP,

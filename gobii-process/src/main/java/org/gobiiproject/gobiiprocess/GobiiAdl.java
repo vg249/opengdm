@@ -73,6 +73,14 @@ public class GobiiAdl {
     private static File parentDirectoryPath;
     private static boolean batchMode = true;
 
+    private static String INPUT_HOST = "h";
+    private static String INPUT_USER = "u";
+    private static String INPUT_PASSWORD = "p";
+    private static String INPUT_TIMEOUT = "t";
+    private static String INPUT_SCENARIO = "s";
+    private static String INPUT_DIRECTORY = "d";
+    private static String NAME_COMMAND = "GobiiAdl";
+
     private static void validateKeys(NodeList nodeList, XPath xPath, Document document) throws Exception {
         for (int i = 0; i < nodeList.getLength(); i++) {
             String parentName = nodeList.item(i).getLocalName();
@@ -1845,6 +1853,7 @@ public class GobiiAdl {
         System.out.println(message);
         if (gobiiStatusLevel.equals(GobiiStatusLevel.ERROR)) {
             ErrorLogger.logError("GobiiADL", message);
+            System.err.print(message);
             System.exit(1);
         }
 
@@ -1997,23 +2006,26 @@ public class GobiiAdl {
 
         // define commandline options
         Options options = new Options();
-        String INPUT_HOST = "h";
         setOption(options, INPUT_HOST, true, "The URL of the gobii server to connect to", "gobii server");
-        String INPUT_USER = "u";
         setOption(options, INPUT_USER, true, "Username of the user doing the load", "username");
-        String INPUT_PASSWORD = "p";
         setOption(options, INPUT_PASSWORD, true, "Password of the user doing the load", "password");
-        String INPUT_TIMEOUT = "t";
-        setOption(options, INPUT_TIMEOUT, true, "Maximum waiting time in minutes.", "timeout");
-        String INPUT_SCENARIO = "s";
-        setOption(options, INPUT_SCENARIO, true, "Specifies the path of one subdirectory under the main directory. When specified, tool in run in single-scenario mode", "scenario");
-        String INPUT_DIRECTORY = "d";
-        setOption(options, INPUT_DIRECTORY, true, "Specifies the path to the directory where the files are in.", "directory");
+        setOption(options, INPUT_TIMEOUT, true, "Maximum waiting time in minutes", "timeout");
+        setOption(options, INPUT_SCENARIO, true, "Specifies the path of one subdirectory under the main directory. When specified, tool is run in single-scenario mode", "scenario");
+        setOption(options, INPUT_DIRECTORY, true, "Specifies the path to the directory where the files are in", "directory");
 
         // parse the commandline
         CommandLineParser parser = new DefaultParser();
         CommandLine commandLine = parser.parse(options, args);
+
+        HelpFormatter helpFormatter = new HelpFormatter();
+
         String message;
+
+        if (args.length == 0) {
+            helpFormatter.printHelp(NAME_COMMAND, options);
+            System.exit(1);
+        }
+
 
         if (!commandLine.hasOption(INPUT_HOST)) {
             message = getMessageForMissingOption(INPUT_HOST, options);
