@@ -69,15 +69,13 @@ export class FlexQueryService {
             jobId);
 
         // I am a bit uneasy about recalculating here. In theory, there is a race condition between dispatch of the actions
-        // performed in resetVertexFilters() and retrieving the filter values to do the count. Fixing this is going to be a
-        // bit of work. I think we'll need specific load actions for vertex and vertex value filters. Or perhaps its a combined
-        // action where you gather together _all_ the vertex related filters and dispatch them at once. Then you can do an
-        // effect such that after the filter load is complete (by definition, the effect happens after the store has been
-        // updated), then you issue the recount request. The reason you need to clump all the filter related actions together
-        // is because if you treat them separately, you are issuing loads and loads of count requests, which is going to get expensive.
-        // So for now the solution is that the vertex and vertex value selection events from the filter control trigger either this method
-        // loadSelectedVertexFilter() or method for when the user selects a new vertex value. In other word, we are tying the recount
-        // request to one, and only one, user event.
+        // performed in resetVertexFilters() and retrieving the filter values to do the count. The correct way to do this
+        // is to use an effect. I have now littered the file-item-effects.ts code with yet another attempt to call a web
+        // service (in this case the post() to the vertex service) and commented it out. I have made some progress since
+        // the last time I tried to do this: the core of the problem appears to be that within an observable chain, there
+        // is something I should be doing with the observable around which the http call is wrapped. I commented
+        // more about this where I have the code commented out and there's an article I found that might point int he
+        // direction of a solution.
         if (previousSelectionExisted) {
             let currentVertexFilterParams: FilterParams = this.filterParamsColl.getFilter(eventedFilterParamsName, GobiiExtractFilterType.FLEX_QUERY);
             if (currentVertexFilterParams.getPreviousSiblingFileItemParams()

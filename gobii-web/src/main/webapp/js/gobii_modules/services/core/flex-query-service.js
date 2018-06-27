@@ -107,6 +107,14 @@ System.register(["@angular/core", "../../model/type-extractor-filter", "../../st
                 }; // loadVertices()
                 FlexQueryService.prototype.loadSelectedVertexFilter = function (eventedFilterParamsName, eventedVertexId, eventedEntityType, eventedEntitySubType, eventedCvGroup, eventedCvTerm, jobId, previousSelectionExisted) {
                     this.resetVertexFilters(eventedFilterParamsName, eventedVertexId, eventedEntityType, eventedEntitySubType, eventedCvGroup, eventedCvTerm, jobId);
+                    // I am a bit uneasy about recalculating here. In theory, there is a race condition between dispatch of the actions
+                    // performed in resetVertexFilters() and retrieving the filter values to do the count. The correct way to do this
+                    // is to use an effect. I have now littered the file-item-effects.ts code with yet another attempt to call a web
+                    // service (in this case the post() to the vertex service) and commented it out. I have made some progress since
+                    // the last time I tried to do this: the core of the problem appears to be that within an observable chain, there
+                    // is something I should be doing with the observable around which the http call is wrapped. I commented
+                    // more about this where I have the code commented out and there's an article I found that might point int he
+                    // direction of a solution.
                     if (previousSelectionExisted) {
                         var currentVertexFilterParams = this.filterParamsColl.getFilter(eventedFilterParamsName, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
                         if (currentVertexFilterParams.getPreviousSiblingFileItemParams()
