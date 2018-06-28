@@ -335,7 +335,10 @@ public class GobiiFileReader {
 				if (gfc.getDataSetType() != null) {
 					dst = getDatasetType(inst, gfc);
 					boolean isVCF = inst.getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF);
-					if (isVCF && !dst.equals("IUPAC")) {
+					if(isVCF && !dst.equals("NUCLEOTIDE_2_LETTER")){
+						ErrorLogger.logError("GobiiFileReader","Invalid Dataset Type selected for VCF file. Expected 2 Letter Nucleotide. Received " +dst);
+					}
+					if (isVCF) {
 						dst = "VCF";
 					}
 					if (gfc.getDataSetOrientationType() != null) dso = gfc.getDataSetOrientationType();
@@ -399,7 +402,7 @@ public class GobiiFileReader {
 			intermediateFile.returnFile(); // replace intermediateFile where it came from
 
 			//DONE WITH TRANSFORMS
-
+			
 			jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION.getCvName(),"Matrix Validation");
 			if(loaderInstructionMap.containsKey(VARIANT_CALL_TABNAME)) {
 				boolean valid=DigestMatrix.validatematrix(loaderInstructionMap.get(VARIANT_CALL_TABNAME), zero.getDatasetType().getName());
