@@ -7,6 +7,7 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexDTO;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
+import org.gobiiproject.gobiimodel.types.GobiiVertexType;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 
 import java.io.BufferedReader;
@@ -68,6 +69,7 @@ public class GqlText {
     private final String GQL_PARM_TARGET_VERTEX_NAME = "-t";
     private final String GQL_PARM_TARGET_VERTEX_COLUMNS = "-f"; // OPTIONAL
     private final String GQL_PARM_COUNT_LIMIT = "-l";
+    private final String GQL_PARM_UNIQUE = "-u";
 
     public String makeGqlJobPath(String cropType, String jobId) throws GobiiDaoException {
 
@@ -177,6 +179,12 @@ public class GqlText {
         commandLineBuilder.append(this.makeArg(GQL_PARM_COUNT_LIMIT,
                 maxResult.toString(),
                 false));
+
+        if( destinationVertex.getGobiiVertexType().equals(GobiiVertexType.CVTERM)) {
+            commandLineBuilder.append(this.makeArg(GQL_PARM_UNIQUE,
+                    "",
+                    false));
+        }
 
         return commandLineBuilder.toString();
     }

@@ -17,7 +17,8 @@ def main(argv):
     column_names = ""
     unique = False
 
-    opts, args = getopt.getopt(argv, "hc:o:g:t:f:l:vd", ["connectionString=", "outputFilePath=", "subGraphPath=", "targetVertexName=", "vertexColumnsToFetch=", "verbose", "debug"])
+    #colon indicates argument required
+    opts, args = getopt.getopt(argv, "hc:o:g:t:f:l:uvd", ["connectionString=", "outputFilePath=", "subGraphPath=", "targetVertexName=", "vertexColumnsToFetch=", "verbose", "debug", "unique"])
     for opt, arg in opts:
         if opt in ("-c", "--connectionString"):
             connection_str = arg
