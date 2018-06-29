@@ -60,7 +60,7 @@ public class VertexDTO extends DTOBase {
     private VertexNameType vertexNameType;
     private GobiiVertexType gobiiVertexType = GobiiVertexType.UNKNOWN;
     private String vertexName;
-    private List<Integer> filterVals = new ArrayList<>();
+    private List<String> filterVals = new ArrayList<>();
     private GobiiEntityNameType entityType;
     private GobiiEntitySubType entitySubType;
     private CvGroup cvGroup;
@@ -99,11 +99,11 @@ public class VertexDTO extends DTOBase {
         this.vertexName = vertexName;
     }
 
-    public List<Integer> getFilterVals() {
+    public List<String> getFilterVals() {
         return filterVals;
     }
 
-    public void setFilterVals(List<Integer> filterVals) {
+    public void setFilterVals(List<String> filterVals) {
         this.filterVals = filterVals;
     }
 
@@ -166,7 +166,7 @@ public class VertexDTO extends DTOBase {
         returnVal.append("\"" + this.getVertexNameType().getVertexName() + "\"");
         returnVal.append(":");
         returnVal.append("[");
-        Iterator<Integer> iterator = this.getFilterVals().iterator();
+        Iterator<String> iterator = this.getFilterVals().iterator();
         while (iterator.hasNext()) {
             returnVal.append(iterator.next());
             if (iterator.hasNext()) {
