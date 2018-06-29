@@ -21,6 +21,7 @@ import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestDataSetTest;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestProtocolTest;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.cvnames.VertexNameType;
+import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.VertexFilterDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.Vertices;
@@ -167,7 +168,7 @@ public class DtoRequestFlexQueryTest {
                 (new GlobalPkColl<DtoCrudRequestAnalysisTest>())
                         .getPkVals(DtoCrudRequestAnalysisTest.class, GobiiEntityNameType.ANALYSIS, 3)
                         .stream()
-                        .map(pk -> toString())
+                        .map(pk -> new NameIdDTO(analysisVertex.getEntityType(), pk, analysisVertex.getVertexNameType() + "-" + pk.toString()))
                         .collect(Collectors.toList())
         );
         vertexFilterDTO.getFilterVertices().add(analysisVertex);
@@ -177,7 +178,7 @@ public class DtoRequestFlexQueryTest {
         datasetVertex.setFilterVals(
                 (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getPkVals(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASET, 5)
                         .stream()
-                        .map(pk -> toString())
+                        .map(pk -> new NameIdDTO(datasetVertex.getEntityType(), pk, datasetVertex.getVertexNameType() + "-" + pk.toString()))
                         .collect(Collectors.toList())
         );
         vertexFilterDTO.getFilterVertices().add(datasetVertex);
@@ -187,7 +188,7 @@ public class DtoRequestFlexQueryTest {
         protocolVertex.setFilterVals(
                 (new GlobalPkColl<DtoCrudRequestProtocolTest>()).getPkVals(DtoCrudRequestProtocolTest.class, GobiiEntityNameType.PROTOCOL, 4)
                         .stream()
-                        .map(pk -> toString())
+                        .map(pk -> new NameIdDTO(protocolVertex.getEntityType(), pk, protocolVertex.getVertexNameType() + "-" + pk.toString()))
                         .collect(Collectors.toList())
         );
         vertexFilterDTO.getFilterVertices().add(protocolVertex);
@@ -267,7 +268,11 @@ public class DtoRequestFlexQueryTest {
                         CvGroup.UNKNOWN,
                         null
                 );
-        filterF1VertexDTO.setFilterVals(new ArrayList<>(Arrays.asList("1", "2", "3")));
+        filterF1VertexDTO.setFilterVals(new ArrayList<>(Arrays.asList(
+                new NameIdDTO(filterF1VertexDTO.getEntityType(),1,filterF1VertexDTO.getVertexNameType() + "-1"),
+                new NameIdDTO(filterF1VertexDTO.getEntityType(),2,filterF1VertexDTO.getVertexNameType() + "-2"),
+                new NameIdDTO(filterF1VertexDTO.getEntityType(),3,filterF1VertexDTO.getVertexNameType() + "-3")
+        )));
 
         GobiiEntityNameType gobiiFilterEntityTypeF2 = GobiiEntityNameType.DATASET;
         VertexDTO filterF2VertexDTO =
@@ -281,7 +286,11 @@ public class DtoRequestFlexQueryTest {
                         CvGroup.UNKNOWN,
                         null
                 );
-        filterF2VertexDTO.setFilterVals(new ArrayList<>(Arrays.asList("1", "2", "3")));
+        filterF2VertexDTO.setFilterVals(new ArrayList<>(Arrays.asList(
+                new NameIdDTO(filterF2VertexDTO.getEntityType(),1,filterF2VertexDTO.getVertexNameType() + "-1"),
+                new NameIdDTO(filterF2VertexDTO.getEntityType(),2,filterF2VertexDTO.getVertexNameType() + "-2"),
+                new NameIdDTO(filterF2VertexDTO.getEntityType(),3,filterF2VertexDTO.getVertexNameType() + "-3")
+        )));
 
         vertexFilterDTO.getFilterVertices().add(filterF1VertexDTO);
         vertexFilterDTO.getFilterVertices().add(filterF2VertexDTO);

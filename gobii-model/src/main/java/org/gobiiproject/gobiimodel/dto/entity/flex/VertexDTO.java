@@ -5,6 +5,7 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.cvnames.VertexNameType;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
+import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.entity.flex.vertexcolumns.VertexColumns;
 import org.gobiiproject.gobiimodel.dto.entity.flex.vertexcolumns.VertexColumnsKvp;
 import org.gobiiproject.gobiimodel.dto.entity.flex.vertexcolumns.VertexColumnsNameIdGeneric;
@@ -60,7 +61,7 @@ public class VertexDTO extends DTOBase {
     private VertexNameType vertexNameType;
     private GobiiVertexType gobiiVertexType = GobiiVertexType.UNKNOWN;
     private String vertexName;
-    private List<String> filterVals = new ArrayList<>();
+    private List<NameIdDTO> filterVals = new ArrayList<>();
     private GobiiEntityNameType entityType;
     private GobiiEntitySubType entitySubType;
     private CvGroup cvGroup;
@@ -99,11 +100,11 @@ public class VertexDTO extends DTOBase {
         this.vertexName = vertexName;
     }
 
-    public List<String> getFilterVals() {
+    public List<NameIdDTO> getFilterVals() {
         return filterVals;
     }
 
-    public void setFilterVals(List<String> filterVals) {
+    public void setFilterVals(List<NameIdDTO> filterVals) {
         this.filterVals = filterVals;
     }
 
@@ -144,7 +145,7 @@ public class VertexDTO extends DTOBase {
 
         VertexColumns returnVal;
 
-        if( this.getGobiiVertexType().equals(GobiiVertexType.CVTERM)) {
+        if (this.getGobiiVertexType().equals(GobiiVertexType.CVTERM)) {
             returnVal = new VertexColumnsKvp();
         } else if (this.getVertexNameType().getVertexName()
                 .equals(VertexNameType.VERTEX_TYPE_PRINCIPLE_INVESTIGATOR.getVertexName())) {
@@ -166,9 +167,17 @@ public class VertexDTO extends DTOBase {
         returnVal.append("\"" + this.getVertexNameType().getVertexName() + "\"");
         returnVal.append(":");
         returnVal.append("[");
-        Iterator<String> iterator = this.getFilterVals().iterator();
+        Iterator<NameIdDTO> iterator = this.getFilterVals().iterator();
         while (iterator.hasNext()) {
-            returnVal.append(iterator.next());
+
+            NameIdDTO currentNameId = iterator.next();
+            String currentVal;
+            if (this.getGobiiVertexType() == GobiiVertexType.CVTERM) {
+                currentVal = "\"" + currentNameId.getName() + "\"";
+            } else {
+                currentVal = currentNameId.getId().toString();
+            }
+            returnVal.append(currentVal);
             if (iterator.hasNext()) {
                 returnVal.append(",");
             }
