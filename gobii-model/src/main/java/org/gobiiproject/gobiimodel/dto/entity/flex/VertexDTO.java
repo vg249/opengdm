@@ -6,6 +6,7 @@ import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.cvnames.VertexNameType;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 import org.gobiiproject.gobiimodel.dto.entity.flex.vertexcolumns.VertexColumns;
+import org.gobiiproject.gobiimodel.dto.entity.flex.vertexcolumns.VertexColumnsKvp;
 import org.gobiiproject.gobiimodel.dto.entity.flex.vertexcolumns.VertexColumnsNameIdGeneric;
 import org.gobiiproject.gobiimodel.dto.entity.flex.vertexcolumns.VertexColumnsPrincipleInvestigator;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -143,108 +144,17 @@ public class VertexDTO extends DTOBase {
 
         VertexColumns returnVal;
 
-        switch (this.vertexNameType) {
-            case VERTEX_TYPE_PROJECT:
-                returnVal = new VertexColumnsNameIdGeneric();
-                break;
-
-            case VERTEX_TYPE_SAMPLING_DATE:
-                returnVal = new VertexColumnsNameIdGeneric();
-                break;
-
-            case VERTEX_TYPE_GENOTYPING_PURPOSE:
-                returnVal = new VertexColumnsNameIdGeneric();
-                break;
-
-            case VERTEX_TYPE_DIVISION:
-                returnVal = new VertexColumnsNameIdGeneric();
-                break;
-
-            case VERTEX_TYPE_TRIAL_NAME:
-                returnVal = new VertexColumnsNameIdGeneric();
-                break;
-
-            case VERTEX_TYPE_EXPERIMENT:
-                returnVal = new VertexColumnsNameIdGeneric();
-                break;
-
-            case VERTEX_TYPE_DATASET:
-                returnVal = new VertexColumnsNameIdGeneric();
-                break;
-
-            case VERTEX_TYPE_DATASET_TYPE:
-                returnVal = new VertexColumnsNameIdGeneric();
-                break;
-
-            case VERTEX_TYPE_ANALYSIS:
-                returnVal = new VertexColumnsNameIdGeneric();
-                break;
-
-            case VERTEX_TYPE_ANALYSIS_TYPE:
-                returnVal = new VertexColumnsNameIdGeneric();
-                break;
-
-            case VERTEX_TYPE_REFERENCE_SAMPLE:
-                returnVal = new VertexColumnsNameIdGeneric();
-                break;
-
-            case VERTEX_TYPE_PLATFORM:
-                returnVal = new VertexColumnsNameIdGeneric();
-                break;
-
-            case VERTEX_TYPE_VENDOR:
-                returnVal = new VertexColumnsNameIdGeneric();
-                break;
-
-            case VERTEX_TYPE_PROTOCOL:
-                returnVal = new VertexColumnsNameIdGeneric();
-                break;
-
-            case VERTEX_TYPE_VENDOR_PROTOCOL:
-                returnVal = new VertexColumnsNameIdGeneric();
-                break;
-
-            case VERTEX_TYPE_MAPSET:
-                returnVal = new VertexColumnsNameIdGeneric();
-                break;
-
-            case VERTEX_TYPE_MAPSET_TYPE:
-                returnVal = new VertexColumnsNameIdGeneric();
-                break;
-
-            case VERTEX_TYPE_LINKAGE_GROUP:
-                returnVal = new VertexColumnsNameIdGeneric();
-                break;
-
-            case VERTEX_TYPE_GERMPLAM_SUBSPECIES:
-                returnVal = new VertexColumnsNameIdGeneric();
-                break;
-
-            case VERTEX_TYPE_GERMPLASM_SPECIES:
-                returnVal = new VertexColumnsNameIdGeneric();
-                break;
-
-            case VERTEX_TYPE_GERMPLASM_TYPE:
-                returnVal = new VertexColumnsNameIdGeneric();
-                break;
-
-            case VERTEX_TYPE_PRINCIPLE_INVESTIGATOR:
-                returnVal = new VertexColumnsPrincipleInvestigator();
-                break;
-
-            case VERTEX_TYPE_MARKER:
-                returnVal = new VertexColumnsNameIdGeneric();
-                break;
-
-            case VERTEX_TYPE_DNASAMPLE:
-                returnVal = new VertexColumnsNameIdGeneric();
-                break;
-
-            default:
-                throw new GobiiException("There is no columns object for vertex : " + this.vertexNameType.getVertexName());
+        if( this.getGobiiVertexType().equals(GobiiVertexType.CVTERM)) {
+            returnVal = new VertexColumnsKvp();
+        } else if (this.getVertexNameType().getVertexName()
+                .equals(VertexNameType.VERTEX_TYPE_PRINCIPLE_INVESTIGATOR.getVertexName())) {
+            returnVal = new VertexColumnsPrincipleInvestigator();
+        } else {
+            returnVal = new VertexColumnsNameIdGeneric();
         }
 
         return returnVal;
+
     } // function get vertex columns
 
 
