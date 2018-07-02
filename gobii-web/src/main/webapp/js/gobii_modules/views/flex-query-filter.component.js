@@ -66,6 +66,8 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                     this.enabledStyle = null;
                     this.disabledStyle = { 'background': '#dddddd' };
                     this.currentStyle = this.disabledStyle;
+                    this.markerCount$ = this.store.select(fromRoot.getCurrentMarkerCount);
+                    this.sampleCount$ = this.store.select(fromRoot.getCurrentSampleCount);
                     // Technically, we should not be keeping state in this control in this way;
                     // However, it turns out to be a lot more complicated and error prone to
                     // rely purely on the store
@@ -112,8 +114,24 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                     }); // subscribe to select filters()
                 }; // ngInit()
                 FlexQueryFilterComponent.prototype.setControlState = function (enabled) {
+                    var _this = this;
                     if (enabled) {
-                        this.currentStyle = this.enabledStyle;
+                        this.markerCount$.subscribe(function (value) {
+                            if (value >= 0) {
+                                _this.currentStyle = _this.enabledStyle;
+                            }
+                            else {
+                                _this.currentStyle = _this.disabledStyle;
+                            }
+                        });
+                        this.sampleCount$.subscribe(function (value) {
+                            if (value >= 0) {
+                                _this.currentStyle = _this.enabledStyle;
+                            }
+                            else {
+                                _this.currentStyle = _this.disabledStyle;
+                            }
+                        });
                     }
                     else {
                         this.currentStyle = this.disabledStyle;

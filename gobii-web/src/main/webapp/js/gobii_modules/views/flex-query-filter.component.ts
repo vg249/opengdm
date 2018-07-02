@@ -141,11 +141,32 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
 
     } // ngInit()
 
-
+    public markerCount$: Observable<number> = this.store.select(fromRoot.getCurrentMarkerCount);
+    public sampleCount$: Observable<number> = this.store.select(fromRoot.getCurrentSampleCount);
     private setControlState(enabled: boolean) {
 
         if (enabled) {
-            this.currentStyle = this.enabledStyle;
+
+            this.markerCount$.subscribe(
+                value => {
+                    if ( value >= 0) {
+                        this.currentStyle = this.enabledStyle;
+                    } else {
+                        this.currentStyle = this.disabledStyle;
+                    }
+                }
+            );
+
+            this.sampleCount$.subscribe(
+                value => {
+                    if ( value >= 0) {
+                        this.currentStyle = this.enabledStyle;
+                    } else {
+                        this.currentStyle = this.disabledStyle;
+                    }
+                }
+            );
+
         } else {
             this.currentStyle = this.disabledStyle;
         }
