@@ -86,31 +86,34 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                     this.setControlState(false);
                     this.store.select(fromRoot.getFileItemsFilters)
                         .subscribe(function (filters) {
-                        // you have to reset from state because this control won't see the sibling control's
-                        // change event
-                        var thisControlVertexfilterParams = _this.filterParamsColl.getFilter(_this.filterParamNameVertices, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
-                        var currentVertexFilter = filters[thisControlVertexfilterParams.getQueryName()];
-                        if (currentVertexFilter) {
-                            if (!currentVertexFilter.targetEntityFilterValue) {
-                                _this.selectedVertex = null;
-                                _this.selectedVertexValues = null;
+                        // setTimeout() fixes the ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked error
+                        setTimeout(function () {
+                            var thisControlVertexfilterParams = _this.filterParamsColl.getFilter(_this.filterParamNameVertices, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
+                            var currentVertexFilter = filters[thisControlVertexfilterParams.getQueryName()];
+                            if (currentVertexFilter) {
+                                if (!currentVertexFilter.targetEntityFilterValue) {
+                                    _this.selectedVertex = null;
+                                    _this.selectedVertexValues = null;
+                                }
                             }
-                        }
-                        if (!thisControlVertexfilterParams.getPreviousSiblingFileItemParams()) {
-                            _this.setControlState(true);
-                        }
-                        else if (thisControlVertexfilterParams.getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
-                            var vertexValuePreviousVertexSelectorParamName = thisControlVertexfilterParams
-                                .getPreviousSiblingFileItemParams()
-                                .getChildFileItemParams()[0].getQueryName();
-                            var previousVertexValuesFilter = filters[vertexValuePreviousVertexSelectorParamName];
-                            if (previousVertexValuesFilter && previousVertexValuesFilter.targetEntityFilterValue) {
+                            if (!thisControlVertexfilterParams.getPreviousSiblingFileItemParams()) {
                                 _this.setControlState(true);
                             }
-                            else {
-                                _this.setControlState(false);
-                            }
-                        } // if-else there are previous sibling params
+                            else if (thisControlVertexfilterParams.getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
+                                var vertexValuePreviousVertexSelectorParamName = thisControlVertexfilterParams
+                                    .getPreviousSiblingFileItemParams()
+                                    .getChildFileItemParams()[0].getQueryName();
+                                var previousVertexValuesFilter = filters[vertexValuePreviousVertexSelectorParamName];
+                                if (previousVertexValuesFilter && previousVertexValuesFilter.targetEntityFilterValue) {
+                                    _this.setControlState(true);
+                                }
+                                else {
+                                    _this.setControlState(false);
+                                }
+                            } // if-else there are previous sibling params
+                        }, 0);
+                        // you have to reset from state because this control won't see the sibling control's
+                        // change event
                     }); // subscribe to select filters()
                 }; // ngInit()
                 FlexQueryFilterComponent.prototype.setControlState = function (enabled) {

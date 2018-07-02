@@ -106,37 +106,38 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
             .subscribe(
                 filters => {
 
+                    // setTimeout() fixes the ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked error
+                    setTimeout(() => {
+                        let thisControlVertexfilterParams: FilterParams = this.filterParamsColl.getFilter(this.filterParamNameVertices, GobiiExtractFilterType.FLEX_QUERY);
+                        let currentVertexFilter: PayloadFilter = filters[thisControlVertexfilterParams.getQueryName()];
+                        if (currentVertexFilter) {
+                            if (!currentVertexFilter.targetEntityFilterValue) {
+                                this.selectedVertex = null;
+                                this.selectedVertexValues = null;
+                            }
+                        }
 
+
+                        if (!thisControlVertexfilterParams.getPreviousSiblingFileItemParams()) {
+                            this.setControlState(true);
+                        } else if (thisControlVertexfilterParams.getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
+
+
+                            let vertexValuePreviousVertexSelectorParamName: string = thisControlVertexfilterParams
+                                .getPreviousSiblingFileItemParams()
+                                .getChildFileItemParams()[0].getQueryName();
+
+                            let previousVertexValuesFilter: PayloadFilter = filters[vertexValuePreviousVertexSelectorParamName];
+                            if (previousVertexValuesFilter && previousVertexValuesFilter.targetEntityFilterValue) {
+                                this.setControlState(true)
+                            } else {
+                                this.setControlState(false)
+                            }
+
+                        } // if-else there are previous sibling params
+                    },0)
                     // you have to reset from state because this control won't see the sibling control's
                     // change event
-                    let thisControlVertexfilterParams: FilterParams = this.filterParamsColl.getFilter(this.filterParamNameVertices, GobiiExtractFilterType.FLEX_QUERY);
-                    let currentVertexFilter: PayloadFilter = filters[thisControlVertexfilterParams.getQueryName()];
-                    if (currentVertexFilter) {
-                        if (!currentVertexFilter.targetEntityFilterValue) {
-                            this.selectedVertex = null;
-                            this.selectedVertexValues = null;
-                        }
-                    }
-
-
-                    if (!thisControlVertexfilterParams.getPreviousSiblingFileItemParams()) {
-                        this.setControlState(true);
-                    } else if (thisControlVertexfilterParams.getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
-
-
-                        let vertexValuePreviousVertexSelectorParamName: string = thisControlVertexfilterParams
-                            .getPreviousSiblingFileItemParams()
-                            .getChildFileItemParams()[0].getQueryName();
-
-                        let previousVertexValuesFilter: PayloadFilter = filters[vertexValuePreviousVertexSelectorParamName];
-                        if (previousVertexValuesFilter && previousVertexValuesFilter.targetEntityFilterValue) {
-                            this.setControlState(true)
-                        } else {
-                            this.setControlState(false)
-                        }
-
-                    } // if-else there are previous sibling params
-
                 }); // subscribe to select filters()
 
     } // ngInit()
