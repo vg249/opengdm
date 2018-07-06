@@ -102,76 +102,102 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
             });
 
         this.setControlState(false);
-        this.store.select(fromRoot.getFileItemsFilters)
-            .subscribe(
-                filters => {
 
-                    // setTimeout() fixes the ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked error
-                    setTimeout(() => {
-                        let thisControlVertexfilterParams: FilterParams = this.filterParamsColl.getFilter(this.filterParamNameVertices, GobiiExtractFilterType.FLEX_QUERY);
-                        let currentVertexFilter: PayloadFilter = filters[thisControlVertexfilterParams.getQueryName()];
-                        if (currentVertexFilter) {
-                            if (!currentVertexFilter.targetEntityFilterValue) {
-                                this.selectedVertex = null;
-                                this.selectedVertexValues = null;
-                            }
+        this.store.select(fromRoot.getFilterCountState)
+            .subscribe(filterCountState => {
+
+                setTimeout( () => {
+                    let thisControlVertexfilterParams: FilterParams = this.filterParamsColl.getFilter(this.filterParamNameVertices, GobiiExtractFilterType.FLEX_QUERY);
+                    let currentVertexFilter: PayloadFilter = filterCountState.flexQueryFilters.get(thisControlVertexfilterParams.getQueryName());
+                    if (currentVertexFilter) {
+                        if (!currentVertexFilter.targetEntityFilterValue) {
+                            this.selectedVertex = null;
+                            this.selectedVertexValues = null;
+                        }
+                    }
+
+
+                    if (!thisControlVertexfilterParams.getPreviousSiblingFileItemParams()) {
+
+                        if (filterCountState.sampleCount >= 0
+                            && filterCountState.markerCount >= 0) {
+                            this.setControlState(true);
+                        } else {
+                            this.setControlState(false);
                         }
 
+                    } else if (thisControlVertexfilterParams.getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
 
-                        if (!thisControlVertexfilterParams.getPreviousSiblingFileItemParams()) {
-                            this.setControlState(true);
-                        } else if (thisControlVertexfilterParams.getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
+                        let vertexValuePreviousVertexSelectorParamName: string = thisControlVertexfilterParams
+                            .getPreviousSiblingFileItemParams()
+                            .getChildFileItemParams()[0].getQueryName();
 
+                        let previousVertexValuesFilter: PayloadFilter = filterCountState.flexQueryFilters.get(vertexValuePreviousVertexSelectorParamName);
+                        if (previousVertexValuesFilter
+                            && previousVertexValuesFilter.targetEntityFilterValue
+                            && filterCountState.sampleCount >= 0
+                            && filterCountState.markerCount >= 0) {
+                            this.setControlState(true)
+                        } else {
+                            this.setControlState(false)
+                        }
 
-                            let vertexValuePreviousVertexSelectorParamName: string = thisControlVertexfilterParams
-                                .getPreviousSiblingFileItemParams()
-                                .getChildFileItemParams()[0].getQueryName();
+                    } // if-else there are previous sibling params
 
-                            let previousVertexValuesFilter: PayloadFilter = filters[vertexValuePreviousVertexSelectorParamName];
-                            if (previousVertexValuesFilter && previousVertexValuesFilter.targetEntityFilterValue) {
-                                this.setControlState(true)
-                            } else {
-                                this.setControlState(false)
-                            }
+                }, 0);
+            }); //subscribe to filter count state
+        // you have to reset from state because this control won't see the sibling control's
+        // change event
 
-                        } // if-else there are previous sibling params
-                    },0)
-                    // you have to reset from state because this control won't see the sibling control's
-                    // change event
-                }); // subscribe to select filters()
+        // this.store.select(fromRoot.getFileItemsFilters)
+        //     .subscribe(
+        //         filters => {
+        //
+        //             // setTimeout() fixes the ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked error
+        //             setTimeout(() => {
+        //                 let thisControlVertexfilterParams: FilterParams = this.filterParamsColl.getFilter(this.filterParamNameVertices, GobiiExtractFilterType.FLEX_QUERY);
+        //                 let currentVertexFilter: PayloadFilter = filters[thisControlVertexfilterParams.getQueryName()];
+        //                 if (currentVertexFilter) {
+        //                     if (!currentVertexFilter.targetEntityFilterValue) {
+        //                         this.selectedVertex = null;
+        //                         this.selectedVertexValues = null;
+        //                     }
+        //                 }
+        //
+        //
+        //                 if (!thisControlVertexfilterParams.getPreviousSiblingFileItemParams()) {
+        //                     this.setControlState(true);
+        //                 } else if (thisControlVertexfilterParams.getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
+        //
+        //
+        //                     let vertexValuePreviousVertexSelectorParamName: string = thisControlVertexfilterParams
+        //                         .getPreviousSiblingFileItemParams()
+        //                         .getChildFileItemParams()[0].getQueryName();
+        //
+        //                     let previousVertexValuesFilter: PayloadFilter = filters[vertexValuePreviousVertexSelectorParamName];
+        //                     if (previousVertexValuesFilter && previousVertexValuesFilter.targetEntityFilterValue) {
+        //                         this.setControlState(true)
+        //                     } else {
+        //                         this.setControlState(false)
+        //                     }
+        //
+        //                 } // if-else there are previous sibling params
+        //             },50)
+        //             // you have to reset from state because this control won't see the sibling control's
+        //             // change event
+        //         }); // subscribe to select filters()
 
     } // ngInit()
 
-    public markerCount$: Observable<number> = this.store.select(fromRoot.getCurrentMarkerCount);
-    public sampleCount$: Observable<number> = this.store.select(fromRoot.getCurrentSampleCount);
     private setControlState(enabled: boolean) {
 
         if (enabled) {
-
-            this.markerCount$.subscribe(
-                value => {
-                    if ( value >= 0) {
-                        this.currentStyle = this.enabledStyle;
-                    } else {
-                        this.currentStyle = this.disabledStyle;
-                    }
-                }
-            );
-
-            this.sampleCount$.subscribe(
-                value => {
-                    if ( value >= 0) {
-                        this.currentStyle = this.enabledStyle;
-                    } else {
-                        this.currentStyle = this.disabledStyle;
-                    }
-                }
-            );
-
+            this.currentStyle = this.enabledStyle;
         } else {
             this.currentStyle = this.disabledStyle;
         }
-    }
+
+    } // setControlState()
 
     public handleVertexSelected(arg) {
 

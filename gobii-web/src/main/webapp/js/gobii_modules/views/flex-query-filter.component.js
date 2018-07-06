@@ -66,8 +66,6 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                     this.enabledStyle = null;
                     this.disabledStyle = { 'background': '#dddddd' };
                     this.currentStyle = this.disabledStyle;
-                    this.markerCount$ = this.store.select(fromRoot.getCurrentMarkerCount);
-                    this.sampleCount$ = this.store.select(fromRoot.getCurrentSampleCount);
                     // Technically, we should not be keeping state in this control in this way;
                     // However, it turns out to be a lot more complicated and error prone to
                     // rely purely on the store
@@ -84,12 +82,11 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                         _this.totalValues = items.length.toString();
                     });
                     this.setControlState(false);
-                    this.store.select(fromRoot.getFileItemsFilters)
-                        .subscribe(function (filters) {
-                        // setTimeout() fixes the ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked error
+                    this.store.select(fromRoot.getFilterCountState)
+                        .subscribe(function (filterCountState) {
                         setTimeout(function () {
                             var thisControlVertexfilterParams = _this.filterParamsColl.getFilter(_this.filterParamNameVertices, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
-                            var currentVertexFilter = filters[thisControlVertexfilterParams.getQueryName()];
+                            var currentVertexFilter = filterCountState.flexQueryFilters.get(thisControlVertexfilterParams.getQueryName());
                             if (currentVertexFilter) {
                                 if (!currentVertexFilter.targetEntityFilterValue) {
                                     _this.selectedVertex = null;
@@ -97,14 +94,23 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                                 }
                             }
                             if (!thisControlVertexfilterParams.getPreviousSiblingFileItemParams()) {
-                                _this.setControlState(true);
+                                if (filterCountState.sampleCount >= 0
+                                    && filterCountState.markerCount >= 0) {
+                                    _this.setControlState(true);
+                                }
+                                else {
+                                    _this.setControlState(false);
+                                }
                             }
                             else if (thisControlVertexfilterParams.getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
                                 var vertexValuePreviousVertexSelectorParamName = thisControlVertexfilterParams
                                     .getPreviousSiblingFileItemParams()
                                     .getChildFileItemParams()[0].getQueryName();
-                                var previousVertexValuesFilter = filters[vertexValuePreviousVertexSelectorParamName];
-                                if (previousVertexValuesFilter && previousVertexValuesFilter.targetEntityFilterValue) {
+                                var previousVertexValuesFilter = filterCountState.flexQueryFilters.get(vertexValuePreviousVertexSelectorParamName);
+                                if (previousVertexValuesFilter
+                                    && previousVertexValuesFilter.targetEntityFilterValue
+                                    && filterCountState.sampleCount >= 0
+                                    && filterCountState.markerCount >= 0) {
                                     _this.setControlState(true);
                                 }
                                 else {
@@ -112,34 +118,55 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                                 }
                             } // if-else there are previous sibling params
                         }, 0);
-                        // you have to reset from state because this control won't see the sibling control's
-                        // change event
-                    }); // subscribe to select filters()
+                    }); //subscribe to filter count state
+                    // you have to reset from state because this control won't see the sibling control's
+                    // change event
+                    // this.store.select(fromRoot.getFileItemsFilters)
+                    //     .subscribe(
+                    //         filters => {
+                    //
+                    //             // setTimeout() fixes the ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked error
+                    //             setTimeout(() => {
+                    //                 let thisControlVertexfilterParams: FilterParams = this.filterParamsColl.getFilter(this.filterParamNameVertices, GobiiExtractFilterType.FLEX_QUERY);
+                    //                 let currentVertexFilter: PayloadFilter = filters[thisControlVertexfilterParams.getQueryName()];
+                    //                 if (currentVertexFilter) {
+                    //                     if (!currentVertexFilter.targetEntityFilterValue) {
+                    //                         this.selectedVertex = null;
+                    //                         this.selectedVertexValues = null;
+                    //                     }
+                    //                 }
+                    //
+                    //
+                    //                 if (!thisControlVertexfilterParams.getPreviousSiblingFileItemParams()) {
+                    //                     this.setControlState(true);
+                    //                 } else if (thisControlVertexfilterParams.getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
+                    //
+                    //
+                    //                     let vertexValuePreviousVertexSelectorParamName: string = thisControlVertexfilterParams
+                    //                         .getPreviousSiblingFileItemParams()
+                    //                         .getChildFileItemParams()[0].getQueryName();
+                    //
+                    //                     let previousVertexValuesFilter: PayloadFilter = filters[vertexValuePreviousVertexSelectorParamName];
+                    //                     if (previousVertexValuesFilter && previousVertexValuesFilter.targetEntityFilterValue) {
+                    //                         this.setControlState(true)
+                    //                     } else {
+                    //                         this.setControlState(false)
+                    //                     }
+                    //
+                    //                 } // if-else there are previous sibling params
+                    //             },50)
+                    //             // you have to reset from state because this control won't see the sibling control's
+                    //             // change event
+                    //         }); // subscribe to select filters()
                 }; // ngInit()
                 FlexQueryFilterComponent.prototype.setControlState = function (enabled) {
-                    var _this = this;
                     if (enabled) {
-                        this.markerCount$.subscribe(function (value) {
-                            if (value >= 0) {
-                                _this.currentStyle = _this.enabledStyle;
-                            }
-                            else {
-                                _this.currentStyle = _this.disabledStyle;
-                            }
-                        });
-                        this.sampleCount$.subscribe(function (value) {
-                            if (value >= 0) {
-                                _this.currentStyle = _this.enabledStyle;
-                            }
-                            else {
-                                _this.currentStyle = _this.disabledStyle;
-                            }
-                        });
+                        this.currentStyle = this.enabledStyle;
                     }
                     else {
                         this.currentStyle = this.disabledStyle;
                     }
-                };
+                }; // setControlState()
                 FlexQueryFilterComponent.prototype.handleVertexSelected = function (arg) {
                     var _this = this;
                     if (arg.value && arg.value._entity) {
