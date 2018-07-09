@@ -196,6 +196,25 @@
 
                     </execution>
 
+                    <!--Digest file validator Execution-->
+                    <execution>
+                        <configuration>
+                            <finalName>DigesterFileValidator</finalName>
+                            <archive>
+                                <manifest>
+                                    <mainClass>org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                        <id>make-digestfilevalidator</id>
+                        <!-- bind to the packaging phase -->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+
+                    </execution>
+
 
                     <!--Extractor Execution-->
                     <execution>

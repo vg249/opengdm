@@ -41,6 +41,7 @@ import static org.gobiiproject.gobiimodel.utils.HelperFunctions.getDestinationFi
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.parseInstructionFile;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
 import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.logError;
+import static org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions.*;
 
 /**
  * Base class for processing instruction files. Start of chain of control for Digester. Takes first argument as instruction file, or promts user.
@@ -55,14 +56,6 @@ public class GobiiFileReader {
 	private static String rootDir="../";
 	private static String loaderScriptPath;
 	private static String extractorScriptPath;
-	private static final String VARIANT_CALL_TABNAME="matrix";
-	private static final String	LINKAGE_GROUP_TABNAME="linkage_group";
-	private static final String GERMPLASM_PROP_TABNAME="germplasm_prop";
-	private static final String GERMPLASM_TABNAME="germplasm";
-	private static final String MARKER_TABNAME="marker";
-	private static final String DS_MARKER_TABNAME="dataset_marker";
-	private static final String DS_SAMPLE_TABNAME="dataset_dnarun";
-	private static final String SAMPLE_TABNAME="dnarun";
 	private static String pathToHDF5Files;
 	private static boolean verbose;
 	private static String errorLogOverride;
