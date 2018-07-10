@@ -1,16 +1,32 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
-import org.apache.commons.cli.*;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
-import org.gobiiproject.gobiiprocess.HDF5Interface;
-import org.gobiiproject.gobiiprocess.digester.LoaderGlobalConfigs;
+
+import java.io.File;
+import java.io.IOException;
 
 import static org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions.*;
 
 public class DigestFileValidator {
 
-    public static void main(String[] args) throws Exception {
+    private String rootDir, digestFileExtension;
+
+    public DigestFileValidator(String rootDir, String digestFileExtension) {
+        this.rootDir = rootDir;
+        this.digestFileExtension = digestFileExtension;
+    }
+
+    public static void main(String[] args)  {
+
         String rootDir = null, digestFileExtension = null;
+
         Options o = new Options()
                 .addOption("r", true, "Fully qualified path to digest directory")
                 .addOption("e", true, "Digest file extension");
@@ -23,6 +39,15 @@ public class DigestFileValidator {
             CommandLine cli = new DefaultParser().parse(o, args);
             if (cli.hasOption("r")) rootDir = cli.getOptionValue("r");
             if (cli.hasOption("e")) digestFileExtension = cli.getOptionValue("e").toLowerCase();
+
+            if (rootDir == null || digestFileExtension == null) {
+                new HelpFormatter().printHelp("DigestFileValidator", o);
+                System.exit(1);
+            }
+            DigestFileValidator digestFileValidator = new DigestFileValidator(rootDir, digestFileExtension);
+            digestFileValidator.readValidationRules();
+            digestFileValidator.validate();
+
         } catch (org.apache.commons.cli.ParseException exp) {
             new HelpFormatter().printHelp("DigestFileValidator", o);
             System.exit(1);
@@ -30,10 +55,33 @@ public class DigestFileValidator {
 
         ErrorLogger.logDebug("Entered Options are: " + rootDir + "," + digestFileExtension, "");
 
-        if (rootDir == null || digestFileExtension == null) {
-            new HelpFormatter().printHelp("DigestFileValidator", o);
-            System.exit(1);
+
+    }
+
+    private void readValidationRules() {
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+
+            // Convert JSON string from file to Object
+            ValidationUnit validationRules = mapper.readValue(new File("E:\\staff.json"), ValidationUnit.class);
+            System.out.println(validationRules);
+
+            //Pretty print
+            String prettyStaff1 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(validationRules);
+            System.out.println(prettyStaff1);
+
+        } catch (JsonGenerationException e) {
+            e.printStackTrace();
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
+
+    public void validate() {
+
 
         switch (digestFileExtension) {
             case GERMPLASM_TABNAME:
@@ -78,7 +126,6 @@ public class DigestFileValidator {
                 ErrorLogger.logError("DigestFileValidator", "Given extension " + digestFileExtension + " is not valid.");
                 System.exit(1);
         }
-
     }
 }
 
