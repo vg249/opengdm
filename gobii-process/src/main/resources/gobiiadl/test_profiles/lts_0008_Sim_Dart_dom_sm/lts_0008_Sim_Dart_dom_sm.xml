@@ -117,6 +117,24 @@
                     <ProjectCode>sim_dominant_proj_01</ProjectCode>
                     <ProjectDescription>sim_dominant_proj_01</ProjectDescription>
                     <ProjectStatus>1</ProjectStatus>
+                    <CvProps>
+                        <CvProp>
+                            <CvTerm>date_sampled</CvTerm>
+                            <CvPropValue>06/11/2018</CvPropValue>
+                        </CvProp>
+                        <CvProp>
+                            <CvTerm>division</CvTerm>
+                            <CvPropValue>Sim_division</CvPropValue>
+                        </CvProp>
+                        <CvProp>
+                            <CvTerm>genotyping_purpose</CvTerm>
+                            <CvPropValue>Sim_genotyp_purp</CvPropValue>
+                        </CvProp>
+                        <CvProp>
+                            <CvTerm>study_name</CvTerm>
+                            <CvPropValue>Sim_study_name</CvPropValue>
+                        </CvProp>
+                    </CvProps>
                 </Properties>
             </Project>
         </Projects>
@@ -159,6 +177,42 @@
                     <Parameters/>
                 </Properties>
             </Analysis>
+            <Analysis>
+                <Keys>
+                    <DbPKey></DbPKey>
+                </Keys>
+                <Properties>
+                    <AnalysisName>Test_Allele_sorting</AnalysisName>
+                    <AnalysisDescription>Test_Allele_sorting</AnalysisDescription>
+                    <AnlaysisTypeId>Allele_sorting</AnlaysisTypeId>
+                    <Program>Test_Allele_sorting_program</Program>
+                    <ProgramVersion>Test_Allele_sorting_program_version</ProgramVersion>
+                    <Algorithm>Test_Allele_sorting_algorithm</Algorithm>
+                    <SourceName>Test_Allele_sorting_sourcename</SourceName>
+                    <SourceVersion>Test_Allele_sorting_sourceversion</SourceVersion>
+                    <SourceUri>Test_Allele_sorting_sourceuri</SourceUri>
+                    <StatusId>1</StatusId>
+                    <Parameters/>
+                </Properties>
+            </Analysis>
+            <Analysis>
+                <Keys>
+                    <DbPKey></DbPKey>
+                </Keys>
+                <Properties>
+                    <AnalysisName>Test_Cleaning</AnalysisName>
+                    <AnalysisDescription>Test_Cleaning</AnalysisDescription>
+                    <AnlaysisTypeId>Cleaning</AnlaysisTypeId>
+                    <Program>Test_Cleaning_program</Program>
+                    <ProgramVersion>Test_Cleaning_program_version</ProgramVersion>
+                    <Algorithm>Test_Cleaning_algorithm</Algorithm>
+                    <SourceName>Test_Cleaning_sourcename</SourceName>
+                    <SourceVersion>Test_Cleaning_sourceversion</SourceVersion>
+                    <SourceUri>Test_Cleaning_sourceuri</SourceUri>
+                    <StatusId>1</StatusId>
+                    <Parameters/>
+                </Properties>
+            </Analysis>
         </Analyses>
         <Datasets DbPKeysurrogate="DatasetName">
             <Dataset>
@@ -181,7 +235,12 @@
                     <QualityFile>sim_dominant_ds_02_qualityfile</QualityFile>
                     <StatusId>1</StatusId>
                     <TypeId>CO_DOMINANT_NON_NUCLEOTIDE</TypeId>
-                    <AnalysesIds/>
+                    <AnalysesIds>
+                        <AnalysisId>Test_Allele_sorting</AnalysisId>
+                        <AnalysisId>Test_Cleaning</AnalysisId>
+                        <AnalysisId>Test_Allele_sorting</AnalysisId>
+                        <AnalysisId>Test_Cleaning</AnalysisId>
+                    </AnalysesIds>
                     <Scores/>
                 </Properties>
             </Dataset>

@@ -117,6 +117,24 @@
                     <ProjectCode>sim_iupac_proj_01</ProjectCode>
                     <ProjectDescription>sim_iupac_proj_01</ProjectDescription>
                     <ProjectStatus>1</ProjectStatus>
+                    <CvProps>
+                        <CvProp>
+                            <CvTerm>date_sampled</CvTerm>
+                            <CvPropValue>06/01/2018</CvPropValue>
+                        </CvProp>
+                        <CvProp>
+                            <CvTerm>division</CvTerm>
+                            <CvPropValue>FQ_division</CvPropValue>
+                        </CvProp>
+                        <CvProp>
+                            <CvTerm>genotyping_purpose</CvTerm>
+                            <CvPropValue>FQ_genotyp_purp</CvPropValue>
+                        </CvProp>
+                        <CvProp>
+                            <CvTerm>study_name</CvTerm>
+                            <CvPropValue>FQ_study_name</CvPropValue>
+                        </CvProp>
+                    </CvProps>
                 </Properties>
             </Project>
         </Projects>
