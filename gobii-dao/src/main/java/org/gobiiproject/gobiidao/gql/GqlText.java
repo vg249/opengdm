@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiidao.gql;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.comparator.LastModifiedFileComparator;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.gobiiproject.gobiidao.GobiiDaoException;
@@ -204,16 +205,18 @@ public class GqlText {
 
         returnVal = commandLineBuilder.toString();
 
-        this.writeCommandlineFile(returnVal);
+        this.writeCommandlineFile(returnVal, outputFileFqpn);
 
         return returnVal;
     }
 
-    private void writeCommandlineFile(String commandline) throws GobiiDaoException {
+    private void writeCommandlineFile(String commandline, String outputFileFqpn) throws GobiiDaoException {
 
         try {
             String currentDirectory = this.makeGqlJobPath();
-            String fileNameStem = "cmd_text_";
+            String fileNameStem =
+                    FilenameUtils.removeExtension(new File(outputFileFqpn).getName())
+                    + "_cmd_";
             String extension = ".txt";
             String filter = fileNameStem + "*" + extension;
             Integer incrementLength = 3;
@@ -221,9 +224,9 @@ public class GqlText {
                     FileFilterUtils.nameFileFilter(filter),
                     null);
             File[] fileArray = new File(currentDirectory).listFiles();
-            Arrays.sort(fileArray , new Comparator<File>() {
+            Arrays.sort(fileArray, new Comparator<File>() {
                 public int compare(File f1, File f2) {
-                    return Long.compare(f2.lastModified(),f1.lastModified());
+                    return Long.compare(f2.lastModified(), f1.lastModified());
                 }
             });
             List<File> fileList = Arrays.asList(fileArray);
