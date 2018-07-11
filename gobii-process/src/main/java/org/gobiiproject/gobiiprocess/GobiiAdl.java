@@ -1651,7 +1651,7 @@ public class GobiiAdl {
                 } else {
                     String instructionFileName = payload.getData().get(0).getInstructionFileName();
                     System.out.println("Request " + instructionFileName + " submitted.");
-                    returnVal = checkJobStatus(instructionFileName);
+                    returnVal = checkJobStatusLoad(instructionFileName);
                 }
             } catch (Exception err) {
                 processError("Error submitting instruction file: " + err.getMessage(), GobiiStatusLevel.ERROR);
@@ -1661,7 +1661,7 @@ public class GobiiAdl {
         return returnVal;
     }
 
-    private static boolean checkJobStatus(String instructionFileName) throws Exception {
+    private static boolean checkJobStatusLoad(String instructionFileName) throws Exception {
 
         boolean returnVal = false;
 
@@ -1712,6 +1712,60 @@ public class GobiiAdl {
         }
 
         return returnVal;
+    }
+
+    private static void checkJobStatusExtract(String instructionFileName) throws Exception {
+
+        GobiiEnvelopeRestResource<ExtractorInstructionFilesDTO> extractJobResponseEnvelope = new GobiiEnvelopeRestResource<>(
+                GobiiClientContext.getInstance(null, false)
+                        .getUriFactory()
+                        .resourceColl(GobiiServiceRequestId.URL_FILE_EXTRACTOR_INSTRUCTIONS)
+                        .addUriParam("instructionFileName", instructionFileName));
+
+        boolean statusDetermined = false;
+        String currentStatus = "";
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        long startTime = System.currentTimeMillis();
+
+        while (!statusDetermined && ((System.currentTimeMillis() - startTime) <= timeoutInMillis)) {
+
+            PayloadEnvelope<ExtractorInstructionFilesDTO>  extractorInstructionFilesDTOPayloadEnvelope = extractJobResponseEnvelope.get(ExtractorInstructionFilesDTO.class);
+            checkStatus(extractorInstructionFilesDTOPayloadEnvelope, true);
+
+            List<ExtractorInstructionFilesDTO> data = extractorInstructionFilesDTOPayloadEnvelope.getPayload().getData();
+            GobiiExtractorInstruction gobiiExtractorInstruction = data.get(0).getGobiiExtractorInstructions().get(0);
+            GobiiDataSetExtract gobiiDataSetExtract = gobiiExtractorInstruction.getDataSetExtracts().get(0);
+
+            if (!currentStatus.equals(gobiiDataSetExtract.getGobiiJobStatus().getCvName())) {
+
+                currentStatus = gobiiDataSetExtract.getGobiiJobStatus().getCvName();
+                System.out.println("\nJob " + instructionFileName + " current status: " + currentStatus + " at " + dateFormat.format(new Date()));
+
+            }
+
+            if (gobiiDataSetExtract.getGobiiJobStatus().getCvName().equalsIgnoreCase("failed") ||
+                    gobiiDataSetExtract.getGobiiJobStatus().getCvName().equalsIgnoreCase("aborted")) {
+
+                System.out.println("\nJob " + instructionFileName + " failed. \n" + gobiiDataSetExtract.getLogMessage());
+                statusDetermined = true;
+
+            } else if (gobiiDataSetExtract.getGobiiJobStatus().getCvName().equalsIgnoreCase("completed")) {
+
+                statusDetermined = true;
+            }
+
+
+            System.out.print(".");
+            Thread.sleep(1000);
+
+        }
+
+        if (!statusDetermined) {
+
+            processError("\n\nMaximum execution time of " + timeout + " minute/s exceeded\n", GobiiStatusLevel.ERROR);
+
+        }
+
     }
 
     private static String getScenarioValues(Element currentElement, String attribute) {
@@ -2308,10 +2362,12 @@ public class GobiiAdl {
 
                         GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
                         gobiiDataSetExtract.setDataSet(new PropNameId(currentDatasetDTO.getDataSetId(), currentDatasetDTO.getDatasetName()));
-                        gobiiDataSetExtract.setGobiiDatasetType(new PropNameId(currentDatasetDTO.getDatatypeId(), currentDatasetDTO.getDatatypeName()));
+                        gobiiDataSetExtract.setGobiiDatasetType(null);
                         gobiiDataSetExtract.setGobiiExtractFilterType(gobiiExtractFilterType);
                         gobiiDataSetExtract.setGobiiFileType(gobiiFileType);
-                        gobiiDataSetExtract.setAccolate(true);
+                        gobiiDataSetExtract.setAccolate(false);
+                        gobiiDataSetExtract.setPrincipleInvestigator(null);
+                        gobiiDataSetExtract.setProject(null);
 
                         gobiiDataSetExtractsList.add(gobiiDataSetExtract);
                         break;
@@ -2334,9 +2390,6 @@ public class GobiiAdl {
             gobiiExtractorInstruction.setDataSetExtracts(gobiiDataSetExtractsList);
             submitExtractInstruction(gobiiExtractorInstruction, jobName);
 
-
-
-
         }
 
 
@@ -2345,6 +2398,9 @@ public class GobiiAdl {
     private static void submitExtractInstruction(GobiiExtractorInstruction gobiiExtractorInstruction, String jobName) throws Exception {
 
         try {
+
+            System.out.println("\nSubmitting extract request with job name: " + jobName +".\n");
+
             ExtractorInstructionFilesDTO extractorInstructionFilesDTO = new ExtractorInstructionFilesDTO();
             extractorInstructionFilesDTO.setInstructionFileName(jobName);
             extractorInstructionFilesDTO.getGobiiExtractorInstructions().add(gobiiExtractorInstruction);
@@ -2365,6 +2421,7 @@ public class GobiiAdl {
 
                 String instructionFileName = payload.getData().get(0).getInstructionFileName();
                 System.out.println("Request " + instructionFileName + " submitted.");
+                checkJobStatusExtract(instructionFileName);
 
             }
         } catch (Exception err) {
@@ -2563,7 +2620,7 @@ public class GobiiAdl {
 
         }
 
-        System.out.println("\nADL uploading successfully finished!");
+        System.out.println("\nADL process successfully finished!");
         System.exit(0);
     }
 }
