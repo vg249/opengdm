@@ -1,35 +1,46 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.xml.internal.bind.v2.TODO;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions.*;
 
 public class DigestFileValidator {
 
-    private String rootDir, digestFileExtension;
+    private String rootDir, rulesFile, digestFileExtension;
 
-    public DigestFileValidator(String rootDir, String digestFileExtension) {
+    public DigestFileValidator(String rootDir) {
         this.rootDir = rootDir;
-        this.digestFileExtension = digestFileExtension;
+        // TODO
+        //Delete below line it is used for testing at the moment
+        this.rulesFile = getClass().getClassLoader().getResource("validationConfig.json").getPath();
     }
 
-    public static void main(String[] args)  {
+    DigestFileValidator(String rootDir, String validationFile) {
+        this.rootDir = rootDir;
+        this.rulesFile = validationFile;
+    }
 
-        String rootDir = null, digestFileExtension = null;
+
+    public static void main(String[] args) throws IllegalAccessException {
+
+        String rootDir = null, validationFile = null;
 
         Options o = new Options()
                 .addOption("r", true, "Fully qualified path to digest directory")
-                .addOption("e", true, "Digest file extension");
+                .addOption("v", true, "Validation rule file path");
         if (args.length != 4) {
             new HelpFormatter().printHelp("DigestFileValidator", o);
             System.exit(1);
@@ -38,50 +49,78 @@ public class DigestFileValidator {
         try {
             CommandLine cli = new DefaultParser().parse(o, args);
             if (cli.hasOption("r")) rootDir = cli.getOptionValue("r");
-            if (cli.hasOption("e")) digestFileExtension = cli.getOptionValue("e").toLowerCase();
-
-            if (rootDir == null || digestFileExtension == null) {
+            if (cli.hasOption("v")) validationFile = cli.getOptionValue("v").toLowerCase();
+            if (rootDir == null || validationFile == null) {
                 new HelpFormatter().printHelp("DigestFileValidator", o);
                 System.exit(1);
             }
-            DigestFileValidator digestFileValidator = new DigestFileValidator(rootDir, digestFileExtension);
-            digestFileValidator.readValidationRules();
-            digestFileValidator.validate();
-
         } catch (org.apache.commons.cli.ParseException exp) {
             new HelpFormatter().printHelp("DigestFileValidator", o);
             System.exit(1);
         }
 
-        ErrorLogger.logDebug("Entered Options are: " + rootDir + "," + digestFileExtension, "");
-
-
+        ErrorLogger.logDebug("Entered Options are: " + rootDir + "," + validationFile, "");
+        DigestFileValidator digestFileValidator = new DigestFileValidator(rootDir);
+        //DigestFileValidator digestFileValidator = new DigestFileValidator(rootDir, validationFile);
+        if (!digestFileValidator.readRules()) return;
+        digestFileValidator.validate();
     }
 
-    private void readValidationRules() {
-        ObjectMapper mapper = new ObjectMapper();
+    /**
+     * Reads rules JSON file stores in an object and returns it.
+     *
+     * @throws IllegalAccessException Illegal Access Exception
+     */
+    private boolean readRules() throws IllegalAccessException {
+
+        // Get allowed digest extensions
+        Map<String, String> allowedExtensions = new HashMap<>();
+        List<ValidationUnit> validations;
+        Field[] fields = DigesterFileExtensions.class.getDeclaredFields();
+        for (Field field : fields) {
+            allowedExtensions.put(field.getName(), String.valueOf(field.get(null)));
+        }
 
         try {
-
             // Convert JSON string from file to Object
-            ValidationUnit validationRules = mapper.readValue(new File("E:\\staff.json"), ValidationUnit.class);
-            System.out.println(validationRules);
-
-            //Pretty print
-            String prettyStaff1 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(validationRules);
-            System.out.println(prettyStaff1);
-
-        } catch (JsonGenerationException e) {
-            e.printStackTrace();
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
+            ValidationRules validationRules = new ObjectMapper().readValue(new File(rulesFile), ValidationRules.class);
+            validations = validationRules.getValidations();
         } catch (IOException e) {
-            e.printStackTrace();
+            ErrorLogger.logError("Exception in reading rules file.", e);
+            return false;
         }
+        return validateRules(allowedExtensions, validations);
+    }
+
+    /**
+     * Validates rules defined in the JSON
+     * Checks if digestFileName is valid or not.
+     * Checks if column name and required fields are defined in all conditionUnits or not.
+     *
+     * @param allowedExtensions Allowed Digest Extensions
+     * @param validations       List of validations read from JSON
+     * @return whether it is a valid JSON or not.
+     */
+    private boolean validateRules(Map<String, String> allowedExtensions, List<ValidationUnit> validations) {
+        List<String> values = allowedExtensions.entrySet().stream().map(Map.Entry::getValue).collect(Collectors.toList());
+        for (ValidationUnit validation : validations) {
+            if (!values.contains(validation.getDigestFileName())) {
+                ErrorLogger.logError("Entered digestFileName is not a valid", validation.getDigestFileName());
+                return false;
+            } else {
+                List<ConditionUnit> conditions = validation.getConditions();
+                for (ConditionUnit condition : conditions) {
+                    if (condition.columnName == null || condition.required == null) {
+                        ErrorLogger.logError("DigestFileName :" + validation.getDigestFileName() + " conditions does not have all required fields.", "");
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     public void validate() {
-
 
         switch (digestFileExtension) {
             case GERMPLASM_TABNAME:

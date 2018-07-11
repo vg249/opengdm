@@ -14,5 +14,4 @@ public class DigesterFileExtensions {
     public static final String DS_SAMPLE_TABNAME = "dataset_dnarun";
     public static final String DS_MARKER_TABNAME = "dataset_marker";
     public static final String VARIANT_CALL_TABNAME = "matrix";
-
 }

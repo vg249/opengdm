@@ -1,0 +1,44 @@
+{
+  "validations": [
+    {
+      "digestFileName": "germplasm",
+      "conditions": [
+        {
+          "columnName": "mkyong",
+          "isUnique": "yes",
+          "typeName": "Developer.txt",
+          "fieldToCompare": "he-haw"
+        },
+        {
+          "columnName": "mkyong",
+          "required": true,
+          "type": "File",
+          "isUnique": true,
+          "typeName": "Developer.txt",
+          "fieldToCompare": "he-haw"
+        }
+      ]
+    },
+    {
+      "digestFileName": "germplasm1",
+      "conditions": [
+        {
+          "columnName": "mkyong",
+          "required": true,
+          "type": "File",
+          "isUnique": true,
+          "typeName": "Developer.txt",
+          "fieldToCompare": "he-haw"
+        },
+        {
+          "columnName": "mkyong",
+          "required": true,
+          "type": "File",
+          "isUnique": true,
+          "typeName": "Developer.txt",
+          "fieldToCompare": "he-haw"
+        }
+      ]
+    }
+  ]
+}
