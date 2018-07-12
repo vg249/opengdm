@@ -22,11 +22,11 @@
 					</Fkey>
 				</Keys>
 				<Properties>
-					<LastName>Developer</LastName>
+					<LastName>Load User</LastName>
 					<FirstName>GOBii</FirstName>
-					<Code>gobii_dev</Code>
+					<Code>gobii_load_user</Code>
 					<Email>gobii.dev@gmail.com</Email>
-					<UserName>gadm</UserName>
+					<UserName>load_user</UserName>
 					<Roles>
 						<Role>PI</Role>
 						<Role>Curator</Role>
