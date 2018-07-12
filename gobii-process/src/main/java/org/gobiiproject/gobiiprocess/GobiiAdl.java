@@ -12,6 +12,7 @@ import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO;
@@ -1593,6 +1594,56 @@ public class GobiiAdl {
         return fileDirectoryName;
     }
 
+    private static void downloadFiles(String localPathName, String jobName, List<GobiiDataSetExtract> returnGobiiDatasetExtractList, File[] extractedFiles) throws Exception {
+
+        System.out.println("\nDownloading files for " + jobName + " to " + localPathName + ".");
+
+        File localDir = new File(localPathName);
+        if (!localDir.exists() || !localDir.isDirectory()) {
+            localDir.mkdir();
+        }
+
+        for (GobiiDataSetExtract currentGobiiDatasetExtract : returnGobiiDatasetExtractList) {
+
+            if (returnGobiiDatasetExtractList.size() > 1) {
+
+            } else {
+
+                // loop through the existing extracted files
+
+                for (File currentFile : extractedFiles) {
+
+                    String currentFileName = currentFile.getName();
+                    if (currentFileName.endsWith(".log") ||  currentFileName.endsWith(".LOG")) {
+                        continue;
+                    }
+
+                    System.out.println("\nDownloading " + currentFileName + "....\n");
+
+                    RestUri restUri = GobiiClientContext.getInstance(null, false)
+                            .getUriFactory()
+                            .fileForJob(jobName, GobiiFileProcessDir.EXTRACTOR_OUTPUT, currentFileName)
+                            .withDestinationFqpn(localPathName + "/" + currentFileName);
+
+
+                    HttpMethodResult httpMethodResult = GobiiClientContext.getInstance(null, false)
+                            .getHttp()
+                            .get(restUri);
+
+                    if (httpMethodResult.getResponseCode() != HttpStatus.SC_OK) {
+
+                        processError("\nError in downloading " + currentFileName + ": " + httpMethodResult.getResponseCode() + ": " + httpMethodResult.getReasonPhrase(), GobiiStatusLevel.WARNING);
+                        continue;
+                    }
+
+                    System.out.println("\nSuccessfully downloaded " + currentFileName);
+
+                }
+            }
+        }
+
+    }
+
     private static LoaderInstructionFilesDTO createInstructionFileDTO(String instructionFilePath, String folderName) throws Exception {
 
         LoaderInstructionFilesDTO loaderInstructionFilesDTO = new LoaderInstructionFilesDTO();
@@ -1714,7 +1765,9 @@ public class GobiiAdl {
         return returnVal;
     }
 
-    private static void checkJobStatusExtract(String instructionFileName) throws Exception {
+    private static boolean checkJobStatusExtract(String instructionFileName) throws Exception {
+
+        boolean returnVal = false;
 
         GobiiEnvelopeRestResource<ExtractorInstructionFilesDTO> extractJobResponseEnvelope = new GobiiEnvelopeRestResource<>(
                 GobiiClientContext.getInstance(null, false)
@@ -1751,6 +1804,7 @@ public class GobiiAdl {
 
             } else if (gobiiDataSetExtract.getGobiiJobStatus().getCvName().equalsIgnoreCase("completed")) {
 
+                returnVal = true;
                 statusDetermined = true;
             }
 
@@ -1765,6 +1819,8 @@ public class GobiiAdl {
             processError("\n\nMaximum execution time of " + timeout + " minute/s exceeded\n", GobiiStatusLevel.ERROR);
 
         }
+
+        return returnVal;
 
     }
 
@@ -2066,6 +2122,29 @@ public class GobiiAdl {
 
     }
 
+    private static boolean checkDataFilesForExtract(File dir) {
+
+        boolean valid = true;
+
+        if (!dir.exists()) {
+            processError("\nPath to extracted data file does not exist.", GobiiStatusLevel.WARNING);
+            valid = false;
+        }
+
+        if (!dir.isDirectory()) {
+            processError("\nPath to extracted data file is not a directory.", GobiiStatusLevel.WARNING);
+            valid = false;
+        }
+
+        if (dir.list().length == 0) {
+            processError("\nDirectory " + dir.getName() + " is empty.", GobiiStatusLevel.WARNING);
+            valid = false;
+        }
+
+        return valid;
+
+    }
+
     private static void validateSubDirectory(File currentSubDir) throws Exception {
 
         File[] subDirFiles = getChildrenFiles(currentSubDir);
@@ -2188,9 +2267,11 @@ public class GobiiAdl {
 
     }
 
-    private static void processXMLExtractScenario(File xmlFile, String subDirectoryName) throws Exception{
+    private static void processXMLExtractScenario(File xmlFile, File subDirectory) throws Exception{
 
         String jobId, jobName;
+
+        String subDirectoryName = subDirectory.getName();
 
         System.out.println("\nChecking for extract scenarios for " + subDirectoryName);
 
@@ -2206,6 +2287,9 @@ public class GobiiAdl {
             processError("\nNo extract scenarios for " + subDirectoryName, GobiiStatusLevel.INFO);
 
         }
+
+        List<GobiiDataSetExtract> returnGobiiDatasetExtractList;
+
 
         // loop through scenarios
 
@@ -2227,6 +2311,28 @@ public class GobiiAdl {
             DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
             jobId = dateFormat.format(new Date());
             jobName = "extract_" + jobId + "_" + scenarioName;
+
+            // get data files
+            String dataExpr = "//Scenario[Name='"+ scenarioName +"']/Files/Data";
+            XPathExpression xPathData = xPath.compile(dataExpr);
+            String dataFileStr = (String) xPathData.evaluate(document, XPathConstants.STRING);
+
+            if (dataFileStr == "" || dataFileStr == null) {
+                processError("\nPath to extracted data files should be specified.", GobiiStatusLevel.WARNING);
+                continue;
+            }
+
+            String dataFilePath = subDirectory.getAbsolutePath() + "/" + dataFileStr;
+
+            File dataFileDir = new File(dataFilePath);
+
+            boolean isDirValid = checkDataFilesForExtract(dataFileDir);
+
+            if (!isDirValid) {
+                continue;
+            }
+
+            File[] extractedFiles = dataFileDir.listFiles();
 
 
             // get contact
@@ -2388,15 +2494,29 @@ public class GobiiAdl {
 
             // send extract request
             gobiiExtractorInstruction.setDataSetExtracts(gobiiDataSetExtractsList);
-            submitExtractInstruction(gobiiExtractorInstruction, jobName);
+
+            returnGobiiDatasetExtractList = submitExtractInstruction(gobiiExtractorInstruction, jobName);
+
+            int idx = 0;
+
+            if (returnGobiiDatasetExtractList != null) {
+
+                // download files and compare to known good extracted files
+
+                String localPathName = subDirectory.getAbsoluteFile() + "/" + jobName;
+
+                downloadFiles(localPathName, jobName, returnGobiiDatasetExtractList, extractedFiles);
+
+            }
 
         }
 
 
     }
 
-    private static void submitExtractInstruction(GobiiExtractorInstruction gobiiExtractorInstruction, String jobName) throws Exception {
+    private static List<GobiiDataSetExtract> submitExtractInstruction(GobiiExtractorInstruction gobiiExtractorInstruction, String jobName) throws Exception {
 
+        List<GobiiDataSetExtract> dataSetExtractReturnList = null;
         try {
 
             System.out.println("\nSubmitting extract request with job name: " + jobName +".\n");
@@ -2421,7 +2541,12 @@ public class GobiiAdl {
 
                 String instructionFileName = payload.getData().get(0).getInstructionFileName();
                 System.out.println("Request " + instructionFileName + " submitted.");
-                checkJobStatusExtract(instructionFileName);
+                boolean isSuccess = checkJobStatusExtract(instructionFileName);
+
+                if (isSuccess) {
+                    System.out.println("\nExtract job " + instructionFileName + " completed.");
+                    dataSetExtractReturnList = payload.getData().get(0).getGobiiExtractorInstructions().get(0).getDataSetExtracts();
+                }
 
             }
         } catch (Exception err) {
@@ -2430,7 +2555,7 @@ public class GobiiAdl {
 
         }
 
-
+        return dataSetExtractReturnList;
 
 
     }
@@ -2452,7 +2577,7 @@ public class GobiiAdl {
 
             // do extract
 
-            processXMLExtractScenario(xmlFile, currentDir.getName());
+            processXMLExtractScenario(xmlFile, currentDir);
 
         }
 
