@@ -4,15 +4,28 @@
       "digestFileName": "germplasm",
       "conditions": [
         {
-          "columnName": "mkyong",
-          "isUnique": "yes",
+          "columnName": "name",
+          "required": "yes"
+        },
+        {
+          "columnName": "external_code",
+          "required": "yes",
+          "unique": "yes"
+        },
+        {
+          "columnName": "species_name",
+          "required": false,
+          "type": "File",
+          "nullAllowed":"yes",
+          "isUnique": true,
           "typeName": "Developer.txt",
           "fieldToCompare": "he-haw"
         },
         {
-          "columnName": "mkyong",
-          "required": true,
+          "columnName": "type_name",
+          "required": false,
           "type": "File",
+          "nullAllowed":"yes",
           "isUnique": true,
           "typeName": "Developer.txt",
           "fieldToCompare": "he-haw"
@@ -20,23 +33,14 @@
       ]
     },
     {
-      "digestFileName": "germplasm1",
+      "digestFileName": "germplasm_prop",
       "conditions": [
         {
-          "columnName": "mkyong",
+          "columnName": "external_code",
           "required": true,
           "type": "File",
-          "isUnique": true,
-          "typeName": "Developer.txt",
-          "fieldToCompare": "he-haw"
-        },
-        {
-          "columnName": "mkyong",
-          "required": true,
-          "type": "File",
-          "isUnique": true,
-          "typeName": "Developer.txt",
-          "fieldToCompare": "he-haw"
+          "typeName": "digest.germplasm",
+          "fieldToCompare": "external_code"
         }
       ]
     }

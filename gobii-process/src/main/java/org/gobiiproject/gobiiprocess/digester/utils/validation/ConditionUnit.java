@@ -18,7 +18,9 @@ public class ConditionUnit {
     public String required;
     // Is this field unique
     @JsonProperty
-    public String isUnique;
+    public String nullAllowed;
+    @JsonProperty
+    public String unique;
     // Is the comparison a file or table in DB
     @JsonProperty
     public String type;

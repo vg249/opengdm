@@ -103,19 +103,25 @@ public class DigestFileValidator {
      */
     private boolean validateRules(Map<String, String> allowedExtensions, List<ValidationUnit> validations) {
         List<String> values = allowedExtensions.entrySet().stream().map(Map.Entry::getValue).collect(Collectors.toList());
+        List<String> encounteredDigestExtensions = new ArrayList<>();
         for (ValidationUnit validation : validations) {
             if (!values.contains(validation.getDigestFileName())) {
                 ErrorLogger.logError("Entered digestFileName is not a valid", validation.getDigestFileName());
                 return false;
+            } else if (encounteredDigestExtensions.contains(validation.getDigestFileName())) {
+                ErrorLogger.logError("DigestFileName", validation.getDigestFileName() + " is already defined.");
+                return false;
             } else {
-                List<ConditionUnit> conditions = validation.getConditions();
-                for (ConditionUnit condition : conditions) {
-                    if (condition.columnName == null || condition.required == null) {
-                        ErrorLogger.logError("DigestFileName :" + validation.getDigestFileName() + " conditions does not have all required fields.", "");
-                        return false;
-                    }
+                encounteredDigestExtensions.add(validation.getDigestFileName());
+            }
+            List<ConditionUnit> conditions = validation.getConditions();
+            for (ConditionUnit condition : conditions) {
+                if (condition.columnName == null || condition.required == null) {
+                    ErrorLogger.logError("DigestFileName :" + validation.getDigestFileName() + " conditions does not have all required fields.", "");
+                    return false;
                 }
             }
+
         }
         return true;
     }
