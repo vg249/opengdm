@@ -1,4 +1,4 @@
-import {Component, OnChanges, OnInit, SimpleChange} from "@angular/core";
+import {AfterViewInit, ChangeDetectorRef, Component, OnChanges, OnInit, SimpleChange} from "@angular/core";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {Store} from "@ngrx/store";
@@ -57,7 +57,7 @@ import {NameId} from "../model/name-id";
         </div>` // end template
 
 })
-export class FlexQueryFilterComponent implements OnInit, OnChanges {
+export class FlexQueryFilterComponent implements OnInit, OnChanges, AfterViewInit {
 
 
     //these are dummy place holders for now
@@ -82,11 +82,15 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
                 private fileItemService: NameIdFileItemService,
                 private filterService: FilterService,
                 private filterParamsColl: FilterParamsColl,
-                private flexQueryService: FlexQueryService) {
+                private flexQueryService: FlexQueryService,
+                private cd: ChangeDetectorRef) {
 
 
     } // ctor
 
+    ngAfterViewInit() {
+        this.cd.detectChanges();
+    }
 
     ngOnInit(): any {
 
@@ -101,12 +105,11 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
                 this.totalValues = items.length.toString()
             });
 
-        this.setControlState(false);
+//        this.setControlState(false);
 
         this.store.select(fromRoot.getFilterCountState)
             .subscribe(filterCountState => {
 
-                setTimeout( () => {
                     let thisControlVertexfilterParams: FilterParams = this.filterParamsColl.getFilter(this.filterParamNameVertices, GobiiExtractFilterType.FLEX_QUERY);
                     let currentVertexFilter: PayloadFilter = filterCountState.flexQueryFilters.get(thisControlVertexfilterParams.getQueryName());
                     if (currentVertexFilter) {
@@ -144,7 +147,6 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges {
 
                     } // if-else there are previous sibling params
 
-                }, 0);
             }); //subscribe to filter count state
         // you have to reset from state because this control won't see the sibling control's
         // change event

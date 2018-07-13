@@ -55,12 +55,13 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
         ],
         execute: function () {
             FlexQueryFilterComponent = (function () {
-                function FlexQueryFilterComponent(store, fileItemService, filterService, filterParamsColl, flexQueryService) {
+                function FlexQueryFilterComponent(store, fileItemService, filterService, filterParamsColl, flexQueryService, cd) {
                     this.store = store;
                     this.fileItemService = fileItemService;
                     this.filterService = filterService;
                     this.filterParamsColl = filterParamsColl;
                     this.flexQueryService = flexQueryService;
+                    this.cd = cd;
                     //these are dummy place holders for now
                     this.totalValues = "0";
                     this.enabledStyle = null;
@@ -71,6 +72,9 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                     // rely purely on the store
                     this.previousSelectedVertices = [];
                 } // ctor
+                FlexQueryFilterComponent.prototype.ngAfterViewInit = function () {
+                    this.cd.detectChanges();
+                };
                 FlexQueryFilterComponent.prototype.ngOnInit = function () {
                     var _this = this;
                     this.fileItemsVertexNames$ = this.filterService.getForFilter(this.filterParamNameVertices);
@@ -81,43 +85,41 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                         .subscribe(function (items) {
                         _this.totalValues = items.length.toString();
                     });
-                    this.setControlState(false);
+                    //        this.setControlState(false);
                     this.store.select(fromRoot.getFilterCountState)
                         .subscribe(function (filterCountState) {
-                        setTimeout(function () {
-                            var thisControlVertexfilterParams = _this.filterParamsColl.getFilter(_this.filterParamNameVertices, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
-                            var currentVertexFilter = filterCountState.flexQueryFilters.get(thisControlVertexfilterParams.getQueryName());
-                            if (currentVertexFilter) {
-                                if (!currentVertexFilter.targetEntityFilterValue) {
-                                    _this.selectedVertex = null;
-                                    _this.selectedVertexValues = null;
-                                }
+                        var thisControlVertexfilterParams = _this.filterParamsColl.getFilter(_this.filterParamNameVertices, type_extractor_filter_1.GobiiExtractFilterType.FLEX_QUERY);
+                        var currentVertexFilter = filterCountState.flexQueryFilters.get(thisControlVertexfilterParams.getQueryName());
+                        if (currentVertexFilter) {
+                            if (!currentVertexFilter.targetEntityFilterValue) {
+                                _this.selectedVertex = null;
+                                _this.selectedVertexValues = null;
                             }
-                            if (!thisControlVertexfilterParams.getPreviousSiblingFileItemParams()) {
-                                if (filterCountState.sampleCount >= 0
-                                    && filterCountState.markerCount >= 0) {
-                                    _this.setControlState(true);
-                                }
-                                else {
-                                    _this.setControlState(false);
-                                }
+                        }
+                        if (!thisControlVertexfilterParams.getPreviousSiblingFileItemParams()) {
+                            if (filterCountState.sampleCount >= 0
+                                && filterCountState.markerCount >= 0) {
+                                _this.setControlState(true);
                             }
-                            else if (thisControlVertexfilterParams.getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
-                                var vertexValuePreviousVertexSelectorParamName = thisControlVertexfilterParams
-                                    .getPreviousSiblingFileItemParams()
-                                    .getChildFileItemParams()[0].getQueryName();
-                                var previousVertexValuesFilter = filterCountState.flexQueryFilters.get(vertexValuePreviousVertexSelectorParamName);
-                                if (previousVertexValuesFilter
-                                    && previousVertexValuesFilter.targetEntityFilterValue
-                                    && filterCountState.sampleCount >= 0
-                                    && filterCountState.markerCount >= 0) {
-                                    _this.setControlState(true);
-                                }
-                                else {
-                                    _this.setControlState(false);
-                                }
-                            } // if-else there are previous sibling params
-                        }, 0);
+                            else {
+                                _this.setControlState(false);
+                            }
+                        }
+                        else if (thisControlVertexfilterParams.getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
+                            var vertexValuePreviousVertexSelectorParamName = thisControlVertexfilterParams
+                                .getPreviousSiblingFileItemParams()
+                                .getChildFileItemParams()[0].getQueryName();
+                            var previousVertexValuesFilter = filterCountState.flexQueryFilters.get(vertexValuePreviousVertexSelectorParamName);
+                            if (previousVertexValuesFilter
+                                && previousVertexValuesFilter.targetEntityFilterValue
+                                && filterCountState.sampleCount >= 0
+                                && filterCountState.markerCount >= 0) {
+                                _this.setControlState(true);
+                            }
+                            else {
+                                _this.setControlState(false);
+                            }
+                        } // if-else there are previous sibling params
                     }); //subscribe to filter count state
                     // you have to reset from state because this control won't see the sibling control's
                     // change event
@@ -240,7 +242,8 @@ System.register(["@angular/core", "../model/type-extractor-filter", "@ngrx/store
                         nameid_file_item_service_1.NameIdFileItemService,
                         filter_service_1.FilterService,
                         filter_params_coll_1.FilterParamsColl,
-                        flex_query_service_1.FlexQueryService])
+                        flex_query_service_1.FlexQueryService,
+                        core_1.ChangeDetectorRef])
                 ], FlexQueryFilterComponent);
                 return FlexQueryFilterComponent;
             }());
