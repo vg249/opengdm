@@ -89,7 +89,7 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges, AfterViewIni
     } // ctor
 
     ngAfterViewInit() {
-        this.cd.detectChanges();
+        // this.cd.detectChanges();
     }
 
     ngOnInit(): any {
@@ -105,89 +105,64 @@ export class FlexQueryFilterComponent implements OnInit, OnChanges, AfterViewIni
                 this.totalValues = items.length.toString()
             });
 
-//        this.setControlState(false);
-
         this.store.select(fromRoot.getFilterCountState)
             .subscribe(filterCountState => {
 
-                    let thisControlVertexfilterParams: FilterParams = this.filterParamsColl.getFilter(this.filterParamNameVertices, GobiiExtractFilterType.FLEX_QUERY);
-                    let currentVertexFilter: PayloadFilter = filterCountState.flexQueryFilters.get(thisControlVertexfilterParams.getQueryName());
-                    if (currentVertexFilter) {
-                        if (!currentVertexFilter.targetEntityFilterValue) {
-                            this.selectedVertex = null;
-                            this.selectedVertexValues = null;
-                        }
+                // calling detectChanges() here is necessary to deal with the
+                // ExpressionChangedAfterItHasBeenCheckedError. This error only
+                // occurs when handleVertexSelected() is called and when there is
+                // a previous sibling filter. In other words, it happens when
+                // the code path goes through the else if below. The problem is that
+                // the eventing change to the filter collection is within a change
+                // detection cycle, and within that same cycle the count changes.
+                // This results in the value being reset within the change cycle.
+                // This is probably a design issue that needs to be solved more
+                // elegantly. It might be that the solution is, per the comment on
+                // on FlexQueryService::loadSelectedVertexFilter(), to issue the
+                // recount properly, as an effect of the filter value changes. Per
+                // the notes there and in the file item effects code, this will
+                // require wrapping the http subscribe with a switchMap() (I _think_)
+                this.cd.detectChanges();
+
+                let thisControlVertexfilterParams: FilterParams = this.filterParamsColl.getFilter(this.filterParamNameVertices, GobiiExtractFilterType.FLEX_QUERY);
+                let currentVertexFilter: PayloadFilter = filterCountState.flexQueryFilters.get(thisControlVertexfilterParams.getQueryName());
+                if (currentVertexFilter) {
+                    if (!currentVertexFilter.targetEntityFilterValue) {
+                        this.selectedVertex = null;
+                        this.selectedVertexValues = null;
+                    }
+                }
+
+
+                if (!thisControlVertexfilterParams.getPreviousSiblingFileItemParams()) {
+
+                    if (filterCountState.sampleCount >= 0
+                        && filterCountState.markerCount >= 0) {
+                        this.setControlState(true);
+                    } else {
+                        this.setControlState(false);
                     }
 
+                } else if (thisControlVertexfilterParams.getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
 
-                    if (!thisControlVertexfilterParams.getPreviousSiblingFileItemParams()) {
+                    let vertexValuePreviousVertexSelectorParamName: string = thisControlVertexfilterParams
+                        .getPreviousSiblingFileItemParams()
+                        .getChildFileItemParams()[0].getQueryName();
 
-                        if (filterCountState.sampleCount >= 0
-                            && filterCountState.markerCount >= 0) {
-                            this.setControlState(true);
-                        } else {
-                            this.setControlState(false);
-                        }
+                    let previousVertexValuesFilter: PayloadFilter = filterCountState.flexQueryFilters.get(vertexValuePreviousVertexSelectorParamName);
+                    if (previousVertexValuesFilter
+                        && previousVertexValuesFilter.targetEntityFilterValue
+                        && filterCountState.sampleCount >= 0
+                        && filterCountState.markerCount >= 0
+                    ) {
+                        this.setControlState(true)
+                    } else {
+                        this.setControlState(false)
+                    }
 
-                    } else if (thisControlVertexfilterParams.getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
-
-                        let vertexValuePreviousVertexSelectorParamName: string = thisControlVertexfilterParams
-                            .getPreviousSiblingFileItemParams()
-                            .getChildFileItemParams()[0].getQueryName();
-
-                        let previousVertexValuesFilter: PayloadFilter = filterCountState.flexQueryFilters.get(vertexValuePreviousVertexSelectorParamName);
-                        if (previousVertexValuesFilter
-                            && previousVertexValuesFilter.targetEntityFilterValue
-                            && filterCountState.sampleCount >= 0
-                            && filterCountState.markerCount >= 0) {
-                            this.setControlState(true)
-                        } else {
-                            this.setControlState(false)
-                        }
-
-                    } // if-else there are previous sibling params
+                } // if-else there are previous sibling params
 
             }); //subscribe to filter count state
-        // you have to reset from state because this control won't see the sibling control's
-        // change event
-
-        // this.store.select(fromRoot.getFileItemsFilters)
-        //     .subscribe(
-        //         filters => {
-        //
-        //             // setTimeout() fixes the ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked error
-        //             setTimeout(() => {
-        //                 let thisControlVertexfilterParams: FilterParams = this.filterParamsColl.getFilter(this.filterParamNameVertices, GobiiExtractFilterType.FLEX_QUERY);
-        //                 let currentVertexFilter: PayloadFilter = filters[thisControlVertexfilterParams.getQueryName()];
-        //                 if (currentVertexFilter) {
-        //                     if (!currentVertexFilter.targetEntityFilterValue) {
-        //                         this.selectedVertex = null;
-        //                         this.selectedVertexValues = null;
-        //                     }
-        //                 }
-        //
-        //
-        //                 if (!thisControlVertexfilterParams.getPreviousSiblingFileItemParams()) {
-        //                     this.setControlState(true);
-        //                 } else if (thisControlVertexfilterParams.getPreviousSiblingFileItemParams().getChildFileItemParams().length > 0) {
-        //
-        //
-        //                     let vertexValuePreviousVertexSelectorParamName: string = thisControlVertexfilterParams
-        //                         .getPreviousSiblingFileItemParams()
-        //                         .getChildFileItemParams()[0].getQueryName();
-        //
-        //                     let previousVertexValuesFilter: PayloadFilter = filters[vertexValuePreviousVertexSelectorParamName];
-        //                     if (previousVertexValuesFilter && previousVertexValuesFilter.targetEntityFilterValue) {
-        //                         this.setControlState(true)
-        //                     } else {
-        //                         this.setControlState(false)
-        //                     }
-        //
-        //                 } // if-else there are previous sibling params
-        //             },50)
-        //             // you have to reset from state because this control won't see the sibling control's
-        //             // change event
-        //         }); // subscribe to select filters()
 
     } // ngInit()
 
