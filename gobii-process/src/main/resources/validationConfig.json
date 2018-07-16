@@ -1,0 +1,47 @@
+{
+  "validations": [
+    {
+      "digestFileName": "digest.germplasm",
+      "conditions": [
+        {
+          "columnName": "name",
+          "required": "yes"
+        },
+        {
+          "columnName": "external_code",
+          "required": "yes",
+          "unique": "yes"
+        },
+        {
+          "columnName": "species_name",
+          "required": "no",
+          "type": "DB",
+          "nullAllowed": "yes",
+          "typeName": "CV",
+          "fieldToCompare": "he-haw"
+        },
+        {
+          "columnName": "type_name",
+          "required": "no",
+          "unique": "yes",
+          "type": "File",
+          "nullAllowed": "yes",
+          "typeName": "Developer.txt",
+          "fieldToCompare": "he-haw"
+        }
+      ]
+    },
+    {
+      "digestFileName": "digest.germplasm_prop",
+      "conditions": [
+        {
+          "columnName": "external_code",
+          "required": "yes",
+          "type": "File",
+          "typeName": "digest.germplasm",
+          "fieldToCompare": "external_code"
+        }
+      ]
+    }
+  ]
+}
