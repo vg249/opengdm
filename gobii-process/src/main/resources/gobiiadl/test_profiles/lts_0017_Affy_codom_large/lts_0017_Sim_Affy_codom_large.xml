@@ -41,11 +41,11 @@
                     <DbPKey></DbPKey>
                 </Keys>
                 <Properties>
-                    <PlatformName>Sequencing</PlatformName>
-                    <PlatformCode>Sequencing</PlatformCode>
-                    <PlatformDescription>Sequencing</PlatformDescription>
+                    <PlatformName>Affymetrix_Axiom</PlatformName>
+                    <PlatformCode>Affymetrix_Axiom</PlatformCode>
+                    <PlatformDescription>Affymetrix_Axiom</PlatformDescription>
                     <StatusId>1</StatusId>
-                    <TypeId>Sequencing</TypeId>
+                    <TypeId>Affymetrix_Axiom</TypeId>
                     <Properties/>
                 </Properties>
             </Platform>
@@ -55,13 +55,13 @@
                 <Keys>
                     <DbPKey></DbPKey>
                     <Fkey entity="Platform" fkproperty="platformId">
-                        <DbPKeySurrogate>Sequencing</DbPKeySurrogate>
+                        <DbPKeySurrogate>Affymetrix_Axiom</DbPKeySurrogate>
                         <DbPKey></DbPKey>
                     </Fkey>
                 </Keys>
                 <Properties>
-                    <Name>Sequencing</Name>
-                    <Description>Sequencing</Description>
+                    <Name>Affymetrix_Axiom</Name>
+                    <Description>Affymetrix_Axiom</Description>
                     <TypeId>1</TypeId>
                     <Status>1</Status>
                     <Props/>
@@ -78,12 +78,12 @@
                         <DbPKey></DbPKey>
                     </Fkey>
                     <Fkey entity="Protocol" fkproperty="protocolId">
-                        <DbPKeySurrogate>Sequencing</DbPKeySurrogate>
+                        <DbPKeySurrogate>Affymetrix_Axiom</DbPKeySurrogate>
                         <DbPKey></DbPKey>
                     </Fkey>
                 </Keys>
                 <Properties>
-                    <Name>Cornell_Sequencing</Name>
+                    <Name>Cornell_Affymetrix_Axiom</Name>
                     <Status>1</Status>
                 </Properties>
             </VendorProtocol>
@@ -94,9 +94,9 @@
                     <DbPKey></DbPKey>
                 </Keys>
                 <Properties>
-                    <Name>Test_Physical</Name>
-                    <Code>Test_Physical</Code>
-                    <Description>Test_Physical</Description>
+                    <Name>Sim_codominant</Name>
+                    <Code>Sim_codominant</Code>
+                    <Description>Sim_codominant</Description>
                     <MapType>physical</MapType>
                     <StatusId>1</StatusId>
                     <Properties/>
@@ -113,26 +113,26 @@
                     </Fkey>
                 </Keys>
                 <Properties>
-                    <ProjectName>sim_2letternuc_proj_01</ProjectName>
-                    <ProjectCode>sim_2letternuc_proj_01</ProjectCode>
-                    <ProjectDescription>sim_2letternuc_proj_01</ProjectDescription>
+                    <ProjectName>sim_codominant_proj_03</ProjectName>
+                    <ProjectCode>sim_codominant_proj_03</ProjectCode>
+                    <ProjectDescription>sim_codominant_proj_03</ProjectDescription>
                     <ProjectStatus>1</ProjectStatus>
                     <CvProps>
                         <CvProp>
                             <CvTerm>date_sampled</CvTerm>
-                            <CvPropValue>06/01/2018</CvPropValue>
+                            <CvPropValue>07/02/2018</CvPropValue>
                         </CvProp>
                         <CvProp>
                             <CvTerm>division</CvTerm>
-                            <CvPropValue>FQ_division</CvPropValue>
+                            <CvPropValue>Sim_division_lg</CvPropValue>
                         </CvProp>
                         <CvProp>
                             <CvTerm>genotyping_purpose</CvTerm>
-                            <CvPropValue>FQ_genotyp_purp</CvPropValue>
+                            <CvPropValue>Sim_genotyp_purp_lg</CvPropValue>
                         </CvProp>
                         <CvProp>
                             <CvTerm>study_name</CvTerm>
-                            <CvPropValue>FQ_study_name</CvPropValue>
+                            <CvPropValue>Sim_study_name_lg</CvPropValue>
                         </CvProp>
                     </CvProps>
                 </Properties>
@@ -143,17 +143,17 @@
                 <Keys>
                     <DbPKey></DbPKey>
                     <Fkey entity="Project" fkproperty="projectId">
-                        <DbPKeySurrogate>sim_2letternuc_proj_01</DbPKeySurrogate>
+                        <DbPKeySurrogate>sim_codominant_proj_03</DbPKeySurrogate>
                         <DbPKey></DbPKey>
                     </Fkey>
                     <Fkey entity="VendorProtocol" fkproperty="vendorProtocolId">
-                        <DbPKeySurrogate>Cornell_Sequencing</DbPKeySurrogate>
+                        <DbPKeySurrogate>Cornell_Affymetrix_Axiom</DbPKeySurrogate>
                         <DbPKey></DbPKey>
                     </Fkey>
                 </Keys>
                 <Properties>
-                    <ExperimentName>sim_2letternuc_exp_01</ExperimentName>
-                    <ExperimentCode>sim_2letternuc_exp_01</ExperimentCode>
+                    <ExperimentName>sim_codominant_exp_05</ExperimentName>
+                    <ExperimentCode>sim_codominant_exp_05</ExperimentCode>
                     <StatusId>1</StatusId>
                 </Properties>
             </Experiment>
@@ -164,15 +164,15 @@
                     <DbPKey></DbPKey>
                 </Keys>
                 <Properties>
-                    <AnalysisName>Test_Calling</AnalysisName>
-                    <AnalysisDescription>Test_Calling</AnalysisDescription>
+                    <AnalysisName>sim_none</AnalysisName>
+                    <AnalysisDescription>sim_none</AnalysisDescription>
                     <AnlaysisTypeId>Calling</AnlaysisTypeId>
-                    <Program>Test_Calling_program</Program>
-                    <ProgramVersion>Test_Calling_program_version</ProgramVersion>
-                    <Algorithm>Test_Calling_algorithm</Algorithm>
-                    <SourceName>Test_Calling_sourcename</SourceName>
-                    <SourceVersion>Test_Calling_sourceversion</SourceVersion>
-                    <SourceUri>Test_Calling_sourceuri</SourceUri>
+                    <Program>sim_none_program</Program>
+                    <ProgramVersion>sim_none_program_version</ProgramVersion>
+                    <Algorithm>sim_none_algorithm</Algorithm>
+                    <SourceName>sim_none_sourcename</SourceName>
+                    <SourceVersion>sim_none_sourceversion</SourceVersion>
+                    <SourceUri>sim_none_sourceuri</SourceUri>
                     <StatusId>1</StatusId>
                     <Parameters/>
                 </Properties>
@@ -183,23 +183,25 @@
                 <Keys>
                     <DbPKey></DbPKey>
                     <Fkey entity="Experiment" fkproperty="experimentId">
-                        <DbPKeySurrogate>sim_2letternuc_exp_01</DbPKeySurrogate>
+                        <DbPKeySurrogate>sim_codominant_exp_05</DbPKeySurrogate>
                         <DbPKey></DbPKey>
                     </Fkey>
                     <Fkey entity="Analysis" fkproperty="callingAnalysisId">
-                        <DbPKeySurrogate>Test_Calling</DbPKeySurrogate>
+                        <DbPKeySurrogate>sim_none</DbPKeySurrogate>
                         <DbPKey></DbPKey>
                     </Fkey>
                 </Keys>
                 <Properties>
-                    <DatasetName>sim_2letternuc_ds_01</DatasetName>
-                    <DataTable>sim_2letternuc_ds_01_datatable</DataTable>
-                    <DataFile>sim_2letternuc_ds_01_datafile</DataFile>
-                    <QualityTable>sim_2letternuc_ds_01_qualitytable</QualityTable>
-                    <QualityFile>sim_2letternuc_ds_01_qualityfile</QualityFile>
+                    <DatasetName>sim_codominant_ds_06</DatasetName>
+                    <DataTable>sim_codominant_ds_06_datatable</DataTable>
+                    <DataFile>sim_codominant_ds_06_datafile</DataFile>
+                    <QualityTable>sim_codominant_ds_06_qualitytable</QualityTable>
+                    <QualityFile>sim_codominant_ds_06_qualityfile</QualityFile>
                     <StatusId>1</StatusId>
-                    <TypeId>NUCLEOTIDE_2_LETTER</TypeId>
-                    <AnalysesIds/>
+                    <TypeId>CO_DOMINANT_NON_NUCLEOTIDE</TypeId>
+                    <AnalysesIds>
+                        <AnalysisId>sim_none</AnalysisId>
+                    </AnalysesIds>
                     <Scores/>
                 </Properties>
             </Dataset>
@@ -207,11 +209,12 @@
     </Entities>
 
     <Scenarios>
+
         <Scenario>
-            <Name>sim_2letternuc_proj_01_marker</Name>
+            <Name>sim_codominant_proj_03_marker</Name>
             <Files>
-                <Instruction>data_20180614_163622_daw279.json</Instruction>
-                <Data>Deb_FQ_2ltr_markers_m1-m10.txt</Data>
+                <Instruction>sim_large_codom_marker.json</Instruction>
+                <Data>marker_codom_large.txt</Data>
             </Files>
             <PayloadType>markers</PayloadType>
 
@@ -221,37 +224,37 @@
             </DbFkey>
 
             <DbFkey entity="Project">
-                <DbPKeySurrogate>sim_2letternuc_proj_01</DbPKeySurrogate>
+                <DbPKeySurrogate>sim_codominant_proj_03</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
             <DbFkey entity="Experiment">
-                <DbPKeySurrogate>sim_2letternuc_exp_01</DbPKeySurrogate>
+                <DbPKeySurrogate>sim_codominant_exp_05</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
             <DbFkey entity="Dataset">
-                <DbPKeySurrogate>sim_2letternuc_ds_01</DbPKeySurrogate>
+                <DbPKeySurrogate>sim_codominant_ds_06</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
             <DbFkey entity="Mapset">
-                <DbPKeySurrogate>Test_Physical</DbPKeySurrogate>
+                <DbPKeySurrogate>Sim_codominant</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
             <DbFkey entity="Platform">
-                <DbPKeySurrogate>Sequencing</DbPKeySurrogate>
+                <DbPKeySurrogate>Affymetrix_Axiom</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
         </Scenario>
 
         <Scenario>
-            <Name>sim_2letternuc_proj_01_sample</Name>
+            <Name>sim_codominant_proj_03_sample</Name>
             <Files>
-                <Instruction>data_20180614_163714_daw279.json</Instruction>
-                <Data>Deb_FQ_2ltr_samples1-10.txt</Data>
+                <Instruction>sim_large_codom_sample.json</Instruction>
+                <Data>sample_codom_large.txt</Data>
             </Files>
             <PayloadType>samples</PayloadType>
 
@@ -261,37 +264,37 @@
             </DbFkey>
 
             <DbFkey entity="Project">
-                <DbPKeySurrogate>sim_2letternuc_proj_01</DbPKeySurrogate>
+                <DbPKeySurrogate>sim_codominant_proj_03</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
             <DbFkey entity="Experiment">
-                <DbPKeySurrogate>sim_2letternuc_exp_01</DbPKeySurrogate>
+                <DbPKeySurrogate>sim_codominant_exp_05</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
             <DbFkey entity="Dataset">
-                <DbPKeySurrogate>sim_2letternuc_ds_01</DbPKeySurrogate>
+                <DbPKeySurrogate>sim_codominant_ds_06</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
             <DbFkey entity="Mapset">
-                <DbPKeySurrogate>Test_Physical</DbPKeySurrogate>
+                <DbPKeySurrogate>Sim_codominant</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
             <DbFkey entity="Platform">
-                <DbPKeySurrogate>Sequencing</DbPKeySurrogate>
+                <DbPKeySurrogate>Affymetrix_Axiom</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
         </Scenario>
 
         <Scenario>
-            <Name>sim_2letternuc_proj_01_dataset</Name>
+            <Name>sim_codominant_proj_03_dataset</Name>
             <Files>
-                <Instruction>data_20180614_165023_daw279.json</Instruction>
-                <Data>Deb_FQ_2ltr_alleles1-10.txt</Data>
+                <Instruction>sim_large_codom_matrix.json</Instruction>
+                <Data>matrix_CODOM.txt</Data>
             </Files>
             <PayloadType>matrix</PayloadType>
 
@@ -301,27 +304,27 @@
             </DbFkey>
 
             <DbFkey entity="Project">
-                <DbPKeySurrogate>sim_2letternuc_proj_01</DbPKeySurrogate>
+                <DbPKeySurrogate>sim_codominant_proj_03</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
             <DbFkey entity="Experiment">
-                <DbPKeySurrogate>sim_2letternuc_exp_01</DbPKeySurrogate>
+                <DbPKeySurrogate>sim_codominant_exp_05</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
             <DbFkey entity="Dataset">
-                <DbPKeySurrogate>sim_2letternuc_ds_01</DbPKeySurrogate>
+                <DbPKeySurrogate>sim_codominant_ds_06</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
             <DbFkey entity="Mapset">
-                <DbPKeySurrogate>Test_Physical</DbPKeySurrogate>
+                <DbPKeySurrogate>Sim_codominant</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
             <DbFkey entity="Platform">
-                <DbPKeySurrogate>Sequencing</DbPKeySurrogate>
+                <DbPKeySurrogate>Affymetrix_Axiom</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
