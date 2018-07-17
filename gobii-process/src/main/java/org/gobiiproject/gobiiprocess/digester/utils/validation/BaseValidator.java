@@ -51,35 +51,51 @@ public abstract class BaseValidator {
      * @param conditions Conditions List
      */
     void validateRequiredColumns(String fileName, List<ConditionUnit> conditions) {
-        List<String[]> collect = null;
-        try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
-            collect = stream.map(line -> line.split("\t")).collect(Collectors.toList());
-        } catch (IOException e) {
-            ErrorLogger.logError("Could not read the input file", fileName);
-        }
-
-        if (collect == null || collect.size() == 0) {
-            ErrorLogger.logError(fileName, " is empty.");
-            return;
-        }
-        List<String> fileHeaders = Arrays.asList(collect.remove(0));
-        Set<Integer> sortedColumnNumbers = new TreeSet<>();
-        List<String> requiredColumns = getRequiredColumns(conditions);
-        for (String columnName : requiredColumns) {
-            if (fileHeaders.contains(columnName)) {
-                sortedColumnNumbers.add(fileHeaders.indexOf(columnName));
-            } else {
-                ErrorLogger.logError("Could not find required column : " + columnName + " in input file", fileName);
+        List<String[]> collect = readFileIntoMemory(fileName);
+        if (collect != null) {
+            List<String> fileHeaders = Arrays.asList(collect.remove(0));
+            Set<Integer> sortedColumnNumbers = new TreeSet<>();
+            List<String> requiredColumns = getRequiredColumns(conditions);
+            for (String columnName : requiredColumns) {
+                if (fileHeaders.contains(columnName)) {
+                    sortedColumnNumbers.add(fileHeaders.indexOf(columnName));
+                } else {
+                    ErrorLogger.logError("Could not find required column : " + columnName + " in input file", fileName);
+                }
             }
-        }
-        for (String[] line : collect) {
-            if (line.length < ((TreeSet<Integer>) sortedColumnNumbers).last())
-                ErrorLogger.logError(fileName, " is corrupted. PLease check file for irregular size columns.");
-            for (Integer colNo : sortedColumnNumbers) {
-                if (line[colNo] == null || line[colNo].trim().equalsIgnoreCase("")) {
-                    ErrorLogger.logError("In file " + fileName, "column " + colNo + " is required. It should not be null or empty.");
+            for (String[] line : collect) {
+                if (line.length < ((TreeSet<Integer>) sortedColumnNumbers).last())
+                    ErrorLogger.logError(fileName, " is corrupted. PLease check file for irregular size columns.");
+                for (Integer colNo : sortedColumnNumbers) {
+                    if (isNullAndEmpty(line[colNo])) {
+                        ErrorLogger.logError("In file " + fileName, "column " + colNo + " is required. It should not be null or empty.");
+                    }
                 }
             }
         }
+    }
+
+    /**
+     * Read file into a list
+     *
+     * @param fileName file name
+     * @return list
+     */
+    List<String[]> readFileIntoMemory(String fileName) {
+        List<String[]> collect = null;
+        try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
+            collect = stream.map(line -> line.split("\t")).collect(Collectors.toList());
+            if (collect == null || collect.size() == 0) {
+                ErrorLogger.logError(fileName, " is empty.");
+                collect = null;
+            }
+        } catch (IOException e) {
+            ErrorLogger.logError("Could not read the input file", fileName);
+        }
+        return collect;
+    }
+
+    boolean isNullAndEmpty(String value) {
+        return value == null || value.trim().equalsIgnoreCase("");
     }
 }

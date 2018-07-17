@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions.*;
+import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationWebServicesUtil.loginIntoServer;
 
 public class DigestFileValidator {
 
@@ -133,6 +134,12 @@ public class DigestFileValidator {
     }
 
     public void validate(ValidationUnit validation) {
+        System.out.println("YELLO");
+        String url = "http://192.168.121.3:8081/gobii-dev/";
+        String username = "mcs397";
+        String password = "q";
+        String crop = null;
+        loginIntoServer(url, username, password, crop);
         switch (FilenameUtils.getExtension(validation.getDigestFileName())) {
             case GERMPLASM_TABNAME:
                 new GermplasmValidator().validate(validation, rootDir);

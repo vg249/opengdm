@@ -1,9 +1,9 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
+import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 class GermplasmValidator extends BaseValidator {
     @Override
@@ -17,6 +17,13 @@ class GermplasmValidator extends BaseValidator {
             }
             String fileName = dir + "/" + validationUnit.getDigestFileName();
             validateRequiredColumns(fileName, validationUnit.getConditions());
+            for (ConditionUnit condition : validationUnit.getConditions()) {
+                System.out.println(condition.type);
+                System.out.println(condition.typeName);
+                if (condition.type != null && condition.type.equalsIgnoreCase("DB") && condition.fieldToCompare != null && condition.fieldToCompare.equalsIgnoreCase("species_name")) {
+                    validateSpeciesName(fileName);
+                }
+            }
         } else {
             return;
         }
@@ -24,5 +31,29 @@ class GermplasmValidator extends BaseValidator {
 
     }
 
+    private void validateSpeciesName(String fileName) {
+        List<String[]> collect = readFileIntoMemory(fileName);
+        if (collect != null) {
+            List<String> headers = Arrays.asList(collect.get(0));
+            if (headers.contains("species_name")) {
+                int speciesNameIndex = headers.indexOf("species_name");
+                collect.remove(0);
+                Set<String> speciesNameList = new HashSet<String>();
+                for (String[] fileRow : collect) {
+                    List<String> fileRowList = Arrays.asList(fileRow);
+                    if (isNullAndEmpty(fileRowList.get(speciesNameIndex)))
+                        System.out.println();
+                        speciesNameList.add(fileRowList.get(speciesNameIndex));
+                }
+                List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+                for (String speciesName : speciesNameList) {
+                    NameIdDTO nameIdDTO = new NameIdDTO();
+                    nameIdDTO.setName(speciesName);
+                    nameIdDTOList.add(nameIdDTO);
+                }
+                ValidationWebServicesUtil.validateSpeciesName(nameIdDTOList);
+            }
+        }
 
+    }
 }
