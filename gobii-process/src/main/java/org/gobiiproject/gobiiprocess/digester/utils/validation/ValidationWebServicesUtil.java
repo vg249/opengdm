@@ -14,7 +14,6 @@ import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 class ValidationWebServicesUtil {
@@ -54,7 +53,7 @@ class ValidationWebServicesUtil {
         }
     }
 
-    static void validateSpeciesName(List<NameIdDTO> nameIdDTOList) {
+    static void validateCVName(List<NameIdDTO> nameIdDTOList, String cvGroupName) {
         try {
             PayloadEnvelope<NameIdDTO> payloadEnvelope = new PayloadEnvelope<>();
             payloadEnvelope.getHeader().setGobiiProcessType(GobiiProcessType.CREATE);
@@ -66,15 +65,25 @@ class ValidationWebServicesUtil {
             GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
             namesUri.setParamValue("entity", GobiiEntityNameType.CV.toString().toLowerCase());
             namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.NAMES_BY_NAME_LIST.toString().toUpperCase()));
-            namesUri.setParamValue("filterValue", CvGroup.CVGROUP_GERMPLASM_SPECIES.getCvGroupName());
+            switch (cvGroupName) {
+                case "species_name":
+                    namesUri.setParamValue("filterValue", CvGroup.CVGROUP_GERMPLASM_SPECIES.getCvGroupName());
+                    break;
+                case "type_name":
+                    namesUri.setParamValue("filterValue", CvGroup.CVGROUP_GERMPLASM_TYPE.getCvGroupName());
+                    break;
+                default:
+                    ErrorLogger.logError(cvGroupName, " is not defined in CV table. ");
+                    return;
+            }
             PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = gobiiEnvelopeRestResource.post(NameIdDTO.class, payloadEnvelope);
             List<NameIdDTO> nameIdDTOListResponse = responsePayloadEnvelope.getPayload().getData();
             for (NameIdDTO nameIdDTO : nameIdDTOListResponse) {
                 if (nameIdDTO.getId() == 0)
-                    ErrorLogger.logError(nameIdDTO.getName(), " in column species_name is not a valid name. ");
+                    ErrorLogger.logError(nameIdDTO.getName(), " in column " + cvGroupName + " is not a valid name.");
             }
         } catch (Exception e) {
-            ErrorLogger.logError("Species_name validation error. ", e);
+            ErrorLogger.logError(cvGroupName + " validation error. ", e);
         }
     }
 }

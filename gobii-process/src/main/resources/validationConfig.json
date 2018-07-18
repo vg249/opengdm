@@ -24,10 +24,10 @@
           "columnName": "type_name",
           "required": "no",
           "unique": "yes",
-          "type": "File",
+          "type": "DB",
           "nullAllowed": "yes",
-          "typeName": "Developer.txt",
-          "fieldToCompare": "he-haw"
+          "typeName": "CV",
+          "fieldToCompare": "type_name"
         }
       ]
     },

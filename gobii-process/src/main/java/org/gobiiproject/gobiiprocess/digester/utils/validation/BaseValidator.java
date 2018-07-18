@@ -33,30 +33,44 @@ public abstract class BaseValidator {
      * @param conditions conditions
      * @return column Names
      */
-    private List<String> getRequiredColumns(List<ConditionUnit> conditions) {
-
+    void validateRequiredColumns(String fileName, List<ConditionUnit> conditions) {
         List<String> requiredFields = new ArrayList<>();
         for (ConditionUnit condition : conditions) {
             if (condition.required.equalsIgnoreCase("YES") && !(condition.unique != null && condition.unique.equalsIgnoreCase("YES"))) {
                 requiredFields.add(condition.columnName);
             }
         }
-        return requiredFields;
+        validateColumns(fileName, requiredFields);
     }
 
     /**
-     * Validates that are the required columns are present and are not null or empty.
+     * Parses the validation rules and gives the rules which are required and unique
      *
-     * @param fileName   fileName
-     * @param conditions Conditions List
+     * @param conditions conditions
+     * @return column Names
      */
-    void validateRequiredColumns(String fileName, List<ConditionUnit> conditions) {
+    void validateRequiredUniqueColumns(String fileName, List<ConditionUnit> conditions) {
+        List<String> requiredUniqueColumns = new ArrayList<>();
+        for (ConditionUnit condition : conditions) {
+            if (condition.required.equalsIgnoreCase("YES") && (condition.unique != null && condition.unique.equalsIgnoreCase("YES"))) {
+                requiredUniqueColumns.add(condition.columnName);
+            }
+        }
+        validateColumns(fileName, requiredUniqueColumns);
+    }
+
+    /**
+     * Validates required columns are present and are not null or empty.
+     *
+     * @param fileName fileName
+     * @param columns  Columns
+     */
+    private void validateColumns(String fileName, List<String> columns) {
         List<String[]> collect = readFileIntoMemory(fileName);
         if (collect != null) {
             List<String> fileHeaders = Arrays.asList(collect.remove(0));
             Set<Integer> sortedColumnNumbers = new TreeSet<>();
-            List<String> requiredColumns = getRequiredColumns(conditions);
-            for (String columnName : requiredColumns) {
+            for (String columnName : columns) {
                 if (fileHeaders.contains(columnName)) {
                     sortedColumnNumbers.add(fileHeaders.indexOf(columnName));
                 } else {
