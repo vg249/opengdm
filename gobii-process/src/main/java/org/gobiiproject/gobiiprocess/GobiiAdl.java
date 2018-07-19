@@ -1511,7 +1511,7 @@ public class GobiiAdl {
                 System.out.println("\nSuccessfully uploaded file.");
             }
         } catch (Exception e) {
-            processError("Error uploading data: " + file.getName(), GobiiStatusLevel.ERROR);
+            processError("Error uploading data: " + file.getName() + ": " + e.getMessage(), GobiiStatusLevel.ERROR);
         }
         return fileDirectoryName;
     }
