@@ -217,7 +217,7 @@
                 <PayloadType>markers</PayloadType>
 
                 <DbFkey entity="Contact">
-                    <DbPKeySurrogate>dummy@email.address</DbPKeySurrogate>
+                    <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
                     <DbPKey></DbPKey>
                 </DbFkey>
 
@@ -257,7 +257,7 @@
                 <PayloadType>samples</PayloadType>
 
                 <DbFkey entity="Contact">
-                    <DbPKeySurrogate>dummy@email.address</DbPKeySurrogate>
+                    <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
                     <DbPKey></DbPKey>
                 </DbFkey>
 
@@ -297,7 +297,7 @@
                 <PayloadType>matrix</PayloadType>
 
                 <DbFkey entity="Contact">
-                    <DbPKeySurrogate>dummy@email.address</DbPKeySurrogate>
+                    <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
                     <DbPKey></DbPKey>
                 </DbFkey>
 
@@ -334,10 +334,9 @@
 
                 <Files>
                     <Data>2018_06_06_15_03_25</Data>
-                    <DownloadPath>ADL_files</DownloadPath>
                 </Files>
 
-                <Contact>dummy@email.address</Contact>
+                <Contact>gobii.dev@gmail.com</Contact>
                 <Mapsets>
 					<Mapset></Mapset>
 				</Mapsets>
@@ -347,14 +346,13 @@
                         <DatasetName>sim_codominant_ds_01</DatasetName>
                         <ExperimentName>sim_codominant_exp_01</ExperimentName>
 						<ProjectName>sim_codominant_proj_01</ProjectName>
-						<PIContact>dummy@email.address</PIContact>
+						<PIContact>gobii.dev@gmail.com</PIContact>
                     </Dataset>
 
                 </Datasets>
 
 
             </Scenario>
-
 
         </Extract>
 

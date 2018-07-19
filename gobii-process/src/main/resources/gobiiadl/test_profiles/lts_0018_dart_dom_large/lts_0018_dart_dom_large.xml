@@ -248,125 +248,160 @@
 
     <Scenarios>
 
-        <Scenario>
-            <Name>sim_dominant_proj_03_marker</Name>
-            <Files>
-                <Instruction>sim_large_dom_marker.json</Instruction>
-                <Data>marker_dom_lg.txt</Data>
-            </Files>
-            <PayloadType>markers</PayloadType>
+        <Load>
 
-            <DbFkey entity="Contact">
-                <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+            <Scenario>
+                <Name>sim_dominant_proj_03_marker</Name>
+                <Files>
+                    <Instruction>sim_large_dom_marker.json</Instruction>
+                    <Data>marker_dom_lg.txt</Data>
+                </Files>
+                <PayloadType>markers</PayloadType>
 
-            <DbFkey entity="Project">
-                <DbPKeySurrogate>sim_dominant_proj_03</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Contact">
+                    <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Experiment">
-                <DbPKeySurrogate>sim_dominant_exp_04</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Project">
+                    <DbPKeySurrogate>sim_dominant_proj_03</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Dataset">
-                <DbPKeySurrogate>sim_dominant_ds_04</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Experiment">
+                    <DbPKeySurrogate>sim_dominant_exp_04</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Mapset">
-                <DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Dataset">
+                    <DbPKeySurrogate>sim_dominant_ds_04</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Platform">
-                <DbPKeySurrogate>Dart_clone</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Mapset">
+                    <DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-        </Scenario>
+                <DbFkey entity="Platform">
+                    <DbPKeySurrogate>Dart_clone</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-        <Scenario>
-            <Name>sim_dominant_proj_03_sample</Name>
-            <Files>
-                <Instruction>sim_large_dom_sample.json</Instruction>
-                <Data>sample_dom_lg.txt</Data>
-            </Files>
-            <PayloadType>samples</PayloadType>
+            </Scenario>
 
-            <DbFkey entity="Contact">
-                <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+            <Scenario>
+                <Name>sim_dominant_proj_03_sample</Name>
+                <Files>
+                    <Instruction>sim_large_dom_sample.json</Instruction>
+                    <Data>sample_dom_lg.txt</Data>
+                </Files>
+                <PayloadType>samples</PayloadType>
 
-            <DbFkey entity="Project">
-                <DbPKeySurrogate>sim_dominant_proj_03</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Contact">
+                    <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Experiment">
-                <DbPKeySurrogate>sim_dominant_exp_04</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Project">
+                    <DbPKeySurrogate>sim_dominant_proj_03</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Dataset">
-                <DbPKeySurrogate>sim_dominant_ds_04</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Experiment">
+                    <DbPKeySurrogate>sim_dominant_exp_04</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Mapset">
-                <DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Dataset">
+                    <DbPKeySurrogate>sim_dominant_ds_04</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Platform">
-                <DbPKeySurrogate>Dart_clone</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Mapset">
+                    <DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-        </Scenario>
+                <DbFkey entity="Platform">
+                    <DbPKeySurrogate>Dart_clone</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-        <Scenario>
-            <Name>sim_dominant_proj_03_dataset</Name>
-            <Files>
-                <Instruction>sim_large_dom_matrix.json</Instruction>
-                <Data>matrix_dom_lg.txt</Data>
-            </Files>
-            <PayloadType>matrix</PayloadType>
+            </Scenario>
 
-            <DbFkey entity="Contact">
-                <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+            <Scenario>
+                <Name>sim_dominant_proj_03_dataset</Name>
+                <Files>
+                    <Instruction>sim_large_dom_matrix.json</Instruction>
+                    <Data>matrix_dom_lg.txt</Data>
+                </Files>
+                <PayloadType>matrix</PayloadType>
 
-            <DbFkey entity="Project">
-                <DbPKeySurrogate>sim_dominant_proj_03</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Contact">
+                    <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Experiment">
-                <DbPKeySurrogate>sim_dominant_exp_04</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Project">
+                    <DbPKeySurrogate>sim_dominant_proj_03</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Dataset">
-                <DbPKeySurrogate>sim_dominant_ds_04</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Experiment">
+                    <DbPKeySurrogate>sim_dominant_exp_04</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Mapset">
-                <DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Dataset">
+                    <DbPKeySurrogate>sim_dominant_ds_04</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Platform">
-                <DbPKeySurrogate>Dart_clone</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Mapset">
+                    <DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-        </Scenario>
+                <DbFkey entity="Platform">
+                    <DbPKeySurrogate>Dart_clone</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
+
+            </Scenario>
+
+        </Load>
+
+        <Extract>
+
+            <Scenario>
+                <Name>sim_dominant_extract_by_dataset</Name>
+                <ExtractType>WHOLE_DATASET</ExtractType>
+                <FileType>HAPMAP</FileType>
+
+                <Files>
+                    <Data>2018_07_09_16_26_16</Data>
+                </Files>
+
+                <Contact>gobii.dev@gmail.com</Contact>
+                <Mapsets>
+                    <Mapset></Mapset>
+                </Mapsets>
+
+                <Datasets>
+                    <Dataset>
+                        <DatasetName>sim_dominant_ds_04</DatasetName>
+                        <ExperimentName>sim_dominant_exp_04</ExperimentName>
+                        <ProjectName>sim_dominant_proj_03</ProjectName>
+                        <PIContact>gobii.dev@gmail.com</PIContact>
+                    </Dataset>
+
+                </Datasets>
+
+
+            </Scenario>
+
+        </Extract>
 
     </Scenarios>
 

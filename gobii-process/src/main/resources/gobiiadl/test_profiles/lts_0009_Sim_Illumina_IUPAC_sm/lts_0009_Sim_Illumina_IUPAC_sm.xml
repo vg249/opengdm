@@ -305,125 +305,160 @@
 
     <Scenarios>
 
-        <Scenario>
-            <Name>sim_iupac_proj_01_marker</Name>
-            <Files>
-                <Instruction>data_20180622_155035_daw279.json</Instruction>
-                <Data>marker.txt</Data>
-            </Files>
-            <PayloadType>markers</PayloadType>
+        <Load>
 
-            <DbFkey entity="Contact">
-                <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+            <Scenario>
+                <Name>sim_iupac_proj_01_marker</Name>
+                <Files>
+                    <Instruction>data_20180622_155035_daw279.json</Instruction>
+                    <Data>marker.txt</Data>
+                </Files>
+                <PayloadType>markers</PayloadType>
 
-            <DbFkey entity="Project">
-                <DbPKeySurrogate>sim_iupac_proj_01</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Contact">
+                    <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Experiment">
-                <DbPKeySurrogate>sim_iupac_exp_02</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Project">
+                    <DbPKeySurrogate>sim_iupac_proj_01</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Dataset">
-                <DbPKeySurrogate>sim_iupac_ds_02</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Experiment">
+                    <DbPKeySurrogate>sim_iupac_exp_02</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Mapset">
-                <DbPKeySurrogate>Test_Genetic</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Dataset">
+                    <DbPKeySurrogate>sim_iupac_ds_02</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Platform">
-                <DbPKeySurrogate>Illumina_Infinium</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Mapset">
+                    <DbPKeySurrogate>Test_Genetic</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-        </Scenario>
+                <DbFkey entity="Platform">
+                    <DbPKeySurrogate>Illumina_Infinium</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-        <Scenario>
-            <Name>sim_iupac_proj_01_sample</Name>
-            <Files>
-                <Instruction>data_20180622_155147_daw279.json</Instruction>
-                <Data>sample.txt</Data>
-            </Files>
-            <PayloadType>samples</PayloadType>
+            </Scenario>
 
-            <DbFkey entity="Contact">
-                <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+            <Scenario>
+                <Name>sim_iupac_proj_01_sample</Name>
+                <Files>
+                    <Instruction>data_20180622_155147_daw279.json</Instruction>
+                    <Data>sample.txt</Data>
+                </Files>
+                <PayloadType>samples</PayloadType>
 
-            <DbFkey entity="Project">
-                <DbPKeySurrogate>sim_iupac_proj_01</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Contact">
+                    <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Experiment">
-                <DbPKeySurrogate>sim_iupac_exp_02</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Project">
+                    <DbPKeySurrogate>sim_iupac_proj_01</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Dataset">
-                <DbPKeySurrogate>sim_iupac_ds_02</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Experiment">
+                    <DbPKeySurrogate>sim_iupac_exp_02</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Mapset">
-                <DbPKeySurrogate>Test_Genetic</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Dataset">
+                    <DbPKeySurrogate>sim_iupac_ds_02</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Platform">
-                <DbPKeySurrogate>Illumina_Infinium</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Mapset">
+                    <DbPKeySurrogate>Test_Genetic</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-        </Scenario>
+                <DbFkey entity="Platform">
+                    <DbPKeySurrogate>Illumina_Infinium</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-        <Scenario>
-            <Name>sim_iupac_proj_01_dataset</Name>
-            <Files>
-                <Instruction>data_20180626_143548_daw279.json</Instruction>
-                <Data>matrix_IUPAC.txt</Data>
-            </Files>
-            <PayloadType>matrix</PayloadType>
+            </Scenario>
 
-            <DbFkey entity="Contact">
-                <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+            <Scenario>
+                <Name>sim_iupac_proj_01_dataset</Name>
+                <Files>
+                    <Instruction>data_20180626_143548_daw279.json</Instruction>
+                    <Data>matrix_IUPAC.txt</Data>
+                </Files>
+                <PayloadType>matrix</PayloadType>
 
-            <DbFkey entity="Project">
-                <DbPKeySurrogate>sim_iupac_proj_01</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Contact">
+                    <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Experiment">
-                <DbPKeySurrogate>sim_iupac_exp_02</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Project">
+                    <DbPKeySurrogate>sim_iupac_proj_01</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Dataset">
-                <DbPKeySurrogate>sim_iupac_ds_02</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Experiment">
+                    <DbPKeySurrogate>sim_iupac_exp_02</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Mapset">
-                <DbPKeySurrogate>Test_Genetic</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Dataset">
+                    <DbPKeySurrogate>sim_iupac_ds_02</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Platform">
-                <DbPKeySurrogate>Illumina_Infinium</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Mapset">
+                    <DbPKeySurrogate>Test_Genetic</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-        </Scenario>
+                <DbFkey entity="Platform">
+                    <DbPKeySurrogate>Illumina_Infinium</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
+
+            </Scenario>
+
+        </Load>
+
+        <Extract>
+
+            <Scenario>
+                <Name>sim_iupac_extract_by_dataset</Name>
+                <ExtractType>WHOLE_DATASET</ExtractType>
+                <FileType>HAPMAP</FileType>
+
+                <Files>
+                    <Data>2018_06_26_20_34_53</Data>
+                </Files>
+
+                <Contact>gobii.dev@gmail.com</Contact>
+                <Mapsets>
+                    <Mapset></Mapset>
+                </Mapsets>
+
+                <Datasets>
+                    <Dataset>
+                        <DatasetName>sim_iupac_ds_02</DatasetName>
+                        <ExperimentName>sim_iupac_exp_02</ExperimentName>
+                        <ProjectName>sim_iupac_proj_01</ProjectName>
+                        <PIContact>gobii.dev@gmail.com</PIContact>
+                    </Dataset>
+
+                </Datasets>
+
+
+            </Scenario>
+
+        </Extract>
 
     </Scenarios>
 
