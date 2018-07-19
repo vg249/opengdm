@@ -81,7 +81,7 @@ public abstract class BaseValidator {
                 if (line.length < ((TreeSet<Integer>) sortedColumnNumbers).last())
                     ErrorLogger.logError(fileName, " is corrupted. PLease check file for irregular size columns.");
                 for (Integer colNo : sortedColumnNumbers) {
-                    if (isNullAndEmpty(line[colNo])) {
+                    if (ValidationUtil.isNullAndEmpty(line[colNo])) {
                         ErrorLogger.logError("In file " + fileName, "column " + colNo + " is required. It should not be null or empty.");
                     }
                 }
@@ -109,7 +109,5 @@ public abstract class BaseValidator {
         return collect;
     }
 
-    boolean isNullAndEmpty(String value) {
-        return value == null || value.trim().equalsIgnoreCase("");
-    }
+
 }

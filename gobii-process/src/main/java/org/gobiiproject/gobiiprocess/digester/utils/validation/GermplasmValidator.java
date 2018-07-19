@@ -5,6 +5,8 @@ import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 
 import java.util.*;
 
+import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.isNullAndEmpty;
+
 class GermplasmValidator extends BaseValidator {
     @Override
     void validate(ValidationUnit validationUnit, String dir) {

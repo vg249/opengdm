@@ -20,29 +20,41 @@ import static org.gobiiproject.gobiiprocess.digester.utils.validation.Validation
 
 public class DigestFileValidator {
 
-    private String rootDir, rulesFile;
+    private String rootDir, rulesFile, url, password, username;
+    //="q";;
+    //="mcs397";;="http://192.168.121.3:8081/gobii-dev/";
 
-    public DigestFileValidator(String rootDir) {
+    public DigestFileValidator(String rootDir, String url, String username, String password) {
         this.rootDir = rootDir;
-        // TODO
-        //Delete below line it is used for testing at the moment
         this.rulesFile = getClass().getClassLoader().getResource("validationConfig.json").getPath();
+        this.url = url;
+        this.username = username;
+        this.password = password;
+        //  this.url = "http://192.168.121.3:8081/gobii-dev/";
+        //  this.username = "mcs397";
+        //  this.password = "q";
     }
 
-    DigestFileValidator(String rootDir, String validationFile) {
+    DigestFileValidator(String rootDir, String validationFile, String url, String username, String password) {
         this.rootDir = rootDir;
         this.rulesFile = validationFile;
+        this.url = url;
+        this.username = username;
+        this.password = password;
     }
 
 
     public static void main(String[] args) throws IllegalAccessException {
 
-        String rootDir = null, validationFile = null;
+        String rootDir = null, validationFile = null, url = null, userName = null, password = null;
 
         Options o = new Options()
                 .addOption("r", true, "Fully qualified path to digest directory")
-                .addOption("v", true, "Validation rule file path");
-        if (args.length != 4) {
+                .addOption("v", true, "Validation rule file path")
+                .addOption("h", true, "Host server URL")
+                .addOption("u", true, "User Name")
+                .addOption("p", true, "Password");
+        if (args.length != 10) {
             new HelpFormatter().printHelp("DigestFileValidator", o);
             System.exit(1);
         }
@@ -51,18 +63,22 @@ public class DigestFileValidator {
             CommandLine cli = new DefaultParser().parse(o, args);
             if (cli.hasOption("r")) rootDir = cli.getOptionValue("r");
             if (cli.hasOption("v")) validationFile = cli.getOptionValue("v").toLowerCase();
-            if (rootDir == null || validationFile == null) {
+            if (cli.hasOption("h")) url = cli.getOptionValue("h").toLowerCase();
+            if (cli.hasOption("u")) userName = cli.getOptionValue("u").toLowerCase();
+            if (cli.hasOption("p")) password = cli.getOptionValue("p").toLowerCase();
+
+            if (ValidationUtil.isNullAndEmpty(rootDir) || ValidationUtil.isNullAndEmpty(rootDir) || ValidationUtil.isNullAndEmpty(url) || ValidationUtil.isNullAndEmpty(userName) || ValidationUtil.isNullAndEmpty(password)) {
                 new HelpFormatter().printHelp("DigestFileValidator", o);
                 System.exit(1);
             }
+            if (url.charAt(url.length() - 1) != '/') url = url + "/";
         } catch (org.apache.commons.cli.ParseException exp) {
             new HelpFormatter().printHelp("DigestFileValidator", o);
             System.exit(1);
         }
 
         ErrorLogger.logDebug("Entered Options are: " + rootDir + "," + validationFile, "");
-        DigestFileValidator digestFileValidator = new DigestFileValidator(rootDir);
-        //DigestFileValidator digestFileValidator = new DigestFileValidator(rootDir, validationFile);
+        DigestFileValidator digestFileValidator = new DigestFileValidator(rootDir, validationFile, url, userName, password);
         List<ValidationUnit> validations = digestFileValidator.readRules();
         if (validations.size() == 0) System.exit(1);
         for (ValidationUnit validation : validations)
@@ -135,9 +151,7 @@ public class DigestFileValidator {
 
     public void validate(ValidationUnit validation) {
         System.out.println("YELLO");
-        String url = "http://192.168.121.3:8081/gobii-dev/";
-        String username = "mcs397";
-        String password = "q";
+
         String crop = null;
         loginIntoServer(url, username, password, crop);
         switch (FilenameUtils.getExtension(validation.getDigestFileName())) {
