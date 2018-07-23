@@ -55,8 +55,9 @@ class GermplasmValidator extends BaseValidator {
                 Set<String> fieldNameList = new HashSet<String>();
                 for (String[] fileRow : collect) {
                     List<String> fileRowList = Arrays.asList(fileRow);
-                    if (!isNullAndEmpty(fileRowList.get(fieldIndex)))
-                        fieldNameList.add(fileRowList.get(fieldIndex));
+                    if (fileRowList.size() > fieldIndex)
+                        if (!isNullAndEmpty(fileRowList.get(fieldIndex)))
+                            fieldNameList.add(fileRowList.get(fieldIndex));
                 }
                 for (String fieldName : fieldNameList) {
                     NameIdDTO nameIdDTO = new NameIdDTO();
