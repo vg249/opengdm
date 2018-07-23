@@ -2,6 +2,7 @@ package org.gobiiproject.gobiiprocess;
 
 import com.google.gson.*;
 import org.apache.commons.cli.*;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.gobiiproject.gobiiapimodel.payload.Payload;
@@ -1596,7 +1597,7 @@ public class GobiiAdl {
         return fileDirectoryName;
     }
 
-    private static void downloadFiles(String localPathName, String jobName, List<GobiiDataSetExtract> returnGobiiDatasetExtractList, File[] extractedFiles) throws Exception {
+    private static void downloadFiles(String localPathName, String jobName, List<GobiiDataSetExtract> returnGobiiDatasetExtractList) throws Exception {
 
         System.out.println("\nDownloading files for " + jobName + " to " + localPathName + ".");
 
@@ -1636,12 +1637,56 @@ public class GobiiAdl {
                     }
 
                     System.out.println("\nSuccessfully downloaded " + currentFileName);
-
                 }
             }
         }
 
     }
+
+
+    private static void compareExtractedFiles(String localPathName, File[] extractedFiles) throws Exception {
+
+        System.out.println("\nComparing extracted files by ADL with extracted files from extractor UI...\n");
+
+        for (File currentFile : extractedFiles) {
+
+            String fileName = currentFile.getName();
+
+            if (fileName.endsWith(".log") || fileName.endsWith(".XML") || fileName.equals("summary.file")) {
+                //skip
+                continue;
+            }
+
+            File localFile = new File(localPathName + "/" + fileName);
+
+            if (!localFile.exists()) {
+                processError("\nFile: " + fileName + " does not exist in the local files.", GobiiStatusLevel.WARNING);
+                continue;
+            }
+
+            if (localFile.isDirectory()) {
+                processError("\nFile: " + fileName + " is a directory.", GobiiStatusLevel.WARNING);
+                continue;
+            }
+
+            boolean isFileEqual = FileUtils.contentEquals(currentFile, localFile);
+
+            if (!isFileEqual) {
+
+                processError("\nExtracted file: " + fileName +" from ADL and extractor UI are not equal.", GobiiStatusLevel.WARNING);
+                continue;
+
+            }
+
+            System.out.println("\nExtracted file: " + fileName + " from ADL and extractor UI are equal");
+
+
+        }
+
+
+
+    }
+
 
     private static LoaderInstructionFilesDTO createInstructionFileDTO(String instructionFilePath, String folderName) throws Exception {
 
@@ -2124,28 +2169,6 @@ public class GobiiAdl {
 
     }
 
-    private static boolean checkDataFilesForExtract(File dir) {
-
-        boolean valid = true;
-
-        if (!dir.exists()) {
-            processError("\nPath to extracted data file does not exist.", GobiiStatusLevel.WARNING);
-            valid = false;
-        }
-
-        if (!dir.isDirectory()) {
-            processError("\nPath to extracted data file is not a directory.", GobiiStatusLevel.WARNING);
-            valid = false;
-        }
-
-        if (dir.list().length == 0) {
-            processError("\nDirectory " + dir.getName() + " is empty.", GobiiStatusLevel.WARNING);
-            valid = false;
-        }
-
-        return valid;
-
-    }
 
     private static void validateSubDirectory(File currentSubDir) throws Exception {
 
@@ -2311,29 +2334,6 @@ public class GobiiAdl {
             DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
             jobId = dateFormat.format(new Date());
             jobName = "extract_" + jobId + "_" + scenarioName;
-
-            // get data files
-            String dataExpr = "//Scenario[Name='"+ scenarioName +"']/Files/Data";
-            XPathExpression xPathData = xPath.compile(dataExpr);
-            String dataFileStr = (String) xPathData.evaluate(document, XPathConstants.STRING);
-
-            if (dataFileStr == "" || dataFileStr == null) {
-                processError("\nPath to extracted data files should be specified.", GobiiStatusLevel.WARNING);
-                continue;
-            }
-
-            String dataFilePath = subDirectory.getAbsolutePath() + "/" + dataFileStr;
-
-            File dataFileDir = new File(dataFilePath);
-
-            boolean isDirValid = checkDataFilesForExtract(dataFileDir);
-
-            if (!isDirValid) {
-                continue;
-            }
-
-            File[] extractedFiles = dataFileDir.listFiles();
-
 
             // get contact
             String contactEmail = getScenarioValues(currentElement, "Contact");
@@ -2503,9 +2503,28 @@ public class GobiiAdl {
 
                 // download files and compare to known good extracted files
 
+
+                // check if existing extracted files exist
+                String dataExpr = "//Scenario[Name='"+ scenarioName +"']/Files/Data";
+                XPathExpression xPathData = xPath.compile(dataExpr);
+                String dataFileStr = (String) xPathData.evaluate(document, XPathConstants.STRING);
+
+                String dataFilePath = subDirectory.getAbsolutePath() + "/" + dataFileStr;
+
+                File dataFileDir = new File(dataFilePath);
+
+                File[] extractedFiles = dataFileDir.listFiles();
+
+
                 String localPathName = subDirectory.getAbsoluteFile() + "/" + jobName;
 
-                downloadFiles(localPathName, jobName, dataSetExtractReturnList, extractedFiles);
+                downloadFiles(localPathName, jobName, dataSetExtractReturnList);
+
+                if (dataFileDir.exists() && dataFileDir.isDirectory() && dataFileDir.listFiles().length > 0) {
+
+                    compareExtractedFiles(localPathName, extractedFiles);
+
+                }
 
             }
 
