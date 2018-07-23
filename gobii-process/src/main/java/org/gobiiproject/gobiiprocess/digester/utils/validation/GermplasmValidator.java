@@ -6,6 +6,7 @@ import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import java.util.*;
 
 import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.isNullAndEmpty;
+import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.printMissingFieldError;
 
 class GermplasmValidator extends BaseValidator {
     @Override
@@ -21,16 +22,20 @@ class GermplasmValidator extends BaseValidator {
             validateRequiredColumns(fileName, validationUnit.getConditions());
             validateRequiredUniqueColumns(fileName, validationUnit.getConditions());
             for (ConditionUnit condition : validationUnit.getConditions()) {
-                if (condition.type != null && condition.type.equalsIgnoreCase("DB") && condition.typeName != null && condition.typeName.equalsIgnoreCase("CV")) {
-                    if (condition.fieldToCompare != null)
-                        validateCV(fileName, condition.fieldToCompare);
+                if (condition.type != null && condition.type.equalsIgnoreCase("DB")) {
+                    if (condition.typeName != null) {
+                        if (condition.typeName.equalsIgnoreCase("CV"))
+                            if (condition.fieldToCompare != null)
+                                validateCV(fileName, condition.fieldToCompare);
+                            else
+                                printMissingFieldError("DB", "fieldToCompare");
+                    } else
+                        printMissingFieldError("DB", "typeName");
                 }
             }
         } else {
             return;
         }
-
-
     }
 
 

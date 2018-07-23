@@ -2,6 +2,7 @@ package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -40,7 +41,8 @@ public abstract class BaseValidator {
                 requiredFields.add(condition.columnName);
             }
         }
-        validateColumns(fileName, requiredFields);
+        if (requiredFields.size() > 0)
+            validateColumns(fileName, requiredFields);
     }
 
     /**
@@ -56,7 +58,8 @@ public abstract class BaseValidator {
                 requiredUniqueColumns.add(condition.columnName);
             }
         }
-        validateColumns(fileName, requiredUniqueColumns);
+        if (requiredUniqueColumns.size() > 0)
+            validateColumns(fileName, requiredUniqueColumns);
     }
 
     /**
@@ -107,6 +110,54 @@ public abstract class BaseValidator {
             ErrorLogger.logError("Could not read the input file", fileName);
         }
         return collect;
+    }
+
+    /**
+     * Validates that a particular column is same in both the files
+     *
+     * @param filepath           first file
+     * @param comparisonFileName second file
+     * @param fieldToCompare     column
+     */
+    void validateColumn(String filepath, String comparisonFileName, String fieldToCompare) {
+        List<String> digestGermplasmProp = new ArrayList<>();
+        if (getFilesWithExtension(new File(filepath).getParent(), comparisonFileName, digestGermplasmProp)) {
+            if (digestGermplasmProp.size() != 1) {
+                ErrorLogger.logError("There should be only one germplasm-prop file in the folder ", new File(filepath).getParent());
+                return;
+            }
+            String comparisonFilePath = new File(filepath).getParent() + "/" + comparisonFileName;
+            Set<String> fileColumnElements = getFileColumn(filepath, fieldToCompare);
+            if (fileColumnElements.size() == 0) return;
+            Set<String> comparisonFileColumnElements = getFileColumn(comparisonFilePath, fieldToCompare);
+            if (comparisonFileColumnElements.size() == 0) return;
+            if (!fileColumnElements.equals(comparisonFileColumnElements)) {
+                ErrorLogger.logError(fieldToCompare, "is not same in " + filepath + "\t" + comparisonFilePath);
+            }
+        }
+    }
+
+    /**
+     * Reads the particular column from the file.
+     * If column does not exist it returns an empty set.
+     *
+     * @param filepath filePath
+     * @param column   column name
+     * @return column values
+     */
+    Set<String> getFileColumn(String filepath, String column) {
+        Set<String> fileColumnElements = new TreeSet<>();
+        List<String[]> file = readFileIntoMemory(filepath);
+        List<String> fileHeaders = Arrays.asList(file.remove(0));
+        int fileCoulmnIndex = fileHeaders.indexOf(column);
+        if (fileCoulmnIndex >= 0) {
+            for (String[] line : file) {
+                fileColumnElements.add(line[fileCoulmnIndex]);
+            }
+        } else {
+            ErrorLogger.logError(column, " doesnot exist in file " + filepath);
+        }
+        return fileColumnElements;
     }
 
 

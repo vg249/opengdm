@@ -7,13 +7,10 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.io.FilenameUtils;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
-import org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions.*;
 import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationWebServicesUtil.loginIntoServer;
@@ -44,7 +41,7 @@ public class DigestFileValidator {
     }
 
 
-    public static void main(String[] args) throws IllegalAccessException {
+    public static void main(String[] args) {
 
         String rootDir = null, validationFile = null, url = null, userName = null, password = null;
 
@@ -78,7 +75,7 @@ public class DigestFileValidator {
         }
 
         ErrorLogger.logDebug("Entered Options are: " + rootDir + "," + validationFile, "");
-        DigestFileValidator digestFileValidator = new DigestFileValidator(rootDir, validationFile, url, userName, password);
+        DigestFileValidator digestFileValidator = new DigestFileValidator(rootDir, url, userName, password);
         List<ValidationUnit> validations = digestFileValidator.readRules();
         if (validations.size() == 0) System.exit(1);
         for (ValidationUnit validation : validations)
@@ -87,17 +84,9 @@ public class DigestFileValidator {
 
     /**
      * Reads rules JSON file stores in an object and returns it.
-     *
-     * @throws IllegalAccessException Illegal Access Exception
      */
-    private List<ValidationUnit> readRules() throws IllegalAccessException {
+    private List<ValidationUnit> readRules() {
         // Get allowed digest extensions
-        Map<String, String> allowedExtensions = new HashMap<>();
-        Field[] fields = DigesterFileExtensions.class.getDeclaredFields();
-        for (Field field : fields) {
-            allowedExtensions.put(String.valueOf(field.get(null)), field.getName());
-        }
-
         List<ValidationUnit> validations;
         try {
             // Convert JSON string from file to Object
@@ -108,27 +97,28 @@ public class DigestFileValidator {
             validations = new ArrayList<>();
             return validations;
         }
-        if (!validateRules(allowedExtensions, validations)) {
+        if (!validateRules(validations)) {
             validations = new ArrayList<>();
             return validations;
         }
         return validations;
     }
 
+
     /**
      * Validates rules defined in the JSON
      * Checks if digestFileName is valid or not.
      * Checks if column name and required fields are defined in all conditionUnits or not.
      *
-     * @param allowedExtensions Allowed Digest Extensions
-     * @param validations       List of validations read from JSON
+     * @param validations List of validations read from JSON
      * @return whether it is a valid JSON or not.
      */
-    private boolean validateRules(Map<String, String> allowedExtensions, List<ValidationUnit> validations) {
-        List<String> values = allowedExtensions.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList());
+    private boolean validateRules(List<ValidationUnit> validations) {
+        List<String> allowedExtensions = ValidationUtil.getAllowedExtensions();
+        if (allowedExtensions.size() == 0) return false;
         List<String> encounteredDigestExtensions = new ArrayList<>();
         for (ValidationUnit validation : validations) {
-            if (!values.contains(FilenameUtils.getExtension(validation.getDigestFileName()))) {
+            if (!allowedExtensions.contains(FilenameUtils.getExtension(validation.getDigestFileName()))) {
                 ErrorLogger.logError("Entered digestFileName is not a valid", validation.getDigestFileName());
                 return false;
             } else if (encounteredDigestExtensions.contains(validation.getDigestFileName())) {
