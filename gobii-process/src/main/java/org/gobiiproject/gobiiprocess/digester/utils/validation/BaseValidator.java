@@ -38,7 +38,8 @@ public abstract class BaseValidator {
         List<String> requiredFields = new ArrayList<>();
         for (ConditionUnit condition : conditions) {
             if (condition.required.equalsIgnoreCase("YES") && !(condition.unique != null && condition.unique.equalsIgnoreCase("YES"))) {
-                requiredFields.add(condition.columnName);
+                if (!requiredFields.contains(condition.columnName))
+                    requiredFields.add(condition.columnName);
             }
         }
         if (requiredFields.size() > 0)
@@ -55,7 +56,8 @@ public abstract class BaseValidator {
         List<String> requiredUniqueColumns = new ArrayList<>();
         for (ConditionUnit condition : conditions) {
             if (condition.required.equalsIgnoreCase("YES") && (condition.unique != null && condition.unique.equalsIgnoreCase("YES"))) {
-                requiredUniqueColumns.add(condition.columnName);
+                if (!requiredUniqueColumns.contains(condition.columnName))
+                    requiredUniqueColumns.add(condition.columnName);
             }
         }
         if (requiredUniqueColumns.size() > 0)
