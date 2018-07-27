@@ -81,8 +81,10 @@ public abstract class BaseValidator {
                 }
             }
             for (String[] line : collect) {
-                if (line.length <= ((TreeSet<Integer>) sortedColumnNumbers).last())
+                if (line.length <= ((TreeSet<Integer>) sortedColumnNumbers).last()) {
                     ErrorLogger.logError(fileName, " is corrupted. Please check file for irregular size columns.");
+                    return;
+                }
                 for (Integer colNo : sortedColumnNumbers) {
                     if (ValidationUtil.isNullAndEmpty(line[colNo])) {
                         ErrorLogger.logError("In file " + fileName, "column " + colNo + " is required. It should not be null or empty.");
@@ -120,10 +122,10 @@ public abstract class BaseValidator {
      * @param fieldToCompare     column
      */
     void validateColumn(String filepath, String comparisonFileName, String fieldToCompare) {
-        List<String> digestGermplasmProp = new ArrayList<>();
-        if (getFilesWithExtension(new File(filepath).getParent(), comparisonFileName, digestGermplasmProp)) {
-            if (digestGermplasmProp.size() != 1) {
-                ErrorLogger.logError("There should be only one germplasm-prop file in the folder ", new File(filepath).getParent());
+        List<String> filesList = new ArrayList<>();
+        if (getFilesWithExtension(new File(filepath).getParent(), comparisonFileName, filesList)) {
+            if (filesList.size() != 1) {
+                ErrorLogger.logError("There should be only one file in the folder ", new File(filepath).getParent());
                 return;
             }
             String comparisonFilePath = new File(filepath).getParent() + "/" + comparisonFileName;
@@ -152,7 +154,12 @@ public abstract class BaseValidator {
         int fileCoulmnIndex = fileHeaders.indexOf(column);
         if (fileCoulmnIndex >= 0) {
             for (String[] line : file) {
-                fileColumnElements.add(line[fileCoulmnIndex]);
+                if (line.length > fileCoulmnIndex) {
+                    fileColumnElements.add(line[fileCoulmnIndex]);
+                } else {
+                    ErrorLogger.logError(column, " value doesnot exist in file. Please check the contents of file. " + filepath);
+
+                }
             }
         } else {
             ErrorLogger.logError(column, " doesnot exist in file " + filepath);

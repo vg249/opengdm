@@ -40,6 +40,9 @@ public class DigestFileValidator {
         this.password = password;
     }
 
+    boolean loginServer() {
+        return loginIntoServer(url, username, password, null);
+    }
 
     public static void main(String[] args) {
 
@@ -78,8 +81,13 @@ public class DigestFileValidator {
         DigestFileValidator digestFileValidator = new DigestFileValidator(rootDir, url, userName, password);
         List<ValidationUnit> validations = digestFileValidator.readRules();
         if (validations.size() == 0) System.exit(1);
-        for (ValidationUnit validation : validations)
-            digestFileValidator.validate(validation);
+        if (!digestFileValidator.loginServer()) {
+            for (ValidationUnit validation : validations)
+                digestFileValidator.validate(validation);
+        } else {
+            ErrorLogger.logError("Could not log into server with below details.", "\n URL:" + url + "\n Username:" + userName + "\n Password:" + password);
+            System.exit(1);
+        }
     }
 
     /**
@@ -141,9 +149,6 @@ public class DigestFileValidator {
 
     public void validate(ValidationUnit validation) {
         System.out.println("YELLO");
-
-        String crop = null;
-        loginIntoServer(url, username, password, crop);
         switch (FilenameUtils.getExtension(validation.getDigestFileName())) {
             case GERMPLASM_TABNAME:
                 new GermplasmValidator().validate(validation, rootDir);
