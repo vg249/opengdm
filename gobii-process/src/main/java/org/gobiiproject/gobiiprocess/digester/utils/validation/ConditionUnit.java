@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
+
 //Ignore if value is missed
 @JsonInclude(JsonInclude.Include.NON_NULL)
 // Ignore unknown values defined in JSON
@@ -23,7 +25,7 @@ public class ConditionUnit {
     public String unique;
     // Is the comparison a file or table in DB
     @JsonProperty
-    public String uniqueColumns;
+    public List<String> uniqueColumns;
     @JsonProperty
     public String type;
     // Name of file or DB

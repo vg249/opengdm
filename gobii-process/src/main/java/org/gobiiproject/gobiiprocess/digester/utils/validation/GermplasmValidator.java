@@ -33,8 +33,6 @@ class GermplasmValidator extends BaseValidator {
                         printMissingFieldError("DB", "typeName");
                 }
             }
-        } else {
-            return;
         }
     }
 

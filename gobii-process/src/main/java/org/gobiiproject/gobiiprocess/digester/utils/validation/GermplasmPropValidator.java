@@ -2,12 +2,11 @@ package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 
-import java.io.File;
 import java.util.*;
 
 import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.printMissingFieldError;
 
-public class GermplasmPropValidator extends BaseValidator {
+class GermplasmPropValidator extends BaseValidator {
     @Override
     void validate(ValidationUnit validationUnit, String dir) {
         System.out.println("Germplasm-prop validation Started.");
@@ -36,8 +35,6 @@ public class GermplasmPropValidator extends BaseValidator {
                     }
                 }
             }
-        } else {
-            return;
         }
     }
 

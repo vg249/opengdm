@@ -31,8 +31,8 @@ public abstract class BaseValidator {
     /**
      * Parses the validation rules and gives the rules which are required and not  unique
      *
+     * @param fileName   name of file
      * @param conditions conditions
-     * @return column Names
      */
     void validateRequiredColumns(String fileName, List<ConditionUnit> conditions) {
         List<String> requiredFields = new ArrayList<>();
@@ -49,8 +49,8 @@ public abstract class BaseValidator {
     /**
      * Parses the validation rules and gives the rules which are required and unique
      *
+     * @param fileName   name of file
      * @param conditions conditions
-     * @return column Names
      */
     void validateRequiredUniqueColumns(String fileName, List<ConditionUnit> conditions) {
         List<String> requiredUniqueColumns = new ArrayList<>();
@@ -63,6 +63,43 @@ public abstract class BaseValidator {
         if (requiredUniqueColumns.size() > 0)
             validateColumns(fileName, requiredUniqueColumns);
     }
+
+    /**
+     * Validates that the combination of columns is unique
+     *
+     * @param fileName       fileName
+     * @param validationUnit validation conditions
+     */
+    void validateUniqueColumnList(String fileName, ValidationUnit validationUnit) {
+        for (ConditionUnit condition : validationUnit.getConditions()) {
+            if (condition.uniqueColumns != null && condition.uniqueColumns.size() > 0) {
+                List<String> uniqueColumns = condition.uniqueColumns;
+                List<List<String>> fileColumns = new ArrayList<>();
+                for (String column : uniqueColumns) {
+                    fileColumns.add(getFileColumn(fileName, column));
+                }
+                int size = fileColumns.get(0).size();
+                for (List<String> column : fileColumns) {
+                    if (column.size() != size) {
+                        ErrorLogger.logError(fileName, " has file columns of irregular size.");
+                        return;
+                    }
+                }
+                List<String> concatList = new ArrayList<>();
+                for (int i = 0; i < size; i++) {
+                    String value = null;
+                    for (List<String> column : fileColumns) {
+                        value = value + "$@$" + column.get(i);
+                    }
+                    if (concatList.contains(value)) {
+                        ErrorLogger.logError(String.valueOf(uniqueColumns), " combination is not unique");
+                        return;
+                    } else concatList.add(value);
+                }
+            }
+        }
+    }
+
 
     /**
      * Validates required columns are present and are not null or empty.
@@ -131,10 +168,14 @@ public abstract class BaseValidator {
                 return;
             }
             String comparisonFilePath = new File(filepath).getParent() + "/" + comparisonFileName;
-            Set<String> fileColumnElements = getFileColumn(filepath, fieldToCompare);
+            List<String> fileColumnElements = getFileColumn(filepath, fieldToCompare);
             if (fileColumnElements.size() == 0) return;
-            Set<String> comparisonFileColumnElements = getFileColumn(comparisonFilePath, fieldToCompare);
+            else
+                fileColumnElements = fileColumnElements.stream().distinct().collect(Collectors.toList());
+            List<String> comparisonFileColumnElements = getFileColumn(comparisonFilePath, fieldToCompare);
             if (comparisonFileColumnElements.size() == 0) return;
+            else
+                fileColumnElements = fileColumnElements.stream().distinct().collect(Collectors.toList());
             if (!fileColumnElements.equals(comparisonFileColumnElements)) {
                 ErrorLogger.logError(fieldToCompare, "is not same in " + filepath + "\t" + comparisonFilePath);
             }
@@ -149,8 +190,8 @@ public abstract class BaseValidator {
      * @param column   column name
      * @return column values
      */
-    Set<String> getFileColumn(String filepath, String column) {
-        Set<String> fileColumnElements = new TreeSet<>();
+    List<String> getFileColumn(String filepath, String column) {
+        List<String> fileColumnElements = new ArrayList<>();
         List<String[]> file = readFileIntoMemory(filepath);
         List<String> fileHeaders = Arrays.asList(file.remove(0));
         int fileCoulmnIndex = fileHeaders.indexOf(column);
