@@ -207,125 +207,154 @@
     </Entities>
 
     <Scenarios>
-        <Scenario>
-            <Name>sim_codominant_proj_01_marker</Name>
-            <Files>
-                <Instruction>data_20180611_143609_daw279.json</Instruction>
-                <Data>Deb_FQ_codom_markermap11-20.txt</Data>
-            </Files>
-            <PayloadType>markers</PayloadType>
+        <Load>
+            <Scenario>
+                <Name>sim_codominant_proj_01_marker</Name>
+                <Files>
+                    <Instruction>data_20180611_143609_daw279.json</Instruction>
+                    <Data>Deb_FQ_codom_markermap11-20.txt</Data>
+                </Files>
+                <PayloadType>markers</PayloadType>
 
             <DbFkey entity="Contact">
                 <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
-            <DbFkey entity="Project">
-                <DbPKeySurrogate>sim_codominant_proj_01</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Project">
+                    <DbPKeySurrogate>sim_codominant_proj_01</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Experiment">
-                <DbPKeySurrogate>sim_codominant_exp_01</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Experiment">
+                    <DbPKeySurrogate>sim_codominant_exp_01</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Dataset">
-                <DbPKeySurrogate>sim_codominant_ds_02</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Dataset">
+                    <DbPKeySurrogate>sim_codominant_ds_02</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Mapset">
-                <DbPKeySurrogate>Test_Genetic</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Mapset">
+                    <DbPKeySurrogate>Test_Genetic</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Platform">
-                <DbPKeySurrogate>SSR</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Platform">
+                    <DbPKeySurrogate>SSR</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-        </Scenario>
+            </Scenario>
 
-        <Scenario>
-            <Name>sim_codominant_proj_01_sample</Name>
-            <Files>
-                <Instruction>data_20180611_143721_daw279.json</Instruction>
-                <Data>Deb_FQ_codom_samples_11-20.txt</Data>
-            </Files>
-            <PayloadType>samples</PayloadType>
-
-            <DbFkey entity="Contact">
-                <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
-
-            <DbFkey entity="Project">
-                <DbPKeySurrogate>sim_codominant_proj_01</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
-
-            <DbFkey entity="Experiment">
-                <DbPKeySurrogate>sim_codominant_exp_01</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
-
-            <DbFkey entity="Dataset">
-                <DbPKeySurrogate>sim_codominant_ds_02</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
-
-            <DbFkey entity="Mapset">
-                <DbPKeySurrogate>Test_Genetic</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
-
-            <DbFkey entity="Platform">
-                <DbPKeySurrogate>SSR</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
-
-        </Scenario>
-
-        <Scenario>
-            <Name>sim_codominant_proj_01_dataset</Name>
-            <Files>
-                <Instruction>data_20180611_145834_daw279.json</Instruction>
-                <Data>Deb_FQ_codom_alleledata_m11-m20.txt</Data>
-            </Files>
-            <PayloadType>matrix</PayloadType>
+            <Scenario>
+                <Name>sim_codominant_proj_01_sample</Name>
+                <Files>
+                    <Instruction>data_20180611_143721_daw279.json</Instruction>
+                    <Data>Deb_FQ_codom_samples_11-20.txt</Data>
+                </Files>
+                <PayloadType>samples</PayloadType>
 
             <DbFkey entity="Contact">
                 <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
-            <DbFkey entity="Project">
-                <DbPKeySurrogate>sim_codominant_proj_01</DbPKeySurrogate>
+                <DbFkey entity="Project">
+                    <DbPKeySurrogate>sim_codominant_proj_01</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
+
+                <DbFkey entity="Experiment">
+                    <DbPKeySurrogate>sim_codominant_exp_01</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
+
+                <DbFkey entity="Dataset">
+                    <DbPKeySurrogate>sim_codominant_ds_02</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
+
+                <DbFkey entity="Mapset">
+                    <DbPKeySurrogate>Test_Genetic</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
+
+                <DbFkey entity="Platform">
+                    <DbPKeySurrogate>SSR</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
+
+            </Scenario>
+
+            <Scenario>
+                <Name>sim_codominant_proj_01_dataset</Name>
+                <Files>
+                    <Instruction>data_20180611_145834_daw279.json</Instruction>
+                    <Data>Deb_FQ_codom_alleledata_m11-m20.txt</Data>
+                </Files>
+                <PayloadType>matrix</PayloadType>
+
+            <DbFkey entity="Contact">
+                <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
                 <DbPKey></DbPKey>
             </DbFkey>
 
-            <DbFkey entity="Experiment">
-                <DbPKeySurrogate>sim_codominant_exp_01</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Project">
+                    <DbPKeySurrogate>sim_codominant_proj_01</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Dataset">
-                <DbPKeySurrogate>sim_codominant_ds_02</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Experiment">
+                    <DbPKeySurrogate>sim_codominant_exp_01</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Mapset">
-                <DbPKeySurrogate>Test_Genetic</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Dataset">
+                    <DbPKeySurrogate>sim_codominant_ds_02</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Platform">
-                <DbPKeySurrogate>SSR</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Mapset">
+                    <DbPKeySurrogate>Test_Genetic</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-        </Scenario>
+                <DbFkey entity="Platform">
+                    <DbPKeySurrogate>SSR</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
+
+            </Scenario>
+
+        </Load>
+
+        <Extract>
+
+            <Scenario>
+                <Name>sim_codominant_extract_by_dataset</Name>
+                <ExtractType>WHOLE_DATASET</ExtractType>
+                <FileType>HAPMAP</FileType>
+
+                <Files>
+                    <Data>extract_files</Data>
+                </Files>
+
+                <Contact>gobii.dev@gmail.com</Contact>
+                <Mapsets><Mapset></Mapset></Mapsets>
+
+                <Datasets>
+                    <Dataset>
+                        <DatasetName>sim_codominant_ds_02</DatasetName>
+                        <ExperimentName>sim_codominant_exp_01</ExperimentName>
+                        <ProjectName>sim_codominant_proj_01</ProjectName>
+                        <PIContact>gobii.dev@gmail.com</PIContact>
+                    </Dataset>
+                </Datasets>
+            </Scenario>
+
+        </Extract>
 
     </Scenarios>
 
