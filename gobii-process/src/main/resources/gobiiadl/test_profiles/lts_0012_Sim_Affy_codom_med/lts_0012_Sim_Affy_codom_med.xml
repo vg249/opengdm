@@ -247,125 +247,160 @@
 
     <Scenarios>
 
-        <Scenario>
-            <Name>sim_codominant_proj_02_marker</Name>
-            <Files>
-                <Instruction>data_20180625_145344_daw279.json</Instruction>
-                <Data>marker.txt</Data>
-            </Files>
-            <PayloadType>markers</PayloadType>
+        <Load>
 
-            <DbFkey entity="Contact">
-                <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+            <Scenario>
+                <Name>sim_codominant_proj_02_marker</Name>
+                <Files>
+                    <Instruction>data_20180625_145344_daw279.json</Instruction>
+                    <Data>marker.txt</Data>
+                </Files>
+                <PayloadType>markers</PayloadType>
 
-            <DbFkey entity="Project">
-                <DbPKeySurrogate>sim_codominant_proj_02</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Contact">
+                    <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Experiment">
-                <DbPKeySurrogate>sim_codominant_exp_04</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Project">
+                    <DbPKeySurrogate>sim_codominant_proj_02</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Dataset">
-                <DbPKeySurrogate>sim_codominant_ds_05</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Experiment">
+                    <DbPKeySurrogate>sim_codominant_exp_04</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Mapset">
-                <DbPKeySurrogate>Sim_codominant</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Dataset">
+                    <DbPKeySurrogate>sim_codominant_ds_05</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Platform">
-                <DbPKeySurrogate>Affymetrix_Axiom</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Mapset">
+                    <DbPKeySurrogate>Sim_codominant</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-        </Scenario>
+                <DbFkey entity="Platform">
+                    <DbPKeySurrogate>Affymetrix_Axiom</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-        <Scenario>
-            <Name>sim_codominant_proj_02_sample</Name>
-            <Files>
-                <Instruction>data_20180625_145439_daw279.json</Instruction>
-                <Data>sample.txt</Data>
-            </Files>
-            <PayloadType>samples</PayloadType>
+            </Scenario>
 
-            <DbFkey entity="Contact">
-                <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+            <Scenario>
+                <Name>sim_codominant_proj_02_sample</Name>
+                <Files>
+                    <Instruction>data_20180625_145439_daw279.json</Instruction>
+                    <Data>sample.txt</Data>
+                </Files>
+                <PayloadType>samples</PayloadType>
 
-            <DbFkey entity="Project">
-                <DbPKeySurrogate>sim_codominant_proj_02</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Contact">
+                    <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Experiment">
-                <DbPKeySurrogate>sim_codominant_exp_04</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Project">
+                    <DbPKeySurrogate>sim_codominant_proj_02</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Dataset">
-                <DbPKeySurrogate>sim_codominant_ds_05</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Experiment">
+                    <DbPKeySurrogate>sim_codominant_exp_04</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Mapset">
-                <DbPKeySurrogate>Sim_codominant</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Dataset">
+                    <DbPKeySurrogate>sim_codominant_ds_05</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Platform">
-                <DbPKeySurrogate>Affymetrix_Axiom</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Mapset">
+                    <DbPKeySurrogate>Sim_codominant</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-        </Scenario>
+                <DbFkey entity="Platform">
+                    <DbPKeySurrogate>Affymetrix_Axiom</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-        <Scenario>
-            <Name>sim_codominant_proj_02_dataset</Name>
-            <Files>
-                <Instruction>data_20180625_145928_daw279.json</Instruction>
-                <Data>matrix_CODOM.txt</Data>
-            </Files>
-            <PayloadType>matrix</PayloadType>
+            </Scenario>
 
-            <DbFkey entity="Contact">
-                <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+            <Scenario>
+                <Name>sim_codominant_proj_02_dataset</Name>
+                <Files>
+                    <Instruction>data_20180625_145928_daw279.json</Instruction>
+                    <Data>matrix_CODOM.txt</Data>
+                </Files>
+                <PayloadType>matrix</PayloadType>
 
-            <DbFkey entity="Project">
-                <DbPKeySurrogate>sim_codominant_proj_02</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Contact">
+                    <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Experiment">
-                <DbPKeySurrogate>sim_codominant_exp_04</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Project">
+                    <DbPKeySurrogate>sim_codominant_proj_02</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Dataset">
-                <DbPKeySurrogate>sim_codominant_ds_05</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Experiment">
+                    <DbPKeySurrogate>sim_codominant_exp_04</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Mapset">
-                <DbPKeySurrogate>Sim_codominant</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Dataset">
+                    <DbPKeySurrogate>sim_codominant_ds_05</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-            <DbFkey entity="Platform">
-                <DbPKeySurrogate>Affymetrix_Axiom</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+                <DbFkey entity="Mapset">
+                    <DbPKeySurrogate>Sim_codominant</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
 
-        </Scenario>
+                <DbFkey entity="Platform">
+                    <DbPKeySurrogate>Affymetrix_Axiom</DbPKeySurrogate>
+                    <DbPKey></DbPKey>
+                </DbFkey>
+
+            </Scenario>
+
+        </Load>
+
+        <Extract>
+
+            <Scenario>
+                <Name>sim_codominant_extract_by_dataset</Name>
+                <ExtractType>WHOLE_DATASET</ExtractType>
+                <FileType>HAPMAP</FileType>
+
+                <Files>
+                    <Data>extract_files</Data>
+                </Files>
+
+                <Contact>gobii.dev@gmail.com</Contact>
+                <Mapsets>
+                    <Mapset></Mapset>
+                </Mapsets>
+
+                <Datasets>
+                    <Dataset>
+                        <DatasetName>sim_codominant_ds_05</DatasetName>
+                        <ExperimentName>sim_codominant_exp_04</ExperimentName>
+                        <ProjectName>sim_codominant_proj_02</ProjectName>
+                        <PIContact>gobii.dev@gmail.com</PIContact>
+                    </Dataset>
+
+                </Datasets>
+
+
+            </Scenario>
+
+        </Extract>
 
     </Scenarios>
 
