@@ -1608,36 +1608,31 @@ public class GobiiAdl {
 
         for (GobiiDataSetExtract currentGobiiDatasetExtract : returnGobiiDatasetExtractList) {
 
-            if (returnGobiiDatasetExtractList.size() > 1) {
+            // loop through the existing extracted files
 
-            } else {
+            for (File currentFile : currentGobiiDatasetExtract.getExtractedFiles()) {
 
-                // loop through the existing extracted files
+                String currentFileName = currentFile.getName();
 
-                for (File currentFile : currentGobiiDatasetExtract.getExtractedFiles()) {
+                System.out.println("\nDownloading " + currentFileName + "....\n");
 
-                    String currentFileName = currentFile.getName();
-
-                    System.out.println("\nDownloading " + currentFileName + "....\n");
-
-                    RestUri restUri = GobiiClientContext.getInstance(null, false)
-                            .getUriFactory()
-                            .fileForJob(jobName, GobiiFileProcessDir.EXTRACTOR_OUTPUT, currentFileName)
-                            .withDestinationFqpn(localPathName + "/" + currentFileName);
+                RestUri restUri = GobiiClientContext.getInstance(null, false)
+                        .getUriFactory()
+                        .fileForJob(jobName, GobiiFileProcessDir.EXTRACTOR_OUTPUT, currentFileName)
+                        .withDestinationFqpn(localPathName + "/" + currentFileName);
 
 
-                    HttpMethodResult httpMethodResult = GobiiClientContext.getInstance(null, false)
-                            .getHttp()
-                            .get(restUri);
+                HttpMethodResult httpMethodResult = GobiiClientContext.getInstance(null, false)
+                        .getHttp()
+                        .get(restUri);
 
-                    if (httpMethodResult.getResponseCode() != HttpStatus.SC_OK) {
+                if (httpMethodResult.getResponseCode() != HttpStatus.SC_OK) {
 
-                        processError("\nError in downloading " + currentFileName + ": " + httpMethodResult.getResponseCode() + ": " + httpMethodResult.getReasonPhrase(), GobiiStatusLevel.WARNING);
-                        continue;
-                    }
-
-                    System.out.println("\nSuccessfully downloaded " + currentFileName);
+                    processError("\nError in downloading " + currentFileName + ": " + httpMethodResult.getResponseCode() + ": " + httpMethodResult.getReasonPhrase(), GobiiStatusLevel.WARNING);
+                    continue;
                 }
+
+                System.out.println("\nSuccessfully downloaded " + currentFileName);
             }
         }
 
