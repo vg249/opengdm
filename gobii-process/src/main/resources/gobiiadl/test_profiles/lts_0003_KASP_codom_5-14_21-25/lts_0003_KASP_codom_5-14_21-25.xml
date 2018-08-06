@@ -208,10 +208,7 @@
 
     <Scenarios>
 
-            <DbFkey entity="Contact">
-                <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+        <Load>
 
             <Scenario>
                 <Name>sim_codominant_proj_01_marker</Name>
@@ -251,10 +248,7 @@
                     <DbPKey></DbPKey>
                 </DbFkey>
 
-            <DbFkey entity="Contact">
-                <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+            </Scenario>
 
             <Scenario>
                 <Name>sim_codominant_proj_01_sample</Name>
@@ -294,10 +288,7 @@
                     <DbPKey></DbPKey>
                 </DbFkey>
 
-            <DbFkey entity="Contact">
-                <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+            </Scenario>
 
             <Scenario>
                 <Name>sim_codominant_proj_01_dataset</Name>

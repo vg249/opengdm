@@ -210,76 +210,82 @@
 
         <Load>
 
-            <DbFkey entity="Contact">
-                <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+            <Scenario>
+                <Name>sim_iupac_proj_01_sample</Name>
+                <Files>
+                    <Instruction>data_20180615_122658_daw279.json</Instruction>
+                    <Data>Deb_IUPACsamples_1-10.txt</Data>
+                </Files>
+                <PayloadType>samples</PayloadType>
 
                 <DbFkey entity="Contact">
                     <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKey>67</DbPKey>
                 </DbFkey>
 
                 <DbFkey entity="Project">
                     <DbPKeySurrogate>sim_iupac_proj_01</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKey>4</DbPKey>
                 </DbFkey>
 
                 <DbFkey entity="Experiment">
                     <DbPKeySurrogate>sim_iupac_exp_01</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKey>5</DbPKey>
                 </DbFkey>
 
                 <DbFkey entity="Dataset">
                     <DbPKeySurrogate>sim_iupac_ds_01</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKey>6</DbPKey>
                 </DbFkey>
 
                 <DbFkey entity="Mapset">
                     <DbPKeySurrogate>Test_Physical</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKey>2</DbPKey>
                 </DbFkey>
 
                 <DbFkey entity="Platform">
                     <DbPKeySurrogate>Sequencing</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKey>5</DbPKey>
                 </DbFkey>
 
             </Scenario>
 
-            <DbFkey entity="Contact">
-                <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+            <Scenario>
+                <Name>sim_iupac_proj_01_dataset</Name>
+                <Files>
+                    <Instruction>data_20180615_123507_daw279.json</Instruction>
+                    <Data>Deb_IUPACalleles_1-10.txt</Data>
+                </Files>
+                <PayloadType>matrix</PayloadType>
 
                 <DbFkey entity="Contact">
                     <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKey>67</DbPKey>
                 </DbFkey>
 
                 <DbFkey entity="Project">
                     <DbPKeySurrogate>sim_iupac_proj_01</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKey>4</DbPKey>
                 </DbFkey>
 
                 <DbFkey entity="Experiment">
                     <DbPKeySurrogate>sim_iupac_exp_01</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKey>5</DbPKey>
                 </DbFkey>
 
                 <DbFkey entity="Dataset">
                     <DbPKeySurrogate>sim_iupac_ds_01</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKey>6</DbPKey>
                 </DbFkey>
 
                 <DbFkey entity="Mapset">
                     <DbPKeySurrogate>Test_Physical</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKey>2</DbPKey>
                 </DbFkey>
 
                 <DbFkey entity="Platform">
                     <DbPKeySurrogate>Sequencing</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKey>5</DbPKey>
                 </DbFkey>
 
             </Scenario>
