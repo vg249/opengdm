@@ -189,126 +189,127 @@
 
 	<Scenarios>
 
-		<Scenario>
-			<Name>dominant_marker</Name>
-			<Files>
-				<Instruction>test_dominant_marker.json</Instruction>
-				<Data>dom_marker_map1-10.txt</Data>
-			</Files>
-			<PayloadType>markers</PayloadType>
+		<Load>
+			<Scenario>
+				<Name>dominant_marker</Name>
+				<Files>
+					<Instruction>test_dominant_marker.json</Instruction>
+					<Data>dom_marker_map1-10.txt</Data>
+				</Files>
+				<PayloadType>markers</PayloadType>
 
-			<DbFkey entity="Contact">
-				<DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-				<DbPKey>4</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Contact">
+					<DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
+					<DbPKey>4</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Project">
-				<DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
-				<DbPKey>2</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Project">
+					<DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
+					<DbPKey>2</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Experiment">
-				<DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
-				<DbPKey>2</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Experiment">
+					<DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
+					<DbPKey>2</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Dataset">
-				<DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
-				<DbPKey>2</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Dataset">
+					<DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
+					<DbPKey>2</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Mapset">
-				<DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
-				<DbPKey>2</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Mapset">
+					<DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
+					<DbPKey>2</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Platform">
-				<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
-				<DbPKey>22</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Platform">
+					<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
+					<DbPKey>22</DbPKey>
+				</DbFkey>
 
-		</Scenario>
+			</Scenario>
 
-		<Scenario>
-			<Name>dominant_sample</Name>
-			<Files>
-				<Instruction>test_dominant_sample.json</Instruction>
-				<Data>dom_samples1-10.txt</Data>
-			</Files>
-			<PayloadType>samples</PayloadType>
+			<Scenario>
+				<Name>dominant_sample</Name>
+				<Files>
+					<Instruction>test_dominant_sample.json</Instruction>
+					<Data>dom_samples1-10.txt</Data>
+				</Files>
+				<PayloadType>samples</PayloadType>
 
-			<DbFkey entity="Contact">
-				<DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-				<DbPKey>4</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Contact">
+					<DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
+					<DbPKey>4</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Project">
-				<DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
-				<DbPKey>2</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Project">
+					<DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
+					<DbPKey>2</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Experiment">
-				<DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
-				<DbPKey>2</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Experiment">
+					<DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
+					<DbPKey>2</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Dataset">
-				<DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
-				<DbPKey>2</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Dataset">
+					<DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
+					<DbPKey>2</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Mapset">
-				<DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
-				<DbPKey>2</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Mapset">
+					<DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
+					<DbPKey>2</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Platform">
-				<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
-				<DbPKey>22</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Platform">
+					<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
+					<DbPKey>22</DbPKey>
+				</DbFkey>
 
-		</Scenario>
+			</Scenario>
 
-		<Scenario>
-			<Name>dominant_dataset</Name>
-			<Files>
-				<Instruction>test_dominant_dataset.json</Instruction>
-				<Data>dom_alleledata1-10.txt</Data>
-			</Files>
-			<PayloadType>matrix</PayloadType>
+			<Scenario>
+				<Name>dominant_dataset</Name>
+				<Files>
+					<Instruction>test_dominant_dataset.json</Instruction>
+					<Data>dom_alleledata1-10.txt</Data>
+				</Files>
+				<PayloadType>matrix</PayloadType>
 
-			<DbFkey entity="Contact">
-				<DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-				<DbPKey>4</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Contact">
+					<DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
+					<DbPKey>4</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Project">
-				<DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
-				<DbPKey>2</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Project">
+					<DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
+					<DbPKey>2</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Experiment">
-				<DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
-				<DbPKey>2</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Experiment">
+					<DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
+					<DbPKey>2</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Dataset">
-				<DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
-				<DbPKey>2</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Dataset">
+					<DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
+					<DbPKey>2</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Mapset">
-				<DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
-				<DbPKey>2</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Mapset">
+					<DbPKeySurrogate>sim_dominant</DbPKeySurrogate>
+					<DbPKey>2</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Platform">
-				<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
-				<DbPKey>22</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Platform">
+					<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
+					<DbPKey>22</DbPKey>
+				</DbFkey>
 
-		</Scenario>
-
+			</Scenario>
+		</Load>
 	</Scenarios>
 
 </GobiiTestData>

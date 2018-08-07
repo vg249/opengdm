@@ -236,127 +236,128 @@
 	</Entities>
 
 	<Scenarios>
-		
-		<Scenario>
-			<Name>codominant_marker</Name>
-			<Files>
-				<Instruction>test_codominant_marker.json</Instruction>
-				<Data>codominant_markermap.txt</Data>
-			</Files>
-			<PayloadType>markers</PayloadType>
 
-			<DbFkey entity="Contact">
-				<DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-				<DbPKey>4</DbPKey>
-			</DbFkey>
+		<Load>
+			<Scenario>
+				<Name>codominant_marker</Name>
+				<Files>
+					<Instruction>test_codominant_marker.json</Instruction>
+					<Data>codominant_markermap.txt</Data>
+				</Files>
+				<PayloadType>markers</PayloadType>
 
-			<DbFkey entity="Project">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey>1</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Contact">
+					<DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
+					<DbPKey>4</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Experiment">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey>1</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Project">
+					<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+					<DbPKey>1</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Dataset">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey>1</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Experiment">
+					<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+					<DbPKey>1</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Mapset">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey>1</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Dataset">
+					<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+					<DbPKey>1</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Platform">
-				<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
-				<DbPKey>22</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Mapset">
+					<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+					<DbPKey>1</DbPKey>
+				</DbFkey>
 
-		</Scenario>
-		
-		<Scenario>
-			<Name>codominant_sample</Name>
-			<Files>
-				<Instruction>test_codominant_sample.json</Instruction>
-				<Data>codominant_samples_csv.csv</Data>
-			</Files>
-			<PayloadType>samples</PayloadType>
+				<DbFkey entity="Platform">
+					<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
+					<DbPKey>22</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Contact">
-				<DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-				<DbPKey>4</DbPKey>
-			</DbFkey>
+			</Scenario>
 
-			<DbFkey entity="Project">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey>1</DbPKey>
-			</DbFkey>
+			<Scenario>
+				<Name>codominant_sample</Name>
+				<Files>
+					<Instruction>test_codominant_sample.json</Instruction>
+					<Data>codominant_samples_csv.csv</Data>
+				</Files>
+				<PayloadType>samples</PayloadType>
 
-			<DbFkey entity="Experiment">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey>1</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Contact">
+					<DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
+					<DbPKey>4</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Dataset">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey>1</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Project">
+					<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+					<DbPKey>1</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Mapset">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey>1</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Experiment">
+					<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+					<DbPKey>1</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Platform">
-				<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
-				<DbPKey>22</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Dataset">
+					<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+					<DbPKey>1</DbPKey>
+				</DbFkey>
 
-		</Scenario>
-		
-		<Scenario>
-			<Name>codominant_dataset</Name>
-			<Files>
-				<Instruction>test_codominant_dataset.json</Instruction>
-				<Data>codominant_allele_data.txt</Data>
-			</Files>
-			<PayloadType>matrix</PayloadType>
+				<DbFkey entity="Mapset">
+					<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+					<DbPKey>1</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Contact">
-				<DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-				<DbPKey>4</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Platform">
+					<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
+					<DbPKey>22</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Project">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey>1</DbPKey>
-			</DbFkey>
+			</Scenario>
 
-			<DbFkey entity="Experiment">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey>1</DbPKey>
-			</DbFkey>
+			<Scenario>
+				<Name>codominant_dataset</Name>
+				<Files>
+					<Instruction>test_codominant_dataset.json</Instruction>
+					<Data>codominant_allele_data.txt</Data>
+				</Files>
+				<PayloadType>matrix</PayloadType>
 
-			<DbFkey entity="Dataset">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey>1</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Contact">
+					<DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
+					<DbPKey>4</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Mapset">
-				<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
-				<DbPKey>1</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Project">
+					<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+					<DbPKey>1</DbPKey>
+				</DbFkey>
 
-			<DbFkey entity="Platform">
-				<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
-				<DbPKey>22</DbPKey>
-			</DbFkey>
+				<DbFkey entity="Experiment">
+					<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+					<DbPKey>1</DbPKey>
+				</DbFkey>
 
-		</Scenario>
+				<DbFkey entity="Dataset">
+					<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+					<DbPKey>1</DbPKey>
+				</DbFkey>
 
+				<DbFkey entity="Mapset">
+					<DbPKeySurrogate>sim_codominant</DbPKeySurrogate>
+					<DbPKey>1</DbPKey>
+				</DbFkey>
+
+				<DbFkey entity="Platform">
+					<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
+					<DbPKey>22</DbPKey>
+				</DbFkey>
+
+			</Scenario>
+		</Load>
 	</Scenarios>
 
 </GobiiTestData>
