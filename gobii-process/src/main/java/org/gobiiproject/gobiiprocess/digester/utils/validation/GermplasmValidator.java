@@ -13,18 +13,14 @@ class GermplasmValidator extends BaseValidator {
     void validate(ValidationUnit validationUnit, String dir) {
         System.out.println("Germplasm validation Started.");
         List<String> digestGermplasm = new ArrayList<>();
-        if (getFilesWithExtension(dir, validationUnit.getDigestFileName(), digestGermplasm)) {
-            if (digestGermplasm.size() != 1) {
-                ErrorLogger.logError("There should be only one germplasm file in the folder ", dir);
-                return;
-            }
+        if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), digestGermplasm)) {
             String fileName = dir + "/" + validationUnit.getDigestFileName();
             validateRequiredColumns(fileName, validationUnit.getConditions());
             validateRequiredUniqueColumns(fileName, validationUnit.getConditions());
             for (ConditionUnit condition : validationUnit.getConditions()) {
-                if (condition.type != null && condition.type.equalsIgnoreCase("DB")) {
+                if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.DB)) {
                     if (condition.typeName != null) {
-                        if (condition.typeName.equalsIgnoreCase("CV"))
+                        if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV))
                             if (condition.fieldToCompare != null)
                                 validateCV(fileName, condition.fieldToCompare);
                             else
@@ -35,7 +31,6 @@ class GermplasmValidator extends BaseValidator {
             }
         }
     }
-
 
     /**
      * Validate terms in CV table
@@ -50,7 +45,7 @@ class GermplasmValidator extends BaseValidator {
             if (headers.contains(fieldToCompare)) {
                 int fieldIndex = headers.indexOf(fieldToCompare);
                 collect.remove(0);
-                Set<String> fieldNameList = new HashSet<String>();
+                Set<String> fieldNameList = new HashSet<>();
                 for (String[] fileRow : collect) {
                     List<String> fileRowList = Arrays.asList(fileRow);
                     if (fileRowList.size() > fieldIndex)

@@ -17,6 +17,24 @@ import static org.gobiiproject.gobiiprocess.digester.utils.validation.Validation
 public abstract class BaseValidator {
     abstract void validate(ValidationUnit conditions, String dir);
 
+    /**
+     * Checks that the fileName exists only once. Returns true if file exists once else false.
+     *
+     * @param dir         directory
+     * @param fileName    file-name
+     * @param listOfFiles list to store files with required extension
+     * @return
+     */
+    boolean checkForSingleFileExistence(String dir, String fileName, List<String> listOfFiles) {
+        // If there is an error in accessing path. Error already printed.
+        getFilesWithExtension(dir, fileName, listOfFiles);
+        if (listOfFiles.size() != 1) {
+            ErrorLogger.logError("There should be only one " + fileName + " file in the folder ", dir);
+            return false;
+        } else
+            return true;
+    }
+
     boolean getFilesWithExtension(String dir, String fileExtension, List<String> filesWithExtension) {
         try {
             DirectoryStream<Path> files = Files.newDirectoryStream(Paths.get(dir), fileExtension);

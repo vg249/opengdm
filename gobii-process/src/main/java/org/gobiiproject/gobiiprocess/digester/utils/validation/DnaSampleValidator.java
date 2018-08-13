@@ -11,11 +11,7 @@ class DnaSampleValidator extends BaseValidator {
     void validate(ValidationUnit validationUnit, String dir) {
         System.out.println("DNA Sample validation Started.");
         List<String> dnaSample = new ArrayList<>();
-        if (getFilesWithExtension(dir, validationUnit.getDigestFileName(), dnaSample)) {
-            if (dnaSample.size() != 1) {
-                ErrorLogger.logError("There should be only one dna-sample file in the folder ", dir);
-                return;
-            }
+        if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), dnaSample)) {
             String fileName = dir + "/" + validationUnit.getDigestFileName();
             validateRequiredColumns(fileName, validationUnit.getConditions());
             validateRequiredUniqueColumns(fileName, validationUnit.getConditions());
@@ -29,7 +25,7 @@ class DnaSampleValidator extends BaseValidator {
             if (condition.fileExistenceCheck != null) {
                 String existenceFile = condition.fileExistenceCheck;
                 List<String> digestGermplasm = new ArrayList<>();
-                boolean shouldFileExist = condition.fileExists.equalsIgnoreCase("yes");
+                boolean shouldFileExist = condition.fileExists.equalsIgnoreCase(ValidationConstants.YES);
                 getFilesWithExtension(new File(fileName).getParent(), existenceFile, digestGermplasm);
                 if (digestGermplasm.size() > 1) {
                     ErrorLogger.logError("There should be maximum one file in the folder ", new File(fileName).getParent());
@@ -37,10 +33,10 @@ class DnaSampleValidator extends BaseValidator {
                 }
                 if ((shouldFileExist && digestGermplasm.size() == 1) || (!shouldFileExist && digestGermplasm.size() == 0)) {
                     // Condition is satisfied
-                    if (condition.type != null && condition.type.equalsIgnoreCase("DB")) {
+                    if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.DB)) {
 
-                    } else if (condition.type != null && condition.type.equalsIgnoreCase("File")) {
-                        validateColumnBetweenFiles(fileName,condition);
+                    } else if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.FILE)) {
+                        validateColumnBetweenFiles(fileName, condition);
                     } else {
                         ErrorLogger.logError("Unrecognised type defined in condition", condition.type);
                     }
