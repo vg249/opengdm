@@ -67,6 +67,5 @@ class GermplasmValidator extends BaseValidator {
                 }
             }
         }
-
     }
 }

@@ -27,6 +27,10 @@ public class ConditionUnit {
     @JsonProperty
     public List<String> uniqueColumns;
     @JsonProperty
+    public String fileExistenceCheck;
+    @JsonProperty
+    public String fileExists;
+    @JsonProperty
     public String type;
     // Name of file or DB
     @JsonProperty
