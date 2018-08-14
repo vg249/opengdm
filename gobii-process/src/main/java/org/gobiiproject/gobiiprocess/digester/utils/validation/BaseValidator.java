@@ -23,7 +23,7 @@ public abstract class BaseValidator {
      * @param dir         directory
      * @param fileName    file-name
      * @param listOfFiles list to store files with required extension
-     * @return
+     * @return boolean value if there is a single file or not.
      */
     boolean checkForSingleFileExistence(String dir, String fileName, List<String> listOfFiles) {
         // If there is an error in accessing path. Error already printed.
@@ -207,7 +207,7 @@ public abstract class BaseValidator {
                             ErrorLogger.logError(fieldToCompare, " doesnot exist in file " + comparisonFilePath);
                             return;
                         } else
-                            fileColumnElements = fileColumnElements.stream().distinct().collect(Collectors.toList());
+                            comparisonFileColumnElements = comparisonFileColumnElements.stream().distinct().collect(Collectors.toList());
                         if (!fileColumnElements.equals(comparisonFileColumnElements)) {
                             ErrorLogger.logError(fieldToCompare, "is not same in " + filePath + "\t" + comparisonFilePath);
                         }
@@ -230,7 +230,7 @@ public abstract class BaseValidator {
      * @param column   column name
      * @return column values
      */
-    List<String> getFileColumn(String filepath, String column) {
+    private List<String> getFileColumn(String filepath, String column) {
         List<String> fileColumnElements = new ArrayList<>();
         List<String[]> file = readFileIntoMemory(filepath);
         List<String> fileHeaders = Arrays.asList(file.remove(0));

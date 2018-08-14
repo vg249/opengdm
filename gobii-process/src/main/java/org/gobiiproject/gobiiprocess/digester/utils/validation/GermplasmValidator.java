@@ -1,7 +1,6 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 
 import java.util.*;
 

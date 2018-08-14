@@ -87,6 +87,61 @@
           "fieldToCompare": "external_code"
         }
       ]
+    },
+    {
+      "digestFileName": "digest.dnasample_prop",
+      "conditions": [
+        {
+          "columnName": "project_id",
+          "required": "yes"
+        },
+        {
+          "columnName": "dnasample_name",
+          "required": "yes"
+        },
+        {
+          "columnName": "num",
+          "required": "yes"
+        },
+        {
+          "columnName": "external_code",
+          "required": "yes",
+          "unique": "yes",
+          "uniqueColumns": [
+            "name",
+            "external_code",
+            "num"
+          ]
+        },
+        {
+          "columnName": "project_id",
+          "required": "yes",
+          "type": "File",
+          "typeName": "digest.dnasample",
+          "fieldToCompare": "project_id"
+        },
+        {
+          "columnName": "dnasample_name",
+          "required": "yes",
+          "type": "File",
+          "typeName": "digest.dnasample",
+          "fieldToCompare": "dnasample_name"
+        },
+        {
+          "columnName": "external_code",
+          "required": "yes",
+          "type": "File",
+          "typeName": "digest.dnasample",
+          "fieldToCompare": "external_code"
+        },
+        {
+          "columnName": "num",
+          "required": "yes",
+          "type": "File",
+          "typeName": "digest.dnasample",
+          "fieldToCompare": "num"
+        }
+      ]
     }
   ]
 }

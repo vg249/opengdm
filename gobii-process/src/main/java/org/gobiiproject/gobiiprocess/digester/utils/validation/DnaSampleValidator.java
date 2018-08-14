@@ -34,7 +34,7 @@ class DnaSampleValidator extends BaseValidator {
                 if ((shouldFileExist && digestGermplasm.size() == 1) || (!shouldFileExist && digestGermplasm.size() == 0)) {
                     // Condition is satisfied
                     if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.DB)) {
-
+                        //TODO: Implement the database call
                     } else if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.FILE)) {
                         validateColumnBetweenFiles(fileName, condition);
                     } else {
