@@ -6,7 +6,7 @@ import java.util.List;
 class DnaSamplePropValidator extends BaseValidator{
     @Override
     void validate(ValidationUnit validationUnit, String dir) {
-        System.out.println("DNA Sample  prop validation Started.");
+        System.out.println("DNA Sample-prop validation Started.");
         List<String> dnaSample = new ArrayList<>();
         if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), dnaSample)) {
             String filePath = dir + "/" + validationUnit.getDigestFileName();

@@ -11,6 +11,7 @@ import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions.*;
 import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationWebServicesUtil.loginIntoServer;
@@ -148,19 +149,23 @@ public class DigestFileValidator {
     }
 
     public void validate(ValidationUnit validation) {
-        System.out.println("YELLO");
+        trimSpaces(validation);
         switch (FilenameUtils.getExtension(validation.getDigestFileName())) {
             case GERMPLASM_TABNAME:
                 new GermplasmValidator().validate(validation, rootDir);
+                System.out.println("YELLO");
                 break;
             case GERMPLASM_PROP_TABNAME:
                 new GermplasmPropValidator().validate(validation, rootDir);
+                System.out.println("YELLO");
                 break;
             case DNA_SAMPLE_TABNAME:
                 new DnaSampleValidator().validate(validation, rootDir);
+                System.out.println("YELLO");
                 break;
             case DNA_SAMPLE_PROP_TABNAME:
                 new DnaSamplePropValidator().validate(validation, rootDir);
+                System.out.println("YELLO");
                 break;
             case SAMPLE_TABNAME:
                 new DnarunValidator().validate(validation, rootDir);
@@ -193,5 +198,25 @@ public class DigestFileValidator {
                 System.exit(1);
         }
     }
+
+    void trimSpaces(ValidationUnit validationUnit) {
+        validationUnit.setDigestFileName(validationUnit.getDigestFileName().trim());
+        for (ConditionUnit conditionUnit : validationUnit.getConditions()) {
+            if (conditionUnit.columnName != null) conditionUnit.columnName = conditionUnit.columnName.trim();
+            if (conditionUnit.required != null) conditionUnit.required = conditionUnit.required.trim();
+            if (conditionUnit.nullAllowed != null) conditionUnit.nullAllowed = conditionUnit.nullAllowed.trim();
+            if (conditionUnit.unique != null) conditionUnit.unique = conditionUnit.unique.trim();
+            if (conditionUnit.fileExistenceCheck != null)
+                conditionUnit.fileExistenceCheck = conditionUnit.fileExistenceCheck.trim();
+            if (conditionUnit.fileExists != null) conditionUnit.fileExists = conditionUnit.fileExists.trim();
+            if (conditionUnit.type != null) conditionUnit.type = conditionUnit.type.trim();
+            if (conditionUnit.typeName != null) conditionUnit.typeName = conditionUnit.typeName.trim();
+            if (conditionUnit.fieldToCompare != null)
+                conditionUnit.fieldToCompare = conditionUnit.fieldToCompare.trim();
+            if (conditionUnit.uniqueColumns != null)
+                conditionUnit.uniqueColumns = conditionUnit.uniqueColumns.stream().map(String::trim).collect(Collectors.toList());
+        }
+    }
+
 }
 

@@ -57,7 +57,7 @@ public abstract class BaseValidator {
     void validateRequiredColumns(String fileName, List<ConditionUnit> conditions) {
         List<String> requiredFields = new ArrayList<>();
         for (ConditionUnit condition : conditions) {
-            if (condition.required.equalsIgnoreCase("YES") && !(condition.unique != null && condition.unique.equalsIgnoreCase("YES"))) {
+            if (condition.required.equalsIgnoreCase(ValidationConstants.YES) && !(condition.unique != null && condition.unique.equalsIgnoreCase(ValidationConstants.YES))) {
                 if (!requiredFields.contains(condition.columnName))
                     requiredFields.add(condition.columnName);
             }
@@ -75,7 +75,7 @@ public abstract class BaseValidator {
     void validateRequiredUniqueColumns(String fileName, List<ConditionUnit> conditions) {
         List<String> requiredUniqueColumns = new ArrayList<>();
         for (ConditionUnit condition : conditions) {
-            if (condition.required.equalsIgnoreCase("YES") && (condition.unique != null && condition.unique.equalsIgnoreCase("YES"))) {
+            if (condition.required.equalsIgnoreCase(ValidationConstants.YES) && (condition.unique != null && condition.unique.equalsIgnoreCase(ValidationConstants.YES))) {
                 if (!requiredUniqueColumns.contains(condition.columnName))
                     requiredUniqueColumns.add(condition.columnName);
             }
@@ -135,6 +135,7 @@ public abstract class BaseValidator {
         List<String[]> collect = readFileIntoMemory(fileName);
         if (collect != null) {
             List<String> fileHeaders = Arrays.asList(collect.remove(0));
+            fileHeaders = fileHeaders.stream().map(String::trim).collect(Collectors.toList());
             Set<Integer> sortedColumnNumbers = new TreeSet<>();
             for (String columnName : columns) {
                 if (fileHeaders.contains(columnName)) {
@@ -143,6 +144,7 @@ public abstract class BaseValidator {
                     ErrorLogger.logError("Could not find required column : " + columnName + " in input file", fileName);
                 }
             }
+            if (sortedColumnNumbers.size() == 0) return;
             for (String[] line : collect) {
                 if (line.length <= ((TreeSet<Integer>) sortedColumnNumbers).last()) {
                     ErrorLogger.logError(fileName, " is corrupted. Please check file for irregular size columns.");
@@ -184,13 +186,12 @@ public abstract class BaseValidator {
      * @param condition Condition Unit
      */
     void validateColumnBetweenFiles(String filePath, ConditionUnit condition) {
-        String comparisonFileName, fieldToCompare, columnName;
         if (condition.typeName != null) {
             if (ValidationUtil.getAllowedExtensions().contains(condition.typeName.substring(condition.typeName.indexOf('.') + 1))) {
                 if (condition.fieldToCompare != null) {
-                    columnName = condition.columnName;
-                    comparisonFileName = condition.typeName;
-                    fieldToCompare = condition.fieldToCompare;
+                    String comparisonFileName = condition.typeName;
+                    String columnName = condition.columnName;
+                    String fieldToCompare = condition.fieldToCompare;
                     List<String> filesList = new ArrayList<>();
                     if (getFilesWithExtension(new File(filePath).getParent(), comparisonFileName, filesList)) {
                         if (filesList.size() != 1) {
@@ -200,14 +201,18 @@ public abstract class BaseValidator {
                         String comparisonFilePath = new File(filePath).getParent() + "/" + comparisonFileName;
                         List<String> fileColumnElements = getFileColumn(filePath, columnName);
                         if (fileColumnElements.size() == 0) return;
-                        else
+                        else {
                             fileColumnElements = fileColumnElements.stream().distinct().collect(Collectors.toList());
+                            Collections.sort(fileColumnElements);
+                        }
                         List<String> comparisonFileColumnElements = getFileColumn(comparisonFilePath, fieldToCompare);
                         if (comparisonFileColumnElements.size() == 0) {
                             ErrorLogger.logError(fieldToCompare, " doesnot exist in file " + comparisonFilePath);
                             return;
-                        } else
+                        } else {
                             comparisonFileColumnElements = comparisonFileColumnElements.stream().distinct().collect(Collectors.toList());
+                            Collections.sort(comparisonFileColumnElements);
+                        }
                         if (!fileColumnElements.equals(comparisonFileColumnElements)) {
                             ErrorLogger.logError(fieldToCompare, "is not same in " + filePath + "\t" + comparisonFilePath);
                         }
@@ -234,6 +239,7 @@ public abstract class BaseValidator {
         List<String> fileColumnElements = new ArrayList<>();
         List<String[]> file = readFileIntoMemory(filepath);
         List<String> fileHeaders = Arrays.asList(file.remove(0));
+        fileHeaders = fileHeaders.stream().map(String::trim).collect(Collectors.toList());
         int fileCoulmnIndex = fileHeaders.indexOf(column);
         if (fileCoulmnIndex >= 0) {
             for (String[] line : file) {
@@ -247,6 +253,4 @@ public abstract class BaseValidator {
         }
         return fileColumnElements;
     }
-
-
 }
