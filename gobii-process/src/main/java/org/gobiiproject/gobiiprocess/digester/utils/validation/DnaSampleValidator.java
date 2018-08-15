@@ -9,7 +9,7 @@ import java.util.List;
 class DnaSampleValidator extends BaseValidator {
     @Override
     void validate(ValidationUnit validationUnit, String dir) {
-        System.out.println("DNA Sample validation Started.");
+        ErrorLogger.logDebug("DNA Sample validation ", " started.");
         List<String> dnaSample = new ArrayList<>();
         if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), dnaSample)) {
             String fileName = dir + "/" + validationUnit.getDigestFileName();
@@ -18,6 +18,7 @@ class DnaSampleValidator extends BaseValidator {
             validateUniqueColumnList(fileName, validationUnit);
             validateFileExistenceCheck(fileName, validationUnit);
         }
+        ErrorLogger.logDebug("DNA Sample validation ", " done.");
     }
 
     private void validateFileExistenceCheck(String fileName, ValidationUnit validationUnit) {

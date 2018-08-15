@@ -108,7 +108,7 @@
           "required": "yes",
           "unique": "yes",
           "uniqueColumns": [
-            "name",
+            "dnasample_name",
             "external_code",
             "num"
           ]

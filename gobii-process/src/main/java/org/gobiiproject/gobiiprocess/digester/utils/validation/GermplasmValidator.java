@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
+import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 
 import java.util.*;
 
@@ -10,7 +11,7 @@ import static org.gobiiproject.gobiiprocess.digester.utils.validation.Validation
 class GermplasmValidator extends BaseValidator {
     @Override
     void validate(ValidationUnit validationUnit, String dir) {
-        System.out.println("Germplasm validation Started.");
+        ErrorLogger.logDebug("Germplasm validation ", " started.");
         List<String> digestGermplasm = new ArrayList<>();
         if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), digestGermplasm)) {
             String fileName = dir + "/" + validationUnit.getDigestFileName();
@@ -29,6 +30,7 @@ class GermplasmValidator extends BaseValidator {
                 }
             }
         }
+        ErrorLogger.logDebug("Germplasm validation ", " done.");
     }
 
     /**

@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -22,10 +23,11 @@ public class DigestFileValidator {
     //="q";;
     //="mcs397";;="http://192.168.121.3:8081/gobii-dev/";
 
-    public DigestFileValidator(String rootDir, String url, String username, String password) {
+    public DigestFileValidator(String rootDir, String validationFile, String url, String username, String password) {
         this.rootDir = rootDir;
-        this.rulesFile = getClass().getClassLoader().getResource("validationConfig.json").getPath();
+        System.out.println("YE YE YE YE");
         this.url = url;
+        this.rulesFile = validationFile;
         this.username = username;
         this.password = password;
         //  this.url = "http://192.168.121.3:8081/gobii-dev/";
@@ -33,20 +35,11 @@ public class DigestFileValidator {
         //  this.password = "q";
     }
 
-    DigestFileValidator(String rootDir, String validationFile, String url, String username, String password) {
-        this.rootDir = rootDir;
-        this.rulesFile = validationFile;
-        this.url = url;
-        this.username = username;
-        this.password = password;
-    }
-
     boolean loginServer() {
         return loginIntoServer(url, username, password, null);
     }
 
     public static void main(String[] args) {
-
         String rootDir = null, validationFile = null, url = null, userName = null, password = null;
 
         Options o = new Options()
@@ -55,22 +48,24 @@ public class DigestFileValidator {
                 .addOption("h", true, "Host server URL")
                 .addOption("u", true, "User Name")
                 .addOption("p", true, "Password");
-        if (args.length != 10) {
+        if (args.length != 8 && args.length != 10) {
             new HelpFormatter().printHelp("DigestFileValidator", o);
             System.exit(1);
         }
-
         try {
             CommandLine cli = new DefaultParser().parse(o, args);
             if (cli.hasOption("r")) rootDir = cli.getOptionValue("r");
-            if (cli.hasOption("v")) validationFile = cli.getOptionValue("v").toLowerCase();
-            if (cli.hasOption("h")) url = cli.getOptionValue("h").toLowerCase();
-            if (cli.hasOption("u")) userName = cli.getOptionValue("u").toLowerCase();
-            if (cli.hasOption("p")) password = cli.getOptionValue("p").toLowerCase();
+            if (cli.hasOption("v")) validationFile = cli.getOptionValue("v");
+            if (cli.hasOption("h")) url = cli.getOptionValue("h");
+            if (cli.hasOption("u")) userName = cli.getOptionValue("u");
+            if (cli.hasOption("p")) password = cli.getOptionValue("p");
 
-            if (ValidationUtil.isNullAndEmpty(rootDir) || ValidationUtil.isNullAndEmpty(rootDir) || ValidationUtil.isNullAndEmpty(url) || ValidationUtil.isNullAndEmpty(userName) || ValidationUtil.isNullAndEmpty(password)) {
+            if (ValidationUtil.isNullAndEmpty(rootDir) || ValidationUtil.isNullAndEmpty(url) || ValidationUtil.isNullAndEmpty(userName) || ValidationUtil.isNullAndEmpty(password)) {
                 new HelpFormatter().printHelp("DigestFileValidator", o);
                 System.exit(1);
+            }
+            if (validationFile == null) {
+                validationFile = "validationConfig.json";
             }
             if (url.charAt(url.length() - 1) != '/') url = url + "/";
         } catch (org.apache.commons.cli.ParseException exp) {
@@ -78,11 +73,11 @@ public class DigestFileValidator {
             System.exit(1);
         }
 
-        ErrorLogger.logDebug("Entered Options are: " + rootDir + "," + validationFile, "");
-        DigestFileValidator digestFileValidator = new DigestFileValidator(rootDir, url, userName, password);
+        ErrorLogger.logDebug("Entered Options are ", rootDir + " , " + validationFile + " , " + url + " , " + userName + " , " + password);
+        DigestFileValidator digestFileValidator = new DigestFileValidator(rootDir, validationFile, url, userName, password);
         List<ValidationUnit> validations = digestFileValidator.readRules();
         if (validations.size() == 0) System.exit(1);
-        if (!digestFileValidator.loginServer()) {
+        if (digestFileValidator.loginServer()) {
             for (ValidationUnit validation : validations)
                 digestFileValidator.validate(validation);
         } else {
@@ -99,7 +94,13 @@ public class DigestFileValidator {
         List<ValidationUnit> validations;
         try {
             // Convert JSON string from file to Object
-            ValidationRules validationRules = new ObjectMapper().readValue(new File(rulesFile), ValidationRules.class);
+            File rules = new File(rulesFile);
+            ValidationRules validationRules;
+            if (rules.isFile())
+                validationRules = new ObjectMapper().readValue(rules, ValidationRules.class);
+            else
+                validationRules = new ObjectMapper()
+                        .readValue(getClass().getClassLoader().getResourceAsStream(rulesFile), ValidationRules.class);
             validations = validationRules.getValidations();
         } catch (IOException e) {
             ErrorLogger.logError("Exception in reading rules file.", e);
@@ -153,19 +154,15 @@ public class DigestFileValidator {
         switch (FilenameUtils.getExtension(validation.getDigestFileName())) {
             case GERMPLASM_TABNAME:
                 new GermplasmValidator().validate(validation, rootDir);
-                System.out.println("YELLO");
                 break;
             case GERMPLASM_PROP_TABNAME:
                 new GermplasmPropValidator().validate(validation, rootDir);
-                System.out.println("YELLO");
                 break;
             case DNA_SAMPLE_TABNAME:
                 new DnaSampleValidator().validate(validation, rootDir);
-                System.out.println("YELLO");
                 break;
             case DNA_SAMPLE_PROP_TABNAME:
                 new DnaSamplePropValidator().validate(validation, rootDir);
-                System.out.println("YELLO");
                 break;
             case SAMPLE_TABNAME:
                 new DnarunValidator().validate(validation, rootDir);
@@ -197,6 +194,7 @@ public class DigestFileValidator {
                 ErrorLogger.logError("DigestFileValidator", "Given extension " + validation.getDigestFileName() + " is not valid.");
                 System.exit(1);
         }
+//        System.out.println("YELLO");
     }
 
     void trimSpaces(ValidationUnit validationUnit) {

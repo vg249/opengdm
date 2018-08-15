@@ -1,12 +1,14 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
 
+import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+
 import java.util.*;
 
 class GermplasmPropValidator extends BaseValidator {
     @Override
     void validate(ValidationUnit validationUnit, String dir) {
-        System.out.println("Germplasm-prop validation Started.");
+        ErrorLogger.logDebug("Germplasm-prop validation ", " started.");
         List<String> digestGermplasmProp = new ArrayList<>();
         if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), digestGermplasmProp)) {
             String filePath = dir + "/" + validationUnit.getDigestFileName();
@@ -18,6 +20,7 @@ class GermplasmPropValidator extends BaseValidator {
                 }
             }
         }
+        ErrorLogger.logDebug("Germplasm-prop validation ", " done.");
     }
 
 
