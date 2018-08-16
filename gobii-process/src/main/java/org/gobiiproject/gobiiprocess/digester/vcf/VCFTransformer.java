@@ -56,12 +56,11 @@ public class VCFTransformer {
 				String[] mrefAltData=new String[]{""};
 
 				//If alternates are unspecified (.), need to handle as a special case. Will let AltData become an empty lsit, and all alts will be dealt with appropriately.
-				if(mrefLineRawData[1].trim().equals(".")){
+				//And since it looks like ""{value}"",""{Value}"", lets just use contains.
+				if(mrefLineRawData[1].contains(".")){
 					unspecifiedAlt=true;
 				}
-				else {
-					mrefAltData = mrefLineRawData[1].split("[^A-Za-z\\-]+");//Split on non-alphabetic, may be jsonified already
-				}
+				mrefAltData = mrefLineRawData[1].split("[^A-Za-z\\-.]+");//Split on non-alphabetic, may be jsonified already
 
 				if(mrefAltData.length==0)mrefAltData=new String[]{""};//if we have no entries, make it a blank first and all below will work fine
 
@@ -146,7 +145,9 @@ public class VCFTransformer {
 						}
 						bimatrixCell += BI_UNKNOWN;
 					}else {
-						bimatrixCell += mrefLineData[value];
+						String cellValue = mrefLineData[value];
+						if(cellValue.equals("."))cellValue=BI_UNKNOWN;
+						bimatrixCell += cellValue;
 					}
 					break;
 				case ".":
