@@ -9,18 +9,26 @@ class DnaSamplePropValidator extends BaseValidator {
     @Override
     void validate(ValidationUnit validationUnit, String dir) {
         ErrorLogger.logDebug("DNA Sample-prop validation ", " started.");
+        boolean status = true;
         List<String> dnaSample = new ArrayList<>();
         if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), dnaSample)) {
             String filePath = dir + "/" + validationUnit.getDigestFileName();
-            validateRequiredColumns(filePath, validationUnit.getConditions());
-            validateRequiredUniqueColumns(filePath, validationUnit.getConditions());
-            validateUniqueColumnList(filePath, validationUnit);
+            boolean returnValue = validateRequiredColumns(filePath, validationUnit.getConditions());
+            if (status) status = returnValue;
+            returnValue = validateRequiredUniqueColumns(filePath, validationUnit.getConditions());
+            if (status) status = returnValue;
+            returnValue = validateUniqueColumnList(filePath, validationUnit);
+            if (status) status = returnValue;
             for (ConditionUnit condition : validationUnit.getConditions()) {
                 if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.FILE)) {
-                    validateColumnBetweenFiles(filePath, condition);
+                    returnValue = validateColumnBetweenFiles(filePath, condition);
+                    if (status) status = returnValue;
                 }
             }
+        } else {
+            if (dnaSample.size() > 1)
+                status = false;
         }
-        ErrorLogger.logDebug("DNA Sample-prop validation ", " done.");
+        printValidationDone("DNA Sample-prop", status);
     }
 }

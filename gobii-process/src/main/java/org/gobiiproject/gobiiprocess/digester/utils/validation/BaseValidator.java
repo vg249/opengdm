@@ -370,7 +370,6 @@ public abstract class BaseValidator {
                     fileColumnElements.add(line[fileCoulmnIndex]);
                 } else {
                     ErrorLogger.logError(column, " value doesnot exist in file. Please check the contents of file. " + filepath);
-
                 }
             }
         }
