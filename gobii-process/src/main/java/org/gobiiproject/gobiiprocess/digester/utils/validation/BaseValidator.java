@@ -85,7 +85,8 @@ public abstract class BaseValidator {
 
     /**
      * Parses the validation rules and gives the rules which are required and unique
-     *  @param fileName   name of file
+     *
+     * @param fileName   name of file
      * @param conditions conditions
      */
     boolean validateRequiredUniqueColumns(String fileName, List<ConditionUnit> conditions) {
@@ -259,7 +260,8 @@ public abstract class BaseValidator {
      * @param filePath  File Path
      * @param condition Condition Unit
      */
-    void validateColumnBetweenFiles(String filePath, ConditionUnit condition) {
+    boolean validateColumnBetweenFiles(String filePath, ConditionUnit condition) {
+        boolean status = true;
         if (condition.typeName != null) {
             if (ValidationUtil.getAllowedExtensions().contains(condition.typeName.substring(condition.typeName.indexOf('.') + 1))) {
                 if (condition.fieldToCompare != null) {
@@ -270,11 +272,11 @@ public abstract class BaseValidator {
                     if (getFilesWithExtension(new File(filePath).getParent(), comparisonFileName, filesList)) {
                         if (filesList.size() != 1) {
                             ErrorLogger.logError("There should be only one file in the folder ", new File(filePath).getParent());
-                            return;
+                            return false;
                         }
                         String comparisonFilePath = new File(filePath).getParent() + "/" + comparisonFileName;
                         List<String> fileColumnElements = getFileColumn(filePath, columnName);
-                        if (fileColumnElements.size() == 0) return;
+                        if (fileColumnElements.size() == 0) return true;
                         else {
                             fileColumnElements = fileColumnElements.stream().distinct().collect(Collectors.toList());
                             Collections.sort(fileColumnElements);
@@ -282,23 +284,29 @@ public abstract class BaseValidator {
                         List<String> comparisonFileColumnElements = getFileColumn(comparisonFilePath, fieldToCompare);
                         if (comparisonFileColumnElements.size() == 0) {
                             ErrorLogger.logError(fieldToCompare, " doesnot exist in file " + comparisonFilePath);
-                            return;
+                            return false;
                         } else {
                             comparisonFileColumnElements = comparisonFileColumnElements.stream().distinct().collect(Collectors.toList());
                             Collections.sort(comparisonFileColumnElements);
                         }
                         if (!fileColumnElements.equals(comparisonFileColumnElements)) {
                             ErrorLogger.logError(fieldToCompare, "is not same in " + filePath + "\t" + comparisonFilePath);
+                            status = false;
                         }
                     }
                 } else {
                     printMissingFieldError("File", "fieldToCompare");
+                    status = false;
                 }
-            } else
+            } else {
                 ErrorLogger.logError(condition.typeName, " is not a valid file extension.");
+                status = false;
+            }
         } else {
             printMissingFieldError("File", "typeName");
+            status = false;
         }
+        return status;
     }
 
     /**

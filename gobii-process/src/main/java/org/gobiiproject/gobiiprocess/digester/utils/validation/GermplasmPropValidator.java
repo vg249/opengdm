@@ -8,19 +8,26 @@ import java.util.*;
 class GermplasmPropValidator extends BaseValidator {
     @Override
     void validate(ValidationUnit validationUnit, String dir) {
+        boolean status = true;
         ErrorLogger.logDebug("Germplasm-prop validation ", " started.");
         List<String> digestGermplasmProp = new ArrayList<>();
         if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), digestGermplasmProp)) {
             String filePath = dir + "/" + validationUnit.getDigestFileName();
-            validateRequiredColumns(filePath, validationUnit.getConditions());
-            validateRequiredUniqueColumns(filePath, validationUnit.getConditions());
+            boolean returnValue = validateRequiredColumns(filePath, validationUnit.getConditions());
+            if (status) status = returnValue;
+            returnValue = validateRequiredUniqueColumns(filePath, validationUnit.getConditions());
+            if (status) status = returnValue;
             for (ConditionUnit condition : validationUnit.getConditions()) {
                 if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.FILE)) {
-                    validateColumnBetweenFiles(filePath, condition);
+                    returnValue = validateColumnBetweenFiles(filePath, condition);
+                    if (status) status = returnValue;
                 }
             }
+        } else {
+            if (digestGermplasmProp.size() > 1)
+                status = false;
         }
-        ErrorLogger.logDebug("Germplasm-prop validation ", " done.");
+        printValidationDone("Germplasm-prop", status);
     }
 
 
