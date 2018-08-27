@@ -109,7 +109,8 @@ public abstract class BaseValidator {
      * @param fileName       fileName
      * @param validationUnit validation conditions
      */
-    void validateUniqueColumnList(String fileName, ValidationUnit validationUnit) {
+    boolean validateUniqueColumnList(String fileName, ValidationUnit validationUnit) {
+        boolean status = true;
         for (ConditionUnit condition : validationUnit.getConditions()) {
             if (condition.uniqueColumns != null && condition.uniqueColumns.size() > 0) {
                 List<String> uniqueColumns = condition.uniqueColumns;
@@ -120,13 +121,14 @@ public abstract class BaseValidator {
                         fileColumns.add(getFileColumn(fileName, column));
                     } else {
                         ErrorLogger.logError(column, " doesnot exist in file " + fileName);
+                        return false;
                     }
                 }
                 int size = fileColumns.get(0).size();
                 for (List<String> column : fileColumns) {
                     if (column.size() != size) {
                         ErrorLogger.logError(fileName, " has file columns of irregular size.");
-                        return;
+                        return false;
                     }
                 }
                 List<String> concatList = new ArrayList<>();
@@ -137,11 +139,12 @@ public abstract class BaseValidator {
                     }
                     if (concatList.contains(value)) {
                         ErrorLogger.logError(String.valueOf(uniqueColumns), " combination is not unique");
-                        return;
+                        status = false;
                     } else concatList.add(value);
                 }
             }
         }
+        return status;
     }
 
     /**
@@ -316,7 +319,8 @@ public abstract class BaseValidator {
      * @param fileName       Name of the file
      * @param validationUnit Validation Unit
      */
-    void validateFileExistenceCheck(String fileName, ValidationUnit validationUnit) {
+    boolean validateFileExistenceCheck(String fileName, ValidationUnit validationUnit) {
+        boolean status = true;
         for (ConditionUnit condition : validationUnit.getConditions()) {
             if (condition.fileExistenceCheck != null) {
                 String existenceFile = condition.fileExistenceCheck;
@@ -325,20 +329,24 @@ public abstract class BaseValidator {
                 getFilesWithExtension(new File(fileName).getParent(), existenceFile, digestGermplasm);
                 if (digestGermplasm.size() > 1) {
                     ErrorLogger.logError("There should be maximum one file in the folder ", new File(fileName).getParent());
-                    return;
+                    return false;
                 }
                 if ((shouldFileExist && digestGermplasm.size() == 1) || (!shouldFileExist && digestGermplasm.size() == 0)) {
                     // Condition is satisfied
                     if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.DB)) {
                         //TODO: Implement the database call
                     } else if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.FILE)) {
-                        validateColumnBetweenFiles(fileName, condition);
+                        boolean returnValue = validateColumnBetweenFiles(fileName, condition);
+                        if (status) status = returnValue;
                     } else {
                         ErrorLogger.logError("Unrecognised type defined in condition", condition.type);
+                        status = false;
                     }
                 }
             }
+
         }
+        return status;
     }
 
 
