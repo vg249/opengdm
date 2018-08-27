@@ -53,7 +53,8 @@ class ValidationWebServicesUtil {
         }
     }
 
-    static void validateCVName(List<NameIdDTO> nameIdDTOList, String cvGroupName) {
+    static boolean validateCVName(List<NameIdDTO> nameIdDTOList, String cvGroupName) {
+        boolean status = true;
         try {
             PayloadEnvelope<NameIdDTO> payloadEnvelope = new PayloadEnvelope<>();
             payloadEnvelope.getHeader().setGobiiProcessType(GobiiProcessType.CREATE);
@@ -72,18 +73,25 @@ class ValidationWebServicesUtil {
                 case "type_name":
                     namesUri.setParamValue("filterValue", CvGroup.CVGROUP_GERMPLASM_TYPE.getCvGroupName());
                     break;
+                case "marker_strand":
+                    namesUri.setParamValue("filterValue", CvGroup.CVGROUP_MARKER_STRAND.getCvGroupName());
+                    break;
                 default:
                     ErrorLogger.logError(cvGroupName, " is not defined in CV table. ");
-                    return;
+                    return status;
             }
             PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = gobiiEnvelopeRestResource.post(NameIdDTO.class, payloadEnvelope);
             List<NameIdDTO> nameIdDTOListResponse = responsePayloadEnvelope.getPayload().getData();
             for (NameIdDTO nameIdDTO : nameIdDTOListResponse) {
-                if (nameIdDTO.getId() == 0)
+                if (nameIdDTO.getId() == 0) {
                     ErrorLogger.logError(nameIdDTO.getName(), " in column " + cvGroupName + " is not a valid name.");
+                    status = false;
+                }
             }
         } catch (Exception e) {
             ErrorLogger.logError(cvGroupName + " validation error. ", e);
+            status = false;
         }
+        return status;
     }
 }

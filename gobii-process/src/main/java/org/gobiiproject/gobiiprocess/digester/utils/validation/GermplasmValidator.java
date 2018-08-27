@@ -11,27 +11,39 @@ import static org.gobiiproject.gobiiprocess.digester.utils.validation.Validation
 class GermplasmValidator extends BaseValidator {
     @Override
     void validate(ValidationUnit validationUnit, String dir) {
+        boolean status = true;
         ErrorLogger.logDebug("Germplasm validation ", " started.");
         List<String> digestGermplasm = new ArrayList<>();
         if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), digestGermplasm)) {
             String fileName = dir + "/" + validationUnit.getDigestFileName();
-            validateRequiredColumns(fileName, validationUnit.getConditions());
-            validateRequiredUniqueColumns(fileName, validationUnit.getConditions());
+            boolean returnValue = validateRequiredColumns(fileName, validationUnit.getConditions());
+            if (status) status = returnValue;
+            returnValue = validateRequiredUniqueColumns(fileName, validationUnit.getConditions());
+            if (status) status = returnValue;
             for (ConditionUnit condition : validationUnit.getConditions()) {
                 if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.DB)) {
                     if (condition.typeName != null) {
                         if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV))
-                            if (condition.fieldToCompare != null)
-                                validateCV(fileName, condition.fieldToCompare);
-                            else
+                            if (condition.fieldToCompare != null) {
+                                returnValue = validateCV(fileName, condition.fieldToCompare);
+                                if (status) status = returnValue;
+                            } else {
                                 printMissingFieldError("DB", "fieldToCompare");
-                    } else
+                                status = false;
+                            }
+                    } else {
                         printMissingFieldError("DB", "typeName");
+                        status = false;
+                    }
                 }
             }
+        } else {
+            if (digestGermplasm.size() > 1)
+                status = false;
         }
-        ErrorLogger.logDebug("Germplasm validation ", " done.");
+        printValidationDone("Germplasm", status);
     }
+
 
     /**
      * Validate terms in CV table
@@ -39,7 +51,8 @@ class GermplasmValidator extends BaseValidator {
      * @param fileName       fileName
      * @param fieldToCompare field to check
      */
-    private void validateCV(String fileName, String fieldToCompare) {
+    private boolean validateCV(String fileName, String fieldToCompare) {
+        boolean status = true;
         List<String[]> collect = readFileIntoMemory(fileName);
         if (collect != null) {
             List<String> headers = Arrays.asList(collect.get(0));
@@ -58,10 +71,11 @@ class GermplasmValidator extends BaseValidator {
                     nameIdDTO.setName(fieldName);
                     List<NameIdDTO> nameIdDTOList = new ArrayList<>();
                     nameIdDTOList.add(nameIdDTO);
-                    ValidationWebServicesUtil.validateCVName(nameIdDTOList, fieldToCompare);
-
+                    boolean returnValue = ValidationWebServicesUtil.validateCVName(nameIdDTOList, fieldToCompare);
+                    if (status) status = returnValue;
                 }
             }
         }
+        return status;
     }
 }
