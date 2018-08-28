@@ -128,6 +128,25 @@ class ConfigValues {
     @Element(required = false)
     private boolean isProvidesBackend = true;
 
+    @Element (required = false)
+    private String ownCloudHost;
+
+    @Element (required = false)
+    private String ownCloudPort;
+
+    @Element (required = false)
+    private String ownCloudUser;
+
+    @Element (required = false)
+    private String ownCloudPass;
+
+    @Element (required = false)
+    private String ownCloudURL;
+
+    @Element (required = false)
+    private String ownCloudPath;
+
+
     public TestExecConfig getTestExecConfig() {
         return testExecConfig;
     }
@@ -524,5 +543,13 @@ class ConfigValues {
 
     public void setProvidesBackend(boolean providesBackend) {
         isProvidesBackend = providesBackend;
+    }
+
+    public void setOwnCloudHost(String ownCloudHost){
+        this.ownCloudHost = ownCloudHost;
+    }
+
+    public String getOwnCloudHost(){
+        return ownCloudHost;
     }
 }

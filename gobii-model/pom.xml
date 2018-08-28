@@ -5,7 +5,7 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>org.gobiiproject</groupId>
-        <version>2.0_2018-07-31</version>
+        <version>1.4.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -94,6 +94,11 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.toile-libre.libe</groupId>
+            <artifactId>curl</artifactId>
         </dependency>
     </dependencies>
 
