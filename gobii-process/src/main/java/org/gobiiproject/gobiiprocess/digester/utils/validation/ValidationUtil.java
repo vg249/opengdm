@@ -38,8 +38,8 @@ class ValidationUtil {
 
     }
 
-    static void printMissingFieldError(String s1, String s2) {
-        ErrorLogger.logError("Condition type defined as " + s1 + " but " + s2 + " not defined.", "");
+    static void printMissingFieldError(String s1, String s2, List<String> errorList) {
+        errorList.add("Condition type defined as " + s1 + " but " + s2 + " not defined.");
     }
 
 }

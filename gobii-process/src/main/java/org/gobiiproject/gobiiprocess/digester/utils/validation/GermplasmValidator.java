@@ -1,7 +1,6 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 
 import java.util.*;
 
@@ -10,38 +9,27 @@ import static org.gobiiproject.gobiiprocess.digester.utils.validation.Validation
 
 class GermplasmValidator extends BaseValidator {
     @Override
-    void validate(ValidationUnit validationUnit, String dir) {
-        boolean status = true;
-        ErrorLogger.logDebug("Germplasm validation ", " started.");
+    void validate(ValidationUnit validationUnit, String dir, List<String> errorList) {
         List<String> digestGermplasm = new ArrayList<>();
-        if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), digestGermplasm)) {
+        if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), digestGermplasm, errorList)) {
             String fileName = dir + "/" + validationUnit.getDigestFileName();
-            boolean returnValue = validateRequiredColumns(fileName, validationUnit.getConditions());
-            if (status) status = returnValue;
-            returnValue = validateRequiredUniqueColumns(fileName, validationUnit.getConditions());
-            if (status) status = returnValue;
+            validateRequiredColumns(fileName, validationUnit.getConditions(), errorList);
+            validateRequiredUniqueColumns(fileName, validationUnit.getConditions(), errorList);
             for (ConditionUnit condition : validationUnit.getConditions()) {
                 if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.DB)) {
                     if (condition.typeName != null) {
                         if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV))
                             if (condition.fieldToCompare != null) {
-                                returnValue = validateCV(fileName, condition.fieldToCompare);
-                                if (status) status = returnValue;
+                                validateCV(fileName, condition.fieldToCompare, errorList);
                             } else {
-                                printMissingFieldError("DB", "fieldToCompare");
-                                status = false;
+                                printMissingFieldError("DB", "fieldToCompare", errorList);
                             }
                     } else {
-                        printMissingFieldError("DB", "typeName");
-                        status = false;
+                        printMissingFieldError("DB", "typeName", errorList);
                     }
                 }
             }
-        } else {
-            if (digestGermplasm.size() > 1)
-                status = false;
         }
-        printValidationDone("Germplasm", status);
     }
 
 
@@ -50,9 +38,9 @@ class GermplasmValidator extends BaseValidator {
      *
      * @param fileName       fileName
      * @param fieldToCompare field to check
+     * @param errorList      error list
      */
-    private boolean validateCV(String fileName, String fieldToCompare) {
-        boolean status = true;
+    private void validateCV(String fileName, String fieldToCompare, List<String> errorList) {
         List<String[]> collect = readFileIntoMemory(fileName);
         if (collect != null) {
             List<String> headers = Arrays.asList(collect.get(0));
@@ -71,11 +59,9 @@ class GermplasmValidator extends BaseValidator {
                     nameIdDTO.setName(fieldName);
                     List<NameIdDTO> nameIdDTOList = new ArrayList<>();
                     nameIdDTOList.add(nameIdDTO);
-                    boolean returnValue = ValidationWebServicesUtil.validateCVName(nameIdDTOList, fieldToCompare);
-                    if (status) status = returnValue;
+                    ValidationWebServicesUtil.validateCVName(nameIdDTOList, fieldToCompare, errorList);
                 }
             }
         }
-        return status;
     }
 }

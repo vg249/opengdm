@@ -1,33 +1,21 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
-
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
-
 import java.util.*;
 
 class GermplasmPropValidator extends BaseValidator {
     @Override
-    void validate(ValidationUnit validationUnit, String dir) {
-        boolean status = true;
-        ErrorLogger.logDebug("Germplasm-prop validation ", " started.");
+    void validate(ValidationUnit validationUnit, String dir, List<String> errorList) {
         List<String> digestGermplasmProp = new ArrayList<>();
-        if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), digestGermplasmProp)) {
+        if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), digestGermplasmProp, errorList)) {
             String filePath = dir + "/" + validationUnit.getDigestFileName();
-            boolean returnValue = validateRequiredColumns(filePath, validationUnit.getConditions());
-            if (status) status = returnValue;
-            returnValue = validateRequiredUniqueColumns(filePath, validationUnit.getConditions());
-            if (status) status = returnValue;
+            validateRequiredColumns(filePath, validationUnit.getConditions(), errorList);
+            validateRequiredUniqueColumns(filePath, validationUnit.getConditions(), errorList);
             for (ConditionUnit condition : validationUnit.getConditions()) {
                 if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.FILE)) {
-                    returnValue = validateColumnBetweenFiles(filePath, condition);
-                    if (status) status = returnValue;
+                    validateColumnBetweenFiles(filePath, condition, errorList);
                 }
             }
-        } else {
-            if (digestGermplasmProp.size() > 1)
-                status = false;
         }
-        printValidationDone("Germplasm-prop", status);
     }
 
 

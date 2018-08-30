@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -9,8 +8,13 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.io.FilenameUtils;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -78,8 +82,36 @@ public class DigestFileValidator {
         List<ValidationUnit> validations = digestFileValidator.readRules();
         if (validations.size() == 0) System.exit(1);
         if (digestFileValidator.loginServer()) {
+            String fileName = digestFileValidator.rootDir + "/" + "ValidationResult-" + new SimpleDateFormat("hhmmss").format(new Date()) + ".txt";
+            try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName))) {
+                writer.write("Successfully connected to the server.");
+                writer.newLine();
+            } catch (IOException e) {
+                ErrorLogger.logError("Unable to write to the file", fileName);
+            }
             for (ValidationUnit validation : validations)
-                digestFileValidator.validate(validation);
+                try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName), StandardOpenOption.APPEND)) {
+                    List<String> errorList = new ArrayList<>();
+                    digestFileValidator.validate(validation, errorList);
+                    if (errorList.size() > 0) {
+                        for (String error : errorList) {
+                            writer.write(error);
+                            writer.newLine();
+                        }
+                        System.out.println(validation.getDigestFileName() + " validation failed.");
+                        writer.write(validation.getDigestFileName() + " validation failed.");
+                        writer.newLine();
+                        writer.newLine();
+                    } else {
+                        System.out.println(validation.getDigestFileName() + " validation succeeded.");
+                        writer.write(validation.getDigestFileName() + " validation succeeded.");
+                        writer.newLine();
+                        writer.newLine();
+                    }
+                    writer.flush();
+                } catch (Exception e) {
+                    ErrorLogger.logError("Could not write to the file", fileName);
+                }
         } else {
             ErrorLogger.logError("Could not log into server with below details.", "\n URL:" + url + "\n Username:" + userName + "\n Password:" + password);
             System.exit(1);
@@ -149,44 +181,44 @@ public class DigestFileValidator {
         return true;
     }
 
-    public void validate(ValidationUnit validation) {
+    public void validate(ValidationUnit validation, List<String> errorList) {
         trimSpaces(validation);
         switch (FilenameUtils.getExtension(validation.getDigestFileName())) {
             case GERMPLASM_TABNAME:
-                new GermplasmValidator().validate(validation, rootDir);
+                new GermplasmValidator().validate(validation, rootDir, errorList);
                 break;
             case GERMPLASM_PROP_TABNAME:
-                new GermplasmPropValidator().validate(validation, rootDir);
+                new GermplasmPropValidator().validate(validation, rootDir, errorList);
                 break;
             case DNA_SAMPLE_TABNAME:
-                new DnaSampleValidator().validate(validation, rootDir);
+                new DnaSampleValidator().validate(validation, rootDir, errorList);
                 break;
             case DNA_SAMPLE_PROP_TABNAME:
-                new DnaSamplePropValidator().validate(validation, rootDir);
+                new DnaSamplePropValidator().validate(validation, rootDir, errorList);
                 break;
             case SAMPLE_TABNAME:
-                new DnarunValidator().validate(validation, rootDir);
+                new DnarunValidator().validate(validation, rootDir, errorList);
                 break;
             case SAMPLE_PROP_TABNAME:
-                new DnarunPropValidator().validate(validation, rootDir);
+                new DnarunPropValidator().validate(validation, rootDir, errorList);
                 break;
             case MARKER_TABNAME:
-                new MarkerValidator().validate(validation, rootDir);
+                new MarkerValidator().validate(validation, rootDir, errorList);
                 break;
             case MARKER_PROP_TABNAME:
-                new MarkerPropValidator().validate(validation, rootDir);
+                new MarkerPropValidator().validate(validation, rootDir, errorList);
                 break;
             case LINKAGE_GROUP_TABNAME:
-                new LinkageGroupValidator().validate(validation, rootDir);
+                new LinkageGroupValidator().validate(validation, rootDir, errorList);
                 break;
             case MARKER_LINKAGE_GROUP_TABNAME:
-                new MarkerLinkageGroupValidator().validate(validation, rootDir);
+                new MarkerLinkageGroupValidator().validate(validation, rootDir, errorList);
                 break;
             case DS_SAMPLE_TABNAME:
-                new DatasetDnarunValidator().validate(validation, rootDir);
+                new DatasetDnarunValidator().validate(validation, rootDir, errorList);
                 break;
             case DS_MARKER_TABNAME:
-                new DatasetMarkerValidator().validate(validation, rootDir);
+                new DatasetMarkerValidator().validate(validation, rootDir, errorList);
                 break;
             case VARIANT_CALL_TABNAME: // Validate has to include matrix validation
                 break;
@@ -197,7 +229,7 @@ public class DigestFileValidator {
 //        System.out.println("YELLO");
     }
 
-    void trimSpaces(ValidationUnit validationUnit) {
+    private void trimSpaces(ValidationUnit validationUnit) {
         validationUnit.setDigestFileName(validationUnit.getDigestFileName().trim());
         for (ConditionUnit conditionUnit : validationUnit.getConditions()) {
             if (conditionUnit.columnName != null) conditionUnit.columnName = conditionUnit.columnName.trim();
