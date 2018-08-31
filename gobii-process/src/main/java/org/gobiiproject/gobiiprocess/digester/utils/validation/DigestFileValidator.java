@@ -39,10 +39,6 @@ public class DigestFileValidator {
         //  this.password = "q";
     }
 
-    boolean loginServer() {
-        return loginIntoServer(url, username, password, null);
-    }
-
     public static void main(String[] args) {
         String rootDir = null, validationFile = null, url = null, userName = null, password = null;
 
@@ -79,51 +75,95 @@ public class DigestFileValidator {
 
         ErrorLogger.logDebug("Entered Options are ", rootDir + " , " + validationFile + " , " + url + " , " + userName + " , " + password);
         DigestFileValidator digestFileValidator = new DigestFileValidator(rootDir, validationFile, url, userName, password);
-        List<ValidationUnit> validations = digestFileValidator.readRules();
-        if (validations.size() == 0) System.exit(1);
-        if (digestFileValidator.loginServer()) {
-            String fileName = digestFileValidator.rootDir + "/" + "ValidationResult-" + new SimpleDateFormat("hhmmss").format(new Date()) + ".txt";
-            try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName))) {
-                writer.write("Successfully connected to the server.");
-                writer.newLine();
-            } catch (IOException e) {
-                ErrorLogger.logError("Unable to write to the file", fileName);
+
+        String fileName = digestFileValidator.rootDir + "/" + "ValidationResult-" + new SimpleDateFormat("hhmmss").format(new Date()) + ".txt";
+        List<String> errorList = new ArrayList<>();
+        List<ValidationUnit> validations = null;
+
+        //Read validation Rules
+        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName))) {
+            validations = digestFileValidator.readRules(errorList);
+            writer.newLine();
+            if (errorList.size() > 0) {
+                for (String error : errorList) {
+                    writer.write(error);
+                    writer.newLine();
+                }
+                writer.write(" validation failed.");
+                writer.flush();
+                System.exit(1);
             }
-            for (ValidationUnit validation : validations)
-                try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName), StandardOpenOption.APPEND)) {
-                    List<String> errorList = new ArrayList<>();
+            if (validations.size() == 0) {
+                writer.write("No validations defined.");
+                writer.flush();
+                System.exit(0);
+            } else {
+                writer.write("Validation started.");
+                writer.newLine();
+                writer.flush();
+            }
+        } catch (IOException e) {
+            ErrorLogger.logError("Unable to write to the file ", fileName);
+            if (validations == null) validations = new ArrayList<>();
+        } catch (MaximumErrorsValidationException e) {
+            ErrorLogger.logError("Exception in reading validation rules.", "");
+        }
+
+        // Login into server
+        if (!loginIntoServer(digestFileValidator.url, digestFileValidator.username, digestFileValidator.password, null, errorList)) {
+            try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName), StandardOpenOption.APPEND)) {
+                writer.write("Could not log into server with below details. " + "\n URL:" + url + "\n Username:" + userName + "\n Password:" + password);
+                writer.newLine();
+                for (String error : errorList) {
+                    writer.write(error);
+                    writer.newLine();
+                }
+                writer.flush();
+            } catch (IOException e) {
+                ErrorLogger.logError("Unable to write to the file ", fileName);
+            }
+            //   System.exit(1);
+        }
+
+        // Do validations
+        for (ValidationUnit validation : validations) {
+            errorList = new ArrayList<>();
+            try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName), StandardOpenOption.APPEND)) {
+                try {
                     digestFileValidator.validate(validation, errorList);
-                    if (errorList.size() > 0) {
-                        for (String error : errorList) {
-                            writer.write(error);
-                            writer.newLine();
-                        }
-                        System.out.println(validation.getDigestFileName() + " validation failed.");
-                        writer.write(validation.getDigestFileName() + " validation failed.");
-                        writer.newLine();
-                        writer.newLine();
-                    } else {
-                        System.out.println(validation.getDigestFileName() + " validation succeeded.");
-                        writer.write(validation.getDigestFileName() + " validation succeeded.");
-                        writer.newLine();
+                } catch (MaximumErrorsValidationException e) {
+                    //Don't do any thing. This implies that error list is full. Later code handles it.
+                } catch (Exception e) {
+                    errorList.add(e.getMessage());
+                }
+                if (errorList.size() > 0) {
+                    for (String error : errorList) {
+                        writer.write(error);
                         writer.newLine();
                     }
-                    writer.flush();
-                } catch (Exception e) {
-                    ErrorLogger.logError("Could not write to the file", fileName);
+                    System.out.println(validation.getDigestFileName() + " validation failed.");
+                    writer.write(validation.getDigestFileName() + " validation failed. No of failures: " + errorList.size());
+                } else {
+                    System.out.println(validation.getDigestFileName() + " validation succeeded.");
+                    writer.write(validation.getDigestFileName() + " validation succeeded.");
                 }
-        } else {
-            ErrorLogger.logError("Could not log into server with below details.", "\n URL:" + url + "\n Username:" + userName + "\n Password:" + password);
-            System.exit(1);
+                writer.newLine();
+                writer.newLine();
+                writer.flush();
+            } catch (IOException e) {
+                ErrorLogger.logError("Could not write to the file", fileName);
+            }
         }
+
     }
 
     /**
      * Reads rules JSON file stores in an object and returns it.
+     *
+     * @param errorList error list
      */
-    private List<ValidationUnit> readRules() {
-        // Get allowed digest extensions
-        List<ValidationUnit> validations;
+    private List<ValidationUnit> readRules(List<String> errorList) throws MaximumErrorsValidationException {
+        List<ValidationUnit> validations = new ArrayList<>();
         try {
             // Convert JSON string from file to Object
             File rules = new File(rulesFile);
@@ -135,14 +175,9 @@ public class DigestFileValidator {
                         .readValue(getClass().getClassLoader().getResourceAsStream(rulesFile), ValidationRules.class);
             validations = validationRules.getValidations();
         } catch (IOException e) {
-            ErrorLogger.logError("Exception in reading rules file.", e);
-            validations = new ArrayList<>();
-            return validations;
+            ValidationUtil.addMessageToList("Exception in reading rules file." + e, errorList);
         }
-        if (!validateRules(validations)) {
-            validations = new ArrayList<>();
-            return validations;
-        }
+        validateRules(validations, errorList);
         return validations;
     }
 
@@ -153,35 +188,30 @@ public class DigestFileValidator {
      * Checks if column name and required fields are defined in all conditionUnits or not.
      *
      * @param validations List of validations read from JSON
-     * @return whether it is a valid JSON or not.
+     * @param errorList   error list
      */
-    private boolean validateRules(List<ValidationUnit> validations) {
-        List<String> allowedExtensions = ValidationUtil.getAllowedExtensions();
-        if (allowedExtensions.size() == 0) return false;
+    private void validateRules(List<ValidationUnit> validations, List<String> errorList) throws MaximumErrorsValidationException {
+        List<String> allowedExtensions = ValidationUtil.getAllowedExtensions(errorList);
+        if (allowedExtensions.size() == 0) return;
         List<String> encounteredDigestExtensions = new ArrayList<>();
         for (ValidationUnit validation : validations) {
             if (!allowedExtensions.contains(FilenameUtils.getExtension(validation.getDigestFileName()))) {
-                ErrorLogger.logError("Entered digestFileName is not a valid", validation.getDigestFileName());
-                return false;
+                ValidationUtil.addMessageToList("Entered digestFileName is not a valid " + validation.getDigestFileName(), errorList);
+                return;
             } else if (encounteredDigestExtensions.contains(validation.getDigestFileName())) {
-                ErrorLogger.logError("DigestFileName", validation.getDigestFileName() + " is already defined.");
-                return false;
+                ValidationUtil.addMessageToList("DigestFileName" + validation.getDigestFileName() + " is already defined.", errorList);
+                return;
             } else {
                 encounteredDigestExtensions.add(validation.getDigestFileName());
             }
             List<ConditionUnit> conditions = validation.getConditions();
-            for (ConditionUnit condition : conditions) {
-                if (condition.columnName == null || condition.required == null) {
-                    ErrorLogger.logError("DigestFileName :" + validation.getDigestFileName() + " conditions does not have all required fields.", "");
-                    return false;
-                }
-            }
-
+            for (ConditionUnit condition : conditions)
+                if (condition.columnName == null || condition.required == null)
+                    ValidationUtil.addMessageToList("DigestFileName :" + validation.getDigestFileName() + " conditions does not have all required fields.", errorList);
         }
-        return true;
     }
 
-    public void validate(ValidationUnit validation, List<String> errorList) {
+    public void validate(ValidationUnit validation, List<String> errorList) throws MaximumErrorsValidationException {
         trimSpaces(validation);
         switch (FilenameUtils.getExtension(validation.getDigestFileName())) {
             case GERMPLASM_TABNAME:
@@ -223,8 +253,7 @@ public class DigestFileValidator {
             case VARIANT_CALL_TABNAME: // Validate has to include matrix validation
                 break;
             default:
-                ErrorLogger.logError("DigestFileValidator", "Given extension " + validation.getDigestFileName() + " is not valid.");
-                System.exit(1);
+                ValidationUtil.addMessageToList("DigestFileValidator" + " Given extension " + validation.getDigestFileName() + " is not valid.", errorList);
         }
 //        System.out.println("YELLO");
     }

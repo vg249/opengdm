@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions;
 
 import java.lang.reflect.Field;
@@ -18,10 +17,10 @@ class ValidationUtil {
     /**
      * Gets the list of allowed file extensions
      *
+     * @param errorList error list
      * @return Map of extensions
-     * @throws IllegalAccessException
      */
-    static List<String> getAllowedExtensions() {
+    static List<String> getAllowedExtensions(List<String> errorList) throws MaximumErrorsValidationException {
         Map<String, String> allowedExtensions = new HashMap<>();
         Field[] fields = DigesterFileExtensions.class.getDeclaredFields();
         List<String> values = null;
@@ -30,7 +29,7 @@ class ValidationUtil {
                 allowedExtensions.put(String.valueOf(field.get(null)), field.getName());
                 values = allowedExtensions.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList());
             } catch (IllegalAccessException e) {
-                ErrorLogger.logError("Could not get allowed file extensions.", "");
+                addMessageToList("Could not get allowed file extensions.", errorList);
                 values = new ArrayList<>();
             }
         }
@@ -38,8 +37,12 @@ class ValidationUtil {
 
     }
 
-    static void printMissingFieldError(String s1, String s2, List<String> errorList) {
-        errorList.add("Condition type defined as " + s1 + " but " + s2 + " not defined.");
+    static void printMissingFieldError(String s1, String s2, List<String> errorList) throws MaximumErrorsValidationException {
+        addMessageToList("Condition type defined as " + s1 + " but " + s2 + " not defined.", errorList);
     }
 
+    static void addMessageToList(String msg, List<String> errorList) throws MaximumErrorsValidationException {
+        errorList.add(msg);
+        if (errorList.size() >= 5) throw new MaximumErrorsValidationException();
+    }
 }

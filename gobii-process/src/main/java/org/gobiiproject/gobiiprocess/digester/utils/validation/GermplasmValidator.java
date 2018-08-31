@@ -9,7 +9,7 @@ import static org.gobiiproject.gobiiprocess.digester.utils.validation.Validation
 
 class GermplasmValidator extends BaseValidator {
     @Override
-    void validate(ValidationUnit validationUnit, String dir, List<String> errorList) {
+    void validate(ValidationUnit validationUnit, String dir, List<String> errorList) throws MaximumErrorsValidationException {
         List<String> digestGermplasm = new ArrayList<>();
         if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), digestGermplasm, errorList)) {
             String fileName = dir + "/" + validationUnit.getDigestFileName();
@@ -19,14 +19,12 @@ class GermplasmValidator extends BaseValidator {
                 if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.DB)) {
                     if (condition.typeName != null) {
                         if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV))
-                            if (condition.fieldToCompare != null) {
+                            if (condition.fieldToCompare != null)
                                 validateCV(fileName, condition.fieldToCompare, errorList);
-                            } else {
+                            else
                                 printMissingFieldError("DB", "fieldToCompare", errorList);
-                            }
-                    } else {
+                    } else
                         printMissingFieldError("DB", "typeName", errorList);
-                    }
                 }
             }
         }
@@ -40,8 +38,8 @@ class GermplasmValidator extends BaseValidator {
      * @param fieldToCompare field to check
      * @param errorList      error list
      */
-    private void validateCV(String fileName, String fieldToCompare, List<String> errorList) {
-        List<String[]> collect = readFileIntoMemory(fileName);
+    private void validateCV(String fileName, String fieldToCompare, List<String> errorList) throws MaximumErrorsValidationException {
+        List<String[]> collect = readFileIntoMemory(fileName,errorList);
         if (collect != null) {
             List<String> headers = Arrays.asList(collect.get(0));
             if (headers.contains(fieldToCompare)) {

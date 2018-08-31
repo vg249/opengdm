@@ -4,7 +4,7 @@ import java.util.*;
 
 class GermplasmPropValidator extends BaseValidator {
     @Override
-    void validate(ValidationUnit validationUnit, String dir, List<String> errorList) {
+    void validate(ValidationUnit validationUnit, String dir, List<String> errorList) throws MaximumErrorsValidationException {
         List<String> digestGermplasmProp = new ArrayList<>();
         if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), digestGermplasmProp, errorList)) {
             String filePath = dir + "/" + validationUnit.getDigestFileName();

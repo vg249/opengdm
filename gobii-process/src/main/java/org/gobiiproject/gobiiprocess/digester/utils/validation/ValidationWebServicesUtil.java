@@ -1,7 +1,9 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
 import org.apache.commons.lang.StringUtils;
+import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
+import org.gobiiproject.gobiiapimodel.payload.Status;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
@@ -11,14 +13,14 @@ import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 class ValidationWebServicesUtil {
 
-    static boolean loginIntoServer(String url, String username, String password, String crop) {
+    static boolean loginIntoServer(String url, String username, String password, String crop, List<String> errorList) {
         try {
             GobiiClientContext.getInstance(url, true).getCurrentClientCropType();
             String contextRoot = new URL(url).getPath();
@@ -33,27 +35,25 @@ class ValidationWebServicesUtil {
                     break;
                 }
             }
-
             if (crop == null || crop.isEmpty()) {
-                ErrorLogger.logError("Undefined crop for server: ", url);
+                errorList.add("Undefined crop for server: " + url);
                 return false;
             }
 
-            ErrorLogger.logDebug("Logging in to url ", url);
             boolean login = GobiiClientContext.getInstance(url, true).login(crop, username, password);
             if (!login) {
                 String failureMessage = GobiiClientContext.getInstance(null, false).getLoginFailure();
-                ErrorLogger.logError("Error logging in: ", failureMessage);
+                errorList.add("Error logging in: " + failureMessage);
                 return false;
             }
             return true;
         } catch (Exception e) {
-            ErrorLogger.logError("Error in logging into server", e);
+            errorList.add("Error in logging into server" + e.getMessage());
             return false;
         }
     }
 
-    static void validateCVName(List<NameIdDTO> nameIdDTOList, String cvGroupName, List<String> errorList) {
+    static void validateCVName(List<NameIdDTO> nameIdDTOList, String cvGroupName, List<String> errorList) throws MaximumErrorsValidationException {
         try {
             PayloadEnvelope<NameIdDTO> payloadEnvelope = new PayloadEnvelope<>();
             payloadEnvelope.getHeader().setGobiiProcessType(GobiiProcessType.CREATE);
@@ -76,18 +76,28 @@ class ValidationWebServicesUtil {
                     namesUri.setParamValue("filterValue", CvGroup.CVGROUP_MARKER_STRAND.getCvGroupName());
                     break;
                 default:
-                    errorList.add(cvGroupName + " is not defined in CV table. ");
+                    ValidationUtil.addMessageToList(cvGroupName + " is not defined in CV table. ", errorList);
                     return;
             }
             PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = gobiiEnvelopeRestResource.post(NameIdDTO.class, payloadEnvelope);
+            Status status = responsePayloadEnvelope.getHeader().getStatus();
+            if (!status.isSucceeded()) {
+                ArrayList<HeaderStatusMessage> statusMessages = status.getStatusMessages();
+                for (HeaderStatusMessage message : statusMessages) {
+                    ValidationUtil.addMessageToList(message.getMessage(), errorList);
+                }
+                return;
+            }
             List<NameIdDTO> nameIdDTOListResponse = responsePayloadEnvelope.getPayload().getData();
             for (NameIdDTO nameIdDTO : nameIdDTOListResponse) {
                 if (nameIdDTO.getId() == 0) {
-                    errorList.add(nameIdDTO.getName() + " in column " + cvGroupName + " is not a valid name.");
+                    ValidationUtil.addMessageToList(nameIdDTO.getName() + " in column " + cvGroupName + " is not a valid name.", errorList);
                 }
             }
+        } catch (MaximumErrorsValidationException e) {
+            throw e;
         } catch (Exception e) {
-            errorList.add(cvGroupName + " validation error. " + e);
+            ValidationUtil.addMessageToList(e.getMessage(), errorList);
         }
     }
 }
