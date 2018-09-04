@@ -63,7 +63,7 @@
 
     <!-- **** Security Beans *************************************** -->
     <bean id="UserDao"
-          class="org.gobiiproject.gobiidao.entity.access.impl.UserDaoImpl"/>
+          class="org.gobiiproject.gobiidao.entity.access.impl.mock.UserDaoImpl"/>
     <bean id="dtoMapProject" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapProjectImpl"/>
     <bean id="projectService"
           class="org.gobiiproject.gobidomain.services.impl.ProjectServiceImpl"/>
