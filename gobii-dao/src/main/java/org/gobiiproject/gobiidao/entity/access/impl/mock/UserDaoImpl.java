@@ -3,7 +3,7 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-24
 // ************************************************************************
-package org.gobiiproject.gobiidao.entity.access.impl;
+package org.gobiiproject.gobiidao.entity.access.impl.mock;
 
 import org.gobiiproject.gobiidao.entity.access.UserDao;
 import org.gobiiproject.gobiimodel.dto.system.User;
