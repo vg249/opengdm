@@ -167,7 +167,7 @@
         },
         {
           "columnName": "project_id",
-          "required": "no",
+          "required": "yes",
           "fileExistenceCheck": "digest.dnasample",
           "fileExists": "yes",
           "type": "File",

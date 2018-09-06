@@ -63,7 +63,23 @@ public abstract class BaseValidator {
             if (condition.required.equalsIgnoreCase(ValidationConstants.YES) && !(condition.unique != null && condition.unique.equalsIgnoreCase(ValidationConstants.YES)))
                 if (!requiredFields.contains(condition.columnName))
                     requiredFields.add(condition.columnName);
+        if (requiredFields.size() > 0)
+            validateColumns(fileName, requiredFields, errorList);
+    }
 
+    /**
+     * Parses the validation rules and gives the rules which are required and not  unique
+     *
+     * @param fileName   name of file
+     * @param conditions conditions
+     * @param errorList  error list
+     */
+    void validateNotNullOptionalColumns(String fileName, List<ConditionUnit> conditions, List<String> errorList) throws MaximumErrorsValidationException {
+        List<String> requiredFields = new ArrayList<>();
+        for (ConditionUnit condition : conditions)
+            if (condition.required.equalsIgnoreCase(ValidationConstants.NO) && !(condition.nullAllowed != null && condition.nullAllowed.equalsIgnoreCase(ValidationConstants.NO)))
+                if (!requiredFields.contains(condition.columnName))
+                    requiredFields.add(condition.columnName);
         if (requiredFields.size() > 0)
             validateColumns(fileName, requiredFields, errorList);
     }
@@ -227,6 +243,7 @@ public abstract class BaseValidator {
      * @param errorList error list
      */
     void validateColumnBetweenFiles(String filePath, ConditionUnit condition, List<String> errorList) throws MaximumErrorsValidationException {
+        String parentDirectory = new File(filePath).getParent();
         if (condition.typeName != null) {
             if (ValidationUtil.getAllowedExtensions(errorList).contains(condition.typeName.substring(condition.typeName.indexOf('.') + 1))) {
                 if (condition.fieldToCompare != null) {
@@ -234,12 +251,12 @@ public abstract class BaseValidator {
                     String columnName = condition.columnName;
                     String fieldToCompare = condition.fieldToCompare;
                     List<String> filesList = new ArrayList<>();
-                    if (getFilesWithExtension(new File(filePath).getParent(), comparisonFileName, filesList, errorList)) {
+                    if (getFilesWithExtension(parentDirectory, comparisonFileName, filesList, errorList)) {
                         if (filesList.size() != 1) {
-                            addMessageToList("There should be only one file in the folder " + new File(filePath).getParent(), errorList);
+                            addMessageToList("There should be only one file in the folder " + parentDirectory, errorList);
                             return;
                         }
-                        String comparisonFilePath = new File(filePath).getParent() + "/" + comparisonFileName;
+                        String comparisonFilePath = parentDirectory + "/" + comparisonFileName;
                         List<String> fileColumnElements = getFileColumn(filePath, columnName, errorList);
                         if (fileColumnElements.size() == 0) return;
                         else {
@@ -255,7 +272,7 @@ public abstract class BaseValidator {
                             Collections.sort(comparisonFileColumnElements);
                         }
                         if (!fileColumnElements.equals(comparisonFileColumnElements)) {
-                            addMessageToList(fieldToCompare + " is not same in " + filePath + "\t" + comparisonFilePath, errorList);
+                            addMessageToList(columnName + " is not same in " + filePath + " as " + fieldToCompare + " in " + comparisonFilePath, errorList);
                         }
                     }
                 } else {
@@ -281,14 +298,14 @@ public abstract class BaseValidator {
         for (ConditionUnit condition : validationUnit.getConditions())
             if (condition.fileExistenceCheck != null) {
                 String existenceFile = condition.fileExistenceCheck;
-                List<String> digestGermplasm = new ArrayList<>();
+                List<String> files = new ArrayList<>();
                 boolean shouldFileExist = condition.fileExists.equalsIgnoreCase(ValidationConstants.YES);
-                getFilesWithExtension(new File(fileName).getParent(), existenceFile, digestGermplasm, errorList);
-                if (digestGermplasm.size() > 1) {
+                getFilesWithExtension(new File(fileName).getParent(), existenceFile, files, errorList);
+                if (files.size() > 1) {
                     addMessageToList("There should be maximum one file in the folder " + new File(fileName).getParent(), errorList);
                     return;
                 }
-                if ((shouldFileExist && digestGermplasm.size() == 1) || (!shouldFileExist && digestGermplasm.size() == 0)) {
+                if ((shouldFileExist && files.size() == 1) || (!shouldFileExist && files.size() == 0)) {
                     // Condition is satisfied
                     if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.DB)) {
                         //TODO: Implement the database call
@@ -324,5 +341,30 @@ public abstract class BaseValidator {
                     addMessageToList(column + " value does not exist in file. Please check the contents of file. " + filepath, errorList);
 
         return fileColumnElements;
+    }
+
+    /**
+     * Check for the header in a file.
+     * Check the required field and returns status appropriately
+     *
+     * @param fileName      fileName
+     * @param conditionUnit condition
+     * @param errorList     error list
+     * @return header exists or not
+     * @throws MaximumErrorsValidationException exception
+     */
+    boolean checkForHeaderExistence(String fileName, ConditionUnit conditionUnit, List<String> errorList) throws MaximumErrorsValidationException {
+        List<String[]> collectList = readFileIntoMemory(fileName, errorList);
+        if (collectList != null) {
+            List<String> headers = Arrays.asList(collectList.get(0));
+            boolean headerExist = headers.contains(conditionUnit.columnName);
+            // If header exists proceed
+            if (headerExist) return true;
+                // Header does not exist and condition states this as required
+            else if (conditionUnit.required.equalsIgnoreCase("yes")) {
+                addMessageToList(conditionUnit.fieldToCompare + " is required but could not be found.", errorList);
+                return false;
+            } else return false;
+        } else return false;
     }
 }
