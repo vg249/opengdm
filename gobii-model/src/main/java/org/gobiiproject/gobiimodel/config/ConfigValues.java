@@ -2,12 +2,15 @@ package org.gobiiproject.gobiimodel.config;
 
 import org.gobiiproject.gobiimodel.security.Decrypter;
 import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
+import org.gobiiproject.gobiimodel.types.GobiiServerType;
 import org.gobiiproject.gobiimodel.types.GobiiFileNoticeType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementMap;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -244,9 +247,13 @@ class ConfigValues {
         gobiiCropConfig
                 .setGobiiCropType(gobiiCropType)
                 .setActive(isActive)
-                .setHost(serviceDomain)
-                .setContextPath(serviceAppRoot)
-                .setPort(servicePort);
+                .addServer(GobiiServerType.WEB,
+                        serviceDomain,
+                        serviceAppRoot,
+                        servicePort,
+                        null,
+                        null,
+                        false);
     }
 
     public void removeCrop(String cropId) throws Exception {
