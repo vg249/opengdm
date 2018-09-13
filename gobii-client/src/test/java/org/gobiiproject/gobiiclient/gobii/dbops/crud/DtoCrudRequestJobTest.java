@@ -3,6 +3,7 @@ package org.gobiiproject.gobiiclient.gobii.dbops.crud;
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiiapimodel.hateos.Link;
 import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
+import org.gobiiproject.gobiiapimodel.payload.Payload;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
@@ -17,10 +18,13 @@ import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.cvnames.JobType;
+import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.DnaSampleDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
@@ -568,6 +572,60 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
                 reRetrievedDatasetDto.getModifiedBy(),
                 newJobDto.getSubmittedBy());
 
+
+    }
+
+    @Test
+    public void submitDnaSamplesByJobName() throws Exception {
+
+        String jobName = "testapp_2018-08-21_10-35-05-378";
+
+
+        // create mock list of DnaSampleDTO
+
+        // get existing projectID
+        RestUri restUriProject = GobiiClientContext.getInstance(null, false).getUriFactory().resourceColl(GobiiServiceRequestId.URL_PROJECTS);
+        GobiiEnvelopeRestResource<ProjectDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriProject);
+        PayloadEnvelope<ProjectDTO> resultEnvelope = gobiiEnvelopeRestResource.get(ProjectDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        List<ProjectDTO> projectDTOList = resultEnvelope.getPayload().getData();
+        Assert.assertNotNull(projectDTOList);
+        Assert.assertTrue(projectDTOList.size() > 0);
+        Assert.assertNotNull(projectDTOList.get(0).getProjectName());
+
+        Integer projectId = projectDTOList.get(0).getProjectId();
+
+        DnaSampleDTO dnaSampleDTO1 = new DnaSampleDTO();
+        dnaSampleDTO1.setProjectId(projectId);
+        dnaSampleDTO1.setDnaSampleName("sample_1");
+        dnaSampleDTO1.setGermplasmExternalCode("sample_code_1");
+        dnaSampleDTO1.setDnaSampleNum(1);
+        dnaSampleDTO1.setDnarunName("sample_runName_1");
+
+        DnaSampleDTO dnaSampleDTO2 = new DnaSampleDTO();
+        dnaSampleDTO2.setProjectId(projectId);
+        dnaSampleDTO2.setDnaSampleName("sample_2");
+        dnaSampleDTO2.setGermplasmExternalCode("sample_code_2");
+        dnaSampleDTO2.setDnaSampleNum(1);
+        dnaSampleDTO2.setDnarunName("sample_runName_2");
+
+        List<DnaSampleDTO> dnaSampleDTOList = new ArrayList<>();
+        dnaSampleDTOList.add(dnaSampleDTO1);
+        dnaSampleDTOList.add(dnaSampleDTO2);
+
+        RestUri jobsUri = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceByUriIdParamName("jobName", GobiiServiceRequestId.URL_JOB_DNASAMPLE);
+        jobsUri.setParamValue("jobName", jobName);
+        GobiiEnvelopeRestResource<DnaSampleDTO> gobiiEnvelopeRestResourceJobs = new GobiiEnvelopeRestResource<>(jobsUri);
+
+        PayloadEnvelope<DnaSampleDTO> payloadEnvelope = new PayloadEnvelope<>();
+        payloadEnvelope.getHeader().setGobiiProcessType(GobiiProcessType.CREATE);
+        payloadEnvelope.getPayload().setData(dnaSampleDTOList);
+
+
+        PayloadEnvelope<DnaSampleDTO> responseEnvelope = gobiiEnvelopeRestResourceJobs.post(DnaSampleDTO.class, payloadEnvelope);
 
     }
 

@@ -8,7 +8,7 @@ import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.DtoMapSample;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.SampleDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.DnaSampleDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +37,9 @@ public class DtoMapSampleImpl implements DtoMapSample {
 
     @Transactional
     @Override
-    public SampleDTO getSampleDetailsByExternalCode(String externalCode) throws GobiiDtoMappingException {
+    public DnaSampleDTO getSampleDetailsByExternalCode(String externalCode) throws GobiiDtoMappingException {
 
-        SampleDTO returnVal = new SampleDTO();
+        DnaSampleDTO returnVal = new DnaSampleDTO();
 
 
         try {

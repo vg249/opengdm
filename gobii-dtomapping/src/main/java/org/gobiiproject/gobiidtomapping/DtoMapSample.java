@@ -2,7 +2,7 @@ package org.gobiiproject.gobiidtomapping;
 
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.SampleDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.DnaSampleDTO;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface DtoMapSample {
 
-    SampleDTO getSampleDetailsByExternalCode(String externalCode) throws GobiiDtoMappingException;
+    DnaSampleDTO getSampleDetailsByExternalCode(String externalCode) throws GobiiDtoMappingException;
 
     List<DataSetDTO> getDatasetForLoadedSamplesOfDataType(String externalCode, String datasetType) throws GobiiDtoMappingException;
 }

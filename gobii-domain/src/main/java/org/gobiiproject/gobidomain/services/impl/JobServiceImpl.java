@@ -4,6 +4,7 @@ import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.JobService;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapJob;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.DnaSampleDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -130,5 +131,20 @@ public class JobServiceImpl implements JobService {
 
     }
 
+
+    @Override
+    public JobDTO submitDnaSamplesByJobName(String jobName, List<DnaSampleDTO> dnaSampleDTOList) throws GobiiDomainException {
+
+        JobDTO returnVal;
+
+        returnVal = dtoMapJob.submitDnaSamplesByJobName(jobName, dnaSampleDTOList);
+
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.CREATE);
+
+
+        return returnVal;
+
+    }
 
 }
