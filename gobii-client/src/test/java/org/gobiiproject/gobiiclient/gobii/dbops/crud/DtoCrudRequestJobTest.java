@@ -66,7 +66,47 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
 
         Assert.assertNotEquals(jobDTOResponse, null);
         Assert.assertTrue(jobDTOResponse.getJobId() > 0);
+        Assert.assertTrue(jobDTOResponse.getJobName().equals(newJobDto.getJobName())); // verify that jobName was not overwritten by the server
 
+
+        //test for an empty jobDTO name
+//        make dummy statusDTO
+        JobDTO newEmptyNameJobDto = TestDtoFactory.makePopulateJobDTO();
+        newEmptyNameJobDto.setJobName("");
+
+        statusUri = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_JOB);
+        gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(statusUri);
+        payloadEnvelope = new PayloadEnvelope<>(newEmptyNameJobDto, GobiiProcessType.CREATE);
+        resultEnvelope = gobiiEnvelopeRestResource
+                .post(JobDTO.class, payloadEnvelope);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+
+        jobDTOResponse = resultEnvelope.getPayload().getData().get(0);
+
+        Assert.assertNotEquals(jobDTOResponse, null);
+        Assert.assertTrue(!jobDTOResponse.getJobName().isEmpty());
+
+        //test for a null jobDTO name
+        JobDTO newNullNameJobDto = TestDtoFactory.makePopulateJobDTO();
+        newNullNameJobDto.setJobName(null);
+
+        statusUri = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_JOB);
+        gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(statusUri);
+        payloadEnvelope = new PayloadEnvelope<>(newNullNameJobDto, GobiiProcessType.CREATE);
+        resultEnvelope = gobiiEnvelopeRestResource
+                .post(JobDTO.class, payloadEnvelope);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+
+        jobDTOResponse = resultEnvelope.getPayload().getData().get(0);
+
+        Assert.assertNotEquals(jobDTOResponse, null);
+        Assert.assertTrue(!jobDTOResponse.getJobName().isEmpty());
     }
 
     /* This unit test should test the creation of a matrix job with dataset ID is not specified
