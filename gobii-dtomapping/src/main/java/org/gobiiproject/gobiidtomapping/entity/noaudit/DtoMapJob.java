@@ -2,6 +2,7 @@ package org.gobiiproject.gobiidtomapping.entity.noaudit;
 
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.DnaSampleDTO;
 
 import java.text.ParseException;
 import java.util.List;
@@ -16,5 +17,6 @@ public interface DtoMapJob {
     JobDTO createJob(JobDTO jobDTO) throws GobiiDtoMappingException, ParseException;
     JobDTO replaceJob(String jobName, JobDTO jobDTO) throws GobiiDtoMappingException;
     JobDTO getJobDetailsByDatasetId(Integer datasetId);
+    JobDTO submitDnaSamplesByJobName(String jobName, List<DnaSampleDTO> dnaSampleDTOList) throws GobiiDtoMappingException;
 
 }
