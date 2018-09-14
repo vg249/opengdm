@@ -618,14 +618,14 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
                 .getUriFactory()
                 .resourceByUriIdParamName("jobName", GobiiServiceRequestId.URL_JOB_DNASAMPLE);
         jobsUri.setParamValue("jobName", jobName);
-        GobiiEnvelopeRestResource<DnaSampleDTO> gobiiEnvelopeRestResourceJobs = new GobiiEnvelopeRestResource<>(jobsUri);
+        GobiiEnvelopeRestResource<DnaSampleDTO,JobDTO> gobiiEnvelopeRestResourceJobs = new GobiiEnvelopeRestResource<>(jobsUri);
 
         PayloadEnvelope<DnaSampleDTO> payloadEnvelope = new PayloadEnvelope<>();
         payloadEnvelope.getHeader().setGobiiProcessType(GobiiProcessType.CREATE);
         payloadEnvelope.getPayload().setData(dnaSampleDTOList);
 
 
-        PayloadEnvelope<DnaSampleDTO> responseEnvelope = gobiiEnvelopeRestResourceJobs.post(DnaSampleDTO.class, payloadEnvelope);
+        PayloadEnvelope<JobDTO> responseEnvelope = gobiiEnvelopeRestResourceJobs.post(JobDTO.class, payloadEnvelope);
 
     }
 
