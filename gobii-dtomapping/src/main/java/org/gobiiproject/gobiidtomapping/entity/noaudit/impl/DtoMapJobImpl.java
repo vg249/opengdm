@@ -14,6 +14,7 @@ import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,7 +88,7 @@ public class DtoMapJobImpl implements DtoMapJob {
 
         //check if JobName is not null
 
-        if(jobDTO.getJobName() == null || jobDTO.getJobName().isEmpty()){ // if empty or null, indicate a new jobName.
+        if(LineUtils.isNullOrEmpty(jobDTO.getJobName())){ // if empty or null, indicate a new jobName.
             jobDTO.setJobName(DateUtils.makeDateIdString());
         }
 
