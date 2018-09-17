@@ -199,23 +199,4 @@ public class DtoMapJobImpl implements DtoMapJob {
 
 
     }
-
-
-    @Override
-    public JobDTO submitDnaSamplesByJobName(String jobName, List<DnaSampleDTO> dnaSampleDTOList) throws GobiiDtoMappingException {
-
-        JobDTO returnVal = new JobDTO();
-
-        try {
-
-            returnVal = this.getJobDetailsByJobName(jobName);
-
-
-        } catch (Exception e) {
-            throw new GobiiDtoMappingException(e);
-        }
-
-        return returnVal;
-    }
-
 }

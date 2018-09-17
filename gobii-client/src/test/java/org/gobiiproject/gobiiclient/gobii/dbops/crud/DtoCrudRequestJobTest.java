@@ -31,6 +31,7 @@ import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -618,7 +619,30 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
     @Test
     public void submitDnaSamplesByJobName() throws Exception {
 
-        String jobName = "testapp_2018-08-21_10-35-05-378";
+        // create new jobDTO
+        JobDTO newJobDto = new JobDTO();
+        newJobDto.setType(JobType.CV_JOBTYPE_LOAD.getCvName());
+        newJobDto.setPayloadType(JobPayloadType.CV_PAYLOADTYPE_SAMPLES.getCvName());
+        newJobDto.setStatus(JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS.getCvName());
+        newJobDto.setSubmittedBy(1);
+        newJobDto.setSubmittedDate(new Date());
+
+        RestUri createJobUri = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_JOB);
+        GobiiEnvelopeRestResource<JobDTO, JobDTO> gobiiEnvelopeRestResourceCreate = new GobiiEnvelopeRestResource<>(createJobUri);
+        PayloadEnvelope<JobDTO> payloadEnvelopeCreateJob = new PayloadEnvelope<>(newJobDto, GobiiProcessType.CREATE);
+        PayloadEnvelope<JobDTO> resultEnvelopeCreateJob = gobiiEnvelopeRestResourceCreate.post(JobDTO.class, payloadEnvelopeCreateJob);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeCreateJob.getHeader()));
+
+        JobDTO jobDtoResponse = resultEnvelopeCreateJob.getPayload().getData().get(0);
+
+        Assert.assertNotEquals(jobDtoResponse, null);
+        Assert.assertTrue(jobDtoResponse.getJobId() > 0);
+        Assert.assertNotNull(jobDtoResponse.getJobName());
+
+        String jobName = jobDtoResponse.getJobName();
 
 
         // create mock list of DnaSampleDTO
@@ -666,6 +690,11 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
 
 
         PayloadEnvelope<JobDTO> responseEnvelope = gobiiEnvelopeRestResourceJobs.post(JobDTO.class, payloadEnvelope);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(responseEnvelope.getHeader()));
+        Assert.assertNotNull(responseEnvelope.getPayload().getData());
+        Assert.assertTrue(responseEnvelope.getPayload().getData().size() > 0);
+        Assert.assertNotNull(responseEnvelope.getPayload().getData().get(0).getJobName());
 
     }
 

@@ -17,6 +17,5 @@ public interface DtoMapJob {
     JobDTO createJob(JobDTO jobDTO) throws GobiiDtoMappingException, ParseException;
     JobDTO replaceJob(String jobName, JobDTO jobDTO) throws GobiiDtoMappingException;
     JobDTO getJobDetailsByDatasetId(Integer datasetId);
-    JobDTO submitDnaSamplesByJobName(String jobName, List<DnaSampleDTO> dnaSampleDTOList) throws GobiiDtoMappingException;
 
 }
