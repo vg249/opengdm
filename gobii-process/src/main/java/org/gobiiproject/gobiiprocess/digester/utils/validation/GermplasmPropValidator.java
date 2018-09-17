@@ -10,13 +10,11 @@ class GermplasmPropValidator extends BaseValidator {
             String filePath = dir + "/" + validationUnit.getDigestFileName();
             validateRequiredColumns(filePath, validationUnit.getConditions(), errorList);
             validateRequiredUniqueColumns(filePath, validationUnit.getConditions(), errorList);
-            for (ConditionUnit condition : validationUnit.getConditions()) {
-                if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.FILE)) {
-                    validateColumnBetweenFiles(filePath, condition, errorList);
-                }
-            }
+            validateColumnsBetweenFiles(filePath, validationUnit, errorList);
         }
     }
+
+
 
 
 }

@@ -235,6 +235,23 @@ public abstract class BaseValidator {
         return collect;
     }
 
+
+    /**
+     * Checks if there is file comparision and does that
+     *
+     * @param filePath       File Path
+     * @param validationUnit Validation Unit
+     * @param errorList      error list
+     * @throws MaximumErrorsValidationException maximum error exception
+     */
+    void validateColumnsBetweenFiles(String filePath, ValidationUnit validationUnit, List<String> errorList) throws MaximumErrorsValidationException {
+        for (ConditionUnit condition : validationUnit.getConditions()) {
+            if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.FILE)) {
+                validateColumnBetweenFiles(filePath, condition, errorList);
+            }
+        }
+    }
+
     /**
      * Validates that a particular column is same in both the files
      *

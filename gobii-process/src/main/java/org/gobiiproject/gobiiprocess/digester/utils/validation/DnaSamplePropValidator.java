@@ -12,11 +12,7 @@ class DnaSamplePropValidator extends BaseValidator {
             validateRequiredColumns(filePath, validationUnit.getConditions(), errorList);
             validateRequiredUniqueColumns(filePath, validationUnit.getConditions(), errorList);
             validateUniqueColumnList(filePath, validationUnit, errorList);
-            for (ConditionUnit condition : validationUnit.getConditions()) {
-                if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.FILE)) {
-                    validateColumnBetweenFiles(filePath, condition, errorList);
-                }
-            }
+            validateColumnsBetweenFiles(filePath, validationUnit, errorList);
         }
     }
 }

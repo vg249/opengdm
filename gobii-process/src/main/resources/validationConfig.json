@@ -193,6 +193,25 @@
           "fieldToCompare": "num"
         }
       ]
+    },
+    {
+      "digestFileName": "digest.dnarun_prop",
+      "conditions": [
+        {
+          "columnName": "experiment_id",
+          "required": "yes",
+          "type": "File",
+          "typeName": "digest.dnarun",
+          "fieldToCompare": "experiment_id"
+        },
+        {
+          "columnName": "dnarun_name",
+          "required": "yes",
+          "type": "File",
+          "typeName": "digest.dnarun",
+          "fieldToCompare": "name"
+        }
+      ]
     }
   ]
 }
