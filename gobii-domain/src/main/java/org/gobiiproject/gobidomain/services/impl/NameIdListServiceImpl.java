@@ -32,6 +32,11 @@ public class NameIdListServiceImpl implements NameIdListService {
     @Override
     public List<NameIdDTO> getNameIdList(DtoMapNameIdParams dtoMapNameIdParams) throws GobiiException {
 
+        /** NOTE
+         * Added this validation to prevent the issue for GP1-1882.
+         * If validation is REMOVED, the service that gets the ID's for given name list should be fixed so that it will work even if the list contains duplicate names
+         * **/
+
         if (dtoMapNameIdParams.getGobiiFilterType().equals(GobiiFilterType.NAMES_BY_NAME_LIST)) {
 
             Set<String> duplicateNames = getDuplicateNames(dtoMapNameIdParams.getNameIdDTOList());
