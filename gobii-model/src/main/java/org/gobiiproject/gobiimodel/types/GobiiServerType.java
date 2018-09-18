@@ -3,9 +3,14 @@ package org.gobiiproject.gobiimodel.types;
 /**
  * Created by Phil on 5/18/2016.
  */
-public enum GobiiDbType {
+public enum GobiiServerType {
     // these must correspond to the jdbc driver name
     POSTGRESQL,
-    MONETDB,
-    UNKNOWN
+    WEB,
+    COMPUTE_NODE,
+    KDC,
+    GENERIC,
+    OWN_CLOUD,
+    UNKNOWN,
+    LDAP
 }

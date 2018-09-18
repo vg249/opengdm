@@ -1,13 +1,30 @@
 package org.gobiiproject.gobiimodel.config;
 
 
+import org.gobiiproject.gobiimodel.security.Decrypter;
+import org.gobiiproject.gobiimodel.types.GobiiServerType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.simpleframework.xml.Element;
+import org.simpleframework.xml.ElementMap;
 import org.simpleframework.xml.Root;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Root
 public class ServerBase {
 
+    @Element(required = false)
+    private boolean decrypt = false;
+
+    @Element(required = false)
+    private String userName = null;
+
+    @Element(required = false)
+    private String password = null;
+
+    @Element(required = false)
+    private GobiiServerType gobiiServerType = null;
 
     @Element(required = false)
     private String host = "";
@@ -24,18 +41,96 @@ public class ServerBase {
     public ServerBase() {
     }
 
-    public ServerBase(String host,
+    public ServerBase(GobiiServerType gobiiServerType,
+                      String host,
                       String contextPath,
                       Integer port,
-                      boolean isActive) {
+                      boolean isActive,
+                      String userName,
+                      String password,
+                      boolean decrypt) {
 
+        this.gobiiServerType = gobiiServerType;
         this.host = host;
         this.contextPath = contextPath;
         this.port = port;
         this.isActive = isActive;
+        this.userName = userName;
+        this.password = password;
+        this.decrypt = decrypt;
 
     }
 
+    public ServerBase(GobiiServerType gobiiServerType,
+                      String host,
+                      String contextPath,
+                      Integer port,
+                      boolean isActive,
+                      boolean decrypt) {
+
+        this.gobiiServerType = gobiiServerType;
+        this.host = host;
+        this.contextPath = contextPath;
+        this.port = port;
+        this.isActive = isActive;
+        this.decrypt = decrypt;
+
+    }
+
+    public boolean isDecrypt() {
+        return decrypt;
+    }
+
+    public ServerBase setDecrypt(boolean decrypt) {
+        this.decrypt = decrypt;
+        return this;
+    }
+
+    public String getUserName() {
+
+        String returnVal = null;
+
+        if (this.decrypt) {
+            returnVal = Decrypter.decrypt(this.userName, null);
+        } else {
+            returnVal = this.userName;
+        }
+
+        return returnVal;
+    }
+
+    public ServerBase setUserName(String userName) {
+        this.userName = userName;
+        return this;
+    }
+
+    public String getPassword() {
+
+        String returnVal = null;
+
+        if (this.decrypt) {
+            returnVal = Decrypter.decrypt(this.password, null);
+        } else {
+            returnVal = this.password;
+        }
+
+        return returnVal;
+    }
+
+    public ServerBase setPassword(String password) {
+        this.password = password;
+        return this;
+    }
+
+
+    public GobiiServerType getGobiiServerType() {
+        return gobiiServerType;
+    }
+
+    public ServerBase setGobiiServerType(GobiiServerType gobiiServerType) {
+        this.gobiiServerType = gobiiServerType;
+        return this;
+    }
 
     public ServerBase setHost(String host) {
         this.host = host;
@@ -86,4 +181,58 @@ public class ServerBase {
     }
 
 
+
+    // These are in the general base class only temporarily until these KDC properties
+    // can be handled differently
+
+    public enum KDCResource {
+        QC_START,
+        QC_STATUS_,
+        QC_DOWNLOAD,
+        QC_PURGE
+    }
+
+    @ElementMap(required = false)
+    Map<ServerBase.KDCResource, String> kdcResources = new HashMap<>();
+
+    @Element(required = false)
+    Integer statusCheckIntervalSecs = 0;
+
+    @Element(required = false)
+    Integer maxStatusCheckMins = 0;
+
+
+    public ServerBase addPath(ServerBase.KDCResource kdcResource, String resource) {
+        this.kdcResources.put(kdcResource, resource);
+        return this;
+    }
+
+    public String getPath(ServerBase.KDCResource kdcResource) {
+
+        String returnVal = null;
+
+        if (this.kdcResources.containsKey(kdcResource)) {
+            returnVal = this.kdcResources.get(kdcResource);
+        }
+
+        return returnVal;
+    }
+
+    public Integer getStatusCheckIntervalSecs() {
+        return statusCheckIntervalSecs;
+    }
+
+    public ServerBase setStatusCheckIntervalSecs(Integer statusCheckIntervalSecs) {
+        this.statusCheckIntervalSecs = statusCheckIntervalSecs;
+        return this;
+    }
+
+    public Integer getMaxStatusCheckMins() {
+        return maxStatusCheckMins;
+    }
+
+    public ServerBase setMaxStatusCheckMins(Integer maxStatusCheckMins) {
+        this.maxStatusCheckMins = maxStatusCheckMins;
+        return this;
+    }
 }
