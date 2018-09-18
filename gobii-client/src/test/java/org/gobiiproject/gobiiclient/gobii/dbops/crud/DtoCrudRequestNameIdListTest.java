@@ -58,22 +58,24 @@ public class DtoCrudRequestNameIdListTest {
 
     }
 
-    private void checkNameIdListResponse(List<NameIdDTO> nameIdDTOListResponse, NameIdDTO nameIdDTO1, NameIdDTO nameIdDTO2, NameIdDTO nameIdDTONotExisting) {
+    private void checkNameIdListResponse(PayloadEnvelope<NameIdDTO> responsePayloadEnvelope, List<NameIdDTO> nameIdDTOListInput, String nameIdDTONotExisting) {
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(responsePayloadEnvelope.getHeader()));
+
+        List<NameIdDTO> nameIdDTOListResponse = responsePayloadEnvelope.getPayload().getData();
+        Assert.assertNotEquals(null, nameIdDTOListResponse);
+        Assert.assertEquals(nameIdDTOListInput.size(), nameIdDTOListResponse.size());
 
         for (NameIdDTO currentNameIdDTO : nameIdDTOListResponse) {
 
-            if (currentNameIdDTO.getName().equals(nameIdDTO1.getName()) || currentNameIdDTO.getName().equals(nameIdDTO2.getName())) {
+            if (currentNameIdDTO.getName().equals(nameIdDTONotExisting)) {
+
+                Assert.assertTrue(currentNameIdDTO.getId() <= 0);
+            } else {
 
                 Assert.assertTrue(currentNameIdDTO.getId() > 0);
 
             }
-
-            if (currentNameIdDTO.getName().equals(nameIdDTONotExisting.getName())) {
-
-                Assert.assertTrue(currentNameIdDTO.getId() <= 0);
-
-            }
-
         }
 
 
@@ -101,11 +103,11 @@ public class DtoCrudRequestNameIdListTest {
         return cvGroupId;
     }
 
+    private List<CvDTO> createCvTerms(Integer cvGroupId) throws Exception {
+       return createCvTerms(cvGroupId, false);
+    }
 
-    @Test
-    public void testGetCvTermsForGermplasmSpeciesAndNameList() throws Exception {
-
-        Integer cvGroupId = getCvGroupIdByGroupName(CvGroup.CVGROUP_GERMPLASM_SPECIES.getCvGroupName());
+    private List<CvDTO> createCvTerms(Integer cvGroupId, Boolean withDuplicates) throws Exception {
 
         // create list of cv terms
 
@@ -117,7 +119,6 @@ public class DtoCrudRequestNameIdListTest {
 
         CvDTO newCvDTO3 = TestDtoFactory.makePopulatedCvDTO(GobiiProcessType.CREATE, 1);
         newCvDTO3.setGroupId(cvGroupId);
-
 
         RestUri restUriCvGroup = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -159,258 +160,118 @@ public class DtoCrudRequestNameIdListTest {
             createCv(newCvDTO3);
         }
 
+        List<CvDTO> cvDTOList = new ArrayList<>();
+        cvDTOList.add(newCvDTO1);
 
-        // create NameIdDTOs; 2 existing in the database, and 1 not existing
+        if (withDuplicates) {
+            cvDTOList.add(newCvDTO1);
+        }
 
-        NameIdDTO nameIdDTO1 = new NameIdDTO();
-        nameIdDTO1.setName(newCvDTO1.getTerm());
+        cvDTOList.add(newCvDTO2);
+        cvDTOList.add(newCvDTO3);
 
-        NameIdDTO nameIdDTO2 = new NameIdDTO();
-        nameIdDTO2.setName(newCvDTO2.getTerm());
+        return cvDTOList;
+    }
 
-        NameIdDTO nameIdDTO3 = new NameIdDTO();
-        nameIdDTO3.setName(newCvDTO3.getTerm());
-
-        String notExistingCvTerm = "notexisting_cvterm-" + UUID.randomUUID().toString();
-
-        NameIdDTO nameIdDTONotExisting = new NameIdDTO();
-        nameIdDTONotExisting.setName(notExistingCvTerm);
+    private List<NameIdDTO> createNameIdDTOList(List<CvDTO> cvDTOList) {
 
         List<NameIdDTO> nameIdDTOList = new ArrayList<>();
-        nameIdDTOList.add(nameIdDTO1);
-        nameIdDTOList.add(nameIdDTO2);
-        nameIdDTOList.add(nameIdDTO3);
-        nameIdDTOList.add(nameIdDTONotExisting);
+
+        for (CvDTO cvDTO : cvDTOList) {
+
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName(cvDTO.getTerm());
+
+            nameIdDTOList.add(nameIdDTO);
+        }
+
+        return nameIdDTOList;
+
+    }
+
+
+    private PayloadEnvelope<NameIdDTO> getNamesByNameList(List<NameIdDTO> nameIdDTOList, GobiiEntityNameType gobiiEntityNameType, String cvGroupName) throws Exception {
 
         PayloadEnvelope<NameIdDTO> payloadEnvelope = new PayloadEnvelope<>();
         payloadEnvelope.getHeader().setGobiiProcessType(GobiiProcessType.CREATE);
         payloadEnvelope.getPayload().setData(nameIdDTOList);
 
-
         RestUri namesUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .nameIdListByQueryParams();
         GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
-        namesUri.setParamValue("entity", GobiiEntityNameType.CV.toString().toLowerCase());
+        namesUri.setParamValue("entity", gobiiEntityNameType.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.NAMES_BY_NAME_LIST.toString().toUpperCase()));
-        namesUri.setParamValue("filterValue", CvGroup.CVGROUP_GERMPLASM_SPECIES.getCvGroupName());
+        namesUri.setParamValue("filterValue", cvGroupName);
+
         PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = gobiiEnvelopeRestResource.post(NameIdDTO.class, payloadEnvelope);
 
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(responsePayloadEnvelope.getHeader()));
+        return responsePayloadEnvelope;
+    }
 
-        List<NameIdDTO> nameIdDTOListResponse = responsePayloadEnvelope.getPayload().getData();
-        Assert.assertNotEquals(null, nameIdDTOListResponse);
-        Assert.assertEquals(nameIdDTOList.size(), nameIdDTOListResponse.size());
 
-        checkNameIdListResponse(nameIdDTOListResponse, nameIdDTO1, nameIdDTO2, nameIdDTONotExisting);
+    private CvDTO createNotExistingCv() {
+
+        String notExistingCvTerm = "notexisting_cvterm-" + UUID.randomUUID().toString();
+        CvDTO notExistingCvDTO = new CvDTO();
+        notExistingCvDTO.setTerm(notExistingCvTerm);
+
+        return notExistingCvDTO;
+    }
+
+    @Test
+    public void testGetCvTermsForGermplasmSpeciesAndNameList() throws Exception {
+
+        String cvGroupName = CvGroup.CVGROUP_GERMPLASM_SPECIES.getCvGroupName();
+        Integer cvGroupId = getCvGroupIdByGroupName(cvGroupName);
+
+        List<CvDTO> cvDTOList = createCvTerms(cvGroupId);
+
+        CvDTO notExistingCvDto = createNotExistingCv();
+        cvDTOList.add(notExistingCvDto);
+
+        List<NameIdDTO> nameIdDTOList = createNameIdDTOList(cvDTOList);
+
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.CV, cvGroupName);
+
+        checkNameIdListResponse(responsePayloadEnvelope, nameIdDTOList, notExistingCvDto.getTerm());
     }
 
     @Test
     public void testGetCvTermsForGermplasmTypeAndNameList() throws Exception {
 
-        // get cvGroupId
-        Integer cvGroupId = getCvGroupIdByGroupName(CvGroup.CVGROUP_GERMPLASM_TYPE.getCvGroupName());
+        String cvGroupName = CvGroup.CVGROUP_GERMPLASM_TYPE.getCvGroupName();
+        Integer cvGroupId = getCvGroupIdByGroupName(cvGroupName);
 
-        // create list of cv terms
+        List<CvDTO> cvDTOList = createCvTerms(cvGroupId);
 
-        CvDTO newCvDTO1 = TestDtoFactory.makePopulatedCvDTO(GobiiProcessType.CREATE, 1);
-        newCvDTO1.setGroupId(cvGroupId);
+        CvDTO notExistingCvDto = createNotExistingCv();
+        cvDTOList.add(notExistingCvDto);
 
-        CvDTO newCvDTO2 = TestDtoFactory.makePopulatedCvDTO(GobiiProcessType.CREATE, 1);
-        newCvDTO2.setGroupId(cvGroupId);
+        List<NameIdDTO> nameIdDTOList = createNameIdDTOList(cvDTOList);
 
-        CvDTO newCvDTO3 = TestDtoFactory.makePopulatedCvDTO(GobiiProcessType.CREATE, 1);
-        newCvDTO3.setGroupId(cvGroupId);
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.CV, cvGroupName);
 
-        RestUri restUriCvGroup = GobiiClientContext.getInstance(null, false)
-                .getUriFactory()
-                .resourceColl(GobiiServiceRequestId.URL_CVGROUP)
-                .addUriParam("groupId")
-                .setParamValue("groupId", cvGroupId.toString())
-                .appendSegment(GobiiServiceRequestId.URL_CV);
-
-        GobiiEnvelopeRestResource<CvDTO> cvDTOGobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriCvGroup);
-        PayloadEnvelope<CvDTO> cvDTOResultEnvelope = cvDTOGobiiEnvelopeRestResource.get(CvDTO.class);
-
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(cvDTOResultEnvelope.getHeader()));
-        List<CvDTO> existingCvDTOList = cvDTOResultEnvelope.getPayload().getData();
-
-        List<String> existingCvTerms = new ArrayList<>();
-
-        if (existingCvDTOList.size() > 0) {
-
-            for (CvDTO currentCvDTO : existingCvDTOList) {
-                if (!currentCvDTO.getTerm().equals(null)) {
-                    existingCvTerms.add(currentCvDTO.getTerm());
-                }
-            }
-        }
-
-        // check if cv terms already exists; if FALSE, create new CvDTO
-
-        if (!existingCvTerms.contains(newCvDTO1.getTerm())) {
-
-            createCv(newCvDTO1);
-        }
-
-        if (!existingCvTerms.contains(newCvDTO2.getTerm())) {
-
-            createCv(newCvDTO2);
-        }
-
-        if (!existingCvTerms.contains(newCvDTO3.getTerm())) {
-            createCv(newCvDTO3);
-        }
-
-        // create NameIDDTOList
-
-        NameIdDTO nameIdDTO1 = new NameIdDTO();
-        nameIdDTO1.setName(newCvDTO1.getTerm());
-
-        NameIdDTO nameIdDTO2 = new NameIdDTO();
-        nameIdDTO2.setName(newCvDTO2.getTerm());
-
-        NameIdDTO nameIdDTO3 = new NameIdDTO();
-        nameIdDTO3.setName(newCvDTO3.getTerm());
-
-
-        String notExistingCvTerm = "notexisting_cvterm-" + UUID.randomUUID().toString();
-
-        NameIdDTO nameIdDTONotExisting = new NameIdDTO();
-        nameIdDTONotExisting.setName(notExistingCvTerm);
-
-        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
-        nameIdDTOList.add(nameIdDTO1);
-        nameIdDTOList.add(nameIdDTO2);
-        nameIdDTOList.add(nameIdDTO3);
-        nameIdDTOList.add(nameIdDTONotExisting);
-
-
-        PayloadEnvelope<NameIdDTO> payloadEnvelope = new PayloadEnvelope<>();
-        payloadEnvelope.getHeader().setGobiiProcessType(GobiiProcessType.CREATE);
-        payloadEnvelope.getPayload().setData(nameIdDTOList);
-
-
-        RestUri namesUri = GobiiClientContext.getInstance(null, false)
-                .getUriFactory()
-                .nameIdListByQueryParams();
-        GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
-        namesUri.setParamValue("entity", GobiiEntityNameType.CV.toString().toLowerCase());
-        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.NAMES_BY_NAME_LIST.toString().toUpperCase()));
-        namesUri.setParamValue("filterValue", CvGroup.CVGROUP_GERMPLASM_TYPE.getCvGroupName());
-        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = gobiiEnvelopeRestResource.post(NameIdDTO.class, payloadEnvelope);
-
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(responsePayloadEnvelope.getHeader()));
-
-        List<NameIdDTO> nameIdDTOListResponse = responsePayloadEnvelope.getPayload().getData();
-        Assert.assertNotEquals(null, nameIdDTOListResponse);
-        Assert.assertEquals(nameIdDTOList.size(), nameIdDTOListResponse.size());
-
-        checkNameIdListResponse(nameIdDTOListResponse, nameIdDTO1, nameIdDTO2, nameIdDTONotExisting);
+        checkNameIdListResponse(responsePayloadEnvelope, nameIdDTOList, notExistingCvDto.getTerm());
 
     }
 
     @Test
     public void testGetCvTermsForMarkerStrandAndNameList() throws Exception {
 
-        // getcvGroupId
+        String cvGroupName = CvGroup.CVGROUP_MARKER_STRAND.getCvGroupName();
         Integer cvGroupId = getCvGroupIdByGroupName(CvGroup.CVGROUP_MARKER_STRAND.getCvGroupName());
 
-        // create list of cv terms
+        List<CvDTO> cvDTOList = createCvTerms(cvGroupId);
 
-        CvDTO newCvDTO1 = TestDtoFactory.makePopulatedCvDTO(GobiiProcessType.CREATE, 1);
-        newCvDTO1.setGroupId(cvGroupId);
+        CvDTO notExistingCvDto = createNotExistingCv();
+        cvDTOList.add(notExistingCvDto);
 
-        CvDTO newCvDTO2 = TestDtoFactory.makePopulatedCvDTO(GobiiProcessType.CREATE, 1);
-        newCvDTO2.setGroupId(cvGroupId);
+        List<NameIdDTO> nameIdDTOList = createNameIdDTOList(cvDTOList);
 
-        CvDTO newCvDTO3 = TestDtoFactory.makePopulatedCvDTO(GobiiProcessType.CREATE, 1);
-        newCvDTO3.setGroupId(cvGroupId);
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.CV, cvGroupName);
 
-        RestUri restUriCvGroup = GobiiClientContext.getInstance(null, false)
-                .getUriFactory()
-                .resourceColl(GobiiServiceRequestId.URL_CVGROUP)
-                .addUriParam("groupId")
-                .setParamValue("groupId", cvGroupId.toString())
-                .appendSegment(GobiiServiceRequestId.URL_CV);
-
-        GobiiEnvelopeRestResource<CvDTO> cvDTOGobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriCvGroup);
-        PayloadEnvelope<CvDTO> cvDTOResultEnvelope = cvDTOGobiiEnvelopeRestResource.get(CvDTO.class);
-
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(cvDTOResultEnvelope.getHeader()));
-        List<CvDTO> existingCvDTOList = cvDTOResultEnvelope.getPayload().getData();
-
-        List<String> existingCvTerms = new ArrayList<>();
-
-        if (existingCvDTOList.size() > 0) {
-
-            for (CvDTO currentCvDTO : existingCvDTOList) {
-                if (!currentCvDTO.getTerm().equals(null)) {
-                    existingCvTerms.add(currentCvDTO.getTerm());
-                }
-            }
-        }
-
-        // check if cv terms already exists; if FALSE, create new CvDTO
-
-        if (!existingCvTerms.contains(newCvDTO1.getTerm())) {
-
-            createCv(newCvDTO1);
-        }
-
-        if (!existingCvTerms.contains(newCvDTO2.getTerm())) {
-
-            createCv(newCvDTO2);
-        }
-
-        if (!existingCvTerms.contains(newCvDTO3.getTerm())) {
-            createCv(newCvDTO3);
-        }
-
-        // create NameIDDTOList
-
-        NameIdDTO nameIdDTO1 = new NameIdDTO();
-        nameIdDTO1.setName(newCvDTO1.getTerm());
-
-        NameIdDTO nameIdDTO2 = new NameIdDTO();
-        nameIdDTO2.setName(newCvDTO2.getTerm());
-
-        NameIdDTO nameIdDTO3 = new NameIdDTO();
-        nameIdDTO3.setName(newCvDTO3.getTerm());
-
-        String notExistingCvTerm = "notexisting_cvterm-" + UUID.randomUUID().toString();
-
-        NameIdDTO nameIdDTONotExisting = new NameIdDTO();
-        nameIdDTONotExisting.setName(notExistingCvTerm);
-
-        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
-        nameIdDTOList.add(nameIdDTO1);
-        nameIdDTOList.add(nameIdDTO2);
-        nameIdDTOList.add(nameIdDTO3);
-        nameIdDTOList.add(nameIdDTONotExisting);
-
-
-        PayloadEnvelope<NameIdDTO> payloadEnvelope = new PayloadEnvelope<>();
-        payloadEnvelope.getHeader().setGobiiProcessType(GobiiProcessType.CREATE);
-        payloadEnvelope.getPayload().setData(nameIdDTOList);
-
-
-        RestUri namesUri = GobiiClientContext.getInstance(null, false)
-                .getUriFactory()
-                .nameIdListByQueryParams();
-        GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
-        namesUri.setParamValue("entity", GobiiEntityNameType.CV.toString().toLowerCase());
-        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.NAMES_BY_NAME_LIST.toString().toUpperCase()));
-        namesUri.setParamValue("filterValue", CvGroup.CVGROUP_MARKER_STRAND.getCvGroupName());
-        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = gobiiEnvelopeRestResource.post(NameIdDTO.class, payloadEnvelope);
-
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(responsePayloadEnvelope.getHeader()));
-
-        List<NameIdDTO> nameIdDTOListResponse = responsePayloadEnvelope.getPayload().getData();
-        Assert.assertNotEquals(null, nameIdDTOListResponse);
-        Assert.assertEquals(nameIdDTOList.size(), nameIdDTOListResponse.size());
-
-        checkNameIdListResponse(nameIdDTOListResponse, nameIdDTO1, nameIdDTO2, nameIdDTONotExisting);
+        checkNameIdListResponse(responsePayloadEnvelope, nameIdDTOList, notExistingCvDto.getTerm());
     }
 
 
@@ -499,26 +360,9 @@ public class DtoCrudRequestNameIdListTest {
         nameIdDTOList.add(nameIdDTO3);
         nameIdDTOList.add(nameIdDTONotExisting);
 
-        PayloadEnvelope<NameIdDTO> payloadEnvelope = new PayloadEnvelope<>();
-        payloadEnvelope.getHeader().setGobiiProcessType(GobiiProcessType.CREATE);
-        payloadEnvelope.getPayload().setData(nameIdDTOList);
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.REFERENCE, "test");
 
-        RestUri namesUri = GobiiClientContext.getInstance(null, false)
-                .getUriFactory()
-                .nameIdListByQueryParams();
-        GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
-        namesUri.setParamValue("entity", GobiiEntityNameType.REFERENCE.toString().toLowerCase());
-        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.NAMES_BY_NAME_LIST.toString().toUpperCase()));
-        namesUri.setParamValue("filterValue", "test");
-        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = gobiiEnvelopeRestResource.post(NameIdDTO.class, payloadEnvelope);
-
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(responsePayloadEnvelope.getHeader()));
-
-        List<NameIdDTO> nameIdDTOListResponse = responsePayloadEnvelope.getPayload().getData();
-        Assert.assertNotEquals(null, nameIdDTOListResponse);
-        Assert.assertEquals(nameIdDTOList.size(), nameIdDTOListResponse.size());
-
-        checkNameIdListResponse(nameIdDTOListResponse, nameIdDTO1, nameIdDTO2, nameIdDTONotExisting);
+        checkNameIdListResponse(responsePayloadEnvelope, nameIdDTOList, notExistingReference);
 
     }
 
@@ -526,79 +370,15 @@ public class DtoCrudRequestNameIdListTest {
     @Test
     public void testWithDuplicateNames() throws Exception {
 
-        Integer cvGroupId = getCvGroupIdByGroupName(CvGroup.CVGROUP_GERMPLASM_SPECIES.getCvGroupName());
+        String cvGroupName = CvGroup.CVGROUP_GERMPLASM_SPECIES.getCvGroupName();
+        Integer cvGroupId = getCvGroupIdByGroupName(cvGroupName);
 
-        // create list of cv terms
+        List<CvDTO> cvDTOList = createCvTerms(cvGroupId, true);
 
-        CvDTO newCvDTO1 = TestDtoFactory.makePopulatedCvDTO(GobiiProcessType.CREATE, 1);
-        newCvDTO1.setGroupId(cvGroupId);
+        List<NameIdDTO> nameIdDTOList = createNameIdDTOList(cvDTOList);
 
-        CvDTO newCvDTO2 = TestDtoFactory.makePopulatedCvDTO(GobiiProcessType.CREATE, 1);
-        newCvDTO2.setGroupId(cvGroupId);
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.CV, cvGroupName);
 
-        RestUri restUriCvGroup = GobiiClientContext.getInstance(null, false)
-                .getUriFactory()
-                .resourceColl(GobiiServiceRequestId.URL_CVGROUP)
-                .addUriParam("groupId")
-                .setParamValue("groupId", cvGroupId.toString())
-                .appendSegment(GobiiServiceRequestId.URL_CV);
-
-        GobiiEnvelopeRestResource<CvDTO> cvDTOGobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriCvGroup);
-        PayloadEnvelope<CvDTO> cvDTOResultEnvelope = cvDTOGobiiEnvelopeRestResource.get(CvDTO.class);
-
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(cvDTOResultEnvelope.getHeader()));
-        List<CvDTO> existingCvDTOList = cvDTOResultEnvelope.getPayload().getData();
-
-        List<String> existingCvTerms = new ArrayList<>();
-
-        if (existingCvDTOList.size() > 0) {
-
-            for (CvDTO currentCvDTO : existingCvDTOList) {
-                if (!currentCvDTO.getTerm().equals(null)) {
-                    existingCvTerms.add(currentCvDTO.getTerm());
-                }
-            }
-        }
-
-        // check if cv terms already exists; if FALSE, create new CvDTO
-
-        if (!existingCvTerms.contains(newCvDTO1.getTerm())) {
-
-            createCv(newCvDTO1);
-        }
-
-        if (!existingCvTerms.contains(newCvDTO2.getTerm())) {
-
-            createCv(newCvDTO2);
-        }
-
-        // create NameIdDTOs; 2 existing in the database, and 1 not existing
-
-        NameIdDTO nameIdDTO1 = new NameIdDTO();
-        nameIdDTO1.setName(newCvDTO1.getTerm());
-
-        NameIdDTO nameIdDTO2 = new NameIdDTO();
-        nameIdDTO2.setName(newCvDTO2.getTerm());
-
-        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
-
-        nameIdDTOList.add(nameIdDTO2);
-        nameIdDTOList.add(nameIdDTO2);
-        nameIdDTOList.add(nameIdDTO1);
-
-        PayloadEnvelope<NameIdDTO> payloadEnvelope = new PayloadEnvelope<>();
-        payloadEnvelope.getHeader().setGobiiProcessType(GobiiProcessType.CREATE);
-        payloadEnvelope.getPayload().setData(nameIdDTOList);
-
-
-        RestUri namesUri = GobiiClientContext.getInstance(null, false)
-                .getUriFactory()
-                .nameIdListByQueryParams();
-        GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
-        namesUri.setParamValue("entity", GobiiEntityNameType.CV.toString().toLowerCase());
-        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.NAMES_BY_NAME_LIST.toString().toUpperCase()));
-        namesUri.setParamValue("filterValue", CvGroup.CVGROUP_GERMPLASM_SPECIES.getCvGroupName());
-        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = gobiiEnvelopeRestResource.post(NameIdDTO.class, payloadEnvelope);
 
         Assert.assertTrue("The error message should contain 'There were duplicate values in the list'",
                 responsePayloadEnvelope.getHeader()
