@@ -623,63 +623,63 @@ public class GobiiConfig {
                 svrHost = commandLine.getOptionValue(CONFIG_SVR_OPTIONS_HOST);
                 argsSet.add(CONFIG_SVR_OPTIONS_HOST);
                 valsSet.add(svrHost);
-                configSettings.getKDCConfig().setHost(svrHost);
+                configSettings.getGlobalServer(GobiiServerType.KDC).setHost(svrHost);
             }
 
             if (commandLine.hasOption(CONFIG_SVR_OPTIONS_PORT)) {
                 port = Integer.parseInt(commandLine.getOptionValue(CONFIG_SVR_OPTIONS_PORT));
                 argsSet.add(CONFIG_SVR_OPTIONS_PORT);
                 valsSet.add(port.toString());
-                configSettings.getKDCConfig().setPort(port);
+                configSettings.getGlobalServer(GobiiServerType.KDC).setPort(port);
             }
 
             if (commandLine.hasOption(CONFIG_SVR_OPTIONS_CONTEXT_PATH)) {
                 contextPath = commandLine.getOptionValue(CONFIG_SVR_OPTIONS_CONTEXT_PATH);
                 argsSet.add(CONFIG_SVR_OPTIONS_CONTEXT_PATH);
                 valsSet.add(contextPath);
-                configSettings.getKDCConfig().setContextPath(contextPath);
+                configSettings.getGlobalServer(GobiiServerType.KDC).setContextPath(contextPath);
             }
 
             if (commandLine.hasOption(SVR_KDC_RESOURCE_START)) {
                 resourceQCStart = commandLine.getOptionValue(SVR_KDC_RESOURCE_START);
                 argsSet.add(SVR_KDC_RESOURCE_START);
                 valsSet.add(resourceQCStart);
-                configSettings.getKDCConfig().addPath(ServerConfigKDC.KDCResource.QC_START, resourceQCStart);
+                configSettings.getGlobalServer(GobiiServerType.KDC).addPath(ServerConfigKDC.KDCResource.QC_START, resourceQCStart);
             }
 
             if (commandLine.hasOption(SVR_KDC_RESOURCE_STATUS)) {
                 resourceQCStatus = commandLine.getOptionValue(SVR_KDC_RESOURCE_STATUS);
                 argsSet.add(SVR_KDC_RESOURCE_STATUS);
                 valsSet.add(resourceQCStatus);
-                configSettings.getKDCConfig().addPath(ServerConfigKDC.KDCResource.QC_STATUS_, resourceQCStatus);
+                configSettings.getGlobalServer(GobiiServerType.KDC).addPath(ServerConfigKDC.KDCResource.QC_STATUS_, resourceQCStatus);
             }
 
             if (commandLine.hasOption(SVR_KDC_RESOURCE_DOWNLOAD)) {
                 resourceQCDownload = commandLine.getOptionValue(SVR_KDC_RESOURCE_DOWNLOAD);
                 argsSet.add(SVR_KDC_RESOURCE_DOWNLOAD);
                 valsSet.add(resourceQCDownload);
-                configSettings.getKDCConfig().addPath(ServerConfigKDC.KDCResource.QC_DOWNLOAD, resourceQCDownload);
+                configSettings.getGlobalServer(GobiiServerType.KDC).addPath(ServerConfigKDC.KDCResource.QC_DOWNLOAD, resourceQCDownload);
             }
 
             if (commandLine.hasOption(SVR_KDC_RESOURCE_PURGE)) {
                 resourceQCPurge = commandLine.getOptionValue(SVR_KDC_RESOURCE_PURGE);
                 argsSet.add(SVR_KDC_RESOURCE_PURGE);
                 valsSet.add(resourceQCPurge);
-                configSettings.getKDCConfig().addPath(ServerConfigKDC.KDCResource.QC_PURGE, resourceQCPurge);
+                configSettings.getGlobalServer(GobiiServerType.KDC).addPath(ServerConfigKDC.KDCResource.QC_PURGE, resourceQCPurge);
             }
 
             if (commandLine.hasOption(SVR_KDC_STATUS_CHECK_INTERVAL_SECS)) {
                 statusCheckIntervalSecs = Integer.parseInt(commandLine.getOptionValue(SVR_KDC_STATUS_CHECK_INTERVAL_SECS));
                 argsSet.add(SVR_KDC_STATUS_CHECK_INTERVAL_SECS);
                 valsSet.add(statusCheckIntervalSecs.toString());
-                configSettings.getKDCConfig().setStatusCheckIntervalSecs(statusCheckIntervalSecs);
+                configSettings.getGlobalServer(GobiiServerType.KDC).setStatusCheckIntervalSecs(statusCheckIntervalSecs);
             }
 
             if (commandLine.hasOption(SVR_KDC_STATUS_CHECK_MAX_TIME_MINS)) {
                 statusWaitThresholdMinutes = Integer.parseInt(commandLine.getOptionValue(SVR_KDC_STATUS_CHECK_MAX_TIME_MINS));
                 argsSet.add(SVR_KDC_STATUS_CHECK_MAX_TIME_MINS);
                 valsSet.add(statusWaitThresholdMinutes.toString());
-                configSettings.getKDCConfig().setMaxStatusCheckMins(statusWaitThresholdMinutes);
+                configSettings.getGlobalServer(GobiiServerType.KDC).setMaxStatusCheckMins(statusWaitThresholdMinutes);
             }
 
             if (commandLine.hasOption(SVR_KDC_STATUS_ACTIVE)) {
@@ -695,7 +695,7 @@ public class GobiiConfig {
 
             argsSet.add(SVR_KDC_STATUS_ACTIVE);
             valsSet.add(active ? "true" : "false");
-            configSettings.getKDCConfig().setActive(active);
+            configSettings.getGlobalServer(GobiiServerType.KDC).setActive(active);
 
 
             writeConfigSettingsMessage(options,

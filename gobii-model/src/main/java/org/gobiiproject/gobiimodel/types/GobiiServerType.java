@@ -10,5 +10,6 @@ public enum GobiiServerType {
     COMPUTE_NODE,
     KDC,
     GENERIC,
+    OWN_CLOUD,
     UNKNOWN
 }

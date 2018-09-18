@@ -735,38 +735,38 @@ public class TestGobiiConfig {
         ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
 
         Assert.assertTrue("The host name does not match",
-                configSettings.getKDCConfig().getHost().equals(host));
+                configSettings.getGlobalServer(GobiiServerType.KDC).getHost().equals(host));
 
         Assert.assertTrue("The port does not match: should be "
                         + port.toString()
                         + "; got: "
-                        + configSettings.getKDCConfig().getPort(),
-                configSettings.getKDCConfig().getPort().equals(port));
+                        + configSettings.getGlobalServer(GobiiServerType.KDC).getPort(),
+                configSettings.getGlobalServer(GobiiServerType.KDC).getPort().equals(port));
 
-        String contextPathRetrieved = configSettings.getKDCConfig().getContextPath();
+        String contextPathRetrieved = configSettings.getGlobalServer(GobiiServerType.KDC).getContextPath();
         Assert.assertTrue("The context path not match",
                 contextPathRetrieved.equals(contextPath));
 
         Assert.assertTrue("The start resource does not not match",
-                configSettings.getKDCConfig().getPath(ServerConfigKDC.KDCResource.QC_START).equals(resourceQCStart));
+                configSettings.getGlobalServer(GobiiServerType.KDC).getPath(ServerConfigKDC.KDCResource.QC_START).equals(resourceQCStart));
 
         Assert.assertTrue("The status resource does not not match",
-                configSettings.getKDCConfig().getPath(ServerConfigKDC.KDCResource.QC_STATUS_).equals(resourceQCStatus));
+                configSettings.getGlobalServer(GobiiServerType.KDC).getPath(ServerConfigKDC.KDCResource.QC_STATUS_).equals(resourceQCStatus));
 
         Assert.assertTrue("The download resource does not not match",
-                configSettings.getKDCConfig().getPath(ServerConfigKDC.KDCResource.QC_DOWNLOAD).equals(resourceQCDownload));
+                configSettings.getGlobalServer(GobiiServerType.KDC).getPath(ServerConfigKDC.KDCResource.QC_DOWNLOAD).equals(resourceQCDownload));
 
         Assert.assertTrue("The purge resource does not not match",
-                configSettings.getKDCConfig().getPath(ServerConfigKDC.KDCResource.QC_PURGE).equals(resourceQCPurge));
+                configSettings.getGlobalServer(GobiiServerType.KDC).getPath(ServerConfigKDC.KDCResource.QC_PURGE).equals(resourceQCPurge));
 
         Assert.assertTrue("The status check interval does not match",
-                configSettings.getKDCConfig().getStatusCheckIntervalSecs().equals(statusCheckIntervalSecs));
+                configSettings.getGlobalServer(GobiiServerType.KDC).getStatusCheckIntervalSecs().equals(statusCheckIntervalSecs));
 
         Assert.assertTrue("The max status check threshold does not not match",
-                configSettings.getKDCConfig().getMaxStatusCheckMins().equals(statusWaitThresholdMinutes));
+                configSettings.getGlobalServer(GobiiServerType.KDC).getMaxStatusCheckMins().equals(statusWaitThresholdMinutes));
 
         Assert.assertFalse("The active flag value does not match",
-                configSettings.getKDCConfig().isActive());
+                configSettings.getGlobalServer(GobiiServerType.KDC).isActive());
 
     }
 
