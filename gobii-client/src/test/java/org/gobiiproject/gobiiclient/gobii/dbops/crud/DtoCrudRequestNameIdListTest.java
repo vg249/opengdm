@@ -18,10 +18,7 @@ import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -414,8 +411,6 @@ public class DtoCrudRequestNameIdListTest {
         Assert.assertEquals(nameIdDTOList.size(), nameIdDTOListResponse.size());
 
         checkNameIdListResponse(nameIdDTOListResponse, nameIdDTO1, nameIdDTO2, nameIdDTONotExisting);
-
-        System.out.print("aaa");
     }
 
 
@@ -524,6 +519,97 @@ public class DtoCrudRequestNameIdListTest {
         Assert.assertEquals(nameIdDTOList.size(), nameIdDTOListResponse.size());
 
         checkNameIdListResponse(nameIdDTOListResponse, nameIdDTO1, nameIdDTO2, nameIdDTONotExisting);
+
+    }
+
+
+    @Test
+    public void testWithDuplicateNames() throws Exception {
+
+        Integer cvGroupId = getCvGroupIdByGroupName(CvGroup.CVGROUP_GERMPLASM_SPECIES.getCvGroupName());
+
+        // create list of cv terms
+
+        CvDTO newCvDTO1 = TestDtoFactory.makePopulatedCvDTO(GobiiProcessType.CREATE, 1);
+        newCvDTO1.setGroupId(cvGroupId);
+
+        CvDTO newCvDTO2 = TestDtoFactory.makePopulatedCvDTO(GobiiProcessType.CREATE, 1);
+        newCvDTO2.setGroupId(cvGroupId);
+
+        RestUri restUriCvGroup = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_CVGROUP)
+                .addUriParam("groupId")
+                .setParamValue("groupId", cvGroupId.toString())
+                .appendSegment(GobiiServiceRequestId.URL_CV);
+
+        GobiiEnvelopeRestResource<CvDTO> cvDTOGobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriCvGroup);
+        PayloadEnvelope<CvDTO> cvDTOResultEnvelope = cvDTOGobiiEnvelopeRestResource.get(CvDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(cvDTOResultEnvelope.getHeader()));
+        List<CvDTO> existingCvDTOList = cvDTOResultEnvelope.getPayload().getData();
+
+        List<String> existingCvTerms = new ArrayList<>();
+
+        if (existingCvDTOList.size() > 0) {
+
+            for (CvDTO currentCvDTO : existingCvDTOList) {
+                if (!currentCvDTO.getTerm().equals(null)) {
+                    existingCvTerms.add(currentCvDTO.getTerm());
+                }
+            }
+        }
+
+        // check if cv terms already exists; if FALSE, create new CvDTO
+
+        if (!existingCvTerms.contains(newCvDTO1.getTerm())) {
+
+            createCv(newCvDTO1);
+        }
+
+        if (!existingCvTerms.contains(newCvDTO2.getTerm())) {
+
+            createCv(newCvDTO2);
+        }
+
+        // create NameIdDTOs; 2 existing in the database, and 1 not existing
+
+        NameIdDTO nameIdDTO1 = new NameIdDTO();
+        nameIdDTO1.setName(newCvDTO1.getTerm());
+
+        NameIdDTO nameIdDTO2 = new NameIdDTO();
+        nameIdDTO2.setName(newCvDTO2.getTerm());
+
+        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+
+        nameIdDTOList.add(nameIdDTO2);
+        nameIdDTOList.add(nameIdDTO2);
+        nameIdDTOList.add(nameIdDTO1);
+
+        PayloadEnvelope<NameIdDTO> payloadEnvelope = new PayloadEnvelope<>();
+        payloadEnvelope.getHeader().setGobiiProcessType(GobiiProcessType.CREATE);
+        payloadEnvelope.getPayload().setData(nameIdDTOList);
+
+
+        RestUri namesUri = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .nameIdListByQueryParams();
+        GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
+        namesUri.setParamValue("entity", GobiiEntityNameType.CV.toString().toLowerCase());
+        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.NAMES_BY_NAME_LIST.toString().toUpperCase()));
+        namesUri.setParamValue("filterValue", CvGroup.CVGROUP_GERMPLASM_SPECIES.getCvGroupName());
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = gobiiEnvelopeRestResource.post(NameIdDTO.class, payloadEnvelope);
+
+        Assert.assertTrue("The error message should contain 'There were duplicate values in the list'",
+                responsePayloadEnvelope.getHeader()
+                .getStatus()
+                .getStatusMessages()
+                .stream()
+                .filter(m -> m.getMessage().contains("There were duplicate values in the list"))
+                .count()
+                > 0);
+
+        Assert.assertTrue(responsePayloadEnvelope.getPayload().getData().size() == 0);
 
     }
 
