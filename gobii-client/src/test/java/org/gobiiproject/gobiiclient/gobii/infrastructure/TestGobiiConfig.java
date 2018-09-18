@@ -770,6 +770,62 @@ public class TestGobiiConfig {
     }
 
     @Test
+    public void testSetOwnCloudServerOptions() throws Exception {
+
+        String testFileFqpn = makeTestFileFqpn("OwnCloudOptions");
+
+        String host = "myowncloud.com";
+        Integer port = 5063;
+        String contextPath = "foodkdcpath-" + UUID.randomUUID().toString() + "/";
+        String userName = "fooowncloudusername-" + UUID.randomUUID().toString() + "/";
+        String password = "fooowncloudpassword-" + UUID.randomUUID().toString() + "/";
+
+        boolean active = false;
+
+
+        String commandLine = makeCommandline("-ownc -wfqpn "
+                + testFileFqpn
+                + " -soH "
+                + host
+                + " -soN "
+                + port.toString()
+                + " -soR "
+                + contextPath
+                + " -soU "
+                + userName
+                + " -soP "
+                + password
+                + " -kA "
+                + (active ? "true" : false)
+        );
+
+        boolean succeeded = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandLine, succeeded);
+
+        ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
+
+        Assert.assertTrue("The host name does not match",
+                configSettings.getGlobalServer(GobiiServerType.OWN_CLOUD).getHost().equals(host));
+
+        Assert.assertTrue("The port does not match: should be "
+                        + port.toString()
+                        + "; got: "
+                        + configSettings.getGlobalServer(GobiiServerType.OWN_CLOUD).getPort(),
+                configSettings.getGlobalServer(GobiiServerType.OWN_CLOUD).getPort().equals(port));
+
+        String contextPathRetrieved = configSettings.getGlobalServer(GobiiServerType.OWN_CLOUD).getContextPath();
+        Assert.assertTrue("The context path not match",
+                contextPathRetrieved.equals(contextPath));
+
+        Assert.assertTrue("The password does not match",
+                configSettings.getGlobalServer(GobiiServerType.OWN_CLOUD).getPassword().equals(password));
+
+        Assert.assertTrue("The username does not match",
+                configSettings.getGlobalServer(GobiiServerType.OWN_CLOUD).getUserName().equals(userName));
+
+    }
+
+    @Test
     public void testSetMonetGresForCropEncrypted() throws Exception {
         String testFileFqpn = makeTestFileFqpn("cropmonet");
 

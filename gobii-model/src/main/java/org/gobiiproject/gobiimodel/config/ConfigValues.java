@@ -32,6 +32,9 @@ class ConfigValues {
         this.globalServersByServerType.put(GobiiServerType.KDC,
                 new ServerBase(GobiiServerType.KDC, "", "", null, false, "", "", false)
         );
+        this.globalServersByServerType.put(GobiiServerType.OWN_CLOUD,
+                new ServerBase(GobiiServerType.OWN_CLOUD, "", "", null, false, "", "", false)
+        );
     } // ctor
 
     @Element(required = false)
@@ -484,6 +487,10 @@ class ConfigValues {
             for (ServerBase currentServerBase : currentGobiiCropConfig.getServers()) {
                 currentServerBase.setDecrypt(isDecrypt);
             }
+        }
+
+        for( ServerBase currentServerBase : this.globalServersByServerType.values() ) {
+            currentServerBase.setDecrypt(isDecrypt);
         }
     }
 

@@ -11,5 +11,6 @@ public enum GobiiServerType {
     KDC,
     GENERIC,
     OWN_CLOUD,
-    UNKNOWN
+    UNKNOWN,
+    LDAP
 }
