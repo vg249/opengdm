@@ -193,7 +193,7 @@ public class ServerBase {
     }
 
     @ElementMap(required = false)
-    Map<ServerConfigKDC.KDCResource, String> kdcResources = new HashMap<>();
+    Map<ServerBase.KDCResource, String> kdcResources = new HashMap<>();
 
     @Element(required = false)
     Integer statusCheckIntervalSecs = 0;
@@ -202,12 +202,12 @@ public class ServerBase {
     Integer maxStatusCheckMins = 0;
 
 
-    public ServerBase addPath(ServerConfigKDC.KDCResource kdcResource, String resource) {
+    public ServerBase addPath(ServerBase.KDCResource kdcResource, String resource) {
         this.kdcResources.put(kdcResource, resource);
         return this;
     }
 
-    public String getPath(ServerConfigKDC.KDCResource kdcResource) {
+    public String getPath(ServerBase.KDCResource kdcResource) {
 
         String returnVal = null;
 

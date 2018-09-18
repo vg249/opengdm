@@ -7,12 +7,12 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.eclipse.jetty.server.Server;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.ServerBase;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
-import org.gobiiproject.gobiimodel.config.ServerConfigKDC;
 import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
 import org.gobiiproject.gobiimodel.types.GobiiServerType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
@@ -644,28 +644,28 @@ public class GobiiConfig {
                 resourceQCStart = commandLine.getOptionValue(SVR_KDC_RESOURCE_START);
                 argsSet.add(SVR_KDC_RESOURCE_START);
                 valsSet.add(resourceQCStart);
-                configSettings.getGlobalServer(GobiiServerType.KDC).addPath(ServerConfigKDC.KDCResource.QC_START, resourceQCStart);
+                configSettings.getGlobalServer(GobiiServerType.KDC).addPath(ServerBase.KDCResource.QC_START, resourceQCStart);
             }
 
             if (commandLine.hasOption(SVR_KDC_RESOURCE_STATUS)) {
                 resourceQCStatus = commandLine.getOptionValue(SVR_KDC_RESOURCE_STATUS);
                 argsSet.add(SVR_KDC_RESOURCE_STATUS);
                 valsSet.add(resourceQCStatus);
-                configSettings.getGlobalServer(GobiiServerType.KDC).addPath(ServerConfigKDC.KDCResource.QC_STATUS_, resourceQCStatus);
+                configSettings.getGlobalServer(GobiiServerType.KDC).addPath(ServerBase.KDCResource.QC_STATUS_, resourceQCStatus);
             }
 
             if (commandLine.hasOption(SVR_KDC_RESOURCE_DOWNLOAD)) {
                 resourceQCDownload = commandLine.getOptionValue(SVR_KDC_RESOURCE_DOWNLOAD);
                 argsSet.add(SVR_KDC_RESOURCE_DOWNLOAD);
                 valsSet.add(resourceQCDownload);
-                configSettings.getGlobalServer(GobiiServerType.KDC).addPath(ServerConfigKDC.KDCResource.QC_DOWNLOAD, resourceQCDownload);
+                configSettings.getGlobalServer(GobiiServerType.KDC).addPath(ServerBase.KDCResource.QC_DOWNLOAD, resourceQCDownload);
             }
 
             if (commandLine.hasOption(SVR_KDC_RESOURCE_PURGE)) {
                 resourceQCPurge = commandLine.getOptionValue(SVR_KDC_RESOURCE_PURGE);
                 argsSet.add(SVR_KDC_RESOURCE_PURGE);
                 valsSet.add(resourceQCPurge);
-                configSettings.getGlobalServer(GobiiServerType.KDC).addPath(ServerConfigKDC.KDCResource.QC_PURGE, resourceQCPurge);
+                configSettings.getGlobalServer(GobiiServerType.KDC).addPath(ServerBase.KDCResource.QC_PURGE, resourceQCPurge);
             }
 
             if (commandLine.hasOption(SVR_KDC_STATUS_CHECK_INTERVAL_SECS)) {
