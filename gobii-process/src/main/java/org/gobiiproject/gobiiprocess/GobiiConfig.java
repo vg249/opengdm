@@ -99,6 +99,7 @@ public class GobiiConfig {
     private static String CONFIG_SVR_OPTIONS_CONTEXT_PATH = "soR";
     private static String CONFIG_SVR_OPTIONS_USER_NAME = "soU";
     private static String CONFIG_SVR_OPTIONS_PASSWORD = "soP";
+    private static String CONFIG_SVR_OPTIONS_ACTIVE = "soA";
 
 
     private static String SVR_KDC = "ksvr";
@@ -109,7 +110,6 @@ public class GobiiConfig {
     private static String SVR_KDC_RESOURCE_PURGE = "krscPRG";
     private static String SVR_KDC_STATUS_CHECK_INTERVAL_SECS = "kstTRS";
     private static String SVR_KDC_STATUS_CHECK_MAX_TIME_MINS = "kstTRM";
-    private static String SVR_KDC_STATUS_ACTIVE = "kA";
 
 
     // we don't actually use the default crop any more, but for now we need to
@@ -261,6 +261,7 @@ public class GobiiConfig {
                     + ")", "context path");
             setOption(options, CONFIG_SVR_OPTIONS_USER_NAME, true, "Server option: Username", "user name");
             setOption(options, CONFIG_SVR_OPTIONS_PASSWORD, true, "Server option: Password", "password");
+            setOption(options, CONFIG_SVR_OPTIONS_ACTIVE, true, "Marker server inactive 'false'", "Server active");
 
 
             setOption(options, CONFIG_TST_GLOBAL, false, "Configure test options", "test options");
@@ -286,7 +287,6 @@ public class GobiiConfig {
             setOption(options, SVR_KDC_RESOURCE_PURGE, true, "KDC qcPurge resource path", "qcPurge resource");
             setOption(options, SVR_KDC_STATUS_CHECK_INTERVAL_SECS, true, "Status check interval for KDC jobs in seconds", "KDC status check interval");
             setOption(options, SVR_KDC_STATUS_CHECK_MAX_TIME_MINS, true, "Total time to wait for KDC job completion in minutes", "KDC job wait threshold");
-            setOption(options, SVR_KDC_STATUS_ACTIVE, true, "Mark KDC server inactive 'false'", "KDC active");
 
 
             // we don't actually use this value any more; it shold be removed when there is time to
@@ -671,6 +671,19 @@ public class GobiiConfig {
                 configSettings.getGlobalServer(gobiiServerType).setPassword(password);
             }
 
+            if (commandLine.hasOption(CONFIG_SVR_OPTIONS_ACTIVE)) {
+                String activeStr = commandLine.getOptionValue(CONFIG_SVR_OPTIONS_ACTIVE);
+                if (activeStr.toLowerCase().equals("false")) {
+                    active = false;
+                } else {
+                    active = true;
+                }
+            } else {
+                active = true;
+            }
+            argsSet.add(CONFIG_SVR_OPTIONS_ACTIVE);
+            valsSet.add(active ? "true" : "false");
+            configSettings.getGlobalServer(gobiiServerType).setActive(active);
 
             if (gobiiServerType.equals(GobiiServerType.KDC)) {
                 if (commandLine.hasOption(SVR_KDC_RESOURCE_START)) {
@@ -715,19 +728,6 @@ public class GobiiConfig {
                     configSettings.getGlobalServer(GobiiServerType.KDC).setMaxStatusCheckMins(statusWaitThresholdMinutes);
                 }
 
-                if (commandLine.hasOption(SVR_KDC_STATUS_ACTIVE)) {
-                    String activeStr = commandLine.getOptionValue(SVR_KDC_STATUS_ACTIVE);
-                    if (activeStr.toLowerCase().equals("false")) {
-                        active = false;
-                    } else {
-                        active = true;
-                    }
-                } else {
-                    active = true;
-                }
-                argsSet.add(SVR_KDC_STATUS_ACTIVE);
-                valsSet.add(active ? "true" : "false");
-                configSettings.getGlobalServer(GobiiServerType.KDC).setActive(active);
             }
 
 

@@ -30,10 +30,10 @@ class ConfigValues {
 
     public ConfigValues() {
         this.globalServersByServerType.put(GobiiServerType.KDC,
-                new ServerBase(GobiiServerType.KDC, "", "", null, false, "", "", false)
+                new ServerBase(GobiiServerType.KDC, "", "", null, true, "", "", false)
         );
         this.globalServersByServerType.put(GobiiServerType.OWN_CLOUD,
-                new ServerBase(GobiiServerType.OWN_CLOUD, "", "", null, false, "", "", false)
+                new ServerBase(GobiiServerType.OWN_CLOUD, "", "", null, true, "", "", false)
         );
     } // ctor
 

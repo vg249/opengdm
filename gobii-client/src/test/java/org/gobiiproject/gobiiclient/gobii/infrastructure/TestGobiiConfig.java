@@ -724,7 +724,7 @@ public class TestGobiiConfig {
                 + statusCheckIntervalSecs
                 + " -kstTRM "
                 + statusWaitThresholdMinutes
-                + " -kA "
+                + " -soA "
                 + (active ? "true" : false)
         );
 
@@ -795,7 +795,7 @@ public class TestGobiiConfig {
                 + userName
                 + " -soP "
                 + password
-                + " -kA "
+                + " -soA "
                 + (active ? "true" : false)
         );
 
