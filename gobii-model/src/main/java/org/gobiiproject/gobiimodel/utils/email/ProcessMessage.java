@@ -1,9 +1,12 @@
 package org.gobiiproject.gobiimodel.utils.email;
 
 
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
+import org.gobiiproject.gobiimodel.types.GobiiServerType;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.gobiiproject.gobiimodel.utils.links.GetLinks;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -38,7 +41,7 @@ public class ProcessMessage extends MailMessage {
     List<HTMLTableEntity> extractCriteria=new ArrayList<>();
     List<HTMLTableEntity> entities=new ArrayList<>();
     List<HTMLTableEntity> paths=new ArrayList<>();
-
+//    ConfigSettings config = new ConfigSettings();
 
     /**
      * Sets the BODY of the mail message with TABLEs
@@ -170,12 +173,17 @@ public class ProcessMessage extends MailMessage {
          * #param alwaysShow to always show the path, even if no object is there
          * @return this object
          */
-    public ProcessMessage addPath(String type,String path, boolean alwaysShow){
+    public ProcessMessage addPath(String type,String path, boolean alwaysShow, ConfigSettings config) throws Exception {
+
+        String pathLine = path;
+        if(config.getGlobalServer(GobiiServerType.OWN_CLOUD).isActive()){
+            pathLine = "<BR>" + GetLinks.getLink(path, config) + "<BR>" + GetLinks.getOwncloudURL(path, config);
+        }
     	if(new File(path).length() > 1){
-    		paths.add(new HTMLTableEntity(type, escapeHTML(path), HelperFunctions.sizeToReadable(new File(path).length())));
+    		paths.add(new HTMLTableEntity(type, escapeHTML(pathLine), HelperFunctions.sizeToReadable(new File(path).length())));
     	}
     	else if(alwaysShow){
-    	    paths.add(new HTMLTableEntity(type,escapeHTML(path),""));
+    	    paths.add(new HTMLTableEntity(type,escapeHTML(pathLine),""));
         }
         return this;
     }
@@ -186,8 +194,8 @@ public class ProcessMessage extends MailMessage {
      * @param path filepath
      * @return
      */
-    public ProcessMessage addPath(String type, String path){
-        return addPath(type,path,false);
+    public ProcessMessage addPath(String type, String path, ConfigSettings config) throws Exception {
+        return addPath(type,path,false,config);
     }
 
     
