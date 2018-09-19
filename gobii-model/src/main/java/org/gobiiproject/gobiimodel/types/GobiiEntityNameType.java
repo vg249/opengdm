@@ -23,5 +23,5 @@ public enum GobiiEntityNameType {
     MARKER,
     PROTOCOL,
     VENDOR_PROTOCOL,
-    DNASAMPLE
+    DNASAMPLE,
 }

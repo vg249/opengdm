@@ -75,6 +75,11 @@ public class GobiiEntityNameConverter {
                             GobiiServiceRequestId.URL_MAPSET);
                     break;
 
+                case MARKER:
+                    returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
+                            GobiiServiceRequestId.URL_MARKERS);
+                    break;
+
                 case MARKER_GROUP:
                     returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
                             GobiiServiceRequestId.URL_MARKERGROUP);

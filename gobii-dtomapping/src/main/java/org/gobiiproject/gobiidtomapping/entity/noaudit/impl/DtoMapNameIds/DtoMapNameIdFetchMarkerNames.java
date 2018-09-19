@@ -21,20 +21,20 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by VCalaminos on 9/18/2018.
+ * Created by VCalaminos on 9/19/2018.
  */
-public class DtoMapNameIdFetchDnaSampleNames implements DtoMapNameIdFetch {
+public class DtoMapNameIdFetchMarkerNames implements DtoMapNameIdFetch {
 
     @Autowired
     private DtoListQueryColl dtoListQueryColl;
 
-    Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdFetchDnaSampleNames.class);
+    Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdFetchMarkerNames.class);
 
     @Override
-    public GobiiEntityNameType getEntityTypeName() { return GobiiEntityNameType.DNASAMPLE; }
+    public GobiiEntityNameType getEntityTypeName() { return GobiiEntityNameType.MARKER; }
 
 
-    private List<NameIdDTO> getDnaSampleNamesByNameList(List<NameIdDTO> nameIdDTOList, String projectId, GobiiFilterType gobiiFilterType) {
+    private List<NameIdDTO> getMarkerNamesByNameList(List<NameIdDTO> nameIdDTOList, String platformId, GobiiFilterType gobiiFilterType) {
 
         List<NameIdDTO> returnVal = new ArrayList<>();
 
@@ -50,9 +50,9 @@ public class DtoMapNameIdFetchDnaSampleNames implements DtoMapNameIdFetch {
                 nameIdDTOListInput.add(currentNameIdDTO);
             }
 
-            ResultSet resultSet = dtoListQueryColl.getResultSet(ListSqlId.QUERY_ID_DNASAMPLE_NAMES_BYLIST,
+            ResultSet resultSet = dtoListQueryColl.getResultSet(ListSqlId.QUERY_ID_MARKER_NAMES_BYLIST,
                     new HashMap<String, Object>(){{
-                        put("projectId", projectId);
+                      put("platformId", platformId);
                     }}, new HashMap<String, Object>(){{
                       put("nameArray", nameArray);
                     }});
@@ -62,12 +62,11 @@ public class DtoMapNameIdFetchDnaSampleNames implements DtoMapNameIdFetch {
                 while (resultSet.next()) {
 
                     if (currentNameIdDTO.getName().equals(resultSet.getString("name"))) {
-
-                        currentNameIdDTO.setId(resultSet.getInt("dnasample_id"));
+                        currentNameIdDTO.setId(resultSet.getInt("marker_id"));
                         break;
                     }
-                }
 
+                }
 
                 if (gobiiFilterType == GobiiFilterType.NAMES_BY_NAME_LIST) {
                     returnVal.add(currentNameIdDTO);
@@ -80,6 +79,7 @@ public class DtoMapNameIdFetchDnaSampleNames implements DtoMapNameIdFetch {
                         returnVal.add(currentNameIdDTO);
                     }
                 }
+
             }
 
         } catch (Exception e) {
@@ -87,6 +87,7 @@ public class DtoMapNameIdFetchDnaSampleNames implements DtoMapNameIdFetch {
         }
 
         return returnVal;
+
     }
 
     @Override
@@ -98,7 +99,7 @@ public class DtoMapNameIdFetchDnaSampleNames implements DtoMapNameIdFetch {
 
         if (GobiiFilterType.NAMES_BY_NAME_LIST == gobiiFilterType || GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_ABSENT == gobiiFilterType || GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_EXISTS == gobiiFilterType) {
 
-            returnVal = this.getDnaSampleNamesByNameList(dtoMapNameIdParams.getNameIdDTOList(), dtoMapNameIdParams.getFilterValueAsString(), gobiiFilterType);
+            returnVal = this.getMarkerNamesByNameList(dtoMapNameIdParams.getNameIdDTOList(), dtoMapNameIdParams.getFilterValueAsString(), gobiiFilterType);
 
         } else {
 
@@ -107,7 +108,6 @@ public class DtoMapNameIdFetchDnaSampleNames implements DtoMapNameIdFetch {
                     "Unsupported filter type for "
                             + this.getEntityTypeName().toString().toLowerCase()
                             + ": " + dtoMapNameIdParams.getGobiiFilterType());
-
         }
 
         return returnVal;
