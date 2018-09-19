@@ -34,6 +34,12 @@ public class GobiiEntityNameConverter {
                             GobiiServiceRequestId.URL_DATASETS);
                     break;
 
+                case DNASAMPLE:
+                    returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
+                            GobiiServiceRequestId.URL_DNASAMPLES);
+
+                    break;
+
                 case CV:
                     returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
                             GobiiServiceRequestId.URL_CV);

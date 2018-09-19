@@ -21,6 +21,7 @@ import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -58,7 +59,10 @@ public class DtoCrudRequestNameIdListTest {
 
     }
 
-    private void checkNameIdListResponse(PayloadEnvelope<NameIdDTO> responsePayloadEnvelope, List<NameIdDTO> nameIdDTOListInput, String nameIdDTONotExisting) {
+    private void checkNameIdListResponse(PayloadEnvelope<NameIdDTO> responsePayloadEnvelope, List<NameIdDTO> nameIdDTOListInput, String[] nameIdDTONotExisting) {
+
+        // Convert String Array to List
+        List<String> nameIdDTONotExistingList = Arrays.asList(nameIdDTONotExisting);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(responsePayloadEnvelope.getHeader()));
 
@@ -68,7 +72,7 @@ public class DtoCrudRequestNameIdListTest {
 
         for (NameIdDTO currentNameIdDTO : nameIdDTOListResponse) {
 
-            if (currentNameIdDTO.getName().equals(nameIdDTONotExisting)) {
+            if (nameIdDTONotExistingList.contains(currentNameIdDTO.getName())){
 
                 Assert.assertTrue(currentNameIdDTO.getId() <= 0);
             } else {
@@ -190,7 +194,7 @@ public class DtoCrudRequestNameIdListTest {
     }
 
 
-    private PayloadEnvelope<NameIdDTO> getNamesByNameList(List<NameIdDTO> nameIdDTOList, GobiiEntityNameType gobiiEntityNameType, String cvGroupName) throws Exception {
+    private PayloadEnvelope<NameIdDTO> getNamesByNameList(List<NameIdDTO> nameIdDTOList, GobiiEntityNameType gobiiEntityNameType, GobiiFilterType gobiiFilterType, String filterValue) throws Exception {
 
         PayloadEnvelope<NameIdDTO> payloadEnvelope = new PayloadEnvelope<>();
         payloadEnvelope.getHeader().setGobiiProcessType(GobiiProcessType.CREATE);
@@ -201,8 +205,8 @@ public class DtoCrudRequestNameIdListTest {
                 .nameIdListByQueryParams();
         GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
         namesUri.setParamValue("entity", gobiiEntityNameType.toString().toLowerCase());
-        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.NAMES_BY_NAME_LIST.toString().toUpperCase()));
-        namesUri.setParamValue("filterValue", cvGroupName);
+        namesUri.setParamValue("filterType", StringUtils.capitalize(gobiiFilterType.toString().toUpperCase()));
+        namesUri.setParamValue("filterValue", filterValue);
 
         PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = gobiiEnvelopeRestResource.post(NameIdDTO.class, payloadEnvelope);
 
@@ -232,9 +236,11 @@ public class DtoCrudRequestNameIdListTest {
 
         List<NameIdDTO> nameIdDTOList = createNameIdDTOList(cvDTOList);
 
-        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.CV, cvGroupName);
+        String[] nameAbsent = new String[]{notExistingCvDto.getTerm()};
 
-        checkNameIdListResponse(responsePayloadEnvelope, nameIdDTOList, notExistingCvDto.getTerm());
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.CV, GobiiFilterType.NAMES_BY_NAME_LIST, cvGroupName);
+
+        checkNameIdListResponse(responsePayloadEnvelope, nameIdDTOList, nameAbsent);
     }
 
     @Test
@@ -250,9 +256,11 @@ public class DtoCrudRequestNameIdListTest {
 
         List<NameIdDTO> nameIdDTOList = createNameIdDTOList(cvDTOList);
 
-        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.CV, cvGroupName);
+        String[] nameAbsent = new String[]{notExistingCvDto.getTerm()};
 
-        checkNameIdListResponse(responsePayloadEnvelope, nameIdDTOList, notExistingCvDto.getTerm());
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.CV, GobiiFilterType.NAMES_BY_NAME_LIST, cvGroupName);
+
+        checkNameIdListResponse(responsePayloadEnvelope, nameIdDTOList, nameAbsent);
 
     }
 
@@ -269,9 +277,11 @@ public class DtoCrudRequestNameIdListTest {
 
         List<NameIdDTO> nameIdDTOList = createNameIdDTOList(cvDTOList);
 
-        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.CV, cvGroupName);
+        String[] nameAbsent = new String[]{notExistingCvDto.getTerm()};
 
-        checkNameIdListResponse(responsePayloadEnvelope, nameIdDTOList, notExistingCvDto.getTerm());
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.CV, GobiiFilterType.NAMES_BY_NAME_LIST, cvGroupName);
+
+        checkNameIdListResponse(responsePayloadEnvelope, nameIdDTOList, nameAbsent);
     }
 
 
@@ -351,6 +361,8 @@ public class DtoCrudRequestNameIdListTest {
 
         String notExistingReference = "notexisting_reference-" + UUID.randomUUID().toString();
 
+        String[] nameAbsent = new String[]{notExistingReference};
+
         NameIdDTO nameIdDTONotExisting = new NameIdDTO();
         nameIdDTONotExisting.setName(notExistingReference);
 
@@ -360,9 +372,9 @@ public class DtoCrudRequestNameIdListTest {
         nameIdDTOList.add(nameIdDTO3);
         nameIdDTOList.add(nameIdDTONotExisting);
 
-        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.REFERENCE, "test");
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.REFERENCE, GobiiFilterType.NAMES_BY_NAME_LIST, "test");
 
-        checkNameIdListResponse(responsePayloadEnvelope, nameIdDTOList, notExistingReference);
+        checkNameIdListResponse(responsePayloadEnvelope, nameIdDTOList, nameAbsent);
 
     }
 
@@ -377,7 +389,7 @@ public class DtoCrudRequestNameIdListTest {
 
         List<NameIdDTO> nameIdDTOList = createNameIdDTOList(cvDTOList);
 
-        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.CV, cvGroupName);
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.CV, GobiiFilterType.NAMES_BY_NAME_LIST, cvGroupName);
 
 
         Assert.assertTrue("The error message should contain 'There were duplicate values in the list'",
@@ -393,4 +405,72 @@ public class DtoCrudRequestNameIdListTest {
 
     }
 
+    @Ignore
+    public void testGetDnaSampleNamesByList() throws Exception {
+
+        Integer projectId = 1;
+        GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.DNASAMPLE;
+
+        String[] dnasampleNamesExisting = new String[]{"dnasample_rza_codom_10","dnasample_rza_codom_11","dnasample_rza_codom_12","dnasample_rza_codom_13"};
+
+        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+
+        for (String dnaSampleName : dnasampleNamesExisting) {
+
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName(dnaSampleName);
+
+            nameIdDTOList.add(nameIdDTO);
+        }
+
+        String[] dnasampleNamesAbsent = new String[]{"yanii","yanii2","yanii3"};
+
+        for (String dnaSampleName : dnasampleNamesAbsent) {
+
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName(dnaSampleName);
+
+            nameIdDTOList.add(nameIdDTO);
+        }
+
+
+        /**
+         * Test get DNA Sample Names by NAMES_BY_NAME_LIST
+         * */
+        GobiiFilterType gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST;
+
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, projectId.toString());
+
+        checkNameIdListResponse(responsePayloadEnvelope, nameIdDTOList, dnasampleNamesAbsent);
+
+        /**
+         * Test get DNA Sample Names by NAMES_BY_NAME_LIST_RETURN_ABSENT
+         * Will return items on the list that are not found in the database
+         */
+        gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_ABSENT;
+
+        responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, projectId.toString());
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(responsePayloadEnvelope.getHeader()));
+
+        List<NameIdDTO> nameIdDTOListResponse = responsePayloadEnvelope.getPayload().getData();
+        Assert.assertNotEquals(null, nameIdDTOListResponse);
+        Assert.assertEquals(dnasampleNamesAbsent.length, nameIdDTOListResponse.size());
+
+
+        /**
+         * Test get DNA Sample Names by NAMES_BY_NAMES_LIST_RETURN_EXISTS
+         * Will return items on the list that are existing in the database
+         */
+        gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_EXISTS;
+
+        responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, projectId.toString());
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(responsePayloadEnvelope.getHeader()));
+
+        nameIdDTOListResponse = responsePayloadEnvelope.getPayload().getData();
+        Assert.assertNotEquals(null, nameIdDTOListResponse);
+        Assert.assertEquals(dnasampleNamesExisting.length, nameIdDTOListResponse.size());
+
+    }
 }

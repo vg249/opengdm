@@ -2237,7 +2237,7 @@ public class GOBIIControllerV1 {
                     } else if (GobiiFilterType.NAMES_BY_TYPE_NAME == gobiiFilterType) {
                         // there is nothing to test here -- the string could be anything
                         // add additional validation tests for other filter types
-                    } else if (GobiiFilterType.NAMES_BY_NAME_LIST == gobiiFilterType) {
+                    } else if (GobiiFilterType.NAMES_BY_NAME_LIST == gobiiFilterType || GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_ABSENT == gobiiFilterType || GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_EXISTS == gobiiFilterType) {
 
                         PayloadReader<NameIdDTO> payloadReader = new PayloadReader<>(NameIdDTO.class);
                         nameIdDTOList = payloadReader.extractListOfItems(payloadEnvelope);

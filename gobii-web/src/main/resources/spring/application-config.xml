@@ -142,6 +142,9 @@
     <bean id="dtoMapNameIdFetchProtocolNames"
           class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchProtocols"/>
 
+    <bean id="dtoMapNameIdFetchDnaSampleNames"
+          class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchDnaSampleNames"/>
+
     <bean id="dtoMapNameIdList"
           class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIdListImpl">
         <property name="dtoMapNameIdFetchMap">
@@ -209,6 +212,10 @@
                 <!-- VENDOR_PROTOCOL -->
                 <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).VENDOR_PROTOCOL}">
                     <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchVendorProtocols"/>
+                </entry>
+                <!-- DNA SAMPLE NAMES -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).DNASAMPLE}">
+                    <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchDnaSampleNames"/>
                 </entry>
             </map>
         </property>
@@ -411,6 +418,8 @@
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementReferencesForList"/>
     <bean id="listStatementJobByJobName"
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementJobByJobName"/>
+    <bean id="listStatementDnaSampleNamesByList"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementDnaSampleNamesByList"/>
 
     <!-- **** ListStatement queries paged *************************************** -->
     <bean id="listStatementDatasetAllPaged"
@@ -587,6 +596,16 @@
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="ListStatementReferencesForList"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
+                    </bean>
+                </entry>
+                <!-- DNA SAMPLES BY LIST -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_DNASAMPLE_NAMES_BYLIST}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
+                        <constructor-arg ref="listStatementDnaSampleNamesByList"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>
