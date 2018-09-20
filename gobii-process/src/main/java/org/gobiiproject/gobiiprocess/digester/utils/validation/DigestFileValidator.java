@@ -23,6 +23,10 @@ import static org.gobiiproject.gobiiprocess.digester.utils.validation.Validation
 
 public class DigestFileValidator {
 
+    static class InputParameters {
+        String rootDir, validationFile, url, password, userName;
+    }
+
     private String rootDir, rulesFile, url, password, username;
     //="q";;
     //="mcs397";;="http://192.168.121.3:8081/gobii-dev/";
@@ -40,41 +44,10 @@ public class DigestFileValidator {
     }
 
     public static void main(String[] args) {
-        String rootDir = null, validationFile = null, url = null, userName = null, password = null;
-
-        Options o = new Options()
-                .addOption("r", true, "Fully qualified path to digest directory")
-                .addOption("v", true, "Validation rule file path")
-                .addOption("h", true, "Host server URL")
-                .addOption("u", true, "User Name")
-                .addOption("p", true, "Password");
-        if (args.length != 8 && args.length != 10) {
-            new HelpFormatter().printHelp("DigestFileValidator", o);
-            System.exit(1);
-        }
-        try {
-            CommandLine cli = new DefaultParser().parse(o, args);
-            if (cli.hasOption("r")) rootDir = cli.getOptionValue("r");
-            if (cli.hasOption("v")) validationFile = cli.getOptionValue("v");
-            if (cli.hasOption("h")) url = cli.getOptionValue("h");
-            if (cli.hasOption("u")) userName = cli.getOptionValue("u");
-            if (cli.hasOption("p")) password = cli.getOptionValue("p");
-
-            if (ValidationUtil.isNullAndEmpty(rootDir) || ValidationUtil.isNullAndEmpty(url) || ValidationUtil.isNullAndEmpty(userName) || ValidationUtil.isNullAndEmpty(password)) {
-                new HelpFormatter().printHelp("DigestFileValidator", o);
-                System.exit(1);
-            }
-            if (validationFile == null) {
-                validationFile = "validationConfig.json";
-            }
-            if (url.charAt(url.length() - 1) != '/') url = url + "/";
-        } catch (org.apache.commons.cli.ParseException exp) {
-            new HelpFormatter().printHelp("DigestFileValidator", o);
-            System.exit(1);
-        }
-
-        ErrorLogger.logDebug("Entered Options are ", rootDir + " , " + validationFile + " , " + url + " , " + userName + " , " + password);
-        DigestFileValidator digestFileValidator = new DigestFileValidator(rootDir, validationFile, url, userName, password);
+        DigestFileValidator digestFileValidator;
+        InputParameters inputParameters = new InputParameters();
+        readInputParameters(args, inputParameters);
+        digestFileValidator = new DigestFileValidator(inputParameters.rootDir, inputParameters.validationFile, inputParameters.url, inputParameters.userName, inputParameters.password);
 
         String fileName = digestFileValidator.rootDir + "/" + "ValidationResult-" + new SimpleDateFormat("hhmmss").format(new Date()) + ".txt";
         List<String> errorList = new ArrayList<>();
@@ -112,7 +85,7 @@ public class DigestFileValidator {
         // Login into server
         if (!loginIntoServer(digestFileValidator.url, digestFileValidator.username, digestFileValidator.password, null, errorList)) {
             try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName), StandardOpenOption.APPEND)) {
-                writer.write("Could not log into server with below details. " + "\n URL:" + url + "\n Username:" + userName + "\n Password:" + password);
+                writer.write("Could not log into server with below details. " + "\n URL:" + inputParameters.url + "\n Username:" + inputParameters.userName + "\n Password:" + inputParameters.password);
                 writer.newLine();
                 for (String error : errorList) {
                     writer.write(error);
@@ -126,6 +99,19 @@ public class DigestFileValidator {
         }
 
         // Do validations
+        doValidations(digestFileValidator, fileName, validations);
+
+    }
+
+    /**
+     * Run Validations
+     *
+     * @param digestFileValidator digest validations
+     * @param fileName            file
+     * @param validations         validations
+     */
+    private static void doValidations(DigestFileValidator digestFileValidator, String fileName, List<ValidationUnit> validations) {
+        List<String> errorList;
         for (ValidationUnit validation : validations) {
             errorList = new ArrayList<>();
             try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName), StandardOpenOption.APPEND)) {
@@ -154,7 +140,47 @@ public class DigestFileValidator {
                 ErrorLogger.logError("Could not write to the file", fileName);
             }
         }
+    }
 
+    /**
+     * Read the command line arguments
+     *
+     * @param args            arguments
+     * @param inputParameters input parameters
+     */
+    private static void readInputParameters(String[] args, InputParameters inputParameters) {
+        Options o = new Options()
+                .addOption("r", true, "Fully qualified path to digest directory")
+                .addOption("v", true, "Validation rule file path")
+                .addOption("h", true, "Host server URL")
+                .addOption("u", true, "User Name")
+                .addOption("p", true, "Password");
+        if (args.length != 8 && args.length != 10) {
+            new HelpFormatter().printHelp("DigestFileValidator", o);
+            System.exit(1);
+        }
+        try {
+            CommandLine cli = new DefaultParser().parse(o, args);
+            if (cli.hasOption("r")) inputParameters.rootDir = cli.getOptionValue("r");
+            if (cli.hasOption("v")) inputParameters.validationFile = cli.getOptionValue("v");
+            if (cli.hasOption("h")) inputParameters.url = cli.getOptionValue("h");
+            if (cli.hasOption("u")) inputParameters.userName = cli.getOptionValue("u");
+            if (cli.hasOption("p")) inputParameters.password = cli.getOptionValue("p");
+
+            if (ValidationUtil.isNullAndEmpty(inputParameters.rootDir) || ValidationUtil.isNullAndEmpty(inputParameters.url) || ValidationUtil.isNullAndEmpty(inputParameters.userName) || ValidationUtil.isNullAndEmpty(inputParameters.password)) {
+                new HelpFormatter().printHelp("DigestFileValidator", o);
+                System.exit(1);
+            }
+            if (inputParameters.validationFile == null) {
+                inputParameters.validationFile = "validationConfig.json";
+            }
+            if (inputParameters.url.charAt(inputParameters.url.length() - 1) != '/')
+                inputParameters.url = inputParameters.url + "/";
+        } catch (org.apache.commons.cli.ParseException exp) {
+            new HelpFormatter().printHelp("DigestFileValidator", o);
+            System.exit(1);
+        }
+        ErrorLogger.logDebug("Entered Options are ", inputParameters.rootDir + " , " + inputParameters.validationFile + " , " + inputParameters.url + " , " + inputParameters.userName + " , " + inputParameters.password);
     }
 
     /**
