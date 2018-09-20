@@ -26,6 +26,7 @@ public enum GobiiServiceRequestId {
     URL_CONTACT_SEARCH("contact-search"),
     URL_ORGANIZATION_SEARCH("organization-search"),
     URL_REFERENCE("references"),
+    URL_DNASAMPLES("dnasamples"),
     URL_EXPERIMENTS("experiments"),
     URL_DATASETS("datasets"),
     URL_DATASETTYPES("datasets/types"),
