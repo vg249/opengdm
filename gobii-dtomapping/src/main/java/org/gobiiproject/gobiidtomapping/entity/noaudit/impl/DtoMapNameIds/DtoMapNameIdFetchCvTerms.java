@@ -118,17 +118,18 @@ public class DtoMapNameIdFetchCvTerms implements DtoMapNameIdFetch {
                     }});
 
 
-            for (NameIdDTO currentNameIdDTO : returnVal) {
+            while (resultSet.next()) {
 
-                while (resultSet.next()) {
+                for (NameIdDTO currentNameIdDTO : returnVal) {
 
                     if (currentNameIdDTO.getName().equals(resultSet.getString("term"))) {
 
                         currentNameIdDTO.setId(resultSet.getInt("cv_id"));
                         break;
-
                     }
+
                 }
+
             }
 
         } catch (Exception e) {

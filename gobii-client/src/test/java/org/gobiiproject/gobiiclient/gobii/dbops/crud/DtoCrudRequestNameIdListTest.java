@@ -228,9 +228,12 @@ public class DtoCrudRequestNameIdListTest {
         List<CvDTO> cvDTOList = createCvTerms(cvGroupId);
 
         CvDTO notExistingCvDto = createNotExistingCv();
-        cvDTOList.add(notExistingCvDto);
 
-        List<NameIdDTO> nameIdDTOList = createNameIdDTOList(cvDTOList);
+        List<CvDTO> cvDTOListInput = new ArrayList<>();
+        cvDTOListInput.add(notExistingCvDto);
+        cvDTOListInput.addAll(cvDTOList);
+
+        List<NameIdDTO> nameIdDTOList = createNameIdDTOList(cvDTOListInput);
 
         PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.CV, cvGroupName);
 

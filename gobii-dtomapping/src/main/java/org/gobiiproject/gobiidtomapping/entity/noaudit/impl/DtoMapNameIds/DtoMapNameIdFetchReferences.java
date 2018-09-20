@@ -86,9 +86,9 @@ public class DtoMapNameIdFetchReferences implements DtoMapNameIdFetch {
                         put("nameArray", nameArray);
                     }});
 
-            for (NameIdDTO currentNameIdDTO : returnVal) {
+            while (resultSet.next()) {
 
-                while (resultSet.next()) {
+                for (NameIdDTO currentNameIdDTO : returnVal) {
 
                     if (currentNameIdDTO.getName().equals(resultSet.getString("name"))) {
 
@@ -96,7 +96,9 @@ public class DtoMapNameIdFetchReferences implements DtoMapNameIdFetch {
                         break;
 
                     }
+
                 }
+
             }
 
         } catch (Exception e) {
