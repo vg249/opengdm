@@ -177,7 +177,12 @@ public class ProcessMessage extends MailMessage {
 
         String pathLine = path;
         if(config.getGlobalServer(GobiiServerType.OWN_CLOUD).isActive()){
-            pathLine = "<BR>" + GetLinks.getLink(path, config) + "<BR>" + GetLinks.getOwncloudURL(path, config);
+            if(path.endsWith("/")){
+                pathLine = path + "\n" + GetLinks.getOwncloudURL(path, config);
+            }
+            else{
+                pathLine = path + "\n" + GetLinks.getLink(path, config);
+            }
         }
     	if(new File(path).length() > 1){
     		paths.add(new HTMLTableEntity(type, escapeHTML(pathLine), HelperFunctions.sizeToReadable(new File(path).length())));

@@ -2,6 +2,7 @@ package org.gobiiproject.gobiimodel.utils.links;
 
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.types.GobiiServerType;
+import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -38,9 +39,10 @@ public class GetLinks {
         String password = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getPassword();
         String host = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getHost();
         String port = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getPort().toString();
-        String apiPath = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getContextPath();
-        String urlPath = "http://" + host + (port.equals("") ? "" : ":"+port) + apiPath.substring(0, apiPath.length()-1);
-        String path = "path=" + filePath + "&shareType=3&permissions=1";
+        String contextPath = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getContextPath();
+//        String urlPath = "http://" + host + (port.equals("") ? "" : ":"+port) + apiPath.substring(0, apiPath.length()-1);
+        String urlPath = "http://" + host + (port.equals("") ? "" : ":"+port) + "/owncloud/ocs/v1.php/apps/files_sharing/api/v1/shares";
+        String path = "path=" + filePath.replace("/data/gobii_bundle/crops/", "/" + contextPath) + "&shareType=3&permissions=1";
         String liveLink;
         URL url = new URL(urlPath);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -67,14 +69,22 @@ public class GetLinks {
         }
         else{
             liveLink = "NA";
+            ErrorLogger.logError("OWNCLOUD", "API request failed due to improper configurations");
         }
         return liveLink;
     }
 
-    public static String getOwncloudURL(String path, ConfigSettings config) throws Exception {
+    public static String getOwncloudURL(String filePath, ConfigSettings config) throws Exception {
         String host = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getHost();
         String port = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getPort().toString();
-        String liveURL = "http://" + host + (port.equals("") ? "" : (":" + port)) + "/" + "/apps/files/?dir=" + path;
+        String contextPath = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getContextPath();
+        filePath = filePath.replace("/data/gobii_bundle/crops/", "/" + contextPath);
+        if(!filePath.endsWith("/")){
+            int start = filePath.lastIndexOf("/");
+            filePath = filePath.substring(0, start);
+        }
+        System.out.println(filePath);
+        String liveURL = "http://" + host + (port.equals("") ? "" : (":" + port)) +  "/owncloud/index.php/apps/files/?dir=" + filePath;
         return liveURL;
     }
 }
