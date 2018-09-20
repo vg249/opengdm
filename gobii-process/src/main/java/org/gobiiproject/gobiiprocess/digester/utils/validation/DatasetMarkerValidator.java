@@ -1,9 +1,11 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
+import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
+
 import java.util.List;
 
 public class DatasetMarkerValidator extends BaseValidator {
     @Override
-    void validate(ValidationUnit validationUnit, String dir, List<String> errorList) {
+    void validate(ValidationUnit validationUnit, String dir, List<Failure> failureList) {
     }
 }

@@ -7,9 +7,15 @@ import java.util.List;
 
 public class Failure {
     @JsonProperty
-    String reason;
+    public String reason;
     @JsonProperty
-    List<String> columnName;
+    public List<String> columnName;
     @JsonProperty
-    ArrayList values;
+    public List<String> values;
+
+    public Failure() {
+        this.reason = "";
+        this.columnName = new ArrayList<>();
+        this.values = new ArrayList<>();
+    }
 }

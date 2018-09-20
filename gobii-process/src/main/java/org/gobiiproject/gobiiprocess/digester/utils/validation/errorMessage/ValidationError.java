@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public class FileError {
+public class ValidationError {
     @JsonProperty
-    String digestFileName;
+    public String digestFileName;
     @JsonProperty
-    String status;
+    public String status;
     @JsonProperty
-    List<Failure> failures;
+    public List<Failure> failures;
 }

@@ -13,6 +13,8 @@ import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
+import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
+import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -53,7 +55,7 @@ class ValidationWebServicesUtil {
         }
     }
 
-    static void validateCVName(List<NameIdDTO> nameIdDTOList, String cvGroupName, List<String> errorList) throws MaximumErrorsValidationException {
+    static void validateCVName(List<NameIdDTO> nameIdDTOList, String cvGroupName, List<Failure> failureList) throws MaximumErrorsValidationException {
         try {
             PayloadEnvelope<NameIdDTO> payloadEnvelope = new PayloadEnvelope<>();
             payloadEnvelope.getHeader().setGobiiProcessType(GobiiProcessType.CREATE);
@@ -76,7 +78,10 @@ class ValidationWebServicesUtil {
                     namesUri.setParamValue("filterValue", CvGroup.CVGROUP_MARKER_STRAND.getCvGroupName());
                     break;
                 default:
-                    ValidationUtil.addMessageToList(cvGroupName + " is not defined in CV table. ", errorList);
+                    Failure failure = new Failure();
+                    failure.reason = FailureTypes.UNDEFINED_CV;
+                    failure.values.add(cvGroupName);
+                    ValidationUtil.addMessageToList(failure, failureList);
                     return;
             }
             PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = gobiiEnvelopeRestResource.post(NameIdDTO.class, payloadEnvelope);
@@ -84,20 +89,30 @@ class ValidationWebServicesUtil {
             if (!status.isSucceeded()) {
                 ArrayList<HeaderStatusMessage> statusMessages = status.getStatusMessages();
                 for (HeaderStatusMessage message : statusMessages) {
-                    ValidationUtil.addMessageToList(message.getMessage(), errorList);
+                    Failure failure = new Failure();
+                    failure.reason = FailureTypes.DATABASE_ERROR;
+                    failure.values.add(message.getMessage());
+                    ValidationUtil.addMessageToList(failure, failureList);
                 }
                 return;
             }
             List<NameIdDTO> nameIdDTOListResponse = responsePayloadEnvelope.getPayload().getData();
             for (NameIdDTO nameIdDTO : nameIdDTOListResponse) {
                 if (nameIdDTO.getId() == 0) {
-                    ValidationUtil.addMessageToList(nameIdDTO.getName() + " in column " + cvGroupName + " is not a valid name.", errorList);
+                    Failure failure = new Failure();
+                    failure.reason = FailureTypes.UNDEFINED_CV_VALUE;
+                    failure.columnName.add(cvGroupName);
+                    failure.values.add(nameIdDTO.getName());
+                    ValidationUtil.addMessageToList(failure, failureList);
                 }
             }
         } catch (MaximumErrorsValidationException e) {
             throw e;
         } catch (Exception e) {
-            ValidationUtil.addMessageToList(e.getMessage(), errorList);
+            Failure failure = new Failure();
+            failure.reason = FailureTypes.EXCEPTION;
+            failure.values.add(e.getMessage());
+            ValidationUtil.addMessageToList(failure, failureList);
         }
     }
 }

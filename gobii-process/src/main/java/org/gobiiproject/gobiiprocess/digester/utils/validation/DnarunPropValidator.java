@@ -1,16 +1,18 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
+import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
+
 import java.util.ArrayList;
 import java.util.List;
 
 class DnarunPropValidator extends BaseValidator {
     @Override
-    void validate(ValidationUnit validationUnit, String dir, List<String> errorList) throws MaximumErrorsValidationException {
+    void validate(ValidationUnit validationUnit, String dir, List<Failure> failureList) throws MaximumErrorsValidationException {
         List<String> dnaSample = new ArrayList<>();
-        if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), dnaSample, errorList)) {
+        if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), dnaSample, failureList)) {
             String filePath = dir + "/" + validationUnit.getDigestFileName();
-            validateRequiredColumns(filePath, validationUnit.getConditions(), errorList);
-            validateColumnsBetweenFiles(filePath, validationUnit, errorList);
+            validateRequiredColumns(filePath, validationUnit.getConditions(), failureList);
+            validateColumnsBetweenFiles(filePath, validationUnit, failureList);
 
         }
     }

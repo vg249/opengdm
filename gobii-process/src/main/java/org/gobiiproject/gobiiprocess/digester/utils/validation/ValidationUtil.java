@@ -1,48 +1,47 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
-import org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions;
+import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 class ValidationUtil {
     static boolean isNullAndEmpty(String value) {
         return value == null || value.trim().equalsIgnoreCase("");
     }
 
+    static void printMissingFieldError(String s1, String s2, String reason, List<Failure> errorList) throws MaximumErrorsValidationException {
+        Failure failure = new Failure();
+        failure.reason = reason;
+        failure.values.add("Condition type defined " + s1 + " but " + s2 + " not defined.");
+        addMessageToList(failure, errorList);
+    }
+
     /**
-     * Gets the list of allowed file extensions
+     * Adds a failure to the failure list.
+     * If the same error exists append the values else create a new one.
+     * If max errors are more than 5 throw exception
      *
-     * @param errorList error list
-     * @return Map of extensions
+     * @param failure     failure
+     * @param failureList failure list
+     * @throws MaximumErrorsValidationException exception when maximum number of failures occured
      */
-    static List<String> getAllowedExtensions(List<String> errorList) throws MaximumErrorsValidationException {
-        Map<String, String> allowedExtensions = new HashMap<>();
-        Field[] fields = DigesterFileExtensions.class.getDeclaredFields();
-        List<String> values = null;
-        for (Field field : fields) {
-            try {
-                allowedExtensions.put(String.valueOf(field.get(null)), field.getName());
-                values = allowedExtensions.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList());
-            } catch (IllegalAccessException e) {
-                addMessageToList("Could not get allowed file extensions.", errorList);
-                values = new ArrayList<>();
+    static void addMessageToList(Failure failure, List<Failure> failureList) throws MaximumErrorsValidationException {
+        failureList.add(failure);
+        String reason = failure.reason;
+        boolean matchNotFound = true;
+        for (Failure fail : failureList)
+            if (fail.reason.equalsIgnoreCase(reason)) {
+                // Both the columns are not null and they are equal. If they are null even thought they are same errors they are not related
+                if (failure.columnName.size() > 0 && fail.columnName.size() > 0 && fail.columnName.containsAll(failure.columnName) && failure.columnName.containsAll(fail.columnName)) {
+                    fail.values.addAll(failure.values);
+                    matchNotFound = false;
+                }
             }
+        if (matchNotFound) failureList.add(failure);
+        int noOfFailures = 0;
+        for (Failure fail : failureList) {
+            noOfFailures = noOfFailures + fail.values.size();
         }
-        return values;
-
-    }
-
-    static void printMissingFieldError(String s1, String s2, List<String> errorList) throws MaximumErrorsValidationException {
-        addMessageToList("Condition type defined as " + s1 + " but " + s2 + " not defined.", errorList);
-    }
-
-    static void addMessageToList(String msg, List<String> errorList) throws MaximumErrorsValidationException {
-        errorList.add(msg);
-        if (errorList.size() >= 5) throw new MaximumErrorsValidationException();
+        if (noOfFailures >= 5) throw new MaximumErrorsValidationException();
     }
 }

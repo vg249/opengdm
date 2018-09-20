@@ -1,15 +1,20 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SequenceWriter;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.io.FilenameUtils;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
+import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
+import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -19,6 +24,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions.*;
+import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.addMessageToList;
 import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationWebServicesUtil.loginIntoServer;
 
 public class DigestFileValidator {
@@ -38,7 +44,7 @@ public class DigestFileValidator {
         this.rulesFile = validationFile;
         this.username = username;
         this.password = password;
-        //  this.url = "http://192.168.121.3:8081/gobii-dev/";
+        //  this.url = "http://192.168.56.101:8081/gobii-dev/";
         //  this.username = "mcs397";
         //  this.password = "q";
     }
@@ -49,7 +55,7 @@ public class DigestFileValidator {
         readInputParameters(args, inputParameters);
         digestFileValidator = new DigestFileValidator(inputParameters.rootDir, inputParameters.validationFile, inputParameters.url, inputParameters.userName, inputParameters.password);
 
-        String fileName = digestFileValidator.rootDir + "/" + "ValidationResult-" + new SimpleDateFormat("hhmmss").format(new Date()) + ".txt";
+        String fileName = digestFileValidator.rootDir + "/" + "ValidationResult-" + new SimpleDateFormat("hhmmss").format(new Date()) + ".json";
         List<String> errorList = new ArrayList<>();
         List<ValidationUnit> validations = null;
 
@@ -92,6 +98,7 @@ public class DigestFileValidator {
                     writer.newLine();
                 }
                 writer.flush();
+                doValidations(digestFileValidator, fileName, validations);
             } catch (IOException e) {
                 ErrorLogger.logError("Unable to write to the file ", fileName);
             }
@@ -99,7 +106,6 @@ public class DigestFileValidator {
         }
 
         // Do validations
-        doValidations(digestFileValidator, fileName, validations);
 
     }
 
@@ -110,36 +116,36 @@ public class DigestFileValidator {
      * @param fileName            file
      * @param validations         validations
      */
-    private static void doValidations(DigestFileValidator digestFileValidator, String fileName, List<ValidationUnit> validations) {
-        List<String> errorList;
-        for (ValidationUnit validation : validations) {
-            errorList = new ArrayList<>();
-            try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName), StandardOpenOption.APPEND)) {
+    private static void doValidations(DigestFileValidator digestFileValidator, String fileName, List<ValidationUnit> validations) throws IOException {
+            FileWriter fileWriter = new FileWriter(new File(fileName));
+            ObjectMapper mapper = new ObjectMapper();
+            SequenceWriter seqWriter = mapper.writer().writeValuesAsArray(fileWriter);
+            for (ValidationUnit validation : validations) {
+                ValidationError validationError = new ValidationError();
+                validationError.digestFileName = validation.getDigestFileName();
+                List<Failure> failureList = new ArrayList<>();
                 try {
-                    digestFileValidator.validate(validation, errorList);
+                    digestFileValidator.validate(validation, failureList);
                 } catch (MaximumErrorsValidationException e) {
                     //Don't do any thing. This implies that error list is full. Later code handles it.
                 } catch (Exception e) {
-                    errorList.add(e.getMessage());
+                    Failure failure = new Failure();
+                    failure.reason = FailureTypes.EXCEPTION;
+                    failure.values.add(e.getMessage());
+                    failureList.add(failure);
                 }
-                if (errorList.size() > 0) {
-                    for (String error : errorList) {
-                        writer.write(error);
-                        writer.newLine();
-                    }
-                    System.out.println(validation.getDigestFileName() + " validation failed.");
-                    writer.write(validation.getDigestFileName() + " validation failed. No of failures: " + errorList.size());
+                if (failureList.size() > 0) {
+                    validationError.status = "FAILED";
+                    validationError.failures.addAll(failureList);
+                    seqWriter.write(validationError);
                 } else {
-                    System.out.println(validation.getDigestFileName() + " validation succeeded.");
-                    writer.write(validation.getDigestFileName() + " validation succeeded.");
+                    validationError.status = "SUCCESS";
+                    seqWriter.write(validationError);
                 }
-                writer.newLine();
-                writer.newLine();
-                writer.flush();
-            } catch (IOException e) {
-                ErrorLogger.logError("Could not write to the file", fileName);
+                seqWriter.flush();
             }
-        }
+            // READ ERRORS
+            //            ValidationError[] fileErrors = mapper.readValue(new File("D:\\writer\\validationError.json"), ValidationError[].class);
     }
 
     /**
@@ -201,12 +207,11 @@ public class DigestFileValidator {
                         .readValue(getClass().getClassLoader().getResourceAsStream(rulesFile), ValidationRules.class);
             validations = validationRules.getValidations();
         } catch (IOException e) {
-            ValidationUtil.addMessageToList("Exception in reading rules file." + e, errorList);
+            errorList.add("Exception in reading rules file." + e);
         }
         validateRules(validations, errorList);
         return validations;
     }
-
 
     /**
      * Validates rules defined in the JSON
@@ -217,15 +222,14 @@ public class DigestFileValidator {
      * @param errorList   error list
      */
     private void validateRules(List<ValidationUnit> validations, List<String> errorList) throws MaximumErrorsValidationException {
-        List<String> allowedExtensions = ValidationUtil.getAllowedExtensions(errorList);
-        if (allowedExtensions.size() == 0) return;
+
         List<String> encounteredDigestExtensions = new ArrayList<>();
         for (ValidationUnit validation : validations) {
             if (!allowedExtensions.contains(FilenameUtils.getExtension(validation.getDigestFileName()))) {
-                ValidationUtil.addMessageToList("Entered digestFileName is not a valid " + validation.getDigestFileName(), errorList);
+                errorList.add("Entered digestFileName is not a valid " + validation.getDigestFileName());
                 return;
             } else if (encounteredDigestExtensions.contains(validation.getDigestFileName())) {
-                ValidationUtil.addMessageToList("DigestFileName" + validation.getDigestFileName() + " is already defined.", errorList);
+                errorList.add("DigestFileName" + validation.getDigestFileName() + " is already defined.");
                 return;
             } else {
                 encounteredDigestExtensions.add(validation.getDigestFileName());
@@ -233,53 +237,56 @@ public class DigestFileValidator {
             List<ConditionUnit> conditions = validation.getConditions();
             for (ConditionUnit condition : conditions)
                 if (condition.columnName == null || condition.required == null)
-                    ValidationUtil.addMessageToList("DigestFileName :" + validation.getDigestFileName() + " conditions does not have all required fields.", errorList);
+                    errorList.add("DigestFileName :" + validation.getDigestFileName() + " conditions does not have all required fields.");
         }
     }
 
-    public void validate(ValidationUnit validation, List<String> errorList) throws MaximumErrorsValidationException {
+    public void validate(ValidationUnit validation, List<Failure> failureList) throws MaximumErrorsValidationException {
         trimSpaces(validation);
         switch (FilenameUtils.getExtension(validation.getDigestFileName())) {
-            case GERMPLASM_TABNAME:
-                new GermplasmValidator().validate(validation, rootDir, errorList);
+            case "germplasm":
+                new GermplasmValidator().validate(validation, rootDir, failureList);
                 break;
-            case GERMPLASM_PROP_TABNAME:
-                new GermplasmPropValidator().validate(validation, rootDir, errorList);
+            case "germplasm_prop":
+                new GermplasmPropValidator().validate(validation, rootDir, failureList);
                 break;
-            case DNA_SAMPLE_TABNAME:
-                new DnaSampleValidator().validate(validation, rootDir, errorList);
+            case "dnasample":
+                new DnaSampleValidator().validate(validation, rootDir, failureList);
                 break;
-            case DNA_SAMPLE_PROP_TABNAME:
-                new DnaSamplePropValidator().validate(validation, rootDir, errorList);
+            case "dnasample_prop":
+                new DnaSamplePropValidator().validate(validation, rootDir, failureList);
                 break;
-            case SAMPLE_TABNAME:
-                new DnarunValidator().validate(validation, rootDir, errorList);
+            case "dnarun":
+                new DnarunValidator().validate(validation, rootDir, failureList);
                 break;
-            case SAMPLE_PROP_TABNAME:
-                new DnarunPropValidator().validate(validation, rootDir, errorList);
+            case "dnarun_prop":
+                new DnarunPropValidator().validate(validation, rootDir, failureList);
                 break;
-            case MARKER_TABNAME:
-                new MarkerValidator().validate(validation, rootDir, errorList);
+            case "marker":
+                new MarkerValidator().validate(validation, rootDir, failureList);
                 break;
-            case MARKER_PROP_TABNAME:
-                new MarkerPropValidator().validate(validation, rootDir, errorList);
+            case "marker_prop":
+                new MarkerPropValidator().validate(validation, rootDir, failureList);
                 break;
-            case LINKAGE_GROUP_TABNAME:
-                new LinkageGroupValidator().validate(validation, rootDir, errorList);
+            case "linkage_group":
+                new LinkageGroupValidator().validate(validation, rootDir, failureList);
                 break;
-            case MARKER_LINKAGE_GROUP_TABNAME:
-                new MarkerLinkageGroupValidator().validate(validation, rootDir, errorList);
+            case "marker_linkage_group":
+                new MarkerLinkageGroupValidator().validate(validation, rootDir, failureList);
                 break;
-            case DS_SAMPLE_TABNAME:
-                new DatasetDnarunValidator().validate(validation, rootDir, errorList);
+            case "dataset_dnarun":
+                new DatasetDnarunValidator().validate(validation, rootDir, failureList);
                 break;
-            case DS_MARKER_TABNAME:
-                new DatasetMarkerValidator().validate(validation, rootDir, errorList);
+            case "dataset_marker":
+                new DatasetMarkerValidator().validate(validation, rootDir, failureList);
                 break;
-            case VARIANT_CALL_TABNAME: // Validate has to include matrix validation
+            case "matrix": // Validate has to include matrix validation
                 break;
             default:
-                ValidationUtil.addMessageToList("DigestFileValidator" + " Given extension " + validation.getDigestFileName() + " is not valid.", errorList);
+                Failure failure = new Failure();
+                failure.reason = FailureTypes.INVALID_FILE_EXTENSIONS;
+                failure.values.add(" Given extension " + validation.getDigestFileName() + " is invalid.");
+                addMessageToList(failure, failureList);
         }
 //        System.out.println("YELLO");
     }
