@@ -40,53 +40,20 @@ public class DtoMapNameIdFetchMarkerNames implements DtoMapNameIdFetch {
 
         try {
 
-            List<String> nameArray = new ArrayList<>();
-            List<NameIdDTO> nameIdDTOListInput = new ArrayList<>();
-
-            for (NameIdDTO currentNameIdDTO : nameIdDTOList) {
-
-                nameArray.add(currentNameIdDTO.getName());
-                currentNameIdDTO.setId(0);
-                nameIdDTOListInput.add(currentNameIdDTO);
-            }
-
             ResultSet resultSet = dtoListQueryColl.getResultSet(ListSqlId.QUERY_ID_MARKER_NAMES_BYLIST,
-                    new HashMap<String, Object>(){{
-                      put("platformId", platformId);
-                    }}, new HashMap<String, Object>(){{
-                      put("nameArray", nameArray);
+                    new HashMap<String, Object>() {{
+                        put("platformId", platformId);
+                    }}, new HashMap<String, Object>() {{
+                        put("nameArray", nameIdDTOList);
                     }});
 
-            for (NameIdDTO currentNameIdDTO : nameIdDTOListInput) {
-
-                while (resultSet.next()) {
-
-                    if (currentNameIdDTO.getName().equals(resultSet.getString("name"))) {
-                        currentNameIdDTO.setId(resultSet.getInt("marker_id"));
-                        break;
-                    }
-
-                }
-
-                if (gobiiFilterType == GobiiFilterType.NAMES_BY_NAME_LIST) {
-                    returnVal.add(currentNameIdDTO);
-                } else if (gobiiFilterType == GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_ABSENT) {
-                    if (currentNameIdDTO.getId() == 0) {
-                        returnVal.add(currentNameIdDTO);
-                    }
-                } else if (gobiiFilterType == GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_EXISTS) {
-                    if (currentNameIdDTO.getId() > 0) {
-                        returnVal.add(currentNameIdDTO);
-                    }
-                }
-
-            }
+            Integer resultSize = DtoMapNameIdUtil.getIdFromResultSet(nameIdDTOList, resultSet, "name", "marker_id", gobiiFilterType);
 
         } catch (Exception e) {
             throw new GobiiDaoException(e);
         }
 
-        return returnVal;
+        return nameIdDTOList;
 
     }
 
