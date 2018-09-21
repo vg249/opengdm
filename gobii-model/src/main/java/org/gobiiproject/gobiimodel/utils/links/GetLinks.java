@@ -78,7 +78,7 @@ public class GetLinks {
         String host = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getHost();
         String port = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getPort().toString();
         String contextPath = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getContextPath();
-        filePath = filePath.replace("/data/gobii_bundle/crops/", "/" + contextPath);
+        filePath = filePath.replace("/data", "/" + contextPath);
         if(!filePath.endsWith("/")){
             int start = filePath.lastIndexOf("/");
             filePath = filePath.substring(0, start);
