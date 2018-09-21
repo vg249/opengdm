@@ -20,11 +20,8 @@ public class DtoMapNameIdUtil {
 
         while (resultSet.next()) {
 
-
-            System.out.print(resultSet.getString(columnName) + "\n");
             index = searchIndex(nameIdDTOList, resultSet.getString(columnName));
 
-            System.out.print(index + "\n");
             if (index > -1) {
 
                 NameIdDTO nameIdDTO  = nameIdDTOList.get(index);
