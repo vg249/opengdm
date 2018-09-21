@@ -3,6 +3,7 @@ package org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discre
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListStatement;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ParameterizedSql;
+import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,13 +31,13 @@ public class ListStatementCvTermsByGroupForList  implements ListStatement {
 
         String parsedNameList = "";
 
-        List<String> nameArray = (ArrayList) sqlParamVals.get(PARAM_NAME_NAME_LIST);
+        List<NameIdDTO> nameArray = (ArrayList) sqlParamVals.get(PARAM_NAME_NAME_LIST);
 
         // parse array into CSV
 
-        for (String name : nameArray) {
+        for (NameIdDTO nameIdDTO : nameArray) {
 
-            String quotedName = "'" + name + "'";
+            String quotedName = "'" + nameIdDTO.getName() + "'";
 
             parsedNameList = (parsedNameList.equals("")) ? quotedName : parsedNameList + ", " + quotedName;
 

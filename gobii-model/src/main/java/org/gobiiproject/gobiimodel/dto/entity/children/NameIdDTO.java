@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * Created by Phil on 4/8/2016.
  */
-public class NameIdDTO extends DTOBase {
+public class NameIdDTO extends DTOBase implements Comparable<NameIdDTO> {
 
 
     // entityLastModified is necessary because this class doe snot correspond to a
@@ -70,5 +70,11 @@ public class NameIdDTO extends DTOBase {
 
     public void setFkId(Integer fkId) {
         this.fkId = fkId;
+    }
+
+    public int compareTo(NameIdDTO compareNameIdDTO) {
+
+        return name.compareTo(compareNameIdDTO.getName());
+
     }
 }

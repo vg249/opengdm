@@ -358,10 +358,10 @@ public class DtoCrudRequestNameIdListTest {
         nameIdDTONotExisting.setName(notExistingReference);
 
         List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+        nameIdDTOList.add(nameIdDTONotExisting);
         nameIdDTOList.add(nameIdDTO1);
         nameIdDTOList.add(nameIdDTO2);
         nameIdDTOList.add(nameIdDTO3);
-        nameIdDTOList.add(nameIdDTONotExisting);
 
         PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.REFERENCE, "test");
 
