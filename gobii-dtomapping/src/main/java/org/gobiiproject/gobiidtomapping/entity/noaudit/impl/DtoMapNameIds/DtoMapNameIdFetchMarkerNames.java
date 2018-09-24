@@ -36,8 +36,6 @@ public class DtoMapNameIdFetchMarkerNames implements DtoMapNameIdFetch {
 
     private List<NameIdDTO> getMarkerNamesByNameList(List<NameIdDTO> nameIdDTOList, String platformId, GobiiFilterType gobiiFilterType) {
 
-        List<NameIdDTO> returnVal = new ArrayList<>();
-
         try {
 
             ResultSet resultSet = dtoListQueryColl.getResultSet(ListSqlId.QUERY_ID_MARKER_NAMES_BYLIST,

@@ -10,6 +10,7 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO;
@@ -156,6 +157,32 @@ public class DtoCrudRequestNameIdListTest {
         Assert.assertTrue(markerDTOResponse.getMarkerId() > 0);
 
         return markerDTOResponse;
+    }
+
+    private PlatformDTO createPlatformForTest() throws Exception {
+
+        PlatformDTO platformDTO = new PlatformDTO();
+        platformDTO.setPlatformName(UUID.randomUUID().toString());
+        platformDTO.setPlatformCode(UUID.randomUUID().toString());
+        platformDTO.setTypeId(1);
+        platformDTO.setStatusId(1);
+        platformDTO.setCreatedBy(1);
+
+        RestUri createPlatformUri = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_PLATFORM);
+        PayloadEnvelope<PlatformDTO> payloadEnvelope = new PayloadEnvelope<>(platformDTO, GobiiProcessType.CREATE);
+        GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(createPlatformUri);
+        PayloadEnvelope<PlatformDTO> responseEnvelope = gobiiEnvelopeRestResource.post(PlatformDTO.class, payloadEnvelope);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(responseEnvelope.getHeader()));
+        PlatformDTO platformDTOResponse = responseEnvelope.getPayload().getData().get(0);
+
+        Assert.assertNotEquals(null, platformDTOResponse);
+        Assert.assertTrue(platformDTOResponse.getPlatformId() > 0);
+        Assert.assertNotNull(platformDTOResponse.getPlatformName());
+
+        return platformDTOResponse;
     }
 
     private List<CvDTO> createCvTerms(Integer cvGroupId) throws Exception {
@@ -459,7 +486,7 @@ public class DtoCrudRequestNameIdListTest {
 
     }
 
-    @Ignore
+    @Test
     public void testGetDnaSampleNamesByList() throws Exception {
 
         Integer projectId = 1;
@@ -469,7 +496,9 @@ public class DtoCrudRequestNameIdListTest {
 
         List<NameIdDTO> nameIdDTOList = new ArrayList<>();
 
-        for (String dnaSampleName : dnasampleNamesExisting) {
+        String[] dnasampleNamesAbsent = new String[]{"yanii","yanii2","yanii3"};
+
+        for (String dnaSampleName : dnasampleNamesAbsent) {
 
             NameIdDTO nameIdDTO = new NameIdDTO();
             nameIdDTO.setName(dnaSampleName);
@@ -477,9 +506,7 @@ public class DtoCrudRequestNameIdListTest {
             nameIdDTOList.add(nameIdDTO);
         }
 
-        String[] dnasampleNamesAbsent = new String[]{"yanii","yanii2","yanii3"};
-
-        for (String dnaSampleName : dnasampleNamesAbsent) {
+        for (String dnaSampleName : dnasampleNamesExisting) {
 
             NameIdDTO nameIdDTO = new NameIdDTO();
             nameIdDTO.setName(dnaSampleName);
@@ -549,13 +576,6 @@ public class DtoCrudRequestNameIdListTest {
 
         List<NameIdDTO> nameIdDTOList = new ArrayList<>();
 
-        for (String markerName : markerNameExisting) {
-
-            NameIdDTO nameIdDTO = new NameIdDTO();
-            nameIdDTO.setName(markerName);
-
-            nameIdDTOList.add(nameIdDTO);
-        }
 
         String[] markerNameAbsent = new String[]{"absent-marker1", "absent-marker2", "absent-marker3"};
 
@@ -566,6 +586,15 @@ public class DtoCrudRequestNameIdListTest {
 
             nameIdDTOList.add(nameIdDTO);
         }
+
+        for (String markerName : markerNameExisting) {
+
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName(markerName);
+
+            nameIdDTOList.add(nameIdDTO);
+        }
+
 
         /**
          * Test get Marker names by NAMES_BY_NAME_LIST
@@ -594,6 +623,47 @@ public class DtoCrudRequestNameIdListTest {
         responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, platformId.toString());
 
         checkNameIdListResponseExists(responsePayloadEnvelope, markerNameExisting);
+
+    }
+
+    @Test
+    public void testGetPlatformNamesByList() throws Exception {
+
+        // create platforms for test
+        PlatformDTO platformDTO1 = createPlatformForTest();
+        PlatformDTO platformDTO2 = createPlatformForTest();
+        PlatformDTO platformDTO3 = createPlatformForTest();
+
+        GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.PLATFORM;
+
+        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+
+        String[] platformNameAbsent = new String[]{"absent-platform1", "absent-platform2", "absent-platform3"};
+
+        for (String platformName : platformNameAbsent) {
+
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName(platformName);
+
+            nameIdDTOList.add(nameIdDTO);
+
+        }
+
+        String[] platformNameExisting = new String[]{platformDTO1.getPlatformName(), platformDTO2.getPlatformName(), platformDTO3.getPlatformName()};
+
+        for (String platformName : platformNameExisting) {
+
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName(platformName);
+
+            nameIdDTOList.add(nameIdDTO);
+        }
+
+        GobiiFilterType gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST;
+
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, "test");
+
+        checkNameIdListResponseAll(responsePayloadEnvelope, nameIdDTOList, platformNameAbsent);
 
     }
 

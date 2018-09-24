@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -29,7 +30,10 @@ public class DtoMapNameIdUtil {
 
         while (resultSet.next()) {
 
-            index = searchIndex(nameIdDTOList, resultSet.getString(columnName));
+            NameIdDTO searchNameDTO = new NameIdDTO();
+            searchNameDTO.setName(resultSet.getString(columnName));
+
+            index = Collections.binarySearch(nameIdDTOList, searchNameDTO);
 
             if (index > -1) {
 
@@ -57,27 +61,4 @@ public class DtoMapNameIdUtil {
         return resultSet.getFetchSize();
 
     }
-
-
-    public static int searchIndex(List<NameIdDTO> nameIdDTOList, String name) {
-        int start = 0;
-        int end = nameIdDTOList.size() - 1;
-        int mid;
-
-        while (start <= end) {
-            mid = (start + end) / 2;
-
-            if (nameIdDTOList.get(mid).getName().compareTo(name) < 0){
-                start = mid + 1;
-            } else if (nameIdDTOList.get(mid).getName().compareTo(name) > 0) {
-                end = mid - 1;
-            } else {
-                return mid;
-            }
-        }
-
-        return -1;
-    }
-
-
 }

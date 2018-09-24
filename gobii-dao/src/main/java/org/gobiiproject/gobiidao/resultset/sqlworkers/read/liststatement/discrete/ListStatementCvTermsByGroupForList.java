@@ -29,19 +29,11 @@ public class ListStatementCvTermsByGroupForList  implements ListStatement {
     @Override
     public PreparedStatement makePreparedStatement(Connection dbConnection, Map<String, Object> jdbcParamVals, Map<String, Object> sqlParamVals) throws SQLException {
 
-        String parsedNameList = "";
-
         List<NameIdDTO> nameArray = (ArrayList) sqlParamVals.get(PARAM_NAME_NAME_LIST);
 
         // parse array into CSV
 
-        for (NameIdDTO nameIdDTO : nameArray) {
-
-            String quotedName = "'" + nameIdDTO.getName() + "'";
-
-            parsedNameList = (parsedNameList.equals("")) ? quotedName : parsedNameList + ", " + quotedName;
-
-        }
+        String parsedNameList = ListStatementUtil.generateParsedNameList(nameArray);
 
         ParameterizedSql parameterizedSql =
                 new ParameterizedSql("select c.cv_id, c.term "
