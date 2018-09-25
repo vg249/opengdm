@@ -347,7 +347,7 @@ public abstract class BaseValidator {
                         }
                     }
                 } else {
-                    printMissingFieldError("File", "fieldToCompare", FailureTypes.CORRUPTED_INSTRUCTION_FILE, failureList);
+                    printMissingFieldError("File", "fieldToCompare", FailureTypes.CORRUPTED_VALIDATION_FILE, failureList);
                 }
             } else {
                 Failure failure = new Failure();
@@ -356,7 +356,7 @@ public abstract class BaseValidator {
                 addMessageToList(failure, failureList);
             }
         } else {
-            printMissingFieldError("File", "typeName", FailureTypes.CORRUPTED_INSTRUCTION_FILE, failureList);
+            printMissingFieldError("File", "typeName", FailureTypes.CORRUPTED_VALIDATION_FILE, failureList);
         }
     }
 

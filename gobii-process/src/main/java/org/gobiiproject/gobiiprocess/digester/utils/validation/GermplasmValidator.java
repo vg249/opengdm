@@ -25,9 +25,9 @@ class GermplasmValidator extends BaseValidator {
                                 if (checkForHeaderExistence(fileName, condition, failureList))
                                     validateCV(fileName, condition.fieldToCompare, failureList);
                             } else
-                                printMissingFieldError("DB", "fieldToCompare", FailureTypes.CORRUPTED_INSTRUCTION_FILE, failureList);
+                                printMissingFieldError("DB", "fieldToCompare", FailureTypes.CORRUPTED_VALIDATION_FILE, failureList);
                     } else
-                        printMissingFieldError("DB", "typeName", FailureTypes.CORRUPTED_INSTRUCTION_FILE, failureList);
+                        printMissingFieldError("DB", "typeName", FailureTypes.CORRUPTED_VALIDATION_FILE, failureList);
                 }
             }
         }

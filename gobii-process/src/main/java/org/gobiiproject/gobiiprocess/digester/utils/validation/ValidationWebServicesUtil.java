@@ -15,6 +15,7 @@ import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
+import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ import java.util.List;
 
 class ValidationWebServicesUtil {
 
-    static boolean loginIntoServer(String url, String username, String password, String crop, List<String> errorList) {
+    static boolean loginIntoServer(String url, String username, String password, String crop, ValidationError validationError) {
         try {
             GobiiClientContext.getInstance(url, true).getCurrentClientCropType();
             String contextRoot = new URL(url).getPath();
@@ -38,19 +39,31 @@ class ValidationWebServicesUtil {
                 }
             }
             if (crop == null || crop.isEmpty()) {
-                errorList.add("Undefined crop for server: " + url);
+                validationError.status = ValidationConstants.FAILURE;
+                Failure failure = new Failure();
+                failure.reason = FailureTypes.LOGIN_FAILURE;
+                failure.values.add("Undefined crop for server: " + url);
+                validationError.failures.add(failure);
                 return false;
             }
 
             boolean login = GobiiClientContext.getInstance(url, true).login(crop, username, password);
             if (!login) {
                 String failureMessage = GobiiClientContext.getInstance(null, false).getLoginFailure();
-                errorList.add("Error logging in: " + failureMessage);
+                validationError.status = ValidationConstants.FAILURE;
+                Failure failure = new Failure();
+                failure.reason = FailureTypes.LOGIN_FAILURE;
+                failure.values.add(failureMessage);
+                validationError.failures.add(failure);
                 return false;
             }
             return true;
         } catch (Exception e) {
-            errorList.add("Error in logging into server" + e.getMessage());
+            validationError.status = ValidationConstants.FAILURE;
+            Failure failure = new Failure();
+            failure.reason = FailureTypes.LOGIN_FAILURE;
+            failure.values.add( e.getMessage());
+            validationError.failures.add(failure);
             return false;
         }
     }

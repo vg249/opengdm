@@ -2,7 +2,8 @@ package org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage;
 
 public class FailureTypes {
     public static final String LOGIN_FAILURE = "Login failure";
-    public static final String CORRUPTED_INSTRUCTION_FILE = "Corruped validation file";
+    public static final String VALIDATION_ERROR = "Validation Error";
+    public static final String CORRUPTED_VALIDATION_FILE = "Corrupted validation file";
     public static final String ERROR_ACCESSING_FILE = "Error in accessing path";
     public static final String MORE_THAN_ONE_FILE = "More than one file with the same name";
     public static final String INVALID_FILE_EXTENSIONS = "Invalid file extension";
