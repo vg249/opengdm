@@ -486,7 +486,7 @@ public class DtoCrudRequestNameIdListTest {
 
     }
 
-    @Test
+    @Ignore
     public void testGetDnaSampleNamesByList() throws Exception {
 
         Integer projectId = 1;
@@ -496,7 +496,7 @@ public class DtoCrudRequestNameIdListTest {
 
         List<NameIdDTO> nameIdDTOList = new ArrayList<>();
 
-        String[] dnasampleNamesAbsent = new String[]{"yanii","yanii2","yanii3"};
+        String[] dnasampleNamesAbsent = new String[]{"notdnasample1","notdnasample2","notdnasample3"};
 
         for (String dnaSampleName : dnasampleNamesAbsent) {
 
@@ -665,6 +665,81 @@ public class DtoCrudRequestNameIdListTest {
 
         checkNameIdListResponseAll(responsePayloadEnvelope, nameIdDTOList, platformNameAbsent);
 
+    }
+
+    @Ignore
+    public void testGetLinkageGroupNamesByList() throws Exception {
+
+        Integer mapsetId = 1;
+
+        GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.LINKAGE_GROUP;
+
+        String[] linkageGroupNameExisting = new String[]{"lg1", "lg2", "lg3", "lg4"};
+
+        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+
+        String[] linkageGroupNameAbsent = new String[]{"notlg1", "notlg2", "notlg3"};
+
+        for (String lgName : linkageGroupNameAbsent) {
+
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName(lgName);
+
+            nameIdDTOList.add(nameIdDTO);
+        }
+
+        for (String lgName : linkageGroupNameExisting) {
+
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName(lgName);
+
+            nameIdDTOList.add(nameIdDTO);
+        }
+
+
+        GobiiFilterType gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST;
+
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, mapsetId.toString());
+
+        checkNameIdListResponseAll(responsePayloadEnvelope, nameIdDTOList, linkageGroupNameAbsent);
+
+    }
+
+    @Ignore
+    public void testGetDnaRunNamesByList() throws Exception {
+
+        Integer experimentId = 1;
+        Integer dnasample_id = 1;
+
+        GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.DNARUN;
+
+        String[] dnaRunNameExisting = new String[]{"dnarun1", "dnarun2", "dnarun3", "dnarun4"};
+
+        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+
+        String[] dnaRunNameAbsent = new String[]{"notdnarun1", "notdnarun2", "notdnarun3"};
+
+        for (String dnaRunName : dnaRunNameAbsent) {
+
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName(dnaRunName);
+
+            nameIdDTOList.add(nameIdDTO);
+        }
+
+        for (String dnaRunName : dnaRunNameExisting) {
+
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName(dnaRunName);
+
+            nameIdDTOList.add(nameIdDTO);
+        }
+
+        GobiiFilterType gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST;
+
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, experimentId.toString());
+
+        checkNameIdListResponseAll(responsePayloadEnvelope, nameIdDTOList, dnaRunNameAbsent);
     }
 
 }

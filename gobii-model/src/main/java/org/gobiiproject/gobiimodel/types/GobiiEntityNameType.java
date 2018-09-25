@@ -24,4 +24,6 @@ public enum GobiiEntityNameType {
     PROTOCOL,
     VENDOR_PROTOCOL,
     DNASAMPLE,
+    LINKAGE_GROUP,
+    DNARUN
 }

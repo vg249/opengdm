@@ -40,6 +40,16 @@ public class GobiiEntityNameConverter {
 
                     break;
 
+                case DNARUN:
+                    returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
+                            GobiiServiceRequestId.URL_DNARUN);
+                    break;
+
+                case LINKAGE_GROUP:
+                    returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
+                            GobiiServiceRequestId.URL_LINKAGEGROUP);
+                    break;
+
                 case CV:
                     returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
                             GobiiServiceRequestId.URL_CV);
