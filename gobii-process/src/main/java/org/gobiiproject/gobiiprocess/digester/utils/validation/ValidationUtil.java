@@ -26,7 +26,6 @@ class ValidationUtil {
      * @throws MaximumErrorsValidationException exception when maximum number of failures occured
      */
     static void addMessageToList(Failure failure, List<Failure> failureList) throws MaximumErrorsValidationException {
-        failureList.add(failure);
         String reason = failure.reason;
         boolean matchNotFound = true;
         for (Failure fail : failureList)
