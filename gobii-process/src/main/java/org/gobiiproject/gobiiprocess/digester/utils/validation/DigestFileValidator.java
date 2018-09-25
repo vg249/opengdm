@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SequenceWriter;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -89,24 +90,28 @@ public class DigestFileValidator {
         }
 
         // Login into server
-        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(validationOutput))) {
+        try {
+            FileWriter fileWriter = new FileWriter(new File(validationOutput));
+            SequenceWriter writer = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValuesAsArray(fileWriter);
             if (!loginIntoServer(digestFileValidator.url, digestFileValidator.username, digestFileValidator.password, null, errorList)) {
-                writer.write("Could not log into server with below details. " + "\n URL:" + inputParameters.url + "\n Username:" + inputParameters.userName + "\n Password:" + inputParameters.password);
-                writer.newLine();
-                for (String error : errorList) {
-                    writer.write(error);
-                    writer.newLine();
-                }
+                ValidationError validationError = new ValidationError();
+                validationError.digestFileName = validations.get(0).getDigestFileName();
+                validationError.status = ValidationConstants.FAILURE;
+                Failure failure = new Failure();
+                failure.reason = FailureTypes.LOGIN_FAILURE;
+                validationError.failures.add(failure);
+                writer.write(validationError);
             } else {
-                doValidations(digestFileValidator, validationOutput, validations);
+                try {
+                    doValidations(digestFileValidator, validationOutput, validations);
+                } catch (Exception e) {
+                    ErrorLogger.logError(e.getMessage(),validationOutput);
+                }
             }
-            writer.flush();
-        } catch (Exception e) {
+            writer.close();
+        } catch (IOException e) {
             ErrorLogger.logError("Unable to write to the file ", validationOutput);
         }
-
-        // READ ERRORS
-        //            ValidationError[] fileErrors = mapper.readValue(new File("D:\\writer\\validationError.json"), ValidationError[].class);
 
     }
 
@@ -117,40 +122,37 @@ public class DigestFileValidator {
      * @param validationOutput    file
      * @param validations         validations
      */
-    private static void doValidations(DigestFileValidator digestFileValidator, String validationOutput, List<ValidationUnit> validations) {
-        try {
-            FileWriter fileWriter = new FileWriter(new File(validationOutput));
-            ObjectMapper mapper = new ObjectMapper();
-            SequenceWriter seqWriter = mapper.writer().writeValuesAsArray(fileWriter);
-            for (ValidationUnit validation : validations) {
-                ValidationError validationError = new ValidationError();
-                validationError.digestFileName = validation.getDigestFileName();
-                validationError.failures = new ArrayList<>();
-                List<Failure> failureList = new ArrayList<>();
-                try {
-                    digestFileValidator.validate(validation, failureList);
-                } catch (MaximumErrorsValidationException e) {
-                    //Don't do any thing. This implies that error list is full. Later code handles it.
-                } catch (Exception e) {
-                    Failure failure = new Failure();
-                    failure.reason = FailureTypes.EXCEPTION;
-                    failure.values.add(e.getMessage());
-                    failureList.add(failure);
-                }
-                if (failureList.size() > 0) {
-                    validationError.status = "FAILED";
-                    validationError.failures.addAll(failureList);
-                    seqWriter.write(validationError);
-                } else {
-                    validationError.status = "SUCCESS";
-                    seqWriter.write(validationError);
-                }
-                seqWriter.flush();
+    private static void doValidations(DigestFileValidator digestFileValidator, String validationOutput, List<ValidationUnit> validations) throws Exception {
+        FileWriter fileWriter = new FileWriter(new File(validationOutput));
+        ObjectMapper mapper = new ObjectMapper();
+        SequenceWriter seqWriter = mapper.writerWithDefaultPrettyPrinter().writeValuesAsArray(fileWriter);
+        for (ValidationUnit validation : validations) {
+            ValidationError validationError = new ValidationError();
+            validationError.digestFileName = validation.getDigestFileName();
+            List<Failure> failureList = new ArrayList<>();
+            try {
+                digestFileValidator.validate(validation, failureList);
+            } catch (MaximumErrorsValidationException e) {
+                //Don't do any thing. This implies that error list is full. Later code handles it.
+            } catch (Exception e) {
+                Failure failure = new Failure();
+                failure.reason = FailureTypes.EXCEPTION;
+                failure.values.add(e.getMessage());
+                failureList.add(failure);
             }
-            seqWriter.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (failureList.size() > 0) {
+                validationError.status = ValidationConstants.FAILURE;
+                validationError.failures.addAll(failureList);
+                seqWriter.write(validationError);
+            } else {
+                validationError.status = ValidationConstants.SUCCESS;
+                seqWriter.write(validationError);
+            }
+            seqWriter.flush();
         }
+        seqWriter.close();
+        // READ ERRORS
+        // ValidationError[] fileErrors = mapper.readValue(new File(validationOutput), ValidationError[].class);
     }
 
     /**

@@ -6,4 +6,6 @@ public class ValidationConstants {
     static final String FILE = "FILE";
     static final String YES = "YES";
     static final String NO = "NO";
+    static final String SUCCESS = "SUCCESS";
+    static final String FAILURE = "FAILURE";
 }
