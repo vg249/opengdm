@@ -10,10 +10,12 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvGroupDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerDTO;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
@@ -21,6 +23,7 @@ import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -58,7 +61,10 @@ public class DtoCrudRequestNameIdListTest {
 
     }
 
-    private void checkNameIdListResponse(PayloadEnvelope<NameIdDTO> responsePayloadEnvelope, List<NameIdDTO> nameIdDTOListInput, String nameIdDTONotExisting) {
+    private void checkNameIdListResponseAll(PayloadEnvelope<NameIdDTO> responsePayloadEnvelope, List<NameIdDTO> nameIdDTOListInput, String[] nameIdDTONotExisting) {
+
+        // Convert String Array to List
+        List<String> nameIdDTONotExistingList = Arrays.asList(nameIdDTONotExisting);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(responsePayloadEnvelope.getHeader()));
 
@@ -68,7 +74,7 @@ public class DtoCrudRequestNameIdListTest {
 
         for (NameIdDTO currentNameIdDTO : nameIdDTOListResponse) {
 
-            if (currentNameIdDTO.getName().equals(nameIdDTONotExisting)) {
+            if (nameIdDTONotExistingList.contains(currentNameIdDTO.getName())){
 
                 Assert.assertTrue(currentNameIdDTO.getId() <= 0);
             } else {
@@ -77,7 +83,36 @@ public class DtoCrudRequestNameIdListTest {
 
             }
         }
+    }
 
+    private void checkNameIdListResponseAbsent(PayloadEnvelope<NameIdDTO> responsePayloadEnvelope, String[] nameIdDTOListInput) {
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(responsePayloadEnvelope.getHeader()));
+
+        List<NameIdDTO> nameIdDTOListResponse = responsePayloadEnvelope.getPayload().getData();
+        Assert.assertNotEquals(null, nameIdDTOListResponse);
+        Assert.assertEquals(nameIdDTOListInput.length, nameIdDTOListResponse.size());
+
+        for (NameIdDTO nameIdDTO : nameIdDTOListResponse) {
+
+            Assert.assertTrue(nameIdDTO.getId() == 0);
+
+        }
+
+    }
+
+    private void checkNameIdListResponseExists(PayloadEnvelope<NameIdDTO> responsePayloadEnvelope, String[] nameIdDTOListInput) {
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(responsePayloadEnvelope.getHeader()));
+
+        List<NameIdDTO> nameIdDTOListResponse = responsePayloadEnvelope.getPayload().getData();
+        Assert.assertNotEquals(null, nameIdDTOListResponse);
+        Assert.assertEquals(nameIdDTOListInput.length, nameIdDTOListResponse.size());
+
+        for (NameIdDTO nameIdDTO : nameIdDTOListResponse) {
+
+            Assert.assertTrue(nameIdDTO.getId() > 0);
+        }
 
     }
 
@@ -101,6 +136,53 @@ public class DtoCrudRequestNameIdListTest {
         Integer cvGroupId = cvGroupDTO.getCvGroupId();
 
         return cvGroupId;
+    }
+
+    private MarkerDTO createMarkerForTest(MarkerDTO markerDTO) throws Exception {
+
+        RestUri createMarkerUri = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_MARKERS);
+        GobiiEnvelopeRestResource<MarkerDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(createMarkerUri);
+        PayloadEnvelope<MarkerDTO> resultEnvelope = gobiiEnvelopeRestResource
+                .post(MarkerDTO.class, new PayloadEnvelope<>(markerDTO, GobiiProcessType.CREATE));
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        MarkerDTO markerDTOResponse = resultEnvelope.getPayload().getData().get(0);
+
+        Assert.assertNotEquals(null, markerDTOResponse);
+        Assert.assertNotNull(markerDTOResponse.getMarkerName());
+        Assert.assertNotNull(markerDTOResponse.getPlatformId());
+        Assert.assertTrue(markerDTOResponse.getPlatformId() > 0);
+        Assert.assertTrue(markerDTOResponse.getMarkerId() > 0);
+
+        return markerDTOResponse;
+    }
+
+    private PlatformDTO createPlatformForTest() throws Exception {
+
+        PlatformDTO platformDTO = new PlatformDTO();
+        platformDTO.setPlatformName(UUID.randomUUID().toString());
+        platformDTO.setPlatformCode(UUID.randomUUID().toString());
+        platformDTO.setTypeId(1);
+        platformDTO.setStatusId(1);
+        platformDTO.setCreatedBy(1);
+
+        RestUri createPlatformUri = GobiiClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(GobiiServiceRequestId.URL_PLATFORM);
+        PayloadEnvelope<PlatformDTO> payloadEnvelope = new PayloadEnvelope<>(platformDTO, GobiiProcessType.CREATE);
+        GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(createPlatformUri);
+        PayloadEnvelope<PlatformDTO> responseEnvelope = gobiiEnvelopeRestResource.post(PlatformDTO.class, payloadEnvelope);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(responseEnvelope.getHeader()));
+        PlatformDTO platformDTOResponse = responseEnvelope.getPayload().getData().get(0);
+
+        Assert.assertNotEquals(null, platformDTOResponse);
+        Assert.assertTrue(platformDTOResponse.getPlatformId() > 0);
+        Assert.assertNotNull(platformDTOResponse.getPlatformName());
+
+        return platformDTOResponse;
     }
 
     private List<CvDTO> createCvTerms(Integer cvGroupId) throws Exception {
@@ -190,7 +272,7 @@ public class DtoCrudRequestNameIdListTest {
     }
 
 
-    private PayloadEnvelope<NameIdDTO> getNamesByNameList(List<NameIdDTO> nameIdDTOList, GobiiEntityNameType gobiiEntityNameType, String cvGroupName) throws Exception {
+    private PayloadEnvelope<NameIdDTO> getNamesByNameList(List<NameIdDTO> nameIdDTOList, GobiiEntityNameType gobiiEntityNameType, GobiiFilterType gobiiFilterType, String filterValue) throws Exception {
 
         PayloadEnvelope<NameIdDTO> payloadEnvelope = new PayloadEnvelope<>();
         payloadEnvelope.getHeader().setGobiiProcessType(GobiiProcessType.CREATE);
@@ -201,8 +283,8 @@ public class DtoCrudRequestNameIdListTest {
                 .nameIdListByQueryParams();
         GobiiEnvelopeRestResource<NameIdDTO,NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
         namesUri.setParamValue("entity", gobiiEntityNameType.toString().toLowerCase());
-        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.NAMES_BY_NAME_LIST.toString().toUpperCase()));
-        namesUri.setParamValue("filterValue", cvGroupName);
+        namesUri.setParamValue("filterType", StringUtils.capitalize(gobiiFilterType.toString().toUpperCase()));
+        namesUri.setParamValue("filterValue", filterValue);
 
         PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = gobiiEnvelopeRestResource.post(NameIdDTO.class, payloadEnvelope);
 
@@ -228,13 +310,18 @@ public class DtoCrudRequestNameIdListTest {
         List<CvDTO> cvDTOList = createCvTerms(cvGroupId);
 
         CvDTO notExistingCvDto = createNotExistingCv();
-        cvDTOList.add(notExistingCvDto);
 
-        List<NameIdDTO> nameIdDTOList = createNameIdDTOList(cvDTOList);
+        List<CvDTO> cvDTOListInput = new ArrayList<>();
+        cvDTOListInput.add(notExistingCvDto);
+        cvDTOListInput.addAll(cvDTOList);
 
-        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.CV, cvGroupName);
+        List<NameIdDTO> nameIdDTOList = createNameIdDTOList(cvDTOListInput);
 
-        checkNameIdListResponse(responsePayloadEnvelope, nameIdDTOList, notExistingCvDto.getTerm());
+        String[] nameAbsent = new String[]{notExistingCvDto.getTerm()};
+
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.CV, GobiiFilterType.NAMES_BY_NAME_LIST, cvGroupName);
+
+        checkNameIdListResponseAll(responsePayloadEnvelope, nameIdDTOList, nameAbsent);
     }
 
     @Test
@@ -250,9 +337,11 @@ public class DtoCrudRequestNameIdListTest {
 
         List<NameIdDTO> nameIdDTOList = createNameIdDTOList(cvDTOList);
 
-        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.CV, cvGroupName);
+        String[] nameAbsent = new String[]{notExistingCvDto.getTerm()};
 
-        checkNameIdListResponse(responsePayloadEnvelope, nameIdDTOList, notExistingCvDto.getTerm());
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.CV, GobiiFilterType.NAMES_BY_NAME_LIST, cvGroupName);
+
+        checkNameIdListResponseAll(responsePayloadEnvelope, nameIdDTOList, nameAbsent);
 
     }
 
@@ -269,9 +358,11 @@ public class DtoCrudRequestNameIdListTest {
 
         List<NameIdDTO> nameIdDTOList = createNameIdDTOList(cvDTOList);
 
-        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.CV, cvGroupName);
+        String[] nameAbsent = new String[]{notExistingCvDto.getTerm()};
 
-        checkNameIdListResponse(responsePayloadEnvelope, nameIdDTOList, notExistingCvDto.getTerm());
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.CV, GobiiFilterType.NAMES_BY_NAME_LIST, cvGroupName);
+
+        checkNameIdListResponseAll(responsePayloadEnvelope, nameIdDTOList, nameAbsent);
     }
 
 
@@ -351,18 +442,20 @@ public class DtoCrudRequestNameIdListTest {
 
         String notExistingReference = "notexisting_reference-" + UUID.randomUUID().toString();
 
+        String[] nameAbsent = new String[]{notExistingReference};
+
         NameIdDTO nameIdDTONotExisting = new NameIdDTO();
         nameIdDTONotExisting.setName(notExistingReference);
 
         List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+        nameIdDTOList.add(nameIdDTONotExisting);
         nameIdDTOList.add(nameIdDTO1);
         nameIdDTOList.add(nameIdDTO2);
         nameIdDTOList.add(nameIdDTO3);
-        nameIdDTOList.add(nameIdDTONotExisting);
 
-        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.REFERENCE, "test");
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.REFERENCE, GobiiFilterType.NAMES_BY_NAME_LIST, "test");
 
-        checkNameIdListResponse(responsePayloadEnvelope, nameIdDTOList, notExistingReference);
+        checkNameIdListResponseAll(responsePayloadEnvelope, nameIdDTOList, nameAbsent);
 
     }
 
@@ -377,7 +470,7 @@ public class DtoCrudRequestNameIdListTest {
 
         List<NameIdDTO> nameIdDTOList = createNameIdDTOList(cvDTOList);
 
-        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.CV, cvGroupName);
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, GobiiEntityNameType.CV, GobiiFilterType.NAMES_BY_NAME_LIST, cvGroupName);
 
 
         Assert.assertTrue("The error message should contain 'There were duplicate values in the list'",
@@ -391,6 +484,262 @@ public class DtoCrudRequestNameIdListTest {
 
         Assert.assertTrue(responsePayloadEnvelope.getPayload().getData().size() == 0);
 
+    }
+
+    @Ignore
+    public void testGetDnaSampleNamesByList() throws Exception {
+
+        Integer projectId = 1;
+        GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.DNASAMPLE;
+
+        String[] dnasampleNamesExisting = new String[]{"dnasample_rza_codom_10","dnasample_rza_codom_11","dnasample_rza_codom_12","dnasample_rza_codom_13"};
+
+        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+
+        String[] dnasampleNamesAbsent = new String[]{"notdnasample1","notdnasample2","notdnasample3"};
+
+        for (String dnaSampleName : dnasampleNamesAbsent) {
+
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName(dnaSampleName);
+
+            nameIdDTOList.add(nameIdDTO);
+        }
+
+        for (String dnaSampleName : dnasampleNamesExisting) {
+
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName(dnaSampleName);
+
+            nameIdDTOList.add(nameIdDTO);
+        }
+
+
+        /**
+         * Test get DNA Sample Names by NAMES_BY_NAME_LIST
+         * */
+        GobiiFilterType gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST;
+
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, projectId.toString());
+
+        checkNameIdListResponseAll(responsePayloadEnvelope, nameIdDTOList, dnasampleNamesAbsent);
+
+        /**
+         * Test get DNA Sample Names by NAMES_BY_NAME_LIST_RETURN_ABSENT
+         * Will return items on the list that are not found in the database
+         */
+        gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_ABSENT;
+
+        responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, projectId.toString());
+
+        checkNameIdListResponseAbsent(responsePayloadEnvelope, dnasampleNamesAbsent);
+
+
+        /**
+         * Test get DNA Sample Names by NAMES_BY_NAMES_LIST_RETURN_EXISTS
+         * Will return items on the list that are existing in the database
+         */
+        gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_EXISTS;
+
+        responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, projectId.toString());
+
+        checkNameIdListResponseExists(responsePayloadEnvelope, dnasampleNamesExisting);
+
+    }
+
+    @Test
+    public void testGetMarkerNamesByList() throws Exception {
+
+        // create markers for test
+
+        MarkerDTO markerDTO1 = TestDtoFactory
+                .makeMarkerDTO(UUID.randomUUID().toString());
+
+        Integer platformId = markerDTO1.getPlatformId();
+
+        MarkerDTO markerDTO2 = TestDtoFactory
+                .makeMarkerDTO(UUID.randomUUID().toString());
+        markerDTO2.setPlatformId(platformId);
+
+        MarkerDTO markerDTO3 = TestDtoFactory
+                .makeMarkerDTO(UUID.randomUUID().toString());
+        markerDTO3.setPlatformId(platformId);
+
+
+        markerDTO1 = createMarkerForTest(markerDTO1);
+        markerDTO2 = createMarkerForTest(markerDTO2);
+        markerDTO3 = createMarkerForTest(markerDTO3);
+
+        GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.MARKER;
+
+        String[] markerNameExisting = new String[]{markerDTO1.getMarkerName(), markerDTO2.getMarkerName(), markerDTO3.getMarkerName()};
+
+        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+
+
+        String[] markerNameAbsent = new String[]{"absent-marker1", "absent-marker2", "absent-marker3"};
+
+        for (String markerName : markerNameAbsent) {
+
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName(markerName);
+
+            nameIdDTOList.add(nameIdDTO);
+        }
+
+        for (String markerName : markerNameExisting) {
+
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName(markerName);
+
+            nameIdDTOList.add(nameIdDTO);
+        }
+
+
+        /**
+         * Test get Marker names by NAMES_BY_NAME_LIST
+         */
+        GobiiFilterType gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST;
+
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, platformId.toString());
+
+        checkNameIdListResponseAll(responsePayloadEnvelope, nameIdDTOList, markerNameAbsent);
+
+        /**
+         * Test get Marker names by NAMES_BY_NAME_LIST_RETURN_ABSENT
+         * Will return items on the list that are not found in the database
+         */
+        gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_ABSENT;
+
+        responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, platformId.toString());
+
+        checkNameIdListResponseAbsent(responsePayloadEnvelope, markerNameAbsent);
+
+        /**
+         * Test get Marker names by NAMES_BY_NAME_LIST_RETURN_EXISTS
+         */
+        gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_EXISTS;
+
+        responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, platformId.toString());
+
+        checkNameIdListResponseExists(responsePayloadEnvelope, markerNameExisting);
+
+    }
+
+    @Test
+    public void testGetPlatformNamesByList() throws Exception {
+
+        // create platforms for test
+        PlatformDTO platformDTO1 = createPlatformForTest();
+        PlatformDTO platformDTO2 = createPlatformForTest();
+        PlatformDTO platformDTO3 = createPlatformForTest();
+
+        GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.PLATFORM;
+
+        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+
+        String[] platformNameAbsent = new String[]{"absent-platform1", "absent-platform2", "absent-platform3"};
+
+        for (String platformName : platformNameAbsent) {
+
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName(platformName);
+
+            nameIdDTOList.add(nameIdDTO);
+
+        }
+
+        String[] platformNameExisting = new String[]{platformDTO1.getPlatformName(), platformDTO2.getPlatformName(), platformDTO3.getPlatformName()};
+
+        for (String platformName : platformNameExisting) {
+
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName(platformName);
+
+            nameIdDTOList.add(nameIdDTO);
+        }
+
+        GobiiFilterType gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST;
+
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, "test");
+
+        checkNameIdListResponseAll(responsePayloadEnvelope, nameIdDTOList, platformNameAbsent);
+
+    }
+
+    @Ignore
+    public void testGetLinkageGroupNamesByList() throws Exception {
+
+        Integer mapsetId = 1;
+
+        GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.LINKAGE_GROUP;
+
+        String[] linkageGroupNameExisting = new String[]{"lg1", "lg2", "lg3", "lg4"};
+
+        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+
+        String[] linkageGroupNameAbsent = new String[]{"notlg1", "notlg2", "notlg3"};
+
+        for (String lgName : linkageGroupNameAbsent) {
+
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName(lgName);
+
+            nameIdDTOList.add(nameIdDTO);
+        }
+
+        for (String lgName : linkageGroupNameExisting) {
+
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName(lgName);
+
+            nameIdDTOList.add(nameIdDTO);
+        }
+
+
+        GobiiFilterType gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST;
+
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, mapsetId.toString());
+
+        checkNameIdListResponseAll(responsePayloadEnvelope, nameIdDTOList, linkageGroupNameAbsent);
+
+    }
+
+    @Ignore
+    public void testGetDnaRunNamesByList() throws Exception {
+
+        Integer experimentId = 1;
+        Integer dnasample_id = 1;
+
+        GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.DNARUN;
+
+        String[] dnaRunNameExisting = new String[]{"dnarun1", "dnarun2", "dnarun3", "dnarun4"};
+
+        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+
+        String[] dnaRunNameAbsent = new String[]{"notdnarun1", "notdnarun2", "notdnarun3"};
+
+        for (String dnaRunName : dnaRunNameAbsent) {
+
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName(dnaRunName);
+
+            nameIdDTOList.add(nameIdDTO);
+        }
+
+        for (String dnaRunName : dnaRunNameExisting) {
+
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName(dnaRunName);
+
+            nameIdDTOList.add(nameIdDTO);
+        }
+
+        GobiiFilterType gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST;
+
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, experimentId.toString());
+
+        checkNameIdListResponseAll(responsePayloadEnvelope, nameIdDTOList, dnaRunNameAbsent);
     }
 
 }
