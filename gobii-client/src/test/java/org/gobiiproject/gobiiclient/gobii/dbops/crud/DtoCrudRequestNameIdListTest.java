@@ -143,7 +143,7 @@ public class DtoCrudRequestNameIdListTest {
         RestUri createMarkerUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(GobiiServiceRequestId.URL_MARKERS);
-        GobiiEnvelopeRestResource<MarkerDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(createMarkerUri);
+        GobiiEnvelopeRestResource<MarkerDTO,MarkerDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(createMarkerUri);
         PayloadEnvelope<MarkerDTO> resultEnvelope = gobiiEnvelopeRestResource
                 .post(MarkerDTO.class, new PayloadEnvelope<>(markerDTO, GobiiProcessType.CREATE));
 
@@ -172,7 +172,7 @@ public class DtoCrudRequestNameIdListTest {
                 .getUriFactory()
                 .resourceColl(GobiiServiceRequestId.URL_PLATFORM);
         PayloadEnvelope<PlatformDTO> payloadEnvelope = new PayloadEnvelope<>(platformDTO, GobiiProcessType.CREATE);
-        GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(createPlatformUri);
+        GobiiEnvelopeRestResource<PlatformDTO,PlatformDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(createPlatformUri);
         PayloadEnvelope<PlatformDTO> responseEnvelope = gobiiEnvelopeRestResource.post(PlatformDTO.class, payloadEnvelope);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(responseEnvelope.getHeader()));
