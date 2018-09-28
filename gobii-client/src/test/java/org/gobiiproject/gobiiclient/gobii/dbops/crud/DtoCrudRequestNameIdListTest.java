@@ -486,6 +486,10 @@ public class DtoCrudRequestNameIdListTest {
 
     }
 
+    /**
+     *  This test is ignored since right now we don't have a separate web service to create dna samples that can be used for this test.
+     **/
+
     @Ignore
     public void testGetDnaSampleNamesByList() throws Exception {
 
@@ -667,6 +671,10 @@ public class DtoCrudRequestNameIdListTest {
 
     }
 
+    /**
+     *  This test is ignored since right now we don't have a separate web service to create linkage groups that can be used for this test.
+     **/
+
     @Ignore
     public void testGetLinkageGroupNamesByList() throws Exception {
 
@@ -705,6 +713,9 @@ public class DtoCrudRequestNameIdListTest {
 
     }
 
+    /**
+     *  This test is ignored since right now we don't have a separate web service to create dna run that can be used for this test.
+     **/
     @Ignore
     public void testGetDnaRunNamesByList() throws Exception {
 

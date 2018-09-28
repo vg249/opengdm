@@ -16,7 +16,7 @@ public class ListStatementUtil {
 
         for (NameIdDTO nameIdDTO : nameIdDTOList) {
 
-            if (!stringBuilder.toString().equals("")) {
+            if (stringBuilder.length() > 0) {
                 stringBuilder.append(", ");
             }
 
