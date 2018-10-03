@@ -155,8 +155,7 @@ public class ProcessMessage extends MailMessage {
 
     public ProcessMessage addCriteria(String type, PropNameId criteria){
         if(criteria == null)return this;
-        if(criteria.getName() == null) return this; // Don't add null values to the table
-        extractCriteria.add(new HTMLTableEntity(type, criteria.getName()));
+        extractCriteria.add(new HTMLTableEntity(type, criteria.getName().toString()));
         return this;
     }
 
