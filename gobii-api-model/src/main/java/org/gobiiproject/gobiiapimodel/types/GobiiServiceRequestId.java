@@ -26,6 +26,9 @@ public enum GobiiServiceRequestId {
     URL_CONTACT_SEARCH("contact-search"),
     URL_ORGANIZATION_SEARCH("organization-search"),
     URL_REFERENCE("references"),
+    URL_DNASAMPLES("dnasamples"),
+    URL_DNARUN("dnarun"),
+    URL_LINKAGEGROUP("linkagegroup"),
     URL_EXPERIMENTS("experiments"),
     URL_DATASETS("datasets"),
     URL_DATASETTYPES("datasets/types"),
@@ -51,6 +54,7 @@ public enum GobiiServiceRequestId {
     URL_ALLELE_MATRICES("allelematrices"),
     URL_FILES("files"),
     URL_JOB("jobs"),
+    URL_JOB_DNASAMPLE("jobs/dnasamples"),
     URL_ENTITIES("entities"),
     URL_COUNT("count"),
     URL_LAST_MODIFIED("lastmodified");

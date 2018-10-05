@@ -34,6 +34,22 @@ public class GobiiEntityNameConverter {
                             GobiiServiceRequestId.URL_DATASETS);
                     break;
 
+                case DNASAMPLE:
+                    returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
+                            GobiiServiceRequestId.URL_DNASAMPLES);
+
+                    break;
+
+                case DNARUN:
+                    returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
+                            GobiiServiceRequestId.URL_DNARUN);
+                    break;
+
+                case LINKAGE_GROUP:
+                    returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
+                            GobiiServiceRequestId.URL_LINKAGEGROUP);
+                    break;
+
                 case CV:
                     returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
                             GobiiServiceRequestId.URL_CV);
@@ -67,6 +83,11 @@ public class GobiiEntityNameConverter {
                 case MAPSET:
                     returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
                             GobiiServiceRequestId.URL_MAPSET);
+                    break;
+
+                case MARKER:
+                    returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
+                            GobiiServiceRequestId.URL_MARKERS);
                     break;
 
                 case MARKER_GROUP:
