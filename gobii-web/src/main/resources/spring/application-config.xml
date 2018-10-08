@@ -619,7 +619,7 @@
     <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigRice"-->
     <!--factory-method="getServer">-->
-    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
+    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).GOBII_PGSQL}"/>-->
     <!--</bean>-->
 
     <!--<bean id="dataSourceRice"-->
@@ -643,7 +643,7 @@
     <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigWheat"-->
     <!--factory-method="getServer">-->
-    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
+    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).GOBII_PGSQL}"/>-->
     <!--</bean>-->
 
     <!--<bean id="dataSourceWheat"-->
@@ -666,7 +666,7 @@
     <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigMaize"-->
     <!--factory-method="getServer">-->
-    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
+    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).GOBII_PGSQL}"/>-->
     <!--</bean>-->
 
     <!--<bean id="dataSourceMaize"-->
@@ -689,7 +689,7 @@
     <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigDev"-->
     <!--factory-method="getServer">-->
-    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
+    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).GOBII_PGSQL}"/>-->
     <!--</bean>-->
 
     <!--<bean id="dataSourceDev"-->
@@ -712,7 +712,7 @@
     <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigTest"-->
     <!--factory-method="getServer">-->
-    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
+    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).GOBII_PGSQL}"/>-->
     <!--</bean>-->
 
     <!--<bean id="dataSourceTest"-->
@@ -736,7 +736,7 @@
     <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigSorghum"-->
     <!--factory-method="getServer">-->
-    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
+    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).GOBII_PGSQL}"/>-->
     <!--</bean>-->
 
     <!--<bean id="dataSourceSorghum"-->
@@ -759,7 +759,7 @@
     <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigChickpea"-->
     <!--factory-method="getServer">-->
-    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
+    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).GOBII_PGSQL}"/>-->
     <!--</bean>-->
 
     <!--<bean id="dataSourceChickpea"-->
