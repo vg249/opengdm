@@ -2,9 +2,9 @@ package org.gobiiproject.gobiimodel.config;
 
 import org.gobiiproject.gobiimodel.security.Decrypter;
 import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
+import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.types.GobiiFileNoticeType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
-import org.gobiiproject.gobiimodel.types.GobiiServerType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementMap;
@@ -29,11 +29,11 @@ import java.util.stream.Collectors;
 class ConfigValues {
 
     public ConfigValues() {
-        this.globalServersByServerType.put(GobiiServerType.KDC,
-                new ServerBase(GobiiServerType.KDC, "", "", null, true, "", "", false)
+        this.globalServersByServerType.put(ServerType.KDC,
+                new ServerBase(ServerType.KDC, "", "", null, true, "", "", false)
         );
-        this.globalServersByServerType.put(GobiiServerType.OWN_CLOUD,
-                new ServerBase(GobiiServerType.OWN_CLOUD, "", "", null, true, "", "", false)
+        this.globalServersByServerType.put(ServerType.OWN_CLOUD,
+                new ServerBase(ServerType.OWN_CLOUD, "", "", null, true, "", "", false)
         );
     } // ctor
 
@@ -41,7 +41,7 @@ class ConfigValues {
     private TestExecConfig testExecConfig = new TestExecConfig();
 
     @ElementMap(required = false)
-    private Map<GobiiServerType, ServerBase> globalServersByServerType = new HashMap<>();
+    private Map<ServerType, ServerBase> globalServersByServerType = new HashMap<>();
 
     @ElementMap(required = false)
     private Map<String, GobiiCropConfig> cropConfigs = new LinkedHashMap<>();
@@ -142,13 +142,13 @@ class ConfigValues {
         return testExecConfig;
     }
 
-    public ServerBase getGlobalServer(GobiiServerType gobiiServerType) throws Exception {
+    public ServerBase getGlobalServer(ServerType serverType) throws Exception {
 
         ServerBase returnVal = null;
 
-        if (this.globalServersByServerType.containsKey(gobiiServerType)) {
+        if (this.globalServersByServerType.containsKey(serverType)) {
 
-            returnVal = this.globalServersByServerType.get(gobiiServerType);
+            returnVal = this.globalServersByServerType.get(serverType);
         }
 
         return returnVal;
@@ -262,7 +262,7 @@ class ConfigValues {
         gobiiCropConfig
                 .setGobiiCropType(gobiiCropType)
                 .setActive(isActive)
-                .addServer(GobiiServerType.GOBII_WEB,
+                .addServer(ServerType.GOBII_WEB,
                         serviceDomain,
                         serviceAppRoot,
                         servicePort,
@@ -552,11 +552,11 @@ class ConfigValues {
         isProvidesBackend = providesBackend;
     }
 
-    public Map<GobiiServerType, ServerBase> getGlobalServersByServerType() {
+    public Map<ServerType, ServerBase> getGlobalServersByServerType() {
         return globalServersByServerType;
     }
 
-    public void setGlobalServersByServerType(Map<GobiiServerType, ServerBase> globalServersByServerType) {
+    public void setGlobalServersByServerType(Map<ServerType, ServerBase> globalServersByServerType) {
         this.globalServersByServerType = globalServersByServerType;
     }
 }
