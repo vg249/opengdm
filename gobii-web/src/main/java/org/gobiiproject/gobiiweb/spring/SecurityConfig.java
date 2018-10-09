@@ -7,7 +7,7 @@ import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobidomain.services.impl.AuthenticationServiceDefault;
 import org.gobiiproject.gobidomain.services.impl.UserDetailsServiceImpl;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
-import org.gobiiproject.gobiimodel.config.RestRequestId;
+import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
 import org.gobiiproject.gobiiweb.security.TokenAuthenticationFilter;
@@ -53,7 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     // see http://stackoverflow.com/questions/30366405/how-to-disable-spring-security-for-particular-url
     @Override
     public void configure(WebSecurity web) throws Exception {
-        String configSettingsUrl = RestRequestId.GOBII_CONFIGSETTINGS.getRequestUrl(null, GobiiControllerType.GOBII.getControllerPath());
+        String configSettingsUrl = RestResourceId.GOBII_CONFIGSETTINGS.getRequestUrl(null, GobiiControllerType.GOBII.getControllerPath());
         web.ignoring().antMatchers(configSettingsUrl,
                 "/login",
                 "/index.html",
@@ -63,7 +63,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         if (!CONFIG_SETTINGS.isAuthenticateBrapi()) {
             String allBrapiUrls = GobiiControllerType.BRAPI.getControllerPath() + "**";
-            String gobiiFIlesUrl = RestRequestId.GOBII_FILES.getRequestUrl(null, GobiiControllerType.GOBII.getControllerPath()) + "/**";;
+            String gobiiFIlesUrl = RestResourceId.GOBII_FILES.getRequestUrl(null, GobiiControllerType.GOBII.getControllerPath()) + "/**";;
             web.ignoring().antMatchers(allBrapiUrls, gobiiFIlesUrl);
 
         }

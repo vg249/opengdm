@@ -51,7 +51,7 @@ public class ServerConfig {
                         String userName,
                         String password,
                         boolean decrypt,
-                        EnumMap<RestRequestId, RestCallProfileDTO> callProfilesByRestRequestId) {
+                        EnumMap<RestResourceId, RestCallProfileDTO> callProfilesByRestRequestId) {
 
         this.serverType = serverType;
         this.host = host;
@@ -215,7 +215,7 @@ public class ServerConfig {
 //
 
     @ElementMap(required = false)
-    EnumMap<RestRequestId, RestCallProfileDTO> callProfilesByRestRequestId = new EnumMap<>(RestRequestId.class);
+    EnumMap<RestResourceId, RestCallProfileDTO> callProfilesByRestRequestId = new EnumMap<>(RestResourceId.class);
 
     @Element(required = false)
     Integer statusCheckIntervalSecs = 0;
@@ -247,37 +247,37 @@ public class ServerConfig {
             ServerType.GOBII_PGSQL,
             ServerType.GOBII_COMPUTE);
 
-    private RestCallProfileDTO getCallProfile(RestRequestId restRequestId) {
+    private RestCallProfileDTO getCallProfile(RestResourceId restResourceId) {
 
-        if (!this.callProfilesByRestRequestId.containsKey(restRequestId)) {
-            throw new GobiiException("There is no call profile for restRequestId " + restRequestId.getResourcePath());
+        if (!this.callProfilesByRestRequestId.containsKey(restResourceId)) {
+            throw new GobiiException("There is no call profile for restResourceId " + restResourceId.getResourcePath());
         }
 
-        return this.callProfilesByRestRequestId.get(restRequestId);
+        return this.callProfilesByRestRequestId.get(restResourceId);
     }
 
-    public Integer getCallMaxPost(RestRequestId restRequestId) {
+    public Integer getCallMaxPost(RestResourceId restResourceId) {
 
-        return this.getCallProfile(restRequestId).getMaxPostPut();
+        return this.getCallProfile(restResourceId).getMaxPostPut();
     }
 
-    public Integer getCallGet(RestRequestId restRequestId) {
+    public Integer getCallGet(RestResourceId restResourceId) {
 
-        return this.getCallProfile(restRequestId).getMaxGet();
+        return this.getCallProfile(restResourceId).getMaxGet();
     }
 
-    public String getCallResourcePath(RestRequestId restRequestId) {
-        return this.getCallProfile(restRequestId).getRestRequestId().getResourcePath();
+    public String getCallResourcePath(RestResourceId restResourceId) {
+        return this.getCallProfile(restResourceId).getRestResourceId().getResourcePath();
     }
 
-    public void setCallResourcePath(RestRequestId restRequestId, String resourcePath) throws GobiiException {
+    public void setCallResourcePath(RestResourceId restResourceId, String resourcePath) throws GobiiException {
 
 
-        if (this.nonUpdatableServerTypes.contains(restRequestId.getServerType())) {
-            throw new GobiiException("This server type does not allow dynamic configuration of resource paths: " + restRequestId.getServerType().toString());
+        if (this.nonUpdatableServerTypes.contains(restResourceId.getServerType())) {
+            throw new GobiiException("This server type does not allow dynamic configuration of resource paths: " + restResourceId.getServerType().toString());
         }
 
-        this.getCallProfile(restRequestId).getRestRequestId().setResourcePath(resourcePath);
+        this.getCallProfile(restResourceId).getRestResourceId().setResourcePath(resourcePath);
     }
 
 }

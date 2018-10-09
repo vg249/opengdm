@@ -3,7 +3,7 @@ package org.gobiiproject.gobiiclient.gobii.infrastructure;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiTestConfiguration;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
-import org.gobiiproject.gobiimodel.config.RestRequestId;
+import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.config.TestExecConfig;
 import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
@@ -695,10 +695,10 @@ public class TestGobiiConfig {
         String host = "mykdc.com";
         Integer port = 5063;
         String contextPath = "foodkdcpath-" + UUID.randomUUID().toString() + "/";
-        String resourceQCStart = RestRequestId.KDC_START.getResourcePath();
-        String resourceQCStatus = RestRequestId.KDC_STATUS.getResourcePath();
-        String resourceQCDownload = RestRequestId.KDC_DOWNLOAD.getResourcePath();
-        String resourceQCPurge = RestRequestId.KDC_PURGE.getResourcePath();
+        String resourceQCStart = RestResourceId.KDC_START.getResourcePath();
+        String resourceQCStatus = RestResourceId.KDC_STATUS.getResourcePath();
+        String resourceQCDownload = RestResourceId.KDC_DOWNLOAD.getResourcePath();
+        String resourceQCPurge = RestResourceId.KDC_PURGE.getResourcePath();
         Integer statusCheckIntervalSecs = 60;
         Integer statusWaitThresholdMinutes = 20;
         boolean active = false;
@@ -747,18 +747,18 @@ public class TestGobiiConfig {
                 contextPathRetrieved.equals(contextPath));
 
         Assert.assertTrue("The start resource does not not match",
-                configSettings.getGlobalServer(ServerType.KDC).getCallResourcePath(RestRequestId.KDC_START).equals(resourceQCStart));
+                configSettings.getGlobalServer(ServerType.KDC).getCallResourcePath(RestResourceId.KDC_START).equals(resourceQCStart));
 
         Assert.assertTrue("The status resource does not not match",
-                configSettings.getGlobalServer(ServerType.KDC).getCallResourcePath(RestRequestId.KDC_STATUS).equals(resourceQCStatus));
+                configSettings.getGlobalServer(ServerType.KDC).getCallResourcePath(RestResourceId.KDC_STATUS).equals(resourceQCStatus));
 
         Assert.assertTrue("The download resource does not not match; "
                         + " expected " + resourceQCDownload
-                        + " got " + configSettings.getGlobalServer(ServerType.KDC).getCallResourcePath(RestRequestId.KDC_DOWNLOAD),
-                configSettings.getGlobalServer(ServerType.KDC).getCallResourcePath(RestRequestId.KDC_DOWNLOAD).equals(resourceQCDownload));
+                        + " got " + configSettings.getGlobalServer(ServerType.KDC).getCallResourcePath(RestResourceId.KDC_DOWNLOAD),
+                configSettings.getGlobalServer(ServerType.KDC).getCallResourcePath(RestResourceId.KDC_DOWNLOAD).equals(resourceQCDownload));
 
         Assert.assertTrue("The purge resource does not not match",
-                configSettings.getGlobalServer(ServerType.KDC).getCallResourcePath(RestRequestId.KDC_PURGE).equals(resourceQCPurge));
+                configSettings.getGlobalServer(ServerType.KDC).getCallResourcePath(RestResourceId.KDC_PURGE).equals(resourceQCPurge));
 
         Assert.assertTrue("The status check interval does not match",
                 configSettings.getGlobalServer(ServerType.KDC).getStatusCheckIntervalSecs().equals(statusCheckIntervalSecs));

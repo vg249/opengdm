@@ -4,7 +4,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.http.HttpStatus;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
-import org.gobiiproject.gobiimodel.config.RestRequestId;
+import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiibrapi.core.common.BrapiStatus;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseDataList;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelope;
@@ -62,7 +62,7 @@ public class BrapiTestAlleleMatrixSearch {
 
         RestUri restUriStudiesSearch = GobiiClientContext.getInstance(null, false)
                 .getUriFactory(GobiiControllerType.BRAPI)
-                .resourceColl(RestRequestId.BRAPI_ALLELE_MATRIX_SEARCH)
+                .resourceColl(RestResourceId.BRAPI_ALLELE_MATRIX_SEARCH)
                 .addQueryParam("matrixDbId", "1");
 
         //because of how BrapiEnvelopeRestResource is type-parameterized, we have to provide BrapiResponseDataList
@@ -219,7 +219,7 @@ public class BrapiTestAlleleMatrixSearch {
         // STEP FOUR: CALL ALLELE MATRICES SEARCH STATUS
         RestUri restUriStudiesSearch = GobiiClientContext.getInstance(null, false)
                 .getUriFactory(GobiiControllerType.BRAPI)
-                .resourceColl(RestRequestId.BRAPI_ALLELE_MATRIX_SEARCH_STATUS)
+                .resourceColl(RestResourceId.BRAPI_ALLELE_MATRIX_SEARCH_STATUS)
                 .addUriParam("jobId", jobId);
 
         //because of how BrapiEnvelopeRestResource is type-parameterized, we have to provide BrapiResponseDataList

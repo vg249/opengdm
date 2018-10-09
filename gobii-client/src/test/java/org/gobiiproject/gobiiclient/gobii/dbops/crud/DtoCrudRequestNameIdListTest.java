@@ -3,7 +3,7 @@ package org.gobiiproject.gobiiclient.gobii.dbops.crud;
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
-import org.gobiiproject.gobiimodel.config.RestRequestId;
+import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
@@ -47,7 +47,7 @@ public class DtoCrudRequestNameIdListTest {
         PayloadEnvelope<CvDTO> cvCreatePayloadEnvelope = new PayloadEnvelope<>(newCvDTO, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<CvDTO> cvCreateGobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceColl(RestRequestId.GOBII_CV));
+                .resourceColl(RestResourceId.GOBII_CV));
         PayloadEnvelope<CvDTO> cvCreateResultEnvelope = cvCreateGobiiEnvelopeRestResource.post(CvDTO.class,
                 cvCreatePayloadEnvelope);
 
@@ -113,10 +113,10 @@ public class DtoCrudRequestNameIdListTest {
 
         RestUri restUriCvGroup = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceColl(RestRequestId.GOBII_CVGROUP)
+                .resourceColl(RestResourceId.GOBII_CVGROUP)
                 .addUriParam("groupId")
                 .setParamValue("groupId", cvGroupId.toString())
-                .appendSegment(RestRequestId.GOBII_CV);
+                .appendSegment(RestResourceId.GOBII_CV);
 
         GobiiEnvelopeRestResource<CvDTO> cvDTOGobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriCvGroup);
         PayloadEnvelope<CvDTO> cvDTOResultEnvelope = cvDTOGobiiEnvelopeRestResource.get(CvDTO.class);
@@ -210,7 +210,7 @@ public class DtoCrudRequestNameIdListTest {
         PayloadEnvelope<ReferenceDTO> payloadEnvelopeReference1 = new PayloadEnvelope<>(newReferenceDto1, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<ReferenceDTO> gobiiEnvelopeRestResourceReference1 = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceColl(RestRequestId.GOBII_REFERENCE));
+                .resourceColl(RestResourceId.GOBII_REFERENCE));
         PayloadEnvelope<ReferenceDTO> referenceDTO1ResponseEnvelope = gobiiEnvelopeRestResourceReference1.post(ReferenceDTO.class,
                 payloadEnvelopeReference1);
 
@@ -225,7 +225,7 @@ public class DtoCrudRequestNameIdListTest {
         PayloadEnvelope<ReferenceDTO> payloadEnvelopeReference2 = new PayloadEnvelope<>(newReferenceDto2, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<ReferenceDTO> gobiiEnvelopeRestResourceReference2 = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceColl(RestRequestId.GOBII_REFERENCE));
+                .resourceColl(RestResourceId.GOBII_REFERENCE));
         PayloadEnvelope<ReferenceDTO> referenceDTO2ResponseEnvelope = gobiiEnvelopeRestResourceReference2.post(ReferenceDTO.class,
                 payloadEnvelopeReference2);
 

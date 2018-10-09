@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiimodel.dto.system;
 
-import org.gobiiproject.gobiimodel.config.RestRequestId;
+import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.types.RestMethodTypes;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
@@ -13,11 +13,11 @@ public class RestCallProfileDTO {
     //default ctor needed for serialization
     public RestCallProfileDTO() {}
 
-    public RestCallProfileDTO(RestRequestId restRequestId,
+    public RestCallProfileDTO(RestResourceId restResourceId,
                               List<RestMethodTypes> supportedVerbs,
                               Integer maxPostPut,
                               Integer maxGet) {
-        this.restRequestId = restRequestId;
+        this.restResourceId = restResourceId;
         this.supportedVerbs = supportedVerbs;
         this.maxPostPut = maxPostPut;
         this.maxGet = maxGet;
@@ -25,7 +25,7 @@ public class RestCallProfileDTO {
 
 
     @Element(required = false)
-    RestRequestId restRequestId;
+    RestResourceId restResourceId;
 
     @ElementList(required = false)
     List<RestMethodTypes> supportedVerbs = new ArrayList<>();
@@ -36,12 +36,12 @@ public class RestCallProfileDTO {
     @Element(required = false)
     Integer maxGet = 500;
 
-    public RestRequestId getRestRequestId() {
-        return restRequestId;
+    public RestResourceId getRestResourceId() {
+        return restResourceId;
     }
 
-    public void setRestRequestId(RestRequestId restRequestId) {
-        this.restRequestId = restRequestId;
+    public void setRestResourceId(RestResourceId restResourceId) {
+        this.restResourceId = restResourceId;
     }
 
     public List<RestMethodTypes> getSupportedVerbs() {

@@ -8,7 +8,7 @@ package org.gobiiproject.gobiiclient.gobii.dbops.crud;
 
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
-import org.gobiiproject.gobiimodel.config.RestRequestId;
+import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
@@ -49,7 +49,7 @@ public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
 
         RestUri projectsUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceByUriIdParam(RestRequestId.GOBII_MARKERS);
+                .resourceByUriIdParam(RestResourceId.GOBII_MARKERS);
         projectsUri.setParamValue("id", markerId.toString());
         GobiiEnvelopeRestResource<MarkerDTO> gobiiEnvelopeRestResourceForProjects = new GobiiEnvelopeRestResource<>(projectsUri);
         PayloadEnvelope<MarkerDTO> resultEnvelope = gobiiEnvelopeRestResourceForProjects
@@ -81,7 +81,7 @@ public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
     public void testEmptyResult() throws Exception {
 
         DtoRestRequestUtils<MarkerDTO> dtoDtoRestRequestUtils =
-                new DtoRestRequestUtils<>(MarkerDTO.class, RestRequestId.GOBII_MARKERS);
+                new DtoRestRequestUtils<>(MarkerDTO.class, RestResourceId.GOBII_MARKERS);
         Integer maxId = dtoDtoRestRequestUtils.getMaxPkVal();
         Integer nonExistentId = maxId + 1;
 
@@ -109,7 +109,7 @@ public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
 
         RestUri markerCollUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceColl(RestRequestId.GOBII_MARKERS);
+                .resourceColl(RestResourceId.GOBII_MARKERS);
         GobiiEnvelopeRestResource<MarkerDTO> gobiiEnvelopeRestResourceForMarkerPost = new GobiiEnvelopeRestResource<>(markerCollUri);
         PayloadEnvelope<MarkerDTO> resultEnvelope = gobiiEnvelopeRestResourceForMarkerPost
                 .post(MarkerDTO.class, new PayloadEnvelope<>(markerDTORequest, GobiiProcessType.CREATE));

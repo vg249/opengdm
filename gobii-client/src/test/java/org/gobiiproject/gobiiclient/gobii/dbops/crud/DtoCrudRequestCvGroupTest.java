@@ -3,7 +3,7 @@ package org.gobiiproject.gobiiclient.gobii.dbops.crud;
 import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
-import org.gobiiproject.gobiimodel.config.RestRequestId;
+import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
@@ -39,10 +39,10 @@ public class DtoCrudRequestCvGroupTest implements DtoCrudRequestTest {
 
         RestUri restUriCvGroup = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceColl(RestRequestId.GOBII_CVGROUP)
+                .resourceColl(RestResourceId.GOBII_CVGROUP)
                 .addUriParam("groupId")
                 .setParamValue("groupId", cvGroupId.toString())
-                .appendSegment(RestRequestId.GOBII_CV);
+                .appendSegment(RestResourceId.GOBII_CV);
 
         GobiiEnvelopeRestResource<CvDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriCvGroup);
         PayloadEnvelope<CvDTO> resultEnvelope = gobiiEnvelopeRestResource

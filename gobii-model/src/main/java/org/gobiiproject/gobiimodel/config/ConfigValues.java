@@ -35,35 +35,35 @@ class ConfigValues {
     public ConfigValues() {
 
 
-        EnumMap<RestRequestId, RestCallProfileDTO> kdcCallProfiles = new EnumMap<RestRequestId, RestCallProfileDTO>(RestRequestId.class);
-        kdcCallProfiles.put(RestRequestId.KDC_START,
+        EnumMap<RestResourceId, RestCallProfileDTO> kdcCallProfiles = new EnumMap<RestResourceId, RestCallProfileDTO>(RestResourceId.class);
+        kdcCallProfiles.put(RestResourceId.KDC_START,
                 new RestCallProfileDTO(
-                        RestRequestId.KDC_START,
+                        RestResourceId.KDC_START,
                         new ArrayList<>(Arrays.asList(RestMethodTypes.GET)),
                         0,
                         1
                 ));
 
-        kdcCallProfiles.put(RestRequestId.KDC_STATUS,
+        kdcCallProfiles.put(RestResourceId.KDC_STATUS,
                 new RestCallProfileDTO(
-                        RestRequestId.KDC_STATUS,
+                        RestResourceId.KDC_STATUS,
                         new ArrayList<>(Arrays.asList(RestMethodTypes.GET)),
                         0,
                         1
                 ));
 
 
-        kdcCallProfiles.put(RestRequestId.KDC_DOWNLOAD,
+        kdcCallProfiles.put(RestResourceId.KDC_DOWNLOAD,
                 new RestCallProfileDTO(
-                        RestRequestId.KDC_DOWNLOAD,
+                        RestResourceId.KDC_DOWNLOAD,
                         new ArrayList<>(Arrays.asList(RestMethodTypes.GET)),
                         0,
                         1
                 ));
 
-        kdcCallProfiles.put(RestRequestId.KDC_PURGE,
+        kdcCallProfiles.put(RestResourceId.KDC_PURGE,
                 new RestCallProfileDTO(
-                        RestRequestId.KDC_PURGE,
+                        RestResourceId.KDC_PURGE,
                         new ArrayList<>(Arrays.asList(RestMethodTypes.GET)),
                         0,
                         1

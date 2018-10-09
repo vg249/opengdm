@@ -19,7 +19,7 @@ import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
-import org.gobiiproject.gobiimodel.config.RestRequestId;
+import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiiclient.core.common.GenericClientContext;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
@@ -693,7 +693,7 @@ public class GobiiExtractor {
 			GenericClientContext genericClientContext = new GenericClientContext(serverConfig);
 			RestUri restUriGetQCJobID = new RestUri("/",
 					configSettings.getGlobalServer(ServerType.KDC).getContextPath(),
-					configSettings.getGlobalServer(ServerType.KDC).getCallResourcePath(RestRequestId.KDC_START));
+					configSettings.getGlobalServer(ServerType.KDC).getCallResourcePath(RestResourceId.KDC_START));
 			restUriGetQCJobID
 					.addQueryParam("datasetId", String.valueOf(datasetId))
 					.addQueryParam("directory", extractDir)
@@ -728,7 +728,7 @@ public class GobiiExtractor {
 					//mailInterface.send(qcStartPm);
 						RestUri restUriGetQCJobStatus = new RestUri("/",
 								configSettings.getGlobalServer(ServerType.KDC).getContextPath(),
-								configSettings.getGlobalServer(ServerType.KDC).getCallResourcePath(RestRequestId.KDC_STATUS));
+								configSettings.getGlobalServer(ServerType.KDC).getCallResourcePath(RestResourceId.KDC_STATUS));
 						restUriGetQCJobStatus
 								.addQueryParam("jobid")
 								.setParamValue("jobid", String.valueOf(qcJobID));
@@ -1086,7 +1086,7 @@ public class GobiiExtractor {
 			GobiiUriFactory gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
 
 			RestUri mapUri = gobiiUriFactory
-					.resourceByUriIdParam(RestRequestId.GOBII_MAPSET);
+					.resourceByUriIdParam(RestResourceId.GOBII_MAPSET);
 			mapUri.setParamValue("id", mapId.toString());
 			GobiiEnvelopeRestResource<MapsetDTO> gobiiEnvelopeRestResourceForDatasets = new GobiiEnvelopeRestResource<>(mapUri);
 			PayloadEnvelope<MapsetDTO> resultEnvelope = gobiiEnvelopeRestResourceForDatasets

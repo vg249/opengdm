@@ -8,7 +8,7 @@ package org.gobiiproject.gobiiclient.gobii.infrastructure;
 
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
-import org.gobiiproject.gobiimodel.config.RestRequestId;
+import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiTestConfiguration;
@@ -51,7 +51,7 @@ public class DtoRequestConfigSettingsPropsTest {
 
         RestUri confgSettingsUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceColl(RestRequestId.GOBII_CONFIGSETTINGS);
+                .resourceColl(RestResourceId.GOBII_CONFIGSETTINGS);
         GobiiEnvelopeRestResource<ConfigSettingsDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(confgSettingsUri);
         PayloadEnvelope<ConfigSettingsDTO> resultEnvelope = gobiiEnvelopeRestResource
                 .get(ConfigSettingsDTO.class);
@@ -208,7 +208,7 @@ public class DtoRequestConfigSettingsPropsTest {
         //DtoRequestPing dtoRequestPing = new DtoRequestPing();
         GobiiEnvelopeRestResource<PingDTO> gobiiEnvelopeRestResourcePingDTO = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceColl(RestRequestId.GOBII_PING));
+                .resourceColl(RestResourceId.GOBII_PING));
 
         PayloadEnvelope<PingDTO> resultEnvelopePing = gobiiEnvelopeRestResourcePingDTO.post(PingDTO.class,
                 new PayloadEnvelope<>(pingDTORequest, GobiiProcessType.CREATE));

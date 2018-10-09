@@ -10,7 +10,7 @@ import org.gobiiproject.gobiiapimodel.payload.Header;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
-import org.gobiiproject.gobiimodel.config.RestRequestId;
+import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
@@ -547,7 +547,7 @@ public class GobiiFileReader {
         gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
         PayloadEnvelope<ExtractorInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(extractorInstructionFilesDTOToSend, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<ExtractorInstructionFilesDTO> gobiiEnvelopeRestResourceForPost = new GobiiEnvelopeRestResource<>(gobiiUriFactory
-                .resourceColl(RestRequestId.GOBII_FILE_EXTRACTOR_INSTRUCTIONS));
+                .resourceColl(RestResourceId.GOBII_FILE_EXTRACTOR_INSTRUCTIONS));
         PayloadEnvelope<ExtractorInstructionFilesDTO> extractorInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResourceForPost.post(ExtractorInstructionFilesDTO.class,
                 payloadEnvelope);
 
@@ -785,7 +785,7 @@ public class GobiiFileReader {
             GobiiUriFactory gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
 
             RestUri projectsUri = gobiiUriFactory
-                    .resourceByUriIdParam(RestRequestId.GOBII_DATASETS);
+                    .resourceByUriIdParam(RestResourceId.GOBII_DATASETS);
             projectsUri.setParamValue("id", dataSetId.toString());
             GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceForDatasets = new GobiiEnvelopeRestResource<>(projectsUri);
             PayloadEnvelope<DataSetDTO> resultEnvelope = gobiiEnvelopeRestResourceForDatasets

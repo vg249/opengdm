@@ -8,7 +8,7 @@ import org.gobiiproject.gobiimodel.utils.LineUtils;
  */
 
 
-public enum RestRequestId {
+public enum RestResourceId {
 
     GOBII_AUTH("auth", ServerType.GOBII_WEB),
     GOBII_PING("ping", ServerType.GOBII_WEB),
@@ -66,7 +66,7 @@ public enum RestRequestId {
     private String requestPath;
     private ServerType serverType;
 
-    RestRequestId(String requestPath, ServerType serverType) {
+    RestResourceId(String requestPath, ServerType serverType) {
         this.requestPath = requestPath;
         this.serverType = serverType;
     }
