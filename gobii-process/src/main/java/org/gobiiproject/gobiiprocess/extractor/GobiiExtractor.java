@@ -24,9 +24,9 @@ import org.gobiiproject.gobiiclient.core.common.GenericClientContext;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
+import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
-import org.gobiiproject.gobiimodel.config.ServerBase;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 import org.gobiiproject.gobiimodel.types.*;
@@ -684,13 +684,13 @@ public class GobiiExtractor {
 		ErrorLogger.logInfo("QC", "KDC Context Path: " + configSettings.getGlobalServer(ServerType.KDC).getContextPath());
 		ErrorLogger.logInfo("QC", "KDC Port: " + configSettings.getGlobalServer(ServerType.KDC).getPort());
 		ErrorLogger.logInfo("QC", "KDC Active: " + configSettings.getGlobalServer(ServerType.KDC).isActive());
-			ServerBase serverBase = new ServerBase(ServerType.GENERIC,
+			ServerConfig serverConfig = new ServerConfig(ServerType.GENERIC,
 					configSettings.getGlobalServer(ServerType.KDC).getHost(),
 					configSettings.getGlobalServer(ServerType.KDC).getContextPath(),
 					configSettings.getGlobalServer(ServerType.KDC).getPort(),
 					configSettings.getGlobalServer(ServerType.KDC).isActive(),
 					configSettings.getGlobalServer(ServerType.KDC).isDecrypt());
-			GenericClientContext genericClientContext = new GenericClientContext(serverBase);
+			GenericClientContext genericClientContext = new GenericClientContext(serverConfig);
 			RestUri restUriGetQCJobID = new RestUri("/",
 					configSettings.getGlobalServer(ServerType.KDC).getContextPath(),
 					configSettings.getGlobalServer(ServerType.KDC).getCallResourcePath(RestRequestId.KDC_START));

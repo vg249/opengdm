@@ -30,7 +30,7 @@ public class GobiiCropConfig {
     private boolean isActive;
 
     @ElementMap(required = false)
-    private Map<ServerType, ServerBase> serversByServerType = new HashMap<>();
+    private Map<ServerType, ServerConfig> serversByServerType = new HashMap<>();
 
     public GobiiCropConfig() {
     }
@@ -44,15 +44,15 @@ public class GobiiCropConfig {
                           boolean decrypt) {
 
         
-        ServerBase serverBase = this.serversByServerType.get(serverType);
-        if (serverBase == null) {
+        ServerConfig serverConfig = this.serversByServerType.get(serverType);
+        if (serverConfig == null) {
 
-            serverBase = new ServerBase();
-            this.serversByServerType.put(serverType, serverBase);
+            serverConfig = new ServerConfig();
+            this.serversByServerType.put(serverType, serverConfig);
 
         }
 
-        serverBase
+        serverConfig
                 .setServerType(serverType)
                 .setHost(host)
                 .setContextPath(contextPath)
@@ -62,17 +62,17 @@ public class GobiiCropConfig {
                 .setDecrypt(decrypt);
     }
 
-    public GobiiCropConfig setServersByServerType(Map<ServerType, ServerBase> serversByServerType) {
+    public GobiiCropConfig setServersByServerType(Map<ServerType, ServerConfig> serversByServerType) {
         this.serversByServerType = serversByServerType;
         return this;
     }
 
-    public ServerBase getServer(ServerType serverType) {
-        ServerBase returnVal = this.serversByServerType.get(serverType);
+    public ServerConfig getServer(ServerType serverType) {
+        ServerConfig returnVal = this.serversByServerType.get(serverType);
         return returnVal;
     } // getServer()
 
-    public Collection<ServerBase> getServers() {
+    public Collection<ServerConfig> getServers() {
         return this.serversByServerType.values();
     }
 

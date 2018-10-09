@@ -143,7 +143,7 @@ public class ConfigSettings {
         return this.configValues.isCropDefined(gobiiCropType);
     }
 
-    public ServerBase getGlobalServer(ServerType serverType) throws Exception {
+    public ServerConfig getGlobalServer(ServerType serverType) throws Exception {
         return this.configValues.getGlobalServer(serverType);
     }
 

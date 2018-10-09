@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiimodel.config;
 
+import org.gobiiproject.gobiimodel.dto.system.RestCallProfileDTO;
 import org.gobiiproject.gobiimodel.security.Decrypter;
 import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
 import org.gobiiproject.gobiimodel.types.RestMethodTypes;
@@ -70,7 +71,7 @@ class ConfigValues {
 
 
         this.globalServersByServerType.put(ServerType.KDC,
-                new ServerBase(
+                new ServerConfig(
                         ServerType.KDC,
                         "",
                         "",
@@ -83,7 +84,7 @@ class ConfigValues {
         );
 
         this.globalServersByServerType.put(ServerType.OWN_CLOUD,
-                new ServerBase(ServerType.OWN_CLOUD,
+                new ServerConfig(ServerType.OWN_CLOUD,
                         "",
                         "",
                         null,
@@ -99,7 +100,7 @@ class ConfigValues {
     private TestExecConfig testExecConfig = new TestExecConfig();
 
     @ElementMap(required = false)
-    private Map<ServerType, ServerBase> globalServersByServerType = new HashMap<>();
+    private Map<ServerType, ServerConfig> globalServersByServerType = new HashMap<>();
 
     @ElementMap(required = false)
     private Map<String, GobiiCropConfig> cropConfigs = new LinkedHashMap<>();
@@ -200,9 +201,9 @@ class ConfigValues {
         return testExecConfig;
     }
 
-    public ServerBase getGlobalServer(ServerType serverType) throws Exception {
+    public ServerConfig getGlobalServer(ServerType serverType) throws Exception {
 
-        ServerBase returnVal = null;
+        ServerConfig returnVal = null;
 
         if (this.globalServersByServerType.containsKey(serverType)) {
 
@@ -299,6 +300,15 @@ class ConfigValues {
             entry.getValue().setGobiiCropType(lowerCaseCropType);
             this.cropConfigs.put(lowerCaseCropType, entry.getValue());
         }
+    }
+
+    private List<RestCallProfileDTO> makeGobiiCallProfiles() {
+
+        List<RestCallProfileDTO> returnVal = new ArrayList<>();
+
+
+
+        return returnVal;
     }
 
     public void setCrop(String gobiiCropType,
@@ -542,13 +552,13 @@ class ConfigValues {
 
         for (GobiiCropConfig currentGobiiCropConfig : this.cropConfigs.values()) {
 
-            for (ServerBase currentServerBase : currentGobiiCropConfig.getServers()) {
-                currentServerBase.setDecrypt(isDecrypt);
+            for (ServerConfig currentServerConfig : currentGobiiCropConfig.getServers()) {
+                currentServerConfig.setDecrypt(isDecrypt);
             }
         }
 
-        for (ServerBase currentServerBase : this.globalServersByServerType.values()) {
-            currentServerBase.setDecrypt(isDecrypt);
+        for (ServerConfig currentServerConfig : this.globalServersByServerType.values()) {
+            currentServerConfig.setDecrypt(isDecrypt);
         }
     }
 
@@ -610,11 +620,11 @@ class ConfigValues {
         isProvidesBackend = providesBackend;
     }
 
-    public Map<ServerType, ServerBase> getGlobalServersByServerType() {
+    public Map<ServerType, ServerConfig> getGlobalServersByServerType() {
         return globalServersByServerType;
     }
 
-    public void setGlobalServersByServerType(Map<ServerType, ServerBase> globalServersByServerType) {
+    public void setGlobalServersByServerType(Map<ServerType, ServerConfig> globalServersByServerType) {
         this.globalServersByServerType = globalServersByServerType;
     }
 }

@@ -13,6 +13,7 @@ import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
+import org.gobiiproject.gobiimodel.config.ServerConfigItem;
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO;
@@ -29,7 +30,6 @@ import org.gobiiproject.gobiimodel.dto.entity.auditable.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.VendorProtocolDTO;
-import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiiapimodel.payload.Header;
 import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
@@ -69,7 +69,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class GobiiAdl {
 
-    private static ServerConfig serverConfig;
+    private static ServerConfigItem serverConfigItem;
     private static String crop = null;
     private static long timeoutInMillis;
     private static Long timeout = null;
@@ -1881,7 +1881,7 @@ public class GobiiAdl {
         String folderName, filesPath, digestPath, jobId;
         boolean returnVal = false;
 
-        Map<GobiiFileProcessDir, String> fileLocations = serverConfig.getFileLocations();
+        Map<GobiiFileProcessDir, String> fileLocations = serverConfigItem.getFileLocations();
         for (int i = 0; i < nodeList.getLength(); i++) {
             Element currentElement = (Element) nodeList.item(i);
             Node scenarioNode = currentElement.getElementsByTagName("Name").item(0);
@@ -2710,11 +2710,11 @@ public class GobiiAdl {
 
             List<String> crops = GobiiClientContext.getInstance(null, false).getCropTypeTypes();
             for (String currentCrop : crops) {
-                ServerConfig currentServerConfig = GobiiClientContext.getInstance(null, false).getServerConfig(currentCrop);
-                if (contextRoot.equals(currentServerConfig.getContextRoot())) {
+                ServerConfigItem currentServerConfigItem = GobiiClientContext.getInstance(null, false).getServerConfig(currentCrop);
+                if (contextRoot.equals(currentServerConfigItem.getContextRoot())) {
                     // use the crop for this server config
                     crop = currentCrop;
-                    serverConfig = currentServerConfig;
+                    serverConfigItem = currentServerConfigItem;
                     break;
                 }
             }

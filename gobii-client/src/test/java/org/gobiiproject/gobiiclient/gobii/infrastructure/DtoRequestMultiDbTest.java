@@ -15,7 +15,7 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.*;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
-import org.gobiiproject.gobiimodel.config.ServerConfig;
+import org.gobiiproject.gobiimodel.config.ServerConfigItem;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO;
 import org.gobiiproject.gobiimodel.dto.system.PingDTO;
 
@@ -72,10 +72,10 @@ public class DtoRequestMultiDbTest {
 
 
         PingDTO pingDTORequest = TestDtoFactory.makePingDTO();
-        for (ServerConfig currentServerConfig : configSettingsDTOResponse.getServerConfigs().values()) {
+        for (ServerConfigItem currentServerConfigItem : configSettingsDTOResponse.getServerConfigs().values()) {
 
             // should cause server to assign the correct datasource
-            String currentCropType = currentServerConfig.getGobiiCropType();
+            String currentCropType = currentServerConfigItem.getGobiiCropType();
             Assert.assertTrue(GobiiClientContextAuth.authenticate(currentCropType));
 
 

@@ -16,7 +16,7 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.config.ServerConfig;
+import org.gobiiproject.gobiimodel.config.ServerConfigItem;
 import org.gobiiproject.gobiimodel.dto.system.ConfigSettingsDTO;
 import org.gobiiproject.gobiimodel.dto.system.PingDTO;
 import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
@@ -95,30 +95,30 @@ public class DtoRequestConfigSettingsPropsTest {
                 .get(0);
 
 
-        ServerConfig serverConfigDefaultCrop = configSettingsDTOResponse
+        ServerConfigItem serverConfigItemDefaultCrop = configSettingsDTOResponse
                 .getServerConfigs()
                 .get(randomCrop);
 
         Assert.assertNotNull("The remote server configuration does not define crop type",
-                serverConfigDefaultCrop.getGobiiCropType());
+                serverConfigItemDefaultCrop.getGobiiCropType());
 
         Assert.assertTrue("The default crop's crop ID does not match the settings default crop",
-                randomCrop.equals(serverConfigDefaultCrop.getGobiiCropType()));
+                randomCrop.equals(serverConfigItemDefaultCrop.getGobiiCropType()));
 
-        Assert.assertNotNull("The remote server configuration does not define a domain for crop type " + serverConfigDefaultCrop.getGobiiCropType(),
-                serverConfigDefaultCrop.getDomain());
+        Assert.assertNotNull("The remote server configuration does not define a domain for crop type " + serverConfigItemDefaultCrop.getGobiiCropType(),
+                serverConfigItemDefaultCrop.getDomain());
 
-        Assert.assertNotNull("The remote server configuration does not define a context root for crop type " + serverConfigDefaultCrop.getGobiiCropType(),
-                serverConfigDefaultCrop.getContextRoot());
+        Assert.assertNotNull("The remote server configuration does not define a context root for crop type " + serverConfigItemDefaultCrop.getGobiiCropType(),
+                serverConfigItemDefaultCrop.getContextRoot());
 
-        Assert.assertNotNull("The remote server configuration does not define a port for crop type " + serverConfigDefaultCrop.getGobiiCropType(),
-                serverConfigDefaultCrop.getPort());
+        Assert.assertNotNull("The remote server configuration does not define a port for crop type " + serverConfigItemDefaultCrop.getGobiiCropType(),
+                serverConfigItemDefaultCrop.getPort());
 
 
         URL url = new URL("http",
-                serverConfigDefaultCrop.getDomain(),
-                serverConfigDefaultCrop.getPort(),
-                serverConfigDefaultCrop.getContextRoot());
+                serverConfigItemDefaultCrop.getDomain(),
+                serverConfigItemDefaultCrop.getPort(),
+                serverConfigItemDefaultCrop.getContextRoot());
 
         String serviceUrl = url.toString();
 
@@ -151,15 +151,15 @@ public class DtoRequestConfigSettingsPropsTest {
                 configSettingsDTOResponse.getServerConfigs().keySet()
         ).get(0);
 
-        ServerConfig serverConfigDefaultCrop = configSettingsDTOResponse
+        ServerConfigItem serverConfigItemDefaultCrop = configSettingsDTOResponse
                 .getServerConfigs()
                 .get(randomCrop);
 
 
         URL url = new URL("http",
-                serverConfigDefaultCrop.getDomain(),
-                serverConfigDefaultCrop.getPort(),
-                serverConfigDefaultCrop.getContextRoot());
+                serverConfigItemDefaultCrop.getDomain(),
+                serverConfigItemDefaultCrop.getPort(),
+                serverConfigItemDefaultCrop.getContextRoot());
 
         String serviceUrl = url.toString();
 

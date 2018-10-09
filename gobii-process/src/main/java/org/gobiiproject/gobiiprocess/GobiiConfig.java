@@ -11,8 +11,8 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.RestRequestId;
-import org.gobiiproject.gobiimodel.config.ServerBase;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
+import org.gobiiproject.gobiimodel.config.ServerConfigItem;
 import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
 import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
@@ -1423,7 +1423,7 @@ public class GobiiConfig {
 
                     }
 
-                    ServerBase postGresConfig = currentGobiiCropConfig.getServer(ServerType.GOBII_PGSQL);
+                    ServerConfig postGresConfig = currentGobiiCropConfig.getServer(ServerType.GOBII_PGSQL);
                     if (postGresConfig == null) {
                         messages.add("The postgresdb for the crop (" + currentGobiiCropConfig.getGobiiCropType() + ") is not defined");
                         returnVal = false;
@@ -1431,7 +1431,7 @@ public class GobiiConfig {
                         returnVal = returnVal && verifyDbConfig(postGresConfig);
                     }
 
-                    ServerBase computeNodeConfig = currentGobiiCropConfig.getServer(ServerType.GOBII_COMPUTE);
+                    ServerConfig computeNodeConfig = currentGobiiCropConfig.getServer(ServerType.GOBII_COMPUTE);
                     if (computeNodeConfig == null) {
                         messages.add("The compute node for the crop (" + currentGobiiCropConfig.getGobiiCropType() + ") is not defined");
                         returnVal = false;
@@ -1459,35 +1459,35 @@ public class GobiiConfig {
     } //
 
 
-    private static boolean verifyDbConfig(ServerBase gobiiServerBase) {
+    private static boolean verifyDbConfig(ServerConfig gobiiServerConfig) {
 
         boolean returnVal = true;
 
-        if (LineUtils.isNullOrEmpty(gobiiServerBase.getHost())) {
-            System.err.println("The server  config for " + gobiiServerBase.getServerType().toString() + " does not define a host");
+        if (LineUtils.isNullOrEmpty(gobiiServerConfig.getHost())) {
+            System.err.println("The server  config for " + gobiiServerConfig.getServerType().toString() + " does not define a host");
             returnVal = false;
         }
 
 
-        if (gobiiServerBase.getPort() == null) {
-            System.err.println("The server config for " + gobiiServerBase.getServerType().toString() + " does not define a port");
+        if (gobiiServerConfig.getPort() == null) {
+            System.err.println("The server config for " + gobiiServerConfig.getServerType().toString() + " does not define a port");
             returnVal = false;
         }
 
 
-        if (gobiiServerBase.getServerType().equals(ServerType.GOBII_PGSQL)) {
-            if (LineUtils.isNullOrEmpty(gobiiServerBase.getUserName())) {
-                System.err.println("The db config for " + gobiiServerBase.getServerType().toString() + " does not define a user name");
+        if (gobiiServerConfig.getServerType().equals(ServerType.GOBII_PGSQL)) {
+            if (LineUtils.isNullOrEmpty(gobiiServerConfig.getUserName())) {
+                System.err.println("The db config for " + gobiiServerConfig.getServerType().toString() + " does not define a user name");
                 returnVal = false;
             }
 
-            if (LineUtils.isNullOrEmpty(gobiiServerBase.getPassword())) {
-                System.err.println("The db config for " + gobiiServerBase.getServerType().toString() + " does not define a password");
+            if (LineUtils.isNullOrEmpty(gobiiServerConfig.getPassword())) {
+                System.err.println("The db config for " + gobiiServerConfig.getServerType().toString() + " does not define a password");
                 returnVal = false;
             }
 
-            if (LineUtils.isNullOrEmpty(gobiiServerBase.getContextPath())) {
-                System.err.println("The db config for " + gobiiServerBase.getServerType().toString() + " does not define a database name");
+            if (LineUtils.isNullOrEmpty(gobiiServerConfig.getContextPath())) {
+                System.err.println("The db config for " + gobiiServerConfig.getServerType().toString() + " does not define a database name");
                 returnVal = false;
             }
         }
@@ -1521,27 +1521,27 @@ public class GobiiConfig {
         for (String currentCropId : gobiiCropTypes) {
 
 
-            ServerConfig currentServerConfig = GobiiClientContext.getInstance(null, false).getServerConfig(currentCropId);
+            ServerConfigItem currentServerConfigItem = GobiiClientContext.getInstance(null, false).getServerConfig(currentCropId);
 
             GobiiConfig.printSeparator();
             GobiiConfig.printField("Crop Type", currentCropId.toString());
-            GobiiConfig.printField("Host", currentServerConfig.getDomain());
-            GobiiConfig.printField("Port", currentServerConfig.getPort().toString());
-            GobiiConfig.printField("Context root", currentServerConfig.getContextRoot());
+            GobiiConfig.printField("Host", currentServerConfigItem.getDomain());
+            GobiiConfig.printField("Port", currentServerConfigItem.getPort().toString());
+            GobiiConfig.printField("Context root", currentServerConfigItem.getContextRoot());
 
-            GobiiConfig.printField("Loader instructions directory", currentServerConfig
+            GobiiConfig.printField("Loader instructions directory", currentServerConfigItem
                     .getFileLocations()
                     .get(GobiiFileProcessDir.LOADER_INSTRUCTIONS));
 
-            GobiiConfig.printField("User file upload directory", currentServerConfig
+            GobiiConfig.printField("User file upload directory", currentServerConfigItem
                     .getFileLocations()
                     .get(GobiiFileProcessDir.RAW_USER_FILES));
 
-            GobiiConfig.printField("Digester output directory ", currentServerConfig
+            GobiiConfig.printField("Digester output directory ", currentServerConfigItem
                     .getFileLocations()
                     .get(GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES));
 
-            GobiiConfig.printField("Extractor instructions directory", currentServerConfig
+            GobiiConfig.printField("Extractor instructions directory", currentServerConfigItem
                     .getFileLocations()
                     .get(GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS));
 

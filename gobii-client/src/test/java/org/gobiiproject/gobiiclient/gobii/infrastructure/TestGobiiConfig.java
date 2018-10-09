@@ -4,7 +4,7 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiTestConfiguration;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.RestRequestId;
-import org.gobiiproject.gobiimodel.config.ServerBase;
+import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.config.TestExecConfig;
 import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
 import org.gobiiproject.gobiimodel.types.ServerType;
@@ -543,7 +543,7 @@ public class TestGobiiConfig {
 
         ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
 
-        ServerBase postGresConfig = configSettings.getCropConfig(cropId).getServer(ServerType.GOBII_PGSQL);
+        ServerConfig postGresConfig = configSettings.getCropConfig(cropId).getServer(ServerType.GOBII_PGSQL);
         Assert.assertNotNull("The crop db config was not created: " + cropId,
                 postGresConfig);
 
@@ -608,7 +608,7 @@ public class TestGobiiConfig {
 
         ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
 
-        ServerBase postGresConfig = configSettings.getCropConfig(cropId).getServer(ServerType.GOBII_PGSQL);
+        ServerConfig postGresConfig = configSettings.getCropConfig(cropId).getServer(ServerType.GOBII_PGSQL);
         Assert.assertNotNull("The crop db config was not created: " + cropId,
                 postGresConfig);
 
@@ -664,7 +664,7 @@ public class TestGobiiConfig {
 
         ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
 
-        ServerBase computeNodeConfig = configSettings.getCropConfig(cropId).getServer(ServerType.GOBII_COMPUTE);
+        ServerConfig computeNodeConfig = configSettings.getCropConfig(cropId).getServer(ServerType.GOBII_COMPUTE);
         Assert.assertNotNull("The crop db config was not created: " + cropId,
                 computeNodeConfig);
 
@@ -867,7 +867,7 @@ public class TestGobiiConfig {
 
         ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
 
-        ServerBase computeNodeConfig = configSettings.getCropConfig(cropId).getServer(ServerType.GOBII_COMPUTE);
+        ServerConfig computeNodeConfig = configSettings.getCropConfig(cropId).getServer(ServerType.GOBII_COMPUTE);
         Assert.assertNotNull("The crop db config was not created: " + cropId,
                 computeNodeConfig);
 

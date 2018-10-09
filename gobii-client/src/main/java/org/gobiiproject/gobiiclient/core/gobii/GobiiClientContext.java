@@ -7,12 +7,12 @@ import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiimodel.config.RestRequestId;
 import org.gobiiproject.gobiiclient.core.common.HttpCore;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
+import org.gobiiproject.gobiimodel.config.ServerConfigItem;
 import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
 import org.gobiiproject.gobiimodel.types.GobiiFileNoticeType;
 import org.gobiiproject.gobiimodel.types.RestMethodTypes;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
-import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.dto.system.ConfigSettingsDTO;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
@@ -128,7 +128,7 @@ public final class GobiiClientContext {
 
             for (GobiiCropConfig currentGobiiCropConfig : configSettings.getActiveCropConfigs()) {
 
-                ServerConfig currentServerConfig = new ServerConfig(currentGobiiCropConfig,
+                ServerConfigItem currentServerConfigItem = new ServerConfigItem(currentGobiiCropConfig,
                         configSettings.getProcessingPath(currentGobiiCropConfig.getGobiiCropType(),
                                 GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS),
                         configSettings.getProcessingPath(currentGobiiCropConfig.getGobiiCropType(),
@@ -142,7 +142,7 @@ public final class GobiiClientContext {
                 );
 
                 gobiiClientContext.serverConfigs.put(currentGobiiCropConfig.getGobiiCropType(),
-                        currentServerConfig);
+                        currentServerConfigItem);
             }
 
             gobiiClientContext.gobiiCropTypes.addAll(gobiiClientContext
@@ -286,7 +286,7 @@ public final class GobiiClientContext {
 
     String fileSystemRoot;
 
-    private Map<String, ServerConfig> serverConfigs = new HashMap<>();
+    private Map<String, ServerConfigItem> serverConfigs = new HashMap<>();
     private Map<ServerCapabilityType, Boolean> serverCapabilities = new HashMap<>();
 
 
@@ -296,29 +296,29 @@ public final class GobiiClientContext {
 
 
     /***
-     * Gets the ServerConfig for the current cropId
+     * Gets the ServerConfigItem for the current cropId
      * @return
      * @throws Exception
      */
-    private ServerConfig getServerConfig() throws Exception {
+    private ServerConfigItem getServerConfig() throws Exception {
 
-        ServerConfig returnVal;
+        ServerConfigItem returnVal;
         returnVal = this.getServerConfig(this.cropId);
         return returnVal;
     }
 
     /***
-     * This method only returns a ServerConfig, if it exists. It does not change the state of this instance of
+     * This method only returns a ServerConfigItem, if it exists. It does not change the state of this instance of
      * GobiiClientContext with respect to the current cropId. In other words, when you call this method, you get
-     * the ServerConfig, but the context and the HttpCore that it encapsulates still reference the server for the
+     * the ServerConfigItem, but the context and the HttpCore that it encapsulates still reference the server for the
      * cropId with which login() was called.
      * @param cropId: The ID of the crop per the configuration file
      * @return
      * @throws Exception if cropoId is null or is not a crop defined in the configuration
      */
-    public ServerConfig getServerConfig(String cropId) throws Exception {
+    public ServerConfigItem getServerConfig(String cropId) throws Exception {
 
-        ServerConfig returnVal;
+        ServerConfigItem returnVal;
 
         if (LineUtils.isNullOrEmpty(cropId)) {
             throw new Exception("Unable to get server config: A cropID was never set for this context");

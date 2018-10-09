@@ -1,5 +1,6 @@
-package org.gobiiproject.gobiimodel.config;
+package org.gobiiproject.gobiimodel.dto.system;
 
+import org.gobiiproject.gobiimodel.config.RestRequestId;
 import org.gobiiproject.gobiimodel.types.RestMethodTypes;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
