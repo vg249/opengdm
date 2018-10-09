@@ -2,6 +2,7 @@ package org.gobiiproject.gobiimodel.config;
 
 import org.gobiiproject.gobiimodel.security.Decrypter;
 import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
+import org.gobiiproject.gobiimodel.types.RestMethodTypes;
 import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.types.GobiiFileNoticeType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
@@ -9,6 +10,8 @@ import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementMap;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -29,11 +32,66 @@ import java.util.stream.Collectors;
 class ConfigValues {
 
     public ConfigValues() {
+
+
+        EnumMap<RestRequestId, RestCallProfileDTO> kdcCallProfiles = new EnumMap<RestRequestId, RestCallProfileDTO>(RestRequestId.class);
+        kdcCallProfiles.put(RestRequestId.KDC_START,
+                new RestCallProfileDTO(
+                        RestRequestId.KDC_START,
+                        new ArrayList<>(Arrays.asList(RestMethodTypes.GET)),
+                        0,
+                        1
+                ));
+
+        kdcCallProfiles.put(RestRequestId.KDC_STATUS,
+                new RestCallProfileDTO(
+                        RestRequestId.KDC_STATUS,
+                        new ArrayList<>(Arrays.asList(RestMethodTypes.GET)),
+                        0,
+                        1
+                ));
+
+
+        kdcCallProfiles.put(RestRequestId.KDC_DOWNLOAD,
+                new RestCallProfileDTO(
+                        RestRequestId.KDC_DOWNLOAD,
+                        new ArrayList<>(Arrays.asList(RestMethodTypes.GET)),
+                        0,
+                        1
+                ));
+
+        kdcCallProfiles.put(RestRequestId.KDC_PURGE,
+                new RestCallProfileDTO(
+                        RestRequestId.KDC_PURGE,
+                        new ArrayList<>(Arrays.asList(RestMethodTypes.GET)),
+                        0,
+                        1
+                ));
+
+
         this.globalServersByServerType.put(ServerType.KDC,
-                new ServerBase(ServerType.KDC, "", "", null, true, "", "", false)
+                new ServerBase(
+                        ServerType.KDC,
+                        "",
+                        "",
+                        null,
+                        true,
+                        "",
+                        "",
+                        false,
+                        kdcCallProfiles)
         );
+
         this.globalServersByServerType.put(ServerType.OWN_CLOUD,
-                new ServerBase(ServerType.OWN_CLOUD, "", "", null, true, "", "", false)
+                new ServerBase(ServerType.OWN_CLOUD,
+                        "",
+                        "",
+                        null,
+                        true,
+                        "",
+                        "",
+                        false,
+                        null)
         );
     } // ctor
 
@@ -489,7 +547,7 @@ class ConfigValues {
             }
         }
 
-        for( ServerBase currentServerBase : this.globalServersByServerType.values() ) {
+        for (ServerBase currentServerBase : this.globalServersByServerType.values()) {
             currentServerBase.setDecrypt(isDecrypt);
         }
     }

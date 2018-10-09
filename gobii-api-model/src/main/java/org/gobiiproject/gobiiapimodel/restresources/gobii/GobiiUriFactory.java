@@ -3,7 +3,7 @@ package org.gobiiproject.gobiiapimodel.restresources.gobii;
 
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
-import org.gobiiproject.gobiiapimodel.types.RestRequestId;
+import org.gobiiproject.gobiimodel.config.RestRequestId;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 

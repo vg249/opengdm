@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiapimodel.types;
+package org.gobiiproject.gobiimodel.config;
 
 import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
@@ -56,7 +56,11 @@ public enum RestRequestId {
     GOBII_VALUES("values",ServerType.GOBII_WEB),
     BRAPI_ALLELE_MATRIX_SEARCH("allelematrix-search", ServerType.BRAPI),
     BRAPI_ALLELE_MATRIX_SEARCH_STATUS("allelematrix-search/status", ServerType.BRAPI),
-    BRAPI_ALLELE_MATRICES("allelematrices", ServerType.BRAPI);
+    BRAPI_ALLELE_MATRICES("allelematrices", ServerType.BRAPI),
+    KDC_START("qcStart",ServerType.KDC),
+    KDC_STATUS("qcStatus",ServerType.KDC),
+    KDC_DOWNLOAD("qcDownload",ServerType.KDC),
+    KDC_PURGE("qcPurge",ServerType.KDC);
 
 
     private String requestPath;
@@ -69,6 +73,10 @@ public enum RestRequestId {
 
     public String getResourcePath() {
         return this.requestPath;
+    }
+
+    public void setResourcePath(String resourcePath) {
+        this.requestPath = resourcePath;
     }
 
     public ServerType getServerType() {

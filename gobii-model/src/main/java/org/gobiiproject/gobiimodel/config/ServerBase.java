@@ -8,7 +8,10 @@ import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementMap;
 import org.simpleframework.xml.Root;
 
+import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Root
@@ -48,7 +51,8 @@ public class ServerBase {
                       boolean isActive,
                       String userName,
                       String password,
-                      boolean decrypt) {
+                      boolean decrypt,
+                      EnumMap<RestRequestId, RestCallProfileDTO> callProfilesByRestRequestId) {
 
         this.serverType = serverType;
         this.host = host;
@@ -58,6 +62,7 @@ public class ServerBase {
         this.userName = userName;
         this.password = password;
         this.decrypt = decrypt;
+        this.callProfilesByRestRequestId = callProfilesByRestRequestId;
 
     }
 
@@ -142,7 +147,7 @@ public class ServerBase {
         return this;
     }
 
-   public Integer getPort() {
+    public Integer getPort() {
         return port;
     }
 
@@ -169,7 +174,7 @@ public class ServerBase {
 
         String returnVal = this.contextPath;
 
-        if( terminate && ! LineUtils.isNullOrEmpty(returnVal)) {
+        if (terminate && !LineUtils.isNullOrEmpty(returnVal)) {
             returnVal = LineUtils.terminateDirectoryPath(returnVal);
         }
         return returnVal;
@@ -181,19 +186,37 @@ public class ServerBase {
     }
 
 
-
-    // These are in the general base class only temporarily until these KDC properties
-    // can be handled differently
-
-    public enum KDCResource {
-        QC_START,
-        QC_STATUS_,
-        QC_DOWNLOAD,
-        QC_PURGE
-    }
+//    // These are in the general base class only temporarily until these KDC properties
+//    // can be handled differently
+//
+//    public enum KDCResource {
+//        QC_START,
+//        QC_STATUS_,
+//        QC_DOWNLOAD,
+//        QC_PURGE
+//    }
+//
+//    @ElementMap(required = false)
+//    Map<ServerBase.KDCResource, String> kdcResources = new HashMap<>();
+//public ServerBase addPath(ServerBase.KDCResource kdcResource, String resource) {
+//    this.kdcResources.put(kdcResource, resource);
+//    return this;
+//}
+//
+//    public String getPath(ServerBase.KDCResource kdcResource) {
+//
+//        String returnVal = null;
+//
+//        if (this.kdcResources.containsKey(kdcResource)) {
+//            returnVal = this.kdcResources.get(kdcResource);
+//        }
+//
+//        return returnVal;
+//    }
+//
 
     @ElementMap(required = false)
-    Map<ServerBase.KDCResource, String> kdcResources = new HashMap<>();
+    EnumMap<RestRequestId, RestCallProfileDTO> callProfilesByRestRequestId = new EnumMap<>(RestRequestId.class);
 
     @Element(required = false)
     Integer statusCheckIntervalSecs = 0;
@@ -201,22 +224,6 @@ public class ServerBase {
     @Element(required = false)
     Integer maxStatusCheckMins = 0;
 
-
-    public ServerBase addPath(ServerBase.KDCResource kdcResource, String resource) {
-        this.kdcResources.put(kdcResource, resource);
-        return this;
-    }
-
-    public String getPath(ServerBase.KDCResource kdcResource) {
-
-        String returnVal = null;
-
-        if (this.kdcResources.containsKey(kdcResource)) {
-            returnVal = this.kdcResources.get(kdcResource);
-        }
-
-        return returnVal;
-    }
 
     public Integer getStatusCheckIntervalSecs() {
         return statusCheckIntervalSecs;
@@ -235,4 +242,43 @@ public class ServerBase {
         this.maxStatusCheckMins = maxStatusCheckMins;
         return this;
     }
+
+
+    List<ServerType> nonUpdatableServerTypes = Arrays.asList(ServerType.GOBII_WEB,
+            ServerType.GOBII_PGSQL,
+            ServerType.GOBII_COMPUTE);
+
+    private RestCallProfileDTO getCallProfile(RestRequestId restRequestId) {
+
+        if (!this.callProfilesByRestRequestId.containsKey(restRequestId)) {
+            throw new GobiiException("There is no call profile for restRequestId " + restRequestId.getResourcePath());
+        }
+
+        return this.callProfilesByRestRequestId.get(restRequestId);
+    }
+
+    public Integer getCallMaxPost(RestRequestId restRequestId) {
+
+        return this.getCallProfile(restRequestId).getMaxPostPut();
+    }
+
+    public Integer getCallGet(RestRequestId restRequestId) {
+
+        return this.getCallProfile(restRequestId).getMaxGet();
+    }
+
+    public String getCallResourcePath(RestRequestId restRequestId) {
+        return this.getCallProfile(restRequestId).getRestRequestId().getResourcePath();
+    }
+
+    public void setCallResourcePath(RestRequestId restRequestId, String resourcePath) throws GobiiException {
+
+
+        if (this.nonUpdatableServerTypes.contains(restRequestId.getServerType())) {
+            throw new GobiiException("This server type does not allow dynamic configuration of resource paths: " + restRequestId.getServerType().toString());
+        }
+
+        this.getCallProfile(restRequestId).getRestRequestId().setResourcePath(resourcePath);
+    }
+
 }

@@ -19,7 +19,7 @@ import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
-import org.gobiiproject.gobiiapimodel.types.RestRequestId;
+import org.gobiiproject.gobiimodel.config.RestRequestId;
 import org.gobiiproject.gobiiclient.core.common.GenericClientContext;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
@@ -693,7 +693,7 @@ public class GobiiExtractor {
 			GenericClientContext genericClientContext = new GenericClientContext(serverBase);
 			RestUri restUriGetQCJobID = new RestUri("/",
 					configSettings.getGlobalServer(ServerType.KDC).getContextPath(),
-					configSettings.getGlobalServer(ServerType.KDC).getPath(ServerBase.KDCResource.QC_START));
+					configSettings.getGlobalServer(ServerType.KDC).getCallResourcePath(RestRequestId.KDC_START));
 			restUriGetQCJobID
 					.addQueryParam("datasetId", String.valueOf(datasetId))
 					.addQueryParam("directory", extractDir)
@@ -728,7 +728,7 @@ public class GobiiExtractor {
 					//mailInterface.send(qcStartPm);
 						RestUri restUriGetQCJobStatus = new RestUri("/",
 								configSettings.getGlobalServer(ServerType.KDC).getContextPath(),
-								configSettings.getGlobalServer(ServerType.KDC).getPath(ServerBase.KDCResource.QC_STATUS_));
+								configSettings.getGlobalServer(ServerType.KDC).getCallResourcePath(RestRequestId.KDC_STATUS));
 						restUriGetQCJobStatus
 								.addQueryParam("jobid")
 								.setParamValue("jobid", String.valueOf(qcJobID));

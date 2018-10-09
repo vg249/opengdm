@@ -1,33 +1,46 @@
-package org.gobiiproject.gobiiapimodel.restresources.common;
+package org.gobiiproject.gobiimodel.config;
 
 import org.gobiiproject.gobiimodel.types.RestMethodTypes;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.ElementList;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GobiiCallProfileDTO {
+public class RestCallProfileDTO {
 
-    public GobiiCallProfileDTO(String methodName,
-                               List<RestMethodTypes> supportedVerbs,
-                               Integer maxPostPut,
-                               Integer maxGet) {
-        this.methodName = methodName;
+    //default ctor needed for serialization
+    public RestCallProfileDTO() {}
+
+    public RestCallProfileDTO(RestRequestId restRequestId,
+                              List<RestMethodTypes> supportedVerbs,
+                              Integer maxPostPut,
+                              Integer maxGet) {
+        this.restRequestId = restRequestId;
         this.supportedVerbs = supportedVerbs;
         this.maxPostPut = maxPostPut;
         this.maxGet = maxGet;
     }
 
-    String methodName;
+
+    @Element(required = false)
+    RestRequestId restRequestId;
+
+    @ElementList(required = false)
     List<RestMethodTypes> supportedVerbs = new ArrayList<>();
+
+    @Element(required = false)
     Integer maxPostPut = 100;
+
+    @Element(required = false)
     Integer maxGet = 500;
 
-    public String getMethodName() {
-        return methodName;
+    public RestRequestId getRestRequestId() {
+        return restRequestId;
     }
 
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
+    public void setRestRequestId(RestRequestId restRequestId) {
+        this.restRequestId = restRequestId;
     }
 
     public List<RestMethodTypes> getSupportedVerbs() {
