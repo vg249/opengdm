@@ -22,10 +22,7 @@ import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by VCalaminos on 1/15/2018.
@@ -85,7 +82,30 @@ public class DtoCrudRequestNameIdListTest {
         }
     }
 
-    private void checkNameIdListResponseAbsent(PayloadEnvelope<NameIdDTO> responsePayloadEnvelope, String[] nameIdDTOListInput) {
+
+    private void searchNameIdDTO(List<NameIdDTO> nameIdDTOListResponse, String[] nameListSearch, boolean doesExist) {
+
+        Collections.sort(nameIdDTOListResponse);
+        Integer index;
+
+        for (String name : nameListSearch) {
+
+            NameIdDTO searchNameDTO = new NameIdDTO();
+            searchNameDTO.setName(name);
+
+            index = Collections.binarySearch(nameIdDTOListResponse, searchNameDTO);
+
+            if (doesExist) {
+                Assert.assertTrue(index > -1);
+            } else {
+                Assert.assertTrue(index <= -1);
+            }
+        }
+
+    }
+
+
+    private void checkNameIdListResponseAbsent(PayloadEnvelope<NameIdDTO> responsePayloadEnvelope, String[] nameIdDTOListInput, String[] nameIdDTONotExisting) {
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(responsePayloadEnvelope.getHeader()));
 
@@ -99,9 +119,16 @@ public class DtoCrudRequestNameIdListTest {
 
         }
 
+        // check all the names that should be present in the list
+        searchNameIdDTO(nameIdDTOListResponse, nameIdDTOListInput, true);
+
+
+        // check all the names that should not be present in the list
+        searchNameIdDTO(nameIdDTOListResponse, nameIdDTONotExisting, false);
+
     }
 
-    private void checkNameIdListResponseExists(PayloadEnvelope<NameIdDTO> responsePayloadEnvelope, String[] nameIdDTOListInput) {
+    private void checkNameIdListResponseExists(PayloadEnvelope<NameIdDTO> responsePayloadEnvelope, String[] nameIdDTOListInput, String[] nameIdDTONotExisting) {
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(responsePayloadEnvelope.getHeader()));
 
@@ -113,6 +140,13 @@ public class DtoCrudRequestNameIdListTest {
 
             Assert.assertTrue(nameIdDTO.getId() > 0);
         }
+
+
+        // check all the names that should be present in the list
+        searchNameIdDTO(nameIdDTOListResponse, nameIdDTOListInput, true);
+
+        // check all the names that should not be present in the list
+        searchNameIdDTO(nameIdDTOListResponse, nameIdDTONotExisting, true);
 
     }
 
@@ -536,7 +570,7 @@ public class DtoCrudRequestNameIdListTest {
 
         responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, projectId.toString());
 
-        checkNameIdListResponseAbsent(responsePayloadEnvelope, dnasampleNamesAbsent);
+        checkNameIdListResponseAbsent(responsePayloadEnvelope, dnasampleNamesAbsent, dnasampleNamesExisting);
 
 
         /**
@@ -547,7 +581,7 @@ public class DtoCrudRequestNameIdListTest {
 
         responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, projectId.toString());
 
-        checkNameIdListResponseExists(responsePayloadEnvelope, dnasampleNamesExisting);
+        checkNameIdListResponseExists(responsePayloadEnvelope, dnasampleNamesExisting, dnasampleNamesAbsent);
 
     }
 
@@ -617,7 +651,7 @@ public class DtoCrudRequestNameIdListTest {
 
         responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, platformId.toString());
 
-        checkNameIdListResponseAbsent(responsePayloadEnvelope, markerNameAbsent);
+        checkNameIdListResponseAbsent(responsePayloadEnvelope, markerNameAbsent, markerNameExisting);
 
         /**
          * Test get Marker names by NAMES_BY_NAME_LIST_RETURN_EXISTS
@@ -626,7 +660,7 @@ public class DtoCrudRequestNameIdListTest {
 
         responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, platformId.toString());
 
-        checkNameIdListResponseExists(responsePayloadEnvelope, markerNameExisting);
+        checkNameIdListResponseExists(responsePayloadEnvelope, markerNameExisting, markerNameAbsent);
 
     }
 
