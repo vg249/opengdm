@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete;
 
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.DnaSampleDTO;
 
 import java.util.List;
 
@@ -30,6 +31,30 @@ public class ListStatementUtil {
 
     }
 
+
+    public static String generateParsedNameListForDnaSamples(List<NameIdDTO> nameIdDTOList) {
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (NameIdDTO nameIdDTO : nameIdDTOList) {
+
+            DnaSampleDTO dnaSampleDTO = (DnaSampleDTO) nameIdDTO.getQueryObject();
+
+            if (stringBuilder.length() > 0) {
+                stringBuilder.append(" or ");
+            }
+
+            stringBuilder.append("(name='")
+                    .append(nameIdDTO.getName())
+                    .append("' and num='")
+                    .append(dnaSampleDTO.getDnaSampleNum())
+                    .append("')");
+
+        }
+
+        return stringBuilder.toString();
+
+    }
 
 
 }

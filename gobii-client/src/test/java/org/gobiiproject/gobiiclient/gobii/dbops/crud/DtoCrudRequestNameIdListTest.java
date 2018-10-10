@@ -146,7 +146,7 @@ public class DtoCrudRequestNameIdListTest {
         searchNameIdDTO(nameIdDTOListResponse, nameIdDTOListInput, true);
 
         // check all the names that should not be present in the list
-        searchNameIdDTO(nameIdDTOListResponse, nameIdDTONotExisting, true);
+        searchNameIdDTO(nameIdDTOListResponse, nameIdDTONotExisting, false);
 
     }
 
