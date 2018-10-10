@@ -37,7 +37,6 @@ public class GobiiEntityNameConverter {
                 case DNASAMPLE:
                     returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
                             GobiiServiceRequestId.URL_DNASAMPLES);
-
                     break;
 
                 case DNARUN:
@@ -48,6 +47,11 @@ public class GobiiEntityNameConverter {
                 case LINKAGE_GROUP:
                     returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
                             GobiiServiceRequestId.URL_LINKAGEGROUP);
+                    break;
+
+                case GERMPLASM:
+                    returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
+                            GobiiServiceRequestId.URL_GERMPLASM);
                     break;
 
                 case CV:

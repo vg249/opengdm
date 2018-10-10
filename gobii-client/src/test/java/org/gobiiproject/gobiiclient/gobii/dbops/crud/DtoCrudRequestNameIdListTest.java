@@ -742,4 +742,47 @@ public class DtoCrudRequestNameIdListTest {
         checkNameIdListResponseAll(responsePayloadEnvelope, nameIdDTOList, dnaRunNameAbsent);
     }
 
+
+    /**
+     *  This test is ignored since right now we don't have a separate web service to create germplasms that can be used for this test.
+     **/
+
+
+    @Ignore
+    public void testGetGermplasmNamesByList() throws Exception {
+
+        GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.GERMPLASM;
+
+        String[] germplasmExisting = new String[]{"1-RZA-12", "1-RZA-13", "1-RZA-14", "1-RZA-15"};
+
+        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+
+        String[] germplasmAbsent = new String[]{"notgermplasm1", "notgermplasm2", "notgermplasm3"};
+
+        for (String germplasmCode : germplasmAbsent) {
+
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName(germplasmCode);
+
+            nameIdDTOList.add(nameIdDTO);
+
+        }
+
+        for (String germplasmCode : germplasmExisting) {
+
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName(germplasmCode);
+
+            nameIdDTOList.add(nameIdDTO);
+
+        }
+
+        GobiiFilterType gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST;
+
+        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, "test");
+
+        checkNameIdListResponseAll(responsePayloadEnvelope, nameIdDTOList, germplasmAbsent);
+
+    }
+
 }
