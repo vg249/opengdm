@@ -42,7 +42,7 @@ public class DtoCrudRequestNameIdListTest {
     private PayloadEnvelope<CvDTO> createCv(CvDTO newCvDTO) throws Exception {
 
         PayloadEnvelope<CvDTO> cvCreatePayloadEnvelope = new PayloadEnvelope<>(newCvDTO, GobiiProcessType.CREATE);
-        GobiiEnvelopeRestResource<CvDTO,CvDTO> cvCreateGobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
+        GobiiEnvelopeRestResource<CvDTO, CvDTO> cvCreateGobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(GobiiServiceRequestId.URL_CV));
         PayloadEnvelope<CvDTO> cvCreateResultEnvelope = cvCreateGobiiEnvelopeRestResource.post(CvDTO.class,
@@ -71,7 +71,7 @@ public class DtoCrudRequestNameIdListTest {
 
         for (NameIdDTO currentNameIdDTO : nameIdDTOListResponse) {
 
-            if (nameIdDTONotExistingList.contains(currentNameIdDTO.getName())){
+            if (nameIdDTONotExistingList.contains(currentNameIdDTO.getName())) {
 
                 Assert.assertTrue(currentNameIdDTO.getId() <= 0);
             } else {
@@ -93,7 +93,12 @@ public class DtoCrudRequestNameIdListTest {
             NameIdDTO searchNameDTO = new NameIdDTO();
             searchNameDTO.setName(name);
 
-            index = Collections.binarySearch(nameIdDTOListResponse, searchNameDTO);
+            Comparator<NameIdDTO> c = new Comparator<NameIdDTO>() {
+                public int compare(NameIdDTO u1, NameIdDTO u2) {
+                    return u1.getId().compareTo(u2.getId());
+                }
+            };
+            index = Collections.binarySearch(nameIdDTOListResponse, searchNameDTO, c);
 
             if (doesExist) {
                 Assert.assertTrue(index > -1);
@@ -159,7 +164,7 @@ public class DtoCrudRequestNameIdListTest {
                 .setParamValue("groupName", cvGroupName)
                 .setParamValue("cvGroupTypeId", GobiiCvGroupType.GROUP_TYPE_USER.getGroupTypeId().toString());
 
-        GobiiEnvelopeRestResource<CvGroupDTO,CvGroupDTO> cvGroupDTOGobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriCvGroupDetails);
+        GobiiEnvelopeRestResource<CvGroupDTO, CvGroupDTO> cvGroupDTOGobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriCvGroupDetails);
         PayloadEnvelope<CvGroupDTO> cvGroupDTOResultEnvelope = cvGroupDTOGobiiEnvelopeRestResource.get(CvGroupDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(cvGroupDTOResultEnvelope.getHeader()));
@@ -177,7 +182,7 @@ public class DtoCrudRequestNameIdListTest {
         RestUri createMarkerUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(GobiiServiceRequestId.URL_MARKERS);
-        GobiiEnvelopeRestResource<MarkerDTO,MarkerDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(createMarkerUri);
+        GobiiEnvelopeRestResource<MarkerDTO, MarkerDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(createMarkerUri);
         PayloadEnvelope<MarkerDTO> resultEnvelope = gobiiEnvelopeRestResource
                 .post(MarkerDTO.class, new PayloadEnvelope<>(markerDTO, GobiiProcessType.CREATE));
 
@@ -206,7 +211,7 @@ public class DtoCrudRequestNameIdListTest {
                 .getUriFactory()
                 .resourceColl(GobiiServiceRequestId.URL_PLATFORM);
         PayloadEnvelope<PlatformDTO> payloadEnvelope = new PayloadEnvelope<>(platformDTO, GobiiProcessType.CREATE);
-        GobiiEnvelopeRestResource<PlatformDTO,PlatformDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(createPlatformUri);
+        GobiiEnvelopeRestResource<PlatformDTO, PlatformDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(createPlatformUri);
         PayloadEnvelope<PlatformDTO> responseEnvelope = gobiiEnvelopeRestResource.post(PlatformDTO.class, payloadEnvelope);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(responseEnvelope.getHeader()));
@@ -220,7 +225,7 @@ public class DtoCrudRequestNameIdListTest {
     }
 
     private List<CvDTO> createCvTerms(Integer cvGroupId) throws Exception {
-       return createCvTerms(cvGroupId, false);
+        return createCvTerms(cvGroupId, false);
     }
 
     private List<CvDTO> createCvTerms(Integer cvGroupId, Boolean withDuplicates) throws Exception {
@@ -243,7 +248,7 @@ public class DtoCrudRequestNameIdListTest {
                 .setParamValue("groupId", cvGroupId.toString())
                 .appendSegment(GobiiServiceRequestId.URL_CV);
 
-        GobiiEnvelopeRestResource<CvDTO,CvDTO> cvDTOGobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriCvGroup);
+        GobiiEnvelopeRestResource<CvDTO, CvDTO> cvDTOGobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriCvGroup);
         PayloadEnvelope<CvDTO> cvDTOResultEnvelope = cvDTOGobiiEnvelopeRestResource.get(CvDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(cvDTOResultEnvelope.getHeader()));
@@ -315,7 +320,7 @@ public class DtoCrudRequestNameIdListTest {
         RestUri namesUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .nameIdListByQueryParams();
-        GobiiEnvelopeRestResource<NameIdDTO,NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
+        GobiiEnvelopeRestResource<NameIdDTO, NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
         namesUri.setParamValue("entity", gobiiEntityNameType.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(gobiiFilterType.toString().toUpperCase()));
         namesUri.setParamValue("filterValue", filterValue);
@@ -420,7 +425,7 @@ public class DtoCrudRequestNameIdListTest {
 
         // create reference 1
         PayloadEnvelope<ReferenceDTO> payloadEnvelopeReference1 = new PayloadEnvelope<>(newReferenceDto1, GobiiProcessType.CREATE);
-        GobiiEnvelopeRestResource<ReferenceDTO,ReferenceDTO> gobiiEnvelopeRestResourceReference1 = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
+        GobiiEnvelopeRestResource<ReferenceDTO, ReferenceDTO> gobiiEnvelopeRestResourceReference1 = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(GobiiServiceRequestId.URL_REFERENCE));
         PayloadEnvelope<ReferenceDTO> referenceDTO1ResponseEnvelope = gobiiEnvelopeRestResourceReference1.post(ReferenceDTO.class,
@@ -435,7 +440,7 @@ public class DtoCrudRequestNameIdListTest {
 
         // create reference 2
         PayloadEnvelope<ReferenceDTO> payloadEnvelopeReference2 = new PayloadEnvelope<>(newReferenceDto2, GobiiProcessType.CREATE);
-        GobiiEnvelopeRestResource<ReferenceDTO,ReferenceDTO> gobiiEnvelopeRestResourceReference2 = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
+        GobiiEnvelopeRestResource<ReferenceDTO, ReferenceDTO> gobiiEnvelopeRestResourceReference2 = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(GobiiServiceRequestId.URL_REFERENCE));
         PayloadEnvelope<ReferenceDTO> referenceDTO2ResponseEnvelope = gobiiEnvelopeRestResourceReference2.post(ReferenceDTO.class,
@@ -450,7 +455,7 @@ public class DtoCrudRequestNameIdListTest {
 
         // create reference 3
         PayloadEnvelope<ReferenceDTO> payloadEnvelopeReference3 = new PayloadEnvelope<>(newReferenceDto3, GobiiProcessType.CREATE);
-        GobiiEnvelopeRestResource<ReferenceDTO,ReferenceDTO> gobiiEnvelopeRestResourceReference3 = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
+        GobiiEnvelopeRestResource<ReferenceDTO, ReferenceDTO> gobiiEnvelopeRestResourceReference3 = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(GobiiServiceRequestId.URL_REFERENCE));
         PayloadEnvelope<ReferenceDTO> referenceDTO3ResponseEnvelope = gobiiEnvelopeRestResourceReference3.post(ReferenceDTO.class,
@@ -509,19 +514,19 @@ public class DtoCrudRequestNameIdListTest {
 
         Assert.assertTrue("The error message should contain 'There were duplicate values in the list'",
                 responsePayloadEnvelope.getHeader()
-                .getStatus()
-                .getStatusMessages()
-                .stream()
-                .filter(m -> m.getMessage().contains("There were duplicate values in the list"))
-                .count()
-                > 0);
+                        .getStatus()
+                        .getStatusMessages()
+                        .stream()
+                        .filter(m -> m.getMessage().contains("There were duplicate values in the list"))
+                        .count()
+                        > 0);
 
         Assert.assertTrue(responsePayloadEnvelope.getPayload().getData().size() == 0);
 
     }
 
     /**
-     *  This test is ignored since right now we don't have a separate web service to create dna samples that can be used for this test.
+     * This test is ignored since right now we don't have a separate web service to create dna samples that can be used for this test.
      **/
 
     @Ignore
@@ -530,11 +535,11 @@ public class DtoCrudRequestNameIdListTest {
         Integer projectId = 1;
         GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.DNASAMPLE;
 
-        String[] dnasampleNamesExisting = new String[]{"dnasample_rza_codom_10","dnasample_rza_codom_11","dnasample_rza_codom_12","dnasample_rza_codom_13"};
+        String[] dnasampleNamesExisting = new String[]{"dnasample_rza_codom_10", "dnasample_rza_codom_11", "dnasample_rza_codom_12", "dnasample_rza_codom_13"};
 
         List<NameIdDTO> nameIdDTOList = new ArrayList<>();
 
-        String[] dnasampleNamesAbsent = new String[]{"notdnasample1","notdnasample2","notdnasample3"};
+        String[] dnasampleNamesAbsent = new String[]{"notdnasample1", "notdnasample2", "notdnasample3"};
 
         for (String dnaSampleName : dnasampleNamesAbsent) {
 
@@ -706,7 +711,7 @@ public class DtoCrudRequestNameIdListTest {
     }
 
     /**
-     *  This test is ignored since right now we don't have a separate web service to create linkage groups that can be used for this test.
+     * This test is ignored since right now we don't have a separate web service to create linkage groups that can be used for this test.
      **/
 
     @Ignore
@@ -748,7 +753,7 @@ public class DtoCrudRequestNameIdListTest {
     }
 
     /**
-     *  This test is ignored since right now we don't have a separate web service to create dna run that can be used for this test.
+     * This test is ignored since right now we don't have a separate web service to create dna run that can be used for this test.
      **/
     @Ignore
     public void testGetDnaRunNamesByList() throws Exception {

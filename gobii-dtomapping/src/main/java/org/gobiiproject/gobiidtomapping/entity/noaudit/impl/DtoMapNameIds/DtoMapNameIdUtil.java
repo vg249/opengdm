@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -35,7 +36,12 @@ public class DtoMapNameIdUtil {
             NameIdDTO searchNameDTO = new NameIdDTO();
             searchNameDTO.setName(resultSet.getString(columnName));
 
-            index = Collections.binarySearch(nameIdDTOList, searchNameDTO);
+            Comparator<NameIdDTO> c = new Comparator<NameIdDTO>() {
+                public int compare(NameIdDTO u1, NameIdDTO u2) {
+                    return u1.getId().compareTo(u2.getId());
+                }
+            };
+            index = Collections.binarySearch(nameIdDTOList, searchNameDTO,c);
 
             if (index > -1) {
 
