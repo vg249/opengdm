@@ -17,6 +17,7 @@ import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
@@ -50,9 +51,11 @@ import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.types.RestMethodType;
 import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
+import org.gobiiproject.gobiiweb.automation.CallLimits;
 import org.gobiiproject.gobiiweb.automation.ControllerUtils;
 import org.gobiiproject.gobiiweb.automation.GobiiVersionInfo;
 import org.gobiiproject.gobiiweb.automation.PayloadReader;
@@ -79,6 +82,7 @@ import java.io.FileInputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -1243,7 +1247,7 @@ public class GOBIIControllerV1 {
             GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.CV;
             GobiiFilterType gobiiFilterType = GobiiFilterType.NAMES_BY_TYPE_NAME;
 
-            DtoMapNameIdParams dtoMapNameIdParams = new DtoMapNameIdParams(gobiiEntityNameType, gobiiFilterType, "dataset_type");
+            DtoMapNameIdParams dtoMapNameIdParams = new DtoMapNameIdParams(gobiiEntityNameType, gobiiFilterType, "dataset_type", null);
 
             List<NameIdDTO> nameIdDTOList = nameIdListService.getNameIdList(dtoMapNameIdParams);
 
@@ -2151,11 +2155,8 @@ public class GOBIIControllerV1 {
             }
 
 
-            DtoMapNameIdParams dtoMapNameIdParams = new DtoMapNameIdParams(gobiiEntityNameType, gobiiFilterType, typedFilterValue);
-
-//            Integer maxPostLimit = (new Config)
-
-//            (new ConfigSettings()).getCropConfig(CropRequestAnalyzer.getGobiiCropType()).getServer(ServerType.GOBII_WEB).getCallProfilesByRestRequestId(RestResourceId.GOBII_NAMES)
+            Integer callLimit = CallLimits.getCallLimit(RestResourceId.GOBII_NAMES, RestMethodType.GET, entity.toUpperCase());
+            DtoMapNameIdParams dtoMapNameIdParams = new DtoMapNameIdParams(gobiiEntityNameType, gobiiFilterType, typedFilterValue, callLimit);
 
             List<NameIdDTO> nameIdList = nameIdListService.getNameIdList(dtoMapNameIdParams);
 
@@ -2209,7 +2210,7 @@ public class GOBIIControllerV1 {
 
             GobiiFilterType gobiiFilterType = GobiiFilterType.NONE;
             Object typedFilterValue = filterValue;
-            List<NameIdDTO> nameIdDTOList = null;
+            List<NameIdDTO> nameIdDTOList = new ArrayList<>();
 
             if (!LineUtils.isNullOrEmpty(filterType)) {
 
@@ -2269,26 +2270,40 @@ public class GOBIIControllerV1 {
                 }
             }
 
-            DtoMapNameIdParams dtoMapNameIdParams = new DtoMapNameIdParams(gobiiEntityNameType, gobiiFilterType, typedFilterValue, nameIdDTOList);
 
-            List<NameIdDTO> nameIdList = nameIdListService.getNameIdList(dtoMapNameIdParams);
+            Integer callLimit = CallLimits.getCallLimit(RestResourceId.GOBII_NAMES, RestMethodType.POST, entity.toUpperCase());
 
-            PayloadWriter<NameIdDTO> payloadWriter = new PayloadWriter<>(request, response, NameIdDTO.class);
-            payloadWriter.writeList(returnVal,
-                    GobiiEntityNameConverter.toServiceRequestId(request.getContextPath(),
-                            gobiiEntityNameType),
-                    nameIdList);
+            if (callLimit == null || callLimit <= new Integer(nameIdDTOList.size())) {
+                DtoMapNameIdParams dtoMapNameIdParams = new DtoMapNameIdParams(gobiiEntityNameType, gobiiFilterType, typedFilterValue, nameIdDTOList, callLimit);
 
-            // return the nameIdDTOs with null IDs
-            for (NameIdDTO currentNameIdDTO : nameIdList) {
+                List<NameIdDTO> nameIdList = nameIdListService.getNameIdList(dtoMapNameIdParams);
 
-                if (currentNameIdDTO.getId().equals(0)) {
+                PayloadWriter<NameIdDTO> payloadWriter = new PayloadWriter<>(request, response, NameIdDTO.class);
+                payloadWriter.writeList(returnVal,
+                        GobiiEntityNameConverter.toServiceRequestId(request.getContextPath(),
+                                gobiiEntityNameType),
+                        nameIdList);
 
-                    returnVal.getPayload().getData().add(currentNameIdDTO);
+                // return the nameIdDTOs with null IDs
+                for (NameIdDTO currentNameIdDTO : nameIdList) {
+
+                    if (currentNameIdDTO.getId().equals(0)) {
+
+                        returnVal.getPayload().getData().add(currentNameIdDTO);
+
+                    }
 
                 }
+            } else {
 
-            }
+                throw new GobiiException(
+                        "The POST to resource "
+                                + RestResourceId.GOBII_NAMES.getResourcePath()
+                                + "/"
+                                + entity
+                                + " exceeds the limit of "
+                                + callLimit.toString());
+            } // if-else the call exceeds the limit
 
 
         } catch (GobiiException e) {
@@ -2466,12 +2481,12 @@ public class GOBIIControllerV1 {
     // *************************** MAPSET METHODS
     // *********************************************
     /*
-    * NOTE: this implementation is incorrect: it is using getAllmapsetNames;
-    * There needs to be a getAllMapset() method added. For now, the funcitonality
-    * Provided by the LoadControlle remains in place and the client side tets have
-    * not been modified. This funcitonality will have to be built out later.
-    * Also note that the resource name /maps is correct but does not match
-    * what is being used in ResourceBuilder on the client side*/
+     * NOTE: this implementation is incorrect: it is using getAllmapsetNames;
+     * There needs to be a getAllMapset() method added. For now, the funcitonality
+     * Provided by the LoadControlle remains in place and the client side tets have
+     * not been modified. This funcitonality will have to be built out later.
+     * Also note that the resource name /maps is correct but does not match
+     * what is being used in ResourceBuilder on the client side*/
     @RequestMapping(value = "/maps", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<MapsetDTO> getMaps(HttpServletRequest request,

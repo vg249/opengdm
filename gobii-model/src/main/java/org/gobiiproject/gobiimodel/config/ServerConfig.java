@@ -218,6 +218,19 @@ public class ServerConfig {
             ServerType.GOBII_PGSQL,
             ServerType.GOBII_COMPUTE);
 
+
+    public boolean isCallProfileDefined(RestResourceId restResourceId, RestMethodType restMethodType) {
+
+        return this.callProfilesByRestRequestId.containsKey(restResourceId)
+                && this.callProfilesByRestRequestId.get(restResourceId).isRestMethodDefined(restMethodType);
+    }
+
+    public boolean isCallProfileDefined(RestResourceId restResourceId, RestMethodType restMethodType, String templateParameter) {
+
+        return this.callProfilesByRestRequestId.containsKey(restResourceId)
+                && this.callProfilesByRestRequestId.get(restResourceId).isRestMethodDefined(restMethodType,templateParameter);
+    }
+
     private RestResourceProfileDTO getCallProfile(RestResourceId restResourceId) {
 
         if (!this.callProfilesByRestRequestId.containsKey(restResourceId)) {
@@ -235,9 +248,17 @@ public class ServerConfig {
         this.callProfilesByRestRequestId = callProfilesByRestRequestId;
     }
 
-    public Integer getCallMaxPost(RestResourceId restResourceId, RestMethodType restMethodType) {
+    public Integer getRestResourceLimit(RestResourceId restResourceId, RestMethodType restMethodType) {
 
         return this.getCallProfile(restResourceId).getMethodLimit(restMethodType);
+    }
+
+    public Integer getRestResourceLimit(RestResourceId restResourceId,
+                                        RestMethodType restMethodType,
+                                        String templateParameter) {
+
+        return this.getCallProfile(restResourceId).getMethodLimit(restMethodType,
+                templateParameter);
     }
 
     public String getCallResourcePath(RestResourceId restResourceId) {

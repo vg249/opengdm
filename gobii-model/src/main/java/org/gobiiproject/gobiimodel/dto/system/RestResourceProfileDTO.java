@@ -75,6 +75,16 @@ public class RestResourceProfileDTO {
         this.hasTemplateParameters = hasTemplateParameters;
     }
 
+    public boolean isRestMethodDefined(RestMethodType restMethodType) {
+        return this.resourceMethodCollsByTemplateParam.containsKey(DEFAULT_TEMPLATE_PARAM) &&
+                this.resourceMethodCollsByTemplateParam.get(DEFAULT_TEMPLATE_PARAM).isMethodDefined(restMethodType);
+    }
+
+    public boolean isRestMethodDefined(RestMethodType restMethodType, String templateParameter) {
+        return this.resourceMethodCollsByTemplateParam.containsKey(templateParameter)
+                && this.resourceMethodCollsByTemplateParam.get(templateParameter).isMethodDefined(restMethodType);
+    }
+
     /***
      * Default methhod overload for setting a resource limit without a template parameter
      * @param restMethodType
@@ -101,8 +111,8 @@ public class RestResourceProfileDTO {
      * @return
      */
     public RestResourceProfileDTO setMethodLimit(RestMethodType restMethodType,
-                               String templateParameter,
-                               Integer max) {
+                                                 String templateParameter,
+                                                 Integer max) {
 
         if (!this.isHasTemplateParameters()) {
             this.setHasTemplateParameters(true);

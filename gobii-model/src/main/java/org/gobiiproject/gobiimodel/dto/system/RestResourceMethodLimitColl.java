@@ -19,6 +19,10 @@ public class RestResourceMethodLimitColl {
     @ElementMap
     private EnumMap<RestMethodType, RestResourceMethodLimit> limitsByMethodType = new EnumMap<>(RestMethodType.class);
 
+    public boolean isMethodDefined(RestMethodType restMethodType) {
+        return this.limitsByMethodType.containsKey(restMethodType);
+    }
+
     public void setMethodLimit(RestMethodType restMethodType, Integer max) {
 
         // if it doesn't exist, add it
