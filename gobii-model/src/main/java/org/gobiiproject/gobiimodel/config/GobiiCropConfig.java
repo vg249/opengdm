@@ -1,13 +1,16 @@
 package org.gobiiproject.gobiimodel.config;
 
 
+import org.gobiiproject.gobiimodel.dto.system.RestResourceProfileDTO;
 import org.gobiiproject.gobiimodel.types.ServerType;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementMap;
 import org.simpleframework.xml.Root;
 
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,7 +44,8 @@ public class GobiiCropConfig {
                           Integer port,
                           String userName,
                           String password,
-                          boolean decrypt) {
+                          boolean decrypt,
+                          EnumMap<RestResourceId, RestResourceProfileDTO> callProfilesByRestRequestId) {
 
         
         ServerConfig serverConfig = this.serversByServerType.get(serverType);
@@ -59,7 +63,8 @@ public class GobiiCropConfig {
                 .setPort(port)
                 .setUserName(userName)
                 .setPassword(password)
-                .setDecrypt(decrypt);
+                .setDecrypt(decrypt)
+        .setCallProfilesByRestRequestId(callProfilesByRestRequestId);
     }
 
     public GobiiCropConfig setServersByServerType(Map<ServerType, ServerConfig> serversByServerType) {

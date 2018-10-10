@@ -6,7 +6,7 @@ import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
 import org.gobiiproject.gobiimodel.dto.system.PagedList;
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
-import org.gobiiproject.gobiimodel.types.RestMethodTypes;
+import org.gobiiproject.gobiimodel.types.RestMethodType;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -79,17 +79,17 @@ public class PayloadWriter<T extends DTOBase> {
                         switch (currentProcessType) {
 
                             case CREATE:
-                                link.getMethods().add(RestMethodTypes.POST);
+                                link.getMethods().add(RestMethodType.POST);
                                 break;
                             case READ:
-                                link.getMethods().add(RestMethodTypes.GET);
+                                link.getMethods().add(RestMethodType.GET);
                                 break;
                             case UPDATE:
-                                link.getMethods().add(RestMethodTypes.PUT);
+                                link.getMethods().add(RestMethodType.PUT);
                                 // add PATCH when we support that
                                 break;
                             case DELETE:
-                                link.getMethods().add(RestMethodTypes.DELETE);
+                                link.getMethods().add(RestMethodType.DELETE);
                         }
                     }
                     payloadEnvelope.getPayload().getLinkCollection().getLinksPerDataItem().add(link);

@@ -1,8 +1,9 @@
 package org.gobiiproject.gobiimodel.config;
 
 
-import org.gobiiproject.gobiimodel.dto.system.RestCallProfileDTO;
+import org.gobiiproject.gobiimodel.dto.system.RestResourceProfileDTO;
 import org.gobiiproject.gobiimodel.security.Decrypter;
+import org.gobiiproject.gobiimodel.types.RestMethodType;
 import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.simpleframework.xml.Element;
@@ -51,7 +52,7 @@ public class ServerConfig {
                         String userName,
                         String password,
                         boolean decrypt,
-                        EnumMap<RestResourceId, RestCallProfileDTO> callProfilesByRestRequestId) {
+                        EnumMap<RestResourceId, RestResourceProfileDTO> callProfilesByRestRequestId) {
 
         this.serverType = serverType;
         this.host = host;
@@ -62,7 +63,6 @@ public class ServerConfig {
         this.password = password;
         this.decrypt = decrypt;
         this.callProfilesByRestRequestId = callProfilesByRestRequestId;
-
     }
 
     public ServerConfig(ServerType serverType,
@@ -185,37 +185,8 @@ public class ServerConfig {
     }
 
 
-//    // These are in the general base class only temporarily until these KDC properties
-//    // can be handled differently
-//
-//    public enum KDCResource {
-//        QC_START,
-//        QC_STATUS_,
-//        QC_DOWNLOAD,
-//        QC_PURGE
-//    }
-//
-//    @ElementMap(required = false)
-//    Map<ServerConfig.KDCResource, String> kdcResources = new HashMap<>();
-//public ServerConfig addPath(ServerConfig.KDCResource kdcResource, String resource) {
-//    this.kdcResources.put(kdcResource, resource);
-//    return this;
-//}
-//
-//    public String getPath(ServerConfig.KDCResource kdcResource) {
-//
-//        String returnVal = null;
-//
-//        if (this.kdcResources.containsKey(kdcResource)) {
-//            returnVal = this.kdcResources.get(kdcResource);
-//        }
-//
-//        return returnVal;
-//    }
-//
-
     @ElementMap(required = false)
-    EnumMap<RestResourceId, RestCallProfileDTO> callProfilesByRestRequestId = new EnumMap<>(RestResourceId.class);
+    EnumMap<RestResourceId, RestResourceProfileDTO> callProfilesByRestRequestId = new EnumMap<>(RestResourceId.class);
 
     @Element(required = false)
     Integer statusCheckIntervalSecs = 0;
@@ -247,7 +218,7 @@ public class ServerConfig {
             ServerType.GOBII_PGSQL,
             ServerType.GOBII_COMPUTE);
 
-    private RestCallProfileDTO getCallProfile(RestResourceId restResourceId) {
+    private RestResourceProfileDTO getCallProfile(RestResourceId restResourceId) {
 
         if (!this.callProfilesByRestRequestId.containsKey(restResourceId)) {
             throw new GobiiException("There is no call profile for restResourceId " + restResourceId.getResourcePath());
@@ -256,14 +227,17 @@ public class ServerConfig {
         return this.callProfilesByRestRequestId.get(restResourceId);
     }
 
-    public Integer getCallMaxPost(RestResourceId restResourceId) {
-
-        return this.getCallProfile(restResourceId).getMaxPostPut();
+    public EnumMap<RestResourceId, RestResourceProfileDTO> getCallProfilesByRestRequestId() {
+        return callProfilesByRestRequestId;
     }
 
-    public Integer getCallGet(RestResourceId restResourceId) {
+    public void setCallProfilesByRestRequestId(EnumMap<RestResourceId, RestResourceProfileDTO> callProfilesByRestRequestId) {
+        this.callProfilesByRestRequestId = callProfilesByRestRequestId;
+    }
 
-        return this.getCallProfile(restResourceId).getMaxGet();
+    public Integer getCallMaxPost(RestResourceId restResourceId, RestMethodType restMethodType) {
+
+        return this.getCallProfile(restResourceId).getMethodLimit(restMethodType);
     }
 
     public String getCallResourcePath(RestResourceId restResourceId) {

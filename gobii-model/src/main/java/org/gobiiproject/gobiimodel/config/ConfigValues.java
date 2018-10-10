@@ -1,9 +1,10 @@
 package org.gobiiproject.gobiimodel.config;
 
-import org.gobiiproject.gobiimodel.dto.system.RestCallProfileDTO;
+import org.gobiiproject.gobiimodel.dto.system.RestResourceProfileDTO;
 import org.gobiiproject.gobiimodel.security.Decrypter;
 import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
-import org.gobiiproject.gobiimodel.types.RestMethodTypes;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
+import org.gobiiproject.gobiimodel.types.RestMethodType;
 import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.types.GobiiFileNoticeType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
@@ -11,8 +12,6 @@ import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementMap;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -35,39 +34,28 @@ class ConfigValues {
     public ConfigValues() {
 
 
-        EnumMap<RestResourceId, RestCallProfileDTO> kdcCallProfiles = new EnumMap<RestResourceId, RestCallProfileDTO>(RestResourceId.class);
+        // Define global server types along with any a particular server's resource profiles
+        EnumMap<RestResourceId, RestResourceProfileDTO> kdcCallProfiles = new EnumMap<>(RestResourceId.class);
         kdcCallProfiles.put(RestResourceId.KDC_START,
-                new RestCallProfileDTO(
+                new RestResourceProfileDTO(
                         RestResourceId.KDC_START,
-                        new ArrayList<>(Arrays.asList(RestMethodTypes.GET)),
-                        0,
-                        1
-                ));
+                        false));
 
         kdcCallProfiles.put(RestResourceId.KDC_STATUS,
-                new RestCallProfileDTO(
+                new RestResourceProfileDTO(
                         RestResourceId.KDC_STATUS,
-                        new ArrayList<>(Arrays.asList(RestMethodTypes.GET)),
-                        0,
-                        1
-                ));
+                        false));
 
 
         kdcCallProfiles.put(RestResourceId.KDC_DOWNLOAD,
-                new RestCallProfileDTO(
+                new RestResourceProfileDTO(
                         RestResourceId.KDC_DOWNLOAD,
-                        new ArrayList<>(Arrays.asList(RestMethodTypes.GET)),
-                        0,
-                        1
-                ));
+                        false));
 
         kdcCallProfiles.put(RestResourceId.KDC_PURGE,
-                new RestCallProfileDTO(
+                new RestResourceProfileDTO(
                         RestResourceId.KDC_PURGE,
-                        new ArrayList<>(Arrays.asList(RestMethodTypes.GET)),
-                        0,
-                        1
-                ));
+                        false));
 
 
         this.globalServersByServerType.put(ServerType.KDC,
@@ -302,10 +290,32 @@ class ConfigValues {
         }
     }
 
-    private List<RestCallProfileDTO> makeGobiiCallProfiles() {
+    /***
+     * Define call profiles for the gobii web server
+     * @return
+     */
+    private EnumMap<RestResourceId, RestResourceProfileDTO> makeGobiiCallProfiles() {
 
-        List<RestCallProfileDTO> returnVal = new ArrayList<>();
+        EnumMap<RestResourceId, RestResourceProfileDTO> returnVal = new EnumMap<>(RestResourceId.class);
 
+        // GOBII_NAMES in particular has many template parameters
+        returnVal.put(RestResourceId.GOBII_NAMES,
+                new RestResourceProfileDTO(RestResourceId.GOBII_NAMES,true)
+                        // MARKERS
+                        .setMethodLimit(RestMethodType.POST ,
+                                GobiiEntityNameType.MARKER.toString(),
+                                2000)
+                        .setMethodLimit(RestMethodType.GET,
+                                GobiiEntityNameType.MARKER.toString(),
+                                2000)
+                        // SAMPLES
+                        .setMethodLimit(RestMethodType.POST ,
+                                GobiiEntityNameType.DNASAMPLE.toString(),
+                                2000)
+                        .setMethodLimit(RestMethodType.GET,
+                                GobiiEntityNameType.DNASAMPLE.toString(),
+                                2000)
+        );
 
 
         return returnVal;
@@ -336,7 +346,8 @@ class ConfigValues {
                         servicePort,
                         null,
                         null,
-                        false);
+                        false,
+                        makeGobiiCallProfiles());
     }
 
     public void removeCrop(String cropId) throws Exception {

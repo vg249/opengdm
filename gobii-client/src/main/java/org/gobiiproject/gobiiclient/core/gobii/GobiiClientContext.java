@@ -10,7 +10,7 @@ import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiimodel.config.ServerConfigItem;
 import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
 import org.gobiiproject.gobiimodel.types.GobiiFileNoticeType;
-import org.gobiiproject.gobiimodel.types.RestMethodTypes;
+import org.gobiiproject.gobiimodel.types.RestMethodType;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.dto.system.ConfigSettingsDTO;
@@ -256,7 +256,7 @@ public final class GobiiClientContext {
 
         GobiiPayloadResponse<ConfigSettingsDTO> gobiiPayloadResponse = new GobiiPayloadResponse<>(configSettingsUri);
         PayloadEnvelope<ConfigSettingsDTO> resultEnvelope = gobiiPayloadResponse.getPayloadFromResponse(ConfigSettingsDTO.class,
-                RestMethodTypes.GET,
+                RestMethodType.GET,
                 HttpStatus.SC_OK,
                 httpMethodResult);
 

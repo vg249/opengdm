@@ -1171,7 +1171,8 @@ public class GobiiConfig {
                                 svrPort,
                                 svrUserName,
                                 svrPassword,
-                                false);
+                                false,
+                                null);
 
                     } else {
                         // do nothing: allow control to fall through to print help

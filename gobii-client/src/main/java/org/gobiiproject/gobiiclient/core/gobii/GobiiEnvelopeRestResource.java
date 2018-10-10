@@ -8,7 +8,7 @@ import org.gobiiproject.gobiiclient.core.common.HttpCore;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 
-import org.gobiiproject.gobiimodel.types.RestMethodTypes;
+import org.gobiiproject.gobiimodel.types.RestMethodType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,7 +77,7 @@ public class GobiiEnvelopeRestResource<T> {
                         .get(this.restUri);
 
         returnVal = this.gobiiPayloadResponse.getPayloadFromResponse(dtoType,
-                RestMethodTypes.GET,
+                RestMethodType.GET,
                 HttpStatus.SC_OK,
                 httpMethodResult);
 
@@ -97,7 +97,7 @@ public class GobiiEnvelopeRestResource<T> {
                                 postBody);
 
         returnVal = this.gobiiPayloadResponse.getPayloadFromResponse(dtoType,
-                RestMethodTypes.POST,
+                RestMethodType.POST,
                 HttpStatus.SC_CREATED,
                 httpMethodResult);
 
@@ -126,7 +126,7 @@ public class GobiiEnvelopeRestResource<T> {
                                 putBody);
 
         returnVal = this.gobiiPayloadResponse.getPayloadFromResponse(dtoType,
-                RestMethodTypes.PUT,
+                RestMethodType.PUT,
                 HttpStatus.SC_OK,
                 httpMethodResult);
 
@@ -156,7 +156,7 @@ public class GobiiEnvelopeRestResource<T> {
                         .delete(this.restUri);
 
         returnVal = this.gobiiPayloadResponse.getPayloadFromResponse(dtoType,
-                RestMethodTypes.DELETE,
+                RestMethodType.DELETE,
                 HttpStatus.SC_OK,
                 httpMethodResult);
 
