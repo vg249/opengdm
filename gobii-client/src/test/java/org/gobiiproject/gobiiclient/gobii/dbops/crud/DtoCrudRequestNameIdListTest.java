@@ -9,6 +9,7 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
+import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.NameIdDTOComparator;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ReferenceDTO;
@@ -93,12 +94,8 @@ public class DtoCrudRequestNameIdListTest {
             NameIdDTO searchNameDTO = new NameIdDTO();
             searchNameDTO.setName(name);
 
-            Comparator<NameIdDTO> c = new Comparator<NameIdDTO>() {
-                public int compare(NameIdDTO u1, NameIdDTO u2) {
-                    return u1.getId().compareTo(u2.getId());
-                }
-            };
-            index = Collections.binarySearch(nameIdDTOListResponse, searchNameDTO, c);
+            NameIdDTOComparator nameIdDTOComparator = new NameIdDTOComparator();
+            index = Collections.binarySearch(nameIdDTOListResponse, searchNameDTO, nameIdDTOComparator);
 
             if (doesExist) {
                 Assert.assertTrue(index > -1);

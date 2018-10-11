@@ -36,12 +36,8 @@ public class DtoMapNameIdUtil {
             NameIdDTO searchNameDTO = new NameIdDTO();
             searchNameDTO.setName(resultSet.getString(columnName));
 
-            Comparator<NameIdDTO> c = new Comparator<NameIdDTO>() {
-                public int compare(NameIdDTO u1, NameIdDTO u2) {
-                    return u1.getId().compareTo(u2.getId());
-                }
-            };
-            index = Collections.binarySearch(nameIdDTOList, searchNameDTO,c);
+            NameIdDTOComparator nameIdDTOComparator = new NameIdDTOComparator();
+            index = Collections.binarySearch(nameIdDTOList, searchNameDTO, nameIdDTOComparator);
 
             if (index > -1) {
 

@@ -11,7 +11,7 @@ import java.util.Date;
 /**
  * Created by Phil on 4/8/2016.
  */
-public class NameIdDTO<T> extends DTOBase implements Comparable<NameIdDTO>, Comparator<NameIdDTO>{
+public class NameIdDTO<T> extends DTOBase implements Comparable<NameIdDTO>{
 
     private T queryObject;
 
@@ -89,9 +89,4 @@ public class NameIdDTO<T> extends DTOBase implements Comparable<NameIdDTO>, Comp
 
     }
 
-    public int compare(NameIdDTO nameIdDTO1, NameIdDTO nameIdDTO2) {
-
-        return nameIdDTO1.getName().compareTo(nameIdDTO2.getName());
-
-    }
 }
