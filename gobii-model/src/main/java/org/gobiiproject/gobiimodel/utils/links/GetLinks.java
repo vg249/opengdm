@@ -40,7 +40,6 @@ public class GetLinks {
         String host = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getHost();
         String port = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getPort().toString();
         String contextPath = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getContextPath();
-//        String urlPath = "http://" + host + (port.equals("") ? "" : ":"+port) + apiPath.substring(0, apiPath.length()-1);
         String urlPath = "http://" + host + (port.equals("") ? "" : ":"+port) + "/owncloud/ocs/v1.php/apps/files_sharing/api/v1/shares";
         String path = "path=" + filePath.replace("/data/gobii_bundle/crops/", "/" + contextPath) + "&shareType=3&permissions=1";
         String liveLink;
@@ -69,7 +68,7 @@ public class GetLinks {
         }
         else{
             liveLink = "NA";
-            ErrorLogger.logError("OWNCLOUD", "API request failed due to improper configurations");
+//            ErrorLogger.logError("OWNCLOUD", "API request failed due to improper configurations");
         }
         return liveLink;
     }
@@ -78,7 +77,7 @@ public class GetLinks {
         String host = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getHost();
         String port = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getPort().toString();
         String contextPath = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getContextPath();
-        filePath = filePath.replace("/data", "/" + contextPath);
+        filePath = filePath.replace("/data/gobii_bundle/crops/", "/" + contextPath);
         if(!filePath.endsWith("/")){
             int start = filePath.lastIndexOf("/");
             filePath = filePath.substring(0, start);

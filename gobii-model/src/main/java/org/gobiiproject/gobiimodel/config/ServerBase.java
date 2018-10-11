@@ -162,7 +162,7 @@ public class ServerBase {
     }
 
     public String getContextPath() {
-        return this.getContextPath(true);
+        return this.getContextPath(false);
     }
 
     public String getContextPath(boolean terminate) {
