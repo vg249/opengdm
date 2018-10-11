@@ -23,8 +23,9 @@ public class RestUri {
 
     private String domain = null;
     private Integer port = null;
-    private String contextPath;
-    private String contextRoot;
+    private String contextPath = null;
+    private String contextRoot = null;
+    private String resourcePath = null;
 
     private String requestTemplate;
     private Map<String, ResourceParam> paramMap = new HashMap<>();
@@ -43,7 +44,8 @@ public class RestUri {
     public RestUri(String contextRoot, String contextPath, String resourcePath) throws Exception {
         this.contextRoot = this.delimitSegment(contextRoot);
         this.contextPath = contextPath;
-        this.requestTemplate = this.contextRoot + this.contextPath + resourcePath;
+        this.resourcePath = resourcePath;
+        this.requestTemplate = this.contextRoot + this.contextPath + this.resourcePath;
 
         // set default content type; this can be overridden by withHeaders()
         this.httpHeaders.put(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE,
@@ -56,6 +58,29 @@ public class RestUri {
 
     public RestUri(String restUri) {
         this.requestTemplate = restUri;
+    }
+
+    /***
+     * Ideally, the constructors to this class would take a RestResourceId and
+     * use it's getResourcePath() method rather than passing in the resourcePath.
+     * That would work in 90 percent of the cases. However, this would require a
+     * refactoring that touches a number of things. For now this mechanism should work.
+     * @return
+     */
+    public RestResourceId getRestResourceId() {
+
+        RestResourceId returnVal = null;
+
+        if( this.resourcePath != null) {
+            for (RestResourceId currentRestResourceId : RestResourceId.values()) {
+                if (currentRestResourceId.getResourcePath().equals(this.resourcePath)) {
+                    returnVal = currentRestResourceId;
+                    break;
+                }
+            }
+        }
+
+        return returnVal;
     }
 
     public Map<String, String> getHttpHeaders() {
@@ -123,6 +148,13 @@ public class RestUri {
         return this.resourceParams
                 .stream()
                 .filter(getParam -> getParam.getResourceParamType().equals(ResourceParam.ResourceParamType.QueryParam))
+                .collect(Collectors.toList());
+    }
+
+    public List<ResourceParam> getTemplateParams() {
+        return this.resourceParams
+                .stream()
+                .filter(getParam -> getParam.getResourceParamType().equals(ResourceParam.ResourceParamType.UriParam))
                 .collect(Collectors.toList());
     }
 

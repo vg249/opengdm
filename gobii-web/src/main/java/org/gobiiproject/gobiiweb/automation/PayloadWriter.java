@@ -2,8 +2,10 @@ package org.gobiiproject.gobiiweb.automation;
 
 import org.gobiiproject.gobiiapimodel.hateos.Link;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
+import org.gobiiproject.gobiiapimodel.restresources.common.ResourceParam;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
+import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.system.PagedList;
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
 import org.gobiiproject.gobiimodel.types.RestMethodType;
@@ -67,7 +69,7 @@ public class PayloadWriter<T extends DTOBase> {
 
                 payloadEnvelope.getPayload().getData().add(itemToWrite);
 
-                if( restUri != null ) {
+                if (restUri != null) {
                     restUri.setParamValue("id", id);
                     //And hence we can create the link ehre
 
@@ -97,8 +99,53 @@ public class PayloadWriter<T extends DTOBase> {
 
 
                 payloadEnvelope.getHeader().setGobiiVersion(this.gobiiWebVersion);
-                setAuthHeader(payloadEnvelope.getHeader().getDtoHeaderAuth(),this.httpServletResponse);
+                setAuthHeader(payloadEnvelope.getHeader().getDtoHeaderAuth(), this.httpServletResponse);
                 payloadEnvelope.getHeader().setCropType(payloadEnvelope.getHeader().getDtoHeaderAuth().getGobiiCropType());
+
+                if (restUri != null) {
+                    RestResourceId restResourceId = restUri.getRestResourceId();
+                    if (restResourceId != null) {
+
+                        Integer callLimitGet = null;
+                        Integer callLimitPost = null;
+                        Integer callLimitPut = null;
+
+                        // If there are any template parameters in the uri, we have to just grab
+                        // all of them and interrogate the call profiles as to whether any parameter
+                        // in particular returns a limit
+                        if (restUri.getTemplateParams().size() <= 0) {
+
+                            callLimitGet = CallLimits.getCallLimit(restResourceId, RestMethodType.GET);
+                            callLimitPost = CallLimits.getCallLimit(restResourceId, RestMethodType.POST);
+                            callLimitPut = CallLimits.getCallLimit(restResourceId, RestMethodType.PUT);
+
+                        } else {
+
+                            for (ResourceParam currentResourceParam : restUri.getTemplateParams()) {
+
+                                String currenTemplateParam = currentResourceParam.getValue();
+                                callLimitGet = CallLimits.getCallLimit(restResourceId, RestMethodType.GET, currenTemplateParam);
+                                callLimitPost = CallLimits.getCallLimit(restResourceId, RestMethodType.POST, currenTemplateParam);
+                                callLimitPut = CallLimits.getCallLimit(restResourceId, RestMethodType.PUT, currenTemplateParam);
+
+                                //if any one got a valid limit, it means that, if there were any others for the current
+                                //template parameter, they would have been set; so here we want to call it quits
+                                //the limitation to this approach is of course that you can only have only one template
+                                //parameter per method type
+                                if( callLimitGet != null || callLimitPost != null || callLimitPut != null ) {
+                                    break;
+                                }
+
+                            }
+
+                        }
+
+                        payloadEnvelope.getHeader().setMaxGet(callLimitGet);
+                        payloadEnvelope.getHeader().setMaxPost(callLimitPost);
+                        payloadEnvelope.getHeader().setMaxPut(callLimitPut);
+
+                    }
+                }
 
 
             } else {
@@ -144,8 +191,8 @@ public class PayloadWriter<T extends DTOBase> {
     }
 
     public void writeListFromPagedQuery(PayloadEnvelope<T> payloadEnvelope,
-                          RestUri restUri,
-                          PagedList<T> pagedListToWrite) throws GobiiWebException, Exception {
+                                        RestUri restUri,
+                                        PagedList<T> pagedListToWrite) throws GobiiWebException, Exception {
 
         for (T currentItem : pagedListToWrite.getDtoList()) {
             this.writeSingleItemForDefaultId(payloadEnvelope, restUri, currentItem);
