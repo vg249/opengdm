@@ -77,7 +77,7 @@ class ValidationWebServicesUtil {
             RestUri namesUri = GobiiClientContext.getInstance(null, false)
                     .getUriFactory()
                     .nameIdListByQueryParams();
-            GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
+            GobiiEnvelopeRestResource<NameIdDTO,NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
             namesUri.setParamValue("entity", GobiiEntityNameType.CV.toString().toLowerCase());
             namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.NAMES_BY_NAME_LIST.toString().toUpperCase()));
             switch (cvGroupName) {

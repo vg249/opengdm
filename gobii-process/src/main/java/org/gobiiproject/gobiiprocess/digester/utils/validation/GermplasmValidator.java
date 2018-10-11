@@ -52,12 +52,12 @@ class GermplasmValidator extends BaseValidator {
                 if (!isNullAndEmpty(fileRowList.get(fieldIndex)))
                     fieldNameList.add(fileRowList.get(fieldIndex));
         }
+        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
         for (String fieldName : fieldNameList) {
-            List<NameIdDTO> nameIdDTOList = new ArrayList<>();
             NameIdDTO nameIdDTO = new NameIdDTO();
             nameIdDTO.setName(fieldName);
             nameIdDTOList.add(nameIdDTO);
-            ValidationWebServicesUtil.validateCVName(nameIdDTOList, fieldToCompare, failureList);
         }
+        ValidationWebServicesUtil.validateCVName(nameIdDTOList, fieldToCompare, failureList);
     }
 }
