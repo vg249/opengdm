@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiimodel.config;
 
-import org.gobiiproject.gobiimodel.dto.system.RestResourceProfileDTO;
+import org.gobiiproject.gobiimodel.dto.rest.RestResourceProfile;
 import org.gobiiproject.gobiimodel.security.Decrypter;
 import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -35,25 +35,25 @@ class ConfigValues {
 
 
         // Define global server types along with any a particular server's resource profiles
-        EnumMap<RestResourceId, RestResourceProfileDTO> kdcCallProfiles = new EnumMap<>(RestResourceId.class);
+        EnumMap<RestResourceId, RestResourceProfile> kdcCallProfiles = new EnumMap<>(RestResourceId.class);
         kdcCallProfiles.put(RestResourceId.KDC_START,
-                new RestResourceProfileDTO(
+                new RestResourceProfile(
                         RestResourceId.KDC_START,
                         false));
 
         kdcCallProfiles.put(RestResourceId.KDC_STATUS,
-                new RestResourceProfileDTO(
+                new RestResourceProfile(
                         RestResourceId.KDC_STATUS,
                         false));
 
 
         kdcCallProfiles.put(RestResourceId.KDC_DOWNLOAD,
-                new RestResourceProfileDTO(
+                new RestResourceProfile(
                         RestResourceId.KDC_DOWNLOAD,
                         false));
 
         kdcCallProfiles.put(RestResourceId.KDC_PURGE,
-                new RestResourceProfileDTO(
+                new RestResourceProfile(
                         RestResourceId.KDC_PURGE,
                         false));
 
@@ -294,13 +294,13 @@ class ConfigValues {
      * Define call profiles for the gobii web server
      * @return
      */
-    private EnumMap<RestResourceId, RestResourceProfileDTO> makeGobiiCallProfiles() {
+    private EnumMap<RestResourceId, RestResourceProfile> makeGobiiCallProfiles() {
 
-        EnumMap<RestResourceId, RestResourceProfileDTO> returnVal = new EnumMap<>(RestResourceId.class);
+        EnumMap<RestResourceId, RestResourceProfile> returnVal = new EnumMap<>(RestResourceId.class);
 
         // GOBII_NAMES in particular has many template parameters
         returnVal.put(RestResourceId.GOBII_NAMES,
-                new RestResourceProfileDTO(RestResourceId.GOBII_NAMES,true)
+                new RestResourceProfile(RestResourceId.GOBII_NAMES,true)
                         // MARKERS
                         .setMethodLimit(RestMethodType.POST ,
                                 GobiiEntityNameType.MARKER.toString(),
@@ -314,6 +314,15 @@ class ConfigValues {
                                 2000)
                         .setMethodLimit(RestMethodType.GET,
                                 GobiiEntityNameType.DNASAMPLE.toString(),
+                                2000)
+                        .setMethodLimit(RestMethodType.GET,
+                                GobiiEntityNameType.ANALYSIS.toString(),
+                                2000)
+                        .setMethodLimit(RestMethodType.POST,
+                                GobiiEntityNameType.ANALYSIS.toString(),
+                                2000)
+                        .setMethodLimit(RestMethodType.PUT,
+                                GobiiEntityNameType.ANALYSIS.toString(),
                                 2000)
         );
 

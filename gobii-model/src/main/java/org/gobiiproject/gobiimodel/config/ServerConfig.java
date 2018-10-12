@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiimodel.config;
 
 
-import org.gobiiproject.gobiimodel.dto.system.RestResourceProfileDTO;
+import org.gobiiproject.gobiimodel.dto.rest.RestResourceProfile;
 import org.gobiiproject.gobiimodel.security.Decrypter;
 import org.gobiiproject.gobiimodel.types.RestMethodType;
 import org.gobiiproject.gobiimodel.types.ServerType;
@@ -52,7 +52,7 @@ public class ServerConfig {
                         String userName,
                         String password,
                         boolean decrypt,
-                        EnumMap<RestResourceId, RestResourceProfileDTO> callProfilesByRestRequestId) {
+                        EnumMap<RestResourceId, RestResourceProfile> callProfilesByRestRequestId) {
 
         this.serverType = serverType;
         this.host = host;
@@ -186,7 +186,7 @@ public class ServerConfig {
 
 
     @ElementMap(required = false)
-    EnumMap<RestResourceId, RestResourceProfileDTO> callProfilesByRestRequestId = new EnumMap<>(RestResourceId.class);
+    EnumMap<RestResourceId, RestResourceProfile> callProfilesByRestRequestId = new EnumMap<>(RestResourceId.class);
 
     @Element(required = false)
     Integer statusCheckIntervalSecs = 0;
@@ -231,7 +231,7 @@ public class ServerConfig {
                 && this.callProfilesByRestRequestId.get(restResourceId).isRestMethodDefined(restMethodType,templateParameter);
     }
 
-    private RestResourceProfileDTO getCallProfile(RestResourceId restResourceId) {
+    private RestResourceProfile getCallProfile(RestResourceId restResourceId) {
 
         if (!this.callProfilesByRestRequestId.containsKey(restResourceId)) {
             throw new GobiiException("There is no call profile for restResourceId " + restResourceId.getResourcePath());
@@ -240,11 +240,11 @@ public class ServerConfig {
         return this.callProfilesByRestRequestId.get(restResourceId);
     }
 
-    public EnumMap<RestResourceId, RestResourceProfileDTO> getCallProfilesByRestRequestId() {
+    public EnumMap<RestResourceId, RestResourceProfile> getCallProfilesByRestRequestId() {
         return callProfilesByRestRequestId;
     }
 
-    public void setCallProfilesByRestRequestId(EnumMap<RestResourceId, RestResourceProfileDTO> callProfilesByRestRequestId) {
+    public void setCallProfilesByRestRequestId(EnumMap<RestResourceId, RestResourceProfile> callProfilesByRestRequestId) {
         this.callProfilesByRestRequestId = callProfilesByRestRequestId;
     }
 
@@ -259,6 +259,22 @@ public class ServerConfig {
 
         return this.getCallProfile(restResourceId).getMethodLimit(restMethodType,
                 templateParameter);
+    }
+
+    public void setRestResourceLimit(RestResourceId restResourceId,
+                                        RestMethodType restMethodType,
+                                        Integer max) {
+
+        this.getCallProfile(restResourceId).setMethodLimit(restMethodType, max);
+    }
+
+    public void setRestResourceLimit(RestResourceId restResourceId,
+                                        RestMethodType restMethodType,
+                                        String templateParameter,
+                                        Integer max) {
+
+        this.getCallProfile(restResourceId).setMethodLimit(restMethodType,
+                templateParameter,max);
     }
 
     public String getCallResourcePath(RestResourceId restResourceId) {

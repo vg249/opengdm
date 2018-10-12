@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.system;
+package org.gobiiproject.gobiimodel.dto.rest;
 
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
@@ -23,10 +23,10 @@ import java.util.Map;
  * value. There are also semantics in this class for dealing with the case where there are
  * no template parameters.
  */
-public class RestResourceProfileDTO {
+public class RestResourceProfile {
 
     //default ctor needed for serialization
-    public RestResourceProfileDTO() {
+    public RestResourceProfile() {
     }
 
     // the default param is used for the case in which there are no TEMPLATE parameters
@@ -48,7 +48,7 @@ public class RestResourceProfileDTO {
      * @param restResourceId
      * @param hasTemplateParams
      */
-    public RestResourceProfileDTO(RestResourceId restResourceId, boolean hasTemplateParams) {
+    public RestResourceProfile(RestResourceId restResourceId, boolean hasTemplateParams) {
         this.restResourceId = restResourceId;
         if (!hasTemplateParams) {
             this.resourceMethodCollsByTemplateParam.put(DEFAULT_TEMPLATE_PARAM,
@@ -81,6 +81,7 @@ public class RestResourceProfileDTO {
     }
 
     public boolean isRestMethodDefined(RestMethodType restMethodType, String templateParameter) {
+        templateParameter = templateParameter.toUpperCase();
         return this.resourceMethodCollsByTemplateParam.containsKey(templateParameter)
                 && this.resourceMethodCollsByTemplateParam.get(templateParameter).isMethodDefined(restMethodType);
     }
@@ -110,15 +111,19 @@ public class RestResourceProfileDTO {
      * @param max
      * @return
      */
-    public RestResourceProfileDTO setMethodLimit(RestMethodType restMethodType,
-                                                 String templateParameter,
-                                                 Integer max) {
+    public RestResourceProfile setMethodLimit(RestMethodType restMethodType,
+                                              String templateParameter,
+                                              Integer max) {
+
+        templateParameter = templateParameter.toUpperCase();
 
         if (!this.isHasTemplateParameters()) {
             this.setHasTemplateParameters(true);
         }
 
         if (!this.resourceMethodCollsByTemplateParam.containsKey(templateParameter)) {
+
+
             this.resourceMethodCollsByTemplateParam
                     .put(templateParameter, new RestResourceMethodLimitColl());
         }
@@ -131,6 +136,7 @@ public class RestResourceProfileDTO {
     public Integer getMethodLimit(RestMethodType restMethodType,
                                   String templateParameter) {
 
+        templateParameter = templateParameter.toUpperCase();
         if (!this.resourceMethodCollsByTemplateParam
                 .containsKey(templateParameter)) {
             throw new GobiiException("No call profile is defined for template parameter " + templateParameter);

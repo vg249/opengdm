@@ -9,15 +9,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.math.NumberUtils;
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
-import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiEntityNameConverter;
+import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
-import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
@@ -36,6 +34,7 @@ import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.CvGroupDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.JobDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerDTO;
+import org.gobiiproject.gobiimodel.dto.rest.RestProfileDTO;
 import org.gobiiproject.gobiimodel.dto.system.AuthDTO;
 import org.gobiiproject.gobiimodel.dto.system.ConfigSettingsDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
@@ -52,10 +51,9 @@ import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.types.RestMethodType;
-import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
-import org.gobiiproject.gobiiweb.automation.CallLimits;
+import org.gobiiproject.gobiiweb.automation.RestResourceLimits;
 import org.gobiiproject.gobiiweb.automation.ControllerUtils;
 import org.gobiiproject.gobiiweb.automation.GobiiVersionInfo;
 import org.gobiiproject.gobiiweb.automation.PayloadReader;
@@ -281,6 +279,45 @@ public class GOBIIControllerV1 {
 
         return (returnVal);
 
+    }
+
+
+    @RequestMapping(value = "/restprofiles", method = RequestMethod.PUT)
+    @ResponseBody
+    public PayloadEnvelope<RestProfileDTO> updateRestProfile(@RequestBody PayloadEnvelope<RestProfileDTO> payloadEnvelope,
+                                                             HttpServletRequest request,
+                                                             HttpServletResponse response) {
+
+        PayloadEnvelope<RestProfileDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            PayloadReader<RestProfileDTO> payloadReader = new PayloadReader<>(RestProfileDTO.class);
+            RestProfileDTO restProfileDTOToUpdate = payloadReader.extractSingleItem(payloadEnvelope);
+
+            RestResourceLimits.setCallLimit(restProfileDTOToUpdate);
+
+            PayloadWriter<RestProfileDTO> payloadWriter = new PayloadWriter<>(request, response,
+                    RestProfileDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
+                            RestResourceId.GOBII_REST_PROFILES),
+                    restProfileDTOToUpdate);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
     }
 
     // *********************************************
@@ -2155,7 +2192,7 @@ public class GOBIIControllerV1 {
             }
 
 
-            Integer callLimit = CallLimits.getCallLimit(RestResourceId.GOBII_NAMES, RestMethodType.GET, entity.toUpperCase());
+            Integer callLimit = RestResourceLimits.getCallLimit(RestResourceId.GOBII_NAMES, RestMethodType.GET, entity.toUpperCase());
             DtoMapNameIdParams dtoMapNameIdParams = new DtoMapNameIdParams(gobiiEntityNameType, gobiiFilterType, typedFilterValue, callLimit);
 
             List<NameIdDTO> nameIdList = nameIdListService.getNameIdList(dtoMapNameIdParams);
@@ -2165,6 +2202,14 @@ public class GOBIIControllerV1 {
                     GobiiEntityNameConverter.toServiceRequestId(request.getContextPath(),
                             gobiiEntityNameType),
                     nameIdList);
+
+
+            // for call limit, the case of /names, we need to add the entity type
+            // so that the limit can be looked up by entity type
+            payloadWriter.setCallLimitToHeader(returnVal,
+                    GobiiUriFactory.resourceColl(request.getContextPath(),
+                    RestResourceId.GOBII_NAMES)
+                    .addUriParam("entity", entity));
 
             String cropType = returnVal.getHeader().getCropType();
 
@@ -2271,7 +2316,7 @@ public class GOBIIControllerV1 {
             }
 
 
-            Integer callLimit = CallLimits.getCallLimit(RestResourceId.GOBII_NAMES, RestMethodType.POST, entity.toUpperCase());
+            Integer callLimit = RestResourceLimits.getCallLimit(RestResourceId.GOBII_NAMES, RestMethodType.POST, entity.toUpperCase());
 
             if (callLimit == null || callLimit <= new Integer(nameIdDTOList.size())) {
                 DtoMapNameIdParams dtoMapNameIdParams = new DtoMapNameIdParams(gobiiEntityNameType, gobiiFilterType, typedFilterValue, nameIdDTOList, callLimit);
@@ -2280,8 +2325,8 @@ public class GOBIIControllerV1 {
 
                 PayloadWriter<NameIdDTO> payloadWriter = new PayloadWriter<>(request, response, NameIdDTO.class);
                 payloadWriter.writeList(returnVal,
-                        GobiiEntityNameConverter.toServiceRequestId(request.getContextPath(),
-                                gobiiEntityNameType),
+                        GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
+                                RestResourceId.GOBII_NAMES),
                         nameIdList);
 
                 // return the nameIdDTOs with null IDs

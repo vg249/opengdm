@@ -54,6 +54,7 @@ public enum RestResourceId {
     GOBII_LAST_MODIFIED("lastmodified", ServerType.GOBII_WEB),
     GOBII_VERTICES("vertices", ServerType.GOBII_WEB),
     GOBII_VALUES("values",ServerType.GOBII_WEB),
+    GOBII_REST_PROFILES("restprofiles",ServerType.GOBII_WEB),
     BRAPI_ALLELE_MATRIX_SEARCH("allelematrix-search", ServerType.BRAPI),
     BRAPI_ALLELE_MATRIX_SEARCH_STATUS("allelematrix-search/status", ServerType.BRAPI),
     BRAPI_ALLELE_MATRICES("allelematrices", ServerType.BRAPI),

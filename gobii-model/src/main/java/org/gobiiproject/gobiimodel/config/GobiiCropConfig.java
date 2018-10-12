@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiimodel.config;
 
 
-import org.gobiiproject.gobiimodel.dto.system.RestResourceProfileDTO;
+import org.gobiiproject.gobiimodel.dto.rest.RestResourceProfile;
 import org.gobiiproject.gobiimodel.types.ServerType;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementMap;
@@ -10,7 +10,6 @@ import org.simpleframework.xml.Root;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,7 +44,7 @@ public class GobiiCropConfig {
                           String userName,
                           String password,
                           boolean decrypt,
-                          EnumMap<RestResourceId, RestResourceProfileDTO> callProfilesByRestRequestId) {
+                          EnumMap<RestResourceId, RestResourceProfile> callProfilesByRestRequestId) {
 
         
         ServerConfig serverConfig = this.serversByServerType.get(serverType);

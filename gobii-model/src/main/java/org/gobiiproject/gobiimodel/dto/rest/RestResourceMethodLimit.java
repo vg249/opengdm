@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.system;
+package org.gobiiproject.gobiimodel.dto.rest;
 
 import org.gobiiproject.gobiimodel.types.RestMethodType;
 import org.simpleframework.xml.Element;

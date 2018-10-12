@@ -36,7 +36,8 @@ public class ConfigSettings {
 
     public ConfigSettings() {
         try {
-            configValues = ConfigValuesReader.read(null);
+            this.configFileFqpn = ConfigValuesReader.getFqpnFromTomcat();
+            configValues = ConfigValuesReader.read(this.configFileFqpn);
         } catch (Exception e) {
             LOGGER.error("Error instancing ConfigValues with null fqpn", e);
         }
