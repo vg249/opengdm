@@ -53,15 +53,19 @@ public enum RestResourceId {
     GOBII_COUNT("count", ServerType.GOBII_WEB),
     GOBII_LAST_MODIFIED("lastmodified", ServerType.GOBII_WEB),
     GOBII_VERTICES("vertices", ServerType.GOBII_WEB),
-    GOBII_VALUES("values",ServerType.GOBII_WEB),
-    GOBII_REST_PROFILES("restprofiles",ServerType.GOBII_WEB),
+    GOBII_VALUES("values", ServerType.GOBII_WEB),
+    GOBII_REST_PROFILES("restprofiles", ServerType.GOBII_WEB),
+    GOBII_DNASAMPLES("dnasamples", ServerType.GOBII_WEB),
+    GOBII_DNARUN("dnarun", ServerType.GOBII_WEB),
+    GOBII_LINKAGEGROUP("linkagegroup", ServerType.GOBII_WEB),
+    GOBII_JOB_DNASAMPLE("jobs/dnasamples", ServerType.GOBII_WEB),
     BRAPI_ALLELE_MATRIX_SEARCH("allelematrix-search", ServerType.BRAPI),
     BRAPI_ALLELE_MATRIX_SEARCH_STATUS("allelematrix-search/status", ServerType.BRAPI),
     BRAPI_ALLELE_MATRICES("allelematrices", ServerType.BRAPI),
-    KDC_START("qcStart",ServerType.KDC),
-    KDC_STATUS("qcStatus",ServerType.KDC),
-    KDC_DOWNLOAD("qcDownload",ServerType.KDC),
-    KDC_PURGE("qcPurge",ServerType.KDC);
+    KDC_START("qcStart", ServerType.KDC),
+    KDC_STATUS("qcStatus", ServerType.KDC),
+    KDC_DOWNLOAD("qcDownload", ServerType.KDC),
+    KDC_PURGE("qcPurge", ServerType.KDC);
 
 
     private String requestPath;

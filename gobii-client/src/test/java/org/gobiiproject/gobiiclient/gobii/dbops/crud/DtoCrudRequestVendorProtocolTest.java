@@ -59,7 +59,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
                 .getUriFactory()
                 .resourceByUriIdParam(RestResourceId.GOBII_PROTOCOL);
         restUriForGetProtocolById.setParamValue("id", protocolId.toString());
-        GobiiEnvelopeRestResource<ProtocolDTO> gobiiEnvelopeRestResourceForGetProtocolById =
+        GobiiEnvelopeRestResource<ProtocolDTO,ProtocolDTO> gobiiEnvelopeRestResourceForGetProtocolById =
                 new GobiiEnvelopeRestResource<>(restUriForGetProtocolById);
         PayloadEnvelope<ProtocolDTO> resultEnvelopeForGetProtocolByID = gobiiEnvelopeRestResourceForGetProtocolById
                 .get(ProtocolDTO.class);
@@ -78,7 +78,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
                     .getUriFactory()
                     .resourceByUriIdParam(RestResourceId.GOBII_ORGANIZATION);
             restUriForGetOrganizationById.setParamValue("id", currentVendorPk.toString());
-            GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResourceForGetOrganizationById =
+            GobiiEnvelopeRestResource<OrganizationDTO,OrganizationDTO> gobiiEnvelopeRestResourceForGetOrganizationById =
                     new GobiiEnvelopeRestResource<>(restUriForGetOrganizationById);
             PayloadEnvelope<OrganizationDTO> resultEnvelopeForGetOrganizationByID = gobiiEnvelopeRestResourceForGetOrganizationById
                     .get(OrganizationDTO.class);
@@ -102,7 +102,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
                     .childResourceByUriIdParam(RestResourceId.GOBII_PROTOCOL,
                             RestResourceId.GOBII_VENDORS);
             restUriProtocoLVendor.setParamValue("id", protocolId.toString());
-            GobiiEnvelopeRestResource<OrganizationDTO> protocolVendorResource =
+            GobiiEnvelopeRestResource<OrganizationDTO,OrganizationDTO> protocolVendorResource =
                     new GobiiEnvelopeRestResource<>(restUriProtocoLVendor);
             PayloadEnvelope<OrganizationDTO> vendorPayloadEnvelope =
                     new PayloadEnvelope<>(organizationDTO, GobiiProcessType.CREATE);
@@ -119,7 +119,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
             RestUri namesUri = GobiiClientContext.getInstance(null, false)
                     .getUriFactory()
                     .nameIdListByQueryParams();
-            GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
+            GobiiEnvelopeRestResource<NameIdDTO,NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
             namesUri.setParamValue("entity", GobiiEntityNameType.VENDOR_PROTOCOL.toString().toLowerCase());
 
             PayloadEnvelope<NameIdDTO> resultEnvelopeProtocoLVendornames = gobiiEnvelopeRestResource
@@ -203,7 +203,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
                     .childResourceByUriIdParam(RestResourceId.GOBII_PROTOCOL,
                             RestResourceId.GOBII_VENDORS);
             restUriProtocoLVendor.setParamValue("id", currentProtocolId.toString());
-            GobiiEnvelopeRestResource<OrganizationDTO> protocolVendorResource =
+            GobiiEnvelopeRestResource<OrganizationDTO,OrganizationDTO> protocolVendorResource =
                     new GobiiEnvelopeRestResource<>(restUriProtocoLVendor);
 
             // ** ITERATE VENDORS
@@ -214,7 +214,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
                         .getUriFactory()
                         .resourceByUriIdParam(RestResourceId.GOBII_ORGANIZATION);
                 restUriForGetOrganizationById.setParamValue("id", currentVendorId.toString());
-                GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResourceForGetOrganizationById =
+                GobiiEnvelopeRestResource<OrganizationDTO,OrganizationDTO> gobiiEnvelopeRestResourceForGetOrganizationById =
                         new GobiiEnvelopeRestResource<>(restUriForGetOrganizationById);
                 PayloadEnvelope<OrganizationDTO> resultEnvelopeForGetOrganizationByID = gobiiEnvelopeRestResourceForGetOrganizationById
                         .get(OrganizationDTO.class);
@@ -253,7 +253,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
                     .resourceByUriIdParam(RestResourceId.GOBII_ORGANIZATION)
                     .setParamValue("id", currentOrganizationDTO.getOrganizationId().toString());
 
-            GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriOrganization);
+            GobiiEnvelopeRestResource<OrganizationDTO,OrganizationDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriOrganization);
             PayloadEnvelope<OrganizationDTO> resultEnvelope = gobiiEnvelopeRestResource
                     .get(OrganizationDTO.class);
 
@@ -282,7 +282,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
                             RestResourceId.GOBII_VENDORS);
 
             restUriProtocoLVendor.setParamValue("id", vendorProtocolDTOToUpdate.getProtocolId().toString());
-            GobiiEnvelopeRestResource<OrganizationDTO> protocolVendorResource =
+            GobiiEnvelopeRestResource<OrganizationDTO,OrganizationDTO> protocolVendorResource =
                     new GobiiEnvelopeRestResource<>(restUriProtocoLVendor);
             PayloadEnvelope<OrganizationDTO> vendorPayloadEnvelope =
                     new PayloadEnvelope<>(currentOrganizationDTO, GobiiProcessType.UPDATE);
@@ -341,7 +341,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
                     .addUriParam("id")
                     .setParamValue("id", currentProtocolId.toString());
 
-            GobiiEnvelopeRestResource<ProtocolDTO> gobiiEnvelopeRestResourceForGetProtocolById =
+            GobiiEnvelopeRestResource<ProtocolDTO,ProtocolDTO> gobiiEnvelopeRestResourceForGetProtocolById =
                     new GobiiEnvelopeRestResource<>(restUriProtocolByProtocolId);
             PayloadEnvelope<ProtocolDTO> resultEnvelopeForGetProtocolByID = gobiiEnvelopeRestResourceForGetProtocolById
                     .get(ProtocolDTO.class);
@@ -398,7 +398,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
                 .setParamValue("protocolId", protocolId.toString())
                 .appendSegment(RestResourceId.GOBII_VENDORS);
 
-        GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriVendorsForProtocol);
+        GobiiEnvelopeRestResource<OrganizationDTO,OrganizationDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriVendorsForProtocol);
         PayloadEnvelope<OrganizationDTO> resultEnvelope = gobiiEnvelopeRestResource
                 .get(OrganizationDTO.class);
 

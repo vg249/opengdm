@@ -144,7 +144,7 @@ public class DTORestProfileTest {
                         .getInstance(null, false)
                         .getUriFactory()
                         .resourceColl(RestResourceId.GOBII_REST_PROFILES);
-        GobiiEnvelopeRestResource<RestProfileDTO> restEnvelopeRestProfile = new GobiiEnvelopeRestResource<>(restProfilesUri);
+        GobiiEnvelopeRestResource<RestProfileDTO,RestProfileDTO> restEnvelopeRestProfile = new GobiiEnvelopeRestResource<>(restProfilesUri);
         PayloadEnvelope<RestProfileDTO> resultEnvelope = restEnvelopeRestProfile
                 .put(RestProfileDTO.class, new PayloadEnvelope<>(restProfileDTO, GobiiProcessType.UPDATE));
 
