@@ -30,14 +30,11 @@ import org.slf4j.LoggerFactory;
 public class ConfigSettings {
 
     private static Logger LOGGER = LoggerFactory.getLogger(ConfigSettings.class);
-
-
     private String configFileFqpn;
 
     public ConfigSettings() {
         try {
-            this.configFileFqpn = ConfigValuesReader.getFqpnFromTomcat();
-            configValues = ConfigValuesReader.read(this.configFileFqpn);
+            configValues = ConfigValuesReader.read(null);
         } catch (Exception e) {
             LOGGER.error("Error instancing ConfigValues with null fqpn", e);
         }
@@ -114,8 +111,23 @@ public class ConfigSettings {
     }
 
 
+    public void commit(boolean getFqpnFromJndi) throws Exception {
+
+        String fqpn;
+
+        if (getFqpnFromJndi) {
+            fqpn = ConfigValuesReader.getFqpnFromTomcat();
+        } else {
+            fqpn = this.configFileFqpn;
+        }
+
+        ConfigValuesReader.commitConfigValues(this.configValues, fqpn);
+    }
+
     public void commit() throws Exception {
-        ConfigValuesReader.commitConfigValues(this.configValues, this.configFileFqpn);
+        // In the case where we are committing, we need to make sure that
+        // we already have the fqpn of the config file
+        this.commit(false);
     }
 
     public String getProcessingPath(String cropType, GobiiFileProcessDir gobiiFileProcessDir) throws Exception {

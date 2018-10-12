@@ -63,7 +63,7 @@ public class GobiiCropConfig {
                 .setUserName(userName)
                 .setPassword(password)
                 .setDecrypt(decrypt)
-        .setCallProfilesByRestRequestId(callProfilesByRestRequestId);
+        .setResourceProfilesByRestRequestId(callProfilesByRestRequestId);
     }
 
     public GobiiCropConfig setServersByServerType(Map<ServerType, ServerConfig> serversByServerType) {

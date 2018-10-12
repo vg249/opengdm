@@ -5,7 +5,6 @@ import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.ResourceParam;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
-import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.system.PagedList;
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
@@ -191,18 +190,18 @@ public class PayloadWriter<T extends DTOBase> {
                 // in particular returns a limit
                 if (restUri.getTemplateParams().size() <= 0) {
 
-                    callLimitGet = RestResourceLimits.getCallLimit(restResourceId, RestMethodType.GET);
-                    callLimitPost = RestResourceLimits.getCallLimit(restResourceId, RestMethodType.POST);
-                    callLimitPut = RestResourceLimits.getCallLimit(restResourceId, RestMethodType.PUT);
+                    callLimitGet = RestResourceLimits.getResourceLimit(restResourceId, RestMethodType.GET);
+                    callLimitPost = RestResourceLimits.getResourceLimit(restResourceId, RestMethodType.POST);
+                    callLimitPut = RestResourceLimits.getResourceLimit(restResourceId, RestMethodType.PUT);
 
                 } else {
 
                     for (ResourceParam currentResourceParam : restUri.getTemplateParams()) {
 
                         String currentTemplateParam = currentResourceParam.getValue().toUpperCase();
-                        callLimitGet = RestResourceLimits.getCallLimit(restResourceId, RestMethodType.GET, currentTemplateParam);
-                        callLimitPost = RestResourceLimits.getCallLimit(restResourceId, RestMethodType.POST, currentTemplateParam);
-                        callLimitPut = RestResourceLimits.getCallLimit(restResourceId, RestMethodType.PUT, currentTemplateParam);
+                        callLimitGet = RestResourceLimits.getResourceLimit(restResourceId, RestMethodType.GET, currentTemplateParam);
+                        callLimitPost = RestResourceLimits.getResourceLimit(restResourceId, RestMethodType.POST, currentTemplateParam);
+                        callLimitPut = RestResourceLimits.getResourceLimit(restResourceId, RestMethodType.PUT, currentTemplateParam);
 
                         //if any one got a valid limit, it means that, if there were any others for the current
                         //template parameter, they would have been set; so here we want to call it quits

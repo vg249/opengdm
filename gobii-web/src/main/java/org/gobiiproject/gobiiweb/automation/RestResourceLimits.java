@@ -20,16 +20,17 @@ public class RestResourceLimits {
      * @param templateParameter
      * @return
      */
-    public static Integer getCallLimit(RestResourceId restResourceId,
-                                       RestMethodType restMethodType,
-                                       String templateParameter) throws Exception {
+    public static Integer getResourceLimit(RestResourceId restResourceId,
+                                           RestMethodType restMethodType,
+                                           String templateParameter) throws Exception {
         Integer returnVal = null;
 
-        ServerConfig serverConfigWeb = (new ConfigSettings())
+        ConfigSettings configSettings = new ConfigSettings();
+        ServerConfig serverConfigWeb = configSettings
                 .getCropConfig(CropRequestAnalyzer.getGobiiCropType())
                 .getServer(ServerType.GOBII_WEB);
 
-        if (serverConfigWeb.isCallProfileDefined(restResourceId,
+        if (serverConfigWeb.isResourceProfileDefined(restResourceId,
                 restMethodType,
                 templateParameter)) {
 
@@ -41,7 +42,7 @@ public class RestResourceLimits {
 
         return returnVal;
 
-    } //getCallLimit()
+    } //getResourceLimit()
 
 
     /***
@@ -50,15 +51,16 @@ public class RestResourceLimits {
      * @param restMethodType
      * @return
      */
-    public static Integer getCallLimit(RestResourceId restResourceId,
-                                       RestMethodType restMethodType) throws Exception {
+    public static Integer getResourceLimit(RestResourceId restResourceId,
+                                           RestMethodType restMethodType) throws Exception {
         Integer returnVal = null;
 
-        ServerConfig serverConfigWeb = (new ConfigSettings())
+        ConfigSettings configSettings = new ConfigSettings();
+        ServerConfig serverConfigWeb = configSettings
                 .getCropConfig(CropRequestAnalyzer.getGobiiCropType())
                 .getServer(ServerType.GOBII_WEB);
 
-        if (serverConfigWeb.isCallProfileDefined(restResourceId,
+        if (serverConfigWeb.isResourceProfileDefined(restResourceId,
                 restMethodType)) {
 
             returnVal = serverConfigWeb.getRestResourceLimit(
@@ -68,9 +70,9 @@ public class RestResourceLimits {
 
         return returnVal;
 
-    } //getCallLimit()
+    } //getResourceLimit()
 
-    public static void setCallLimit(RestProfileDTO restProfileDTO) throws Exception {
+    public static void setResourceLimit(RestProfileDTO restProfileDTO) throws Exception {
 
         ConfigSettings configSettings = new ConfigSettings();
         ServerConfig serverConfigWeb = configSettings
@@ -81,7 +83,7 @@ public class RestResourceLimits {
         if (LineUtils.isNullOrEmpty(restProfileDTO.getTemplateParameter())) {
 
             if (!serverConfigWeb
-                    .isCallProfileDefined(restProfileDTO.getRestResourceId(),
+                    .isResourceProfileDefined(restProfileDTO.getRestResourceId(),
                             restProfileDTO.getRestMethodType())) {
 
                 throw new GobiiException("There is no rest resource profile defined for "
@@ -100,7 +102,7 @@ public class RestResourceLimits {
         } else {
 
             if (!serverConfigWeb
-                    .isCallProfileDefined(restProfileDTO.getRestResourceId(),
+                    .isResourceProfileDefined(restProfileDTO.getRestResourceId(),
                             restProfileDTO.getRestMethodType(),
                             restProfileDTO.getTemplateParameter())) {
 
@@ -122,7 +124,7 @@ public class RestResourceLimits {
 
         } // if-else there is a template parameter
 
-        configSettings.commit();
+        configSettings.commit(true);
 
     } //set call limit
 }

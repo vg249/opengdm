@@ -52,7 +52,7 @@ public class ServerConfig {
                         String userName,
                         String password,
                         boolean decrypt,
-                        EnumMap<RestResourceId, RestResourceProfile> callProfilesByRestRequestId) {
+                        EnumMap<RestResourceId, RestResourceProfile> resourceProfilesByRestRequestId) {
 
         this.serverType = serverType;
         this.host = host;
@@ -62,7 +62,7 @@ public class ServerConfig {
         this.userName = userName;
         this.password = password;
         this.decrypt = decrypt;
-        this.callProfilesByRestRequestId = callProfilesByRestRequestId;
+        this.resourceProfilesByRestRequestId = resourceProfilesByRestRequestId;
     }
 
     public ServerConfig(ServerType serverType,
@@ -186,7 +186,7 @@ public class ServerConfig {
 
 
     @ElementMap(required = false)
-    EnumMap<RestResourceId, RestResourceProfile> callProfilesByRestRequestId = new EnumMap<>(RestResourceId.class);
+    EnumMap<RestResourceId, RestResourceProfile> resourceProfilesByRestRequestId = new EnumMap<>(RestResourceId.class);
 
     @Element(required = false)
     Integer statusCheckIntervalSecs = 0;
@@ -219,45 +219,45 @@ public class ServerConfig {
             ServerType.GOBII_COMPUTE);
 
 
-    public boolean isCallProfileDefined(RestResourceId restResourceId, RestMethodType restMethodType) {
+    public boolean isResourceProfileDefined(RestResourceId restResourceId, RestMethodType restMethodType) {
 
-        return this.callProfilesByRestRequestId.containsKey(restResourceId)
-                && this.callProfilesByRestRequestId.get(restResourceId).isRestMethodDefined(restMethodType);
+        return this.resourceProfilesByRestRequestId.containsKey(restResourceId)
+                && this.resourceProfilesByRestRequestId.get(restResourceId).isRestMethodDefined(restMethodType);
     }
 
-    public boolean isCallProfileDefined(RestResourceId restResourceId, RestMethodType restMethodType, String templateParameter) {
+    public boolean isResourceProfileDefined(RestResourceId restResourceId, RestMethodType restMethodType, String templateParameter) {
 
-        return this.callProfilesByRestRequestId.containsKey(restResourceId)
-                && this.callProfilesByRestRequestId.get(restResourceId).isRestMethodDefined(restMethodType,templateParameter);
+        return this.resourceProfilesByRestRequestId.containsKey(restResourceId)
+                && this.resourceProfilesByRestRequestId.get(restResourceId).isRestMethodDefined(restMethodType,templateParameter);
     }
 
-    private RestResourceProfile getCallProfile(RestResourceId restResourceId) {
+    private RestResourceProfile getResourceProfile(RestResourceId restResourceId) {
 
-        if (!this.callProfilesByRestRequestId.containsKey(restResourceId)) {
+        if (!this.resourceProfilesByRestRequestId.containsKey(restResourceId)) {
             throw new GobiiException("There is no call profile for restResourceId " + restResourceId.getResourcePath());
         }
 
-        return this.callProfilesByRestRequestId.get(restResourceId);
+        return this.resourceProfilesByRestRequestId.get(restResourceId);
     }
 
-    public EnumMap<RestResourceId, RestResourceProfile> getCallProfilesByRestRequestId() {
-        return callProfilesByRestRequestId;
+    public EnumMap<RestResourceId, RestResourceProfile> getResourceProfilesByRestRequestId() {
+        return resourceProfilesByRestRequestId;
     }
 
-    public void setCallProfilesByRestRequestId(EnumMap<RestResourceId, RestResourceProfile> callProfilesByRestRequestId) {
-        this.callProfilesByRestRequestId = callProfilesByRestRequestId;
+    public void setResourceProfilesByRestRequestId(EnumMap<RestResourceId, RestResourceProfile> resourceProfilesByRestRequestId) {
+        this.resourceProfilesByRestRequestId = resourceProfilesByRestRequestId;
     }
 
     public Integer getRestResourceLimit(RestResourceId restResourceId, RestMethodType restMethodType) {
 
-        return this.getCallProfile(restResourceId).getMethodLimit(restMethodType);
+        return this.getResourceProfile(restResourceId).getMethodLimit(restMethodType);
     }
 
     public Integer getRestResourceLimit(RestResourceId restResourceId,
                                         RestMethodType restMethodType,
                                         String templateParameter) {
 
-        return this.getCallProfile(restResourceId).getMethodLimit(restMethodType,
+        return this.getResourceProfile(restResourceId).getMethodLimit(restMethodType,
                 templateParameter);
     }
 
@@ -265,7 +265,7 @@ public class ServerConfig {
                                         RestMethodType restMethodType,
                                         Integer max) {
 
-        this.getCallProfile(restResourceId).setMethodLimit(restMethodType, max);
+        this.getResourceProfile(restResourceId).setMethodLimit(restMethodType, max);
     }
 
     public void setRestResourceLimit(RestResourceId restResourceId,
@@ -273,12 +273,12 @@ public class ServerConfig {
                                         String templateParameter,
                                         Integer max) {
 
-        this.getCallProfile(restResourceId).setMethodLimit(restMethodType,
+        this.getResourceProfile(restResourceId).setMethodLimit(restMethodType,
                 templateParameter,max);
     }
 
     public String getCallResourcePath(RestResourceId restResourceId) {
-        return this.getCallProfile(restResourceId).getRestResourceId().getResourcePath();
+        return this.getResourceProfile(restResourceId).getRestResourceId().getResourcePath();
     }
 
     public void setCallResourcePath(RestResourceId restResourceId, String resourcePath) throws GobiiException {
@@ -288,7 +288,7 @@ public class ServerConfig {
             throw new GobiiException("This server type does not allow dynamic configuration of resource paths: " + restResourceId.getServerType().toString());
         }
 
-        this.getCallProfile(restResourceId).getRestResourceId().setResourcePath(resourcePath);
+        this.getResourceProfile(restResourceId).getRestResourceId().setResourcePath(resourcePath);
     }
 
 }

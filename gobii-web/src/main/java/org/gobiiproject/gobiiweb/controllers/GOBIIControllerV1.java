@@ -295,7 +295,7 @@ public class GOBIIControllerV1 {
             PayloadReader<RestProfileDTO> payloadReader = new PayloadReader<>(RestProfileDTO.class);
             RestProfileDTO restProfileDTOToUpdate = payloadReader.extractSingleItem(payloadEnvelope);
 
-            RestResourceLimits.setCallLimit(restProfileDTOToUpdate);
+            RestResourceLimits.setResourceLimit(restProfileDTOToUpdate);
 
             PayloadWriter<RestProfileDTO> payloadWriter = new PayloadWriter<>(request, response,
                     RestProfileDTO.class);
@@ -2192,7 +2192,7 @@ public class GOBIIControllerV1 {
             }
 
 
-            Integer callLimit = RestResourceLimits.getCallLimit(RestResourceId.GOBII_NAMES, RestMethodType.GET, entity.toUpperCase());
+            Integer callLimit = RestResourceLimits.getResourceLimit(RestResourceId.GOBII_NAMES, RestMethodType.GET, entity.toUpperCase());
             DtoMapNameIdParams dtoMapNameIdParams = new DtoMapNameIdParams(gobiiEntityNameType, gobiiFilterType, typedFilterValue, callLimit);
 
             List<NameIdDTO> nameIdList = nameIdListService.getNameIdList(dtoMapNameIdParams);
@@ -2316,7 +2316,7 @@ public class GOBIIControllerV1 {
             }
 
 
-            Integer callLimit = RestResourceLimits.getCallLimit(RestResourceId.GOBII_NAMES, RestMethodType.POST, entity.toUpperCase());
+            Integer callLimit = RestResourceLimits.getResourceLimit(RestResourceId.GOBII_NAMES, RestMethodType.POST, entity.toUpperCase());
 
             if (callLimit == null || callLimit <= new Integer(nameIdDTOList.size())) {
                 DtoMapNameIdParams dtoMapNameIdParams = new DtoMapNameIdParams(gobiiEntityNameType, gobiiFilterType, typedFilterValue, nameIdDTOList, callLimit);
