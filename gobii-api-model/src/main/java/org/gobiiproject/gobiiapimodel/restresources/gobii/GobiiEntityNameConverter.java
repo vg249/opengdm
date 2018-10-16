@@ -53,7 +53,7 @@ public class GobiiEntityNameConverter {
 
                 case GERMPLASM:
                     returnVal = GobiiUriFactory.resourceByUriIdParam(contextRoot,
-                            GobiiServiceRequestId.URL_GERMPLASM);
+                            RestResourceId.GOBII_GERMPLASM);
                     break;
 
                 case CV:

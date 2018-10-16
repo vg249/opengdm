@@ -3,6 +3,8 @@ package org.gobiiproject.gobiiclient.gobii.dbops.crud;
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiTestConfiguration;
+import org.gobiiproject.gobiiclient.gobii.Helpers.ADLEncapsulator;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
@@ -10,6 +12,7 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.NameIdDTOComparator;
+import org.gobiiproject.gobiimodel.config.TestExecConfig;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ReferenceDTO;
@@ -23,6 +26,7 @@ import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.*;
 
+import java.io.File;
 import java.util.*;
 
 /**
@@ -33,6 +37,35 @@ public class DtoCrudRequestNameIdListTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         Assert.assertTrue(GobiiClientContextAuth.authenticate());
+
+        // do an ADL load
+        GobiiTestConfiguration gobiiTestConfiguration = new GobiiTestConfiguration();
+        TestExecConfig testExecConfig = gobiiTestConfiguration.getConfigSettings().getTestExecConfig();
+        ADLEncapsulator adlEncapsulator = new ADLEncapsulator();
+        String configUtilCommandlineStem = testExecConfig.getConfigUtilCommandlineStem();
+
+        String[] split = configUtilCommandlineStem.split(" ");
+        adlEncapsulator.setAdlJarPath(split[2] + "/gobiiadl.jar");
+        adlEncapsulator.setInputHost(testExecConfig.getInitialConfigUrl());
+        adlEncapsulator.setInputUser(testExecConfig.getLdapUserForUnitTest());
+        adlEncapsulator.setInputPassword(testExecConfig.getLdapPasswordForUnitTest());
+        adlEncapsulator.setInputTimeout(testExecConfig.getAsynchOpTimeoutMinutes());
+
+        // copy to temp folder
+        String tempDirName = "adlTest-" + UUID.randomUUID().toString();
+        String tempDirString = testExecConfig.getTestFileDownloadDirectory() + "/" + tempDirName;
+
+        File tempDir = new File(tempDirString);
+
+        tempDir.mkdir();
+
+        File fileFromRepo = new File("src/test/resources/nameIdListLoadTest");
+
+        adlEncapsulator.copyFilesToLocalDir(fileFromRepo, tempDir);
+
+        adlEncapsulator.setInputDirectory(tempDir.getAbsolutePath());
+        Assert.assertTrue(adlEncapsulator.getErrorMsg(), adlEncapsulator.executeBatchGobiiADL());
+
     }
 
     @AfterClass
@@ -526,13 +559,13 @@ public class DtoCrudRequestNameIdListTest {
      * This test is ignored since right now we don't have a separate web service to create dna samples that can be used for this test.
      **/
 
-    @Ignore
+    @Test
     public void testGetDnaSampleNamesByList() throws Exception {
 
         Integer projectId = 1;
         GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.DNASAMPLE;
 
-        String[] dnasampleNamesExisting = new String[]{"dnasample_rza_codom_10", "dnasample_rza_codom_11", "dnasample_rza_codom_12", "dnasample_rza_codom_13"};
+        String[] dnasampleNamesExisting = new String[]{"dnasample_codom_5", "dnasample_codom_6", "dnasample_codom_7", "dnasample_codom_8"};
 
         List<NameIdDTO> nameIdDTOList = new ArrayList<>();
 
@@ -587,7 +620,7 @@ public class DtoCrudRequestNameIdListTest {
 
     }
 
-    @Ignore
+    @Test
     public void testGetMarkerNamesByList() throws Exception {
 
         // create markers for test
@@ -711,14 +744,14 @@ public class DtoCrudRequestNameIdListTest {
      * This test is ignored since right now we don't have a separate web service to create linkage groups that can be used for this test.
      **/
 
-    @Ignore
+    @Test
     public void testGetLinkageGroupNamesByList() throws Exception {
 
         Integer mapsetId = 1;
 
         GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.LINKAGE_GROUP;
 
-        String[] linkageGroupNameExisting = new String[]{"lg1", "lg2", "lg3", "lg4"};
+        String[] linkageGroupNameExisting = new String[]{"lg_name1", "lg_name2", "lg_name3", "lg_name4"};
 
         List<NameIdDTO> nameIdDTOList = new ArrayList<>();
 
@@ -752,7 +785,7 @@ public class DtoCrudRequestNameIdListTest {
     /**
      * This test is ignored since right now we don't have a separate web service to create dna run that can be used for this test.
      **/
-    @Ignore
+    @Test
     public void testGetDnaRunNamesByList() throws Exception {
 
         Integer experimentId = 1;
@@ -760,7 +793,7 @@ public class DtoCrudRequestNameIdListTest {
 
         GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.DNARUN;
 
-        String[] dnaRunNameExisting = new String[]{"dnarun1", "dnarun2", "dnarun3", "dnarun4"};
+        String[] dnaRunNameExisting = new String[]{"dnarunname_codom_5", "dnarunname_codom_6", "dnarunname_codom_7", "dnarunname_codom_8"};
 
         List<NameIdDTO> nameIdDTOList = new ArrayList<>();
 
@@ -795,12 +828,12 @@ public class DtoCrudRequestNameIdListTest {
      **/
 
 
-    @Ignore
+    @Test
     public void testGetGermplasmNamesByList() throws Exception {
 
         GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.GERMPLASM;
 
-        String[] germplasmExisting = new String[]{"1-RZA-12", "1-RZA-13", "1-RZA-14", "1-RZA-15"};
+        String[] germplasmExisting = new String[]{"germplasm_codom_5", "germplasm_codom_6", "germplasm_codom_7", "germplasm_codom_8"};
 
         List<NameIdDTO> nameIdDTOList = new ArrayList<>();
 

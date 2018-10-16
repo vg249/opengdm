@@ -32,31 +32,6 @@ public class GobiiAdlTest {
     }
 
 
-    private void copyFilesToLocalDir(File sourceDir, File destinationDir) throws Exception {
-
-        if (sourceDir.exists() && sourceDir.isDirectory() && sourceDir.list().length > 0) {
-
-            for (File currentFile : sourceDir.listFiles()) {
-
-                if (currentFile.isDirectory()) {
-
-                    if (!new File(destinationDir.getAbsoluteFile() + "/" + currentFile.getName()).exists()) {
-                        File newDir = new File(destinationDir.getAbsoluteFile() + "/" + currentFile.getName());
-                        newDir.mkdir();
-
-                        copyFilesToLocalDir(currentFile, newDir);
-                    }
-
-                } else {
-
-                    FileUtils.copyFile(currentFile, new File(destinationDir.getAbsoluteFile() + "/" + currentFile.getName()));
-                }
-            }
-
-        }
-
-
-    }
 
     /***
      * Note: there are a couple of issues with this test. First of all, checking
@@ -90,7 +65,7 @@ public class GobiiAdlTest {
 
             File fileFromRepo = new File("src/test/resources/gobiiAdl");
 
-            copyFilesToLocalDir(fileFromRepo, tempDir);
+            adlEncapsulator.copyFilesToLocalDir(fileFromRepo, tempDir);
 
             adlEncapsulator.setInputDirectory(tempDir.getAbsolutePath());
             Assert.assertTrue(adlEncapsulator.getErrorMsg(), adlEncapsulator.executeBatchGobiiADL());
