@@ -1,10 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<GobiiTestData>
+<?xml version="1.0" encoding="UTF-8"?><GobiiTestData>
     <Entities>
         <Organizations DbPKeysurrogate="Name">
             <Organization>
                 <Keys>
-                    <DbPKey></DbPKey>
+                    <DbPKey>35</DbPKey>
                 </Keys>
                 <Properties>
                     <Name>Cornell</Name>
@@ -16,10 +15,10 @@
         <Contacts DbPKeysurrogate="Email">
             <Contact>
                 <Keys>
-                    <DbPKey></DbPKey>
+                    <DbPKey>67</DbPKey>
                     <Fkey entity="Organization" fkproperty="organizationId">
                         <DbPKeySurrogate>Cornell</DbPKeySurrogate>
-                        <DbPKey></DbPKey>
+                        <DbPKey>34</DbPKey>
                     </Fkey>
                 </Keys>
                 <Properties>
@@ -38,14 +37,14 @@
         <Platforms DbPKeysurrogate="PlatformName">
             <Platform>
                 <Keys>
-                    <DbPKey></DbPKey>
+                    <DbPKey>5</DbPKey>
                 </Keys>
                 <Properties>
-                    <PlatformName>KASP</PlatformName>
-                    <PlatformCode>KASP</PlatformCode>
-                    <PlatformDescription>KASP</PlatformDescription>
+                    <PlatformName>Sequencing</PlatformName>
+                    <PlatformCode>Sequencing</PlatformCode>
+                    <PlatformDescription>Sequencing</PlatformDescription>
                     <StatusId>1</StatusId>
-                    <TypeId>KASP</TypeId>
+                    <TypeId>Sequencing</TypeId>
                     <Properties/>
                 </Properties>
             </Platform>
@@ -53,15 +52,15 @@
         <Protocols DbPKeysurrogate="Name">
             <Protocol>
                 <Keys>
-                    <DbPKey></DbPKey>
+                    <DbPKey>36</DbPKey>
                     <Fkey entity="Platform" fkproperty="platformId">
-                        <DbPKeySurrogate>KASP</DbPKeySurrogate>
-                        <DbPKey></DbPKey>
+                        <DbPKeySurrogate>Sequencing</DbPKeySurrogate>
+                        <DbPKey>5</DbPKey>
                     </Fkey>
                 </Keys>
                 <Properties>
-                    <Name>KASP</Name>
-                    <Description>KASP</Description>
+                    <Name>Sequencing</Name>
+                    <Description>Sequencing</Description>
                     <TypeId>1</TypeId>
                     <Status>1</Status>
                     <Props/>
@@ -72,18 +71,18 @@
         <VendorProtocols DbPKeysurrogate="Name">
             <VendorProtocol>
                 <Keys>
-                    <DbPKey></DbPKey>
+                    <DbPKey>4</DbPKey>
                     <Fkey entity="Organization" fkproperty="organizationId">
                         <DbPKeySurrogate>Cornell</DbPKeySurrogate>
-                        <DbPKey></DbPKey>
+                        <DbPKey>35</DbPKey>
                     </Fkey>
                     <Fkey entity="Protocol" fkproperty="protocolId">
-                        <DbPKeySurrogate>KASP</DbPKeySurrogate>
-                        <DbPKey></DbPKey>
+                        <DbPKeySurrogate>Sequencing</DbPKeySurrogate>
+                        <DbPKey>36</DbPKey>
                     </Fkey>
                 </Keys>
                 <Properties>
-                    <Name>Cornell_KASP</Name>
+                    <Name>Cornell_Sequencing</Name>
                     <Status>1</Status>
                 </Properties>
             </VendorProtocol>
@@ -91,13 +90,13 @@
         <Mapsets DbPKeysurrogate="Name">
             <Mapset>
                 <Keys>
-                    <DbPKey></DbPKey>
+                    <DbPKey>5</DbPKey>
                 </Keys>
                 <Properties>
-                    <Name>Test_Genetic</Name>
-                    <Code>Test_Genetic</Code>
-                    <Description>Test_Genetic</Description>
-                    <MapType>genetic</MapType>
+                    <Name>Test_Physical</Name>
+                    <Code>Test_Physical</Code>
+                    <Description>Test_Physical</Description>
+                    <MapType>physical</MapType>
                     <StatusId>1</StatusId>
                     <Properties/>
                 </Properties>
@@ -106,16 +105,16 @@
         <Projects DbPKeysurrogate="ProjectName">
             <Project>
                 <Keys>
-                    <DbPKey></DbPKey>
+                    <DbPKey>6</DbPKey>
                     <Fkey entity="Contact" fkproperty="piContact">
                         <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-                        <DbPKey></DbPKey>
+                        <DbPKey>67</DbPKey>
                     </Fkey>
                 </Keys>
                 <Properties>
-                    <ProjectName>sim_codominant_proj_01</ProjectName>
-                    <ProjectCode>sim_codominant_proj_01</ProjectCode>
-                    <ProjectDescription>sim_codominant_proj_01</ProjectDescription>
+                    <ProjectName>sim_2letternuc_proj_01</ProjectName>
+                    <ProjectCode>sim_2letternuc_proj_01</ProjectCode>
+                    <ProjectDescription>sim_2letternuc_proj_01</ProjectDescription>
                     <ProjectStatus>1</ProjectStatus>
                     <CvProps>
                         <CvProp>
@@ -141,19 +140,19 @@
         <Experiments DbPKeysurrogate="ExperimentName">
             <Experiment>
                 <Keys>
-                    <DbPKey></DbPKey>
+                    <DbPKey>7</DbPKey>
                     <Fkey entity="Project" fkproperty="projectId">
-                        <DbPKeySurrogate>sim_codominant_proj_01</DbPKeySurrogate>
-                        <DbPKey></DbPKey>
+                        <DbPKeySurrogate>sim_2letternuc_proj_01</DbPKeySurrogate>
+                        <DbPKey>6</DbPKey>
                     </Fkey>
                     <Fkey entity="VendorProtocol" fkproperty="vendorProtocolId">
-                        <DbPKeySurrogate>Cornell_KASP</DbPKeySurrogate>
-                        <DbPKey></DbPKey>
+                        <DbPKeySurrogate>Cornell_Sequencing</DbPKeySurrogate>
+                        <DbPKey>4</DbPKey>
                     </Fkey>
                 </Keys>
                 <Properties>
-                    <ExperimentName>sim_codominant_exp_02</ExperimentName>
-                    <ExperimentCode>sim_codominant_exp_02</ExperimentCode>
+                    <ExperimentName>sim_2letternuc_exp_01</ExperimentName>
+                    <ExperimentCode>sim_2letternuc_exp_01</ExperimentCode>
                     <StatusId>1</StatusId>
                 </Properties>
             </Experiment>
@@ -161,7 +160,7 @@
         <Analyses DbPKeysurrogate="AnalysisName">
             <Analysis>
                 <Keys>
-                    <DbPKey></DbPKey>
+                    <DbPKey>4</DbPKey>
                 </Keys>
                 <Properties>
                     <AnalysisName>Test_Calling</AnalysisName>
@@ -181,24 +180,24 @@
         <Datasets DbPKeysurrogate="DatasetName">
             <Dataset>
                 <Keys>
-                    <DbPKey></DbPKey>
+                    <DbPKey>8</DbPKey>
                     <Fkey entity="Experiment" fkproperty="experimentId">
-                        <DbPKeySurrogate>sim_codominant_exp_02</DbPKeySurrogate>
-                        <DbPKey></DbPKey>
+                        <DbPKeySurrogate>sim_2letternuc_exp_01</DbPKeySurrogate>
+                        <DbPKey>7</DbPKey>
                     </Fkey>
                     <Fkey entity="Analysis" fkproperty="callingAnalysisId">
                         <DbPKeySurrogate>Test_Calling</DbPKeySurrogate>
-                        <DbPKey></DbPKey>
+                        <DbPKey>4</DbPKey>
                     </Fkey>
                 </Keys>
                 <Properties>
-                    <DatasetName>sim_codominant_ds_03</DatasetName>
-                    <DataTable>sim_codominant_ds_03_datatable</DataTable>
-                    <DataFile>sim_codominant_ds_03_datafile</DataFile>
-                    <QualityTable>sim_codominant_ds_03_qualitytable</QualityTable>
-                    <QualityFile>sim_codominant_ds_03_qualityfile</QualityFile>
+                    <DatasetName>sim_2letternuc_ds_01</DatasetName>
+                    <DataTable>sim_2letternuc_ds_01_datatable</DataTable>
+                    <DataFile>sim_2letternuc_ds_01_datafile</DataFile>
+                    <QualityTable>sim_2letternuc_ds_01_qualitytable</QualityTable>
+                    <QualityFile>sim_2letternuc_ds_01_qualityfile</QualityFile>
                     <StatusId>1</StatusId>
-                    <TypeId>CO_DOMINANT_NON_NUCLEOTIDE</TypeId>
+                    <TypeId>NUCLEOTIDE_2_LETTER</TypeId>
                     <AnalysesIds/>
                     <Scores/>
                 </Properties>
@@ -208,133 +207,123 @@
 
     <Scenarios>
 
-            <DbFkey entity="Contact">
-                <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
-
+        <Load>
             <Scenario>
-                <Name>sim_codominant_proj_01_marker</Name>
+                <Name>sim_2letternuc_proj_01_marker</Name>
                 <Files>
-                    <Instruction>data_20180614_124604_daw279.json</Instruction>
-                    <Data>Deb_FQ_codom_markermap5-14_21-25.txt</Data>
+                    <Instruction>data_20180614_163622_daw279.json</Instruction>
+                    <Data>Deb_FQ_2ltr_markers_m1-m10.txt</Data>
                 </Files>
                 <PayloadType>markers</PayloadType>
 
                 <DbFkey entity="Contact">
                     <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKey>67</DbPKey>
                 </DbFkey>
 
                 <DbFkey entity="Project">
-                    <DbPKeySurrogate>sim_codominant_proj_01</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKeySurrogate>sim_2letternuc_proj_01</DbPKeySurrogate>
+                    <DbPKey>6</DbPKey>
                 </DbFkey>
 
                 <DbFkey entity="Experiment">
-                    <DbPKeySurrogate>sim_codominant_exp_02</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKeySurrogate>sim_2letternuc_exp_01</DbPKeySurrogate>
+                    <DbPKey>7</DbPKey>
                 </DbFkey>
 
                 <DbFkey entity="Dataset">
-                    <DbPKeySurrogate>sim_codominant_ds_03</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKeySurrogate>sim_2letternuc_ds_01</DbPKeySurrogate>
+                    <DbPKey>8</DbPKey>
                 </DbFkey>
 
                 <DbFkey entity="Mapset">
-                    <DbPKeySurrogate>Test_Genetic</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKeySurrogate>Test_Physical</DbPKeySurrogate>
+                    <DbPKey>5</DbPKey>
                 </DbFkey>
 
                 <DbFkey entity="Platform">
-                    <DbPKeySurrogate>KASP</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKeySurrogate>Sequencing</DbPKeySurrogate>
+                    <DbPKey>5</DbPKey>
                 </DbFkey>
 
-            <DbFkey entity="Contact">
-                <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+            </Scenario>
 
             <Scenario>
-                <Name>sim_codominant_proj_01_sample</Name>
+                <Name>sim_2letternuc_proj_01_sample</Name>
                 <Files>
-                    <Instruction>data_20180614_125648_daw279.json</Instruction>
-                    <Data>Deb_FQ_codom_samples_5-14_21-25.txt</Data>
+                    <Instruction>data_20180614_163714_daw279.json</Instruction>
+                    <Data>Deb_FQ_2ltr_samples1-10.txt</Data>
                 </Files>
                 <PayloadType>samples</PayloadType>
 
                 <DbFkey entity="Contact">
                     <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKey>67</DbPKey>
                 </DbFkey>
 
                 <DbFkey entity="Project">
-                    <DbPKeySurrogate>sim_codominant_proj_01</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKeySurrogate>sim_2letternuc_proj_01</DbPKeySurrogate>
+                    <DbPKey>6</DbPKey>
                 </DbFkey>
 
                 <DbFkey entity="Experiment">
-                    <DbPKeySurrogate>sim_codominant_exp_02</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKeySurrogate>sim_2letternuc_exp_01</DbPKeySurrogate>
+                    <DbPKey>7</DbPKey>
                 </DbFkey>
 
                 <DbFkey entity="Dataset">
-                    <DbPKeySurrogate>sim_codominant_ds_03</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKeySurrogate>sim_2letternuc_ds_01</DbPKeySurrogate>
+                    <DbPKey>8</DbPKey>
                 </DbFkey>
 
                 <DbFkey entity="Mapset">
-                    <DbPKeySurrogate>Test_Genetic</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKeySurrogate>Test_Physical</DbPKeySurrogate>
+                    <DbPKey>5</DbPKey>
                 </DbFkey>
 
                 <DbFkey entity="Platform">
-                    <DbPKeySurrogate>KASP</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKeySurrogate>Sequencing</DbPKeySurrogate>
+                    <DbPKey>5</DbPKey>
                 </DbFkey>
 
-            <DbFkey entity="Contact">
-                <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-                <DbPKey></DbPKey>
-            </DbFkey>
+            </Scenario>
 
             <Scenario>
-                <Name>sim_codominant_proj_01_dataset</Name>
+                <Name>sim_2letternuc_proj_01_dataset</Name>
                 <Files>
-                    <Instruction>data_20180614_131340_daw279.json</Instruction>
-                    <Data>Deb_FQ_codom_alleledata_5-14_21-25.txt</Data>
+                    <Instruction>data_20180614_165023_daw279.json</Instruction>
+                    <Data>Deb_FQ_2ltr_alleles1-10.txt</Data>
                 </Files>
                 <PayloadType>matrix</PayloadType>
 
                 <DbFkey entity="Contact">
                     <DbPKeySurrogate>gobii.dev@gmail.com</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKey>67</DbPKey>
                 </DbFkey>
 
                 <DbFkey entity="Project">
-                    <DbPKeySurrogate>sim_codominant_proj_01</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKeySurrogate>sim_2letternuc_proj_01</DbPKeySurrogate>
+                    <DbPKey>6</DbPKey>
                 </DbFkey>
 
                 <DbFkey entity="Experiment">
-                    <DbPKeySurrogate>sim_codominant_exp_02</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKeySurrogate>sim_2letternuc_exp_01</DbPKeySurrogate>
+                    <DbPKey>7</DbPKey>
                 </DbFkey>
 
                 <DbFkey entity="Dataset">
-                    <DbPKeySurrogate>sim_codominant_ds_03</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKeySurrogate>sim_2letternuc_ds_01</DbPKeySurrogate>
+                    <DbPKey>8</DbPKey>
                 </DbFkey>
 
                 <DbFkey entity="Mapset">
-                    <DbPKeySurrogate>Test_Genetic</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKeySurrogate>Test_Physical</DbPKeySurrogate>
+                    <DbPKey>5</DbPKey>
                 </DbFkey>
 
                 <DbFkey entity="Platform">
-                    <DbPKeySurrogate>KASP</DbPKeySurrogate>
-                    <DbPKey></DbPKey>
+                    <DbPKeySurrogate>Sequencing</DbPKeySurrogate>
+                    <DbPKey>5</DbPKey>
                 </DbFkey>
 
             </Scenario>
@@ -344,7 +333,7 @@
         <Extract>
 
             <Scenario>
-                <Name>sim_codominant_extract_by_dataset</Name>
+                <Name>sim_2letternuc_extract_by_dataset</Name>
                 <ExtractType>WHOLE_DATASET</ExtractType>
                 <FileType>HAPMAP</FileType>
 
@@ -354,14 +343,14 @@
 
                 <Contact>gobii.dev@gmail.com</Contact>
                 <Mapsets>
-                    <Mapset></Mapset>
+                    <Mapset/>
                 </Mapsets>
 
                 <Datasets>
                     <Dataset>
-                        <DatasetName>sim_codominant_ds_03</DatasetName>
-                        <ExperimentName>sim_codominant_exp_02</ExperimentName>
-                        <ProjectName>sim_codominant_proj_01</ProjectName>
+                        <DatasetName>sim_2letternuc_ds_01</DatasetName>
+                        <ExperimentName>sim_2letternuc_exp_01</ExperimentName>
+                        <ProjectName>sim_2letternuc_proj_01</ProjectName>
                         <PIContact>gobii.dev@gmail.com</PIContact>
                     </Dataset>
 

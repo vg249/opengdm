@@ -20,30 +20,29 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by VCalaminos on 9/24/2018.
+ * Created by VCalaminos on 10/10/2018.
  */
-public class DtoMapNameIdFetchLinkageGroup implements DtoMapNameIdFetch {
+public class DtoMapNameIdFetchGermplasm implements DtoMapNameIdFetch {
 
     @Autowired
     private DtoListQueryColl dtoListQueryColl;
 
-    Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdFetchLinkageGroup.class);
+    Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdFetchGermplasm.class);
 
     @Override
-    public GobiiEntityNameType getEntityTypeName() { return GobiiEntityNameType.LINKAGE_GROUP; }
+    public GobiiEntityNameType getEntityTypeName() { return GobiiEntityNameType.GERMPLASM; }
 
-    private List<NameIdDTO> getLinkageGroupNamesByNameList(List<NameIdDTO> nameIdDTOList, String mapsetId) {
+    private List<NameIdDTO> getGermplasmNamesByNameList(List<NameIdDTO> nameIdDTOList) {
 
         try {
 
-            ResultSet resultSet = dtoListQueryColl.getResultSet(ListSqlId.QUERY_ID_LINKAGE_GROUP_NAMES_BYLIST,
+            ResultSet resultSet = dtoListQueryColl.getResultSet(ListSqlId.QUERY_ID_GERMPLASM_BYLIST,
                     new HashMap<String, Object>() {{
-                        put("mapsetId", mapsetId);
-                    }}, new HashMap<String, Object>() {{
+                    }}, new HashMap<String, Object>(){{
                         put("nameArray", nameIdDTOList);
                     }});
 
-            Integer resultSize = DtoMapNameIdUtil.getIdsFromResultSet(nameIdDTOList, resultSet, "name", "linkage_group_id");
+            Integer resultSize = DtoMapNameIdUtil.getIdsFromResultSet(nameIdDTOList, resultSet, "external_code", "germplasm_id");
 
         } catch (Exception e) {
             throw new GobiiDaoException(e);
@@ -61,7 +60,7 @@ public class DtoMapNameIdFetchLinkageGroup implements DtoMapNameIdFetch {
 
         if (GobiiFilterType.NAMES_BY_NAME_LIST == gobiiFilterType) {
 
-            returnVal = this.getLinkageGroupNamesByNameList(dtoMapNameIdParams.getNameIdDTOList(), dtoMapNameIdParams.getFilterValueAsString());
+            returnVal = this.getGermplasmNamesByNameList(dtoMapNameIdParams.getNameIdDTOList());
 
         } else {
 
@@ -70,9 +69,7 @@ public class DtoMapNameIdFetchLinkageGroup implements DtoMapNameIdFetch {
                     "Unsupported filter type for "
                             + this.getEntityTypeName().toString().toLowerCase()
                             + ": " + dtoMapNameIdParams.getGobiiFilterType());
-
         }
-
 
         return returnVal;
 
