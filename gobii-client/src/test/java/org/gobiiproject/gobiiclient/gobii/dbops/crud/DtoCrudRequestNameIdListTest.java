@@ -370,7 +370,7 @@ public class DtoCrudRequestNameIdListTest {
         return notExistingCvDTO;
     }
 
-    @Ignore
+    @Test
     public void testGetCvTermsForGermplasmSpeciesAndNameList() throws Exception {
 
         String cvGroupName = CvGroup.CVGROUP_GERMPLASM_SPECIES.getCvGroupName();
@@ -393,7 +393,7 @@ public class DtoCrudRequestNameIdListTest {
         checkNameIdListResponseAll(responsePayloadEnvelope, nameIdDTOList, nameAbsent);
     }
 
-    @Ignore
+    @Test
     public void testGetCvTermsForGermplasmTypeAndNameList() throws Exception {
 
         String cvGroupName = CvGroup.CVGROUP_GERMPLASM_TYPE.getCvGroupName();
@@ -414,7 +414,7 @@ public class DtoCrudRequestNameIdListTest {
 
     }
 
-    @Ignore
+    @Test
     public void testGetCvTermsForMarkerStrandAndNameList() throws Exception {
 
         String cvGroupName = CvGroup.CVGROUP_MARKER_STRAND.getCvGroupName();
@@ -435,7 +435,7 @@ public class DtoCrudRequestNameIdListTest {
     }
 
 
-    @Ignore
+    @Test
     public void testGetReferencesByNameList() throws Exception {
 
         ReferenceDTO newReferenceDto1 = TestDtoFactory
@@ -529,7 +529,7 @@ public class DtoCrudRequestNameIdListTest {
     }
 
 
-    @Ignore
+    @Test
     public void testWithDuplicateNames() throws Exception {
 
         String cvGroupName = CvGroup.CVGROUP_GERMPLASM_SPECIES.getCvGroupName();
@@ -559,7 +559,7 @@ public class DtoCrudRequestNameIdListTest {
      * This test is ignored since right now we don't have a separate web service to create dna samples that can be used for this test.
      **/
 
-    @Ignore
+    @Test
     public void testGetDnaSampleNamesByList() throws Exception {
 
         // get project ID for loaded dna samples by ADL
@@ -654,7 +654,7 @@ public class DtoCrudRequestNameIdListTest {
 
     }
 
-    @Ignore
+    @Test
     public void testGetMarkerNamesByList() throws Exception {
 
         // create markers for test
@@ -733,7 +733,7 @@ public class DtoCrudRequestNameIdListTest {
 
     }
 
-    @Ignore
+    @Test
     public void testGetPlatformNamesByList() throws Exception {
 
         // create platforms for test
@@ -778,7 +778,7 @@ public class DtoCrudRequestNameIdListTest {
      * This test is ignored since right now we don't have a separate web service to create linkage groups that can be used for this test.
      **/
 
-    @Ignore
+    @Test
     public void testGetLinkageGroupNamesByList() throws Exception {
 
         // get mapset ID for loaded linkage group names by ADL
@@ -847,7 +847,7 @@ public class DtoCrudRequestNameIdListTest {
     /**
      * This test is ignored since right now we don't have a separate web service to create dna run that can be used for this test.
      **/
-    @Ignore
+    @Test
     public void testGetDnaRunNamesByList() throws Exception {
 
         // get experiment ID for loaded dna run names by SQL
@@ -917,7 +917,7 @@ public class DtoCrudRequestNameIdListTest {
      **/
 
 
-    @Ignore
+    @Test
     public void testGetGermplasmNamesByList() throws Exception {
 
         GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.GERMPLASM;
