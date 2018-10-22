@@ -97,7 +97,7 @@ public class DtoCrudRequestNameIdListTest {
         // Convert String Array to List
         List<String> nameIdDTONotExistingList = Arrays.asList(nameIdDTONotExisting);
 
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(responsePayloadEnvelope.getHeader()));
+        Assert.assertFalse(responsePayloadEnvelope.getHeader().getStatus().getStatusMessages().toString(),TestUtils.checkAndPrintHeaderMessages(responsePayloadEnvelope.getHeader()));
 
         List<NameIdDTO> nameIdDTOListResponse = responsePayloadEnvelope.getPayload().getData();
         Assert.assertNotEquals(null, nameIdDTOListResponse);
