@@ -922,7 +922,7 @@ public class DtoCrudRequestNameIdListTest {
 
         GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.GERMPLASM;
 
-        String[] germplasmExisting = new String[]{"germplasmname_Deb_FQ_dom_1", "germplasmname_Deb_FQ_dom_2", "germplasmname_Deb_FQ_dom_3", "germplasmname_Deb_FQ_dom_4"};
+        String[] germplasmExisting = new String[]{"Deb_FQ_dom_xc_1", "Deb_FQ_dom_xc_2", "Deb_FQ_dom_xc_3", "Deb_FQ_dom_xc_4"};
 
         List<NameIdDTO> nameIdDTOList = new ArrayList<>();
 

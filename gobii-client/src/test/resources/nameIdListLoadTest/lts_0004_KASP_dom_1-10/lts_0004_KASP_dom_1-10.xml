@@ -331,37 +331,6 @@
 
         </Load>
 
-        <Extract>
-
-            <Scenario>
-                <Name>sim_dominant_extract_by_dataset</Name>
-                <ExtractType>WHOLE_DATASET</ExtractType>
-                <FileType>HAPMAP</FileType>
-
-                <Files>
-                    <Data>extract_files</Data>
-                </Files>
-
-                <Contact>gobii.dev@gmail.com</Contact>
-                <Mapsets>
-                    <Mapset/>
-                </Mapsets>
-
-                <Datasets>
-                    <Dataset>
-                        <DatasetName>sim_dominant_ds_01</DatasetName>
-                        <ExperimentName>sim_dominant_exp_01</ExperimentName>
-                        <ProjectName>sim_dominant_proj_01</ProjectName>
-                        <PIContact>gobii.dev@gmail.com</PIContact>
-                    </Dataset>
-
-                </Datasets>
-
-
-            </Scenario>
-
-        </Extract>
-
     </Scenarios>
 
 </GobiiTestData>
