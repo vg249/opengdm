@@ -17,7 +17,7 @@
 				<Keys>
 					<DbPKey></DbPKey>
 					<Fkey entity="Organization" fkproperty="organizationId">
-						<DbPKeySurrogate>Cornell</DbPKeySurrogate>
+						<DbPKeySurrogate>sim_Cornell</DbPKeySurrogate>
 						<DbPKey></DbPKey>
 					</Fkey>
 				</Keys>
