@@ -40,11 +40,11 @@
 					<DbPKey>34</DbPKey>
 				</Keys>
 				<Properties>
-					<PlatformName>sim_SSR</PlatformName>
-					<PlatformCode>sim_SSR</PlatformCode>
-					<PlatformDescription>sim_SSR</PlatformDescription>
+					<PlatformName>KASP</PlatformName>
+					<PlatformCode>KASP</PlatformCode>
+					<PlatformDescription>KASP</PlatformDescription>
 					<StatusId>1</StatusId>
-					<TypeId>SSR</TypeId>
+					<TypeId>KASP</TypeId>
 					<Properties/>
 				</Properties>
 			</Platform>
@@ -54,7 +54,7 @@
 				<Keys>
 					<DbPKey>34</DbPKey>
 					<Fkey entity="Platform" fkproperty="platformId">
-						<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
+						<DbPKeySurrogate>KASP</DbPKeySurrogate>
 						<DbPKey>34</DbPKey>
 					</Fkey>
 				</Keys>
@@ -225,7 +225,7 @@
 				</DbFkey>
 
 				<DbFkey entity="Platform">
-					<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
+					<DbPKeySurrogate>KASP</DbPKeySurrogate>
 					<DbPKey>34</DbPKey>
 				</DbFkey>
 
@@ -265,7 +265,7 @@
 				</DbFkey>
 
 				<DbFkey entity="Platform">
-					<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
+					<DbPKeySurrogate>KASP</DbPKeySurrogate>
 					<DbPKey>34</DbPKey>
 				</DbFkey>
 
@@ -305,7 +305,7 @@
 				</DbFkey>
 
 				<DbFkey entity="Platform">
-					<DbPKeySurrogate>sim_SSR</DbPKeySurrogate>
+					<DbPKeySurrogate>KASP</DbPKeySurrogate>
 					<DbPKey>34</DbPKey>
 				</DbFkey>
 
