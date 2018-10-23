@@ -551,17 +551,17 @@
                 </dependencies>
 
 
-                <configuration>
-                    <sourceDirectory>${basedir}/generated/asciidoc</sourceDirectory>
-                    <sourceDocumentName>index.adoc</sourceDocumentName>
-                    <!--<backend>html5</backend>-->
-                    <!--<backend>pdf</backend>-->
-                    <attributes>
-                        <toc>left</toc>
-                        <!-- define {generated} variable in index.adoc -->
-                        <generated>${basedir}/generated/asciidoc</generated>
-                    </attributes>
-                </configuration>
+                <!--<configuration>-->
+                    <!--<sourceDirectory>${basedir}/generated/asciidoc</sourceDirectory>-->
+                    <!--<sourceDocumentName>index.adoc</sourceDocumentName>-->
+                    <!--&lt;!&ndash;<backend>html5</backend>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<backend>pdf</backend>&ndash;&gt;-->
+                    <!--<attributes>-->
+                        <!--<toc>left</toc>-->
+                        <!--&lt;!&ndash; define {generated} variable in index.adoc &ndash;&gt;-->
+                        <!--<generated>${basedir}/generated/asciidoc</generated>-->
+                    <!--</attributes>-->
+                <!--</configuration>-->
 
                 <executions>
                     <execution>
@@ -579,14 +579,25 @@
                                                      https://github.com/asciidoctor/asciidoctorj-pdf/issues/3
                                                      https://github.com/jneen/rouge/issues/661
                             -->
-                            <sourceHighlighter>coderay</sourceHighlighter>
+                            <sourceDirectory>${basedir}/generated/asciidoc</sourceDirectory>
+                            <sourceDocumentName>index.adoc</sourceDocumentName>
+                            <outputDirectory>${basedir}/generated/pdf</outputDirectory>
+                            <!--<backend>html5</backend>-->
+                            <!--<backend>pdf</backend>-->
                             <attributes>
-                                <icons>font</icons>
-                                <pagenums/>
-                                <toc/>
-                                <idprefix/>
-                                <idseparator>-</idseparator>
+                                <toc>left</toc>
+                                <!-- define {generated} variable in index.adoc -->
+                                <generated>${basedir}/generated/asciidoc</generated>
                             </attributes>
+
+                            <!--<sourceHighlighter>coderay</sourceHighlighter>-->
+                            <!--<attributes>-->
+                                <!--<icons>font</icons>-->
+                                <!--<pagenums/>-->
+                                <!--<toc/>-->
+                                <!--<idprefix/>-->
+                                <!--<idseparator>-</idseparator>-->
+                            <!--</attributes>-->
                         </configuration>
                     </execution>
 
@@ -598,7 +609,18 @@
                         </goals>
                         <configuration>
                             <backend>html5</backend>
-                            <sourceHighlighter>coderay</sourceHighlighter>
+                            <sourceDirectory>${basedir}/generated/asciidoc</sourceDirectory>
+                            <sourceDocumentName>index.adoc</sourceDocumentName>
+                            <outputDirectory>${basedir}/generated/html</outputDirectory>
+                            <!--<backend>html5</backend>-->
+                            <!--<backend>pdf</backend>-->
+                            <attributes>
+                                <toc>left</toc>
+                                <!-- define {generated} variable in index.adoc -->
+                                <generated>${basedir}/generated/asciidoc</generated>
+                            </attributes>
+
+                            <!--<sourceHighlighter>coderay</sourceHighlighter>-->
                             <!--
                             Scenarios for linking vs embedding assets:
                             Link to both stylesheets and images::
@@ -638,16 +660,16 @@
                               </attributes>
                             IMPORTANT: When you enable image embedding, you must qualify the path the the imagesdir, as shown above.
                             -->
-                            <attributes>
-                                <imagesdir>./images</imagesdir>
-                                <toc>left</toc>
-                                <icons>font</icons>
-                                <sectanchors>true</sectanchors>
-                                <!-- set the idprefix to blank -->
-                                <idprefix/>
-                                <idseparator>-</idseparator>
-                                <docinfo1>true</docinfo1>
-                            </attributes>
+                            <!--<attributes>-->
+                                <!--<imagesdir>./images</imagesdir>-->
+                                <!--<toc>left</toc>-->
+                                <!--<icons>font</icons>-->
+                                <!--<sectanchors>true</sectanchors>-->
+                                <!--&lt;!&ndash; set the idprefix to blank &ndash;&gt;-->
+                                <!--<idprefix/>-->
+                                <!--<idseparator>-</idseparator>-->
+                                <!--<docinfo1>true</docinfo1>-->
+                            <!--</attributes>-->
                         </configuration>
                     </execution>
 
