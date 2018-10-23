@@ -6,7 +6,9 @@ import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
+import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
+import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestAnalysisTest;
 import org.gobiiproject.gobiiclient.gobii.dbops.readonly.DtoRequestNameIdListTest;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
@@ -39,6 +41,12 @@ public class DTORestProfileTest {
     public void changePostMax() throws Exception {
 
         // We know that the /names/analysis profile has been defined
+
+        // create arbitrary entities
+
+        (new GlobalPkColl<DtoCrudRequestAnalysisTest>()).getPkVals(DtoCrudRequestAnalysisTest.class, GobiiEntityNameType.ANALYSIS, 10);
+
+
         PayloadEnvelope<NameIdDTO> analysisNameIdResponseEnvelopePreUpdate = DtoRequestNameIdListTest
                 .testNameRetrieval(GobiiEntityNameType.ANALYSIS,
                         GobiiFilterType.NONE,
