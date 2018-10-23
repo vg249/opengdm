@@ -518,6 +518,11 @@
             </plugin>
 
             <!-- asciidoctor-maven-plugin should generate html from asciidoc -->
+            <!--
+            mvn clean swagger2markup:convertSwagger2markup asciidoctor:process-asciidoc
+            process-asciidoc hits the primary configuration
+            asciidoctor:generate-resources -->
+
             <plugin>
                 <groupId>org.asciidoctor</groupId>
                 <artifactId>asciidoctor-maven-plugin</artifactId>
@@ -549,14 +554,105 @@
                 <configuration>
                     <sourceDirectory>${basedir}/generated/asciidoc</sourceDirectory>
                     <sourceDocumentName>index.adoc</sourceDocumentName>
-                    <backend>html5</backend>
-                    <backend>pdf</backend>
+                    <!--<backend>html5</backend>-->
+                    <!--<backend>pdf</backend>-->
                     <attributes>
                         <toc>left</toc>
                         <!-- define {generated} variable in index.adoc -->
                         <generated>${basedir}/generated/asciidoc</generated>
                     </attributes>
                 </configuration>
+
+                <executions>
+                    <execution>
+                        <id>generate-pdf-doc</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <backend>pdf</backend>
+                            <!-- Since 1.5.0-alpha.9 PDF back-end can use 'rouge' as well as 'coderay'
+                            for source highlighting -->
+                            <!-- Due to a known issue on windows, it is recommended to use 'coderay' until an new version of 'rouge' is released.
+                                    see discussions: https://github.com/asciidoctor/asciidoctor-maven-examples/pull/58
+                                                     https://github.com/asciidoctor/asciidoctorj-pdf/issues/3
+                                                     https://github.com/jneen/rouge/issues/661
+                            -->
+                            <sourceHighlighter>coderay</sourceHighlighter>
+                            <attributes>
+                                <icons>font</icons>
+                                <pagenums/>
+                                <toc/>
+                                <idprefix/>
+                                <idseparator>-</idseparator>
+                            </attributes>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>asciidoc-to-html</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <backend>html5</backend>
+                            <sourceHighlighter>coderay</sourceHighlighter>
+                            <!--
+                            Scenarios for linking vs embedding assets:
+                            Link to both stylesheets and images::
+                              - don't set embedAssets option
+                              - set linkcss attribute to true
+                              - set imagesdir attribute to path relative to AsciiDoc source file
+                              <attributes>
+                                  <linkcss>true</linkcss>
+                                  <imagesdir>./images</imagesdir>
+                              </attributes>
+                            Embed stylesheets and images::
+
+                              - set embedAssets option to true
+                              - don't set linkcss attribute
+                              - set imagesdir attribute to path relative to project root
+                              <embedAssets>true</embedAssets>
+                              <attributes>
+                                  <imagesdir>src/docs/asciidoc/images</imagesdir>
+                              </attributes>
+                            Link to stylesheets but embed images::
+
+                              - set embedAssets option to true
+                              - set linkcss attribute to true
+                              - set imagesdir attribute to path relative to project root
+                              <embedAssets>true</embedAssets>
+                              <attributes>
+                                  <linkcss>true</linkcss>
+                                  <imagesdir>src/docs/asciidoc/images</imagesdir>
+                              </attributes>
+                            Embed stylesheets but link images (default)::
+
+                              - don't set embedAssets option
+                              - don't set linkcss attribute
+                              - set imagesdir attribute to path relative to AsciiDoc source file
+                              <attributes>
+                                  <imagesdir>./images</imagesdir>
+                              </attributes>
+                            IMPORTANT: When you enable image embedding, you must qualify the path the the imagesdir, as shown above.
+                            -->
+                            <attributes>
+                                <imagesdir>./images</imagesdir>
+                                <toc>left</toc>
+                                <icons>font</icons>
+                                <sectanchors>true</sectanchors>
+                                <!-- set the idprefix to blank -->
+                                <idprefix/>
+                                <idseparator>-</idseparator>
+                                <docinfo1>true</docinfo1>
+                            </attributes>
+                        </configuration>
+                    </execution>
+
+                </executions>
+
             </plugin>
 
 
