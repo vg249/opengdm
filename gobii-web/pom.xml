@@ -29,6 +29,8 @@
 
         <!-- java-script related -->
         <grunt-plugin-version>1.5.1</grunt-plugin-version>
+        <doc-location-source>${project.basedir}/src/main/resources/docs/source</doc-location-source>
+        <doc-location-generated>${project.basedir}/src/main/resources/docs/generated</doc-location-generated>
 
     </properties>
 
@@ -333,6 +335,27 @@
                 <version>2.6</version>
                 <executions>
                     <execution>
+                        <id>prepare-package-asciidoc</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <!-- Copy all asciidoc SOURCE files to where the plugin expects them to be -->
+                            <outputDirectory>${doc-location-generated}/asciidoc</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${doc-location-source}/asciidoc</directory>
+                                    <includes>
+                                        <include>index.adoc</include>
+                                    </includes>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+
+                    <execution>
                         <id>prepare-package-nodemodules</id>
                         <phase>prepare-package</phase>
                         <goals>
@@ -349,7 +372,7 @@
                                     <directory>${project.basedir}/node_modules</directory>
                                     <includes>
                                         <!-- *************************************************-->
-                                        <!-- deployed javascript libraries to support angular2-->
+                                        <!-- packageed javascript libraries to support angular2-->
                                         <!-- ***** GROUP 1: supporting libraries -->
                                         <include>es6-shim/es6-shim.min.js</include>
                                         <include>systemjs/dist/system-polyfills.js</include>
@@ -472,7 +495,8 @@
                             1) classpath e.g: "classpath:/markdown.hbs", "classpath:/templates/hello.html"
                             2) file e.g: "${basedir}/src/main/resources/markdown.hbs",
                                 "${basedir}/src/main/resources/template/hello.html" -->
-                            <swaggerDirectory>${basedir}/generated/swagger-ui</swaggerDirectory>
+                            <swaggerDirectory>${doc-location-generated}/swagger</swaggerDirectory>
+                            <!--<swaggerDirectory>${basedir}/generated/swagger-ui</swaggerDirectory>-->
                             <!--<templatePath>${basedir}/src/test/resources/strapdown.html.hbs</templatePath>-->
                             <!--<outputPath>${basedir}/generated/document.html</outputPath>-->
                             <!--<swaggerApiReader>com.wordnik.swagger.jaxrs.reader.DefaultJaxrsApiReader</swaggerApiReader>-->
@@ -498,7 +522,7 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <phase>compile</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>generate</goal>
                         </goals>
@@ -512,9 +536,18 @@
                 <artifactId>swagger2markup-maven-plugin</artifactId>
                 <version>1.0.0</version>
                 <configuration>
-                    <swaggerInput>${basedir}/generated/swagger-ui/swagger.yaml</swaggerInput>
-                    <outputDir>${basedir}/generated/asciidoc</outputDir>
+                    <swaggerInput>${doc-location-generated}/swagger/swagger.yaml</swaggerInput>
+                    <outputDir>${doc-location-generated}/asciidoc</outputDir>
                 </configuration>
+
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>convertSwagger2markup</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <!-- asciidoctor-maven-plugin should generate html from asciidoc -->
@@ -552,21 +585,21 @@
 
 
                 <!--<configuration>-->
-                    <!--<sourceDirectory>${basedir}/generated/asciidoc</sourceDirectory>-->
-                    <!--<sourceDocumentName>index.adoc</sourceDocumentName>-->
-                    <!--&lt;!&ndash;<backend>html5</backend>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<backend>pdf</backend>&ndash;&gt;-->
-                    <!--<attributes>-->
-                        <!--<toc>left</toc>-->
-                        <!--&lt;!&ndash; define {generated} variable in index.adoc &ndash;&gt;-->
-                        <!--<generated>${basedir}/generated/asciidoc</generated>-->
-                    <!--</attributes>-->
+                <!--<sourceDirectory>${basedir}/generated/asciidoc</sourceDirectory>-->
+                <!--<sourceDocumentName>index.adoc</sourceDocumentName>-->
+                <!--&lt;!&ndash;<backend>html5</backend>&ndash;&gt;-->
+                <!--&lt;!&ndash;<backend>pdf</backend>&ndash;&gt;-->
+                <!--<attributes>-->
+                <!--<toc>left</toc>-->
+                <!--&lt;!&ndash; define {generated} variable in index.adoc &ndash;&gt;-->
+                <!--<generated>${basedir}/generated/asciidoc</generated>-->
+                <!--</attributes>-->
                 <!--</configuration>-->
 
                 <executions>
                     <execution>
                         <id>generate-pdf-doc</id>
-                        <phase>generate-resources</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>process-asciidoc</goal>
                         </goals>
@@ -579,45 +612,45 @@
                                                      https://github.com/asciidoctor/asciidoctorj-pdf/issues/3
                                                      https://github.com/jneen/rouge/issues/661
                             -->
-                            <sourceDirectory>${basedir}/generated/asciidoc</sourceDirectory>
+                            <sourceDirectory>${doc-location-generated}/asciidoc</sourceDirectory>
                             <sourceDocumentName>index.adoc</sourceDocumentName>
-                            <outputDirectory>${basedir}/generated/pdf</outputDirectory>
+                            <outputDirectory>${doc-location-generated}/pdf</outputDirectory>
                             <!--<backend>html5</backend>-->
                             <!--<backend>pdf</backend>-->
                             <attributes>
                                 <toc>left</toc>
                                 <!-- define {generated} variable in index.adoc -->
-                                <generated>${basedir}/generated/asciidoc</generated>
+                                <generated>${doc-location-generated}/asciidoc</generated>
                             </attributes>
 
                             <!--<sourceHighlighter>coderay</sourceHighlighter>-->
                             <!--<attributes>-->
-                                <!--<icons>font</icons>-->
-                                <!--<pagenums/>-->
-                                <!--<toc/>-->
-                                <!--<idprefix/>-->
-                                <!--<idseparator>-</idseparator>-->
+                            <!--<icons>font</icons>-->
+                            <!--<pagenums/>-->
+                            <!--<toc/>-->
+                            <!--<idprefix/>-->
+                            <!--<idseparator>-</idseparator>-->
                             <!--</attributes>-->
                         </configuration>
                     </execution>
 
                     <execution>
                         <id>asciidoc-to-html</id>
-                        <phase>generate-resources</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>process-asciidoc</goal>
                         </goals>
                         <configuration>
                             <backend>html5</backend>
-                            <sourceDirectory>${basedir}/generated/asciidoc</sourceDirectory>
+                            <sourceDirectory>${doc-location-generated}/asciidoc</sourceDirectory>
                             <sourceDocumentName>index.adoc</sourceDocumentName>
-                            <outputDirectory>${basedir}/generated/html</outputDirectory>
+                            <outputDirectory>${doc-location-generated}/html</outputDirectory>
                             <!--<backend>html5</backend>-->
                             <!--<backend>pdf</backend>-->
                             <attributes>
                                 <toc>left</toc>
                                 <!-- define {generated} variable in index.adoc -->
-                                <generated>${basedir}/generated/asciidoc</generated>
+                                <generated>${doc-location-generated}/asciidoc</generated>
                             </attributes>
 
                             <!--<sourceHighlighter>coderay</sourceHighlighter>-->
@@ -661,14 +694,14 @@
                             IMPORTANT: When you enable image embedding, you must qualify the path the the imagesdir, as shown above.
                             -->
                             <!--<attributes>-->
-                                <!--<imagesdir>./images</imagesdir>-->
-                                <!--<toc>left</toc>-->
-                                <!--<icons>font</icons>-->
-                                <!--<sectanchors>true</sectanchors>-->
-                                <!--&lt;!&ndash; set the idprefix to blank &ndash;&gt;-->
-                                <!--<idprefix/>-->
-                                <!--<idseparator>-</idseparator>-->
-                                <!--<docinfo1>true</docinfo1>-->
+                            <!--<imagesdir>./images</imagesdir>-->
+                            <!--<toc>left</toc>-->
+                            <!--<icons>font</icons>-->
+                            <!--<sectanchors>true</sectanchors>-->
+                            <!--&lt;!&ndash; set the idprefix to blank &ndash;&gt;-->
+                            <!--<idprefix/>-->
+                            <!--<idseparator>-</idseparator>-->
+                            <!--<docinfo1>true</docinfo1>-->
                             <!--</attributes>-->
                         </configuration>
                     </execution>
