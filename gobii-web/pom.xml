@@ -410,6 +410,7 @@
                             <locations>
                                 org.gobiiproject.gobiiweb.controllers
                             </locations>
+                           <outputFormats>json,yaml</outputFormats>
                             <schemes>http, https</schemes>
                             <host>localhost:8081</host>
                             <basePath>/api</basePath>
