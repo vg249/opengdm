@@ -32,6 +32,13 @@
 
     </properties>
 
+    <repositories>
+        <repository>
+            <id>spring.repo</id>
+            <name>spring repo</name>
+            <url>http://repo.spring.io/plugins-release/</url>
+        </repository>
+    </repositories>
 
     <dependencies>
 
@@ -72,12 +79,24 @@
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.github.kongchen/swagger-maven-plugin -->
+        <!-- https://mvnrepository.com/artifact/ch.netzwerg/paleo-core -->
+        <!--<dependency>-->
+            <!--<groupId>ch.netzwerg</groupId>-->
+            <!--<artifactId>paleo-core</artifactId>-->
+            <!--<version>0.11.0</version>-->
+        <!--</dependency>-->
+
         <dependency>
             <groupId>com.github.kongchen</groupId>
             <artifactId>swagger-maven-plugin</artifactId>
             <version>3.1.7</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.github.swagger2markup</groupId>
+            <artifactId>swagger2markup</artifactId>
+            <version>1.0.0</version>
+        </dependency>
         <!-- Spring WEB -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -399,6 +418,8 @@
                 </executions>
             </plugin>
 
+
+            <!-- swagger-maven-plugin generates yaml from swagger annotations in controller  -->
             <plugin>
                 <groupId>com.github.kongchen</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
@@ -481,6 +502,34 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin> <!-- swagger-maven-->
+
+            <!-- swagger2markup-maven-plugin generates asciidoc from yaml  -->
+            <plugin>
+                <groupId>io.github.swagger2markup</groupId>
+                <artifactId>swagger2markup-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <configuration>
+                    <swaggerInput>${basedir}/generated/swagger-ui/swagger.yaml</swaggerInput>
+                    <outputDir>${basedir}/generated/asciidoc</outputDir>
+                </configuration>
+            </plugin>
+
+            <!-- asciidoctor-maven-plugin should generate html from asciidoc -->
+            <plugin>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctor-maven-plugin</artifactId>
+                <version>1.5.3</version>
+                <configuration>
+                    <sourceDirectory>${basedir}/generated/asciidoc</sourceDirectory>
+                    <sourceDocumentName>index.adoc</sourceDocumentName>
+                    <backend>html5</backend>
+                    <attributes>
+                        <toc>left</toc>
+                        <!-- define {generated} variable in index.adoc -->
+                        <generated>${basedir}/generated/asciidoc</generated>
+                    </attributes>
+                </configuration>
             </plugin>
 
 
