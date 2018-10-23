@@ -81,9 +81,9 @@
         <!-- https://mvnrepository.com/artifact/com.github.kongchen/swagger-maven-plugin -->
         <!-- https://mvnrepository.com/artifact/ch.netzwerg/paleo-core -->
         <!--<dependency>-->
-            <!--<groupId>ch.netzwerg</groupId>-->
-            <!--<artifactId>paleo-core</artifactId>-->
-            <!--<version>0.11.0</version>-->
+        <!--<groupId>ch.netzwerg</groupId>-->
+        <!--<artifactId>paleo-core</artifactId>-->
+        <!--<version>0.11.0</version>-->
         <!--</dependency>-->
 
         <dependency>
@@ -97,7 +97,9 @@
             <artifactId>swagger2markup</artifactId>
             <version>1.0.0</version>
         </dependency>
-        <!-- Spring WEB -->
+
+
+        <!--Spring WEB-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
@@ -431,7 +433,7 @@
                             <locations>
                                 org.gobiiproject.gobiiweb.controllers
                             </locations>
-                           <outputFormats>json,yaml</outputFormats>
+                            <outputFormats>json,yaml</outputFormats>
                             <schemes>http, https</schemes>
                             <host>localhost:8081</host>
                             <basePath>/api</basePath>
@@ -520,10 +522,35 @@
                 <groupId>org.asciidoctor</groupId>
                 <artifactId>asciidoctor-maven-plugin</artifactId>
                 <version>1.5.3</version>
+
+                <!-- https://mvnrepository.com/artifact/org.jruby/jruby-complete -->
+
+                <dependencies>
+                    <dependency>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoctorj-pdf</artifactId>
+                        <version>1.5.0-alpha.16</version>
+                    </dependency>
+                    <!-- Comment this section to use the default jruby artifact provided by the plugin -->
+                    <dependency>
+                        <groupId>org.jruby</groupId>
+                        <artifactId>jruby-complete</artifactId>
+                        <version>9.1.17.0</version>
+                    </dependency>
+                    <!-- Comment this section to use the default AsciidoctorJ artifact provided by the plugin -->
+                    <dependency>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoctorj</artifactId>
+                        <version>1.5.7</version>
+                    </dependency>
+                </dependencies>
+
+
                 <configuration>
                     <sourceDirectory>${basedir}/generated/asciidoc</sourceDirectory>
                     <sourceDocumentName>index.adoc</sourceDocumentName>
                     <backend>html5</backend>
+                    <backend>pdf</backend>
                     <attributes>
                         <toc>left</toc>
                         <!-- define {generated} variable in index.adoc -->
