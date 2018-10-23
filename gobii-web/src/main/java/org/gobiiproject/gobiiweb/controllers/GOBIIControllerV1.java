@@ -6,6 +6,8 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.math.NumberUtils;
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
@@ -69,6 +71,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -87,8 +90,9 @@ import java.util.Optional;
  * Created by MrPhil on 7/6/2015.
  */
 @Scope(value = "request")
-@Controller
+@RestController
 @RequestMapping(GobiiControllerType.SERVICE_PATH_GOBII)
+@Api
 public class GOBIIControllerV1 {
 
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(GOBIIControllerV1.class);
@@ -203,6 +207,7 @@ public class GOBIIControllerV1 {
     }//getPingResponse()
 
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
+    @ApiOperation(value="authorization")
     @ResponseBody
     public String authenticate(@RequestBody String noContentExpected,
                                HttpServletRequest request,
