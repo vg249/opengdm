@@ -574,7 +574,8 @@
             </plugin> <!-- swagger-maven-->
 
 
-            <!-- usage guide: https://github.com/beiliubei/maven-replacer-plugin/wiki/Usage-Guide-->
+            <!-- usage guide: https://github.com/beiliubei/maven-replacer-plugin/wiki/Usage-Guide
+            use tokenValueMap to specify a file containing the replacements -->
             <plugin>
                 <groupId>com.google.code.maven-replacer-plugin</groupId>
                 <artifactId>replacer</artifactId>
