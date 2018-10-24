@@ -7,7 +7,11 @@ package org.gobiiproject.gobiiweb.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.apache.commons.lang.math.NumberUtils;
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
@@ -64,7 +68,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -206,8 +209,12 @@ public class GOBIIControllerV1 {
 
     }//getPingResponse()
 
+    @ApiOperation(value = "/auth",
+            notes = "The user credentials are specified in the request headers; " +
+                    "the response and the response headers incldue the token, which can " +
+                    "which the client will include in the request headers for subsequent " +
+                    "requests. ")
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
-    @ApiOperation(value="authorization")
     @ResponseBody
     public String authenticate(@RequestBody String noContentExpected,
                                HttpServletRequest request,
@@ -240,6 +247,8 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(value = "/configsettings",
+            notes = "Provides generic configuration information about the GOBii instance")
     @RequestMapping(value = "/configsettings", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ConfigSettingsDTO> getConfigSettings(
@@ -285,9 +294,22 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** ANALYSIS METHODS
     // *********************************************
+    @ApiOperation(value = "/analyses",
+            notes = "Creates an analysis entity")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "analysisPostEnvelope",
+                    required = true,
+                    dataTypeClass = AnalysisDTO.class)
+    })
+    @ApiResponses(
+            @ApiResponse(code = 200,
+                    message = "ok",
+                    response = AnalysisDTO.class,
+                    responseContainer = "PayloadEnvelope<AnalysisDTO>")
+    )
     @RequestMapping(value = "/analyses", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<AnalysisDTO> createAnalysis(@RequestBody PayloadEnvelope<AnalysisDTO> payloadEnvelope,
+    public PayloadEnvelope<AnalysisDTO> createAnalysis(@RequestBody() PayloadEnvelope<AnalysisDTO> analysisPostEnvelope,
                                                        HttpServletRequest request,
                                                        HttpServletResponse response) {
 
@@ -296,7 +318,7 @@ public class GOBIIControllerV1 {
         try {
 
             PayloadReader<AnalysisDTO> payloadReader = new PayloadReader<>(AnalysisDTO.class);
-            AnalysisDTO analysisDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+            AnalysisDTO analysisDTOToCreate = payloadReader.extractSingleItem(analysisPostEnvelope);
 
             AnalysisDTO analysisDTONew = analysisService.createAnalysis(analysisDTOToCreate);
 
@@ -2465,12 +2487,12 @@ public class GOBIIControllerV1 {
     // *************************** MAPSET METHODS
     // *********************************************
     /*
-    * NOTE: this implementation is incorrect: it is using getAllmapsetNames;
-    * There needs to be a getAllMapset() method added. For now, the funcitonality
-    * Provided by the LoadControlle remains in place and the client side tets have
-    * not been modified. This funcitonality will have to be built out later.
-    * Also note that the resource name /maps is correct but does not match
-    * what is being used in ResourceBuilder on the client side*/
+     * NOTE: this implementation is incorrect: it is using getAllmapsetNames;
+     * There needs to be a getAllMapset() method added. For now, the funcitonality
+     * Provided by the LoadControlle remains in place and the client side tets have
+     * not been modified. This funcitonality will have to be built out later.
+     * Also note that the resource name /maps is correct but does not match
+     * what is being used in ResourceBuilder on the client side*/
     @RequestMapping(value = "/maps", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<MapsetDTO> getMaps(HttpServletRequest request,

@@ -90,6 +90,7 @@
         <!--<version>0.11.0</version>-->
         <!--</dependency>-->
 
+
         <dependency>
             <groupId>com.github.kongchen</groupId>
             <artifactId>swagger-maven-plugin</artifactId>
@@ -486,7 +487,6 @@
                 </executions>
             </plugin>
 
-
             <!-- swagger-maven-plugin generates yaml from swagger annotations in controller  -->
             <plugin>
                 <groupId>com.github.kongchen</groupId>
@@ -573,6 +573,37 @@
                 </executions>
             </plugin> <!-- swagger-maven-->
 
+
+            <!-- usage guide: https://github.com/beiliubei/maven-replacer-plugin/wiki/Usage-Guide-->
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <ignoreErrors>false</ignoreErrors>
+                    <regex>false</regex>
+                    <filesToInclude>
+                        ${doc-location-generated}/swagger/swagger.yaml,
+                        ${doc-location-generated}/swagger/swagger.json
+                    </filesToInclude>
+                    <replacements>
+                        <replacement>
+                            <token>PayloadEnvelopeAnalysisDTO</token>
+                            <value>AnalysisDTO</value>
+                        </replacement>
+                    </replacements>
+                </configuration>
+            </plugin>
+
+
             <!-- swagger2markup-maven-plugin generates asciidoc from yaml  -->
             <plugin>
                 <groupId>io.github.swagger2markup</groupId>
@@ -581,7 +612,7 @@
                 <configuration>
                     <swaggerInput>${doc-location-generated}/swagger/swagger.yaml</swaggerInput>
                     <outputDir>${doc-location-generated}/asciidoc</outputDir>
-                </configuration>
+            </configuration>
 
                 <executions>
                     <execution>

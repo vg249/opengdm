@@ -1,2 +1,229 @@
 
+[[_definitions]]
+== Definitions
+
+[[_analysisdto]]
+=== AnalysisDTO
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|*header* +
+_optional_||<<_header,Header>>
+|*payload* +
+_optional_||<<_payloadanalysisdto,PayloadAnalysisDTO>>
+|===
+
+
+[[_configsettingsdto]]
+=== ConfigSettingsDTO
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|*allowedProcessTypes* +
+_optional_||< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|*id* +
+_optional_||integer(int32)
+|*maxUploadSizeMbytes* +
+_optional_||integer(int32)
+|*serverCapabilities* +
+_optional_||< string, boolean > map
+|*serverConfigs* +
+_optional_||< string, <<_serverconfig,ServerConfig>> > map
+|===
+
+
+[[_entitypropertydto]]
+=== EntityPropertyDTO
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|*entityIdId* +
+_optional_||integer(int32)
+|*propertyId* +
+_optional_||integer(int32)
+|*propertyName* +
+_optional_||string
+|*propertyValue* +
+_optional_||string
+|===
+
+
+[[_header]]
+=== Header
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|*cropType* +
+_optional_||string
+|*dtoHeaderAuth* +
+_optional_||<<_headerauth,HeaderAuth>>
+|*gobiiProcessType* +
+_optional_||enum (CREATE, READ, UPDATE, DELETE, NONE)
+|*gobiiVersion* +
+_optional_||string
+|*pagination* +
+_optional_||<<_pagination,Pagination>>
+|*status* +
+_optional_||<<_status,Status>>
+|===
+
+
+[[_headerauth]]
+=== HeaderAuth
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|*gobiiCropType* +
+_optional_||string
+|*password* +
+_optional_||string
+|*token* +
+_optional_||string
+|*userName* +
+_optional_||string
+|===
+
+
+[[_headerstatusmessage]]
+=== HeaderStatusMessage
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|*gobiiStatusLevel* +
+_optional_||enum (ERROR, VALIDATION, WARNING, INFO, OK)
+|*gobiiValidationStatusType* +
+_optional_||enum (NONE, UNKNOWN, VALIDATION_COMPOUND_UNIQUE, VALIDATION_NOT_UNIQUE, NONEXISTENT_FK_ENTITY, BAD_REQUEST, MISSING_REQUIRED_VALUE, ENTITY_DOES_NOT_EXIST, ENTITY_ALREADY_EXISTS, UNKNOWN_ENUM_VALUE)
+|*message* +
+_optional_||string
+|===
+
+
+[[_link]]
+=== Link
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|*description* +
+_optional_||string
+|*href* +
+_optional_||string
+|*methods* +
+_optional_||< enum (GET, POST, PUT, PATCH, DELETE, OPTIONS) > array
+|===
+
+
+[[_linkcollection]]
+=== LinkCollection
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|*exploreLinksPerDataItem* +
+_optional_||< < <<_link,Link>> > array > array
+|*linksPerDataItem* +
+_optional_||< <<_link,Link>> > array
+|===
+
+
+[[_pagination]]
+=== Pagination
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|*currentPage* +
+_optional_||integer(int32)
+|*pageSize* +
+_optional_||integer(int32)
+|*pagedQueryId* +
+_optional_||string
+|*queryTime* +
+_optional_||string(date-time)
+|*totalPages* +
+_optional_||integer(int32)
+|===
+
+
+[[_payloadanalysisdto]]
+=== PayloadAnalysisDTO
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|*data* +
+_optional_||< <<_analysisdto,AnalysisDTO>> > array
+|*linkCollection* +
+_optional_||<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_payloadconfigsettingsdto]]
+=== PayloadConfigSettingsDTO
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|*data* +
+_optional_||< <<_configsettingsdto,ConfigSettingsDTO>> > array
+|*linkCollection* +
+_optional_||<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_payloadenvelopeconfigsettingsdto]]
+=== PayloadEnvelopeConfigSettingsDTO
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|*header* +
+_optional_||<<_header,Header>>
+|*payload* +
+_optional_||<<_payloadconfigsettingsdto,PayloadConfigSettingsDTO>>
+|===
+
+
+[[_serverconfig]]
+=== ServerConfig
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|*confidentialityNotice* +
+_optional_||string
+|*contextRoot* +
+_optional_||string
+|*domain* +
+_optional_||string
+|*fileLocations* +
+_optional_||< string, string > map
+|*gobiiCropType* +
+_optional_||string
+|*port* +
+_optional_||integer(int32)
+|===
+
+
+[[_status]]
+=== Status
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|*statusMessages* +
+_optional_||< <<_headerstatusmessage,HeaderStatusMessage>> > array
+|*statusMessagesByCode* +
+_optional_||< string, string > map
+|*succeeded* +
+_optional_|*Default* : `false`|boolean
+|===
+
+
 
