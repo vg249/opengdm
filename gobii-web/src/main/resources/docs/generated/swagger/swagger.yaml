@@ -21,12 +21,12 @@ paths:
       parameters:
       - in: "body"
         name: "body"
-        required: false
+        required: true
         schema:
           $ref: "#/definitions/AnalysisDTO"
       responses:
         200:
-          description: "ok"
+          description: "successful operation"
           schema:
             $ref: "#/definitions/AnalysisDTO"
   /gobii/v1/auth:

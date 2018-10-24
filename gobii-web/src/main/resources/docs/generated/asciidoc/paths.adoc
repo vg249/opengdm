@@ -19,7 +19,7 @@ Creates an analysis entity
 |===
 |Type|Name|Description|Schema|Default
 |*Body*|*body* +
-_optional_||<<_analysisdto,AnalysisDTO>>|
+_required_||<<_analysisdto,AnalysisDTO>>|
 |===
 
 
@@ -28,7 +28,7 @@ _optional_||<<_analysisdto,AnalysisDTO>>|
 [options="header", cols=".^1,.^15,.^4"]
 |===
 |HTTP Code|Description|Schema
-|*200*|ok|<<_analysisdto,AnalysisDTO>>
+|*200*|successful operation|<<_analysisdto,AnalysisDTO>>
 |===
 
 

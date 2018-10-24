@@ -10,6 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.apache.commons.lang.math.NumberUtils;
@@ -296,20 +297,20 @@ public class GOBIIControllerV1 {
     // *********************************************
     @ApiOperation(value = "/analyses",
             notes = "Creates an analysis entity")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "analysisPostEnvelope",
-                    required = true,
-                    dataTypeClass = AnalysisDTO.class)
-    })
-    @ApiResponses(
-            @ApiResponse(code = 200,
-                    message = "ok",
-                    response = AnalysisDTO.class,
-                    responseContainer = "PayloadEnvelope<AnalysisDTO>")
-    )
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "analysisPostEnvelope",
+//                    required = true,
+//                    dataTypeClass = AnalysisDTO.class)
+//    })
+//    @ApiResponses(
+//            @ApiResponse(code = 200,
+//                    message = "ok",
+//                    response = AnalysisDTO.class,
+//                    responseContainer = "PayloadEnvelope<AnalysisDTO>")
+//    )
     @RequestMapping(value = "/analyses", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<AnalysisDTO> createAnalysis(@RequestBody() PayloadEnvelope<AnalysisDTO> analysisPostEnvelope,
+    public PayloadEnvelope<AnalysisDTO> createAnalysis(@ApiParam(required = true) @RequestBody PayloadEnvelope<AnalysisDTO> analysisPostEnvelope,
                                                        HttpServletRequest request,
                                                        HttpServletResponse response) {
 
