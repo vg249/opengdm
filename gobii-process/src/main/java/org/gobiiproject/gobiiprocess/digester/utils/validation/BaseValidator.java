@@ -130,7 +130,7 @@ public abstract class BaseValidator {
                 for (String column : uniqueColumns) {
                     List<String> fileColumn = getFileColumn(fileName, column, failureList);
                     if (fileColumn.size() != 0) {
-                        fileColumns.add(getFileColumn(fileName, column, failureList));
+                        fileColumns.add(fileColumn);
                     } else {
                         Failure failure = new Failure();
                         failure.reason = FailureTypes.COLUMN_NOT_FOUND;
@@ -139,20 +139,15 @@ public abstract class BaseValidator {
                         return;
                     }
                 }
-                int size = fileColumns.get(0).size();
-                for (List<String> column : fileColumns)
-                    if (column.size() != size) {
-                        Failure failure = new Failure();
-                        failure.reason = FailureTypes.INVALID_COLUMN_SIZE;
-                        addMessageToList(failure, failureList);
-                        return;
-                    }
+                if (!verifyEqualSizeColumn(failureList, fileColumns)) return;
 
                 List<String> concatList = new ArrayList<>();
-                for (int i = 0; i < size; i++) {
-                    String value = null;
-                    for (List<String> column : fileColumns)
-                        value = value + "$@$" + column.get(i);
+                for (int i = 0; i < fileColumns.get(0).size(); i++) {
+                    String value = "";
+                    for (List<String> column : fileColumns) {
+                        if (value.equals("")) value = column.get(i);
+                        else value = value + "$@$" + column.get(i);
+                    }
                     if (concatList.contains(value)) {
                         Failure failure = new Failure();
                         failure.reason = FailureTypes.NOT_UNIQUE;
@@ -310,7 +305,7 @@ public abstract class BaseValidator {
                 if (condition.fieldToCompare != null) {
                     String comparisonFileName = condition.typeName;
                     String columnName = condition.columnName;
-                    String fieldToCompare = condition.fieldToCompare;
+                    List<String> fieldToCompare = condition.fieldToCompare;
                     List<String> filesList = new ArrayList<>();
                     if (getFilesWithExtension(parentDirectory, comparisonFileName, filesList, failureList)) {
                         if (filesList.size() != 1) {
@@ -323,32 +318,25 @@ public abstract class BaseValidator {
                         String comparisonFilePath = parentDirectory + "/" + comparisonFileName;
                         List<String> fileColumnElements = getFileColumn(filePath, columnName, failureList);
                         if (fileColumnElements.size() == 0) return;
-                        else {
-                            fileColumnElements = fileColumnElements.stream().distinct().collect(Collectors.toList());
-                            Collections.sort(fileColumnElements);
-                        }
-                        List<String> comparisonFileColumnElements = getFileColumn(comparisonFilePath, fieldToCompare, failureList);
-                        if (comparisonFileColumnElements.size() == 0) {
-                            Failure failure = new Failure();
-                            failure.reason = FailureTypes.COLUMN_NOT_FOUND;
-                            failure.values.add(fieldToCompare);
-                            addMessageToList(failure, failureList);
-                            return;
-                        } else {
-                            comparisonFileColumnElements = comparisonFileColumnElements.stream().distinct().collect(Collectors.toList());
-                            Collections.sort(comparisonFileColumnElements);
-                        }
-                        // If it is only unique list
-                        if(condition.uniqueFileCheck != null && condition.uniqueFileCheck.equalsIgnoreCase(ValidationConstants.YES)){
-                            fileColumnElements = fileColumnElements.stream().distinct().collect(Collectors.toList());
-                            comparisonFileColumnElements = comparisonFileColumnElements.stream().distinct().collect(Collectors.toList());
-                        }
+                        else Collections.sort(fileColumnElements);
 
+                        List<String> comparisonFileColumnElements;
+                        if (fieldToCompare.size() > 1) {
+                            comparisonFileColumnElements = getFileColumns(comparisonFilePath, fieldToCompare, failureList);
+                        } else
+                            comparisonFileColumnElements = getFileColumn(comparisonFilePath, fieldToCompare.get(0), failureList);
+                        if (comparisonFileColumnElements.size() == 0) return;
+                        else Collections.sort(comparisonFileColumnElements);
+                        // If it is only unique list
+                        if (condition.uniqueFileCheck != null && condition.uniqueFileCheck.equalsIgnoreCase(ValidationConstants.YES)) {
+                            fileColumnElements = fileColumnElements.stream().distinct().collect(Collectors.toList());
+                            comparisonFileColumnElements = comparisonFileColumnElements.stream().distinct().collect(Collectors.toList());
+                        }
                         if (!fileColumnElements.containsAll(comparisonFileColumnElements)) {
                             Failure failure = new Failure();
                             failure.reason = FailureTypes.VALUE_MISMATCH;
                             failure.columnName.add(columnName);
-                            failure.columnName.add(fieldToCompare);
+                            failure.columnName.add(fieldToCompare.stream().collect(Collectors.joining(",")));
                             addMessageToList(failure, failureList);
                         }
                     }
@@ -364,7 +352,9 @@ public abstract class BaseValidator {
         } else {
             printMissingFieldError("File", "typeName", FailureTypes.CORRUPTED_VALIDATION_FILE, failureList);
         }
+
     }
+
 
     /**
      * Validation based on the existence of a file.
@@ -434,6 +424,66 @@ public abstract class BaseValidator {
     }
 
     /**
+     * If all the elements are found it adds the columns combination to a list and returns it.
+     * Duplicated are allowed here
+     * Else returns dummy list
+     *
+     * @param filepath    file name
+     * @param columns     columns list
+     * @param failureList failure list
+     * @return list
+     * @throws MaximumErrorsValidationException maximum error exception
+     */
+    private List<String> getFileColumns(String filepath, List<String> columns, List<Failure> failureList) throws MaximumErrorsValidationException {
+
+        List<List<String>> fileColumns = new ArrayList<>();
+        for (String column : columns) {
+            List<String> fileColumn = getFileColumn(filepath, column, failureList);
+            if (fileColumn.size() != 0) {
+                fileColumns.add(fileColumn);
+            } else {
+                Failure failure = new Failure();
+                failure.reason = FailureTypes.COLUMN_NOT_FOUND;
+                failure.columnName.add(column);
+                addMessageToList(failure, failureList);
+                return new ArrayList<>();
+            }
+        }
+
+        if (!verifyEqualSizeColumn(failureList, fileColumns)) return new ArrayList<>();
+
+        List<String> concatList = new ArrayList<>();
+        for (int i = 0; i < fileColumns.get(0).size(); i++) {
+            String value = "";
+            for (List<String> column : fileColumns)
+                if (value.equals("")) value = column.get(i);
+                else value = value + "$@$" + column.get(i);
+            concatList.add(value);
+        }
+        return concatList;
+    }
+
+    /**
+     * Verifies all the columns are of equal size
+     *
+     * @param failureList failure list
+     * @param fileColumns file columns
+     * @return status
+     */
+    private boolean verifyEqualSizeColumn(List<Failure> failureList, List<List<String>> fileColumns) throws MaximumErrorsValidationException {
+        int size = fileColumns.get(0).size();
+        for (List<String> column : fileColumns)
+            if (column.size() != size) {
+                Failure failure = new Failure();
+                failure.reason = FailureTypes.INVALID_COLUMN_SIZE;
+                addMessageToList(failure, failureList);
+                return false;
+            }
+        return true;
+    }
+
+
+    /**
      * Check for the header in a file.
      * Check the required field and returns status appropriately
      *
@@ -453,7 +503,7 @@ public abstract class BaseValidator {
             else if (conditionUnit.required.equalsIgnoreCase("yes")) {
                 Failure failure = new Failure();
                 failure.reason = FailureTypes.COLUMN_NOT_FOUND;
-                failure.columnName.add(conditionUnit.fieldToCompare);
+                failure.columnName.add(conditionUnit.columnName);
                 addMessageToList(failure, failureList);
                 return false;
             } else return false;
@@ -468,4 +518,6 @@ public abstract class BaseValidator {
             return true;
         }
     }
+
+
 }
