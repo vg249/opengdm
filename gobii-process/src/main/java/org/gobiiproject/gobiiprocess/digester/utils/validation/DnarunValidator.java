@@ -13,7 +13,7 @@ class DnarunValidator extends BaseValidator {
             String filePath = dir + "/" + validationUnit.getDigestFileName();
             validateRequiredColumns(filePath, validationUnit.getConditions(), failureList);
             validateNotNullOptionalColumns(filePath, validationUnit.getConditions(), failureList);
-            validateFileExistenceCheck(filePath, validationUnit, failureList);
+            validateColumnsBetweenFiles(filePath, validationUnit, failureList);
         }
     }
 }

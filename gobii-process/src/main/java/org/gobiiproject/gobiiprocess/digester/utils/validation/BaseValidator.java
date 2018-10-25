@@ -285,7 +285,9 @@ public abstract class BaseValidator {
      */
     void validateColumnsBetweenFiles(String filePath, ValidationUnit validationUnit, List<Failure> failureList) throws MaximumErrorsValidationException {
         for (ConditionUnit condition : validationUnit.getConditions()) {
-            if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.FILE)) {
+            if (condition.fileExistenceCheck != null) {
+                validateFileExistenceCheck(filePath, validationUnit, failureList);
+            } else if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.FILE)) {
                 validateColumnBetweenFiles(filePath, condition, failureList);
             }
         }
@@ -298,7 +300,7 @@ public abstract class BaseValidator {
      * @param condition   Condition Unit
      * @param failureList failure list
      */
-    void validateColumnBetweenFiles(String filePath, ConditionUnit condition, List<Failure> failureList) throws MaximumErrorsValidationException {
+    private void validateColumnBetweenFiles(String filePath, ConditionUnit condition, List<Failure> failureList) throws MaximumErrorsValidationException {
         String parentDirectory = new File(filePath).getParent();
         if (condition.typeName != null) {
             if (DigesterFileExtensions.allowedExtensions.contains(condition.typeName.substring(condition.typeName.indexOf('.') + 1))) {
@@ -364,7 +366,7 @@ public abstract class BaseValidator {
      * @param validationUnit Validation Unit
      * @param failureList    failure list
      */
-    void validateFileExistenceCheck(String fileName, ValidationUnit validationUnit, List<Failure> failureList) throws MaximumErrorsValidationException {
+    private void validateFileExistenceCheck(String fileName, ValidationUnit validationUnit, List<Failure> failureList) throws MaximumErrorsValidationException {
         for (ConditionUnit condition : validationUnit.getConditions())
             if (condition.fileExistenceCheck != null) {
                 String existenceFile = condition.fileExistenceCheck;

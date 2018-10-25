@@ -14,7 +14,7 @@ class DnaSampleValidator extends BaseValidator {
             validateRequiredColumns(filePath, validationUnit.getConditions(), failureList);
             validateRequiredUniqueColumns(filePath, validationUnit.getConditions(), failureList);
             validateUniqueColumnList(filePath, validationUnit, failureList);
-            validateFileExistenceCheck(filePath, validationUnit, failureList);
+            validateColumnsBetweenFiles(filePath, validationUnit, failureList);
         }
     }
 }
