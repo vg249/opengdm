@@ -306,7 +306,7 @@ public abstract class BaseValidator {
             if (DigesterFileExtensions.allowedExtensions.contains(condition.typeName.substring(condition.typeName.indexOf('.') + 1))) {
                 if (condition.fieldToCompare != null) {
                     String comparisonFileName = condition.typeName;
-                    String columnName = condition.columnName;
+                    List<String> fieldColumns = condition.fieldColumns;
                     List<String> fieldToCompare = condition.fieldToCompare;
                     List<String> filesList = new ArrayList<>();
                     if (getFilesWithExtension(parentDirectory, comparisonFileName, filesList, failureList)) {
@@ -318,7 +318,11 @@ public abstract class BaseValidator {
                             return;
                         }
                         String comparisonFilePath = parentDirectory + "/" + comparisonFileName;
-                        List<String> fileColumnElements = getFileColumn(filePath, columnName, failureList);
+                        List<String> fileColumnElements;
+                        if (fieldToCompare.size() > 1) {
+                            fileColumnElements = getFileColumns(comparisonFilePath, fieldColumns, failureList);
+                        } else
+                            fileColumnElements = getFileColumn(comparisonFilePath, fieldColumns.get(0), failureList);
                         if (fileColumnElements.size() == 0) return;
                         else Collections.sort(fileColumnElements);
 
@@ -329,15 +333,17 @@ public abstract class BaseValidator {
                             comparisonFileColumnElements = getFileColumn(comparisonFilePath, fieldToCompare.get(0), failureList);
                         if (comparisonFileColumnElements.size() == 0) return;
                         else Collections.sort(comparisonFileColumnElements);
+
                         // If it is only unique list
                         if (condition.uniqueFileCheck != null && condition.uniqueFileCheck.equalsIgnoreCase(ValidationConstants.YES)) {
                             fileColumnElements = fileColumnElements.stream().distinct().collect(Collectors.toList());
                             comparisonFileColumnElements = comparisonFileColumnElements.stream().distinct().collect(Collectors.toList());
                         }
+
                         if (!fileColumnElements.containsAll(comparisonFileColumnElements)) {
                             Failure failure = new Failure();
                             failure.reason = FailureTypes.VALUE_MISMATCH;
-                            failure.columnName.add(columnName);
+                            failure.columnName.add(fieldColumns.stream().collect(Collectors.joining(",")));
                             failure.columnName.add(fieldToCompare.stream().collect(Collectors.joining(",")));
                             addMessageToList(failure, failureList);
                         }

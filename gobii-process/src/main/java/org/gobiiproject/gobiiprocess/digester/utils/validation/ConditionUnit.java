@@ -34,6 +34,8 @@ public class ConditionUnit {
     public String type;
     // Name of file or DB
     @JsonProperty
+    public List<String> fieldColumns;
+    @JsonProperty
     public String uniqueFileCheck;
     @JsonProperty
     public String typeName;
