@@ -1,0 +1,27 @@
+== System Architecture
+
+=== DTO Models
+Content TBD
+
+=== Data Access 
+Content TBD
+
+=== DTO Maping
+Content TBD
+
+=== Services
+Content TBD
+
+=== The Web Controller
+Content TBD
+
+== Web Service Operations
+
+=== Request/Response Structure
+Content TBD
+
+=== Authentication
+Content TBD
+
+=== Error Handling
+Content TBD

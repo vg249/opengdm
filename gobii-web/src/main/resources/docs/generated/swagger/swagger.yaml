@@ -1,9 +1,12 @@
 ---
 swagger: "2.0"
 info:
-  description: "This is a sample."
-  version: "v1"
-  title: "Swagger Maven Plugin Sample"
+  description: "The GOBii web service API provides a comprehensive set of RESTful\
+    \ methods for accomplishing the following core tasks in the GOBii Genomic Data\
+    \ Management (GDM) system. This manual explains the GOBii web architecture and\
+    \ its web service operations.\r\n\r\n"
+  version: "1.0"
+  title: "GOBii API"
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"

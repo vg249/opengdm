@@ -361,6 +361,7 @@
                                     <directory>${doc-location-source}/asciidoc</directory>
                                     <includes>
                                         <include>index.adoc</include>
+                                        <include>gobii-system.adoc</include>
                                     </includes>
                                     <filtering>false</filtering>
                                 </resource>
@@ -503,15 +504,19 @@
                             <schemes>http, https</schemes>
                             <host>localhost:8081</host>
                             <basePath>/api</basePath>
+                            <!-- content of description file overrides the <description>
+                                element of the <info> tag below. This ends up as the
+                                 Overview section in the HTML/PDF -->
+                            <descriptionFile>${doc-location-source}/swagger/overview.txt</descriptionFile>
                             <info>
-                                <title>Swagger Maven Plugin Sample</title>
-                                <version>v1</version>
+                                <title>GOBii API</title>
+                                <version>1.0</version>
                                 <!-- use markdown here because I'm using markdown for output,
                                 if you need to use html or other markup language, you need to use your target language,
                                  and note escape your description for xml -->
-                                <description>
-                                    This is a sample.
-                                </description>
+                                <!--<description>-->
+                                    <!--GOBii API-->
+                                <!--</description>-->
                                 <!--<termsOfService>-->
                                 <!--http://www.github.com/kongchen/swagger-maven-plugin-->
                                 <!--</termsOfService>-->
@@ -595,7 +600,7 @@
                         ${doc-location-generated}/swagger/swagger.yaml,
                         ${doc-location-generated}/swagger/swagger.json
                     </filesToInclude>
-                    <tokenValueMap>${doc-location-source}/asciidoc/tokens.txt</tokenValueMap>
+                    <tokenValueMap>${doc-location-source}/tokens.txt</tokenValueMap>
                     <!--<replacements>-->
                         <!--<replacement>-->
                             <!--<token>PayloadEnvelopeAnalysisDTO</token>-->

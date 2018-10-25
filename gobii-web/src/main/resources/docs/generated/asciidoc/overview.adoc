@@ -1,14 +1,14 @@
-= Swagger Maven Plugin Sample
+= GOBii API
 
 
 [[_overview]]
 == Overview
-This is a sample.
+The GOBii web service API provides a comprehensive set of RESTful methods for accomplishing the following core tasks in the GOBii Genomic Data Management (GDM) system. This manual explains the GOBii web architecture and its web service operations.
 
 
 === Version information
 [%hardbreaks]
-_Version_ : v1
+_Version_ : 1.0
 
 
 === License information
