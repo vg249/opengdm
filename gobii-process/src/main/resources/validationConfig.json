@@ -18,7 +18,7 @@
           "type": "DB",
           "nullAllowed": "yes",
           "typeName": "CV",
-          "fieldToCompare": "species_name"
+          "fieldToCompare": ["species_name"]
         },
         {
           "columnName": "type_name",
@@ -26,7 +26,7 @@
           "type": "DB",
           "nullAllowed": "yes",
           "typeName": "CV",
-          "fieldToCompare": "type_name"
+          "fieldToCompare": ["type_name"]
         }
       ]
     },
@@ -38,7 +38,10 @@
           "required": "yes",
           "type": "File",
           "typeName": "digest.germplasm",
-          "fieldToCompare": "external_code"
+          "fieldToCompare": [
+            "external_code",
+            "external_code"
+          ]
         }
       ]
     },
@@ -73,7 +76,7 @@
           "fileExists": "no",
           "type": "DB",
           "typeName": "CV",
-          "fieldToCompare": "external_code"
+          "fieldToCompare": ["external_code"]
         },
         {
           "columnName": "external_code",
@@ -82,7 +85,7 @@
           "fileExists": "yes",
           "type": "File",
           "typeName": "digest.germplasm",
-          "fieldToCompare": "external_code"
+          "fieldToCompare": ["external_code"]
         }
       ]
     },
@@ -115,28 +118,28 @@
           "required": "yes",
           "type": "File",
           "typeName": "digest.dnasample",
-          "fieldToCompare": "project_id"
+          "fieldToCompare": ["project_id"]
         },
         {
           "columnName": "dnasample_name",
           "required": "yes",
           "type": "File",
           "typeName": "digest.dnasample",
-          "fieldToCompare": "dnasample_name"
+          "fieldToCompare": ["dnasample_name"]
         },
         {
           "columnName": "external_code",
           "required": "yes",
           "type": "File",
           "typeName": "digest.dnasample",
-          "fieldToCompare": "external_code"
+          "fieldToCompare": ["external_code"]
         },
         {
           "columnName": "num",
           "required": "yes",
           "type": "File",
           "typeName": "digest.dnasample",
-          "fieldToCompare": "num"
+          "fieldToCompare": ["num"]
         }
       ]
     },
@@ -171,8 +174,9 @@
           "fileExistenceCheck": "digest.dnasample",
           "fileExists": "yes",
           "type": "File",
+          "uniqueFileCheck":"yes",
           "typeName": "digest.dnasample",
-          "fieldToCompare": "project_id"
+          "fieldToCompare": ["project_id"]
         },
         {
           "columnName": "dnasample_name",
@@ -180,8 +184,9 @@
           "fileExistenceCheck": "digest.dnasample",
           "fileExists": "yes",
           "type": "File",
+          "uniqueFileCheck":"yes",
           "typeName": "digest.dnasample",
-          "fieldToCompare": "name"
+          "fieldToCompare": ["name"]
         },
         {
           "columnName": "num",
@@ -190,7 +195,7 @@
           "fileExists": "yes",
           "type": "File",
           "typeName": "digest.dnasample",
-          "fieldToCompare": "num"
+          "fieldToCompare": ["num"]
         }
       ]
     },
@@ -202,14 +207,14 @@
           "required": "yes",
           "type": "File",
           "typeName": "digest.dnarun",
-          "fieldToCompare": "experiment_id"
+          "fieldToCompare": ["experiment_id"]
         },
         {
           "columnName": "dnarun_name",
           "required": "yes",
           "type": "File",
           "typeName": "digest.dnarun",
-          "fieldToCompare": "name"
+          "fieldToCompare": ["name"]
         }
       ]
     }

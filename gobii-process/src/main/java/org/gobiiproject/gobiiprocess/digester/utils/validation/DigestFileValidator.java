@@ -320,8 +320,10 @@ public class DigestFileValidator {
             if (conditionUnit.fileExists != null) conditionUnit.fileExists = conditionUnit.fileExists.trim();
             if (conditionUnit.type != null) conditionUnit.type = conditionUnit.type.trim();
             if (conditionUnit.typeName != null) conditionUnit.typeName = conditionUnit.typeName.trim();
-            if (conditionUnit.fieldToCompare != null)
-                conditionUnit.fieldToCompare = conditionUnit.fieldToCompare.trim();
+            if (conditionUnit.fieldToCompare != null) {
+                for (int i = 0; i < conditionUnit.fieldToCompare.size(); i++)
+                    conditionUnit.fieldToCompare.set(i, conditionUnit.fieldToCompare.get(i).trim());
+            }
             if (conditionUnit.uniqueColumns != null)
                 conditionUnit.uniqueColumns = conditionUnit.uniqueColumns.stream().map(String::trim).collect(Collectors.toList());
         }

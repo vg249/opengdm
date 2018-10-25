@@ -39,5 +39,5 @@ public class ConditionUnit {
     public String typeName;
     // Field to compare against in DB or other file
     @JsonProperty
-    public String fieldToCompare;
+    public List<String> fieldToCompare;
 }

@@ -35,15 +35,15 @@ class GermplasmValidator extends BaseValidator {
 
     /**
      * Validate terms in CV table
-     *
      * @param fileName       fileName
      * @param fieldToCompare field to check
      * @param failureList    failure list
      */
-    private void validateCV(String fileName, String fieldToCompare, List<Failure> failureList) throws MaximumErrorsValidationException {
+    private void validateCV(String fileName, List<String> fieldToCompare, List<Failure> failureList) throws MaximumErrorsValidationException {
         List<String[]> collect = readFileIntoMemory(fileName, failureList);
         List<String> headers = Arrays.asList(collect.get(0));
-        int fieldIndex = headers.indexOf(fieldToCompare);
+        //TODO: Current assumption there will be only one row validation from Database
+        int fieldIndex = headers.indexOf(fieldToCompare.get(0));
         collect.remove(0);
         Set<String> fieldNameList = new HashSet<>();
         for (String[] fileRow : collect) {
@@ -58,6 +58,6 @@ class GermplasmValidator extends BaseValidator {
             nameIdDTO.setName(fieldName);
             nameIdDTOList.add(nameIdDTO);
         }
-        ValidationWebServicesUtil.validateCVName(nameIdDTOList, fieldToCompare, failureList);
+        ValidationWebServicesUtil.validateCVName(nameIdDTOList, fieldToCompare.get(0), failureList);
     }
 }
