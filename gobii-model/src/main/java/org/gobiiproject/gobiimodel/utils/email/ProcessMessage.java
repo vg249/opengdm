@@ -6,6 +6,7 @@ import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 import org.gobiiproject.gobiimodel.types.GobiiServerType;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiimodel.utils.links.GetLinks;
 
 import java.io.File;
@@ -254,7 +255,8 @@ public class ProcessMessage extends MailMessage {
         if(identifierLine!=null)body.append(identifierLine+line);
         if(entityLine!=null)body.append(entityLine+line);
         if(tableLine!=null)body.append(tableLine+line);
-        if(pathsLine!=null)body.append(pathsLine+line);
+        if(pathsLine!=null)body.append(pathsLine+line + "<font size=5 color=red><b>WARNING: Clicking links might force you to download bigger files.</b></font>" + line);
+
         if(longError!=null)body.append(longError);
         body.append("</html>");
         this.setBody(lastBody + body.toString());
@@ -262,6 +264,9 @@ public class ProcessMessage extends MailMessage {
     }
 
     public String escapeHTML(String strToHTML){
+        if(strToHTML.contains("http")){
+            strToHTML.replace("http","URL");
+        }
         return StringEscapeUtils.escapeHtml(strToHTML);
     }
 }

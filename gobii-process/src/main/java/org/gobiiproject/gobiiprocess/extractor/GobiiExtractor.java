@@ -465,7 +465,7 @@ public class GobiiExtractor {
 					}
 
 					pm.addPath("Instruction File",new File(instructionFile).getAbsolutePath(),true,configuration);
-					pm.addFolderPath("Output Directory", extractDir);
+					pm.addPath("Output Directory", extractDir,true, configuration);
 					pm.addPath("Error Log", logFile,true, configuration);
 					pm.addPath("Summary File", new File(projectFile).getAbsolutePath(), configuration);
 					pm.addPath("Sample File", new File(sampleFile).getAbsolutePath(), configuration);
@@ -559,7 +559,7 @@ public class GobiiExtractor {
                         ErrorLogger.logError("GobiiExtractor", "No genetic data extracted. Extract failed.");
                         pm.setBody(jobReadableIdentifier, extractType, SimpleTimer.stop("Extract"), ErrorLogger.getFirstErrorReason(), ErrorLogger.success(), ErrorLogger.getAllErrorStringsHTML());
 						jobStatus.setError("Unsuccessful Data Extract");
-						if(!inst.isQcCheck())mailInterface.send(pm);
+//						if(!inst.isQcCheck())mailInterface.send(pm);
                     }
 
                     //Clean Temporary Files

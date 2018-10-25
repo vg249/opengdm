@@ -35,6 +35,11 @@ public class GetLinks {
      * @throws Exception
      */
     public static String getLink(String filePath, ConfigSettings config) throws Exception {
+
+        if(filePath.contains("ïnprogress")){
+            filePath.replace("inprogress", "done");
+        }
+
         String username = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getUserName();
         String password = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getPassword();
         String host = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getHost();
@@ -67,10 +72,10 @@ public class GetLinks {
             liveLink = getTAG(resultBuf.toString(),"url") + "/download";
         }
         else{
-            liveLink = "NA";
+            liveLink = "";
 //            ErrorLogger.logError("OWNCLOUD", "API request failed due to improper configurations");
         }
-        return liveLink;
+        return liveLink.replace("http://","URL:");
     }
 
     public static String getOwncloudURL(String filePath, ConfigSettings config) throws Exception {
