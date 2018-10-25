@@ -8,6 +8,7 @@ import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
+import org.gobiiproject.gobiimodel.config.ServerConfigItem;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -31,7 +32,7 @@ class ValidationWebServicesUtil {
                 contextRoot = contextRoot + "/";
             List<String> crops = GobiiClientContext.getInstance(null, false).getCropTypeTypes();
             for (String currentCrop : crops) {
-                ServerConfig currentServerConfig = GobiiClientContext.getInstance(null, false).getServerConfig(currentCrop);
+                ServerConfigItem currentServerConfig = GobiiClientContext.getInstance(null,false).getServerConfig(currentCrop);
                 if (contextRoot.equals(currentServerConfig.getContextRoot())) {
                     // use the crop for this server config
                     crop = currentCrop;

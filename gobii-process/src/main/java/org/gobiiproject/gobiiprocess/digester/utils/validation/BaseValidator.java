@@ -338,7 +338,13 @@ public abstract class BaseValidator {
                             comparisonFileColumnElements = comparisonFileColumnElements.stream().distinct().collect(Collectors.toList());
                             Collections.sort(comparisonFileColumnElements);
                         }
-                        if (!fileColumnElements.equals(comparisonFileColumnElements)) {
+                        // If it is only unique list
+                        if(condition.uniqueFileCheck != null && condition.uniqueFileCheck.equalsIgnoreCase(ValidationConstants.YES)){
+                            fileColumnElements = fileColumnElements.stream().distinct().collect(Collectors.toList());
+                            comparisonFileColumnElements = comparisonFileColumnElements.stream().distinct().collect(Collectors.toList());
+                        }
+
+                        if (!fileColumnElements.containsAll(comparisonFileColumnElements)) {
                             Failure failure = new Failure();
                             failure.reason = FailureTypes.VALUE_MISMATCH;
                             failure.columnName.add(columnName);
