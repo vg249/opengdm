@@ -13,18 +13,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY_ID_DNASAMPLE_NAMES_BYLIST;
-
 /**
- * Created by VCalaminos on 9/18/2018.
+ * Created by VCalaminos on 10/10/2018.
  */
-public class ListStatementDnaSampleNamesByList implements ListStatement {
+public class ListStatementGermplasmNamesByList implements ListStatement{
 
     private final String PARAM_NAME_NAME_LIST = "nameArray";
-    private final String PARAM_NAME_PROJECT_ID = "projectId";
 
     @Override
-    public ListSqlId getListSqlId() { return QUERY_ID_DNASAMPLE_NAMES_BYLIST; }
+    public ListSqlId getListSqlId() { return ListSqlId.QUERY_ID_GERMPLASM_BYLIST; }
 
     @Override
     public PreparedStatement makePreparedStatement(Connection dbConnection, Map<String, Object> jdbcParamVals, Map<String, Object> sqlParamVals) throws SQLException {
@@ -33,13 +30,12 @@ public class ListStatementDnaSampleNamesByList implements ListStatement {
 
         // parse array into csv
 
-        String parsedNameList = ListStatementUtil.generateParsedNameListForDnaSamples(nameArray);
+        String parsedNameList = ListStatementUtil.generateParsedNameList(nameArray);
 
         ParameterizedSql parameterizedSql =
-                new ParameterizedSql("select dnasample_id, name " +
-                        "from dnasample " +
-                        "where project_id::varchar = ?" +
-                        "and ("+ PARAM_NAME_NAME_LIST+ ")",
+                new ParameterizedSql("select germplasm_id, external_code " +
+                        "from germplasm " +
+                        "where external_code in (" + PARAM_NAME_NAME_LIST + ") ",
                         new HashMap<String, String>(){
                             {
                                 put(PARAM_NAME_NAME_LIST, null);
@@ -52,10 +48,8 @@ public class ListStatementDnaSampleNamesByList implements ListStatement {
 
         PreparedStatement returnVal = dbConnection.prepareStatement(sql);
 
-        String projectId = (String) jdbcParamVals.get(PARAM_NAME_PROJECT_ID);
-        returnVal.setString(1, projectId);
-
         return returnVal;
+
     }
 
 }
