@@ -595,12 +595,13 @@
                         ${doc-location-generated}/swagger/swagger.yaml,
                         ${doc-location-generated}/swagger/swagger.json
                     </filesToInclude>
-                    <replacements>
-                        <replacement>
-                            <token>PayloadEnvelopeAnalysisDTO</token>
-                            <value>AnalysisDTO</value>
-                        </replacement>
-                    </replacements>
+                    <tokenValueMap>${doc-location-source}/asciidoc/tokens.txt</tokenValueMap>
+                    <!--<replacements>-->
+                        <!--<replacement>-->
+                            <!--<token>PayloadEnvelopeAnalysisDTO</token>-->
+                            <!--<value>AnalysisDTO</value>-->
+                        <!--</replacement>-->
+                    <!--</replacements>-->
                 </configuration>
             </plugin>
 
