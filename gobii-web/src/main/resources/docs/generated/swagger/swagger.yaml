@@ -19,19 +19,19 @@ paths:
   /gobii/v1/analyses:
     post:
       summary: "/analyses"
-      description: "Creates an analysis entity"
+      description: "Creates an analysis entity. $RequestResponseStructure$"
       operationId: "createAnalysis"
       parameters:
       - in: "body"
         name: "body"
         required: true
         schema:
-          $ref: "#/definitions/AnalysisDTO"
+          $ref: "#/definitions/PayloadEnvelopeAnalysisDTO"
       responses:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/AnalysisDTO"
+            $ref: "#/definitions/PayloadEnvelopeAnalysisDTO"
   /gobii/v1/auth:
     post:
       summary: "/auth"
@@ -317,7 +317,7 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/ConfigSettingsDTO"
-  AnalysisDTO:
+  PayloadEnvelopeAnalysisDTO:
     type: "object"
     properties:
       payload:

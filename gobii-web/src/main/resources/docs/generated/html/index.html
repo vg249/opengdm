@@ -454,7 +454,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_web_service_operations">Web Service Operations</a>
 <ul class="sectlevel2">
-<li><a href="#_requestresponse_structure">Request/Response Structure</a></li>
+<li><a href="#_requestresponsestructure">Request/Response Structure</a></li>
 <li><a href="#_authentication">Authentication</a></li>
 <li><a href="#_error_handling">Error Handling</a></li>
 </ul>
@@ -479,7 +479,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_pagination">Pagination</a></li>
 <li><a href="#_payloadanalysisdto">PayloadAnalysisDTO</a></li>
 <li><a href="#_payloadconfigsettingsdto">PayloadConfigSettingsDTO</a></li>
-<li><a href="#_payloadenvelopeconfigsettingsdto">PayloadEnvelopeConfigSettingsDTO</a></li>
+<li><a href="#_payloadenvelopeanalysisdto">AnalysisDTO</a></li>
+<li><a href="#_payloadenvelopeconfigsettingsdto">ConfigSettingsDTO</a></li>
 <li><a href="#_serverconfig">ServerConfig</a></li>
 <li><a href="#_status">Status</a></li>
 </ul>
@@ -556,21 +557,142 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_web_service_operations">Web Service Operations</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_requestresponse_structure">Request/Response Structure</h3>
+<h3 id="_requestresponsestructure">Request/Response Structure</h3>
 <div class="paragraph">
-<p>Content TBD</p>
+<p>The http body structure is the same for all responses as well as for the body of POST and PUT requests. Here is a high level schematic of the body structure:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">	{
+	   "payload":{
+		  "linkCollection":{
+			 "linksPerDataItem":[</code></pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>],
+"exploreLinksPerDataItem":[</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>]
+},
+"data":[</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>]
+},
+"header":{
+"gobiiProcessType":"",
+"dtoHeaderAuth":{
+"userName":null,
+"password":null,
+"token":"",
+"gobiiCropType":""
+},
+"status":{
+"succeeded":true,
+"statusMessages":[</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>],
+"statusMessagesByCode":{</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>		 }
+	  },
+	  "pagination":null,
+	  "gobiiVersion":"2.0_2018-07-31",
+	  "cropType":""
+   }
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For requests, the following keys can be omitted:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>payload.linkCollection</p>
+</li>
+<li>
+<p>header</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The content of the "data" array will vary depending on the type of the call. For example, for a POST to the the /project resource, it will contain a project object.</p>
+</div>
+<div class="paragraph">
+<p>After a successful POST to the /auth resource, the "token" key in "dtoHeaderAuth" contains the token value, which should be used to set the X-Auth-Token header for subsequent requests.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_authentication">Authentication</h3>
 <div class="paragraph">
-<p>Content TBD</p>
+<p>A valid token may be acquired by doing a POST to the /auth resource with an empty body and the following request headers set:</p>
+</div>
+<div class="paragraph">
+<p>X-Username
+X-Password</p>
+</div>
+<div class="paragraph">
+<p>The username and password depend on how the destination GOBii server is configured (per the gobii-web.xml file):</p>
+</div>
+<div class="paragraph">
+<p>If gobiiAuthenticationType of the server is TEST, the username and password are hard-coded to USER_READER and reader, respectively.
+If the server is configured for LDAP authentication:
+The username/password must be provisioned in the configured LDAP server (if it is not, the error from the server will be 401: Unauthorized)
+There must be an entry for the user in contact table, where the username value matches the ldap user name;
+NOTE: if no such record is found, the error will be 403: Forbidden: Missing contact info for user &lt;user-name&gt; in crop database &lt;crop-db&gt;; a contact record must have username = &lt;user-name&gt;</p>
+</div>
+<div class="paragraph">
+<p>When authentication succeeds, the response headers will contain a X-Auth-Token key whose value is a valid token. For subsequent requests, it is sufficient to supply X-Auth-Token in the request headers with the token that was received from the /auth POST. Some browsers prevent the client code from reading custom response headers. In this case, the token can also be retrieved from the meta data portion of the response body (see below).</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_error_handling">Error Handling</h3>
 <div class="paragraph">
-<p>Content TBD</p>
+<p>Errors internal to GOBii are reported in the "header" key accompanying the response. An example of how to retrieve error data is provided in the following code fragment.</p>
+</div>
+<div class="paragraph">
+<p>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+if (!header.getStatus().isSucceeded() ||
+        header
+                .getStatus()
+                .getStatusMessages()
+                .stream()
+                .filter(headerStatusMessage &#8594; headerStatusMessage.getGobiiStatusLevel().equals(GobiiStatusLevel.VALIDATION))
+                .count() &gt; 0) {
+    returnVal = true;
+    System.out.println();
+    System.out.println("<strong>*</strong> Header errors: ");
+    for (HeaderStatusMessage currentStatusMesage : header.getStatus().getStatusMessages()) {
+        System.out.println(currentStatusMesage.getMessage());
+    }
+}</p>
 </div>
 </div>
 </div>
@@ -588,7 +710,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect3">
 <h4 id="_description">Description</h4>
 <div class="paragraph">
-<p>Creates an analysis entity</p>
+<p>Creates an analysis entity. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
 </div>
 </div>
 <div class="sect3">
@@ -613,10 +735,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Body</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>body</strong><br>
-<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>body</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_analysisdto">AnalysisDTO</a></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_payloadenvelopeanalysisdto">AnalysisDTO</a></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 </tr>
 </tbody>
@@ -641,7 +762,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">successful operation</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_analysisdto">AnalysisDTO</a></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_payloadenvelopeanalysisdto">AnalysisDTO</a></p></td>
 </tr>
 </tbody>
 </table>
@@ -682,8 +803,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Body</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>body</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>body</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-middle"></td>
@@ -748,7 +868,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">successful operation</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_payloadenvelopeconfigsettingsdto">PayloadEnvelopeConfigSettingsDTO</a></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_payloadenvelopeconfigsettingsdto">ConfigSettingsDTO</a></p></td>
 </tr>
 </tbody>
 </table>
@@ -776,16 +896,109 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>header</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>algorithm</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_header">Header</a></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>payload</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>allowedProcessTypes</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_payloadanalysisdto">PayloadAnalysisDTO</a></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; enum (CREATE, READ, UPDATE, DELETE, NONE) &gt; array</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>analysisDescription</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>analysisId</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">integer(int32)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>analysisName</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>anlaysisTypeId</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">integer(int32)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>createdBy</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">integer(int32)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>createdDate</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string(date-time)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>entityNameType</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION, PLATFORM, MANIFEST, MAPSET, MARKER_GROUP, EXPERIMENT, REFERENCE, ROLE, DISPLAY, MARKER, PROTOCOL, VENDOR_PROTOCOL)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>id</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">integer(int32)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>modifiedBy</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">integer(int32)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>modifiedDate</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string(date-time)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>parameters</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_entitypropertydto">EntityPropertyDTO</a> &gt; array</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>program</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>programVersion</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>referenceId</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">integer(int32)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>sourceName</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>sourceUri</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>sourceVersion</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>statusId</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">integer(int32)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>timeExecuted</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string(date-time)</p></td>
 </tr>
 </tbody>
 </table>
@@ -807,32 +1020,27 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>allowedProcessTypes</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>allowedProcessTypes</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; enum (CREATE, READ, UPDATE, DELETE, NONE) &gt; array</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>id</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>id</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer(int32)</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>maxUploadSizeMbytes</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>maxUploadSizeMbytes</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer(int32)</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>serverCapabilities</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>serverCapabilities</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; string, boolean &gt; map</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>serverConfigs</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>serverConfigs</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; string, <a href="#_serverconfig">ServerConfig</a> &gt; map</p></td>
 </tr>
@@ -856,26 +1064,22 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>entityIdId</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>entityIdId</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer(int32)</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>propertyId</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>propertyId</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer(int32)</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>propertyName</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>propertyName</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>propertyValue</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>propertyValue</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
@@ -899,38 +1103,32 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>cropType</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>cropType</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>dtoHeaderAuth</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>dtoHeaderAuth</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_headerauth">HeaderAuth</a></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>gobiiProcessType</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>gobiiProcessType</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">enum (CREATE, READ, UPDATE, DELETE, NONE)</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>gobiiVersion</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>gobiiVersion</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>pagination</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>pagination</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_pagination">Pagination</a></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>status</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>status</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_status">Status</a></p></td>
 </tr>
@@ -954,26 +1152,22 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>gobiiCropType</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>gobiiCropType</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>password</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>password</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>token</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>token</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>userName</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>userName</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
@@ -997,20 +1191,17 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>gobiiStatusLevel</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>gobiiStatusLevel</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">enum (ERROR, VALIDATION, WARNING, INFO, OK)</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>gobiiValidationStatusType</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>gobiiValidationStatusType</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">enum (NONE, UNKNOWN, VALIDATION_COMPOUND_UNIQUE, VALIDATION_NOT_UNIQUE, NONEXISTENT_FK_ENTITY, BAD_REQUEST, MISSING_REQUIRED_VALUE, ENTITY_DOES_NOT_EXIST, ENTITY_ALREADY_EXISTS, UNKNOWN_ENUM_VALUE)</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>message</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>message</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
@@ -1034,20 +1225,17 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>description</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>description</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>href</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>href</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>methods</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>methods</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; enum (GET, POST, PUT, PATCH, DELETE, OPTIONS) &gt; array</p></td>
 </tr>
@@ -1071,14 +1259,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>exploreLinksPerDataItem</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>exploreLinksPerDataItem</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; &lt; <a href="#_link">Link</a> &gt; array &gt; array</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>linksPerDataItem</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>linksPerDataItem</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_link">Link</a> &gt; array</p></td>
 </tr>
@@ -1102,32 +1288,27 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>currentPage</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>currentPage</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer(int32)</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>pageSize</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>pageSize</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer(int32)</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>pagedQueryId</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>pagedQueryId</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>queryTime</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>queryTime</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string(date-time)</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>totalPages</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>totalPages</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer(int32)</p></td>
 </tr>
@@ -1151,14 +1332,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>data</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>data</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_analysisdto">AnalysisDTO</a> &gt; array</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>linkCollection</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>linkCollection</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_linkcollection">LinkCollection</a></p></td>
 </tr>
@@ -1182,14 +1361,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>data</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>data</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_configsettingsdto">ConfigSettingsDTO</a> &gt; array</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>linkCollection</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>linkCollection</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_linkcollection">LinkCollection</a></p></td>
 </tr>
@@ -1197,7 +1374,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </table>
 </div>
 <div class="sect2">
-<h3 id="_payloadenvelopeconfigsettingsdto">PayloadEnvelopeConfigSettingsDTO</h3>
+<h3 id="_payloadenvelopeanalysisdto">AnalysisDTO</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 16.6666%;">
@@ -1213,14 +1390,41 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>header</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>header</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_header">Header</a></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>payload</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>payload</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_payloadanalysisdto">PayloadAnalysisDTO</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_payloadenvelopeconfigsettingsdto">ConfigSettingsDTO</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 61.1111%;">
+<col style="width: 22.2223%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>header</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_header">Header</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>payload</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_payloadconfigsettingsdto">PayloadConfigSettingsDTO</a></p></td>
 </tr>
@@ -1244,38 +1448,32 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>confidentialityNotice</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>confidentialityNotice</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>contextRoot</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>contextRoot</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>domain</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>domain</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>fileLocations</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>fileLocations</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; string, string &gt; map</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>gobiiCropType</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>gobiiCropType</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>port</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>port</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer(int32)</p></td>
 </tr>
@@ -1299,20 +1497,17 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>statusMessages</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>statusMessages</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_headerstatusmessage">HeaderStatusMessage</a> &gt; array</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>statusMessagesByCode</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>statusMessagesByCode</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; string, string &gt; map</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>succeeded</strong><br>
-<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>succeeded</strong><br></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Default</strong> : <code>false</code></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">boolean</p></td>
 </tr>

@@ -302,7 +302,7 @@ public class GOBIIControllerV1 {
     // *************************** ANALYSIS METHODS
     // *********************************************
     @ApiOperation(value = "/analyses",
-            notes = "Creates an analysis entity")
+            notes = "Creates an analysis entity. $RequestResponseStructure$")
 //    @ApiImplicitParams({
 //            @ApiImplicitParam(name = "analysisPostEnvelope",
 //                    required = true,

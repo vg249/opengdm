@@ -579,37 +579,6 @@
             </plugin> <!-- swagger-maven-->
 
 
-            <!-- usage guide: https://github.com/beiliubei/maven-replacer-plugin/wiki/Usage-Guide
-            use tokenValueMap to specify a file containing the replacements -->
-            <plugin>
-                <groupId>com.google.code.maven-replacer-plugin</groupId>
-                <artifactId>replacer</artifactId>
-                <version>1.5.3</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>replace</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <ignoreErrors>false</ignoreErrors>
-                    <regex>false</regex>
-                    <filesToInclude>
-                        ${doc-location-generated}/swagger/swagger.yaml,
-                        ${doc-location-generated}/swagger/swagger.json
-                    </filesToInclude>
-                    <tokenValueMap>${doc-location-source}/tokens.txt</tokenValueMap>
-                    <!--<replacements>-->
-                        <!--<replacement>-->
-                            <!--<token>PayloadEnvelopeAnalysisDTO</token>-->
-                            <!--<value>AnalysisDTO</value>-->
-                        <!--</replacement>-->
-                    <!--</replacements>-->
-                </configuration>
-            </plugin>
-
 
             <!-- swagger2markup-maven-plugin generates asciidoc from yaml  -->
             <plugin>
@@ -630,6 +599,41 @@
                     </execution>
                 </executions>
             </plugin>
+
+
+            <!-- usage guide: https://github.com/beiliubei/maven-replacer-plugin/wiki/Usage-Guide
+use tokenValueMap to specify a file containing the replacements -->
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <ignoreErrors>false</ignoreErrors>
+                    <regex>false</regex>
+                    <filesToInclude>
+                        ${doc-location-generated}/asciidoc/definitions.adoc,
+                        ${doc-location-generated}/asciidoc/gobii-system.adoc,
+                        ${doc-location-generated}/asciidoc/paths.adoc,
+                        ${doc-location-generated}/asciidoc/security.adoc
+                    </filesToInclude>
+                    <tokenValueMap>${doc-location-source}/tokens.txt</tokenValueMap>
+                    <!--<replacements>-->
+                    <!--<replacement>-->
+                    <!--<token>PayloadEnvelopeAnalysisDTO</token>-->
+                    <!--<value>AnalysisDTO</value>-->
+                    <!--</replacement>-->
+                    <!--</replacements>-->
+                </configuration>
+            </plugin>
+
 
             <!-- asciidoctor-maven-plugin should generate html from asciidoc -->
             <!--

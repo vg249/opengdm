@@ -8,10 +8,48 @@
 [options="header", cols=".^3,.^11,.^4"]
 |===
 |Name|Description|Schema
-|*header* +
-_optional_||<<_header,Header>>
-|*payload* +
-_optional_||<<_payloadanalysisdto,PayloadAnalysisDTO>>
+|*algorithm* +
+||string
+|*allowedProcessTypes* +
+||< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|*analysisDescription* +
+||string
+|*analysisId* +
+||integer(int32)
+|*analysisName* +
+||string
+|*anlaysisTypeId* +
+||integer(int32)
+|*createdBy* +
+||integer(int32)
+|*createdDate* +
+||string(date-time)
+|*entityNameType* +
+||enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION, PLATFORM, MANIFEST, MAPSET, MARKER_GROUP, EXPERIMENT, REFERENCE, ROLE, DISPLAY, MARKER, PROTOCOL, VENDOR_PROTOCOL)
+|*id* +
+||integer(int32)
+|*modifiedBy* +
+||integer(int32)
+|*modifiedDate* +
+||string(date-time)
+|*parameters* +
+||< <<_entitypropertydto,EntityPropertyDTO>> > array
+|*program* +
+||string
+|*programVersion* +
+||string
+|*referenceId* +
+||integer(int32)
+|*sourceName* +
+||string
+|*sourceUri* +
+||string
+|*sourceVersion* +
+||string
+|*statusId* +
+||integer(int32)
+|*timeExecuted* +
+||string(date-time)
 |===
 
 
@@ -22,15 +60,15 @@ _optional_||<<_payloadanalysisdto,PayloadAnalysisDTO>>
 |===
 |Name|Description|Schema
 |*allowedProcessTypes* +
-_optional_||< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+||< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
 |*id* +
-_optional_||integer(int32)
+||integer(int32)
 |*maxUploadSizeMbytes* +
-_optional_||integer(int32)
+||integer(int32)
 |*serverCapabilities* +
-_optional_||< string, boolean > map
+||< string, boolean > map
 |*serverConfigs* +
-_optional_||< string, <<_serverconfig,ServerConfig>> > map
+||< string, <<_serverconfig,ServerConfig>> > map
 |===
 
 
@@ -41,13 +79,13 @@ _optional_||< string, <<_serverconfig,ServerConfig>> > map
 |===
 |Name|Description|Schema
 |*entityIdId* +
-_optional_||integer(int32)
+||integer(int32)
 |*propertyId* +
-_optional_||integer(int32)
+||integer(int32)
 |*propertyName* +
-_optional_||string
+||string
 |*propertyValue* +
-_optional_||string
+||string
 |===
 
 
@@ -58,17 +96,17 @@ _optional_||string
 |===
 |Name|Description|Schema
 |*cropType* +
-_optional_||string
+||string
 |*dtoHeaderAuth* +
-_optional_||<<_headerauth,HeaderAuth>>
+||<<_headerauth,HeaderAuth>>
 |*gobiiProcessType* +
-_optional_||enum (CREATE, READ, UPDATE, DELETE, NONE)
+||enum (CREATE, READ, UPDATE, DELETE, NONE)
 |*gobiiVersion* +
-_optional_||string
+||string
 |*pagination* +
-_optional_||<<_pagination,Pagination>>
+||<<_pagination,Pagination>>
 |*status* +
-_optional_||<<_status,Status>>
+||<<_status,Status>>
 |===
 
 
@@ -79,13 +117,13 @@ _optional_||<<_status,Status>>
 |===
 |Name|Description|Schema
 |*gobiiCropType* +
-_optional_||string
+||string
 |*password* +
-_optional_||string
+||string
 |*token* +
-_optional_||string
+||string
 |*userName* +
-_optional_||string
+||string
 |===
 
 
@@ -96,11 +134,11 @@ _optional_||string
 |===
 |Name|Description|Schema
 |*gobiiStatusLevel* +
-_optional_||enum (ERROR, VALIDATION, WARNING, INFO, OK)
+||enum (ERROR, VALIDATION, WARNING, INFO, OK)
 |*gobiiValidationStatusType* +
-_optional_||enum (NONE, UNKNOWN, VALIDATION_COMPOUND_UNIQUE, VALIDATION_NOT_UNIQUE, NONEXISTENT_FK_ENTITY, BAD_REQUEST, MISSING_REQUIRED_VALUE, ENTITY_DOES_NOT_EXIST, ENTITY_ALREADY_EXISTS, UNKNOWN_ENUM_VALUE)
+||enum (NONE, UNKNOWN, VALIDATION_COMPOUND_UNIQUE, VALIDATION_NOT_UNIQUE, NONEXISTENT_FK_ENTITY, BAD_REQUEST, MISSING_REQUIRED_VALUE, ENTITY_DOES_NOT_EXIST, ENTITY_ALREADY_EXISTS, UNKNOWN_ENUM_VALUE)
 |*message* +
-_optional_||string
+||string
 |===
 
 
@@ -111,11 +149,11 @@ _optional_||string
 |===
 |Name|Description|Schema
 |*description* +
-_optional_||string
+||string
 |*href* +
-_optional_||string
+||string
 |*methods* +
-_optional_||< enum (GET, POST, PUT, PATCH, DELETE, OPTIONS) > array
+||< enum (GET, POST, PUT, PATCH, DELETE, OPTIONS) > array
 |===
 
 
@@ -126,9 +164,9 @@ _optional_||< enum (GET, POST, PUT, PATCH, DELETE, OPTIONS) > array
 |===
 |Name|Description|Schema
 |*exploreLinksPerDataItem* +
-_optional_||< < <<_link,Link>> > array > array
+||< < <<_link,Link>> > array > array
 |*linksPerDataItem* +
-_optional_||< <<_link,Link>> > array
+||< <<_link,Link>> > array
 |===
 
 
@@ -139,15 +177,15 @@ _optional_||< <<_link,Link>> > array
 |===
 |Name|Description|Schema
 |*currentPage* +
-_optional_||integer(int32)
+||integer(int32)
 |*pageSize* +
-_optional_||integer(int32)
+||integer(int32)
 |*pagedQueryId* +
-_optional_||string
+||string
 |*queryTime* +
-_optional_||string(date-time)
+||string(date-time)
 |*totalPages* +
-_optional_||integer(int32)
+||integer(int32)
 |===
 
 
@@ -158,9 +196,9 @@ _optional_||integer(int32)
 |===
 |Name|Description|Schema
 |*data* +
-_optional_||< <<_analysisdto,AnalysisDTO>> > array
+||< <<_analysisdto,AnalysisDTO>> > array
 |*linkCollection* +
-_optional_||<<_linkcollection,LinkCollection>>
+||<<_linkcollection,LinkCollection>>
 |===
 
 
@@ -171,22 +209,35 @@ _optional_||<<_linkcollection,LinkCollection>>
 |===
 |Name|Description|Schema
 |*data* +
-_optional_||< <<_configsettingsdto,ConfigSettingsDTO>> > array
+||< <<_configsettingsdto,ConfigSettingsDTO>> > array
 |*linkCollection* +
-_optional_||<<_linkcollection,LinkCollection>>
+||<<_linkcollection,LinkCollection>>
 |===
 
 
-[[_payloadenvelopeconfigsettingsdto]]
-=== PayloadEnvelopeConfigSettingsDTO
+[[_payloadenvelopeanalysisdto]]
+=== AnalysisDTO
 
 [options="header", cols=".^3,.^11,.^4"]
 |===
 |Name|Description|Schema
 |*header* +
-_optional_||<<_header,Header>>
+||<<_header,Header>>
 |*payload* +
-_optional_||<<_payloadconfigsettingsdto,PayloadConfigSettingsDTO>>
+||<<_payloadanalysisdto,PayloadAnalysisDTO>>
+|===
+
+
+[[_payloadenvelopeconfigsettingsdto]]
+=== ConfigSettingsDTO
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|*header* +
+||<<_header,Header>>
+|*payload* +
+||<<_payloadconfigsettingsdto,PayloadConfigSettingsDTO>>
 |===
 
 
@@ -197,17 +248,17 @@ _optional_||<<_payloadconfigsettingsdto,PayloadConfigSettingsDTO>>
 |===
 |Name|Description|Schema
 |*confidentialityNotice* +
-_optional_||string
+||string
 |*contextRoot* +
-_optional_||string
+||string
 |*domain* +
-_optional_||string
+||string
 |*fileLocations* +
-_optional_||< string, string > map
+||< string, string > map
 |*gobiiCropType* +
-_optional_||string
+||string
 |*port* +
-_optional_||integer(int32)
+||integer(int32)
 |===
 
 
@@ -218,11 +269,11 @@ _optional_||integer(int32)
 |===
 |Name|Description|Schema
 |*statusMessages* +
-_optional_||< <<_headerstatusmessage,HeaderStatusMessage>> > array
+||< <<_headerstatusmessage,HeaderStatusMessage>> > array
 |*statusMessagesByCode* +
-_optional_||< string, string > map
+||< string, string > map
 |*succeeded* +
-_optional_|*Default* : `false`|boolean
+|*Default* : `false`|boolean
 |===
 
 
