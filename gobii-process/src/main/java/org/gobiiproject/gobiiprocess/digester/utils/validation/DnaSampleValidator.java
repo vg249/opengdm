@@ -12,8 +12,6 @@ class DnaSampleValidator extends BaseValidator {
         if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), dnaSample, failureList)) {
             String filePath = dir + "/" + validationUnit.getDigestFileName();
             beginValidation(filePath,validationUnit,failureList);
-        //    validateUniqueColumnList(filePath, validationUnit, failureList);
-        //    validateColumnsBetweenFiles(filePath, validationUnit, failureList);
         }
     }
 }

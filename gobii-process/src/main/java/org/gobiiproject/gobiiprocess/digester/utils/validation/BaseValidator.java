@@ -38,6 +38,9 @@ public abstract class BaseValidator {
         validateRequiredColumns(fileName, validationUnit.getConditions(), failureList);
         validateRequiredUniqueColumns(fileName, validationUnit.getConditions(), failureList);
         validateOptionalNotNullColumns(fileName, validationUnit.getConditions(), failureList);
+        validateUniqueColumnList(fileName, validationUnit, failureList);
+        validateColumnsBetweenFiles(fileName, validationUnit, failureList);
+        validateDataBasecalls(validationUnit, failureList, fileName);
     }
 
     /**
@@ -47,7 +50,7 @@ public abstract class BaseValidator {
      * @param conditions  conditions
      * @param failureList failure list
      */
-    void validateRequiredColumns(String fileName, List<ConditionUnit> conditions, List<Failure> failureList) throws MaximumErrorsValidationException {
+    private void validateRequiredColumns(String fileName, List<ConditionUnit> conditions, List<Failure> failureList) throws MaximumErrorsValidationException {
         List<String> requiredFields = new ArrayList<>();
         for (ConditionUnit condition : conditions)
             if (condition.required.equalsIgnoreCase(ValidationConstants.YES) && !(condition.unique != null && condition.unique.equalsIgnoreCase(ValidationConstants.YES)))
@@ -64,7 +67,7 @@ public abstract class BaseValidator {
      * @param conditions  conditions
      * @param failureList failure list
      */
-    void validateRequiredUniqueColumns(String fileName, List<ConditionUnit> conditions, List<Failure> failureList) throws MaximumErrorsValidationException {
+    private void validateRequiredUniqueColumns(String fileName, List<ConditionUnit> conditions, List<Failure> failureList) throws MaximumErrorsValidationException {
         List<String> requiredUniqueColumns = new ArrayList<>();
         for (ConditionUnit condition : conditions)
             if (condition.required.equalsIgnoreCase(ValidationConstants.YES) && (condition.unique != null && condition.unique.equalsIgnoreCase(ValidationConstants.YES)))
@@ -82,7 +85,7 @@ public abstract class BaseValidator {
      * @param conditions  conditions
      * @param failureList failure list
      */
-    void validateOptionalNotNullColumns(String fileName, List<ConditionUnit> conditions, List<Failure> failureList) throws MaximumErrorsValidationException {
+    private void validateOptionalNotNullColumns(String fileName, List<ConditionUnit> conditions, List<Failure> failureList) throws MaximumErrorsValidationException {
         List<String> requiredFields = new ArrayList<>();
         List<String> headers = new ArrayList<>();
         getHeaders(fileName, headers, failureList);
@@ -101,7 +104,7 @@ public abstract class BaseValidator {
      * @param validationUnit validation conditions
      * @param failureList    failure list
      */
-    void validateUniqueColumnList(String fileName, ValidationUnit validationUnit, List<Failure> failureList) throws MaximumErrorsValidationException {
+    private void validateUniqueColumnList(String fileName, ValidationUnit validationUnit, List<Failure> failureList) throws MaximumErrorsValidationException {
         for (ConditionUnit condition : validationUnit.getConditions())
             if (condition.uniqueColumns != null && condition.uniqueColumns.size() > 0) {
                 List<String> uniqueColumns = condition.uniqueColumns;
@@ -145,7 +148,7 @@ public abstract class BaseValidator {
      * @param failureList    failure list
      * @throws MaximumErrorsValidationException maximum error exception
      */
-    void validateColumnsBetweenFiles(String filePath, ValidationUnit validationUnit, List<Failure> failureList) throws MaximumErrorsValidationException {
+    private void validateColumnsBetweenFiles(String filePath, ValidationUnit validationUnit, List<Failure> failureList) throws MaximumErrorsValidationException {
         for (ConditionUnit condition : validationUnit.getConditions()) {
             if (condition.fileExistenceCheck != null) {
                 validateFileExistenceCheck(filePath, validationUnit, failureList);
@@ -155,7 +158,7 @@ public abstract class BaseValidator {
         }
     }
 
-    void validateDataBasecalls(ValidationUnit validationUnit, List<Failure> failureList, String fileName) throws MaximumErrorsValidationException {
+    private void validateDataBasecalls(ValidationUnit validationUnit, List<Failure> failureList, String fileName) throws MaximumErrorsValidationException {
         for (ConditionUnit condition : validationUnit.getConditions()) {
             if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.DB)) {
                 if (condition.typeName != null) {
@@ -181,7 +184,7 @@ public abstract class BaseValidator {
      * @return header exists or not
      * @throws MaximumErrorsValidationException exception
      */
-    boolean checkForHeaderExistence(String fileName, ConditionUnit conditionUnit, List<Failure> failureList) throws MaximumErrorsValidationException {
+    private boolean checkForHeaderExistence(String fileName, ConditionUnit conditionUnit, List<Failure> failureList) throws MaximumErrorsValidationException {
         List<String> headers = new ArrayList<>();
         if (getHeaders(fileName, headers, failureList)) {
             boolean headerExist = headers.contains(conditionUnit.columnName);

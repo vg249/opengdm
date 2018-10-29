@@ -11,7 +11,6 @@ class GermplasmValidator extends BaseValidator {
         if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), digestGermplasm, failureList)) {
             String fileName = dir + "/" + validationUnit.getDigestFileName();
             beginValidation(fileName, validationUnit, failureList);
-         //   validateDataBasecalls(validationUnit, failureList, fileName);
         }
     }
 }
