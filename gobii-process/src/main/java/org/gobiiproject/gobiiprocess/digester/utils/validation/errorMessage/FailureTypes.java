@@ -5,6 +5,7 @@ public class FailureTypes {
     public static final String VALIDATION_ERROR = "Validation Error";
     public static final String CORRUPTED_VALIDATION_FILE = "Corrupted validation file";
     public static final String ERROR_ACCESSING_FILE = "Error in accessing path";
+    public static final String FILE_NOT_FOUND = "File not found";
     public static final String MORE_THAN_ONE_FILE = "More than one file with the same name";
     public static final String INVALID_FILE_EXTENSIONS = "Invalid file extension";
     public static final String EMPTY_FILE = "Empty file";

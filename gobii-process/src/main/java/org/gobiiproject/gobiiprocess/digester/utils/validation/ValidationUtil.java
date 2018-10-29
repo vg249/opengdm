@@ -93,10 +93,7 @@ class ValidationUtil {
                     List<String> filesList = new ArrayList<>();
                     if (getFilesWithExtension(parentDirectory, comparisonFileName, filesList, failureList)) {
                         if (filesList.size() != 1) {
-                            Failure failure = new Failure();
-                            failure.reason = FailureTypes.MORE_THAN_ONE_FILE;
-                            failure.values.add(comparisonFileName);
-                            addMessageToList(failure, failureList);
+                            processFileError(filePath, filesList.size(), failureList);
                             return;
                         }
                         String comparisonFilePath = parentDirectory + "/" + comparisonFileName;
@@ -125,8 +122,8 @@ class ValidationUtil {
                         if (!fileColumnElements.containsAll(comparisonFileColumnElements)) {
                             Failure failure = new Failure();
                             failure.reason = FailureTypes.VALUE_MISMATCH;
-                            failure.columnName.add(fieldColumns.stream().collect(Collectors.joining(",")));
-                            failure.columnName.add(fieldToCompare.stream().collect(Collectors.joining(",")));
+                            failure.columnName.add(String.join(",", fieldColumns));
+                            failure.columnName.add(String.join(",", fieldToCompare));
                             addMessageToList(failure, failureList);
                         }
                     }
@@ -146,41 +143,78 @@ class ValidationUtil {
     }
 
     /**
+     * Checks that the file exists
+     *
+     * @param fileName    file name
+     * @param condition   Condition unit
+     * @param failureList failure list
+     */
+    static void validateUniqueColumnListHelper(String fileName, ConditionUnit condition, List<Failure> failureList) throws MaximumErrorsValidationException {
+        List<String> uniqueColumns = condition.uniqueColumns;
+        List<List<String>> fileColumns = new ArrayList<>();
+        for (String column : uniqueColumns) {
+            List<String> fileColumn = getFileColumn(fileName, column, failureList);
+            if (fileColumn.size() != 0) {
+                fileColumns.add(fileColumn);
+            } else {
+                Failure failure = new Failure();
+                failure.reason = FailureTypes.COLUMN_NOT_FOUND;
+                failure.columnName.add(column);
+                addMessageToList(failure, failureList);
+                return;
+            }
+        }
+        if (!verifyEqualSizeColumn(failureList, fileColumns)) return;
+
+        List<String> concatList = new ArrayList<>();
+        for (int i = 0; i < fileColumns.get(0).size(); i++) {
+            String value = "";
+            for (List<String> column : fileColumns) {
+                if (value.equals("")) value = column.get(i);
+                else value = value + "$@$" + column.get(i);
+            }
+            if (concatList.contains(value)) {
+                Failure failure = new Failure();
+                failure.reason = FailureTypes.NOT_UNIQUE;
+                failure.columnName.addAll(uniqueColumns);
+                addMessageToList(failure, failureList);
+            } else concatList.add(value);
+        }
+    }
+
+
+    /**
      * Validation based on the existence of a file.
      * Do something if a file exists and something else if it doesn't exist.
      *
-     * @param fileName       Name of the file
-     * @param validationUnit Validation Unit
-     * @param failureList    failure list
+     * @param fileName    Name of the file
+     * @param condition   Condition unit
+     * @param failureList failure list
      */
-    static void validateFileExistenceCheck(String fileName, ValidationUnit validationUnit, List<Failure> failureList) throws MaximumErrorsValidationException {
-        for (ConditionUnit condition : validationUnit.getConditions())
-            if (condition.fileExistenceCheck != null) {
-                String existenceFile = condition.fileExistenceCheck;
-                List<String> files = new ArrayList<>();
-                boolean shouldFileExist = condition.fileExists.equalsIgnoreCase(ValidationConstants.YES);
-                getFilesWithExtension(new File(fileName).getParent(), existenceFile, files, failureList);
-                if (files.size() > 1) {
+    static void validateFileExistenceCheck(String fileName, ConditionUnit condition, List<Failure> failureList) throws MaximumErrorsValidationException {
+        if (condition.fileExistenceCheck != null) {
+            String existenceFile = condition.fileExistenceCheck;
+            List<String> files = new ArrayList<>();
+            boolean shouldFileExist = condition.fileExists.equalsIgnoreCase(ValidationConstants.YES);
+            getFilesWithExtension(new File(fileName).getParent(), existenceFile, files, failureList);
+            if (files.size() > 1) {
+                processFileError(fileName, files.size(), failureList);
+                return;
+            }
+            if ((shouldFileExist && files.size() == 1) || (!shouldFileExist && files.size() == 0)) {
+                // Condition is satisfied
+                if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.DB)) {
+                    //TODO: Implement the database call
+                } else if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.FILE))
+                    validateColumnBetweenFiles(fileName, condition, failureList);
+                else {
                     Failure failure = new Failure();
-                    failure.reason = FailureTypes.MORE_THAN_ONE_FILE;
-                    failure.values.add(fileName);
+                    failure.reason = FailureTypes.UNDEFINED_CONDITION_TYPE;
+                    failure.values.add(condition.type);
                     addMessageToList(failure, failureList);
-                    return;
-                }
-                if ((shouldFileExist && files.size() == 1) || (!shouldFileExist && files.size() == 0)) {
-                    // Condition is satisfied
-                    if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.DB)) {
-                        //TODO: Implement the database call
-                    } else if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.FILE))
-                        validateColumnBetweenFiles(fileName, condition, failureList);
-                    else {
-                        Failure failure = new Failure();
-                        failure.reason = FailureTypes.UNDEFINED_CONDITION_TYPE;
-                        failure.values.add(condition.type);
-                        addMessageToList(failure, failureList);
-                    }
                 }
             }
+        }
     }
 
     static boolean getFilesWithExtension(String dir, String fileExtension, List<String> filesWithExtension, List<Failure> failureList) throws MaximumErrorsValidationException {
@@ -208,7 +242,7 @@ class ValidationUtil {
      * @param failureList failure list
      * @return column values
      */
-    static List<String> getFileColumn(String filepath, String column, List<Failure> failureList) throws MaximumErrorsValidationException {
+    private static List<String> getFileColumn(String filepath, String column, List<Failure> failureList) throws MaximumErrorsValidationException {
         List<String> fileColumnElements = new ArrayList<>();
         List<String[]> file = readFileIntoMemory(filepath, failureList);
         List<String> fileHeaders = Arrays.asList(file.remove(0));
@@ -336,7 +370,7 @@ class ValidationUtil {
      * @param fileColumns file columns
      * @return status
      */
-    static boolean verifyEqualSizeColumn(List<Failure> failureList, List<List<String>> fileColumns) throws MaximumErrorsValidationException {
+    private static boolean verifyEqualSizeColumn(List<Failure> failureList, List<List<String>> fileColumns) throws MaximumErrorsValidationException {
         int size = fileColumns.get(0).size();
         for (List<String> column : fileColumns)
             if (column.size() != size) {
@@ -382,6 +416,20 @@ class ValidationUtil {
         failure.reason = reason;
         failure.values.add("Condition type defined " + s1 + " but " + s2 + " not defined.");
         addMessageToList(failure, errorList);
+    }
+
+    static void processFileError(String fileName, int size, List<Failure> failureList) throws MaximumErrorsValidationException {
+        if (size > 1) {
+            Failure failure = new Failure();
+            failure.reason = FailureTypes.MORE_THAN_ONE_FILE;
+            failure.values.add(fileName);
+            addMessageToList(failure, failureList);
+        } else if (size < 1) {
+            Failure failure = new Failure();
+            failure.reason = FailureTypes.FILE_NOT_FOUND;
+            failure.values.add(fileName);
+            addMessageToList(failure, failureList);
+        }
     }
 
     /**

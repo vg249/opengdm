@@ -3,6 +3,7 @@ package org.gobiiproject.gobiiprocess.digester.utils.validation;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
 
+import java.io.File;
 import java.util.*;
 
 import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.*;
@@ -39,6 +40,7 @@ public abstract class BaseValidator {
         validateRequiredUniqueColumns(fileName, validationUnit.getConditions(), failureList);
         validateOptionalNotNullColumns(fileName, validationUnit.getConditions(), failureList);
         validateUniqueColumnList(fileName, validationUnit, failureList);
+        validateFileShouldExist(fileName, validationUnit, failureList);
         validateColumnsBetweenFiles(fileName, validationUnit, failureList);
         validateDataBasecalls(validationUnit, failureList, fileName);
     }
@@ -106,39 +108,31 @@ public abstract class BaseValidator {
      */
     private void validateUniqueColumnList(String fileName, ValidationUnit validationUnit, List<Failure> failureList) throws MaximumErrorsValidationException {
         for (ConditionUnit condition : validationUnit.getConditions())
-            if (condition.uniqueColumns != null && condition.uniqueColumns.size() > 0) {
-                List<String> uniqueColumns = condition.uniqueColumns;
-                List<List<String>> fileColumns = new ArrayList<>();
-                for (String column : uniqueColumns) {
-                    List<String> fileColumn = getFileColumn(fileName, column, failureList);
-                    if (fileColumn.size() != 0) {
-                        fileColumns.add(fileColumn);
-                    } else {
-                        Failure failure = new Failure();
-                        failure.reason = FailureTypes.COLUMN_NOT_FOUND;
-                        failure.columnName.add(column);
-                        addMessageToList(failure, failureList);
-                        return;
-                    }
-                }
-                if (!verifyEqualSizeColumn(failureList, fileColumns)) return;
+            if (condition.uniqueColumns != null && condition.uniqueColumns.size() > 0)
+                validateUniqueColumnListHelper(fileName, condition, failureList);
+    }
 
-                List<String> concatList = new ArrayList<>();
-                for (int i = 0; i < fileColumns.get(0).size(); i++) {
-                    String value = "";
-                    for (List<String> column : fileColumns) {
-                        if (value.equals("")) value = column.get(i);
-                        else value = value + "$@$" + column.get(i);
-                    }
-                    if (concatList.contains(value)) {
-                        Failure failure = new Failure();
-                        failure.reason = FailureTypes.NOT_UNIQUE;
-                        failure.columnName.addAll(uniqueColumns);
-                        addMessageToList(failure, failureList);
-                    } else concatList.add(value);
+
+    /**
+     * Checks that the file exists
+     *
+     * @param fileName       file name
+     * @param validationUnit validation unit
+     * @param failureList    failure list
+     */
+    private void validateFileShouldExist(String fileName, ValidationUnit validationUnit, List<Failure> failureList) throws MaximumErrorsValidationException {
+        for (ConditionUnit condition : validationUnit.getConditions()) {
+            if (condition.fileShouldExist != null) {
+                String existenceFile = condition.fileShouldExist;
+                List<String> files = new ArrayList<>();
+                getFilesWithExtension(new File(fileName).getParent(), existenceFile, files, failureList);
+                if (files.size() != 1) {
+                    processFileError(fileName, files.size(), failureList);
                 }
             }
+        }
     }
+
 
     /**
      * Checks if there is file comparision and does that
@@ -151,7 +145,7 @@ public abstract class BaseValidator {
     private void validateColumnsBetweenFiles(String filePath, ValidationUnit validationUnit, List<Failure> failureList) throws MaximumErrorsValidationException {
         for (ConditionUnit condition : validationUnit.getConditions()) {
             if (condition.fileExistenceCheck != null) {
-                validateFileExistenceCheck(filePath, validationUnit, failureList);
+                validateFileExistenceCheck(filePath, condition, failureList);
             } else if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.FILE)) {
                 validateColumnBetweenFiles(filePath, condition, failureList);
             }

@@ -41,6 +41,7 @@
           "columnName": "external_code",
           "required": "yes",
           "type": "File",
+          "fileShouldExist": "digest.germplasm",
           "fieldColumns": [
             "external_code"
           ],
@@ -130,6 +131,7 @@
           "columnName": "project_id",
           "required": "yes",
           "type": "File",
+          "fileShouldExist": "digest.dnasample",
           "fieldColumns": [
             "project_id"
           ],
@@ -257,6 +259,7 @@
           "columnName": "experiment_id",
           "required": "yes",
           "type": "File",
+          "fileShouldExist": "digest.dnarun",
           "fileColumns": [
             "experiment_id"
           ],
@@ -299,7 +302,8 @@
           "fieldToCompare": [
             "reference_name"
           ]
-        },{
+        },
+        {
           "columnName": "strand_name",
           "required": "no",
           "type": "DB",
@@ -308,6 +312,20 @@
           "fieldToCompare": [
             "strand_name"
           ]
+        }
+      ]
+    },
+    {
+      "digestFileName": "digest.marker_prop",
+      "conditions": [
+        {
+          "columnName": "platform_id",
+          "required": "yes"
+        },
+        {
+          "columnName": "marker_name",
+          "required": "yes",
+          "fileShouldExist": "digest.marker"
         }
       ]
     }

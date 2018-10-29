@@ -17,6 +17,4 @@ class MarkerValidator extends BaseValidator {
             beginValidation(fileName,validationUnit,failureList);
         }
     }
-
-
 }
