@@ -5,7 +5,7 @@ import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Fail
 import java.util.ArrayList;
 import java.util.List;
 
-public class LinkageGroupValidator extends BaseValidator {
+class LinkageGroupValidator extends BaseValidator {
     @Override
     void validate(ValidationUnit validationUnit, String dir, List<Failure> failureList) throws MaximumErrorsValidationException {
         List<String> digestLinkageGroup = new ArrayList<>();

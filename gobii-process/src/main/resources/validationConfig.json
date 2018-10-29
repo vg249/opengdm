@@ -330,20 +330,6 @@
       ]
     },
     {
-      "digestFileName": "digest.marker_prop",
-      "conditions": [
-        {
-          "columnName": "platform_id",
-          "required": "yes"
-        },
-        {
-          "columnName": "marker_name",
-          "required": "yes",
-          "fileShouldExist": "digest.marker"
-        }
-      ]
-    },
-    {
       "digestFileName": "digest.linkage_group",
       "conditions": [
         {
@@ -352,7 +338,42 @@
         },
         {
           "columnName": "name",
+          "required": "yes"
+        }
+      ]
+    },
+    {
+      "digestFileName": "digest.marker_linkage_group",
+      "conditions": [
+        {
+          "columnName": "platform_id",
+          "required": "yes"
+        },
+        {
+          "columnName": "map_id",
+          "required": "yes"
+        },
+        {
+          "columnName": "linkage_group_name",
           "required": "yes",
+          "fileExistenceCheck": "digest.linkage_group",
+          "fileExists": "no",
+          "type": "DB",
+          "typeName": "linkage_group",
+          "fieldToCompare": [
+            "linkage_group_name"
+          ]
+        },
+        {
+          "columnName": "maker_name",
+          "required": "yes",
+          "fileExistenceCheck": "digest.marker ",
+          "fileExists": "no",
+          "type": "DB",
+          "typeName": "marker_table",
+          "fieldToCompare": [
+            "maker_name"
+          ]
         }
       ]
     }
