@@ -8,8 +8,8 @@ import java.util.List;
 class DnaSamplePropValidator extends BaseValidator {
     @Override
     void validate(ValidationUnit validationUnit, String dir, List<Failure> failureList) throws MaximumErrorsValidationException {
-        List<String> dnaSample = new ArrayList<>();
-        if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), dnaSample, failureList)) {
+        List<String> dnaSampleProp = new ArrayList<>();
+        if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), dnaSampleProp, failureList)) {
             String filePath = dir + "/" + validationUnit.getDigestFileName();
             beginValidation(filePath,validationUnit,failureList);
         }

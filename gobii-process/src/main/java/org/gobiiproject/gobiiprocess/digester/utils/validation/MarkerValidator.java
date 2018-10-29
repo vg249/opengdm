@@ -11,8 +11,8 @@ import static org.gobiiproject.gobiiprocess.digester.utils.validation.Validation
 class MarkerValidator extends BaseValidator {
     @Override
     void validate(ValidationUnit validationUnit, String dir, List<Failure> failureList) throws MaximumErrorsValidationException {
-        List<String> digestGermplasm = new ArrayList<>();
-        if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), digestGermplasm, failureList)) {
+        List<String> digestMarker = new ArrayList<>();
+        if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), digestMarker, failureList)) {
             String fileName = dir + "/" + validationUnit.getDigestFileName();
             beginValidation(fileName,validationUnit,failureList);
         }
