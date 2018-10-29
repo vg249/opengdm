@@ -8,8 +8,8 @@ import java.util.List;
 class DatasetDnarunValidator extends BaseValidator {
     @Override
     void validate(ValidationUnit validationUnit, String dir, List<Failure> failureList) throws MaximumErrorsValidationException {
-        List<String> digestGermplasmProp = new ArrayList<>();
-        if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), digestGermplasmProp, failureList)) {
+        List<String> digestDatasetDNARun = new ArrayList<>();
+        if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), digestDatasetDNARun, failureList)) {
             String filePath = dir + "/" + validationUnit.getDigestFileName();
             beginValidation(filePath, validationUnit, failureList);
         }
