@@ -88,7 +88,7 @@ class ValidationWebServicesUtil {
                 case "type_name":
                     namesUri.setParamValue("filterValue", CvGroup.CVGROUP_GERMPLASM_TYPE.getCvGroupName());
                     break;
-                case "marker_strand":
+                case "strand_name":
                     namesUri.setParamValue("filterValue", CvGroup.CVGROUP_MARKER_STRAND.getCvGroupName());
                     break;
                 default:
