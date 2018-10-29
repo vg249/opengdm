@@ -10,9 +10,8 @@ class GermplasmPropValidator extends BaseValidator {
         List<String> digestGermplasmProp = new ArrayList<>();
         if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), digestGermplasmProp, failureList)) {
             String filePath = dir + "/" + validationUnit.getDigestFileName();
-            validateRequiredColumns(filePath, validationUnit.getConditions(), failureList);
-            validateRequiredUniqueColumns(filePath, validationUnit.getConditions(), failureList);
-            validateColumnsBetweenFiles(filePath, validationUnit, failureList);
+            beginValidation(filePath,validationUnit,failureList);
+         //   validateColumnsBetweenFiles(filePath, validationUnit, failureList);
         }
     }
 }
