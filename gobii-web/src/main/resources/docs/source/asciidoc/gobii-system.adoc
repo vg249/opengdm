@@ -23,6 +23,7 @@ Content TBD
 The http body structure is the same for all responses as well as for the body of POST and PUT requests. Here is a high level schematic of the body structure:
 
 [source,json]
+----
 	{
 	   "payload":{
 		  "linkCollection":{
@@ -59,6 +60,7 @@ The http body structure is the same for all responses as well as for the body of
 		  "cropType":""
 	   }
 	}
+----
 
 For requests, the following keys can be omitted:
 
@@ -90,22 +92,8 @@ When authentication succeeds, the response headers will contain a X-Auth-Token k
 
 Errors internal to GOBii are reported in the "header" key accompanying the response. An example of how to retrieve error data is provided in the following code fragment.
 
-
-
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
+[source,java]
+----
 if (!header.getStatus().isSucceeded() ||
         header
                 .getStatus()
@@ -120,6 +108,9 @@ if (!header.getStatus().isSucceeded() ||
         System.out.println(currentStatusMesage.getMessage());
     }
 }
+----
 
+== Documentation Tools
+The toolchain used to produce this documentation is swagger compatible. It is
 
 

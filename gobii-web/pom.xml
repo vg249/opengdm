@@ -361,6 +361,7 @@
                                     <directory>${doc-location-source}/asciidoc</directory>
                                     <includes>
                                         <include>index.adoc</include>
+                                        <include>gobii-api.adoc</include>
                                         <include>gobii-system.adoc</include>
                                     </includes>
                                     <filtering>false</filtering>
@@ -470,7 +471,7 @@
                                 <resource>
                                     <directory>${doc-location-generated}/pdf</directory>
                                     <includes>
-                                        <include>index.pdf</include>
+                                        <include>gobii-api.pdf</include>
                                     </includes>
                                     <filtering>false</filtering>
                                 </resource>
@@ -507,7 +508,7 @@
                             <!-- content of description file overrides the <description>
                                 element of the <info> tag below. This ends up as the
                                  Overview section in the HTML/PDF -->
-                            <descriptionFile>${doc-location-source}/swagger/overview.txt</descriptionFile>
+                            <descriptionFile>${doc-location-source}/overview.txt</descriptionFile>
                             <info>
                                 <title>GOBii API</title>
                                 <version>1.0</version>
@@ -698,7 +699,7 @@ use tokenValueMap to specify a file containing the replacements -->
                                                      https://github.com/jneen/rouge/issues/661
                             -->
                             <sourceDirectory>${doc-location-generated}/asciidoc</sourceDirectory>
-                            <sourceDocumentName>index.adoc</sourceDocumentName>
+                            <sourceDocumentName>gobii-api.adoc</sourceDocumentName>
                             <outputDirectory>${doc-location-generated}/pdf</outputDirectory>
                             <!--<backend>html5</backend>-->
                             <!--<backend>pdf</backend>-->

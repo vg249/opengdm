@@ -5,7 +5,8 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.7.1">
-<title>GOBii API</title>
+<meta name="author" content="= GOBii API">
+<title>master document for generating html</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -432,7 +433,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
-<h1>GOBii API</h1>
+<h1>master document for generating html</h1>
+<div class="details">
+<span id="author" class="author">= GOBii API</span><br>
+</div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
@@ -459,6 +463,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_error_handling">Error Handling</a></li>
 </ul>
 </li>
+<li><a href="#_documentation_tools">Documentation Tools</a></li>
 <li><a href="#_paths">Paths</a>
 <ul class="sectlevel2">
 <li><a href="#_createanalysis">/analyses</a></li>
@@ -566,54 +571,39 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <pre class="highlight"><code class="language-json" data-lang="json">	{
 	   "payload":{
 		  "linkCollection":{
-			 "linksPerDataItem":[</code></pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>],
-"exploreLinksPerDataItem":[</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>]
-},
-"data":[</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>]
-},
-"header":{
-"gobiiProcessType":"",
-"dtoHeaderAuth":{
-"userName":null,
-"password":null,
-"token":"",
-"gobiiCropType":""
-},
-"status":{
-"succeeded":true,
-"statusMessages":[</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>],
-"statusMessagesByCode":{</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>		 }
-	  },
-	  "pagination":null,
-	  "gobiiVersion":"2.0_2018-07-31",
-	  "cropType":""
-   }
-}</pre>
+			 "linksPerDataItem":[
+
+			 ],
+			 "exploreLinksPerDataItem":[
+
+			 ]
+		  },
+		  "data":[
+
+		  ]
+	   },
+	   "header":{
+		  "gobiiProcessType":"",
+		  "dtoHeaderAuth":{
+			 "userName":null,
+			 "password":null,
+			 "token":"",
+			 "gobiiCropType":""
+		  },
+		  "status":{
+			 "succeeded":true,
+			 "statusMessages":[
+
+			 ],
+			 "statusMessagesByCode":{
+
+			 }
+		  },
+		  "pagination":null,
+		  "gobiiVersion":"2.0_2018-07-31",
+		  "cropType":""
+	   }
+	}</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -664,36 +654,32 @@ NOTE: if no such record is found, the error will be 403: Forbidden: Missing cont
 <div class="paragraph">
 <p>Errors internal to GOBii are reported in the "header" key accompanying the response. An example of how to retrieve error data is provided in the following code fragment.</p>
 </div>
-<div class="paragraph">
-<p>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-if (!header.getStatus().isSucceeded() ||
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">if (!header.getStatus().isSucceeded() ||
         header
                 .getStatus()
                 .getStatusMessages()
                 .stream()
-                .filter(headerStatusMessage &#8594; headerStatusMessage.getGobiiStatusLevel().equals(GobiiStatusLevel.VALIDATION))
+                .filter(headerStatusMessage -&gt; headerStatusMessage.getGobiiStatusLevel().equals(GobiiStatusLevel.VALIDATION))
                 .count() &gt; 0) {
     returnVal = true;
     System.out.println();
-    System.out.println("<strong>*</strong> Header errors: ");
+    System.out.println("*** Header errors: ");
     for (HeaderStatusMessage currentStatusMesage : header.getStatus().getStatusMessages()) {
         System.out.println(currentStatusMesage.getMessage());
     }
-}</p>
+}</code></pre>
 </div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_documentation_tools">Documentation Tools</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The toolchain used to produce this documentation is swagger compatible. It is</p>
 </div>
 </div>
 </div>
@@ -1519,7 +1505,7 @@ if (!header.getStatus().isSucceeded() ||
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-10-25 18:09:53 EDT
+Last updated 2018-10-29 12:28:37 EDT
 </div>
 </div>
 </body>
