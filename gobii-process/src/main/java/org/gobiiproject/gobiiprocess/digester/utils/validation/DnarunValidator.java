@@ -12,7 +12,6 @@ class DnarunValidator extends BaseValidator {
         if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), dnaSample, failureList)) {
             String filePath = dir + "/" + validationUnit.getDigestFileName();
             beginValidation(filePath,validationUnit,failureList);
-        //    validateOptionalNotNullColumns(filePath, validationUnit.getConditions(), failureList);
          //   validateColumnsBetweenFiles(filePath, validationUnit, failureList);
         }
     }

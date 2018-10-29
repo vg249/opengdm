@@ -15,7 +15,6 @@ class MarkerValidator extends BaseValidator {
         if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), digestGermplasm, failureList)) {
             String fileName = dir + "/" + validationUnit.getDigestFileName();
             beginValidation(fileName,validationUnit,failureList);
-        //    validateRequiredUniqueColumns(fileName, validationUnit.getConditions(), failureList);
         //    validateDataBasecalls(validationUnit, failureList, fileName);
         }
     }

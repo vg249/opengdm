@@ -37,6 +37,7 @@ public abstract class BaseValidator {
     void beginValidation(String fileName, ValidationUnit validationUnit, List<Failure> failureList) throws MaximumErrorsValidationException {
         validateRequiredColumns(fileName, validationUnit.getConditions(), failureList);
         validateRequiredUniqueColumns(fileName, validationUnit.getConditions(), failureList);
+        validateOptionalNotNullColumns(fileName, validationUnit.getConditions(), failureList);
     }
 
     /**
