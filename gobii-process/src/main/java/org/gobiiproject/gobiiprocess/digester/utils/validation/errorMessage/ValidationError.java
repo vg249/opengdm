@@ -7,14 +7,14 @@ import java.util.List;
 
 public class ValidationError {
     @JsonProperty
-    public String digestFileName;
+    public String fileName;
     @JsonProperty
     public String status;
     @JsonProperty
     public List<Failure> failures;
 
     public ValidationError() {
-        digestFileName = "";
+        fileName = "";
         status = "";
         failures = new ArrayList<>();
     }
