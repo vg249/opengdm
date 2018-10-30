@@ -98,9 +98,7 @@ public class DigestFileValidator {
             validationError.fileName = FilenameUtils.getExtension(validation.getDigestFileName());
             List<Failure> failureList = new ArrayList<>();
             try {
-                digestFileValidator.validate(validation, failureList);
-            } catch (MaximumErrorsValidationException e) {
-                //Don't do any thing. This implies that error list is full. Later code handles it.
+                failureList.addAll(digestFileValidator.validate(validation));
             } catch (Exception e) {
                 Failure failure = new Failure();
                 failure.reason = FailureTypes.EXCEPTION;
@@ -258,44 +256,45 @@ public class DigestFileValidator {
         }
     }
 
-    public void validate(ValidationUnit validation, List<Failure> failureList) throws MaximumErrorsValidationException {
+    public List<Failure> validate(ValidationUnit validation) {
         trimSpaces(validation);
+        List<Failure> failureList = new ArrayList<>();
         switch (FilenameUtils.getExtension(validation.getDigestFileName())) {
             case "germplasm":
-                new GermplasmValidator().validate(validation, rootDir, failureList);
+                failureList.addAll(new GermplasmValidator().validate(validation, rootDir));
                 break;
             case "germplasm_prop":
-                new GermplasmPropValidator().validate(validation, rootDir, failureList);
+                failureList.addAll(new GermplasmPropValidator().validate(validation, rootDir));
                 break;
             case "dnasample":
-                new DnaSampleValidator().validate(validation, rootDir, failureList);
+                failureList.addAll(new DnaSampleValidator().validate(validation, rootDir));
                 break;
             case "dnasample_prop":
-                new DnaSamplePropValidator().validate(validation, rootDir, failureList);
+                failureList.addAll(new DnaSamplePropValidator().validate(validation, rootDir));
                 break;
             case "dnarun":
-                new DnarunValidator().validate(validation, rootDir, failureList);
+                failureList.addAll(new DnarunValidator().validate(validation, rootDir));
                 break;
             case "dnarun_prop":
-                new DnarunPropValidator().validate(validation, rootDir, failureList);
+                failureList.addAll(new DnarunPropValidator().validate(validation, rootDir));
                 break;
             case "marker":
-                new MarkerValidator().validate(validation, rootDir, failureList);
+                failureList.addAll(new MarkerValidator().validate(validation, rootDir));
                 break;
             case "marker_prop":
-                new MarkerPropValidator().validate(validation, rootDir, failureList);
+                failureList.addAll(new MarkerPropValidator().validate(validation, rootDir));
                 break;
             case "linkage_group":
-                new LinkageGroupValidator().validate(validation, rootDir, failureList);
+                failureList.addAll(new LinkageGroupValidator().validate(validation, rootDir));
                 break;
             case "marker_linkage_group":
-                new MarkerLinkageGroupValidator().validate(validation, rootDir, failureList);
+                failureList.addAll(new MarkerLinkageGroupValidator().validate(validation, rootDir));
                 break;
             case "dataset_dnarun":
-                new DatasetDnarunValidator().validate(validation, rootDir, failureList);
+                failureList.addAll(new DatasetDnarunValidator().validate(validation, rootDir));
                 break;
             case "dataset_marker":
-                new DatasetMarkerValidator().validate(validation, rootDir, failureList);
+                failureList.addAll(new DatasetMarkerValidator().validate(validation, rootDir));
                 break;
             case "matrix": // Validate has to include matrix validation
                 break;
@@ -303,8 +302,13 @@ public class DigestFileValidator {
                 Failure failure = new Failure();
                 failure.reason = FailureTypes.INVALID_FILE_EXTENSIONS;
                 failure.values.add(" Given extension " + validation.getDigestFileName() + " is invalid.");
-                addMessageToList(failure, failureList);
+                try {
+                    addMessageToList(failure, failureList);
+                } catch (MaximumErrorsValidationException e) {
+                    // No action needed
+                }
         }
+        return failureList;
 //        System.out.println("YELLO");
     }
 

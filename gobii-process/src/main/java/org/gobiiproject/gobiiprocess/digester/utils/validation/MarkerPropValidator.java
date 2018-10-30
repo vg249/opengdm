@@ -7,11 +7,18 @@ import java.util.List;
 
 class MarkerPropValidator extends BaseValidator {
     @Override
-    void validate(ValidationUnit validationUnit, String dir, List<Failure> failureList) throws MaximumErrorsValidationException {
+    List<Failure> validate(ValidationUnit validationUnit, String dir) {
         List<String> digestMarkerProp = new ArrayList<>();
-        if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), digestMarkerProp, failureList)) {
-            String fileName = dir + "/" + validationUnit.getDigestFileName();
-            beginValidation(fileName, validationUnit, failureList);
+        List<Failure> failureList = new ArrayList<>();
+        try {
+            if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), digestMarkerProp, failureList)) {
+                String fileName = dir + "/" + validationUnit.getDigestFileName();
+                List<Failure> failures = beginValidation(fileName, validationUnit);
+                failureList.addAll(failures);
+            }
+        } catch (MaximumErrorsValidationException e) {
+            //////Don't do any thing. This implies that particular error list is full.;
         }
+        return failureList;
     }
 }

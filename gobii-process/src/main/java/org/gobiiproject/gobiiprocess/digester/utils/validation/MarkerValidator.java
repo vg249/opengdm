@@ -1,20 +1,24 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
-import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.printMissingFieldError;
-
 class MarkerValidator extends BaseValidator {
     @Override
-    void validate(ValidationUnit validationUnit, String dir, List<Failure> failureList) throws MaximumErrorsValidationException {
+    List<Failure> validate(ValidationUnit validationUnit, String dir) {
         List<String> digestMarker = new ArrayList<>();
-        if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), digestMarker, failureList)) {
-            String fileName = dir + "/" + validationUnit.getDigestFileName();
-            beginValidation(fileName,validationUnit,failureList);
+        List<Failure> failureList = new ArrayList<>();
+        try {
+            if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), digestMarker, failureList)) {
+                String fileName = dir + "/" + validationUnit.getDigestFileName();
+                List<Failure> failures = beginValidation(fileName, validationUnit);
+                failureList.addAll(failures);
+            }
+        } catch (MaximumErrorsValidationException e) {
+            //////Don't do any thing. This implies that particular error list is full.;
         }
+        return failureList;
     }
 }

@@ -6,11 +6,18 @@ import java.util.*;
 
 class GermplasmPropValidator extends BaseValidator {
     @Override
-    void validate(ValidationUnit validationUnit, String dir, List<Failure> failureList) throws MaximumErrorsValidationException {
+    List<Failure> validate(ValidationUnit validationUnit, String dir) {
         List<String> digestGermplasmProp = new ArrayList<>();
-        if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), digestGermplasmProp, failureList)) {
-            String filePath = dir + "/" + validationUnit.getDigestFileName();
-            beginValidation(filePath, validationUnit, failureList);
+        List<Failure> failureList = new ArrayList<>();
+        try {
+            if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), digestGermplasmProp, failureList)) {
+                String filePath = dir + "/" + validationUnit.getDigestFileName();
+                List<Failure> failures = beginValidation(filePath, validationUnit);
+                failureList.addAll(failures);
+            }
+        } catch (MaximumErrorsValidationException e) {
+            //////Don't do any thing. This implies that particular error list is full.;
         }
+        return failureList;
     }
 }
