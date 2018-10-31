@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 import static org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions.*;
 import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.addMessageToList;
-import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationWebServicesUtil.loginIntoServer;
+import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationWebServicesUtil.*;
 
 public class DigestFileValidator {
 
@@ -46,12 +46,15 @@ public class DigestFileValidator {
     }
 
     public static void main(String[] args) {
-        DigestFileValidator digestFileValidator;
         InputParameters inputParameters = new InputParameters();
         readInputParameters(args, inputParameters);
-        digestFileValidator = new DigestFileValidator(inputParameters.rootDir, inputParameters.validationFile, inputParameters.url, inputParameters.userName, inputParameters.password);
+        DigestFileValidator digestFileValidator = new DigestFileValidator(inputParameters.rootDir, inputParameters.validationFile, inputParameters.url, inputParameters.userName, inputParameters.password);
+        digestFileValidator.performValidation();
 
-        String validationOutput = digestFileValidator.rootDir + "/" + "ValidationResult-" + new SimpleDateFormat("hhmmss").format(new Date()) + ".json";
+    }
+
+    public void performValidation() {
+        String validationOutput = rootDir + "/" + "ValidationResult-" + new SimpleDateFormat("hhmmss").format(new Date()) + ".json";
 
         /*
          * Read validation Rules
@@ -60,14 +63,17 @@ public class DigestFileValidator {
          * */
         try {
             SequenceWriter writer = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValuesAsArray(new FileWriter(new File(validationOutput)));
-            List<ValidationUnit> validations = digestFileValidator.readRules(writer);
+            List<ValidationUnit> validations = readRules(writer);
             ValidationError validationError = new ValidationError();
             validationError.fileName = FilenameUtils.getExtension(validations.get(0).getDigestFileName());
-            if (loginIntoServer(digestFileValidator.url, digestFileValidator.username, digestFileValidator.password, null, validationError)) {
+            List<Failure> failures = new ArrayList<>();
+            if (!loginIntoServer(url, username, password, null, failures)) {
+                validationError.status = ValidationConstants.FAILURE;
+                validationError.failures.addAll(failures);
                 writer.write(validationError);
             } else {
                 try {
-                    doValidations(digestFileValidator, validationOutput, validations);
+                    doValidations(validationOutput, validations);
                 } catch (Exception e) {
                     validationError.status = ValidationConstants.FAILURE;
                     Failure failure = new Failure();
@@ -81,24 +87,22 @@ public class DigestFileValidator {
         } catch (IOException e) {
             ErrorLogger.logError("I/O Error ", e);
         }
-
     }
 
     /**
      * Run Validations
      *
-     * @param digestFileValidator digest validations
-     * @param validationOutput    file
-     * @param validations         validations
+     * @param validationOutput file
+     * @param validations      validations
      */
-    private static void doValidations(DigestFileValidator digestFileValidator, String validationOutput, List<ValidationUnit> validations) throws Exception {
+    private void doValidations(String validationOutput, List<ValidationUnit> validations) throws Exception {
         SequenceWriter seqWriter = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValuesAsArray(new FileWriter(new File(validationOutput)));
         for (ValidationUnit validation : validations) {
             ValidationError validationError = new ValidationError();
             validationError.fileName = FilenameUtils.getExtension(validation.getDigestFileName());
             List<Failure> failureList = new ArrayList<>();
             try {
-                failureList.addAll(digestFileValidator.validate(validation));
+                failureList.addAll(validate(validation));
             } catch (Exception e) {
                 Failure failure = new Failure();
                 failure.reason = FailureTypes.EXCEPTION;

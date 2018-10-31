@@ -7,7 +7,6 @@ import org.gobiiproject.gobiiapimodel.payload.Status;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
-import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfigItem;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
@@ -16,15 +15,14 @@ import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
-import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-class ValidationWebServicesUtil {
+public class ValidationWebServicesUtil {
 
-    static boolean loginIntoServer(String url, String username, String password, String crop, ValidationError validationError) {
+    public static boolean loginIntoServer(String url, String username, String password, String crop, List<Failure> failures) {
         try {
             GobiiClientContext.getInstance(url, true).getCurrentClientCropType();
             String contextRoot = new URL(url).getPath();
@@ -32,7 +30,7 @@ class ValidationWebServicesUtil {
                 contextRoot = contextRoot + "/";
             List<String> crops = GobiiClientContext.getInstance(null, false).getCropTypeTypes();
             for (String currentCrop : crops) {
-                ServerConfigItem currentServerConfig = GobiiClientContext.getInstance(null,false).getServerConfig(currentCrop);
+                ServerConfigItem currentServerConfig = GobiiClientContext.getInstance(null, false).getServerConfig(currentCrop);
                 if (contextRoot.equals(currentServerConfig.getContextRoot())) {
                     // use the crop for this server config
                     crop = currentCrop;
@@ -40,36 +38,34 @@ class ValidationWebServicesUtil {
                 }
             }
             if (crop == null || crop.isEmpty()) {
-                validationError.status = ValidationConstants.FAILURE;
                 Failure failure = new Failure();
                 failure.reason = FailureTypes.LOGIN_FAILURE;
                 failure.values.add("Undefined crop for server: " + url);
-                validationError.failures.add(failure);
+                failures.add(failure);
                 return false;
             }
 
             boolean login = GobiiClientContext.getInstance(url, true).login(crop, username, password);
             if (!login) {
                 String failureMessage = GobiiClientContext.getInstance(null, false).getLoginFailure();
-                validationError.status = ValidationConstants.FAILURE;
+
                 Failure failure = new Failure();
                 failure.reason = FailureTypes.LOGIN_FAILURE;
                 failure.values.add(failureMessage);
-                validationError.failures.add(failure);
+                failures.add(failure);
                 return false;
             }
             return true;
         } catch (Exception e) {
-            validationError.status = ValidationConstants.FAILURE;
             Failure failure = new Failure();
             failure.reason = FailureTypes.LOGIN_FAILURE;
-            failure.values.add( e.getMessage());
-            validationError.failures.add(failure);
+            failure.values.add(e.getMessage());
+            failures.add(failure);
             return false;
         }
     }
 
-    static void validateCVName(List<NameIdDTO> nameIdDTOList, String cvGroupName, List<Failure> failureList) throws MaximumErrorsValidationException {
+    public static void validateCVName(List<NameIdDTO> nameIdDTOList, String cvGroupName, List<Failure> failureList) throws MaximumErrorsValidationException {
         try {
             PayloadEnvelope<NameIdDTO> payloadEnvelope = new PayloadEnvelope<>();
             payloadEnvelope.getHeader().setGobiiProcessType(GobiiProcessType.CREATE);
@@ -78,7 +74,7 @@ class ValidationWebServicesUtil {
             RestUri namesUri = GobiiClientContext.getInstance(null, false)
                     .getUriFactory()
                     .nameIdListByQueryParams();
-            GobiiEnvelopeRestResource<NameIdDTO,NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
+            GobiiEnvelopeRestResource<NameIdDTO, NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
             namesUri.setParamValue("entity", GobiiEntityNameType.CV.toString().toLowerCase());
             namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.NAMES_BY_NAME_LIST.toString().toUpperCase()));
             switch (cvGroupName) {
