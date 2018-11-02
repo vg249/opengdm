@@ -168,7 +168,7 @@
           "columnName": "num",
           "required": "yes",
           "type": "File",
-          "fileColumns": [
+          "fieldColumns": [
             "num"
           ],
           "typeName": "digest.dnasample",

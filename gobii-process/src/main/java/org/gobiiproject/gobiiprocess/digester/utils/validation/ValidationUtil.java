@@ -30,6 +30,7 @@ class ValidationUtil {
     static void validateColumns(String fileName, List<String> columns, List<Failure> failureList) throws MaximumErrorsValidationException {
         if (columns.size() == 0) return;
         List<String[]> collect = readFileIntoMemory(fileName, failureList);
+        if (collect == null) return;
         TreeSet<Integer> sortedColumnNumbers = new TreeSet<>();
         if (collect != null && getColumnIndices(fileName, columns, collect, sortedColumnNumbers, failureList))
             for (String[] line : collect)
@@ -52,6 +53,7 @@ class ValidationUtil {
     static void validateUniqueColumns(String fileName, List<String> columns, List<Failure> failureList) throws MaximumErrorsValidationException {
         if (columns.size() == 0) return;
         List<String[]> collect = readFileIntoMemory(fileName, failureList);
+        if (collect == null) return;
         TreeSet<Integer> sortedColumnNumbers = new TreeSet<>();
         if (collect != null && getColumnIndices(fileName, columns, collect, sortedColumnNumbers, failureList))
             for (Integer colNo : sortedColumnNumbers) {
@@ -86,7 +88,7 @@ class ValidationUtil {
         String parentDirectory = new File(filePath).getParent();
         if (condition.typeName != null) {
             if (DigesterFileExtensions.allowedExtensions.contains(condition.typeName.substring(condition.typeName.indexOf('.') + 1))) {
-                if (condition.fieldToCompare != null) {
+                if (condition.fieldToCompare != null && condition.fieldColumns != null) {
                     String comparisonFileName = condition.typeName;
                     List<String> fieldColumns = condition.fieldColumns;
                     List<String> fieldToCompare = condition.fieldToCompare;
@@ -245,6 +247,7 @@ class ValidationUtil {
     private static List<String> getFileColumn(String filepath, String column, List<Failure> failureList) throws MaximumErrorsValidationException {
         List<String> fileColumnElements = new ArrayList<>();
         List<String[]> file = readFileIntoMemory(filepath, failureList);
+        if (file == null) return fileColumnElements;
         List<String> fileHeaders = Arrays.asList(file.remove(0));
         fileHeaders = fileHeaders.stream().map(String::trim).collect(Collectors.toList());
         int fileColumnIndex = fileHeaders.indexOf(column);
@@ -391,6 +394,7 @@ class ValidationUtil {
      */
     static void validateCV(String fileName, List<String> fieldToCompare, List<Failure> failureList) throws MaximumErrorsValidationException {
         List<String[]> collect = readFileIntoMemory(fileName, failureList);
+        if (collect == null) return;
         List<String> headers = Arrays.asList(collect.get(0));
         //TODO: Current assumption there will be only one row validation from Database
         int fieldIndex = headers.indexOf(fieldToCompare.get(0));
@@ -408,7 +412,17 @@ class ValidationUtil {
             nameIdDTO.setName(fieldName);
             nameIdDTOList.add(nameIdDTO);
         }
-        ValidationWebServicesUtil.validateCVName(nameIdDTOList, fieldToCompare.get(0), failureList);
+        List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.validateCVName(nameIdDTOList, fieldToCompare.get(0), failureList);
+
+        for (NameIdDTO nameIdDTO : nameIdDTOListResponse) {
+            if (nameIdDTO.getId() == 0) {
+                Failure failure = new Failure();
+                failure.reason = FailureTypes.UNDEFINED_CV_VALUE;
+                failure.columnName.add(fieldToCompare.get(0));
+                failure.values.add(nameIdDTO.getName());
+                ValidationUtil.addMessageToList(failure, failureList);
+            }
+        }
     }
 
     static void printMissingFieldError(String s1, String s2, String reason, List<Failure> errorList) throws MaximumErrorsValidationException {

@@ -65,7 +65,8 @@ public class ValidationWebServicesUtil {
         }
     }
 
-    public static void validateCVName(List<NameIdDTO> nameIdDTOList, String cvGroupName, List<Failure> failureList) throws MaximumErrorsValidationException {
+    public static List<NameIdDTO> validateCVName(List<NameIdDTO> nameIdDTOList, String cvGroupName, List<Failure> failureList) throws MaximumErrorsValidationException {
+        List<NameIdDTO> nameIdDTOListResponse = new ArrayList<>();
         try {
             PayloadEnvelope<NameIdDTO> payloadEnvelope = new PayloadEnvelope<>();
             payloadEnvelope.getHeader().setGobiiProcessType(GobiiProcessType.CREATE);
@@ -92,7 +93,7 @@ public class ValidationWebServicesUtil {
                     failure.reason = FailureTypes.UNDEFINED_CV;
                     failure.values.add(cvGroupName);
                     ValidationUtil.addMessageToList(failure, failureList);
-                    return;
+                    return nameIdDTOListResponse;
             }
             PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = gobiiEnvelopeRestResource.post(NameIdDTO.class, payloadEnvelope);
             Status status = responsePayloadEnvelope.getHeader().getStatus();
@@ -104,18 +105,10 @@ public class ValidationWebServicesUtil {
                     failure.values.add(message.getMessage());
                     ValidationUtil.addMessageToList(failure, failureList);
                 }
-                return;
+                return nameIdDTOListResponse;
             }
-            List<NameIdDTO> nameIdDTOListResponse = responsePayloadEnvelope.getPayload().getData();
-            for (NameIdDTO nameIdDTO : nameIdDTOListResponse) {
-                if (nameIdDTO.getId() == 0) {
-                    Failure failure = new Failure();
-                    failure.reason = FailureTypes.UNDEFINED_CV_VALUE;
-                    failure.columnName.add(cvGroupName);
-                    failure.values.add(nameIdDTO.getName());
-                    ValidationUtil.addMessageToList(failure, failureList);
-                }
-            }
+            nameIdDTOListResponse.addAll(responsePayloadEnvelope.getPayload().getData());
+
         } catch (MaximumErrorsValidationException e) {
             throw e;
         } catch (Exception e) {
@@ -124,5 +117,6 @@ public class ValidationWebServicesUtil {
             failure.values.add(e.getMessage());
             ValidationUtil.addMessageToList(failure, failureList);
         }
+        return nameIdDTOListResponse;
     }
 }

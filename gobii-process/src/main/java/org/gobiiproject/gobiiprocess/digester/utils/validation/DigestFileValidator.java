@@ -62,18 +62,15 @@ public class DigestFileValidator {
          * Perform validation
          * */
         try {
-            SequenceWriter writer = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValuesAsArray(new FileWriter(new File(validationOutput)));
+            SequenceWriter writer = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValues(new FileWriter(new File(validationOutput)));
             List<ValidationUnit> validations = readRules(writer);
             ValidationError validationError = new ValidationError();
             validationError.fileName = FilenameUtils.getExtension(validations.get(0).getDigestFileName());
             List<Failure> failures = new ArrayList<>();
-            if (!loginIntoServer(url, username, password, null, failures)) {
-                validationError.status = ValidationConstants.FAILURE;
-                validationError.failures.addAll(failures);
-                writer.write(validationError);
-            } else {
+            if (loginIntoServer(url, username, password, null, failures)) {
                 try {
-                    doValidations(validationOutput, validations);
+                    List<ValidationError> validationErrorList = doValidations(validations);
+                    writer.write(validationErrorList);
                 } catch (Exception e) {
                     validationError.status = ValidationConstants.FAILURE;
                     Failure failure = new Failure();
@@ -82,44 +79,41 @@ public class DigestFileValidator {
                     validationError.failures.add(failure);
                     writer.write(validationError);
                 }
+            } else {
+                validationError.status = ValidationConstants.FAILURE;
+                validationError.failures.addAll(failures);
+                writer.write(validationError);
             }
             writer.close();
         } catch (IOException e) {
             ErrorLogger.logError("I/O Error ", e);
         }
+        System.out.println();
     }
 
     /**
      * Run Validations
      *
-     * @param validationOutput file
-     * @param validations      validations
+     * @param validations validations
      */
-    private void doValidations(String validationOutput, List<ValidationUnit> validations) throws Exception {
-        SequenceWriter seqWriter = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValuesAsArray(new FileWriter(new File(validationOutput)));
+    private List<ValidationError> doValidations(List<ValidationUnit> validations) throws Exception {
+        List<ValidationError> validationErrorList = new ArrayList<>();
         for (ValidationUnit validation : validations) {
             ValidationError validationError = new ValidationError();
             validationError.fileName = FilenameUtils.getExtension(validation.getDigestFileName());
-            List<Failure> failureList = new ArrayList<>();
-            try {
-                failureList.addAll(validate(validation));
-            } catch (Exception e) {
-                Failure failure = new Failure();
-                failure.reason = FailureTypes.EXCEPTION;
-                failure.values.add(e.getMessage());
-                failureList.add(failure);
+            List<Failure> failureList = validate(validation);
+            if (failureList != null) {
+                if (failureList.size() > 0) {
+                    validationError.status = ValidationConstants.FAILURE;
+                    validationError.failures.addAll(failureList);
+                    validationErrorList.add(validationError);
+                } else {
+                    validationError.status = ValidationConstants.SUCCESS;
+                    validationErrorList.add(validationError);
+                }
             }
-            if (failureList.size() > 0) {
-                validationError.status = ValidationConstants.FAILURE;
-                validationError.failures.addAll(failureList);
-                seqWriter.write(validationError);
-            } else {
-                validationError.status = ValidationConstants.SUCCESS;
-                seqWriter.write(validationError);
-            }
-            seqWriter.flush();
         }
-        seqWriter.close();
+        return validationErrorList;
         // READ ERRORS
         // ValidationError[] fileErrors = mapper.readValue(new File(validationOutput), ValidationError[].class);
     }
@@ -265,40 +259,41 @@ public class DigestFileValidator {
         List<Failure> failureList = new ArrayList<>();
         switch (FilenameUtils.getExtension(validation.getDigestFileName())) {
             case "germplasm":
-                failureList.addAll(new GermplasmValidator().validate(validation, rootDir));
+                if (!new GermplasmValidator().validate(validation, rootDir, failureList))
+                    failureList = null;
                 break;
             case "germplasm_prop":
-                failureList.addAll(new GermplasmPropValidator().validate(validation, rootDir));
+                if (!new GermplasmPropValidator().validate(validation, rootDir, failureList)) failureList = null;
                 break;
             case "dnasample":
-                failureList.addAll(new DnaSampleValidator().validate(validation, rootDir));
+                if (!new DnaSampleValidator().validate(validation, rootDir, failureList)) failureList = null;
                 break;
             case "dnasample_prop":
-                failureList.addAll(new DnaSamplePropValidator().validate(validation, rootDir));
+                if (!new DnaSamplePropValidator().validate(validation, rootDir, failureList)) failureList = null;
                 break;
             case "dnarun":
-                failureList.addAll(new DnarunValidator().validate(validation, rootDir));
+                if (!new DnarunValidator().validate(validation, rootDir, failureList)) failureList = null;
                 break;
             case "dnarun_prop":
-                failureList.addAll(new DnarunPropValidator().validate(validation, rootDir));
+                if (!new DnarunPropValidator().validate(validation, rootDir, failureList)) failureList = null;
                 break;
             case "marker":
-                failureList.addAll(new MarkerValidator().validate(validation, rootDir));
+                if (!new MarkerValidator().validate(validation, rootDir, failureList)) failureList = null;
                 break;
             case "marker_prop":
-                failureList.addAll(new MarkerPropValidator().validate(validation, rootDir));
+                if (!new MarkerPropValidator().validate(validation, rootDir, failureList)) failureList = null;
                 break;
             case "linkage_group":
-                failureList.addAll(new LinkageGroupValidator().validate(validation, rootDir));
+                if (!new LinkageGroupValidator().validate(validation, rootDir, failureList)) failureList = null;
                 break;
             case "marker_linkage_group":
-                failureList.addAll(new MarkerLinkageGroupValidator().validate(validation, rootDir));
+                if (!new MarkerLinkageGroupValidator().validate(validation, rootDir, failureList)) failureList = null;
                 break;
             case "dataset_dnarun":
-                failureList.addAll(new DatasetDnarunValidator().validate(validation, rootDir));
+                if (!new DatasetDnarunValidator().validate(validation, rootDir, failureList)) failureList = null;
                 break;
             case "dataset_marker":
-                failureList.addAll(new DatasetMarkerValidator().validate(validation, rootDir));
+                if (!new DatasetMarkerValidator().validate(validation, rootDir, failureList)) failureList = null;
                 break;
             case "matrix": // Validate has to include matrix validation
                 break;

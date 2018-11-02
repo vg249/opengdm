@@ -9,19 +9,19 @@ import java.util.*;
 import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.*;
 
 public abstract class BaseValidator {
-    abstract List<Failure> validate(ValidationUnit validationUnit, String dir);
+    abstract boolean validate(ValidationUnit validationUnit, String dir, List<Failure> failureList);
 
     /**
      * Checks that the fileName exists only once. Returns true if file exists once else false.
      *
      * @param dir         directory
      * @param fileName    file-name
-     * @param listOfFiles list to store files with required extension
      * @param failureList error list
      * @return boolean value if there is a single file or not.
      */
-    boolean checkForSingleFileExistence(String dir, String fileName, List<String> listOfFiles, List<Failure> failureList) throws MaximumErrorsValidationException {
+    boolean checkForSingleFileExistence(String dir, String fileName, List<Failure> failureList) throws MaximumErrorsValidationException {
         // If there is an error in accessing path. Error already printed.
+        List<String> listOfFiles = new ArrayList<>();
         getFilesWithExtension(dir, fileName, listOfFiles, failureList);
         if (listOfFiles.size() < 1) return false;
         if (listOfFiles.size() > 1) {
