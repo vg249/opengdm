@@ -216,7 +216,7 @@
 
 
 [[_payloadenvelopeanalysisdto]]
-=== AnalysisDTO
+=== PayloadEnvelopeAnalysisDTO
 
 [options="header", cols=".^3,.^11,.^4"]
 |===
@@ -229,7 +229,7 @@
 
 
 [[_payloadenvelopeconfigsettingsdto]]
-=== ConfigSettingsDTO
+=== PayloadEnvelopeConfigSettingsDTO
 
 [options="header", cols=".^3,.^11,.^4"]
 |===

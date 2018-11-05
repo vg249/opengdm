@@ -1,18 +1,4 @@
 
-#json specific
-#"required" : true,=
-#"required" : false,=
-
-#yaml specific
-#required: true=
-#required: false=
-
-# adoc
-# mis-parsed class substitutions
-PayloadEnvelopeAnalysisDTO=AnalysisDTO
-PayloadEnvelopeConfigSettingsDTO=ConfigSettingsDTO
-
-
 
 # adding the swagger markup to get these to come out properly would take a lot of effort
 _optional_=
