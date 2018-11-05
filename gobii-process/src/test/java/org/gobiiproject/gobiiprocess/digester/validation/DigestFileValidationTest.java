@@ -3,23 +3,21 @@ package org.gobiiproject.gobiiprocess.digester.validation;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
-import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
-import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
-import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
-import org.gobiiproject.gobiiclient.core.common.HttpCore;
-import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
-import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
-import org.gobiiproject.gobiimodel.utils.HelperFunctions;
-import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator;
+import org.gobiiproject.gobiiprocess.digester.utils.validation.MaximumErrorsValidationException;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationWebServicesUtil;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
+import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -27,11 +25,16 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
+import org.mockito.Matchers;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 
 /**
  * Unit test for CSVFileReaderV2Test. Approach: A temporary folder is created
@@ -56,7 +59,6 @@ public class DigestFileValidationTest {
         tempFolderLocation = tempFolder.getRoot().getPath();
         File source = new File("src/test/resources/validation");
         FileUtils.copyDirectory(source, tempFolder.getRoot());
-        System.out.println();
     }
 
 
@@ -66,30 +68,170 @@ public class DigestFileValidationTest {
      */
     @AfterClass
     public static void checkAndCleanTempFile() {
-        try {
+ /*       try {
             FileUtils.deleteDirectory(new File(tempFolderLocation));
         } catch (IOException e) {
             e.printStackTrace();
         }
+   */
     }
 
     /**
-     * Test case for multiple_CSV_ROW
-     *
-     * @throws IOException
-     * @throws InterruptedException
+     * Germplasm validation.
      */
     @Test
-    public void testGermplasm() {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/germplasm", tempFolder.getRoot().getAbsolutePath() + "/germplasm/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+    public void testGermplasmAllPass() throws IOException {
+        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/germplasm/allPass", tempFolder.getRoot().getAbsolutePath() + "/germplasm/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
-        List<Failure> failures = new ArrayList<>();
         PowerMockito
-                .when(ValidationWebServicesUtil.loginIntoServer("http://192.168.56.101:8081/gobii-dev/", "mcs397", "q", null, failures))
+                .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
                 .thenReturn(true);
-        digestFileValidator.performValidation();
 
+        List<NameIdDTO> typeResponse = new ArrayList<>();
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("Population");
+            nameIdDTOResponse.setId(21);
+            typeResponse.add(nameIdDTOResponse);
+        }
+
+        List<NameIdDTO> speciesResponse = new ArrayList<>();
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("Triticum urartu");
+            nameIdDTOResponse.setId(141);
+            speciesResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("x Aegilotriticum");
+            nameIdDTOResponse.setId(171);
+            speciesResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("x Triticosecale");
+            nameIdDTOResponse.setId(172);
+            speciesResponse.add(nameIdDTOResponse);
+        }
+
+        try {
+            PowerMockito
+                    .when(ValidationWebServicesUtil.validateCVName(Matchers.any(), eq("type_name"), any()))
+                    .thenReturn(typeResponse);
+            PowerMockito
+                    .when(ValidationWebServicesUtil.validateCVName(Matchers.any(), eq("species_name"), any()))
+                    .thenReturn(speciesResponse);
+        } catch (MaximumErrorsValidationException e) {
+            e.printStackTrace();
+        }
+        digestFileValidator.performValidation();
+        List<Path> pathList =
+                Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/germplasm/allPass"))
+                        .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
+        assertEquals("There should be one validation output json file", 1, pathList.size());
+
+        ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
+
+        assertEquals("Expected file name is not germplasm", "germplasm", fileErrors[0].fileName);
+        assertEquals("Expected STATUS is not success", "SUCCESS", fileErrors[0].status);
+
+    }
+
+    /**
+     * Germplasm validation.
+     * Has all required fields, one error speeciesName and one error typeName
+     */
+    @Test
+    public void testGermplasmCvFail() throws IOException {
+        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/germplasm/cvFail", tempFolder.getRoot().getAbsolutePath() + "/germplasm/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+
+        PowerMockito.mockStatic(ValidationWebServicesUtil.class);
+        PowerMockito
+                .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
+                .thenReturn(true);
+
+        List<NameIdDTO> typeResponse = new ArrayList<>();
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("Population");
+            nameIdDTOResponse.setId(21);
+            typeResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("Inbred line");
+            nameIdDTOResponse.setId(0);
+            typeResponse.add(nameIdDTOResponse);
+        }
+
+        List<NameIdDTO> speciesResponse = new ArrayList<>();
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("Triticum urartu");
+            nameIdDTOResponse.setId(141);
+            speciesResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("x Aegilotriticum");
+            nameIdDTOResponse.setId(171);
+            speciesResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("x Triticosecale");
+            nameIdDTOResponse.setId(172);
+            speciesResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("x Aegilotriticume");
+            nameIdDTOResponse.setId(0);
+            speciesResponse.add(nameIdDTOResponse);
+        }
+
+
+        try {
+            PowerMockito
+                    .when(ValidationWebServicesUtil.validateCVName(Matchers.any(), eq("type_name"), any()))
+                    .thenReturn(typeResponse);
+            PowerMockito
+                    .when(ValidationWebServicesUtil.validateCVName(Matchers.any(), eq("species_name"), any()))
+                    .thenReturn(speciesResponse);
+        } catch (MaximumErrorsValidationException e) {
+            e.printStackTrace();
+        }
+        digestFileValidator.performValidation();
+        List<Path> pathList =
+                Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/germplasm/cvFail"))
+                        .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
+        assertEquals("There should be one validation output json file", 1, pathList.size());
+
+        ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
+
+        assertEquals("Expected file name is not germplasm", "germplasm", fileErrors[0].fileName);
+        assertEquals("", "FAILURE", fileErrors[0].status);
+
+        List<Failure> failures = fileErrors[0].failures;
+        assertEquals("", 2, failures.size());
+
+        for (Failure failure : failures) {
+            switch (failure.columnName.get(0)) {
+                case "species_name":
+                    assertEquals("", "Undefined CV value", failure.reason);
+                    assertEquals("", "x Aegilotriticume", failure.values.get(0));
+                    break;
+                case "type_name":
+                    assertEquals("", "Undefined CV value", failure.reason);
+                    assertEquals("", "Inbred line", failure.values.get(0));
+                    break;
+                default:
+                    assertEquals("Undefined failure" + failure.columnName, "1", "0");
+                    break;
+            }
+        }
     }
 }
 
