@@ -239,7 +239,7 @@ public class DigestFileValidationTest {
      */
     @Test
     public void testGermplasmMissingRequiredField() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/germplasm/missingRequired", tempFolder.getRoot().getAbsolutePath() + "/germplasm/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/germplasm/missingRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/germplasm/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
         PowerMockito
@@ -249,7 +249,7 @@ public class DigestFileValidationTest {
 
         digestFileValidator.performValidation();
         List<Path> pathList =
-                Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/germplasm/missingRequired"))
+                Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/germplasm/missingRequiredColumns"))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
@@ -264,6 +264,40 @@ public class DigestFileValidationTest {
 
         assertEquals("Unexpected failure reason", "Column not found", failures.get(0).reason);
         assertEquals("Unexpected column name", "external_code", failures.get(0).columnName.get(0));
+
+    }
+
+    /**
+     * Germplasm validation.
+     * Missing one required field
+     */
+    @Test
+    public void testGermplasmMissingValuesInRequiredField() throws IOException {
+        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/germplasm/missingValuesInRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/germplasm/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+
+        PowerMockito.mockStatic(ValidationWebServicesUtil.class);
+        PowerMockito
+                .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
+                .thenReturn(true);
+
+
+        digestFileValidator.performValidation();
+        List<Path> pathList =
+                Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/germplasm/missingValuesInRequiredColumns"))
+                        .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
+        assertEquals("There should be one validation output json file", 1, pathList.size());
+
+        ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
+
+        assertEquals("Expected file name is not germplasm", "germplasm", fileErrors[0].fileName);
+        assertEquals("Expected STATUS is not FAILURE", "FAILURE", fileErrors[0].status);
+
+        List<Failure> failures = fileErrors[0].failures;
+        assertEquals("Failures are more than the expected", 1, failures.size());
+
+
+        assertEquals("Unexpected failure reason", "NULL VALUE", failures.get(0).reason);
+        assertEquals("Unexpected column name", "name", failures.get(0).columnName.get(0));
 
     }
 

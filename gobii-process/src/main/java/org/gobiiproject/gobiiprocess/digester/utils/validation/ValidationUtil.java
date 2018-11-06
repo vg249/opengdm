@@ -67,14 +67,22 @@ class ValidationUtil {
                             Failure failure = new Failure();
                             failure.reason = FailureTypes.NULL_VALUE;
                             failure.columnName.add(headers.get(colNo));
-                            addMessageToList(failure, failureList);
+                            try {
+                                addMessageToList(failure, failureList);
+                            } catch (MaximumErrorsValidationException e) {
+                                break;
+                            }
                         } else {
                             if (map.contains(line[colNo])) {
                                 Failure failure = new Failure();
                                 failure.reason = FailureTypes.DUPLICATE_FOUND;
                                 failure.columnName.add(headers.get(colNo));
                                 failure.values.add(line[colNo]);
-                                addMessageToList(failure, failureList);
+                                try {
+                                    addMessageToList(failure, failureList);
+                                } catch (MaximumErrorsValidationException e) {
+                                    break;
+                                }
                             } else map.add(line[colNo]);
                         }
                 }
