@@ -77,12 +77,16 @@ public class DigestFileValidator {
                     failure.reason = FailureTypes.VALIDATION_ERROR;
                     failure.values.add(e.getMessage());
                     validationError.failures.add(failure);
-                    writer.write(validationError);
+                    List<ValidationError> validationErrorList = new ArrayList<>();
+                    validationErrorList.add(validationError);
+                    writer.write(validationErrorList);
                 }
             } else {
                 validationError.status = ValidationConstants.FAILURE;
                 validationError.failures.addAll(failures);
-                writer.write(validationError);
+                List<ValidationError> validationErrorList = new ArrayList<>();
+                validationErrorList.add(validationError);
+                writer.write(validationErrorList);
             }
             writer.close();
         } catch (IOException e) {

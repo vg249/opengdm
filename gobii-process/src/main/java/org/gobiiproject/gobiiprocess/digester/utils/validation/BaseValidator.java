@@ -255,11 +255,12 @@ public abstract class BaseValidator {
     }
 
     private boolean getHeaders(String fileName, List<String> headers, List<Failure> failureList) throws MaximumErrorsValidationException {
-        List<String[]> collectList = readFileIntoMemory(fileName, failureList);
-        if (collectList == null) return false;
-        else {
+        List<String[]> collectList = new ArrayList<>();
+        if (readFileIntoMemory(fileName, collectList, failureList)) {
             headers.addAll(Arrays.asList(collectList.get(0)));
             return true;
+        } else {
+            return false;
         }
     }
 }

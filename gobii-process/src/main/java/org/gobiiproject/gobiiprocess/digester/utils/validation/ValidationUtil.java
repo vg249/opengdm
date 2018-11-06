@@ -29,18 +29,20 @@ class ValidationUtil {
      */
     static void validateColumns(String fileName, List<String> columns, List<Failure> failureList) throws MaximumErrorsValidationException {
         if (columns.size() == 0) return;
-        List<String[]> collect = readFileIntoMemory(fileName, failureList);
-        if (collect == null) return;
-        TreeSet<Integer> sortedColumnNumbers = new TreeSet<>();
-        if (collect != null && getColumnIndices(fileName, columns, collect, sortedColumnNumbers, failureList))
-            for (String[] line : collect)
-                for (Integer colNo : sortedColumnNumbers)
-                    if (ValidationUtil.isNullAndEmpty(line[colNo])) {
-                        Failure failure = new Failure();
-                        failure.reason = FailureTypes.NULL_VALUE;
-                        failure.columnName.add(columns.get(colNo));
-                        addMessageToList(failure, failureList);
-                    }
+        List<String[]> collectList = new ArrayList<>();
+        if (readFileIntoMemory(fileName, collectList, failureList)) {
+            List<String> headers = Arrays.asList(collectList.get(0).clone());
+            TreeSet<Integer> sortedColumnNumbers = new TreeSet<>();
+            if (getColumnIndices(fileName, columns, collectList, sortedColumnNumbers, failureList))
+                for (String[] line : collectList)
+                    for (Integer colNo : sortedColumnNumbers)
+                        if (ValidationUtil.isNullAndEmpty(line[colNo])) {
+                            Failure failure = new Failure();
+                            failure.reason = FailureTypes.NULL_VALUE;
+                            failure.columnName.add(headers.get(colNo));
+                            addMessageToList(failure, failureList);
+                        }
+        }
     }
 
     /**
@@ -52,29 +54,31 @@ class ValidationUtil {
      */
     static void validateUniqueColumns(String fileName, List<String> columns, List<Failure> failureList) throws MaximumErrorsValidationException {
         if (columns.size() == 0) return;
-        List<String[]> collect = readFileIntoMemory(fileName, failureList);
-        if (collect == null) return;
-        TreeSet<Integer> sortedColumnNumbers = new TreeSet<>();
-        if (collect != null && getColumnIndices(fileName, columns, collect, sortedColumnNumbers, failureList))
-            for (Integer colNo : sortedColumnNumbers) {
-                // For each column check if null or duplicate exists.
-                TreeSet<String> map = new TreeSet<>();
-                for (String[] line : collect)
-                    if (ValidationUtil.isNullAndEmpty(line[colNo])) {
-                        Failure failure = new Failure();
-                        failure.reason = FailureTypes.NULL_VALUE;
-                        failure.columnName.add(columns.get(colNo));
-                        addMessageToList(failure, failureList);
-                    } else {
-                        if (map.contains(line[colNo])) {
+        List<String[]> collectList = new ArrayList<>();
+        if (readFileIntoMemory(fileName, collectList, failureList)) {
+            List<String> headers = Arrays.asList(collectList.get(0).clone());
+            TreeSet<Integer> sortedColumnNumbers = new TreeSet<>();
+            if (getColumnIndices(fileName, columns, collectList, sortedColumnNumbers, failureList))
+                for (Integer colNo : sortedColumnNumbers) {
+                    // For each column check if null or duplicate exists.
+                    TreeSet<String> map = new TreeSet<>();
+                    for (String[] line : collectList)
+                        if (ValidationUtil.isNullAndEmpty(line[colNo])) {
                             Failure failure = new Failure();
-                            failure.reason = FailureTypes.DUPLICATE_FOUND;
-                            failure.columnName.add(columns.get(colNo));
-                            failure.values.add(line[colNo]);
+                            failure.reason = FailureTypes.NULL_VALUE;
+                            failure.columnName.add(headers.get(colNo));
                             addMessageToList(failure, failureList);
-                        } else map.add(line[colNo]);
-                    }
-            }
+                        } else {
+                            if (map.contains(line[colNo])) {
+                                Failure failure = new Failure();
+                                failure.reason = FailureTypes.DUPLICATE_FOUND;
+                                failure.columnName.add(headers.get(colNo));
+                                failure.values.add(line[colNo]);
+                                addMessageToList(failure, failureList);
+                            } else map.add(line[colNo]);
+                        }
+                }
+        }
     }
 
     /**
@@ -246,13 +250,13 @@ class ValidationUtil {
      */
     private static List<String> getFileColumn(String filepath, String column, List<Failure> failureList) throws MaximumErrorsValidationException {
         List<String> fileColumnElements = new ArrayList<>();
-        List<String[]> file = readFileIntoMemory(filepath, failureList);
-        if (file == null) return fileColumnElements;
-        List<String> fileHeaders = Arrays.asList(file.remove(0));
+        List<String[]> collectList = new ArrayList<>();
+        if (!readFileIntoMemory(filepath, collectList, failureList)) return fileColumnElements;
+        List<String> fileHeaders = Arrays.asList(collectList.remove(0));
         fileHeaders = fileHeaders.stream().map(String::trim).collect(Collectors.toList());
         int fileColumnIndex = fileHeaders.indexOf(column);
         if (fileColumnIndex >= 0)
-            for (String[] line : file)
+            for (String[] line : collectList)
                 if (line.length > fileColumnIndex)
                     fileColumnElements.add(line[fileColumnIndex]);
                 else {
@@ -308,27 +312,28 @@ class ValidationUtil {
      * Read file into a list
      *
      * @param fileName    file name
+     * @param collectList list to save file contents
      * @param failureList failure list
      * @return list
      */
-    static List<String[]> readFileIntoMemory(String fileName, List<Failure> failureList) throws MaximumErrorsValidationException {
-        List<String[]> collect = null;
+    static boolean readFileIntoMemory(String fileName, List<String[]> collectList, List<Failure> failureList) throws MaximumErrorsValidationException {
         try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
-            collect = stream.map(line -> line.split("\t")).collect(Collectors.toList());
-            if (collect == null || collect.size() == 0) {
+            collectList.addAll(stream.map(line -> line.split("\t")).collect(Collectors.toList()));
+            if (collectList.size() == 0) {
                 Failure failure = new Failure();
                 failure.reason = FailureTypes.EMPTY_FILE;
                 failure.values.add(fileName);
                 addMessageToList(failure, failureList);
-                collect = null;
+                return false;
             }
         } catch (IOException e) {
             Failure failure = new Failure();
             failure.reason = FailureTypes.EXCEPTION_IN_READING_FILE;
             failure.values.add(fileName);
             addMessageToList(failure, failureList);
+            return false;
         }
-        return collect;
+        return true;
     }
 
     /**
@@ -393,34 +398,35 @@ class ValidationUtil {
      * @param failureList    failure list
      */
     static void validateCV(String fileName, List<String> fieldToCompare, List<Failure> failureList) throws MaximumErrorsValidationException {
-        List<String[]> collect = readFileIntoMemory(fileName, failureList);
-        if (collect == null) return;
-        List<String> headers = Arrays.asList(collect.get(0));
-        //TODO: Current assumption there will be only one row validation from Database
-        int fieldIndex = headers.indexOf(fieldToCompare.get(0));
-        collect.remove(0);
-        Set<String> fieldNameList = new HashSet<>();
-        for (String[] fileRow : collect) {
-            List<String> fileRowList = Arrays.asList(fileRow);
-            if (fileRowList.size() > fieldIndex)
-                if (!isNullAndEmpty(fileRowList.get(fieldIndex)))
-                    fieldNameList.add(fileRowList.get(fieldIndex));
-        }
-        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
-        for (String fieldName : fieldNameList) {
-            NameIdDTO nameIdDTO = new NameIdDTO();
-            nameIdDTO.setName(fieldName);
-            nameIdDTOList.add(nameIdDTO);
-        }
-        List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.validateCVName(nameIdDTOList, fieldToCompare.get(0), failureList);
+        List<String[]> collectList = new ArrayList<>();
+        if (readFileIntoMemory(fileName, collectList, failureList)) {
+            List<String> headers = Arrays.asList(collectList.get(0));
+            //TODO: Current assumption there will be only one row validation from Database
+            int fieldIndex = headers.indexOf(fieldToCompare.get(0));
+            collectList.remove(0);
+            Set<String> fieldNameList = new HashSet<>();
+            for (String[] fileRow : collectList) {
+                List<String> fileRowList = Arrays.asList(fileRow);
+                if (fileRowList.size() > fieldIndex)
+                    if (!isNullAndEmpty(fileRowList.get(fieldIndex)))
+                        fieldNameList.add(fileRowList.get(fieldIndex));
+            }
+            List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+            for (String fieldName : fieldNameList) {
+                NameIdDTO nameIdDTO = new NameIdDTO();
+                nameIdDTO.setName(fieldName);
+                nameIdDTOList.add(nameIdDTO);
+            }
+            List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.validateCVName(nameIdDTOList, fieldToCompare.get(0), failureList);
 
-        for (NameIdDTO nameIdDTO : nameIdDTOListResponse) {
-            if (nameIdDTO.getId() == 0) {
-                Failure failure = new Failure();
-                failure.reason = FailureTypes.UNDEFINED_CV_VALUE;
-                failure.columnName.add(fieldToCompare.get(0));
-                failure.values.add(nameIdDTO.getName());
-                ValidationUtil.addMessageToList(failure, failureList);
+            for (NameIdDTO nameIdDTO : nameIdDTOListResponse) {
+                if (nameIdDTO.getId() == 0) {
+                    Failure failure = new Failure();
+                    failure.reason = FailureTypes.UNDEFINED_CV_VALUE;
+                    failure.columnName.add(fieldToCompare.get(0));
+                    failure.values.add(nameIdDTO.getName());
+                    ValidationUtil.addMessageToList(failure, failureList);
+                }
             }
         }
     }
