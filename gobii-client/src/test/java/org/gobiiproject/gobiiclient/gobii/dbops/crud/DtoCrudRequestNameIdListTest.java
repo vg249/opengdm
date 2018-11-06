@@ -207,7 +207,7 @@ public class DtoCrudRequestNameIdListTest {
         return cvGroupId;
     }
 
-    private MarkerDTO createMarkerForTest(MarkerDTO markerDTO) throws Exception {
+    public static MarkerDTO createMarkerForTest(MarkerDTO markerDTO) throws Exception {
 
         RestUri createMarkerUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()

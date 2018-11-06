@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -54,6 +55,34 @@ public class DtoMapNameIdFetchDnaSampleNames implements DtoMapNameIdFetch {
         return nameIdDTOList;
     }
 
+    private List<NameIdDTO> getAllNameIdsForDnaSampleNames(Integer callLimit) throws GobiiException {
+
+        List<NameIdDTO> returnVal = new ArrayList<>();
+
+        try {
+
+            ResultSet resultSet = dtoListQueryColl.getResultSet(ListSqlId.QUERY_ID_DNASAMPLE_NAMES_ALL,
+                    new HashMap<String, Object>() {{
+                        put("callLimit", callLimit);
+                    }}, new HashMap<String, Object>() {{
+                    }});
+
+            NameIdDTO nameIdDTO;
+            while (resultSet.next()) {
+
+                nameIdDTO = new NameIdDTO();
+                nameIdDTO.setId(resultSet.getInt("dnasample_id"));
+                nameIdDTO.setName(resultSet.getString("name"));
+                returnVal.add(nameIdDTO);
+            }
+
+        } catch (Exception e) {
+            throw new GobiiDaoException(e);
+        }
+
+        return returnVal;
+    }
+
     @Override
     public List<NameIdDTO> getNameIds(DtoMapNameIdParams dtoMapNameIdParams) throws GobiiException {
 
@@ -61,7 +90,16 @@ public class DtoMapNameIdFetchDnaSampleNames implements DtoMapNameIdFetch {
 
         GobiiFilterType gobiiFilterType = dtoMapNameIdParams.getGobiiFilterType();
 
-        if (GobiiFilterType.NAMES_BY_NAME_LIST == gobiiFilterType || GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_ABSENT == gobiiFilterType || GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_EXISTS == gobiiFilterType) {
+        if (GobiiFilterType.NONE == gobiiFilterType) {
+
+            // check call limit
+            Integer callLimit = dtoMapNameIdParams.getCallLimit();
+
+            DtoMapNameIdUtil.checkCallLimit(callLimit, GobiiEntityNameType.DNASAMPLE.toString());
+
+            returnVal = this.getAllNameIdsForDnaSampleNames(callLimit);
+
+        } else if (GobiiFilterType.NAMES_BY_NAME_LIST == gobiiFilterType || GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_ABSENT == gobiiFilterType || GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_EXISTS == gobiiFilterType) {
 
             returnVal = this.getDnaSampleNamesByNameList(dtoMapNameIdParams.getNameIdDTOList(), dtoMapNameIdParams.getFilterValueAsString(), gobiiFilterType);
 

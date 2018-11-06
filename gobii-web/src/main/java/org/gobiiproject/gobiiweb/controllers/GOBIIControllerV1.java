@@ -2351,7 +2351,7 @@ public class GOBIIControllerV1 {
                                         RestResourceId.GOBII_NAMES.getResourcePath()
                                         + "/"
                                         + entity
-                                        + " exceeds the limit of "
+                                        + " exceeds the max POST limit of "
                                         + callLimit.toString()));
 
             } // if-else the call exceeds the limit

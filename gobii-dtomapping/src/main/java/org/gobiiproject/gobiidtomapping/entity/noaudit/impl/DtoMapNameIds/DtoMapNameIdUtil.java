@@ -1,9 +1,12 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds;
 
+import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DnaSampleDTO;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -61,6 +64,29 @@ public class DtoMapNameIdUtil {
         }
 
         return resultSet.getFetchSize();
+
+    }
+
+    public static void checkCallLimit(Integer callLimit, String gobiiEntityNameType) {
+
+        if (callLimit == null) {
+
+            throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
+                    GobiiValidationStatusType.RESOURCE_LIMIT,
+                    "The max GET limit for names/"
+                    + gobiiEntityNameType
+                    + " should not be null");
+        }
+
+        if (callLimit <= 0) {
+
+            throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
+                    GobiiValidationStatusType.RESOURCE_LIMIT,
+                    "The max GET limit for names/"
+                    + gobiiEntityNameType
+                    + " should have a value");
+
+        }
 
     }
 }
