@@ -122,6 +122,8 @@ public abstract class BaseValidator {
             } catch (MaximumErrorsValidationException e) {
                 //Don't do any thing. This implies that particular error list is full.
             }
+        }else{
+            failureList = new ArrayList<>();
         }
         return failureList;
     }
@@ -165,7 +167,7 @@ public abstract class BaseValidator {
                 try {
                     getFilesWithExtension(new File(fileName).getParent(), existenceFile, files, failureList);
                     if (files.size() != 1) {
-                        processFileError(fileName, files.size(), failureList);
+                        processFileError(existenceFile, files.size(), failureList);
                     }
                 } catch (MaximumErrorsValidationException e) {
                     ////Don't do any thing. This implies that particular error list is full.

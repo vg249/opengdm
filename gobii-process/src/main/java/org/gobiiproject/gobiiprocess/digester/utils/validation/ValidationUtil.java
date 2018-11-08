@@ -107,7 +107,7 @@ class ValidationUtil {
                     List<String> filesList = new ArrayList<>();
                     if (getFilesWithExtension(parentDirectory, comparisonFileName, filesList, failureList)) {
                         if (filesList.size() != 1) {
-                            processFileError(filePath, filesList.size(), failureList);
+                            processFileError(comparisonFileName, filesList.size(), failureList);
                             return;
                         }
                         String comparisonFilePath = parentDirectory + "/" + comparisonFileName;
@@ -221,7 +221,7 @@ class ValidationUtil {
             boolean shouldFileExist = condition.fileExists.equalsIgnoreCase(ValidationConstants.YES);
             getFilesWithExtension(new File(fileName).getParent(), existenceFile, files, failureList);
             if (files.size() > 1) {
-                processFileError(fileName, files.size(), failureList);
+                processFileError(existenceFile, files.size(), failureList);
                 return;
             }
             if ((shouldFileExist && files.size() == 1) || (!shouldFileExist && files.size() == 0)) {

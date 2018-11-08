@@ -77,10 +77,10 @@ public class GermplasmPropValidationTest {
     }
 
     /**
-     * Germplasm validation.
+     * GermplasmProp validation.
      */
     @Test
-    public void testGermplasmAllPass() throws IOException {
+    public void testGermplasmPropAllPass() throws IOException {
         DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/allPass", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
@@ -99,6 +99,78 @@ public class GermplasmPropValidationTest {
 
         assertEquals("Expected file name is not germplasm_prop", "germplasm_prop", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not success", "SUCCESS", fileErrors[0].status);
+
+    }
+
+    /**
+     * GermplasmProp validation.
+     * Missing one required field
+     */
+    @Test
+    public void testGermplasmPropMissingRequiredField() throws IOException {
+        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+
+        PowerMockito.mockStatic(ValidationWebServicesUtil.class);
+        PowerMockito
+                .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
+                .thenReturn(true);
+
+
+        digestFileValidator.performValidation();
+        List<Path> pathList =
+                Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns"))
+                        .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
+        assertEquals("There should be one validation output json file", 1, pathList.size());
+
+        ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
+
+        assertEquals("Expected file name is not germplasm_prop", "germplasm_prop", fileErrors[0].fileName);
+        assertEquals("Expected STATUS is not FAILURE", "FAILURE", fileErrors[0].status);
+
+        List<Failure> failures = fileErrors[0].failures;
+        assertEquals("Failures are more than the expected", 1, failures.size());
+
+
+        assertEquals("Unexpected failure reason", "Column not found", failures.get(0).reason);
+        assertEquals("Unexpected column name", "external_code", failures.get(0).columnName.get(0));
+
+    }
+
+    /**
+     * GermplasmProp validation.
+     * Missing one required field
+     */
+    @Test
+    public void testGermplasmPropMissingComparisonFile() throws IOException {
+        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingComparisonFile", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+
+        PowerMockito.mockStatic(ValidationWebServicesUtil.class);
+        PowerMockito
+                .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
+                .thenReturn(true);
+
+
+        digestFileValidator.performValidation();
+        List<Path> pathList =
+                Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/missingComparisonFile"))
+                        .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
+        assertEquals("There should be one validation output json file", 1, pathList.size());
+
+        ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
+
+        assertEquals("Expected file name is not germplasm_prop", "germplasm_prop", fileErrors[0].fileName);
+        assertEquals("Expected STATUS is not FAILURE", "FAILURE", fileErrors[0].status);
+
+        List<Failure> failures = fileErrors[0].failures;
+        assertEquals("Failures are more than the expected", 2, failures.size());
+
+
+        assertEquals("Unexpected failure reason", "File not found", failures.get(0).reason);
+        assertEquals("Unexpected values", "digest.germplasm", failures.get(0).values.get(0));
+
+
+        assertEquals("Unexpected failure reason", "File not found", failures.get(0).reason);
+        assertEquals("Unexpected values", "digest.germplasm", failures.get(0).values.get(0));
 
     }
 }
