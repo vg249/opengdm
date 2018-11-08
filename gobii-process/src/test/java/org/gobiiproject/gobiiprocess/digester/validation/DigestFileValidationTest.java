@@ -57,7 +57,7 @@ public class DigestFileValidationTest {
     @BeforeClass
     public static void setUp() throws IOException {
         tempFolderLocation = tempFolder.getRoot().getPath();
-        File source = new File("src/test/resources/validation");
+        File source = new File("src/test/resources/validation/germplasm");
         FileUtils.copyDirectory(source, tempFolder.getRoot());
     }
 
@@ -81,7 +81,7 @@ public class DigestFileValidationTest {
      */
     @Test
     public void testGermplasmAllPass() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/germplasm/allPass", tempFolder.getRoot().getAbsolutePath() + "/germplasm/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/allPass", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
         PowerMockito
@@ -128,7 +128,7 @@ public class DigestFileValidationTest {
         }
         digestFileValidator.performValidation();
         List<Path> pathList =
-                Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/germplasm/allPass"))
+                Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/allPass"))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
@@ -145,7 +145,7 @@ public class DigestFileValidationTest {
      */
     @Test
     public void testGermplasmCvFail() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/germplasm/cvFail", tempFolder.getRoot().getAbsolutePath() + "/germplasm/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/cvFail", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
         PowerMockito
@@ -204,7 +204,7 @@ public class DigestFileValidationTest {
         }
         digestFileValidator.performValidation();
         List<Path> pathList =
-                Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/germplasm/cvFail"))
+                Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/cvFail"))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
@@ -239,7 +239,7 @@ public class DigestFileValidationTest {
      */
     @Test
     public void testGermplasmMissingRequiredField() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/germplasm/missingRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/germplasm/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
         PowerMockito
@@ -249,7 +249,7 @@ public class DigestFileValidationTest {
 
         digestFileValidator.performValidation();
         List<Path> pathList =
-                Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/germplasm/missingRequiredColumns"))
+                Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns"))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
@@ -273,7 +273,7 @@ public class DigestFileValidationTest {
      */
     @Test
     public void testGermplasmMissingValuesInRequiredField() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/germplasm/missingValuesInRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/germplasm/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingValuesInRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
         PowerMockito
@@ -283,7 +283,7 @@ public class DigestFileValidationTest {
 
         digestFileValidator.performValidation();
         List<Path> pathList =
-                Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/germplasm/missingValuesInRequiredColumns"))
+                Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/missingValuesInRequiredColumns"))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
@@ -307,7 +307,7 @@ public class DigestFileValidationTest {
      */
     @Test
     public void testGermplasmnonUniqueRequiredColumns() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/germplasm/nonUniqueRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/germplasm/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/nonUniqueRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
         PowerMockito
@@ -317,7 +317,7 @@ public class DigestFileValidationTest {
 
         digestFileValidator.performValidation();
         List<Path> pathList =
-                Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/germplasm/nonUniqueRequiredColumns"))
+                Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/nonUniqueRequiredColumns"))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
         assertEquals("There should be one validation output json file", 1, pathList.size());
 

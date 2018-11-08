@@ -116,16 +116,21 @@ class ValidationUtil {
                             fileColumnElements = getFileColumns(comparisonFilePath, fieldColumns, failureList);
                         } else
                             fileColumnElements = getFileColumn(comparisonFilePath, fieldColumns.get(0), failureList);
-                        if (fileColumnElements.size() == 0) return;
-                        else Collections.sort(fileColumnElements);
+                        if (condition.required.equals(ValidationConstants.YES)) {
+                            Failure failure = new Failure();
+                            failure.reason = FailureTypes.COLUMN_NOT_FOUND;
+                            failure.columnName.addAll(fieldColumns);
+                            addMessageToList(failure, failureList);
+                            return;
+                        }
+                        Collections.sort(fileColumnElements);
 
                         List<String> comparisonFileColumnElements;
                         if (fieldToCompare.size() > 1) {
                             comparisonFileColumnElements = getFileColumns(comparisonFilePath, fieldToCompare, failureList);
                         } else
                             comparisonFileColumnElements = getFileColumn(comparisonFilePath, fieldToCompare.get(0), failureList);
-                        if (comparisonFileColumnElements.size() == 0) return;
-                        else Collections.sort(comparisonFileColumnElements);
+                        Collections.sort(comparisonFileColumnElements);
 
                         // If it is only unique list
                         if (condition.uniqueFileCheck != null && condition.uniqueFileCheck.equalsIgnoreCase(ValidationConstants.YES)) {
@@ -142,7 +147,11 @@ class ValidationUtil {
                         }
                     }
                 } else {
-                    printMissingFieldError("File", "fieldToCompare", FailureTypes.CORRUPTED_VALIDATION_FILE, failureList);
+                    if (condition.fieldToCompare != null)
+                        printMissingFieldError("File", "fieldToCompare", FailureTypes.CORRUPTED_VALIDATION_FILE, failureList);
+                    else if (condition.fieldColumns != null)
+                        printMissingFieldError("File", "fieldColumns", FailureTypes.CORRUPTED_VALIDATION_FILE, failureList);
+
                 }
             } else {
                 Failure failure = new Failure();
