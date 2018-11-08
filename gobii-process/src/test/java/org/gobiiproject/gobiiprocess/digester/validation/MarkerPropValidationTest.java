@@ -42,7 +42,7 @@ import static org.mockito.Matchers.eq;
 @PrepareForTest(ValidationWebServicesUtil.class)
 @PowerMockRunnerDelegate(BlockJUnit4ClassRunner.class)
 @PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
-public class LinkageGroupValidationTest {
+public class MarkerPropValidationTest {
 
     private static String tempFolderLocation;
 
@@ -53,7 +53,7 @@ public class LinkageGroupValidationTest {
     @BeforeClass
     public static void setUp() throws IOException {
         tempFolderLocation = tempFolder.getRoot().getPath();
-        File source = new File("src/test/resources/validation/linkage_group");
+        File source = new File("src/test/resources/validation/marker_prop");
         FileUtils.copyDirectory(source, tempFolder.getRoot());
     }
 
@@ -73,10 +73,10 @@ public class LinkageGroupValidationTest {
     }
 
     /**
-     * linkage group validation.
+     * marker prop validation.
      */
     @Test
-    public void linkageGroupAllPassTest() throws IOException {
+    public void markerPropAllPassTest() throws IOException {
         DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/allPass", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
@@ -92,17 +92,17 @@ public class LinkageGroupValidationTest {
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
 
-        assertEquals("Expected file name is not linkage_group", "linkage_group", fileErrors[0].fileName);
+        assertEquals("Expected file name is not marker_prop", "marker_prop", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not success", "SUCCESS", fileErrors[0].status);
 
     }
 
     /**
-     * Linkage group validation.
+     * Marker prop validation.
      * Missing one required field
      */
     @Test
-    public void linkageGroupMissingRequiredFieldTest() throws IOException {
+    public void markerPropMissingRequiredFieldTest() throws IOException {
         DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
@@ -119,7 +119,7 @@ public class LinkageGroupValidationTest {
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
 
-        assertEquals("Expected file name is not linkage_group", "linkage_group", fileErrors[0].fileName);
+        assertEquals("Expected file name is not marker_prop", "marker_prop", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not FAILURE", "FAILURE", fileErrors[0].status);
 
         List<Failure> failures = fileErrors[0].failures;
@@ -127,13 +127,13 @@ public class LinkageGroupValidationTest {
 
 
         assertEquals("Unexpected failure reason", "Column not found", failures.get(0).reason);
-        assertEquals("Unexpected column name", "map_id", failures.get(0).columnName.get(0));
+        assertEquals("Unexpected column name", "marker_name", failures.get(0).columnName.get(0));
 
     }
 
     /**
-     * Linkage group validation.
-     * Missing values in required field
+     * Marker prop validation.
+     * Missing value in required field
      */
     @Test
     public void linkageGroupMissingValuesInRequiredFieldTest() throws IOException {
@@ -153,7 +153,7 @@ public class LinkageGroupValidationTest {
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
 
-        assertEquals("Expected file name is not linkage_group", "linkage_group", fileErrors[0].fileName);
+        assertEquals("Expected file name is not marker_prop", "marker_prop", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not FAILURE", "FAILURE", fileErrors[0].status);
 
         List<Failure> failures = fileErrors[0].failures;
@@ -161,8 +161,41 @@ public class LinkageGroupValidationTest {
 
 
         assertEquals("Unexpected failure reason", "NULL VALUE", failures.get(0).reason);
-        assertEquals("Unexpected column name", "name", failures.get(0).columnName.get(0));
+        assertEquals("Unexpected column name", "platform_id", failures.get(0).columnName.get(0));
 
+    }
+
+    /**
+     * Marker prop validation.
+     * Missing comparison file
+     */
+    @Test
+    public void germplasmPropMissingComparisonFileTest() throws IOException {
+        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingComparisonFile", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+
+        PowerMockito.mockStatic(ValidationWebServicesUtil.class);
+        PowerMockito
+                .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
+                .thenReturn(true);
+
+
+        digestFileValidator.performValidation();
+        List<Path> pathList =
+                Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/missingComparisonFile"))
+                        .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
+        assertEquals("There should be one validation output json file", 1, pathList.size());
+
+        ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
+
+        assertEquals("Expected file name is not marker_prop", "marker_prop", fileErrors[0].fileName);
+        assertEquals("Expected STATUS is not FAILURE", "FAILURE", fileErrors[0].status);
+
+        List<Failure> failures = fileErrors[0].failures;
+        assertEquals("Failures are more than the expected", 1, failures.size());
+
+
+        assertEquals("Unexpected failure reason", "File not found", failures.get(0).reason);
+        assertEquals("Unexpected values", "digest.marker", failures.get(0).values.get(0));
     }
 }
 

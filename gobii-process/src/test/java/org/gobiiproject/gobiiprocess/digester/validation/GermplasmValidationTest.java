@@ -269,7 +269,7 @@ public class GermplasmValidationTest {
 
     /**
      * Germplasm validation.
-     * Missing one required field
+     * Missing values in required field
      */
     @Test
     public void germplasmMissingValuesInRequiredFieldTest() throws IOException {

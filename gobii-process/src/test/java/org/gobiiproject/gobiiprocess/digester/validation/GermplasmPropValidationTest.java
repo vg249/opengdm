@@ -134,7 +134,7 @@ public class GermplasmPropValidationTest {
 
     /**
      * GermplasmProp validation.
-     * Missing one required field
+     * Missing comparison file
      */
     @Test
     public void germplasmPropMissingComparisonFileTest() throws IOException {
