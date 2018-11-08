@@ -105,18 +105,20 @@ class ValidationUtil {
                     List<String> fieldColumns = condition.fieldColumns;
                     List<String> fieldToCompare = condition.fieldToCompare;
                     List<String> filesList = new ArrayList<>();
+
                     if (getFilesWithExtension(parentDirectory, comparisonFileName, filesList, failureList)) {
                         if (filesList.size() != 1) {
                             processFileError(comparisonFileName, filesList.size(), failureList);
                             return;
                         }
-                        String comparisonFilePath = parentDirectory + "/" + comparisonFileName;
-                        List<String> fileColumnElements;
+
+                        List<String> fileColumnElements, comparisonFileColumnElements;
                         if (fieldToCompare.size() > 1) {
-                            fileColumnElements = getFileColumns(comparisonFilePath, fieldColumns, failureList);
-                        } else
-                            fileColumnElements = getFileColumn(comparisonFilePath, fieldColumns.get(0), failureList);
-                        if (condition.required.equals(ValidationConstants.YES)) {
+                            fileColumnElements = getFileColumns(filePath, fieldColumns, failureList);
+                        } else {
+                            fileColumnElements = getFileColumn(filePath, fieldColumns.get(0), failureList);
+                        }
+                        if (fileColumnElements.size() == 0 && condition.required.equalsIgnoreCase(ValidationConstants.YES)) {
                             Failure failure = new Failure();
                             failure.reason = FailureTypes.COLUMN_NOT_FOUND;
                             failure.columnName.addAll(fieldColumns);
@@ -125,7 +127,8 @@ class ValidationUtil {
                         }
                         Collections.sort(fileColumnElements);
 
-                        List<String> comparisonFileColumnElements;
+
+                        String comparisonFilePath = parentDirectory + "/" + comparisonFileName;
                         if (fieldToCompare.size() > 1) {
                             comparisonFileColumnElements = getFileColumns(comparisonFilePath, fieldToCompare, failureList);
                         } else
@@ -138,7 +141,7 @@ class ValidationUtil {
                             comparisonFileColumnElements = comparisonFileColumnElements.stream().distinct().collect(Collectors.toList());
                         }
 
-                        if (!fileColumnElements.containsAll(comparisonFileColumnElements)) {
+                        if (!fileColumnElements.equals(comparisonFileColumnElements)) {
                             Failure failure = new Failure();
                             failure.reason = FailureTypes.VALUE_MISMATCH;
                             failure.columnName.add(String.join(",", fieldColumns));

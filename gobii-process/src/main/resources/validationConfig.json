@@ -260,7 +260,7 @@
           "required": "yes",
           "type": "File",
           "fileShouldExist": "digest.dnarun",
-          "fileColumns": [
+          "fieldColumns": [
             "experiment_id"
           ],
           "typeName": "digest.dnarun",
@@ -272,7 +272,7 @@
           "columnName": "dnarun_name",
           "required": "yes",
           "type": "File",
-          "fileColumns": [
+          "fieldColumns": [
             "dnarun_name"
           ],
           "typeName": "digest.dnarun",

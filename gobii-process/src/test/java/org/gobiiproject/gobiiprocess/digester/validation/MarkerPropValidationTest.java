@@ -136,7 +136,7 @@ public class MarkerPropValidationTest {
      * Missing value in required field
      */
     @Test
-    public void linkageGroupMissingValuesInRequiredFieldTest() throws IOException {
+    public void markerPropMissingValuesInRequiredFieldTest() throws IOException {
         DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingValuesInRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
@@ -170,7 +170,7 @@ public class MarkerPropValidationTest {
      * Missing comparison file
      */
     @Test
-    public void germplasmPropMissingComparisonFileTest() throws IOException {
+    public void markerPropMissingComparisonFileTest() throws IOException {
         DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingComparisonFile", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
