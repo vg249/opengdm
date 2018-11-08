@@ -264,6 +264,7 @@ public class DigestFileValidator {
         switch (FilenameUtils.getExtension(validation.getDigestFileName())) {
             case "germplasm":
             case "germplasm_prop":
+            case "linkage_group":
                 if (!new GermplasmPropValidator().validate(validation, rootDir, failureList)) failureList = null;
                 break;
             case "dnasample":
@@ -283,9 +284,6 @@ public class DigestFileValidator {
                 break;
             case "marker_prop":
                 if (!new MarkerPropValidator().validate(validation, rootDir, failureList)) failureList = null;
-                break;
-            case "linkage_group":
-                if (!new LinkageGroupValidator().validate(validation, rootDir, failureList)) failureList = null;
                 break;
             case "marker_linkage_group":
                 if (!new MarkerLinkageGroupValidator().validate(validation, rootDir, failureList)) failureList = null;

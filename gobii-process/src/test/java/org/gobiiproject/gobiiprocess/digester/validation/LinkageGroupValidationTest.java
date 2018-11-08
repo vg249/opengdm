@@ -42,7 +42,7 @@ import static org.mockito.Matchers.eq;
 @PrepareForTest(ValidationWebServicesUtil.class)
 @PowerMockRunnerDelegate(BlockJUnit4ClassRunner.class)
 @PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
-public class GermplasmPropValidationTest {
+public class LinkageGroupValidationTest {
 
     private static String tempFolderLocation;
 
@@ -53,7 +53,7 @@ public class GermplasmPropValidationTest {
     @BeforeClass
     public static void setUp() throws IOException {
         tempFolderLocation = tempFolder.getRoot().getPath();
-        File source = new File("src/test/resources/validation/germplasmProps");
+        File source = new File("src/test/resources/validation/linkage_group");
         FileUtils.copyDirectory(source, tempFolder.getRoot());
     }
 
@@ -73,17 +73,16 @@ public class GermplasmPropValidationTest {
     }
 
     /**
-     * GermplasmProp validation.
+     * linkage group validation.
      */
     @Test
-    public void germplasmPropAllPassTest() throws IOException {
+    public void linkageGroupAllPassTest() throws IOException {
         DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/allPass", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
         PowerMockito
                 .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
                 .thenReturn(true);
-
 
         digestFileValidator.performValidation();
         List<Path> pathList =
@@ -93,17 +92,17 @@ public class GermplasmPropValidationTest {
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
 
-        assertEquals("Expected file name is not germplasm_prop", "germplasm_prop", fileErrors[0].fileName);
+        assertEquals("Expected file name is not linkage_group", "linkage_group", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not success", "SUCCESS", fileErrors[0].status);
 
     }
 
     /**
-     * GermplasmProp validation.
+     * Linkage group validation.
      * Missing one required field
      */
     @Test
-    public void germplasmPropMissingRequiredFieldTest() throws IOException {
+    public void linkageGroupMissingRequiredFieldTest() throws IOException {
         DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
@@ -120,7 +119,7 @@ public class GermplasmPropValidationTest {
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
 
-        assertEquals("Expected file name is not germplasm_prop", "germplasm_prop", fileErrors[0].fileName);
+        assertEquals("Expected file name is not linkage_group", "linkage_group", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not FAILURE", "FAILURE", fileErrors[0].status);
 
         List<Failure> failures = fileErrors[0].failures;
@@ -128,17 +127,17 @@ public class GermplasmPropValidationTest {
 
 
         assertEquals("Unexpected failure reason", "Column not found", failures.get(0).reason);
-        assertEquals("Unexpected column name", "external_code", failures.get(0).columnName.get(0));
+        assertEquals("Unexpected column name", "map_id", failures.get(0).columnName.get(0));
 
     }
 
     /**
-     * GermplasmProp validation.
+     * Linkage group validation.
      * Missing one required field
      */
     @Test
-    public void germplasmPropMissingComparisonFileTest() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingComparisonFile", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+    public void linkageGroupMissingValuesInRequiredFieldTest() throws IOException {
+        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingValuesInRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
         PowerMockito
@@ -148,25 +147,21 @@ public class GermplasmPropValidationTest {
 
         digestFileValidator.performValidation();
         List<Path> pathList =
-                Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/missingComparisonFile"))
+                Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/missingValuesInRequiredColumns"))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
 
-        assertEquals("Expected file name is not germplasm_prop", "germplasm_prop", fileErrors[0].fileName);
+        assertEquals("Expected file name is not linkage_group", "linkage_group", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not FAILURE", "FAILURE", fileErrors[0].status);
 
         List<Failure> failures = fileErrors[0].failures;
-        assertEquals("Failures are more than the expected", 2, failures.size());
+        assertEquals("Failures are more than the expected", 1, failures.size());
 
 
-        assertEquals("Unexpected failure reason", "File not found", failures.get(0).reason);
-        assertEquals("Unexpected values", "digest.germplasm", failures.get(0).values.get(0));
-
-
-        assertEquals("Unexpected failure reason", "File not found", failures.get(0).reason);
-        assertEquals("Unexpected values", "digest.germplasm", failures.get(0).values.get(0));
+        assertEquals("Unexpected failure reason", "NULL VALUE", failures.get(0).reason);
+        assertEquals("Unexpected column name", "name", failures.get(0).columnName.get(0));
 
     }
 }

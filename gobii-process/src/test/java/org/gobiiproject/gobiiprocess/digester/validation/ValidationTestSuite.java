@@ -6,7 +6,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         GermplasmValidationTest.class,
-        GermplasmPropValidationTest.class})
+        GermplasmPropValidationTest.class,
+        LinkageGroupValidationTest.class})
 
 public class ValidationTestSuite {
 }

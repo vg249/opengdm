@@ -80,7 +80,7 @@ public class GermplasmValidationTest {
      * Germplasm validation.
      */
     @Test
-    public void testGermplasmAllPass() throws IOException {
+    public void germplasmAllPassTest() throws IOException {
         DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/allPass", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
@@ -144,7 +144,7 @@ public class GermplasmValidationTest {
      * Has all required fields, one error speeciesName and one error typeName
      */
     @Test
-    public void testGermplasmCvFail() throws IOException {
+    public void germplasmCvFailTest() throws IOException {
         DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/cvFail", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
@@ -238,7 +238,7 @@ public class GermplasmValidationTest {
      * Missing one required field
      */
     @Test
-    public void testGermplasmMissingRequiredField() throws IOException {
+    public void germplasmMissingRequiredFieldTest() throws IOException {
         DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
@@ -272,7 +272,7 @@ public class GermplasmValidationTest {
      * Missing one required field
      */
     @Test
-    public void testGermplasmMissingValuesInRequiredField() throws IOException {
+    public void germplasmMissingValuesInRequiredFieldTest() throws IOException {
         DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingValuesInRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
@@ -306,7 +306,7 @@ public class GermplasmValidationTest {
      * Repeated required field
      */
     @Test
-    public void testGermplasmnonUniqueRequiredColumns() throws IOException {
+    public void germplasmnonUniqueRequiredColumnsTest() throws IOException {
         DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/nonUniqueRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
