@@ -46,7 +46,7 @@ import static org.mockito.Matchers.eq;
 @PrepareForTest(ValidationWebServicesUtil.class)
 @PowerMockRunnerDelegate(BlockJUnit4ClassRunner.class)
 @PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
-public class DigestFileValidationTest {
+public class GermplasmValidationTest {
 
     private static String tempFolderLocation;
 

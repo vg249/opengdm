@@ -263,9 +263,6 @@ public class DigestFileValidator {
         List<Failure> failureList = new ArrayList<>();
         switch (FilenameUtils.getExtension(validation.getDigestFileName())) {
             case "germplasm":
-                if (!new GermplasmValidator().validate(validation, rootDir, failureList))
-                    failureList = null;
-                break;
             case "germplasm_prop":
                 if (!new GermplasmPropValidator().validate(validation, rootDir, failureList)) failureList = null;
                 break;
