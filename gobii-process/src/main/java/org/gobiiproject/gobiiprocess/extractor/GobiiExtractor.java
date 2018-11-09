@@ -589,7 +589,7 @@ public class GobiiExtractor {
 							ErrorLogger.logInfo("Extractor", "qcCheck detected");
 							ErrorLogger.logInfo("Extractor", "Entering into the QC Subsection #1 of 1...");
 							jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING.getCvName(),"Processing QC Job");
-							performQC(configuration, inst, crop, datasetId, extractDir, mailInterface, extractType);
+							performQC(configuration, inst, crop, datasetName, datasetId, extractDir, mailInterface, extractType);
 							jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(),"QC Job Complete");
 						}
 						//inst.isQcCheck has supressed the email output, we wnat to *unsupress* it if there was a problem with file generation
@@ -666,7 +666,7 @@ public class GobiiExtractor {
 	 * @param extractType type of extract being performed
      * @throws Exception when an exception has occurred (all of them)
      */
-    private static void performQC(ConfigSettings configuration, GobiiExtractorInstruction inst, String crop, Integer datasetId, String extractDir, MailInterface mailInterface, String extractType) throws Exception {
+    private static void performQC(ConfigSettings configuration, GobiiExtractorInstruction inst, String crop, String datasetName, Integer datasetId, String extractDir, MailInterface mailInterface, String extractType) throws Exception {
         if (configuration.getKDCConfig().getHost() == null) {
             ErrorLogger.logInfo("QC", "Unable to continue QC with the KDC host name being null");
             return;
@@ -728,8 +728,8 @@ public class GobiiExtractor {
 					ProcessMessage qcStartPm = new ProcessMessage();
 					qcStartPm.setUser(inst.getContactEmail());
 					qcStartPm.setSubject("new QC Job #"+qcJobID);
-					qcStartPm.addIdentifier("QC Job Identifier", String.valueOf(qcJobID), String.valueOf(qcJobID));
-					qcStartPm.addIdentifier("Dataset Identifier", String.valueOf(datasetId), String.valueOf(qcJobID));
+					qcStartPm.addIdentifier("QC Job Identifier", "", String.valueOf(qcJobID));
+					qcStartPm.addIdentifier("Dataset Identifier", datasetName, String.valueOf(datasetId));
 					qcStartPm.addPath("Output Extraction/QC Directory", extractDir);
 					qcStartPm.setBody("new QC Job #"+qcJobID,"QC",0,"",true,"");
 					//mailInterface.send(qcStartPm);
@@ -774,8 +774,8 @@ public class GobiiExtractor {
 					ProcessMessage qcStatusPm = new ProcessMessage();
 						qcStatusPm.setUser(inst.getContactEmail());
 						qcStatusPm.setSubject(new StringBuilder("QC Job #").append(qcJobID).append(" status").toString());
-						qcStatusPm.addIdentifier("QC Job Identifier", String.valueOf(qcJobID), String.valueOf(qcJobID));
-						qcStatusPm.addIdentifier("Dataset Identifier", String.valueOf(datasetId), String.valueOf(qcJobID));
+						qcStatusPm.addIdentifier("QC Job Identifier", "", String.valueOf(qcJobID));
+						qcStatusPm.addIdentifier("Dataset Identifier", datasetName, String.valueOf(datasetId));
 
 						int qcDuration=0;
 					if (jsonPayload == null) {
