@@ -278,8 +278,7 @@ public class GobiiExtractor {
                         datasetName = datasetPropNameId.getName();
                     }
 
-                    String sampleListFile = null;
-
+					String markerListFileLocation = null,sampleListFileLocation = null;//Generally list file location, populated as needed
                     switch (filterType) {
                         case WHOLE_DATASET:
                             extractType = "Extract by Dataset";
@@ -298,14 +297,18 @@ public class GobiiExtractor {
 
                             break;
                         case BY_MARKER:
+
                             extractType = "Extract by Marker";
                             //List takes extra work, as it might be a <List> or a <File>
                             //Create a file out of the List if non-null, else use the <File>
                             List<String> markerList = extract.getMarkerList();
                             if (markerList != null && !markerList.isEmpty()) {
-                                markerListLocation = " -X " + createTempFileForMarkerList(extractDir, markerList);
+								markerListFileLocation=createTempFileForMarkerList(extractDir, markerList);
                             } else if (extract.getListFileName() != null) {
-                                markerListLocation = " -X " + extract.getListFileName();
+								markerListFileLocation=extract.getListFileName();
+							}
+							if(markerListFileLocation!=null){
+								markerListLocation = " -X " + markerListFileLocation;
                             }
                             //else if file is null and list is empty or null - > no term
 
@@ -341,12 +344,12 @@ public class GobiiExtractor {
                             //Create a file out of the List if non-null, else use the <File>
                             List<String> sampleList = extract.getSampleList();
                             if (sampleList != null && !sampleList.isEmpty()) {
-                                sampleListFile = createTempFileForMarkerList(extractDir, sampleList, "sampleList");
+                                sampleListFileLocation = createTempFileForMarkerList(extractDir, sampleList, "sampleList");
                             } else if (extract.getListFileName() != null) {
-                                sampleListFile = extract.getListFileName();
+                                sampleListFileLocation = extract.getListFileName();
                             }
-                            if (sampleListFile != null) {
-                                sampleListLocation = " -Y " + sampleListFile;
+                            if (sampleListFileLocation != null) {
+                                sampleListLocation = " -Y " + sampleListFileLocation;
                             }
 
                             GobiiSampleListType type = extract.getGobiiSampleListType();
@@ -434,31 +437,21 @@ public class GobiiExtractor {
                     //turns /data/gobii_bundle/crops/zoan/extractor/instructions/2018_05_15_13_32_12_samples.txt into 2018_05_15_13_32_12_samples.txt
                     //We're moving it into the extract directory when we're done now, so lets be vague as to its location.
                     //They'll find it if they want to
-                    String listFileName = null;
-                    if (extract.getListFileName() != null) {
-                        listFileName = new File(extract.getListFileName()).getName();
-                    }
+
 
                     //Marker List or List File (see above for selection logic)
-                    if (extract.getMarkerList() != null && !extract.getMarkerList().isEmpty()) {
-                        pm.addCriteria("Marker List", String.join("<BR>", extract.getMarkerList()));
-                        esw.addItem("Marker List", extract.getMarkerList());
-                    } else if (filterType == BY_MARKER && listFileName != null) {
-                        pm.addCriteria("Marker List", listFileName);
-                        esw.addItem("Marker File", listFileName);
+					if((extract.getMarkerList() != null && !extract.getMarkerList().isEmpty()) || (filterType==BY_MARKER && markerListFileLocation != null)) {
+						pm.addCriteria("Marker List", markerListFileLocation);
+						esw.addItem("Marker List", markerListFileLocation);
                     }
 
                     if (type != null) {
                         pm.addCriteria("Sample List Type", uppercaseFirstLetter(type.toString().toLowerCase()));
                     }
 
-                    //Sample List or Sample List File (See above for selection logic)
-                    if (extract.getSampleList() != null && !extract.getSampleList().isEmpty()) {
-                        pm.addCriteria("Sample List", String.join("<BR>", extract.getSampleList()));
-                        esw.addItem("Sample List", extract.getSampleList());
-                    } else if (filterType == BY_SAMPLE && listFileName != null) {
-                        pm.addCriteria("Sample List", listFileName);
-                        esw.addItem("Sample File", listFileName);
+					if( (extract.getSampleList() != null && !extract.getSampleList().isEmpty()) || (filterType==BY_SAMPLE && sampleListFileLocation != null)){
+						pm.addCriteria("Sample List", sampleListFileLocation);
+						esw.addItem("Sample File",sampleListFileLocation);
                     }
 
                     List<Integer> mapsetIds = inst.getMapsetIds();
@@ -949,7 +942,7 @@ public class GobiiExtractor {
      * @return location of new file.
      */
     private static String createTempFileForMarkerList(String tmpDir, List<String> markerList, String tmpFilename) {
-        String tempFileLocation = tmpDir + tmpFilename + ".tmp";
+		String tempFileLocation=tmpDir+tmpFilename+".list";
         try {
             FileWriter f = new FileWriter(tempFileLocation);
             for (String marker : markerList) {
