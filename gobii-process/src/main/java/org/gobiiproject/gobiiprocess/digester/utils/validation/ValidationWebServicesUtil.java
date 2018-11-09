@@ -65,7 +65,17 @@ public class ValidationWebServicesUtil {
         }
     }
 
-    public static List<NameIdDTO> validateCVName(List<NameIdDTO> nameIdDTOList, String cvGroupName, List<Failure> failureList) throws MaximumErrorsValidationException {
+    /**
+     * Web service call to validate CV and reference type
+     *
+     * @param nameIdDTOList       Items list
+     * @param gobiiEntityNameType CV or Reference
+     * @param filterValue         filter value
+     * @param failureList         failure list
+     * @return Items list with id
+     * @throws MaximumErrorsValidationException exception
+     */
+    public static List<NameIdDTO> getNamesByNameList(List<NameIdDTO> nameIdDTOList, String gobiiEntityNameType, String filterValue, List<Failure> failureList) throws MaximumErrorsValidationException {
         List<NameIdDTO> nameIdDTOListResponse = new ArrayList<>();
         try {
             PayloadEnvelope<NameIdDTO> payloadEnvelope = new PayloadEnvelope<>();
@@ -76,25 +86,29 @@ public class ValidationWebServicesUtil {
                     .getUriFactory()
                     .nameIdListByQueryParams();
             GobiiEnvelopeRestResource<NameIdDTO, NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
-            namesUri.setParamValue("entity", GobiiEntityNameType.CV.toString().toLowerCase());
+            namesUri.setParamValue("entity", gobiiEntityNameType.toString().toLowerCase());
             namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.NAMES_BY_NAME_LIST.toString().toUpperCase()));
-            switch (cvGroupName) {
-                case "species_name":
-                    namesUri.setParamValue("filterValue", CvGroup.CVGROUP_GERMPLASM_SPECIES.getCvGroupName());
-                    break;
-                case "type_name":
-                    namesUri.setParamValue("filterValue", CvGroup.CVGROUP_GERMPLASM_TYPE.getCvGroupName());
-                    break;
-                case "strand_name":
-                    namesUri.setParamValue("filterValue", CvGroup.CVGROUP_MARKER_STRAND.getCvGroupName());
-                    break;
-                default:
-                    Failure failure = new Failure();
-                    failure.reason = FailureTypes.UNDEFINED_CV;
-                    failure.values.add(cvGroupName);
-                    ValidationUtil.addMessageToList(failure, failureList);
-                    return nameIdDTOListResponse;
-            }
+            if (gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.CV.toString())) {
+                switch (filterValue) {
+                    case "species_name":
+                        namesUri.setParamValue("filterValue", CvGroup.CVGROUP_GERMPLASM_SPECIES.getCvGroupName());
+                        break;
+                    case "type_name":
+                        namesUri.setParamValue("filterValue", CvGroup.CVGROUP_GERMPLASM_TYPE.getCvGroupName());
+                        break;
+                    case "strand_name":
+                        namesUri.setParamValue("filterValue", CvGroup.CVGROUP_MARKER_STRAND.getCvGroupName());
+                        break;
+                    default:
+                        Failure failure = new Failure();
+                        failure.reason = FailureTypes.UNDEFINED_CV;
+                        failure.values.add(filterValue);
+                        ValidationUtil.addMessageToList(failure, failureList);
+                        return nameIdDTOListResponse;
+                }
+            } else if (gobiiEntityNameType.toString().equalsIgnoreCase(GobiiEntityNameType.REFERENCE.toString()))
+                namesUri.setParamValue("filterValue", filterValue);
+
             PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = gobiiEnvelopeRestResource.post(NameIdDTO.class, payloadEnvelope);
             Status status = responsePayloadEnvelope.getHeader().getStatus();
             if (!status.isSucceeded()) {
@@ -108,7 +122,6 @@ public class ValidationWebServicesUtil {
                 return nameIdDTOListResponse;
             }
             nameIdDTOListResponse.addAll(responsePayloadEnvelope.getPayload().getData());
-
         } catch (MaximumErrorsValidationException e) {
             throw e;
         } catch (Exception e) {
@@ -119,4 +132,6 @@ public class ValidationWebServicesUtil {
         }
         return nameIdDTOListResponse;
     }
+
+
 }

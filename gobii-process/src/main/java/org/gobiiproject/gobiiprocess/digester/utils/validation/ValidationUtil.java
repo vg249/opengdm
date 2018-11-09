@@ -415,9 +415,10 @@ class ValidationUtil {
      *
      * @param fileName       fileName
      * @param fieldToCompare field to check
+     * @param typeName       CV/REFERENCE
      * @param failureList    failure list
      */
-    static void validateCV(String fileName, List<String> fieldToCompare, List<Failure> failureList) throws MaximumErrorsValidationException {
+    static void validateDB(String fileName, List<String> fieldToCompare, String typeName, List<Failure> failureList) throws MaximumErrorsValidationException {
         List<String[]> collectList = new ArrayList<>();
         if (readFileIntoMemory(fileName, collectList, failureList)) {
             List<String> headers = Arrays.asList(collectList.get(0));
@@ -437,12 +438,15 @@ class ValidationUtil {
                 nameIdDTO.setName(fieldName);
                 nameIdDTOList.add(nameIdDTO);
             }
-            List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.validateCVName(nameIdDTOList, fieldToCompare.get(0), failureList);
+            List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.getNamesByNameList(nameIdDTOList, typeName, fieldToCompare.get(0), failureList);
 
             for (NameIdDTO nameIdDTO : nameIdDTOListResponse) {
                 if (nameIdDTO.getId() == 0) {
                     Failure failure = new Failure();
-                    failure.reason = FailureTypes.UNDEFINED_CV_VALUE;
+                    if (typeName.equalsIgnoreCase(ValidationConstants.CV))
+                        failure.reason = FailureTypes.UNDEFINED_CV_VALUE;
+                    else if (typeName.equalsIgnoreCase(ValidationConstants.REFERENCE))
+                        failure.reason = FailureTypes.UNDEFINED_REFERENCE_VALUE;
                     failure.columnName.add(fieldToCompare.get(0));
                     failure.values.add(nameIdDTO.getName());
                     ValidationUtil.addMessageToList(failure, failureList);

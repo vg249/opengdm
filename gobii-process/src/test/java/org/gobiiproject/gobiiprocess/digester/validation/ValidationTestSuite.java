@@ -7,6 +7,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
         GermplasmValidationTest.class,
         GermplasmPropValidationTest.class,
+        DnaSamplePropValidationTest.class,
         DnarunPropValidationTest.class,
         MarkerPropValidationTest.class,
         LinkageGroupValidationTest.class})

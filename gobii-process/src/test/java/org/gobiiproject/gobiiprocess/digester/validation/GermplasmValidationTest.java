@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.MaximumErrorsValidationException;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationWebServicesUtil;
@@ -118,10 +119,10 @@ public class GermplasmValidationTest {
 
         try {
             PowerMockito
-                    .when(ValidationWebServicesUtil.validateCVName(Matchers.any(), eq("type_name"), any()))
+                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq(GobiiEntityNameType.CV.toString()), eq("type_name"), any()))
                     .thenReturn(typeResponse);
             PowerMockito
-                    .when(ValidationWebServicesUtil.validateCVName(Matchers.any(), eq("species_name"), any()))
+                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq(GobiiEntityNameType.CV.toString()), eq("species_name"), any()))
                     .thenReturn(speciesResponse);
         } catch (MaximumErrorsValidationException e) {
             e.printStackTrace();
@@ -194,10 +195,10 @@ public class GermplasmValidationTest {
 
         try {
             PowerMockito
-                    .when(ValidationWebServicesUtil.validateCVName(Matchers.any(), eq("type_name"), any()))
+                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq(GobiiEntityNameType.CV.toString()), eq("type_name"), any()))
                     .thenReturn(typeResponse);
             PowerMockito
-                    .when(ValidationWebServicesUtil.validateCVName(Matchers.any(), eq("species_name"), any()))
+                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq(GobiiEntityNameType.CV.toString()), eq("species_name"), any()))
                     .thenReturn(speciesResponse);
         } catch (MaximumErrorsValidationException e) {
             e.printStackTrace();

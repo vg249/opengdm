@@ -122,7 +122,7 @@ public abstract class BaseValidator {
             } catch (MaximumErrorsValidationException e) {
                 //Don't do any thing. This implies that particular error list is full.
             }
-        }else{
+        } else {
             failureList = new ArrayList<>();
         }
         return failureList;
@@ -212,12 +212,13 @@ public abstract class BaseValidator {
             try {
                 if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.DB)) {
                     if (condition.typeName != null) {
-                        if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV))
+                        if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV)|| condition.typeName.equalsIgnoreCase(ValidationConstants.REFERENCE)) {
                             if (condition.fieldToCompare != null) {
                                 if (checkForHeaderExistence(fileName, condition, failureList))
-                                    validateCV(fileName, condition.fieldToCompare, failureList);
+                                    validateDB(fileName, condition.fieldToCompare, condition.typeName, failureList);
                             } else
                                 printMissingFieldError("DB", "fieldToCompare", FailureTypes.CORRUPTED_VALIDATION_FILE, failureList);
+                        }
                     } else
                         printMissingFieldError("DB", "typeName", FailureTypes.CORRUPTED_VALIDATION_FILE, failureList);
                 }
