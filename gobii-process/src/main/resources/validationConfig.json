@@ -209,7 +209,7 @@
           "fileExistenceCheck": "digest.dnasample",
           "fileExists": "yes",
           "type": "File",
-          "fileColumns": [
+          "fieldColumns": [
             "project_id"
           ],
           "uniqueFileCheck": "yes",
@@ -224,7 +224,7 @@
           "fileExistenceCheck": "digest.dnasample",
           "fileExists": "yes",
           "type": "File",
-          "fileColumns": [
+          "fieldColumns": [
             "dnasample_name"
           ],
           "uniqueFileCheck": "yes",
@@ -239,7 +239,7 @@
           "fileExistenceCheck": "digest.dnasample",
           "fileExists": "yes",
           "type": "File",
-          "fileColumns": [
+          "fieldColumns": [
             "name",
             "num"
           ],
