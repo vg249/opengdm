@@ -222,7 +222,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                 }; // function()
                 InstructionSubmissionService.prototype.expurgateZero = function (nameId) {
                     if (nameId.id === "0") {
-                        nameId.id = null;
+                        nameId.id = undefined;
                     }
                 };
                 InstructionSubmissionService.prototype.submit = function (gobiiExtractFilterType) {
