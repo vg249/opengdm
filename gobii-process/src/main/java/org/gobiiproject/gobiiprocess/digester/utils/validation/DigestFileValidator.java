@@ -266,6 +266,7 @@ public class DigestFileValidator {
             case "germplasm_prop":
             case "dnasample_prop":
             case "dnarun_prop":
+            case "marker":
             case "marker_prop":
             case "linkage_group":
                 if (!new GermplasmPropValidator().validate(validation, rootDir, failureList)) failureList = null;
@@ -275,9 +276,6 @@ public class DigestFileValidator {
                 break;
             case "dnarun":
                 if (!new DnarunValidator().validate(validation, rootDir, failureList)) failureList = null;
-                break;
-            case "marker":
-                if (!new MarkerValidator().validate(validation, rootDir, failureList)) failureList = null;
                 break;
             case "marker_linkage_group":
                 if (!new MarkerLinkageGroupValidator().validate(validation, rootDir, failureList)) failureList = null;

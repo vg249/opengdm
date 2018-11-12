@@ -9,6 +9,7 @@ import org.junit.runners.Suite;
         GermplasmPropValidationTest.class,
         DnaSamplePropValidationTest.class,
         DnarunPropValidationTest.class,
+        MarkerValidationTest.class,
         MarkerPropValidationTest.class,
         LinkageGroupValidationTest.class})
 

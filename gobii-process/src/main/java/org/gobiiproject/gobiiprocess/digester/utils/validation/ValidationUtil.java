@@ -151,9 +151,9 @@ class ValidationUtil {
                     }
                 } else {
                     if (condition.fieldToCompare != null)
-                        printMissingFieldError("File", "fieldToCompare", FailureTypes.CORRUPTED_VALIDATION_FILE, failureList);
+                        printMissingFieldError("File", "fieldToCompare", failureList);
                     else if (condition.fieldColumns != null)
-                        printMissingFieldError("File", "fieldColumns", FailureTypes.CORRUPTED_VALIDATION_FILE, failureList);
+                        printMissingFieldError("File", "fieldColumns", failureList);
 
                 }
             } else {
@@ -163,7 +163,7 @@ class ValidationUtil {
                 addMessageToList(failure, failureList);
             }
         } else {
-            printMissingFieldError("File", "typeName", FailureTypes.CORRUPTED_VALIDATION_FILE, failureList);
+            printMissingFieldError("File", "typeName", failureList);
         }
 
     }
@@ -194,17 +194,17 @@ class ValidationUtil {
 
         List<String> concatList = new ArrayList<>();
         for (int i = 0; i < fileColumns.get(0).size(); i++) {
-            String value = "";
+            StringBuilder value = new StringBuilder();
             for (List<String> column : fileColumns) {
-                if (value.equals("")) value = column.get(i);
-                else value = value + "$@$" + column.get(i);
+                if (value.toString().equals("")) value = new StringBuilder(column.get(i));
+                else value.append("$@$").append(column.get(i));
             }
-            if (concatList.contains(value)) {
+            if (concatList.contains(value.toString())) {
                 Failure failure = new Failure();
                 failure.reason = FailureTypes.NOT_UNIQUE;
                 failure.columnName.addAll(uniqueColumns);
                 addMessageToList(failure, failureList);
-            } else concatList.add(value);
+            } else concatList.add(value.toString());
         }
     }
 
@@ -228,16 +228,17 @@ class ValidationUtil {
                 return;
             }
             if ((shouldFileExist && files.size() == 1) || (!shouldFileExist && files.size() == 0)) {
-                // Condition is satisfied
-                if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.DB)) {
-                    //TODO: Implement the database call
-                } else if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.FILE))
-                    validateColumnBetweenFiles(fileName, condition, failureList);
-                else {
-                    Failure failure = new Failure();
-                    failure.reason = FailureTypes.UNDEFINED_CONDITION_TYPE;
-                    failure.values.add(condition.type);
-                    addMessageToList(failure, failureList);
+                if (condition.type != null) {
+                    if (condition.type.equalsIgnoreCase(ValidationConstants.FILE)) {
+                        validateColumnBetweenFiles(fileName, condition, failureList);
+                    } else if (condition.type.equalsIgnoreCase(ValidationConstants.DB)) {
+                        validateDataBasecalls(fileName, condition, failureList);
+                    } else {
+                        Failure failure = new Failure();
+                        failure.reason = FailureTypes.UNDEFINED_CONDITION_TYPE;
+                        failure.values.add(condition.type);
+                        addMessageToList(failure, failureList);
+                    }
                 }
             }
         }
@@ -319,11 +320,11 @@ class ValidationUtil {
 
         List<String> concatList = new ArrayList<>();
         for (int i = 0; i < fileColumns.get(0).size(); i++) {
-            String value = "";
+            StringBuilder value = new StringBuilder();
             for (List<String> column : fileColumns)
-                if (value.equals("")) value = column.get(i);
-                else value = value + "$@$" + column.get(i);
-            concatList.add(value);
+                if (value.toString().equals("")) value = new StringBuilder(column.get(i));
+                else value.append("$@$").append(column.get(i));
+            concatList.add(value.toString());
         }
         return concatList;
     }
@@ -336,7 +337,7 @@ class ValidationUtil {
      * @param failureList failure list
      * @return list
      */
-    static boolean readFileIntoMemory(String fileName, List<String[]> collectList, List<Failure> failureList) throws MaximumErrorsValidationException {
+    private static boolean readFileIntoMemory(String fileName, List<String[]> collectList, List<Failure> failureList) throws MaximumErrorsValidationException {
         try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
             collectList.addAll(stream.map(line -> line.split("\t")).collect(Collectors.toList()));
             if (collectList.size() == 0) {
@@ -410,6 +411,23 @@ class ValidationUtil {
         return true;
     }
 
+    static void validateDataBasecalls(String fileName, ConditionUnit condition, List<Failure> failureList) {
+        try {
+            if (condition.typeName != null) {
+                if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV) || condition.typeName.equalsIgnoreCase(ValidationConstants.REFERENCE)) {
+                    if (condition.fieldToCompare != null) {
+                        if (checkForHeaderExistence(fileName, condition, failureList))
+                            validateDB(fileName, condition.fieldToCompare, condition.typeName, failureList);
+                    } else
+                        printMissingFieldError("DB", "fieldToCompare", failureList);
+                }
+            } else
+                printMissingFieldError("DB", "typeName", failureList);
+        } catch (MaximumErrorsValidationException e) {
+            ////Don't do any thing. This implies that particular error list is full.;
+        }
+    }
+
     /**
      * Validate terms in CV table
      *
@@ -418,7 +436,7 @@ class ValidationUtil {
      * @param typeName       CV/REFERENCE
      * @param failureList    failure list
      */
-    static void validateDB(String fileName, List<String> fieldToCompare, String typeName, List<Failure> failureList) throws MaximumErrorsValidationException {
+    private static void validateDB(String fileName, List<String> fieldToCompare, String typeName, List<Failure> failureList) throws MaximumErrorsValidationException {
         List<String[]> collectList = new ArrayList<>();
         if (readFileIntoMemory(fileName, collectList, failureList)) {
             List<String> headers = Arrays.asList(collectList.get(0));
@@ -439,7 +457,6 @@ class ValidationUtil {
                 nameIdDTOList.add(nameIdDTO);
             }
             List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.getNamesByNameList(nameIdDTOList, typeName, fieldToCompare.get(0), failureList);
-
             for (NameIdDTO nameIdDTO : nameIdDTOListResponse) {
                 if (nameIdDTO.getId() == 0) {
                     Failure failure = new Failure();
@@ -455,9 +472,9 @@ class ValidationUtil {
         }
     }
 
-    static void printMissingFieldError(String s1, String s2, String reason, List<Failure> errorList) throws MaximumErrorsValidationException {
+    private static void printMissingFieldError(String s1, String s2, List<Failure> errorList) throws MaximumErrorsValidationException {
         Failure failure = new Failure();
-        failure.reason = reason;
+        failure.reason = FailureTypes.CORRUPTED_VALIDATION_FILE;
         failure.values.add("Condition type defined " + s1 + " but " + s2 + " not defined.");
         addMessageToList(failure, errorList);
     }
@@ -504,5 +521,42 @@ class ValidationUtil {
             noOfFailures = noOfFailures + fail.values.size();
         }*/
         if (noOfMatches >= 3) throw new MaximumErrorsValidationException();
+    }
+
+    /**
+     * Check for the header in a file.
+     * Check the required field and returns status appropriately
+     *
+     * @param fileName      fileName
+     * @param conditionUnit condition
+     * @param failureList   failure list
+     * @return header exists or not
+     * @throws MaximumErrorsValidationException exception
+     */
+    private static boolean checkForHeaderExistence(String fileName, ConditionUnit conditionUnit, List<Failure> failureList) throws MaximumErrorsValidationException {
+        List<String> headers = new ArrayList<>();
+        if (getHeaders(fileName, headers, failureList)) {
+            boolean headerExist = headers.contains(conditionUnit.columnName);
+            // If header exists proceed
+            if (headerExist) return true;
+                // Header does not exist and condition states this as required
+            else if (conditionUnit.required.equalsIgnoreCase("yes")) {
+                Failure failure = new Failure();
+                failure.reason = FailureTypes.COLUMN_NOT_FOUND;
+                failure.columnName.add(conditionUnit.columnName);
+                addMessageToList(failure, failureList);
+                return false;
+            } else return false;
+        } else return false;
+    }
+
+    static boolean getHeaders(String fileName, List<String> headers, List<Failure> failureList) throws MaximumErrorsValidationException {
+        List<String[]> collectList = new ArrayList<>();
+        if (readFileIntoMemory(fileName, collectList, failureList)) {
+            headers.addAll(Arrays.asList(collectList.get(0)));
+            return true;
+        } else {
+            return false;
+        }
     }
 }

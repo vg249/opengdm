@@ -8,7 +8,7 @@ import java.util.*;
 
 import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.*;
 
-public abstract class BaseValidator {
+abstract class BaseValidator {
     abstract boolean validate(ValidationUnit validationUnit, String dir, List<Failure> failureList);
 
     /**
@@ -42,8 +42,7 @@ public abstract class BaseValidator {
         failureList.addAll(validateOptionalNotNullColumns(fileName, validationUnit.getConditions()));
         failureList.addAll(validateUniqueColumnList(fileName, validationUnit));
         failureList.addAll(validateFileShouldExist(fileName, validationUnit));
-        failureList.addAll(validateColumnsBetweenFiles(fileName, validationUnit));
-        failureList.addAll(validateDataBasecalls(fileName, validationUnit));
+        failureList.addAll(validateColumnDBandFile(fileName, validationUnit));
         return failureList;
     }
 
@@ -184,18 +183,25 @@ public abstract class BaseValidator {
      *
      * @param filePath       File Path
      * @param validationUnit Validation Unit
-     * @throws MaximumErrorsValidationException maximum error exception
      */
-    private List<Failure> validateColumnsBetweenFiles(String filePath, ValidationUnit validationUnit) {
+    private List<Failure> validateColumnDBandFile(String filePath, ValidationUnit validationUnit) {
         List<Failure> failures = new ArrayList<>();
         for (ConditionUnit condition : validationUnit.getConditions()) {
             List<Failure> failureList = new ArrayList<>();
             try {
                 if (condition.fileExistenceCheck != null) {
                     validateFileExistenceCheck(filePath, condition, failureList);
-
-                } else if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.FILE)) {
-                    validateColumnBetweenFiles(filePath, condition, failureList);
+                } else if (condition.type != null) {
+                    if (condition.type.equalsIgnoreCase(ValidationConstants.FILE)) {
+                        validateColumnBetweenFiles(filePath, condition, failureList);
+                    } else if (condition.type.equalsIgnoreCase(ValidationConstants.DB)) {
+                        validateDataBasecalls(filePath, condition, failureList);
+                    } else {
+                        Failure failure = new Failure();
+                        failure.reason = FailureTypes.UNDEFINED_CONDITION_TYPE;
+                        failure.columnName.add(condition.type);
+                        addMessageToList(failure, failureList);
+                    }
                 }
             } catch (MaximumErrorsValidationException e) {
                 ////Don't do any thing. This implies that particular error list is full.;
@@ -203,67 +209,5 @@ public abstract class BaseValidator {
             failures.addAll(failureList);
         }
         return failures;
-    }
-
-    private List<Failure> validateDataBasecalls(String fileName, ValidationUnit validationUnit) {
-        List<Failure> failures = new ArrayList<>();
-        for (ConditionUnit condition : validationUnit.getConditions()) {
-            List<Failure> failureList = new ArrayList<>();
-            try {
-                if (condition.type != null && condition.type.equalsIgnoreCase(ValidationConstants.DB)) {
-                    if (condition.typeName != null) {
-                        if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV)|| condition.typeName.equalsIgnoreCase(ValidationConstants.REFERENCE)) {
-                            if (condition.fieldToCompare != null) {
-                                if (checkForHeaderExistence(fileName, condition, failureList))
-                                    validateDB(fileName, condition.fieldToCompare, condition.typeName, failureList);
-                            } else
-                                printMissingFieldError("DB", "fieldToCompare", FailureTypes.CORRUPTED_VALIDATION_FILE, failureList);
-                        }
-                    } else
-                        printMissingFieldError("DB", "typeName", FailureTypes.CORRUPTED_VALIDATION_FILE, failureList);
-                }
-            } catch (MaximumErrorsValidationException e) {
-                ////Don't do any thing. This implies that particular error list is full.;
-            }
-            failures.addAll(failureList);
-        }
-        return failures;
-    }
-
-    /**
-     * Check for the header in a file.
-     * Check the required field and returns status appropriately
-     *
-     * @param fileName      fileName
-     * @param conditionUnit condition
-     * @param failureList   failure list
-     * @return header exists or not
-     * @throws MaximumErrorsValidationException exception
-     */
-    private boolean checkForHeaderExistence(String fileName, ConditionUnit conditionUnit, List<Failure> failureList) throws MaximumErrorsValidationException {
-        List<String> headers = new ArrayList<>();
-        if (getHeaders(fileName, headers, failureList)) {
-            boolean headerExist = headers.contains(conditionUnit.columnName);
-            // If header exists proceed
-            if (headerExist) return true;
-                // Header does not exist and condition states this as required
-            else if (conditionUnit.required.equalsIgnoreCase("yes")) {
-                Failure failure = new Failure();
-                failure.reason = FailureTypes.COLUMN_NOT_FOUND;
-                failure.columnName.add(conditionUnit.columnName);
-                addMessageToList(failure, failureList);
-                return false;
-            } else return false;
-        } else return false;
-    }
-
-    private boolean getHeaders(String fileName, List<String> headers, List<Failure> failureList) throws MaximumErrorsValidationException {
-        List<String[]> collectList = new ArrayList<>();
-        if (readFileIntoMemory(fileName, collectList, failureList)) {
-            headers.addAll(Arrays.asList(collectList.get(0)));
-            return true;
-        } else {
-            return false;
-        }
     }
 }
