@@ -86,7 +86,7 @@ public class ValidationWebServicesUtil {
                     .getUriFactory()
                     .nameIdListByQueryParams();
             GobiiEnvelopeRestResource<NameIdDTO, NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
-            namesUri.setParamValue("entity", gobiiEntityNameType.toString().toLowerCase());
+            namesUri.setParamValue("entity", gobiiEntityNameType.toLowerCase());
             namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.NAMES_BY_NAME_LIST.toString().toUpperCase()));
             if (gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.CV.toString())) {
                 switch (filterValue) {
@@ -106,7 +106,7 @@ public class ValidationWebServicesUtil {
                         ValidationUtil.addMessageToList(failure, failureList);
                         return nameIdDTOListResponse;
                 }
-            } else if (gobiiEntityNameType.toString().equalsIgnoreCase(GobiiEntityNameType.REFERENCE.toString()))
+            } else if (gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.REFERENCE.toString()))
                 namesUri.setParamValue("filterValue", filterValue);
 
             PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = gobiiEnvelopeRestResource.post(NameIdDTO.class, payloadEnvelope);

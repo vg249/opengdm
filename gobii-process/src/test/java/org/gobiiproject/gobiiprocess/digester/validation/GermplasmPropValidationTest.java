@@ -53,7 +53,7 @@ public class GermplasmPropValidationTest {
     @BeforeClass
     public static void setUp() throws IOException {
         tempFolderLocation = tempFolder.getRoot().getPath();
-        File source = new File("src/test/resources/validation/germplasmProps");
+        File source = new File("src/test/resources/validation/germplasm_prop");
         FileUtils.copyDirectory(source, tempFolder.getRoot());
     }
 
