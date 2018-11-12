@@ -8,13 +8,16 @@ import * as historyAction from '../store/actions/history-action';
 import {Observable} from "rxjs/Observable";
 import {FilterParamNames} from "../model/file-item-param-names";
 import {FileItemService} from "../services/core/file-item-service";
+import {ViewIdGeneratorService} from "../services/core/view-id-generator-service";
 
 
 @Component({
     selector: 'name-id-list-box',
     inputs: ['gobiiExtractFilterType','filterParamName'],
     outputs: [],
-    template: `<select class="nameIdListBox" (change)="handleFileItemSelected($event)" >
+    template: `<select class="nameIdListBox" 
+                       (change)="handleFileItemSelected($event)"
+                       id="{{controlId}}">
         <option *ngFor="let fileItem of fileItems$ | async"
                 [value]="fileItem.getFileItemUniqueId()"
                 [selected]="fileItem.getSelected()"
@@ -34,15 +37,17 @@ export class NameIdListBoxComponent  {
     private gobiiExtractFilterType: GobiiExtractFilterType;
 
     private filterParamName:FilterParamNames;
+    public controlId:string = "<NO-ID>";
+
     constructor(private store: Store<fromRoot.State>,
                 private fileItemService:FileItemService) {
-
 
     } // ctor
 
 
     ngOnInit(): any {
 
+        this.controlId = ViewIdGeneratorService.makeIdNameIdListBox(this.filterParamName);
         this.fileItems$ = this.fileItemService.getForFilter(this.filterParamName)
 
         this
