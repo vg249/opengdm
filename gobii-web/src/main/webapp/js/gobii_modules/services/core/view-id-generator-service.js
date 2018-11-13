@@ -1,4 +1,4 @@
-System.register(["./type-control", "@angular/core"], function (exports_1, context_1) {
+System.register(["./type-control", "@angular/core", "../../model/type-extract-format"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -7,7 +7,7 @@ System.register(["./type-control", "@angular/core"], function (exports_1, contex
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
     var __moduleName = context_1 && context_1.id;
-    var type_control_1, core_1, ViewIdGeneratorService;
+    var type_control_1, core_1, type_extract_format_1, ViewIdGeneratorService;
     return {
         setters: [
             function (type_control_1_1) {
@@ -15,6 +15,9 @@ System.register(["./type-control", "@angular/core"], function (exports_1, contex
             },
             function (core_1_1) {
                 core_1 = core_1_1;
+            },
+            function (type_extract_format_1_1) {
+                type_extract_format_1 = type_extract_format_1_1;
             }
         ],
         execute: function () {
@@ -27,6 +30,9 @@ System.register(["./type-control", "@angular/core"], function (exports_1, contex
                 ViewIdGeneratorService.prototype.makeDatasetRowCheckboxId = function (datasetName) {
                     return type_control_1.TypeControl[type_control_1.TypeControl.DATASET_ROW_CHECKBOX] + "_" + datasetName;
                 };
+                ViewIdGeneratorService.prototype.makeExportFormatRadioButtonId = function (gobiiExtractFormat) {
+                    return type_control_1.TypeControl[type_control_1.TypeControl.EXPORT_FORMAT_RADIO_BUTTON] + "_" + type_extract_format_1.GobiiExtractFormat[gobiiExtractFormat];
+                }; //makeExportFormatRadioButtonId()
                 ViewIdGeneratorService.prototype.makeStandardId = function (typeControl) {
                     return type_control_1.TypeControl[typeControl];
                 };
