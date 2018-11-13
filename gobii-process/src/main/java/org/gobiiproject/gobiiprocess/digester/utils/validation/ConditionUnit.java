@@ -41,6 +41,9 @@ public class ConditionUnit {
     public String uniqueFileCheck;
     @JsonProperty
     public String typeName;
+    // Used in linkage_group_name, marker_name etc.  Important observation is that this foreign key is a required field. So without this value there is no point in doing the db call.
+    @JsonProperty
+    public String foreignKey;
     // Field to compare against in DB or other file
     @JsonProperty
     public List<String> fieldToCompare;

@@ -22,6 +22,7 @@ public class FailureTypes {
     public static final String DATABASE_ERROR = "Database Error";
     public static final String UNDEFINED_CV_VALUE = "Undefined CV value";
     public static final String UNDEFINED_REFERENCE_VALUE = "Undefined Reference value";
+    public static final String UNDEFINED_LINKAGE_GROUP_NAME__VALUE = "Undefined linkage_group_name value";
     public static final String EXCEPTION = "Exception";
     public static final String UNDEFINED_CONDITION_TYPE = "Undefined condition type";
 }

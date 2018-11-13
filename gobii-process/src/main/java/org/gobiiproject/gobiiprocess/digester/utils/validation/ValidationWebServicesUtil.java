@@ -12,7 +12,6 @@ import org.gobiiproject.gobiimodel.config.ServerConfigItem;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
-import org.gobiiproject.gobiimodel.dto.entity.noaudit.MarkerDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
@@ -22,7 +21,6 @@ import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Fail
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class ValidationWebServicesUtil {
 
@@ -69,6 +67,23 @@ public class ValidationWebServicesUtil {
         }
     }
 
+    static boolean getMapsetIdList(List<MapsetDTO> mapsetDTOList, List<Failure> failureList) throws MaximumErrorsValidationException {
+        try {
+            RestUri restUriMapset = GobiiClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .resourceColl(RestResourceId.GOBII_MAPSET);
+            GobiiEnvelopeRestResource<MapsetDTO, MapsetDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriMapset);
+            PayloadEnvelope<MapsetDTO> resultEnvelope = gobiiEnvelopeRestResource.get(MapsetDTO.class);
+            mapsetDTOList.addAll(resultEnvelope.getPayload().getData());
+            return true;
+        } catch (Exception e) {
+            Failure failure = new Failure();
+            failure.reason = FailureTypes.EXCEPTION;
+            failure.values.add(e.getMessage());
+            ValidationUtil.addMessageToList(failure, failureList);
+            return false;
+        }
+    }
 
     /**
      * Web service call to validate CV and reference type
@@ -111,7 +126,8 @@ public class ValidationWebServicesUtil {
                         ValidationUtil.addMessageToList(failure, failureList);
                         return nameIdDTOListResponse;
                 }
-            } else if (gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.REFERENCE.toString()) || gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.MARKER.toString()))
+            } else if (gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.REFERENCE.toString()) || gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.MARKER.toString())
+                || gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.LINKAGE_GROUP.toString()))
                 namesUri.setParamValue("filterValue", filterValue);
 
             PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = gobiiEnvelopeRestResource.post(NameIdDTO.class, payloadEnvelope);

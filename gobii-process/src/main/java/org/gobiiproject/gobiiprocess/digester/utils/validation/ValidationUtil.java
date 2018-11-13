@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
+import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
@@ -414,10 +415,14 @@ class ValidationUtil {
     static void validateDataBasecalls(String fileName, ConditionUnit condition, List<Failure> failureList) {
         try {
             if (condition.typeName != null) {
-                if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV) || condition.typeName.equalsIgnoreCase(ValidationConstants.REFERENCE)) {
+                if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV) || condition.typeName.equalsIgnoreCase(ValidationConstants.REFERENCE)
+                        || condition.typeName.equalsIgnoreCase(ValidationConstants.LINKAGE_GROUP)) {
                     if (condition.fieldToCompare != null) {
-                        if (checkForHeaderExistence(fileName, condition, failureList))
-                            validateDB(fileName, condition.fieldToCompare, condition.typeName, failureList);
+                        if (checkForHeaderExistence(fileName, condition.fieldToCompare, condition.required, failureList))
+                            if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV) || condition.typeName.equalsIgnoreCase(ValidationConstants.REFERENCE)) {
+                                validateDB(fileName, condition, failureList);
+                            } else if (condition.typeName.equalsIgnoreCase(ValidationConstants.LINKAGE_GROUP))
+                                validateLinkageGroup(fileName, condition, failureList);
                     } else
                         printMissingFieldError("DB", "fieldToCompare", failureList);
                 }
@@ -431,45 +436,122 @@ class ValidationUtil {
     /**
      * Validate terms in CV table
      *
-     * @param fileName       fileName
-     * @param fieldToCompare field to check
-     * @param typeName       CV/REFERENCE
-     * @param failureList    failure list
+     * @param fileName    fileName
+     * @param condition   condition
+     * @param failureList failure list
      */
-    private static void validateDB(String fileName, List<String> fieldToCompare, String typeName, List<Failure> failureList) throws MaximumErrorsValidationException {
-        List<String[]> collectList = new ArrayList<>();
-        if (readFileIntoMemory(fileName, collectList, failureList)) {
-            List<String> headers = Arrays.asList(collectList.get(0));
-            //TODO: Current assumption there will be only one row validation from Database
-            int fieldIndex = headers.indexOf(fieldToCompare.get(0));
-            collectList.remove(0);
-            Set<String> fieldNameList = new HashSet<>();
-            for (String[] fileRow : collectList) {
-                List<String> fileRowList = Arrays.asList(fileRow);
-                if (fileRowList.size() > fieldIndex)
-                    if (!isNullAndEmpty(fileRowList.get(fieldIndex)))
-                        fieldNameList.add(fileRowList.get(fieldIndex));
-            }
+    private static void validateDB(String fileName, ConditionUnit condition, List<Failure> failureList) throws MaximumErrorsValidationException {
+        Set<String> fieldNameList = new HashSet<>();
+        List<String> fieldToCompare = condition.fieldToCompare;
+        String typeName = condition.typeName;
+        String filterValue = fieldToCompare.get(0);
+        if (readColumnIntoSet(fileName, fieldToCompare, fieldNameList, failureList)) {
             List<NameIdDTO> nameIdDTOList = new ArrayList<>();
             for (String fieldName : fieldNameList) {
                 NameIdDTO nameIdDTO = new NameIdDTO();
                 nameIdDTO.setName(fieldName);
                 nameIdDTOList.add(nameIdDTO);
             }
-            List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.getNamesByNameList(nameIdDTOList, typeName, fieldToCompare.get(0), failureList);
-            for (NameIdDTO nameIdDTO : nameIdDTOListResponse) {
-                if (nameIdDTO.getId() == 0) {
-                    Failure failure = new Failure();
-                    if (typeName.equalsIgnoreCase(ValidationConstants.CV))
-                        failure.reason = FailureTypes.UNDEFINED_CV_VALUE;
-                    else if (typeName.equalsIgnoreCase(ValidationConstants.REFERENCE))
-                        failure.reason = FailureTypes.UNDEFINED_REFERENCE_VALUE;
-                    failure.columnName.add(fieldToCompare.get(0));
-                    failure.values.add(nameIdDTO.getName());
-                    ValidationUtil.addMessageToList(failure, failureList);
+            List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.getNamesByNameList(nameIdDTOList, typeName, filterValue, failureList);
+            if (typeName.equalsIgnoreCase(ValidationConstants.CV))
+                processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_CV_VALUE, failureList);
+            else if (typeName.equalsIgnoreCase(ValidationConstants.REFERENCE))
+                processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_REFERENCE_VALUE, failureList);
+        }
+
+    }
+
+    private static void validateLinkageGroup(String fileName, ConditionUnit condition, List<Failure> failureList) throws MaximumErrorsValidationException {
+        List<String> fieldToCompare = condition.fieldToCompare;
+        String typeName = condition.typeName;
+        if (typeName.equalsIgnoreCase(ValidationConstants.LINKAGE_GROUP)) {
+            Set<String> foreignKeyList = new HashSet<>();
+            if (readForeignKey(fileName, condition.foreignKey, foreignKeyList, failureList)) {
+                List<MapsetDTO> mapsetDTOList = new ArrayList<>();
+                if (ValidationWebServicesUtil.getMapsetIdList(mapsetDTOList, failureList)) {
+                    List<String> foreignKey = getFileColumn(fileName, condition.foreignKey, failureList);
+                    List<String> fileColumn = getFileColumn(fileName, condition.fieldToCompare.get(0), failureList);
+                    if (foreignKey.size() != fileColumn.size()) {
+                        Failure failure = new Failure();
+                        failure.reason = FailureTypes.INVALID_COLUMN_SIZE;
+                        failure.columnName.add(condition.fieldToCompare.get(0));
+                        failure.columnName.add(condition.foreignKey);
+                        ValidationUtil.addMessageToList(failure, failureList);
+                        return;
+                    }
+                    Map<String, Set<String>> mapsetLinkagegroup = new HashMap<>();
+                    for (int i = 0; i < foreignKey.size(); i++) {
+                        Set<String> strings = mapsetLinkagegroup.get(foreignKey.get(i));
+                        if (strings != null) {
+                            strings.add(fileColumn.get(i));
+                        } else {
+                            strings = new HashSet<>();
+                            strings.add(fileColumn.get(i));
+                            mapsetLinkagegroup.put(foreignKey.get(i), strings);
+                        }
+                    }
+                    for (Map.Entry<String, Set<String>> ent : mapsetLinkagegroup.entrySet()) {
+                        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+                        for (String linkageGroup : ent.getValue()) {
+                            NameIdDTO nameIdDTO = new NameIdDTO();
+                            nameIdDTO.setName(linkageGroup);
+                            nameIdDTOList.add(nameIdDTO);
+                        }
+                        List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.getNamesByNameList(nameIdDTOList, typeName, ent.getKey(), failureList);
+                        processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_LINKAGE_GROUP_NAME__VALUE, failureList);
+                        System.out.println();
+                    }
                 }
             }
         }
+    }
+
+    /**
+     * Process the DB response. If there is no id add it to the failure list
+     */
+    private static void processResponseList(List<NameIdDTO> nameIdDTOList, List<String> fieldToCompare, String reason, List<Failure> failureList) throws MaximumErrorsValidationException {
+        for (NameIdDTO nameIdDTO : nameIdDTOList) {
+            if (nameIdDTO.getId() == 0) {
+                Failure failure = new Failure();
+                failure.reason = reason;
+                failure.columnName.add(fieldToCompare.get(0));
+                failure.values.add(nameIdDTO.getName());
+                ValidationUtil.addMessageToList(failure, failureList);
+            }
+        }
+    }
+
+    /**
+     * Reads specified key.
+     * Can simplify while refactoring
+     */
+    private static boolean readForeignKey(String fileName, String foreignKey, Set<String> foreignKeyList, List<Failure> failureList) throws MaximumErrorsValidationException {
+        if (checkForHeaderExistence(fileName, Collections.singletonList(foreignKey), "yes", failureList)) {
+            return readColumnIntoSet(fileName, Collections.singletonList(foreignKey), foreignKeyList, failureList);
+        }
+        return false;
+    }
+
+    /**
+     * Reads column into the set. If the header does not exist it wont return a failure.
+     * Use  checkForHeaderExistence to check for the header
+     */
+    private static boolean readColumnIntoSet(String fileName, List<String> fieldToCompare, Set<String> fieldNameList, List<Failure> failureList) throws MaximumErrorsValidationException {
+        List<String[]> collectList = new ArrayList<>();
+        if (readFileIntoMemory(fileName, collectList, failureList)) {
+            List<String> headers = Arrays.asList(collectList.get(0));
+            //TODO: Current assumption there will be only one row validation from Database
+            int fieldIndex = headers.indexOf(fieldToCompare.get(0));
+            if (fieldIndex < 0) return false;
+            collectList.remove(0);
+            for (String[] fileRow : collectList) {
+                List<String> fileRowList = Arrays.asList(fileRow);
+                if (fileRowList.size() > fieldIndex)
+                    if (!isNullAndEmpty(fileRowList.get(fieldIndex)))
+                        fieldNameList.add(fileRowList.get(fieldIndex));
+            }
+            return true;
+        } else return false;
     }
 
     private static void printMissingFieldError(String s1, String s2, List<Failure> errorList) throws MaximumErrorsValidationException {
@@ -527,23 +609,24 @@ class ValidationUtil {
      * Check for the header in a file.
      * Check the required field and returns status appropriately
      *
-     * @param fileName      fileName
-     * @param conditionUnit condition
-     * @param failureList   failure list
+     * @param fieldName   field name
+     * @param fileName    fileName
+     * @param required    column required or not
+     * @param failureList failure list
      * @return header exists or not
      * @throws MaximumErrorsValidationException exception
      */
-    private static boolean checkForHeaderExistence(String fileName, ConditionUnit conditionUnit, List<Failure> failureList) throws MaximumErrorsValidationException {
+    private static boolean checkForHeaderExistence(String fileName, List<String> fieldName, String required, List<Failure> failureList) throws MaximumErrorsValidationException {
         List<String> headers = new ArrayList<>();
         if (getHeaders(fileName, headers, failureList)) {
-            boolean headerExist = headers.contains(conditionUnit.columnName);
+            boolean headerExist = headers.contains(fieldName.get(0));
             // If header exists proceed
             if (headerExist) return true;
                 // Header does not exist and condition states this as required
-            else if (conditionUnit.required.equalsIgnoreCase("yes")) {
+            else if (required.equalsIgnoreCase("yes")) {
                 Failure failure = new Failure();
                 failure.reason = FailureTypes.COLUMN_NOT_FOUND;
-                failure.columnName.add(conditionUnit.columnName);
+                failure.columnName.add(fieldName.get(0));
                 addMessageToList(failure, failureList);
                 return false;
             } else return false;
