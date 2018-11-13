@@ -7,6 +7,7 @@ System.register([], function (exports_1, context_1) {
         execute: function () {
             (function (TypeControl) {
                 TypeControl[TypeControl["NAME_ID_LIST"] = 0] = "NAME_ID_LIST";
+                TypeControl[TypeControl["DATASET_ROW_CHECKBOX"] = 1] = "DATASET_ROW_CHECKBOX";
             })(TypeControl || (TypeControl = {}));
             exports_1("TypeControl", TypeControl);
         }

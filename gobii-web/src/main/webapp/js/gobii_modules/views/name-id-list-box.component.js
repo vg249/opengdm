@@ -34,15 +34,16 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
         ],
         execute: function () {
             NameIdListBoxComponent = (function () {
-                function NameIdListBoxComponent(store, fileItemService) {
+                function NameIdListBoxComponent(store, fileItemService, viewIdGeneratorService) {
                     this.store = store;
                     this.fileItemService = fileItemService;
+                    this.viewIdGeneratorService = viewIdGeneratorService;
                     this.controlId = "<NO-ID>";
                     this.previousSelectedItemId = null;
                 } // ctor
                 NameIdListBoxComponent.prototype.ngOnInit = function () {
                     var _this = this;
-                    this.controlId = view_id_generator_service_1.ViewIdGeneratorService.makeIdNameIdListBox(this.filterParamName);
+                    this.controlId = this.viewIdGeneratorService.makeIdNameIdListBoxId(this.filterParamName);
                     this.fileItems$ = this.fileItemService.getForFilter(this.filterParamName);
                     this
                         .fileItems$
@@ -76,7 +77,8 @@ System.register(["@angular/core", "@ngrx/store", "../store/actions/fileitem-acti
                         template: "<select class=\"nameIdListBox\" \n                       (change)=\"handleFileItemSelected($event)\"\n                       id=\"{{controlId}}\">\n        <option *ngFor=\"let fileItem of fileItems$ | async\"\n                [value]=\"fileItem.getFileItemUniqueId()\"\n                [selected]=\"fileItem.getSelected()\"\n                title=\"{{fileItem.getItemName()}}\">\n            {{fileItem.getItemName().length < 34 ? fileItem.getItemName() : fileItem.getItemName().substr(0,30).concat(\" . . .\")}}\n            \n        </option>\n    </select>\n    " // end template
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
-                        file_item_service_1.FileItemService])
+                        file_item_service_1.FileItemService,
+                        view_id_generator_service_1.ViewIdGeneratorService])
                 ], NameIdListBoxComponent);
                 return NameIdListBoxComponent;
             }());

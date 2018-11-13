@@ -41,6 +41,7 @@ import {FileItemService} from "../services/core/file-item-service";
 import {InstructionSubmissionService} from "../services/core/instruction-submission-service";
 import {DatasetDatatableComponent} from "../views/dataset-datatable.component";
 import {FilterParamsColl} from "../services/core/filter-params-coll";
+import {ViewIdGeneratorService} from "../services/core/view-id-generator-service";
 
 
 @NgModule({
@@ -95,6 +96,7 @@ import {FilterParamsColl} from "../services/core/filter-params-coll";
         NameIdService,
         TreeStructureService,
         FileItemService,
+        ViewIdGeneratorService,
         InstructionSubmissionService,
         FilterParamsColl,
         {provide: APP_BASE_HREF, useValue: './'}],

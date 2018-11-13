@@ -40,14 +40,15 @@ export class NameIdListBoxComponent  {
     public controlId:string = "<NO-ID>";
 
     constructor(private store: Store<fromRoot.State>,
-                private fileItemService:FileItemService) {
+                private fileItemService:FileItemService,
+                private viewIdGeneratorService:ViewIdGeneratorService) {
 
     } // ctor
 
 
     ngOnInit(): any {
 
-        this.controlId = ViewIdGeneratorService.makeIdNameIdListBox(this.filterParamName);
+        this.controlId = this.viewIdGeneratorService.makeIdNameIdListBoxId(this.filterParamName);
         this.fileItems$ = this.fileItemService.getForFilter(this.filterParamName)
 
         this

@@ -1,20 +1,35 @@
-System.register(["./type-control"], function (exports_1, context_1) {
+System.register(["./type-control", "@angular/core"], function (exports_1, context_1) {
     "use strict";
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
     var __moduleName = context_1 && context_1.id;
-    var type_control_1, ViewIdGeneratorService;
+    var type_control_1, core_1, ViewIdGeneratorService;
     return {
         setters: [
             function (type_control_1_1) {
                 type_control_1 = type_control_1_1;
+            },
+            function (core_1_1) {
+                core_1 = core_1_1;
             }
         ],
         execute: function () {
             ViewIdGeneratorService = (function () {
                 function ViewIdGeneratorService() {
                 }
-                ViewIdGeneratorService.makeIdNameIdListBox = function (filterParamName) {
+                ViewIdGeneratorService.prototype.makeIdNameIdListBoxId = function (filterParamName) {
                     return type_control_1.TypeControl[type_control_1.TypeControl.NAME_ID_LIST] + "_" + filterParamName;
                 };
+                ViewIdGeneratorService.prototype.makeDatasetRowCheckboxId = function (datasetName) {
+                    return type_control_1.TypeControl[type_control_1.TypeControl.DATASET_ROW_CHECKBOX] + "_" + datasetName;
+                };
+                ViewIdGeneratorService = __decorate([
+                    core_1.Injectable()
+                ], ViewIdGeneratorService);
                 return ViewIdGeneratorService;
             }());
             exports_1("ViewIdGeneratorService", ViewIdGeneratorService);
