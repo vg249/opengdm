@@ -5,11 +5,13 @@ import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.payload.Status;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
+import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.config.ServerConfigItem;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -21,6 +23,9 @@ import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Fail
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import static org.gobiiproject.gobiimodel.config.RestResourceId.GOBII_EXPERIMENTS;
 
 public class ValidationWebServicesUtil {
 
@@ -67,15 +72,25 @@ public class ValidationWebServicesUtil {
         }
     }
 
-    static boolean getMapsetIdList(List<MapsetDTO> mapsetDTOList, List<Failure> failureList) throws MaximumErrorsValidationException {
+
+    static boolean getAllowedForeignKeyList(Map<String, String> mapsetDTOList, String foreignKey, List<Failure> failureList) throws MaximumErrorsValidationException {
         try {
-            RestUri restUriMapset = GobiiClientContext.getInstance(null, false)
-                    .getUriFactory()
-                    .resourceColl(RestResourceId.GOBII_MAPSET);
-            GobiiEnvelopeRestResource<MapsetDTO, MapsetDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriMapset);
-            PayloadEnvelope<MapsetDTO> resultEnvelope = gobiiEnvelopeRestResource.get(MapsetDTO.class);
-            mapsetDTOList.addAll(resultEnvelope.getPayload().getData());
-            return true;
+            GobiiUriFactory uriFactory = GobiiClientContext.getInstance(null, false).getUriFactory();
+            RestUri restUri = null;
+            if (foreignKey.equalsIgnoreCase(ValidationConstants.LINKAGE_GROUP)) {
+                restUri = uriFactory.resourceColl(RestResourceId.GOBII_MAPSET);
+                GobiiEnvelopeRestResource<MapsetDTO, MapsetDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
+                PayloadEnvelope<MapsetDTO> resultEnvelope = gobiiEnvelopeRestResource.get(MapsetDTO.class);
+                resultEnvelope.getPayload().getData().forEach(dto -> mapsetDTOList.put(dto.getName(), dto.getMapsetId().toString()));
+                return true;
+            } else if (foreignKey.equalsIgnoreCase(ValidationConstants.DNARUN)) {
+                restUri = uriFactory.resourceColl(RestResourceId.GOBII_EXPERIMENTS);
+                GobiiEnvelopeRestResource<ExperimentDTO, ExperimentDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
+                PayloadEnvelope<ExperimentDTO> resultEnvelope = gobiiEnvelopeRestResource
+                        .get(ExperimentDTO.class);
+                resultEnvelope.getPayload().getData().forEach(dto -> mapsetDTOList.put(dto.getExperimentName(), dto.getExperimentId().toString()));
+                return true;
+            } else return false;
         } catch (Exception e) {
             Failure failure = new Failure();
             failure.reason = FailureTypes.EXCEPTION;
@@ -127,7 +142,7 @@ public class ValidationWebServicesUtil {
                         return nameIdDTOListResponse;
                 }
             } else if (gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.REFERENCE.toString()) || gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.MARKER.toString())
-                || gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.LINKAGE_GROUP.toString()))
+                    || gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.LINKAGE_GROUP.toString())|| gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.DNARUN.toString()))
                 namesUri.setParamValue("filterValue", filterValue);
 
             PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = gobiiEnvelopeRestResource.post(NameIdDTO.class, payloadEnvelope);

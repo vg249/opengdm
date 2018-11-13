@@ -360,7 +360,7 @@
           "fileExists": "no",
           "type": "DB",
           "typeName": "linkage_group",
-          "foreignKey":"map_id",
+          "foreignKey": "map_id",
           "fieldToCompare": [
             "linkage_group_name"
           ]
@@ -396,10 +396,11 @@
         {
           "columnName": "dnarun_name",
           "required": "yes",
-          "fileExistenceCheck": "digest.dnarun ",
+          "fileExistenceCheck": "digest.dnarun",
           "fileExists": "no",
           "type": "DB",
-          "typeName": "dnarun_table",
+          "typeName": "dnarun",
+          "foreignKey": "experiment_id",
           "fieldToCompare": [
             "dnarun_name"
           ]
