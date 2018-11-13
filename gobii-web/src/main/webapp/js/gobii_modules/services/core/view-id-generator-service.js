@@ -42,6 +42,9 @@ System.register(["./type-control", "@angular/core", "../../model/type-extract-fo
                 ViewIdGeneratorService.prototype.makeSampleListTypeId = function (gobiiSampleListType) {
                     return type_control_1.TypeControl[type_control_1.TypeControl.SAMPLE_LIST_TYPE_RADIO_BUTTON] + "_" + type_extractor_sample_list_1.GobiiSampleListType[gobiiSampleListType];
                 };
+                ViewIdGeneratorService.prototype.makeMarkerSampleListModeRadioButtonId = function (typeLabel) {
+                    return type_control_1.TypeControl[type_control_1.TypeControl.MARKER_SAMPLE_LIST_MODE_RADIO_BUTTON] + "_" + typeLabel.toUpperCase().replace(" ", "_");
+                };
                 ViewIdGeneratorService = __decorate([
                     core_1.Injectable()
                 ], ViewIdGeneratorService);

@@ -3,6 +3,7 @@ import {TypeControl} from "./type-control";
 import {Injectable} from "@angular/core";
 import {GobiiExtractFormat} from "../../model/type-extract-format";
 import {GobiiSampleListType} from "../../model/type-extractor-sample-list";
+import {ExtractorItemType} from "../../model/type-extractor-item";
 
 @Injectable()
 export class ViewIdGeneratorService {
@@ -25,6 +26,10 @@ export class ViewIdGeneratorService {
 
     public makeSampleListTypeId(gobiiSampleListType:GobiiSampleListType): string {
         return TypeControl[TypeControl.SAMPLE_LIST_TYPE_RADIO_BUTTON] + "_" + GobiiSampleListType[gobiiSampleListType];
+    }
+
+    public makeMarkerSampleListModeRadioButtonId(typeLabel:string): string {
+        return TypeControl[TypeControl.MARKER_SAMPLE_LIST_MODE_RADIO_BUTTON] + "_" + typeLabel.toUpperCase().replace(" ","_");
     }
 
 }
