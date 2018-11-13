@@ -360,6 +360,7 @@
           "fileExists": "no",
           "type": "DB",
           "typeName": "linkage_group",
+          "foreignKey":"map_id",
           "fieldToCompare": [
             "linkage_group_name"
           ]
