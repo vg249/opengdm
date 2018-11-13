@@ -297,7 +297,7 @@ export class InstructionSubmissionService {
     } // function()
 
     private expurgateZero(nameId: NameId) {
-        if (nameId.id === "0") {
+        if (nameId && nameId.id === "0") {
             nameId.id = undefined;
         }
     }

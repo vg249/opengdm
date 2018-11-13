@@ -221,7 +221,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                     ); // Observable.crate
                 }; // function()
                 InstructionSubmissionService.prototype.expurgateZero = function (nameId) {
-                    if (nameId.id === "0") {
+                    if (nameId && nameId.id === "0") {
                         nameId.id = undefined;
                     }
                 };
