@@ -366,7 +366,7 @@
           ]
         },
         {
-          "columnName": "maker_name",
+          "columnName": "marker_name",
           "required": "yes",
           "fileExistenceCheck": "digest.marker ",
           "fileExists": "no",
