@@ -79,7 +79,8 @@ import {TypeControl} from "../services/core/type-control";
                                 <!--<p-tabView [style]="{'border': '1px solid #336699', 'padding-left': '5px'}">-->
                                 <p-tabView
                                         (onChange)="handleTabPanelChange($event)"
-                                        styleClass="ui-tabview-panels">
+                                        styleClass="ui-tabview-panels"
+                                [id]="viewIdGeneratorService.makeStandardId(typeControl.NAVIGATION_TABS)">
                                     <p-tabPanel header="By Dataset">
                                         <ng-template pTemplate="content"> <!-- lazy-load controls -->
                                             <div class="container-fluid">
@@ -301,7 +302,8 @@ import {TypeControl} from "../services/core/type-control";
                                             [disabled]="submitButtonStyle === buttonStyleSubmitNotReady"
                                             (mouseenter)="handleOnMouseOverSubmit($event,true)"
                                             (mouseleave)="handleOnMouseOverSubmit($event,false)"
-                                            (click)="handleExtractSubmission()">Submit
+                                            (click)="handleExtractSubmission()"
+                                            [id]="viewIdGeneratorService.makeStandardId(typeControl.SUBMIT_BUTTON_EXTRACT)">Submit
                                     </button>
 
                                     <button type="clear"

@@ -12,6 +12,10 @@ export class ViewIdGeneratorService {
         return TypeControl[TypeControl.NAME_ID_LIST] + "_" + filterParamName;
     }
 
+    public makeCheckboxListBoxId(filterParamName:FilterParamNames): string {
+        return TypeControl[TypeControl.CHECKBOX_LIST] + "_" + filterParamName;
+    }
+
     public makeDatasetRowCheckboxId(datasetName:String): string {
         return TypeControl[TypeControl.DATASET_ROW_CHECKBOX] + "_" + datasetName ;
     }

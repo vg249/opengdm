@@ -16,6 +16,12 @@ System.register([], function (exports_1, context_1) {
                 TypeControl[TypeControl["SAMPLE_LIST_TYPE_RADIO_BUTTON"] = 7] = "SAMPLE_LIST_TYPE_RADIO_BUTTON";
                 TypeControl[TypeControl["SYSTEM_STATUS_MESSAGE_BODY"] = 8] = "SYSTEM_STATUS_MESSAGE_BODY";
                 TypeControl[TypeControl["MARKER_SAMPLE_LIST_MODE_RADIO_BUTTON"] = 9] = "MARKER_SAMPLE_LIST_MODE_RADIO_BUTTON";
+                TypeControl[TypeControl["FILE_SELECTOR_MARKER_SAMPLE_LIST_UPLOAD"] = 10] = "FILE_SELECTOR_MARKER_SAMPLE_LIST_UPLOAD";
+                TypeControl[TypeControl["SUBMIT_BUTTON_UPLOAD_MARKER_SAMPLE_LIST"] = 11] = "SUBMIT_BUTTON_UPLOAD_MARKER_SAMPLE_LIST";
+                TypeControl[TypeControl["SUBMIT_BUTTON_EXTRACT"] = 12] = "SUBMIT_BUTTON_EXTRACT";
+                TypeControl[TypeControl["CHECKBOX_LIST"] = 13] = "CHECKBOX_LIST";
+                TypeControl[TypeControl["CRITERIA_TREE"] = 14] = "CRITERIA_TREE";
+                TypeControl[TypeControl["NAVIGATION_TABS"] = 15] = "NAVIGATION_TABS";
             })(TypeControl || (TypeControl = {}));
             exports_1("TypeControl", TypeControl);
         }

@@ -30,6 +30,9 @@ System.register(["./type-control", "@angular/core", "../../model/type-extract-fo
                 ViewIdGeneratorService.prototype.makeIdNameIdListBoxId = function (filterParamName) {
                     return type_control_1.TypeControl[type_control_1.TypeControl.NAME_ID_LIST] + "_" + filterParamName;
                 };
+                ViewIdGeneratorService.prototype.makeCheckboxListBoxId = function (filterParamName) {
+                    return type_control_1.TypeControl[type_control_1.TypeControl.CHECKBOX_LIST] + "_" + filterParamName;
+                };
                 ViewIdGeneratorService.prototype.makeDatasetRowCheckboxId = function (datasetName) {
                     return type_control_1.TypeControl[type_control_1.TypeControl.DATASET_ROW_CHECKBOX] + "_" + datasetName;
                 };
