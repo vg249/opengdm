@@ -32,12 +32,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 
-/**
- * Unit test for CSVFileReaderV2Test. Approach: A temporary folder is created
- * which contains all input file. Instruction file is created with required
- * fields. Using CSVFileReaderV2 input file is read and stored in output file
- * after processing. Generated o/p file is verified that it is as expected.
- */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(ValidationWebServicesUtil.class)
 @PowerMockRunnerDelegate(BlockJUnit4ClassRunner.class)
@@ -64,12 +58,11 @@ public class DnaSamplePropValidationTest {
      */
     @AfterClass
     public static void checkAndCleanTempFile() {
- /*       try {
+        try {
             FileUtils.deleteDirectory(new File(tempFolderLocation));
         } catch (IOException e) {
             e.printStackTrace();
         }
-   */
     }
 
     /**
@@ -172,13 +165,13 @@ public class DnaSamplePropValidationTest {
         assertEquals("Unexpected values", "digest.dnasample", failures.get(1).values.get(0));
 
         assertEquals("Unexpected failure reason", "File not found", failures.get(2).reason);
-        assertEquals("Unexpected values", "digest.dnasample", failures.get(2 ).values.get(0));
+        assertEquals("Unexpected values", "digest.dnasample", failures.get(2).values.get(0));
 
         assertEquals("Unexpected failure reason", "File not found", failures.get(1).reason);
         assertEquals("Unexpected values", "digest.dnasample", failures.get(1).values.get(0));
 
         assertEquals("Unexpected failure reason", "File not found", failures.get(2).reason);
-        assertEquals("Unexpected values", "digest.dnasample", failures.get(2 ).values.get(0));
+        assertEquals("Unexpected values", "digest.dnasample", failures.get(2).values.get(0));
 
     }
 
@@ -187,7 +180,7 @@ public class DnaSamplePropValidationTest {
      * DnaSampleProp validation.
      * Mismatch comparison file
      */
-     @Test
+    @Test
     public void dnasamplePropMismatchComparisionTest() throws IOException {
         DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/mismatchComparisonColumn", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 

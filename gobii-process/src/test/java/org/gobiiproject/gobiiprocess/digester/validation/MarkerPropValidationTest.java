@@ -32,12 +32,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 
-/**
- * Unit test for CSVFileReaderV2Test. Approach: A temporary folder is created
- * which contains all input file. Instruction file is created with required
- * fields. Using CSVFileReaderV2 input file is read and stored in output file
- * after processing. Generated o/p file is verified that it is as expected.
- */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(ValidationWebServicesUtil.class)
 @PowerMockRunnerDelegate(BlockJUnit4ClassRunner.class)
@@ -64,12 +58,11 @@ public class MarkerPropValidationTest {
      */
     @AfterClass
     public static void checkAndCleanTempFile() {
- /*       try {
+        try {
             FileUtils.deleteDirectory(new File(tempFolderLocation));
         } catch (IOException e) {
             e.printStackTrace();
         }
-   */
     }
 
     /**
