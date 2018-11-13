@@ -16,6 +16,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.Scanner;
 import java.util.UUID;
 
 public class GobiiAdlTest {
@@ -69,6 +70,7 @@ public class GobiiAdlTest {
     public void testADLBatchProcessing() throws  Exception{
 
         if (backendSupoorted) {
+
             ADLEncapsulator adlEncapsulator = new ADLEncapsulator();
             String configUtilCommandlineStem = testExecConfig.getConfigUtilCommandlineStem();
 
@@ -83,19 +85,41 @@ public class GobiiAdlTest {
             // copy to temp folder
             String tempDirName = "adlTest-" + UUID.randomUUID().toString();
             String tempDirString = testExecConfig.getTestFileDownloadDirectory() + "/" + tempDirName;
-
             File tempDir = new File(tempDirString);
 
             tempDir.mkdir();
 
-            File fileFromRepo = new File("src/test/resources/gobiiAdl");
+            // check if include_scenarios.txt exists
+            File scenarioFile = new File("src/test/resources/gobiiAdl/include_scenarios.txt");
 
-            copyFilesToLocalDir(fileFromRepo, tempDir);
+            if (scenarioFile.exists() && !scenarioFile.isDirectory()) {
+
+                Scanner sc = new Scanner(scenarioFile);
+
+                while (sc.hasNextLine()) {
+
+                    String scenarioName = sc.nextLine();
+
+                    File fileFromRepo = new File("src/test/resources/gobiiAdl/" + scenarioName);
+
+                    File newScenarioDir = new File(tempDir.getAbsoluteFile() + "/" + scenarioName);
+                    newScenarioDir.mkdir();
+
+                    copyFilesToLocalDir(fileFromRepo, newScenarioDir);
+
+                    System.out.print(scenarioName);
+                }
+            } else {
+
+                File fileFromRepo = new File("src/test/resources/gobiiAdl");
+
+                copyFilesToLocalDir(fileFromRepo, tempDir);
+
+            }
 
             adlEncapsulator.setInputDirectory(tempDir.getAbsolutePath());
 
             boolean isADLSuccessful = adlEncapsulator.executeBatchGobiiADL();
-
 
             Assert.assertTrue(adlEncapsulator.getErrorMsg(), isADLSuccessful);
 
