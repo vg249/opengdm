@@ -5,7 +5,6 @@ import {BrowserModule} from "@angular/platform-browser";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {ExportFormatComponent} from "../views/export-format.component";
 import {StatusDisplayComponent} from "../views/status-display-box.component";
-import {CropsListBoxComponent} from "../views/crops-list-box.component";
 import {ExportTypeComponent} from "../views/export-type.component";
 import {CheckListBoxComponent} from "../views/checklist-box.component";
 import {SampleMarkerBoxComponent} from "../views/sample-marker-box.component";
@@ -76,7 +75,6 @@ import {ViewIdGeneratorService} from "../services/core/view-id-generator-service
         LoginComponent,
         ExportFormatComponent,
         StatusDisplayComponent,
-        CropsListBoxComponent,
         ExportTypeComponent,
         CheckListBoxComponent,
         SampleMarkerBoxComponent,
