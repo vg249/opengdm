@@ -5,7 +5,7 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>org.gobiiproject</groupId>
-        <version>18-spock-pdg_2018-11-11</version>
+        <version>18-spock-pdg_2018-11-13</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
