@@ -14,5 +14,8 @@ export class ViewIdGeneratorService {
     }
 
 
+    public makeStandardId(typeControl:TypeControl): string {
+        return TypeControl[typeControl];
+    }
 
 }

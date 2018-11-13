@@ -27,6 +27,9 @@ System.register(["./type-control", "@angular/core"], function (exports_1, contex
                 ViewIdGeneratorService.prototype.makeDatasetRowCheckboxId = function (datasetName) {
                     return type_control_1.TypeControl[type_control_1.TypeControl.DATASET_ROW_CHECKBOX] + "_" + datasetName;
                 };
+                ViewIdGeneratorService.prototype.makeStandardId = function (typeControl) {
+                    return type_control_1.TypeControl[typeControl];
+                };
                 ViewIdGeneratorService = __decorate([
                     core_1.Injectable()
                 ], ViewIdGeneratorService);
