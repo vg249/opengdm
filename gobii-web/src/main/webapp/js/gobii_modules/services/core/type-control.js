@@ -13,6 +13,7 @@ System.register([], function (exports_1, context_1) {
                 TypeControl[TypeControl["LOGIN_PASSWORD_INPUT"] = 4] = "LOGIN_PASSWORD_INPUT";
                 TypeControl[TypeControl["LOGIN_SUBMIT_BUTTON"] = 5] = "LOGIN_SUBMIT_BUTTON";
                 TypeControl[TypeControl["EXPORT_FORMAT_RADIO_BUTTON"] = 6] = "EXPORT_FORMAT_RADIO_BUTTON";
+                TypeControl[TypeControl["SAMPLE_LIST_TYPE_RADIO_BUTTON"] = 7] = "SAMPLE_LIST_TYPE_RADIO_BUTTON";
             })(TypeControl || (TypeControl = {}));
             exports_1("TypeControl", TypeControl);
         }

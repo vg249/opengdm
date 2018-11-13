@@ -1,4 +1,4 @@
-System.register(["./type-control", "@angular/core", "../../model/type-extract-format"], function (exports_1, context_1) {
+System.register(["./type-control", "@angular/core", "../../model/type-extract-format", "../../model/type-extractor-sample-list"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -7,7 +7,7 @@ System.register(["./type-control", "@angular/core", "../../model/type-extract-fo
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
     var __moduleName = context_1 && context_1.id;
-    var type_control_1, core_1, type_extract_format_1, ViewIdGeneratorService;
+    var type_control_1, core_1, type_extract_format_1, type_extractor_sample_list_1, ViewIdGeneratorService;
     return {
         setters: [
             function (type_control_1_1) {
@@ -18,6 +18,9 @@ System.register(["./type-control", "@angular/core", "../../model/type-extract-fo
             },
             function (type_extract_format_1_1) {
                 type_extract_format_1 = type_extract_format_1_1;
+            },
+            function (type_extractor_sample_list_1_1) {
+                type_extractor_sample_list_1 = type_extractor_sample_list_1_1;
             }
         ],
         execute: function () {
@@ -35,6 +38,9 @@ System.register(["./type-control", "@angular/core", "../../model/type-extract-fo
                 }; //makeExportFormatRadioButtonId()
                 ViewIdGeneratorService.prototype.makeStandardId = function (typeControl) {
                     return type_control_1.TypeControl[typeControl];
+                };
+                ViewIdGeneratorService.prototype.makeSampleListTypeId = function (gobiiSampleListType) {
+                    return type_control_1.TypeControl[type_control_1.TypeControl.SAMPLE_LIST_TYPE_RADIO_BUTTON] + "_" + type_extractor_sample_list_1.GobiiSampleListType[gobiiSampleListType];
                 };
                 ViewIdGeneratorService = __decorate([
                     core_1.Injectable()

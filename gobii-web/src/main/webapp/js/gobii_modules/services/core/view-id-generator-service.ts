@@ -2,6 +2,7 @@ import {FilterParamNames} from "../../model/file-item-param-names";
 import {TypeControl} from "./type-control";
 import {Injectable} from "@angular/core";
 import {GobiiExtractFormat} from "../../model/type-extract-format";
+import {GobiiSampleListType} from "../../model/type-extractor-sample-list";
 
 @Injectable()
 export class ViewIdGeneratorService {
@@ -20,6 +21,10 @@ export class ViewIdGeneratorService {
 
     public makeStandardId(typeControl:TypeControl): string {
         return TypeControl[typeControl];
+    }
+
+    public makeSampleListTypeId(gobiiSampleListType:GobiiSampleListType): string {
+        return TypeControl[TypeControl.SAMPLE_LIST_TYPE_RADIO_BUTTON] + "_" + GobiiSampleListType[gobiiSampleListType];
     }
 
 }
