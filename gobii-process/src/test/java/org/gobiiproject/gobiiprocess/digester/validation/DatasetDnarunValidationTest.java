@@ -30,7 +30,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -102,8 +104,15 @@ public class DatasetDnarunValidationTest {
             nameIdDTOResponse.setId(271);
             dnarunNameResponse.add(nameIdDTOResponse);
         }
-
+        Map<String, String> experimentForeignKeyReturn = new HashMap<>();
+        experimentForeignKeyReturn.put("Deb_Proj_Exp_GSD-399_vcf", "3");
+        experimentForeignKeyReturn.put("Jdls_Test", "59");
+        experimentForeignKeyReturn.put("sim_2letternuc_exp_01", "64");
         try {
+            PowerMockito
+                    .when(ValidationWebServicesUtil.getAllowedForeignKeyList(eq("dnarun"), any()))
+                    .thenReturn(experimentForeignKeyReturn);
+
             PowerMockito
                     .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq(GobiiEntityNameType.DNARUN.toString()), eq("3"), any()))
                     .thenReturn(dnarunNameResponse);
@@ -123,91 +132,77 @@ public class DatasetDnarunValidationTest {
     }
 
     /**
-     * Marker validation.
-     * Has all required fields, one error speeciesName and one error typeName
+     * Dataset_dnarun validation.
+     * Has all required fields, two undefined dnarun_name
      */
-    //@Test
-    public void markerCvFailTest() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/cvFail", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+    @Test
+    public void datasetDnarunDnarunNameTest() throws IOException {
+        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/dnarunName/missingNames",
+                tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
         PowerMockito
                 .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
                 .thenReturn(true);
 
-        List<NameIdDTO> referenceResponse = new ArrayList<>();
+        List<NameIdDTO> dnarunNameResponse = new ArrayList<>();
         {
             NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("5fa68c87-6331-4fa7-a5f2-7a5428567eb5");
-            nameIdDTOResponse.setId(5);
-            referenceResponse.add(nameIdDTOResponse);
+            nameIdDTOResponse.setName("sample325:C6NPUANXX:5:250490978");
+            nameIdDTOResponse.setId(262);
+            dnarunNameResponse.add(nameIdDTOResponse);
         }
         {
             NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("cb5d4d35-512a-46fc-a053-7855f7701d27");
-            nameIdDTOResponse.setId(4);
-            referenceResponse.add(nameIdDTOResponse);
+            nameIdDTOResponse.setName("sample293:C6NPUANXX:5:250490977");
+            nameIdDTOResponse.setId(226);
+            dnarunNameResponse.add(nameIdDTOResponse);
         }
         {
             NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("5fa68c87-6331-4fa7-a5f2-7a5428567eb5s");
+            nameIdDTOResponse.setName("R_8T3QPTdB6hFEO_21140");
             nameIdDTOResponse.setId(0);
-            referenceResponse.add(nameIdDTOResponse);
+            dnarunNameResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("R_8T3QPp6fluRwk_21141");
+            nameIdDTOResponse.setId(0);
+            dnarunNameResponse.add(nameIdDTOResponse);
         }
 
-        List<NameIdDTO> strandResponse = new ArrayList<>();
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("TOP");
-            nameIdDTOResponse.setId(62);
-            strandResponse.add(nameIdDTOResponse);
-        }
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("BOTTOM");
-            nameIdDTOResponse.setId(0);
-            strandResponse.add(nameIdDTOResponse);
-        }
-
+        Map<String, String> experimentForeignKeyReturn = new HashMap<>();
+        experimentForeignKeyReturn.put("Deb_Proj_Exp_GSD-399_vcf", "3");
+        experimentForeignKeyReturn.put("Jdls_Test", "59");
+        experimentForeignKeyReturn.put("sim_2letternuc_exp_01", "64");
         try {
             PowerMockito
-                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("reference"), eq("reference_name"), any()))
-                    .thenReturn(referenceResponse);
+                    .when(ValidationWebServicesUtil.getAllowedForeignKeyList(eq("dnarun"), any()))
+                    .thenReturn(experimentForeignKeyReturn);
             PowerMockito
-                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq(GobiiEntityNameType.CV.toString()), eq("strand_name"), any()))
-                    .thenReturn(strandResponse);
+                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("dnarun"), eq("3"), any()))
+                    .thenReturn(dnarunNameResponse);
         } catch (MaximumErrorsValidationException e) {
             e.printStackTrace();
         }
         digestFileValidator.performValidation();
         List<Path> pathList =
-                Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/cvFail"))
+                Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/dnarunName/missingNames"))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
 
-        assertEquals("Expected file name is not marker", "marker", fileErrors[0].fileName);
-        assertEquals("Expected STATUS is not FAILURE", "FAILURE", fileErrors[0].status);
-
+        assertEquals("Expected file name is not dataset_dnarun", "dataset_dnarun", fileErrors[0].fileName);
+        assertEquals("Expected STATUS is not success", "FAILURE", fileErrors[0].status);
         List<Failure> failures = fileErrors[0].failures;
-        assertEquals("Failures are more than the expected", 2, failures.size());
+        assertEquals("Failures are more than the expected", 1, failures.size());
 
-        for (Failure failure : failures) {
-            switch (failure.columnName.get(0)) {
-                case "strand_name":
-                    assertEquals("Unexpected failure reason", "Undefined CV value", failure.reason);
-                    assertEquals("Unexpected failure", "BOTTOM", failure.values.get(0));
-                    break;
-                case "reference_name":
-                    assertEquals("Unexpected failure reason", "Undefined Reference value", failure.reason);
-                    assertEquals("Unexpected failure", "5fa68c87-6331-4fa7-a5f2-7a5428567eb5s", failure.values.get(0));
-                    break;
-                default:
-                    assertEquals("Undefined failure reason" + failure.columnName, "1", "0");
-                    break;
-            }
-        }
+        assertEquals("Unexpected failure reason", "Undefined dnarun_name value", failures.get(0).reason);
+        assertEquals("Unexpected column name", "dnarun_name", failures.get(0).columnName.get(0));
+        assertEquals("Unexpected dnarun_name", "R_8T3QPTdB6hFEO_21140", failures.get(0).values.get(0));
+        assertEquals("Unexpected dnarun_name", "R_8T3QPp6fluRwk_21141", failures.get(0).values.get(1));
+
     }
 
     /**

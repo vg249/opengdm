@@ -27,5 +27,6 @@ public class FailureTypes {
     public static final String UNDEFINED_DNARUN_NAME__VALUE = "Undefined dnarun_name value";
     public static final String EXCEPTION = "Exception";
     public static final String UNDEFINED_CONDITION_TYPE = "Undefined condition type";
+    public static final String UNDEFINED_FOREIGN_KEY = "Undefined foreign key";
 
 }

@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
-import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
@@ -467,49 +466,48 @@ class ValidationUtil {
         String typeName = condition.typeName;
         Set<String> foreignKeyList = new HashSet<>();
         if (readForeignKey(fileName, condition.foreignKey, foreignKeyList, failureList)) {
-            Map<String, String> foreignKeyValueFromDB = new HashMap<>();
-            if (ValidationWebServicesUtil.getAllowedForeignKeyList(foreignKeyValueFromDB, condition.typeName, failureList)) {
-                List<String> foreignKey = getFileColumn(fileName, condition.foreignKey, failureList);
-                List<String> fileColumn = getFileColumn(fileName, condition.fieldToCompare.get(0), failureList);
-                if (foreignKey.size() != fileColumn.size()) {
+            Map<String, String> foreignKeyValueFromDB = ValidationWebServicesUtil.getAllowedForeignKeyList(condition.typeName, failureList);
+            if (foreignKeyValueFromDB.size() == 0) return;
+            List<String> foreignKey = getFileColumn(fileName, condition.foreignKey, failureList);
+            List<String> fileColumn = getFileColumn(fileName, condition.fieldToCompare.get(0), failureList);
+            if (foreignKey.size() != fileColumn.size()) {
+                Failure failure = new Failure();
+                failure.reason = FailureTypes.INVALID_COLUMN_SIZE;
+                failure.columnName.add(condition.fieldToCompare.get(0));
+                failure.columnName.add(condition.foreignKey);
+                ValidationUtil.addMessageToList(failure, failureList);
+                return;
+            }
+            Map<String, Set<String>> mapForeignkeyAndName = new HashMap<>();
+            for (int i = 0; i < foreignKey.size(); i++) {
+                Set<String> strings = mapForeignkeyAndName.get(foreignKey.get(i));
+                if (strings != null) {
+                    strings.add(fileColumn.get(i));
+                } else {
+                    strings = new HashSet<>();
+                    strings.add(fileColumn.get(i));
+                    mapForeignkeyAndName.put(foreignKey.get(i), strings);
+                }
+            }
+            for (Map.Entry<String, Set<String>> ent : mapForeignkeyAndName.entrySet()) {
+                if (foreignKeyValueFromDB.values().contains(ent.getKey())) {
+                    List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+                    for (String name : ent.getValue()) {
+                        NameIdDTO nameIdDTO = new NameIdDTO();
+                        nameIdDTO.setName(name);
+                        nameIdDTOList.add(nameIdDTO);
+                    }
+                    List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.getNamesByNameList(nameIdDTOList, typeName, ent.getKey(), failureList);
+                    if (condition.typeName.equalsIgnoreCase(ValidationConstants.LINKAGE_GROUP))
+                        processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_LINKAGE_GROUP_NAME__VALUE, failureList);
+                    if (condition.typeName.equalsIgnoreCase(ValidationConstants.DNARUN))
+                        processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_DNARUN_NAME__VALUE, failureList);
+                } else {
                     Failure failure = new Failure();
-                    failure.reason = FailureTypes.INVALID_COLUMN_SIZE;
-                    failure.columnName.add(condition.fieldToCompare.get(0));
+                    failure.reason = FailureTypes.UNDEFINED_VALUE;
                     failure.columnName.add(condition.foreignKey);
+                    failure.values.add(ent.getKey());
                     ValidationUtil.addMessageToList(failure, failureList);
-                    return;
-                }
-                Map<String, Set<String>> mapForeignkeyAndName = new HashMap<>();
-                for (int i = 0; i < foreignKey.size(); i++) {
-                    Set<String> strings = mapForeignkeyAndName.get(foreignKey.get(i));
-                    if (strings != null) {
-                        strings.add(fileColumn.get(i));
-                    } else {
-                        strings = new HashSet<>();
-                        strings.add(fileColumn.get(i));
-                        mapForeignkeyAndName.put(foreignKey.get(i), strings);
-                    }
-                }
-                for (Map.Entry<String, Set<String>> ent : mapForeignkeyAndName.entrySet()) {
-                    if (foreignKeyValueFromDB.values().contains(ent.getKey())) {
-                        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
-                        for (String name : ent.getValue()) {
-                            NameIdDTO nameIdDTO = new NameIdDTO();
-                            nameIdDTO.setName(name);
-                            nameIdDTOList.add(nameIdDTO);
-                        }
-                        List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.getNamesByNameList(nameIdDTOList, typeName, ent.getKey(), failureList);
-                        if (condition.typeName.equalsIgnoreCase(ValidationConstants.LINKAGE_GROUP))
-                            processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_LINKAGE_GROUP_NAME__VALUE, failureList);
-                        if (condition.typeName.equalsIgnoreCase(ValidationConstants.DNARUN))
-                            processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_DNARUN_NAME__VALUE, failureList);
-                    } else {
-                        Failure failure = new Failure();
-                        failure.reason = FailureTypes.UNDEFINED_VALUE;
-                        failure.columnName.add(condition.foreignKey);
-                        failure.values.add(ent.getKey());
-                        ValidationUtil.addMessageToList(failure, failureList);
-                    }
                 }
             }
         }

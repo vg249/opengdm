@@ -22,10 +22,9 @@ import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Fail
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.gobiiproject.gobiimodel.config.RestResourceId.GOBII_EXPERIMENTS;
 
 public class ValidationWebServicesUtil {
 
@@ -72,8 +71,8 @@ public class ValidationWebServicesUtil {
         }
     }
 
-
-    static boolean getAllowedForeignKeyList(Map<String, String> mapsetDTOList, String foreignKey, List<Failure> failureList) throws MaximumErrorsValidationException {
+    public static Map<String, String> getAllowedForeignKeyList(String foreignKey, List<Failure> failureList) throws MaximumErrorsValidationException {
+        Map<String, String> mapsetDTOList = new HashMap<>();
         try {
             GobiiUriFactory uriFactory = GobiiClientContext.getInstance(null, false).getUriFactory();
             RestUri restUri = null;
@@ -82,21 +81,27 @@ public class ValidationWebServicesUtil {
                 GobiiEnvelopeRestResource<MapsetDTO, MapsetDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
                 PayloadEnvelope<MapsetDTO> resultEnvelope = gobiiEnvelopeRestResource.get(MapsetDTO.class);
                 resultEnvelope.getPayload().getData().forEach(dto -> mapsetDTOList.put(dto.getName(), dto.getMapsetId().toString()));
-                return true;
+                return mapsetDTOList;
             } else if (foreignKey.equalsIgnoreCase(ValidationConstants.DNARUN)) {
                 restUri = uriFactory.resourceColl(RestResourceId.GOBII_EXPERIMENTS);
                 GobiiEnvelopeRestResource<ExperimentDTO, ExperimentDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
                 PayloadEnvelope<ExperimentDTO> resultEnvelope = gobiiEnvelopeRestResource
                         .get(ExperimentDTO.class);
                 resultEnvelope.getPayload().getData().forEach(dto -> mapsetDTOList.put(dto.getExperimentName(), dto.getExperimentId().toString()));
-                return true;
-            } else return false;
+                return mapsetDTOList;
+            } else {
+                Failure failure = new Failure();
+                failure.reason = FailureTypes.UNDEFINED_FOREIGN_KEY;
+                failure.values.add(foreignKey);
+                ValidationUtil.addMessageToList(failure, failureList);
+                return mapsetDTOList;
+            }
         } catch (Exception e) {
             Failure failure = new Failure();
             failure.reason = FailureTypes.EXCEPTION;
             failure.values.add(e.getMessage());
             ValidationUtil.addMessageToList(failure, failureList);
-            return false;
+            return mapsetDTOList;
         }
     }
 
@@ -142,7 +147,7 @@ public class ValidationWebServicesUtil {
                         return nameIdDTOListResponse;
                 }
             } else if (gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.REFERENCE.toString()) || gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.MARKER.toString())
-                    || gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.LINKAGE_GROUP.toString())|| gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.DNARUN.toString()))
+                    || gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.LINKAGE_GROUP.toString()) || gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.DNARUN.toString()))
                 namesUri.setParamValue("filterValue", filterValue);
 
             PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = gobiiEnvelopeRestResource.post(NameIdDTO.class, payloadEnvelope);
