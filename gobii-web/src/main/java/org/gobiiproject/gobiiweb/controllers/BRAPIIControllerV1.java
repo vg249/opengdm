@@ -191,7 +191,7 @@ public class BRAPIIControllerV1 {
     // *********************************************
     // *************************** LOGIN (MASTER ONLY)
     // *********************************************
-    @RequestMapping(value = "/studies-search",
+    @RequestMapping(value = "/login",
             method = RequestMethod.POST,
             produces = "application/json")
     @ResponseBody
