@@ -206,6 +206,71 @@ public class DatasetDnarunValidationTest {
 
     /**
      * Dataset_dnarun validation.
+     * Has all required fields, two undefined dnarun_name
+     */
+    @Test
+    public void datasetDnarunSkipnarunNameVerificationTest() throws IOException {
+        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/dnarunName/skipdnaNameVerification",
+                tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+
+        PowerMockito.mockStatic(ValidationWebServicesUtil.class);
+        PowerMockito
+                .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
+                .thenReturn(true);
+        List<NameIdDTO> dnarunNameResponse = new ArrayList<>();
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("sample325:C6NPUANXX:5:250490978");
+            nameIdDTOResponse.setId(262);
+            dnarunNameResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("sample293:C6NPUANXX:5:250490977");
+            nameIdDTOResponse.setId(226);
+            dnarunNameResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("R_8T3QPTdB6hFEO_21140");
+            nameIdDTOResponse.setId(0);
+            dnarunNameResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("R_8T3QPp6fluRwk_21141");
+            nameIdDTOResponse.setId(0);
+            dnarunNameResponse.add(nameIdDTOResponse);
+        }
+
+        Map<String, String> experimentForeignKeyReturn = new HashMap<>();
+        experimentForeignKeyReturn.put("Deb_Proj_Exp_GSD-399_vcf", "3");
+        experimentForeignKeyReturn.put("Jdls_Test", "59");
+        experimentForeignKeyReturn.put("sim_2letternuc_exp_01", "64");
+        try {
+            PowerMockito
+                    .when(ValidationWebServicesUtil.getAllowedForeignKeyList(eq("dnarun"), any()))
+                    .thenReturn(experimentForeignKeyReturn);
+            PowerMockito
+                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("dnarun"), eq("3"), any()))
+                    .thenReturn(dnarunNameResponse);
+        } catch (MaximumErrorsValidationException e) {
+            e.printStackTrace();
+        }
+        digestFileValidator.performValidation();
+        List<Path> pathList =
+                Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/dnarunName/skipdnaNameVerification"))
+                        .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
+        assertEquals("There should be one validation output json file", 1, pathList.size());
+
+        ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
+
+        assertEquals("Expected file name is not dataset_dnarun", "dataset_dnarun", fileErrors[0].fileName);
+        assertEquals("Expected STATUS is success", "SUCCESS", fileErrors[0].status);
+    }
+
+    /**
+     * Dataset_dnarun validation.
      * Missing one required field
      */
     @Test
