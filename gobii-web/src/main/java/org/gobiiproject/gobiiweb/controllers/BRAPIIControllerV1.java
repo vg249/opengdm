@@ -191,7 +191,7 @@ public class BRAPIIControllerV1 {
     // *********************************************
     // *************************** LOGIN (MASTER ONLY)
     // *********************************************
-    @RequestMapping(value = "/login",
+    @RequestMapping(value = "/token",
             method = RequestMethod.POST,
             produces = "application/json")
     @ResponseBody
@@ -210,11 +210,9 @@ public class BRAPIIControllerV1 {
             BrapiRequestLogin brapiRequestLogin = brapiRequestReader.makeRequestObj(loginRequestBody);
 
             BrapiResponseMapLogin brapiResponseMapLogin = new BrapiResponseMapLogin();
-            BrapiResponseLogin brapiResponseLogin = brapiResponseMapLogin.getLoginInfo(brapiRequestLogin);
+            BrapiResponseLogin brapiResponseLogin = brapiResponseMapLogin.getLoginInfo(brapiRequestLogin, response);
 
             brapiResponseEnvelopeMaster.setResult(brapiResponseLogin);
-
-
 
             brapiResponseEnvelopeMaster.getBrapiMetaData().setPagination(new BrapiPagination(
                     1,

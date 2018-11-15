@@ -67,6 +67,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             web.ignoring().antMatchers(allBrapiUrls, gobiiFIlesUrl);
 
         }
+
+        // the calling the calls call does not require authentication
+        String gobiiFIlesUrl = GobiiServiceRequestId.URL_CALLS.getRequestUrl(null, GobiiControllerType.BRAPI.getControllerPath());
+        web.ignoring().antMatchers(gobiiFIlesUrl);
+
     }
 
 
