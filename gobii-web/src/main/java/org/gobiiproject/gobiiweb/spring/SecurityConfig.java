@@ -74,8 +74,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         String gobiiFIlesUrl = GobiiServiceRequestId.URL_FILES.getRequestUrl(null, GobiiControllerType.GOBII.getControllerPath()) + "/**";
 
         web.ignoring()
-                .antMatchers(brapiCallsUrl)
-                .antMatchers(gobiiFIlesUrl);
+                .antMatchers(brapiCallsUrl);
+//                .antMatchers(gobiiFIlesUrl);
     }
 
 

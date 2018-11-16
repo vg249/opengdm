@@ -1,7 +1,6 @@
 package org.gobiiproject.gobiiclient.core.brapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang.ObjectUtils;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
@@ -9,19 +8,13 @@ import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiibrapi.calls.login.BrapiRequestLogin;
 import org.gobiiproject.gobiibrapi.calls.login.BrapiResponseLogin;
 import org.gobiiproject.gobiibrapi.core.common.BrapiRequestReader;
-import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseDataList;
-import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelope;
 import org.gobiiproject.gobiiclient.core.common.HttpCore;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
-import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiTestConfiguration;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
-import org.gobiiproject.gobiimodel.config.ServerBase;
 import org.gobiiproject.gobiimodel.config.TestExecConfig;
-import org.gobiiproject.gobiimodel.utils.LineUtils;
 
 import javax.servlet.http.HttpServletResponse;
-import java.net.URL;
 
 
 /**
@@ -30,7 +23,7 @@ import java.net.URL;
 public class BrapiClientContextAuth {
 
 
-    private static HttpCore authenticate(HttpCore httpCore) throws Exception {
+    public static HttpCore authenticate() throws Exception {
 
         HttpCore returnVal = null;
 
@@ -57,7 +50,7 @@ public class BrapiClientContextAuth {
 
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody = objectMapper.writeValueAsString(brapiRequestLogin);
-        HttpMethodResult httpMethodResult = httpCore.post(restUriToken, requestBody);
+        HttpMethodResult httpMethodResult = returnVal.post(restUriToken, requestBody);
 
         if (httpMethodResult.getResponseCode() == HttpServletResponse.SC_OK) {
 
