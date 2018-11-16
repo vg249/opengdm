@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Enumeration;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
@@ -99,10 +100,23 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
                     tokenHeaderVal = authenticationRequestWrapper.getHeader(GobiiHttpHeaderNames.HEADER_NAME_TOKEN);
                 } else {
 
+
+                    // useful code to probe header values when you need to
+                    Enumeration<String> headerNames = authenticationRequestWrapper.getHeaderNames();
+                    while(headerNames.hasMoreElements()) {
+                        String headerName = headerNames.nextElement();
+                        Enumeration<String> headers = authenticationRequestWrapper.getHeaders(headerName);
+                        while(headers.hasMoreElements()) {
+                            String headerValue = headers.nextElement();
+                            String temp = "foo";
+                        }
+                    }
+
+
                     if (!LineUtils.isNullOrEmpty(rawAuthorizationHeader)) {
 
                         if (rawAuthorizationHeader.contains("Bearer")) {
-                            tokenHeaderVal = rawAuthorizationHeader.replace("Bearer", "");
+                            tokenHeaderVal = rawAuthorizationHeader.replace("Bearer", "").trim();
                         } else {
                             // this way the logic for whether we're doing Basic authentication below works out
                             rawAuthorizationHeader = null;
@@ -116,7 +130,7 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
 
                     //header data
                     this.addHeadersToValidRequest(httpResponse, null, gobiiCropType, tokenHeaderVal);
-                    chain.doFilter(request, response);
+                    chain.doFilter(authenticationRequestWrapper, response);
                 } else {
 
                     // there was not a valid token, so now we need to authenticate

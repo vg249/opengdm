@@ -204,13 +204,14 @@ public class BRAPIIControllerV1 {
         BrapiResponseEnvelopeMaster<BrapiResponseLogin> brapiResponseEnvelopeMaster =
                 new BrapiResponseEnvelopeMaster<>();
 
+        BrapiResponseLogin brapiResponseLogin = null;
         try {
 
             BrapiRequestReader<BrapiRequestLogin> brapiRequestReader = new BrapiRequestReader<>(BrapiRequestLogin.class);
             BrapiRequestLogin brapiRequestLogin = brapiRequestReader.makeRequestObj(loginRequestBody);
 
             BrapiResponseMapLogin brapiResponseMapLogin = new BrapiResponseMapLogin();
-            BrapiResponseLogin brapiResponseLogin = brapiResponseMapLogin.getLoginInfo(brapiRequestLogin, response);
+            brapiResponseLogin = brapiResponseMapLogin.getLoginInfo(brapiRequestLogin, response);
 
             brapiResponseEnvelopeMaster.setResult(brapiResponseLogin);
 
@@ -234,7 +235,7 @@ public class BRAPIIControllerV1 {
             brapiResponseEnvelopeMaster.getBrapiMetaData().addStatusMessage("exception", message);
         }
 
-        returnVal = objectMapper.writeValueAsString(brapiResponseEnvelopeMaster);
+        returnVal = objectMapper.writeValueAsString(brapiResponseLogin);
 
         return returnVal;
     }
