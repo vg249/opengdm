@@ -1,11 +1,12 @@
 package org.gobiiproject.gobiibrapi.calls.login;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelope;
 
 /**
  * Created by Phil on 12/15/2016.
  */
-public class BrapiResponseLogin {
+public class BrapiResponseLogin extends BrapiResponseEnvelope {
 
 
     private String accessToken;

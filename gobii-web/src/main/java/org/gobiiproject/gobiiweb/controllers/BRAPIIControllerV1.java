@@ -196,13 +196,11 @@ public class BRAPIIControllerV1 {
             produces = "application/json")
     @ResponseBody
     public String postLogin(@RequestBody String loginRequestBody,
-                             HttpServletRequest request,
-                             HttpServletResponse response) throws Exception {
+                            HttpServletRequest request,
+                            HttpServletResponse response) throws Exception {
 
         String returnVal;
 
-        BrapiResponseEnvelopeMaster<BrapiResponseLogin> brapiResponseEnvelopeMaster =
-                new BrapiResponseEnvelopeMaster<>();
 
         BrapiResponseLogin brapiResponseLogin = null;
         try {
@@ -213,9 +211,8 @@ public class BRAPIIControllerV1 {
             BrapiResponseMapLogin brapiResponseMapLogin = new BrapiResponseMapLogin();
             brapiResponseLogin = brapiResponseMapLogin.getLoginInfo(brapiRequestLogin, response);
 
-            brapiResponseEnvelopeMaster.setResult(brapiResponseLogin);
 
-            brapiResponseEnvelopeMaster.getBrapiMetaData().setPagination(new BrapiPagination(
+            brapiResponseLogin.getBrapiMetaData().setPagination(new BrapiPagination(
                     1,
                     1,
                     1,
@@ -226,13 +223,13 @@ public class BRAPIIControllerV1 {
 
             String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
 
-            brapiResponseEnvelopeMaster.getBrapiMetaData().addStatusMessage("exception", message);
+            brapiResponseLogin.getBrapiMetaData().addStatusMessage("exception", message);
 
         } catch (Exception e) {
 
             String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
 
-            brapiResponseEnvelopeMaster.getBrapiMetaData().addStatusMessage("exception", message);
+            brapiResponseLogin.getBrapiMetaData().addStatusMessage("exception", message);
         }
 
         returnVal = objectMapper.writeValueAsString(brapiResponseLogin);
