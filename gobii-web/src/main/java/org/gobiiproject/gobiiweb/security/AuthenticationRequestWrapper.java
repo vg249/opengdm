@@ -35,43 +35,11 @@ public class AuthenticationRequestWrapper
 
         super(request);
 
-
         try {
             this.savedBytes = org.apache.commons.io.IOUtils.toByteArray(request.getInputStream());
         } catch (Exception ex) {
             throw new AuthenticationException("Error creating saved byte array for request: " + ex.getMessage());
         }
-
-        // read the original payload into the requestBody variable
-//        StringBuilder stringBuilder = new StringBuilder();
-//        BufferedReader bufferedReader = null;
-//        try {
-//            // read the payload into the StringBuilder
-//            InputStream inputStream = request.getInputStream();
-//            if (inputStream != null) {
-//                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-//                char[] charBuffer = new char[128];
-//                int bytesRead = -1;
-//                while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
-//                    stringBuilder.append(charBuffer, 0, bytesRead);
-//                }
-//            } else {
-//                // make an empty string since there is no payload
-//                stringBuilder.append("");
-//            }
-//        } catch (Exception ex) {
-//            LOGGER.error("Error reading the request payload", ex);
-//            throw new AuthenticationException("Error reading request payload; see log file for exception details");
-//        } finally {
-//            if (bufferedReader != null) {
-//                try {
-//                    bufferedReader.close();
-//                } catch (IOException iox) {
-//                    // ignore
-//                }
-//            }
-//        }
-//        requestBody = stringBuilder.toString();
     }
 
     /**
@@ -82,23 +50,19 @@ public class AuthenticationRequestWrapper
     public ServletInputStream getInputStream()
             throws IOException {
 
+        if (this.savedBytes != null) {
 
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(this.savedBytes);
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(this.savedBytes);
 
-        return new ServletInputStream(){
-            public int read() throws IOException {
-                return byteArrayInputStream.read();
-            }
-        };
+            return new ServletInputStream() {
+                public int read() throws IOException {
+                    return byteArrayInputStream.read();
+                }
+            };
 
-//        final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(requestBody.getBytes());
-//        ServletInputStream inputStream = new ServletInputStream() {
-//            public int read()
-//                    throws IOException {
-//                return byteArrayInputStream.read();
-//            }
-//        };
-//        return inputStream;
+        } else {
+            return super.getInputStream();
+        }
     }
 
     /***
@@ -107,7 +71,17 @@ public class AuthenticationRequestWrapper
      */
     public String getRequestBody() throws Exception {
 
-        if( this.requestBody == null ) {
+        if (this.requestBody == null) {
+
+            if (this.savedBytes == null) {
+
+                if(super.getInputStream() == null ) {
+                    throw new Exception("There is no input stream to create a body from");
+                }
+
+                this.savedBytes = org.apache.commons.io.IOUtils.toByteArray(super.getInputStream());
+            }
+
             StringBuilder stringBuilder = new StringBuilder();
             BufferedReader bufferedReader = null;
             try {
