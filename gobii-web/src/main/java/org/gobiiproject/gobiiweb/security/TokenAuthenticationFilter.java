@@ -27,19 +27,13 @@ import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
-import java.util.Scanner;
 import java.util.StringTokenizer;
 
 /**
@@ -147,7 +141,7 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
                         String method = authenticationRequestWrapper.getMethod();
                         if ("POST".equalsIgnoreCase(method) && url.toLowerCase().contains(GobiiServiceRequestId.URL_LOGIN.getResourcePath())) {
 
-                            String loginRequestBody = authenticationRequestWrapper.getRequestBody();
+                            String loginRequestBody = authenticationRequestWrapper.getRequestBodyAsString();
                             if (loginRequestBody != null) {
                                 BrapiRequestReader<BrapiRequestLogin> brapiRequestReader = new BrapiRequestReader<>(BrapiRequestLogin.class);
                                 BrapiRequestLogin brapiRequestLogin = brapiRequestReader.makeRequestObj(loginRequestBody.toString());
