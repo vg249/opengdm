@@ -8,7 +8,9 @@ import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiibrapi.core.common.BrapiStatus;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseDataList;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelope;
+import org.gobiiproject.gobiiclient.core.brapi.BrapiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.brapi.BrapiEnvelopeRestResource;
+import org.gobiiproject.gobiiclient.core.common.HttpCore;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
@@ -34,10 +36,19 @@ public class BrapiTestAlleleMatrixSearch {
     private static TestExecConfig testExecConfig = null;
 
     private static List<File> filesToCleanUp = new ArrayList<>();
+    private static HttpCore httpCore = null;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
+        // you have to set up the GobiiClient because some native GOBII calls
+        // are made to set up data
         Assert.assertTrue(GobiiClientContextAuth.authenticate());
+
+        // but for the BRAPI calls we use the raw httpCore
+        httpCore = BrapiClientContextAuth.authenticate();
+        Assert.assertNotNull("Could not create http core component",
+                httpCore);
+
         testExecConfig = new GobiiTestConfiguration().getConfigSettings().getTestExecConfig();
 
     }
@@ -73,7 +84,8 @@ public class BrapiTestAlleleMatrixSearch {
                 new BrapiEnvelopeRestResource<>(restUriStudiesSearch,
                         ObjectUtils.Null.class,
                         ObjectUtils.Null.class,
-                        BrapiResponseDataList.class);
+                        BrapiResponseDataList.class,
+                        httpCore);
 
         BrapiResponseEnvelope searchResult = brapiEnvelopeRestResource.posttQueryRequest();
         BrapiTestResponseStructure.validatateBrapiResponseStructure(searchResult.getBrapiMetaData());
@@ -120,9 +132,13 @@ public class BrapiTestAlleleMatrixSearch {
         RestUri restUriUpload = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .fileForJob(jobId, gobiiFileProcessDir, destinationFileName);
+
+        // even though we're in a BRAPI test, we have to use the httpcore from GOBii because it's the one that
+        // will use the GOBii specific authentication header; otherwise, authentication will fail
         HttpMethodResult httpMethodResult = GobiiClientContext.getInstance(null, false)
                 .getHttp()
                 .upload(restUriUpload, sourceFile);
+
         Assert.assertTrue("Expected "
                         + HttpStatus.SC_OK
                         + " got: "
@@ -157,9 +173,12 @@ public class BrapiTestAlleleMatrixSearch {
                 .withDestinationFqpn(tesetClientDestinationPath);
 
 
-        HttpMethodResult httpMethodResultFromDownload = GobiiClientContext.getInstance(null, false)
-                .getHttp()
-                .get(restUriForDownload);
+        // even though we're in a BRAPI test, we have to use the httpcore from GOBii because it's the one that
+        // will use the GOBii specific authentication header; otherwise, authentication will fail
+        HttpMethodResult httpMethodResultFromDownload =
+                GobiiClientContext.getInstance(null, false)
+                        .getHttp()
+                        .get(restUriForDownload);
 
         Assert.assertTrue("Expected "
                         + HttpStatus.SC_OK
@@ -230,7 +249,8 @@ public class BrapiTestAlleleMatrixSearch {
                 new BrapiEnvelopeRestResource<>(restUriStudiesSearch,
                         ObjectUtils.Null.class,
                         ObjectUtils.Null.class,
-                        BrapiResponseDataList.class);
+                        BrapiResponseDataList.class,
+                        httpCore);
 
         BrapiResponseEnvelope searchResult = brapiEnvelopeRestResource.getMetaDataResponse();
         BrapiTestResponseStructure.validatateBrapiResponseStructure(searchResult.getBrapiMetaData());

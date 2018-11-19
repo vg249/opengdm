@@ -10,11 +10,17 @@ import org.gobiiproject.gobidomain.services.AuthenticationService;
 
 
 import org.gobiiproject.gobidomain.services.ContactService;
+import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
+import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
+import org.gobiiproject.gobiibrapi.calls.login.BrapiRequestLogin;
+import org.gobiiproject.gobiibrapi.core.common.BrapiRequestReader;
+import org.gobiiproject.gobiibrapi.types.BRAPIHttpHeaderNames;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.automation.ControllerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
+import org.gobiiproject.gobiiapimodel.types.GobiiHttpHeaderNames;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.web.filter.GenericFilterBean;
@@ -27,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Enumeration;
 import java.util.StringTokenizer;
 
 /**
@@ -65,38 +72,107 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
         HttpServletResponse httpResponse = null;
 
         try {
-            httpRequest = (HttpServletRequest) request;
+            AuthenticationRequestWrapper authenticationRequestWrapper = new AuthenticationRequestWrapper((HttpServletRequest) request);
+
             httpResponse = (HttpServletResponse) response;
 
 
-            String gobiiCropType = CropRequestAnalyzer.getGobiiCropType(httpRequest);
+            String gobiiCropType = CropRequestAnalyzer.getGobiiCropType(authenticationRequestWrapper);
             if (gobiiCropType != null) {
 
-                String tokenHeaderVal = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_NAME_TOKEN);
+
+                String url = authenticationRequestWrapper.getRequestURL().toString();
+                boolean isBrapiRequest = url.toLowerCase().contains(GobiiControllerType.SERVICE_PATH_BRAPI);
+
+                // BRAPI is using the "Authorization" header for its token value, which we had been using
+                // to indicate whether or not to do basic authentication; so we need to rework how we
+                // work with this variable here
+                String rawAuthorizationHeader = authenticationRequestWrapper.getHeader(BRAPIHttpHeaderNames.HEADER_NAME_TOKEN);
+
+                String tokenHeaderVal = null;
+                if (!isBrapiRequest) {
+                    tokenHeaderVal = authenticationRequestWrapper.getHeader(GobiiHttpHeaderNames.HEADER_NAME_TOKEN);
+                } else {
+
+
+                    // useful code to probe header values when you need to
+                    Enumeration<String> headerNames = authenticationRequestWrapper.getHeaderNames();
+                    while(headerNames.hasMoreElements()) {
+                        String headerName = headerNames.nextElement();
+                        Enumeration<String> headers = authenticationRequestWrapper.getHeaders(headerName);
+                        while(headers.hasMoreElements()) {
+                            String headerValue = headers.nextElement();
+                            String temp = "foo";
+                        }
+                    }
+
+
+                    if (!LineUtils.isNullOrEmpty(rawAuthorizationHeader)) {
+
+                        if (rawAuthorizationHeader.contains("Bearer")) {
+                            tokenHeaderVal = rawAuthorizationHeader.replace("Bearer", "").trim();
+                        } else {
+                            // this way the logic for whether we're doing Basic authentication below works out
+                            rawAuthorizationHeader = null;
+                        }
+                    }
+                } // if this is a BRAPI request
+
                 boolean hasValidToken = authenticationService.checkToken(tokenHeaderVal);
 
                 if (hasValidToken) {
 
                     //header data
                     this.addHeadersToValidRequest(httpResponse, null, gobiiCropType, tokenHeaderVal);
-                    chain.doFilter(request, response);
+                    chain.doFilter(authenticationRequestWrapper, response);
                 } else {
 
+                    // there was not a valid token, so now we need to authenticate
                     TokenInfo tokenInfo = null;
-                    String userName = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_NAME_USERNAME);
-                    String password = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_NAME_PASSWORD);
-                    String authorization = httpRequest.getHeader("Authorization");
+                    String userName = null;
+                    String password = null;
+
+
+                    if (!isBrapiRequest) {
+                        userName = authenticationRequestWrapper.getHeader(GobiiHttpHeaderNames.HEADER_NAME_USERNAME);
+                        password = authenticationRequestWrapper.getHeader(GobiiHttpHeaderNames.HEADER_NAME_PASSWORD);
+                    } else { // we're dealing with BRAPI, so we get the username/password from the body
+
+                        String method = authenticationRequestWrapper.getMethod();
+                        if ("POST".equalsIgnoreCase(method) && url.toLowerCase().contains(GobiiServiceRequestId.URL_LOGIN.getResourcePath())) {
+
+                            String loginRequestBody = authenticationRequestWrapper.getRequestBodyAsString();
+                            if (loginRequestBody != null) {
+                                BrapiRequestReader<BrapiRequestLogin> brapiRequestReader = new BrapiRequestReader<>(BrapiRequestLogin.class);
+                                BrapiRequestLogin brapiRequestLogin = brapiRequestReader.makeRequestObj(loginRequestBody.toString());
+                                userName = brapiRequestLogin.getUserName();
+                                password = brapiRequestLogin.getPassword();
+                            }
+
+
+//                                ServletInputStream servletInputStreamNu = httpRequest.getInputStream();
+//                                Scanner nus = new Scanner(servletInputStreamNu, "UTF-8").useDelimiter("\\A");
+//                                boolean hasNu = nus.hasNext();
+//                                String foo = "foo";
+//                                // note that we don't need to do anything else specific for brapi
+                            // because the BRAPI controller method for login will take care
+                            // of building the response body from the token that we are putting
+                            // into the response headers
+
+                        }
+                    } // if-else this is not a BRAPI request
+
 
                     // we assume that the DataSource selector will have done the right thing with the response
                     // we are just echoing back to the client (the web client needs this)
 
-                    if (null == authorization) {
+                    if (null == rawAuthorizationHeader) {
 
                         // we're doing HTTP post authentication
                         tokenInfo = authenticationService.authenticate(userName, password);
 
                     } else {
-                        tokenInfo = checkBasicAuthorization(authorization, httpResponse);
+                        tokenInfo = checkBasicAuthorization(rawAuthorizationHeader, httpResponse);
 
                     } // if else we're going basic authentication
 
@@ -105,7 +181,7 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
                         if (this.contactService.getContactByUserName(userName).getContactId() > 0) {
 
                             this.addHeadersToValidRequest(httpResponse, userName, gobiiCropType, tokenInfo.getToken());
-                            chain.doFilter(request, response);
+                            chain.doFilter(authenticationRequestWrapper, response);
 
                         } else {
 
@@ -116,7 +192,7 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
                                     + "; a contact record must have username = "
                                     + userName;
 
-                            ControllerUtils.writeRawResponse(httpResponse,HttpServletResponse.SC_FORBIDDEN,message);
+                            ControllerUtils.writeRawResponse(httpResponse, HttpServletResponse.SC_FORBIDDEN, message);
 
                             LOGGER.error(message);
                         }
@@ -132,6 +208,7 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
                 LOGGER.error("Unable to proceed with authentication: no crop type could be derived from the request url");
 
             } // if-else crop type could not be found
+
 
         } catch (Exception e) {
 

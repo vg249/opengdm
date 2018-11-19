@@ -19,6 +19,7 @@ import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
+import org.gobiiproject.gobiiapimodel.types.GobiiHttpHeaderNames;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.GenericClientContext;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
