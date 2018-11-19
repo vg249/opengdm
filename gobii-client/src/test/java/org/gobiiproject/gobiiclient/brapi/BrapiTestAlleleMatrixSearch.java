@@ -132,8 +132,13 @@ public class BrapiTestAlleleMatrixSearch {
         RestUri restUriUpload = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .fileForJob(jobId, gobiiFileProcessDir, destinationFileName);
-        HttpMethodResult httpMethodResult = httpCore
+
+        // even though we're in a BRAPI test, we have to use the httpcore from GOBii because it's the one that
+        // will use the GOBii specific authentication header; otherwise, authentication will fail
+        HttpMethodResult httpMethodResult = GobiiClientContext.getInstance(null, false)
+                .getHttp()
                 .upload(restUriUpload, sourceFile);
+
         Assert.assertTrue("Expected "
                         + HttpStatus.SC_OK
                         + " got: "
@@ -168,8 +173,12 @@ public class BrapiTestAlleleMatrixSearch {
                 .withDestinationFqpn(tesetClientDestinationPath);
 
 
+        // even though we're in a BRAPI test, we have to use the httpcore from GOBii because it's the one that
+        // will use the GOBii specific authentication header; otherwise, authentication will fail
         HttpMethodResult httpMethodResultFromDownload =
-                httpCore.get(restUriForDownload);
+                GobiiClientContext.getInstance(null, false)
+                        .getHttp()
+                        .get(restUriForDownload);
 
         Assert.assertTrue("Expected "
                         + HttpStatus.SC_OK
