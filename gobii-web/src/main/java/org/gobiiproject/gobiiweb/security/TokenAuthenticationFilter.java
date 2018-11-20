@@ -82,41 +82,36 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
 
 
                 String url = authenticationRequestWrapper.getRequestURL().toString();
-                boolean isBrapiRequest = url.toLowerCase().contains(GobiiControllerType.SERVICE_PATH_BRAPI);
 
                 // BRAPI is using the "Authorization" header for its token value, which we had been using
                 // to indicate whether or not to do basic authentication; so we need to rework how we
                 // work with this variable here
-                String rawAuthorizationHeader = authenticationRequestWrapper.getHeader(BRAPIHttpHeaderNames.HEADER_NAME_TOKEN);
+                String rawBearerTokenHeader = authenticationRequestWrapper.getHeader(BRAPIHttpHeaderNames.HEADER_NAME_TOKEN);
 
                 String tokenHeaderVal = null;
-                if (!isBrapiRequest) {
+                if (LineUtils.isNullOrEmpty(rawBearerTokenHeader)) {
                     tokenHeaderVal = authenticationRequestWrapper.getHeader(GobiiHttpHeaderNames.HEADER_NAME_TOKEN);
                 } else {
 
-
                     // useful code to probe header values when you need to
-                    Enumeration<String> headerNames = authenticationRequestWrapper.getHeaderNames();
-                    while(headerNames.hasMoreElements()) {
-                        String headerName = headerNames.nextElement();
-                        Enumeration<String> headers = authenticationRequestWrapper.getHeaders(headerName);
-                        while(headers.hasMoreElements()) {
-                            String headerValue = headers.nextElement();
-                            String temp = "foo";
-                        }
-                    }
+//                    Enumeration<String> headerNames = authenticationRequestWrapper.getHeaderNames();
+//                    while(headerNames.hasMoreElements()) {
+//                        String headerName = headerNames.nextElement();
+//                        Enumeration<String> headers = authenticationRequestWrapper.getHeaders(headerName);
+//                        while(headers.hasMoreElements()) {
+//                            String headerValue = headers.nextElement();
+//                            String temp = "foo";
+//                        }
+//                    }
 
-
-                    if (!LineUtils.isNullOrEmpty(rawAuthorizationHeader)) {
-
-                        if (rawAuthorizationHeader.contains("Bearer")) {
-                            tokenHeaderVal = rawAuthorizationHeader.replace("Bearer", "").trim();
+                        if (rawBearerTokenHeader.contains("Bearer")) {
+                            tokenHeaderVal = rawBearerTokenHeader.replace("Bearer", "").trim();
                         } else {
                             // this way the logic for whether we're doing Basic authentication below works out
-                            rawAuthorizationHeader = null;
+                            rawBearerTokenHeader = null;
                         }
-                    }
-                } // if this is a BRAPI request
+
+                } // if-else we are dealing with a Bearer token or a gobii token
 
                 boolean hasValidToken = authenticationService.checkToken(tokenHeaderVal);
 
@@ -133,6 +128,7 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
                     String password = null;
 
 
+                    boolean isBrapiRequest = url.toLowerCase().contains(GobiiControllerType.SERVICE_PATH_BRAPI);
                     if (!isBrapiRequest) {
                         userName = authenticationRequestWrapper.getHeader(GobiiHttpHeaderNames.HEADER_NAME_USERNAME);
                         password = authenticationRequestWrapper.getHeader(GobiiHttpHeaderNames.HEADER_NAME_PASSWORD);
@@ -148,17 +144,6 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
                                 userName = brapiRequestLogin.getUserName();
                                 password = brapiRequestLogin.getPassword();
                             }
-
-
-//                                ServletInputStream servletInputStreamNu = httpRequest.getInputStream();
-//                                Scanner nus = new Scanner(servletInputStreamNu, "UTF-8").useDelimiter("\\A");
-//                                boolean hasNu = nus.hasNext();
-//                                String foo = "foo";
-//                                // note that we don't need to do anything else specific for brapi
-                            // because the BRAPI controller method for login will take care
-                            // of building the response body from the token that we are putting
-                            // into the response headers
-
                         }
                     } // if-else this is not a BRAPI request
 
@@ -166,13 +151,13 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
                     // we assume that the DataSource selector will have done the right thing with the response
                     // we are just echoing back to the client (the web client needs this)
 
-                    if (null == rawAuthorizationHeader) {
+                    if (null == rawBearerTokenHeader) {
 
                         // we're doing HTTP post authentication
                         tokenInfo = authenticationService.authenticate(userName, password);
 
                     } else {
-                        tokenInfo = checkBasicAuthorization(rawAuthorizationHeader, httpResponse);
+                        tokenInfo = checkBasicAuthorization(rawBearerTokenHeader, httpResponse);
 
                     } // if else we're going basic authentication
 
