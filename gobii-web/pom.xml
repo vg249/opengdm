@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.gobiiproject</groupId>
         <artifactId>parent</artifactId>
-        <version>18-spock-pdg_2018-11-19</version>
+        <version>18-spock-pdg_2018-11-20</version>
     </parent>
 
     <groupId>org.gobiiproject</groupId>
