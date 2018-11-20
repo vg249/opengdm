@@ -40,16 +40,21 @@ public class BrapiTestAlleleMatrixSearch {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        // you have to set up the GobiiClient because some native GOBII calls
-        // are made to set up data
+
+        //we need gobiiclient authentication in order to use
+        // GobiiClientContext for creating the URLs and so forth
+        // However, the actual client calls are made with the
+        // httpCore instance that we get from BrapiClientContextAuth
+        // so that we are testing what happens when the authentication
+        // token is set through the Bearer header
         Assert.assertTrue(GobiiClientContextAuth.authenticate());
 
         // but for the BRAPI calls we use the raw httpCore
+        testExecConfig = new GobiiTestConfiguration().getConfigSettings().getTestExecConfig();
         httpCore = BrapiClientContextAuth.authenticate();
         Assert.assertNotNull("Could not create http core component",
                 httpCore);
 
-        testExecConfig = new GobiiTestConfiguration().getConfigSettings().getTestExecConfig();
 
     }
 
@@ -135,8 +140,7 @@ public class BrapiTestAlleleMatrixSearch {
 
         // even though we're in a BRAPI test, we have to use the httpcore from GOBii because it's the one that
         // will use the GOBii specific authentication header; otherwise, authentication will fail
-        HttpMethodResult httpMethodResult = GobiiClientContext.getInstance(null, false)
-                .getHttp()
+        HttpMethodResult httpMethodResult = httpCore
                 .upload(restUriUpload, sourceFile);
 
         Assert.assertTrue("Expected "
@@ -176,8 +180,7 @@ public class BrapiTestAlleleMatrixSearch {
         // even though we're in a BRAPI test, we have to use the httpcore from GOBii because it's the one that
         // will use the GOBii specific authentication header; otherwise, authentication will fail
         HttpMethodResult httpMethodResultFromDownload =
-                GobiiClientContext.getInstance(null, false)
-                        .getHttp()
+                httpCore
                         .get(restUriForDownload);
 
         Assert.assertTrue("Expected "
