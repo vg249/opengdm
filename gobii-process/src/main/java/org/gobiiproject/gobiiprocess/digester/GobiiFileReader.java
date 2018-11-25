@@ -142,7 +142,6 @@ public class GobiiFileReader {
         }
 
 		//Error logs go to a file based on crop (for human readability) and
-		pm.addPath("Instruction File",new File(instructionFile).getAbsolutePath(),true,configuration);
         ErrorLogger.logInfo("Digester", "Beginning read of " + instructionFile);
         List<GobiiLoaderInstruction> list = parseInstructionFile(instructionFile);
 		if(list==null || list.isEmpty()){
@@ -489,18 +488,19 @@ public class GobiiFileReader {
 			ErrorLogger.logWarning("Digester","Aborted - Unsuccessfully Generated Files");
 			jobStatus.setError("Unsuccessfully Generated Files - No Data Upload");
 		}
-
+		HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
 		try{
 			GobiiFileType loadType=zero.getGobiiFile().getGobiiFileType();
 			String loadTypeName="";//No load type name if default
 			if(loadType!=GobiiFileType.GENERIC)loadTypeName=loadType.name();
 			pm.addPath("Error Log", logFile, configuration);
+			pm.addPath("Instruction File",new File(instructionFile).getAbsolutePath(),true,configuration);
 			pm.setBody(jobName,loadTypeName,SimpleTimer.stop("FileRead"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
 			mailInterface.send(pm);
 		}catch(Exception e){
 			ErrorLogger.logError("MailInterface","Error Sending Mail",e);
         }
-        HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
+
     }
 
 	private static GobiiExtractorInstruction createQCExtractInstruction(GobiiLoaderInstruction zero, String crop) {

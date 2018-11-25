@@ -255,10 +255,22 @@ public class ProcessMessage extends MailMessage {
         if(identifierLine!=null)body.append(identifierLine+line);
         if(entityLine!=null)body.append(entityLine+line);
         if(tableLine!=null)body.append(tableLine+line);
-        if(pathsLine!=null)body.append(pathsLine+line + "<font size=5 color=red><b>WARNING: Clicking links might force you to download bigger files.</b></font>" + line);
+        if(pathsLine!=null)body.append(pathsLine+line);
 
         if(longError!=null)body.append(longError);
         body.append("</html>");
+        this.setBody(lastBody + body.toString());
+        return this;
+    }
+
+    public ProcessMessage addProcessPath(String lastBody){
+        if(!paths.isEmpty()) {
+            pathsLine = HTMLTableEntity.getHTMLTable(paths, pathsLineWidth,"File Type","Path","Size");
+        }
+        String line="<br>";
+        StringBuilder body=new StringBuilder();
+        body.append("<html><head><style>table{font-family:arial,sans-serif;border-collapse:collapse;width:60%;}th{background-color:" + color + ";border:1px solid #dddddd;text-align:left;padding:8px;}td{border:1px solid #dddddd;text-align:left;padding:8px;}tr:nth-child(even){background-color:lightblue;}</style></head><body>");
+        if(pathsLine!=null)body.append(pathsLine +line + "<font size=5 color=red><b>WARNING: Clicking links might force you to download bigger files.</b></font>" + line);
         this.setBody(lastBody + body.toString());
         return this;
     }

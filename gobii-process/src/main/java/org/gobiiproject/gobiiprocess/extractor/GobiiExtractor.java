@@ -464,9 +464,7 @@ public class GobiiExtractor {
 						pm.addCriteria("Mapset List", String.join("<BR>", inst.getMapsetIds().toString())); //This should never happen
 					}
 
-					pm.addPath("Instruction File",new File(instructionFile).getAbsolutePath(),true,configuration);
 					pm.addPath("Output Directory", extractDir,true, configuration);
-					pm.addPath("Error Log", logFile,true, configuration);
 					pm.addPath("Summary File", new File(projectFile).getAbsolutePath(), configuration);
 					pm.addPath("Sample File", new File(sampleFile).getAbsolutePath(), configuration);
 					pm.addPath("Marker File", new File(markerFile).getAbsolutePath(), configuration);
@@ -573,6 +571,10 @@ public class GobiiExtractor {
 					mv(extract.getListFileName(),extractDir); //Move the list file to the extract directory
 
 					ErrorLogger.logDebug("Extractor", "DataSet " + datasetName + " Created");
+					HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
+					pm.addPath("Instruction File",new File(instructionFile.replace("inprogress","done")).getAbsolutePath(),true,configuration);
+					pm.addPath("Error Log", logFile,true, configuration);
+					pm.addProcessPath(pm.getBody());
 
 					/*Perform QC if the instruction is QC-based AND we are a successful extract*/
 					if (inst.isQcCheck()) {
@@ -590,7 +592,7 @@ public class GobiiExtractor {
 					}
 				}
 				if(!inst.isQcCheck())mailInterface.send(pm);
-				HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
+//				HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
 			}catch(Exception e){
 				//TODO - make better email here
 					ErrorLogger.logError("GobiiExtractor","Uncaught fatal error found in program.",e);
