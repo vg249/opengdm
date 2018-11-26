@@ -303,7 +303,7 @@ public class GobiiExtractor {
 							//Create a file out of the List if non-null, else use the <File>
 							List<String> markerList = extract.getMarkerList();
 							if (markerList != null && !markerList.isEmpty()) {
-								markerListFileLocation=createTempFileForMarkerList(extractDir, markerList);
+								markerListFileLocation= createTempListFile(extractDir, markerList);
 							} else if (extract.getListFileName() != null) {
 								markerListFileLocation=extract.getListFileName();
 							}
@@ -344,7 +344,7 @@ public class GobiiExtractor {
 							//Create a file out of the List if non-null, else use the <File>
                             List<String> sampleList = extract.getSampleList();
                             if (sampleList != null && !sampleList.isEmpty()) {
-                                sampleListFileLocation = createTempFileForMarkerList(extractDir, sampleList, "sampleList");
+                                sampleListFileLocation = createTempListFile(extractDir, sampleList, "sampleList");
                             } else if (extract.getListFileName() != null) {
                                 sampleListFileLocation = extract.getListFileName();
                             }
@@ -939,7 +939,7 @@ public class GobiiExtractor {
 	 * @param markerList List to go into file, newline delimited
 	 * @return location of new file.
 	 */
-	private static String createTempFileForMarkerList(String tmpDir,List<String> markerList,String tmpFilename){
+	private static String createTempListFile(String tmpDir, List<String> markerList, String tmpFilename){
 		String tempFileLocation=tmpDir+tmpFilename+".list";
 		try {
 			FileWriter f = new FileWriter(tempFileLocation);
@@ -954,8 +954,8 @@ public class GobiiExtractor {
 		return tempFileLocation;
 	}
 
-	private static String createTempFileForMarkerList(String tmpDir,List<String> markerList){
-		return createTempFileForMarkerList(tmpDir,markerList,"markerList");
+	private static String createTempListFile(String tmpDir, List<String> markerList){
+		return createTempListFile(tmpDir,markerList,"markerList");
 	}
 
 
