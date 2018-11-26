@@ -3,11 +3,13 @@ package org.gobiiproject.gobiiprocess.digester.utils;
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiimodel.types.NucIupacCodes;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+
 import static org.gobiiproject.gobiimodel.types.NucIupacCodes.*;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.checkFileExistence;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,6 +24,7 @@ public class IUPACmatrixToBi {
     private static int decodeErrors=0;
     private static final int MAX_ERRORS=20;
 
+
     public static boolean convertIUPACtoBi(String sep, String iFile, String oFile, String loaderScriptPath) throws FileNotFoundException {
 
         if (!checkFileExistence(iFile)) {
@@ -31,7 +34,7 @@ public class IUPACmatrixToBi {
 
         Map<String, NucIupacCodes> hash = new HashMap<>();
 
-        initNuclHash(hash, loaderScriptPath);
+        initNuclHash(hash);
         switch (sep) {
             case "tab":
                 fSep = "\t";
@@ -94,13 +97,34 @@ public class IUPACmatrixToBi {
         return true;
     }
 
+    public static boolean convertIUPACtoBi(int rowNo, List<String> inrow, List<String> outrow) {
+        Map<String, NucIupacCodes> hash = new HashMap<>();
+        initNuclHash(hash);
+        for (String element : inrow) {
+            if (element.length() > 1) {
+                char first = element.charAt(0);
+                char last = element.charAt(element.length() - 1);
+                if ((first == '+' || first == '-') && (last == '+' || last == '-')) {// takes care of "+/+" or "+/-" or "-/-" cases
+                    outrow.add(first + "" + last);
+                }
+            } else {
+                NucIupacCodes code = hash.get(element.toUpperCase());
+                if (code == null) {
+                    ErrorLogger.logError("IUPACMatrixToBi", "Unknown IUPAC code " + element.toUpperCase() + "in line " + rowNo);
+                    return false;
+                } else {
+                    outrow.add(code.getName());
+                }
+            }
+        }
+        return true;
+    }
+
     /***
      * Initializing IUPAC nucleotide Dictionary
      * @param hash passed in hashmap to be filled with valid values of IUPAC data (I/O)
-     * @param loaderScriptPath Base script directory. Used to calculate where the missing indicators .txt file is to use that for extra
-     *                         null values.
      */
-    private static void initNuclHash(Map<String,NucIupacCodes> hash, String loaderScriptPath) {
+    private static void initNuclHash(Map<String, NucIupacCodes> hash) {
         hash.put("A", AA);
         hash.put("T", TT);
         hash.put("G", GG);

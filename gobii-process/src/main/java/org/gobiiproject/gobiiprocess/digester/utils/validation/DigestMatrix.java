@@ -1,7 +1,9 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
+import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiimodel.types.DataSetType;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+
 import java.io.*;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -32,11 +34,9 @@ public class DigestMatrix {
                 lineNumber++;
                 if(iLine.equals("matrix")) continue;
                 String[] iNucl = iLine.split(fSep);
-                errorBase = validateDatasetList(iNucl,dataSetType);
-                if(errorBase!= null){
-                    ErrorLogger.logError("Validate Dataset Matrix", "Invalid data found in post-processed matrix line " + lineNumber+ " column "+iLine.indexOf(errorBase)+" - '" + errorBase + "'");
+                if (validateDatasetList(lineNumber, Arrays.asList(iNucl), dataSetType)) {
                     //Don't fail on first error, give a reasonable number of lines of warnings
-                    if(++errorCount>=maxInvalidWarnings){
+                    if (++errorCount>=maxInvalidWarnings) {
                         ErrorLogger.logError("Validate Dataset Matrix", "Reached max warnings for Invalid data");
                         return false;
                     }
@@ -59,30 +59,26 @@ public class DigestMatrix {
         return (errorCount==0);//true if no Invalid Data warnings
     }
 
-    /**
-     * Checks a dataset list based on data set type
-     * @param rowList List of rows
-     * @param dataSetType The dataset type expected for teh data
-     * @return the string value of the first invalid element in the list
-     */
-    private static String validateDatasetList(String[] rowList, String dataSetType){
-        List<String> elements = null;
-        DataSetType dataSetTypeE = DataSetType.valueOf(dataSetType);
-        switch (dataSetTypeE) {
-            case NUCLEOTIDE_2_LETTER: case  IUPAC:
-                elements = initNucleotide2letterList();
+   
+    public static boolean validateDatasetList(int lineNumber, List<String> rowList, String type) {
+        List<String> allowedCharacters;
+        DataSetType dataSetType = DataSetType.valueOf(type);
+        switch (dataSetType) {
+            case NUCLEOTIDE_2_LETTER:
+            case IUPAC:
+                allowedCharacters = initNucleotide2letterList();
                 break;
             case CO_DOMINANT_NON_NUCLEOTIDE:
-                elements = initCoDominantList();
+                allowedCharacters = initCoDominantList();
                 break;
             case DOMINANT_NON_NUCLEOTIDE:
-                elements = initDominantList();
+                allowedCharacters = initDominantList();
                 break;
             case SSR_ALLELE_SIZE:
-                /***
+                /*
                  * since ssr data has only digits (upto 8)
                  */
-                for (String base : rowList){
+                for (String element : rowList) {
                     /*
                     TODO - Since no filtering on {1-4}d/{1-4}d, don't support that format now
                     if (base.contains("/")){
@@ -95,50 +91,47 @@ public class DigestMatrix {
                     }
                     else{
                         */
-                    boolean isDigit=base.matches("\\d+");
-                    boolean isEightCharatersLong=(base.length() == 8);
-                    if(!(isDigit && isEightCharatersLong))return base; // Only accept strings of exactly eight characters
+                    // Only accept numerical strings of exactly eight characters
+                    if (!(StringUtils.isNumeric(element) && element.length() == 8)) {
+                        ErrorLogger.logError("Validate Dataset Matrix", "Invalid data found in post-processed matrix line: " + lineNumber + " Data:" + element);
+                        return false;
+                    }
                 }
-                return null;
+                return true;
             case VCF:
-                return null;
+                return false;
             default:
-                ErrorLogger.logError("Validate Dataset Matrix","Invalid dataset type " + dataSetType);
-                break;
+                ErrorLogger.logError("Validate Dataset Matrix", "Invalid dataset type " + dataSetType);
+                return false;
         }
-        for (String base: rowList) {
-            if (!elements.contains(base) && !base.equals("") && !elements.contains(reverse(base))) {
-                return base;
+        for (String element : rowList)
+            if (element == null || element.equals("") || !allowedCharacters.contains(element)) {
+                ErrorLogger.logError("Validate Dataset Matrix", "Invalid data found in post-processed matrix line: " + lineNumber + " Data:" + element);
+                return false;
             }
-        }
-        return null;
+        return true;
     }
 
     /***
      * Assign data in respective data types.
-     * @return
      */
-    private static List<String> initNucleotide2letterList(){
-        List<String> elements = new LinkedList<String>(Arrays.asList("AA", "TT", "CC", "GG", "AT", "AG", "AC", "TG", "TC", "GC", "NN", "++", "--", "+-","AN","CN","GN","TN"));
-        for(char c:"ACGTN".toCharArray()){
-            elements.add(c+"+");
-            elements.add(c+"-");
+    private static List<String> initNucleotide2letterList() {
+        List<String> elements = new LinkedList<>(Arrays.asList("AA", "TT", "CC", "GG", "AT", "AG", "AC", "TG", "TC", "GC", "NN", "++", "--", "+-", "-+", "AN", "CN", "GN", "TN",
+                "TA", "GA", "CA", "GT", "CT", "CG", "NA", "NC", "NG", "NT"));
+        for (char c : "ACGTN".toCharArray()) {
+            elements.add(c + "+");
+            elements.add(c + "-");
+            elements.add("+" + c);
+            elements.add("-" + c);
         }
         return elements;
     }
 
-    private static List<String> initIupacList(){
-        List<String> elements = Arrays.asList("A", "T", "G", "C", "N");
-        return elements;
+    private static List<String> initDominantList() {
+        return Arrays.asList("0", "1", "N");
     }
 
-    private static List<String> initDominantList(){
-        List<String> elements = Arrays.asList("0", "1", "N");
-        return elements;
-    }
-
-    private static List<String> initCoDominantList(){
-        List<String> elements = Arrays.asList("0","1","2", "N");
-        return elements;
+    private static List<String> initCoDominantList() {
+        return Arrays.asList("0", "1", "2", "N");
     }
 }
