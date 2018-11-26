@@ -29,6 +29,12 @@ public class BrapiResponseMapCalls {
 
         returnVal.add(new BrapiResponseCallsItem(new RestUri(this.contextRoot,
                 GobiiControllerType.BRAPI.getControllerPath(),
+                GobiiServiceRequestId.URL_LOGIN .getResourcePath()),
+                Arrays.asList(RestMethodTypes.POST),
+                Arrays.asList(BrapiDataTypes.JSON)));
+
+        returnVal.add(new BrapiResponseCallsItem(new RestUri(this.contextRoot,
+                GobiiControllerType.BRAPI.getControllerPath(),
                 GobiiServiceRequestId.URL_CALLS.getResourcePath()),
                 Arrays.asList(RestMethodTypes.GET),
                 Arrays.asList(BrapiDataTypes.JSON)));
@@ -36,12 +42,6 @@ public class BrapiResponseMapCalls {
         returnVal.add(new BrapiResponseCallsItem(new RestUri(this.contextRoot,
                 GobiiControllerType.BRAPI.getControllerPath(),
                 GobiiServiceRequestId.URL_STUDIES_SEARCH.getResourcePath()),
-                Arrays.asList(RestMethodTypes.POST),
-                Arrays.asList(BrapiDataTypes.JSON)));
-
-        returnVal.add(new BrapiResponseCallsItem(new RestUri(this.contextRoot,
-                GobiiControllerType.BRAPI.getControllerPath(),
-                GobiiServiceRequestId.URL_GERMPLASM.getResourcePath()).addUriParam("id"),
                 Arrays.asList(RestMethodTypes.POST),
                 Arrays.asList(BrapiDataTypes.JSON)));
 

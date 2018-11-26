@@ -18,15 +18,13 @@ import org.gobiiproject.gobiiclient.generic.model.GenericTestValues;
 import org.gobiiproject.gobiiclient.generic.model.Person;
 import org.gobiiproject.gobiimodel.config.ServerBase;
 import org.gobiiproject.gobiimodel.config.TestExecConfig;
-import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
-import org.gobiiproject.gobiimodel.utils.LineUtils;
+import org.gobiiproject.gobiiapimodel.types.GobiiHttpHeaderNames;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ClassPathResource;
 
 import javax.ws.rs.core.MediaType;
 import java.io.File;
