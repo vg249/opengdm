@@ -934,8 +934,9 @@ public class GobiiExtractor {
 	/**
 	 * Turns a list into a newline delimited file.
      *
-	 * @param tmpDir File path - will append 'markerList.tmp' and return
+	 * @param tmpDir File path - will append the file name and return
 	 * @param markerList List to go into file, newline delimited
+	 * @param tmpFilename filename to use, will append ".list" after name as filetype, and use with directory for location of output.
 	 * @return location of new file.
 	 */
 	private static String createTempListFile(String tmpDir, List<String> markerList, String tmpFilename){
