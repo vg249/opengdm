@@ -7,6 +7,8 @@ import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiRequestStudiesSearch;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearch;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMasterDetail;
+import org.gobiiproject.gobiiclient.core.brapi.BrapiClientContextAuth;
+import org.gobiiproject.gobiiclient.core.common.HttpCore;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.brapi.BrapiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
@@ -26,11 +28,19 @@ import java.util.stream.Collectors;
  */
 public class BrapiTestSearchStudies {
 
+    private static HttpCore httpCore = null;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
+
+        // you have to set up the GobiiClient because some native GOBII calls
+        // are made to set up data
         Assert.assertTrue(GobiiClientContextAuth.authenticate());
 
+        // but for the BRAPI calls we use the raw httpCore
+        httpCore = BrapiClientContextAuth.authenticate();
+        Assert.assertNotNull("Could not create http core component",
+        httpCore);
     }
 
     @AfterClass
@@ -55,7 +65,8 @@ public class BrapiTestSearchStudies {
                 new BrapiEnvelopeRestResource<BrapiRequestStudiesSearch, ObjectUtils.Null, BrapiResponseStudiesSearch>(restUriStudiesSearch,
                         BrapiRequestStudiesSearch.class,
                         ObjectUtils.Null.class,
-                        BrapiResponseStudiesSearch.class);
+                        BrapiResponseStudiesSearch.class,
+                        this.httpCore);
 
         BrapiResponseEnvelopeMasterDetail<BrapiResponseStudiesSearch> studiesResult = brapiEnvelopeRestResource.postToListResource(brapiRequestStudiesSearch);
 

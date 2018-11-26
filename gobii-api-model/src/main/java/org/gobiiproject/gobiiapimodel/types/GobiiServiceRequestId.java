@@ -53,7 +53,8 @@ public enum GobiiServiceRequestId {
     URL_JOB("jobs"),
     URL_ENTITIES("entities"),
     URL_COUNT("count"),
-    URL_LAST_MODIFIED("lastmodified");
+    URL_LAST_MODIFIED("lastmodified"),
+    URL_LOGIN("token");
 
 
     private String requestPath;
