@@ -250,9 +250,9 @@ public class GobiiExtractor {
 					}
 
 					//Common terms
-					String platformTerm, mapIdTerm, markerListLocation, sampleListLocation, verboseTerm;
+					String platformTerm, mapIdTerm, markerListTerm, sampleListTerm, verboseTerm;
 					String samplePosFile;//Location of sample position indices (see markerList for an example
-					platformTerm = mapIdTerm = markerListLocation = sampleListLocation = verboseTerm = "";
+					platformTerm = mapIdTerm = markerListTerm = sampleListTerm = verboseTerm = "";
 					List<Integer> platforms = extract
 							.getPlatforms()
 							.stream()
@@ -307,12 +307,12 @@ public class GobiiExtractor {
 								markerListFileLocation=extract.getListFileName();
 							}
 							if(markerListFileLocation!=null){
-								markerListLocation = " -X " + markerListFileLocation;
+								markerListTerm = " -X " + markerListFileLocation;
 							}
 							//else if file is null and list is empty or null - > no term
 
 							if (markerListOverrideLocation != null)
-								markerListLocation = " -x " + markerListOverrideLocation;
+								markerListTerm = " -x " + markerListOverrideLocation;
 
 							String markerGroupTerm="";
 							if(extract.getMarkerGroups()!=null && !extract.getMarkerGroups().isEmpty()){
@@ -329,7 +329,7 @@ public class GobiiExtractor {
 									" -s " + sampleFile +
 									" -p " + projectFile +
 									markerGroupTerm +
-									markerListLocation +
+									markerListTerm +
 									" --datasetType " + extract.getGobiiDatasetType().getId() +
 									mapIdTerm +
 									platformTerm +
@@ -348,7 +348,7 @@ public class GobiiExtractor {
                                 sampleListFileLocation = extract.getListFileName();
                             }
                             if (sampleListFileLocation != null) {
-                                sampleListLocation = " -Y " + sampleListFileLocation;
+                                sampleListTerm = " -Y " + sampleListFileLocation;
                             }
 
 							GobiiSampleListType type = extract.getGobiiSampleListType();
@@ -372,7 +372,7 @@ public class GobiiExtractor {
 									" -b " + mapsetFile +
 									" -s " + sampleFile +
 									" -p " + projectFile +
-									sampleListLocation +
+									sampleListTerm +
 									sampleListTypeTerm +
 									PITerm +
 									projectTerm +
