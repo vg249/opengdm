@@ -18,10 +18,6 @@ import org.gobiiproject.gobiimodel.types.GobiiColumnType;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.digester.LoaderGlobalConfigs;
-import org.gobiiproject.gobiiprocess.digester.utils.IUPACmatrixToBi;
-import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestMatrix;
-
-import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 
 /**
  * CSV-Specific File Loader class, used by
@@ -44,20 +40,24 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
 
     private static final String NEWLINE = "\n";
     private static final String TAB = "\t";
+    private final String loaderScriptPath;
     private GobiiProcessedInstruction processedInstruction;
     private int maxLines = 0;
-    private static final int MAX_ERRORS = 20;
+
+    CSVFileReaderV2(String loaderScriptPath) {
+        this.loaderScriptPath = loaderScriptPath;
+    }
 
     /**
      * Parses a given instruction file, and executes the loader on every instruction found within, by passing the objects to {@link CSVFileReaderV2#processCSV(GobiiLoaderInstruction)}.
      * This method can be called directly to simulate an instruction file being parsed by the reader.
      */
-    public static void parseInstructionFile(List<GobiiLoaderInstruction> instructions) throws IOException {
+    public static void parseInstructionFile(List<GobiiLoaderInstruction> instructions, String loaderScriptPath) {
         CSVFileReaderInterface reader;
         if (LoaderGlobalConfigs.getSingleThreadFileRead()) {
             for (GobiiLoaderInstruction i : instructions) {
                 try {
-                    reader = new CSVFileReaderV2();
+                    reader = new CSVFileReaderV2(loaderScriptPath);
                     reader.processCSV(i);
                 } catch (InterruptedException e) {
                     ErrorLogger.logError("CSVFileReader", "Interrupted reading instruction", e);
@@ -71,21 +71,22 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
         List<Thread> threads = new LinkedList<>();
         if (instructions == null) {
             ErrorLogger.logError("CSVFileReader", "No instructions passed in");
-        }
-        //Create threads
-        for (GobiiLoaderInstruction loaderInstruction : instructions) {
-            reader = new CSVFileReaderV2();
-            Thread processingThread = new Thread(new ReaderThread(reader, loaderInstruction));
-            threads.add(processingThread);
-            processingThread.start();
-        }
-        //Wait for all threads to complete, lets just wait for all of them in order (obviously, many will be done
-        // before hand, in which case 'join' does nothing. Brilliant.
-        for (Thread t : threads) {
-            try {
-                t.join();
-            } catch (InterruptedException e) {
-                ErrorLogger.logError("CSVFileReader", "Interrupt", e);
+        } else {
+            //Create threads
+            for (GobiiLoaderInstruction loaderInstruction : instructions) {
+                reader = new CSVFileReaderV2(loaderScriptPath);
+                Thread processingThread = new Thread(new ReaderThread(reader, loaderInstruction));
+                threads.add(processingThread);
+                processingThread.start();
+            }
+            //Wait for all threads to complete, lets just wait for all of them in order (obviously, many will be done
+            // before hand, in which case 'join' does nothing. Brilliant.
+            for (Thread t : threads) {
+                try {
+                    t.join();
+                } catch (InterruptedException e) {
+                    ErrorLogger.logError("CSVFileReader", "Interrupt", e);
+                }
             }
         }
     }
@@ -95,18 +96,18 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
      * digest file based on the instruction.
      *
      * @param loaderInstruction Singular instruction, specifying input and output directories
-     * @throws InterruptedException If interrupted (Signals, etc)
      */
-    public void processCSV(GobiiLoaderInstruction loaderInstruction) throws InterruptedException {
+    public void processCSV(GobiiLoaderInstruction loaderInstruction) {
 
         processedInstruction = new GobiiProcessedInstruction(loaderInstruction);
         processedInstruction.parseInstruction();
 
         String outputFileName = HelperFunctions.getDestinationFile(loaderInstruction);
-
+        //outputFileName = "C:/Users/ICRISAT/Desktop/1/crops/chickpea/digest.matrix";
         try (BufferedWriter tempFileBufferedWriter = new BufferedWriter(new FileWriter(outputFileName))) {
 
             File file = new File(loaderInstruction.getGobiiFile().getSource());
+            //  file = new File("C:\\Users\\ICRISAT\\Desktop\\1\\crops\\chickpea\\data_20180731_122913_rdas");
             if (file.isDirectory()) {
                 listFilesFromFolder(file, tempFileBufferedWriter, loaderInstruction);
             } else {
@@ -196,11 +197,10 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
      * @param file                   Input file to read from.
      * @param tempFileBufferedWriter Output file writer.
      * @param loaderInstruction      Loader instruction.
-     * @throws IOException Exception in I/O operations
      */
 
     private void processCSV_COL(File file, BufferedWriter tempFileBufferedWriter,
-                                GobiiLoaderInstruction loaderInstruction) throws IOException {
+                                GobiiLoaderInstruction loaderInstruction) {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
             int rowNo = 0;
             String fileRow;
@@ -257,76 +257,33 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
                 break;
             }
         }
-        if (processedInstruction.isFirstLine()) {
-            writeFirstLine(tempFileBufferedWriter);
-            processedInstruction.setFirstLine(false);
-        }
-        int iupacConversionError = 0, validationError = 0, sizeError = 0;
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
-            int rowNo = 0, noOfElements = 0;
-            String fileRow;
-            String datasetType = loaderInstruction.getDatasetType().getName();
-            List<String> inputRowList, outputRowList;
-            String delimiter = loaderInstruction.getGobiiFile().getDelimiter();
-            while ((fileRow = bufferedReader.readLine()) != null) {
-                if (rowNo >= csv_BothColumn.getrCoord()) {
-                    inputRowList = new ArrayList<>(Arrays.asList(fileRow.split(delimiter)));
-                    outputRowList = new ArrayList<>();
-
-                    if (noOfElements == 0) {
-                        noOfElements = inputRowList.size();
-                    } else {
-                        if (noOfElements != inputRowList.size()) {
-                            sizeError++;
-                            if (sizeError > MAX_ERRORS) {
-                                ErrorLogger.logError("CSVReader", "Exception in processing matrix file. Irregular size matrix.");
-                                return;
-                            }
-                        }
-                    }
-
-                    getRow(inputRowList, csv_BothColumn);
-
-                    /*
-                     *   IUPAC conversion
-                     *   Tried to convert IUPAC to BI.
-                     *   If it fails for a row that semi processed row is added.
-                     *   Reason being, as it is already a failure we are processing further to identify all errors once.
-                     *
-                     * */
-                    if (datasetType.equalsIgnoreCase("IUPAC")) {
-                        if (!IUPACmatrixToBi.convertIUPACtoBi(rowNo, inputRowList, outputRowList)) {
-                            iupacConversionError++;
-                            if (iupacConversionError > MAX_ERRORS) {
-                                ErrorLogger.logError("CSVReader", "Exception in processing matrix file. Failed in IUPAC conversion.");
-                                return;
-                            }
-                        }
-                    }
-
-                    if (datasetType.equalsIgnoreCase("IUPAC")) {
-                        //TODO: Convery python to Java
-                        //TODO: Mobile transform strip headers
-                    }
-                    /*
-                     * VALIDATION.
-                     * Validates each element is a valid value or not based on the datasetType.
-                     * */
-                    if (datasetType.equalsIgnoreCase("DOMINANT_NON_NUCLEOTIDE") || datasetType.equalsIgnoreCase("IUPAC") ||
-                            datasetType.equalsIgnoreCase("CO_DOMINANT_NON_NUCLEOTIDE") || datasetType.equalsIgnoreCase("SSR_ALLELE_SIZE")) {
-                        if (DigestMatrix.validateDatasetList(rowNo, outputRowList, datasetType)) {
+        // For matrix file there is no need of writing first line. Setting it to false for consistency
+        processedInstruction.setFirstLine(false);
+        String missingFile = loaderScriptPath + "etc/missingIndicators.txt";
+        MatrixValidation matrixValidation = new MatrixValidation(loaderInstruction.getDatasetType().getName(), missingFile);
+        if (!matrixValidation.setUp()) {
+            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
+                int rowNo = 0;
+                String fileRow;
+                List<String> inputRowList, outputRowList;
+                String delimiter = loaderInstruction.getGobiiFile().getDelimiter();
+                while ((fileRow = bufferedReader.readLine()) != null) {
+                    if (rowNo >= csv_BothColumn.getrCoord()) {
+                        inputRowList = new ArrayList<>(Arrays.asList(fileRow.split(delimiter)));
+                        outputRowList = new ArrayList<>();
+                        getRow(inputRowList, csv_BothColumn);
+                        if (matrixValidation.validate(rowNo, inputRowList, outputRowList))
                             writeOutputLine(tempFileBufferedWriter, outputRowList);
-                        } else {
-                            validationError++;
-                            if (validationError > MAX_ERRORS) {
-                                ErrorLogger.logError("CSVReader", "Exception in processing matrix file. Failed in file validation.");
-                                return;
-                            }
+                        else {
+                            if (matrixValidation.stopProcessing()) return false;
                         }
                     }
+                    rowNo++;
                 }
-                rowNo++;
             }
+        }
+        if (matrixValidation.getErrorCount() != 0) {
+            remove digest.matrix File;
         }
     }
 
@@ -495,10 +452,10 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
     }
 
     /**
-     * Removing columns till cCoard and applying filter.
+     * Removing columns till cCoord and applying filter.
      *
-     * @param rowList
-     * @param column
+     * @param rowList row from the file
+     * @param column  gobii file column
      */
     private void getRow(List<String> rowList, GobiiFileColumn column) {
         int colNo = 0;
@@ -533,7 +490,7 @@ class ReaderThread implements Runnable {
     private CSVFileReaderInterface reader;
     private GobiiLoaderInstruction instruction;
 
-    protected ReaderThread(CSVFileReaderInterface reader, GobiiLoaderInstruction instruction) {
+    ReaderThread(CSVFileReaderInterface reader, GobiiLoaderInstruction instruction) {
         this.reader = reader;
         this.instruction = instruction;
     }
