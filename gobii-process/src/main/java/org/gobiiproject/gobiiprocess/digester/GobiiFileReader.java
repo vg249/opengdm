@@ -15,8 +15,6 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.config.*;
-import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
-import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.*;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.ExtractorInstructionFilesDTO;
@@ -331,10 +329,11 @@ public class GobiiFileReader {
 		boolean sendQc= false;
 
 		boolean isFirstInstructionVCF=zero.getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF);
-		PropNameId datasetType = zero.getDatasetType();
-		String datasetTypeName = datasetType!=null?datasetType.getName():null;
-		if(isFirstInstructionVCF && datasetTypeName != null && !datasetTypeName.equals("NUCLEOTIDE_2_LETTER")){
-			ErrorLogger.logError("GobiiFileReader","Invalid Dataset Type selected for VCF file. Expected 2 Letter Nucleotide. Received " +datasetTypeName);
+		List<GobiiFileColumn> cols=zero.getGobiiFileColumns();
+		GobiiFileColumn firstCol=cols.size()>0?cols.get(0):null;
+		String firstInstructionDatasetType=getDatasetType(zero,firstCol);
+		if(isFirstInstructionVCF && !firstInstructionDatasetType.equals("NUCLEOTIDE_2_LETTER")){
+			ErrorLogger.logError("GobiiFileReader","Invalid Dataset Type selected for VCF file. Expected 2 Letter Nucleotide. Received " +firstInstructionDatasetType);
 		}
 
 		for (GobiiLoaderInstruction inst:list) {
