@@ -327,7 +327,15 @@ public class GobiiFileReader {
 		querier.close();
 
 		boolean sendQc= false;
-		boolean typeWarning=false;
+
+		boolean isFirstInstructionVCF=zero.getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF);
+		List<GobiiFileColumn> cols=zero.getGobiiFileColumns();
+		GobiiFileColumn firstCol=cols.size()>0?cols.get(0):null;
+		String firstInstructionDatasetType=getDatasetType(zero,firstCol);
+		if(isFirstInstructionVCF && !firstInstructionDatasetType.equals("NUCLEOTIDE_2_LETTER")){
+			ErrorLogger.logError("GobiiFileReader","Invalid Dataset Type selected for VCF file. Expected 2 Letter Nucleotide. Received " +firstInstructionDatasetType);
+		}
+
 		for (GobiiLoaderInstruction inst:list) {
 			qcCheck = inst.isQcCheck();
 
@@ -342,10 +350,6 @@ public class GobiiFileReader {
 					break;
 				}
 
-			}
-			if(isVCF && !dst.equals("NUCLEOTIDE_2_LETTER") && !typeWarning){
-				ErrorLogger.logError("GobiiFileReader","Invalid Dataset Type selected for VCF file. Expected 2 Letter Nucleotide. Received " +dst);
-				typeWarning=true;
 			}
 			//Switch used for VCF transforms is currently a change in dataset type. See 'why is VCF a data type' GSD
 			if (isVCF) {
@@ -865,7 +869,7 @@ public class GobiiFileReader {
      * @return String representation of the dataset type of the column
      */
     private static String getDatasetType(GobiiLoaderInstruction i, GobiiFileColumn gfc) {
-        DataSetType dst = gfc.getDataSetType(); //Old way
+        DataSetType dst = (gfc !=null?gfc.getDataSetType():null); //Old way
         if (dst != null) {
             return dst.toString();
         } else {
