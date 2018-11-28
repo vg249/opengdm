@@ -5,6 +5,7 @@ import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiTestConfiguration;
 import org.gobiiproject.gobiiclient.gobii.Helpers.ADLEncapsulator;
+import org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapDataSetImpl;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
@@ -25,6 +26,8 @@ import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.*;
@@ -34,37 +37,45 @@ import java.util.*;
  */
 public class DtoCrudRequestNameIdListTest {
 
+    private static Logger LOGGER = LoggerFactory.getLogger(DtoCrudRequestNameIdListTest.class);
+
+
     @BeforeClass
     public static void setUpClass() throws Exception {
         Assert.assertTrue(GobiiClientContextAuth.authenticate());
 
-        // do an ADL load
-        GobiiTestConfiguration gobiiTestConfiguration = new GobiiTestConfiguration();
-        TestExecConfig testExecConfig = gobiiTestConfiguration.getConfigSettings().getTestExecConfig();
-        ADLEncapsulator adlEncapsulator = new ADLEncapsulator();
-        String configUtilCommandlineStem = testExecConfig.getConfigUtilCommandlineStem();
+        if( TestUtils.isBackEndSupported()) {
+            // do an ADL load
+            GobiiTestConfiguration gobiiTestConfiguration = new GobiiTestConfiguration();
+            TestExecConfig testExecConfig = gobiiTestConfiguration.getConfigSettings().getTestExecConfig();
+            ADLEncapsulator adlEncapsulator = new ADLEncapsulator();
+            String configUtilCommandlineStem = testExecConfig.getConfigUtilCommandlineStem();
 
-        String[] split = configUtilCommandlineStem.split(" ");
-        adlEncapsulator.setAdlJarPath(split[2] + "/gobiiadl.jar");
-        adlEncapsulator.setInputHost(testExecConfig.getInitialConfigUrl());
-        adlEncapsulator.setInputUser(testExecConfig.getLdapUserForUnitTest());
-        adlEncapsulator.setInputPassword(testExecConfig.getLdapPasswordForUnitTest());
-        adlEncapsulator.setInputTimeout(testExecConfig.getAsynchOpTimeoutMinutes());
+            String[] split = configUtilCommandlineStem.split(" ");
+            adlEncapsulator.setAdlJarPath(split[2] + "/gobiiadl.jar");
+            adlEncapsulator.setInputHost(testExecConfig.getInitialConfigUrl());
+            adlEncapsulator.setInputUser(testExecConfig.getLdapUserForUnitTest());
+            adlEncapsulator.setInputPassword(testExecConfig.getLdapPasswordForUnitTest());
+            adlEncapsulator.setInputTimeout(testExecConfig.getAsynchOpTimeoutMinutes());
 
-        // copy to temp folder
-        String tempDirName = "adlTest-" + UUID.randomUUID().toString();
-        String tempDirString = testExecConfig.getTestFileDownloadDirectory() + "/" + tempDirName;
+            // copy to temp folder
+            String tempDirName = "adlTest-" + UUID.randomUUID().toString();
+            String tempDirString = testExecConfig.getTestFileDownloadDirectory() + "/" + tempDirName;
 
-        File tempDir = new File(tempDirString);
+            File tempDir = new File(tempDirString);
 
-        tempDir.mkdir();
+            tempDir.mkdir();
 
-        File fileFromRepo = new File("src/test/resources/nameIdListLoadTest");
+            File fileFromRepo = new File("src/test/resources/nameIdListLoadTest");
 
-        adlEncapsulator.copyFilesToLocalDir(fileFromRepo, tempDir);
+            adlEncapsulator.copyFilesToLocalDir(fileFromRepo, tempDir);
 
-        adlEncapsulator.setInputDirectory(tempDir.getAbsolutePath());
-        Assert.assertTrue(adlEncapsulator.getErrorMsg(), adlEncapsulator.executeBatchGobiiADL());
+            adlEncapsulator.setInputDirectory(tempDir.getAbsolutePath());
+            Assert.assertTrue(adlEncapsulator.getErrorMsg(), adlEncapsulator.executeBatchGobiiADL());
+        } else {
+            LOGGER.error("Backend support is not provided in this context: system-critical unit tests will not be run");
+
+        }
 
     }
 
@@ -563,95 +574,97 @@ public class DtoCrudRequestNameIdListTest {
     public void testGetDnaSampleNamesByList() throws Exception {
 
         // get project ID for loaded dna samples by ADL
+        if( TestUtils.isBackEndSupported()) {
 
-        String projectName = "sim_dominant_proj_01";
-        Integer projectId = null;
+            String projectName = "sim_dominant_proj_01";
+            Integer projectId = null;
 
-        RestUri restUriProject = GobiiClientContext.getInstance(null, false).getUriFactory().resourceColl(RestResourceId.GOBII_PROJECTS);
-        GobiiEnvelopeRestResource<ProjectDTO,ProjectDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriProject);
-        PayloadEnvelope<ProjectDTO> resultEnvelope = gobiiEnvelopeRestResource
-                .get(ProjectDTO.class);
+            RestUri restUriProject = GobiiClientContext.getInstance(null, false).getUriFactory().resourceColl(RestResourceId.GOBII_PROJECTS);
+            GobiiEnvelopeRestResource<ProjectDTO, ProjectDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriProject);
+            PayloadEnvelope<ProjectDTO> resultEnvelope = gobiiEnvelopeRestResource
+                    .get(ProjectDTO.class);
 
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
-        List<ProjectDTO> projectDTOList = resultEnvelope.getPayload().getData();
-        Assert.assertNotNull(projectDTOList);
-        Assert.assertTrue(projectDTOList.size() > 0);
-        Assert.assertNotNull(projectDTOList.get(0).getProjectName());
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+            List<ProjectDTO> projectDTOList = resultEnvelope.getPayload().getData();
+            Assert.assertNotNull(projectDTOList);
+            Assert.assertTrue(projectDTOList.size() > 0);
+            Assert.assertNotNull(projectDTOList.get(0).getProjectName());
 
-        for (ProjectDTO projectDTO : projectDTOList) {
+            for (ProjectDTO projectDTO : projectDTOList) {
 
-            if (projectDTO.getProjectName().equals(projectName)) {
+                if (projectDTO.getProjectName().equals(projectName)) {
 
-                projectId = projectDTO.getProjectId();
-                break;
+                    projectId = projectDTO.getProjectId();
+                    break;
+                }
+
             }
 
+            Assert.assertNotNull("Project Id not found for project name: " + projectName, projectId);
+
+            GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.DNASAMPLE;
+
+            String[] dnasampleNamesExisting = new String[]{"dnasamplename_Deb_FQ_dom_1", "dnasamplename_Deb_FQ_dom_2", "dnasamplename_Deb_FQ_dom_3", "dnasamplename_Deb_FQ_dom_4"};
+
+            List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+
+            String[] dnasampleNamesAbsent = new String[]{"notdnasample1", "notdnasample2", "notdnasample3"};
+
+            for (String dnaSampleName : dnasampleNamesAbsent) {
+
+                NameIdDTO nameIdDTO = new NameIdDTO();
+                nameIdDTO.setName(dnaSampleName);
+
+                nameIdDTOList.add(nameIdDTO);
+            }
+
+            Integer dnaSampleNum = 1;
+
+            for (String dnaSampleName : dnasampleNamesExisting) {
+
+                NameIdDTO nameIdDTO = new NameIdDTO();
+                nameIdDTO.setName(dnaSampleName);
+
+                DnaSampleDTO dnaSampleDTO = new DnaSampleDTO();
+                dnaSampleDTO.setDnaSampleNum(dnaSampleNum++);
+
+                nameIdDTO.setQueryObject(dnaSampleDTO);
+
+                nameIdDTOList.add(nameIdDTO);
+            }
+
+
+            /**
+             * Test get DNA Sample Names by NAMES_BY_NAME_LIST
+             * */
+            GobiiFilterType gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST;
+
+            PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, projectId.toString());
+
+            checkNameIdListResponseAll(responsePayloadEnvelope, nameIdDTOList, dnasampleNamesAbsent);
+
+            /**
+             * Test get DNA Sample Names by NAMES_BY_NAME_LIST_RETURN_ABSENT
+             * Will return items on the list that are not found in the database
+             */
+            gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_ABSENT;
+
+            responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, projectId.toString());
+
+            checkNameIdListResponseAbsent(responsePayloadEnvelope, dnasampleNamesAbsent, dnasampleNamesExisting);
+
+
+            /**
+             * Test get DNA Sample Names by NAMES_BY_NAMES_LIST_RETURN_EXISTS
+             * Will return items on the list that are existing in the database
+             */
+            gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_EXISTS;
+
+            responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, projectId.toString());
+
+            checkNameIdListResponseExists(responsePayloadEnvelope, dnasampleNamesExisting, dnasampleNamesAbsent);
+
         }
-
-        Assert.assertNotNull("Project Id not found for project name: " + projectName, projectId);
-
-        GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.DNASAMPLE;
-
-        String[] dnasampleNamesExisting = new String[]{"dnasamplename_Deb_FQ_dom_1", "dnasamplename_Deb_FQ_dom_2", "dnasamplename_Deb_FQ_dom_3", "dnasamplename_Deb_FQ_dom_4"};
-
-        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
-
-        String[] dnasampleNamesAbsent = new String[]{"notdnasample1", "notdnasample2", "notdnasample3"};
-
-        for (String dnaSampleName : dnasampleNamesAbsent) {
-
-            NameIdDTO nameIdDTO = new NameIdDTO();
-            nameIdDTO.setName(dnaSampleName);
-
-            nameIdDTOList.add(nameIdDTO);
-        }
-
-        Integer dnaSampleNum = 1;
-
-        for (String dnaSampleName : dnasampleNamesExisting) {
-
-            NameIdDTO nameIdDTO = new NameIdDTO();
-            nameIdDTO.setName(dnaSampleName);
-
-            DnaSampleDTO dnaSampleDTO = new DnaSampleDTO();
-            dnaSampleDTO.setDnaSampleNum(dnaSampleNum++);
-
-            nameIdDTO.setQueryObject(dnaSampleDTO);
-
-            nameIdDTOList.add(nameIdDTO);
-        }
-
-
-        /**
-         * Test get DNA Sample Names by NAMES_BY_NAME_LIST
-         * */
-        GobiiFilterType gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST;
-
-        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, projectId.toString());
-
-        checkNameIdListResponseAll(responsePayloadEnvelope, nameIdDTOList, dnasampleNamesAbsent);
-
-        /**
-         * Test get DNA Sample Names by NAMES_BY_NAME_LIST_RETURN_ABSENT
-         * Will return items on the list that are not found in the database
-         */
-        gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_ABSENT;
-
-        responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, projectId.toString());
-
-        checkNameIdListResponseAbsent(responsePayloadEnvelope, dnasampleNamesAbsent, dnasampleNamesExisting);
-
-
-        /**
-         * Test get DNA Sample Names by NAMES_BY_NAMES_LIST_RETURN_EXISTS
-         * Will return items on the list that are existing in the database
-         */
-        gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_EXISTS;
-
-        responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, projectId.toString());
-
-        checkNameIdListResponseExists(responsePayloadEnvelope, dnasampleNamesExisting, dnasampleNamesAbsent);
-
     }
 
     @Test
@@ -782,66 +795,68 @@ public class DtoCrudRequestNameIdListTest {
     public void testGetLinkageGroupNamesByList() throws Exception {
 
         // get mapset ID for loaded linkage group names by ADL
+        if( TestUtils.isBackEndSupported()) {
 
-        String mapsetName = "Test_Physical";
-        Integer mapsetId = null;
+            String mapsetName = "Test_Physical";
+            Integer mapsetId = null;
 
-        RestUri restUriMapset = GobiiClientContext.getInstance(null, false)
-                .getUriFactory()
-                .resourceColl(RestResourceId.GOBII_MAPSET);
-        GobiiEnvelopeRestResource<MapsetDTO,MapsetDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriMapset);
-        PayloadEnvelope<MapsetDTO> resultEnvelope = gobiiEnvelopeRestResource
-                .get(MapsetDTO.class);
+            RestUri restUriMapset = GobiiClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .resourceColl(RestResourceId.GOBII_MAPSET);
+            GobiiEnvelopeRestResource<MapsetDTO, MapsetDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriMapset);
+            PayloadEnvelope<MapsetDTO> resultEnvelope = gobiiEnvelopeRestResource
+                    .get(MapsetDTO.class);
 
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
-        List<MapsetDTO> mapsetDTOList = resultEnvelope.getPayload().getData();
-        Assert.assertNotNull(mapsetDTOList);
-        Assert.assertTrue(mapsetDTOList.size() > 0);
-        Assert.assertNotNull(mapsetDTOList.get(0).getName());
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+            List<MapsetDTO> mapsetDTOList = resultEnvelope.getPayload().getData();
+            Assert.assertNotNull(mapsetDTOList);
+            Assert.assertTrue(mapsetDTOList.size() > 0);
+            Assert.assertNotNull(mapsetDTOList.get(0).getName());
 
-        for (MapsetDTO mapsetDTO : mapsetDTOList) {
+            for (MapsetDTO mapsetDTO : mapsetDTOList) {
 
-            if (mapsetDTO.getName().equals(mapsetName)) {
+                if (mapsetDTO.getName().equals(mapsetName)) {
 
-                mapsetId = mapsetDTO.getMapsetId();
-                break;
+                    mapsetId = mapsetDTO.getMapsetId();
+                    break;
+                }
+
             }
 
+            Assert.assertNotNull("Mapset ID not found for mapset name: " + mapsetName, mapsetId);
+
+            GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.LINKAGE_GROUP;
+
+            String[] linkageGroupNameExisting = new String[]{"LG_1", "LG_2", "LG_3", "LG_4"};
+
+            List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+
+            String[] linkageGroupNameAbsent = new String[]{"notlg1", "notlg2", "notlg3"};
+
+            for (String lgName : linkageGroupNameAbsent) {
+
+                NameIdDTO nameIdDTO = new NameIdDTO();
+                nameIdDTO.setName(lgName);
+
+                nameIdDTOList.add(nameIdDTO);
+            }
+
+            for (String lgName : linkageGroupNameExisting) {
+
+                NameIdDTO nameIdDTO = new NameIdDTO();
+                nameIdDTO.setName(lgName);
+
+                nameIdDTOList.add(nameIdDTO);
+            }
+
+
+            GobiiFilterType gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST;
+
+            PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, mapsetId.toString());
+
+            checkNameIdListResponseAll(responsePayloadEnvelope, nameIdDTOList, linkageGroupNameAbsent);
+
         }
-
-        Assert.assertNotNull("Mapset ID not found for mapset name: " + mapsetName, mapsetId);
-
-        GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.LINKAGE_GROUP;
-
-        String[] linkageGroupNameExisting = new String[]{"LG_1", "LG_2", "LG_3", "LG_4"};
-
-        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
-
-        String[] linkageGroupNameAbsent = new String[]{"notlg1", "notlg2", "notlg3"};
-
-        for (String lgName : linkageGroupNameAbsent) {
-
-            NameIdDTO nameIdDTO = new NameIdDTO();
-            nameIdDTO.setName(lgName);
-
-            nameIdDTOList.add(nameIdDTO);
-        }
-
-        for (String lgName : linkageGroupNameExisting) {
-
-            NameIdDTO nameIdDTO = new NameIdDTO();
-            nameIdDTO.setName(lgName);
-
-            nameIdDTOList.add(nameIdDTO);
-        }
-
-
-        GobiiFilterType gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST;
-
-        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, mapsetId.toString());
-
-        checkNameIdListResponseAll(responsePayloadEnvelope, nameIdDTOList, linkageGroupNameAbsent);
-
     }
 
     /**
@@ -850,65 +865,70 @@ public class DtoCrudRequestNameIdListTest {
     @Test
     public void testGetDnaRunNamesByList() throws Exception {
 
-        // get experiment ID for loaded dna run names by SQL
+        if( TestUtils.isBackEndSupported()) {
 
-        String experimentName = "sim_dominant_exp_01";
-        Integer experimentId = null;
+            // get experiment ID for loaded dna run names by SQL
 
-        RestUri restUriExperiment = GobiiClientContext.getInstance(null, false)
-                .getUriFactory()
-                .resourceColl(RestResourceId.GOBII_EXPERIMENTS);
-        GobiiEnvelopeRestResource<ExperimentDTO,ExperimentDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriExperiment);
-        PayloadEnvelope<ExperimentDTO> resultEnvelope = gobiiEnvelopeRestResource
-                .get(ExperimentDTO.class);
+            String experimentName = "sim_dominant_exp_01";
+            Integer experimentId = null;
 
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
-        List<ExperimentDTO> experimentDTOList = resultEnvelope.getPayload().getData();
-        Assert.assertNotNull(experimentDTOList);
-        Assert.assertTrue(experimentDTOList.size() > 0);
-        Assert.assertNotNull(experimentDTOList.get(0).getExperimentName());
+            RestUri restUriExperiment = GobiiClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .resourceColl(RestResourceId.GOBII_EXPERIMENTS);
+            GobiiEnvelopeRestResource<ExperimentDTO, ExperimentDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriExperiment);
+            PayloadEnvelope<ExperimentDTO> resultEnvelope = gobiiEnvelopeRestResource
+                    .get(ExperimentDTO.class);
 
-        for (ExperimentDTO experimentDTO : experimentDTOList) {
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+            List<ExperimentDTO> experimentDTOList = resultEnvelope.getPayload().getData();
+            Assert.assertNotNull(experimentDTOList);
+            Assert.assertTrue(experimentDTOList.size() > 0);
+            Assert.assertNotNull(experimentDTOList.get(0).getExperimentName());
 
-            if (experimentDTO.getExperimentName().equals(experimentName)) {
+            for (ExperimentDTO experimentDTO : experimentDTOList) {
 
-                experimentId = experimentDTO.getExperimentId();
-                break;
+                if (experimentDTO.getExperimentName().equals(experimentName)) {
+
+                    experimentId = experimentDTO.getExperimentId();
+                    break;
+                }
+
             }
 
+            Assert.assertNotNull("Experiment ID not found for experiment name: " + experimentName, experimentId);
+
+            GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.DNARUN;
+
+            String[] dnaRunNameExisting = new String[]{"dnarunname_Deb_FQ_dom_1", "dnarunname_Deb_FQ_dom_2", "dnarunname_Deb_FQ_dom_3", "dnarunname_Deb_FQ_dom_4"};
+
+            List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+
+            String[] dnaRunNameAbsent = new String[]{"notdnarun1", "notdnarun2", "notdnarun3"};
+
+            for (String dnaRunName : dnaRunNameAbsent) {
+
+                NameIdDTO nameIdDTO = new NameIdDTO();
+                nameIdDTO.setName(dnaRunName);
+
+                nameIdDTOList.add(nameIdDTO);
+            }
+
+            for (String dnaRunName : dnaRunNameExisting) {
+
+                NameIdDTO nameIdDTO = new NameIdDTO();
+                nameIdDTO.setName(dnaRunName);
+
+                nameIdDTOList.add(nameIdDTO);
+            }
+
+            GobiiFilterType gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST;
+
+            PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, experimentId.toString());
+
+            checkNameIdListResponseAll(responsePayloadEnvelope, nameIdDTOList, dnaRunNameAbsent);
+
         }
 
-        Assert.assertNotNull("Experiment ID not found for experiment name: " + experimentName, experimentId);
-
-        GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.DNARUN;
-
-        String[] dnaRunNameExisting = new String[]{"dnarunname_Deb_FQ_dom_1", "dnarunname_Deb_FQ_dom_2", "dnarunname_Deb_FQ_dom_3", "dnarunname_Deb_FQ_dom_4"};
-
-        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
-
-        String[] dnaRunNameAbsent = new String[]{"notdnarun1", "notdnarun2", "notdnarun3"};
-
-        for (String dnaRunName : dnaRunNameAbsent) {
-
-            NameIdDTO nameIdDTO = new NameIdDTO();
-            nameIdDTO.setName(dnaRunName);
-
-            nameIdDTOList.add(nameIdDTO);
-        }
-
-        for (String dnaRunName : dnaRunNameExisting) {
-
-            NameIdDTO nameIdDTO = new NameIdDTO();
-            nameIdDTO.setName(dnaRunName);
-
-            nameIdDTOList.add(nameIdDTO);
-        }
-
-        GobiiFilterType gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST;
-
-        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, experimentId.toString());
-
-        checkNameIdListResponseAll(responsePayloadEnvelope, nameIdDTOList, dnaRunNameAbsent);
     }
 
 
@@ -920,38 +940,40 @@ public class DtoCrudRequestNameIdListTest {
     @Test
     public void testGetGermplasmNamesByList() throws Exception {
 
-        GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.GERMPLASM;
+        if( TestUtils.isBackEndSupported()) {
 
-        String[] germplasmExisting = new String[]{"Deb_FQ_dom_xc_1", "Deb_FQ_dom_xc_2", "Deb_FQ_dom_xc_3", "Deb_FQ_dom_xc_4"};
+            GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.GERMPLASM;
 
-        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+            String[] germplasmExisting = new String[]{"Deb_FQ_dom_xc_1", "Deb_FQ_dom_xc_2", "Deb_FQ_dom_xc_3", "Deb_FQ_dom_xc_4"};
 
-        String[] germplasmAbsent = new String[]{"notgermplasm1", "notgermplasm2", "notgermplasm3"};
+            List<NameIdDTO> nameIdDTOList = new ArrayList<>();
 
-        for (String germplasmCode : germplasmAbsent) {
+            String[] germplasmAbsent = new String[]{"notgermplasm1", "notgermplasm2", "notgermplasm3"};
 
-            NameIdDTO nameIdDTO = new NameIdDTO();
-            nameIdDTO.setName(germplasmCode);
+            for (String germplasmCode : germplasmAbsent) {
 
-            nameIdDTOList.add(nameIdDTO);
+                NameIdDTO nameIdDTO = new NameIdDTO();
+                nameIdDTO.setName(germplasmCode);
+
+                nameIdDTOList.add(nameIdDTO);
+
+            }
+
+            for (String germplasmCode : germplasmExisting) {
+
+                NameIdDTO nameIdDTO = new NameIdDTO();
+                nameIdDTO.setName(germplasmCode);
+
+                nameIdDTOList.add(nameIdDTO);
+
+            }
+
+            GobiiFilterType gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST;
+
+            PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, "test");
+
+            checkNameIdListResponseAll(responsePayloadEnvelope, nameIdDTOList, germplasmAbsent);
 
         }
-
-        for (String germplasmCode : germplasmExisting) {
-
-            NameIdDTO nameIdDTO = new NameIdDTO();
-            nameIdDTO.setName(germplasmCode);
-
-            nameIdDTOList.add(nameIdDTO);
-
-        }
-
-        GobiiFilterType gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST;
-
-        PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, "test");
-
-        checkNameIdListResponseAll(responsePayloadEnvelope, nameIdDTOList, germplasmAbsent);
-
     }
-
 }

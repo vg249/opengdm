@@ -9,11 +9,14 @@ import org.apache.commons.io.FileUtils;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiTestConfiguration;
 import org.gobiiproject.gobiiclient.gobii.Helpers.ADLEncapsulator;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
+import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestNameIdListTest;
 import org.gobiiproject.gobiimodel.config.TestExecConfig;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.UUID;
@@ -23,6 +26,7 @@ public class GobiiAdlTest {
 
     private static boolean backendSupoorted;
     private static TestExecConfig testExecConfig;
+    private static Logger LOGGER = LoggerFactory.getLogger(DtoCrudRequestNameIdListTest.class);
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -44,6 +48,7 @@ public class GobiiAdlTest {
     public void testADLBatchProcessing() throws  Exception{
 
         if (backendSupoorted) {
+
             ADLEncapsulator adlEncapsulator = new ADLEncapsulator();
             String configUtilCommandlineStem = testExecConfig.getConfigUtilCommandlineStem();
 
@@ -70,6 +75,8 @@ public class GobiiAdlTest {
             adlEncapsulator.setInputDirectory(tempDir.getAbsolutePath());
             Assert.assertTrue(adlEncapsulator.getErrorMsg(), adlEncapsulator.executeBatchGobiiADL());
 
+        } else {
+            LOGGER.error("Backend support is not provided in this context: system-critical unit tests will not be run");
         }
     }
 }
