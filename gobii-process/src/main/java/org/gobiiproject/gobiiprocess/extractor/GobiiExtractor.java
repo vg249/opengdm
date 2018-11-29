@@ -574,7 +574,7 @@ public class GobiiExtractor {
 					HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
 					pm.addPath("Instruction File",new File(instructionFile.replace("inprogress","done")).getAbsolutePath(),true,configuration);
 					pm.addPath("Error Log", logFile,true, configuration);
-					pm.addProcessPath(pm.getBody());
+					pm.addProcessPath(pm.getBody(), configuration.getGlobalServer(GobiiServerType.OWN_CLOUD).isActive());
 
 					/*Perform QC if the instruction is QC-based AND we are a successful extract*/
 					if (inst.isQcCheck()) {

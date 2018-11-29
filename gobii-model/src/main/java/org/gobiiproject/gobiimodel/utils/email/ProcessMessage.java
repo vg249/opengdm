@@ -263,14 +263,17 @@ public class ProcessMessage extends MailMessage {
         return this;
     }
 
-    public ProcessMessage addProcessPath(String lastBody){
+    public ProcessMessage addProcessPath(String lastBody, boolean active){
         if(!paths.isEmpty()) {
             pathsLine = HTMLTableEntity.getHTMLTable(paths, pathsLineWidth,"File Type","Path","Size");
         }
         String line="<br>";
         StringBuilder body=new StringBuilder();
         body.append("<html><head><style>table{font-family:arial,sans-serif;border-collapse:collapse;width:60%;}th{background-color:" + color + ";border:1px solid #dddddd;text-align:left;padding:8px;}td{border:1px solid #dddddd;text-align:left;padding:8px;}tr:nth-child(even){background-color:lightblue;}</style></head><body>");
-        if(pathsLine!=null)body.append(pathsLine +line + "<font size=5 color=red><b>WARNING: Clicking links might force you to download bigger files.</b></font>" + line);
+        if(pathsLine!=null)body.append(pathsLine +line);
+        if(active){
+            body.append("<font size=6 color=red><b>WARNING: Clicking links might force you to download bigger files.</b></font>" + line);
+        }
         this.setBody(lastBody + body.toString());
         return this;
     }
