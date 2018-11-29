@@ -12,9 +12,11 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
+import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.digester.LoaderGlobalConfigs;
@@ -275,7 +277,10 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
                         if (matrixValidation.validate(rowNo, inputRowList, outputRowList))
                             writeOutputLine(tempFileBufferedWriter, outputRowList);
                         else {
-                            if (matrixValidation.stopProcessing()) return false;
+                            if (matrixValidation.stopProcessing()) {
+                                FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(loaderInstruction));
+                                return;
+                            }
                         }
                     }
                     rowNo++;
@@ -283,7 +288,7 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
             }
         }
         if (matrixValidation.getErrorCount() != 0) {
-            remove digest.matrix File;
+            FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(loaderInstruction));
         }
     }
 

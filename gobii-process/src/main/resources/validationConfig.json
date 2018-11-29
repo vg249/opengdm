@@ -434,6 +434,10 @@
           ]
         }
       ]
+    },
+    {
+      "digestFileName": "digest.matrix",
+      "conditions":[]
     }
   ]
 }

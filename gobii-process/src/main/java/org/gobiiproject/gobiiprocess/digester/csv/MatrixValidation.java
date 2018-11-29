@@ -78,7 +78,7 @@ class MatrixValidation {
             }
 
         //TODO: Handle the case of VCF validation
-        VCF validation goes here
+            VCF validation goes here
 
         /*
          * VALIDATION.

@@ -284,7 +284,8 @@ public class DigestFileValidator {
             case "dataset_marker":
                 if (!new DatasetMarkerValidator().validate(validation, rootDir, failureList)) failureList = null;
                 break;
-            case "matrix": // Validate has to include matrix validation
+            case "matrix":
+                if (!new MatrixValidator().validate(validation, rootDir, failureList)) failureList = null;
                 break;
             default:
                 Failure failure = new Failure();
