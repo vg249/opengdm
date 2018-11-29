@@ -450,6 +450,8 @@
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementJobByJobName"/>
     <bean id="listStatementDnaSampleNamesByList"
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementDnaSampleNamesByList"/>
+    <bean id="listStatementDnaSampleNamesAll"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementDnaSampleNamesAll"/>
     <bean id="listStatementMarkerNamesByList"
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementMarkerNamesByList"/>
     <bean id="listStatementLinkageGroupByList"
@@ -458,6 +460,8 @@
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementDnaRunNamesByList"/>
     <bean id="listStatementGermplasmByList"
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementGermplasmNamesByList"/>
+    <bean id="listStatementMarkerNamesAll"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementMarkerNamesAll"/>
 
     <!-- **** ListStatement queries paged *************************************** -->
     <bean id="listStatementDatasetAllPaged"
@@ -653,6 +657,26 @@
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementDnaSampleNamesByList"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
+                    </bean>
+                </entry>
+                <!-- DNA SAMPLES ALL -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_DNASAMPLE_NAMES_ALL}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
+                        <constructor-arg ref="listStatementDnaSampleNamesAll"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
+                    </bean>
+                </entry>
+                <!-- MARKER NAMES ALL -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_MARKER_NAMES_ALL}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
+                        <constructor-arg ref="listStatementMarkerNamesAll"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>
