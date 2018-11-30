@@ -3,7 +3,7 @@ package org.gobiiproject.gobiiclient.brapi;
 import org.apache.commons.lang.ObjectUtils;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
-import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
+import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCalls;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMasterDetail;
 import org.gobiiproject.gobiiclient.core.brapi.BrapiClientContextAuth;
@@ -49,7 +49,7 @@ public class BrapiTestCalls {
 
         RestUri restUriCalls = GobiiClientContext.getInstance(null, false)
                 .getUriFactory(GobiiControllerType.BRAPI)
-                .resourceColl(GobiiServiceRequestId.URL_CALLS);
+                .resourceColl(RestResourceId.GOBII_CALLS);
 
         BrapiEnvelopeRestResource<ObjectUtils.Null,ObjectUtils.Null,BrapiResponseCalls> brapiEnvelopeRestResource =
                 new BrapiEnvelopeRestResource<>(restUriCalls,

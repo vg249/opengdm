@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.gobiiproject</groupId>
         <artifactId>parent</artifactId>
-        <version>GOBII Server 2.0_2018-11-26</version>
+        <version>GR-90-2018-10-12</version>
     </parent>
 
     <groupId>org.gobiiproject</groupId>
@@ -71,7 +71,7 @@
             <!--</exclusions>-->
         </dependency>
 
-        <!-- Spring WEB -->
+        <!-- Spring GOBII_WEB -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>

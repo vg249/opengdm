@@ -142,6 +142,21 @@
     <bean id="dtoMapNameIdFetchProtocolNames"
           class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchProtocols"/>
 
+    <bean id="dtoMapNameIdFetchDnaSampleNames"
+          class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchDnaSampleNames"/>
+
+    <bean id="dtoMapNameIdFetchMarkerNames"
+          class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchMarkerNames"/>
+
+    <bean id="dtoMapNameIdFetchLinkageGroup"
+          class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchLinkageGroup"/>
+
+    <bean id="dtoMapNameIdFetchDnaRun"
+          class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchDnaRun"/>
+
+    <bean id="dtoMapNameIdFetchGermplasm"
+          class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchGermplasm"/>
+
     <bean id="dtoMapNameIdList"
           class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIdListImpl">
         <property name="dtoMapNameIdFetchMap">
@@ -209,6 +224,26 @@
                 <!-- VENDOR_PROTOCOL -->
                 <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).VENDOR_PROTOCOL}">
                     <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchVendorProtocols"/>
+                </entry>
+                <!-- DNA SAMPLE NAMES -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).DNASAMPLE}">
+                    <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchDnaSampleNames"/>
+                </entry>
+                <!-- MARKER NAMES -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).MARKER}">
+                    <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchMarkerNames"/>
+                </entry>
+                <!-- LINKAGE GROUP NAMES -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).LINKAGE_GROUP}">
+                    <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchLinkageGroup"/>
+                </entry>
+                <!-- DNA RUN NAMES -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).DNARUN}">
+                    <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchDnaRun"/>
+                </entry>
+                <!-- GERMPLASM NAMES -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).GERMPLASM}">
+                    <bean class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIds.DtoMapNameIdFetchGermplasm"/>
                 </entry>
             </map>
         </property>
@@ -389,6 +424,8 @@
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementOrganizationAll"/>
     <bean id="listStatementPlatformAll"
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementPlatformAll"/>
+    <bean id="listStatementPlatformByList"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementPlatformByList"/>
     <bean id="listStatementProjectAll"
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementProjectAll"/>
     <bean id="listStatementProtocolAll"
@@ -411,6 +448,20 @@
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementReferencesForList"/>
     <bean id="listStatementJobByJobName"
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementJobByJobName"/>
+    <bean id="listStatementDnaSampleNamesByList"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementDnaSampleNamesByList"/>
+    <bean id="listStatementDnaSampleNamesAll"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementDnaSampleNamesAll"/>
+    <bean id="listStatementMarkerNamesByList"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementMarkerNamesByList"/>
+    <bean id="listStatementLinkageGroupByList"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementLinkageGroupNamesByList"/>
+    <bean id="listStatementDnaRunNamesByList"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementDnaRunNamesByList"/>
+    <bean id="listStatementGermplasmByList"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementGermplasmNamesByList"/>
+    <bean id="listStatementMarkerNamesAll"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementMarkerNamesAll"/>
 
     <!-- **** ListStatement queries paged *************************************** -->
     <bean id="listStatementDatasetAllPaged"
@@ -457,6 +508,15 @@
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementPlatformAll"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
+                    </bean>
+                </entry>
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_PLATFORM_NAMES_BYLIST}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
+                        <constructor-arg ref="listStatementPlatformByList"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>
@@ -590,6 +650,76 @@
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>
+                <!-- DNA SAMPLES BY LIST -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_DNASAMPLE_NAMES_BYLIST}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
+                        <constructor-arg ref="listStatementDnaSampleNamesByList"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
+                    </bean>
+                </entry>
+                <!-- DNA SAMPLES ALL -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_DNASAMPLE_NAMES_ALL}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
+                        <constructor-arg ref="listStatementDnaSampleNamesAll"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
+                    </bean>
+                </entry>
+                <!-- MARKER NAMES ALL -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_MARKER_NAMES_ALL}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
+                        <constructor-arg ref="listStatementMarkerNamesAll"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
+                    </bean>
+                </entry>
+                <!-- MARKER NAMES BY LIST -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_MARKER_NAMES_BYLIST}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
+                        <constructor-arg ref="listStatementMarkerNamesByList"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
+                    </bean>
+                </entry>
+                <!-- LINKAGE GROUP NAMES BY LIST -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_LINKAGE_GROUP_NAMES_BYLIST}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
+                        <constructor-arg ref="listStatementLinkageGroupByList"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
+                    </bean>
+                </entry>
+                <!-- DNA RUN NAMES BY LIST -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_DNARUN_NAMES_BYLIST}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
+                        <constructor-arg ref="listStatementDnaRunNamesByList"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
+                    </bean>
+                </entry>
+                <!-- GERMPLASM NAMES BY LIST -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_GERMPLASM_BYLIST}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.system.EntityStatsDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
+                        <constructor-arg ref="listStatementGermplasmByList"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
+                    </bean>
+                </entry>
             </map>
         </property>
     </bean>
@@ -618,14 +748,14 @@
     <!--<bean id="cropDbConfigRice"-->
     <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigRice"-->
-    <!--factory-method="getCropDbConfig">-->
-    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
+    <!--factory-method="getServer">-->
+    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).GOBII_PGSQL}"/>-->
     <!--</bean>-->
 
     <!--<bean id="dataSourceRice"-->
     <!--class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
     <!--<property name="driverClassName" value="org.postgresql.Driver"/>-->
-    <!--<property name="url" value="#{cropDbConfigRice.getConnectionString()}"/>-->
+    <!--<property name="url" value="#{cropDbConfigRice.getJdbcConnectionString()}"/>-->
     <!--<property name="username" value="#{cropDbConfigRice.getUserName()}"/>-->
     <!--<property name="password" value="#{cropDbConfigRice.getPassword()}"/>-->
     <!--</bean>-->
@@ -642,14 +772,14 @@
     <!--<bean id="cropDbConfigWheat"-->
     <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigWheat"-->
-    <!--factory-method="getCropDbConfig">-->
-    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
+    <!--factory-method="getServer">-->
+    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).GOBII_PGSQL}"/>-->
     <!--</bean>-->
 
     <!--<bean id="dataSourceWheat"-->
     <!--class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
     <!--<property name="driverClassName" value="org.postgresql.Driver"/>-->
-    <!--<property name="url" value="#{cropDbConfigWheat.getConnectionString()}"/>-->
+    <!--<property name="url" value="#{cropDbConfigWheat.getJdbcConnectionString()}"/>-->
     <!--<property name="username" value="#{cropDbConfigWheat.getUserName()}"/>-->
     <!--<property name="password" value="#{cropDbConfigWheat.getPassword()}"/>-->
     <!--</bean>-->
@@ -665,14 +795,14 @@
     <!--<bean id="cropDbConfigMaize"-->
     <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigMaize"-->
-    <!--factory-method="getCropDbConfig">-->
-    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
+    <!--factory-method="getServer">-->
+    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).GOBII_PGSQL}"/>-->
     <!--</bean>-->
 
     <!--<bean id="dataSourceMaize"-->
     <!--class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
     <!--<property name="driverClassName" value="org.postgresql.Driver"/>-->
-    <!--<property name="url" value="#{cropDbConfigMaize.getConnectionString()}"/>-->
+    <!--<property name="url" value="#{cropDbConfigMaize.getJdbcConnectionString()}"/>-->
     <!--<property name="username" value="#{cropDbConfigMaize.getUserName()}"/>-->
     <!--<property name="password" value="#{cropDbConfigMaize.getPassword()}"/>-->
     <!--</bean>-->
@@ -688,14 +818,14 @@
     <!--<bean id="cropDbConfigDev"-->
     <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigDev"-->
-    <!--factory-method="getCropDbConfig">-->
-    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
+    <!--factory-method="getServer">-->
+    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).GOBII_PGSQL}"/>-->
     <!--</bean>-->
 
     <!--<bean id="dataSourceDev"-->
     <!--class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
     <!--<property name="driverClassName" value="org.postgresql.Driver"/>-->
-    <!--<property name="url" value="#{cropDbConfigDev.getConnectionString()}"/>-->
+    <!--<property name="url" value="#{cropDbConfigDev.getJdbcConnectionString()}"/>-->
     <!--<property name="username" value="#{cropDbConfigDev.getUserName()}"/>-->
     <!--<property name="password" value="#{cropDbConfigDev.getPassword()}"/>-->
     <!--</bean>-->
@@ -711,14 +841,14 @@
     <!--<bean id="cropDbConfigTest"-->
     <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigTest"-->
-    <!--factory-method="getCropDbConfig">-->
-    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
+    <!--factory-method="getServer">-->
+    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).GOBII_PGSQL}"/>-->
     <!--</bean>-->
 
     <!--<bean id="dataSourceTest"-->
     <!--class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
     <!--<property name="driverClassName" value="org.postgresql.Driver"/>-->
-    <!--<property name="url" value="#{cropDbConfigTest.getConnectionString()}"/>-->
+    <!--<property name="url" value="#{cropDbConfigTest.getJdbcConnectionString()}"/>-->
     <!--<property name="username" value="#{cropDbConfigTest.getUserName()}"/>-->
     <!--<property name="password" value="#{cropDbConfigTest.getPassword()}"/>-->
     <!--</bean>-->
@@ -735,14 +865,14 @@
     <!--<bean id="cropDbConfigSorghum"-->
     <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigSorghum"-->
-    <!--factory-method="getCropDbConfig">-->
-    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
+    <!--factory-method="getServer">-->
+    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).GOBII_PGSQL}"/>-->
     <!--</bean>-->
 
     <!--<bean id="dataSourceSorghum"-->
     <!--class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
     <!--<property name="driverClassName" value="org.postgresql.Driver"/>-->
-    <!--<property name="url" value="#{cropDbConfigSorghum.getConnectionString()}"/>-->
+    <!--<property name="url" value="#{cropDbConfigSorghum.getJdbcConnectionString()}"/>-->
     <!--<property name="username" value="#{cropDbConfigSorghum.getUserName()}"/>-->
     <!--<property name="password" value="#{cropDbConfigSorghum.getPassword()}"/>-->
     <!--</bean>-->
@@ -758,14 +888,14 @@
     <!--<bean id="cropDbConfigChickpea"-->
     <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigChickpea"-->
-    <!--factory-method="getCropDbConfig">-->
-    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
+    <!--factory-method="getServer">-->
+    <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).GOBII_PGSQL}"/>-->
     <!--</bean>-->
 
     <!--<bean id="dataSourceChickpea"-->
     <!--class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
     <!--<property name="driverClassName" valu   e="org.postgresql.Driver"/>-->
-    <!--<property name="url" value="#{cropDbConfigChickpea.getConnectionString()}"/>-->
+    <!--<property name="url" value="#{cropDbConfigChickpea.getJdbcConnectionString()}"/>-->
     <!--<property name="username" value="#{cropDbConfigChickpea.getUserName()}"/>-->
     <!--<property name="password" value="#{cropDbConfigChickpea.getPassword()}"/>-->
     <!--</bean>-->

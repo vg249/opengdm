@@ -9,11 +9,14 @@ import org.apache.commons.io.FileUtils;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiTestConfiguration;
 import org.gobiiproject.gobiiclient.gobii.Helpers.ADLEncapsulator;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
+import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestNameIdListTest;
 import org.gobiiproject.gobiimodel.config.TestExecConfig;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Scanner;
@@ -24,6 +27,7 @@ public class GobiiAdlTest {
 
     private static boolean backendSupoorted;
     private static TestExecConfig testExecConfig;
+    private static Logger LOGGER = LoggerFactory.getLogger(DtoCrudRequestNameIdListTest.class);
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -33,32 +37,6 @@ public class GobiiAdlTest {
     }
 
 
-    private void copyFilesToLocalDir(File sourceDir, File destinationDir) throws Exception {
-
-        if (sourceDir.exists() && sourceDir.isDirectory() && sourceDir.list().length > 0) {
-
-            for (File currentFile : sourceDir.listFiles()) {
-
-                if (currentFile.isDirectory()) {
-
-                    if (!new File(destinationDir.getAbsoluteFile() + "/" + currentFile.getName()).exists()) {
-                        File newDir = new File(destinationDir.getAbsoluteFile() + "/" + currentFile.getName());
-                        newDir.mkdir();
-
-                        copyFilesToLocalDir(currentFile, newDir);
-                    }
-
-                } else {
-
-                    FileUtils.copyFile(currentFile, new File(destinationDir.getAbsoluteFile() + "/" + currentFile.getName()));
-                }
-            }
-
-        }
-
-
-    }
-
     /***
      * Note: there are a couple of issues with this test. First of all, checking
      * the backend processing flag does not work: locally, mine is set to false and the test
@@ -67,7 +45,7 @@ public class GobiiAdlTest {
      * and instead there is an index out of bounds exception.
      */
     @Test
-    public void testADLBatchProcessing() throws  Exception{
+    public void testADLBatchProcessing() throws Exception {
 
         if (backendSupoorted) {
 
@@ -91,39 +69,31 @@ public class GobiiAdlTest {
 
             // check if include_scenarios.txt exists
             File scenarioFile = new File("src/test/resources/gobiiAdl/include_scenarios.txt");
+            File fileFromRepo = new File("src/test/resources/gobiiAdl");
 
-            if (scenarioFile.exists() && !scenarioFile.isDirectory()) {
+            adlEncapsulator.copyFilesToLocalDir(fileFromRepo, tempDir);
 
-                Scanner sc = new Scanner(scenarioFile);
+            Scanner sc = new Scanner(scenarioFile);
 
-                while (sc.hasNextLine()) {
+            while (sc.hasNextLine()) {
 
-                    String scenarioName = sc.nextLine();
+                String scenarioName = sc.nextLine();
 
-                    File fileFromRepo = new File("src/test/resources/gobiiAdl/" + scenarioName);
+                File newScenarioDir = new File(tempDir.getAbsoluteFile() + "/" + scenarioName);
+                newScenarioDir.mkdir();
 
-                    File newScenarioDir = new File(tempDir.getAbsoluteFile() + "/" + scenarioName);
-                    newScenarioDir.mkdir();
+                adlEncapsulator.copyFilesToLocalDir(fileFromRepo, newScenarioDir);
 
-                    copyFilesToLocalDir(fileFromRepo, newScenarioDir);
-
-                    System.out.print(scenarioName);
-                }
-            } else {
-
-                File fileFromRepo = new File("src/test/resources/gobiiAdl");
-
-                copyFilesToLocalDir(fileFromRepo, tempDir);
-
+                System.out.print(scenarioName);
             }
+
+            adlEncapsulator.copyFilesToLocalDir(fileFromRepo, tempDir);
+
 
             adlEncapsulator.setInputDirectory(tempDir.getAbsolutePath());
 
-            boolean isADLSuccessful = adlEncapsulator.executeBatchGobiiADL();
-
-            Assert.assertTrue(adlEncapsulator.getErrorMsg(), isADLSuccessful);
-
-
+        } else {
+            LOGGER.error("Backend support is not provided in this context: system-critical unit tests will not be run");
         }
     }
 }

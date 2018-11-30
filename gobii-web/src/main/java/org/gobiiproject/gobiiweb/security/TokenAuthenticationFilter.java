@@ -11,10 +11,10 @@ import org.gobiiproject.gobidomain.services.AuthenticationService;
 
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
-import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiibrapi.calls.login.BrapiRequestLogin;
 import org.gobiiproject.gobiibrapi.core.common.BrapiRequestReader;
 import org.gobiiproject.gobiibrapi.types.BRAPIHttpHeaderNames;
+import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.automation.ControllerUtils;
@@ -135,7 +135,7 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
                     } else { // we're dealing with BRAPI, so we get the username/password from the body
 
                         String method = authenticationRequestWrapper.getMethod();
-                        if ("POST".equalsIgnoreCase(method) && url.toLowerCase().contains(GobiiServiceRequestId.URL_LOGIN.getResourcePath())) {
+                        if ("POST".equalsIgnoreCase(method) && url.toLowerCase().contains(RestResourceId.BRAPI_LOGIN.getResourcePath())) {
 
                             String loginRequestBody = authenticationRequestWrapper.getRequestBodyAsString();
                             if (loginRequestBody != null) {

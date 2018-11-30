@@ -3,7 +3,7 @@ package org.gobiiproject.gobiiclient.brapi;
 import org.apache.commons.lang.ObjectUtils;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
-import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
+import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiRequestStudiesSearch;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearch;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMasterDetail;
@@ -21,7 +21,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by Phil on 12/15/2016.
@@ -56,7 +55,7 @@ public class BrapiTestSearchStudies {
 
         RestUri restUriStudiesSearch = GobiiClientContext.getInstance(null, false)
                 .getUriFactory(GobiiControllerType.BRAPI)
-                .resourceColl(GobiiServiceRequestId.URL_STUDIES_SEARCH);
+                .resourceColl(RestResourceId.GOBII_STUDIES_SEARCH);
 
         BrapiRequestStudiesSearch brapiRequestStudiesSearch = new BrapiRequestStudiesSearch();
         brapiRequestStudiesSearch.setStudyType("genotype");

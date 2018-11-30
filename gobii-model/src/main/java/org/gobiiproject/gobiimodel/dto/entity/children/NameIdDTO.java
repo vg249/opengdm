@@ -2,15 +2,18 @@ package org.gobiiproject.gobiimodel.dto.entity.children;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
+import org.gobiiproject.gobiimodel.headerlesscontainer.DnaSampleDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
+import java.util.Comparator;
 import java.util.Date;
 
 /**
  * Created by Phil on 4/8/2016.
  */
-public class NameIdDTO extends DTOBase {
+public class NameIdDTO<T> extends DTOBase implements Comparable<NameIdDTO>{
 
+    private T queryObject;
 
     // entityLastModified is necessary because this class doe snot correspond to a
     // specific entity, and so it should not derive from DTOBaseAuditable
@@ -71,4 +74,19 @@ public class NameIdDTO extends DTOBase {
     public void setFkId(Integer fkId) {
         this.fkId = fkId;
     }
+
+    public T getQueryObject() {
+        return queryObject;
+    }
+
+    public void setQueryObject(T queryObject) {
+        this.queryObject = queryObject;
+    }
+
+    public int compareTo(NameIdDTO compareNameIdDTO) {
+
+        return name.compareTo(compareNameIdDTO.getName());
+
+    }
+
 }
