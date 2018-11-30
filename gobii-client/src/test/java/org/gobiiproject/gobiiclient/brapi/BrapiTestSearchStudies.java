@@ -55,7 +55,7 @@ public class BrapiTestSearchStudies {
 
         RestUri restUriStudiesSearch = GobiiClientContext.getInstance(null, false)
                 .getUriFactory(GobiiControllerType.BRAPI)
-                .resourceColl(RestResourceId.GOBII_STUDIES_SEARCH);
+                .resourceColl(RestResourceId.BRAPI_STUDIES_SEARCH);
 
         BrapiRequestStudiesSearch brapiRequestStudiesSearch = new BrapiRequestStudiesSearch();
         brapiRequestStudiesSearch.setStudyType("genotype");

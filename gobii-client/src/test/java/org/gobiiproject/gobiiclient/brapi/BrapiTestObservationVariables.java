@@ -50,7 +50,7 @@ public class BrapiTestObservationVariables {
 
         RestUri restUriObservationVariables = GobiiClientContext.getInstance(null, false)
                 .getUriFactory(GobiiControllerType.BRAPI)
-                .childResourceByUriIdParam(RestResourceId.GOBII_STUDIES,
+                .childResourceByUriIdParam(RestResourceId.BRAPI_STUDIES,
                         RestResourceId.GOBII_OBSERVATION_VARIABLES);
         restUriObservationVariables.setParamValue("id", "1");
 

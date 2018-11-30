@@ -41,8 +41,6 @@ public enum RestResourceId {
     GOBII_MARKERS("markers", ServerType.GOBII_WEB),
     GOBII_MARKER_SEARCH("marker-search", ServerType.GOBII_WEB),
     GOBII_CALLS("calls", ServerType.GOBII_WEB),
-    GOBII_STUDIES_SEARCH("studies-search", ServerType.GOBII_WEB),
-    GOBII_STUDIES("studies", ServerType.GOBII_WEB),
     GOBII_GERMPLASM("germplasm", ServerType.GOBII_WEB),
     GOBII_OBSERVATION_VARIABLES("observationVariables", ServerType.GOBII_WEB),
     GOBII_PROTOCOL("protocols", ServerType.GOBII_WEB),
@@ -68,6 +66,7 @@ public enum RestResourceId {
     KDC_PURGE("qcPurge", ServerType.KDC),
     BRAPI_LOGIN("token", ServerType.BRAPI),
     BRAPI_STUDIES_SEARCH("studies-search", ServerType.BRAPI),
+    BRAPI_STUDIES("studies", ServerType.BRAPI),
     BRAPI_CALLS("calls", ServerType.BRAPI);
 
 
