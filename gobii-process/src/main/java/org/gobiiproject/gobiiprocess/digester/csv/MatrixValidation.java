@@ -2,6 +2,7 @@ package org.gobiiproject.gobiiprocess.digester.csv;
 
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestMatrix;
+import org.gobiiproject.gobiiprocess.digester.vcf.VCFTransformer;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -79,6 +80,15 @@ class MatrixValidation {
 
         //TODO: Handle the case of VCF validation
             VCF validation goes here
+                //TODO: figure out how to get a line of the digest.marker file, which is required to exist for VCF loads
+        if(/*VCFInputFile*/false){
+            String markerFileLine=no idea how to get;
+            if(!VCFTransformer.transformVCFLine(markerFileLine,rowNo,inputRowList,outputRowList)){
+                //note, outputRowList here is now a two letter file, which needs to be validated
+                returnStatus = setError("Exception in processing matrix file. Failed in VCF Transformer.");
+            }
+
+        }
 
         /*
          * VALIDATION.
