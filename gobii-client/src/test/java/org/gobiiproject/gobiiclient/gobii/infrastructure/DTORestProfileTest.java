@@ -21,6 +21,7 @@ import org.gobiiproject.gobiimodel.types.*;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -179,7 +180,7 @@ public class DTORestProfileTest {
     }
 
 
-    @Test
+    @Ignore
     public void changePostMaxMarkerNames() throws Exception {
 
         PayloadEnvelope<NameIdDTO> analysisNameIdResponseEnvelopePreUpdate = DtoRequestNameIdListTest
