@@ -5,7 +5,7 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>org.gobiiproject</groupId>
-        <version>GOBII Server 2.0_2018-11-26</version>
+        <version>GP1-2133-config</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

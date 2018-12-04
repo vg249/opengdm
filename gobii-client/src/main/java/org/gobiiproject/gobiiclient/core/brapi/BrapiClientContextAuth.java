@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
-import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
+
 import org.gobiiproject.gobiibrapi.calls.login.BrapiRequestLogin;
 import org.gobiiproject.gobiibrapi.calls.login.BrapiResponseLogin;
 import org.gobiiproject.gobiibrapi.core.common.BrapiRequestReader;
@@ -12,7 +12,9 @@ import org.gobiiproject.gobiiclient.core.common.HttpCore;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiTestConfiguration;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
+import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.config.TestExecConfig;
+import org.gobiiproject.gobiimodel.types.ServerType;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -32,7 +34,8 @@ public class BrapiClientContextAuth {
         GobiiCropConfig gobiiCropConfig = (new GobiiTestConfiguration()).getConfigSettings().getCropConfig(testCrop);
 
 
-        returnVal = new HttpCore(gobiiCropConfig.getHost(), gobiiCropConfig.getPort());
+        returnVal = new HttpCore(gobiiCropConfig.getServer(ServerType.GOBII_WEB).getHost(),
+                gobiiCropConfig.getServer(ServerType.GOBII_WEB).getPort());
 
         // this method assumes we've already initialized the context with the server URL
         String testUserName = testExecConfig.getLdapUserForUnitTest();
@@ -43,10 +46,11 @@ public class BrapiClientContextAuth {
         brapiRequestLogin.setUserName(testUserName);
         brapiRequestLogin.setPassword(testPassword);
 
-        GobiiUriFactory gobiiUriFactory = new GobiiUriFactory(gobiiCropConfig.getContextPath(), GobiiControllerType.BRAPI);
+        GobiiUriFactory gobiiUriFactory = new GobiiUriFactory(gobiiCropConfig
+                .getServer(ServerType.GOBII_WEB).getContextPath(), GobiiControllerType.BRAPI);
 
         RestUri restUriToken = gobiiUriFactory
-                .resourceColl(GobiiServiceRequestId.URL_LOGIN);
+                .resourceColl(RestResourceId.BRAPI_LOGIN);
 
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody = objectMapper.writeValueAsString(brapiRequestLogin);

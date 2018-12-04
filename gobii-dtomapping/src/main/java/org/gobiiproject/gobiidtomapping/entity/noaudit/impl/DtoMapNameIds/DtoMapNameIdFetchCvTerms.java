@@ -96,46 +96,23 @@ public class DtoMapNameIdFetchCvTerms implements DtoMapNameIdFetch {
 
     private List<NameIdDTO> getCvTermsForGroupByNameList(List<NameIdDTO> nameIdDTOList, String cvGroupName) {
 
-        List<NameIdDTO> returnVal = new ArrayList<>();
-
         try {
-
-            List<String> nameArray = new ArrayList<>();
-
-            for (NameIdDTO currentNameIdDTO : nameIdDTOList) {
-
-                nameArray.add(currentNameIdDTO.getName());
-                currentNameIdDTO.setId(0);
-                returnVal.add(currentNameIdDTO);
-
-            }
 
             ResultSet resultSet = dtoListQueryColl.getResultSet(ListSqlId.QUERY_ID_CV_BY_GROUP_AND_LIST,
                     new HashMap<String, Object>() {{
                         put("cvGroupName", cvGroupName);
                     }}, new HashMap<String, Object>(){{
-                        put("nameArray", nameArray);
+                        put("nameArray", nameIdDTOList);
                     }});
 
 
-            for (NameIdDTO currentNameIdDTO : returnVal) {
-
-                while (resultSet.next()) {
-
-                    if (currentNameIdDTO.getName().equals(resultSet.getString("term"))) {
-
-                        currentNameIdDTO.setId(resultSet.getInt("cv_id"));
-                        break;
-
-                    }
-                }
-            }
+            Integer resultSize = DtoMapNameIdUtil.getIdsFromResultSet(nameIdDTOList, resultSet, "term", "cv_id");
 
         } catch (Exception e) {
             throw new GobiiDaoException(e);
         }
 
-        return returnVal;
+        return nameIdDTOList;
 
     }
 

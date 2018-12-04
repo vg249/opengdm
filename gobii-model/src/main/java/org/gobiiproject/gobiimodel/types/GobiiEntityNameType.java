@@ -22,5 +22,9 @@ public enum GobiiEntityNameType {
     DISPLAY,
     MARKER,
     PROTOCOL,
-    VENDOR_PROTOCOL
+    VENDOR_PROTOCOL,
+    DNASAMPLE,
+    LINKAGE_GROUP,
+    DNARUN,
+    GERMPLASM
 }
