@@ -415,12 +415,12 @@ class ValidationUtil {
         try {
             if (condition.typeName != null) {
                 if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV) || condition.typeName.equalsIgnoreCase(ValidationConstants.REFERENCE)
-                        || condition.typeName.equalsIgnoreCase(ValidationConstants.LINKAGE_GROUP) || condition.typeName.equalsIgnoreCase(ValidationConstants.DNARUN)) {
+                        || condition.typeName.equalsIgnoreCase(ValidationConstants.LINKAGE_GROUP) || condition.typeName.equalsIgnoreCase(ValidationConstants.DNARUN) || condition.typeName.equalsIgnoreCase(ValidationConstants.MARKER)) {
                     if (condition.fieldToCompare != null) {
                         if (checkForHeaderExistence(fileName, condition.fieldToCompare, condition.required, failureList))
                             if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV) || condition.typeName.equalsIgnoreCase(ValidationConstants.REFERENCE)) {
                                 validateDB(fileName, condition, failureList);
-                            } else if ((condition.typeName.equalsIgnoreCase(ValidationConstants.LINKAGE_GROUP) || condition.typeName.equalsIgnoreCase(ValidationConstants.DNARUN))
+                            } else if ((condition.typeName.equalsIgnoreCase(ValidationConstants.LINKAGE_GROUP) || condition.typeName.equalsIgnoreCase(ValidationConstants.DNARUN) || condition.typeName.equalsIgnoreCase(ValidationConstants.MARKER))
                                     && condition.foreignKey != null)
                                 validateDbWithForeignKey(fileName, condition, failureList);
                     } else
@@ -466,51 +466,81 @@ class ValidationUtil {
         String typeName = condition.typeName;
         Set<String> foreignKeyList = new HashSet<>();
         if (readForeignKey(fileName, condition.foreignKey, foreignKeyList, failureList)) {
-            Map<String, String> foreignKeyValueFromDB = ValidationWebServicesUtil.getAllowedForeignKeyList(condition.typeName, failureList);
-            if (foreignKeyValueFromDB.size() == 0) return;
-            List<String> foreignKey = getFileColumn(fileName, condition.foreignKey, failureList);
-            List<String> fileColumn = getFileColumn(fileName, condition.fieldToCompare.get(0), failureList);
-            if (foreignKey.size() != fileColumn.size()) {
-                Failure failure = new Failure();
-                failure.reason = FailureTypes.INVALID_COLUMN_SIZE;
-                failure.columnName.add(condition.fieldToCompare.get(0));
-                failure.columnName.add(condition.foreignKey);
-                ValidationUtil.addMessageToList(failure, failureList);
-                return;
-            }
             Map<String, Set<String>> mapForeignkeyAndName = new HashMap<>();
-            for (int i = 0; i < foreignKey.size(); i++) {
-                Set<String> strings = mapForeignkeyAndName.get(foreignKey.get(i));
-                if (strings != null) {
-                    strings.add(fileColumn.get(i));
-                } else {
-                    strings = new HashSet<>();
-                    strings.add(fileColumn.get(i));
-                    mapForeignkeyAndName.put(foreignKey.get(i), strings);
-                }
-            }
-            for (Map.Entry<String, Set<String>> ent : mapForeignkeyAndName.entrySet()) {
-                if (foreignKeyValueFromDB.values().contains(ent.getKey())) {
-                    List<NameIdDTO> nameIdDTOList = new ArrayList<>();
-                    for (String name : ent.getValue()) {
-                        NameIdDTO nameIdDTO = new NameIdDTO();
-                        nameIdDTO.setName(name);
-                        nameIdDTOList.add(nameIdDTO);
-                    }
-                    List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.getNamesByNameList(nameIdDTOList, typeName, ent.getKey(), failureList);
-                    if (condition.typeName.equalsIgnoreCase(ValidationConstants.LINKAGE_GROUP))
-                        processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_LINKAGE_GROUP_NAME__VALUE, failureList);
-                    if (condition.typeName.equalsIgnoreCase(ValidationConstants.DNARUN))
-                        processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_DNARUN_NAME__VALUE, failureList);
-                } else {
+            if (createForeignKeyGroup(fileName, condition, mapForeignkeyAndName, failureList)) {
+                Map<String, String> foreignKeyValueFromDB = new HashMap<>();
+                if (foreignKeyList.size() != 1) {
                     Failure failure = new Failure();
-                    failure.reason = FailureTypes.UNDEFINED_VALUE;
+                    failure.reason = FailureTypes.MULTIPLE_PLATFORM_ID;
+                    failure.columnName.add(condition.fieldToCompare.get(0));
                     failure.columnName.add(condition.foreignKey);
-                    failure.values.add(ent.getKey());
                     ValidationUtil.addMessageToList(failure, failureList);
+                    return;
+                }
+                if (condition.typeName.equalsIgnoreCase(ValidationConstants.MARKER)) {
+                    for (String platformId : foreignKeyList)
+                        foreignKeyValueFromDB = ValidationWebServicesUtil.validatePlatformId(platformId, failureList);
+                } else {
+                    foreignKeyValueFromDB = ValidationWebServicesUtil.getAllowedForeignKeyList(condition.typeName, failureList);
+                }
+                if (foreignKeyValueFromDB.size() == 0) return;
+                for (Map.Entry<String, Set<String>> ent : mapForeignkeyAndName.entrySet()) {
+                    if (foreignKeyValueFromDB.keySet().contains(ent.getKey())) {
+                        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+                        for (String name : ent.getValue()) {
+                            NameIdDTO nameIdDTO = new NameIdDTO();
+                            nameIdDTO.setName(name);
+                            nameIdDTOList.add(nameIdDTO);
+                        }
+                        List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.getNamesByNameList(nameIdDTOList, typeName, ent.getKey(), failureList);
+                        if (condition.typeName.equalsIgnoreCase(ValidationConstants.LINKAGE_GROUP))
+                            processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_LINKAGE_GROUP_NAME__VALUE, failureList);
+                        if (condition.typeName.equalsIgnoreCase(ValidationConstants.DNARUN))
+                            processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_DNARUN_NAME__VALUE, failureList);
+                    } else {
+                        Failure failure = new Failure();
+                        failure.reason = FailureTypes.UNDEFINED_VALUE;
+                        failure.columnName.add(condition.foreignKey);
+                        failure.values.add(ent.getKey());
+                        ValidationUtil.addMessageToList(failure, failureList);
+                    }
                 }
             }
         }
+    }
+
+    /**
+     * Go through the file and creates a foreignKey Id.
+     * Result will be a map with one key and several values to it
+     *
+     * @param fileName             fileName
+     * @param condition            Condition
+     * @param mapForeignkeyAndName foreignKeyMap
+     * @param failureList          failure list
+     * @return status
+     */
+    private static boolean createForeignKeyGroup(String fileName, ConditionUnit condition, Map<String, Set<String>> mapForeignkeyAndName, List<Failure> failureList) throws MaximumErrorsValidationException {
+        List<String> foreignKey = getFileColumn(fileName, condition.foreignKey, failureList);
+        List<String> fileColumn = getFileColumn(fileName, condition.fieldToCompare.get(0), failureList);
+        if (foreignKey.size() != fileColumn.size()) {
+            Failure failure = new Failure();
+            failure.reason = FailureTypes.INVALID_COLUMN_SIZE;
+            failure.columnName.add(condition.fieldToCompare.get(0));
+            failure.columnName.add(condition.foreignKey);
+            ValidationUtil.addMessageToList(failure, failureList);
+            return false;
+        }
+        for (int i = 0; i < foreignKey.size(); i++) {
+            Set<String> strings = mapForeignkeyAndName.get(foreignKey.get(i));
+            if (strings != null) {
+                strings.add(fileColumn.get(i));
+            } else {
+                strings = new HashSet<>();
+                strings.add(fileColumn.get(i));
+                mapForeignkeyAndName.put(foreignKey.get(i), strings);
+            }
+        }
+        return true;
     }
 
     /**

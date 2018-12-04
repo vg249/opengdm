@@ -13,6 +13,8 @@ import org.gobiiproject.gobiimodel.config.ServerConfigItem;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
@@ -21,10 +23,7 @@ import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Fail
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ValidationWebServicesUtil {
 
@@ -80,14 +79,13 @@ public class ValidationWebServicesUtil {
                 restUri = uriFactory.resourceColl(RestResourceId.GOBII_MAPSET);
                 GobiiEnvelopeRestResource<MapsetDTO, MapsetDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
                 PayloadEnvelope<MapsetDTO> resultEnvelope = gobiiEnvelopeRestResource.get(MapsetDTO.class);
-                resultEnvelope.getPayload().getData().forEach(dto -> mapsetDTOList.put(dto.getName(), dto.getMapsetId().toString()));
+                resultEnvelope.getPayload().getData().forEach(dto -> mapsetDTOList.put(dto.getMapsetId().toString(), dto.getName()));
                 return mapsetDTOList;
             } else if (foreignKey.equalsIgnoreCase(ValidationConstants.DNARUN)) {
                 restUri = uriFactory.resourceColl(RestResourceId.GOBII_EXPERIMENTS);
                 GobiiEnvelopeRestResource<ExperimentDTO, ExperimentDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
-                PayloadEnvelope<ExperimentDTO> resultEnvelope = gobiiEnvelopeRestResource
-                        .get(ExperimentDTO.class);
-                resultEnvelope.getPayload().getData().forEach(dto -> mapsetDTOList.put(dto.getExperimentName(), dto.getExperimentId().toString()));
+                PayloadEnvelope<ExperimentDTO> resultEnvelope = gobiiEnvelopeRestResource.get(ExperimentDTO.class);
+                resultEnvelope.getPayload().getData().forEach(dto -> mapsetDTOList.put(dto.getExperimentId().toString(), dto.getExperimentName()));
                 return mapsetDTOList;
             } else {
                 Failure failure = new Failure();
@@ -96,6 +94,36 @@ public class ValidationWebServicesUtil {
                 ValidationUtil.addMessageToList(failure, failureList);
                 return mapsetDTOList;
             }
+        } catch (Exception e) {
+            Failure failure = new Failure();
+            failure.reason = FailureTypes.EXCEPTION;
+            failure.values.add(e.getMessage());
+            ValidationUtil.addMessageToList(failure, failureList);
+            return mapsetDTOList;
+        }
+    }
+
+    /**
+     * Verifies whether the Platform Id is valid or not
+     */
+    static Map<String, String> validatePlatformId(String platformId, List<Failure> failureList) throws MaximumErrorsValidationException {
+        Map<String, String> mapsetDTOList = new HashMap<>();
+        try {
+            RestUri restUri = GobiiClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .resourceByUriIdParam(RestResourceId.GOBII_PLATFORM);
+            restUri.setParamValue("id", platformId);
+            GobiiEnvelopeRestResource<PlatformDTO, PlatformDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
+            PayloadEnvelope<PlatformDTO> resultEnvelope = gobiiEnvelopeRestResource.get(PlatformDTO.class);
+            if (resultEnvelope.getHeader().getStatus().isSucceeded())
+                resultEnvelope.getPayload().getData().forEach(dto -> mapsetDTOList.put(dto.getPlatformId().toString(), dto.getPlatformName()));
+            else {
+                Failure failure = new Failure();
+                failure.reason = FailureTypes.UNDEFINED_PLATFORM_ID;
+                failure.values.add(resultEnvelope.getHeader().getStatus().messages());
+                ValidationUtil.addMessageToList(failure, failureList);
+            }
+            return mapsetDTOList;
         } catch (Exception e) {
             Failure failure = new Failure();
             failure.reason = FailureTypes.EXCEPTION;
@@ -173,6 +201,5 @@ public class ValidationWebServicesUtil {
         }
         return nameIdDTOListResponse;
     }
-
 
 }
