@@ -9,12 +9,12 @@ import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
+
 import org.gobiiproject.gobiimodel.config.ServerConfigItem;
 import org.gobiiproject.gobiimodel.cvnames.CvGroup;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO;
-import org.gobiiproject.gobiimodel.dto.entity.auditable.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
@@ -158,6 +158,7 @@ public class ValidationWebServicesUtil {
                     .nameIdListByQueryParams();
             GobiiEnvelopeRestResource<NameIdDTO, NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
             namesUri.setParamValue("entity", gobiiEntityNameType.toLowerCase());
+
             namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.NAMES_BY_NAME_LIST.toString().toUpperCase()));
             if (gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.CV.toString())) {
                 switch (filterValue) {

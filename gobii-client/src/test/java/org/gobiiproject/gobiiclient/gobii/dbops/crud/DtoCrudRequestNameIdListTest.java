@@ -570,7 +570,7 @@ public class DtoCrudRequestNameIdListTest {
      * This test is ignored since right now we don't have a separate web service to create dna samples that can be used for this test.
      **/
 
-    @Test
+    @Ignore
     public void testGetDnaSampleNamesByList() throws Exception {
 
         // get project ID for loaded dna samples by ADL

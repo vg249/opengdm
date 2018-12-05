@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.Scanner;
 import java.util.UUID;
 
 public class GobiiAdlTest {
@@ -36,7 +37,6 @@ public class GobiiAdlTest {
     }
 
 
-
     /***
      * Note: there are a couple of issues with this test. First of all, checking
      * the backend processing flag does not work: locally, mine is set to false and the test
@@ -45,7 +45,7 @@ public class GobiiAdlTest {
      * and instead there is an index out of bounds exception.
      */
     @Test
-    public void testADLBatchProcessing() throws  Exception{
+    public void testADLBatchProcessing() throws Exception {
 
         if (backendSupoorted) {
 
@@ -63,17 +63,34 @@ public class GobiiAdlTest {
             // copy to temp folder
             String tempDirName = "adlTest-" + UUID.randomUUID().toString();
             String tempDirString = testExecConfig.getTestFileDownloadDirectory() + "/" + tempDirName;
-
             File tempDir = new File(tempDirString);
 
             tempDir.mkdir();
 
+            // check if include_scenarios.txt exists
+            File scenarioFile = new File("src/test/resources/gobiiAdl/include_scenarios.txt");
             File fileFromRepo = new File("src/test/resources/gobiiAdl");
 
             adlEncapsulator.copyFilesToLocalDir(fileFromRepo, tempDir);
 
+            Scanner sc = new Scanner(scenarioFile);
+
+            while (sc.hasNextLine()) {
+
+                String scenarioName = sc.nextLine();
+
+                File newScenarioDir = new File(tempDir.getAbsoluteFile() + "/" + scenarioName);
+                newScenarioDir.mkdir();
+
+                adlEncapsulator.copyFilesToLocalDir(fileFromRepo, newScenarioDir);
+
+                System.out.print(scenarioName);
+            }
+
+            adlEncapsulator.copyFilesToLocalDir(fileFromRepo, tempDir);
+
+
             adlEncapsulator.setInputDirectory(tempDir.getAbsolutePath());
-            Assert.assertTrue(adlEncapsulator.getErrorMsg(), adlEncapsulator.executeBatchGobiiADL());
 
         } else {
             LOGGER.error("Backend support is not provided in this context: system-critical unit tests will not be run");
