@@ -25,4 +25,3 @@ public enum NucIupacCodes {
         return this.name();
     }
 }
-

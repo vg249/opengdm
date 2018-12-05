@@ -1,18 +1,25 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
-import java.util.ArrayList;
+import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
+
 import java.util.List;
 
 class DnaSampleValidator extends BaseValidator {
     @Override
-    void validate(ValidationUnit validationUnit, String dir, List<String> errorList) throws MaximumErrorsValidationException {
-        List<String> dnaSample = new ArrayList<>();
-        if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), dnaSample, errorList)) {
-            String filePath = dir + "/" + validationUnit.getDigestFileName();
-            validateRequiredColumns(filePath, validationUnit.getConditions(), errorList);
-            validateRequiredUniqueColumns(filePath, validationUnit.getConditions(), errorList);
-            validateUniqueColumnList(filePath, validationUnit,errorList);
-            validateFileExistenceCheck(filePath, validationUnit,errorList);
+    boolean validate(ValidationUnit validationUnit, String dir, List<Failure> failureList) {
+        try {
+            if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), failureList)) {
+                String filePath = dir + "/" + validationUnit.getDigestFileName();
+                List<Failure> failures = beginValidation(filePath, validationUnit);
+                failureList.addAll(failures);
+                return true;
+            } else {
+                if (failureList.size() == 0) return false;
+                else return true;
+            }
+        } catch (MaximumErrorsValidationException e) {
+            //////Don't do any thing. This implies that particular error list is full.;
         }
+        return true;
     }
 }

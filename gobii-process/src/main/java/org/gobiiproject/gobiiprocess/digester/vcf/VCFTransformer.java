@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
@@ -50,6 +52,7 @@ public class VCFTransformer {
 			bimatrixFileBufferedWriter.newLine();
 			while (((mrefLine = mrefFileBufferedReader.readLine()) != null) &&
 				   ((matrixLine = matrixFileBufferedReader.readLine()) != null)) {
+				//TODO - update this to split matrix line and run transformVCFLine
 				lineNumber++;
 				boolean unspecifiedAlt=false;
 				String[] mrefLineRawData = mrefLine.trim().toUpperCase().split("\\s+");
@@ -120,7 +123,7 @@ public class VCFTransformer {
 	 */
 	//TODO - need to add some separation to appropriately deal with multi-allelic alternates downstream - potentially wrapper class
 	@SuppressWarnings("StringConcatenationInLoop")
-	private String getBiallelicEntry(int lineNumber,  String[] mrefLineData, String matrixLineDatum, int col,boolean unspecifiedAlt){
+	private static String getBiallelicEntry(int lineNumber,  String[] mrefLineData, String matrixLineDatum, int col,boolean unspecifiedAlt){
 		String[] terms = matrixLineDatum.split("/");
 		if (terms.length != 2) {
 			if(++errorsSoFar<MAX_ERRORS) {
@@ -194,4 +197,50 @@ public class VCFTransformer {
 
         HelperFunctions.tryExec("cut -f"+refPos+","+altPos+ " "+markerFile,outFile,errorPath);
     }
+
+	public static boolean transformVCFLine(String mrefLine, int lineNumber, List<String> inputList, List<String> outputList) throws IOException {
+		BufferedReader mrefFileBufferedReader = ; BufferedReader matrixFileBufferedReader = ;
+		lineNumber++;
+		boolean unspecifiedAlt=false;
+		String[] mrefLineRawData = mrefLine.trim().toUpperCase().split("\\s+");
+		String[] mrefAltData=new String[]{""};
+
+		//If alternates are unspecified (.), need to handle as a special case. Will let AltData become an empty lsit, and all alts will be dealt with appropriately.
+		//And since it looks like ""{value}"",""{Value}"", lets just use contains.
+		if(mrefLineRawData[1].contains(".")){
+			unspecifiedAlt=true;
+		}
+		mrefAltData = mrefLineRawData[1].split("[^A-Za-z\\-.]+");//Split on non-alphabetic, may be jsonified already
+
+		if(mrefAltData.length==0)mrefAltData=new String[]{""};//if we have no entries, make it a blank first and all below will work fine
+
+		int offset=0;//offset for first alt being blank (happens with this regex and split (freaking split)
+		if(mrefAltData[0].equals(""))offset=1;
+
+		String mrefLineData[]=new String[mrefAltData.length+1-offset];//List of 1 + alts length
+		mrefLineData[0]=mrefLineRawData[0];
+		System.arraycopy(mrefAltData,0+offset,mrefLineData,1,mrefAltData.length-offset);
+
+		//Fix - to N
+		for(int i =0;i< mrefLineData.length;i++) {
+			if (mrefLineData[i].equals("-"))mrefLineData[i]="N";// - is technically not valid
+			if(mrefLineData[i].equals("*"))mrefLineData[i]=BI_UNKNOWN;// * is upstream deletion
+			if(mrefLineData[i].equals("INS"))mrefLineData[i]="+";// Technically, all these are supposed to be info fields
+			if(mrefLineData[i].equals("DEL"))mrefLineData[i]="-";
+			if(mrefLineData[i].equals("DUP"))mrefLineData[i]=BI_UNKNOWN;
+			if(mrefLineData[i].equals("INV"))mrefLineData[i]=BI_UNKNOWN;
+		}
+
+		outputList = new LinkedList<String>);
+		for(int i = 0; I < inputList.size();i++){
+			String input = inputList.get(i);
+			String alleles=input.split(":")[0];
+			String bimatrixCell = getBiallelicEntry( lineNumber,  mrefLineData, alleles, i,unspecifiedAlt);
+			if (bimatrixCell == null) {
+				return false;
+			}
+			outputList.add(bimatrixCell);
+		}
+		return true;
+	}
 }

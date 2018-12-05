@@ -1,0 +1,79 @@
+{
+  "validations": [
+    {
+      "digestFileName": "digest.dnasample_prop",
+      "conditions": [
+        {
+          "columnName": "project_id",
+          "required": "yes"
+        },
+        {
+          "columnName": "dnasample_name",
+          "required": "yes"
+        },
+        {
+          "columnName": "num",
+          "required": "yes"
+        },
+        {
+          "columnName": "external_code",
+          "required": "yes",
+          "uniqueColumns": [
+            "dnasample_name",
+            "external_code",
+            "num"
+          ]
+        },
+        {
+          "columnName": "project_id",
+          "required": "yes",
+          "type": "File",
+          "fileShouldExist": "digest.dnasample",
+          "fieldColumns": [
+            "project_id"
+          ],
+          "typeName": "digest.dnasample",
+          "fieldToCompare": [
+            "project_id"
+          ]
+        },
+        {
+          "columnName": "dnasample_name",
+          "required": "yes",
+          "type": "File",
+          "fieldColumns": [
+            "dnasample_name"
+          ],
+          "typeName": "digest.dnasample",
+          "fieldToCompare": [
+            "dnasample_name"
+          ]
+        },
+        {
+          "columnName": "external_code",
+          "required": "yes",
+          "type": "File",
+          "fieldColumns": [
+            "external_code"
+          ],
+          "typeName": "digest.dnasample",
+          "fieldToCompare": [
+            "external_code"
+          ]
+        },
+        {
+          "columnName": "num",
+          "required": "yes",
+          "type": "File",
+          "fieldColumns": [
+            "num"
+          ],
+          "typeName": "digest.dnasample",
+          "fieldToCompare": [
+            "num"
+          ]
+        }
+      ]
+    }
+  ]
+}

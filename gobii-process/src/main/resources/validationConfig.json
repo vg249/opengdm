@@ -18,7 +18,9 @@
           "type": "DB",
           "nullAllowed": "yes",
           "typeName": "CV",
-          "fieldToCompare": "species_name"
+          "fieldToCompare": [
+            "species_name"
+          ]
         },
         {
           "columnName": "type_name",
@@ -26,7 +28,9 @@
           "type": "DB",
           "nullAllowed": "yes",
           "typeName": "CV",
-          "fieldToCompare": "type_name"
+          "fieldToCompare": [
+            "type_name"
+          ]
         }
       ]
     },
@@ -37,8 +41,14 @@
           "columnName": "external_code",
           "required": "yes",
           "type": "File",
+          "fileShouldExist": "digest.germplasm",
+          "fieldColumns": [
+            "external_code"
+          ],
           "typeName": "digest.germplasm",
-          "fieldToCompare": "external_code"
+          "fieldToCompare": [
+            "external_code"
+          ]
         }
       ]
     },
@@ -73,7 +83,9 @@
           "fileExists": "no",
           "type": "DB",
           "typeName": "CV",
-          "fieldToCompare": "external_code"
+          "fieldToCompare": [
+            "external_code"
+          ]
         },
         {
           "columnName": "external_code",
@@ -81,8 +93,13 @@
           "fileExistenceCheck": "digest.germplasm",
           "fileExists": "yes",
           "type": "File",
+          "fieldColumns": [
+            "external_code"
+          ],
           "typeName": "digest.germplasm",
-          "fieldToCompare": "external_code"
+          "fieldToCompare": [
+            "external_code"
+          ]
         }
       ]
     },
@@ -114,29 +131,50 @@
           "columnName": "project_id",
           "required": "yes",
           "type": "File",
+          "fileShouldExist": "digest.dnasample",
+          "fieldColumns": [
+            "project_id"
+          ],
           "typeName": "digest.dnasample",
-          "fieldToCompare": "project_id"
+          "fieldToCompare": [
+            "project_id"
+          ]
         },
         {
           "columnName": "dnasample_name",
           "required": "yes",
           "type": "File",
+          "fieldColumns": [
+            "dnasample_name"
+          ],
           "typeName": "digest.dnasample",
-          "fieldToCompare": "dnasample_name"
+          "fieldToCompare": [
+            "dnasample_name"
+          ]
         },
         {
           "columnName": "external_code",
           "required": "yes",
           "type": "File",
+          "fieldColumns": [
+            "external_code"
+          ],
           "typeName": "digest.dnasample",
-          "fieldToCompare": "external_code"
+          "fieldToCompare": [
+            "external_code"
+          ]
         },
         {
           "columnName": "num",
           "required": "yes",
           "type": "File",
+          "fieldColumns": [
+            "num"
+          ],
           "typeName": "digest.dnasample",
-          "fieldToCompare": "num"
+          "fieldToCompare": [
+            "num"
+          ]
         }
       ]
     },
@@ -171,8 +209,14 @@
           "fileExistenceCheck": "digest.dnasample",
           "fileExists": "yes",
           "type": "File",
+          "fieldColumns": [
+            "project_id"
+          ],
+          "uniqueFileCheck": "yes",
           "typeName": "digest.dnasample",
-          "fieldToCompare": "project_id"
+          "fieldToCompare": [
+            "project_id"
+          ]
         },
         {
           "columnName": "dnasample_name",
@@ -180,8 +224,14 @@
           "fileExistenceCheck": "digest.dnasample",
           "fileExists": "yes",
           "type": "File",
+          "fieldColumns": [
+            "dnasample_name"
+          ],
+          "uniqueFileCheck": "yes",
           "typeName": "digest.dnasample",
-          "fieldToCompare": "name"
+          "fieldToCompare": [
+            "name"
+          ]
         },
         {
           "columnName": "num",
@@ -189,10 +239,206 @@
           "fileExistenceCheck": "digest.dnasample",
           "fileExists": "yes",
           "type": "File",
+          "fieldColumns": [
+            "name",
+            "num"
+          ],
+          "uniqueFileCheck": "yes",
           "typeName": "digest.dnasample",
-          "fieldToCompare": "num"
+          "fieldToCompare": [
+            "name",
+            "num"
+          ]
         }
       ]
+    },
+    {
+      "digestFileName": "digest.dnarun_prop",
+      "conditions": [
+        {
+          "columnName": "experiment_id",
+          "required": "yes",
+          "type": "File",
+          "fileShouldExist": "digest.dnarun",
+          "fieldColumns": [
+            "experiment_id"
+          ],
+          "typeName": "digest.dnarun",
+          "fieldToCompare": [
+            "experiment_id"
+          ]
+        },
+        {
+          "columnName": "dnarun_name",
+          "required": "yes",
+          "type": "File",
+          "fieldColumns": [
+            "dnarun_name"
+          ],
+          "typeName": "digest.dnarun",
+          "fieldToCompare": [
+            "name"
+          ]
+        }
+      ]
+    },
+    {
+      "digestFileName": "digest.marker",
+      "conditions": [
+        {
+          "columnName": "platform_id",
+          "required": "yes"
+        },
+        {
+          "columnName": "name",
+          "required": "yes"
+        },
+        {
+          "columnName": "reference_name",
+          "required": "no",
+          "type": "DB",
+          "nullAllowed": "yes",
+          "typeName": "reference",
+          "fieldToCompare": [
+            "reference_name"
+          ]
+        },
+        {
+          "columnName": "strand_name",
+          "required": "no",
+          "type": "DB",
+          "nullAllowed": "yes",
+          "typeName": "CV",
+          "fieldToCompare": [
+            "strand_name"
+          ]
+        }
+      ]
+    },
+    {
+      "digestFileName": "digest.marker_prop",
+      "conditions": [
+        {
+          "columnName": "platform_id",
+          "required": "yes"
+        },
+        {
+          "columnName": "marker_name",
+          "required": "yes",
+          "fileShouldExist": "digest.marker"
+        }
+      ]
+    },
+    {
+      "digestFileName": "digest.linkage_group",
+      "conditions": [
+        {
+          "columnName": "map_id",
+          "required": "yes"
+        },
+        {
+          "columnName": "name",
+          "required": "yes"
+        }
+      ]
+    },
+    {
+      "digestFileName": "digest.marker_linkage_group",
+      "conditions": [
+        {
+          "columnName": "platform_id",
+          "required": "yes"
+        },
+        {
+          "columnName": "map_id",
+          "required": "yes"
+        },
+        {
+          "columnName": "linkage_group_name",
+          "required": "yes",
+          "fileExistenceCheck": "digest.linkage_group",
+          "fileExists": "no",
+          "type": "DB",
+          "typeName": "linkage_group",
+          "foreignKey": "map_id",
+          "fieldToCompare": [
+            "linkage_group_name"
+          ]
+        },
+        {
+          "columnName": "marker_name",
+          "required": "yes",
+          "fileExistenceCheck": "digest.marker ",
+          "fileExists": "no",
+          "type": "DB",
+          "typeName": "marker",
+          "foreignKey": "platform_id",
+          "fieldToCompare": [
+            "marker_name"
+          ]
+        }
+      ]
+    },
+    {
+      "digestFileName": "digest.dataset_dnarun",
+      "conditions": [
+        {
+          "columnName": "experiment_id",
+          "required": "yes"
+        },
+        {
+          "columnName": "dataset_id",
+          "required": "yes"
+        },
+        {
+          "columnName": "dnarun_idx",
+          "required": "yes"
+        },
+        {
+          "columnName": "dnarun_name",
+          "required": "yes",
+          "fileExistenceCheck": "digest.dnarun",
+          "fileExists": "no",
+          "type": "DB",
+          "typeName": "dnarun",
+          "foreignKey": "experiment_id",
+          "fieldToCompare": [
+            "dnarun_name"
+          ]
+        }
+      ]
+    },
+    {
+      "digestFileName": "digest.dataset_marker",
+      "conditions": [
+        {
+          "columnName": "platform_id",
+          "required": "yes"
+        },
+        {
+          "columnName": "dataset_id",
+          "required": "yes"
+        },
+        {
+          "columnName": "marker_idx",
+          "required": "yes"
+        },
+        {
+          "columnName": "marker_name",
+          "required": "yes",
+          "fileExistenceCheck": "digest.marker ",
+          "fileExists": "no",
+          "type": "DB",
+          "typeName": "marker_table",
+          "fieldToCompare": [
+            "marker_name"
+          ]
+        }
+      ]
+    },
+    {
+      "digestFileName": "digest.matrix",
+      "conditions":[]
     }
   ]
 }
