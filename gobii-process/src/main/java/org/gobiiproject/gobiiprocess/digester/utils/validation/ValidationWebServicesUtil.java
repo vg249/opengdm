@@ -70,6 +70,9 @@ public class ValidationWebServicesUtil {
         }
     }
 
+    /**
+     * Gets the allowed values for foreign key
+     */
     public static Map<String, String> getAllowedForeignKeyList(String foreignKey, List<Failure> failureList) throws MaximumErrorsValidationException {
         Map<String, String> mapsetDTOList = new HashMap<>();
         try {
@@ -175,8 +178,9 @@ public class ValidationWebServicesUtil {
                         return nameIdDTOListResponse;
                 }
             } else if (gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.REFERENCE.toString()) || gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.MARKER.toString())
-                    || gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.LINKAGE_GROUP.toString()) || gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.DNARUN.toString()))
-                namesUri.setParamValue("filterValue", filterValue);
+                    || gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.LINKAGE_GROUP.toString()) || gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.DNARUN.toString())
+                    || gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.MARKER.toString())) ;
+            namesUri.setParamValue("filterValue", filterValue);
 
             PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = gobiiEnvelopeRestResource.post(NameIdDTO.class, payloadEnvelope);
             Status status = responsePayloadEnvelope.getHeader().getStatus();
