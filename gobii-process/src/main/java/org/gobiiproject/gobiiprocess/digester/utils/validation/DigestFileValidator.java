@@ -269,6 +269,7 @@ public class DigestFileValidator {
             case "marker":
             case "marker_prop":
             case "linkage_group":
+            case "marker_linkage_group":
             case "dataset_dnarun":
                 if (!new GermplasmPropValidator().validate(validation, rootDir, failureList)) failureList = null;
                 break;
@@ -277,9 +278,6 @@ public class DigestFileValidator {
                 break;
             case "dnarun":
                 if (!new DnarunValidator().validate(validation, rootDir, failureList)) failureList = null;
-                break;
-            case "marker_linkage_group":
-                if (!new MarkerLinkageGroupValidator().validate(validation, rootDir, failureList)) failureList = null;
                 break;
             case "dataset_marker":
                 if (!new DatasetMarkerValidator().validate(validation, rootDir, failureList)) failureList = null;

@@ -109,7 +109,7 @@ public class ValidationWebServicesUtil {
     /**
      * Verifies whether the Platform Id is valid or not
      */
-    static Map<String, String> validatePlatformId(String platformId, List<Failure> failureList) throws MaximumErrorsValidationException {
+    public static Map<String, String> validatePlatformId(String platformId, List<Failure> failureList) throws MaximumErrorsValidationException {
         Map<String, String> mapsetDTOList = new HashMap<>();
         try {
             RestUri restUri = GobiiClientContext.getInstance(null, false)

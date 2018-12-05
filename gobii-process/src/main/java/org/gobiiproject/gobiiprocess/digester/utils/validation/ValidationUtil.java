@@ -497,6 +497,8 @@ class ValidationUtil {
                             processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_LINKAGE_GROUP_NAME__VALUE, failureList);
                         if (condition.typeName.equalsIgnoreCase(ValidationConstants.DNARUN))
                             processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_DNARUN_NAME__VALUE, failureList);
+                        if (condition.typeName.equalsIgnoreCase(ValidationConstants.MARKER))
+                            processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_MARKER_NAME__VALUE, failureList);
                     } else {
                         Failure failure = new Failure();
                         failure.reason = FailureTypes.UNDEFINED_VALUE;
