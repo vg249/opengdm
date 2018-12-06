@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
@@ -415,10 +416,11 @@ class ValidationUtil {
         try {
             if (condition.typeName != null) {
                 if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV) || condition.typeName.equalsIgnoreCase(ValidationConstants.REFERENCE)
-                        || condition.typeName.equalsIgnoreCase(ValidationConstants.LINKAGE_GROUP) || condition.typeName.equalsIgnoreCase(ValidationConstants.DNARUN) || condition.typeName.equalsIgnoreCase(ValidationConstants.MARKER)) {
+                        || condition.typeName.equalsIgnoreCase(ValidationConstants.LINKAGE_GROUP) || condition.typeName.equalsIgnoreCase(ValidationConstants.DNARUN)
+                        || condition.typeName.equalsIgnoreCase(ValidationConstants.MARKER) || condition.typeName.equalsIgnoreCase(ValidationConstants.EXTERNAL_CODE)) {
                     if (condition.fieldToCompare != null) {
                         if (checkForHeaderExistence(fileName, condition.fieldToCompare, condition.required, failureList))
-                            if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV) || condition.typeName.equalsIgnoreCase(ValidationConstants.REFERENCE)) {
+                            if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV) || condition.typeName.equalsIgnoreCase(ValidationConstants.REFERENCE) || condition.typeName.equalsIgnoreCase(ValidationConstants.EXTERNAL_CODE)) {
                                 validateDB(fileName, condition, failureList);
                             } else if ((condition.typeName.equalsIgnoreCase(ValidationConstants.LINKAGE_GROUP) || condition.typeName.equalsIgnoreCase(ValidationConstants.DNARUN) || condition.typeName.equalsIgnoreCase(ValidationConstants.MARKER))
                                     && condition.foreignKey != null)
@@ -452,6 +454,8 @@ class ValidationUtil {
                 nameIdDTO.setName(fieldName);
                 nameIdDTOList.add(nameIdDTO);
             }
+            if (typeName.equalsIgnoreCase(ValidationConstants.EXTERNAL_CODE))
+                typeName = GobiiEntityNameType.GERMPLASM.name();
             List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.getNamesByNameList(nameIdDTOList, typeName, filterValue, failureList);
             if (typeName.equalsIgnoreCase(ValidationConstants.CV))
                 processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_CV_VALUE, failureList);

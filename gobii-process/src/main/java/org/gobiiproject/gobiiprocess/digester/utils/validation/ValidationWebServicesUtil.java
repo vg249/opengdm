@@ -180,7 +180,7 @@ public class ValidationWebServicesUtil {
                 }
             } else if (gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.REFERENCE.toString()) || gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.MARKER.toString())
                     || gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.LINKAGE_GROUP.toString()) || gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.DNARUN.toString())
-                    || gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.MARKER.toString())) ;
+                    || gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.MARKER.toString())|| gobiiEntityNameType.equalsIgnoreCase(GobiiEntityNameType.GERMPLASM.toString()))
             namesUri.setParamValue("filterValue", filterValue);
 
             PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = gobiiEnvelopeRestResource.post(NameIdDTO.class, payloadEnvelope);

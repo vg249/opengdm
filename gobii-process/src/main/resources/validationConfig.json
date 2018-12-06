@@ -82,7 +82,7 @@
           "fileExistenceCheck": "digest.germplasm",
           "fileExists": "no",
           "type": "DB",
-          "typeName": "CV",
+          "typeName": "external_code",
           "fieldToCompare": [
             "external_code"
           ]

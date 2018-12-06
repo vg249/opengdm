@@ -4,6 +4,7 @@ public class ValidationConstants {
     static final String CV = "CV";
     static final String REFERENCE = "reference";
     static final String LINKAGE_GROUP = "linkage_group";
+    static final String EXTERNAL_CODE ="external_code";
     static final String DNARUN = "dnarun";
     static final String MARKER = "marker";
     static final String DB = "DB";
