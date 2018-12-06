@@ -324,22 +324,36 @@ public class GobiiFileReader {
 		querier.close();
 
 		boolean sendQc= false;
+
+		boolean isFirstInstructionVCF=zero.getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF);
+		List<GobiiFileColumn> cols=zero.getGobiiFileColumns();
+		GobiiFileColumn firstCol=cols.size()>0?cols.get(0):null;
+		String firstInstructionDatasetType=getDatasetType(zero,firstCol);
+		if(isFirstInstructionVCF && !firstInstructionDatasetType.equals("NUCLEOTIDE_2_LETTER")){
+			ErrorLogger.logError("GobiiFileReader","Invalid Dataset Type selected for VCF file. Expected 2 Letter Nucleotide. Received " +firstInstructionDatasetType);
+		}
+
 		for (GobiiLoaderInstruction inst:list) {
 			qcCheck = inst.isQcCheck();
+
 			//Section - Matrix Post-processing
 			//Dataset is the first non-empty dataset type
+			boolean isVCF=false;
 			for (GobiiFileColumn gfc : inst.getGobiiFileColumns()) {
 				if (gfc.getDataSetType() != null) {
 					dst = getDatasetType(inst, gfc);
-					boolean isVCF = inst.getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF);
-					if (isVCF && !dst.equals("IUPAC")) {
-						dst = "VCF";
-					}
+					isVCF = inst.getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF);
 					if (gfc.getDataSetOrientationType() != null) dso = gfc.getDataSetOrientationType();
-
 					break;
 				}
+
 			}
+			//Switch used for VCF transforms is currently a change in dataset type. See 'why is VCF a data type' GSD
+			if (isVCF) {
+				dst = "VCF";
+			}
+
+
 			String fromFile = getDestinationFile(inst);
 			SequenceInPlaceTransform intermediateFile=new SequenceInPlaceTransform(fromFile,errorPath);
 			if (dst != null && inst.getTable().equals(VARIANT_CALL_TABNAME)) {
@@ -396,7 +410,7 @@ public class GobiiFileReader {
 			intermediateFile.returnFile(); // replace intermediateFile where it came from
 
 			//DONE WITH TRANSFORMS
-
+			
 			jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION.getCvName(),"Matrix Validation");
 			if(loaderInstructionMap.containsKey(VARIANT_CALL_TABNAME)) {
 				boolean valid=DigestMatrix.validatematrix(loaderInstructionMap.get(VARIANT_CALL_TABNAME), zero.getDatasetType().getName());
@@ -834,7 +848,7 @@ public class GobiiFileReader {
      * @return String representation of the dataset type of the column
      */
     private static String getDatasetType(GobiiLoaderInstruction i, GobiiFileColumn gfc) {
-        DataSetType dst = gfc.getDataSetType(); //Old way
+        DataSetType dst = (gfc !=null?gfc.getDataSetType():null); //Old way
         if (dst != null) {
             return dst.toString();
         } else {
