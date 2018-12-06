@@ -478,12 +478,21 @@ class ValidationUtil {
                     return;
                 }
                 if (condition.typeName.equalsIgnoreCase(ValidationConstants.MARKER)) {
-                    for (String platformId : foreignKeyList)
+                    for (String platformId : foreignKeyList) {
                         foreignKeyValueFromDB = ValidationWebServicesUtil.validatePlatformId(platformId, failureList);
+                        if (foreignKeyValueFromDB.size() == 0) {
+                            Failure failure = new Failure();
+                            failure.reason = FailureTypes.UNDEFINED_VALUE;
+                            failure.columnName.add(condition.foreignKey);
+                            failure.values.add(platformId);
+                            ValidationUtil.addMessageToList(failure, failureList);
+                            return;
+                        }
+                    }
                 } else {
                     foreignKeyValueFromDB = ValidationWebServicesUtil.getAllowedForeignKeyList(condition.typeName, failureList);
                 }
-                if (foreignKeyValueFromDB.size() == 0) return;
+
                 for (Map.Entry<String, Set<String>> ent : mapForeignkeyAndName.entrySet()) {
                     if (foreignKeyValueFromDB.keySet().contains(ent.getKey())) {
                         List<NameIdDTO> nameIdDTOList = new ArrayList<>();

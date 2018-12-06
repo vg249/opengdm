@@ -429,7 +429,8 @@
           "fileExistenceCheck": "digest.marker ",
           "fileExists": "no",
           "type": "DB",
-          "typeName": "marker_table",
+          "typeName": "marker",
+          "foreignKey": "platform_id",
           "fieldToCompare": [
             "marker_name"
           ]

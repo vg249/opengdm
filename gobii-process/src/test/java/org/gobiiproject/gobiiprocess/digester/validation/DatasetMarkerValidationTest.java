@@ -41,7 +41,7 @@ import static org.mockito.Matchers.eq;
 @PrepareForTest(ValidationWebServicesUtil.class)
 @PowerMockRunnerDelegate(BlockJUnit4ClassRunner.class)
 @PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
-public class MarkerLinkageGroupValidationTest {
+public class DatasetMarkerValidationTest {
 
     private static String tempFolderLocation;
 
@@ -52,15 +52,15 @@ public class MarkerLinkageGroupValidationTest {
     @BeforeClass
     public static void setUp() throws IOException {
         tempFolderLocation = tempFolder.getRoot().getPath();
-        File source = new File("src/test/resources/validation/marker_linkage_group");
+        File source = new File("src/test/resources/validation/dataset_marker");
         FileUtils.copyDirectory(source, tempFolder.getRoot());
     }
 
     /**
-     * markerLinkageGroup validation.
+     * datasetMarkerGroup validation.
      */
     @Test
-    public void markerLinkageGroupAllPassTest() throws IOException {
+    public void datasetMarkerAllPassTest() throws IOException {
         DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/allPass", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
@@ -70,23 +70,6 @@ public class MarkerLinkageGroupValidationTest {
         Map<String, String> foreignKeyValueFromDBPlatformId = new HashMap<>();
         foreignKeyValueFromDBPlatformId.put("8", "Dart_clone");
 
-        List<NameIdDTO> referenceResponseLG = new ArrayList<>();
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("LG_1_length_39901017");
-            nameIdDTOResponse.setId(1);
-            referenceResponseLG.add(nameIdDTOResponse);
-        }
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("LG_2_length_33233457");
-            nameIdDTOResponse.setId(2);
-            referenceResponseLG.add(nameIdDTOResponse);
-        }
-
-        Map<String, String> foreignKeyValueFromDBMapset = new HashMap<>();
-        foreignKeyValueFromDBMapset.put("1", "validationTestMapset");
-
         List<NameIdDTO> referenceResponse = new ArrayList<>();
         {
             NameIdDTO nameIdDTOResponse = new NameIdDTO();
@@ -96,12 +79,24 @@ public class MarkerLinkageGroupValidationTest {
         }
         {
             NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("dommarker206");
-            nameIdDTOResponse.setId(206);
+            nameIdDTOResponse.setName("dommarker2");
+            nameIdDTOResponse.setId(2);
+            referenceResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("dommarker3");
+            nameIdDTOResponse.setId(3);
+            referenceResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("dommarker4");
+            nameIdDTOResponse.setId(4);
             referenceResponse.add(nameIdDTOResponse);
         }
 
-        mockForTestCase(foreignKeyValueFromDBPlatformId, referenceResponseLG, foreignKeyValueFromDBMapset, referenceResponse);
+        mockForTestCase(foreignKeyValueFromDBPlatformId, referenceResponse);
         digestFileValidator.performValidation();
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/allPass"))
@@ -110,41 +105,23 @@ public class MarkerLinkageGroupValidationTest {
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
 
-        assertEquals("Expected file name is not marker_linkage_group", "marker_linkage_group", fileErrors[0].fileName);
+        assertEquals("Expected file name is not dataset_marker", "dataset_marker", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not success", "SUCCESS", fileErrors[0].status);
 
     }
 
     /**
-     * markerLinkageGroup validation.
+     * datasetMarkerGroup validation.
      */
     @Test
     public void missingPlatformIdAllPassTest() throws IOException {
         DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingPlatformId", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
-
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
         PowerMockito
                 .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
                 .thenReturn(true);
         Map<String, String> foreignKeyValueFromDBPlatformId = new HashMap<>();
         foreignKeyValueFromDBPlatformId.put("81", "Dart_clone");
-
-        List<NameIdDTO> referenceResponseLG = new ArrayList<>();
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("LG_1_length_39901017");
-            nameIdDTOResponse.setId(1);
-            referenceResponseLG.add(nameIdDTOResponse);
-        }
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("LG_2_length_33233457");
-            nameIdDTOResponse.setId(2);
-            referenceResponseLG.add(nameIdDTOResponse);
-        }
-
-        Map<String, String> foreignKeyValueFromDBMapset = new HashMap<>();
-        foreignKeyValueFromDBMapset.put("1", "validationTestMapset");
 
         List<NameIdDTO> referenceResponse = new ArrayList<>();
         {
@@ -155,12 +132,24 @@ public class MarkerLinkageGroupValidationTest {
         }
         {
             NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("dommarker206");
-            nameIdDTOResponse.setId(206);
+            nameIdDTOResponse.setName("dommarker2");
+            nameIdDTOResponse.setId(2);
+            referenceResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("dommarker3");
+            nameIdDTOResponse.setId(3);
+            referenceResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("dommarker4");
+            nameIdDTOResponse.setId(4);
             referenceResponse.add(nameIdDTOResponse);
         }
 
-        mockForTestCase(foreignKeyValueFromDBPlatformId, referenceResponseLG, foreignKeyValueFromDBMapset, referenceResponse);
+        mockForTestCase(foreignKeyValueFromDBPlatformId, referenceResponse);
         digestFileValidator.performValidation();
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/missingPlatformId"))
@@ -169,7 +158,7 @@ public class MarkerLinkageGroupValidationTest {
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
 
-        assertEquals("Expected file name is not marker_linkage_group", "marker_linkage_group", fileErrors[0].fileName);
+        assertEquals("Expected file name is not dataset_marker", "dataset_marker", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not success", "FAILURE", fileErrors[0].status);
         List<Failure> failures = fileErrors[0].failures;
         assertEquals("Failures are more than the expected", 1, failures.size());
@@ -180,81 +169,11 @@ public class MarkerLinkageGroupValidationTest {
     }
 
     /**
-     * MarkerLinkageGroup validation.
-     * Has all required fields, one error in linkageGroup
-     */
-    @Test
-    public void linkageGroupFailTest() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/linkageGroupFail", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
-
-        PowerMockito.mockStatic(ValidationWebServicesUtil.class);
-        PowerMockito
-                .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
-                .thenReturn(true);
-        Map<String, String> foreignKeyValueFromDBPlatformId = new HashMap<>();
-        foreignKeyValueFromDBPlatformId.put("8", "Dart_clone");
-
-        List<NameIdDTO> referenceResponseLG = new ArrayList<>();
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("LG_1_length_39901017");
-            nameIdDTOResponse.setId(1);
-            referenceResponseLG.add(nameIdDTOResponse);
-        }
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("LG_2_length_33233457");
-            nameIdDTOResponse.setId(0);
-            referenceResponseLG.add(nameIdDTOResponse);
-        }
-
-        Map<String, String> foreignKeyValueFromDBMapset = new HashMap<>();
-        foreignKeyValueFromDBMapset.put("1", "validationTestMapset");
-
-        List<NameIdDTO> referenceResponse = new ArrayList<>();
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("dommarker1");
-            nameIdDTOResponse.setId(1);
-            referenceResponse.add(nameIdDTOResponse);
-        }
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("dommarker206");
-            nameIdDTOResponse.setId(206);
-            referenceResponse.add(nameIdDTOResponse);
-        }
-
-        mockForTestCase(foreignKeyValueFromDBPlatformId, referenceResponseLG, foreignKeyValueFromDBMapset, referenceResponse);
-        digestFileValidator.performValidation();
-        List<Path> pathList =
-                Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/linkageGroupFail"))
-                        .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
-        assertEquals("There should be one validation output json file", 1, pathList.size());
-
-        ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-
-        assertEquals("Expected file name is not marker_linkage_group", "marker_linkage_group", fileErrors[0].fileName);
-        assertEquals("Expected STATUS is not FAILURE", "FAILURE", fileErrors[0].status);
-
-        List<Failure> failures = fileErrors[0].failures;
-        assertEquals("Failures are more than the expected", 1, failures.size());
-
-        for (Failure failure : failures) {
-            assertEquals("Unexpected column name", "linkage_group_name", failure.columnName.get(0));
-            assertEquals("Unexpected failure reason", "Undefined linkage_group_name value", failure.reason);
-            assertEquals("Unexpected failure", "LG_2_length_33233457", failure.values.get(0));
-
-        }
-    }
-
-
-    /**
-     * MarkerLinkageGroup validation.
+     * datasetMarkerGroup validation.
      * Missing one required field
      */
     @Test
-    public void markerLinkageGroupMissingRequiredFieldTest() throws IOException {
+    public void datasetMarkerMissingRequiredFieldTest() throws IOException {
         DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
@@ -264,23 +183,6 @@ public class MarkerLinkageGroupValidationTest {
         Map<String, String> foreignKeyValueFromDBPlatformId = new HashMap<>();
         foreignKeyValueFromDBPlatformId.put("8", "Dart_clone");
 
-        List<NameIdDTO> referenceResponseLG = new ArrayList<>();
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("LG_1_length_39901017");
-            nameIdDTOResponse.setId(1);
-            referenceResponseLG.add(nameIdDTOResponse);
-        }
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("LG_2_length_33233457");
-            nameIdDTOResponse.setId(2);
-            referenceResponseLG.add(nameIdDTOResponse);
-        }
-
-        Map<String, String> foreignKeyValueFromDBMapset = new HashMap<>();
-        foreignKeyValueFromDBMapset.put("1", "validationTestMapset");
-
         List<NameIdDTO> referenceResponse = new ArrayList<>();
         {
             NameIdDTO nameIdDTOResponse = new NameIdDTO();
@@ -290,12 +192,24 @@ public class MarkerLinkageGroupValidationTest {
         }
         {
             NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("dommarker206");
-            nameIdDTOResponse.setId(206);
+            nameIdDTOResponse.setName("dommarker2");
+            nameIdDTOResponse.setId(2);
+            referenceResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("dommarker3");
+            nameIdDTOResponse.setId(3);
+            referenceResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("dommarker4");
+            nameIdDTOResponse.setId(4);
             referenceResponse.add(nameIdDTOResponse);
         }
 
-        mockForTestCase(foreignKeyValueFromDBPlatformId, referenceResponseLG, foreignKeyValueFromDBMapset, referenceResponse);
+        mockForTestCase(foreignKeyValueFromDBPlatformId, referenceResponse);
         digestFileValidator.performValidation();
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns"))
@@ -304,21 +218,17 @@ public class MarkerLinkageGroupValidationTest {
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
 
-        assertEquals("Expected file name is not marker_linkage_group", "marker_linkage_group", fileErrors[0].fileName);
+        assertEquals("Expected file name is not dataset_marker", "dataset_marker", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not FAILURE", "FAILURE", fileErrors[0].status);
 
         List<Failure> failures = fileErrors[0].failures;
-        assertEquals("Failures are more than the expected", 2, failures.size());
+        assertEquals("Failures are more than the expected", 1, failures.size());
         assertEquals("Unexpected failure reason", "Column not found", failures.get(0).reason);
-        assertEquals("Unexpected column name", "linkage_group_name", failures.get(0).columnName.get(0));
-
-        assertEquals("Unexpected failure reason", "Column not found", failures.get(1).reason);
-        assertEquals("Unexpected column name", "linkage_group_name", failures.get(1).columnName.get(0));
-
+        assertEquals("Unexpected column name", "marker_idx", failures.get(0).columnName.get(0));
     }
 
     /**
-     * MarkerLinkageGroup validation.
+     * datasetMarkerGroup validation.
      */
     @Test
     public void markerNameFailTest() throws IOException {
@@ -328,25 +238,10 @@ public class MarkerLinkageGroupValidationTest {
         PowerMockito
                 .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
                 .thenReturn(true);
+
+
         Map<String, String> foreignKeyValueFromDBPlatformId = new HashMap<>();
         foreignKeyValueFromDBPlatformId.put("8", "Dart_clone");
-
-        List<NameIdDTO> referenceResponseLG = new ArrayList<>();
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("LG_1_length_39901017");
-            nameIdDTOResponse.setId(1);
-            referenceResponseLG.add(nameIdDTOResponse);
-        }
-        {
-            NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("LG_2_length_33233457");
-            nameIdDTOResponse.setId(2);
-            referenceResponseLG.add(nameIdDTOResponse);
-        }
-
-        Map<String, String> foreignKeyValueFromDBMapset = new HashMap<>();
-        foreignKeyValueFromDBMapset.put("1", "validationTestMapset");
 
         List<NameIdDTO> referenceResponse = new ArrayList<>();
         {
@@ -357,12 +252,24 @@ public class MarkerLinkageGroupValidationTest {
         }
         {
             NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("dommarker206");
+            nameIdDTOResponse.setName("dommarker2");
+            nameIdDTOResponse.setId(2);
+            referenceResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("dommarker3");
+            nameIdDTOResponse.setId(3);
+            referenceResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("dommarkerss4");
             nameIdDTOResponse.setId(0);
             referenceResponse.add(nameIdDTOResponse);
         }
 
-        mockForTestCase(foreignKeyValueFromDBPlatformId, referenceResponseLG, foreignKeyValueFromDBMapset, referenceResponse);
+        mockForTestCase(foreignKeyValueFromDBPlatformId, referenceResponse);
         digestFileValidator.performValidation();
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/markerNameFailTest"))
@@ -371,7 +278,7 @@ public class MarkerLinkageGroupValidationTest {
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
 
-        assertEquals("Expected file name is not marker_linkage_group", "marker_linkage_group", fileErrors[0].fileName);
+        assertEquals("Expected file name is not dataset_marker", "dataset_marker", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not success", "FAILURE", fileErrors[0].status);
 
 
@@ -381,17 +288,12 @@ public class MarkerLinkageGroupValidationTest {
 
         assertEquals("Unexpected failure reason", "Undefined marker value", failures.get(0).reason);
         assertEquals("Unexpected column name", "marker_name", failures.get(0).columnName.get(0));
-        assertEquals("Unexpected column value", "dommarker206", failures.get(0).values.get(0));
+        assertEquals("Unexpected column value", "dommarkerss4", failures.get(0).values.get(0));
 
     }
 
-    private void mockForTestCase(Map<String, String> foreignKeyValueFromDBPlatformId, List<NameIdDTO> referenceResponseLG, Map<String, String> foreignKeyValueFromDBMapset, List<NameIdDTO> referenceResponse) {
+    private void mockForTestCase(Map<String, String> foreignKeyValueFromDBPlatformId, List<NameIdDTO> referenceResponse) {
         try {
-            PowerMockito
-                    .when(ValidationWebServicesUtil.getAllowedForeignKeyList(eq("linkage_group"), any())).thenReturn(foreignKeyValueFromDBMapset);
-            PowerMockito
-                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("linkage_group"), eq("1"), any()))
-                    .thenReturn(referenceResponseLG);
             PowerMockito
                     .when(ValidationWebServicesUtil.validatePlatformId(eq("8"), any())).thenReturn(foreignKeyValueFromDBPlatformId);
             PowerMockito
