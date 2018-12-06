@@ -3,6 +3,7 @@ package org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discre
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DnaSampleDTO;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -38,7 +39,7 @@ public class ListStatementUtil {
 
         for (NameIdDTO nameIdDTO : nameIdDTOList) {
 
-            DnaSampleDTO dnaSampleDTO = (DnaSampleDTO) nameIdDTO.getQueryObject();
+            LinkedHashMap queryObject = (LinkedHashMap) nameIdDTO.getQueryObject();
 
             if (stringBuilder.length() > 0) {
                 stringBuilder.append(" or ");
@@ -47,7 +48,7 @@ public class ListStatementUtil {
             stringBuilder.append("(name='")
                     .append(nameIdDTO.getName())
                     .append("' and num='")
-                    .append(dnaSampleDTO.getDnaSampleNum())
+                    .append(queryObject.get("dnaSampleNum"))
                     .append("')");
 
         }

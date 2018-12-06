@@ -180,7 +180,7 @@ public class DTORestProfileTest {
     }
 
 
-    @Ignore
+    @Test
     public void changePostMaxMarkerNames() throws Exception {
 
         PayloadEnvelope<NameIdDTO> analysisNameIdResponseEnvelopePreUpdate = DtoRequestNameIdListTest

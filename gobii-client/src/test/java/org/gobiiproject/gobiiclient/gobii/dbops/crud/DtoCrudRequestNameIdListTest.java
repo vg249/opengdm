@@ -570,12 +570,12 @@ public class DtoCrudRequestNameIdListTest {
      * This test is ignored since right now we don't have a separate web service to create dna samples that can be used for this test.
      **/
 
-    @Ignore
+    @Test
     public void testGetDnaSampleNamesByList() throws Exception {
 
         // get project ID for loaded dna samples by ADL
         if( TestUtils.isBackEndSupported()) {
-
+            
             String projectName = "sim_dominant_proj_01";
             Integer projectId = null;
 
@@ -614,6 +614,11 @@ public class DtoCrudRequestNameIdListTest {
 
                 NameIdDTO nameIdDTO = new NameIdDTO();
                 nameIdDTO.setName(dnaSampleName);
+
+                DnaSampleDTO dnaSampleDTO = new DnaSampleDTO();
+                dnaSampleDTO.setDnaSampleNum(1);
+
+                nameIdDTO.setQueryObject(dnaSampleDTO);
 
                 nameIdDTOList.add(nameIdDTO);
             }
