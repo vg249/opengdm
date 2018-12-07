@@ -29,7 +29,7 @@ public class GobiiCropConfig {
     private String gobiiCropType;
 
     @Element(required = false)
-    private boolean isActive;
+    private boolean isActive = true;
 
     @ElementMap(required = false)
     private Map<ServerType, ServerConfig> serversByServerType = new HashMap<>();
@@ -46,7 +46,7 @@ public class GobiiCropConfig {
                           boolean decrypt,
                           EnumMap<RestResourceId, RestResourceProfile> callProfilesByRestRequestId) {
 
-        
+
         ServerConfig serverConfig = this.serversByServerType.get(serverType);
         if (serverConfig == null) {
 
@@ -63,7 +63,8 @@ public class GobiiCropConfig {
                 .setUserName(userName)
                 .setPassword(password)
                 .setDecrypt(decrypt)
-        .setResourceProfilesByRestRequestId(callProfilesByRestRequestId);
+                .setActive(this.isActive)
+                .setResourceProfilesByRestRequestId(callProfilesByRestRequestId);
     }
 
     public GobiiCropConfig setServersByServerType(Map<ServerType, ServerConfig> serversByServerType) {
@@ -90,8 +91,27 @@ public class GobiiCropConfig {
         return this;
     }
 
+
+    /***
+     * For now, we will assume that the child servers active status goes along with that
+     * of the crop (parent) instance (web, postgres, and compute node). This may need to change
+     * someday.
+     * @return
+     */
     public boolean isActive() {
-        return isActive;
+
+        boolean returnVal = this.isActive;
+
+        if (this.isActive) {
+            for (ServerConfig currentServerConfig : this.getServers()) {
+                if (!currentServerConfig.isActive()) {
+                    returnVal = false;
+                    break;
+                }
+            }
+        }
+
+        return returnVal;
     }
 
     public GobiiCropConfig setActive(boolean active) {

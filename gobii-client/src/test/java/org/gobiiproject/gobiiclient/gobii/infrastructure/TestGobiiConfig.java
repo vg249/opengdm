@@ -1184,15 +1184,8 @@ public class TestGobiiConfig {
 
         createCrops(testFileFqpn, Arrays.asList("dev", "test", "extra"));
 
-        String commandSetTestActive = makeCommandline("-a -wfqpn "
-                + testFileFqpn
-                + " -c "
-                + " test "
-                + " -cA ");
 
-        boolean succeeded = HelperFunctions.tryExec(commandSetTestActive, testFileFqpn + ".out", testFileFqpn + ".err");
-        Assert.assertTrue("Command failed: " + commandSetTestActive, succeeded);
-
+        // By default, when a crop is created, it should be active
         ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
         GobiiCropConfig shouldBeActiveCropConfig = configSettings.getCropConfig("test");
         Assert.assertTrue("The TEST Crop was not marked active", shouldBeActiveCropConfig.isActive());
@@ -1209,7 +1202,7 @@ public class TestGobiiConfig {
                 + "test "
                 + " -cD ");
 
-        succeeded = HelperFunctions.tryExec(commandSetTestNotActive, testFileFqpn + ".out", testFileFqpn + ".err");
+        boolean succeeded = HelperFunctions.tryExec(commandSetTestNotActive, testFileFqpn + ".out", testFileFqpn + ".err");
         Assert.assertTrue("Command failed: " + commandSetTestNotActive, succeeded);
 
         configSettings = new ConfigSettings(testFileFqpn);
