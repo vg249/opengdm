@@ -96,6 +96,11 @@ public class GobiiCropConfig {
 
     public GobiiCropConfig setActive(boolean active) {
         isActive = active;
+
+        for (ServerConfig currentServerConfig : this.getServers()) {
+            currentServerConfig.setActive(active);
+        }
+
         return this;
     }
 }
