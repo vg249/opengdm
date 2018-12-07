@@ -358,9 +358,13 @@ public class GobiiExtractor {
                             PITerm = projectTerm = "";
                             PropNameId PI = extract.getPrincipleInvestigator();
                             PropNameId project = extract.getProject();
-                            if (PI != null && PI.getId() != null) {
-                                PITerm = " --piId " + PI.getId();
+                            if (PI != null) {
+                                PITerm = " --piId ";
+                                if (PI.getId() != null) {
+                                    PITerm += PI.getId();
+                                }
                             }
+
                             if (project != null && project.getId() != null) {
                                 projectTerm = " --projectId " + project.getId();
                             }
