@@ -519,11 +519,9 @@ export class ExtractorRoot implements OnInit {
     private handleExportTypeSelected(arg: GobiiExtractFilterType) {
 
 
-        //
         this.store.dispatch(new fileItemAction.RemoveAllFromExtractAction(arg));
         this.store.dispatch(new fileItemAction.SetExtractType({gobiiExtractFilterType: arg}));
 
-        // this will trigger onchange events in child components
         this.gobiiExtractFilterType = arg;
 
         this.instructionSubmissionService.submitReady(this.gobiiExtractFilterType)
@@ -549,10 +547,6 @@ export class ExtractorRoot implements OnInit {
                 null);
 
             this.fileItemService.loadFilter(this.gobiiExtractFilterType, FilterParamNames.DATASET_FILTER_OPTIONAL, null);
-
-            // this.fileItemService.setItemLabelType(this.gobiiExtractFilterType,
-            //     FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,
-            //     NameIdLabelType.UNKNOWN);
 
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
 
@@ -588,10 +582,6 @@ export class ExtractorRoot implements OnInit {
 
 
         this.initializeSubmissionContact();
-
-
-        // this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
-        //     this.nameIdRequestParamsExperiments);
 
         this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
             FilterParamNames.MAPSETS,

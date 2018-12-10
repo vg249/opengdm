@@ -227,10 +227,8 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 }; // handleTabPanelChange
                 ExtractorRoot.prototype.handleExportTypeSelected = function (arg) {
                     var _this = this;
-                    //
                     this.store.dispatch(new fileItemAction.RemoveAllFromExtractAction(arg));
                     this.store.dispatch(new fileItemAction.SetExtractType({ gobiiExtractFilterType: arg }));
-                    // this will trigger onchange events in child components
                     this.gobiiExtractFilterType = arg;
                     this.instructionSubmissionService.submitReady(this.gobiiExtractFilterType)
                         .subscribe(function (submistReady) {
@@ -242,9 +240,6 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL, null);
                         this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.EXPERIMENT_FILTER_OPTIONAL, null);
                         this.fileItemService.loadFilter(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.DATASET_FILTER_OPTIONAL, null);
-                        // this.fileItemService.setItemLabelType(this.gobiiExtractFilterType,
-                        //     FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,
-                        //     NameIdLabelType.UNKNOWN);
                     }
                     else if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
                         this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.CONTACT_PI_HIERARCHY_ROOT, null);
@@ -257,8 +252,6 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.PLATFORMS, null);
                     }
                     this.initializeSubmissionContact();
-                    // this.fileItemService.loadWithFilterParams(this.gobiiExtractFilterType,
-                    //     this.nameIdRequestParamsExperiments);
                     this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType, file_item_param_names_1.FilterParamNames.MAPSETS, null);
                     //changing modes will have nuked the submit as item in the tree, so we need to re-event (sic.) it:
                     var formatItem = gobii_file_item_1.GobiiFileItem
