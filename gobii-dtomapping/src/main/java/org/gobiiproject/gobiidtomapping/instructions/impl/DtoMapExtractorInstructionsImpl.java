@@ -240,9 +240,9 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                             extractorInstructionFilesDTO.getInstructionFileName());
 
                     if (currentExtractorInstruction.getDataSetExtracts().size() > 1) {
-                        extractorFileDestinationLocation += "/" + idx.toString();
+                        Integer dataSetIndexSegment = idx + 1;
+                        extractorFileDestinationLocation += "/" + dataSetIndexSegment.toString();
                     }
-
 
                     if (!instructionFileAccess.doesPathExist(extractorFileDestinationLocation)) {
 
