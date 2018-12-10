@@ -83,7 +83,7 @@ import {TypeControl} from "../services/core/type-control";
                                 [id]="viewIdGeneratorService.makeStandardId(typeControl.NAVIGATION_TABS)">
                                     <p-tabPanel header="By Dataset">
                                         <ng-template pTemplate="content"> <!-- lazy-load controls -->
-                                            <div class="container-fluid">
+                                            <div class="container-fluid" *ngIf="gobiiExtractFilterType === gobiiExtractFilterTypeForExpressions.WHOLE_DATASET">
                                                 <div class="row">
                                                     <div class="col-md-12"> <!-- inner column 2 of main column 1 -->
                                                         <div class="panel panel-primary">
@@ -134,7 +134,7 @@ import {TypeControl} from "../services/core/type-control";
                                     </p-tabPanel> <!-- tab panel -- dataset -->
                                     <p-tabPanel header="By Samples">
                                         <ng-template pTemplate="content"> <!-- lazy-load controls -->
-                                            <div class="container-fluid">
+                                            <div class="container-fluid" *ngIf="gobiiExtractFilterType === gobiiExtractFilterTypeForExpressions.BY_SAMPLE">
                                                 <div class="row">
                                                     <div class="col-md-4"> <!-- inner column 1 of main column 1 -->
                                                         <div class="panel panel-primary">
@@ -200,7 +200,7 @@ import {TypeControl} from "../services/core/type-control";
                                     </p-tabPanel> <!-- tab panel -- samples -->
                                     <p-tabPanel header="By Markers">
                                         <ng-template pTemplate="content"> <!-- lazy-load controls -->
-                                            <div class="container-fluid">
+                                            <div class="container-fluid" *ngIf="gobiiExtractFilterType === gobiiExtractFilterTypeForExpressions.BY_MARKER">
                                                 <div class="row">
                                                     <div class="col-md-4"> <!-- inner column 1 of main column 1 -->
                                                         <div class="panel panel-primary">
@@ -346,7 +346,7 @@ export class ExtractorRoot implements OnInit {
     // ************************************************************************
 
     public treeFileItemEvent: GobiiFileItem;
-
+    public gobiiExtractFilterTypeForExpressions: any = GobiiExtractFilterType;
     public loggedInUser: string = null;
 
 
@@ -519,90 +519,88 @@ export class ExtractorRoot implements OnInit {
     private handleExportTypeSelected(arg: GobiiExtractFilterType) {
 
 
-        this.store.dispatch(new fileItemAction.RemoveAllFromExtractAction(arg));
-        this.store.dispatch(new fileItemAction.SetExtractType({gobiiExtractFilterType: arg}));
+            this.store.dispatch(new fileItemAction.RemoveAllFromExtractAction(arg));
+            this.store.dispatch(new fileItemAction.SetExtractType({gobiiExtractFilterType: arg}));
 
-        this.gobiiExtractFilterType = arg;
+            this.gobiiExtractFilterType = arg;
 
-        this.instructionSubmissionService.submitReady(this.gobiiExtractFilterType)
-            .subscribe(submistReady => {
-                submistReady ? this.submitButtonStyle = this.buttonStyleSubmitReady : this.submitButtonStyle = this.buttonStyleSubmitNotReady;
-            })
+            this.instructionSubmissionService.submitReady(this.gobiiExtractFilterType)
+                .subscribe(submistReady => {
+                    submistReady ? this.submitButtonStyle = this.buttonStyleSubmitReady : this.submitButtonStyle = this.buttonStyleSubmitNotReady;
+                })
 
 
-        this.refreshJobId();
+            this.refreshJobId();
 
-        if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
+            if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
+
+                this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                    FilterParamNames.CONTACT_PI_FILTER_OPTIONAL,
+                    null);
+
+                this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                    FilterParamNames.PROJECT_FILTER_OPTIONAL,
+                    null);
+
+                this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                    FilterParamNames.EXPERIMENT_FILTER_OPTIONAL,
+                    null);
+
+                this.fileItemService.loadFilter(this.gobiiExtractFilterType, FilterParamNames.DATASET_FILTER_OPTIONAL, null);
+
+            } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
+
+                this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                    FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,
+                    null);
+
+                this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                    FilterParamNames.PROJECTS_BY_CONTACT,
+                    null);
+
+                this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                    FilterParamNames.CV_DATATYPE,
+                    null);
+
+                this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                    FilterParamNames.PLATFORMS,
+                    null);
+
+
+            } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
+
+                this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                    FilterParamNames.CV_DATATYPE,
+                    null);
+
+                this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
+                    FilterParamNames.PLATFORMS,
+                    null);
+
+            }
+
+
+            this.initializeSubmissionContact();
 
             this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                FilterParamNames.CONTACT_PI_FILTER_OPTIONAL,
-                null);
-
-            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                FilterParamNames.PROJECT_FILTER_OPTIONAL,
-                null);
-
-            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                FilterParamNames.EXPERIMENT_FILTER_OPTIONAL,
-                null);
-
-            this.fileItemService.loadFilter(this.gobiiExtractFilterType, FilterParamNames.DATASET_FILTER_OPTIONAL, null);
-
-        } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
-
-            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                FilterParamNames.CONTACT_PI_HIERARCHY_ROOT,
-                null);
-
-            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                FilterParamNames.PROJECTS_BY_CONTACT,
-                null);
-
-            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                FilterParamNames.CV_DATATYPE,
-                null);
-
-            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                FilterParamNames.PLATFORMS,
+                FilterParamNames.MAPSETS,
                 null);
 
 
-
-        } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
-
-            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                FilterParamNames.CV_DATATYPE,
-                null);
-
-            this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-                FilterParamNames.PLATFORMS,
-                null);
-
-        }
+            //changing modes will have nuked the submit as item in the tree, so we need to re-event (sic.) it:
+            let formatItem: GobiiFileItem = GobiiFileItem
+                .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
+                .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
+                .setItemId(GobiiExtractFormat[GobiiExtractFormat.HAPMAP])
+                .setItemName(GobiiExtractFormat[GobiiExtractFormat[GobiiExtractFormat.HAPMAP]]);
+            this.fileItemService.replaceFileItemByCompoundId(formatItem);
 
 
-        this.initializeSubmissionContact();
-
-        this.fileItemService.loadNameIdsFromFilterParams(this.gobiiExtractFilterType,
-            FilterParamNames.MAPSETS,
-            null);
-
-
-        //changing modes will have nuked the submit as item in the tree, so we need to re-event (sic.) it:
-        let formatItem: GobiiFileItem = GobiiFileItem
-            .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
-            .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
-            .setItemId(GobiiExtractFormat[GobiiExtractFormat.HAPMAP])
-            .setItemName(GobiiExtractFormat[GobiiExtractFormat[GobiiExtractFormat.HAPMAP]]);
-        this.fileItemService.replaceFileItemByCompoundId(formatItem);
-
-
-        this.fileItemService
-            .replaceFileItemByCompoundId(GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
+            this.fileItemService
+                .replaceFileItemByCompoundId(GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
                     .setExtractorItemType(ExtractorItemType.SAMPLE_LIST_TYPE)
                     .setItemName(GobiiSampleListType[GobiiSampleListType.GERMPLASM_NAME])
                     .setItemId(GobiiSampleListType[GobiiSampleListType.GERMPLASM_NAME]));
-
 
     }
 
