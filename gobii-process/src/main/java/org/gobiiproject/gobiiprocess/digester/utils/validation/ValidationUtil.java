@@ -417,16 +417,25 @@ class ValidationUtil {
             if (condition.typeName != null) {
                 if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV) || condition.typeName.equalsIgnoreCase(ValidationConstants.REFERENCE)
                         || condition.typeName.equalsIgnoreCase(ValidationConstants.LINKAGE_GROUP) || condition.typeName.equalsIgnoreCase(ValidationConstants.DNARUN)
-                        || condition.typeName.equalsIgnoreCase(ValidationConstants.MARKER) || condition.typeName.equalsIgnoreCase(ValidationConstants.EXTERNAL_CODE)) {
+                        || condition.typeName.equalsIgnoreCase(ValidationConstants.MARKER) || condition.typeName.equalsIgnoreCase(ValidationConstants.EXTERNAL_CODE)
+                        || condition.typeName.equalsIgnoreCase(ValidationConstants.DNASAMPLE_NAME)) {
                     if (condition.fieldToCompare != null) {
                         if (checkForHeaderExistence(fileName, condition.fieldToCompare, condition.required, failureList))
                             if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV) || condition.typeName.equalsIgnoreCase(ValidationConstants.REFERENCE) || condition.typeName.equalsIgnoreCase(ValidationConstants.EXTERNAL_CODE)) {
                                 validateDB(fileName, condition, failureList);
-                            } else if ((condition.typeName.equalsIgnoreCase(ValidationConstants.LINKAGE_GROUP) || condition.typeName.equalsIgnoreCase(ValidationConstants.DNARUN) || condition.typeName.equalsIgnoreCase(ValidationConstants.MARKER))
-                                    && condition.foreignKey != null)
-                                validateDbWithForeignKey(fileName, condition, failureList);
+                            } else {
+                                if (condition.foreignKey != null) {
+                                    if (condition.fieldColumns != null)
+                                        validateDbWithForeignKey(fileName, condition, failureList);
+                                    else validateDbWithForeignKey(fileName, condition, failureList);
+                                } else {
+                                    printMissingFieldError("DB", "foreignKey", failureList);
+                                }
+                            }
                     } else
                         printMissingFieldError("DB", "fieldToCompare", failureList);
+                } else {
+                    printMissingFieldError("DB", "unsupported typeName", failureList);
                 }
             } else
                 printMissingFieldError("DB", "typeName", failureList);
@@ -524,6 +533,8 @@ class ValidationUtil {
         }
     }
 
+
+
     /**
      * Go through the file and creates a foreignKey Id.
      * Result will be a map with one key and several values to it
@@ -574,6 +585,18 @@ class ValidationUtil {
     }
 
     /**
+     * +     * Reads specified key.
+     * +     * Can simplify while refactoring
+     * +
+     */
+    private static boolean readKey(String fileName, String key, List<String> keyList, List<Failure> failureList) throws MaximumErrorsValidationException {
+        if (checkForHeaderExistence(fileName, Collections.singletonList(key), "yes", failureList)) {
+            return readColumnIntoSet(fileName, Collections.singletonList(key), keyList, failureList);
+        }
+        return false;
+    }
+
+    /**
      * Reads specified key.
      * Can simplify while refactoring
      */
@@ -588,7 +611,7 @@ class ValidationUtil {
      * Reads column into the set. If the header does not exist it wont return a failure.
      * Use  checkForHeaderExistence to check for the header
      */
-    private static boolean readColumnIntoSet(String fileName, List<String> fieldToCompare, Set<String> fieldNameList, List<Failure> failureList) throws MaximumErrorsValidationException {
+    private static boolean readColumnIntoSet(String fileName, List<String> fieldToCompare, Collection<String> fieldNameList, List<Failure> failureList) throws MaximumErrorsValidationException {
         List<String[]> collectList = new ArrayList<>();
         if (readFileIntoMemory(fileName, collectList, failureList)) {
             List<String> headers = Arrays.asList(collectList.get(0));

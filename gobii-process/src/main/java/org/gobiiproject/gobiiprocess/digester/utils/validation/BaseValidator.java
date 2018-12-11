@@ -112,7 +112,7 @@ abstract class BaseValidator {
             return failureList;
         }
         for (ConditionUnit condition : conditions)
-            if (condition.required.equalsIgnoreCase(ValidationConstants.NO) && !(condition.nullAllowed != null && condition.nullAllowed.equalsIgnoreCase(ValidationConstants.NO)))
+            if (condition.required.equalsIgnoreCase(ValidationConstants.NO) && (condition.nullAllowed != null && condition.nullAllowed.equalsIgnoreCase(ValidationConstants.NO)))
                 if (headers.contains(condition.columnName) && !requiredFields.contains(condition.columnName))
                     requiredFields.add(condition.columnName);
         if (requiredFields.size() > 0) {
