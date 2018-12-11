@@ -4,7 +4,7 @@ import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestMatrix;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFTransformer;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -14,19 +14,20 @@ import java.util.stream.Stream;
 class MatrixValidation {
 
     private static final int MAX_ERRORS = 20;
-    private final String datasetType, missingFile;
+    private final String datasetType, missingFile, markerFile;
     private int errorCount;
     private int noOfElements;
     private IUPACmatrixToBi iupacMatrixToBi;
     private SNPSepRemoval snpSepRemoval;
 
-    public int getErrorCount() {
+    int getErrorCount() {
         return errorCount;
     }
 
-    MatrixValidation(String datasetType, String missingFile) {
+    MatrixValidation(String datasetType, String missingFile, String markerFile) {
         this.datasetType = datasetType;
         this.missingFile = missingFile;
+        this.markerFile = markerFile;
         errorCount = 0;
         noOfElements = 0;
         iupacMatrixToBi = new IUPACmatrixToBi();
@@ -45,7 +46,7 @@ class MatrixValidation {
         return true;
     }
 
-    boolean validate(int rowNo, List<String> inputRowList, List<String> outputRowList) {
+    boolean validate(int rowNo, List<String> inputRowList, List<String> outputRowList, boolean isVCF) {
         boolean returnStatus = true;
         if (noOfElements == 0) noOfElements = inputRowList.size();
         else if (noOfElements != inputRowList.size()) {
@@ -73,19 +74,31 @@ class MatrixValidation {
          *   Reason being, as it is already a failure we are processing further to identify all errors once.
          *
          * */
-        if (datasetType.equalsIgnoreCase("NUCLEOTIDE_2_LETTER"))
+        if (datasetType.equalsIgnoreCase("NUCLEOTIDE_2_LETTER") && !isVCF)
             if (!snpSepRemoval.process(rowNo, inputRowList, outputRowList)) {
                 returnStatus = setError("Exception in processing matrix file. Failed in SNPSepRemoval.");
             }
 
         //TODO: Handle the case of VCF validation
-            VCF validation goes here
-                //TODO: figure out how to get a line of the digest.marker file, which is required to exist for VCF loads
-        if(/*VCFInputFile*/false){
-            String markerFileLine=no idea how to get;
-            if(!VCFTransformer.transformVCFLine(markerFileLine,rowNo,inputRowList,outputRowList)){
-                //note, outputRowList here is now a two letter file, which needs to be validated
-                returnStatus = setError("Exception in processing matrix file. Failed in VCF Transformer.");
+        //TODO: figure out how to get a line of the digest.marker file, which is required to exist for VCF loads
+        if (isVCF) {
+            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(new File(markerFile)))) {
+                int lineNo = 0;
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    if (lineNo == rowNo) {
+                        if (!VCFTransformer.transformVCFLine(line, rowNo, inputRowList, outputRowList)) {
+                            //note, outputRowList here is now a two letter file, which needs to be validated
+                            returnStatus = setError("Exception in processing matrix file. Failed in VCF Transformer.");
+                        }
+                    } else lineNo++;
+                }
+
+            } catch (FileNotFoundException e) {
+                returnStatus = setError("Could not find marker file");
+
+            } catch (IOException e) {
+                returnStatus = setError("Could not read marker file" + e.getMessage());
             }
 
         }

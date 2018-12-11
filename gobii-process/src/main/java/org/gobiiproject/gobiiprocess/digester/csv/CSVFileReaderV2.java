@@ -16,6 +16,7 @@ import org.apache.commons.io.FileUtils;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
+import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
@@ -262,19 +263,22 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
         // For matrix file there is no need of writing first line. Setting it to false for consistency
         processedInstruction.setFirstLine(false);
         String missingFile = loaderScriptPath + "etc/missingIndicators.txt";
-        MatrixValidation matrixValidation = new MatrixValidation(loaderInstruction.getDatasetType().getName(), missingFile);
+        String parentDirectory = file.getParentFile().getName();
+        String markerFile = parentDirectory + "/digest.marker";
+        MatrixValidation matrixValidation = new MatrixValidation(loaderInstruction.getDatasetType().getName(), missingFile,markerFile);
         if (!matrixValidation.setUp()) {
             try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
                 int rowNo = 0;
                 String fileRow;
                 List<String> inputRowList, outputRowList;
                 String delimiter = loaderInstruction.getGobiiFile().getDelimiter();
+                boolean isVCF = loaderInstruction.getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF);
                 while ((fileRow = bufferedReader.readLine()) != null) {
                     if (rowNo >= csv_BothColumn.getrCoord()) {
                         inputRowList = new ArrayList<>(Arrays.asList(fileRow.split(delimiter)));
                         outputRowList = new ArrayList<>();
                         getRow(inputRowList, csv_BothColumn);
-                        if (matrixValidation.validate(rowNo, inputRowList, outputRowList))
+                        if (matrixValidation.validate(rowNo, inputRowList, outputRowList, isVCF))
                             writeOutputLine(tempFileBufferedWriter, outputRowList);
                         else {
                             if (matrixValidation.stopProcessing()) {

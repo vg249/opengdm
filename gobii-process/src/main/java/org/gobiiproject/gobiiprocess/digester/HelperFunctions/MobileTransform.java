@@ -30,21 +30,6 @@ public abstract class MobileTransform {
         }
     };
 
-    public static MobileTransform getVCFTransform(File markerFile) {
-        return new MobileTransform() {
-            public void transform(String fromFile, String toFile, String errorPath) {
-                String markerFilename = markerFile.getAbsolutePath();
-                String markerTmp = new File(markerFile.getParentFile(), "marker.mref").getAbsolutePath();
-                try {
-                    VCFTransformer.generateMarkerReference(markerFilename, markerTmp, errorPath);
-                    new VCFTransformer(markerTmp, fromFile, toFile);
-                } catch (Exception e) {
-                    ErrorLogger.logError("VCFTransformer", "Failure loading dataset", e);
-                }
-            }
-        };
-    }
-
     /**
      * @param dest Name of a non-existent temporary folder to store temporary files in
      */

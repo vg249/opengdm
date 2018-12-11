@@ -67,9 +67,6 @@ public class GobiiFileReader {
     private static String errorLogOverride;
     private static String propertiesFile;
     private static GobiiUriFactory gobiiUriFactory;
-    //To calculate RunTime of Extraction
-    private static long startTime, endTime, duration;
-    //Not null if QC Extract is happening
     private static GobiiExtractorInstruction qcExtractInstruction = null;
 
     /**
@@ -290,7 +287,7 @@ public class GobiiFileReader {
             case VCF:
                 //INTENTIONAL FALLTHROUGH
             case GENERIC:
-                CSVFileReaderV2.parseInstructionFile(list,loaderScriptPath);
+                CSVFileReaderV2.parseInstructionFile(list, loaderScriptPath);
                 //TODO: Check that if it is a matrix file and it exists else set success to false
          /*   {
                 It is gonna show up as an error. Use something like below
@@ -304,7 +301,7 @@ public class GobiiFileReader {
                     }
                 }
             }*/
-            break;
+                break;
             default:
                 System.err.println("Unable to deal with file type " + zero.getGobiiFile().getGobiiFileType());
                 break;
@@ -315,7 +312,7 @@ public class GobiiFileReader {
         databaseValidation(loaderInstructionMap, zero, gobiiCropConfig);
 
         boolean sendQc = false;
-        String dst=null;
+        String dst = null;
         for (GobiiLoaderInstruction inst : list) {
             qcCheck = inst.isQcCheck();
             //Section - Matrix Post-processing
@@ -335,12 +332,9 @@ public class GobiiFileReader {
             String fromFile = getDestinationFile(inst);
             SequenceInPlaceTransform intermediateFile = new SequenceInPlaceTransform(fromFile, errorPath);
             if (dst != null && inst.getTable().equals(VARIANT_CALL_TABNAME)) {
-                jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_TRANSFORMATION.getCvName(), "Data Matrix Transformation");
                 errorPath = getLogName(inst, gobiiCropConfig, crop, "Matrix_Processing"); //Temporary Error File Name
 
-                boolean isSampleFast = false;
-                if (DataSetOrientationType.SAMPLE_FAST.equals(dso)) isSampleFast = true;
-                if (isSampleFast) {
+                if (DataSetOrientationType.SAMPLE_FAST.equals(dso)) {
                     //Rotate to marker fast before loading it - all data is marker fast in the system
                     File transposeDir = new File(new File(fromFile).getParentFile(), "transpose");
                     intermediateFile.transform(MobileTransform.getTransposeMatrix(transposeDir.getPath()));
@@ -350,7 +344,6 @@ public class GobiiFileReader {
             String instructionName = inst.getTable();
             loaderInstructionMap.put(instructionName, new File(getDestinationFile(inst)));
             loaderInstructionList.add(instructionName);//TODO Hack - for ordering
-
             if (LINKAGE_GROUP_TABNAME.equals(instructionName) || GERMPLASM_TABNAME.equals(instructionName) || GERMPLASM_PROP_TABNAME.equals(instructionName)) {
                 success &= HelperFunctions.tryExec(loaderScriptPath + "LGduplicates.py -i " + getDestinationFile(inst));
             }
@@ -403,7 +396,6 @@ public class GobiiFileReader {
                     }
 
                 }
-
 
             }
             if (!loadedData) {
