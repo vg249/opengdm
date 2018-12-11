@@ -610,6 +610,7 @@ public class DtoCrudRequestNameIdListTest {
 
             String[] dnasampleNamesAbsent = new String[]{"notdnasample1", "notdnasample2", "notdnasample3"};
 
+            String paramName = "dnaSampleNum";
             for (String dnaSampleName : dnasampleNamesAbsent) {
 
                 NameIdDTO nameIdDTO = new NameIdDTO();
@@ -618,7 +619,7 @@ public class DtoCrudRequestNameIdListTest {
                 DnaSampleDTO dnaSampleDTO = new DnaSampleDTO();
                 dnaSampleDTO.setDnaSampleNum(1);
 
-                nameIdDTO.setQueryObject(dnaSampleDTO);
+                nameIdDTO.getParameters().put(paramName, dnaSampleDTO.getDnaSampleNum());
 
                 nameIdDTOList.add(nameIdDTO);
             }
@@ -633,7 +634,7 @@ public class DtoCrudRequestNameIdListTest {
                 DnaSampleDTO dnaSampleDTO = new DnaSampleDTO();
                 dnaSampleDTO.setDnaSampleNum(dnaSampleNum++);
 
-                nameIdDTO.setQueryObject(dnaSampleDTO);
+                nameIdDTO.getParameters().put(paramName, dnaSampleDTO.getDnaSampleNum());
 
                 nameIdDTOList.add(nameIdDTO);
             }
