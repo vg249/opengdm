@@ -45,7 +45,6 @@ public class DtoCrudRequestJobTestCallable implements Callable<Object> {
                 .resourceByUriIdParamName("jobName", RestResourceId.GOBII_JOB);
         restUriStatusForGetById.setParamValue("jobName", jobName);
 
-
         PayloadEnvelope<JobDTO> postRequestEnvelope = new PayloadEnvelope<>(jobDTO, GobiiProcessType.UPDATE);
         GobiiEnvelopeRestResource<JobDTO, JobDTO> gobiiEnvelopeRestResourceGetById = new GobiiEnvelopeRestResource<>(restUriStatusForGetById);
         PayloadEnvelope<JobDTO> resultEnvelope = gobiiEnvelopeRestResourceGetById
