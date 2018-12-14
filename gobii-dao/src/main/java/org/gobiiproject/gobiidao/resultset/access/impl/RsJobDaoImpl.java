@@ -10,6 +10,7 @@ import org.hibernate.exception.SQLGrammarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,7 +51,9 @@ public class RsJobDaoImpl implements RsJobDao {
         return  returnVal;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED
+//    ,isolation = Isolation.SERIALIZABLE
+    )
     @Override
     public void updateJobWithCvTerms(Map<String, Object> parameters) throws GobiiDaoException {
 
