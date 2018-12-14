@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.gobiiproject</groupId>
         <artifactId>parent</artifactId>
-        <version>GOBII Server 2.0_2018-12-11</version>
+        <version>GOBII Server 2.0_2018-12-14</version>
     </parent>
 
     <groupId>org.gobiiproject</groupId>
