@@ -3,9 +3,9 @@ package org.gobiiproject.gobiiclient.gobii.dbops.crud;
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiiapimodel.hateos.Link;
 import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
-import org.gobiiproject.gobiiapimodel.payload.Payload;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
+import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
@@ -18,7 +18,6 @@ import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.cvnames.JobType;
-import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DataSetDTO;
@@ -34,6 +33,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Created by VCalaminos on 8/25/2017.
@@ -72,6 +75,7 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
         Assert.assertNotEquals(jobDTOResponse, null);
         Assert.assertTrue(jobDTOResponse.getJobId() > 0);
         Assert.assertTrue(jobDTOResponse.getJobName().equals(newJobDto.getJobName())); // verify that jobName was not overwritten by the server
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.JOB, jobDTOResponse.getJobId());
 
 
         //test for an empty jobDTO name
@@ -206,7 +210,7 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
 
     }
 
-    private List<JobDTO> getJobDtoToUpdate() throws Exception {
+    private List<JobDTO> getJobDtoInstancesToUpdate() throws Exception {
 
         RestUri restUriStatusForAll = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -231,16 +235,17 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
     public void update() throws Exception {
 
 
-        JobDTO jobDTOReceived = this.getJobDtoToUpdate().get(0);
+        JobDTO jobDTOReceived = this.getJobDtoInstancesToUpdate().get(0);
         this.updateJob(jobDTOReceived);
     }
+
 
     @Test
     public void rapidUpdate() throws Exception {
 
 
         // make sure we have at least 5 jobs ready to update
-        List<JobDTO> allJobsToUpdate = this.getJobDtoToUpdate();
+        List<JobDTO> allJobsToUpdate = this.getJobDtoInstancesToUpdate();
         List<JobDTO> jobsToUpdateRapidly = new ArrayList<>();
         for (Integer idx = 0; idx < 5; idx++) {
             jobsToUpdateRapidly.add(allJobsToUpdate.get(idx));
@@ -251,6 +256,48 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
             this.updateJob(currentJobDto);
         }
 
+    }
+
+    @Test
+    public void rapidUpdateMultiThreaded() throws Exception {
+
+
+        // make sure we have at least totalJobUpdaters jobs ready to update
+        Integer totalJobUpdaters = 10;
+        (new GlobalPkColl<DtoCrudRequestJobTest>())
+                .getFreshPkVals(DtoCrudRequestJobTest.class,
+                        GobiiEntityNameType.JOB,
+                        totalJobUpdaters);
+
+        List<JobDTO> allJobsToUpdate = this.getJobDtoInstancesToUpdate();
+        List<Callable<Object>> callableJobUpdates = new ArrayList<>();
+        for (Integer idx = 0; idx < totalJobUpdaters; idx++) {
+            callableJobUpdates.add(new DtoCrudRequestJobTestCallable(allJobsToUpdate.get(idx)));
+        }
+
+        List<Future<Object>> futures = new ArrayList<>();
+        ExecutorService executorService = Executors.newFixedThreadPool(totalJobUpdaters);
+        for (Callable<Object> dtoCrudRequestJobTestCallable : callableJobUpdates) {
+            Future<Object> currentFuture = executorService.submit(dtoCrudRequestJobTestCallable);
+            futures.add(currentFuture);
+        }
+
+        while (futures
+                .stream()
+                .filter(filter -> filter.isDone())
+                .count() != totalJobUpdaters) {
+            Thread.sleep(200);
+        }
+
+        for (Future<Object> currentFuture : futures) {
+            String currentMessage = null;
+            if( currentFuture.get()!= null ) {
+                currentMessage = currentFuture.get().toString();
+            }
+
+            Assert.assertNull(currentMessage,
+                    currentMessage);
+        }
     }
 
     @Test
