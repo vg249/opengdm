@@ -10,10 +10,12 @@ import org.hibernate.exception.SQLGrammarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Isolation;
+import org.springframework.context.annotation.Scope;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.Map;
 
 /**
@@ -26,7 +28,7 @@ public class RsJobDaoImpl implements RsJobDao {
     @Autowired
     private StoredProcExec storedProcExec = null;
 
-    @Autowired
+    @Autowired()
     private SpRunnerCallable spRunnerCallable;
 
 
@@ -48,8 +50,12 @@ public class RsJobDaoImpl implements RsJobDao {
 
         }
 
-        return  returnVal;
+        return returnVal;
     }
+
+
+    @PersistenceContext
+    protected EntityManager em;
 
     @Transactional(propagation = Propagation.REQUIRED
 //    ,isolation = Isolation.SERIALIZABLE
@@ -59,8 +65,7 @@ public class RsJobDaoImpl implements RsJobDao {
 
         try {
 
-            spRunnerCallable.run(new SpUpdJobByCvTerms(), parameters);
-
+            (new SpRunnerCallable(this.em)).run(new SpUpdJobByCvTerms(), parameters);
 
         } catch (SQLGrammarException e) {
 

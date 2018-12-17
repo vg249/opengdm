@@ -243,11 +243,15 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
     @Test
     public void rapidUpdate() throws Exception {
 
+        Integer totalJobUpdaters = 10;
+        (new GlobalPkColl<DtoCrudRequestJobTest>())
+                .getFreshPkVals(DtoCrudRequestJobTest.class,
+                        GobiiEntityNameType.JOB,
+                        totalJobUpdaters);
 
-        // make sure we have at least 5 jobs ready to update
         List<JobDTO> allJobsToUpdate = this.getJobDtoInstancesToUpdate();
         List<JobDTO> jobsToUpdateRapidly = new ArrayList<>();
-        for (Integer idx = 0; idx < 5; idx++) {
+        for (Integer idx = 0; idx < totalJobUpdaters ; idx++) {
             jobsToUpdateRapidly.add(allJobsToUpdate.get(idx));
         }
 
@@ -277,11 +281,11 @@ public class DtoCrudRequestJobTest implements DtoCrudRequestTest {
 
         // IF YOU DON'T SLEEP BETWEEN CALLS TO SUBMIT, YOU GET A RACE CONDITION ON THE
         // SERVER. SEE GSD-529
-        Integer KludgeWaitStateMs = 100;
+//        Integer KludgeWaitStateMs = 100;
         List<Future<Object>> futures = new ArrayList<>();
         ExecutorService executorService = Executors.newFixedThreadPool(totalJobUpdaters);
         for (Callable<Object> dtoCrudRequestJobTestCallable : callableJobUpdates) {
-            Thread.sleep(KludgeWaitStateMs); // THIS WORKAROUND SHOULD _NOT_ BE NECESSARY!
+//            Thread.sleep(KludgeWaitStateMs); // THIS WORKAROUND SHOULD _NOT_ BE NECESSARY!
             Future<Object> currentFuture = executorService.submit(dtoCrudRequestJobTestCallable);
             futures.add(currentFuture);
         }
