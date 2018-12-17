@@ -498,6 +498,7 @@ public class GobiiExtractor {
                                 break;
                         }
 
+
                         // Adding "/" back to the bi-allelic data made from HDF5
                         if (datasetName != null) {
                             if (datasetName.toLowerCase().equals("ssr_allele_size")) {

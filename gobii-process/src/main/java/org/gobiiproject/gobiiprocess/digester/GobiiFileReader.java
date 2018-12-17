@@ -466,8 +466,9 @@ public class GobiiFileReader {
 			}
 			if((variantFile!=null)&&dataSetId!=null){ //Create an HDF5 and a Monet
 				jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD.getCvName(),"Matrix Upload");
-                HDF5Interface.createHDF5FromDataset(pm, dst, configuration, dataSetId, crop, errorPath, variantFilename, variantFile);
+                boolean HDF5Success=HDF5Interface.createHDF5FromDataset(pm, dst, configuration, dataSetId, crop, errorPath, variantFilename, variantFile);
                 rmIfExist(variantFile.getPath());
+                success &= HDF5Success;
             }
             if (success && ErrorLogger.success()) {
                 ErrorLogger.logInfo("Digester", "Successful Data Upload");
@@ -490,18 +491,40 @@ public class GobiiFileReader {
 			jobStatus.setError("Unsuccessfully Generated Files - No Data Upload");
 		}
 
+		//Send Email
+		finalizeProcessing(pm, configuration, mailInterface, instructionFile, zero, crop, jobName, logFile);
+
+
+	}
+
+	/**
+	 * Finalize processing step
+	 *  *Include log files
+	 *  *Send Email
+	 *  *update status
+	 * @param pm
+	 * @param configuration
+	 * @param mailInterface
+	 * @param instructionFile
+	 * @param zero
+	 * @param crop
+	 * @param jobName
+	 * @param logFile
+	 * @throws Exception
+	 */
+	private static void finalizeProcessing(ProcessMessage pm, ConfigSettings configuration, MailInterface mailInterface, String instructionFile, GobiiLoaderInstruction zero, String crop, String jobName, String logFile) throws Exception {
 		try{
 			GobiiFileType loadType=zero.getGobiiFile().getGobiiFileType();
 			String loadTypeName="";//No load type name if default
 			if(loadType!=GobiiFileType.GENERIC)loadTypeName=loadType.name();
 			pm.addPath("Error Log", logFile);
-			pm.setBody(jobName,loadTypeName,SimpleTimer.stop("FileRead"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
+			pm.setBody(jobName,loadTypeName, SimpleTimer.stop("FileRead"), ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
 			mailInterface.send(pm);
 		}catch(Exception e){
 			ErrorLogger.logError("MailInterface","Error Sending Mail",e);
         }
-        HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
-    }
+		HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
+	}
 
 	private static GobiiExtractorInstruction createQCExtractInstruction(GobiiLoaderInstruction zero, String crop) {
 		GobiiExtractorInstruction gobiiExtractorInstruction;
