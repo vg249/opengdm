@@ -481,24 +481,29 @@ public class GobiiExtractor {
                     if (!extract.getGobiiFileType().equals(GobiiFileType.META_DATA)) {
                         jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_FINALASSEMBLY.getCvName(), "Assembling Output Matrix");
                         boolean markerFast = (fileType == GobiiFileType.HAPMAP);
-
-                        switch (filterType) {
-                            case WHOLE_DATASET:
-                                genoFile = HDF5Interface.getHDF5Genotype(markerFast, errorFile, datasetId, tempFolder);
-                                break;
-                            case BY_MARKER:
-                                genoFile = HDF5Interface.getHDF5GenoFromMarkerList(markerFast, errorFile, tempFolder, markerPosFile);
-                                break;
-                            case BY_SAMPLE:
-                                genoFile = HDF5Interface.getHDF5GenoFromSampleList(markerFast, errorFile, tempFolder, markerPosFile, samplePosFile);
-                                break;
-                            default:
-                                genoFile = null;
-                                ErrorLogger.logError("GobiiExtractor", "UnknownFilterType " + filterType);
-                                break;
+                        try {
+                            switch (filterType) {
+                                case WHOLE_DATASET:
+                                    genoFile = HDF5Interface.getHDF5Genotype(markerFast, errorFile, datasetId, tempFolder);
+                                    break;
+                                case BY_MARKER:
+                                    genoFile = HDF5Interface.getHDF5GenoFromMarkerList(markerFast, errorFile, tempFolder, markerPosFile);
+                                    break;
+                                case BY_SAMPLE:
+                                    genoFile = HDF5Interface.getHDF5GenoFromSampleList(markerFast, errorFile, tempFolder, markerPosFile, samplePosFile);
+                                    break;
+                                default:
+                                    genoFile = null;
+                                    ErrorLogger.logError("GobiiExtractor", "UnknownFilterType " + filterType);
+                                    break;
+                            }
+                        }
+                        catch(FileNotFoundException e){
+                            ErrorLogger.logError("GobiiExtractor","Unable to load HDF5 files",e);
                         }
 
 
+                        //TODO - GSD-533 Dataset **name** is ssr_allele_size? WTF does this do and why is it here.
                         // Adding "/" back to the bi-allelic data made from HDF5
                         if (datasetName != null) {
                             if (datasetName.toLowerCase().equals("ssr_allele_size")) {
