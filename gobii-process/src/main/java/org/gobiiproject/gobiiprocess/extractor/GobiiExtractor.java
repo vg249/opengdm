@@ -361,7 +361,6 @@ public class GobiiExtractor {
 							if (PI != null && PI.getId() != null) {
                                 PITerm = " --piId " + PI.getId();
                             }
-							if (project != null && project.getId() != null) {
                             if (project != null && project.getId() != null) {
                                 projectTerm = " --projectId " + project.getId();
                             }
