@@ -587,7 +587,10 @@ public class GobiiExtractor {
 							}
 						}
 					}
-					if (!inst.isQcCheck()) mailInterface.send(pm);
+	                if(pm.getBody()==null) { //Make sure the PM body is set before we send it
+		                pm.setBody(jobReadableIdentifier, extractType, SimpleTimer.stop("Extract"), ErrorLogger.getFirstErrorReason(), ErrorLogger.success(), ErrorLogger.getAllErrorStringsHTML());
+	                }
+	                if (!inst.isQcCheck()) mailInterface.send(pm);
 					HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
 				}
 			} catch (Exception e) {
