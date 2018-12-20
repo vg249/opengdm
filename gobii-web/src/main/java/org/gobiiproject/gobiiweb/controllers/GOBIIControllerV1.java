@@ -6,6 +6,19 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Contact;
+import io.swagger.annotations.ExternalDocs;
+import io.swagger.annotations.Info;
+import io.swagger.annotations.License;
+import io.swagger.annotations.SwaggerDefinition;
+import io.swagger.annotations.Tag;
 import org.apache.commons.lang.math.NumberUtils;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.*;
@@ -68,13 +81,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -94,8 +107,9 @@ import java.util.Optional;
  * Created by MrPhil on 7/6/2015.
  */
 @Scope(value = "request")
-@Controller
+@RestController
 @RequestMapping(GobiiControllerType.SERVICE_PATH_GOBII)
+@Api
 public class GOBIIControllerV1 {
 
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(GOBIIControllerV1.class);
@@ -209,6 +223,11 @@ public class GOBIIControllerV1 {
 
     }//getPingResponse()
 
+    @ApiOperation(value = "/auth",
+            notes = "The user credentials are specified in the request headers; " +
+                    "the response and the response headers incldue the token, which can " +
+                    "which the client will include in the request headers for subsequent " +
+                    "requests. ")
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
     @ResponseBody
     public String authenticate(@RequestBody String noContentExpected,
@@ -242,6 +261,8 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(value = "/configsettings",
+            notes = "Provides generic configuration information about the GOBii instance")
     @RequestMapping(value = "/configsettings", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ConfigSettingsDTO> getConfigSettings(
@@ -326,9 +347,22 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** ANALYSIS METHODS
     // *********************************************
+    @ApiOperation(value = "/analyses",
+            notes = "Creates an analysis entity. $RequestResponseStructure$")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "analysisPostEnvelope",
+//                    required = true,
+//                    dataTypeClass = AnalysisDTO.class)
+//    })
+//    @ApiResponses(
+//            @ApiResponse(code = 200,
+//                    message = "ok",
+//                    response = AnalysisDTO.class,
+//                    responseContainer = "PayloadEnvelope<AnalysisDTO>")
+//    )
     @RequestMapping(value = "/analyses", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<AnalysisDTO> createAnalysis(@RequestBody PayloadEnvelope<AnalysisDTO> payloadEnvelope,
+    public PayloadEnvelope<AnalysisDTO> createAnalysis(@ApiParam(required = true) @RequestBody PayloadEnvelope<AnalysisDTO> analysisPostEnvelope,
                                                        HttpServletRequest request,
                                                        HttpServletResponse response) {
 
@@ -337,7 +371,7 @@ public class GOBIIControllerV1 {
         try {
 
             PayloadReader<AnalysisDTO> payloadReader = new PayloadReader<>(AnalysisDTO.class);
-            AnalysisDTO analysisDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+            AnalysisDTO analysisDTOToCreate = payloadReader.extractSingleItem(analysisPostEnvelope);
 
             AnalysisDTO analysisDTONew = analysisService.createAnalysis(analysisDTOToCreate);
 
