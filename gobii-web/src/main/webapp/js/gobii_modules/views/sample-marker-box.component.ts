@@ -97,13 +97,15 @@ import {ViewIdGeneratorService} from "../services/core/view-id-generator-service
                     </p-footer>
                 </p-dialog>
             </div>
-            <div>
+            
                 <p-dialog header="Maximum {{maxExceededTypeLabel}} Items Exceeded" [(visible)]="displayMaxItemsExceeded"
-                          modal="modal" width="300" height="300" responsive="true">
+                          modal="modal" [dismissableMask]="true" width="300" height="200" [responsive]="true">
                     <p>You attempted to paste more than {{maxListItems}} {{maxExceededTypeLabel}} items; Please reduce
                         the size of the list</p>
                 </p-dialog>
-            </div>`
+           
+        </div>`
+
 
 })
 
