@@ -110,7 +110,9 @@ export class FilterParamsColl {
                 .setIsDynamicDataLoad(false)
                 .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
                 .setNameIdLabelType(NameIdLabelType.ALL)
-                .setIsExtractCriterion(true));
+                .setIsExtractCriterion(true)
+                .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
+                .setCvFilterValue("PI"));
 
         this.addFilter(
             FilterParams
@@ -375,7 +377,9 @@ export class FilterParamsColl {
                 .setIsDynamicDataLoad(false)
                 .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
                 .setNameIdLabelType(NameIdLabelType.ALL)
-                .setIsExtractCriterion(false));
+                .setIsExtractCriterion(false)
+                .setFilterType(FilterType.NAMES_BY_TYPE_NAME)
+                .setCvFilterValue("PI"));
 
         // relate this filter to CONTACT_PI_FILTER_OPTIONAL as parent
         this.addFilter(

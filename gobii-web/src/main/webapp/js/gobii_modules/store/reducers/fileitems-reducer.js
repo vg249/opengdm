@@ -660,7 +660,8 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                 return returnVal;
             }));
             exports_1("getPiContactsFilterOptional", getPiContactsFilterOptional = reselect_1.createSelector(getFileItems, getGobiiExtractFilterType, function (fileItems, gobiiExtractFilterType) {
-                return fileItems.filter(function (e) {
+                var returnVal = [];
+                returnVal = fileItems.filter(function (e) {
                     return (e.getGobiiExtractFilterType() === gobiiExtractFilterType
                         && e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.ENTITY
                         || e.getExtractorItemType() === type_extractor_item_1.ExtractorItemType.LABEL)
@@ -668,6 +669,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                         && e.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR;
                 })
                     .map(function (fi) { return fi; });
+                return returnVal;
             }));
             exports_1("getProjectsFilterOptional", getProjectsFilterOptional = reselect_1.createSelector(getFileItems, getFilters, getGobiiExtractFilterType, function (fileItems, filters, gobiiExtractFilterType) {
                 var returnVal = [];
