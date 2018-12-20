@@ -867,13 +867,17 @@ export const getDatasetEntitiesPaged = createSelector(getFileItems, getFilters, 
 
 export const getPiContactsFilterOptional = createSelector(getFileItems, getGobiiExtractFilterType, (fileItems, gobiiExtractFilterType) => {
 
-    return fileItems.filter(e =>
+    let returnVal:GobiiFileItem[] = [];
+
+    returnVal = fileItems.filter(e =>
         (e.getGobiiExtractFilterType() === gobiiExtractFilterType
             && e.getExtractorItemType() === ExtractorItemType.ENTITY
             || e.getExtractorItemType() === ExtractorItemType.LABEL)
         && e.getEntityType() === EntityType.CONTACT
         && e.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
         .map(fi => fi);
+
+    return returnVal;
 });
 
 export const getProjectsFilterOptional = createSelector(getFileItems, getFilters, getGobiiExtractFilterType, (fileItems, filters, gobiiExtractFilterType) => {
