@@ -601,12 +601,11 @@
             </configuration>
 			<dependencies>
               <!-- https://mvnrepository.com/artifact/nl.jworks.markdown_to_asciidoc/markdown_to_asciidoc -->
-<dependency>
-    <groupId>nl.jworks.markdown_to_asciidoc</groupId>
-    <artifactId>markdown_to_asciidoc</artifactId>
-    <version>1.0</version>
-</dependency>
-
+					<dependency>
+    				<groupId>nl.jworks.markdown_to_asciidoc</groupId>
+    				<artifactId>markdown_to_asciidoc</artifactId>
+    				<version>1.1</version>
+				</dependency>
               </dependencies>
                 <executions>
                     <execution>
