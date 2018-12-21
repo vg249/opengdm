@@ -104,7 +104,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .setIsDynamicDataLoad(false)
                         .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL)
-                        .setIsExtractCriterion(true));
+                        .setIsExtractCriterion(true)
+                        .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPE_NAME)
+                        .setCvFilterValue("PI"));
                     this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.PROJECTS_BY_CONTACT, type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, type_entity_1.EntityType.PROJECT)
                         .setExtractorItemType(type_extractor_item_1.ExtractorItemType.ENTITY)
@@ -235,7 +237,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         .setIsDynamicDataLoad(false)
                         .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
                         .setNameIdLabelType(name_id_label_type_1.NameIdLabelType.ALL)
-                        .setIsExtractCriterion(false));
+                        .setIsExtractCriterion(false)
+                        .setFilterType(filter_type_1.FilterType.NAMES_BY_TYPE_NAME)
+                        .setCvFilterValue("PI"));
                     // relate this filter to CONTACT_PI_FILTER_OPTIONAL as parent
                     this.addFilter(filter_params_1.FilterParams
                         .build(file_item_param_names_1.FilterParamNames.PROJECT_FILTER_OPTIONAL, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.PROJECT)
