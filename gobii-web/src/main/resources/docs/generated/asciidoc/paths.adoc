@@ -1,0 +1,135 @@
+
+[[_paths]]
+== Paths
+
+[[_createanalysis]]
+=== /analyses
+....
+POST /gobii/v1/analyses
+....
+
+
+==== Description
+Creates an analysis entity. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^1,.^3,.^10,.^4,.^2"]
+|===
+|Type|Name|Description|Schema|Default
+|*Body*|*body* +
+||<<_payloadenvelopeanalysisdto,PayloadEnvelopeAnalysisDTO>>|
+|===
+
+
+==== Responses
+
+[options="header", cols=".^1,.^15,.^4"]
+|===
+|HTTP Code|Description|Schema
+|*200*|successful operation|<<_payloadenvelopeanalysisdto,PayloadEnvelopeAnalysisDTO>>
+|===
+
+
+[[_getanalyses]]
+=== /analyses
+....
+GET /gobii/v1/analyses
+....
+
+
+==== Description
+Retrieves an unfiltered list of all Analysis entities. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Responses
+
+[options="header", cols=".^1,.^15,.^4"]
+|===
+|HTTP Code|Description|Schema
+|*200*|successful operation|<<_payloadenvelopeanalysisdto,PayloadEnvelopeAnalysisDTO>>
+|===
+
+
+[[_authenticate]]
+=== /auth
+....
+POST /gobii/v1/auth
+....
+
+
+==== Description
+The user credentials are specified in the request headers X-Username and X-Password; the response and the response headers include the token in the X-Auth-Token header. this header and value be included in the request headers for subsequent requests. The token value is also supplied in the dtoHeaderAuth object.
+
+
+==== Parameters
+
+[options="header", cols=".^1,.^3,.^10,.^4,.^2"]
+|===
+|Type|Name|Description|Schema|Default
+|*Body*|*body* +
+||string|
+|===
+
+
+==== Responses
+
+[options="header", cols=".^1,.^15,.^4"]
+|===
+|HTTP Code|Description|Schema
+|*200*|successful operation|string
+|===
+
+
+[[_getconfigsettings]]
+=== /configsettings
+....
+GET /gobii/v1/configsettings
+....
+
+
+==== Description
+Provides generic configuration information about the GOBii instances in a given deployment. This call does not require authentication
+
+
+==== Responses
+
+[options="header", cols=".^1,.^15,.^4"]
+|===
+|HTTP Code|Description|Schema
+|*200*|successful operation|<<_payloadenvelopeconfigsettingsdto,PayloadEnvelopeConfigSettingsDTO>>
+|===
+
+
+[[_updaterestprofile]]
+=== /restprofiles
+....
+PUT /gobii/v1/restprofiles
+....
+
+
+==== Description
+When the Header of the payload envelope for a resource contains maxGet, maxPost, and maxPut values, this resource provides a means to update the max for a given rest resource ID and for a given HTTP verb. The values are transient in the sense that they will be confined only to a specific web service deployment. They are stored in the web service configurationdocument
+
+
+==== Parameters
+
+[options="header", cols=".^1,.^3,.^10,.^4,.^2"]
+|===
+|Type|Name|Description|Schema|Default
+|*Body*|*body* +
+||<<_payloadenveloperestprofiledto,PayloadEnvelopeRestProfileDTO>>|
+|===
+
+
+==== Responses
+
+[options="header", cols=".^1,.^15,.^4"]
+|===
+|HTTP Code|Description|Schema
+|*200*|successful operation|<<_payloadenveloperestprofiledto,PayloadEnvelopeRestProfileDTO>>
+|===
+
+
+

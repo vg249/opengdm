@@ -6,6 +6,19 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Contact;
+import io.swagger.annotations.ExternalDocs;
+import io.swagger.annotations.Info;
+import io.swagger.annotations.License;
+import io.swagger.annotations.SwaggerDefinition;
+import io.swagger.annotations.Tag;
 import org.apache.commons.lang.math.NumberUtils;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.*;
@@ -68,13 +81,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -94,8 +107,9 @@ import java.util.Optional;
  * Created by MrPhil on 7/6/2015.
  */
 @Scope(value = "request")
-@Controller
+@RestController
 @RequestMapping(GobiiControllerType.SERVICE_PATH_GOBII)
+@Api
 public class GOBIIControllerV1 {
 
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(GOBIIControllerV1.class);
@@ -209,6 +223,12 @@ public class GOBIIControllerV1 {
 
     }//getPingResponse()
 
+    @ApiOperation(value = "/auth",
+            notes = "The user credentials are specified in the request headers X-Username and X-Password; " +
+                    "the response and the response headers include the token in the X-Auth-Token header. " +
+                    "this header and value be " +
+                    "included in the request headers for subsequent " +
+                    "requests. The token value is also supplied in the dtoHeaderAuth object.")
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
     @ResponseBody
     public String authenticate(@RequestBody String noContentExpected,
@@ -242,6 +262,9 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(value = "/configsettings",
+            notes = "Provides generic configuration information about the GOBii instances in " +
+                    "a given deployment. This call does not require authentication")
     @RequestMapping(value = "/configsettings", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ConfigSettingsDTO> getConfigSettings(
@@ -285,6 +308,13 @@ public class GOBIIControllerV1 {
     }
 
 
+    @ApiOperation(value = "/restprofiles",
+            notes = "When the Header of the payload envelope for a resource contains " +
+                    "maxGet, maxPost, and maxPut values, this resource provides a means " +
+                    "to update the max for a given rest resource ID and for a given HTTP verb. " +
+                    "The values are transient in the sense that they will be confined only to a " +
+                    "specific web service deployment. They are stored in the web service configuration" +
+                    "document")
     @RequestMapping(value = "/restprofiles", method = RequestMethod.PUT)
     @ResponseBody
     public PayloadEnvelope<RestProfileDTO> updateRestProfile(@RequestBody PayloadEnvelope<RestProfileDTO> payloadEnvelope,
@@ -326,9 +356,11 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** ANALYSIS METHODS
     // *********************************************
+    @ApiOperation(value = "/analyses",
+            notes = "Creates an analysis entity. $RequestResponseStructure$")
     @RequestMapping(value = "/analyses", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<AnalysisDTO> createAnalysis(@RequestBody PayloadEnvelope<AnalysisDTO> payloadEnvelope,
+    public PayloadEnvelope<AnalysisDTO> createAnalysis(@ApiParam(required = true) @RequestBody PayloadEnvelope<AnalysisDTO> analysisPostEnvelope,
                                                        HttpServletRequest request,
                                                        HttpServletResponse response) {
 
@@ -337,7 +369,7 @@ public class GOBIIControllerV1 {
         try {
 
             PayloadReader<AnalysisDTO> payloadReader = new PayloadReader<>(AnalysisDTO.class);
-            AnalysisDTO analysisDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+            AnalysisDTO analysisDTOToCreate = payloadReader.extractSingleItem(analysisPostEnvelope);
 
             AnalysisDTO analysisDTONew = analysisService.createAnalysis(analysisDTOToCreate);
 
@@ -364,9 +396,12 @@ public class GOBIIControllerV1 {
     }
 
 
+//    @ApiOperation(value = "/analyses",
+//            notes = "Updates the Analysis entity having the specified analysisId. $RequestResponseStructure$")
     @RequestMapping(value = "/analyses/{analysisId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
     public PayloadEnvelope<AnalysisDTO> replaceAnalysis(@RequestBody PayloadEnvelope<AnalysisDTO> payloadEnvelope,
+//                                                        @ApiParam(value = "ID of Analysis to be updated", required = true)
                                                         @PathVariable Integer analysisId,
                                                         HttpServletRequest request,
                                                         HttpServletResponse response) {
@@ -402,6 +437,8 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(value = "/analyses",
+            notes = "Retrieves an unfiltered list of all Analysis entities. $RequestResponseStructure$")
     @RequestMapping(value = "/analyses", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<AnalysisDTO> getAnalyses(HttpServletRequest request,
@@ -436,6 +473,13 @@ public class GOBIIControllerV1 {
     }
 
     @RequestMapping(value = "/analyses/{analysisId:[\\d]+}", method = RequestMethod.GET)
+//    @ApiOperation(value = "/analyses",
+//            notes = "Retrieves the Analysis entity having the specified ID. $RequestResponseStructure$")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "analysisId", value = "Analysis ID", required = true, dataType = "integer", paramType = "path"),
+////            @ApiImplicitParam(name = "email", value = "User's email", required = false, dataType = "string", paramType = "query"),
+////            @ApiImplicitParam(name = "id", value = "User ID", required = true, dataType = "long", paramType = "query")
+//    })
     @ResponseBody
     public PayloadEnvelope<AnalysisDTO> getAnalysisById(@PathVariable Integer analysisId,
                                                         HttpServletRequest request,
@@ -2211,8 +2255,8 @@ public class GOBIIControllerV1 {
             // so that the limit can be looked up by entity type
             payloadWriter.setCallLimitToHeader(returnVal,
                     GobiiUriFactory.resourceColl(request.getContextPath(),
-                    RestResourceId.GOBII_NAMES)
-                    .addUriParam("entity", entity));
+                            RestResourceId.GOBII_NAMES)
+                            .addUriParam("entity", entity));
 
             String cropType = returnVal.getHeader().getCropType();
 
@@ -4311,7 +4355,6 @@ public class GOBIIControllerV1 {
         return (returnVal);
 
     }
-
 
 
     // *********************************************
