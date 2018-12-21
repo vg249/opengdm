@@ -585,6 +585,11 @@
             <plugin>
                 <groupId>io.github.swagger2markup</groupId>
                 <artifactId>swagger2markup-maven-plugin</artifactId>
+              <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
                 <version>1.0.0</version>
                 <configuration>
                     <swaggerInput>${doc-location-generated}/swagger/swagger.yaml</swaggerInput>
