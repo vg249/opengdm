@@ -28,7 +28,19 @@ public class HDF5Interface {
     private static String pathToHDF5Files;
     //Paths
 
-    public static void createHDF5FromDataset(ProcessMessage dm, String dst, ConfigSettings configuration, Integer dataSetId, String crop, String errorPath, String variantFilename, File variantFile) {
+    /**
+     * Creates an HDF5 for a dataset given an existing file path. Will return false if the process fails (generally due to *nix OS failures) which also will set the error state to false.
+     * @param dm Email message object - for direct writing
+     * @param dst DataSetType (obviously)
+     * @param configuration configurations - for reading if a configruation is set correctly
+     * @param dataSetId ID of dataset to create
+     * @param crop crop to create the dataset for
+     * @param errorPath Place to store temporary files in case of needing temporary files
+     * @param variantFilename Name of the dataset (Only used to set the postgres name [probably a bug)
+     * @param variantFile Location of the file to use for creating the dataset
+     * @return if the process succeeded
+     */
+    public static boolean createHDF5FromDataset(ProcessMessage dm, String dst, ConfigSettings configuration, Integer dataSetId, String crop, String errorPath, String variantFilename, File variantFile) {
         //HDF-5
         //Usage: %s <datasize> <input file> <output HDF5 file
         String loadHDF5= getPathToHDF5() +"loadHDF5";
@@ -42,11 +54,17 @@ public class HDF5Interface {
             case "CO_DOMINANT_NON_NUCLEOTIDE":
             case "DOMINANT_NON_NUCLEOTIDE":size=1;break;
             default:
-                logError("Digester","Unknown type "+dst.toString());break;
+                logError("Digester","Unknown type "+dst.toString());return false;
         }
         ErrorLogger.logInfo("Digester","Running HDF5 Loader. HDF5 Generating at "+HDF5File);
-        HelperFunctions.tryExec(loadHDF5+" "+size+" "+variantFile.getPath()+" "+HDF5File,null,errorPath);
+        boolean success=HelperFunctions.tryExec(loadHDF5+" "+size+" "+variantFile.getPath()+" "+HDF5File,null,errorPath);
+        if(!success){
+            //TODO - if not successful - remove HDF5 file, do not update GobiiFileReader's state
+            rmIfExist(HDF5File);
+            return false;
+        }
         GobiiFileReader.updateValues(configuration, crop, dataSetId,variantFilename, HDF5File);
+        return true;
     }
 
     public static String getPathToHDF5() {
@@ -67,12 +85,12 @@ public class HDF5Interface {
 
     /**
      * Given a marker list extracts genotyping data from it. See getHDF5GenoFromSampleList for more information.
-     * @param markerFast
-     * @param errorFile
-     * @param tempFolder
-     * @param posFile
-     * @return
-     * @throws FileNotFoundException
+     * @param markerFast if the file is extracted in 'marker fast' orientation
+     * @param errorFile Where to put errors
+     * @param tempFolder folder for temporary files
+     * @param posFile the place for a positional file
+     * @return location of output
+     * @throws FileNotFoundException if it can't find a file related
      */
     public static String getHDF5GenoFromMarkerList(boolean markerFast, String errorFile, String tempFolder, String posFile) throws FileNotFoundException {
         return getHDF5GenoFromSampleList(markerFast,errorFile,tempFolder,posFile,null);
@@ -151,6 +169,7 @@ StringBuilder genoFileString=new StringBuilder();
                 String genoFile=null;
                 if(!hasSampleList || (sampleList!=null)) {
                     genoFile = getHDF5Genotype(markerFast, errorFile, dsID, tempFolder, positionListFileLoc, sampleList);
+                    if(genoFile==null)return null;
                 }
                 else{
                     //We have a marker position but not a sample position. Do not create a genotype file in the first place
@@ -218,12 +237,21 @@ StringBuilder genoFileString=new StringBuilder();
         if(markerList!=null) {
             String hdf5Extractor=pathToHDF5+"fetchmarkerlist";
             ErrorLogger.logInfo("Extractor","Executing: " + hdf5Extractor+" "+ ordering +" "+HDF5File+" "+markerList+" "+genoFile);
-            HelperFunctions.tryExec(hdf5Extractor + " " + ordering+" " + HDF5File+" "+markerList+" "+genoFile, null, errorFile);
+            boolean success=HelperFunctions.tryExec(hdf5Extractor + " " + ordering+" " + HDF5File+" "+markerList+" "+genoFile, null, errorFile);
+            if(!success){
+                rmIfExist(genoFile);
+                return null;
+            }
         }
         else {
             String hdf5Extractor=pathToHDF5+"dumpdataset";
             ErrorLogger.logInfo("Extractor","Executing: " + hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile);
-            HelperFunctions.tryExec(hdf5Extractor + " " + ordering + " " + HDF5File + " " + genoFile, null, errorFile);
+            boolean success=HelperFunctions.tryExec(hdf5Extractor + " " + ordering + " " + HDF5File + " " + genoFile, null, errorFile);
+            if(!success){
+                rmIfExist(genoFile);
+                return null;
+            }
+
         }
         if(sampleList!=null){
             filterBySampleList(genoFile,sampleList,markerFast, errorFile);
