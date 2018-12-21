@@ -17,6 +17,16 @@ schemes:
 - null
 paths:
   /gobii/v1/analyses:
+    get:
+      summary: "/analyses"
+      description: "Retrieves an unfiltered list of all Analysis entities. $RequestResponseStructure$"
+      operationId: "getAnalyses"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/PayloadEnvelopeAnalysisDTO"
     post:
       summary: "/analyses"
       description: "Creates an analysis entity. $RequestResponseStructure$"
@@ -35,9 +45,11 @@ paths:
   /gobii/v1/auth:
     post:
       summary: "/auth"
-      description: "The user credentials are specified in the request headers; the\
-        \ response and the response headers incldue the token, which can which the\
-        \ client will include in the request headers for subsequent requests. "
+      description: "The user credentials are specified in the request headers X-Username\
+        \ and X-Password; the response and the response headers include the token\
+        \ in the X-Auth-Token header. this header and value be included in the request\
+        \ headers for subsequent requests. The token value is also supplied in the\
+        \ dtoHeaderAuth object."
       operationId: "authenticate"
       parameters:
       - in: "body"
@@ -53,7 +65,8 @@ paths:
   /gobii/v1/configsettings:
     get:
       summary: "/configsettings"
-      description: "Provides generic configuration information about the GOBii instance"
+      description: "Provides generic configuration information about the GOBii instances\
+        \ in a given deployment. This call does not require authentication"
       operationId: "getConfigSettings"
       parameters: []
       responses:
@@ -61,6 +74,26 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeConfigSettingsDTO"
+  /gobii/v1/restprofiles:
+    put:
+      summary: "/restprofiles"
+      description: "When the Header of the payload envelope for a resource contains\
+        \ maxGet, maxPost, and maxPut values, this resource provides a means to update\
+        \ the max for a given rest resource ID and for a given HTTP verb. The values\
+        \ are transient in the sense that they will be confined only to a specific\
+        \ web service deployment. They are stored in the web service configurationdocument"
+      operationId: "updateRestProfile"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/PayloadEnvelopeRestProfileDTO"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/PayloadEnvelopeRestProfileDTO"
 securityDefinitions:
   basicAuth:
     type: "basic"
@@ -346,6 +379,114 @@ definitions:
         $ref: "#/definitions/PayloadConfigSettingsDTO"
       header:
         $ref: "#/definitions/Header"
+  PayloadEnvelopeRestProfileDTO:
+    type: "object"
+    properties:
+      payload:
+        $ref: "#/definitions/PayloadRestProfileDTO"
+      header:
+        $ref: "#/definitions/Header"
+  PayloadRestProfileDTO:
+    type: "object"
+    properties:
+      linkCollection:
+        $ref: "#/definitions/LinkCollection"
+      data:
+        type: "array"
+        items:
+          $ref: "#/definitions/RestProfileDTO"
+  RestProfileDTO:
+    type: "object"
+    properties:
+      allowedProcessTypes:
+        type: "array"
+        uniqueItems: true
+        items:
+          type: "string"
+          enum:
+          - "CREATE"
+          - "READ"
+          - "UPDATE"
+          - "DELETE"
+          - "NONE"
+      restResourceId:
+        type: "string"
+        enum:
+        - "GOBII_AUTH"
+        - "GOBII_PING"
+        - "GOBII_PROJECTS"
+        - "GOBII_NAME_ID_LIST_DEPRECATED"
+        - "GOBII_NAMES"
+        - "GOBII_FILE_LOAD"
+        - "GOBII_FILE_LOAD_INSTRUCTIONS"
+        - "GOBII_FILE_EXTRACTOR_INSTRUCTIONS"
+        - "GOBII_FILE_EXTRACTOR_JOBS"
+        - "GOBII_FILE_LOADER_JOBS"
+        - "GOBII_DISPLAY"
+        - "GOBII_CV"
+        - "GOBII_CVGROUP"
+        - "GOBII_CONTACTS"
+        - "GOBII_CONTACT_SEARCH"
+        - "GOBII_ORGANIZATION_SEARCH"
+        - "GOBII_REFERENCE"
+        - "GOBII_EXPERIMENTS"
+        - "GOBII_DATASETS"
+        - "GOBII_DATASETTYPES"
+        - "GOBII_ANALYSIS"
+        - "GOBII_MARKERGROUP"
+        - "GOBII_MANIFEST"
+        - "GOBII_ORGANIZATION"
+        - "GOBII_PLATFORM"
+        - "GOBII_MAPSET"
+        - "GOBII_CONFIGSETTINGS"
+        - "GOBII_ROLES"
+        - "GOBII_MARKERS"
+        - "GOBII_MARKER_SEARCH"
+        - "GOBII_CALLS"
+        - "GOBII_GERMPLASM"
+        - "GOBII_OBSERVATION_VARIABLES"
+        - "GOBII_PROTOCOL"
+        - "GOBII_VENDORS"
+        - "GOBII_FILES"
+        - "GOBII_JOB"
+        - "GOBII_ENTITIES"
+        - "GOBII_COUNT"
+        - "GOBII_LAST_MODIFIED"
+        - "GOBII_VERTICES"
+        - "GOBII_VALUES"
+        - "GOBII_REST_PROFILES"
+        - "GOBII_DNASAMPLES"
+        - "GOBII_DNARUN"
+        - "GOBII_LINKAGEGROUP"
+        - "GOBII_JOB_DNASAMPLE"
+        - "BRAPI_ALLELE_MATRIX_SEARCH"
+        - "BRAPI_ALLELE_MATRIX_SEARCH_STATUS"
+        - "BRAPI_ALLELE_MATRICES"
+        - "KDC_START"
+        - "KDC_STATUS"
+        - "KDC_DOWNLOAD"
+        - "KDC_PURGE"
+        - "BRAPI_LOGIN"
+        - "BRAPI_STUDIES_SEARCH"
+        - "BRAPI_STUDIES"
+        - "BRAPI_CALLS"
+      restMethodType:
+        type: "string"
+        enum:
+        - "GET"
+        - "POST"
+        - "PUT"
+        - "PATCH"
+        - "DELETE"
+        - "OPTIONS"
+      templateParameter:
+        type: "string"
+      max:
+        type: "integer"
+        format: "int32"
+      id:
+        type: "integer"
+        format: "int32"
   ServerConfigItem:
     type: "object"
     properties:

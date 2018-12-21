@@ -447,28 +447,22 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_uri_scheme">URI scheme</a></li>
 </ul>
 </li>
-<li><a href="#_system_architecture">System Architecture</a>
+<li><a href="#_overview_2">Overview</a>
 <ul class="sectlevel2">
-<li><a href="#_dto_models">DTO Models</a></li>
-<li><a href="#_data_access">Data Access</a></li>
-<li><a href="#_dto_maping">DTO Maping</a></li>
-<li><a href="#_services">Services</a></li>
-<li><a href="#_the_web_controller">The Web Controller</a></li>
-</ul>
-</li>
-<li><a href="#_web_service_operations">Web Service Operations</a>
-<ul class="sectlevel2">
+<li><a href="#_language_and_framework">Language and Framework</a></li>
+<li><a href="#_the_dto_payload">The DTO Payload</a></li>
 <li><a href="#_requestresponsestructure">Request/Response Structure</a></li>
 <li><a href="#_authentication">Authentication</a></li>
 <li><a href="#_error_handling">Error Handling</a></li>
 </ul>
 </li>
-<li><a href="#_documentation_tools">Documentation Tools</a></li>
 <li><a href="#_paths">Paths</a>
 <ul class="sectlevel2">
 <li><a href="#_createanalysis">/analyses</a></li>
+<li><a href="#_getanalyses">/analyses</a></li>
 <li><a href="#_authenticate">/auth</a></li>
 <li><a href="#_getconfigsettings">/configsettings</a></li>
+<li><a href="#_updaterestprofile">/restprofiles</a></li>
 </ul>
 </li>
 <li><a href="#_definitions">Definitions</a>
@@ -486,6 +480,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_payloadconfigsettingsdto">PayloadConfigSettingsDTO</a></li>
 <li><a href="#_payloadenvelopeanalysisdto">PayloadEnvelopeAnalysisDTO</a></li>
 <li><a href="#_payloadenvelopeconfigsettingsdto">PayloadEnvelopeConfigSettingsDTO</a></li>
+<li><a href="#_payloadenveloperestprofiledto">PayloadEnvelopeRestProfileDTO</a></li>
+<li><a href="#_payloadrestprofiledto">PayloadRestProfileDTO</a></li>
+<li><a href="#_restprofiledto">RestProfileDTO</a></li>
 <li><a href="#_serverconfigitem">ServerConfigItem</a></li>
 <li><a href="#_status">Status</a></li>
 </ul>
@@ -524,47 +521,49 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect1">
-<h2 id="_system_architecture">System Architecture</h2>
+<h2 id="_overview_2">Overview</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="_dto_models">DTO Models</h3>
 <div class="paragraph">
-<p>Content TBD</p>
-</div>
+<p>GOBii&#8217;s internal documentation explains in detail how the web service infrastructure is architected. It is not necessary for a consumer of the GOBii web API to understand this in great detail. However, knowing a few things about it will make it easier to understand the web method documentation.</p>
 </div>
 <div class="sect2">
-<h3 id="_data_access">Data Access</h3>
+<h3 id="_language_and_framework">Language and Framework</h3>
 <div class="paragraph">
-<p>Content TBD</p>
+<p>GOBii Web Services are implemented in Java with the Spring frameowrk. Virtually all calls conform to the same basic structure. For example, the /analyses POST method is as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">    @RequestMapping(value = "/analyses", method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope&lt;AnalysisDTO&gt; createAnalysis(@ApiParam(required = true) @RequestBody PayloadEnvelope&lt;AnalysisDTO&gt; analysisPostEnvelope,
+                                                       HttpServletRequest request,
+                                                       HttpServletResponse response) {
+
+        PayloadEnvelope&lt;AnalysisDTO&gt; returnVal = new PayloadEnvelope&lt;&gt;();
+
+    	// populate returnVal . . .
+
+    	return returnVal;
+    }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Ther request and response are almost always wrapped in a type-parameterized PayloadEvenlope. In this case, the PayloadEnvelope is type-parameterized for the AnalysisDTO. Other methods are type parameterized according to the entity that they touch (e.g., the implementation of the /datasets POST method is type-parameterized for the DataSetDTO).</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_dto_maping">DTO Maping</h3>
+<h3 id="_the_dto_payload">The DTO Payload</h3>
 <div class="paragraph">
-<p>Content TBD</p>
+<p>The DTO objects are lightweight classes that contain simple data properties. They correspond roughly but not exactly to entities in the database (for example, in some cases a DTO defines a child collection of foreign-keyed entitites).</p>
 </div>
-</div>
-<div class="sect2">
-<h3 id="_services">Services</h3>
 <div class="paragraph">
-<p>Content TBD</p>
+<p>For a client of this application, however, the strongly-typed nature of the implementation is irrelvant: all request responses and bodies are conveyed in plain JSON, and it is the application&#8217;s job to serialize and deserialize accordingly. What a client implementation must take into account, however, is the structure of the DTO that pertains to a specific all. From the reference section for each web method in this document, youcan navigate to the DTO definition.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_the_web_controller">The Web Controller</h3>
-<div class="paragraph">
-<p>Content TBD</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_web_service_operations">Web Service Operations</h2>
-<div class="sectionbody">
 <div class="sect2">
 <h3 id="_requestresponsestructure">Request/Response Structure</h3>
 <div class="paragraph">
-<p>The http body structure is the same for all responses as well as for the body of POST and PUT requests. Here is a high level schematic of the body structure:</p>
+<p>The following illustrates the http body structure encompassed by the PayloadEnvelope. As mentioned above, it is the same for almost all responses as well as for the body of POST and PUT requests.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -620,33 +619,42 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </ul>
 </div>
 <div class="paragraph">
-<p>The content of the "data" array will vary depending on the type of the call. For example, for a POST to the the /project resource, it will contain a project object.</p>
-</div>
-<div class="paragraph">
-<p>After a successful POST to the /auth resource, the "token" key in "dtoHeaderAuth" contains the token value, which should be used to set the X-Auth-Token header for subsequent requests.</p>
+<p>The content of the "data" array will vary depending on how the call is type-parameterized. For example, for a POST to the the /project resource, it will contain a project object, as defined by ProjectDTO.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_authentication">Authentication</h3>
 <div class="paragraph">
-<p>A valid token may be acquired by doing a POST to the /auth resource with an empty body and the following request headers set:</p>
+<p>All calls except for /configsettings GET require a valid authentication token. The token can be acquired via a POST to the /auth resource with an empty body and the following request headers set:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>X-Username</p>
+</li>
+<li>
+<p>X-Password</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>X-Username
-X-Password</p>
+<p>The specified header values must, of course, be a valid GOBii username and password. Both values are expected to be unencrypted (https will provide encryption for the overall request stream).</p>
 </div>
 <div class="paragraph">
-<p>The username and password depend on how the destination GOBii server is configured (per the gobii-web.xml file):</p>
+<p>GOBii users must be defined in the system&#8217;s LDAP and in the GOBii contact table. Accordingly, there can be two types of authentication failures:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>401 Unauthorized: the user does not authenticate to LDAP;</p>
+</li>
+<li>
+<p>403 Forbidden: the contact record does not exist. In this case, the error will indicate "Missing contact info for user &lt;user-name&gt; in crop database &lt;crop-db&gt;; a contact record must have username = &lt;user-name&gt;";</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>If gobiiAuthenticationType of the server is TEST, the username and password are hard-coded to USER_READER and reader, respectively.
-If the server is configured for LDAP authentication:
-The username/password must be provisioned in the configured LDAP server (if it is not, the error from the server will be 401: Unauthorized)
-There must be an entry for the user in contact table, where the username value matches the ldap user name;
-NOTE: if no such record is found, the error will be 403: Forbidden: Missing contact info for user &lt;user-name&gt; in crop database &lt;crop-db&gt;; a contact record must have username = &lt;user-name&gt;</p>
-</div>
-<div class="paragraph">
-<p>When authentication succeeds, the response headers will contain a X-Auth-Token key whose value is a valid token. For subsequent requests, it is sufficient to supply X-Auth-Token in the request headers with the token that was received from the /auth POST. Some browsers prevent the client code from reading custom response headers. In this case, the token can also be retrieved from the meta data portion of the response body (see below).</p>
+<p>When authentication succeeds, the response headers will contain an X-Auth-Token key whose value is a valid token. For subsequent requests, it is sufficient to supply X-Auth-Token in the request headers with the token that was received from the /auth POST. Some browsers prevent the client code from reading custom response headers. For such cases, the token value can also be retrieved from the "token" key in the "dtoHeaderAuth"  object.</p>
 </div>
 </div>
 <div class="sect2">
@@ -672,14 +680,6 @@ NOTE: if no such record is found, the error will be 403: Forbidden: Missing cont
 }</code></pre>
 </div>
 </div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_documentation_tools">Documentation Tools</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The toolchain used to produce this documentation is swagger compatible. It is</p>
 </div>
 </div>
 </div>
@@ -755,6 +755,44 @@ NOTE: if no such record is found, the error will be 403: Forbidden: Missing cont
 </div>
 </div>
 <div class="sect2">
+<h3 id="_getanalyses">/analyses</h3>
+<div class="literalblock">
+<div class="content">
+<pre>GET /gobii/v1/analyses</pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_description_2">Description</h4>
+<div class="paragraph">
+<p>Retrieves an unfiltered list of all Analysis entities. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_responses_2">Responses</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 5%;">
+<col style="width: 75%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">successful operation</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_payloadenvelopeanalysisdto">PayloadEnvelopeAnalysisDTO</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_authenticate">/auth</h3>
 <div class="literalblock">
 <div class="content">
@@ -762,9 +800,9 @@ NOTE: if no such record is found, the error will be 403: Forbidden: Missing cont
 </div>
 </div>
 <div class="sect3">
-<h4 id="_description_2">Description</h4>
+<h4 id="_description_3">Description</h4>
 <div class="paragraph">
-<p>The user credentials are specified in the request headers; the response and the response headers incldue the token, which can which the client will include in the request headers for subsequent requests.</p>
+<p>The user credentials are specified in the request headers X-Username and X-Password; the response and the response headers include the token in the X-Auth-Token header. this header and value be included in the request headers for subsequent requests. The token value is also supplied in the dtoHeaderAuth object.</p>
 </div>
 </div>
 <div class="sect3">
@@ -798,7 +836,7 @@ NOTE: if no such record is found, the error will be 403: Forbidden: Missing cont
 </table>
 </div>
 <div class="sect3">
-<h4 id="_responses_2">Responses</h4>
+<h4 id="_responses_3">Responses</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 5%;">
@@ -830,13 +868,13 @@ NOTE: if no such record is found, the error will be 403: Forbidden: Missing cont
 </div>
 </div>
 <div class="sect3">
-<h4 id="_description_3">Description</h4>
+<h4 id="_description_4">Description</h4>
 <div class="paragraph">
-<p>Provides generic configuration information about the GOBii instance</p>
+<p>Provides generic configuration information about the GOBii instances in a given deployment. This call does not require authentication</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_responses_3">Responses</h4>
+<h4 id="_responses_4">Responses</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 5%;">
@@ -855,6 +893,74 @@ NOTE: if no such record is found, the error will be 403: Forbidden: Missing cont
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">successful operation</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_payloadenvelopeconfigsettingsdto">PayloadEnvelopeConfigSettingsDTO</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_updaterestprofile">/restprofiles</h3>
+<div class="literalblock">
+<div class="content">
+<pre>PUT /gobii/v1/restprofiles</pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_description_5">Description</h4>
+<div class="paragraph">
+<p>When the Header of the payload envelope for a resource contains maxGet, maxPost, and maxPut values, this resource provides a means to update the max for a given rest resource ID and for a given HTTP verb. The values are transient in the sense that they will be confined only to a specific web service deployment. They are stored in the web service configurationdocument</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_parameters_3">Parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 5%;">
+<col style="width: 15%;">
+<col style="width: 50%;">
+<col style="width: 20%;">
+<col style="width: 10%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Type</th>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+<th class="tableblock halign-left valign-middle">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Body</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>body</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_payloadenveloperestprofiledto">PayloadEnvelopeRestProfileDTO</a></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_responses_5">Responses</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 5%;">
+<col style="width: 75%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">successful operation</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_payloadenveloperestprofiledto">PayloadEnvelopeRestProfileDTO</a></p></td>
 </tr>
 </tbody>
 </table>
@@ -1433,6 +1539,113 @@ NOTE: if no such record is found, the error will be 403: Forbidden: Missing cont
 </table>
 </div>
 <div class="sect2">
+<h3 id="_payloadenveloperestprofiledto">PayloadEnvelopeRestProfileDTO</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 61.1111%;">
+<col style="width: 22.2223%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>header</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_header">Header</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>payload</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_payloadrestprofiledto">PayloadRestProfileDTO</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_payloadrestprofiledto">PayloadRestProfileDTO</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 61.1111%;">
+<col style="width: 22.2223%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>data</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_restprofiledto">RestProfileDTO</a> &gt; array</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>linkCollection</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_linkcollection">LinkCollection</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_restprofiledto">RestProfileDTO</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 61.1111%;">
+<col style="width: 22.2223%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>allowedProcessTypes</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; enum (CREATE, READ, UPDATE, DELETE, NONE) &gt; array</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>id</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">integer(int32)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>max</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">integer(int32)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>restMethodType</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">enum (GET, POST, PUT, PATCH, DELETE, OPTIONS)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>restResourceId</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">enum (GOBII_AUTH, GOBII_PING, GOBII_PROJECTS, GOBII_NAME_ID_LIST_DEPRECATED, GOBII_NAMES, GOBII_FILE_LOAD, GOBII_FILE_LOAD_INSTRUCTIONS, GOBII_FILE_EXTRACTOR_INSTRUCTIONS, GOBII_FILE_EXTRACTOR_JOBS, GOBII_FILE_LOADER_JOBS, GOBII_DISPLAY, GOBII_CV, GOBII_CVGROUP, GOBII_CONTACTS, GOBII_CONTACT_SEARCH, GOBII_ORGANIZATION_SEARCH, GOBII_REFERENCE, GOBII_EXPERIMENTS, GOBII_DATASETS, GOBII_DATASETTYPES, GOBII_ANALYSIS, GOBII_MARKERGROUP, GOBII_MANIFEST, GOBII_ORGANIZATION, GOBII_PLATFORM, GOBII_MAPSET, GOBII_CONFIGSETTINGS, GOBII_ROLES, GOBII_MARKERS, GOBII_MARKER_SEARCH, GOBII_CALLS, GOBII_GERMPLASM, GOBII_OBSERVATION_VARIABLES, GOBII_PROTOCOL, GOBII_VENDORS, GOBII_FILES, GOBII_JOB, GOBII_ENTITIES, GOBII_COUNT, GOBII_LAST_MODIFIED, GOBII_VERTICES, GOBII_VALUES, GOBII_REST_PROFILES, GOBII_DNASAMPLES, GOBII_DNARUN, GOBII_LINKAGEGROUP, GOBII_JOB_DNASAMPLE, BRAPI_ALLELE_MATRIX_SEARCH, BRAPI_ALLELE_MATRIX_SEARCH_STATUS, BRAPI_ALLELE_MATRICES, KDC_START, KDC_STATUS, KDC_DOWNLOAD, KDC_PURGE, BRAPI_LOGIN, BRAPI_STUDIES_SEARCH, BRAPI_STUDIES, BRAPI_CALLS)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>templateParameter</strong><br></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
 <h3 id="_serverconfigitem">ServerConfigItem</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -1520,7 +1733,7 @@ NOTE: if no such record is found, the error will be 403: Forbidden: Missing cont
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-12-20 18:03:30 EST
+Last updated 2018-12-21 09:47:42 EST
 </div>
 </div>
 </body>

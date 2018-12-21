@@ -224,10 +224,11 @@ public class GOBIIControllerV1 {
     }//getPingResponse()
 
     @ApiOperation(value = "/auth",
-            notes = "The user credentials are specified in the request headers; " +
-                    "the response and the response headers incldue the token, which can " +
-                    "which the client will include in the request headers for subsequent " +
-                    "requests. ")
+            notes = "The user credentials are specified in the request headers X-Username and X-Password; " +
+                    "the response and the response headers include the token in the X-Auth-Token header. " +
+                    "this header and value be " +
+                    "included in the request headers for subsequent " +
+                    "requests. The token value is also supplied in the dtoHeaderAuth object.")
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
     @ResponseBody
     public String authenticate(@RequestBody String noContentExpected,
@@ -262,7 +263,8 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(value = "/configsettings",
-            notes = "Provides generic configuration information about the GOBii instance")
+            notes = "Provides generic configuration information about the GOBii instances in " +
+                    "a given deployment. This call does not require authentication")
     @RequestMapping(value = "/configsettings", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ConfigSettingsDTO> getConfigSettings(
@@ -306,6 +308,13 @@ public class GOBIIControllerV1 {
     }
 
 
+    @ApiOperation(value = "/restprofiles",
+            notes = "When the Header of the payload envelope for a resource contains " +
+                    "maxGet, maxPost, and maxPut values, this resource provides a means " +
+                    "to update the max for a given rest resource ID and for a given HTTP verb. " +
+                    "The values are transient in the sense that they will be confined only to a " +
+                    "specific web service deployment. They are stored in the web service configuration" +
+                    "document")
     @RequestMapping(value = "/restprofiles", method = RequestMethod.PUT)
     @ResponseBody
     public PayloadEnvelope<RestProfileDTO> updateRestProfile(@RequestBody PayloadEnvelope<RestProfileDTO> payloadEnvelope,
@@ -349,17 +358,6 @@ public class GOBIIControllerV1 {
     // *********************************************
     @ApiOperation(value = "/analyses",
             notes = "Creates an analysis entity. $RequestResponseStructure$")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "analysisPostEnvelope",
-//                    required = true,
-//                    dataTypeClass = AnalysisDTO.class)
-//    })
-//    @ApiResponses(
-//            @ApiResponse(code = 200,
-//                    message = "ok",
-//                    response = AnalysisDTO.class,
-//                    responseContainer = "PayloadEnvelope<AnalysisDTO>")
-//    )
     @RequestMapping(value = "/analyses", method = RequestMethod.POST)
     @ResponseBody
     public PayloadEnvelope<AnalysisDTO> createAnalysis(@ApiParam(required = true) @RequestBody PayloadEnvelope<AnalysisDTO> analysisPostEnvelope,
@@ -398,9 +396,12 @@ public class GOBIIControllerV1 {
     }
 
 
+//    @ApiOperation(value = "/analyses",
+//            notes = "Updates the Analysis entity having the specified analysisId. $RequestResponseStructure$")
     @RequestMapping(value = "/analyses/{analysisId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
     public PayloadEnvelope<AnalysisDTO> replaceAnalysis(@RequestBody PayloadEnvelope<AnalysisDTO> payloadEnvelope,
+//                                                        @ApiParam(value = "ID of Analysis to be updated", required = true)
                                                         @PathVariable Integer analysisId,
                                                         HttpServletRequest request,
                                                         HttpServletResponse response) {
@@ -436,6 +437,8 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(value = "/analyses",
+            notes = "Retrieves an unfiltered list of all Analysis entities. $RequestResponseStructure$")
     @RequestMapping(value = "/analyses", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<AnalysisDTO> getAnalyses(HttpServletRequest request,
@@ -470,6 +473,13 @@ public class GOBIIControllerV1 {
     }
 
     @RequestMapping(value = "/analyses/{analysisId:[\\d]+}", method = RequestMethod.GET)
+//    @ApiOperation(value = "/analyses",
+//            notes = "Retrieves the Analysis entity having the specified ID. $RequestResponseStructure$")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "analysisId", value = "Analysis ID", required = true, dataType = "integer", paramType = "path"),
+////            @ApiImplicitParam(name = "email", value = "User's email", required = false, dataType = "string", paramType = "query"),
+////            @ApiImplicitParam(name = "id", value = "User ID", required = true, dataType = "long", paramType = "query")
+//    })
     @ResponseBody
     public PayloadEnvelope<AnalysisDTO> getAnalysisById(@PathVariable Integer analysisId,
                                                         HttpServletRequest request,
@@ -2245,8 +2255,8 @@ public class GOBIIControllerV1 {
             // so that the limit can be looked up by entity type
             payloadWriter.setCallLimitToHeader(returnVal,
                     GobiiUriFactory.resourceColl(request.getContextPath(),
-                    RestResourceId.GOBII_NAMES)
-                    .addUriParam("entity", entity));
+                            RestResourceId.GOBII_NAMES)
+                            .addUriParam("entity", entity));
 
             String cropType = returnVal.getHeader().getCropType();
 
@@ -4345,7 +4355,6 @@ public class GOBIIControllerV1 {
         return (returnVal);
 
     }
-
 
 
     // *********************************************

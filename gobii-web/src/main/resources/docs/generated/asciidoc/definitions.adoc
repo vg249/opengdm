@@ -247,6 +247,53 @@
 |===
 
 
+[[_payloadenveloperestprofiledto]]
+=== PayloadEnvelopeRestProfileDTO
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|*header* +
+||<<_header,Header>>
+|*payload* +
+||<<_payloadrestprofiledto,PayloadRestProfileDTO>>
+|===
+
+
+[[_payloadrestprofiledto]]
+=== PayloadRestProfileDTO
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|*data* +
+||< <<_restprofiledto,RestProfileDTO>> > array
+|*linkCollection* +
+||<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_restprofiledto]]
+=== RestProfileDTO
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|*allowedProcessTypes* +
+||< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|*id* +
+||integer(int32)
+|*max* +
+||integer(int32)
+|*restMethodType* +
+||enum (GET, POST, PUT, PATCH, DELETE, OPTIONS)
+|*restResourceId* +
+||enum (GOBII_AUTH, GOBII_PING, GOBII_PROJECTS, GOBII_NAME_ID_LIST_DEPRECATED, GOBII_NAMES, GOBII_FILE_LOAD, GOBII_FILE_LOAD_INSTRUCTIONS, GOBII_FILE_EXTRACTOR_INSTRUCTIONS, GOBII_FILE_EXTRACTOR_JOBS, GOBII_FILE_LOADER_JOBS, GOBII_DISPLAY, GOBII_CV, GOBII_CVGROUP, GOBII_CONTACTS, GOBII_CONTACT_SEARCH, GOBII_ORGANIZATION_SEARCH, GOBII_REFERENCE, GOBII_EXPERIMENTS, GOBII_DATASETS, GOBII_DATASETTYPES, GOBII_ANALYSIS, GOBII_MARKERGROUP, GOBII_MANIFEST, GOBII_ORGANIZATION, GOBII_PLATFORM, GOBII_MAPSET, GOBII_CONFIGSETTINGS, GOBII_ROLES, GOBII_MARKERS, GOBII_MARKER_SEARCH, GOBII_CALLS, GOBII_GERMPLASM, GOBII_OBSERVATION_VARIABLES, GOBII_PROTOCOL, GOBII_VENDORS, GOBII_FILES, GOBII_JOB, GOBII_ENTITIES, GOBII_COUNT, GOBII_LAST_MODIFIED, GOBII_VERTICES, GOBII_VALUES, GOBII_REST_PROFILES, GOBII_DNASAMPLES, GOBII_DNARUN, GOBII_LINKAGEGROUP, GOBII_JOB_DNASAMPLE, BRAPI_ALLELE_MATRIX_SEARCH, BRAPI_ALLELE_MATRIX_SEARCH_STATUS, BRAPI_ALLELE_MATRICES, KDC_START, KDC_STATUS, KDC_DOWNLOAD, KDC_PURGE, BRAPI_LOGIN, BRAPI_STUDIES_SEARCH, BRAPI_STUDIES, BRAPI_CALLS)
+|*templateParameter* +
+||string
+|===
+
+
 [[_serverconfigitem]]
 === ServerConfigItem
 

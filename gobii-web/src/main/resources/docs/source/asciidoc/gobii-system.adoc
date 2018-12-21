@@ -1,26 +1,39 @@
-== System Architecture
-	
-=== DTO Models
-Content TBD
+== Overview
 
-=== Data Access 
-Content TBD
+GOBii's internal documentation explains in detail how the web service infrastructure is architected. It is not necessary for a consumer of the GOBii web API to understand this in great detail. However, knowing a few things about it will make it easier to understand the web method documentation.  
 
-=== DTO Maping
-Content TBD
+=== Language and Framework
+GOBii Web Services are implemented in Java with the Spring frameowrk. Virtually all calls conform to the same basic structure. For example, the /analyses POST method is as follows: 
 
-=== Services
-Content TBD
+[source,java]
+----
+    @RequestMapping(value = "/analyses", method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope<AnalysisDTO> createAnalysis(@ApiParam(required = true) @RequestBody PayloadEnvelope<AnalysisDTO> analysisPostEnvelope,
+                                                       HttpServletRequest request,
+                                                       HttpServletResponse response) {
 
-=== The Web Controller
-Content TBD
+        PayloadEnvelope<AnalysisDTO> returnVal = new PayloadEnvelope<>();
+    
+    	// populate returnVal . . . 
 
-== Web Service Operations
+    	return returnVal; 
+    }
+----
+
+Ther request and response are almost always wrapped in a type-parameterized PayloadEvenlope. In this case, the PayloadEnvelope is type-parameterized for the AnalysisDTO. Other methods are type parameterized according to the entity that they touch (e.g., the implementation of the /datasets POST method is type-parameterized for the DataSetDTO). 
+
+=== The DTO Payload
+
+The DTO objects are lightweight classes that contain simple data properties. They correspond roughly but not exactly to entities in the database (for example, in some cases a DTO defines a child collection of foreign-keyed entitites).
+
+For a client of this application, however, the strongly-typed nature of the implementation is irrelvant: all request responses and bodies are conveyed in plain JSON, and it is the application's job to serialize and deserialize accordingly. What a client implementation must take into account, however, is the structure of the DTO that pertains to a specific all. From the reference section for each web method in this document, youcan navigate to the DTO definition. 
+
 
 [[_requestresponsestructure]]
 === Request/Response Structure
 
-The http body structure is the same for all responses as well as for the body of POST and PUT requests. Here is a high level schematic of the body structure:
+The following illustrates the http body structure encompassed by the PayloadEnvelope. As mentioned above, it is the same for almost all responses as well as for the body of POST and PUT requests. 
 
 [source,json]
 ----
@@ -67,26 +80,26 @@ For requests, the following keys can be omitted:
 * payload.linkCollection
 * header
 
-The content of the "data" array will vary depending on the type of the call. For example, for a POST to the the /project resource, it will contain a project object.
+The content of the "data" array will vary depending on how the call is type-parameterized. For example, for a POST to the the /project resource, it will contain a project object, as defined by ProjectDTO.
 
-After a successful POST to the /auth resource, the "token" key in "dtoHeaderAuth" contains the token value, which should be used to set the X-Auth-Token header for subsequent requests.
 
 
 === Authentication
-A valid token may be acquired by doing a POST to the /auth resource with an empty body and the following request headers set:
 
-X-Username
-X-Password
+All calls except for /configsettings GET require a valid authentication token. The token can be acquired via a POST to the /auth resource with an empty body and the following request headers set:
 
-The username and password depend on how the destination GOBii server is configured (per the gobii-web.xml file):
+* X-Username
+* X-Password
 
-If gobiiAuthenticationType of the server is TEST, the username and password are hard-coded to USER_READER and reader, respectively.
-If the server is configured for LDAP authentication:
-The username/password must be provisioned in the configured LDAP server (if it is not, the error from the server will be 401: Unauthorized)
-There must be an entry for the user in contact table, where the username value matches the ldap user name;
-NOTE: if no such record is found, the error will be 403: Forbidden: Missing contact info for user <user-name> in crop database <crop-db>; a contact record must have username = <user-name>
+The specified header values must, of course, be a valid GOBii username and password. Both values are expected to be unencrypted (https will provide encryption for the overall request stream). 
 
-When authentication succeeds, the response headers will contain a X-Auth-Token key whose value is a valid token. For subsequent requests, it is sufficient to supply X-Auth-Token in the request headers with the token that was received from the /auth POST. Some browsers prevent the client code from reading custom response headers. In this case, the token can also be retrieved from the meta data portion of the response body (see below).
+GOBii users must be defined in the system's LDAP and in the GOBii contact table. Accordingly, there can be two types of authentication failures:  
+
+* 401 Unauthorized: the user does not authenticate to LDAP; 
+* 403 Forbidden: the contact record does not exist. In this case, the error will indicate "Missing contact info for user <user-name> in crop database <crop-db>; a contact record must have username = <user-name>";  
+
+When authentication succeeds, the response headers will contain an X-Auth-Token key whose value is a valid token. For subsequent requests, it is sufficient to supply X-Auth-Token in the request headers with the token that was received from the /auth POST. Some browsers prevent the client code from reading custom response headers. For such cases, the token value can also be retrieved from the "token" key in the "dtoHeaderAuth"  object. 
+
 
 === Error Handling
 
@@ -109,8 +122,5 @@ if (!header.getStatus().isSucceeded() ||
     }
 }
 ----
-
-== Documentation Tools
-The toolchain used to produce this documentation is swagger compatible. It is
 
 
