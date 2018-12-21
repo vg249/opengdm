@@ -62,7 +62,7 @@ public class ErrorMessageInterpreter {
 		}
 		else{
 			//Remove / from process name, if there are any.
-			message=processName.substring(processName.lastIndexOf('/')) + "exited with a return code of " + retCode;
+			message=processName.substring(processName.lastIndexOf('/')) + " exited with a return code of " + retCode;
 		}
 
 		return message;
