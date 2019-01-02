@@ -5,6 +5,7 @@ import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Fail
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.*;
 
@@ -35,11 +36,17 @@ abstract class BaseValidator {
             return true;
     }
 
-    List<Failure> beginValidation(String fileName, ValidationUnit validationUnit) {
+    List<Failure> beginValidation(String fileName, ValidationUnit validationUnit) throws MaximumErrorsValidationException {
         List<Failure> failureList = new ArrayList<>();
-        failureList.addAll(validateRequiredColumns(fileName, validationUnit.getConditions()));
-        failureList.addAll(validateRequiredUniqueColumns(fileName, validationUnit.getConditions()));
-        failureList.addAll(validateOptionalNotNullColumns(fileName, validationUnit.getConditions()));
+        List<String[]> inputFile = new ArrayList<>();
+        if (!ValidationUtil.readFileIntoMemory(fileName, inputFile, failureList)) return failureList;
+        // Copying of the list to avoid possible deletion of original data
+        List<String[]> input = inputFile.stream().collect(Collectors.toList());
+        failureList.addAll(validateRequiredColumns(fileName, validationUnit.getConditions(), input));
+        input = inputFile.stream().collect(Collectors.toList());
+        failureList.addAll(validateRequiredUniqueColumns(fileName, validationUnit.getConditions(), input));
+        input = inputFile.stream().collect(Collectors.toList());
+        failureList.addAll(validateOptionalNotNullColumns(fileName, validationUnit.getConditions(), input));
         failureList.addAll(validateUniqueColumnList(fileName, validationUnit));
         failureList.addAll(validateFileShouldExist(fileName, validationUnit));
         failureList.addAll(validateColumnDBandFile(fileName, validationUnit));
@@ -49,10 +56,11 @@ abstract class BaseValidator {
     /**
      * Parses the validation rules and gives the rules which are required and not  unique
      *
-     * @param fileName   name of file
-     * @param conditions conditions
+     * @param fileName      name of file
+     * @param conditions    conditions
+     * @param inputFileList input file read into a list
      */
-    private List<Failure> validateRequiredColumns(String fileName, List<ConditionUnit> conditions) {
+    private List<Failure> validateRequiredColumns(String fileName, List<ConditionUnit> conditions, List<String[]> inputFileList) {
         List<String> requiredFields = new ArrayList<>();
         for (ConditionUnit condition : conditions)
             if (condition.required.equalsIgnoreCase(ValidationConstants.YES) && !(condition.unique != null && condition.unique.equalsIgnoreCase(ValidationConstants.YES))) {
@@ -63,7 +71,7 @@ abstract class BaseValidator {
         List<Failure> failureList = new ArrayList<>();
         if (requiredFields.size() > 0) {
             try {
-                validateColumns(fileName, requiredFields, failureList);
+                validateColumns(fileName, requiredFields, inputFileList, failureList);
             } catch (MaximumErrorsValidationException e) {
                 //Don't do any thing. This implies that particular error list is full.
             }
@@ -76,8 +84,9 @@ abstract class BaseValidator {
      *
      * @param fileName   name of file
      * @param conditions conditions
+     * @param inputFile  input file as a list
      */
-    private List<Failure> validateRequiredUniqueColumns(String fileName, List<ConditionUnit> conditions) {
+    private List<Failure> validateRequiredUniqueColumns(String fileName, List<ConditionUnit> conditions, List<String[]> inputFile) {
         List<String> requiredUniqueColumns = new ArrayList<>();
         for (ConditionUnit condition : conditions)
             if (condition.required.equalsIgnoreCase(ValidationConstants.YES) && (condition.unique != null && condition.unique.equalsIgnoreCase(ValidationConstants.YES)))
@@ -87,7 +96,7 @@ abstract class BaseValidator {
         List<Failure> failureList = new ArrayList<>();
         if (requiredUniqueColumns.size() > 0) {
             try {
-                validateUniqueColumns(fileName, requiredUniqueColumns, failureList);
+                validateUniqueColumns(fileName, requiredUniqueColumns, inputFile, failureList);
             } catch (MaximumErrorsValidationException e) {
                 //Don't do any thing. This implies that particular error list is full.
             }
@@ -100,24 +109,21 @@ abstract class BaseValidator {
      *
      * @param fileName   name of file
      * @param conditions conditions
+     * @param inputFile  input file as a list
      */
-    private List<Failure> validateOptionalNotNullColumns(String fileName, List<ConditionUnit> conditions) {
+    private List<Failure> validateOptionalNotNullColumns(String fileName, List<ConditionUnit> conditions, List<String[]> inputFile) {
         List<String> requiredFields = new ArrayList<>();
         List<String> headers = new ArrayList<>();
+        headers.addAll(Arrays.asList(inputFile.get(0)));
         List<Failure> failureList = new ArrayList<>();
-        try {
-            getHeaders(fileName, headers, failureList);
-        } catch (MaximumErrorsValidationException e) {
-            // Maximum errors of this type came in. return.
-            return failureList;
-        }
+
         for (ConditionUnit condition : conditions)
             if (condition.required.equalsIgnoreCase(ValidationConstants.NO) && (condition.nullAllowed != null && condition.nullAllowed.equalsIgnoreCase(ValidationConstants.NO)))
                 if (headers.contains(condition.columnName) && !requiredFields.contains(condition.columnName))
                     requiredFields.add(condition.columnName);
         if (requiredFields.size() > 0) {
             try {
-                validateColumns(fileName, requiredFields, failureList);
+                validateColumns(fileName, requiredFields, inputFile, failureList);
             } catch (MaximumErrorsValidationException e) {
                 //Don't do any thing. This implies that particular error list is full.
             }
@@ -130,7 +136,7 @@ abstract class BaseValidator {
     /**
      * Validates that the combination of columns is unique
      *
-     * @param fileName       fileName
+     * @param fileName fileName
      * @param validationUnit validation conditions
      */
     private List<Failure> validateUniqueColumnList(String fileName, ValidationUnit validationUnit) {
