@@ -3,7 +3,10 @@ package org.gobiiproject.gobiiprocess.digester.validation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
+import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator;
+import org.gobiiproject.gobiiprocess.digester.utils.validation.MaximumErrorsValidationException;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationWebServicesUtil;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
@@ -14,6 +17,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
+import org.mockito.Matchers;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -25,6 +29,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +41,7 @@ import static org.mockito.Matchers.eq;
 @PrepareForTest(ValidationWebServicesUtil.class)
 @PowerMockRunnerDelegate(BlockJUnit4ClassRunner.class)
 @PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
-public class DnaSamplePropValidationTest {
+public class DnaSampleValidationTest {
 
     private static String tempFolderLocation;
 
@@ -47,7 +52,7 @@ public class DnaSamplePropValidationTest {
     @BeforeClass
     public static void setUp() throws IOException {
         tempFolderLocation = tempFolder.getRoot().getPath();
-        File source = new File("src/test/resources/validation/dnasample_prop");
+        File source = new File("src/test/resources/validation/dnasample");
         FileUtils.copyDirectory(source, tempFolder.getRoot());
     }
 
@@ -66,10 +71,10 @@ public class DnaSamplePropValidationTest {
     }
 
     /**
-     * Dnasample propsvalidation.
+     * Dnasample validation.
      */
     @Test
-    public void dnasamplePropAllPassTest() throws IOException {
+    public void dnasampleAllPassTest() throws IOException {
         DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/allPass", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
@@ -86,17 +91,17 @@ public class DnaSamplePropValidationTest {
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
 
-        assertEquals("Expected file name is not dnasample_prop", "dnasample_prop", fileErrors[0].fileName);
+        assertEquals("Expected file name is not dnasample", "dnasample", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not success", "SUCCESS", fileErrors[0].status);
 
     }
 
     /**
-     * dnasample props validation.
+     * dnasample validation.
      * Missing one required field
      */
     @Test
-    public void dnasamplePropMissingRequiredFieldTest() throws IOException {
+    public void dnasampleMissingRequiredFieldTest() throws IOException {
         DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
@@ -113,7 +118,7 @@ public class DnaSamplePropValidationTest {
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
 
-        assertEquals("Expected file name is not dnasample_prop", "dnasample_prop", fileErrors[0].fileName);
+        assertEquals("Expected file name is not dnasample", "dnasample", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not FAILURE", "FAILURE", fileErrors[0].status);
 
         List<Failure> failures = fileErrors[0].failures;
@@ -121,67 +126,19 @@ public class DnaSamplePropValidationTest {
 
 
         assertEquals("Unexpected failure reason", "Column not found", failures.get(0).reason);
-        assertEquals("Unexpected column name", "project_id", failures.get(0).columnName.get(0));
+        assertEquals("Unexpected column name", "num", failures.get(0).columnName.get(0));
 
         assertEquals("Unexpected failure reason", "Column not found", failures.get(1).reason);
-        assertEquals("Unexpected column name", "project_id", failures.get(1).columnName.get(0));
+        assertEquals("Unexpected column name", "num", failures.get(1).columnName.get(0));
 
     }
 
     /**
-     * DnasampleProp validation.
-     * Missing comparison file
-     */
-    @Test
-    public void dnasamplePropMissingComparisonFileTest() throws IOException {
-        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingComparisonFile", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
-
-        PowerMockito.mockStatic(ValidationWebServicesUtil.class);
-        PowerMockito
-                .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
-                .thenReturn(true);
-
-
-        digestFileValidator.performValidation();
-        List<Path> pathList =
-                Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/missingComparisonFile"))
-                        .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
-        assertEquals("There should be one validation output json file", 1, pathList.size());
-
-        ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-
-        assertEquals("Expected file name is not dnasample_prop", "dnasample_prop", fileErrors[0].fileName);
-        assertEquals("Expected STATUS is not FAILURE", "FAILURE", fileErrors[0].status);
-
-        List<Failure> failures = fileErrors[0].failures;
-        assertEquals("Failures are more than the expected", 5, failures.size());
-
-
-        assertEquals("Unexpected failure reason", "File not found", failures.get(0).reason);
-        assertEquals("Unexpected values", "digest.dnasample", failures.get(0).values.get(0));
-
-
-        assertEquals("Unexpected failure reason", "File not found", failures.get(1).reason);
-        assertEquals("Unexpected values", "digest.dnasample", failures.get(1).values.get(0));
-
-        assertEquals("Unexpected failure reason", "File not found", failures.get(2).reason);
-        assertEquals("Unexpected values", "digest.dnasample", failures.get(2).values.get(0));
-
-        assertEquals("Unexpected failure reason", "File not found", failures.get(1).reason);
-        assertEquals("Unexpected values", "digest.dnasample", failures.get(1).values.get(0));
-
-        assertEquals("Unexpected failure reason", "File not found", failures.get(2).reason);
-        assertEquals("Unexpected values", "digest.dnasample", failures.get(2).values.get(0));
-
-    }
-
-
-    /**
-     * DnaSampleProp validation.
+     * DnaSample validation.
      * Mismatch comparison file
      */
     @Test
-    public void dnasamplePropMismatchComparisionTest() throws IOException {
+    public void dnasampleMismatchComparisionTest() throws IOException {
         DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/mismatchComparisonColumn", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
@@ -198,7 +155,7 @@ public class DnaSamplePropValidationTest {
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
 
-        assertEquals("Expected file name is not dnasample_prop", "dnasample_prop", fileErrors[0].fileName);
+        assertEquals("Expected file name is not dnasample", "dnasample", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not success", "FAILURE", fileErrors[0].status);
 
         List<Failure> failures = fileErrors[0].failures;
@@ -212,7 +169,7 @@ public class DnaSamplePropValidationTest {
      * Mismatch comparison file
      */
     @Test
-    public void dnasamplePropcolumnCombinationNotUniqueTest() throws IOException {
+    public void dnasampleColumnCombinationNotUniqueTest() throws IOException {
         DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/columnCombinationNotUnique", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
@@ -229,12 +186,93 @@ public class DnaSamplePropValidationTest {
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
 
-        assertEquals("Expected file name is not dnasample_prop", "dnasample_prop", fileErrors[0].fileName);
+        assertEquals("Expected file name is not dnasample", "dnasample", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not success", "FAILURE", fileErrors[0].status);
 
         List<Failure> failures = fileErrors[0].failures;
         assertEquals("Failures are more than the expected", 1, failures.size());
         assertEquals("Unexpected failure reason", "Not unique", failures.get(0).reason);
+
+    }
+
+    /**
+     * DnaSampleProp validation.
+     */
+    @Test
+    public void dnasampleExternalCodesGermplasmTableTest() throws IOException {
+        DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/externalCodesGermplasmTable", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
+
+        PowerMockito.mockStatic(ValidationWebServicesUtil.class);
+        PowerMockito
+                .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
+                .thenReturn(true);
+
+        List<NameIdDTO> externalCodeResponse = new ArrayList<>();
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("5555");
+            nameIdDTOResponse.setId(1);
+            externalCodeResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("5556");
+            nameIdDTOResponse.setId(2);
+            externalCodeResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("5557");
+            nameIdDTOResponse.setId(3);
+            externalCodeResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("5558");
+            nameIdDTOResponse.setId(4);
+            externalCodeResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("5559");
+            nameIdDTOResponse.setId(5);
+            externalCodeResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("5560");
+            nameIdDTOResponse.setId(6);
+            externalCodeResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("5561");
+            nameIdDTOResponse.setId(7);
+            externalCodeResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("5562");
+            nameIdDTOResponse.setId(8);
+            externalCodeResponse.add(nameIdDTOResponse);
+        }
+        try {
+            PowerMockito
+                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq(GobiiEntityNameType.GERMPLASM.toString()), eq("external_code"), any()))
+                    .thenReturn(externalCodeResponse);
+        } catch (MaximumErrorsValidationException e) {
+            e.printStackTrace();
+        }
+        digestFileValidator.performValidation();
+        List<Path> pathList =
+                Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/externalCodesGermplasmTable"))
+                        .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
+        assertEquals("There should be one validation output json file", 1, pathList.size());
+
+        ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
+
+        assertEquals("Expected file name is not dnasample", "dnasample", fileErrors[0].fileName);
+        assertEquals("Expected STATUS is success", "SUCCESS", fileErrors[0].status);
 
     }
 }

@@ -300,7 +300,7 @@ public class GermplasmValidationTest {
      * Repeated required field
      */
     @Test
-    public void germplasmnonUniqueRequiredColumnsTest() throws IOException {
+    public void germplasmNonUniqueRequiredColumnsTest() throws IOException {
         DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/nonUniqueRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);

@@ -264,6 +264,7 @@ public class DigestFileValidator {
         switch (FilenameUtils.getExtension(validation.getDigestFileName())) {
             case "germplasm":
             case "germplasm_prop":
+            case "dnasample":
             case "dnasample_prop":
             case "dnarun_prop":
             case "marker":
@@ -273,9 +274,6 @@ public class DigestFileValidator {
             case "dataset_dnarun":
             case "dataset_marker":
                 if (!new GermplasmPropValidator().validate(validation, rootDir, failureList)) failureList = null;
-                break;
-            case "dnasample":
-                if (!new DnaSampleValidator().validate(validation, rootDir, failureList)) failureList = null;
                 break;
             case "dnarun":
                 if (!new DnarunValidator().validate(validation, rootDir, failureList)) failureList = null;

@@ -96,6 +96,7 @@
           "fieldColumns": [
             "external_code"
           ],
+          "uniqueFileCheck": "yes",
           "typeName": "digest.germplasm",
           "fieldToCompare": [
             "external_code"
