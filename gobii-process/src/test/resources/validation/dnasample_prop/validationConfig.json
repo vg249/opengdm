@@ -4,18 +4,6 @@
       "digestFileName": "digest.dnasample_prop",
       "conditions": [
         {
-          "columnName": "project_id",
-          "required": "yes"
-        },
-        {
-          "columnName": "dnasample_name",
-          "required": "yes"
-        },
-        {
-          "columnName": "num",
-          "required": "yes"
-        },
-        {
           "columnName": "external_code",
           "required": "yes",
           "uniqueColumns": [
@@ -46,7 +34,7 @@
           ],
           "typeName": "digest.dnasample",
           "fieldToCompare": [
-            "dnasample_name"
+            "name"
           ]
         },
         {
