@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiiprocess.digester.validation;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
@@ -50,7 +49,6 @@ public class DatasetDnarunValidationTest {
     @ClassRule
     public static TemporaryFolder tempFolder = new TemporaryFolder();
 
-
     @BeforeClass
     public static void setUp() throws IOException {
         tempFolderLocation = tempFolder.getRoot().getPath();
@@ -58,19 +56,17 @@ public class DatasetDnarunValidationTest {
         FileUtils.copyDirectory(source, tempFolder.getRoot());
     }
 
-
     /**
      * According to JUnit no exception is thrown when temp folder is not
      * deleted. This method ensures that temp folder is always deleted.
      */
     @AfterClass
     public static void checkAndCleanTempFile() {
- /*       try {
+        try {
             FileUtils.deleteDirectory(new File(tempFolderLocation));
         } catch (IOException e) {
             e.printStackTrace();
         }
-   */
     }
 
     /**
@@ -88,33 +84,31 @@ public class DatasetDnarunValidationTest {
         List<NameIdDTO> dnarunNameResponse = new ArrayList<>();
         {
             NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("sample325:C6NPUANXX:5:250490978");
+            nameIdDTOResponse.setName("dnarunname_dom_1");
             nameIdDTOResponse.setId(262);
             dnarunNameResponse.add(nameIdDTOResponse);
         }
         {
             NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("sample293:C6NPUANXX:5:250490977");
+            nameIdDTOResponse.setName("dnarunname_dom_2");
             nameIdDTOResponse.setId(226);
             dnarunNameResponse.add(nameIdDTOResponse);
         }
         {
             NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("sample333:C6NPUANXX:5:250490979");
+            nameIdDTOResponse.setName("dnarunname_dom_3");
             nameIdDTOResponse.setId(271);
             dnarunNameResponse.add(nameIdDTOResponse);
         }
         Map<String, String> experimentForeignKeyReturn = new HashMap<>();
-        experimentForeignKeyReturn.put("Deb_Proj_Exp_GSD-399_vcf", "3");
-        experimentForeignKeyReturn.put("Jdls_Test", "59");
-        experimentForeignKeyReturn.put("sim_2letternuc_exp_01", "64");
+        experimentForeignKeyReturn.put("1", "validationTestExp1");
         try {
             PowerMockito
                     .when(ValidationWebServicesUtil.getAllowedForeignKeyList(eq("dnarun"), any()))
                     .thenReturn(experimentForeignKeyReturn);
 
             PowerMockito
-                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq(GobiiEntityNameType.DNARUN.toString()), eq("3"), any()))
+                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq(GobiiEntityNameType.DNARUN.toString()), eq("1"), any()))
                     .thenReturn(dnarunNameResponse);
         } catch (MaximumErrorsValidationException e) {
             e.printStackTrace();
@@ -126,7 +120,6 @@ public class DatasetDnarunValidationTest {
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-
         assertEquals("Expected file name is not dataset_dnarun", "dataset_dnarun", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not success", "SUCCESS", fileErrors[0].status);
     }
@@ -147,39 +140,42 @@ public class DatasetDnarunValidationTest {
         List<NameIdDTO> dnarunNameResponse = new ArrayList<>();
         {
             NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("sample325:C6NPUANXX:5:250490978");
+            nameIdDTOResponse.setName("dnarunname_dom_1");
             nameIdDTOResponse.setId(262);
             dnarunNameResponse.add(nameIdDTOResponse);
         }
         {
             NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("sample293:C6NPUANXX:5:250490977");
+            nameIdDTOResponse.setName("dnarunname_dom_2");
             nameIdDTOResponse.setId(226);
             dnarunNameResponse.add(nameIdDTOResponse);
         }
         {
             NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("R_8T3QPTdB6hFEO_21140");
+            nameIdDTOResponse.setName("dnarunname_dom_3");
+            nameIdDTOResponse.setId(271);
+            dnarunNameResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("dnarunname_doma_9");
             nameIdDTOResponse.setId(0);
             dnarunNameResponse.add(nameIdDTOResponse);
         }
         {
             NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("R_8T3QPp6fluRwk_21141");
+            nameIdDTOResponse.setName("dnarunname_doma_10");
             nameIdDTOResponse.setId(0);
             dnarunNameResponse.add(nameIdDTOResponse);
         }
-
         Map<String, String> experimentForeignKeyReturn = new HashMap<>();
-        experimentForeignKeyReturn.put("Deb_Proj_Exp_GSD-399_vcf", "3");
-        experimentForeignKeyReturn.put("Jdls_Test", "59");
-        experimentForeignKeyReturn.put("sim_2letternuc_exp_01", "64");
+        experimentForeignKeyReturn.put("1", "validationTestExp1");
         try {
             PowerMockito
                     .when(ValidationWebServicesUtil.getAllowedForeignKeyList(eq("dnarun"), any()))
                     .thenReturn(experimentForeignKeyReturn);
             PowerMockito
-                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("dnarun"), eq("3"), any()))
+                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("dnarun"), eq("1"), any()))
                     .thenReturn(dnarunNameResponse);
         } catch (MaximumErrorsValidationException e) {
             e.printStackTrace();
@@ -191,17 +187,15 @@ public class DatasetDnarunValidationTest {
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-
         assertEquals("Expected file name is not dataset_dnarun", "dataset_dnarun", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not success", "FAILURE", fileErrors[0].status);
+
         List<Failure> failures = fileErrors[0].failures;
         assertEquals("Failures are more than the expected", 1, failures.size());
-
         assertEquals("Unexpected failure reason", "Undefined dnarun_name value", failures.get(0).reason);
         assertEquals("Unexpected column name", "dnarun_name", failures.get(0).columnName.get(0));
-        assertEquals("Unexpected dnarun_name", "R_8T3QPTdB6hFEO_21140", failures.get(0).values.get(0));
-        assertEquals("Unexpected dnarun_name", "R_8T3QPp6fluRwk_21141", failures.get(0).values.get(1));
-
+        assertEquals("Unexpected dnarun_name", "dnarunname_doma_9", failures.get(0).values.get(0));
+        assertEquals("Unexpected dnarun_name", "dnarunname_doma_10", failures.get(0).values.get(1));
     }
 
     /**
@@ -220,39 +214,42 @@ public class DatasetDnarunValidationTest {
         List<NameIdDTO> dnarunNameResponse = new ArrayList<>();
         {
             NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("sample325:C6NPUANXX:5:250490978");
+            nameIdDTOResponse.setName("dnarunname_dom_1");
             nameIdDTOResponse.setId(262);
             dnarunNameResponse.add(nameIdDTOResponse);
         }
         {
             NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("sample293:C6NPUANXX:5:250490977");
+            nameIdDTOResponse.setName("dnarunname_dom_2");
             nameIdDTOResponse.setId(226);
             dnarunNameResponse.add(nameIdDTOResponse);
         }
         {
             NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("R_8T3QPTdB6hFEO_21140");
+            nameIdDTOResponse.setName("dnarunname_dom_3");
+            nameIdDTOResponse.setId(271);
+            dnarunNameResponse.add(nameIdDTOResponse);
+        }
+        {
+            NameIdDTO nameIdDTOResponse = new NameIdDTO();
+            nameIdDTOResponse.setName("dnarunname_doma_9");
             nameIdDTOResponse.setId(0);
             dnarunNameResponse.add(nameIdDTOResponse);
         }
         {
             NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("R_8T3QPp6fluRwk_21141");
+            nameIdDTOResponse.setName("dnarunname_doma_10");
             nameIdDTOResponse.setId(0);
             dnarunNameResponse.add(nameIdDTOResponse);
         }
-
         Map<String, String> experimentForeignKeyReturn = new HashMap<>();
-        experimentForeignKeyReturn.put("Deb_Proj_Exp_GSD-399_vcf", "3");
-        experimentForeignKeyReturn.put("Jdls_Test", "59");
-        experimentForeignKeyReturn.put("sim_2letternuc_exp_01", "64");
+        experimentForeignKeyReturn.put("1", "validationTestExp1");
         try {
             PowerMockito
                     .when(ValidationWebServicesUtil.getAllowedForeignKeyList(eq("dnarun"), any()))
                     .thenReturn(experimentForeignKeyReturn);
             PowerMockito
-                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("dnarun"), eq("3"), any()))
+                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("dnarun"), eq("1"), any()))
                     .thenReturn(dnarunNameResponse);
         } catch (MaximumErrorsValidationException e) {
             e.printStackTrace();
@@ -264,7 +261,6 @@ public class DatasetDnarunValidationTest {
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-
         assertEquals("Expected file name is not dataset_dnarun", "dataset_dnarun", fileErrors[0].fileName);
         assertEquals("Expected STATUS is success", "SUCCESS", fileErrors[0].status);
     }
@@ -281,36 +277,33 @@ public class DatasetDnarunValidationTest {
         PowerMockito
                 .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
                 .thenReturn(true);
-
         List<NameIdDTO> dnarunNameResponse = new ArrayList<>();
         {
             NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("sample325:C6NPUANXX:5:250490978");
+            nameIdDTOResponse.setName("dnarunname_dom_1");
             nameIdDTOResponse.setId(262);
             dnarunNameResponse.add(nameIdDTOResponse);
         }
         {
             NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("sample293:C6NPUANXX:5:250490977");
+            nameIdDTOResponse.setName("dnarunname_dom_2");
             nameIdDTOResponse.setId(226);
             dnarunNameResponse.add(nameIdDTOResponse);
         }
         {
             NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("sample333:C6NPUANXX:5:250490979");
+            nameIdDTOResponse.setName("dnarunname_dom_3");
             nameIdDTOResponse.setId(271);
             dnarunNameResponse.add(nameIdDTOResponse);
         }
         Map<String, String> experimentForeignKeyReturn = new HashMap<>();
-        experimentForeignKeyReturn.put("Deb_Proj_Exp_GSD-399_vcf", "3");
-        experimentForeignKeyReturn.put("Jdls_Test", "59");
-        experimentForeignKeyReturn.put("sim_2letternuc_exp_01", "64");
+        experimentForeignKeyReturn.put("1", "validationTestExp1");
         try {
             PowerMockito
                     .when(ValidationWebServicesUtil.getAllowedForeignKeyList(eq("dnarun"), any()))
                     .thenReturn(experimentForeignKeyReturn);
             PowerMockito
-                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("dnarun"), eq("3"), any()))
+                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("dnarun"), eq("1"), any()))
                     .thenReturn(dnarunNameResponse);
         } catch (MaximumErrorsValidationException e) {
             e.printStackTrace();
@@ -323,17 +316,13 @@ public class DatasetDnarunValidationTest {
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-
         assertEquals("Expected file name is not dataset_dnarun", "dataset_dnarun", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not FAILURE", "FAILURE", fileErrors[0].status);
 
         List<Failure> failures = fileErrors[0].failures;
         assertEquals("Failures are more than the expected", 1, failures.size());
-
-
         assertEquals("Unexpected failure reason", "Column not found", failures.get(0).reason);
         assertEquals("Unexpected column name", "dnarun_idx", failures.get(0).columnName.get(0));
-
     }
 
     /**
@@ -352,32 +341,30 @@ public class DatasetDnarunValidationTest {
         List<NameIdDTO> dnarunNameResponse = new ArrayList<>();
         {
             NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("sample325:C6NPUANXX:5:250490978");
+            nameIdDTOResponse.setName("dnarunname_dom_1");
             nameIdDTOResponse.setId(262);
             dnarunNameResponse.add(nameIdDTOResponse);
         }
         {
             NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("sample293:C6NPUANXX:5:250490977");
+            nameIdDTOResponse.setName("dnarunname_dom_2");
             nameIdDTOResponse.setId(226);
             dnarunNameResponse.add(nameIdDTOResponse);
         }
         {
             NameIdDTO nameIdDTOResponse = new NameIdDTO();
-            nameIdDTOResponse.setName("sample333:C6NPUANXX:5:250490979");
+            nameIdDTOResponse.setName("dnarunname_dom_3");
             nameIdDTOResponse.setId(271);
             dnarunNameResponse.add(nameIdDTOResponse);
         }
         Map<String, String> experimentForeignKeyReturn = new HashMap<>();
-        experimentForeignKeyReturn.put("Deb_Proj_Exp_GSD-399_vcf", "3");
-        experimentForeignKeyReturn.put("Jdls_Test", "59");
-        experimentForeignKeyReturn.put("sim_2letternuc_exp_01", "64");
+        experimentForeignKeyReturn.put("1", "validationTestExp1");
         try {
             PowerMockito
                     .when(ValidationWebServicesUtil.getAllowedForeignKeyList(eq("dnarun"), any()))
                     .thenReturn(experimentForeignKeyReturn);
             PowerMockito
-                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("dnarun"), eq("3"), any()))
+                    .when(ValidationWebServicesUtil.getNamesByNameList(Matchers.any(), eq("dnarun"), eq("1"), any()))
                     .thenReturn(dnarunNameResponse);
         } catch (MaximumErrorsValidationException e) {
             e.printStackTrace();
@@ -389,20 +376,12 @@ public class DatasetDnarunValidationTest {
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-
         assertEquals("Expected file name is not dataset_dnarun", "dataset_dnarun", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not FAILURE", "FAILURE", fileErrors[0].status);
 
         List<Failure> failures = fileErrors[0].failures;
         assertEquals("Failures are more than the expected", 1, failures.size());
-
-
         assertEquals("Unexpected failure reason", "NULL VALUE", failures.get(0).reason);
         assertEquals("Unexpected column name", "dataset_id", failures.get(0).columnName.get(0));
-
     }
 }
-
-
-
-

@@ -1,5 +1,11 @@
-experiment_id	dataset_id	dnarun_name	dnarun_idx
-3	1	sample325:C6NPUANXX:5:250490978	0
-3	1	sample293:C6NPUANXX:5:250490977	1
-3	1	R_8T3QPTdB6hFEO_21140	10
-3	1	R_8T3QPp6fluRwk_21141	11
+platform_id	experiment_id	dataset_id	dnarun_name	dnarun_idx
+8	1	1	dnarunname_dom_1	0
+8	1	1	dnarunname_dom_2	1
+8	1	1	dnarunname_dom_3	2
+8	1	1	dnarunname_dom_4	3
+8	1	1	dnarunname_dom_5	4
+8	1	1	dnarunname_dom_6	5
+8	1	1	dnarunname_dom_7	6
+8	1	1	dnarunname_dom_8	7
+8	1	1	dnarunname_doma_9	8
+8	1	1	dnarunname_doma_10	9
