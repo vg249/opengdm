@@ -65,7 +65,6 @@ public class DatasetDnarunValidationTest {
         try {
             FileUtils.deleteDirectory(new File(tempFolderLocation));
         } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 

@@ -58,7 +58,6 @@ public class LinkageGroupValidationTest {
         try {
             FileUtils.deleteDirectory(new File(tempFolderLocation));
         } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 

@@ -63,7 +63,6 @@ public class GermplasmValidationTest {
         try {
             FileUtils.deleteDirectory(new File(tempFolderLocation));
         } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 

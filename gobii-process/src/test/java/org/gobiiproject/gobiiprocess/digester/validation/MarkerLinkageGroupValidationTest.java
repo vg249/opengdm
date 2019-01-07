@@ -8,6 +8,7 @@ import org.gobiiproject.gobiiprocess.digester.utils.validation.MaximumErrorsVali
 import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationWebServicesUtil;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -52,6 +53,18 @@ public class MarkerLinkageGroupValidationTest {
         tempFolderLocation = tempFolder.getRoot().getPath();
         File source = new File("src/test/resources/validation/marker_linkage_group");
         FileUtils.copyDirectory(source, tempFolder.getRoot());
+    }
+
+    /**
+     * According to JUnit no exception is thrown when temp folder is not
+     * deleted. This method ensures that temp folder is always deleted.
+     */
+    @AfterClass
+    public static void checkAndCleanTempFile() {
+        try {
+            FileUtils.deleteDirectory(new File(tempFolderLocation));
+        } catch (IOException e) {
+        }
     }
 
     /**

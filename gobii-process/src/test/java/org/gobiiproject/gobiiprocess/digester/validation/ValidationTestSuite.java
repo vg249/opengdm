@@ -14,7 +14,8 @@ import org.junit.runners.Suite;
         MarkerPropValidationTest.class,
         LinkageGroupValidationTest.class,
         MarkerLinkageGroupValidationTest.class,
-        DatasetDnarunValidationTest.class})
+        DatasetDnarunValidationTest.class,
+        DatasetMarkerValidationTest.class})
 
 public class ValidationTestSuite {
 }

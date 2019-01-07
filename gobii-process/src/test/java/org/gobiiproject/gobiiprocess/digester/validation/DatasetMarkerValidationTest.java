@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiiprocess.digester.validation;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
@@ -9,6 +8,7 @@ import org.gobiiproject.gobiiprocess.digester.utils.validation.MaximumErrorsVali
 import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationWebServicesUtil;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -48,12 +48,23 @@ public class DatasetMarkerValidationTest {
     @ClassRule
     public static TemporaryFolder tempFolder = new TemporaryFolder();
 
-
     @BeforeClass
     public static void setUp() throws IOException {
         tempFolderLocation = tempFolder.getRoot().getPath();
         File source = new File("src/test/resources/validation/dataset_marker");
         FileUtils.copyDirectory(source, tempFolder.getRoot());
+    }
+
+    /**
+     * According to JUnit no exception is thrown when temp folder is not
+     * deleted. This method ensures that temp folder is always deleted.
+     */
+    @AfterClass
+    public static void checkAndCleanTempFile() {
+        try {
+            FileUtils.deleteDirectory(new File(tempFolderLocation));
+        } catch (IOException e) {
+        }
     }
 
     /**
@@ -104,10 +115,8 @@ public class DatasetMarkerValidationTest {
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-
         assertEquals("Expected file name is not dataset_marker", "dataset_marker", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not success", "SUCCESS", fileErrors[0].status);
-
     }
 
     /**
@@ -157,7 +166,6 @@ public class DatasetMarkerValidationTest {
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-
         assertEquals("Expected file name is not dataset_marker", "dataset_marker", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not success", "FAILURE", fileErrors[0].status);
         List<Failure> failures = fileErrors[0].failures;
@@ -165,7 +173,6 @@ public class DatasetMarkerValidationTest {
         assertEquals("Unexpected column name", "platform_id", failures.get(0).columnName.get(0));
         assertEquals("Unexpected failure reason", "Undefined value", failures.get(0).reason);
         assertEquals("Unexpected failure", "81", failures.get(0).values.get(0));
-
     }
 
     /**
@@ -217,7 +224,6 @@ public class DatasetMarkerValidationTest {
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-
         assertEquals("Expected file name is not dataset_marker", "dataset_marker", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not FAILURE", "FAILURE", fileErrors[0].status);
 
@@ -238,7 +244,6 @@ public class DatasetMarkerValidationTest {
         PowerMockito
                 .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
                 .thenReturn(true);
-
 
         Map<String, String> foreignKeyValueFromDBPlatformId = new HashMap<>();
         foreignKeyValueFromDBPlatformId.put("8", "Dart_clone");
@@ -277,19 +282,15 @@ public class DatasetMarkerValidationTest {
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-
         assertEquals("Expected file name is not dataset_marker", "dataset_marker", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not success", "FAILURE", fileErrors[0].status);
-
 
         List<Failure> failures = fileErrors[0].failures;
         assertEquals("Failures are more than the expected", 1, failures.size());
 
-
         assertEquals("Unexpected failure reason", "Undefined marker value", failures.get(0).reason);
         assertEquals("Unexpected column name", "marker_name", failures.get(0).columnName.get(0));
         assertEquals("Unexpected column value", "dommarkerss4", failures.get(0).values.get(0));
-
     }
 
     private void mockForTestCase(Map<String, String> foreignKeyValueFromDBPlatformId, List<NameIdDTO> referenceResponse) {
