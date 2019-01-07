@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiiprocess.digester.validation;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
@@ -47,7 +46,6 @@ public class MarkerLinkageGroupValidationTest {
 
     @ClassRule
     public static TemporaryFolder tempFolder = new TemporaryFolder();
-
 
     @BeforeClass
     public static void setUp() throws IOException {
@@ -168,7 +166,6 @@ public class MarkerLinkageGroupValidationTest {
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-
         assertEquals("Expected file name is not marker_linkage_group", "marker_linkage_group", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not success", "FAILURE", fileErrors[0].status);
         List<Failure> failures = fileErrors[0].failures;
@@ -176,7 +173,6 @@ public class MarkerLinkageGroupValidationTest {
         assertEquals("Unexpected column name", "platform_id", failures.get(0).columnName.get(0));
         assertEquals("Unexpected failure reason", "Undefined value", failures.get(0).reason);
         assertEquals("Unexpected failure", "81", failures.get(0).values.get(0));
-
     }
 
     /**
@@ -233,7 +229,6 @@ public class MarkerLinkageGroupValidationTest {
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-
         assertEquals("Expected file name is not marker_linkage_group", "marker_linkage_group", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not FAILURE", "FAILURE", fileErrors[0].status);
 
@@ -244,10 +239,8 @@ public class MarkerLinkageGroupValidationTest {
             assertEquals("Unexpected column name", "linkage_group_name", failure.columnName.get(0));
             assertEquals("Unexpected failure reason", "Undefined linkage_group_name value", failure.reason);
             assertEquals("Unexpected failure", "LG_2_length_33233457", failure.values.get(0));
-
         }
     }
-
 
     /**
      * MarkerLinkageGroup validation.
@@ -402,7 +395,3 @@ public class MarkerLinkageGroupValidationTest {
         }
     }
 }
-
-
-
-
