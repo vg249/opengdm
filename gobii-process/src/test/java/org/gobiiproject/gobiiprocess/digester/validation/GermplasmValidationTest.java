@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiiprocess.digester.validation;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -48,14 +47,12 @@ public class GermplasmValidationTest {
     @ClassRule
     public static TemporaryFolder tempFolder = new TemporaryFolder();
 
-
     @BeforeClass
     public static void setUp() throws IOException {
         tempFolderLocation = tempFolder.getRoot().getPath();
         File source = new File("src/test/resources/validation/germplasm");
         FileUtils.copyDirectory(source, tempFolder.getRoot());
     }
-
 
     /**
      * According to JUnit no exception is thrown when temp folder is not
@@ -127,10 +124,8 @@ public class GermplasmValidationTest {
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-
         assertEquals("Expected file name is not germplasm", "germplasm", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not success", "SUCCESS", fileErrors[0].status);
-
     }
 
     /**
@@ -203,7 +198,6 @@ public class GermplasmValidationTest {
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-
         assertEquals("Expected file name is not germplasm", "germplasm", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not FAILURE", "FAILURE", fileErrors[0].status);
 
@@ -240,7 +234,6 @@ public class GermplasmValidationTest {
                 .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
                 .thenReturn(true);
 
-
         digestFileValidator.performValidation();
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns"))
@@ -254,11 +247,8 @@ public class GermplasmValidationTest {
 
         List<Failure> failures = fileErrors[0].failures;
         assertEquals("Failures are more than the expected", 1, failures.size());
-
-
         assertEquals("Unexpected failure reason", "Column not found", failures.get(0).reason);
         assertEquals("Unexpected column name", "external_code", failures.get(0).columnName.get(0));
-
     }
 
     /**
@@ -274,7 +264,6 @@ public class GermplasmValidationTest {
                 .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
                 .thenReturn(true);
 
-
         digestFileValidator.performValidation();
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/missingValuesInRequiredColumns"))
@@ -282,17 +271,13 @@ public class GermplasmValidationTest {
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-
         assertEquals("Expected file name is not germplasm", "germplasm", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not FAILURE", "FAILURE", fileErrors[0].status);
 
         List<Failure> failures = fileErrors[0].failures;
         assertEquals("Failures are more than the expected", 1, failures.size());
-
-
         assertEquals("Unexpected failure reason", "NULL VALUE", failures.get(0).reason);
         assertEquals("Unexpected column name", "name", failures.get(0).columnName.get(0));
-
     }
 
     /**
@@ -308,7 +293,6 @@ public class GermplasmValidationTest {
                 .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
                 .thenReturn(true);
 
-
         digestFileValidator.performValidation();
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/nonUniqueRequiredColumns"))
@@ -316,21 +300,13 @@ public class GermplasmValidationTest {
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-
         assertEquals("Expected file name is not germplasm", "germplasm", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not FAILURE", "FAILURE", fileErrors[0].status);
 
         List<Failure> failures = fileErrors[0].failures;
         assertEquals("Failures are more than the expected", 1, failures.size());
-
-
         assertEquals("Duplicate Found", "Duplicate Found", failures.get(0).reason);
         assertEquals("Unexpected column name", "external_code", failures.get(0).columnName.get(0));
         assertEquals("Unexpected number of duplicates", 3, failures.get(0).values.size());
     }
-
 }
-
-
-
-

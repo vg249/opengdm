@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiiprocess.digester.validation;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
@@ -48,14 +47,12 @@ public class DnaSampleValidationTest {
     @ClassRule
     public static TemporaryFolder tempFolder = new TemporaryFolder();
 
-
     @BeforeClass
     public static void setUp() throws IOException {
         tempFolderLocation = tempFolder.getRoot().getPath();
         File source = new File("src/test/resources/validation/dnasample");
         FileUtils.copyDirectory(source, tempFolder.getRoot());
     }
-
 
     /**
      * According to JUnit no exception is thrown when temp folder is not
@@ -82,7 +79,6 @@ public class DnaSampleValidationTest {
                 .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
                 .thenReturn(true);
 
-
         digestFileValidator.performValidation();
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/allPass"))
@@ -90,10 +86,8 @@ public class DnaSampleValidationTest {
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-
         assertEquals("Expected file name is not dnasample", "dnasample", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not success", "SUCCESS", fileErrors[0].status);
-
     }
 
     /**
@@ -109,7 +103,6 @@ public class DnaSampleValidationTest {
                 .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
                 .thenReturn(true);
 
-
         digestFileValidator.performValidation();
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns"))
@@ -117,20 +110,15 @@ public class DnaSampleValidationTest {
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-
         assertEquals("Expected file name is not dnasample", "dnasample", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not FAILURE", "FAILURE", fileErrors[0].status);
 
         List<Failure> failures = fileErrors[0].failures;
         assertEquals("Failures are more than the expected", 2, failures.size());
-
-
         assertEquals("Unexpected failure reason", "Column not found", failures.get(0).reason);
         assertEquals("Unexpected column name", "num", failures.get(0).columnName.get(0));
-
         assertEquals("Unexpected failure reason", "Column not found", failures.get(1).reason);
         assertEquals("Unexpected column name", "num", failures.get(1).columnName.get(0));
-
     }
 
     /**
@@ -146,7 +134,6 @@ public class DnaSampleValidationTest {
                 .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
                 .thenReturn(true);
 
-
         digestFileValidator.performValidation();
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/mismatchComparisonColumn"))
@@ -154,14 +141,12 @@ public class DnaSampleValidationTest {
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-
         assertEquals("Expected file name is not dnasample", "dnasample", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not success", "FAILURE", fileErrors[0].status);
 
         List<Failure> failures = fileErrors[0].failures;
         assertEquals("Failures are more than the expected", 1, failures.size());
         assertEquals("Unexpected failure reason", "Column value mismatch", failures.get(0).reason);
-
     }
 
     /**
@@ -177,7 +162,6 @@ public class DnaSampleValidationTest {
                 .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
                 .thenReturn(true);
 
-
         digestFileValidator.performValidation();
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/columnCombinationNotUnique"))
@@ -185,14 +169,12 @@ public class DnaSampleValidationTest {
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-
         assertEquals("Expected file name is not dnasample", "dnasample", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not success", "FAILURE", fileErrors[0].status);
 
         List<Failure> failures = fileErrors[0].failures;
         assertEquals("Failures are more than the expected", 1, failures.size());
         assertEquals("Unexpected failure reason", "Not unique", failures.get(0).reason);
-
     }
 
     /**
@@ -270,13 +252,7 @@ public class DnaSampleValidationTest {
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-
         assertEquals("Expected file name is not dnasample", "dnasample", fileErrors[0].fileName);
         assertEquals("Expected STATUS is success", "SUCCESS", fileErrors[0].status);
-
     }
 }
-
-
-
-

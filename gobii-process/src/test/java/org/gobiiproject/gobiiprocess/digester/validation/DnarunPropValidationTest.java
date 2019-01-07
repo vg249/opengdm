@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiiprocess.digester.validation;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator;
@@ -43,14 +42,12 @@ public class DnarunPropValidationTest {
     @ClassRule
     public static TemporaryFolder tempFolder = new TemporaryFolder();
 
-
     @BeforeClass
     public static void setUp() throws IOException {
         tempFolderLocation = tempFolder.getRoot().getPath();
         File source = new File("src/test/resources/validation/dnarun_prop");
         FileUtils.copyDirectory(source, tempFolder.getRoot());
     }
-
 
     /**
      * According to JUnit no exception is thrown when temp folder is not
@@ -84,10 +81,8 @@ public class DnarunPropValidationTest {
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-
         assertEquals("Expected file name is not dnarun_prop", "dnarun_prop", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not success", "SUCCESS", fileErrors[0].status);
-
     }
 
     /**
@@ -103,7 +98,6 @@ public class DnarunPropValidationTest {
                 .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
                 .thenReturn(true);
 
-
         digestFileValidator.performValidation();
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns"))
@@ -111,19 +105,15 @@ public class DnarunPropValidationTest {
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-
         assertEquals("Expected file name is not dnarun_prop", "dnarun_prop", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not FAILURE", "FAILURE", fileErrors[0].status);
 
         List<Failure> failures = fileErrors[0].failures;
         assertEquals("Failures are more than the expected", 2, failures.size());
-
         assertEquals("Unexpected failure reason", "Column not found", failures.get(0).reason);
         assertEquals("Unexpected column name", "dnarun_name", failures.get(0).columnName.get(0));
-
         assertEquals("Unexpected failure reason", "Column not found", failures.get(1).reason);
         assertEquals("Unexpected column name", "dnarun_name", failures.get(1).columnName.get(0));
-
     }
 
     /**
@@ -139,7 +129,6 @@ public class DnarunPropValidationTest {
                 .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
                 .thenReturn(true);
 
-
         digestFileValidator.performValidation();
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/missingComparisonFile"))
@@ -147,14 +136,11 @@ public class DnarunPropValidationTest {
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-
         assertEquals("Expected file name is not dnarun_prop", "dnarun_prop", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not FAILURE", "FAILURE", fileErrors[0].status);
 
         List<Failure> failures = fileErrors[0].failures;
         assertEquals("Failures are more than the expected", 3, failures.size());
-
-
         assertEquals("Unexpected failure reason", "File not found", failures.get(0).reason);
         assertEquals("Unexpected values", "digest.dnarun", failures.get(0).values.get(0));
         assertEquals("Unexpected failure reason", "File not found", failures.get(1).reason);
@@ -176,7 +162,6 @@ public class DnarunPropValidationTest {
                 .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
                 .thenReturn(true);
 
-
         digestFileValidator.performValidation();
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/mismatchComparisonColumn"))
@@ -184,7 +169,6 @@ public class DnarunPropValidationTest {
         assertEquals("There should be one validation output json file", 1, pathList.size());
 
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-
         assertEquals("Expected file name is not dnarun_prop", "dnarun_prop", fileErrors[0].fileName);
         assertEquals("Expected STATUS is not success", "FAILURE", fileErrors[0].status);
 
@@ -193,7 +177,3 @@ public class DnarunPropValidationTest {
         assertEquals("Unexpected failure reason", "Column value mismatch", failures.get(0).reason);
     }
 }
-
-
-
-
