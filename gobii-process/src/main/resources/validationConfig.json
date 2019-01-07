@@ -229,13 +229,26 @@
           "fileExists": "yes",
           "type": "File",
           "fieldColumns": [
-            "name",
+            "dnasample_name",
             "num"
           ],
           "uniqueFileCheck": "yes",
           "typeName": "digest.dnasample",
           "fieldToCompare": [
             "name",
+            "num"
+          ]
+        },
+        {
+          "columnName": "num",
+          "required": "no",
+          "fileExistenceCheck": "digest.dnasample",
+          "fileExists": "no",
+          "type": "DB",
+          "typeName": "sampleNameNum",
+          "foreignKey": "project_id",
+          "fieldToCompare": [
+            "dnasample_name",
             "num"
           ]
         }
@@ -428,7 +441,7 @@
     },
     {
       "digestFileName": "digest.matrix",
-      "conditions":[]
+      "conditions": []
     }
   ]
 }

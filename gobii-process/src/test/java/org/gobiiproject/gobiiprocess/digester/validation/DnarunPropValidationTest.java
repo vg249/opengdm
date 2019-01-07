@@ -68,7 +68,7 @@ public class DnarunPropValidationTest {
     /**
      * dna run prop validation.
      */
-    // @Test
+    @Test
     public void dnarunPropAllPassTest() throws IOException {
         DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/allPass", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
@@ -94,7 +94,7 @@ public class DnarunPropValidationTest {
      * DnaRun prop validation.
      * Missing one required field
      */
-    // @Test
+    @Test
     public void dnarunPropMissingRequiredFieldTest() throws IOException {
         DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingRequiredColumns", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
@@ -130,7 +130,7 @@ public class DnarunPropValidationTest {
      * DnaRun prop validation.
      * Missing comparison file
      */
-    // @Test
+    @Test
     public void dnarunPropMissingComparisonFileTest() throws IOException {
         DigestFileValidator digestFileValidator = new DigestFileValidator(tempFolder.getRoot().getAbsolutePath() + "/missingComparisonFile", tempFolder.getRoot().getAbsolutePath() + "/validationConfig.json", "http://192.168.56.101:8081/gobii-dev/", "mcs397", "q");
 
