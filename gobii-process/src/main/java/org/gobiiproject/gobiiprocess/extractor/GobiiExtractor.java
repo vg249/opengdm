@@ -116,7 +116,7 @@ public class GobiiExtractor {
             return;
         }
 
-        ProcessMessage pm = new ProcessMessage();
+        ProcessMessage pm;
 
         MailInterface mailInterface = new MailInterface(configuration);
         String instructionFile;
@@ -211,6 +211,7 @@ public class GobiiExtractor {
 	            for (GobiiDataSetExtract extract : inst.getDataSetExtracts()) {
 		            String jobReadableIdentifier = getJobReadableIdentifier(crop, extract);
 		            String jobUser = inst.getContactEmail();
+		            pm = new ProcessMessage();
 		            pm.setUser(jobUser);
 
 		            GobiiExtractFilterType filterType = extract.getGobiiExtractFilterType();
