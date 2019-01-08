@@ -5,12 +5,25 @@ import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Fail
 
 import java.io.File;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.*;
 
-abstract class BaseValidator {
-    abstract boolean validate(ValidationUnit validationUnit, String dir, List<Failure> failureList);
+class Validator {
+    boolean validate(ValidationUnit validationUnit, String dir, List<Failure> failureList) {
+        try {
+            if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), failureList)) {
+                String filePath = dir + "/" + validationUnit.getDigestFileName();
+                List<Failure> failures = beginValidation(filePath, validationUnit);
+                failureList.addAll(failures);
+                return true;
+            } else {
+                return failureList.size() != 0;
+            }
+        } catch (MaximumErrorsValidationException e) {
+            //////Don't do any thing. This implies that particular error list is full.;
+        }
+        return true;
+    }
 
     /**
      * Checks that the fileName exists only once. Returns true if file exists once else false.
@@ -20,7 +33,7 @@ abstract class BaseValidator {
      * @param failureList error list
      * @return boolean value if there is a single file or not.
      */
-    boolean checkForSingleFileExistence(String dir, String fileName, List<Failure> failureList) throws MaximumErrorsValidationException {
+    private boolean checkForSingleFileExistence(String dir, String fileName, List<Failure> failureList) throws MaximumErrorsValidationException {
         // If there is an error in accessing path. Error already printed.
         List<String> listOfFiles = new ArrayList<>();
         getFilesWithExtension(dir, fileName, listOfFiles, failureList);
@@ -36,16 +49,16 @@ abstract class BaseValidator {
             return true;
     }
 
-    List<Failure> beginValidation(String fileName, ValidationUnit validationUnit) throws MaximumErrorsValidationException {
+    private List<Failure> beginValidation(String fileName, ValidationUnit validationUnit) throws MaximumErrorsValidationException {
         List<Failure> failureList = new ArrayList<>();
         List<String[]> inputFile = new ArrayList<>();
         if (!ValidationUtil.readFileIntoMemory(fileName, inputFile, failureList)) return failureList;
         // Copying of the list to avoid possible deletion of original data
-        List<String[]> input = inputFile.stream().collect(Collectors.toList());
+        List<String[]> input = new ArrayList<>(inputFile);
         failureList.addAll(validateRequiredColumns(fileName, validationUnit.getConditions(), input));
-        input = inputFile.stream().collect(Collectors.toList());
+        input = new ArrayList<>(inputFile);
         failureList.addAll(validateRequiredUniqueColumns(fileName, validationUnit.getConditions(), input));
-        input = inputFile.stream().collect(Collectors.toList());
+        input = new ArrayList<>(inputFile);
         failureList.addAll(validateOptionalNotNullColumns(fileName, validationUnit.getConditions(), input));
         failureList.addAll(validateUniqueColumnList(fileName, validationUnit));
         failureList.addAll(validateFileShouldExist(fileName, validationUnit));
@@ -64,9 +77,7 @@ abstract class BaseValidator {
         List<String> requiredFields = new ArrayList<>();
         for (ConditionUnit condition : conditions)
             if (condition.required.equalsIgnoreCase(ValidationConstants.YES) && !(condition.unique != null && condition.unique.equalsIgnoreCase(ValidationConstants.YES))) {
-                if (!requiredFields.contains(condition.columnName)) {
-                    requiredFields.add(condition.columnName);
-                }
+                if (!requiredFields.contains(condition.columnName)) requiredFields.add(condition.columnName);
             }
         List<Failure> failureList = new ArrayList<>();
         if (requiredFields.size() > 0) {
@@ -113,8 +124,7 @@ abstract class BaseValidator {
      */
     private List<Failure> validateOptionalNotNullColumns(String fileName, List<ConditionUnit> conditions, List<String[]> inputFile) {
         List<String> requiredFields = new ArrayList<>();
-        List<String> headers = new ArrayList<>();
-        headers.addAll(Arrays.asList(inputFile.get(0)));
+        List<String> headers = new ArrayList<>(Arrays.asList(inputFile.get(0)));
         List<Failure> failureList = new ArrayList<>();
 
         for (ConditionUnit condition : conditions)
@@ -136,7 +146,7 @@ abstract class BaseValidator {
     /**
      * Validates that the combination of columns is unique
      *
-     * @param fileName fileName
+     * @param fileName       fileName
      * @param validationUnit validation conditions
      */
     private List<Failure> validateUniqueColumnList(String fileName, ValidationUnit validationUnit) {
@@ -155,7 +165,6 @@ abstract class BaseValidator {
         return failures;
     }
 
-
     /**
      * Checks that the file exists
      *
@@ -171,9 +180,7 @@ abstract class BaseValidator {
                 List<String> files = new ArrayList<>();
                 try {
                     getFilesWithExtension(new File(fileName).getParent(), existenceFile, files, failureList);
-                    if (files.size() != 1) {
-                        processFileError(existenceFile, files.size(), failureList);
-                    }
+                    if (files.size() != 1) processFileError(existenceFile, files.size(), failureList);
                 } catch (MaximumErrorsValidationException e) {
                     ////Don't do any thing. This implies that particular error list is full.
                 }
@@ -182,7 +189,6 @@ abstract class BaseValidator {
         }
         return failures;
     }
-
 
     /**
      * Checks if there is file comparision and does that
@@ -203,10 +209,7 @@ abstract class BaseValidator {
                     } else if (condition.type.equalsIgnoreCase(ValidationConstants.DB)) {
                         validateDataBasecalls(filePath, condition, failureList);
                     } else {
-                        Failure failure = new Failure();
-                        failure.reason = FailureTypes.UNDEFINED_CONDITION_TYPE;
-                        failure.columnName.add(condition.type);
-                        addMessageToList(failure, failureList);
+                        ValidationUtil.createFailure(FailureTypes.UNDEFINED_CONDITION_TYPE, Collections.singletonList(condition.type), failureList);
                     }
                 }
             } catch (MaximumErrorsValidationException e) {

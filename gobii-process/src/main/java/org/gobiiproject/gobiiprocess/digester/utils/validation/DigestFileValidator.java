@@ -20,7 +20,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions.*;
-import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.addMessageToList;
 import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationWebServicesUtil.*;
 
 public class DigestFileValidator {
@@ -30,19 +29,13 @@ public class DigestFileValidator {
     }
 
     private String rootDir, rulesFile, url, password, username;
-    //="q";;
-    //="mcs397";;="http://192.168.121.3:8081/gobii-dev/";
 
     public DigestFileValidator(String rootDir, String validationFile, String url, String username, String password) {
         this.rootDir = rootDir;
-        System.out.println("YE YE YE YE");
         this.url = url;
         this.rulesFile = validationFile;
         this.username = username;
         this.password = password;
-        //  this.url = "http://192.168.56.101:8081/gobii-dev/";
-        //  this.username = "mcs397";
-        //  this.password = "q";
     }
 
     public static void main(String[] args) {
@@ -50,12 +43,10 @@ public class DigestFileValidator {
         readInputParameters(args, inputParameters);
         DigestFileValidator digestFileValidator = new DigestFileValidator(inputParameters.rootDir, inputParameters.validationFile, inputParameters.url, inputParameters.userName, inputParameters.password);
         digestFileValidator.performValidation();
-
     }
 
     public void performValidation() {
         String validationOutput = rootDir + "/" + "ValidationResult-" + new SimpleDateFormat("hhmmss").format(new Date()) + ".json";
-
         /*
          * Read validation Rules
          * Login into server
@@ -92,7 +83,6 @@ public class DigestFileValidator {
         } catch (IOException e) {
             ErrorLogger.logError("I/O Error ", e);
         }
-        System.out.println();
     }
 
     /**
@@ -181,24 +171,12 @@ public class DigestFileValidator {
                         .readValue(getClass().getClassLoader().getResourceAsStream(rulesFile), ValidationRules.class);
             validations = validationRules.getValidations();
         } catch (IOException e) {
-            ValidationError validationError = new ValidationError();
-            validationError.fileName = rulesFile;
-            Failure failure = new Failure();
-            failure.reason = FailureTypes.CORRUPTED_VALIDATION_FILE;
-            failure.values.add("Exception in reading rules file.\n" + e.getMessage());
-            validationError.failures.add(failure);
-            writer.write(validationError);
+            validationFailed(writer, rulesFile, "Exception in reading rules file.\n" + e.getMessage());
             writer.close();
             System.exit(1);
         }
         if (validations.size() == 0) {
-            ValidationError validationError = new ValidationError();
-            validationError.fileName = rulesFile;
-            Failure failure = new Failure();
-            failure.reason = FailureTypes.CORRUPTED_VALIDATION_FILE;
-            failure.values.add("No validations defined.");
-            validationError.failures.add(failure);
-            writer.write(validationError);
+            validationFailed(writer, rulesFile, "No validations defined.");
             writer.close();
             System.exit(0);
         }
@@ -218,44 +196,31 @@ public class DigestFileValidator {
         boolean validationFailed = false;
         List<String> encounteredDigestExtensions = new ArrayList<>();
         for (ValidationUnit validation : validations) {
-            if (!allowedExtensions.contains(FilenameUtils.getExtension(validation.getDigestFileName()))) {
-                ValidationError validationError = new ValidationError();
-                validationError.fileName = FilenameUtils.getExtension(validation.getDigestFileName());
-                Failure failure = new Failure();
-                failure.reason = FailureTypes.CORRUPTED_VALIDATION_FILE;
-                failure.values.add("Entered fileName is not a valid " + validation.getDigestFileName());
-                validationError.failures.add(failure);
-                writer.write(validationError);
-                validationFailed = true;
-            } else if (encounteredDigestExtensions.contains(validation.getDigestFileName())) {
-                ValidationError validationError = new ValidationError();
-                validationError.fileName = FilenameUtils.getExtension(validation.getDigestFileName());
-                Failure failure = new Failure();
-                failure.reason = FailureTypes.CORRUPTED_VALIDATION_FILE;
-                failure.values.add(validation.getDigestFileName() + " is already defined.");
-                validationError.failures.add(failure);
-                writer.write(validationError);
-                validationFailed = true;
-            } else {
-                encounteredDigestExtensions.add(validation.getDigestFileName());
-            }
+            if (!allowedExtensions.contains(FilenameUtils.getExtension(validation.getDigestFileName())))
+                validationFailed = validationFailed(writer, FilenameUtils.getExtension(validation.getDigestFileName()), "Entered fileName is not a valid " + validation.getDigestFileName());
+            else if (encounteredDigestExtensions.contains(validation.getDigestFileName()))
+                validationFailed = validationFailed(writer, FilenameUtils.getExtension(validation.getDigestFileName()), validation.getDigestFileName() + " is already defined.");
+            else encounteredDigestExtensions.add(validation.getDigestFileName());
             List<ConditionUnit> conditions = validation.getConditions();
             for (ConditionUnit condition : conditions)
-                if (condition.columnName == null || condition.required == null) {
-                    ValidationError validationError = new ValidationError();
-                    validationError.fileName = FilenameUtils.getExtension(validation.getDigestFileName());
-                    Failure failure = new Failure();
-                    failure.reason = FailureTypes.CORRUPTED_VALIDATION_FILE;
-                    failure.values.add(validation.getDigestFileName() + " conditions does not have all required fields.");
-                    validationError.failures.add(failure);
-                    writer.write(validationError);
-                    validationFailed = true;
-                }
+                if (condition.columnName == null || condition.required == null)
+                    validationFailed = validationFailed(writer, FilenameUtils.getExtension(validation.getDigestFileName()), validation.getDigestFileName() + " conditions does not have all required fields.");
         }
         if (validationFailed) {
             writer.close();
             System.exit(1);
         }
+    }
+
+    private boolean validationFailed(SequenceWriter writer, String fileName, String value) throws IOException {
+        ValidationError validationError = new ValidationError();
+        validationError.fileName = fileName;
+        Failure failure = new Failure();
+        failure.reason = FailureTypes.CORRUPTED_VALIDATION_FILE;
+        failure.values.add(value);
+        validationError.failures.add(failure);
+        writer.write(validationError);
+        return true;
     }
 
     public List<Failure> validate(ValidationUnit validation) {
@@ -266,6 +231,7 @@ public class DigestFileValidator {
             case "germplasm_prop":
             case "dnasample":
             case "dnasample_prop":
+            case "dnarun":
             case "dnarun_prop":
             case "marker":
             case "marker_prop":
@@ -273,26 +239,16 @@ public class DigestFileValidator {
             case "marker_linkage_group":
             case "dataset_dnarun":
             case "dataset_marker":
-                if (!new GermplasmPropValidator().validate(validation, rootDir, failureList)) failureList = null;
-                break;
-            case "dnarun":
-                if (!new DnarunValidator().validate(validation, rootDir, failureList)) failureList = null;
-                break;
-            case "matrix":
-                if (!new MatrixValidator().validate(validation, rootDir, failureList)) failureList = null;
+                if (!new Validator().validate(validation, rootDir, failureList)) failureList = null;
                 break;
             default:
-                Failure failure = new Failure();
-                failure.reason = FailureTypes.INVALID_FILE_EXTENSIONS;
-                failure.values.add(" Given extension " + validation.getDigestFileName() + " is invalid.");
                 try {
-                    addMessageToList(failure, failureList);
+                    ValidationUtil.createFailure(FailureTypes.INVALID_FILE_EXTENSIONS, new ArrayList<>(), " Given extension " + validation.getDigestFileName() + " is invalid.", failureList);
                 } catch (MaximumErrorsValidationException e) {
-                    // No action needed
+                    //No action needed
                 }
         }
         return failureList;
-//        System.out.println("YELLO");
     }
 
     private void trimSpaces(ValidationUnit validationUnit) {
@@ -315,6 +271,5 @@ public class DigestFileValidator {
                 conditionUnit.uniqueColumns = conditionUnit.uniqueColumns.stream().map(String::trim).collect(Collectors.toList());
         }
     }
-
 }
 
