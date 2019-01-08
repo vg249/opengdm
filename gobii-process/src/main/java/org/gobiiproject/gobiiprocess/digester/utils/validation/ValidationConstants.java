@@ -8,6 +8,7 @@ public class ValidationConstants {
     static final String DNARUN = "dnarun";
     static final String MARKER = "marker";
     static final String DNASAMPLE_NAME = "dnasample_name";
+    static final String DNASAMPLE_NAME_NUM = "sampleNameNum";
     static final String DB = "DB";
     static final String FILE = "FILE";
     static final String YES = "YES";

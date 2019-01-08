@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.DnaSampleDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
@@ -37,10 +38,7 @@ class ValidationUtil {
             for (String[] line : inputFileList)
                 for (Integer colNo : sortedColumnNumbers)
                     if (ValidationUtil.isNullAndEmpty(line[colNo])) {
-                        Failure failure = new Failure();
-                        failure.reason = FailureTypes.NULL_VALUE;
-                        failure.columnName.add(headers.get(colNo));
-                        addMessageToList(failure, failureList);
+                        createFailure(FailureTypes.NULL_VALUE, Collections.singletonList(headers.get(colNo)), failureList);
                     }
     }
 
@@ -62,22 +60,15 @@ class ValidationUtil {
                 TreeSet<String> map = new TreeSet<>();
                 for (String[] line : inputFile)
                     if (ValidationUtil.isNullAndEmpty(line[colNo])) {
-                        Failure failure = new Failure();
-                        failure.reason = FailureTypes.NULL_VALUE;
-                        failure.columnName.add(headers.get(colNo));
                         try {
-                            addMessageToList(failure, failureList);
+                            createFailure(FailureTypes.NULL_VALUE, Collections.singletonList(headers.get(colNo)), failureList);
                         } catch (MaximumErrorsValidationException e) {
                             break;
                         }
                     } else {
                         if (map.contains(line[colNo])) {
-                            Failure failure = new Failure();
-                            failure.reason = FailureTypes.DUPLICATE_FOUND;
-                            failure.columnName.add(headers.get(colNo));
-                            failure.values.add(line[colNo]);
                             try {
-                                addMessageToList(failure, failureList);
+                                createFailure(FailureTypes.DUPLICATE_FOUND, Collections.singletonList(headers.get(colNo)), line[colNo], failureList);
                             } catch (MaximumErrorsValidationException e) {
                                 break;
                             }
@@ -110,25 +101,20 @@ class ValidationUtil {
                         }
 
                         List<String> fileColumnElements, comparisonFileColumnElements;
-                        if (fieldToCompare.size() > 1) {
+                        if (fieldToCompare.size() > 1)
                             fileColumnElements = getFileColumns(filePath, fieldColumns, failureList);
-                        } else {
-                            fileColumnElements = getFileColumn(filePath, fieldColumns.get(0), failureList);
-                        }
+                        else fileColumnElements = getFileColumn(filePath, fieldColumns.get(0), failureList);
+
                         if (fileColumnElements.size() == 0 && condition.required.equalsIgnoreCase(ValidationConstants.YES)) {
-                            Failure failure = new Failure();
-                            failure.reason = FailureTypes.COLUMN_NOT_FOUND;
-                            failure.columnName.addAll(fieldColumns);
-                            addMessageToList(failure, failureList);
+                            createFailure(FailureTypes.COLUMN_NOT_FOUND, fieldColumns, failureList);
                             return;
                         }
                         Collections.sort(fileColumnElements);
 
-
                         String comparisonFilePath = parentDirectory + "/" + comparisonFileName;
-                        if (fieldToCompare.size() > 1) {
+                        if (fieldToCompare.size() > 1)
                             comparisonFileColumnElements = getFileColumns(comparisonFilePath, fieldToCompare, failureList);
-                        } else
+                        else
                             comparisonFileColumnElements = getFileColumn(comparisonFilePath, fieldToCompare.get(0), failureList);
                         Collections.sort(comparisonFileColumnElements);
 
@@ -138,38 +124,26 @@ class ValidationUtil {
                             comparisonFileColumnElements = comparisonFileColumnElements.stream().distinct().collect(Collectors.toList());
                         }
 
-                        if (!fileColumnElements.equals(comparisonFileColumnElements)) {
-                            Failure failure = new Failure();
-                            failure.reason = FailureTypes.VALUE_MISMATCH;
-                            failure.columnName.add(String.join(",", fieldColumns));
-                            failure.columnName.add(String.join(",", fieldToCompare));
-                            addMessageToList(failure, failureList);
-                        }
+                        if (!fileColumnElements.equals(comparisonFileColumnElements))
+                            createFailure(FailureTypes.VALUE_MISMATCH, new ArrayList<>(Arrays.asList(String.join(",", fieldColumns), String.join(",", fieldToCompare))), failureList);
                     }
                 } else {
                     if (condition.fieldToCompare != null)
                         printMissingFieldError("File", "fieldToCompare", failureList);
                     else if (condition.fieldColumns != null)
                         printMissingFieldError("File", "fieldColumns", failureList);
-
                 }
-            } else {
-                Failure failure = new Failure();
-                failure.reason = FailureTypes.INVALID_FILE_EXTENSIONS;
-                failure.values.add(condition.typeName);
-                addMessageToList(failure, failureList);
-            }
-        } else {
-            printMissingFieldError("File", "typeName", failureList);
-        }
+            } else
+                createFailure(FailureTypes.INVALID_FILE_EXTENSIONS, new ArrayList<>(), condition.typeName, failureList);
 
+        } else
+            printMissingFieldError("File", "typeName", failureList);
     }
 
     /**
      * Checks that the file exists
      *
-     * @param fileName fileName
-     * @param fileName fileName
+     * @param fileName    fileName
      * @param condition   Condition unit
      * @param failureList failure list
      */
@@ -178,13 +152,9 @@ class ValidationUtil {
         List<List<String>> fileColumns = new ArrayList<>();
         for (String column : uniqueColumns) {
             List<String> fileColumn = getFileColumn(fileName, column, failureList);
-            if (fileColumn.size() != 0) {
-                fileColumns.add(fileColumn);
-            } else {
-                Failure failure = new Failure();
-                failure.reason = FailureTypes.COLUMN_NOT_FOUND;
-                failure.columnName.add(column);
-                addMessageToList(failure, failureList);
+            if (fileColumn.size() != 0) fileColumns.add(fileColumn);
+            else {
+                createFailure(FailureTypes.COLUMN_NOT_FOUND, Collections.singletonList(column), failureList);
                 return;
             }
         }
@@ -197,15 +167,11 @@ class ValidationUtil {
                 if (value.toString().equals("")) value = new StringBuilder(column.get(i));
                 else value.append("$@$").append(column.get(i));
             }
-            if (concatList.contains(value.toString())) {
-                Failure failure = new Failure();
-                failure.reason = FailureTypes.NOT_UNIQUE;
-                failure.columnName.addAll(uniqueColumns);
-                addMessageToList(failure, failureList);
-            } else concatList.add(value.toString());
+            if (concatList.contains(value.toString()))
+                createFailure(FailureTypes.NOT_UNIQUE, uniqueColumns, failureList);
+            else concatList.add(value.toString());
         }
     }
-
 
     /**
      * Validation based on the existence of a file.
@@ -227,16 +193,12 @@ class ValidationUtil {
             }
             if ((shouldFileExist && files.size() == 1) || (!shouldFileExist && files.size() == 0)) {
                 if (condition.type != null) {
-                    if (condition.type.equalsIgnoreCase(ValidationConstants.FILE)) {
+                    if (condition.type.equalsIgnoreCase(ValidationConstants.FILE))
                         validateColumnBetweenFiles(fileName, condition, failureList);
-                    } else if (condition.type.equalsIgnoreCase(ValidationConstants.DB)) {
+                    else if (condition.type.equalsIgnoreCase(ValidationConstants.DB))
                         validateDataBasecalls(fileName, condition, failureList);
-                    } else {
-                        Failure failure = new Failure();
-                        failure.reason = FailureTypes.UNDEFINED_CONDITION_TYPE;
-                        failure.values.add(condition.type);
-                        addMessageToList(failure, failureList);
-                    }
+                    else
+                        createFailure(FailureTypes.UNDEFINED_CONDITION_TYPE, new ArrayList<>(), condition.type, failureList);
                 }
             }
         }
@@ -245,14 +207,9 @@ class ValidationUtil {
     static boolean getFilesWithExtension(String dir, String fileExtension, List<String> filesWithExtension, List<Failure> failureList) throws MaximumErrorsValidationException {
         try {
             DirectoryStream<Path> files = Files.newDirectoryStream(Paths.get(dir), fileExtension);
-            for (Path entry : files) {
-                filesWithExtension.add(entry.getFileName().toString());
-            }
+            for (Path entry : files) filesWithExtension.add(entry.getFileName().toString());
         } catch (Exception e) {
-            Failure failure = new Failure();
-            failure.reason = FailureTypes.ERROR_ACCESSING_FILE;
-            failure.values.add(dir);
-            addMessageToList(failure, failureList);
+            createFailure(FailureTypes.ERROR_ACCESSING_FILE, new ArrayList<>(), dir, failureList);
             return false;
         }
         return true;
@@ -276,14 +233,8 @@ class ValidationUtil {
         int fileColumnIndex = fileHeaders.indexOf(column);
         if (fileColumnIndex >= 0)
             for (String[] line : collectList)
-                if (line.length > fileColumnIndex)
-                    fileColumnElements.add(line[fileColumnIndex]);
-                else {
-                    Failure failure = new Failure();
-                    failure.reason = FailureTypes.COLUMN_VALUE_NOT_FOUND;
-                    failure.columnName.add(column);
-                    addMessageToList(failure, failureList);
-                }
+                if (line.length > fileColumnIndex) fileColumnElements.add(line[fileColumnIndex]);
+                else createFailure(FailureTypes.COLUMN_VALUE_NOT_FOUND, Collections.singletonList(column), failureList);
         return fileColumnElements;
     }
 
@@ -299,23 +250,17 @@ class ValidationUtil {
      * @throws MaximumErrorsValidationException maximum error exception
      */
     private static List<String> getFileColumns(String filepath, List<String> columns, List<Failure> failureList) throws MaximumErrorsValidationException {
-
         List<List<String>> fileColumns = new ArrayList<>();
         for (String column : columns) {
             List<String> fileColumn = getFileColumn(filepath, column, failureList);
-            if (fileColumn.size() != 0) {
-                fileColumns.add(fileColumn);
-            } else {
-                Failure failure = new Failure();
-                failure.reason = FailureTypes.COLUMN_NOT_FOUND;
-                failure.columnName.add(column);
-                addMessageToList(failure, failureList);
+            if (fileColumn.size() != 0) fileColumns.add(fileColumn);
+            else {
+                createFailure(FailureTypes.COLUMN_NOT_FOUND, Collections.singletonList(column), failureList);
                 return new ArrayList<>();
             }
         }
 
         if (!verifyEqualSizeColumn(failureList, fileColumns)) return new ArrayList<>();
-
         List<String> concatList = new ArrayList<>();
         for (int i = 0; i < fileColumns.get(0).size(); i++) {
             StringBuilder value = new StringBuilder();
@@ -339,17 +284,11 @@ class ValidationUtil {
         try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
             collectList.addAll(stream.map(line -> line.split("\t")).collect(Collectors.toList()));
             if (collectList.size() == 0) {
-                Failure failure = new Failure();
-                failure.reason = FailureTypes.EMPTY_FILE;
-                failure.values.add(fileName);
-                addMessageToList(failure, failureList);
+                createFailure(FailureTypes.EMPTY_FILE, new ArrayList<>(), fileName, failureList);
                 return false;
             }
         } catch (IOException e) {
-            Failure failure = new Failure();
-            failure.reason = FailureTypes.EXCEPTION_IN_READING_FILE;
-            failure.values.add(fileName);
-            addMessageToList(failure, failureList);
+            createFailure(FailureTypes.EXCEPTION_IN_READING_FILE, new ArrayList<>(), fileName, failureList);
             return false;
         }
         return true;
@@ -367,24 +306,15 @@ class ValidationUtil {
      */
     private static boolean getColumnIndices(String fileName, List<String> columns, List<String[]> collect, TreeSet<Integer> sortedColumnNumbers, List<Failure> failureList) throws MaximumErrorsValidationException {
         List<String> fileHeaders = Arrays.asList(collect.remove(0));
-
         fileHeaders = fileHeaders.stream().map(String::trim).collect(Collectors.toList());
         for (String columnName : columns)
-            if (fileHeaders.contains(columnName))
-                sortedColumnNumbers.add(fileHeaders.indexOf(columnName));
-            else {
-                Failure failure = new Failure();
-                failure.reason = FailureTypes.COLUMN_NOT_FOUND;
-                failure.columnName.add(columnName);
-                addMessageToList(failure, failureList);
-            }
+            if (fileHeaders.contains(columnName)) sortedColumnNumbers.add(fileHeaders.indexOf(columnName));
+            else createFailure(FailureTypes.COLUMN_NOT_FOUND, Collections.singletonList(columnName), failureList);
+
         if (sortedColumnNumbers.size() == 0) return false;
         for (String[] line : collect)
             if (line.length <= sortedColumnNumbers.last()) {
-                Failure failure = new Failure();
-                failure.reason = FailureTypes.CORRUPTED_FILE;
-                failure.values.add(fileName);
-                addMessageToList(failure, failureList);
+                createFailure(FailureTypes.CORRUPTED_FILE, new ArrayList<>(), fileName, failureList);
                 return false;
             }
         return true;
@@ -401,9 +331,7 @@ class ValidationUtil {
         int size = fileColumns.get(0).size();
         for (List<String> column : fileColumns)
             if (column.size() != size) {
-                Failure failure = new Failure();
-                failure.reason = FailureTypes.INVALID_COLUMN_SIZE;
-                addMessageToList(failure, failureList);
+                createFailure(FailureTypes.INVALID_COLUMN_SIZE, new ArrayList<>(), failureList);
                 return false;
             }
         return true;
@@ -415,27 +343,21 @@ class ValidationUtil {
                 if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV) || condition.typeName.equalsIgnoreCase(ValidationConstants.REFERENCE)
                         || condition.typeName.equalsIgnoreCase(ValidationConstants.LINKAGE_GROUP) || condition.typeName.equalsIgnoreCase(ValidationConstants.DNARUN)
                         || condition.typeName.equalsIgnoreCase(ValidationConstants.MARKER) || condition.typeName.equalsIgnoreCase(ValidationConstants.EXTERNAL_CODE)
-                        || condition.typeName.equalsIgnoreCase(ValidationConstants.DNASAMPLE_NAME)) {
+                        || condition.typeName.equalsIgnoreCase(ValidationConstants.DNASAMPLE_NAME) || condition.typeName.equalsIgnoreCase(ValidationConstants.DNASAMPLE_NAME_NUM)) {
                     if (condition.fieldToCompare != null) {
                         if (checkForHeaderExistence(fileName, condition.fieldToCompare, condition.required, failureList))
                             if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV) || condition.typeName.equalsIgnoreCase(ValidationConstants.REFERENCE) || condition.typeName.equalsIgnoreCase(ValidationConstants.EXTERNAL_CODE)) {
                                 validateDB(fileName, condition, failureList);
                             } else {
                                 if (condition.foreignKey != null) {
-                                    if (condition.fieldColumns != null)
+                                    if (condition.fieldToCompare.size() == 1)
                                         validateDbWithForeignKey(fileName, condition, failureList);
-                                    else validateDbWithForeignKey(fileName, condition, failureList);
-                                } else {
-                                    printMissingFieldError("DB", "foreignKey", failureList);
-                                }
+                                    else validateDNASampleNameAndNum(fileName, condition, failureList);
+                                } else printMissingFieldError("DB", "foreignKey", failureList);
                             }
-                    } else
-                        printMissingFieldError("DB", "fieldToCompare", failureList);
-                } else {
-                    printMissingFieldError("DB", "unsupported typeName", failureList);
-                }
-            } else
-                printMissingFieldError("DB", "typeName", failureList);
+                    } else printMissingFieldError("DB", "fieldToCompare", failureList);
+                } else printMissingFieldError("DB", "unsupported typeName", failureList);
+            } else printMissingFieldError("DB", "typeName", failureList);
         } catch (MaximumErrorsValidationException e) {
             ////Don't do any thing. This implies that particular error list is full.;
         }
@@ -468,7 +390,49 @@ class ValidationUtil {
             else if (typeName.equalsIgnoreCase(ValidationConstants.REFERENCE))
                 processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_REFERENCE_VALUE, failureList);
         }
+    }
 
+    private static void validateDNASampleNameAndNum(String fileName, ConditionUnit condition, List<Failure> failureList) throws MaximumErrorsValidationException {
+        List<String> fieldToCompare = condition.fieldToCompare;
+        Set<String> foreignKeyList = new HashSet<>();
+        if (readForeignKey(fileName, condition.foreignKey, foreignKeyList, failureList)) {
+            Map<String, Set<List<String>>> mapForeignkeyAndName = new HashMap<>();
+            if (createPlatformIdSampleNameAndNumGroup(fileName, condition, mapForeignkeyAndName, failureList)) {
+                Map<String, String> foreignKeyValueFromDB = new HashMap<>();
+                if (foreignKeyList.size() != 1) {
+                    multiplePlatformIdError(condition, failureList);
+                    return;
+                }
+                if (condition.typeName.equalsIgnoreCase(ValidationConstants.DNASAMPLE_NAME_NUM)) {
+                    for (String platformId : foreignKeyList) {
+                        foreignKeyValueFromDB = ValidationWebServicesUtil.validatePlatformId(platformId, failureList);
+                        if (foreignKeyValueFromDB.size() == 0) {
+                            undefinedForeignKey(condition, platformId, failureList);
+                            return;
+                        }
+                    }
+                } else {
+                    createFailure(FailureTypes.UNDEFINED_FOREIGN_KEY, Collections.singletonList(condition.foreignKey), failureList);
+                    return;
+                }
+                String paramName = "dnaSampleNum";
+                for (Map.Entry<String, Set<List<String>>> ent : mapForeignkeyAndName.entrySet()) {
+                    if (foreignKeyValueFromDB.keySet().contains(ent.getKey())) {
+                        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+                        for (List<String> name : ent.getValue()) {
+                            NameIdDTO nameIdDTO = new NameIdDTO();
+                            nameIdDTO.setName(name.get(0));
+                            DnaSampleDTO dnaSampleDTO = new DnaSampleDTO();
+                            dnaSampleDTO.setDnaSampleNum(Integer.parseInt(name.get(1)));
+                            nameIdDTO.getParameters().put(paramName, dnaSampleDTO.getDnaSampleNum());
+                            nameIdDTOList.add(nameIdDTO);
+                        }
+                        List<NameIdDTO> nameIdDTOListResponse = ValidationWebServicesUtil.getNamesByNameList(nameIdDTOList, GobiiEntityNameType.DNASAMPLE.toString(), ent.getKey(), failureList);
+                        processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_DNASAMPLE_NAME_NUM_VALUE, failureList);
+                    } else undefinedForeignKey(condition, ent.getKey(), failureList);
+                }
+            }
+        }
     }
 
     private static void validateDbWithForeignKey(String fileName, ConditionUnit condition, List<Failure> failureList) throws MaximumErrorsValidationException {
@@ -480,22 +444,14 @@ class ValidationUtil {
             if (createForeignKeyGroup(fileName, condition, mapForeignkeyAndName, failureList)) {
                 Map<String, String> foreignKeyValueFromDB = new HashMap<>();
                 if (foreignKeyList.size() != 1) {
-                    Failure failure = new Failure();
-                    failure.reason = FailureTypes.MULTIPLE_PLATFORM_ID;
-                    failure.columnName.add(condition.fieldToCompare.get(0));
-                    failure.columnName.add(condition.foreignKey);
-                    ValidationUtil.addMessageToList(failure, failureList);
+                    multiplePlatformIdError(condition, failureList);
                     return;
                 }
                 if (condition.typeName.equalsIgnoreCase(ValidationConstants.MARKER)) {
                     for (String platformId : foreignKeyList) {
                         foreignKeyValueFromDB = ValidationWebServicesUtil.validatePlatformId(platformId, failureList);
                         if (foreignKeyValueFromDB.size() == 0) {
-                            Failure failure = new Failure();
-                            failure.reason = FailureTypes.UNDEFINED_VALUE;
-                            failure.columnName.add(condition.foreignKey);
-                            failure.values.add(platformId);
-                            ValidationUtil.addMessageToList(failure, failureList);
+                            undefinedForeignKey(condition, platformId, failureList);
                             return;
                         }
                     }
@@ -518,18 +474,23 @@ class ValidationUtil {
                             processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_DNARUN_NAME__VALUE, failureList);
                         if (condition.typeName.equalsIgnoreCase(ValidationConstants.MARKER))
                             processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_MARKER_NAME__VALUE, failureList);
-                    } else {
-                        Failure failure = new Failure();
-                        failure.reason = FailureTypes.UNDEFINED_VALUE;
-                        failure.columnName.add(condition.foreignKey);
-                        failure.values.add(ent.getKey());
-                        ValidationUtil.addMessageToList(failure, failureList);
-                    }
+                    } else undefinedForeignKey(condition, ent.getKey(), failureList);
                 }
             }
         }
     }
 
+    private static void undefinedForeignKey(ConditionUnit condition, String value, List<Failure> failureList) throws MaximumErrorsValidationException {
+        createFailure(FailureTypes.UNDEFINED_VALUE, Collections.singletonList(condition.foreignKey), value, failureList);
+    }
+
+    private static void multiplePlatformIdError(ConditionUnit condition, List<Failure> failureList) throws MaximumErrorsValidationException {
+        Failure failure = new Failure();
+        failure.reason = FailureTypes.MULTIPLE_PLATFORM_ID;
+        failure.columnName.add(condition.fieldToCompare.get(0));
+        failure.columnName.add(condition.foreignKey);
+        ValidationUtil.addMessageToList(failure, failureList);
+    }
 
     /**
      * Go through the file and creates a foreignKey Id.
@@ -545,20 +506,45 @@ class ValidationUtil {
         List<String> foreignKey = getFileColumn(fileName, condition.foreignKey, failureList);
         List<String> fileColumn = getFileColumn(fileName, condition.fieldToCompare.get(0), failureList);
         if (foreignKey.size() != fileColumn.size()) {
-            Failure failure = new Failure();
-            failure.reason = FailureTypes.INVALID_COLUMN_SIZE;
-            failure.columnName.add(condition.fieldToCompare.get(0));
-            failure.columnName.add(condition.foreignKey);
-            ValidationUtil.addMessageToList(failure, failureList);
+            createFailure(FailureTypes.INVALID_COLUMN_SIZE, new ArrayList<>(Arrays.asList(condition.fieldToCompare.get(0), condition.foreignKey)), failureList);
             return false;
         }
         for (int i = 0; i < foreignKey.size(); i++) {
             Set<String> strings = mapForeignkeyAndName.get(foreignKey.get(i));
-            if (strings != null) {
-                strings.add(fileColumn.get(i));
-            } else {
+            if (strings != null) strings.add(fileColumn.get(i));
+            else {
                 strings = new HashSet<>();
                 strings.add(fileColumn.get(i));
+                mapForeignkeyAndName.put(foreignKey.get(i), strings);
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Go through the file and creates a foreignKey Id.
+     * Result will be a map with one key and several values to it
+     *
+     * @param fileName             fileName
+     * @param condition            Condition
+     * @param mapForeignkeyAndName foreignKeyMap
+     * @param failureList          failure list
+     * @return status
+     */
+    private static boolean createPlatformIdSampleNameAndNumGroup(String fileName, ConditionUnit condition, Map<String, Set<List<String>>> mapForeignkeyAndName, List<Failure> failureList) throws MaximumErrorsValidationException {
+        List<String> foreignKey = getFileColumn(fileName, condition.foreignKey, failureList);
+        List<String> fileColumn1 = getFileColumn(fileName, condition.fieldToCompare.get(0), failureList);
+        List<String> fileColumn2 = getFileColumn(fileName, condition.fieldToCompare.get(1), failureList);
+        if (foreignKey.size() != fileColumn1.size() || foreignKey.size() != fileColumn2.size()) {
+            createFailure(FailureTypes.INVALID_COLUMN_SIZE, new ArrayList<>(Arrays.asList(condition.fieldToCompare.get(0), condition.foreignKey)), failureList);
+            return false;
+        }
+        for (int i = 0; i < foreignKey.size(); i++) {
+            Set<List<String>> strings = mapForeignkeyAndName.get(foreignKey.get(i));
+            if (strings != null) strings.add(new ArrayList<>(Arrays.asList(fileColumn1.get(i), fileColumn2.get(i))));
+            else {
+                strings = new HashSet<>();
+                strings.add(new ArrayList<>(Arrays.asList(fileColumn1.get(i), fileColumn2.get(i))));
                 mapForeignkeyAndName.put(foreignKey.get(i), strings);
             }
         }
@@ -569,27 +555,8 @@ class ValidationUtil {
      * Process the DB response. If there is no id add it to the failure list
      */
     private static void processResponseList(List<NameIdDTO> nameIdDTOList, List<String> fieldToCompare, String reason, List<Failure> failureList) throws MaximumErrorsValidationException {
-        for (NameIdDTO nameIdDTO : nameIdDTOList) {
-            if (nameIdDTO.getId() == 0) {
-                Failure failure = new Failure();
-                failure.reason = reason;
-                failure.columnName.add(fieldToCompare.get(0));
-                failure.values.add(nameIdDTO.getName());
-                ValidationUtil.addMessageToList(failure, failureList);
-            }
-        }
-    }
-
-    /**
-     * +     * Reads specified key.
-     * +     * Can simplify while refactoring
-     * +
-     */
-    private static boolean readKey(String fileName, String key, List<String> keyList, List<Failure> failureList) throws MaximumErrorsValidationException {
-        if (checkForHeaderExistence(fileName, Collections.singletonList(key), "yes", failureList)) {
-            return readColumnIntoSet(fileName, Collections.singletonList(key), keyList, failureList);
-        }
-        return false;
+        for (NameIdDTO nameIdDTO : nameIdDTOList)
+            if (nameIdDTO.getId() == 0) createFailure(reason, fieldToCompare, nameIdDTO.getName(), failureList);
     }
 
     /**
@@ -597,9 +564,8 @@ class ValidationUtil {
      * Can simplify while refactoring
      */
     private static boolean readForeignKey(String fileName, String foreignKey, Set<String> foreignKeyList, List<Failure> failureList) throws MaximumErrorsValidationException {
-        if (checkForHeaderExistence(fileName, Collections.singletonList(foreignKey), "yes", failureList)) {
+        if (checkForHeaderExistence(fileName, Collections.singletonList(foreignKey), "yes", failureList))
             return readColumnIntoSet(fileName, Collections.singletonList(foreignKey), foreignKeyList, failureList);
-        }
         return false;
     }
 
@@ -625,25 +591,15 @@ class ValidationUtil {
         } else return false;
     }
 
-    private static void printMissingFieldError(String s1, String s2, List<Failure> errorList) throws MaximumErrorsValidationException {
-        Failure failure = new Failure();
-        failure.reason = FailureTypes.CORRUPTED_VALIDATION_FILE;
-        failure.values.add("Condition type defined " + s1 + " but " + s2 + " not defined.");
-        addMessageToList(failure, errorList);
+    private static void printMissingFieldError(String s1, String s2, List<Failure> failureList) throws MaximumErrorsValidationException {
+        createFailure(FailureTypes.CORRUPTED_VALIDATION_FILE, new ArrayList<>(), "Condition type defined " + s1 + " but " + s2 + " not defined.", failureList);
     }
 
     static void processFileError(String fileName, int size, List<Failure> failureList) throws MaximumErrorsValidationException {
-        if (size > 1) {
-            Failure failure = new Failure();
-            failure.reason = FailureTypes.MORE_THAN_ONE_FILE;
-            failure.values.add(fileName);
-            addMessageToList(failure, failureList);
-        } else if (size < 1) {
-            Failure failure = new Failure();
-            failure.reason = FailureTypes.FILE_NOT_FOUND;
-            failure.values.add(fileName);
-            addMessageToList(failure, failureList);
-        }
+        if (size > 1)
+            createFailure(FailureTypes.MORE_THAN_ONE_FILE, new ArrayList<>(), fileName, failureList);
+        else if (size < 1)
+            createFailure(FailureTypes.FILE_NOT_FOUND, new ArrayList<>(), fileName, failureList);
     }
 
     /**
@@ -695,10 +651,7 @@ class ValidationUtil {
             if (headerExist) return true;
                 // Header does not exist and condition states this as required
             else if (required.equalsIgnoreCase("yes")) {
-                Failure failure = new Failure();
-                failure.reason = FailureTypes.COLUMN_NOT_FOUND;
-                failure.columnName.add(fieldName.get(0));
-                addMessageToList(failure, failureList);
+                createFailure(FailureTypes.COLUMN_NOT_FOUND, Collections.singletonList(fieldName.get(0)), failureList);
                 return false;
             } else return false;
         } else return false;
@@ -709,9 +662,23 @@ class ValidationUtil {
         if (readFileIntoMemory(fileName, collectList, failureList)) {
             headers.addAll(Arrays.asList(collectList.get(0)));
             return true;
-        } else {
-            return false;
-        }
+        } else return false;
+
     }
 
+    static void createFailure(String reason, List<String> columnName, List<Failure> failureList) throws MaximumErrorsValidationException {
+        Failure failure = new Failure();
+        failure.reason = reason;
+        failure.columnName.addAll(columnName);
+        ValidationUtil.addMessageToList(failure, failureList);
+    }
+
+    static void createFailure(String reason, List<String> columnName, String value, List<Failure> failureList) throws MaximumErrorsValidationException {
+        Failure failure = new Failure();
+        failure.reason = reason;
+        if (columnName.size() > 0)
+            failure.columnName.addAll(columnName);
+        failure.values.add(value);
+        ValidationUtil.addMessageToList(failure, failureList);
+    }
 }

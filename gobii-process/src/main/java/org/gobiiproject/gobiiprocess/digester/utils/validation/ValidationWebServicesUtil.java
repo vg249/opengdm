@@ -78,7 +78,7 @@ public class ValidationWebServicesUtil {
         Map<String, String> mapsetDTOList = new HashMap<>();
         try {
             GobiiUriFactory uriFactory = GobiiClientContext.getInstance(null, false).getUriFactory();
-            RestUri restUri = null;
+            RestUri restUri;
             if (foreignKey.equalsIgnoreCase(ValidationConstants.LINKAGE_GROUP)) {
                 restUri = uriFactory.resourceColl(RestResourceId.GOBII_MAPSET);
                 GobiiEnvelopeRestResource<MapsetDTO, MapsetDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
@@ -98,17 +98,11 @@ public class ValidationWebServicesUtil {
                 resultEnvelope.getPayload().getData().forEach(dto -> mapsetDTOList.put(dto.getProjectId().toString(), dto.getProjectName()));
                 return mapsetDTOList;
             } else {
-                Failure failure = new Failure();
-                failure.reason = FailureTypes.UNDEFINED_FOREIGN_KEY;
-                failure.values.add(foreignKey);
-                ValidationUtil.addMessageToList(failure, failureList);
+                ValidationUtil.createFailure(FailureTypes.UNDEFINED_FOREIGN_KEY, new ArrayList<>(), foreignKey, failureList);
                 return mapsetDTOList;
             }
         } catch (Exception e) {
-            Failure failure = new Failure();
-            failure.reason = FailureTypes.EXCEPTION;
-            failure.values.add(e.getMessage());
-            ValidationUtil.addMessageToList(failure, failureList);
+            ValidationUtil.createFailure(FailureTypes.EXCEPTION, new ArrayList<>(), e.getMessage(), failureList);
             return mapsetDTOList;
         }
     }
@@ -127,18 +121,11 @@ public class ValidationWebServicesUtil {
             PayloadEnvelope<PlatformDTO> resultEnvelope = gobiiEnvelopeRestResource.get(PlatformDTO.class);
             if (resultEnvelope.getHeader().getStatus().isSucceeded())
                 resultEnvelope.getPayload().getData().forEach(dto -> mapsetDTOList.put(dto.getPlatformId().toString(), dto.getPlatformName()));
-            else {
-                Failure failure = new Failure();
-                failure.reason = FailureTypes.UNDEFINED_PLATFORM_ID;
-                failure.values.add(resultEnvelope.getHeader().getStatus().messages());
-                ValidationUtil.addMessageToList(failure, failureList);
-            }
+            else
+                ValidationUtil.createFailure(FailureTypes.UNDEFINED_PLATFORM_ID, new ArrayList<>(), resultEnvelope.getHeader().getStatus().messages(), failureList);
             return mapsetDTOList;
         } catch (Exception e) {
-            Failure failure = new Failure();
-            failure.reason = FailureTypes.EXCEPTION;
-            failure.values.add(e.getMessage());
-            ValidationUtil.addMessageToList(failure, failureList);
+            ValidationUtil.createFailure(FailureTypes.EXCEPTION, new ArrayList<>(), e.getMessage(), failureList);
             return mapsetDTOList;
         }
     }
@@ -179,37 +166,25 @@ public class ValidationWebServicesUtil {
                         namesUri.setParamValue("filterValue", CvGroup.CVGROUP_MARKER_STRAND.getCvGroupName());
                         break;
                     default:
-                        Failure failure = new Failure();
-                        failure.reason = FailureTypes.UNDEFINED_CV;
-                        failure.values.add(filterValue);
-                        ValidationUtil.addMessageToList(failure, failureList);
+                        ValidationUtil.createFailure(FailureTypes.UNDEFINED_CV, new ArrayList<>(), filterValue, failureList);
                         return nameIdDTOListResponse;
                 }
-            } else
-                namesUri.setParamValue("filterValue", filterValue);
+            } else namesUri.setParamValue("filterValue", filterValue);
 
             PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = gobiiEnvelopeRestResource.post(NameIdDTO.class, payloadEnvelope);
             Status status = responsePayloadEnvelope.getHeader().getStatus();
             if (!status.isSucceeded()) {
                 ArrayList<HeaderStatusMessage> statusMessages = status.getStatusMessages();
-                for (HeaderStatusMessage message : statusMessages) {
-                    Failure failure = new Failure();
-                    failure.reason = FailureTypes.DATABASE_ERROR;
-                    failure.values.add(message.getMessage());
-                    ValidationUtil.addMessageToList(failure, failureList);
-                }
+                for (HeaderStatusMessage message : statusMessages)
+                    ValidationUtil.createFailure(FailureTypes.DATABASE_ERROR, new ArrayList<>(), message.getMessage(), failureList);
                 return nameIdDTOListResponse;
             }
             nameIdDTOListResponse.addAll(responsePayloadEnvelope.getPayload().getData());
         } catch (MaximumErrorsValidationException e) {
             throw e;
         } catch (Exception e) {
-            Failure failure = new Failure();
-            failure.reason = FailureTypes.EXCEPTION;
-            failure.values.add(e.getMessage());
-            ValidationUtil.addMessageToList(failure, failureList);
+            ValidationUtil.createFailure(FailureTypes.EXCEPTION, new ArrayList<>(), e.getMessage(), failureList);
         }
         return nameIdDTOListResponse;
     }
-
 }
