@@ -7,13 +7,14 @@ import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Created by Phil on 4/8/2016.
  */
-public class NameIdDTO<T> extends DTOBase implements Comparable<NameIdDTO>{
+public class NameIdDTO extends DTOBase implements Comparable<NameIdDTO>{
 
-    private T queryObject;
+    private HashMap<String, Object> parameters = new HashMap<>();
 
     // entityLastModified is necessary because this class doe snot correspond to a
     // specific entity, and so it should not derive from DTOBaseAuditable
@@ -75,12 +76,13 @@ public class NameIdDTO<T> extends DTOBase implements Comparable<NameIdDTO>{
         this.fkId = fkId;
     }
 
-    public T getQueryObject() {
-        return queryObject;
+
+    public HashMap<String, Object> getParameters() {
+        return parameters;
     }
 
-    public void setQueryObject(T queryObject) {
-        this.queryObject = queryObject;
+    public void setParameters(HashMap<String, Object> parameters) {
+        this.parameters = parameters;
     }
 
     public int compareTo(NameIdDTO compareNameIdDTO) {
