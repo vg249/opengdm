@@ -438,10 +438,6 @@
           ]
         }
       ]
-    },
-    {
-      "digestFileName": "digest.matrix",
-      "conditions": []
     }
   ]
 }
