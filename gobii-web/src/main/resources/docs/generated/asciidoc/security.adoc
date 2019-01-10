@@ -5,7 +5,7 @@
 [[_basicauth]]
 === basicAuth
 [%hardbreaks]
-_Type_ : basic
+__Type__ : basic
 
 
 
