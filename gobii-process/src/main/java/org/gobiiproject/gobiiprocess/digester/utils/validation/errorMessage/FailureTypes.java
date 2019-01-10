@@ -26,6 +26,7 @@ public class FailureTypes {
     public static final String UNDEFINED_LINKAGE_GROUP_NAME__VALUE = "Undefined linkage_group_name value";
     public static final String UNDEFINED_DNARUN_NAME__VALUE = "Undefined dnarun_name value";
     public static final String UNDEFINED_MARKER_NAME__VALUE = "Undefined marker value";
+    public static final String UNDEFINED_DNASAMPLE_NAME_VALUE = "Undefined dnasample_name";
     public static final String UNDEFINED_DNASAMPLE_NAME_NUM_VALUE = "Undefined dnasample_name and num combination";
     public static final String EXCEPTION = "Exception";
     public static final String UNDEFINED_CONDITION_TYPE = "Undefined condition type";

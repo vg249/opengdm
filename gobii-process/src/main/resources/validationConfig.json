@@ -245,6 +245,18 @@
           "fileExistenceCheck": "digest.dnasample",
           "fileExists": "no",
           "type": "DB",
+          "typeName": "dnasample",
+          "foreignKey": "project_id",
+          "fieldToCompare": [
+            "dnasample_name"
+          ]
+        },
+        {
+          "columnName": "num",
+          "required": "no",
+          "fileExistenceCheck": "digest.dnasample",
+          "fileExists": "no",
+          "type": "DB",
           "typeName": "sampleNameNum",
           "foreignKey": "project_id",
           "fieldToCompare": [

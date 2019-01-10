@@ -1,7 +1,6 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.DnaSampleDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
@@ -343,7 +342,7 @@ class ValidationUtil {
                 if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV) || condition.typeName.equalsIgnoreCase(ValidationConstants.REFERENCE)
                         || condition.typeName.equalsIgnoreCase(ValidationConstants.LINKAGE_GROUP) || condition.typeName.equalsIgnoreCase(ValidationConstants.DNARUN)
                         || condition.typeName.equalsIgnoreCase(ValidationConstants.MARKER) || condition.typeName.equalsIgnoreCase(ValidationConstants.EXTERNAL_CODE)
-                        || condition.typeName.equalsIgnoreCase(ValidationConstants.DNASAMPLE_NAME) || condition.typeName.equalsIgnoreCase(ValidationConstants.DNASAMPLE_NAME_NUM)) {
+                        || condition.typeName.equalsIgnoreCase(ValidationConstants.DNASAMPLE) || condition.typeName.equalsIgnoreCase(ValidationConstants.DNASAMPLE_NAME) || condition.typeName.equalsIgnoreCase(ValidationConstants.DNASAMPLE_NAME_NUM)) {
                     if (condition.fieldToCompare != null) {
                         if (checkForHeaderExistence(fileName, condition.fieldToCompare, condition.required, failureList))
                             if (condition.typeName.equalsIgnoreCase(ValidationConstants.CV) || condition.typeName.equalsIgnoreCase(ValidationConstants.REFERENCE) || condition.typeName.equalsIgnoreCase(ValidationConstants.EXTERNAL_CODE)) {
@@ -445,7 +444,7 @@ class ValidationUtil {
                     multiplePlatformIdError(condition, failureList);
                     return;
                 }
-                if (condition.typeName.equalsIgnoreCase(ValidationConstants.MARKER)) {
+                if (condition.typeName.equalsIgnoreCase(ValidationConstants.MARKER) || condition.typeName.equalsIgnoreCase(ValidationConstants.DNASAMPLE)) {
                     for (String platformId : foreignKeyList) {
                         foreignKeyValueFromDB = ValidationWebServicesUtil.validatePlatformId(platformId, failureList);
                         if (foreignKeyValueFromDB.size() == 0) {
@@ -470,6 +469,8 @@ class ValidationUtil {
                             processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_LINKAGE_GROUP_NAME__VALUE, failureList);
                         if (condition.typeName.equalsIgnoreCase(ValidationConstants.DNARUN))
                             processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_DNARUN_NAME__VALUE, failureList);
+                        if (condition.typeName.equalsIgnoreCase(ValidationConstants.DNASAMPLE))
+                            processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_DNASAMPLE_NAME_VALUE, failureList);
                         if (condition.typeName.equalsIgnoreCase(ValidationConstants.MARKER))
                             processResponseList(nameIdDTOListResponse, fieldToCompare, FailureTypes.UNDEFINED_MARKER_NAME__VALUE, failureList);
                     } else undefinedForeignKey(condition, ent.getKey(), failureList);

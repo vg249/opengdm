@@ -254,6 +254,68 @@ public class DnarunValidationTest {
             nameIdDTO.getParameters().put("dnaSampleNum", dnaSampleDTO.getDnaSampleNum());
             nameIdDTOList.add(nameIdDTO);
         }
+
+        List<NameIdDTO> nameIdDTOList1 = new ArrayList<>();
+        {
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName("dnasamplename_dom_1");
+            nameIdDTO.setId(1);
+            nameIdDTOList1.add(nameIdDTO);
+        }
+        {
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName("dnasamplename_dom_2");
+            nameIdDTO.setId(2);
+            nameIdDTOList1.add(nameIdDTO);
+        }
+        {
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName("dnasamplename_dom_3");
+            nameIdDTO.setId(3);
+            nameIdDTOList1.add(nameIdDTO);
+        }
+        {
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName("dnasamplename_dom_4");
+            nameIdDTO.setId(4);
+            nameIdDTOList1.add(nameIdDTO);
+        }
+        {
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName("dnasamplename_dom_5");
+            nameIdDTO.setId(5);
+            nameIdDTOList1.add(nameIdDTO);
+        }
+        {
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName("dnasamplename_dom_6");
+            nameIdDTO.setId(6);
+            nameIdDTOList1.add(nameIdDTO);
+        }
+        {
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName("dnasamplename_dom_7");
+            nameIdDTO.setId(7);
+            nameIdDTOList1.add(nameIdDTO);
+        }
+        {
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName("dnasamplename_dom_8");
+            nameIdDTO.setId(8);
+            nameIdDTOList1.add(nameIdDTO);
+        }
+        {
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName("dnasamplename_dom_9");
+            nameIdDTO.setId(9);
+            nameIdDTOList1.add(nameIdDTO);
+        }
+        {
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName("dnasamplename_dom_10");
+            nameIdDTO.setId(10);
+            nameIdDTOList1.add(nameIdDTO);
+        }
         PowerMockito.mockStatic(ValidationWebServicesUtil.class);
         PowerMockito
                 .when(ValidationWebServicesUtil.loginIntoServer(eq("http://192.168.56.101:8081/gobii-dev/"), eq("mcs397"), eq("q"), eq(null), any()))
@@ -264,7 +326,9 @@ public class DnarunValidationTest {
         PowerMockito
                 .when(ValidationWebServicesUtil.getNamesByNameList(eq(nameIdDTOList), eq("DNASAMPLE"), eq("1"), any()))
                 .thenReturn(nameIdDTOList);
-
+        PowerMockito
+                .when(ValidationWebServicesUtil.getNamesByNameList(eq(nameIdDTOList1), eq("DNASAMPLE"), eq("1"), any()))
+                .thenReturn(nameIdDTOList1);
         digestFileValidator.performValidation();
         List<Path> pathList =
                 Files.list(Paths.get(tempFolder.getRoot().getAbsolutePath() + "/nameAndNumCombinationSuccess"))
