@@ -363,6 +363,14 @@ public class GobiiFileReader {
 
         }
 
+
+        //Validation logic before loading any metadata
+        String baseConnectionString = getJDBCConnectionString(gobiiCropConfig);
+        String user = configuration.getLdapUserForBackendProcs();
+        String password = configuration.getLdapPasswordForBackendProcs();
+        String directory=dstDir.getAbsolutePath();
+        //Call validations here, update 'success' to false with any call to ErrorLogger.logError()
+
         if (success && ErrorLogger.success()) {
             jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_METADATALOAD.getCvName(), "Loading Metadata");
             errorPath = getLogName(zero, gobiiCropConfig, crop, "IFLs");
