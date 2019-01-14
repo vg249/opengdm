@@ -393,12 +393,22 @@ public class GobiiExtractor {
 				            ErrorLogger.logError("GobiiExtractor", "UnknownFilterType " + filterType);
 				            break;
 		            }
+
+		            if(verbose){
+		            	ErrorLogger.logDebug("MDE",gobiiMDE.replace(gobiiCropConfig.getServer(ServerType.GOBII_PGSQL).getPassword(),"<******************>"));
+		            }
+
 		            samplePosFile = sampleFile + ".pos";
 
 		            String errorFile = getLogName(extract, gobiiCropConfig, datasetId);
 		            ErrorLogger.logInfo("Extractor", "Executing MDEs");
-		            tryExec(gobiiMDE, extractDir + "mdeOut", errorFile);
 
+		            if(verbose) {
+			            tryExec(gobiiMDE,extractDir + "mdeOut", errorFile,extractDir+"MDEStdOut");
+		            }
+		            else {
+			            tryExec(gobiiMDE, extractDir + "mdeOut", errorFile);
+		            }
 		            //Clean some variables ahead of declaration
 		            final String defaultMapName = "No Mapset info available";
 		            String mapName = defaultMapName;
