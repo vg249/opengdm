@@ -396,13 +396,13 @@ public class GOBIIControllerV1 {
     }
 
 
-//    @ApiOperation(value = "/analyses",
-//            notes = "Updates the Analysis entity having the specified analysisId. $RequestResponseStructure$")
+    @ApiOperation(value = "/analyses",
+            notes = "Updates the Analysis entity having the specified analysisId. $RequestResponseStructure$")
     @RequestMapping(value = "/analyses/{analysisId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
     public PayloadEnvelope<AnalysisDTO> replaceAnalysis(@RequestBody PayloadEnvelope<AnalysisDTO> payloadEnvelope,
-//                                                        @ApiParam(value = "ID of Analysis to be updated", required = true)
-                                                        @PathVariable Integer analysisId,
+                                                        @ApiParam(value = "ID of Analysis to be updated", required = true)
+                                                        @PathVariable("analysisId") Integer analysisId,
                                                         HttpServletRequest request,
                                                         HttpServletResponse response) {
 

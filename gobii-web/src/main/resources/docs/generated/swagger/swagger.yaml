@@ -4,7 +4,7 @@ info:
   description: "The GOBii web service API provides a comprehensive set of RESTful\
     \ methods for accomplishing the following core tasks in the GOBii Genomic Data\
     \ Management (GDM) system. This manual explains the GOBii web architecture and\
-    \ its web service operations.\r\n\r\n"
+    \ its web service operations.\n\n"
   version: "1.0"
   title: "GOBii API"
   license:
@@ -37,6 +37,29 @@ paths:
         required: true
         schema:
           $ref: "#/definitions/PayloadEnvelopeAnalysisDTO"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/PayloadEnvelopeAnalysisDTO"
+  /gobii/v1/analyses/{analysisId}:
+    put:
+      summary: "/analyses"
+      description: "Updates the Analysis entity having the specified analysisId. $RequestResponseStructure$"
+      operationId: "replaceAnalysis"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/PayloadEnvelopeAnalysisDTO"
+      - name: "analysisId"
+        in: "path"
+        description: "ID of Analysis to be updated"
+        required: true
+        type: "integer"
+        pattern: "[\\d]+"
+        format: "int32"
       responses:
         200:
           description: "successful operation"
