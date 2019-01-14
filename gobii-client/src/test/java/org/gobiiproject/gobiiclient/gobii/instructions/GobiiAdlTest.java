@@ -69,28 +69,37 @@ public class GobiiAdlTest {
 
             // check if include_scenarios.txt exists
             File scenarioFile = new File("src/test/resources/gobiiAdl/include_scenarios.txt");
-            File fileFromRepo = new File("src/test/resources/gobiiAdl");
 
-            adlEncapsulator.copyFilesToLocalDir(fileFromRepo, tempDir);
+            if (scenarioFile.exists() && !scenarioFile.isDirectory()) {
 
-            Scanner sc = new Scanner(scenarioFile);
+                Scanner sc = new Scanner(scenarioFile);
 
-            while (sc.hasNextLine()) {
+                while (sc.hasNextLine()) {
 
-                String scenarioName = sc.nextLine();
+                    String scenarioName = sc.nextLine();
 
-                File newScenarioDir = new File(tempDir.getAbsoluteFile() + "/" + scenarioName);
-                newScenarioDir.mkdir();
+                    File fileFromRepo = new File("src/test/resources/gobiiAdl/" + scenarioName);
 
-                adlEncapsulator.copyFilesToLocalDir(fileFromRepo, newScenarioDir);
+                    File newScenarioDir = new File(tempDir.getAbsoluteFile() + "/" + scenarioName);
+                    newScenarioDir.mkdir();
 
-                System.out.print(scenarioName);
+                    adlEncapsulator.copyFilesToLocalDir(fileFromRepo, newScenarioDir);
+
+                    System.out.print(scenarioName);
+                }
+            } else {
+
+                File fileFromRepo = new File("src/test/resources/gobiiAdl");
+
+                adlEncapsulator.copyFilesToLocalDir(fileFromRepo, tempDir);
+
             }
 
-            adlEncapsulator.copyFilesToLocalDir(fileFromRepo, tempDir);
-
-
             adlEncapsulator.setInputDirectory(tempDir.getAbsolutePath());
+
+            boolean isADLSuccessful = adlEncapsulator.executeBatchGobiiADL();
+
+            Assert.assertTrue(adlEncapsulator.getErrorMsg(), isADLSuccessful);
 
         } else {
             LOGGER.error("Backend support is not provided in this context: system-critical unit tests will not be run");
