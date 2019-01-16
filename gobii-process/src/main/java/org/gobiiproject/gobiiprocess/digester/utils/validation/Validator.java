@@ -138,20 +138,13 @@ class Validator {
         if (requiredFields.size() > 0) {
             try {
                 validateColumns(fileName, requiredFields, inputFile, failureList);
-                List<Integer> columnNotFoundErrors = new ArrayList<>();
-                for (int i = 0; i < failureList.size(); i++) {
-                    if (failureList.get(i).reason.equalsIgnoreCase(FailureTypes.COLUMN_NOT_FOUND)) {
-                        columnNotFoundErrors.add(i);
-                    }
-                }
-                for (int i = columnNotFoundErrors.size() - 1; i > 0; i--) {
-                    failureList.remove(columnNotFoundErrors.get(i));
-                }
             } catch (MaximumErrorsValidationException e) {
-                //Don't do any thing. This implies that particular error list is full.
+                //This exception is used for control purposes. It it thrown to exit the column validation cycle.
+                //Don't do anything. This implies that particular error list is full.
             }
-        } else {
-            failureList = new ArrayList<>();
+
+            //Remove column not found errors
+            failureList.removeIf(f -> f.reason.equalsIgnoreCase(FailureTypes.COLUMN_NOT_FOUND));
         }
         return failureList;
     }
