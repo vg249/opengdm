@@ -44,38 +44,21 @@ public class DtoCrudRequestNameIdListTest {
     public static void setUpClass() throws Exception {
         Assert.assertTrue(GobiiClientContextAuth.authenticate());
 
-        if( TestUtils.isBackEndSupported()) {
-            // do an ADL load
-            GobiiTestConfiguration gobiiTestConfiguration = new GobiiTestConfiguration();
-            TestExecConfig testExecConfig = gobiiTestConfiguration.getConfigSettings().getTestExecConfig();
-            ADLEncapsulator adlEncapsulator = new ADLEncapsulator();
-            String configUtilCommandlineStem = testExecConfig.getConfigUtilCommandlineStem();
+        // do an ADL load
+        GobiiTestConfiguration gobiiTestConfiguration = new GobiiTestConfiguration();
+        TestExecConfig testExecConfig = gobiiTestConfiguration.getConfigSettings().getTestExecConfig();
+        ADLEncapsulator adlEncapsulator = new ADLEncapsulator();
 
-            String[] split = configUtilCommandlineStem.split(" ");
-            adlEncapsulator.setAdlJarPath(split[2] + "/gobiiadl.jar");
-            adlEncapsulator.setInputHost(testExecConfig.getInitialConfigUrl());
-            adlEncapsulator.setInputUser(testExecConfig.getLdapUserForUnitTest());
-            adlEncapsulator.setInputPassword(testExecConfig.getLdapPasswordForUnitTest());
-            adlEncapsulator.setInputTimeout(testExecConfig.getAsynchOpTimeoutMinutes());
+        File tempDir = adlEncapsulator.setUpAdlTest(testExecConfig);
 
-            // copy to temp folder
-            String tempDirName = "adlTest-" + UUID.randomUUID().toString();
-            String tempDirString = testExecConfig.getTestFileDownloadDirectory() + "/" + tempDirName;
+        Assert.assertNotNull(adlEncapsulator.getErrorMsg(), tempDir);
 
-            File tempDir = new File(tempDirString);
+        File fileFromRepo = new File("src/test/resources/nameIdListLoadTest");
 
-            tempDir.mkdir();
+        adlEncapsulator.copyFilesToLocalDir(fileFromRepo, tempDir);
 
-            File fileFromRepo = new File("src/test/resources/nameIdListLoadTest");
-
-            adlEncapsulator.copyFilesToLocalDir(fileFromRepo, tempDir);
-
-            adlEncapsulator.setInputDirectory(tempDir.getAbsolutePath());
-            Assert.assertTrue(adlEncapsulator.getErrorMsg(), adlEncapsulator.executeBatchGobiiADL());
-        } else {
-            LOGGER.error("Backend support is not provided in this context: system-critical unit tests will not be run");
-
-        }
+        adlEncapsulator.setInputDirectory(tempDir.getAbsolutePath());
+        Assert.assertTrue(adlEncapsulator.getErrorMsg(), adlEncapsulator.executeBatchGobiiADL());
 
     }
 
