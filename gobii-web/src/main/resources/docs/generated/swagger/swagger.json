@@ -15,7 +15,7 @@
   "paths" : {
     "/gobii/v1/analyses" : {
       "get" : {
-        "summary" : "/analyses",
+        "summary" : "Gets all the analysis in the GOBii system",
         "description" : "Retrieves an unfiltered list of all Analysis entities. $RequestResponseStructure$",
         "operationId" : "getAnalyses",
         "responses" : {
@@ -28,8 +28,8 @@
         }
       },
       "post" : {
-        "summary" : "/analyses",
-        "description" : "Creates an analysis entity. $RequestResponseStructure$",
+        "summary" : "Creates analysis entity",
+        "description" : "Creates an analysis entity for GOBii system. $RequestResponseStructure$",
         "operationId" : "createAnalysis",
         "parameters" : [ {
           "in" : "body",
@@ -50,8 +50,30 @@
       }
     },
     "/gobii/v1/analyses/{analysisId}" : {
+      "get" : {
+        "summary" : "Gets analysis by Analysis ID",
+        "description" : "Retrieves the Analysis entity having the specified ID. $RequestResponseStructure$",
+        "operationId" : "getAnalysisById",
+        "parameters" : [ {
+          "name" : "analysisId",
+          "in" : "path",
+          "description" : "ID of Analysis to be extracted.",
+          "required" : true,
+          "type" : "integer",
+          "pattern" : "[\\d]+",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/PayloadEnvelopeAnalysisDTO"
+            }
+          }
+        }
+      },
       "put" : {
-        "summary" : "/analyses",
+        "summary" : "Updates analysis by Analysis ID",
         "description" : "Updates the Analysis entity having the specified analysisId. $RequestResponseStructure$",
         "operationId" : "replaceAnalysis",
         "parameters" : [ {
@@ -82,7 +104,7 @@
     },
     "/gobii/v1/auth" : {
       "post" : {
-        "summary" : "/auth",
+        "summary" : "Authentication service for accessing GOBii System",
         "description" : "The user credentials are specified in the request headers X-Username and X-Password; the response and the response headers include the token in the X-Auth-Token header. this header and value be included in the request headers for subsequent requests. The token value is also supplied in the dtoHeaderAuth object.",
         "operationId" : "authenticate",
         "parameters" : [ {
@@ -105,7 +127,7 @@
     },
     "/gobii/v1/configsettings" : {
       "get" : {
-        "summary" : "/configsettings",
+        "summary" : "Gets the configuration settings for GOBii system",
         "description" : "Provides generic configuration information about the GOBii instances in a given deployment. This call does not require authentication",
         "operationId" : "getConfigSettings",
         "responses" : {
@@ -118,9 +140,295 @@
         }
       }
     },
+    "/gobii/v1/contact-search" : {
+      "get" : {
+        "summary" : "/contacts-search",
+        "description" : "Gets contacts by searching for emailid, lastname, firstname, username.",
+        "operationId" : "getContactsBySearch",
+        "parameters" : [ {
+          "name" : "email",
+          "in" : "query",
+          "description" : "contact's email",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "lastName",
+          "in" : "query",
+          "description" : "contact's last name",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "firstName",
+          "in" : "query",
+          "description" : "contact's first name",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "userName",
+          "in" : "query",
+          "description" : "contact's user name",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/PayloadEnvelopeContactDTO"
+            }
+          }
+        }
+      }
+    },
+    "/gobii/v1/contacts" : {
+      "get" : {
+        "summary" : "Gets all the contacts in the GOBii system",
+        "description" : "Gets all contacts.",
+        "operationId" : "getContacts",
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/PayloadEnvelopeContactDTO"
+            }
+          }
+        }
+      },
+      "post" : {
+        "summary" : "Adds new contact to GOBii system",
+        "description" : "Adds new contact.",
+        "operationId" : "createContact",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/PayloadEnvelopeContactDTO"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/PayloadEnvelopeContactDTO"
+            }
+          }
+        }
+      }
+    },
+    "/gobii/v1/contacts/{contactId}" : {
+      "get" : {
+        "summary" : "Gets contacts by contact ID",
+        "description" : "Gets contacts by contact id.",
+        "operationId" : "getContactsById",
+        "parameters" : [ {
+          "name" : "contactId",
+          "in" : "path",
+          "description" : "ID of contacts to be extracted.",
+          "required" : true,
+          "type" : "integer",
+          "pattern" : "[\\d]+",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/PayloadEnvelopeContactDTO"
+            }
+          }
+        }
+      },
+      "put" : {
+        "summary" : "Updates contacts by contact ID",
+        "description" : "Updates contacts for a given contact id.",
+        "operationId" : "replaceContact",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/PayloadEnvelopeContactDTO"
+          }
+        }, {
+          "name" : "contactId",
+          "in" : "path",
+          "description" : "ID of contacts to be updated.",
+          "required" : true,
+          "type" : "integer",
+          "pattern" : "[\\d]+",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/PayloadEnvelopeContactDTO"
+            }
+          }
+        }
+      }
+    },
+    "/gobii/v1/contacts/{email}" : {
+      "get" : {
+        "summary" : "Gets contacts by email id",
+        "description" : "Gets contacts by email id.",
+        "operationId" : "getContactsByEmail",
+        "parameters" : [ {
+          "name" : "email",
+          "in" : "path",
+          "description" : "email id of contacts to be extracted.",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "[a-zA-Z-]+@[a-zA-Z-]+.[a-zA-Z-]+"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/PayloadEnvelopeContactDTO"
+            }
+          }
+        }
+      }
+    },
+    "/gobii/v1/cvs" : {
+      "get" : {
+        "summary" : "/cvs",
+        "description" : "Gets all cvs in the system.",
+        "operationId" : "getCvs",
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/PayloadEnvelopeCvDTO"
+            }
+          }
+        }
+      },
+      "post" : {
+        "summary" : "/cvs",
+        "description" : "Creates new cv's.",
+        "operationId" : "createCv",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/PayloadEnvelopeCvDTO"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/PayloadEnvelopeCvDTO"
+            }
+          }
+        }
+      }
+    },
+    "/gobii/v1/cvs/{cvId}" : {
+      "get" : {
+        "summary" : "/cvs",
+        "description" : "Gets cv by the id.",
+        "operationId" : "getCvById",
+        "parameters" : [ {
+          "name" : "cvId",
+          "in" : "path",
+          "description" : "ID of the CV to be extracted",
+          "required" : true,
+          "type" : "integer",
+          "pattern" : "[\\d]+",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/PayloadEnvelopeCvDTO"
+            }
+          }
+        }
+      },
+      "put" : {
+        "summary" : "/cvs",
+        "description" : "Updates cv's by cvId.",
+        "operationId" : "replaceCv",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/PayloadEnvelopeCvDTO"
+          }
+        }, {
+          "name" : "cvId",
+          "in" : "path",
+          "description" : "ID of the CV to be updated",
+          "required" : true,
+          "type" : "integer",
+          "pattern" : "[\\d]+",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/PayloadEnvelopeCvDTO"
+            }
+          }
+        }
+      },
+      "delete" : {
+        "summary" : "/cvs",
+        "description" : "Deletes cv by the id.",
+        "operationId" : "deleteCv",
+        "parameters" : [ {
+          "name" : "cvId",
+          "in" : "path",
+          "description" : "ID of cv to be deleted",
+          "required" : true,
+          "type" : "integer",
+          "pattern" : "[\\d]+",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/PayloadEnvelopeCvDTO"
+            }
+          }
+        }
+      }
+    },
+    "/gobii/v1/cvs/{groupName}" : {
+      "get" : {
+        "summary" : "/cvs/{groupName:[a-zA-Z_]+}",
+        "description" : "Gets cvs by the group name.",
+        "operationId" : "getCvById",
+        "parameters" : [ {
+          "name" : "groupName",
+          "in" : "path",
+          "description" : "name of cv group to be extracted",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "[a-zA-Z_]+"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/PayloadEnvelopeCvDTO"
+            }
+          }
+        }
+      }
+    },
     "/gobii/v1/restprofiles" : {
       "put" : {
-        "summary" : "/restprofiles",
+        "summary" : "Gets REST profiles of GOBii system",
         "description" : "When the Header of the payload envelope for a resource contains maxGet, maxPost, and maxPut values, this resource provides a means to update the max for a given rest resource ID and for a given HTTP verb. The values are transient in the sense that they will be confined only to a specific web service deployment. They are stored in the web service configurationdocument",
         "operationId" : "updateRestProfile",
         "parameters" : [ {
@@ -263,6 +571,127 @@
           "format" : "int32"
         },
         "id" : {
+          "type" : "integer",
+          "format" : "int32"
+        }
+      }
+    },
+    "ContactDTO" : {
+      "type" : "object",
+      "properties" : {
+        "allowedProcessTypes" : {
+          "type" : "array",
+          "uniqueItems" : true,
+          "items" : {
+            "type" : "string",
+            "enum" : [ "CREATE", "READ", "UPDATE", "DELETE", "NONE" ]
+          }
+        },
+        "entityNameType" : {
+          "type" : "string",
+          "enum" : [ "UNKNOWN", "ANALYSIS", "CONTACT", "DATASET", "CV", "CVGROUP", "PROJECT", "ORGANIZATION", "PLATFORM", "MANIFEST", "MAPSET", "MARKER_GROUP", "EXPERIMENT", "REFERENCE", "ROLE", "DISPLAY", "MARKER", "PROTOCOL", "VENDOR_PROTOCOL", "DNASAMPLE", "LINKAGE_GROUP", "DNARUN", "GERMPLASM", "JOB" ]
+        },
+        "createdBy" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "createdDate" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "modifiedBy" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "modifiedDate" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "contactId" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "lastName" : {
+          "type" : "string"
+        },
+        "firstName" : {
+          "type" : "string"
+        },
+        "code" : {
+          "type" : "string"
+        },
+        "email" : {
+          "type" : "string"
+        },
+        "roles" : {
+          "type" : "array",
+          "items" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        },
+        "organizationId" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "userName" : {
+          "type" : "string"
+        },
+        "id" : {
+          "type" : "integer",
+          "format" : "int32"
+        }
+      }
+    },
+    "CvDTO" : {
+      "type" : "object",
+      "properties" : {
+        "allowedProcessTypes" : {
+          "type" : "array",
+          "uniqueItems" : true,
+          "items" : {
+            "type" : "string",
+            "enum" : [ "CREATE", "READ", "UPDATE", "DELETE", "NONE" ]
+          }
+        },
+        "groupId" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "xrefId" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "entityStatus" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "term" : {
+          "type" : "string"
+        },
+        "abbreviation" : {
+          "type" : "string"
+        },
+        "definition" : {
+          "type" : "string"
+        },
+        "rank" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "groupType" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "id" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "group" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "cvId" : {
           "type" : "integer",
           "format" : "int32"
         }
@@ -447,6 +876,34 @@
         }
       }
     },
+    "PayloadContactDTO" : {
+      "type" : "object",
+      "properties" : {
+        "linkCollection" : {
+          "$ref" : "#/definitions/LinkCollection"
+        },
+        "data" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/ContactDTO"
+          }
+        }
+      }
+    },
+    "PayloadCvDTO" : {
+      "type" : "object",
+      "properties" : {
+        "linkCollection" : {
+          "$ref" : "#/definitions/LinkCollection"
+        },
+        "data" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/CvDTO"
+          }
+        }
+      }
+    },
     "PayloadEnvelopeAnalysisDTO" : {
       "type" : "object",
       "properties" : {
@@ -463,6 +920,28 @@
       "properties" : {
         "payload" : {
           "$ref" : "#/definitions/PayloadConfigSettingsDTO"
+        },
+        "header" : {
+          "$ref" : "#/definitions/Header"
+        }
+      }
+    },
+    "PayloadEnvelopeContactDTO" : {
+      "type" : "object",
+      "properties" : {
+        "payload" : {
+          "$ref" : "#/definitions/PayloadContactDTO"
+        },
+        "header" : {
+          "$ref" : "#/definitions/Header"
+        }
+      }
+    },
+    "PayloadEnvelopeCvDTO" : {
+      "type" : "object",
+      "properties" : {
+        "payload" : {
+          "$ref" : "#/definitions/PayloadCvDTO"
         },
         "header" : {
           "$ref" : "#/definitions/Header"

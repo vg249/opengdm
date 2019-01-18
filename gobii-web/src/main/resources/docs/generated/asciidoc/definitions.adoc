@@ -72,6 +72,78 @@ __|< string, <<_serverconfigitem,ServerConfigItem>> > map
 |===
 
 
+[[_contactdto]]
+=== ContactDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**allowedProcessTypes** +
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**code** +
+__|string
+|**contactId** +
+__|integer (int32)
+|**createdBy** +
+__|integer (int32)
+|**createdDate** +
+__|string (date-time)
+|**email** +
+__|string
+|**entityNameType** +
+__|enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION, PLATFORM, MANIFEST, MAPSET, MARKER_GROUP, EXPERIMENT, REFERENCE, ROLE, DISPLAY, MARKER, PROTOCOL, VENDOR_PROTOCOL, DNASAMPLE, LINKAGE_GROUP, DNARUN, GERMPLASM, JOB)
+|**firstName** +
+__|string
+|**id** +
+__|integer (int32)
+|**lastName** +
+__|string
+|**modifiedBy** +
+__|integer (int32)
+|**modifiedDate** +
+__|string (date-time)
+|**organizationId** +
+__|integer (int32)
+|**roles** +
+__|< integer (int32) > array
+|**userName** +
+__|string
+|===
+
+
+[[_cvdto]]
+=== CvDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**abbreviation** +
+__|string
+|**allowedProcessTypes** +
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**cvId** +
+__|integer (int32)
+|**definition** +
+__|string
+|**entityStatus** +
+__|integer (int32)
+|**group** +
+__|integer (int32)
+|**groupId** +
+__|integer (int32)
+|**groupType** +
+__|integer (int32)
+|**id** +
+__|integer (int32)
+|**rank** +
+__|integer (int32)
+|**term** +
+__|string
+|**xrefId** +
+__|integer (int32)
+|===
+
+
 [[_entitypropertydto]]
 === EntityPropertyDTO
 
@@ -221,6 +293,32 @@ __|<<_linkcollection,LinkCollection>>
 |===
 
 
+[[_payloadcontactdto]]
+=== PayloadContactDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< <<_contactdto,ContactDTO>> > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_payloadcvdto]]
+=== PayloadCvDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< <<_cvdto,CvDTO>> > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
 [[_payloadenvelopeanalysisdto]]
 === PayloadEnvelopeAnalysisDTO
 
@@ -244,6 +342,32 @@ __|<<_payloadanalysisdto,PayloadAnalysisDTO>>
 __|<<_header,Header>>
 |**payload** +
 __|<<_payloadconfigsettingsdto,PayloadConfigSettingsDTO>>
+|===
+
+
+[[_payloadenvelopecontactdto]]
+=== PayloadEnvelopeContactDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloadcontactdto,PayloadContactDTO>>
+|===
+
+
+[[_payloadenvelopecvdto]]
+=== PayloadEnvelopeCvDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloadcvdto,PayloadCvDTO>>
 |===
 
 

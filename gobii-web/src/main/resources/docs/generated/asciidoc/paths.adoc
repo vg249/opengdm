@@ -3,14 +3,14 @@
 == Paths
 
 [[_createanalysis]]
-=== /analyses
+=== Creates analysis entity
 ....
 POST /gobii/v1/analyses
 ....
 
 
 ==== Description
-Creates an analysis entity. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Creates an analysis entity for GOBii system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
 
 
 ==== Parameters
@@ -33,7 +33,7 @@ __|<<_payloadenvelopeanalysisdto,PayloadEnvelopeAnalysisDTO>>
 
 
 [[_getanalyses]]
-=== /analyses
+=== Gets all the analysis in the GOBii system
 ....
 GET /gobii/v1/analyses
 ....
@@ -52,8 +52,38 @@ Retrieves an unfiltered list of all Analysis entities. Consult the <<_requestres
 |===
 
 
+[[_getanalysisbyid]]
+=== Gets analysis by Analysis ID
+....
+GET /gobii/v1/analyses/{analysisId}
+....
+
+
+==== Description
+Retrieves the Analysis entity having the specified ID. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**analysisId** +
+__|ID of Analysis to be extracted.|integer (int32)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeanalysisdto,PayloadEnvelopeAnalysisDTO>>
+|===
+
+
 [[_replaceanalysis]]
-=== /analyses
+=== Updates analysis by Analysis ID
 ....
 PUT /gobii/v1/analyses/{analysisId}
 ....
@@ -85,7 +115,7 @@ __||<<_payloadenvelopeanalysisdto,PayloadEnvelopeAnalysisDTO>>
 
 
 [[_authenticate]]
-=== /auth
+=== Authentication service for accessing GOBii System
 ....
 POST /gobii/v1/auth
 ....
@@ -115,7 +145,7 @@ __|string
 
 
 [[_getconfigsettings]]
-=== /configsettings
+=== Gets the configuration settings for GOBii system
 ....
 GET /gobii/v1/configsettings
 ....
@@ -134,8 +164,358 @@ Provides generic configuration information about the GOBii instances in a given 
 |===
 
 
+[[_getcontactsbysearch]]
+=== /contacts-search
+....
+GET /gobii/v1/contact-search
+....
+
+
+==== Description
+Gets contacts by searching for emailid, lastname, firstname, username.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Query**|**email** +
+__|contact's email|string
+|**Query**|**firstName** +
+__|contact's first name|string
+|**Query**|**lastName** +
+__|contact's last name|string
+|**Query**|**userName** +
+__|contact's user name|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopecontactdto,PayloadEnvelopeContactDTO>>
+|===
+
+
+[[_createcontact]]
+=== Adds new contact to GOBii system
+....
+POST /gobii/v1/contacts
+....
+
+
+==== Description
+Adds new contact.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^4"]
+|===
+|Type|Name|Schema
+|**Body**|**body** +
+__|<<_payloadenvelopecontactdto,PayloadEnvelopeContactDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopecontactdto,PayloadEnvelopeContactDTO>>
+|===
+
+
+[[_getcontacts]]
+=== Gets all the contacts in the GOBii system
+....
+GET /gobii/v1/contacts
+....
+
+
+==== Description
+Gets all contacts.
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopecontactdto,PayloadEnvelopeContactDTO>>
+|===
+
+
+[[_getcontactsbyid]]
+=== Gets contacts by contact ID
+....
+GET /gobii/v1/contacts/{contactId}
+....
+
+
+==== Description
+Gets contacts by contact id.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**contactId** +
+__|ID of contacts to be extracted.|integer (int32)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopecontactdto,PayloadEnvelopeContactDTO>>
+|===
+
+
+[[_replacecontact]]
+=== Updates contacts by contact ID
+....
+PUT /gobii/v1/contacts/{contactId}
+....
+
+
+==== Description
+Updates contacts for a given contact id.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**contactId** +
+__|ID of contacts to be updated.|integer (int32)
+|**Body**|**body** +
+__||<<_payloadenvelopecontactdto,PayloadEnvelopeContactDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopecontactdto,PayloadEnvelopeContactDTO>>
+|===
+
+
+[[_getcontactsbyemail]]
+=== Gets contacts by email id
+....
+GET /gobii/v1/contacts/{email}
+....
+
+
+==== Description
+Gets contacts by email id.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**email** +
+__|email id of contacts to be extracted.|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopecontactdto,PayloadEnvelopeContactDTO>>
+|===
+
+
+[[_createcv]]
+=== /cvs
+....
+POST /gobii/v1/cvs
+....
+
+
+==== Description
+Creates new cv's.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^4"]
+|===
+|Type|Name|Schema
+|**Body**|**body** +
+__|<<_payloadenvelopecvdto,PayloadEnvelopeCvDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopecvdto,PayloadEnvelopeCvDTO>>
+|===
+
+
+[[_getcvs]]
+=== /cvs
+....
+GET /gobii/v1/cvs
+....
+
+
+==== Description
+Gets all cvs in the system.
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopecvdto,PayloadEnvelopeCvDTO>>
+|===
+
+
+[[_getcvbyid]]
+=== /cvs
+....
+GET /gobii/v1/cvs/{cvId}
+....
+
+
+==== Description
+Gets cv by the id.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**cvId** +
+__|ID of the CV to be extracted|integer (int32)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopecvdto,PayloadEnvelopeCvDTO>>
+|===
+
+
+[[_replacecv]]
+=== /cvs
+....
+PUT /gobii/v1/cvs/{cvId}
+....
+
+
+==== Description
+Updates cv's by cvId.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**cvId** +
+__|ID of the CV to be updated|integer (int32)
+|**Body**|**body** +
+__||<<_payloadenvelopecvdto,PayloadEnvelopeCvDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopecvdto,PayloadEnvelopeCvDTO>>
+|===
+
+
+[[_deletecv]]
+=== /cvs
+....
+DELETE /gobii/v1/cvs/{cvId}
+....
+
+
+==== Description
+Deletes cv by the id.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**cvId** +
+__|ID of cv to be deleted|integer (int32)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopecvdto,PayloadEnvelopeCvDTO>>
+|===
+
+
+[[_getcvbyid]]
+=== /cvs/{groupName:[a-zA-Z_]+}
+....
+GET /gobii/v1/cvs/{groupName}
+....
+
+
+==== Description
+Gets cvs by the group name.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**groupName** +
+__|name of cv group to be extracted|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopecvdto,PayloadEnvelopeCvDTO>>
+|===
+
+
 [[_updaterestprofile]]
-=== /restprofiles
+=== Gets REST profiles of GOBii system
 ....
 PUT /gobii/v1/restprofiles
 ....
