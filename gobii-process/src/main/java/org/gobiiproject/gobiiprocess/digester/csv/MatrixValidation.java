@@ -46,7 +46,7 @@ public class MatrixValidation {
         return true;
     }
 
-    boolean validate(int rowNo, List<String> inputRowList, List<String> outputRowList, boolean isVCF) {
+    boolean validate(int rowNo, int rowOffset, List<String> inputRowList, List<String> outputRowList, boolean isVCF) {
         if (noOfElements == 0) noOfElements = inputRowList.size();
         else if (noOfElements != inputRowList.size()) {
             errorCount++;
@@ -62,7 +62,7 @@ public class MatrixValidation {
          *
          * */
         if (datasetType.equalsIgnoreCase("IUPAC"))
-            if (!iupacMatrixToBi.process(rowNo, inputRowList, outputRowList)) {
+            if (!iupacMatrixToBi.process(rowNo + rowOffset, inputRowList, outputRowList)) {
                 setError("Exception in processing matrix file. Failed in IUPAC conversion.");
                 return false;
             }
@@ -111,9 +111,11 @@ public class MatrixValidation {
          * Validates each element is a valid value or not based on the datasetType.
          * */
         if (datasetType.equalsIgnoreCase("DOMINANT_NON_NUCLEOTIDE") || datasetType.equalsIgnoreCase("IUPAC") ||
-                datasetType.equalsIgnoreCase("CO_DOMINANT_NON_NUCLEOTIDE") || datasetType.equalsIgnoreCase("SSR_ALLELE_SIZE"))
-            outputRowList.addAll(inputRowList);
-        return DigestMatrix.validateDatasetList(rowNo, outputRowList, datasetType, this);
+                datasetType.equalsIgnoreCase("CO_DOMINANT_NON_NUCLEOTIDE") || datasetType.equalsIgnoreCase("SSR_ALLELE_SIZE")) {
+            if (datasetType.equalsIgnoreCase("DOMINANT_NON_NUCLEOTIDE") || datasetType.equalsIgnoreCase("CO_DOMINANT_NON_NUCLEOTIDE"))
+                outputRowList.addAll(inputRowList);
+            return DigestMatrix.validateDatasetList(rowNo + rowOffset, outputRowList, datasetType, this);
+        } else return true;
     }
 
     public void setError(String s) {

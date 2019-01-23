@@ -278,7 +278,7 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
                         inputRowList = new ArrayList<>(Arrays.asList(fileRow.split(delimiter)));
                         outputRowList = new ArrayList<>();
                         getRow(inputRowList, csv_BothColumn);
-                        if (matrixValidation.validate(rowNo, inputRowList, outputRowList, isVCF))
+                        if (matrixValidation.validate(rowNo, csv_BothColumn.getrCoord(), inputRowList, outputRowList, isVCF))
                             writeOutputLine(tempFileBufferedWriter, outputRowList);
                         else {
                             if (matrixValidation.stopProcessing()) {

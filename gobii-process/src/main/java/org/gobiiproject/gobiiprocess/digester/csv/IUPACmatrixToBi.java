@@ -56,9 +56,9 @@ class IUPACmatrixToBi {
             if (element.length() > 1) {
                 char first = element.charAt(0);
                 char last = element.charAt(element.length() - 1);
-                if ((first == '+' || first == '-') && (last == '+' || last == '-')) {// takes care of "+/+" or "+/-" or "-/-" cases
-                    outrow.add(first + "" + last);
-                }
+                // if ((first == '+' || first == '-') && (last == '+' || last == '-')) {// takes care of "+/+" or "+/-" or "-/-" cases
+                // Irrespective of the character, we need to add it to the outlist
+                outrow.add(first + "" + last);
             } else {
                 NucIupacCodes code = hash.get(element.toUpperCase());
                 if (code == null) {

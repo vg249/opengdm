@@ -135,7 +135,7 @@ public class CSVFileReader_CSV_BOTHV2Test {
         List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
         gobiiColumns.add(Util.createGobiiCSV_BOTH(1, 1, DataSetType.CO_DOMINANT_NON_NUCLEOTIDE));
         instruction.setGobiiFileColumns(gobiiColumns);
-        instruction.setDatasetType(new PropNameId(99, "CO_DOMINANT_NON_NUCLEOTIDE"));
+        instruction.setDatasetType(new PropNameId(100, "CO_DOMINANT_NON_NUCLEOTIDE"));
 
         CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
         csvReader.processCSV(instruction);
@@ -168,7 +168,73 @@ public class CSVFileReader_CSV_BOTHV2Test {
         List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
         gobiiColumns.add(Util.createGobiiCSV_BOTH(1, 1, DataSetType.CO_DOMINANT_NON_NUCLEOTIDE));
         instruction.setGobiiFileColumns(gobiiColumns);
-        instruction.setDatasetType(new PropNameId(99, "CO_DOMINANT_NON_NUCLEOTIDE"));
+        instruction.setDatasetType(new PropNameId(100, "CO_DOMINANT_NON_NUCLEOTIDE"));
+
+        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
+        csvReader.processCSV(instruction);
+
+        Util.checkFileAbsence(table, tempFolderLocation);
+        Util.deleteDirectory(srcFolder);
+        Util.deleteDirectory(new File(tempFolder.getRoot().getAbsolutePath() + "/dest"));
+    }
+
+    @Test
+    public void testCSV_BOTH_IUPAC() throws IOException{
+        File srcFolder;
+        srcFolder = tempFolder.newFolder("IUPAC");
+        tempFolder.newFolder("dest");
+
+        tempFolderLocation = tempFolder.getRoot().getPath();
+        File resourceDest = new File("src/test/resources/csvBoth");
+        resourceDestFolderLocation = resourceDest.getAbsolutePath();
+        loaderScriptPath = new File("src/test/resources/loaderScriptPath").getAbsolutePath();
+        File resourceSource = new File("src/test/resources/csvBoth/IUPAC.txt");
+        File dest = new File(srcFolder.getAbsolutePath() + "\\IUPAC.txt");
+        Files.copy(resourceSource.toPath(), dest.toPath());
+
+        String table = "CSV_BOTH_IUPAC";
+        GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
+        Util.createAndSetGobiiFile(instruction, tempFolderLocation);
+        instruction.getGobiiFile().setSource(tempFolderLocation + "/IUPAC");
+
+        instruction.setTable(table);
+        List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
+        gobiiColumns.add(Util.createGobiiCSV_BOTH(1, 11, DataSetType.IUPAC));
+        instruction.setGobiiFileColumns(gobiiColumns);
+        instruction.setDatasetType(new PropNameId(98, "IUPAC"));
+
+        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
+        csvReader.processCSV(instruction);
+
+        Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
+        Util.deleteDirectory(srcFolder);
+        Util.deleteDirectory(new File(tempFolder.getRoot().getAbsolutePath() + "/dest"));
+    }
+
+    @Test
+    public void testCSV_BOTH_IUPAC_Fail() throws IOException{
+        File srcFolder;
+        srcFolder = tempFolder.newFolder("IUPAC");
+        tempFolder.newFolder("dest");
+
+        tempFolderLocation = tempFolder.getRoot().getPath();
+        File resourceDest = new File("src/test/resources/csvBoth");
+        resourceDestFolderLocation = resourceDest.getAbsolutePath();
+        loaderScriptPath = new File("src/test/resources/loaderScriptPath").getAbsolutePath();
+        File resourceSource = new File("src/test/resources/csvBoth/IUPAC_Fail.txt");
+        File dest = new File(srcFolder.getAbsolutePath() + "\\IUPAC.txt");
+        Files.copy(resourceSource.toPath(), dest.toPath());
+
+        String table = "CSV_BOTH_IUPAC";
+        GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
+        Util.createAndSetGobiiFile(instruction, tempFolderLocation);
+        instruction.getGobiiFile().setSource(tempFolderLocation + "/IUPAC");
+
+        instruction.setTable(table);
+        List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
+        gobiiColumns.add(Util.createGobiiCSV_BOTH(1, 11, DataSetType.IUPAC));
+        instruction.setGobiiFileColumns(gobiiColumns);
+        instruction.setDatasetType(new PropNameId(98, "IUPAC"));
 
         CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
         csvReader.processCSV(instruction);
@@ -178,22 +244,6 @@ public class CSVFileReader_CSV_BOTHV2Test {
         Util.deleteDirectory(new File(tempFolder.getRoot().getAbsolutePath() + "/dest"));
     }
 /*
-    @Test
-    public void testCSV_BOTH_SSR() throws IOException, InterruptedException {
-        String table = "multipleCSV_BOTH";
-        GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
-        Util.createAndSetGobiiFile(instruction, tempFolderLocation);
-        instruction.setTable(table);
-        List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
-        gobiiColumns.add(Util.createGobiiCSV_BOTH(0, 0));
-        instruction.setGobiiFileColumns(gobiiColumns);
-
-        CSVFileReaderV2 csvReader = new CSVFileReaderV2();
-        csvReader.processCSV(instruction);
-
-        Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
-    }
-
     @Test
     public void testCSV_BOTH_Two_Letter() throws IOException, InterruptedException {
         String table = "multipleCSV_BOTH";
