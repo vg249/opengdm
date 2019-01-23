@@ -243,40 +243,70 @@ public class CSVFileReader_CSV_BOTHV2Test {
         Util.deleteDirectory(srcFolder);
         Util.deleteDirectory(new File(tempFolder.getRoot().getAbsolutePath() + "/dest"));
     }
-/*
+
     @Test
     public void testCSV_BOTH_Two_Letter() throws IOException, InterruptedException {
-        String table = "multipleCSV_BOTH";
+        File srcFolder;
+        srcFolder = tempFolder.newFolder("NUCLEOTIDE_2_LETTER");
+        tempFolder.newFolder("dest");
+
+        tempFolderLocation = tempFolder.getRoot().getPath();
+        File resourceDest = new File("src/test/resources/csvBoth");
+        resourceDestFolderLocation = resourceDest.getAbsolutePath();
+        loaderScriptPath = new File("src/test/resources/loaderScriptPath").getAbsolutePath();
+        File resourceSource = new File("src/test/resources/csvBoth/NUCLEOTIDE_2_LETTER.txt");
+        File dest = new File(srcFolder.getAbsolutePath() + "\\NUCLEOTIDE_2_LETTER.txt");
+        Files.copy(resourceSource.toPath(), dest.toPath());
+
+        String table = "CSV_BOTH_NUCLEOTIDE_2_LETTER";
         GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
         Util.createAndSetGobiiFile(instruction, tempFolderLocation);
+        instruction.getGobiiFile().setSource(tempFolderLocation + "/NUCLEOTIDE_2_LETTER");
+
         instruction.setTable(table);
         List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
-        gobiiColumns.add(Util.createGobiiCSV_BOTH(0, 0));
+        gobiiColumns.add(Util.createGobiiCSV_BOTH(1, 1, DataSetType.NUCLEOTIDE_2_LETTER));
         instruction.setGobiiFileColumns(gobiiColumns);
+        instruction.setDatasetType(new PropNameId(97, "NUCLEOTIDE_2_LETTER"));
 
-        CSVFileReaderV2 csvReader = new CSVFileReaderV2();
+        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
         csvReader.processCSV(instruction);
 
         Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
+        Util.deleteDirectory(srcFolder);
+        Util.deleteDirectory(new File(tempFolder.getRoot().getAbsolutePath() + "/dest"));
     }
 
     @Test
-    public void testCSV_BOTH_IUPAC() throws IOException, InterruptedException {
-        String table = "multipleCSV_BOTH";
+    public void testCSV_BOTH_Two_Letter_Fail() throws IOException{
+        File srcFolder;
+        srcFolder = tempFolder.newFolder("NUCLEOTIDE_2_LETTER");
+        tempFolder.newFolder("dest");
+
+        tempFolderLocation = tempFolder.getRoot().getPath();
+        File resourceDest = new File("src/test/resources/csvBoth");
+        resourceDestFolderLocation = resourceDest.getAbsolutePath();
+        loaderScriptPath = new File("src/test/resources/loaderScriptPath").getAbsolutePath();
+        File resourceSource = new File("src/test/resources/csvBoth/NUCLEOTIDE_2_LETTER_Fail.txt");
+        File dest = new File(srcFolder.getAbsolutePath() + "\\NUCLEOTIDE_2_LETTER.txt");
+        Files.copy(resourceSource.toPath(), dest.toPath());
+
+        String table = "CSV_BOTH_NUCLEOTIDE_2_LETTER";
         GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
         Util.createAndSetGobiiFile(instruction, tempFolderLocation);
+        instruction.getGobiiFile().setSource(tempFolderLocation + "/NUCLEOTIDE_2_LETTER");
+
         instruction.setTable(table);
         List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
-        gobiiColumns.add(Util.createGobiiCSV_BOTH(0, 0));
+        gobiiColumns.add(Util.createGobiiCSV_BOTH(1, 1, DataSetType.NUCLEOTIDE_2_LETTER));
         instruction.setGobiiFileColumns(gobiiColumns);
+        instruction.setDatasetType(new PropNameId(97, "NUCLEOTIDE_2_LETTER"));
 
-        CSVFileReaderV2 csvReader = new CSVFileReaderV2();
+        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
         csvReader.processCSV(instruction);
 
-        Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
+        Util.checkFileAbsence(table, tempFolderLocation);
+        Util.deleteDirectory(srcFolder);
+        Util.deleteDirectory(new File(tempFolder.getRoot().getAbsolutePath() + "/dest"));
     }
-
-
-
-*/
 }

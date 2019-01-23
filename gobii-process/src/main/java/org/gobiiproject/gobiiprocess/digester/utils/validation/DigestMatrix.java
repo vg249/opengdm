@@ -17,6 +17,8 @@ public class DigestMatrix {
         switch (dataSetType) {
             case NUCLEOTIDE_2_LETTER:
             case IUPAC:
+            case VCF:
+
                 allowedCharacters = initNucleotide2letterList();
                 break;
             case CO_DOMINANT_NON_NUCLEOTIDE:
@@ -37,19 +39,17 @@ public class DigestMatrix {
                     }
                 }
                 return true;
-            case VCF:
-                //TODO: SHould this be rtue or false. CHeck with JOSH for VCF Transform
-                return true;
             default:
                 ErrorLogger.logError("Validate Dataset Matrix", "Invalid dataset type " + dataSetType);
                 return false;
         }
+        boolean returnStatus = true;
         for (String element : rowList)
             if (element == null || element.equals("") || !allowedCharacters.contains(element)) {
                 matrixValidation.setError("Validate Dataset Matrix Invalid data found in post-processed matrix line: " + lineNumber + " Data:" + element);
-                return false;
+                returnStatus = false;
             }
-        return true;
+        return returnStatus;
     }
 
     /***

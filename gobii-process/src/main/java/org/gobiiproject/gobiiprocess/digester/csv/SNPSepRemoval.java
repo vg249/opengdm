@@ -35,27 +35,27 @@ class SNPSepRemoval {
         missingFromFile.addAll(missingFileElements);
     }
 
-    boolean process(int rowNo, List<String> inrow, List<String> outrow) {
-        String allele1, allele2;
+    boolean process(int rowNo, List<String> inrow, List<String> outrow, MatrixValidation matrixValidation) {
         boolean returnStatus = true;
         for (String element : inrow) {
             if (element.length() < 1 || missingFromFile.contains(element)) {
-                allele1 = "N";
-                allele2 = "N";
+                outrow.add("NN");
+            } else if (element.length() == 1) {
+                matrixValidation.setError("SNPSepRemoval Unsupported Allele Call " + element.charAt(0) + " " + element.charAt(element.length() - 1) + " in row " + rowNo);
+                returnStatus = false;
             } else {
-                if (alleles.contains(element.charAt(0)) && alleles.contains(element.charAt(element.length() - 1))) {
+                String allele1, allele2;
+                if (alleles.contains(String.valueOf(element.charAt(0))) && alleles.contains(String.valueOf(element.charAt(element.length() - 1)))) {
                     allele1 = String.valueOf(element.charAt(0));
                     allele2 = String.valueOf(element.charAt(element.length() - 1));
                     if (missingAlts.contains(allele1)) allele1 = "N";
                     if (missingAlts.contains(allele2)) allele2 = "N";
+                    outrow.add(allele1 + allele2);
                 } else {
-                    allele1 = "N";
-                    allele2 = "N";
-                    ErrorLogger.logError("SNPSepRemoval", "Unsupported Allele Call " + element.charAt(0) + " " + element.charAt(element.length() - 1) + " in row " + rowNo);
+                    matrixValidation.setError("SNPSepRemoval Unsupported Allele Call " + element.charAt(0) + " " + element.charAt(element.length() - 1) + " in row " + rowNo);
                     returnStatus = false;
                 }
             }
-            outrow.add(allele1 + allele2);
         }
         return returnStatus;
     }

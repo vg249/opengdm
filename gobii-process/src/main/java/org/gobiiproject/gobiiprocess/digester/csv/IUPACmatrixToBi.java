@@ -51,7 +51,8 @@ class IUPACmatrixToBi {
         hash.put("N", NN);
     }
 
-    boolean process(int rowNo, List<String> inrow, List<String> outrow) {
+    boolean process(int rowNo, List<String> inrow, List<String> outrow, MatrixValidation matrixValidation) {
+        boolean returnStatus = true;
         for (String element : inrow) {
             if (element.length() > 1) {
                 char first = element.charAt(0);
@@ -62,13 +63,12 @@ class IUPACmatrixToBi {
             } else {
                 NucIupacCodes code = hash.get(element.toUpperCase());
                 if (code == null) {
-                    ErrorLogger.logError("IUPACMatrixToBi", "Unknown IUPAC code " + element.toUpperCase() + "in line " + rowNo);
-                    return false;
-                } else {
+                    matrixValidation.setError("IUPACMatrixToBi Unknown IUPAC code " + element.toUpperCase() + "in line " + rowNo);
+                    returnStatus = false;
+                } else
                     outrow.add(code.getName());
-                }
             }
         }
-        return true;
+        return returnStatus;
     }
 }

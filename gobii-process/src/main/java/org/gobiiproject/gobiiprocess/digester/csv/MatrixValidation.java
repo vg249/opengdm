@@ -49,8 +49,7 @@ public class MatrixValidation {
     boolean validate(int rowNo, int rowOffset, List<String> inputRowList, List<String> outputRowList, boolean isVCF) {
         if (noOfElements == 0) noOfElements = inputRowList.size();
         else if (noOfElements != inputRowList.size()) {
-            errorCount++;
-            ErrorLogger.logError("CSVReader", "Exception in processing matrix file. Irregular size matrix. Expected: " + noOfElements + " actual: " + inputRowList.size());
+            setError("Exception in processing matrix file. Irregular size matrix. Expected: " + noOfElements + " actual: " + inputRowList.size());
             return false;
         }
 
@@ -62,8 +61,7 @@ public class MatrixValidation {
          *
          * */
         if (datasetType.equalsIgnoreCase("IUPAC"))
-            if (!iupacMatrixToBi.process(rowNo + rowOffset, inputRowList, outputRowList)) {
-                setError("Exception in processing matrix file. Failed in IUPAC conversion.");
+            if (!iupacMatrixToBi.process(rowNo + rowOffset, inputRowList, outputRowList, this)) {
                 return false;
             }
 
@@ -75,8 +73,7 @@ public class MatrixValidation {
          *
          * */
         if (datasetType.equalsIgnoreCase("NUCLEOTIDE_2_LETTER") && !isVCF)
-            if (!snpSepRemoval.process(rowNo, inputRowList, outputRowList)) {
-                setError("Exception in processing matrix file. Failed in SNPSepRemoval.");
+            if (!snpSepRemoval.process(rowNo + rowOffset, inputRowList, outputRowList, this)) {
                 return false;
             }
 
@@ -111,7 +108,7 @@ public class MatrixValidation {
          * Validates each element is a valid value or not based on the datasetType.
          * */
         if (datasetType.equalsIgnoreCase("DOMINANT_NON_NUCLEOTIDE") || datasetType.equalsIgnoreCase("IUPAC") ||
-                datasetType.equalsIgnoreCase("CO_DOMINANT_NON_NUCLEOTIDE") || datasetType.equalsIgnoreCase("SSR_ALLELE_SIZE")) {
+                datasetType.equalsIgnoreCase("CO_DOMINANT_NON_NUCLEOTIDE") || datasetType.equalsIgnoreCase("SSR_ALLELE_SIZE") || datasetType.equalsIgnoreCase("NUCLEOTIDE_2_LETTER")) {
             if (datasetType.equalsIgnoreCase("DOMINANT_NON_NUCLEOTIDE") || datasetType.equalsIgnoreCase("CO_DOMINANT_NON_NUCLEOTIDE"))
                 outputRowList.addAll(inputRowList);
             return DigestMatrix.validateDatasetList(rowNo + rowOffset, outputRowList, datasetType, this);
