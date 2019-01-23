@@ -263,7 +263,7 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
         // For matrix file there is no need of writing first line. Setting it to false for consistency
         processedInstruction.setFirstLine(false);
         String missingFile = loaderScriptPath + "/etc/missingIndicators.txt";
-        String parentDirectory = file.getParentFile().getName();
+        String parentDirectory = file.getParentFile().getAbsolutePath();
         String markerFile = parentDirectory + "/digest.marker";
         MatrixValidation matrixValidation = new MatrixValidation(loaderInstruction.getDatasetType().getName(), missingFile,markerFile);
         if (matrixValidation.setUp()) {

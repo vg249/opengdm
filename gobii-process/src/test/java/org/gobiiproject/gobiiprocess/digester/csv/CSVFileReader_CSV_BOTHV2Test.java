@@ -111,23 +111,73 @@ public class CSVFileReader_CSV_BOTHV2Test {
         Util.deleteDirectory(srcFolder);
         Util.deleteDirectory(new File(tempFolder.getRoot().getAbsolutePath() + "/dest"));
     }
-/*
+
     @Test
-    public void testCSV_BOTH_Co_Dominant() throws IOException, InterruptedException {
-        String table = "multipleCSV_BOTH";
+    public void testCSV_BOTH_Co_Dominant() throws IOException{
+        File srcFolder;
+        srcFolder = tempFolder.newFolder("Codominant");
+        tempFolder.newFolder("dest");
+
+        tempFolderLocation = tempFolder.getRoot().getPath();
+        File resourceDest = new File("src/test/resources/csvBoth");
+        resourceDestFolderLocation = resourceDest.getAbsolutePath();
+        loaderScriptPath = new File("src/test/resources/loaderScriptPath").getAbsolutePath();
+        File resourceSource = new File("src/test/resources/csvBoth/Codominant.txt");
+        File dest = new File(srcFolder.getAbsolutePath() + "\\Codominant.txt");
+        Files.copy(resourceSource.toPath(), dest.toPath());
+
+        String table = "CSV_BOTH_CoDominant";
         GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
         Util.createAndSetGobiiFile(instruction, tempFolderLocation);
+        instruction.getGobiiFile().setSource(tempFolderLocation + "/Codominant");
+
         instruction.setTable(table);
         List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
-        gobiiColumns.add(Util.createGobiiCSV_BOTH(0, 0));
+        gobiiColumns.add(Util.createGobiiCSV_BOTH(1, 1, DataSetType.CO_DOMINANT_NON_NUCLEOTIDE));
         instruction.setGobiiFileColumns(gobiiColumns);
+        instruction.setDatasetType(new PropNameId(99, "CO_DOMINANT_NON_NUCLEOTIDE"));
 
-        CSVFileReaderV2 csvReader = new CSVFileReaderV2();
+        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
         csvReader.processCSV(instruction);
 
         Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
+        Util.deleteDirectory(srcFolder);
+        Util.deleteDirectory(new File(tempFolder.getRoot().getAbsolutePath() + "/dest"));
     }
 
+    @Test
+    public void testCSV_BOTH_Co_Dominant_Fail() throws IOException{
+        File srcFolder;
+        srcFolder = tempFolder.newFolder("Codominant");
+        tempFolder.newFolder("dest");
+
+        tempFolderLocation = tempFolder.getRoot().getPath();
+        File resourceDest = new File("src/test/resources/csvBoth");
+        resourceDestFolderLocation = resourceDest.getAbsolutePath();
+        loaderScriptPath = new File("src/test/resources/loaderScriptPath").getAbsolutePath();
+        File resourceSource = new File("src/test/resources/csvBoth/Codominant_Fail.txt");
+        File dest = new File(srcFolder.getAbsolutePath() + "\\Codominant.txt");
+        Files.copy(resourceSource.toPath(), dest.toPath());
+
+        String table = "CSV_BOTH_CoDominant";
+        GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
+        Util.createAndSetGobiiFile(instruction, tempFolderLocation);
+        instruction.getGobiiFile().setSource(tempFolderLocation + "/Codominant");
+
+        instruction.setTable(table);
+        List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
+        gobiiColumns.add(Util.createGobiiCSV_BOTH(1, 1, DataSetType.CO_DOMINANT_NON_NUCLEOTIDE));
+        instruction.setGobiiFileColumns(gobiiColumns);
+        instruction.setDatasetType(new PropNameId(99, "CO_DOMINANT_NON_NUCLEOTIDE"));
+
+        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
+        csvReader.processCSV(instruction);
+
+        Util.checkFileAbsence(table, tempFolderLocation);
+        Util.deleteDirectory(srcFolder);
+        Util.deleteDirectory(new File(tempFolder.getRoot().getAbsolutePath() + "/dest"));
+    }
+/*
     @Test
     public void testCSV_BOTH_SSR() throws IOException, InterruptedException {
         String table = "multipleCSV_BOTH";
