@@ -7,11 +7,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SequenceWriter;
 import org.apache.commons.io.FileUtils;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
@@ -262,11 +262,11 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
         }
         // For matrix file there is no need of writing first line. Setting it to false for consistency
         processedInstruction.setFirstLine(false);
-        String missingFile = loaderScriptPath + "etc/missingIndicators.txt";
+        String missingFile = loaderScriptPath + "/etc/missingIndicators.txt";
         String parentDirectory = file.getParentFile().getName();
         String markerFile = parentDirectory + "/digest.marker";
         MatrixValidation matrixValidation = new MatrixValidation(loaderInstruction.getDatasetType().getName(), missingFile,markerFile);
-        if (!matrixValidation.setUp()) {
+        if (matrixValidation.setUp()) {
             try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
                 int rowNo = 0;
                 String fileRow;
@@ -282,6 +282,8 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
                             writeOutputLine(tempFileBufferedWriter, outputRowList);
                         else {
                             if (matrixValidation.stopProcessing()) {
+                                tempFileBufferedWriter.flush();
+                                tempFileBufferedWriter.close();
                                 FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(loaderInstruction));
                                 return;
                             }
@@ -292,6 +294,8 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
             }
         }
         if (matrixValidation.getErrorCount() != 0) {
+            tempFileBufferedWriter.flush();
+            tempFileBufferedWriter.close();
             FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(loaderInstruction));
         }
     }

@@ -3,15 +3,15 @@ package org.gobiiproject.gobiiprocess.digester.utils.validation;
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiimodel.types.DataSetType;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiiprocess.digester.csv.MatrixValidation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 public class DigestMatrix {
 
-    public static boolean validateDatasetList(int lineNumber, List<String> rowList, String type) {
+    public static boolean validateDatasetList(int lineNumber, List<String> rowList, String type, MatrixValidation matrixValidation) {
         List<String> allowedCharacters;
         DataSetType dataSetType = DataSetType.valueOf(type);
         switch (dataSetType) {
@@ -46,7 +46,7 @@ public class DigestMatrix {
         }
         for (String element : rowList)
             if (element == null || element.equals("") || !allowedCharacters.contains(element)) {
-                ErrorLogger.logError("Validate Dataset Matrix", "Invalid data found in post-processed matrix line: " + lineNumber + " Data:" + element);
+                matrixValidation.setError("Validate Dataset Matrix Invalid data found in post-processed matrix line: " + lineNumber + " Data:" + element);
                 return false;
             }
         return true;
