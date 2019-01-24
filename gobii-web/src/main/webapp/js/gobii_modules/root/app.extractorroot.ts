@@ -249,6 +249,7 @@ import {TypeControl} from "../services/core/type-control";
 
 
                         <p-dialog header="System Message"
+                                  modal="modal"
                                   [(visible)]="display"
                                   (onHide)="onHideMessageDialog($event)"
                                   [contentStyle]="{'width': '400px'}">
