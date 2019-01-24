@@ -32,6 +32,7 @@ import org.gobiiproject.gobiiprocess.HDF5Interface;
 import org.gobiiproject.gobiiprocess.JobStatus;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.*;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderV2;
+import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFFileReader;
 
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
@@ -368,7 +369,9 @@ public class GobiiFileReader {
         String baseConnectionString = getJDBCConnectionString(gobiiCropConfig);
         String user = configuration.getLdapUserForBackendProcs();
         String password = configuration.getLdapPasswordForBackendProcs();
-        String directory=dstDir.getAbsolutePath();
+        String directory = dstDir.getAbsolutePath();
+        DigestFileValidator digestFileValidator = new DigestFileValidator(directory, baseConnectionString, user, password);
+        digestFileValidator.performValidation();
         //Call validations here, update 'success' to false with any call to ErrorLogger.logError()
 
         if (success && ErrorLogger.success()) {

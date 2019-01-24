@@ -38,6 +38,13 @@ public class DigestFileValidator {
         this.password = password;
     }
 
+    public DigestFileValidator(String rootDir, String url, String username, String password) {
+        this.rootDir = rootDir;
+        this.url = url;
+        this.username = username;
+        this.password = password;
+    }
+
     public static void main(String[] args) {
         InputParameters inputParameters = new InputParameters();
         readInputParameters(args, inputParameters);
@@ -162,13 +169,13 @@ public class DigestFileValidator {
         List<ValidationUnit> validations = new ArrayList<>();
         try {
             // Convert JSON string from file to Object
-            File rules = new File(rulesFile);
             ValidationRules validationRules;
-            if (rules.isFile())
+            if (rulesFile != null) {
+                File rules = new File(rulesFile);
                 validationRules = new ObjectMapper().readValue(rules, ValidationRules.class);
-            else
+            } else
                 validationRules = new ObjectMapper()
-                        .readValue(getClass().getClassLoader().getResourceAsStream(rulesFile), ValidationRules.class);
+                        .readValue(getClass().getClassLoader().getResourceAsStream("validationConfig.json"), ValidationRules.class);
             validations = validationRules.getValidations();
         } catch (IOException e) {
             validationFailed(writer, rulesFile, "Exception in reading rules file.\n" + e.getMessage());
