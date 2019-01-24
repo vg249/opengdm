@@ -2,7 +2,6 @@ package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiimodel.types.DataSetType;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.digester.csv.MatrixValidation;
 
 import java.util.ArrayList;
@@ -14,11 +13,11 @@ public class DigestMatrix {
     public static boolean validateDatasetList(int lineNumber, List<String> rowList, String type, MatrixValidation matrixValidation) {
         List<String> allowedCharacters;
         DataSetType dataSetType = DataSetType.valueOf(type);
+        boolean returnStatus = true;
         switch (dataSetType) {
             case NUCLEOTIDE_2_LETTER:
             case IUPAC:
             case VCF:
-
                 allowedCharacters = initNucleotide2letterList();
                 break;
             case CO_DOMINANT_NON_NUCLEOTIDE:
@@ -34,16 +33,16 @@ public class DigestMatrix {
                 for (String element : rowList) {
                     // Only accept numerical strings of exactly eight characters. No hetro SSR
                     if (!(StringUtils.isNumeric(element) && element.length() == 8)) {
-                        ErrorLogger.logError("Validate Dataset Matrix", "Invalid data found in post-processed matrix line: " + lineNumber + " Data:" + element);
-                        return false;
+                        matrixValidation.setError("Validate Dataset Matrix. Invalid data found in post-processed matrix line: " + lineNumber + " Data:" + element);
+                        returnStatus = false;
                     }
                 }
-                return true;
+                return returnStatus;
             default:
-                ErrorLogger.logError("Validate Dataset Matrix", "Invalid dataset type " + dataSetType);
+                matrixValidation.setError("Validate Dataset Matrix. Invalid dataset type " + dataSetType);
                 return false;
         }
-        boolean returnStatus = true;
+
         for (String element : rowList)
             if (element == null || element.equals("") || !allowedCharacters.contains(element)) {
                 matrixValidation.setError("Validate Dataset Matrix Invalid data found in post-processed matrix line: " + lineNumber + " Data:" + element);

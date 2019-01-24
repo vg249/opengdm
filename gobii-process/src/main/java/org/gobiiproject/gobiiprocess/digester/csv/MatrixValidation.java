@@ -109,7 +109,7 @@ public class MatrixValidation {
          * */
         if (datasetType.equalsIgnoreCase("DOMINANT_NON_NUCLEOTIDE") || datasetType.equalsIgnoreCase("IUPAC") ||
                 datasetType.equalsIgnoreCase("CO_DOMINANT_NON_NUCLEOTIDE") || datasetType.equalsIgnoreCase("SSR_ALLELE_SIZE") || datasetType.equalsIgnoreCase("NUCLEOTIDE_2_LETTER")) {
-            if (datasetType.equalsIgnoreCase("DOMINANT_NON_NUCLEOTIDE") || datasetType.equalsIgnoreCase("CO_DOMINANT_NON_NUCLEOTIDE"))
+            if (datasetType.equalsIgnoreCase("DOMINANT_NON_NUCLEOTIDE") || datasetType.equalsIgnoreCase("CO_DOMINANT_NON_NUCLEOTIDE")|| datasetType.equalsIgnoreCase("SSR_ALLELE_SIZE"))
                 outputRowList.addAll(inputRowList);
             return DigestMatrix.validateDatasetList(rowNo + rowOffset, outputRowList, datasetType, this);
         } else return true;
