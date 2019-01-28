@@ -450,7 +450,7 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "Gets all the analysis in the GOBii system",
+            value = "Gets all the analysis",
             notes = "Retrieves an unfiltered list of all Analysis entities. $RequestResponseStructure$"
     )
     @RequestMapping(value = "/analyses", method = RequestMethod.GET)

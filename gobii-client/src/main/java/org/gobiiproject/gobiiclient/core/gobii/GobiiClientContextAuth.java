@@ -56,8 +56,10 @@ public class GobiiClientContextAuth {
 
             initialConfigUrl = getTestExecConfig().getInitialConfigUrl();
         } else {
-            if (null == getTestExecConfig().getSshOverrideHost()
-                    || null == getTestExecConfig().getSshOverridePort()) {
+            if (
+                    null == getTestExecConfig().getSshOverrideHost()
+                    || null == getTestExecConfig().getSshOverridePort()
+            ) {
                 throw new Exception("Cannot test SSH override without host and port");
             }
 
@@ -77,7 +79,7 @@ public class GobiiClientContextAuth {
         //String gobiiCropTypeDefault = GobiiClientContext.getInstance(initialConfigUrl, true).getDefaultCropType();
         GobiiClientContext.getInstance(initialConfigUrl, true);
 
-        return GobiiClientContextAuth.authenticate(getTestExecConfig(),cropId);
+        return GobiiClientContextAuth.authenticate(getTestExecConfig(), cropId);
     }
 
     // not implemented yet

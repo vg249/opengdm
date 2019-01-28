@@ -15,7 +15,7 @@
   "paths" : {
     "/gobii/v1/analyses" : {
       "get" : {
-        "summary" : "Gets all the analysis in the GOBii system",
+        "summary" : "Gets all the analysis",
         "description" : "Retrieves an unfiltered list of all Analysis entities. $RequestResponseStructure$",
         "operationId" : "getAnalyses",
         "responses" : {
