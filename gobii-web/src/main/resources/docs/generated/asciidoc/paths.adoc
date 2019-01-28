@@ -33,7 +33,7 @@ __|<<_payloadenvelopeanalysisdto,PayloadEnvelopeAnalysisDTO>>
 
 
 [[_getanalyses]]
-=== Gets all the analysis in the GOBii system
+=== Gets all the analysis
 ....
 GET /gobii/v1/analyses
 ....
