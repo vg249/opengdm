@@ -85,7 +85,7 @@ public class GobiiAdl {
     private static String INPUT_TIMEOUT = "t";
     private static String INPUT_SCENARIO = "s";
     private static String INPUT_DIRECTORY = "d";
-    private static String INPUT_EXTRACT = "e";
+    private static String INPUT_EXTRACT = "no_extract";
     private static String NAME_COMMAND = "GobiiAdl";
 
     private static List<GobiiDataSetExtract> dataSetExtractReturnList = null;
@@ -2625,7 +2625,7 @@ public class GobiiAdl {
         setOption(options, INPUT_TIMEOUT, true, "Maximum waiting time in minutes", "timeout");
         setOption(options, INPUT_SCENARIO, true, "Specifies the path of one subdirectory under the main directory. When specified, tool is run in single-scenario mode", "scenario");
         setOption(options, INPUT_DIRECTORY, true, "Specifies the path to the directory where the files are in", "directory");
-        setOption(options, INPUT_EXTRACT, true, "Specifies whether the ADL job will do an extract. Defaults to true", "extract");
+        setOption(options, INPUT_EXTRACT, false, "If specified, ADL won't do an extract", "extract");
 
         // parse the commandline
         CommandLineParser parser = new DefaultParser();
@@ -2678,12 +2678,7 @@ public class GobiiAdl {
 
         if (commandLine.hasOption(INPUT_EXTRACT)) {
 
-            String extractFlag = commandLine.getOptionValue(INPUT_EXTRACT);
-
-            extractFlag = extractFlag.toLowerCase();
-            if (extractFlag.equals("false") || extractFlag.equals("f")) {
-                doExtract = false;
-            }
+            doExtract = false;
 
         }
 

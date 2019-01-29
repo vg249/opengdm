@@ -121,22 +121,34 @@ public class ADLEncapsulator {
             String configUtilCommandlineStem = testExecConfig.getConfigUtilCommandlineStem();
 
             String[] split = configUtilCommandlineStem.split(" ");
-            this.setAdlJarPath(split[2] + "gobiiadl.jar");
-            this.setInputHost(testExecConfig.getInitialConfigUrl());
-            this.setInputUser(testExecConfig.getLdapUserForUnitTest());
-            this.setInputPassword(testExecConfig.getLdapPasswordForUnitTest());
-            this.setInputTimeout(testExecConfig.getAsynchOpTimeoutMinutes());
 
-            // copy to temp folder
+            if (split.length >= 3) {
 
-            String tempDirName = "adlTest-" + UUID.randomUUID().toString();
-            String tempDirString = testExecConfig.getTestFileDownloadDirectory() + "/" + tempDirName;
+                this.setAdlJarPath(split[2] + "gobiiadl.jar");
+                this.setInputHost(testExecConfig.getInitialConfigUrl());
+                this.setInputUser(testExecConfig.getLdapUserForUnitTest());
+                this.setInputPassword(testExecConfig.getLdapPasswordForUnitTest());
+                this.setInputTimeout(testExecConfig.getAsynchOpTimeoutMinutes());
 
-            File tempDir = new File(tempDirString);
+                // copy to temp folder
 
-            tempDir.mkdir();
+                String tempDirName = "adlTest-" + UUID.randomUUID();
+                String tempDirString = testExecConfig.getTestFileDownloadDirectory() + "/" + tempDirName;
 
-            return tempDir;
+                File tempDir = new File(tempDirString);
+
+                tempDir.mkdir();
+
+                return tempDir;
+
+            } else {
+
+                setErrorMsg("Error in getting the path to ADL");
+
+                return null;
+
+            }
+
         } else {
 
             setErrorMsg("Backend support is not provided in this context: system-critical unit tests will not be run");
