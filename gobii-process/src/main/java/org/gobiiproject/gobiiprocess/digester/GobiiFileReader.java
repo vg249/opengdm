@@ -324,14 +324,6 @@ public class GobiiFileReader {
 
 		boolean sendQc= false;
 
-		boolean isFirstInstructionVCF=zero.getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF);
-		List<GobiiFileColumn> cols=zero.getGobiiFileColumns();
-		GobiiFileColumn firstCol=cols.size()>0?cols.get(0):null;
-		String firstInstructionDatasetType=getDatasetType(zero,firstCol);
-		if(isFirstInstructionVCF && !firstInstructionDatasetType.equals("NUCLEOTIDE_2_LETTER")){
-			ErrorLogger.logError("GobiiFileReader","Invalid Dataset Type selected for VCF file. Expected 2 Letter Nucleotide. Received " +firstInstructionDatasetType);
-		}
-
 		String dst=null;//Only populated if variant table exists
 		for (GobiiLoaderInstruction inst:list) {
 			qcCheck = inst.isQcCheck();
@@ -352,6 +344,9 @@ public class GobiiFileReader {
 				}
 				dst=getDatasetType(inst,matrixCol);//Calculate dataset type only for Matrix.
 				boolean isVCF=inst.getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF);
+				if(isVCF && !dst.equals("NUCLEOTIDE_2_LETTER")){
+					ErrorLogger.logError("GobiiFileReader","Invalid Dataset Type selected for VCF file. Expected 2 Letter Nucleotide. Received " +dst);
+				}
 
 
 				jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_TRANSFORMATION.getCvName(),"Data Matrix Transformation");
