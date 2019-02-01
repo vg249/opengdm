@@ -33,7 +33,6 @@ import org.gobiiproject.gobiiprocess.JobStatus;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.*;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderV2;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator;
-import org.gobiiproject.gobiiprocess.digester.vcf.VCFFileReader;
 
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
@@ -45,7 +44,7 @@ import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.logError;
 /**
  * Base class for processing instruction files. Start of chain of control for Digester. Takes first argument as instruction file, or promts user.
  * The File Reader runs off the Instruction Files, which tell it where the input files are, and how to process them.
- * {@link CSVFileReaderV2} and {@link VCFFileReader} deal with specific file formats. Overall logic and program flow come from this class.
+ * {@link CSVFileReaderV2}deal with specific file formats. Overall logic and program flow come from this class.
  * <p>
  * This class deals with external commands and scripts, and coordinates uploads to the IFL and directly talks to HDF5 and MonetDB.
  *

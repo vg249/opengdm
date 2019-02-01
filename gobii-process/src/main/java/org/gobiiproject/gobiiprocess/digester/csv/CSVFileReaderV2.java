@@ -102,11 +102,9 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
         processedInstruction.parseInstruction();
 
         String outputFileName = HelperFunctions.getDestinationFile(loaderInstruction);
-        //outputFileName = "C:/Users/ICRISAT/Desktop/1/crops/chickpea/digest.matrix";
         try (BufferedWriter tempFileBufferedWriter = new BufferedWriter(new FileWriter(outputFileName))) {
 
             File file = new File(loaderInstruction.getGobiiFile().getSource());
-            //  file = new File("C:\\Users\\ICRISAT\\Desktop\\1\\crops\\chickpea\\data_20180731_122913_rdas");
             if (file.isDirectory()) {
                 listFilesFromFolder(file, tempFileBufferedWriter, loaderInstruction);
             } else {
@@ -136,7 +134,7 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
         }
         for (File file : folder.listFiles()) {
             // Sub folders are ignored
-            if (file.isFile()) {
+            if (file.isFile() & !file.getName().contains("digest")) {
                 try {
                     writeToOutputFile(file, tempFileBufferedWriter, loaderInstruction);
                 } catch (IOException e) {

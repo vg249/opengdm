@@ -1,7 +1,5 @@
-package org.gobiiproject.gobiiprocess.digester.vcf;
+package org.gobiiproject.gobiiprocess.digester.csv;
 
-import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
@@ -17,31 +15,25 @@ import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
  * c) 1 from the matrix cell -> the cell from the same row in the .mref matrix but in the second column "alt"
  * d) . from the matrix cell -> N
  **/
-public class VCFTransformer {
+class VCFTransformer {
 
     //Bi-allelic unknown character state
     private static final String BI_UNKNOWN = "N";
 
-    //Maximum Transformer errors in one file, because you can get a lot of them
-    private static final int MAX_ERRORS = 20;
-    private static int errorsSoFar = 0;
-
     /**
-     * @param lineNumber      line processed
-     * @param mrefLineData    contains reference and alternates
-     * @param matrixLineDatum single entry (eg: 0/0) of the bi-allelic datum
-     * @param col             column processed
+     * @param lineNumber       line processed
+     * @param mrefLineData     contains reference and alternates
+     * @param matrixLineDatum  single entry (eg: 0/0) of the bi-allelic datum
+     * @param col              column processed
+     * @param matrixValidation matrix validation. setError from this used to count errors
      * @return unseparated bi-allelic closest approximation of the VCF line data
      */
     //TODO - need to add some separation to appropriately deal with multi-allelic alternates downstream - potentially wrapper class
     @SuppressWarnings("StringConcatenationInLoop")
-    private static String getBiallelicEntry(int lineNumber, String[] mrefLineData, String matrixLineDatum, int col, boolean unspecifiedAlt) {
+    private static String getBiallelicEntry(int lineNumber, String[] mrefLineData, String matrixLineDatum, int col, boolean unspecifiedAlt, MatrixValidation matrixValidation) {
         String[] terms = matrixLineDatum.split("/");
         if (terms.length != 2) {
-            if (++errorsSoFar < MAX_ERRORS) {
-                ErrorLogger.logError("VCFTransformer", "Incorrect number of alleles: " + matrixLineDatum
-                        + "\n Data line " + lineNumber + " column " + col);
-            }
+            matrixValidation.setError("VCFTransformer Incorrect number of alleles: " + matrixLineDatum + "\n Data line " + lineNumber + " column " + col);
             return null;
         }
         String bimatrixCell = "";
@@ -59,13 +51,10 @@ public class VCFTransformer {
                 case "9":
                     int value = Integer.parseInt(terms[k]);
                     if (value >= mrefLineData.length) {
-                        if (unspecifiedAlt) {
+                        if (unspecifiedAlt)
                             ErrorLogger.logWarning("VCFTransformer", "Alternate number " + terms[k] + " specified with '.' alts listed on data line " + lineNumber + " column " + col);
-                        } else {
-                            if (++errorsSoFar < MAX_ERRORS) {
-                                ErrorLogger.logError("VCFTransformer", "Alternate number " + terms[k] + " exceeds the length of the alternates list on data line " + lineNumber + " column " + col);
-                            }
-                        }
+                        else
+                            matrixValidation.setError("VCFTransformer, Alternate number " + terms[k] + " exceeds the length of the alternates list on data line " + lineNumber + " column " + col);
                         bimatrixCell += BI_UNKNOWN;
                     } else {
                         String cellValue = mrefLineData[value];
@@ -77,16 +66,14 @@ public class VCFTransformer {
                     bimatrixCell += BI_UNKNOWN;
                     break;
                 default:
-                    if (++errorsSoFar < MAX_ERRORS) {
-                        ErrorLogger.logError("VCFTransformer", "Unsupported alternate: " + terms[k] + " on data line " + lineNumber + " column " + col);
-                    }
+                    matrixValidation.setError("VCFTransformer, Unsupported alternate: " + terms[k] + " on data line " + lineNumber + " column " + col);
                     return null;
             }
         }
         return bimatrixCell;
     }
 
-    public static boolean transformVCFLine(String mrefLine, int lineNumber, List<String> inputList, List<String> outputList) throws IOException {
+    static boolean transformVCFLine(String mrefLine, int lineNumber, List<String> inputList, List<String> outputList, MatrixValidation matrixValidation) {
         lineNumber++;
         boolean unspecifiedAlt = false;
         String[] mrefLineRawData = mrefLine.trim().toUpperCase().split("\\s+");
@@ -105,7 +92,7 @@ public class VCFTransformer {
         int offset = 0;//offset for first alt being blank (happens with this regex and split (freaking split)
         if (mrefAltData[0].equals("")) offset = 1;
 
-        String mrefLineData[] = new String[mrefAltData.length + 1 - offset];//List of 1 + alts length
+        String[] mrefLineData = new String[mrefAltData.length + 1 - offset];//List of 1 + alts length
         mrefLineData[0] = mrefLineRawData[0];
         System.arraycopy(mrefAltData, 0 + offset, mrefLineData, 1, mrefAltData.length - offset);
 
@@ -120,11 +107,10 @@ public class VCFTransformer {
             if (mrefLineData[i].equals("INV")) mrefLineData[i] = BI_UNKNOWN;
         }
 
-        outputList = new LinkedList<String>();
         for (int i = 0; i < inputList.size(); i++) {
             String input = inputList.get(i);
             String alleles = input.split(":")[0];
-            String bimatrixCell = getBiallelicEntry(lineNumber, mrefLineData, alleles, i, unspecifiedAlt);
+            String bimatrixCell = getBiallelicEntry(lineNumber, mrefLineData, alleles, i, unspecifiedAlt, matrixValidation);
             if (bimatrixCell == null) {
                 return false;
             }

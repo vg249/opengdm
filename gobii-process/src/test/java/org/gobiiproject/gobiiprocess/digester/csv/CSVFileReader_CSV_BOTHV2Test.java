@@ -4,6 +4,7 @@ import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.types.DataSetType;
+import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.junit.AfterClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -365,4 +366,81 @@ public class CSVFileReader_CSV_BOTHV2Test {
         Util.deleteDirectory(srcFolder);
         Util.deleteDirectory(new File(tempFolder.getRoot().getAbsolutePath() + "/dest"));
     }
+
+    @Test
+    public void testCSV_BOTH_VCF() throws IOException{
+        File srcFolder;
+        srcFolder = tempFolder.newFolder("VCF");
+        tempFolder.newFolder("dest");
+
+        tempFolderLocation = tempFolder.getRoot().getPath();
+        File resourceDest = new File("src/test/resources/csvBoth");
+        resourceDestFolderLocation = resourceDest.getAbsolutePath();
+        loaderScriptPath = new File("src/test/resources/loaderScriptPath").getAbsolutePath();
+        File resourceSource = new File("src/test/resources/csvBoth/100Testwithperiods_inAlt_071118_S2.vcf");
+        File dest = new File(srcFolder.getAbsolutePath() + "\\100Testwithperiods_inAlt_071118_S2.vcf");
+        Files.copy(resourceSource.toPath(), dest.toPath());
+        resourceSource = new File("src/test/resources/csvBoth/digest.marker");
+        dest = new File(srcFolder.getAbsolutePath() + "\\digest.marker");
+        Files.copy(resourceSource.toPath(), dest.toPath());
+
+
+        String table = "CSV_BOTH_VCF";
+        GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
+        Util.createAndSetGobiiFile(instruction, tempFolderLocation);
+        instruction.getGobiiFile().setSource(tempFolderLocation + "/VCF");
+        instruction.getGobiiFile().setGobiiFileType(GobiiFileType.VCF);
+        instruction.getGobiiFile().setDelimiter("\t");
+        instruction.setTable(table);
+        List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
+        gobiiColumns.add(Util.createGobiiCSV_BOTH(10, 9, DataSetType.NUCLEOTIDE_2_LETTER));
+        instruction.setGobiiFileColumns(gobiiColumns);
+        instruction.setDatasetType(new PropNameId(97, "NUCLEOTIDE_2_LETTER"));
+
+        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
+        csvReader.processCSV(instruction);
+
+        Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
+        Util.deleteDirectory(srcFolder);
+        Util.deleteDirectory(new File(tempFolder.getRoot().getAbsolutePath() + "/dest"));
+    }
+
+    @Test
+    public void testCSV_BOTH_VCF_FAIL() throws IOException{
+        File srcFolder;
+        srcFolder = tempFolder.newFolder("VCF");
+        tempFolder.newFolder("dest");
+
+        tempFolderLocation = tempFolder.getRoot().getPath();
+        File resourceDest = new File("src/test/resources/csvBoth");
+        resourceDestFolderLocation = resourceDest.getAbsolutePath();
+        loaderScriptPath = new File("src/test/resources/loaderScriptPath").getAbsolutePath();
+        File resourceSource = new File("src/test/resources/csvBoth/100Testwithperiods_inAlt_071118_S2_fail.vcf");
+        File dest = new File(srcFolder.getAbsolutePath() + "\\100Testwithperiods_inAlt_071118_S2_fail.vcf");
+        Files.copy(resourceSource.toPath(), dest.toPath());
+        resourceSource = new File("src/test/resources/csvBoth/digest.marker");
+        dest = new File(srcFolder.getAbsolutePath() + "\\digest.marker");
+        Files.copy(resourceSource.toPath(), dest.toPath());
+
+
+        String table = "CSV_BOTH_VCF";
+        GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
+        Util.createAndSetGobiiFile(instruction, tempFolderLocation);
+        instruction.getGobiiFile().setSource(tempFolderLocation + "/VCF");
+        instruction.getGobiiFile().setGobiiFileType(GobiiFileType.VCF);
+        instruction.getGobiiFile().setDelimiter("\t");
+        instruction.setTable(table);
+        List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
+        gobiiColumns.add(Util.createGobiiCSV_BOTH(10, 9, DataSetType.NUCLEOTIDE_2_LETTER));
+        instruction.setGobiiFileColumns(gobiiColumns);
+        instruction.setDatasetType(new PropNameId(97, "NUCLEOTIDE_2_LETTER"));
+
+        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
+        csvReader.processCSV(instruction);
+
+        Util.checkFileAbsence(table, tempFolderLocation);
+        Util.deleteDirectory(srcFolder);
+        Util.deleteDirectory(new File(tempFolder.getRoot().getAbsolutePath() + "/dest"));
+    }
+
 }

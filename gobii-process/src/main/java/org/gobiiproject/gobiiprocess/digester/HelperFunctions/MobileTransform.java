@@ -1,9 +1,7 @@
 package org.gobiiproject.gobiiprocess.digester.HelperFunctions;
 
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
-import org.gobiiproject.gobiiprocess.digester.vcf.VCFTransformer;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 
 import static org.gobiiproject.gobiiprocess.digester.utils.TransposeMatrix.transposeMatrix;
