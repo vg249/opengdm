@@ -17,6 +17,7 @@ import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.digester.LoaderGlobalConfigs;
+import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.MatrixValidation;
 
 /**
  * CSV-Specific File Loader class, used by
@@ -259,7 +260,7 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
         String missingFile = loaderScriptPath + "/etc/missingIndicators.txt";
         String parentDirectory = file.getParentFile().getAbsolutePath();
         String markerFile = parentDirectory + "/digest.marker";
-        MatrixValidation matrixValidation = new MatrixValidation(loaderInstruction.getDatasetType().getName(), missingFile,markerFile);
+        MatrixValidation matrixValidation = new MatrixValidation(loaderInstruction.getDatasetType().getName(), missingFile, markerFile);
         if (matrixValidation.setUp()) {
             try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
                 int rowNo = 0;

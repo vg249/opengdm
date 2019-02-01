@@ -1,16 +1,15 @@
-package org.gobiiproject.gobiiprocess.digester.utils.validation;
+package org.gobiiproject.gobiiprocess.digester.csv.matrixValidation;
 
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiimodel.types.DataSetType;
-import org.gobiiproject.gobiiprocess.digester.csv.MatrixValidation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class DigestMatrix {
+class DigestMatrix {
 
-    public static boolean validateDatasetList(int lineNumber, List<String> rowList, String type, MatrixValidation matrixValidation) {
+    static boolean validateDatasetList(int lineNumber, List<String> rowList, String type, MatrixErrorUtil matrixErrorUtil) {
         List<String> allowedCharacters;
         DataSetType dataSetType = DataSetType.valueOf(type);
         boolean returnStatus = true;
@@ -33,19 +32,19 @@ public class DigestMatrix {
                 for (String element : rowList) {
                     // Only accept numerical strings of exactly eight characters. No hetro SSR
                     if (!(StringUtils.isNumeric(element) && element.length() == 8)) {
-                        matrixValidation.setError("Validate Dataset Matrix. Invalid data found in post-processed matrix line: " + lineNumber + " Data:" + element);
+                        matrixErrorUtil.setError("Validate Dataset Matrix. Invalid data found in post-processed matrix line: " + lineNumber + " Data:" + element);
                         returnStatus = false;
                     }
                 }
                 return returnStatus;
             default:
-                matrixValidation.setError("Validate Dataset Matrix. Invalid dataset type " + dataSetType);
+                matrixErrorUtil.setError("Validate Dataset Matrix. Invalid dataset type " + dataSetType);
                 return false;
         }
 
         for (String element : rowList)
             if (element == null || element.equals("") || !allowedCharacters.contains(element)) {
-                matrixValidation.setError("Validate Dataset Matrix Invalid data found in post-processed matrix line: " + lineNumber + " Data:" + element);
+                matrixErrorUtil.setError("Validate Dataset Matrix Invalid data found in post-processed matrix line: " + lineNumber + " Data:" + element);
                 returnStatus = false;
             }
         return returnStatus;

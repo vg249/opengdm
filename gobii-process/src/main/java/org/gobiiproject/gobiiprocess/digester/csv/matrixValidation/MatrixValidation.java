@@ -1,7 +1,7 @@
-package org.gobiiproject.gobiiprocess.digester.csv;
+package org.gobiiproject.gobiiprocess.digester.csv.matrixValidation;
 
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
-import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestMatrix;
+import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.*;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -13,32 +13,39 @@ import java.util.stream.Stream;
 
 public class MatrixValidation {
 
-    private static final int MAX_ERRORS = 20;
     private final String datasetType, missingFile, markerFile;
-    private int errorCount;
     private int noOfElements;
     private IUPACmatrixToBi iupacMatrixToBi;
     private SNPSepRemoval snpSepRemoval;
+    private MatrixErrorUtil matrixErrorUtil;
 
-    int getErrorCount() {
-        return errorCount;
+    public MatrixErrorUtil getMatrixErrorUtil() {
+        return matrixErrorUtil;
     }
 
-    MatrixValidation(String datasetType, String missingFile, String markerFile) {
+    public int getErrorCount() {
+        return matrixErrorUtil.getErrorCount();
+    }
+
+    public boolean stopProcessing() {
+        return matrixErrorUtil.stopProcessing();
+    }
+
+    public MatrixValidation(String datasetType, String missingFile, String markerFile) {
         this.datasetType = datasetType;
         this.missingFile = missingFile;
         this.markerFile = markerFile;
-        errorCount = 0;
+        matrixErrorUtil = new MatrixErrorUtil();
         noOfElements = 0;
         iupacMatrixToBi = new IUPACmatrixToBi();
     }
 
-    boolean setUp() {
+    public boolean setUp() {
         List<String> missingFileElements = new ArrayList<>();
         try (Stream<String> stream = Files.lines(Paths.get(missingFile))) {
             stream.forEach(missingFileElements::add);
         } catch (IOException e) {
-            errorCount++;
+            matrixErrorUtil.incrementErrorCount();
             ErrorLogger.logError("SNPSepRemoval", "Exception in reading SNSSepRemoval missing values.");
             return false;
         }
@@ -46,10 +53,10 @@ public class MatrixValidation {
         return true;
     }
 
-    boolean validate(int rowNo, int rowOffset, List<String> inputRowList, List<String> outputRowList, boolean isVCF) {
+    public boolean validate(int rowNo, int rowOffset, List<String> inputRowList, List<String> outputRowList, boolean isVCF) {
         if (noOfElements == 0) noOfElements = inputRowList.size();
         else if (noOfElements != inputRowList.size()) {
-            setError("Exception in processing matrix file. Irregular size matrix. Expected: " + noOfElements + " actual: " + inputRowList.size());
+            matrixErrorUtil.setError("Exception in processing matrix file. Irregular size matrix. Expected: " + noOfElements + " actual: " + inputRowList.size());
             return false;
         }
 
@@ -61,7 +68,7 @@ public class MatrixValidation {
          *
          * */
         if (datasetType.equalsIgnoreCase("IUPAC"))
-            if (!iupacMatrixToBi.process(rowNo + rowOffset, inputRowList, outputRowList, this)) {
+            if (!iupacMatrixToBi.process(rowNo + rowOffset, inputRowList, outputRowList, matrixErrorUtil)) {
                 return false;
             }
 
@@ -73,7 +80,7 @@ public class MatrixValidation {
          *
          * */
         if (datasetType.equalsIgnoreCase("NUCLEOTIDE_2_LETTER") && !isVCF)
-            if (!snpSepRemoval.process(rowNo + rowOffset, inputRowList, outputRowList, this)) {
+            if (!snpSepRemoval.process(rowNo + rowOffset, inputRowList, outputRowList, matrixErrorUtil)) {
                 return false;
             }
 
@@ -92,7 +99,7 @@ public class MatrixValidation {
                                 altPos = i;
                         }
                         if (refPos == -1 || altPos == -1) {
-                            setError("Exception in processing matrix file. Marker file does not contain ref and alt columns.");
+                            matrixErrorUtil.setError("Exception in processing matrix file. Marker file does not contain ref and alt columns.");
                             return false;
                         }
                         lineNo++;
@@ -101,9 +108,9 @@ public class MatrixValidation {
                     else if (lineNo == rowNo - (rowOffset) + 1) {
                         List<String> dataLine = Arrays.asList(line.split("\t"));
                         String newLine = dataLine.get(refPos) + "\t" + dataLine.get(altPos);
-                        if (!VCFTransformer.transformVCFLine(line, rowNo, inputRowList, outputRowList, this)) {
+                        if (!VCFTransformer.transformVCFLine(newLine, rowNo, inputRowList, outputRowList, matrixErrorUtil)) {
                             //note, outputRowList here is now a two letter file, which needs to be validated
-                            setError("Exception in processing matrix file. Failed in VCF Transformer.");
+                            matrixErrorUtil.setError("Exception in processing matrix file. Failed in VCF Transformer.");
                             return false;
                         }
                         lineNo++;
@@ -111,13 +118,12 @@ public class MatrixValidation {
                 }
 
             } catch (FileNotFoundException e) {
-                setError("Could not find marker file");
+                matrixErrorUtil.setError("Could not find marker file");
                 return false;
             } catch (IOException e) {
-                setError("Could not read marker file" + e.getMessage());
+                matrixErrorUtil.setError("Could not read marker file" + e.getMessage());
                 return false;
             }
-
         }
 
         /*
@@ -129,17 +135,7 @@ public class MatrixValidation {
                 datasetType.equalsIgnoreCase("NUCLEOTIDE_2_LETTER") || datasetType.equalsIgnoreCase("VCF")) {
             if (datasetType.equalsIgnoreCase("DOMINANT_NON_NUCLEOTIDE") || datasetType.equalsIgnoreCase("CO_DOMINANT_NON_NUCLEOTIDE") || datasetType.equalsIgnoreCase("SSR_ALLELE_SIZE"))
                 outputRowList.addAll(inputRowList);
-            return DigestMatrix.validateDatasetList(rowNo + rowOffset, outputRowList, datasetType, this);
+            return DigestMatrix.validateDatasetList(rowNo + rowOffset, outputRowList, datasetType, matrixErrorUtil);
         } else return true;
-    }
-
-    public void setError(String s) {
-        errorCount++;
-        ErrorLogger.logError("CSVReader", s);
-    }
-
-
-    boolean stopProcessing() {
-        return errorCount > MAX_ERRORS;
     }
 }

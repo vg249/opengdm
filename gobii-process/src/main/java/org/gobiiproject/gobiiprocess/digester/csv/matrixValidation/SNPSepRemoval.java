@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiprocess.digester.csv;
+package org.gobiiproject.gobiiprocess.digester.csv.matrixValidation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ class SNPSepRemoval {
         missingFromFile.addAll(missingFileElements);
     }
 
-    boolean process(int rowNo, List<String> inrow, List<String> outrow, MatrixValidation matrixValidation) {
+    boolean process(int rowNo, List<String> inrow, List<String> outrow, MatrixErrorUtil matrixErrorUtil) {
         boolean returnStatus = true;
         for (String element : inrow) {
             if (element.length() < 1 || missingFromFile.contains(element)) {
@@ -41,7 +41,7 @@ class SNPSepRemoval {
             } else {
                 final String s = "SNPSepRemoval Unsupported Allele Call " + element.charAt(0) + " " + element.charAt(element.length() - 1) + " in row " + rowNo;
                 if (element.length() == 1) {
-                    matrixValidation.setError(s);
+                    matrixErrorUtil.setError(s);
                     returnStatus = false;
                 } else {
                     String allele1, allele2;
@@ -52,7 +52,7 @@ class SNPSepRemoval {
                         if (missingAlts.contains(allele2)) allele2 = "N";
                         outrow.add(allele1 + allele2);
                     } else {
-                        matrixValidation.setError(s);
+                        matrixErrorUtil.setError(s);
                         returnStatus = false;
                     }
                 }

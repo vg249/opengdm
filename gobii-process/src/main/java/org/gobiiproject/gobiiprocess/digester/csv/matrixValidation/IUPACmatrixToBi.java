@@ -1,7 +1,6 @@
-package org.gobiiproject.gobiiprocess.digester.csv;
+package org.gobiiproject.gobiiprocess.digester.csv.matrixValidation;
 
 import org.gobiiproject.gobiimodel.types.NucIupacCodes;
-import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 
 import static org.gobiiproject.gobiimodel.types.NucIupacCodes.*;
 
@@ -51,7 +50,7 @@ class IUPACmatrixToBi {
         hash.put("N", NN);
     }
 
-    boolean process(int rowNo, List<String> inrow, List<String> outrow, MatrixValidation matrixValidation) {
+    boolean process(int rowNo, List<String> inrow, List<String> outrow, MatrixErrorUtil matrixErrorUtil) {
         boolean returnStatus = true;
         for (String element : inrow) {
             if (element.length() > 1) {
@@ -63,7 +62,7 @@ class IUPACmatrixToBi {
             } else {
                 NucIupacCodes code = hash.get(element.toUpperCase());
                 if (code == null) {
-                    matrixValidation.setError("IUPACMatrixToBi Unknown IUPAC code " + element.toUpperCase() + "in line " + rowNo);
+                    matrixErrorUtil.setError("IUPACMatrixToBi Unknown IUPAC code " + element.toUpperCase() + "in line " + rowNo);
                     returnStatus = false;
                 } else
                     outrow.add(code.getName());
