@@ -29,6 +29,8 @@ public class DtoMapNameIdUtil {
 
     public static Integer getIdsFromResultSet(List<NameIdDTO> nameIdDTOList, ResultSet resultSet, String columnName, String columnId, GobiiFilterType gobiiFilterType) throws SQLException {
 
+        /** Implemented binary search for a more efficient way of looking for a name in the list **/
+
         Collections.sort(nameIdDTOList);
         Integer index;
 
