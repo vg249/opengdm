@@ -11,7 +11,7 @@
   },
   "host" : "localhost:8081",
   "basePath" : "/api",
-  "schemes" : [ "http", null ],
+  "schemes" : [ "http" ],
   "paths" : {
     "/gobii/v1/analyses" : {
       "get" : {
