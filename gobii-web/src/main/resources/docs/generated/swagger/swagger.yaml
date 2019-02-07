@@ -14,7 +14,6 @@ host: "localhost:8081"
 basePath: "/api"
 schemes:
 - "http"
-- null
 paths:
   /gobii/v1/analyses:
     get:
