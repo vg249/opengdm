@@ -450,7 +450,7 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "Gets all the analysis",
+            value = "Gets all the analyses",
             notes = "Retrieves an unfiltered list of all Analysis entities. $RequestResponseStructure$"
     )
     @RequestMapping(value = "/analyses", method = RequestMethod.GET)
@@ -579,11 +579,12 @@ public class GOBIIControllerV1 {
     )
     @RequestMapping(value = "/contacts/{contactId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<ContactDTO> replaceContact(@RequestBody PayloadEnvelope<ContactDTO> payloadEnvelope,
-                                                      @ApiParam(value = "ID of contacts to be updated.", required = true)
-                                                      @PathVariable("contactId") Integer contactId,
-                                                      HttpServletRequest request,
-                                                      HttpServletResponse response) {
+    public PayloadEnvelope<ContactDTO> replaceContact(
+            @RequestBody PayloadEnvelope<ContactDTO> payloadEnvelope,
+            @ApiParam(value = "ID of contacts to be updated.", required = true)
+            @PathVariable("contactId") Integer contactId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
 
@@ -813,9 +814,11 @@ public class GOBIIControllerV1 {
             notes = "Creates new cv's.")
     @RequestMapping(value = "/cvs", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<CvDTO> createCv(@RequestBody PayloadEnvelope<CvDTO> payloadEnvelope,
-                                           HttpServletRequest request,
-                                           HttpServletResponse response) {
+    public PayloadEnvelope<CvDTO> createCv(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<CvDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<CvDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1050,11 +1053,17 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** CVGROUP METHODS
     // *********************************************
+    @ApiOperation(
+            value = "Gets CV terms by CV group ID",
+            notes = "Retrieves all the CV terms having the specified CV group ID"
+    )
     @RequestMapping(value = "/cvgroups/{cvGroupId}/cvs", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<CvDTO> getCvsForCvGroup(@PathVariable Integer cvGroupId,
-                                                   HttpServletRequest request,
-                                                   HttpServletResponse response) {
+    public PayloadEnvelope<CvDTO> getCvsForCvGroup(
+            @ApiParam(value = "ID of the CV group.", required = true)
+            @PathVariable("cvGroupId") Integer cvGroupId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<CvDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1089,11 +1098,17 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Gets CV groups by CV group type ID",
+            notes = "Retrieves all CV groups having the specified CV group type ID"
+    )
     @RequestMapping(value = "/cvgroups/{cvGroupTypeId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<CvGroupDTO> getCvGroupsByType(@PathVariable Integer cvGroupTypeId,
-                                                         HttpServletRequest request,
-                                                         HttpServletResponse response) {
+    public PayloadEnvelope<CvGroupDTO> getCvGroupsByType(
+            @ApiParam(value = "ID of the cv group type", required = true)
+            @PathVariable("cvGroupdTypeId") Integer cvGroupTypeId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<CvGroupDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1138,12 +1153,18 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Gets CV Group details given CV group name and type ID",
+            notes = "Retrieves the details for a given CV Group name and type ID"
+    )
     @RequestMapping(value = "/cvgroups/{groupName:[a-zA-Z_]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<CvGroupDTO> getCvGroupDetails(@PathVariable("groupName") String groupName,
-                                                         @RequestParam(value = "cvGroupTypeId") Integer cvGroupTypeId,
-                                                         HttpServletRequest request,
-                                                         HttpServletResponse response) {
+    public PayloadEnvelope<CvGroupDTO> getCvGroupDetails(
+            @ApiParam(value = "name of the cv group to be extracted")
+            @PathVariable("groupName") String groupName,
+            @RequestParam(value = "cvGroupTypeId") Integer cvGroupTypeId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<CvGroupDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1181,11 +1202,17 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** DATASET METHODS
     // *********************************************
+    @ApiOperation(
+            value = "Creates a dataset",
+            notes = "Creates a new dataset in the system. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/datasets", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<DataSetDTO> createDataSet(@RequestBody PayloadEnvelope<DataSetDTO> payloadEnvelope,
-                                                     HttpServletRequest request,
-                                                     HttpServletResponse response) {
+    public PayloadEnvelope<DataSetDTO> createDataSet(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<DataSetDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<DataSetDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1219,12 +1246,18 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Updates the Dataset by Dataset ID",
+            notes = "Updates the Dataset entity having the specified datasetId. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/datasets/{dataSetId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<DataSetDTO> replaceDataSet(@RequestBody PayloadEnvelope<DataSetDTO> payloadEnvelope,
-                                                      @PathVariable Integer dataSetId,
-                                                      HttpServletRequest request,
-                                                      HttpServletResponse response) {
+    public PayloadEnvelope<DataSetDTO> replaceDataSet(
+            @RequestBody PayloadEnvelope<DataSetDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Dataset to be updated", required = true)
+            @PathVariable("datasetId") Integer dataSetId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<DataSetDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1260,14 +1293,20 @@ public class GOBIIControllerV1 {
 
     }
 
-
+    @ApiOperation(
+            value = "Gets all the datasets",
+            notes = "Retrieves all the existing datasets in the system. The list can be retrieved by page and specific page size."
+    )
     @RequestMapping(value = "/datasets", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<DataSetDTO> getDataSets(HttpServletRequest request,
-                                                   HttpServletResponse response,
-                                                   @RequestParam("pageSize") Optional<Integer> pageSize,
-                                                   @RequestParam("pageNo") Optional<Integer> pageNo,
-                                                   @RequestParam("queryId") Optional<String> queryId) {
+    public PayloadEnvelope<DataSetDTO> getDataSets(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @ApiParam(value = "Specify the custom page size")
+            @RequestParam("pageSize") Optional<Integer> pageSize,
+            @ApiParam(value = "Retrieve the specified page by number", required = false)
+            @RequestParam("pageNo") Optional<Integer> pageNo,
+            @RequestParam("queryId") Optional<String> queryId) {
 
         PayloadEnvelope<DataSetDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1312,11 +1351,17 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Gets the dataset given Dataset ID",
+            notes = "Retrieves the Dataset entity having the specified ID."
+    )
     @RequestMapping(value = "/datasets/{dataSetId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<DataSetDTO> getDataSetsById(@PathVariable Integer dataSetId,
-                                                       HttpServletRequest request,
-                                                       HttpServletResponse response) {
+    public PayloadEnvelope<DataSetDTO> getDataSetsById(
+            @ApiParam(value = "ID of the Dataset to be extracted", required = true)
+            @PathVariable("dataSetId") Integer dataSetId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<DataSetDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1346,11 +1391,17 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Gets all the analysis for the given Dataset ID",
+            notes = "Retrieves all the analysis for the given datasetId"
+    )
     @RequestMapping(value = "/datasets/{dataSetId:[\\d]+}/analyses", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<AnalysisDTO> getAnalysesForDataset(@PathVariable Integer dataSetId,
-                                                              HttpServletRequest request,
-                                                              HttpServletResponse response) {
+    public PayloadEnvelope<AnalysisDTO> getAnalysesForDataset(
+            @ApiParam(value = "ID of the dataset", required = true)
+            @PathVariable("dataSetId") Integer dataSetId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<AnalysisDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1380,6 +1431,10 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Gets the defined Dataset Types in the system",
+            notes = "Retrieves all the defined dataset types in the system."
+    )
     @RequestMapping(value = "/datasets/types", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<NameIdDTO> getDataSetsTypes(HttpServletRequest request,
@@ -1418,12 +1473,17 @@ public class GOBIIControllerV1 {
 
     }
 
-
+    @ApiOperation(
+            value = "Gets all the datasets with the given dataset type ID",
+            notes = "Retrieves all the Datasets having the specified type ID."
+    )
     @RequestMapping(value = "/datasets/types/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<DataSetDTO> getDataSetsByTypeId(@PathVariable Integer id,
-                                                           HttpServletRequest request,
-                                                           HttpServletResponse response) {
+    public PayloadEnvelope<DataSetDTO> getDataSetsByTypeId(
+            @ApiParam(value = "ID of the dataset type", required = true)
+            @PathVariable("id") Integer id,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<DataSetDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1459,11 +1519,17 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Gets the job details for the given Dataset ID",
+            notes = "Retrieves the information for active job for a given datasetId"
+    )
     @RequestMapping(value = "/datasets/{datasetId}/jobs", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<JobDTO> getJobDetailsByDatasetId(@PathVariable("datasetId") String datasetId,
-                                                            HttpServletRequest request,
-                                                            HttpServletResponse response) {
+    public PayloadEnvelope<JobDTO> getJobDetailsByDatasetId(
+            @ApiParam(value = "ID of the dataset", required = true)
+            @PathVariable("datasetId") String datasetId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1497,11 +1563,17 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** DISPLAY METHODS
     // *********************************************
+    @ApiOperation(
+            value = "Creates a display entity",
+            notes = "Creates a display entity with the given information. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/displays", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<DisplayDTO> createDisplay(@RequestBody PayloadEnvelope<DisplayDTO> payloadEnvelope,
-                                                     HttpServletRequest request,
-                                                     HttpServletResponse response) {
+    public PayloadEnvelope<DisplayDTO> createDisplay(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<DisplayDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<DisplayDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1535,12 +1607,18 @@ public class GOBIIControllerV1 {
     }
 
 
+    @ApiOperation(
+            value = "Updates display by Display ID",
+            notes = "Updates the Display entity having the specified displayId. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/displays/{displayId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<DisplayDTO> replaceDisplay(@RequestBody PayloadEnvelope<DisplayDTO> payloadEnvelope,
-                                                      @PathVariable Integer displayId,
-                                                      HttpServletRequest request,
-                                                      HttpServletResponse response) {
+    public PayloadEnvelope<DisplayDTO> replaceDisplay(
+            @RequestBody PayloadEnvelope<DisplayDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Display to be updated", required = true)
+            @PathVariable("displayId") Integer displayId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<DisplayDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1573,6 +1651,10 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Gets all the displays",
+            notes = "Retrieves a list of all the Display entities"
+    )
     @RequestMapping(value = "/displays", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<DisplayDTO> getDisplays(HttpServletRequest request,
@@ -1606,11 +1688,17 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Gets display by Display ID",
+            notes = "Retrieves the Display entity having the specified ID"
+    )
     @RequestMapping(value = "/displays/{displayId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<DisplayDTO> getDisplayById(@PathVariable Integer displayId,
-                                                      HttpServletRequest request,
-                                                      HttpServletResponse response) {
+    public PayloadEnvelope<DisplayDTO> getDisplayById(
+            @ApiParam(value = "ID of the Display to be extracted", required = true)
+            @PathVariable("displayId") Integer displayId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<DisplayDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1645,11 +1733,17 @@ public class GOBIIControllerV1 {
     // *************************** LOADER INSTRUCTION METHODS
     // *********************************************
 
+    @ApiOperation(
+            value = "Creates instruction file for loading data",
+            notes = "Creates loader instruction file and then submits a new Job."
+    )
     @RequestMapping(value = "/instructions/loader", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<LoaderInstructionFilesDTO> createLoaderInstruction(@RequestBody PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope,
-                                                                              HttpServletRequest request,
-                                                                              HttpServletResponse response) {
+    public PayloadEnvelope<LoaderInstructionFilesDTO> createLoaderInstruction(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<LoaderInstructionFilesDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1684,11 +1778,17 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Gets the loading instruction information given file name",
+            notes = "Retrieves the loader instruction file entity having the specified instruction file name."
+    )
     @RequestMapping(value = "/instructions/loader/{instructionFileName}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<LoaderInstructionFilesDTO> getLoaderInstruction(@PathVariable("instructionFileName") String instructionFileName,
-                                                                           HttpServletRequest request,
-                                                                           HttpServletResponse response) {
+    public PayloadEnvelope<LoaderInstructionFilesDTO> getLoaderInstruction(
+            @ApiParam(value = "Name of the instruction file to be retrieved.", required = true)
+            @PathVariable("instructionFileName") String instructionFileName,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<LoaderInstructionFilesDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1720,11 +1820,17 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Gets the loading job status by Job name",
+            notes = "Retrieves the loading job status along with other job details having the specified Job Name."
+    )
     @RequestMapping(value = "/instructions/loader/jobs/{jobName}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<JobDTO> getLoaderInstructionStatus(@PathVariable("jobName") String jobName,
-                                                              HttpServletRequest request,
-                                                              HttpServletResponse response) {
+    public PayloadEnvelope<JobDTO> getLoaderInstructionStatus(
+            @ApiParam(value = "Name of the job", required =  true)
+            @PathVariable("jobName") String jobName,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1760,11 +1866,17 @@ public class GOBIIControllerV1 {
     // *************************** EXTRACTOR INSTRUCTION METHODS
     // *********************************************
 
+    @ApiOperation(
+            value = "Creates instruction file for extracting data",
+            notes = "Creates extractor instruction file and then submits a new Job."
+    )
     @RequestMapping(value = "/instructions/extractor", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<ExtractorInstructionFilesDTO> createExtractorInstruction(@RequestBody PayloadEnvelope<ExtractorInstructionFilesDTO> payloadEnvelope,
-                                                                                    HttpServletRequest request,
-                                                                                    HttpServletResponse response) {
+    public PayloadEnvelope<ExtractorInstructionFilesDTO> createExtractorInstruction(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<ExtractorInstructionFilesDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ExtractorInstructionFilesDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1800,12 +1912,17 @@ public class GOBIIControllerV1 {
 
     }
 
-
+    @ApiOperation(
+            value = "Gets the extract instruction information given file name",
+            notes = "Retrieves the extractor instruction file entity having the specified instruction file name."
+    )
     @RequestMapping(value = "/instructions/extractor/{instructionFileName}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<ExtractorInstructionFilesDTO> getExtractorInstruction(@PathVariable("instructionFileName") String instructionFileName,
-                                                                                 HttpServletRequest request,
-                                                                                 HttpServletResponse response) {
+    public PayloadEnvelope<ExtractorInstructionFilesDTO> getExtractorInstruction(
+            @ApiParam(value = "Name of the instruction file to be retrieved", required = true)
+            @PathVariable("instructionFileName") String instructionFileName,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ExtractorInstructionFilesDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1837,11 +1954,17 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Gets the extract job status by Job name",
+            notes = "Retrieves the extract job status along with other job details having the specified Job Name."
+    )
     @RequestMapping(value = "/instructions/extractor/jobs/{jobName}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<JobDTO> getExtractorInstructionStatus(@PathVariable("jobName") String jobName,
-                                                                 HttpServletRequest request,
-                                                                 HttpServletResponse response) {
+    public PayloadEnvelope<JobDTO> getExtractorInstructionStatus(
+            @ApiParam(value = "Name of the job", required = true)
+            @PathVariable("jobName") String jobName,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1876,11 +1999,17 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** MANIFEST METHODS
     // *********************************************
+    @ApiOperation(
+            value = "Creates manifest entity",
+            notes = "Creates a Manifest entity for GOBii system. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/manifests", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<ManifestDTO> createManifest(@RequestBody PayloadEnvelope<ManifestDTO> payloadEnvelope,
-                                                       HttpServletRequest request,
-                                                       HttpServletResponse response) {
+    public PayloadEnvelope<ManifestDTO> createManifest(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<ManifestDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ManifestDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1913,12 +2042,18 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Updates manifest by Manifest ID",
+            notes = "Updates the Manifest entity having the specified manifestId. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/manifests/{manifestId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<ManifestDTO> replaceManifest(@RequestBody PayloadEnvelope<ManifestDTO> payloadEnvelope,
-                                                        @PathVariable Integer manifestId,
-                                                        HttpServletRequest request,
-                                                        HttpServletResponse response) {
+    public PayloadEnvelope<ManifestDTO> replaceManifest(
+            @RequestBody PayloadEnvelope<ManifestDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Manifest to be updated", required = true)
+            @PathVariable("manifestId") Integer manifestId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ManifestDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1951,7 +2086,10 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
-
+    @ApiOperation(
+            value = "Gets all the Manifests",
+            notes = "Retrieves an unfiltered list of all Manifest entities."
+    )
     @RequestMapping(value = "/manifests", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ManifestDTO> getManifests(HttpServletRequest request,
@@ -1985,11 +2123,17 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Gets the manifest given Manifest ID",
+            notes = "Retrieves the Manifest entity having the specified ID."
+    )
     @RequestMapping(value = "/manifests/{manifestId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<ManifestDTO> getManifestById(@PathVariable Integer manifestId,
-                                                        HttpServletRequest request,
-                                                        HttpServletResponse response) {
+    public PayloadEnvelope<ManifestDTO> getManifestById(
+            @ApiParam(value = "ID of the Manifest to be retrieved", required = true)
+            @PathVariable("manifestId") Integer manifestId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ManifestDTO> returnVal = new PayloadEnvelope<>();
 
@@ -2023,11 +2167,17 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** MARKER METHODS
     // *********************************************
+    @ApiOperation(
+            value = "Creates a marker",
+            notes = "Creates a new marker in the system. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/markers", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<MarkerDTO> createMarker(@RequestBody PayloadEnvelope<MarkerDTO> payloadEnvelope,
-                                                   HttpServletRequest request,
-                                                   HttpServletResponse response) {
+    public PayloadEnvelope<MarkerDTO> createMarker(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<MarkerDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<MarkerDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -2061,12 +2211,18 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Updates the Marker by Marker ID",
+            notes = "Updates the Marker entity having the specified markerId. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/markers/{markerId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<MarkerDTO> replaceMarker(@RequestBody PayloadEnvelope<MarkerDTO> payloadEnvelope,
-                                                    @PathVariable Integer markerId,
-                                                    HttpServletRequest request,
-                                                    HttpServletResponse response) {
+    public PayloadEnvelope<MarkerDTO> replaceMarker(
+            @RequestBody PayloadEnvelope<MarkerDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Marker to be updated", required = true)
+            @PathVariable("markerId") Integer markerId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<MarkerDTO> returnVal = new PayloadEnvelope<>();
 
@@ -2102,7 +2258,10 @@ public class GOBIIControllerV1 {
 
     }
 
-
+    @ApiOperation(
+            value = "Gets all the markers",
+            notes = "Retrieves all the existing markers in the system."
+    )
     @RequestMapping(value = "/markers", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<MarkerDTO> getMarkers(HttpServletRequest request,
@@ -2138,11 +2297,17 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Gets the marker given Marker ID",
+            notes = "Retrieves the Marker entity having the specified ID."
+    )
     @RequestMapping(value = "/markers/{markerId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<MarkerDTO> getMarkerById(@PathVariable Integer markerId,
-                                                    HttpServletRequest request,
-                                                    HttpServletResponse response) {
+    public PayloadEnvelope<MarkerDTO> getMarkerById(
+            @ApiParam(value = "ID of the Marker to be extracted", required = true)
+            @PathVariable("markerId") Integer markerId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<MarkerDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -2173,13 +2338,19 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Marker search",
+            notes = "Gets Marker by searching by name"
+    )
     @RequestMapping(value = "/marker-search",
             params = {"name"},
             method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<MarkerDTO> getMarkerByName(@RequestParam("name") String name,
-                                                      HttpServletRequest request,
-                                                      HttpServletResponse response) {
+    public PayloadEnvelope<MarkerDTO> getMarkerByName(
+            @ApiParam(value = "Name of the marker", required = true)
+            @RequestParam("name") String name,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<MarkerDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -2213,14 +2384,28 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** NameIDList
     // *********************************************
+
+    @ApiOperation(
+            value = "Gets a list of name/ID combination for given Entity",
+            notes = "Retrieves a list of name/ID combination for a given entity. " +
+                    "For the list of entities supported see class GobiiEntityNameType." +
+                    "List can further be filtered out by specifying the filter type and value." +
+                    "For the list of filter types supported see class GobiiFilterType." +
+                    "Example use case: entity = CV; filterType = NAMES_BY_TYPE_NAME; filterValue = status" +
+                    "Result will be a list of CV terms having status as the cv group"
+    )
     @RequestMapping(value = "/names/{entity}",
             method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<NameIdDTO> getNames(@PathVariable("entity") String entity,
-                                               @RequestParam(value = "filterType", required = false) String filterType,
-                                               @RequestParam(value = "filterValue", required = false) String filterValue,
-                                               HttpServletRequest request,
-                                               HttpServletResponse response) {
+    public PayloadEnvelope<NameIdDTO> getNames(
+            @ApiParam(value = "The entity to be retrieved", required = true)
+            @PathVariable("entity") String entity,
+            @ApiParam(value = "The filter type for the name list")
+            @RequestParam(value = "filterType", required = false) String filterType,
+            @ApiParam(value = "The value for the filter type")
+            @RequestParam(value = "filterValue", required = false) String filterValue,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<NameIdDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -2336,15 +2521,32 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Gets a list of name/ID combination for given Entity and a name list",
+            notes = "Retrieves a list of name/ID combination for a given entity and name list. " +
+                    "For the list of entities supported see class GobiiEntityNameType." +
+                    "This is service is specifically implemented for these filter types: " +
+                    "NAMES_BY_NAME_LIST - given a list of names, return the same list with the corresponding ID in the database. If name doesn't exist, ID will be 0." +
+                    "NAMES_BY_NAME_LIST_RETURN_EXISTS - given a list of names, return the list of names with ID that exists in the database." +
+                    "NAMES_BY_NAME_LIST_RETURN_ABSENT - given a list of names, return the list of names that doesn't exist in the database with 0 as the ID" +
+                    "Filter value varies per entity. This can be cv group name, project ID, platform ID, etc." +
+                    "Example use case: entity = CV; filterType = NAMES_BY_NAME_LIST; filterValue = germplasm_type" +
+                    "Result will be a list of CV terms with ID having germplasm_type as the cv group"
+    )
     @RequestMapping(value = "/names/{entity}",
             method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<NameIdDTO> getNamesByNameList(@RequestBody PayloadEnvelope<NameIdDTO> payloadEnvelope,
-                                                         @PathVariable("entity") String entity,
-                                                         @RequestParam(value = "filterType", required = false) String filterType,
-                                                         @RequestParam(value = "filterValue", required = false) String filterValue,
-                                                         HttpServletRequest request,
-                                                         HttpServletResponse response) {
+    public PayloadEnvelope<NameIdDTO> getNamesByNameList(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<NameIdDTO> payloadEnvelope,
+            @ApiParam(value = "The entity to be retrieved", required = true)
+            @PathVariable("entity") String entity,
+            @ApiParam(value = "The filter type for the name list")
+            @RequestParam(value = "filterType", required = false) String filterType,
+            @ApiParam(value = "The value for the filter type")
+            @RequestParam(value = "filterValue", required = false) String filterValue,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<NameIdDTO> returnVal = new PayloadEnvelope<>();
 
@@ -2481,12 +2683,17 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** ORGANIZATION METHODS
     // *********************************************
-
+    @ApiOperation(
+            value = "Creates a organization",
+            notes = "Creates a new organization in the system. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/organizations", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<OrganizationDTO> createOrganization(@RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
-                                                               HttpServletRequest request,
-                                                               HttpServletResponse response) {
+    public PayloadEnvelope<OrganizationDTO> createOrganization(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -2519,12 +2726,18 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Updates the Organization by Organization ID",
+            notes = "Updates the Organization entity having the specified organizationId. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/organizations/{organizationId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<OrganizationDTO> replaceOrganization(@RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
-                                                                @PathVariable Integer organizationId,
-                                                                HttpServletRequest request,
-                                                                HttpServletResponse response) {
+    public PayloadEnvelope<OrganizationDTO> replaceOrganization(
+            @RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Organization to be updated", required = true)
+            @PathVariable("organizationId") Integer organizationId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
 
@@ -2560,7 +2773,10 @@ public class GOBIIControllerV1 {
 
     }
 
-
+    @ApiOperation(
+            value = "Gets all the organizations",
+            notes = "Retrieves all the existing organizations in the system."
+    )
     @RequestMapping(value = "/organizations", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<OrganizationDTO> getOrganizations(HttpServletRequest request,
@@ -2596,11 +2812,17 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Gets the organization given Organization ID",
+            notes = "Retrieves the Organization entity having the specified ID."
+    )
     @RequestMapping(value = "/organizations/{organizationId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<OrganizationDTO> getOrganizationsById(@PathVariable Integer organizationId,
-                                                                 HttpServletRequest request,
-                                                                 HttpServletResponse response) {
+    public PayloadEnvelope<OrganizationDTO> getOrganizationsById(
+            @ApiParam(value = "ID of the Organization to be extracted", required = true)
+            @PathVariable("organizationId") Integer organizationId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -2642,6 +2864,10 @@ public class GOBIIControllerV1 {
      * not been modified. This funcitonality will have to be built out later.
      * Also note that the resource name /maps is correct but does not match
      * what is being used in ResourceBuilder on the client side*/
+    @ApiOperation(
+            value = "Gets all the Mapsets",
+            notes = "Retrieves all the existing Mapsets in the system."
+    )
     @RequestMapping(value = "/maps", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<MapsetDTO> getMaps(HttpServletRequest request,
@@ -2679,12 +2905,17 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** PLATFORM METHODS
     // *********************************************
-
+    @ApiOperation(
+            value = "Creates a Platform",
+            notes = "Creates a new Platform in the system. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/platforms", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<PlatformDTO> createPlatform(@RequestBody PayloadEnvelope<PlatformDTO> payloadEnvelope,
-                                                       HttpServletRequest request,
-                                                       HttpServletResponse response) {
+    public PayloadEnvelope<PlatformDTO> createPlatform(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<PlatformDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<PlatformDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -2718,12 +2949,18 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Updates the Platform by Platform ID",
+            notes = "Updates the Platform entity having the specified platformId. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/platforms/{platformId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<PlatformDTO> replacePlatform(@RequestBody PayloadEnvelope<PlatformDTO> payloadEnvelope,
-                                                        @PathVariable Integer platformId,
-                                                        HttpServletRequest request,
-                                                        HttpServletResponse response) {
+    public PayloadEnvelope<PlatformDTO> replacePlatform(
+            @RequestBody PayloadEnvelope<PlatformDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Platform to be updated", required = true)
+            @PathVariable("platformId") Integer platformId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<PlatformDTO> returnVal = new PayloadEnvelope<>();
 
@@ -2759,7 +2996,10 @@ public class GOBIIControllerV1 {
 
     }
 
-
+    @ApiOperation(
+            value = "Gets all the platforms",
+            notes = "Retrieves all the existing platforms in the system."
+    )
     @RequestMapping(value = "/platforms", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<PlatformDTO> getPlatforms(HttpServletRequest request,
@@ -2795,11 +3035,17 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Gets the platform given Platform ID",
+            notes = "Retrieves the Platform entity having the specified ID."
+    )
     @RequestMapping(value = "/platforms/{platformId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<PlatformDTO> getPlatformsById(@PathVariable Integer platformId,
-                                                         HttpServletRequest request,
-                                                         HttpServletResponse response) {
+    public PayloadEnvelope<PlatformDTO> getPlatformsById(
+            @ApiParam(value = "ID of the Platform to be extracted", required = true)
+            @PathVariable("platformId") Integer platformId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<PlatformDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -2831,11 +3077,17 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Gets the platform details given Vendor Protocol ID",
+            notes = "Retrieves the Platform entity having the specified Vendor Protocol ID."
+    )
     @RequestMapping(value = "/platforms/protocols/{vendorProtocolId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<PlatformDTO> getPlatformDetailsByVendorProtocolId(@PathVariable Integer vendorProtocolId,
-                                                                             HttpServletRequest request,
-                                                                             HttpServletResponse response) {
+    public PayloadEnvelope<PlatformDTO> getPlatformDetailsByVendorProtocolId(
+            @ApiParam(value = "ID of the vendor protocol", required = true)
+            @PathVariable("vendorProtocolId") Integer vendorProtocolId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<PlatformDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -2871,11 +3123,17 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** PROJECT METHODS
     // *********************************************
+    @ApiOperation(
+            value = "Creates a project",
+            notes = "Creates a new project in the system. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/projects", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<ProjectDTO> createProject(@RequestBody PayloadEnvelope<ProjectDTO> payloadEnvelope,
-                                                     HttpServletRequest request,
-                                                     HttpServletResponse response) {
+    public PayloadEnvelope<ProjectDTO> createProject(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<ProjectDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ProjectDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -2909,12 +3167,18 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Updates the Project by Project ID",
+            notes = "Updates the Project entity having the specified projectId. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/projects/{projectId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<ProjectDTO> replaceProject(@RequestBody PayloadEnvelope<ProjectDTO> payloadEnvelope,
-                                                      @PathVariable Integer projectId,
-                                                      HttpServletRequest request,
-                                                      HttpServletResponse response) {
+    public PayloadEnvelope<ProjectDTO> replaceProject(
+            @RequestBody PayloadEnvelope<ProjectDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Project to be updated", required = true)
+            @PathVariable("projectId") Integer projectId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ProjectDTO> returnVal = new PayloadEnvelope<>();
 
@@ -2950,7 +3214,10 @@ public class GOBIIControllerV1 {
 
     }
 
-
+    @ApiOperation(
+            value = "Gets all the projects",
+            notes = "Retrieves all the existing projects in the system."
+    )
     @RequestMapping(value = "/projects", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ProjectDTO> getProjects(HttpServletRequest request,
@@ -2986,11 +3253,17 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Gets the projects given Project ID",
+            notes = "Retrieves the Project entity having the specified ID."
+    )
     @RequestMapping(value = "/projects/{projectId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<ProjectDTO> getProjectsById(@PathVariable Integer projectId,
-                                                       HttpServletRequest request,
-                                                       HttpServletResponse response) {
+    public PayloadEnvelope<ProjectDTO> getProjectsById(
+            @ApiParam(value = "ID of the Project to be extracted", required = true)
+            @PathVariable("projectId") Integer projectId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ProjectDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -3025,11 +3298,17 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** EXPERIMENT METHODS
     // *********************************************
+    @ApiOperation(
+            value = "Creates an experiment",
+            notes = "Creates a new experiment in the system. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/experiments", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<ExperimentDTO> createExperiment(@RequestBody PayloadEnvelope<ExperimentDTO> payloadEnvelope,
-                                                           HttpServletRequest request,
-                                                           HttpServletResponse response) {
+    public PayloadEnvelope<ExperimentDTO> createExperiment(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<ExperimentDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ExperimentDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -3062,12 +3341,18 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Updates the Experiment by Experiement ID",
+            notes = "Updates the Experiment entity having the specified experimentId. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/experiments/{experimentId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<ExperimentDTO> replaceExperiment(@RequestBody PayloadEnvelope<ExperimentDTO> payloadEnvelope,
-                                                            @PathVariable Integer experimentId,
-                                                            HttpServletRequest request,
-                                                            HttpServletResponse response) {
+    public PayloadEnvelope<ExperimentDTO> replaceExperiment(
+            @RequestBody PayloadEnvelope<ExperimentDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Experiment to be updated", required = true)
+            @PathVariable("experimentId") Integer experimentId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ExperimentDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3104,7 +3389,10 @@ public class GOBIIControllerV1 {
 
     }
 
-
+    @ApiOperation(
+            value = "Gets all the experiments",
+            notes = "Retrieves all the existing experiments in the system."
+    )
     @RequestMapping(value = "/experiments", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ExperimentDTO> getExperiments(HttpServletRequest request,
@@ -3140,11 +3428,17 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Gets the experiment given Experiment ID",
+            notes = "Retrieves the Experiment entity having the specified ID."
+    )
     @RequestMapping(value = "/experiments/{experimentId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<ExperimentDTO> getExperimentsById(@PathVariable Integer experimentId,
-                                                             HttpServletRequest request,
-                                                             HttpServletResponse response) {
+    public PayloadEnvelope<ExperimentDTO> getExperimentsById(
+            @ApiParam(value = "ID of the Experiment to be updated", required = true)
+            @PathVariable("experimentId") Integer experimentId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ExperimentDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -3178,11 +3472,17 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** PROTOCOL METHODS
     // *********************************************
+    @ApiOperation(
+            value = "Creates a Protocol",
+            notes = "Creates a new Protocol in the system. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/protocols", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<ProtocolDTO> createProtocol(@RequestBody PayloadEnvelope<ProtocolDTO> payloadEnvelope,
-                                                       HttpServletRequest request,
-                                                       HttpServletResponse response) {
+    public PayloadEnvelope<ProtocolDTO> createProtocol(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<ProtocolDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ProtocolDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -3214,12 +3514,18 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Updates the Protocol by Protocol ID",
+            notes = "Updates the Protocol entity having the specified protocolId. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/protocols/{protocolId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<ProtocolDTO> replaceProtocol(@RequestBody PayloadEnvelope<ProtocolDTO> payloadEnvelope,
-                                                        @PathVariable Integer protocolId,
-                                                        HttpServletRequest request,
-                                                        HttpServletResponse response) {
+    public PayloadEnvelope<ProtocolDTO> replaceProtocol(
+            @RequestBody PayloadEnvelope<ProtocolDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Protocol to be updated", required = true)
+            @PathVariable("protocolId") Integer protocolId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ProtocolDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3252,11 +3558,17 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Gets the protocol given Protocol ID",
+            notes = "Retrieves the Protocol entity having the specified ID."
+    )
     @RequestMapping(value = "/protocols/{protocolId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<ProtocolDTO> replaceProtocol(@PathVariable Integer protocolId,
-                                                        HttpServletRequest request,
-                                                        HttpServletResponse response) {
+    public PayloadEnvelope<ProtocolDTO> replaceProtocol(
+            @ApiParam(value = "ID of the Protocol to be extracted", required = true)
+            @PathVariable("protocolId") Integer protocolId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ProtocolDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3288,6 +3600,10 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Gets all the protocols",
+            notes = "Retrieves all the existing protocols in the system."
+    )
     @RequestMapping(value = "/protocols", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ProtocolDTO> getProtocols(HttpServletRequest request,
@@ -3322,12 +3638,19 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Creates a Vendor Protocol record for given Protocol ID",
+            notes = "Creates a new Vendor Protocol in the system for specified Protocol ID. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/protocols/{protocolId:[\\d]+}/vendors", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<OrganizationDTO> addVendorToProtocol(@RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
-                                                                @PathVariable Integer protocolId,
-                                                                HttpServletRequest request,
-                                                                HttpServletResponse response) {
+    public PayloadEnvelope<OrganizationDTO> addVendorToProtocol(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Protocol")
+            @PathVariable("protocolId") Integer protocolId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3361,12 +3684,18 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Updates the Vendor Protocol by Protocol ID",
+            notes = "Updates the Vendor Protocol entity having the specified protocolId. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/protocols/{protocolId:[\\d]+}/vendors", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<OrganizationDTO> updateOrReplaceVendorProtocol(@RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
-                                                                          @PathVariable Integer protocolId,
-                                                                          HttpServletRequest request,
-                                                                          HttpServletResponse response) {
+    public PayloadEnvelope<OrganizationDTO> updateOrReplaceVendorProtocol(
+            @RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Protocol", required = true)
+            @PathVariable("protocolId") Integer protocolId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3400,11 +3729,17 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Gets all the Vendor Protocols given Protocol ID",
+            notes = "Retrieves all the vendor protocols given protocolId in the system."
+    )
     @RequestMapping(value = "/protocols/{protocolId:[\\d]+}/vendors", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<OrganizationDTO> getVendorsForProtocol(@PathVariable Integer protocolId,
-                                                                  HttpServletRequest request,
-                                                                  HttpServletResponse response) {
+    public PayloadEnvelope<OrganizationDTO> getVendorsForProtocol(
+            @ApiParam(value = "ID of the Protocol ID", required = true)
+            @PathVariable("protocolId") Integer protocolId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3443,11 +3778,17 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Gets all the Protocols by Experiment ID",
+            notes = "Retrieves all the protocols having the specified experimentId in the system."
+    )
     @RequestMapping(value = "/experiments/{experimentId:[\\d]+}/protocols", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<ProtocolDTO> getProtocolByExperimentId(@PathVariable Integer experimentId,
-                                                                  HttpServletRequest request,
-                                                                  HttpServletResponse response) {
+    public PayloadEnvelope<ProtocolDTO> getProtocolByExperimentId(
+            @ApiParam(value = "ID of the Experiment", required = true)
+            @PathVariable("experimentId") Integer experimentId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ProtocolDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -3481,13 +3822,18 @@ public class GOBIIControllerV1 {
     // *************************** FILE PREVIEW METHODS
     // *********************************************
 
-
+    @ApiOperation(
+            value = "Creates a Directory to be used for loading",
+            notes = "Creates a directory in the system that will be used for storing the data files for loading"
+    )
     @RequestMapping(value = "/files/loader/{directoryName}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<LoaderFilePreviewDTO> createLoaderFileDirectory(@PathVariable("directoryName") String directoryName,
-                                                                           @RequestBody PayloadEnvelope<LoaderFilePreviewDTO> payloadEnvelope,
-                                                                           HttpServletRequest request,
-                                                                           HttpServletResponse response) {
+    public PayloadEnvelope<LoaderFilePreviewDTO> createLoaderFileDirectory(
+            @ApiParam(value = "Name of the directory/folder", required = true)
+            @PathVariable("directoryName") String directoryName,
+            @RequestBody PayloadEnvelope<LoaderFilePreviewDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<LoaderFilePreviewDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -3520,14 +3866,21 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Gets file preview for the specified directory name",
+            notes = "Retrieves file preview for the specified directory name"
+    )
     @RequestMapping(value = "/files/loader/{directoryName}",
             params = {"fileFormat"},
             method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<LoaderFilePreviewDTO> getFilePreviewBySearch(@PathVariable("directoryName") String directoryName,
-                                                                        @RequestParam(value = "fileFormat", required = false) String fileFormat,
-                                                                        HttpServletRequest request,
-                                                                        HttpServletResponse response) {
+    public PayloadEnvelope<LoaderFilePreviewDTO> getFilePreviewBySearch(
+            @ApiParam(value = "Name of the directory", required = true)
+            @PathVariable("directoryName") String directoryName,
+            @ApiParam(value = "Format/Extension of the file")
+            @RequestParam(value = "fileFormat", required = false) String fileFormat,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<LoaderFilePreviewDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -3562,11 +3915,17 @@ public class GOBIIControllerV1 {
     // *************************** MAPSET METHODS
     // *********************************************
 
+    @ApiOperation(
+            value = "Creates a mapset",
+            notes = "Creates a new mapset in the system. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/mapsets", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<MapsetDTO> createMapset(@RequestBody PayloadEnvelope<MapsetDTO> payloadEnvelope,
-                                                   HttpServletRequest request,
-                                                   HttpServletResponse response) {
+    public PayloadEnvelope<MapsetDTO> createMapset(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<MapsetDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<MapsetDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3599,12 +3958,18 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Updates the Mapset by Mapset ID",
+            notes = "Updates the Mapset entity having the specified mapsetId. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/mapsets/{mapsetId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<MapsetDTO> replaceMapset(@RequestBody PayloadEnvelope<MapsetDTO> payloadEnvelope,
-                                                    @PathVariable Integer mapsetId,
-                                                    HttpServletRequest request,
-                                                    HttpServletResponse response) {
+    public PayloadEnvelope<MapsetDTO> replaceMapset(
+            @RequestBody PayloadEnvelope<MapsetDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Mapset to be updated", required = true)
+            @PathVariable("mapsetId") Integer mapsetId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<MapsetDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3637,6 +4002,10 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Gets all the mapsets",
+            notes = "Retrieves all the existing mapsets in the system."
+    )
     @RequestMapping(value = "/mapsets", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<MapsetDTO> getMapsets(HttpServletRequest request,
@@ -3670,11 +4039,17 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Gets the mapset given Mapset ID",
+            notes = "Retrieves the Mapset entity having the specified ID."
+    )
     @RequestMapping(value = "/mapsets/{mapsetId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<MapsetDTO> getMapsetById(@PathVariable Integer mapsetId,
-                                                    HttpServletRequest request,
-                                                    HttpServletResponse response) {
+    public PayloadEnvelope<MapsetDTO> getMapsetById(
+            @ApiParam(value = "ID of the Mapset to be extracted", required = true)
+            @PathVariable("mapsetId") Integer mapsetId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<MapsetDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3708,12 +4083,17 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** MARKERGROUP METHODS
     // *********************************************
-
+    @ApiOperation(
+            value = "Creates a Marker Group",
+            notes = "Creates a new marker group in the system. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/markergroups", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<MarkerGroupDTO> createMarkerGroup(@RequestBody PayloadEnvelope<MarkerGroupDTO> payloadEnvelope,
-                                                             HttpServletRequest request,
-                                                             HttpServletResponse response) {
+    public PayloadEnvelope<MarkerGroupDTO> createMarkerGroup(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<MarkerGroupDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<MarkerGroupDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3746,12 +4126,18 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Updates the Marker Group by Marker Group ID",
+            notes = "Updates the Marker Group entity having the specified markerGroupId. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/markergroups/{markerGroupId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<MarkerGroupDTO> replaceMarkerGroup(@RequestBody PayloadEnvelope<MarkerGroupDTO> payloadEnvelope,
-                                                              @PathVariable Integer markerGroupId,
-                                                              HttpServletRequest request,
-                                                              HttpServletResponse response) {
+    public PayloadEnvelope<MarkerGroupDTO> replaceMarkerGroup(
+            @RequestBody PayloadEnvelope<MarkerGroupDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Marker Group to be updated", required = true)
+            @PathVariable("markerGroupId") Integer markerGroupId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<MarkerGroupDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3784,6 +4170,10 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Gets all the marker groups",
+            notes = "Retrieves all the existing marker groups in the system."
+    )
     @RequestMapping(value = "/markergroups", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<MarkerGroupDTO> getMarkerGroups(HttpServletRequest request,
@@ -3817,11 +4207,17 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Gets the marker group given Marker Group ID",
+            notes = "Retrieves the Marker Group entity having the specified ID."
+    )
     @RequestMapping(value = "/markergroups/{markerGroupId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<MarkerGroupDTO> getMarkerGroupById(@PathVariable Integer markerGroupId,
-                                                              HttpServletRequest request,
-                                                              HttpServletResponse response) {
+    public PayloadEnvelope<MarkerGroupDTO> getMarkerGroupById(
+            @ApiParam(value = "ID of the marker group to be updated", required = true)
+            @PathVariable("markerGroupId") Integer markerGroupId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<MarkerGroupDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3855,12 +4251,17 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** REFERENCE METHODS
     // *********************************************
-
+    @ApiOperation(
+            value = "Creates a reference",
+            notes = "Creates a new reference in the system. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/references", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<ReferenceDTO> createReference(@RequestBody PayloadEnvelope<ReferenceDTO> payloadEnvelope,
-                                                         HttpServletRequest request,
-                                                         HttpServletResponse response) {
+    public PayloadEnvelope<ReferenceDTO> createReference(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<ReferenceDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ReferenceDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3893,12 +4294,18 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Updates the Reference by Reference ID",
+            notes = "Updates the Reference entity having the specified referenceId. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/references/{referenceId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<ReferenceDTO> replaceReference(@RequestBody PayloadEnvelope<ReferenceDTO> payloadEnvelope,
-                                                          @PathVariable Integer referenceId,
-                                                          HttpServletRequest request,
-                                                          HttpServletResponse response) {
+    public PayloadEnvelope<ReferenceDTO> replaceReference(
+            @RequestBody PayloadEnvelope<ReferenceDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Reference to be updated", required = true)
+            @PathVariable("referenceId") Integer referenceId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ReferenceDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3931,6 +4338,10 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Gets all the references",
+            notes = "Retrieves all the existing references in the system."
+    )
     @RequestMapping(value = "/references", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ReferenceDTO> getReferences(HttpServletRequest request,
@@ -3964,11 +4375,17 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Gets the reference given Reference ID",
+            notes = "Retrieves the Reference entity having the specified ID."
+    )
     @RequestMapping(value = "/references/{referenceId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<ReferenceDTO> getReferenceById(@PathVariable Integer referenceId,
-                                                          HttpServletRequest request,
-                                                          HttpServletResponse response) {
+    public PayloadEnvelope<ReferenceDTO> getReferenceById(
+            @ApiParam(value = "ID of the Reference to be extracted", required = true)
+            @PathVariable("referenceId") Integer referenceId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ReferenceDTO> returnVal = new PayloadEnvelope<>();
 
@@ -4013,15 +4430,24 @@ public class GOBIIControllerV1 {
      * @return
      * @throws Exception
      */
+
+    @ApiOperation(
+            value = "Upload file",
+            notes = "Uploads an arbitrary file to the specified destination"
+    )
     @RequestMapping(value = "/files/{destinationType}",
             method = RequestMethod.POST)
     public
     @ResponseBody
-    String uploadFile(@PathVariable("destinationType") String destinationType,
-                      @RequestParam("fileName") String fileName,
-                      @RequestParam("file") MultipartFile file,
-                      HttpServletRequest request,
-                      HttpServletResponse response) throws Exception {
+    String uploadFile(
+            @ApiParam(value = "Destination type where the file will be uploaded to", required = true)
+            @PathVariable("destinationType") String destinationType,
+            @ApiParam(value = "Name of the file to be uploaded", required = true)
+            @RequestParam("fileName") String fileName,
+            @ApiParam(value = "The file to be uploaded", required = true)
+            @RequestParam("file") MultipartFile file,
+            HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
 
         //String fileName= file.getName();
 
@@ -4070,7 +4496,7 @@ public class GOBIIControllerV1 {
     }
 
     /***
-     * Uplaod an arbitary file to the specified destination
+     * Delete an arbitary file to the specified destination
      * @param destinationType
      * @param fileName
      * @param file
@@ -4079,16 +4505,24 @@ public class GOBIIControllerV1 {
      * @return
      * @throws Exception
      */
+
+    @ApiOperation(
+            value = "Delete file",
+            notes = "Deletes an arbitrary file from the specified destination"
+    )
     @RequestMapping(value = "/files/{destinationType}",
             method = RequestMethod.DELETE
             , produces = MediaType.TEXT_PLAIN_VALUE
     )
     public
     @ResponseBody
-    String deleteFile(@PathVariable("destinationType") String destinationType,
-                      @RequestParam("fileName") String fileName,
-                      HttpServletRequest request,
-                      HttpServletResponse response) throws Exception {
+    String deleteFile(
+            @ApiParam(value = "Destination type where the file will be delete from", required = true)
+            @PathVariable("destinationType") String destinationType,
+            @ApiParam(value = "Name of the file to be deleted", required = true)
+            @RequestParam("fileName") String fileName,
+            HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
 
         //String fileName= file.getName();
 
@@ -4130,17 +4564,27 @@ public class GOBIIControllerV1 {
      * @return
      * @throws Exception
      */
+
+    @ApiOperation(
+            value = "Upload file for Job",
+            notes = "Uploads the specified file for a specific job to the specified directory"
+    )
     @RequestMapping(value = "/files/{gobiiJobId}/{destinationType}",
             params = {"fileName"},
             method = RequestMethod.POST)
     public
     @ResponseBody
-    String uploadJobFile(@PathVariable("gobiiJobId") String gobiiJobId,
-                         @PathVariable("destinationType") String destinationType,
-                         @RequestParam("fileName") String fileName,
-                         @RequestParam("file") MultipartFile file,
-                         HttpServletRequest request,
-                         HttpServletResponse response) throws Exception {
+    String uploadJobFile(
+            @ApiParam(value = "ID of the Job that the file will be associated to", required = true)
+            @PathVariable("gobiiJobId") String gobiiJobId,
+            @ApiParam(value = "Destination type where the file will be uploaded to", required = true)
+            @PathVariable("destinationType") String destinationType,
+            @ApiParam(value = "Name of the file", required = true)
+            @RequestParam("fileName") String fileName,
+            @ApiParam(value = "The file to be uploaded", required = true)
+            @RequestParam("file") MultipartFile file,
+            HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
 
         String name = file.getName();
 
@@ -4188,13 +4632,21 @@ public class GOBIIControllerV1 {
         return "";
     }
 
+    @ApiOperation(
+            value = "Download file for specified Job",
+            notes = "Downloads the specified file for a specific job from the specified directory"
+    )
     @RequestMapping(value = "/files/{gobiiJobId}/{destinationType}",
             method = RequestMethod.GET)
-    public ResponseEntity<InputStreamResource> downloadJobFile(@PathVariable("gobiiJobId") String gobiiJobId,
-                                                               @PathVariable("destinationType") String destinationType,
-                                                               @RequestParam("fileName") String fileName,
-                                                               HttpServletRequest request,
-                                                               HttpServletResponse response) throws Exception {
+    public ResponseEntity<InputStreamResource> downloadJobFile(
+            @ApiParam(value = "ID of the Job", required = true)
+            @PathVariable("gobiiJobId") String gobiiJobId,
+            @ApiParam(value = "Destination type where the file will be downloaded from", required = true)
+            @PathVariable("destinationType") String destinationType,
+            @ApiParam(value = "Name of the file to be downloaded", required = true)
+            @RequestParam("fileName") String fileName,
+            HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
 
         ResponseEntity<InputStreamResource> returnVal = null;
         try {
@@ -4226,12 +4678,17 @@ public class GOBIIControllerV1 {
 
 
     /*** JOB METHODS ***/
-
+    @ApiOperation(
+            value = "Creates a job",
+            notes = "Creates a new job in the system. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/jobs", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<JobDTO> createJob(@RequestBody PayloadEnvelope<JobDTO> payloadEnvelope,
-                                             HttpServletRequest request,
-                                             HttpServletResponse response) {
+    public PayloadEnvelope<JobDTO> createJob(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<JobDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -4266,7 +4723,10 @@ public class GOBIIControllerV1 {
 
     }
 
-
+    @ApiOperation(
+            value = "Gets all the jobs",
+            notes = "Retrieves all the existing jobs in the system."
+    )
     @RequestMapping(value = "/jobs", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<JobDTO> getStatus(HttpServletRequest request,
@@ -4300,12 +4760,18 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Updates the Job by Job Name",
+            notes = "Updates the Job entity having the specified jobName. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/jobs/{jobName}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<JobDTO> replaceStatus(@RequestBody PayloadEnvelope<JobDTO> payloadEnvelope,
-                                                 @PathVariable("jobName") String jobName,
-                                                 HttpServletRequest request,
-                                                 HttpServletResponse response) {
+    public PayloadEnvelope<JobDTO> replaceStatus(
+            @RequestBody PayloadEnvelope<JobDTO> payloadEnvelope,
+            @ApiParam(value = "Name of the Job to be updated", required = true)
+            @PathVariable("jobName") String jobName,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
 
@@ -4340,11 +4806,17 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Gets the job given Job Name",
+            notes = "Retrieves the Job entity having the specified name."
+    )
     @RequestMapping(value = "/jobs/{jobName}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<JobDTO> getStatusById(@PathVariable("jobName") String jobName,
-                                                 HttpServletRequest request,
-                                                 HttpServletResponse response) {
+    public PayloadEnvelope<JobDTO> getStatusById(
+            @ApiParam(value = "Name of the Job to be extracted", required = true)
+            @PathVariable("jobName") String jobName,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -4375,13 +4847,19 @@ public class GOBIIControllerV1 {
 
     }
 
-
+    @ApiOperation(
+            value = "Created DNA samples for a given Job",
+            notes = "Creates DNA samples for a given Job having the specified name in the system. $RequestResponseStructure$"
+    )
     @RequestMapping(value = "/jobs/dnasamples/{jobName}", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<JobDTO> submitDnaSamplesByJobName(@RequestBody PayloadEnvelope<DnaSampleDTO> payloadEnvelope,
-                                                             @PathVariable("jobName") String jobName,
-                                                             HttpServletRequest request,
-                                                             HttpServletResponse response) {
+    public PayloadEnvelope<JobDTO> submitDnaSamplesByJobName(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<DnaSampleDTO> payloadEnvelope,
+            @ApiParam(value = "Name of the Job that the DNA samples will be added to", required = true)
+            @PathVariable("jobName") String jobName,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
 
@@ -4420,6 +4898,10 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** ENTITY STATS METHODS
     // *********************************************
+    @ApiOperation(
+            value = "Gets all the entities",
+            notes = "Retrieves all the existing entities in the system."
+    )
     @RequestMapping(value = "/entities", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<EntityStatsDTO> getAllEntityStats(HttpServletRequest request,
@@ -4456,12 +4938,17 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
-
+    @ApiOperation(
+            value = "Gets the last modified entity for the given Entity Name",
+            notes = "Retrieves last modified Entity for the given entityName"
+    )
     @RequestMapping(value = "/entities/{entityName}/lastmodified", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<EntityStatsDTO> getEntityLastModified(@PathVariable String entityName,
-                                                                 HttpServletRequest request,
-                                                                 HttpServletResponse response) {
+    public PayloadEnvelope<EntityStatsDTO> getEntityLastModified(
+            @ApiParam(value = "Name of the Entity", required = true)
+            @PathVariable("entityName") String entityName,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<EntityStatsDTO> returnVal = new PayloadEnvelope<>();
 
@@ -4496,11 +4983,17 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Gets the total entity count for the given Entity Name",
+            notes = "Retrieves the total Entity count for the given entityName"
+    )
     @RequestMapping(value = "/entities/{entityName}/count", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<EntityStatsDTO> getEntityCount(@PathVariable String entityName,
-                                                          HttpServletRequest request,
-                                                          HttpServletResponse response) {
+    public PayloadEnvelope<EntityStatsDTO> getEntityCount(
+            @ApiParam(value = "Name of the Entity", required = true)
+            @PathVariable("entityName") String entityName,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<EntityStatsDTO> returnVal = new PayloadEnvelope<>();
 
@@ -4536,13 +5029,21 @@ public class GOBIIControllerV1 {
     }
 
 
+    @ApiOperation(
+            value = "Gets the total count of the children for the given Entity",
+            notes = "Retrieves the total count of the children for the given entity"
+    )
     @RequestMapping(value = "/entities/{entityNameParent}/{parentId}/{entityNameChild}/count", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<EntityStatsDTO> getEntityCountOfChildren(@PathVariable String entityNameParent,
-                                                                    @PathVariable Integer parentId,
-                                                                    @PathVariable String entityNameChild,
-                                                                    HttpServletRequest request,
-                                                                    HttpServletResponse response) {
+    public PayloadEnvelope<EntityStatsDTO> getEntityCountOfChildren(
+            @ApiParam(value = "Name of the parent entity", required = true)
+            @PathVariable("entityNameParent") String entityNameParent,
+            @ApiParam(value = "ID of the parent entity", required = true)
+            @PathVariable("parentId") Integer parentId,
+            @ApiParam(value = "Name of the child entity", required = true)
+            @PathVariable("entityNameChild") String entityNameChild,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<EntityStatsDTO> returnVal = new PayloadEnvelope<>();
 
