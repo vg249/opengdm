@@ -144,6 +144,194 @@ __|integer (int32)
 |===
 
 
+[[_cvgroupdto]]
+=== CvGroupDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**allowedProcessTypes** +
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**cvGroupId** +
+__|integer (int32)
+|**definition** +
+__|string
+|**groupType** +
+__|integer (int32)
+|**id** +
+__|integer (int32)
+|**name** +
+__|string
+|===
+
+
+[[_datasetdto]]
+=== DataSetDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**allowedProcessTypes** +
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**analysesIds** +
+__|< integer (int32) > array
+|**callingAnalysisId** +
+__|integer (int32)
+|**callingAnalysisName** +
+__|string
+|**createdBy** +
+__|integer (int32)
+|**createdDate** +
+__|string (date-time)
+|**dataFile** +
+__|string
+|**dataSetId** +
+__|integer (int32)
+|**dataTable** +
+__|string
+|**datasetName** +
+__|string
+|**datatypeId** +
+__|integer (int32)
+|**datatypeName** +
+__|string
+|**experimentId** +
+__|integer (int32)
+|**experimentName** +
+__|string
+|**id** +
+__|integer (int32)
+|**jobId** +
+__|integer (int32)
+|**jobStatusId** +
+__|integer (int32)
+|**jobStatusName** +
+__|string
+|**jobSubmittedDate** +
+__|string (date-time)
+|**jobTypeId** +
+__|integer (int32)
+|**jobTypeName** +
+__|string
+|**loaderFirstName** +
+__|string
+|**loaderLastName** +
+__|string
+|**modifiedBy** +
+__|integer (int32)
+|**modifiedDate** +
+__|string (date-time)
+|**piContactId** +
+__|integer (int32)
+|**piEmail** +
+__|string
+|**piFirstName** +
+__|string
+|**piLastName** +
+__|string
+|**platformId** +
+__|integer (int32)
+|**platformName** +
+__|string
+|**projectId** +
+__|integer (int32)
+|**projectName** +
+__|string
+|**protocolId** +
+__|integer (int32)
+|**protocolName** +
+__|string
+|**qualityFile** +
+__|string
+|**qualityTable** +
+__|string
+|**scores** +
+__|< integer (int32) > array
+|**statusId** +
+__|integer (int32)
+|**totalMarkers** +
+__|integer (int32)
+|**totalSamples** +
+__|integer (int32)
+|===
+
+
+[[_displaydto]]
+=== DisplayDTO
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|**allowedProcessTypes** +
+__||< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**columnName** +
+__||string
+|**createdBy** +
+__||integer (int32)
+|**createdDate** +
+__||string (date-time)
+|**displayId** +
+__||integer (int32)
+|**displayName** +
+__||string
+|**displayRank** +
+__||integer (int32)
+|**entityNameType** +
+__||enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION, PLATFORM, MANIFEST, MAPSET, MARKER_GROUP, EXPERIMENT, REFERENCE, ROLE, DISPLAY, MARKER, PROTOCOL, VENDOR_PROTOCOL, DNASAMPLE, LINKAGE_GROUP, DNARUN, GERMPLASM, JOB)
+|**id** +
+__||integer (int32)
+|**includeDetailsList** +
+__|**Default** : `false`|boolean
+|**modifiedBy** +
+__||integer (int32)
+|**modifiedDate** +
+__||string (date-time)
+|**tableName** +
+__||string
+|**tableNamesWithColDisplay** +
+__||< string, < <<_tablecoldisplay,TableColDisplay>> > array > map
+|===
+
+
+[[_dnasampledto]]
+=== DnaSampleDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**allowedProcessTypes** +
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**analysisMethodName** +
+__|string
+|**dnaRunId** +
+__|integer (int32)
+|**dnaSampleId** +
+__|integer (int32)
+|**dnaSampleName** +
+__|string
+|**dnaSampleNum** +
+__|integer (int32)
+|**dnarunName** +
+__|string
+|**experimentId** +
+__|integer (int32)
+|**externalCode** +
+__|string
+|**germplasmExternalCode** +
+__|string
+|**germplasmId** +
+__|integer (int32)
+|**germplasmName** +
+__|string
+|**id** +
+__|integer (int32)
+|**markerCount** +
+__|integer (int32)
+|**projectId** +
+__|integer (int32)
+|===
+
+
 [[_entitypropertydto]]
 === EntityPropertyDTO
 
@@ -158,6 +346,297 @@ __|integer (int32)
 __|string
 |**propertyValue** +
 __|string
+|===
+
+
+[[_entitystatsdto]]
+=== EntityStatsDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**allowedProcessTypes** +
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**count** +
+__|integer (int32)
+|**entityNameType** +
+__|enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION, PLATFORM, MANIFEST, MAPSET, MARKER_GROUP, EXPERIMENT, REFERENCE, ROLE, DISPLAY, MARKER, PROTOCOL, VENDOR_PROTOCOL, DNASAMPLE, LINKAGE_GROUP, DNARUN, GERMPLASM, JOB)
+|**entityStateDateType** +
+__|enum (INSERT_UPDATE, INSERT_ONLY)
+|**id** +
+__|integer (int32)
+|**lastModified** +
+__|string (date-time)
+|===
+
+
+[[_experimentdto]]
+=== ExperimentDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**allowedProcessTypes** +
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**createdBy** +
+__|integer (int32)
+|**createdDate** +
+__|string (date-time)
+|**datasets** +
+__|< <<_datasetdto,DataSetDTO>> > array
+|**entityNameType** +
+__|enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION, PLATFORM, MANIFEST, MAPSET, MARKER_GROUP, EXPERIMENT, REFERENCE, ROLE, DISPLAY, MARKER, PROTOCOL, VENDOR_PROTOCOL, DNASAMPLE, LINKAGE_GROUP, DNARUN, GERMPLASM, JOB)
+|**experimentCode** +
+__|string
+|**experimentDataFile** +
+__|string
+|**experimentId** +
+__|integer (int32)
+|**experimentName** +
+__|string
+|**id** +
+__|integer (int32)
+|**manifestId** +
+__|integer (int32)
+|**modifiedBy** +
+__|integer (int32)
+|**modifiedDate** +
+__|string (date-time)
+|**projectId** +
+__|integer (int32)
+|**statusId** +
+__|integer (int32)
+|**vendorProtocolId** +
+__|integer (int32)
+|===
+
+
+[[_extractorinstructionfilesdto]]
+=== ExtractorInstructionFilesDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**allowedProcessTypes** +
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**gobiiExtractorInstructions** +
+__|< <<_gobiiextractorinstruction,GobiiExtractorInstruction>> > array
+|**id** +
+__|integer (int32)
+|**instructionFileName** +
+__|string
+|**jobId** +
+__|string
+|===
+
+
+[[_file]]
+=== File
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|**absolute** +
+__|**Default** : `false`|boolean
+|**absoluteFile** +
+__||<<_file,File>>
+|**absolutePath** +
+__||string
+|**canonicalFile** +
+__||<<_file,File>>
+|**canonicalPath** +
+__||string
+|**directory** +
+__|**Default** : `false`|boolean
+|**file** +
+__|**Default** : `false`|boolean
+|**freeSpace** +
+__||integer (int64)
+|**hidden** +
+__|**Default** : `false`|boolean
+|**name** +
+__||string
+|**parent** +
+__||string
+|**parentFile** +
+__||<<_file,File>>
+|**path** +
+__||string
+|**totalSpace** +
+__||integer (int64)
+|**usableSpace** +
+__||integer (int64)
+|===
+
+
+[[_gobiidatasetextract]]
+=== GobiiDataSetExtract
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|**accolate** +
+__|**Default** : `false`|boolean
+|**dataSet** +
+__||<<_propnameid,PropNameId>>
+|**extractDestinationDirectory** +
+__||string
+|**extractedFiles** +
+__||< <<_file,File>> > array
+|**gobiiDatasetType** +
+__||<<_propnameid,PropNameId>>
+|**gobiiExtractFilterType** +
+__||enum (UNKNOWN, WHOLE_DATASET, BY_MARKER, BY_SAMPLE)
+|**gobiiFileType** +
+__||enum (HAPMAP, FLAPJACK, GENERIC, VCF, META_DATA)
+|**gobiiJobStatus** +
+__||enum (CV_PROGRESSSTATUS_PENDING, CV_PROGRESSSTATUS_INPROGRESS, CV_PROGRESSSTATUS_COMPLETED, CV_PROGRESSSTATUS_FAILED, CV_PROGRESSSTATUS_VALIDATION, CV_PROGRESSSTATUS_DIGEST, CV_PROGRESSSTATUS_TRANSFORMATION, CV_PROGRESSSTATUS_METADATALOAD, CV_PROGRESSSTATUS_MATRIXLOAD, CV_PROGRESSSTATUS_ABORTED, CV_PROGRESSSTATUS_METADATAEXTRACT, CV_PROGRESSSTATUS_FINALASSEMBLY, CV_PROGRESSSTATUS_QCPROCESSING, CV_PROGRESSSTATUS_NOSTATUS)
+|**gobiiSampleListType** +
+__||enum (GERMPLASM_NAME, EXTERNAL_CODE, DNA_SAMPLE)
+|**listFileName** +
+__||string
+|**logMessage** +
+__||string
+|**markerGroups** +
+__||< <<_propnameid,PropNameId>> > array
+|**markerList** +
+__||< string > array
+|**platforms** +
+__||< <<_propnameid,PropNameId>> > array
+|**principleInvestigator** +
+__||<<_propnameid,PropNameId>>
+|**project** +
+__||<<_propnameid,PropNameId>>
+|**sampleList** +
+__||< string > array
+|===
+
+
+[[_gobiiextractorinstruction]]
+=== GobiiExtractorInstruction
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|**contactEmail** +
+__||string
+|**contactId** +
+__||integer (int32)
+|**dataSetExtracts** +
+__||< <<_gobiidatasetextract,GobiiDataSetExtract>> > array
+|**gobiiCropType** +
+__||string
+|**mapsetIds** +
+__||< integer (int32) > array
+|**qcCheck** +
+__|**Default** : `false`|boolean
+|===
+
+
+[[_gobiifile]]
+=== GobiiFile
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|**createSource** +
+__|**Default** : `false`|boolean
+|**delimiter** +
+__||string
+|**destination** +
+__||string
+|**gobiiFileType** +
+__||enum (HAPMAP, FLAPJACK, GENERIC, VCF, META_DATA)
+|**requireDirectoriesToExist** +
+__|**Default** : `false`|boolean
+|**source** +
+__||string
+|===
+
+
+[[_gobiifilecolumn]]
+=== GobiiFileColumn
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|**constantValue** +
+__||string
+|**dataSetOrientationType** +
+__||enum (SAMPLE_FAST, MARKER_FAST)
+|**dataSetType** +
+__||enum (NUCLEOTIDE_2_LETTER, IUPAC, SSR_ALLELE_SIZE, DOMINANT_NON_NUCLEOTIDE, CO_DOMINANT_NON_NUCLEOTIDE, VCF)
+|**filterFrom** +
+__||string
+|**filterTo** +
+__||string
+|**findText** +
+__||string
+|**getcCoord** +
+__||integer (int32)
+|**getrCoord** +
+__||integer (int32)
+|**gobiiColumnType** +
+__||enum (CSV_COLUMN, CSV_ROW, CSV_BOTH, VCF_SAMPLE, VCF_MARKER, VCF_VARIANT, VCF_METADATA, VCF_INFO, CONSTANT, AUTOINCREMENT, VCF_MARKER_POS)
+|**index** +
+__||string
+|**metaDataId** +
+__||string
+|**name** +
+__||string
+|**replaceText** +
+__||string
+|**subcolumn** +
+__|**Default** : `false`|boolean
+|**subcolumnDelimiter** +
+__||string
+|===
+
+
+[[_gobiiloaderinstruction]]
+=== GobiiLoaderInstruction
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|**columnsByTableName** +
+__||< string, < <<_gobiifilecolumn,GobiiFileColumn>> > array > map
+|**contactEmail** +
+__||string
+|**contactId** +
+__||integer (int32)
+|**dataSet** +
+__||<<_propnameid,PropNameId>>
+|**dataSetId** +
+__||integer (int32)
+|**datasetType** +
+__||<<_propnameid,PropNameId>>
+|**experiment** +
+__||<<_propnameid,PropNameId>>
+|**gobiiCropType** +
+__||string
+|**gobiiFile** +
+__||<<_gobiifile,GobiiFile>>
+|**gobiiFileColumns** +
+__||< <<_gobiifilecolumn,GobiiFileColumn>> > array
+|**gobiiJobStatus** +
+__||enum (CV_PROGRESSSTATUS_PENDING, CV_PROGRESSSTATUS_INPROGRESS, CV_PROGRESSSTATUS_COMPLETED, CV_PROGRESSSTATUS_FAILED, CV_PROGRESSSTATUS_VALIDATION, CV_PROGRESSSTATUS_DIGEST, CV_PROGRESSSTATUS_TRANSFORMATION, CV_PROGRESSSTATUS_METADATALOAD, CV_PROGRESSSTATUS_MATRIXLOAD, CV_PROGRESSSTATUS_ABORTED, CV_PROGRESSSTATUS_METADATAEXTRACT, CV_PROGRESSSTATUS_FINALASSEMBLY, CV_PROGRESSSTATUS_QCPROCESSING, CV_PROGRESSSTATUS_NOSTATUS)
+|**jobPayloadType** +
+__||enum (CV_PAYLOADTYPE_SAMPLES, CV_PAYLOADTYPE_MARKERS, CV_PAYLOADTYPE_MATRIX, CV_PAYLOADTYPE_MARKERSAMPLES, CV_PAYLOADTYPE_ALLMETA)
+|**logMessage** +
+__||string
+|**mapset** +
+__||<<_propnameid,PropNameId>>
+|**platform** +
+__||<<_propnameid,PropNameId>>
+|**project** +
+__||<<_propnameid,PropNameId>>
+|**qcCheck** +
+__|**Default** : `false`|boolean
+|**table** +
+__||string
+|**vcfParameters** +
+__||<<_vcfparameters,VcfParameters>>
 |===
 
 
@@ -220,6 +699,67 @@ __|string
 |===
 
 
+[[_inputstream]]
+=== InputStream
+__Type__ : object
+
+
+[[_inputstreamresource]]
+=== InputStreamResource
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|**description** +
+__||string
+|**file** +
+__||<<_file,File>>
+|**filename** +
+__||string
+|**inputStream** +
+__||<<_inputstream,InputStream>>
+|**open** +
+__|**Default** : `false`|boolean
+|**readable** +
+__|**Default** : `false`|boolean
+|**uri** +
+__||string (uri)
+|**url** +
+__||string (url)
+|===
+
+
+[[_jobdto]]
+=== JobDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**allowedProcessTypes** +
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**datasetIds** +
+__|< integer (int32) > array
+|**id** +
+__|integer (int32)
+|**jobId** +
+__|integer (int32)
+|**jobName** +
+__|string
+|**message** +
+__|string
+|**payloadType** +
+__|string
+|**status** +
+__|string
+|**submittedBy** +
+__|integer (int32)
+|**submittedDate** +
+__|string (date-time)
+|**type** +
+__|string
+|===
+
+
 [[_link]]
 === Link
 
@@ -245,6 +785,273 @@ __|< enum (GET, POST, PUT, PATCH, DELETE, OPTIONS) > array
 __|< < <<_link,Link>> > array > array
 |**linksPerDataItem** +
 __|< <<_link,Link>> > array
+|===
+
+
+[[_loaderfilepreviewdto]]
+=== LoaderFilePreviewDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**allowedProcessTypes** +
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**directoryName** +
+__|string
+|**fileList** +
+__|< string > array
+|**filePreview** +
+__|< < string > array > array
+|**id** +
+__|integer (int32)
+|**previewFileName** +
+__|string
+|===
+
+
+[[_loaderinstructionfilesdto]]
+=== LoaderInstructionFilesDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**allowedProcessTypes** +
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**gobiiLoaderInstructions** +
+__|< <<_gobiiloaderinstruction,GobiiLoaderInstruction>> > array
+|**id** +
+__|integer (int32)
+|**instructionFileName** +
+__|string
+|===
+
+
+[[_manifestdto]]
+=== ManifestDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**allowedProcessTypes** +
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**code** +
+__|string
+|**createdBy** +
+__|integer (int32)
+|**createdDate** +
+__|string (date-time)
+|**entityNameType** +
+__|enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION, PLATFORM, MANIFEST, MAPSET, MARKER_GROUP, EXPERIMENT, REFERENCE, ROLE, DISPLAY, MARKER, PROTOCOL, VENDOR_PROTOCOL, DNASAMPLE, LINKAGE_GROUP, DNARUN, GERMPLASM, JOB)
+|**filePath** +
+__|string
+|**id** +
+__|integer (int32)
+|**manifestId** +
+__|integer (int32)
+|**modifiedBy** +
+__|integer (int32)
+|**modifiedDate** +
+__|string (date-time)
+|**name** +
+__|string
+|===
+
+
+[[_mapsetdto]]
+=== MapsetDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**allowedProcessTypes** +
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**code** +
+__|string
+|**createdBy** +
+__|integer (int32)
+|**createdDate** +
+__|string (date-time)
+|**description** +
+__|string
+|**entityNameType** +
+__|enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION, PLATFORM, MANIFEST, MAPSET, MARKER_GROUP, EXPERIMENT, REFERENCE, ROLE, DISPLAY, MARKER, PROTOCOL, VENDOR_PROTOCOL, DNASAMPLE, LINKAGE_GROUP, DNARUN, GERMPLASM, JOB)
+|**id** +
+__|integer (int32)
+|**mapType** +
+__|integer (int32)
+|**mapsetId** +
+__|integer (int32)
+|**modifiedBy** +
+__|integer (int32)
+|**modifiedDate** +
+__|string (date-time)
+|**name** +
+__|string
+|**properties** +
+__|< <<_entitypropertydto,EntityPropertyDTO>> > array
+|**referenceId** +
+__|integer (int32)
+|**statusId** +
+__|integer (int32)
+|===
+
+
+[[_markerdto]]
+=== MarkerDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**allowedProcessTypes** +
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**alts** +
+__|< integer (int32) > array
+|**code** +
+__|string
+|**id** +
+__|integer (int32)
+|**markerId** +
+__|integer (int32)
+|**markerName** +
+__|string
+|**platformId** +
+__|integer (int32)
+|**platformName** +
+__|string
+|**ref** +
+__|string
+|**referenceId** +
+__|integer (int32)
+|**sequence** +
+__|string
+|**status** +
+__|integer (int32)
+|**strand** +
+__|integer (int32)
+|**strandId** +
+__|integer (int32)
+|**variantId** +
+__|integer (int32)
+|===
+
+
+[[_markergroupdto]]
+=== MarkerGroupDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**allowedProcessTypes** +
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**code** +
+__|string
+|**createdBy** +
+__|integer (int32)
+|**createdDate** +
+__|string (date-time)
+|**entityNameType** +
+__|enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION, PLATFORM, MANIFEST, MAPSET, MARKER_GROUP, EXPERIMENT, REFERENCE, ROLE, DISPLAY, MARKER, PROTOCOL, VENDOR_PROTOCOL, DNASAMPLE, LINKAGE_GROUP, DNARUN, GERMPLASM, JOB)
+|**germplasmGroup** +
+__|string
+|**id** +
+__|integer (int32)
+|**markerGroupId** +
+__|integer (int32)
+|**markerMap** +
+__|< string, < string > array > map
+|**markers** +
+__|< <<_markergroupmarkerdto,MarkerGroupMarkerDTO>> > array
+|**modifiedBy** +
+__|integer (int32)
+|**modifiedDate** +
+__|string (date-time)
+|**name** +
+__|string
+|**statusId** +
+__|integer (int32)
+|===
+
+
+[[_markergroupmarkerdto]]
+=== MarkerGroupMarkerDTO
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|**favorableAllele** +
+__||string
+|**gobiiProcessType** +
+__||enum (CREATE, READ, UPDATE, DELETE, NONE)
+|**markerExists** +
+__|**Default** : `false`|boolean
+|**markerId** +
+__||integer (int32)
+|**markerName** +
+__||string
+|**platformId** +
+__||integer (int32)
+|**platformName** +
+__||string
+|===
+
+
+[[_nameiddto]]
+=== NameIdDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**allowedProcessTypes** +
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**entityLasetModified** +
+__|string (date-time)
+|**fkId** +
+__|integer (int32)
+|**gobiiEntityNameType** +
+__|enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION, PLATFORM, MANIFEST, MAPSET, MARKER_GROUP, EXPERIMENT, REFERENCE, ROLE, DISPLAY, MARKER, PROTOCOL, VENDOR_PROTOCOL, DNASAMPLE, LINKAGE_GROUP, DNARUN, GERMPLASM, JOB)
+|**gobiiFkEntityNameType** +
+__|enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION, PLATFORM, MANIFEST, MAPSET, MARKER_GROUP, EXPERIMENT, REFERENCE, ROLE, DISPLAY, MARKER, PROTOCOL, VENDOR_PROTOCOL, DNASAMPLE, LINKAGE_GROUP, DNARUN, GERMPLASM, JOB)
+|**id** +
+__|integer (int32)
+|**name** +
+__|string
+|**queryObject** +
+__|object
+|===
+
+
+[[_organizationdto]]
+=== OrganizationDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**address** +
+__|string
+|**allowedProcessTypes** +
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**createdBy** +
+__|integer (int32)
+|**createdDate** +
+__|string (date-time)
+|**entityNameType** +
+__|enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION, PLATFORM, MANIFEST, MAPSET, MARKER_GROUP, EXPERIMENT, REFERENCE, ROLE, DISPLAY, MARKER, PROTOCOL, VENDOR_PROTOCOL, DNASAMPLE, LINKAGE_GROUP, DNARUN, GERMPLASM, JOB)
+|**id** +
+__|integer (int32)
+|**modifiedBy** +
+__|integer (int32)
+|**modifiedDate** +
+__|string (date-time)
+|**name** +
+__|string
+|**organizationId** +
+__|integer (int32)
+|**statusId** +
+__|integer (int32)
+|**vendorProtocols** +
+__|< <<_vendorprotocoldto,VendorProtocolDTO>> > array
+|**website** +
+__|string
 |===
 
 
@@ -319,6 +1126,71 @@ __|<<_linkcollection,LinkCollection>>
 |===
 
 
+[[_payloadcvgroupdto]]
+=== PayloadCvGroupDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< <<_cvgroupdto,CvGroupDTO>> > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_payloaddatasetdto]]
+=== PayloadDataSetDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< <<_datasetdto,DataSetDTO>> > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_payloaddisplaydto]]
+=== PayloadDisplayDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< <<_displaydto,DisplayDTO>> > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_payloaddnasampledto]]
+=== PayloadDnaSampleDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< <<_dnasampledto,DnaSampleDTO>> > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_payloadentitystatsdto]]
+=== PayloadEntityStatsDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< <<_entitystatsdto,EntityStatsDTO>> > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
 [[_payloadenvelopeanalysisdto]]
 === PayloadEnvelopeAnalysisDTO
 
@@ -371,6 +1243,266 @@ __|<<_payloadcvdto,PayloadCvDTO>>
 |===
 
 
+[[_payloadenvelopecvgroupdto]]
+=== PayloadEnvelopeCvGroupDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloadcvgroupdto,PayloadCvGroupDTO>>
+|===
+
+
+[[_payloadenvelopedatasetdto]]
+=== PayloadEnvelopeDataSetDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloaddatasetdto,PayloadDataSetDTO>>
+|===
+
+
+[[_payloadenvelopedisplaydto]]
+=== PayloadEnvelopeDisplayDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloaddisplaydto,PayloadDisplayDTO>>
+|===
+
+
+[[_payloadenvelopednasampledto]]
+=== PayloadEnvelopeDnaSampleDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloaddnasampledto,PayloadDnaSampleDTO>>
+|===
+
+
+[[_payloadenvelopeentitystatsdto]]
+=== PayloadEnvelopeEntityStatsDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloadentitystatsdto,PayloadEntityStatsDTO>>
+|===
+
+
+[[_payloadenvelopeexperimentdto]]
+=== PayloadEnvelopeExperimentDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloadexperimentdto,PayloadExperimentDTO>>
+|===
+
+
+[[_payloadenvelopeextractorinstructionfilesdto]]
+=== PayloadEnvelopeExtractorInstructionFilesDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloadextractorinstructionfilesdto,PayloadExtractorInstructionFilesDTO>>
+|===
+
+
+[[_payloadenvelopejobdto]]
+=== PayloadEnvelopeJobDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloadjobdto,PayloadJobDTO>>
+|===
+
+
+[[_payloadenvelopeloaderfilepreviewdto]]
+=== PayloadEnvelopeLoaderFilePreviewDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloadloaderfilepreviewdto,PayloadLoaderFilePreviewDTO>>
+|===
+
+
+[[_payloadenvelopeloaderinstructionfilesdto]]
+=== PayloadEnvelopeLoaderInstructionFilesDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloadloaderinstructionfilesdto,PayloadLoaderInstructionFilesDTO>>
+|===
+
+
+[[_payloadenvelopemanifestdto]]
+=== PayloadEnvelopeManifestDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloadmanifestdto,PayloadManifestDTO>>
+|===
+
+
+[[_payloadenvelopemapsetdto]]
+=== PayloadEnvelopeMapsetDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloadmapsetdto,PayloadMapsetDTO>>
+|===
+
+
+[[_payloadenvelopemarkerdto]]
+=== PayloadEnvelopeMarkerDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloadmarkerdto,PayloadMarkerDTO>>
+|===
+
+
+[[_payloadenvelopemarkergroupdto]]
+=== PayloadEnvelopeMarkerGroupDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloadmarkergroupdto,PayloadMarkerGroupDTO>>
+|===
+
+
+[[_payloadenvelopenameiddto]]
+=== PayloadEnvelopeNameIdDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloadnameiddto,PayloadNameIdDTO>>
+|===
+
+
+[[_payloadenvelopeorganizationdto]]
+=== PayloadEnvelopeOrganizationDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloadorganizationdto,PayloadOrganizationDTO>>
+|===
+
+
+[[_payloadenvelopeplatformdto]]
+=== PayloadEnvelopePlatformDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloadplatformdto,PayloadPlatformDTO>>
+|===
+
+
+[[_payloadenvelopeprojectdto]]
+=== PayloadEnvelopeProjectDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloadprojectdto,PayloadProjectDTO>>
+|===
+
+
+[[_payloadenvelopeprotocoldto]]
+=== PayloadEnvelopeProtocolDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloadprotocoldto,PayloadProtocolDTO>>
+|===
+
+
+[[_payloadenvelopereferencedto]]
+=== PayloadEnvelopeReferenceDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloadreferencedto,PayloadReferenceDTO>>
+|===
+
+
 [[_payloadenveloperestprofiledto]]
 === PayloadEnvelopeRestProfileDTO
 
@@ -384,6 +1516,201 @@ __|<<_payloadrestprofiledto,PayloadRestProfileDTO>>
 |===
 
 
+[[_payloadexperimentdto]]
+=== PayloadExperimentDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< <<_experimentdto,ExperimentDTO>> > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_payloadextractorinstructionfilesdto]]
+=== PayloadExtractorInstructionFilesDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< <<_extractorinstructionfilesdto,ExtractorInstructionFilesDTO>> > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_payloadjobdto]]
+=== PayloadJobDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< <<_jobdto,JobDTO>> > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_payloadloaderfilepreviewdto]]
+=== PayloadLoaderFilePreviewDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< <<_loaderfilepreviewdto,LoaderFilePreviewDTO>> > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_payloadloaderinstructionfilesdto]]
+=== PayloadLoaderInstructionFilesDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< <<_loaderinstructionfilesdto,LoaderInstructionFilesDTO>> > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_payloadmanifestdto]]
+=== PayloadManifestDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< <<_manifestdto,ManifestDTO>> > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_payloadmapsetdto]]
+=== PayloadMapsetDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< <<_mapsetdto,MapsetDTO>> > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_payloadmarkerdto]]
+=== PayloadMarkerDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< <<_markerdto,MarkerDTO>> > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_payloadmarkergroupdto]]
+=== PayloadMarkerGroupDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< <<_markergroupdto,MarkerGroupDTO>> > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_payloadnameiddto]]
+=== PayloadNameIdDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< <<_nameiddto,NameIdDTO>> > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_payloadorganizationdto]]
+=== PayloadOrganizationDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< <<_organizationdto,OrganizationDTO>> > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_payloadplatformdto]]
+=== PayloadPlatformDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< <<_platformdto,PlatformDTO>> > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_payloadprojectdto]]
+=== PayloadProjectDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< <<_projectdto,ProjectDTO>> > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_payloadprotocoldto]]
+=== PayloadProtocolDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< <<_protocoldto,ProtocolDTO>> > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_payloadreferencedto]]
+=== PayloadReferenceDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< <<_referencedto,ReferenceDTO>> > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
 [[_payloadrestprofiledto]]
 === PayloadRestProfileDTO
 
@@ -394,6 +1721,167 @@ __|<<_payloadrestprofiledto,PayloadRestProfileDTO>>
 __|< <<_restprofiledto,RestProfileDTO>> > array
 |**linkCollection** +
 __|<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_platformdto]]
+=== PlatformDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**allowedProcessTypes** +
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**createdBy** +
+__|integer (int32)
+|**createdDate** +
+__|string (date-time)
+|**entityNameType** +
+__|enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION, PLATFORM, MANIFEST, MAPSET, MARKER_GROUP, EXPERIMENT, REFERENCE, ROLE, DISPLAY, MARKER, PROTOCOL, VENDOR_PROTOCOL, DNASAMPLE, LINKAGE_GROUP, DNARUN, GERMPLASM, JOB)
+|**id** +
+__|integer (int32)
+|**modifiedBy** +
+__|integer (int32)
+|**modifiedDate** +
+__|string (date-time)
+|**platformCode** +
+__|string
+|**platformDescription** +
+__|string
+|**platformId** +
+__|integer (int32)
+|**platformName** +
+__|string
+|**properties** +
+__|< <<_entitypropertydto,EntityPropertyDTO>> > array
+|**statusId** +
+__|integer (int32)
+|**typeId** +
+__|integer (int32)
+|===
+
+
+[[_projectdto]]
+=== ProjectDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**allowedProcessTypes** +
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**createdBy** +
+__|integer (int32)
+|**createdDate** +
+__|string (date-time)
+|**entityNameType** +
+__|enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION, PLATFORM, MANIFEST, MAPSET, MARKER_GROUP, EXPERIMENT, REFERENCE, ROLE, DISPLAY, MARKER, PROTOCOL, VENDOR_PROTOCOL, DNASAMPLE, LINKAGE_GROUP, DNARUN, GERMPLASM, JOB)
+|**id** +
+__|integer (int32)
+|**modifiedBy** +
+__|integer (int32)
+|**modifiedDate** +
+__|string (date-time)
+|**piContact** +
+__|integer (int32)
+|**principleInvestigators** +
+__|< string, string > map
+|**projectCode** +
+__|string
+|**projectDescription** +
+__|string
+|**projectId** +
+__|integer (int32)
+|**projectName** +
+__|string
+|**projectStatus** +
+__|integer (int32)
+|**properties** +
+__|< <<_entitypropertydto,EntityPropertyDTO>> > array
+|===
+
+
+[[_propnameid]]
+=== PropNameId
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**id** +
+__|integer (int32)
+|**name** +
+__|string
+|===
+
+
+[[_protocoldto]]
+=== ProtocolDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**allowedProcessTypes** +
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**createdBy** +
+__|integer (int32)
+|**createdDate** +
+__|string (date-time)
+|**description** +
+__|string
+|**entityNameType** +
+__|enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION, PLATFORM, MANIFEST, MAPSET, MARKER_GROUP, EXPERIMENT, REFERENCE, ROLE, DISPLAY, MARKER, PROTOCOL, VENDOR_PROTOCOL, DNASAMPLE, LINKAGE_GROUP, DNARUN, GERMPLASM, JOB)
+|**id** +
+__|integer (int32)
+|**modifiedBy** +
+__|integer (int32)
+|**modifiedDate** +
+__|string (date-time)
+|**name** +
+__|string
+|**platformId** +
+__|integer (int32)
+|**props** +
+__|< <<_entitypropertydto,EntityPropertyDTO>> > array
+|**protocolId** +
+__|integer (int32)
+|**status** +
+__|integer (int32)
+|**typeId** +
+__|integer (int32)
+|**vendorProtocols** +
+__|< <<_vendorprotocoldto,VendorProtocolDTO>> > array
+|===
+
+
+[[_referencedto]]
+=== ReferenceDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**allowedProcessTypes** +
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**createdBy** +
+__|integer (int32)
+|**createdDate** +
+__|string (date-time)
+|**entityNameType** +
+__|enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION, PLATFORM, MANIFEST, MAPSET, MARKER_GROUP, EXPERIMENT, REFERENCE, ROLE, DISPLAY, MARKER, PROTOCOL, VENDOR_PROTOCOL, DNASAMPLE, LINKAGE_GROUP, DNARUN, GERMPLASM, JOB)
+|**filePath** +
+__|string
+|**id** +
+__|integer (int32)
+|**link** +
+__|string
+|**modifiedBy** +
+__|integer (int32)
+|**modifiedDate** +
+__|string (date-time)
+|**name** +
+__|string
+|**referenceId** +
+__|integer (int32)
+|**version** +
+__|string
 |===
 
 
@@ -451,6 +1939,65 @@ __||< <<_headerstatusmessage,HeaderStatusMessage>> > array
 __||< string, string > map
 |**succeeded** +
 __|**Default** : `false`|boolean
+|===
+
+
+[[_tablecoldisplay]]
+=== TableColDisplay
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**columnName** +
+__|string
+|**displayId** +
+__|integer (int32)
+|**displayName** +
+__|string
+|**rank** +
+__|integer (int32)
+|===
+
+
+[[_vcfparameters]]
+=== VcfParameters
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|**maf** +
+__||number (float)
+|**minDp** +
+__||number (float)
+|**minQ** +
+__||number (float)
+|**removeIndels** +
+__|**Default** : `false`|boolean
+|**toIupac** +
+__|**Default** : `false`|boolean
+|===
+
+
+[[_vendorprotocoldto]]
+=== VendorProtocolDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**allowedProcessTypes** +
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**id** +
+__|integer (int32)
+|**name** +
+__|string
+|**organizationId** +
+__|integer (int32)
+|**protocolId** +
+__|integer (int32)
+|**status** +
+__|integer (int32)
+|**vendorProtocolId** +
+__|integer (int32)
 |===
 
 

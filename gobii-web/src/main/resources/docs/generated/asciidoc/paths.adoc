@@ -33,7 +33,7 @@ __|<<_payloadenvelopeanalysisdto,PayloadEnvelopeAnalysisDTO>>
 
 
 [[_getanalyses]]
-=== Gets all the analysis
+=== Gets all the analyses
 ....
 GET /gobii/v1/analyses
 ....
@@ -342,6 +342,98 @@ __|email id of contacts to be extracted.|string
 |===
 
 
+[[_getcvsforcvgroup]]
+=== Gets CV terms by CV group ID
+....
+GET /gobii/v1/cvgroups/{cvGroupId}/cvs
+....
+
+
+==== Description
+Retrieves all the CV terms having the specified CV group ID
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**cvGroupId** +
+__|ID of the CV group.|integer (int32)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopecvdto,PayloadEnvelopeCvDTO>>
+|===
+
+
+[[_getcvgroupsbytype]]
+=== Gets CV groups by CV group type ID
+....
+GET /gobii/v1/cvgroups/{cvGroupTypeId}
+....
+
+
+==== Description
+Retrieves all CV groups having the specified CV group type ID
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**cvGroupdTypeId** +
+__|ID of the cv group type|integer (int32)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopecvgroupdto,PayloadEnvelopeCvGroupDTO>>
+|===
+
+
+[[_getcvgroupdetails]]
+=== Gets CV Group details given CV group name and type ID
+....
+GET /gobii/v1/cvgroups/{groupName}
+....
+
+
+==== Description
+Retrieves the details for a given CV Group name and type ID
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**groupName** +
+__|name of the cv group to be extracted|string
+|**Query**|**cvGroupTypeId** +
+__||integer (int32)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopecvgroupdto,PayloadEnvelopeCvGroupDTO>>
+|===
+
+
 [[_createcv]]
 === /cvs
 ....
@@ -511,6 +603,2391 @@ __|name of cv group to be extracted|string
 |===
 |HTTP Code|Description|Schema
 |**200**|successful operation|<<_payloadenvelopecvdto,PayloadEnvelopeCvDTO>>
+|===
+
+
+[[_createdataset]]
+=== Creates a dataset
+....
+POST /gobii/v1/datasets
+....
+
+
+==== Description
+Creates a new dataset in the system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^4"]
+|===
+|Type|Name|Schema
+|**Body**|**body** +
+__|<<_payloadenvelopedatasetdto,PayloadEnvelopeDataSetDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopedatasetdto,PayloadEnvelopeDataSetDTO>>
+|===
+
+
+[[_getdatasets]]
+=== Gets all the datasets
+....
+GET /gobii/v1/datasets
+....
+
+
+==== Description
+Retrieves all the existing datasets in the system. The list can be retrieved by page and specific page size.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Query**|**pageNo** +
+__|Retrieve the specified page by number|integer (int32)
+|**Query**|**pageSize** +
+__|Specify the custom page size|integer (int32)
+|**Query**|**queryId** +
+__||string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopedatasetdto,PayloadEnvelopeDataSetDTO>>
+|===
+
+
+[[_getdatasetstypes]]
+=== Gets the defined Dataset Types in the system
+....
+GET /gobii/v1/datasets/types
+....
+
+
+==== Description
+Retrieves all the defined dataset types in the system.
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopenameiddto,PayloadEnvelopeNameIdDTO>>
+|===
+
+
+[[_getdatasetsbytypeid]]
+=== Gets all the datasets with the given dataset type ID
+....
+GET /gobii/v1/datasets/types/{id}
+....
+
+
+==== Description
+Retrieves all the Datasets having the specified type ID.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**id** +
+__|ID of the dataset type|integer (int32)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopedatasetdto,PayloadEnvelopeDataSetDTO>>
+|===
+
+
+[[_getdatasetsbyid]]
+=== Gets the dataset given Dataset ID
+....
+GET /gobii/v1/datasets/{dataSetId}
+....
+
+
+==== Description
+Retrieves the Dataset entity having the specified ID.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**dataSetId** +
+__|ID of the Dataset to be extracted|integer (int32)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopedatasetdto,PayloadEnvelopeDataSetDTO>>
+|===
+
+
+[[_replacedataset]]
+=== Updates the Dataset by Dataset ID
+....
+PUT /gobii/v1/datasets/{dataSetId}
+....
+
+
+==== Description
+Updates the Dataset entity having the specified datasetId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**datasetId** +
+__|ID of the Dataset to be updated|integer (int32)
+|**Body**|**body** +
+__||<<_payloadenvelopedatasetdto,PayloadEnvelopeDataSetDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopedatasetdto,PayloadEnvelopeDataSetDTO>>
+|===
+
+
+[[_getanalysesfordataset]]
+=== Gets all the analysis for the given Dataset ID
+....
+GET /gobii/v1/datasets/{dataSetId}/analyses
+....
+
+
+==== Description
+Retrieves all the analysis for the given datasetId
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**dataSetId** +
+__|ID of the dataset|integer (int32)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeanalysisdto,PayloadEnvelopeAnalysisDTO>>
+|===
+
+
+[[_getjobdetailsbydatasetid]]
+=== Gets the job details for the given Dataset ID
+....
+GET /gobii/v1/datasets/{datasetId}/jobs
+....
+
+
+==== Description
+Retrieves the information for active job for a given datasetId
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**datasetId** +
+__|ID of the dataset|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopejobdto,PayloadEnvelopeJobDTO>>
+|===
+
+
+[[_createdisplay]]
+=== Creates a display entity
+....
+POST /gobii/v1/displays
+....
+
+
+==== Description
+Creates a display entity with the given information. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^4"]
+|===
+|Type|Name|Schema
+|**Body**|**body** +
+__|<<_payloadenvelopedisplaydto,PayloadEnvelopeDisplayDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopedisplaydto,PayloadEnvelopeDisplayDTO>>
+|===
+
+
+[[_getdisplays]]
+=== Gets all the displays
+....
+GET /gobii/v1/displays
+....
+
+
+==== Description
+Retrieves a list of all the Display entities
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopedisplaydto,PayloadEnvelopeDisplayDTO>>
+|===
+
+
+[[_getdisplaybyid]]
+=== Gets display by Display ID
+....
+GET /gobii/v1/displays/{displayId}
+....
+
+
+==== Description
+Retrieves the Display entity having the specified ID
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**displayId** +
+__|ID of the Display to be extracted|integer (int32)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopedisplaydto,PayloadEnvelopeDisplayDTO>>
+|===
+
+
+[[_replacedisplay]]
+=== Updates display by Display ID
+....
+PUT /gobii/v1/displays/{displayId}
+....
+
+
+==== Description
+Updates the Display entity having the specified displayId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**displayId** +
+__|ID of the Display to be updated|integer (int32)
+|**Body**|**body** +
+__||<<_payloadenvelopedisplaydto,PayloadEnvelopeDisplayDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopedisplaydto,PayloadEnvelopeDisplayDTO>>
+|===
+
+
+[[_getallentitystats]]
+=== Gets all the entities
+....
+GET /gobii/v1/entities
+....
+
+
+==== Description
+Retrieves all the existing entities in the system.
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeentitystatsdto,PayloadEnvelopeEntityStatsDTO>>
+|===
+
+
+[[_getentitycountofchildren]]
+=== Gets the total count of the children for the given Entity
+....
+GET /gobii/v1/entities/{entityNameParent}/{parentId}/{entityNameChild}/count
+....
+
+
+==== Description
+Retrieves the total count of the children for the given entity
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**entityNameChild** +
+__|Name of the child entity|string
+|**Path**|**entityNameParent** +
+__|Name of the parent entity|string
+|**Path**|**parentId** +
+__|ID of the parent entity|integer (int32)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeentitystatsdto,PayloadEnvelopeEntityStatsDTO>>
+|===
+
+
+[[_getentitycount]]
+=== Gets the total entity count for the given Entity Name
+....
+GET /gobii/v1/entities/{entityName}/count
+....
+
+
+==== Description
+Retrieves the total Entity count for the given entityName
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**entityName** +
+__|Name of the Entity|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeentitystatsdto,PayloadEnvelopeEntityStatsDTO>>
+|===
+
+
+[[_getentitylastmodified]]
+=== Gets the last modified entity for the given Entity Name
+....
+GET /gobii/v1/entities/{entityName}/lastmodified
+....
+
+
+==== Description
+Retrieves last modified Entity for the given entityName
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**entityName** +
+__|Name of the Entity|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeentitystatsdto,PayloadEnvelopeEntityStatsDTO>>
+|===
+
+
+[[_createexperiment]]
+=== Creates an experiment
+....
+POST /gobii/v1/experiments
+....
+
+
+==== Description
+Creates a new experiment in the system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^4"]
+|===
+|Type|Name|Schema
+|**Body**|**body** +
+__|<<_payloadenvelopeexperimentdto,PayloadEnvelopeExperimentDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeexperimentdto,PayloadEnvelopeExperimentDTO>>
+|===
+
+
+[[_getexperiments]]
+=== Gets all the experiments
+....
+GET /gobii/v1/experiments
+....
+
+
+==== Description
+Retrieves all the existing experiments in the system.
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeexperimentdto,PayloadEnvelopeExperimentDTO>>
+|===
+
+
+[[_getexperimentsbyid]]
+=== Gets the experiment given Experiment ID
+....
+GET /gobii/v1/experiments/{experimentId}
+....
+
+
+==== Description
+Retrieves the Experiment entity having the specified ID.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**experimentId** +
+__|ID of the Experiment to be updated|integer (int32)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeexperimentdto,PayloadEnvelopeExperimentDTO>>
+|===
+
+
+[[_replaceexperiment]]
+=== Updates the Experiment by Experiement ID
+....
+PUT /gobii/v1/experiments/{experimentId}
+....
+
+
+==== Description
+Updates the Experiment entity having the specified experimentId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**experimentId** +
+__|ID of the Experiment to be updated|integer (int32)
+|**Body**|**body** +
+__||<<_payloadenvelopeexperimentdto,PayloadEnvelopeExperimentDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeexperimentdto,PayloadEnvelopeExperimentDTO>>
+|===
+
+
+[[_getprotocolbyexperimentid]]
+=== Gets all the Protocols by Experiment ID
+....
+GET /gobii/v1/experiments/{experimentId}/protocols
+....
+
+
+==== Description
+Retrieves all the protocols having the specified experimentId in the system.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**experimentId** +
+__|ID of the Experiment|integer (int32)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeprotocoldto,PayloadEnvelopeProtocolDTO>>
+|===
+
+
+[[_getfilepreviewbysearch]]
+=== Gets file preview for the specified directory name
+....
+GET /gobii/v1/files/loader/{directoryName}
+....
+
+
+==== Description
+Retrieves file preview for the specified directory name
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**directoryName** +
+__|Name of the directory|string
+|**Query**|**fileFormat** +
+__|Format/Extension of the file|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeloaderfilepreviewdto,PayloadEnvelopeLoaderFilePreviewDTO>>
+|===
+
+
+[[_createloaderfiledirectory]]
+=== Creates a Directory to be used for loading
+....
+PUT /gobii/v1/files/loader/{directoryName}
+....
+
+
+==== Description
+Creates a directory in the system that will be used for storing the data files for loading
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**directoryName** +
+__|Name of the directory/folder|string
+|**Body**|**body** +
+__||<<_payloadenvelopeloaderfilepreviewdto,PayloadEnvelopeLoaderFilePreviewDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeloaderfilepreviewdto,PayloadEnvelopeLoaderFilePreviewDTO>>
+|===
+
+
+[[_uploadfile]]
+=== Upload file
+....
+POST /gobii/v1/files/{destinationType}
+....
+
+
+==== Description
+Uploads an arbitrary file to the specified destination
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**destinationType** +
+__|Destination type where the file will be uploaded to|string
+|**Query**|**file** +
+__|The file to be uploaded|ref
+|**Query**|**fileName** +
+__|Name of the file to be uploaded|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|string
+|===
+
+
+[[_deletefile]]
+=== Delete file
+....
+DELETE /gobii/v1/files/{destinationType}
+....
+
+
+==== Description
+Deletes an arbitrary file from the specified destination
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**destinationType** +
+__|Destination type where the file will be delete from|string
+|**Query**|**fileName** +
+__|Name of the file to be deleted|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|string
+|===
+
+
+==== Produces
+
+* `text/plain`
+
+
+[[_uploadjobfile]]
+=== Upload file for Job
+....
+POST /gobii/v1/files/{gobiiJobId}/{destinationType}
+....
+
+
+==== Description
+Uploads the specified file for a specific job to the specified directory
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**destinationType** +
+__|Destination type where the file will be uploaded to|string
+|**Path**|**gobiiJobId** +
+__|ID of the Job that the file will be associated to|string
+|**Query**|**file** +
+__|The file to be uploaded|ref
+|**Query**|**fileName** +
+__|Name of the file|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^4"]
+|===
+|HTTP Code|Schema
+|**200**|string
+|===
+
+
+[[_downloadjobfile]]
+=== Download file for specified Job
+....
+GET /gobii/v1/files/{gobiiJobId}/{destinationType}
+....
+
+
+==== Description
+Downloads the specified file for a specific job from the specified directory
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**destinationType** +
+__|Destination type where the file will be downloaded from|string
+|**Path**|**gobiiJobId** +
+__|ID of the Job|string
+|**Query**|**fileName** +
+__|Name of the file to be downloaded|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_inputstreamresource,InputStreamResource>>
+|===
+
+
+[[_createextractorinstruction]]
+=== Creates instruction file for extracting data
+....
+POST /gobii/v1/instructions/extractor
+....
+
+
+==== Description
+Creates extractor instruction file and then submits a new Job.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^4"]
+|===
+|Type|Name|Schema
+|**Body**|**body** +
+__|<<_payloadenvelopeextractorinstructionfilesdto,PayloadEnvelopeExtractorInstructionFilesDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeextractorinstructionfilesdto,PayloadEnvelopeExtractorInstructionFilesDTO>>
+|===
+
+
+[[_getextractorinstructionstatus]]
+=== Gets the extract job status by Job name
+....
+GET /gobii/v1/instructions/extractor/jobs/{jobName}
+....
+
+
+==== Description
+Retrieves the extract job status along with other job details having the specified Job Name.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**jobName** +
+__|Name of the job|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopejobdto,PayloadEnvelopeJobDTO>>
+|===
+
+
+[[_getextractorinstruction]]
+=== Gets the extract instruction information given file name
+....
+GET /gobii/v1/instructions/extractor/{instructionFileName}
+....
+
+
+==== Description
+Retrieves the extractor instruction file entity having the specified instruction file name.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**instructionFileName** +
+__|Name of the instruction file to be retrieved|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeextractorinstructionfilesdto,PayloadEnvelopeExtractorInstructionFilesDTO>>
+|===
+
+
+[[_createloaderinstruction]]
+=== Creates instruction file for loading data
+....
+POST /gobii/v1/instructions/loader
+....
+
+
+==== Description
+Creates loader instruction file and then submits a new Job.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^4"]
+|===
+|Type|Name|Schema
+|**Body**|**body** +
+__|<<_payloadenvelopeloaderinstructionfilesdto,PayloadEnvelopeLoaderInstructionFilesDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeloaderinstructionfilesdto,PayloadEnvelopeLoaderInstructionFilesDTO>>
+|===
+
+
+[[_getloaderinstructionstatus]]
+=== Gets the loading job status by Job name
+....
+GET /gobii/v1/instructions/loader/jobs/{jobName}
+....
+
+
+==== Description
+Retrieves the loading job status along with other job details having the specified Job Name.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**jobName** +
+__|Name of the job|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopejobdto,PayloadEnvelopeJobDTO>>
+|===
+
+
+[[_getloaderinstruction]]
+=== Gets the loading instruction information given file name
+....
+GET /gobii/v1/instructions/loader/{instructionFileName}
+....
+
+
+==== Description
+Retrieves the loader instruction file entity having the specified instruction file name.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**instructionFileName** +
+__|Name of the instruction file to be retrieved.|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeloaderinstructionfilesdto,PayloadEnvelopeLoaderInstructionFilesDTO>>
+|===
+
+
+[[_createjob]]
+=== Creates a job
+....
+POST /gobii/v1/jobs
+....
+
+
+==== Description
+Creates a new job in the system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^4"]
+|===
+|Type|Name|Schema
+|**Body**|**body** +
+__|<<_payloadenvelopejobdto,PayloadEnvelopeJobDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopejobdto,PayloadEnvelopeJobDTO>>
+|===
+
+
+[[_getstatus]]
+=== Gets all the jobs
+....
+GET /gobii/v1/jobs
+....
+
+
+==== Description
+Retrieves all the existing jobs in the system.
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopejobdto,PayloadEnvelopeJobDTO>>
+|===
+
+
+[[_submitdnasamplesbyjobname]]
+=== Created DNA samples for a given Job
+....
+POST /gobii/v1/jobs/dnasamples/{jobName}
+....
+
+
+==== Description
+Creates DNA samples for a given Job having the specified name in the system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**jobName** +
+__|Name of the Job that the DNA samples will be added to|string
+|**Body**|**body** +
+__||<<_payloadenvelopednasampledto,PayloadEnvelopeDnaSampleDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopejobdto,PayloadEnvelopeJobDTO>>
+|===
+
+
+[[_getstatusbyid]]
+=== Gets the job given Job Name
+....
+GET /gobii/v1/jobs/{jobName}
+....
+
+
+==== Description
+Retrieves the Job entity having the specified name.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**jobName** +
+__|Name of the Job to be extracted|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopejobdto,PayloadEnvelopeJobDTO>>
+|===
+
+
+[[_replacestatus]]
+=== Updates the Job by Job Name
+....
+PUT /gobii/v1/jobs/{jobName}
+....
+
+
+==== Description
+Updates the Job entity having the specified jobName. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**jobName** +
+__|Name of the Job to be updated|string
+|**Body**|**body** +
+__||<<_payloadenvelopejobdto,PayloadEnvelopeJobDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopejobdto,PayloadEnvelopeJobDTO>>
+|===
+
+
+[[_createmanifest]]
+=== Creates manifest entity
+....
+POST /gobii/v1/manifests
+....
+
+
+==== Description
+Creates a Manifest entity for GOBii system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^4"]
+|===
+|Type|Name|Schema
+|**Body**|**body** +
+__|<<_payloadenvelopemanifestdto,PayloadEnvelopeManifestDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopemanifestdto,PayloadEnvelopeManifestDTO>>
+|===
+
+
+[[_getmanifests]]
+=== Gets all the Manifests
+....
+GET /gobii/v1/manifests
+....
+
+
+==== Description
+Retrieves an unfiltered list of all Manifest entities.
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopemanifestdto,PayloadEnvelopeManifestDTO>>
+|===
+
+
+[[_getmanifestbyid]]
+=== Gets the manifest given Manifest ID
+....
+GET /gobii/v1/manifests/{manifestId}
+....
+
+
+==== Description
+Retrieves the Manifest entity having the specified ID.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**manifestId** +
+__|ID of the Manifest to be retrieved|integer (int32)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopemanifestdto,PayloadEnvelopeManifestDTO>>
+|===
+
+
+[[_replacemanifest]]
+=== Updates manifest by Manifest ID
+....
+PUT /gobii/v1/manifests/{manifestId}
+....
+
+
+==== Description
+Updates the Manifest entity having the specified manifestId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**manifestId** +
+__|ID of the Manifest to be updated|integer (int32)
+|**Body**|**body** +
+__||<<_payloadenvelopemanifestdto,PayloadEnvelopeManifestDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopemanifestdto,PayloadEnvelopeManifestDTO>>
+|===
+
+
+[[_getmaps]]
+=== Gets all the Mapsets
+....
+GET /gobii/v1/maps
+....
+
+
+==== Description
+Retrieves all the existing Mapsets in the system.
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopemapsetdto,PayloadEnvelopeMapsetDTO>>
+|===
+
+
+[[_createmapset]]
+=== Creates a mapset
+....
+POST /gobii/v1/mapsets
+....
+
+
+==== Description
+Creates a new mapset in the system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^4"]
+|===
+|Type|Name|Schema
+|**Body**|**body** +
+__|<<_payloadenvelopemapsetdto,PayloadEnvelopeMapsetDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopemapsetdto,PayloadEnvelopeMapsetDTO>>
+|===
+
+
+[[_getmapsets]]
+=== Gets all the mapsets
+....
+GET /gobii/v1/mapsets
+....
+
+
+==== Description
+Retrieves all the existing mapsets in the system.
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopemapsetdto,PayloadEnvelopeMapsetDTO>>
+|===
+
+
+[[_getmapsetbyid]]
+=== Gets the mapset given Mapset ID
+....
+GET /gobii/v1/mapsets/{mapsetId}
+....
+
+
+==== Description
+Retrieves the Mapset entity having the specified ID.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**mapsetId** +
+__|ID of the Mapset to be extracted|integer (int32)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopemapsetdto,PayloadEnvelopeMapsetDTO>>
+|===
+
+
+[[_replacemapset]]
+=== Updates the Mapset by Mapset ID
+....
+PUT /gobii/v1/mapsets/{mapsetId}
+....
+
+
+==== Description
+Updates the Mapset entity having the specified mapsetId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**mapsetId** +
+__|ID of the Mapset to be updated|integer (int32)
+|**Body**|**body** +
+__||<<_payloadenvelopemapsetdto,PayloadEnvelopeMapsetDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopemapsetdto,PayloadEnvelopeMapsetDTO>>
+|===
+
+
+[[_getmarkerbyname]]
+=== Marker search
+....
+GET /gobii/v1/marker-search
+....
+
+
+==== Description
+Gets Marker by searching by name
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Query**|**name** +
+__|Name of the marker|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopemarkerdto,PayloadEnvelopeMarkerDTO>>
+|===
+
+
+[[_createmarkergroup]]
+=== Creates a Marker Group
+....
+POST /gobii/v1/markergroups
+....
+
+
+==== Description
+Creates a new marker group in the system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^4"]
+|===
+|Type|Name|Schema
+|**Body**|**body** +
+__|<<_payloadenvelopemarkergroupdto,PayloadEnvelopeMarkerGroupDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopemarkergroupdto,PayloadEnvelopeMarkerGroupDTO>>
+|===
+
+
+[[_getmarkergroups]]
+=== Gets all the marker groups
+....
+GET /gobii/v1/markergroups
+....
+
+
+==== Description
+Retrieves all the existing marker groups in the system.
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopemarkergroupdto,PayloadEnvelopeMarkerGroupDTO>>
+|===
+
+
+[[_getmarkergroupbyid]]
+=== Gets the marker group given Marker Group ID
+....
+GET /gobii/v1/markergroups/{markerGroupId}
+....
+
+
+==== Description
+Retrieves the Marker Group entity having the specified ID.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**markerGroupId** +
+__|ID of the marker group to be updated|integer (int32)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopemarkergroupdto,PayloadEnvelopeMarkerGroupDTO>>
+|===
+
+
+[[_replacemarkergroup]]
+=== Updates the Marker Group by Marker Group ID
+....
+PUT /gobii/v1/markergroups/{markerGroupId}
+....
+
+
+==== Description
+Updates the Marker Group entity having the specified markerGroupId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**markerGroupId** +
+__|ID of the Marker Group to be updated|integer (int32)
+|**Body**|**body** +
+__||<<_payloadenvelopemarkergroupdto,PayloadEnvelopeMarkerGroupDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopemarkergroupdto,PayloadEnvelopeMarkerGroupDTO>>
+|===
+
+
+[[_createmarker]]
+=== Creates a marker
+....
+POST /gobii/v1/markers
+....
+
+
+==== Description
+Creates a new marker in the system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^4"]
+|===
+|Type|Name|Schema
+|**Body**|**body** +
+__|<<_payloadenvelopemarkerdto,PayloadEnvelopeMarkerDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopemarkerdto,PayloadEnvelopeMarkerDTO>>
+|===
+
+
+[[_getmarkers]]
+=== Gets all the markers
+....
+GET /gobii/v1/markers
+....
+
+
+==== Description
+Retrieves all the existing markers in the system.
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopemarkerdto,PayloadEnvelopeMarkerDTO>>
+|===
+
+
+[[_getmarkerbyid]]
+=== Gets the marker given Marker ID
+....
+GET /gobii/v1/markers/{markerId}
+....
+
+
+==== Description
+Retrieves the Marker entity having the specified ID.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**markerId** +
+__|ID of the Marker to be extracted|integer (int32)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopemarkerdto,PayloadEnvelopeMarkerDTO>>
+|===
+
+
+[[_replacemarker]]
+=== Updates the Marker by Marker ID
+....
+PUT /gobii/v1/markers/{markerId}
+....
+
+
+==== Description
+Updates the Marker entity having the specified markerId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**markerId** +
+__|ID of the Marker to be updated|integer (int32)
+|**Body**|**body** +
+__||<<_payloadenvelopemarkerdto,PayloadEnvelopeMarkerDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopemarkerdto,PayloadEnvelopeMarkerDTO>>
+|===
+
+
+[[_getnamesbynamelist]]
+=== Gets a list of name/ID combination for given Entity and a name list
+....
+POST /gobii/v1/names/{entity}
+....
+
+
+==== Description
+Retrieves a list of name/ID combination for a given entity and name list. For the list of entities supported see class GobiiEntityNameType.This is service is specifically implemented for these filter types: NAMES_BY_NAME_LIST - given a list of names, return the same list with the corresponding ID in the database. If name doesn't exist, ID will be 0.NAMES_BY_NAME_LIST_RETURN_EXISTS - given a list of names, return the list of names with ID that exists in the database.NAMES_BY_NAME_LIST_RETURN_ABSENT - given a list of names, return the list of names that doesn't exist in the database with 0 as the IDFilter value varies per entity. This can be cv group name, project ID, platform ID, etc.Example use case: entity = CV; filterType = NAMES_BY_NAME_LIST; filterValue = germplasm_typeResult will be a list of CV terms with ID having germplasm_type as the cv group
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**entity** +
+__|The entity to be retrieved|string
+|**Query**|**filterType** +
+__|The filter type for the name list|string
+|**Query**|**filterValue** +
+__|The value for the filter type|string
+|**Body**|**body** +
+__||<<_payloadenvelopenameiddto,PayloadEnvelopeNameIdDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopenameiddto,PayloadEnvelopeNameIdDTO>>
+|===
+
+
+[[_getnames]]
+=== Gets a list of name/ID combination for given Entity
+....
+GET /gobii/v1/names/{entity}
+....
+
+
+==== Description
+Retrieves a list of name/ID combination for a given entity. For the list of entities supported see class GobiiEntityNameType.List can further be filtered out by specifying the filter type and value.For the list of filter types supported see class GobiiFilterType.Example use case: entity = CV; filterType = NAMES_BY_TYPE_NAME; filterValue = statusResult will be a list of CV terms having status as the cv group
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**entity** +
+__|The entity to be retrieved|string
+|**Query**|**filterType** +
+__|The filter type for the name list|string
+|**Query**|**filterValue** +
+__|The value for the filter type|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopenameiddto,PayloadEnvelopeNameIdDTO>>
+|===
+
+
+[[_createorganization]]
+=== Creates a organization
+....
+POST /gobii/v1/organizations
+....
+
+
+==== Description
+Creates a new organization in the system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^4"]
+|===
+|Type|Name|Schema
+|**Body**|**body** +
+__|<<_payloadenvelopeorganizationdto,PayloadEnvelopeOrganizationDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeorganizationdto,PayloadEnvelopeOrganizationDTO>>
+|===
+
+
+[[_getorganizations]]
+=== Gets all the organizations
+....
+GET /gobii/v1/organizations
+....
+
+
+==== Description
+Retrieves all the existing organizations in the system.
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeorganizationdto,PayloadEnvelopeOrganizationDTO>>
+|===
+
+
+[[_getorganizationsbyid]]
+=== Gets the organization given Organization ID
+....
+GET /gobii/v1/organizations/{organizationId}
+....
+
+
+==== Description
+Retrieves the Organization entity having the specified ID.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**organizationId** +
+__|ID of the Organization to be extracted|integer (int32)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeorganizationdto,PayloadEnvelopeOrganizationDTO>>
+|===
+
+
+[[_replaceorganization]]
+=== Updates the Organization by Organization ID
+....
+PUT /gobii/v1/organizations/{organizationId}
+....
+
+
+==== Description
+Updates the Organization entity having the specified organizationId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**organizationId** +
+__|ID of the Organization to be updated|integer (int32)
+|**Body**|**body** +
+__||<<_payloadenvelopeorganizationdto,PayloadEnvelopeOrganizationDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeorganizationdto,PayloadEnvelopeOrganizationDTO>>
+|===
+
+
+[[_createplatform]]
+=== Creates a Platform
+....
+POST /gobii/v1/platforms
+....
+
+
+==== Description
+Creates a new Platform in the system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^4"]
+|===
+|Type|Name|Schema
+|**Body**|**body** +
+__|<<_payloadenvelopeplatformdto,PayloadEnvelopePlatformDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeplatformdto,PayloadEnvelopePlatformDTO>>
+|===
+
+
+[[_getplatforms]]
+=== Gets all the platforms
+....
+GET /gobii/v1/platforms
+....
+
+
+==== Description
+Retrieves all the existing platforms in the system.
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeplatformdto,PayloadEnvelopePlatformDTO>>
+|===
+
+
+[[_getplatformdetailsbyvendorprotocolid]]
+=== Gets the platform details given Vendor Protocol ID
+....
+GET /gobii/v1/platforms/protocols/{vendorProtocolId}
+....
+
+
+==== Description
+Retrieves the Platform entity having the specified Vendor Protocol ID.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**vendorProtocolId** +
+__|ID of the vendor protocol|integer (int32)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeplatformdto,PayloadEnvelopePlatformDTO>>
+|===
+
+
+[[_getplatformsbyid]]
+=== Gets the platform given Platform ID
+....
+GET /gobii/v1/platforms/{platformId}
+....
+
+
+==== Description
+Retrieves the Platform entity having the specified ID.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**platformId** +
+__|ID of the Platform to be extracted|integer (int32)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeplatformdto,PayloadEnvelopePlatformDTO>>
+|===
+
+
+[[_replaceplatform]]
+=== Updates the Platform by Platform ID
+....
+PUT /gobii/v1/platforms/{platformId}
+....
+
+
+==== Description
+Updates the Platform entity having the specified platformId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**platformId** +
+__|ID of the Platform to be updated|integer (int32)
+|**Body**|**body** +
+__||<<_payloadenvelopeplatformdto,PayloadEnvelopePlatformDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeplatformdto,PayloadEnvelopePlatformDTO>>
+|===
+
+
+[[_createproject]]
+=== Creates a project
+....
+POST /gobii/v1/projects
+....
+
+
+==== Description
+Creates a new project in the system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^4"]
+|===
+|Type|Name|Schema
+|**Body**|**body** +
+__|<<_payloadenvelopeprojectdto,PayloadEnvelopeProjectDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeprojectdto,PayloadEnvelopeProjectDTO>>
+|===
+
+
+[[_getprojects]]
+=== Gets all the projects
+....
+GET /gobii/v1/projects
+....
+
+
+==== Description
+Retrieves all the existing projects in the system.
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeprojectdto,PayloadEnvelopeProjectDTO>>
+|===
+
+
+[[_getprojectsbyid]]
+=== Gets the projects given Project ID
+....
+GET /gobii/v1/projects/{projectId}
+....
+
+
+==== Description
+Retrieves the Project entity having the specified ID.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**projectId** +
+__|ID of the Project to be extracted|integer (int32)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeprojectdto,PayloadEnvelopeProjectDTO>>
+|===
+
+
+[[_replaceproject]]
+=== Updates the Project by Project ID
+....
+PUT /gobii/v1/projects/{projectId}
+....
+
+
+==== Description
+Updates the Project entity having the specified projectId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**projectId** +
+__|ID of the Project to be updated|integer (int32)
+|**Body**|**body** +
+__||<<_payloadenvelopeprojectdto,PayloadEnvelopeProjectDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeprojectdto,PayloadEnvelopeProjectDTO>>
+|===
+
+
+[[_createprotocol]]
+=== Creates a Protocol
+....
+POST /gobii/v1/protocols
+....
+
+
+==== Description
+Creates a new Protocol in the system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^4"]
+|===
+|Type|Name|Schema
+|**Body**|**body** +
+__|<<_payloadenvelopeprotocoldto,PayloadEnvelopeProtocolDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeprotocoldto,PayloadEnvelopeProtocolDTO>>
+|===
+
+
+[[_getprotocols]]
+=== Gets all the protocols
+....
+GET /gobii/v1/protocols
+....
+
+
+==== Description
+Retrieves all the existing protocols in the system.
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeprotocoldto,PayloadEnvelopeProtocolDTO>>
+|===
+
+
+[[_replaceprotocol]]
+=== Gets the protocol given Protocol ID
+....
+GET /gobii/v1/protocols/{protocolId}
+....
+
+
+==== Description
+Retrieves the Protocol entity having the specified ID.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**protocolId** +
+__|ID of the Protocol to be extracted|integer (int32)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeprotocoldto,PayloadEnvelopeProtocolDTO>>
+|===
+
+
+[[_replaceprotocol]]
+=== Updates the Protocol by Protocol ID
+....
+PUT /gobii/v1/protocols/{protocolId}
+....
+
+
+==== Description
+Updates the Protocol entity having the specified protocolId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**protocolId** +
+__|ID of the Protocol to be updated|integer (int32)
+|**Body**|**body** +
+__||<<_payloadenvelopeprotocoldto,PayloadEnvelopeProtocolDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeprotocoldto,PayloadEnvelopeProtocolDTO>>
+|===
+
+
+[[_addvendortoprotocol]]
+=== Creates a Vendor Protocol record for given Protocol ID
+....
+POST /gobii/v1/protocols/{protocolId}/vendors
+....
+
+
+==== Description
+Creates a new Vendor Protocol in the system for specified Protocol ID. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**protocolId** +
+__|ID of the Protocol|integer (int32)
+|**Body**|**body** +
+__||<<_payloadenvelopeorganizationdto,PayloadEnvelopeOrganizationDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeorganizationdto,PayloadEnvelopeOrganizationDTO>>
+|===
+
+
+[[_getvendorsforprotocol]]
+=== Gets all the Vendor Protocols given Protocol ID
+....
+GET /gobii/v1/protocols/{protocolId}/vendors
+....
+
+
+==== Description
+Retrieves all the vendor protocols given protocolId in the system.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**protocolId** +
+__|ID of the Protocol ID|integer (int32)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeorganizationdto,PayloadEnvelopeOrganizationDTO>>
+|===
+
+
+[[_updateorreplacevendorprotocol]]
+=== Updates the Vendor Protocol by Protocol ID
+....
+PUT /gobii/v1/protocols/{protocolId}/vendors
+....
+
+
+==== Description
+Updates the Vendor Protocol entity having the specified protocolId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**protocolId** +
+__|ID of the Protocol|integer (int32)
+|**Body**|**body** +
+__||<<_payloadenvelopeorganizationdto,PayloadEnvelopeOrganizationDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopeorganizationdto,PayloadEnvelopeOrganizationDTO>>
+|===
+
+
+[[_createreference]]
+=== Creates a reference
+....
+POST /gobii/v1/references
+....
+
+
+==== Description
+Creates a new reference in the system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^4"]
+|===
+|Type|Name|Schema
+|**Body**|**body** +
+__|<<_payloadenvelopereferencedto,PayloadEnvelopeReferenceDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopereferencedto,PayloadEnvelopeReferenceDTO>>
+|===
+
+
+[[_getreferences]]
+=== Gets all the references
+....
+GET /gobii/v1/references
+....
+
+
+==== Description
+Retrieves all the existing references in the system.
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopereferencedto,PayloadEnvelopeReferenceDTO>>
+|===
+
+
+[[_getreferencebyid]]
+=== Gets the reference given Reference ID
+....
+GET /gobii/v1/references/{referenceId}
+....
+
+
+==== Description
+Retrieves the Reference entity having the specified ID.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**referenceId** +
+__|ID of the Reference to be extracted|integer (int32)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopereferencedto,PayloadEnvelopeReferenceDTO>>
+|===
+
+
+[[_replacereference]]
+=== Updates the Reference by Reference ID
+....
+PUT /gobii/v1/references/{referenceId}
+....
+
+
+==== Description
+Updates the Reference entity having the specified referenceId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**referenceId** +
+__|ID of the Reference to be updated|integer (int32)
+|**Body**|**body** +
+__||<<_payloadenvelopereferencedto,PayloadEnvelopeReferenceDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopereferencedto,PayloadEnvelopeReferenceDTO>>
 |===
 
 
