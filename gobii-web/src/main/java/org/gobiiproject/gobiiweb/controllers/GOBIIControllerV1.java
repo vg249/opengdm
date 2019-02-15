@@ -19,7 +19,6 @@ import io.swagger.annotations.Info;
 import io.swagger.annotations.License;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
-import io.swagger.v3.oas.annotations.media.Schema;
 import org.apache.commons.lang.math.NumberUtils;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.*;
@@ -4439,7 +4438,6 @@ public class GOBIIControllerV1 {
     )
     @RequestMapping(value = "/files/{destinationType}",
             method = RequestMethod.POST)
-    @Schema(description = "Empty string.", type = "string", allowableValues = {""})
     public
     @ResponseBody
     String uploadFile(
@@ -4517,7 +4515,6 @@ public class GOBIIControllerV1 {
             method = RequestMethod.DELETE
             , produces = MediaType.TEXT_PLAIN_VALUE
     )
-    @Schema(description = "Empty string.", type = "string", allowableValues = {""})
     public
     @ResponseBody
     String deleteFile(
