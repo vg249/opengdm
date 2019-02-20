@@ -11,7 +11,7 @@
   },
   "host" : "localhost:8081",
   "basePath" : "/api",
-  "schemes" : [ "http", null ],
+  "schemes" : [ "http" ],
   "paths" : {
     "/gobii/v1/analyses" : {
       "get" : {
@@ -321,11 +321,12 @@
         "description" : "Retrieves all CV groups having the specified CV group type ID",
         "operationId" : "getCvGroupsByType",
         "parameters" : [ {
-          "name" : "cvGroupdTypeId",
+          "name" : "cvGroupTypeId",
           "in" : "path",
           "description" : "ID of the cv group type",
           "required" : true,
           "type" : "integer",
+          "pattern" : "[\\d]+",
           "format" : "int32"
         } ],
         "responses" : {
@@ -482,7 +483,7 @@
       "get" : {
         "summary" : "/cvs/{groupName:[a-zA-Z_]+}",
         "description" : "Gets cvs by the group name.",
-        "operationId" : "getCvById",
+        "operationId" : "getCvsByGroupName",
         "parameters" : [ {
           "name" : "groupName",
           "in" : "path",
@@ -630,11 +631,12 @@
             "$ref" : "#/definitions/PayloadEnvelopeDataSetDTO"
           }
         }, {
-          "name" : "datasetId",
+          "name" : "dataSetId",
           "in" : "path",
           "description" : "ID of the Dataset to be updated",
           "required" : true,
           "type" : "integer",
+          "pattern" : "[\\d]+",
           "format" : "int32"
         } ],
         "responses" : {
@@ -1163,13 +1165,13 @@
         }, {
           "name" : "file",
           "in" : "query",
-          "description" : "The file to be uploaded",
+          "description" : "The file to be uploade",
           "required" : true,
           "type" : "ref"
         } ],
         "responses" : {
           "200" : {
-            "description" : "",
+            "description" : "successful operation",
             "schema" : {
               "type" : "string"
             }
@@ -2222,7 +2224,7 @@
       "get" : {
         "summary" : "Gets the protocol given Protocol ID",
         "description" : "Retrieves the Protocol entity having the specified ID.",
-        "operationId" : "replaceProtocol",
+        "operationId" : "getProtocol",
         "parameters" : [ {
           "name" : "protocolId",
           "in" : "path",
@@ -3600,19 +3602,19 @@
           "type" : "boolean",
           "default" : false
         },
-        "uri" : {
-          "type" : "string",
-          "format" : "uri"
-        },
-        "filename" : {
-          "type" : "string"
-        },
         "url" : {
           "type" : "string",
           "format" : "url"
         },
         "file" : {
           "$ref" : "#/definitions/File"
+        },
+        "uri" : {
+          "type" : "string",
+          "format" : "uri"
+        },
+        "filename" : {
+          "type" : "string"
         }
       }
     },

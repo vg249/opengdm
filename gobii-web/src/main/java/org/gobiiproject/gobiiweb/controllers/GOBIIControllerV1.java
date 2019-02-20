@@ -6,19 +6,7 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Contact;
-import io.swagger.annotations.ExternalDocs;
-import io.swagger.annotations.Info;
-import io.swagger.annotations.License;
-import io.swagger.annotations.SwaggerDefinition;
-import io.swagger.annotations.Tag;
+import io.swagger.annotations.*;
 import org.apache.commons.lang.math.NumberUtils;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.*;
@@ -1014,7 +1002,9 @@ public class GOBIIControllerV1 {
 
     @ApiOperation(
             value = "/cvs/{groupName:[a-zA-Z_]+}",
-            notes = "Gets cvs by the group name.")
+            notes = "Gets cvs by the group name.",
+            nickname = "getCvsByGroupName"
+    )
     @RequestMapping(value = "/cvs/{groupName:[a-zA-Z_]+}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<CvDTO> getCvById(
@@ -1107,7 +1097,7 @@ public class GOBIIControllerV1 {
     @ResponseBody
     public PayloadEnvelope<CvGroupDTO> getCvGroupsByType(
             @ApiParam(value = "ID of the cv group type", required = true)
-            @PathVariable("cvGroupdTypeId") Integer cvGroupTypeId,
+            @PathVariable("cvGroupTypeId") Integer cvGroupTypeId,
             HttpServletRequest request,
             HttpServletResponse response) {
 
@@ -1256,7 +1246,7 @@ public class GOBIIControllerV1 {
     public PayloadEnvelope<DataSetDTO> replaceDataSet(
             @RequestBody PayloadEnvelope<DataSetDTO> payloadEnvelope,
             @ApiParam(value = "ID of the Dataset to be updated", required = true)
-            @PathVariable("datasetId") Integer dataSetId,
+            @PathVariable("dataSetId") Integer dataSetId,
             HttpServletRequest request,
             HttpServletResponse response) {
 
@@ -3561,7 +3551,8 @@ public class GOBIIControllerV1 {
 
     @ApiOperation(
             value = "Gets the protocol given Protocol ID",
-            notes = "Retrieves the Protocol entity having the specified ID."
+            notes = "Retrieves the Protocol entity having the specified ID.",
+            nickname = "getProtocol"
     )
     @RequestMapping(value = "/protocols/{protocolId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
@@ -4445,7 +4436,7 @@ public class GOBIIControllerV1 {
             @PathVariable("destinationType") String destinationType,
             @ApiParam(value = "Name of the file to be uploaded", required = true)
             @RequestParam("fileName") String fileName,
-            @ApiParam(value = "The file to be uploaded", required = true)
+            @ApiParam(value = "The file to be uploaded", required = true, type = "string")
             @RequestParam("file") MultipartFile file,
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
@@ -4573,9 +4564,6 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/files/{gobiiJobId}/{destinationType}",
             params = {"fileName", "file"},
             method = RequestMethod.POST)
-    @ApiResponses(value= {
-            @ApiResponse(code=200, message = "")
-    })
     public
     @ResponseBody
     String uploadJobFile(
@@ -4585,7 +4573,7 @@ public class GOBIIControllerV1 {
             @PathVariable("destinationType") String destinationType,
             @ApiParam(value = "Name of the file", required = true)
             @RequestParam("fileName") String fileName,
-            @ApiParam(value = "The file to be uploaded", required = true)
+            @ApiParam(name="file", value = "The file to be uploade", required = true, type="string")
             @RequestParam("file") MultipartFile file,
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {

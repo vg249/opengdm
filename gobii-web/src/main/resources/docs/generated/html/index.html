@@ -478,7 +478,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_getcvbyid">/cvs</a></li>
 <li><a href="#_replacecv">/cvs</a></li>
 <li><a href="#_deletecv">/cvs</a></li>
-<li><a href="#_getcvbyid">/cvs/{groupName:[a-zA-Z_]+}</a></li>
+<li><a href="#_getcvsbygroupname">/cvs/{groupName:[a-zA-Z_]+}</a></li>
 <li><a href="#_createdataset">Creates a dataset</a></li>
 <li><a href="#_getdatasets">Gets all the datasets</a></li>
 <li><a href="#_getdatasetstypes">Gets the defined Dataset Types in the system</a></li>
@@ -552,7 +552,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_replaceproject">Updates the Project by Project ID</a></li>
 <li><a href="#_createprotocol">Creates a Protocol</a></li>
 <li><a href="#_getprotocols">Gets all the protocols</a></li>
-<li><a href="#_replaceprotocol">Gets the protocol given Protocol ID</a></li>
+<li><a href="#_getprotocol">Gets the protocol given Protocol ID</a></li>
 <li><a href="#_replaceprotocol">Updates the Protocol by Protocol ID</a></li>
 <li><a href="#_addvendortoprotocol">Creates a Vendor Protocol record for given Protocol ID</a></li>
 <li><a href="#_getvendorsforprotocol">Gets all the Vendor Protocols given Protocol ID</a></li>
@@ -1698,7 +1698,7 @@ __</p></td>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>cvGroupdTypeId</strong><br>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>cvGroupTypeId</strong><br>
 __</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">ID of the cv group type</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
@@ -2111,7 +2111,7 @@ __</p></td>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_getcvbyid">/cvs/{groupName:[a-zA-Z_]+}</h3>
+<h3 id="_getcvsbygroupname">/cvs/{groupName:[a-zA-Z_]+}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/cvs/{groupName}</pre>
@@ -2522,7 +2522,7 @@ __</p></td>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>datasetId</strong><br>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>dataSetId</strong><br>
 __</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">ID of the Dataset to be updated</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
@@ -3848,7 +3848,7 @@ __</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Query</strong></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>file</strong><br>
 __</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The file to be uploaded</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The file to be uploade</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">ref</p></td>
 </tr>
 <tr>
@@ -3865,18 +3865,21 @@ __</p></td>
 <h4 id="_responses_47">Responses</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 66.6667%;">
+<col style="width: 10%;">
+<col style="width: 70%;">
+<col style="width: 20%;">
 </colgroup>
 <thead>
 <tr>
 <th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
 <th class="tableblock halign-left valign-middle">Schema</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">successful operation</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 </tbody>
@@ -6785,7 +6788,7 @@ __</p></td>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_replaceprotocol">Gets the protocol given Protocol ID</h3>
+<h3 id="_getprotocol">Gets the protocol given Protocol ID</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/protocols/{protocolId}</pre>
@@ -12048,7 +12051,7 @@ __</p></td>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-02-12 09:58:57 EST
+Last updated 2019-02-20 10:31:04 EST
 </div>
 </div>
 </body>

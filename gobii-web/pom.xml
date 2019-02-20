@@ -519,7 +519,7 @@
                                 org.gobiiproject.gobiiweb.controllers
                             </locations>
                             <outputFormats>json,yaml</outputFormats>
-                            <schemes>http, https</schemes>
+                            <schemes>http</schemes>
                             <host>localhost:8081</host>
                             <basePath>/api</basePath>
                             <!-- content of description file overrides the <description>

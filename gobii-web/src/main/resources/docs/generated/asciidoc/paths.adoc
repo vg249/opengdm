@@ -388,7 +388,7 @@ Retrieves all CV groups having the specified CV group type ID
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
-|**Path**|**cvGroupdTypeId** +
+|**Path**|**cvGroupTypeId** +
 __|ID of the cv group type|integer (int32)
 |===
 
@@ -576,7 +576,7 @@ __|ID of cv to be deleted|integer (int32)
 |===
 
 
-[[_getcvbyid]]
+[[_getcvsbygroupname]]
 === /cvs/{groupName:[a-zA-Z_]+}
 ....
 GET /gobii/v1/cvs/{groupName}
@@ -766,7 +766,7 @@ Updates the Dataset entity having the specified datasetId. Consult the <<_reques
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
-|**Path**|**datasetId** +
+|**Path**|**dataSetId** +
 __|ID of the Dataset to be updated|integer (int32)
 |**Body**|**body** +
 __||<<_payloadenvelopedatasetdto,PayloadEnvelopeDataSetDTO>>
@@ -1366,7 +1366,7 @@ __|Destination type where the file will be uploaded to|string
 |**Path**|**gobiiJobId** +
 __|ID of the Job that the file will be associated to|string
 |**Query**|**file** +
-__|The file to be uploaded|ref
+__|The file to be uploade|ref
 |**Query**|**fileName** +
 __|Name of the file|string
 |===
@@ -1374,10 +1374,10 @@ __|Name of the file|string
 
 ==== Responses
 
-[options="header", cols=".^2,.^4"]
+[options="header", cols=".^2,.^14,.^4"]
 |===
-|HTTP Code|Schema
-|**200**|string
+|HTTP Code|Description|Schema
+|**200**|successful operation|string
 |===
 
 
@@ -2723,7 +2723,7 @@ Retrieves all the existing protocols in the system.
 |===
 
 
-[[_replaceprotocol]]
+[[_getprotocol]]
 === Gets the protocol given Protocol ID
 ....
 GET /gobii/v1/protocols/{protocolId}
