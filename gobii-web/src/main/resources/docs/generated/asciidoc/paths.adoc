@@ -1293,7 +1293,7 @@ Uploads an arbitrary file to the specified destination
 |**Path**|**destinationType** +
 __|Destination type where the file will be uploaded to|string
 |**Query**|**file** +
-__|The file to be uploaded|ref
+__|The file to be uploaded|string
 |**Query**|**fileName** +
 __|Name of the file to be uploaded|string
 |===
@@ -1366,7 +1366,7 @@ __|Destination type where the file will be uploaded to|string
 |**Path**|**gobiiJobId** +
 __|ID of the Job that the file will be associated to|string
 |**Query**|**file** +
-__|The file to be uploade|ref
+__|The file to be uploaded|string
 |**Query**|**fileName** +
 __|Name of the file|string
 |===

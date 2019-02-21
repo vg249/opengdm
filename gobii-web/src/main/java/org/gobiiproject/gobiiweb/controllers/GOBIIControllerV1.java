@@ -4427,6 +4427,14 @@ public class GOBIIControllerV1 {
             value = "Upload file",
             notes = "Uploads an arbitrary file to the specified destination"
     )
+    //OpenAPI specification uses "string" as datatype for file, but the swagger automatically
+    //adds "ref" as datatype for file parameter. So, an Implicit parameter is added and the original
+    //parameter is made hidden.
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="file", value="The file to be uploaded",
+                    required = true, dataType = "string",
+                    paramType = "query")
+    })
     @RequestMapping(value = "/files/{destinationType}",
             method = RequestMethod.POST)
     public
@@ -4436,7 +4444,7 @@ public class GOBIIControllerV1 {
             @PathVariable("destinationType") String destinationType,
             @ApiParam(value = "Name of the file to be uploaded", required = true)
             @RequestParam("fileName") String fileName,
-            @ApiParam(value = "The file to be uploaded", required = true, type = "string")
+            @ApiParam(value = "dummy", required = false, hidden = true)
             @RequestParam("file") MultipartFile file,
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
@@ -4564,6 +4572,14 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/files/{gobiiJobId}/{destinationType}",
             params = {"fileName", "file"},
             method = RequestMethod.POST)
+    //OpenAPI specification uses "string" as datatype for file, but the swagger automatically
+    //adds "ref" as datatype for file parameter. So, an Implicit parameter is added and the original
+    //parameter is made hidden.
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="file", value="The file to be uploaded",
+                    required = true, dataType = "string",
+                    paramType = "query")
+    })
     public
     @ResponseBody
     String uploadJobFile(
@@ -4573,7 +4589,7 @@ public class GOBIIControllerV1 {
             @PathVariable("destinationType") String destinationType,
             @ApiParam(value = "Name of the file", required = true)
             @RequestParam("fileName") String fileName,
-            @ApiParam(name="file", value = "The file to be uploade", required = true, type="string")
+            @ApiParam(value="dummy", hidden = true, required = false)
             @RequestParam("file") MultipartFile file,
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {

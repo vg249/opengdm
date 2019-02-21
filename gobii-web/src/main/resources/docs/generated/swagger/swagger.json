@@ -1068,7 +1068,7 @@
           "in" : "query",
           "description" : "The file to be uploaded",
           "required" : true,
-          "type" : "ref"
+          "type" : "string"
         } ],
         "responses" : {
           "200" : {
@@ -1165,9 +1165,9 @@
         }, {
           "name" : "file",
           "in" : "query",
-          "description" : "The file to be uploade",
+          "description" : "The file to be uploaded",
           "required" : true,
-          "type" : "ref"
+          "type" : "string"
         } ],
         "responses" : {
           "200" : {
@@ -3602,19 +3602,19 @@
           "type" : "boolean",
           "default" : false
         },
-        "url" : {
-          "type" : "string",
-          "format" : "url"
-        },
-        "file" : {
-          "$ref" : "#/definitions/File"
-        },
         "uri" : {
           "type" : "string",
           "format" : "uri"
         },
         "filename" : {
           "type" : "string"
+        },
+        "url" : {
+          "type" : "string",
+          "format" : "url"
+        },
+        "file" : {
+          "$ref" : "#/definitions/File"
         }
       }
     },

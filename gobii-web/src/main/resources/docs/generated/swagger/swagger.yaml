@@ -813,7 +813,7 @@ paths:
         in: "query"
         description: "The file to be uploaded"
         required: true
-        type: "ref"
+        type: "string"
       responses:
         200:
           description: "successful operation"
@@ -891,9 +891,9 @@ paths:
         type: "string"
       - name: "file"
         in: "query"
-        description: "The file to be uploade"
+        description: "The file to be uploaded"
         required: true
-        type: "ref"
+        type: "string"
       responses:
         200:
           description: "successful operation"
@@ -2949,16 +2949,16 @@ definitions:
       readable:
         type: "boolean"
         default: false
-      url:
-        type: "string"
-        format: "url"
-      file:
-        $ref: "#/definitions/File"
       uri:
         type: "string"
         format: "uri"
       filename:
         type: "string"
+      url:
+        type: "string"
+        format: "url"
+      file:
+        $ref: "#/definitions/File"
   JobDTO:
     type: "object"
     properties:
