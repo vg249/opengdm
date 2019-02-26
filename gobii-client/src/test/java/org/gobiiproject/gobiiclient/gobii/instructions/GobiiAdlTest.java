@@ -112,6 +112,12 @@ public class GobiiAdlTest {
         }
 
 
+        // get path to GDMFileProject.jar
+
+        File fileComparator = new File("/gobii-process/src/main/resources/gobiiadl/GDMFileProject.jar");
+
+        adlEncapsulator.setInputFileComparator(fileComparator.getAbsolutePath());
+
         adlEncapsulator.setInputDirectory(tempDir.getAbsolutePath());
 
         boolean isADLSuccessful = adlEncapsulator.executeBatchGobiiADL();
