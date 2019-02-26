@@ -210,8 +210,8 @@ public class GOBIIControllerV1 {
             value = "Authentication service for accessing GDM System",
             notes = "The user credentials are specified in the request headers X-Username and X-Password; " +
                     "the response and the response headers include the token in the X-Auth-Token header. " +
-                    "this header and value be included in the request headers for subsequent " +
-                    "requests. The token value is also supplied in the dtoHeaderAuth object."
+                    "X-Auth-Token header and value obtained from /auth call will be used as an API-key " +
+                    "for the rest of the GDM calls."
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name="X-Username", value="User Identifier", required=true,
@@ -663,7 +663,7 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "Gets all the contacts in the GOBii system",
+            value = "Gets all the contacts in the GDM system",
             notes = "Gets all contacts."
     )
     @RequestMapping(value = "/contacts", method = RequestMethod.GET)
