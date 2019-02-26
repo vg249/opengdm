@@ -50,7 +50,7 @@ import {ViewIdGeneratorService} from "../services/core/view-id-generator-service
                             (ngModelChange)="handleFormatSelected($event)"
                             [ngModel]="(fileFormat$  | async).getItemId()"
                             name="fileFormat"
-                            label="Sample Metadata"
+                            label="Metadata"
                             value="META_DATA_ONLY"
                             [id]="viewIdGeneratorService.makeExportFormatRadioButtonId(gobiiExtractFormat.META_DATA_ONLY)">
                     </p-radioButton>
