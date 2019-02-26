@@ -115,7 +115,7 @@ __||<<_payloadenvelopeanalysisdto,PayloadEnvelopeAnalysisDTO>>
 
 
 [[_authenticate]]
-=== Authentication service for accessing GOBii System
+=== Authentication service for accessing GDM System
 ....
 POST /gobii/v1/auth
 ....
@@ -151,7 +151,7 @@ __||string
 
 
 [[_getconfigsettings]]
-=== Gets the configuration settings for GOBii system
+=== Gets the configuration settings for GDM system
 ....
 GET /gobii/v1/configsettings
 ....
@@ -2998,7 +2998,7 @@ __||<<_payloadenvelopereferencedto,PayloadEnvelopeReferenceDTO>>
 
 
 [[_updaterestprofile]]
-=== Gets REST profiles of GOBii system
+=== Gets REST profiles of GDM system
 ....
 PUT /gobii/v1/restprofiles
 ....

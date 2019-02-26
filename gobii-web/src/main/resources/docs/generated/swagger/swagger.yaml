@@ -83,7 +83,7 @@ paths:
             $ref: "#/definitions/PayloadEnvelopeAnalysisDTO"
   /gobii/v1/auth:
     post:
-      summary: "Authentication service for accessing GOBii System"
+      summary: "Authentication service for accessing GDM System"
       description: "The user credentials are specified in the request headers X-Username\
         \ and X-Password; the response and the response headers include the token\
         \ in the X-Auth-Token header. this header and value be included in the request\
@@ -117,7 +117,7 @@ paths:
               description: "API key to authenticate GDM api calls"
   /gobii/v1/configsettings:
     get:
-      summary: "Gets the configuration settings for GOBii system"
+      summary: "Gets the configuration settings for GDM system"
       description: "Provides generic configuration information about the GOBii instances\
         \ in a given deployment. This call does not require authentication"
       operationId: "getConfigSettings"
@@ -1878,7 +1878,7 @@ paths:
             $ref: "#/definitions/PayloadEnvelopeReferenceDTO"
   /gobii/v1/restprofiles:
     put:
-      summary: "Gets REST profiles of GOBii system"
+      summary: "Gets REST profiles of GDM system"
       description: "When the Header of the payload envelope for a resource contains\
         \ maxGet, maxPost, and maxPut values, this resource provides a means to update\
         \ the max for a given rest resource ID and for a given HTTP verb. The values\

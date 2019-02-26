@@ -207,7 +207,7 @@ public class GOBIIControllerV1 {
     }//getPingResponse()
 
     @ApiOperation(
-            value = "Authentication service for accessing GOBii System",
+            value = "Authentication service for accessing GDM System",
             notes = "The user credentials are specified in the request headers X-Username and X-Password; " +
                     "the response and the response headers include the token in the X-Auth-Token header. " +
                     "this header and value be included in the request headers for subsequent " +
@@ -259,7 +259,7 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "Gets the configuration settings for GOBii system",
+            value = "Gets the configuration settings for GDM system",
             notes = "Provides generic configuration information about the GOBii instances in " +
                     "a given deployment. This call does not require authentication"
     )
@@ -307,7 +307,7 @@ public class GOBIIControllerV1 {
 
 
     @ApiOperation(
-            value = "Gets REST profiles of GOBii system",
+            value = "Gets REST profiles of GDM system",
             notes = "When the Header of the payload envelope for a resource contains " +
                     "maxGet, maxPost, and maxPut values, this resource provides a means " +
                     "to update the max for a given rest resource ID and for a given HTTP verb. " +
