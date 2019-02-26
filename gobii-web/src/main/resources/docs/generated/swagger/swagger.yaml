@@ -96,11 +96,25 @@ paths:
         required: false
         schema:
           type: "string"
+      - name: "X-Username"
+        in: "header"
+        description: "User Identifier"
+        required: true
+        type: "string"
+      - name: "X-Password"
+        in: "header"
+        description: "User password"
+        required: true
+        type: "string"
       responses:
         200:
-          description: "successful operation"
+          description: "OK"
           schema:
             type: "string"
+          headers:
+            'X-Auth-Token ':
+              type: "string"
+              description: "API key to authenticate GDM api calls"
   /gobii/v1/configsettings:
     get:
       summary: "Gets the configuration settings for GOBii system"

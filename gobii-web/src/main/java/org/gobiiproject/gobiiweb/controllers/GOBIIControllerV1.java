@@ -69,13 +69,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -219,6 +213,18 @@ public class GOBIIControllerV1 {
                     "this header and value be included in the request headers for subsequent " +
                     "requests. The token value is also supplied in the dtoHeaderAuth object."
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Username", value="User Identifier", required=true,
+                    paramType = "header", dataType = "string"),
+            @ApiImplicitParam(name="X-Password", value="User password", required=true,
+                    paramType = "header", dataType = "string"),
+    })
+    @ApiResponses(value={
+            @ApiResponse(code=200, message = "OK", responseHeaders=@ResponseHeader(
+                    name="X-Auth-Token ", description = "API key to authenticate GDM api calls",
+                    response = String.class
+            ))
+    })
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
     @ResponseBody
     public String authenticate(@RequestBody String noContentExpected,

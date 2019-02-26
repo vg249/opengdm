@@ -127,11 +127,15 @@ The user credentials are specified in the request headers X-Username and X-Passw
 
 ==== Parameters
 
-[options="header", cols=".^2,.^3,.^4"]
+[options="header", cols=".^2,.^3,.^9,.^4"]
 |===
-|Type|Name|Schema
+|Type|Name|Description|Schema
+|**Header**|**X-Password** +
+__|User password|string
+|**Header**|**X-Username** +
+__|User Identifier|string
 |**Body**|**body** +
-__|string
+__||string
 |===
 
 
@@ -140,7 +144,9 @@ __|string
 [options="header", cols=".^2,.^14,.^4"]
 |===
 |HTTP Code|Description|Schema
-|**200**|successful operation|string
+|**200**|OK +
+**Headers** :  +
+`X-Auth-Token ` (string) : API key to authenticate GDM api calls.|string
 |===
 
 
