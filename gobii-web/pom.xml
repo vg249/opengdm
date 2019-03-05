@@ -527,7 +527,7 @@
                                  Overview section in the HTML/PDF -->
                             <descriptionFile>${doc-location-source}/overview.txt</descriptionFile>
                             <info>
-                                <title>GOBii API</title>
+                                <title>Genomic Data Management (GDM)</title>
                                 <version>1.0</version>
                                 <!-- use markdown here because I'm using markdown for output,
                                 if you need to use html or other markup language, you need to use your target language,
@@ -553,9 +553,6 @@
                                     <name>basicAuth</name>
                                     <type>basic</type>
                                 </securityDefinition>
-                                <!--<securityDefinition>-->
-                                <!--<json>/securityDefinition.json</json>-->
-                                <!--</securityDefinition>-->
                             </securityDefinitions>
                             <!-- Support classpath or file absolute path here.
                             1) classpath e.g: "classpath:/markdown.hbs", "classpath:/templates/hello.html"

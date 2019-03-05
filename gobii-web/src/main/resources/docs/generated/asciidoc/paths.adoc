@@ -3,14 +3,14 @@
 == Paths
 
 [[_createanalysis]]
-=== Creates analysis entity
+=== POST /analyses
 ....
 POST /gobii/v1/analyses
 ....
 
 
 ==== Description
-Creates an analysis entity for GOBii system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Create analysis entity for GDM system.
 
 
 ==== Parameters
@@ -32,15 +32,20 @@ __|<<_payloadenvelopeanalysisdto,PayloadEnvelopeAnalysisDTO>>
 |===
 
 
+==== Tags
+
+* Analyses
+
+
 [[_getanalyses]]
-=== Gets all the analyses
+=== GET /analyses
 ....
 GET /gobii/v1/analyses
 ....
 
 
 ==== Description
-Retrieves an unfiltered list of all Analysis entities. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+List of all Analysis entities.
 
 
 ==== Responses
@@ -52,15 +57,20 @@ Retrieves an unfiltered list of all Analysis entities. Consult the <<_requestres
 |===
 
 
+==== Tags
+
+* Analyses
+
+
 [[_getanalysisbyid]]
-=== Gets analysis by Analysis ID
+=== GET /analyses/{analysisId}
 ....
 GET /gobii/v1/analyses/{analysisId}
 ....
 
 
 ==== Description
-Retrieves the Analysis entity having the specified ID. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Get analyses by analyses Id.
 
 
 ==== Parameters
@@ -82,15 +92,20 @@ __|ID of Analysis to be extracted.|integer (int32)
 |===
 
 
+==== Tags
+
+* Analyses
+
+
 [[_replaceanalysis]]
-=== Updates analysis by Analysis ID
+=== PUT /analyses/{analysisId}
 ....
 PUT /gobii/v1/analyses/{analysisId}
 ....
 
 
 ==== Description
-Updates the Analysis entity having the specified analysisId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Updates the Analysis entity having the specified analysisId.
 
 
 ==== Parameters
@@ -114,15 +129,20 @@ __||<<_payloadenvelopeanalysisdto,PayloadEnvelopeAnalysisDTO>>
 |===
 
 
+==== Tags
+
+* Analyses
+
+
 [[_authenticate]]
-=== Authentication service for accessing GDM System
+=== POST /auth
 ....
 POST /gobii/v1/auth
 ....
 
 
 ==== Description
-The user credentials are specified in the request headers X-Username and X-Password; the response and the response headers include the token in the X-Auth-Token header. this header and value be included in the request headers for subsequent requests. The token value is also supplied in the dtoHeaderAuth object.
+The user credentials are specified in the request headers X-Username and X-Password; the response and the response headers include the token in the X-Auth-Token header. X-Auth-Token header and value obtained from /auth call will be used as an API-key for the rest of the GDM calls.
 
 
 ==== Parameters
@@ -150,15 +170,21 @@ __||string
 |===
 
 
+==== Tags
+
+* Authentication
+
+
 [[_getconfigsettings]]
-=== Gets the configuration settings for GDM system
+=== GET /configsettings
 ....
 GET /gobii/v1/configsettings
 ....
 
 
 ==== Description
-Provides generic configuration information about the GOBii instances in a given deployment. This call does not require authentication
+List all configuration settings.
++Provides generic configuration information about the GOBii instances in a given deployment. This call does not require authentication
 
 
 ==== Responses
@@ -170,15 +196,20 @@ Provides generic configuration information about the GOBii instances in a given 
 |===
 
 
+==== Tags
+
+* ConfigSettings
+
+
 [[_getcontactsbysearch]]
-=== /contacts-search
+=== GET /contacts-search
 ....
 GET /gobii/v1/contact-search
 ....
 
 
 ==== Description
-Gets contacts by searching for emailid, lastname, firstname, username.
+List contacts for emailid, lastname, firstname, username.
 
 
 ==== Parameters
@@ -206,15 +237,20 @@ __|contact's user name|string
 |===
 
 
+==== Tags
+
+* ContactsSearch
+
+
 [[_createcontact]]
-=== Adds new contact to GOBii system
+=== POST /contacts
 ....
 POST /gobii/v1/contacts
 ....
 
 
 ==== Description
-Adds new contact.
+Create new contact.
 
 
 ==== Parameters
@@ -236,15 +272,20 @@ __|<<_payloadenvelopecontactdto,PayloadEnvelopeContactDTO>>
 |===
 
 
+==== Tags
+
+* Contacts
+
+
 [[_getcontacts]]
-=== Gets all the contacts in the GOBii system
+=== GET /contacts
 ....
 GET /gobii/v1/contacts
 ....
 
 
 ==== Description
-Gets all contacts.
+List all contacts.
 
 
 ==== Responses
@@ -256,15 +297,20 @@ Gets all contacts.
 |===
 
 
+==== Tags
+
+* Contacts
+
+
 [[_getcontactsbyid]]
-=== Gets contacts by contact ID
+=== GET /contacts/{contactId}
 ....
 GET /gobii/v1/contacts/{contactId}
 ....
 
 
 ==== Description
-Gets contacts by contact id.
+Get contacts by Contact Id.
 
 
 ==== Parameters
@@ -286,15 +332,20 @@ __|ID of contacts to be extracted.|integer (int32)
 |===
 
 
+==== Tags
+
+* Contacts
+
+
 [[_replacecontact]]
-=== Updates contacts by contact ID
+=== PUT /contacts/{contactId}
 ....
 PUT /gobii/v1/contacts/{contactId}
 ....
 
 
 ==== Description
-Updates contacts for a given contact id.
+Update contact by contact id.
 
 
 ==== Parameters
@@ -318,15 +369,20 @@ __||<<_payloadenvelopecontactdto,PayloadEnvelopeContactDTO>>
 |===
 
 
+==== Tags
+
+* Contacts
+
+
 [[_getcontactsbyemail]]
-=== Gets contacts by email id
+=== GET /contacts/{email}
 ....
 GET /gobii/v1/contacts/{email}
 ....
 
 
 ==== Description
-Gets contacts by email id.
+Get contact by email id.
 
 
 ==== Parameters
@@ -348,15 +404,20 @@ __|email id of contacts to be extracted.|string
 |===
 
 
+==== Tags
+
+* Contacts
+
+
 [[_getcvsforcvgroup]]
-=== Gets CV terms by CV group ID
+=== GET /cvgroups/{cvGroupId}/cvs
 ....
 GET /gobii/v1/cvgroups/{cvGroupId}/cvs
 ....
 
 
 ==== Description
-Retrieves all the CV terms having the specified CV group ID
+List CV terms in given group
 
 
 ==== Parameters
@@ -378,15 +439,20 @@ __|ID of the CV group.|integer (int32)
 |===
 
 
+==== Tags
+
+* CvGroups.cvs
+
+
 [[_getcvgroupsbytype]]
-=== Gets CV groups by CV group type ID
+=== GET /cvgroups/{cvGroupTypeId}
 ....
 GET /gobii/v1/cvgroups/{cvGroupTypeId}
 ....
 
 
 ==== Description
-Retrieves all CV groups having the specified CV group type ID
+Get CV group by cv group type ID
 
 
 ==== Parameters
@@ -408,15 +474,20 @@ __|ID of the cv group type|integer (int32)
 |===
 
 
+==== Tags
+
+* CvGroups
+
+
 [[_getcvgroupdetails]]
-=== Gets CV Group details given CV group name and type ID
+=== Get /cvgroups/{groupName}
 ....
 GET /gobii/v1/cvgroups/{groupName}
 ....
 
 
 ==== Description
-Retrieves the details for a given CV Group name and type ID
+Get CV group by name
 
 
 ==== Parameters
@@ -440,8 +511,13 @@ __||integer (int32)
 |===
 
 
+==== Tags
+
+* CvGroups
+
+
 [[_createcv]]
-=== /cvs
+=== POST /cvs
 ....
 POST /gobii/v1/cvs
 ....
@@ -470,15 +546,20 @@ __|<<_payloadenvelopecvdto,PayloadEnvelopeCvDTO>>
 |===
 
 
+==== Tags
+
+* ControlledVocabularies
+
+
 [[_getcvs]]
-=== /cvs
+=== GET /cvs
 ....
 GET /gobii/v1/cvs
 ....
 
 
 ==== Description
-Gets all cvs in the system.
+List all cvs in the GDM.
 
 
 ==== Responses
@@ -490,15 +571,20 @@ Gets all cvs in the system.
 |===
 
 
+==== Tags
+
+* ControlledVocabularies
+
+
 [[_getcvbyid]]
-=== /cvs
+=== GET /cvs/{cvId}
 ....
 GET /gobii/v1/cvs/{cvId}
 ....
 
 
 ==== Description
-Gets cv by the id.
+Get cv by the id.
 
 
 ==== Parameters
@@ -520,15 +606,20 @@ __|ID of the CV to be extracted|integer (int32)
 |===
 
 
+==== Tags
+
+* ControlledVocabularies
+
+
 [[_replacecv]]
-=== /cvs
+=== PUT /cvs/{cvId}
 ....
 PUT /gobii/v1/cvs/{cvId}
 ....
 
 
 ==== Description
-Updates cv's by cvId.
+Update cv by cvId.
 
 
 ==== Parameters
@@ -552,15 +643,20 @@ __||<<_payloadenvelopecvdto,PayloadEnvelopeCvDTO>>
 |===
 
 
+==== Tags
+
+* ControlledVocabularies
+
+
 [[_deletecv]]
-=== /cvs
+=== DELETE /cvs/{cvId}
 ....
 DELETE /gobii/v1/cvs/{cvId}
 ....
 
 
 ==== Description
-Deletes cv by the id.
+Deletes cv by id.
 
 
 ==== Parameters
@@ -582,15 +678,20 @@ __|ID of cv to be deleted|integer (int32)
 |===
 
 
+==== Tags
+
+* ControlledVocabularies
+
+
 [[_getcvsbygroupname]]
-=== /cvs/{groupName:[a-zA-Z_]+}
+=== GET /cvs/{groupName}
 ....
 GET /gobii/v1/cvs/{groupName}
 ....
 
 
 ==== Description
-Gets cvs by the group name.
+List cvs by the group name.
 
 
 ==== Parameters
@@ -612,15 +713,20 @@ __|name of cv group to be extracted|string
 |===
 
 
+==== Tags
+
+* Cvs
+
+
 [[_createdataset]]
-=== Creates a dataset
+=== POST /datasets
 ....
 POST /gobii/v1/datasets
 ....
 
 
 ==== Description
-Creates a new dataset in the system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Creates a new dataset in the system.
 
 
 ==== Parameters
@@ -642,15 +748,20 @@ __|<<_payloadenvelopedatasetdto,PayloadEnvelopeDataSetDTO>>
 |===
 
 
+==== Tags
+
+* Datasets
+
+
 [[_getdatasets]]
-=== Gets all the datasets
+=== GET /datasets
 ....
 GET /gobii/v1/datasets
 ....
 
 
 ==== Description
-Retrieves all the existing datasets in the system. The list can be retrieved by page and specific page size.
+List all the existing datasets in the system. The list can be retrieved by page and specific page size.
 
 
 ==== Parameters
@@ -676,15 +787,20 @@ __||string
 |===
 
 
+==== Tags
+
+* Datasets
+
+
 [[_getdatasetstypes]]
-=== Gets the defined Dataset Types in the system
+=== GET /datasets/types
 ....
 GET /gobii/v1/datasets/types
 ....
 
 
 ==== Description
-Retrieves all the defined dataset types in the system.
+Lists dataset types in the system.
 
 
 ==== Responses
@@ -696,15 +812,20 @@ Retrieves all the defined dataset types in the system.
 |===
 
 
+==== Tags
+
+* Datasets.types
+
+
 [[_getdatasetsbytypeid]]
-=== Gets all the datasets with the given dataset type ID
+=== GET /datasets/types/{id}
 ....
 GET /gobii/v1/datasets/types/{id}
 ....
 
 
 ==== Description
-Retrieves all the Datasets having the specified type ID.
+Gets the Dataset type by type ID.
 
 
 ==== Parameters
@@ -726,15 +847,20 @@ __|ID of the dataset type|integer (int32)
 |===
 
 
+==== Tags
+
+* Datasets.types
+
+
 [[_getdatasetsbyid]]
-=== Gets the dataset given Dataset ID
+=== GET /datasets/{dataSetId}
 ....
 GET /gobii/v1/datasets/{dataSetId}
 ....
 
 
 ==== Description
-Retrieves the Dataset entity having the specified ID.
+Gets the Dataset entity having the specified ID.
 
 
 ==== Parameters
@@ -756,15 +882,20 @@ __|ID of the Dataset to be extracted|integer (int32)
 |===
 
 
+==== Tags
+
+* Datasets
+
+
 [[_replacedataset]]
-=== Updates the Dataset by Dataset ID
+=== PUT /datasets/{dataSetId}
 ....
 PUT /gobii/v1/datasets/{dataSetId}
 ....
 
 
 ==== Description
-Updates the Dataset entity having the specified datasetId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Updates the Dataset entity having the specified datasetId.
 
 
 ==== Parameters
@@ -788,15 +919,20 @@ __||<<_payloadenvelopedatasetdto,PayloadEnvelopeDataSetDTO>>
 |===
 
 
+==== Tags
+
+* Datasets
+
+
 [[_getanalysesfordataset]]
-=== Gets all the analysis for the given Dataset ID
+=== GET /datasets/{dataSetId}/analyses
 ....
 GET /gobii/v1/datasets/{dataSetId}/analyses
 ....
 
 
 ==== Description
-Retrieves all the analysis for the given datasetId
+Lists all the analysis in a dataset identified by dataset id.
 
 
 ==== Parameters
@@ -818,15 +954,20 @@ __|ID of the dataset|integer (int32)
 |===
 
 
+==== Tags
+
+* Datasets.analyses
+
+
 [[_getjobdetailsbydatasetid]]
-=== Gets the job details for the given Dataset ID
+=== GET /datasets/{datasetId}/jobs
 ....
 GET /gobii/v1/datasets/{datasetId}/jobs
 ....
 
 
 ==== Description
-Retrieves the information for active job for a given datasetId
+List information for active job for a given datasetId
 
 
 ==== Parameters
@@ -848,15 +989,20 @@ __|ID of the dataset|string
 |===
 
 
+==== Tags
+
+* Datasets.jobs
+
+
 [[_createdisplay]]
-=== Creates a display entity
+=== POST /displays
 ....
 POST /gobii/v1/displays
 ....
 
 
 ==== Description
-Creates a display entity with the given information. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Creates displays in GDM.
 
 
 ==== Parameters
@@ -878,15 +1024,20 @@ __|<<_payloadenvelopedisplaydto,PayloadEnvelopeDisplayDTO>>
 |===
 
 
+==== Tags
+
+* Displays
+
+
 [[_getdisplays]]
-=== Gets all the displays
+=== GET /displays
 ....
 GET /gobii/v1/displays
 ....
 
 
 ==== Description
-Retrieves a list of all the Display entities
+Lists all Displays in GDM
 
 
 ==== Responses
@@ -898,15 +1049,20 @@ Retrieves a list of all the Display entities
 |===
 
 
+==== Tags
+
+* Displays
+
+
 [[_getdisplaybyid]]
-=== Gets display by Display ID
+=== GET /displays/{displayId}
 ....
 GET /gobii/v1/displays/{displayId}
 ....
 
 
 ==== Description
-Retrieves the Display entity having the specified ID
+Get the Display by display Id
 
 
 ==== Parameters
@@ -928,15 +1084,20 @@ __|ID of the Display to be extracted|integer (int32)
 |===
 
 
+==== Tags
+
+* Displays
+
+
 [[_replacedisplay]]
-=== Updates display by Display ID
+=== PUT /displays/{displayId}
 ....
 PUT /gobii/v1/displays/{displayId}
 ....
 
 
 ==== Description
-Updates the Display entity having the specified displayId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Updates the Display entity having the specified displayId.
 
 
 ==== Parameters
@@ -960,15 +1121,20 @@ __||<<_payloadenvelopedisplaydto,PayloadEnvelopeDisplayDTO>>
 |===
 
 
+==== Tags
+
+* Displays
+
+
 [[_getallentitystats]]
-=== Gets all the entities
+=== GET /entities
 ....
 GET /gobii/v1/entities
 ....
 
 
 ==== Description
-Retrieves all the existing entities in the system.
+Lists all the existing entities in the system.
 
 
 ==== Responses
@@ -980,8 +1146,13 @@ Retrieves all the existing entities in the system.
 |===
 
 
+==== Tags
+
+* Entities
+
+
 [[_getentitycountofchildren]]
-=== Gets the total count of the children for the given Entity
+=== Gets /entities/{entityNameParent}/{parentId}/{entityNameChild}/count
 ....
 GET /gobii/v1/entities/{entityNameParent}/{parentId}/{entityNameChild}/count
 ....
@@ -1014,15 +1185,20 @@ __|ID of the parent entity|integer (int32)
 |===
 
 
+==== Tags
+
+* Entities.parent.child.count
+
+
 [[_getentitycount]]
-=== Gets the total entity count for the given Entity Name
+=== GET /entities/{entityName}/count
 ....
 GET /gobii/v1/entities/{entityName}/count
 ....
 
 
 ==== Description
-Retrieves the total Entity count for the given entityName
+Gets the total Entity count for the given entityName
 
 
 ==== Parameters
@@ -1044,15 +1220,20 @@ __|Name of the Entity|string
 |===
 
 
+==== Tags
+
+* Entities.count
+
+
 [[_getentitylastmodified]]
-=== Gets the last modified entity for the given Entity Name
+=== GET /entities/{entityName}/lastmodified
 ....
 GET /gobii/v1/entities/{entityName}/lastmodified
 ....
 
 
 ==== Description
-Retrieves last modified Entity for the given entityName
+Gets last modified Entity for the given entityName
 
 
 ==== Parameters
@@ -1074,15 +1255,20 @@ __|Name of the Entity|string
 |===
 
 
+==== Tags
+
+* Entities.lastModified
+
+
 [[_createexperiment]]
-=== Creates an experiment
+=== POST /experiments
 ....
 POST /gobii/v1/experiments
 ....
 
 
 ==== Description
-Creates a new experiment in the system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Creates a new experiment in the system.
 
 
 ==== Parameters
@@ -1104,15 +1290,20 @@ __|<<_payloadenvelopeexperimentdto,PayloadEnvelopeExperimentDTO>>
 |===
 
 
+==== Tags
+
+* Experiments
+
+
 [[_getexperiments]]
-=== Gets all the experiments
+=== GET /experiments
 ....
 GET /gobii/v1/experiments
 ....
 
 
 ==== Description
-Retrieves all the existing experiments in the system.
+List all the existing experiments in the system.
 
 
 ==== Responses
@@ -1124,15 +1315,20 @@ Retrieves all the existing experiments in the system.
 |===
 
 
+==== Tags
+
+* Experiments
+
+
 [[_getexperimentsbyid]]
-=== Gets the experiment given Experiment ID
+=== GET /experiments/{experimentId}
 ....
 GET /gobii/v1/experiments/{experimentId}
 ....
 
 
 ==== Description
-Retrieves the Experiment entity having the specified ID.
+Gets the Experiment entity having the specified ID.
 
 
 ==== Parameters
@@ -1154,15 +1350,20 @@ __|ID of the Experiment to be updated|integer (int32)
 |===
 
 
+==== Tags
+
+* Experiments
+
+
 [[_replaceexperiment]]
-=== Updates the Experiment by Experiement ID
+=== PUT /experiments/{experimentId}
 ....
 PUT /gobii/v1/experiments/{experimentId}
 ....
 
 
 ==== Description
-Updates the Experiment entity having the specified experimentId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Updates the Experiment entity having the specified experimentId.
 
 
 ==== Parameters
@@ -1186,8 +1387,13 @@ __||<<_payloadenvelopeexperimentdto,PayloadEnvelopeExperimentDTO>>
 |===
 
 
+==== Tags
+
+* Experiments
+
+
 [[_getprotocolbyexperimentid]]
-=== Gets all the Protocols by Experiment ID
+=== GET /experiments/{experimentId}/protocols
 ....
 GET /gobii/v1/experiments/{experimentId}/protocols
 ....
@@ -1216,15 +1422,20 @@ __|ID of the Experiment|integer (int32)
 |===
 
 
+==== Tags
+
+* Experiments.protocols
+
+
 [[_getfilepreviewbysearch]]
-=== Gets file preview for the specified directory name
+=== GET /files/loader/{directoryName}
 ....
 GET /gobii/v1/files/loader/{directoryName}
 ....
 
 
 ==== Description
-Retrieves file preview for the specified directory name
+Gets file preview for the specified directory name
 
 
 ==== Parameters
@@ -1248,15 +1459,20 @@ __|Format/Extension of the file|string
 |===
 
 
+==== Tags
+
+* Files.loader
+
+
 [[_createloaderfiledirectory]]
-=== Creates a Directory to be used for loading
+=== PUT /files/loader/{directoryName}
 ....
 PUT /gobii/v1/files/loader/{directoryName}
 ....
 
 
 ==== Description
-Creates a directory in the system that will be used for storing the data files for loading
+Updates a directory in the system that will be used for storing the data files for loading
 
 
 ==== Parameters
@@ -1280,8 +1496,13 @@ __||<<_payloadenvelopeloaderfilepreviewdto,PayloadEnvelopeLoaderFilePreviewDTO>>
 |===
 
 
+==== Tags
+
+* Files.loader
+
+
 [[_uploadfile]]
-=== Upload file
+=== POST /files/{destinationType}
 ....
 POST /gobii/v1/files/{destinationType}
 ....
@@ -1314,8 +1535,13 @@ __|Name of the file to be uploaded|string
 |===
 
 
+==== Tags
+
+* Files
+
+
 [[_deletefile]]
-=== Delete file
+=== DELETE /files/{destinationType}
 ....
 DELETE /gobii/v1/files/{destinationType}
 ....
@@ -1351,8 +1577,13 @@ __|Name of the file to be deleted|string
 * `text/plain`
 
 
+==== Tags
+
+* Files
+
+
 [[_uploadjobfile]]
-=== Upload file for Job
+=== POST /files/{gobiiJobId}/{destinationType}
 ....
 POST /gobii/v1/files/{gobiiJobId}/{destinationType}
 ....
@@ -1387,8 +1618,13 @@ __|Name of the file|string
 |===
 
 
+==== Tags
+
+* Files.jobs
+
+
 [[_downloadjobfile]]
-=== Download file for specified Job
+=== GET /files/{gobiiJobId}/{destinationType}
 ....
 GET /gobii/v1/files/{gobiiJobId}/{destinationType}
 ....
@@ -1421,8 +1657,13 @@ __|Name of the file to be downloaded|string
 |===
 
 
+==== Tags
+
+* Files.jobs
+
+
 [[_createextractorinstruction]]
-=== Creates instruction file for extracting data
+=== POST /instructions/extractor
 ....
 POST /gobii/v1/instructions/extractor
 ....
@@ -1451,8 +1692,13 @@ __|<<_payloadenvelopeextractorinstructionfilesdto,PayloadEnvelopeExtractorInstru
 |===
 
 
+==== Tags
+
+* Instructions.extractor
+
+
 [[_getextractorinstructionstatus]]
-=== Gets the extract job status by Job name
+=== GET /instructions/extractor/jobs/{jobName}
 ....
 GET /gobii/v1/instructions/extractor/jobs/{jobName}
 ....
@@ -1481,8 +1727,13 @@ __|Name of the job|string
 |===
 
 
+==== Tags
+
+* Instructions.extractor.jobs
+
+
 [[_getextractorinstruction]]
-=== Gets the extract instruction information given file name
+=== GET /instructions/extractor/{instructionFileName}
 ....
 GET /gobii/v1/instructions/extractor/{instructionFileName}
 ....
@@ -1511,8 +1762,13 @@ __|Name of the instruction file to be retrieved|string
 |===
 
 
+==== Tags
+
+* Instructions.extractor
+
+
 [[_createloaderinstruction]]
-=== Creates instruction file for loading data
+=== POST /instructions/loader
 ....
 POST /gobii/v1/instructions/loader
 ....
@@ -1541,15 +1797,20 @@ __|<<_payloadenvelopeloaderinstructionfilesdto,PayloadEnvelopeLoaderInstructionF
 |===
 
 
+==== Tags
+
+* Instructions.loader
+
+
 [[_getloaderinstructionstatus]]
-=== Gets the loading job status by Job name
+=== GET /instructions/loader/jobs/{jobName}
 ....
 GET /gobii/v1/instructions/loader/jobs/{jobName}
 ....
 
 
 ==== Description
-Retrieves the loading job status along with other job details having the specified Job Name.
+Gets the loading job status along with other job details having the specified Job Name.
 
 
 ==== Parameters
@@ -1571,15 +1832,20 @@ __|Name of the job|string
 |===
 
 
+==== Tags
+
+* Instructions.loader.jobs
+
+
 [[_getloaderinstruction]]
-=== Gets the loading instruction information given file name
+=== GET /instructions/loader/{instructionFileName}
 ....
 GET /gobii/v1/instructions/loader/{instructionFileName}
 ....
 
 
 ==== Description
-Retrieves the loader instruction file entity having the specified instruction file name.
+Gets the loader instruction file entity having the specified instruction file name.
 
 
 ==== Parameters
@@ -1601,15 +1867,20 @@ __|Name of the instruction file to be retrieved.|string
 |===
 
 
+==== Tags
+
+* Instructions.loader
+
+
 [[_createjob]]
-=== Creates a job
+=== POST /jobs
 ....
 POST /gobii/v1/jobs
 ....
 
 
 ==== Description
-Creates a new job in the system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Creates a new job in the system.
 
 
 ==== Parameters
@@ -1631,15 +1902,20 @@ __|<<_payloadenvelopejobdto,PayloadEnvelopeJobDTO>>
 |===
 
 
+==== Tags
+
+* Jobs
+
+
 [[_getstatus]]
-=== Gets all the jobs
+=== GET /jobs
 ....
 GET /gobii/v1/jobs
 ....
 
 
 ==== Description
-Retrieves all the existing jobs in the system.
+Lists all the existing jobs in the system.
 
 
 ==== Responses
@@ -1651,15 +1927,20 @@ Retrieves all the existing jobs in the system.
 |===
 
 
+==== Tags
+
+* Jobs
+
+
 [[_submitdnasamplesbyjobname]]
-=== Created DNA samples for a given Job
+=== POST /jobs/dnasamples/{jobName}
 ....
 POST /gobii/v1/jobs/dnasamples/{jobName}
 ....
 
 
 ==== Description
-Creates DNA samples for a given Job having the specified name in the system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Creates DNA samples for a given Job having the specified name in the system.
 
 
 ==== Parameters
@@ -1683,15 +1964,20 @@ __||<<_payloadenvelopednasampledto,PayloadEnvelopeDnaSampleDTO>>
 |===
 
 
+==== Tags
+
+* Jobs.dnasamples
+
+
 [[_getstatusbyid]]
-=== Gets the job given Job Name
+=== GET /jobs/{jobName}
 ....
 GET /gobii/v1/jobs/{jobName}
 ....
 
 
 ==== Description
-Retrieves the Job entity having the specified name.
+Gets the Job entity having the specified name.
 
 
 ==== Parameters
@@ -1713,15 +1999,20 @@ __|Name of the Job to be extracted|string
 |===
 
 
+==== Tags
+
+* Jobs
+
+
 [[_replacestatus]]
-=== Updates the Job by Job Name
+=== PUT /jobs/{jobName}
 ....
 PUT /gobii/v1/jobs/{jobName}
 ....
 
 
 ==== Description
-Updates the Job entity having the specified jobName. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Updates the Job entity having the specified jobName.
 
 
 ==== Parameters
@@ -1745,15 +2036,20 @@ __||<<_payloadenvelopejobdto,PayloadEnvelopeJobDTO>>
 |===
 
 
+==== Tags
+
+* Jobs
+
+
 [[_createmanifest]]
-=== Creates manifest entity
+=== POST /manifests
 ....
 POST /gobii/v1/manifests
 ....
 
 
 ==== Description
-Creates a Manifest entity for GOBii system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Creates a Manifest entity for GOBii system.
 
 
 ==== Parameters
@@ -1775,15 +2071,20 @@ __|<<_payloadenvelopemanifestdto,PayloadEnvelopeManifestDTO>>
 |===
 
 
+==== Tags
+
+* Manifests
+
+
 [[_getmanifests]]
-=== Gets all the Manifests
+=== GET /manifests
 ....
 GET /gobii/v1/manifests
 ....
 
 
 ==== Description
-Retrieves an unfiltered list of all Manifest entities.
+Lists an unfiltered list of all Manifest entities.
 
 
 ==== Responses
@@ -1795,15 +2096,20 @@ Retrieves an unfiltered list of all Manifest entities.
 |===
 
 
+==== Tags
+
+* Manifests
+
+
 [[_getmanifestbyid]]
-=== Gets the manifest given Manifest ID
+=== GET /manifests/{manifestId}
 ....
 GET /gobii/v1/manifests/{manifestId}
 ....
 
 
 ==== Description
-Retrieves the Manifest entity having the specified ID.
+Gets the Manifest entity having the specified ID.
 
 
 ==== Parameters
@@ -1825,15 +2131,20 @@ __|ID of the Manifest to be retrieved|integer (int32)
 |===
 
 
+==== Tags
+
+* Manifests
+
+
 [[_replacemanifest]]
-=== Updates manifest by Manifest ID
+=== PUT /manifests/{manifestId}
 ....
 PUT /gobii/v1/manifests/{manifestId}
 ....
 
 
 ==== Description
-Updates the Manifest entity having the specified manifestId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Updates the Manifest entity having the specified manifestId.
 
 
 ==== Parameters
@@ -1857,15 +2168,20 @@ __||<<_payloadenvelopemanifestdto,PayloadEnvelopeManifestDTO>>
 |===
 
 
+==== Tags
+
+* Manifests
+
+
 [[_getmaps]]
-=== Gets all the Mapsets
+=== GET /maps
 ....
 GET /gobii/v1/maps
 ....
 
 
 ==== Description
-Retrieves all the existing Mapsets in the system.
+Lists all the existing Mapsets in the system.
 
 
 ==== Responses
@@ -1877,15 +2193,20 @@ Retrieves all the existing Mapsets in the system.
 |===
 
 
+==== Tags
+
+* Maps
+
+
 [[_createmapset]]
-=== Creates a mapset
+=== POST /mapsets
 ....
 POST /gobii/v1/mapsets
 ....
 
 
 ==== Description
-Creates a new mapset in the system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Creates a new mapset in the system.
 
 
 ==== Parameters
@@ -1907,15 +2228,20 @@ __|<<_payloadenvelopemapsetdto,PayloadEnvelopeMapsetDTO>>
 |===
 
 
+==== Tags
+
+* Mapsets
+
+
 [[_getmapsets]]
-=== Gets all the mapsets
+=== GET /mapsets
 ....
 GET /gobii/v1/mapsets
 ....
 
 
 ==== Description
-Retrieves all the existing mapsets in the system.
+List all the existing mapsets in the system.
 
 
 ==== Responses
@@ -1927,15 +2253,20 @@ Retrieves all the existing mapsets in the system.
 |===
 
 
+==== Tags
+
+* Mapsets
+
+
 [[_getmapsetbyid]]
-=== Gets the mapset given Mapset ID
+=== GET /mapsets/{mapsetId}
 ....
 GET /gobii/v1/mapsets/{mapsetId}
 ....
 
 
 ==== Description
-Retrieves the Mapset entity having the specified ID.
+Gets the Mapset entity having the specified ID.
 
 
 ==== Parameters
@@ -1957,15 +2288,20 @@ __|ID of the Mapset to be extracted|integer (int32)
 |===
 
 
+==== Tags
+
+* Mapsets
+
+
 [[_replacemapset]]
-=== Updates the Mapset by Mapset ID
+=== PUT /mapsets/{mapsetId}
 ....
 PUT /gobii/v1/mapsets/{mapsetId}
 ....
 
 
 ==== Description
-Updates the Mapset entity having the specified mapsetId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Updates the Mapset entity having the specified mapsetId.
 
 
 ==== Parameters
@@ -1989,15 +2325,20 @@ __||<<_payloadenvelopemapsetdto,PayloadEnvelopeMapsetDTO>>
 |===
 
 
+==== Tags
+
+* Mapsets
+
+
 [[_getmarkerbyname]]
-=== Marker search
+=== GET /marker-search
 ....
 GET /gobii/v1/marker-search
 ....
 
 
 ==== Description
-Gets Marker by searching by name
+List Marker search results.
 
 
 ==== Parameters
@@ -2019,15 +2360,20 @@ __|Name of the marker|string
 |===
 
 
+==== Tags
+
+* MarkerSearch
+
+
 [[_createmarkergroup]]
-=== Creates a Marker Group
+=== POST /markergroups
 ....
 POST /gobii/v1/markergroups
 ....
 
 
 ==== Description
-Creates a new marker group in the system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Creates a new marker group in the system.
 
 
 ==== Parameters
@@ -2049,15 +2395,20 @@ __|<<_payloadenvelopemarkergroupdto,PayloadEnvelopeMarkerGroupDTO>>
 |===
 
 
+==== Tags
+
+* MarkerGroups
+
+
 [[_getmarkergroups]]
-=== Gets all the marker groups
+=== GET /markergroups
 ....
 GET /gobii/v1/markergroups
 ....
 
 
 ==== Description
-Retrieves all the existing marker groups in the system.
+Lists all the existing marker groups in the system.
 
 
 ==== Responses
@@ -2069,8 +2420,13 @@ Retrieves all the existing marker groups in the system.
 |===
 
 
+==== Tags
+
+* MarkerGroups
+
+
 [[_getmarkergroupbyid]]
-=== Gets the marker group given Marker Group ID
+=== GET /markergroups/{markerGroupId}
 ....
 GET /gobii/v1/markergroups/{markerGroupId}
 ....
@@ -2099,15 +2455,20 @@ __|ID of the marker group to be updated|integer (int32)
 |===
 
 
+==== Tags
+
+* MarkerGroups
+
+
 [[_replacemarkergroup]]
-=== Updates the Marker Group by Marker Group ID
+=== PUT /markergroups/{markerGroupId}
 ....
 PUT /gobii/v1/markergroups/{markerGroupId}
 ....
 
 
 ==== Description
-Updates the Marker Group entity having the specified markerGroupId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Updates the Marker Group entity having the specified markerGroupId.
 
 
 ==== Parameters
@@ -2131,15 +2492,20 @@ __||<<_payloadenvelopemarkergroupdto,PayloadEnvelopeMarkerGroupDTO>>
 |===
 
 
+==== Tags
+
+* MarkerGroups
+
+
 [[_createmarker]]
-=== Creates a marker
+=== POST /markers
 ....
 POST /gobii/v1/markers
 ....
 
 
 ==== Description
-Creates a new marker in the system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Creates a new marker in the system.
 
 
 ==== Parameters
@@ -2161,15 +2527,20 @@ __|<<_payloadenvelopemarkerdto,PayloadEnvelopeMarkerDTO>>
 |===
 
 
+==== Tags
+
+* Markers
+
+
 [[_getmarkers]]
-=== Gets all the markers
+=== GET /markers
 ....
 GET /gobii/v1/markers
 ....
 
 
 ==== Description
-Retrieves all the existing markers in the system.
+Lists all the existing markers in the system.
 
 
 ==== Responses
@@ -2181,8 +2552,13 @@ Retrieves all the existing markers in the system.
 |===
 
 
+==== Tags
+
+* Markers
+
+
 [[_getmarkerbyid]]
-=== Gets the marker given Marker ID
+=== GET /markers/{markerId}
 ....
 GET /gobii/v1/markers/{markerId}
 ....
@@ -2211,15 +2587,20 @@ __|ID of the Marker to be extracted|integer (int32)
 |===
 
 
+==== Tags
+
+* Markers
+
+
 [[_replacemarker]]
-=== Updates the Marker by Marker ID
+=== PUT /markers/{markerId}
 ....
 PUT /gobii/v1/markers/{markerId}
 ....
 
 
 ==== Description
-Updates the Marker entity having the specified markerId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Updates the Marker entity having the specified markerId.
 
 
 ==== Parameters
@@ -2243,8 +2624,13 @@ __||<<_payloadenvelopemarkerdto,PayloadEnvelopeMarkerDTO>>
 |===
 
 
+==== Tags
+
+* Markers
+
+
 [[_getnamesbynamelist]]
-=== Gets a list of name/ID combination for given Entity and a name list
+=== POST /names/{entity}
 ....
 POST /gobii/v1/names/{entity}
 ....
@@ -2279,15 +2665,20 @@ __||<<_payloadenvelopenameiddto,PayloadEnvelopeNameIdDTO>>
 |===
 
 
+==== Tags
+
+* Names
+
+
 [[_getnames]]
-=== Gets a list of name/ID combination for given Entity
+=== GET /names/{entity}
 ....
 GET /gobii/v1/names/{entity}
 ....
 
 
 ==== Description
-Retrieves a list of name/ID combination for a given entity. For the list of entities supported see class GobiiEntityNameType.List can further be filtered out by specifying the filter type and value.For the list of filter types supported see class GobiiFilterType.Example use case: entity = CV; filterType = NAMES_BY_TYPE_NAME; filterValue = statusResult will be a list of CV terms having status as the cv group
+List of name/ID combination for a given entity. For the list of entities supported see class GobiiEntityNameType.List can further be filtered out by specifying the filter type and value.For the list of filter types supported see class GobiiFilterType.Example use case: entity = CV; filterType = NAMES_BY_TYPE_NAME; filterValue = statusResult will be a list of CV terms having status as the cv group
 
 
 ==== Parameters
@@ -2313,15 +2704,20 @@ __|The value for the filter type|string
 |===
 
 
+==== Tags
+
+* Names
+
+
 [[_createorganization]]
-=== Creates a organization
+=== POST /organizations
 ....
 POST /gobii/v1/organizations
 ....
 
 
 ==== Description
-Creates a new organization in the system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Creates a new organization in the system.
 
 
 ==== Parameters
@@ -2343,15 +2739,20 @@ __|<<_payloadenvelopeorganizationdto,PayloadEnvelopeOrganizationDTO>>
 |===
 
 
+==== Tags
+
+* Organizations
+
+
 [[_getorganizations]]
-=== Gets all the organizations
+=== GET /organizations
 ....
 GET /gobii/v1/organizations
 ....
 
 
 ==== Description
-Retrieves all the existing organizations in the system.
+List all the existing organizations in the system.
 
 
 ==== Responses
@@ -2363,8 +2764,13 @@ Retrieves all the existing organizations in the system.
 |===
 
 
+==== Tags
+
+* Organizations
+
+
 [[_getorganizationsbyid]]
-=== Gets the organization given Organization ID
+=== GET /organizations/{organizationId}
 ....
 GET /gobii/v1/organizations/{organizationId}
 ....
@@ -2393,15 +2799,20 @@ __|ID of the Organization to be extracted|integer (int32)
 |===
 
 
+==== Tags
+
+* Organizations
+
+
 [[_replaceorganization]]
-=== Updates the Organization by Organization ID
+=== PUT /organizations/{organizationId}
 ....
 PUT /gobii/v1/organizations/{organizationId}
 ....
 
 
 ==== Description
-Updates the Organization entity having the specified organizationId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Updates the Organization entity having the specified organizationId.
 
 
 ==== Parameters
@@ -2425,15 +2836,20 @@ __||<<_payloadenvelopeorganizationdto,PayloadEnvelopeOrganizationDTO>>
 |===
 
 
+==== Tags
+
+* Organizations
+
+
 [[_createplatform]]
-=== Creates a Platform
+=== POST /platforms
 ....
 POST /gobii/v1/platforms
 ....
 
 
 ==== Description
-Creates a new Platform in the system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Creates a new Platform in the system.
 
 
 ==== Parameters
@@ -2455,15 +2871,20 @@ __|<<_payloadenvelopeplatformdto,PayloadEnvelopePlatformDTO>>
 |===
 
 
+==== Tags
+
+* Platforms
+
+
 [[_getplatforms]]
-=== Gets all the platforms
+=== GET /platforms
 ....
 GET /gobii/v1/platforms
 ....
 
 
 ==== Description
-Retrieves all the existing platforms in the system.
+List all the existing platforms in the system.
 
 
 ==== Responses
@@ -2475,15 +2896,20 @@ Retrieves all the existing platforms in the system.
 |===
 
 
+==== Tags
+
+* Platforms
+
+
 [[_getplatformdetailsbyvendorprotocolid]]
-=== Gets the platform details given Vendor Protocol ID
+=== GET /platforms/protocols/{vendorProtocolId}
 ....
 GET /gobii/v1/platforms/protocols/{vendorProtocolId}
 ....
 
 
 ==== Description
-Retrieves the Platform entity having the specified Vendor Protocol ID.
+Gets the Platform entity having the specified Vendor Protocol ID.
 
 
 ==== Parameters
@@ -2505,8 +2931,13 @@ __|ID of the vendor protocol|integer (int32)
 |===
 
 
+==== Tags
+
+* Platform.protocols
+
+
 [[_getplatformsbyid]]
-=== Gets the platform given Platform ID
+=== GET /platforms/{platformId}
 ....
 GET /gobii/v1/platforms/{platformId}
 ....
@@ -2535,15 +2966,20 @@ __|ID of the Platform to be extracted|integer (int32)
 |===
 
 
+==== Tags
+
+* Platforms
+
+
 [[_replaceplatform]]
-=== Updates the Platform by Platform ID
+=== PUT /platforms/{platformId}
 ....
 PUT /gobii/v1/platforms/{platformId}
 ....
 
 
 ==== Description
-Updates the Platform entity having the specified platformId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Updates the Platform entity having the specified platformId.
 
 
 ==== Parameters
@@ -2567,15 +3003,20 @@ __||<<_payloadenvelopeplatformdto,PayloadEnvelopePlatformDTO>>
 |===
 
 
+==== Tags
+
+* Platforms
+
+
 [[_createproject]]
-=== Creates a project
+=== GET /projects
 ....
 POST /gobii/v1/projects
 ....
 
 
 ==== Description
-Creates a new project in the system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Creates a new project in the system.
 
 
 ==== Parameters
@@ -2597,15 +3038,20 @@ __|<<_payloadenvelopeprojectdto,PayloadEnvelopeProjectDTO>>
 |===
 
 
+==== Tags
+
+* Projects
+
+
 [[_getprojects]]
-=== Gets all the projects
+=== GET /projects
 ....
 GET /gobii/v1/projects
 ....
 
 
 ==== Description
-Retrieves all the existing projects in the system.
+List all the existing projects in the system.
 
 
 ==== Responses
@@ -2617,8 +3063,13 @@ Retrieves all the existing projects in the system.
 |===
 
 
+==== Tags
+
+* Projects
+
+
 [[_getprojectsbyid]]
-=== Gets the projects given Project ID
+=== GET /projects/{projectId}
 ....
 GET /gobii/v1/projects/{projectId}
 ....
@@ -2647,15 +3098,20 @@ __|ID of the Project to be extracted|integer (int32)
 |===
 
 
+==== Tags
+
+* Projects
+
+
 [[_replaceproject]]
-=== Updates the Project by Project ID
+=== PUT /projects/{projectId}
 ....
 PUT /gobii/v1/projects/{projectId}
 ....
 
 
 ==== Description
-Updates the Project entity having the specified projectId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Updates the Project entity having the specified projectId.
 
 
 ==== Parameters
@@ -2679,15 +3135,20 @@ __||<<_payloadenvelopeprojectdto,PayloadEnvelopeProjectDTO>>
 |===
 
 
+==== Tags
+
+* Projects
+
+
 [[_createprotocol]]
-=== Creates a Protocol
+=== POST /protocols
 ....
 POST /gobii/v1/protocols
 ....
 
 
 ==== Description
-Creates a new Protocol in the system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Creates a new Protocol in the system.
 
 
 ==== Parameters
@@ -2709,15 +3170,20 @@ __|<<_payloadenvelopeprotocoldto,PayloadEnvelopeProtocolDTO>>
 |===
 
 
+==== Tags
+
+* Protocols
+
+
 [[_getprotocols]]
-=== Gets all the protocols
+=== GET /protocols
 ....
 GET /gobii/v1/protocols
 ....
 
 
 ==== Description
-Retrieves all the existing protocols in the system.
+List all the existing protocols in the system.
 
 
 ==== Responses
@@ -2729,8 +3195,13 @@ Retrieves all the existing protocols in the system.
 |===
 
 
+==== Tags
+
+* Protocols
+
+
 [[_getprotocol]]
-=== Gets the protocol given Protocol ID
+=== GET /protocols/{protocolId}
 ....
 GET /gobii/v1/protocols/{protocolId}
 ....
@@ -2759,15 +3230,20 @@ __|ID of the Protocol to be extracted|integer (int32)
 |===
 
 
+==== Tags
+
+* Protocols
+
+
 [[_replaceprotocol]]
-=== Updates the Protocol by Protocol ID
+=== PUT /protocols/{protocolId}
 ....
 PUT /gobii/v1/protocols/{protocolId}
 ....
 
 
 ==== Description
-Updates the Protocol entity having the specified protocolId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Updates the Protocol entity having the specified protocolId.
 
 
 ==== Parameters
@@ -2791,15 +3267,20 @@ __||<<_payloadenvelopeprotocoldto,PayloadEnvelopeProtocolDTO>>
 |===
 
 
+==== Tags
+
+* Protocols
+
+
 [[_addvendortoprotocol]]
-=== Creates a Vendor Protocol record for given Protocol ID
+=== POST /protocols/{protocolId}/vendors
 ....
 POST /gobii/v1/protocols/{protocolId}/vendors
 ....
 
 
 ==== Description
-Creates a new Vendor Protocol in the system for specified Protocol ID. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Creates a new Vendor Protocol in the system for specified Protocol ID.
 
 
 ==== Parameters
@@ -2823,15 +3304,20 @@ __||<<_payloadenvelopeorganizationdto,PayloadEnvelopeOrganizationDTO>>
 |===
 
 
+==== Tags
+
+* Protocols.vendor
+
+
 [[_getvendorsforprotocol]]
-=== Gets all the Vendor Protocols given Protocol ID
+=== GET /protocols/{protocolId}/vendors
 ....
 GET /gobii/v1/protocols/{protocolId}/vendors
 ....
 
 
 ==== Description
-Retrieves all the vendor protocols given protocolId in the system.
+List all the vendor protocols given protocolId in the system.
 
 
 ==== Parameters
@@ -2853,15 +3339,20 @@ __|ID of the Protocol ID|integer (int32)
 |===
 
 
+==== Tags
+
+* Protocols.vendor
+
+
 [[_updateorreplacevendorprotocol]]
-=== Updates the Vendor Protocol by Protocol ID
+=== PUT /protocols/{protocolId}/vendors
 ....
 PUT /gobii/v1/protocols/{protocolId}/vendors
 ....
 
 
 ==== Description
-Updates the Vendor Protocol entity having the specified protocolId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Updates the Vendor Protocol entity having the specified protocolId.
 
 
 ==== Parameters
@@ -2885,15 +3376,20 @@ __||<<_payloadenvelopeorganizationdto,PayloadEnvelopeOrganizationDTO>>
 |===
 
 
+==== Tags
+
+* Protocols.vendor
+
+
 [[_createreference]]
-=== Creates a reference
+=== POST /references
 ....
 POST /gobii/v1/references
 ....
 
 
 ==== Description
-Creates a new reference in the system. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Creates a new reference in the system.
 
 
 ==== Parameters
@@ -2915,15 +3411,20 @@ __|<<_payloadenvelopereferencedto,PayloadEnvelopeReferenceDTO>>
 |===
 
 
+==== Tags
+
+* References
+
+
 [[_getreferences]]
-=== Gets all the references
+=== GET /references
 ....
 GET /gobii/v1/references
 ....
 
 
 ==== Description
-Retrieves all the existing references in the system.
+Lists all the existing references in the system.
 
 
 ==== Responses
@@ -2935,15 +3436,20 @@ Retrieves all the existing references in the system.
 |===
 
 
+==== Tags
+
+* References
+
+
 [[_getreferencebyid]]
-=== Gets the reference given Reference ID
+=== GET /references/{referenceId}
 ....
 GET /gobii/v1/references/{referenceId}
 ....
 
 
 ==== Description
-Retrieves the Reference entity having the specified ID.
+Gets the Reference entity having the specified ID.
 
 
 ==== Parameters
@@ -2965,15 +3471,20 @@ __|ID of the Reference to be extracted|integer (int32)
 |===
 
 
+==== Tags
+
+* References
+
+
 [[_replacereference]]
-=== Updates the Reference by Reference ID
+=== PUT /references/{referenceId}
 ....
 PUT /gobii/v1/references/{referenceId}
 ....
 
 
 ==== Description
-Updates the Reference entity having the specified referenceId. Consult the <<_requestresponsestructure,Request/Response Section>> before attempting to use this call.
+Updates the Reference entity having the specified referenceId.
 
 
 ==== Parameters
@@ -2997,14 +3508,20 @@ __||<<_payloadenvelopereferencedto,PayloadEnvelopeReferenceDTO>>
 |===
 
 
+==== Tags
+
+* References
+
+
 [[_updaterestprofile]]
-=== Gets REST profiles of GDM system
+=== /restprofiles/
 ....
 PUT /gobii/v1/restprofiles
 ....
 
 
 ==== Description
+Update REST profiles
 When the Header of the payload envelope for a resource contains maxGet, maxPost, and maxPut values, this resource provides a means to update the max for a given rest resource ID and for a given HTTP verb. The values are transient in the sense that they will be confined only to a specific web service deployment. They are stored in the web service configurationdocument
 
 
@@ -3025,6 +3542,11 @@ __|<<_payloadenveloperestprofiledto,PayloadEnvelopeRestProfileDTO>>
 |HTTP Code|Description|Schema
 |**200**|successful operation|<<_payloadenveloperestprofiledto,PayloadEnvelopeRestProfileDTO>>
 |===
+
+
+==== Tags
+
+* RestProfiles
 
 
 

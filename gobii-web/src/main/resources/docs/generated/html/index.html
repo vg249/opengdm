@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.7.1">
-<meta name="author" content="= GOBii API">
+<meta name="author" content="= Genomic Data Management (GDM)">
 <title>master document for generating html</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -435,7 +435,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>master document for generating html</h1>
 <div class="details">
-<span id="author" class="author">= GOBii API</span><br>
+<span id="author" class="author">= Genomic Data Management (GDM)</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -445,6 +445,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_version_information">Version information</a></li>
 <li><a href="#_license_information">License information</a></li>
 <li><a href="#_uri_scheme">URI scheme</a></li>
+<li><a href="#_tags">Tags</a></li>
 </ul>
 </li>
 <li><a href="#_overview_2">Overview</a>
@@ -458,110 +459,110 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_paths">Paths</a>
 <ul class="sectlevel2">
-<li><a href="#_createanalysis">Creates analysis entity</a></li>
-<li><a href="#_getanalyses">Gets all the analyses</a></li>
-<li><a href="#_getanalysisbyid">Gets analysis by Analysis ID</a></li>
-<li><a href="#_replaceanalysis">Updates analysis by Analysis ID</a></li>
-<li><a href="#_authenticate">Authentication service for accessing GDM System</a></li>
-<li><a href="#_getconfigsettings">Gets the configuration settings for GDM system</a></li>
-<li><a href="#_getcontactsbysearch">/contacts-search</a></li>
-<li><a href="#_createcontact">Adds new contact to GOBii system</a></li>
-<li><a href="#_getcontacts">Gets all the contacts in the GOBii system</a></li>
-<li><a href="#_getcontactsbyid">Gets contacts by contact ID</a></li>
-<li><a href="#_replacecontact">Updates contacts by contact ID</a></li>
-<li><a href="#_getcontactsbyemail">Gets contacts by email id</a></li>
-<li><a href="#_getcvsforcvgroup">Gets CV terms by CV group ID</a></li>
-<li><a href="#_getcvgroupsbytype">Gets CV groups by CV group type ID</a></li>
-<li><a href="#_getcvgroupdetails">Gets CV Group details given CV group name and type ID</a></li>
-<li><a href="#_createcv">/cvs</a></li>
-<li><a href="#_getcvs">/cvs</a></li>
-<li><a href="#_getcvbyid">/cvs</a></li>
-<li><a href="#_replacecv">/cvs</a></li>
-<li><a href="#_deletecv">/cvs</a></li>
-<li><a href="#_getcvsbygroupname">/cvs/{groupName:[a-zA-Z_]+}</a></li>
-<li><a href="#_createdataset">Creates a dataset</a></li>
-<li><a href="#_getdatasets">Gets all the datasets</a></li>
-<li><a href="#_getdatasetstypes">Gets the defined Dataset Types in the system</a></li>
-<li><a href="#_getdatasetsbytypeid">Gets all the datasets with the given dataset type ID</a></li>
-<li><a href="#_getdatasetsbyid">Gets the dataset given Dataset ID</a></li>
-<li><a href="#_replacedataset">Updates the Dataset by Dataset ID</a></li>
-<li><a href="#_getanalysesfordataset">Gets all the analysis for the given Dataset ID</a></li>
-<li><a href="#_getjobdetailsbydatasetid">Gets the job details for the given Dataset ID</a></li>
-<li><a href="#_createdisplay">Creates a display entity</a></li>
-<li><a href="#_getdisplays">Gets all the displays</a></li>
-<li><a href="#_getdisplaybyid">Gets display by Display ID</a></li>
-<li><a href="#_replacedisplay">Updates display by Display ID</a></li>
-<li><a href="#_getallentitystats">Gets all the entities</a></li>
-<li><a href="#_getentitycountofchildren">Gets the total count of the children for the given Entity</a></li>
-<li><a href="#_getentitycount">Gets the total entity count for the given Entity Name</a></li>
-<li><a href="#_getentitylastmodified">Gets the last modified entity for the given Entity Name</a></li>
-<li><a href="#_createexperiment">Creates an experiment</a></li>
-<li><a href="#_getexperiments">Gets all the experiments</a></li>
-<li><a href="#_getexperimentsbyid">Gets the experiment given Experiment ID</a></li>
-<li><a href="#_replaceexperiment">Updates the Experiment by Experiement ID</a></li>
-<li><a href="#_getprotocolbyexperimentid">Gets all the Protocols by Experiment ID</a></li>
-<li><a href="#_getfilepreviewbysearch">Gets file preview for the specified directory name</a></li>
-<li><a href="#_createloaderfiledirectory">Creates a Directory to be used for loading</a></li>
-<li><a href="#_uploadfile">Upload file</a></li>
-<li><a href="#_deletefile">Delete file</a></li>
-<li><a href="#_uploadjobfile">Upload file for Job</a></li>
-<li><a href="#_downloadjobfile">Download file for specified Job</a></li>
-<li><a href="#_createextractorinstruction">Creates instruction file for extracting data</a></li>
-<li><a href="#_getextractorinstructionstatus">Gets the extract job status by Job name</a></li>
-<li><a href="#_getextractorinstruction">Gets the extract instruction information given file name</a></li>
-<li><a href="#_createloaderinstruction">Creates instruction file for loading data</a></li>
-<li><a href="#_getloaderinstructionstatus">Gets the loading job status by Job name</a></li>
-<li><a href="#_getloaderinstruction">Gets the loading instruction information given file name</a></li>
-<li><a href="#_createjob">Creates a job</a></li>
-<li><a href="#_getstatus">Gets all the jobs</a></li>
-<li><a href="#_submitdnasamplesbyjobname">Created DNA samples for a given Job</a></li>
-<li><a href="#_getstatusbyid">Gets the job given Job Name</a></li>
-<li><a href="#_replacestatus">Updates the Job by Job Name</a></li>
-<li><a href="#_createmanifest">Creates manifest entity</a></li>
-<li><a href="#_getmanifests">Gets all the Manifests</a></li>
-<li><a href="#_getmanifestbyid">Gets the manifest given Manifest ID</a></li>
-<li><a href="#_replacemanifest">Updates manifest by Manifest ID</a></li>
-<li><a href="#_getmaps">Gets all the Mapsets</a></li>
-<li><a href="#_createmapset">Creates a mapset</a></li>
-<li><a href="#_getmapsets">Gets all the mapsets</a></li>
-<li><a href="#_getmapsetbyid">Gets the mapset given Mapset ID</a></li>
-<li><a href="#_replacemapset">Updates the Mapset by Mapset ID</a></li>
-<li><a href="#_getmarkerbyname">Marker search</a></li>
-<li><a href="#_createmarkergroup">Creates a Marker Group</a></li>
-<li><a href="#_getmarkergroups">Gets all the marker groups</a></li>
-<li><a href="#_getmarkergroupbyid">Gets the marker group given Marker Group ID</a></li>
-<li><a href="#_replacemarkergroup">Updates the Marker Group by Marker Group ID</a></li>
-<li><a href="#_createmarker">Creates a marker</a></li>
-<li><a href="#_getmarkers">Gets all the markers</a></li>
-<li><a href="#_getmarkerbyid">Gets the marker given Marker ID</a></li>
-<li><a href="#_replacemarker">Updates the Marker by Marker ID</a></li>
-<li><a href="#_getnamesbynamelist">Gets a list of name/ID combination for given Entity and a name list</a></li>
-<li><a href="#_getnames">Gets a list of name/ID combination for given Entity</a></li>
-<li><a href="#_createorganization">Creates a organization</a></li>
-<li><a href="#_getorganizations">Gets all the organizations</a></li>
-<li><a href="#_getorganizationsbyid">Gets the organization given Organization ID</a></li>
-<li><a href="#_replaceorganization">Updates the Organization by Organization ID</a></li>
-<li><a href="#_createplatform">Creates a Platform</a></li>
-<li><a href="#_getplatforms">Gets all the platforms</a></li>
-<li><a href="#_getplatformdetailsbyvendorprotocolid">Gets the platform details given Vendor Protocol ID</a></li>
-<li><a href="#_getplatformsbyid">Gets the platform given Platform ID</a></li>
-<li><a href="#_replaceplatform">Updates the Platform by Platform ID</a></li>
-<li><a href="#_createproject">Creates a project</a></li>
-<li><a href="#_getprojects">Gets all the projects</a></li>
-<li><a href="#_getprojectsbyid">Gets the projects given Project ID</a></li>
-<li><a href="#_replaceproject">Updates the Project by Project ID</a></li>
-<li><a href="#_createprotocol">Creates a Protocol</a></li>
-<li><a href="#_getprotocols">Gets all the protocols</a></li>
-<li><a href="#_getprotocol">Gets the protocol given Protocol ID</a></li>
-<li><a href="#_replaceprotocol">Updates the Protocol by Protocol ID</a></li>
-<li><a href="#_addvendortoprotocol">Creates a Vendor Protocol record for given Protocol ID</a></li>
-<li><a href="#_getvendorsforprotocol">Gets all the Vendor Protocols given Protocol ID</a></li>
-<li><a href="#_updateorreplacevendorprotocol">Updates the Vendor Protocol by Protocol ID</a></li>
-<li><a href="#_createreference">Creates a reference</a></li>
-<li><a href="#_getreferences">Gets all the references</a></li>
-<li><a href="#_getreferencebyid">Gets the reference given Reference ID</a></li>
-<li><a href="#_replacereference">Updates the Reference by Reference ID</a></li>
-<li><a href="#_updaterestprofile">Gets REST profiles of GDM system</a></li>
+<li><a href="#_createanalysis">POST /analyses</a></li>
+<li><a href="#_getanalyses">GET /analyses</a></li>
+<li><a href="#_getanalysisbyid">GET /analyses/{analysisId}</a></li>
+<li><a href="#_replaceanalysis">PUT /analyses/{analysisId}</a></li>
+<li><a href="#_authenticate">POST /auth</a></li>
+<li><a href="#_getconfigsettings">GET /configsettings</a></li>
+<li><a href="#_getcontactsbysearch">GET /contacts-search</a></li>
+<li><a href="#_createcontact">POST /contacts</a></li>
+<li><a href="#_getcontacts">GET /contacts</a></li>
+<li><a href="#_getcontactsbyid">GET /contacts/{contactId}</a></li>
+<li><a href="#_replacecontact">PUT /contacts/{contactId}</a></li>
+<li><a href="#_getcontactsbyemail">GET /contacts/{email}</a></li>
+<li><a href="#_getcvsforcvgroup">GET /cvgroups/{cvGroupId}/cvs</a></li>
+<li><a href="#_getcvgroupsbytype">GET /cvgroups/{cvGroupTypeId}</a></li>
+<li><a href="#_getcvgroupdetails">Get /cvgroups/{groupName}</a></li>
+<li><a href="#_createcv">POST /cvs</a></li>
+<li><a href="#_getcvs">GET /cvs</a></li>
+<li><a href="#_getcvbyid">GET /cvs/{cvId}</a></li>
+<li><a href="#_replacecv">PUT /cvs/{cvId}</a></li>
+<li><a href="#_deletecv">DELETE /cvs/{cvId}</a></li>
+<li><a href="#_getcvsbygroupname">GET /cvs/{groupName}</a></li>
+<li><a href="#_createdataset">POST /datasets</a></li>
+<li><a href="#_getdatasets">GET /datasets</a></li>
+<li><a href="#_getdatasetstypes">GET /datasets/types</a></li>
+<li><a href="#_getdatasetsbytypeid">GET /datasets/types/{id}</a></li>
+<li><a href="#_getdatasetsbyid">GET /datasets/{dataSetId}</a></li>
+<li><a href="#_replacedataset">PUT /datasets/{dataSetId}</a></li>
+<li><a href="#_getanalysesfordataset">GET /datasets/{dataSetId}/analyses</a></li>
+<li><a href="#_getjobdetailsbydatasetid">GET /datasets/{datasetId}/jobs</a></li>
+<li><a href="#_createdisplay">POST /displays</a></li>
+<li><a href="#_getdisplays">GET /displays</a></li>
+<li><a href="#_getdisplaybyid">GET /displays/{displayId}</a></li>
+<li><a href="#_replacedisplay">PUT /displays/{displayId}</a></li>
+<li><a href="#_getallentitystats">GET /entities</a></li>
+<li><a href="#_getentitycountofchildren">Gets /entities/{entityNameParent}/{parentId}/{entityNameChild}/count</a></li>
+<li><a href="#_getentitycount">GET /entities/{entityName}/count</a></li>
+<li><a href="#_getentitylastmodified">GET /entities/{entityName}/lastmodified</a></li>
+<li><a href="#_createexperiment">POST /experiments</a></li>
+<li><a href="#_getexperiments">GET /experiments</a></li>
+<li><a href="#_getexperimentsbyid">GET /experiments/{experimentId}</a></li>
+<li><a href="#_replaceexperiment">PUT /experiments/{experimentId}</a></li>
+<li><a href="#_getprotocolbyexperimentid">GET /experiments/{experimentId}/protocols</a></li>
+<li><a href="#_getfilepreviewbysearch">GET /files/loader/{directoryName}</a></li>
+<li><a href="#_createloaderfiledirectory">PUT /files/loader/{directoryName}</a></li>
+<li><a href="#_uploadfile">POST /files/{destinationType}</a></li>
+<li><a href="#_deletefile">DELETE /files/{destinationType}</a></li>
+<li><a href="#_uploadjobfile">POST /files/{gobiiJobId}/{destinationType}</a></li>
+<li><a href="#_downloadjobfile">GET /files/{gobiiJobId}/{destinationType}</a></li>
+<li><a href="#_createextractorinstruction">POST /instructions/extractor</a></li>
+<li><a href="#_getextractorinstructionstatus">GET /instructions/extractor/jobs/{jobName}</a></li>
+<li><a href="#_getextractorinstruction">GET /instructions/extractor/{instructionFileName}</a></li>
+<li><a href="#_createloaderinstruction">POST /instructions/loader</a></li>
+<li><a href="#_getloaderinstructionstatus">GET /instructions/loader/jobs/{jobName}</a></li>
+<li><a href="#_getloaderinstruction">GET /instructions/loader/{instructionFileName}</a></li>
+<li><a href="#_createjob">POST /jobs</a></li>
+<li><a href="#_getstatus">GET /jobs</a></li>
+<li><a href="#_submitdnasamplesbyjobname">POST /jobs/dnasamples/{jobName}</a></li>
+<li><a href="#_getstatusbyid">GET /jobs/{jobName}</a></li>
+<li><a href="#_replacestatus">PUT /jobs/{jobName}</a></li>
+<li><a href="#_createmanifest">POST /manifests</a></li>
+<li><a href="#_getmanifests">GET /manifests</a></li>
+<li><a href="#_getmanifestbyid">GET /manifests/{manifestId}</a></li>
+<li><a href="#_replacemanifest">PUT /manifests/{manifestId}</a></li>
+<li><a href="#_getmaps">GET /maps</a></li>
+<li><a href="#_createmapset">POST /mapsets</a></li>
+<li><a href="#_getmapsets">GET /mapsets</a></li>
+<li><a href="#_getmapsetbyid">GET /mapsets/{mapsetId}</a></li>
+<li><a href="#_replacemapset">PUT /mapsets/{mapsetId}</a></li>
+<li><a href="#_getmarkerbyname">GET /marker-search</a></li>
+<li><a href="#_createmarkergroup">POST /markergroups</a></li>
+<li><a href="#_getmarkergroups">GET /markergroups</a></li>
+<li><a href="#_getmarkergroupbyid">GET /markergroups/{markerGroupId}</a></li>
+<li><a href="#_replacemarkergroup">PUT /markergroups/{markerGroupId}</a></li>
+<li><a href="#_createmarker">POST /markers</a></li>
+<li><a href="#_getmarkers">GET /markers</a></li>
+<li><a href="#_getmarkerbyid">GET /markers/{markerId}</a></li>
+<li><a href="#_replacemarker">PUT /markers/{markerId}</a></li>
+<li><a href="#_getnamesbynamelist">POST /names/{entity}</a></li>
+<li><a href="#_getnames">GET /names/{entity}</a></li>
+<li><a href="#_createorganization">POST /organizations</a></li>
+<li><a href="#_getorganizations">GET /organizations</a></li>
+<li><a href="#_getorganizationsbyid">GET /organizations/{organizationId}</a></li>
+<li><a href="#_replaceorganization">PUT /organizations/{organizationId}</a></li>
+<li><a href="#_createplatform">POST /platforms</a></li>
+<li><a href="#_getplatforms">GET /platforms</a></li>
+<li><a href="#_getplatformdetailsbyvendorprotocolid">GET /platforms/protocols/{vendorProtocolId}</a></li>
+<li><a href="#_getplatformsbyid">GET /platforms/{platformId}</a></li>
+<li><a href="#_replaceplatform">PUT /platforms/{platformId}</a></li>
+<li><a href="#_createproject">GET /projects</a></li>
+<li><a href="#_getprojects">GET /projects</a></li>
+<li><a href="#_getprojectsbyid">GET /projects/{projectId}</a></li>
+<li><a href="#_replaceproject">PUT /projects/{projectId}</a></li>
+<li><a href="#_createprotocol">POST /protocols</a></li>
+<li><a href="#_getprotocols">GET /protocols</a></li>
+<li><a href="#_getprotocol">GET /protocols/{protocolId}</a></li>
+<li><a href="#_replaceprotocol">PUT /protocols/{protocolId}</a></li>
+<li><a href="#_addvendortoprotocol">POST /protocols/{protocolId}/vendors</a></li>
+<li><a href="#_getvendorsforprotocol">GET /protocols/{protocolId}/vendors</a></li>
+<li><a href="#_updateorreplacevendorprotocol">PUT /protocols/{protocolId}/vendors</a></li>
+<li><a href="#_createreference">POST /references</a></li>
+<li><a href="#_getreferences">GET /references</a></li>
+<li><a href="#_getreferencebyid">GET /references/{referenceId}</a></li>
+<li><a href="#_replacereference">PUT /references/{referenceId}</a></li>
+<li><a href="#_updaterestprofile">/restprofiles/</a></li>
 </ul>
 </li>
 <li><a href="#_definitions">Definitions</a>
@@ -673,7 +674,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_overview">Overview</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The GOBii web service API provides a comprehensive set of RESTful methods for accomplishing the following core tasks in the GOBii Genomic Data Management (GDM) system. This manual explains the GOBii web architecture and its web service operations.</p>
+<p>The GDM web service API provides a comprehensive set of RESTful methods for accomplishing the following core tasks in the GOBii Genomic Data Management (GDM) system. This manual explains the GDM web architecture and its web service operations.</p>
 </div>
 <div class="sect2">
 <h3 id="_version_information">Version information</h3>
@@ -695,6 +696,145 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p><em>Host</em> : localhost:8081<br>
 <em>BasePath</em> : /api<br>
 <em>Schemes</em> : HTTP</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_tags">Tags</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Analyses</p>
+</li>
+<li>
+<p>Authentication</p>
+</li>
+<li>
+<p>ConfigSettings</p>
+</li>
+<li>
+<p>Contacts</p>
+</li>
+<li>
+<p>ContactsSearch</p>
+</li>
+<li>
+<p>ControlledVocabularies</p>
+</li>
+<li>
+<p>CvGroups</p>
+</li>
+<li>
+<p>CvGroups.cvs</p>
+</li>
+<li>
+<p>Cvs</p>
+</li>
+<li>
+<p>Datasets</p>
+</li>
+<li>
+<p>Datasets.analyses</p>
+</li>
+<li>
+<p>Datasets.jobs</p>
+</li>
+<li>
+<p>Datasets.types</p>
+</li>
+<li>
+<p>Displays</p>
+</li>
+<li>
+<p>Entities</p>
+</li>
+<li>
+<p>Entities.count</p>
+</li>
+<li>
+<p>Entities.lastModified</p>
+</li>
+<li>
+<p>Entities.parent.child.count</p>
+</li>
+<li>
+<p>Experiments</p>
+</li>
+<li>
+<p>Experiments.protocols</p>
+</li>
+<li>
+<p>Files</p>
+</li>
+<li>
+<p>Files.jobs</p>
+</li>
+<li>
+<p>Files.loader</p>
+</li>
+<li>
+<p>Instructions.extractor</p>
+</li>
+<li>
+<p>Instructions.extractor.jobs</p>
+</li>
+<li>
+<p>Instructions.loader</p>
+</li>
+<li>
+<p>Instructions.loader.jobs</p>
+</li>
+<li>
+<p>Jobs</p>
+</li>
+<li>
+<p>Jobs.dnasamples</p>
+</li>
+<li>
+<p>Manifests</p>
+</li>
+<li>
+<p>Maps</p>
+</li>
+<li>
+<p>Mapsets</p>
+</li>
+<li>
+<p>MarkerGroups</p>
+</li>
+<li>
+<p>MarkerSearch</p>
+</li>
+<li>
+<p>Markers</p>
+</li>
+<li>
+<p>Names</p>
+</li>
+<li>
+<p>Organizations</p>
+</li>
+<li>
+<p>Platform.protocols</p>
+</li>
+<li>
+<p>Platforms</p>
+</li>
+<li>
+<p>Projects</p>
+</li>
+<li>
+<p>Protocols</p>
+</li>
+<li>
+<p>Protocols.vendor</p>
+</li>
+<li>
+<p>References</p>
+</li>
+<li>
+<p>RestProfiles</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -866,7 +1006,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_paths">Paths</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_createanalysis">Creates analysis entity</h3>
+<h3 id="_createanalysis">POST /analyses</h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /gobii/v1/analyses</pre>
@@ -875,7 +1015,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect3">
 <h4 id="_description">Description</h4>
 <div class="paragraph">
-<p>Creates an analysis entity for GOBii system. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Create analysis entity for GDM system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -927,9 +1067,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_2">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Analyses</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getanalyses">Gets all the analyses</h3>
+<h3 id="_getanalyses">GET /analyses</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/analyses</pre>
@@ -938,7 +1088,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_2">Description</h4>
 <div class="paragraph">
-<p>Retrieves an unfiltered list of all Analysis entities. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>List of all Analysis entities.</p>
 </div>
 </div>
 <div class="sect3">
@@ -965,9 +1115,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_3">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Analyses</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getanalysisbyid">Gets analysis by Analysis ID</h3>
+<h3 id="_getanalysisbyid">GET /analyses/{analysisId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/analyses/{analysisId}</pre>
@@ -976,7 +1136,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_3">Description</h4>
 <div class="paragraph">
-<p>Retrieves the Analysis entity having the specified ID. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Get analyses by analyses Id.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1031,9 +1191,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_4">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Analyses</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_replaceanalysis">Updates analysis by Analysis ID</h3>
+<h3 id="_replaceanalysis">PUT /analyses/{analysisId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>PUT /gobii/v1/analyses/{analysisId}</pre>
@@ -1042,7 +1212,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_4">Description</h4>
 <div class="paragraph">
-<p>Updates the Analysis entity having the specified analysisId. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Updates the Analysis entity having the specified analysisId.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1104,9 +1274,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_5">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Analyses</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_authenticate">Authentication service for accessing GDM System</h3>
+<h3 id="_authenticate">POST /auth</h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /gobii/v1/auth</pre>
@@ -1115,7 +1295,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_5">Description</h4>
 <div class="paragraph">
-<p>The user credentials are specified in the request headers X-Username and X-Password; the response and the response headers include the token in the X-Auth-Token header. this header and value be included in the request headers for subsequent requests. The token value is also supplied in the dtoHeaderAuth object.</p>
+<p>The user credentials are specified in the request headers X-Username and X-Password; the response and the response headers include the token in the X-Auth-Token header. X-Auth-Token header and value obtained from /auth call will be used as an API-key for the rest of the GDM calls.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1186,9 +1366,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_6">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Authentication</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getconfigsettings">Gets the configuration settings for GDM system</h3>
+<h3 id="_getconfigsettings">GET /configsettings</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/configsettings</pre>
@@ -1197,7 +1387,8 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_6">Description</h4>
 <div class="paragraph">
-<p>Provides generic configuration information about the GOBii instances in a given deployment. This call does not require authentication</p>
+<p>List all configuration settings.
++Provides generic configuration information about the GOBii instances in a given deployment. This call does not require authentication</p>
 </div>
 </div>
 <div class="sect3">
@@ -1224,9 +1415,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_7">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>ConfigSettings</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getcontactsbysearch">/contacts-search</h3>
+<h3 id="_getcontactsbysearch">GET /contacts-search</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/contact-search</pre>
@@ -1235,7 +1436,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_7">Description</h4>
 <div class="paragraph">
-<p>Gets contacts by searching for emailid, lastname, firstname, username.</p>
+<p>List contacts for emailid, lastname, firstname, username.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1311,9 +1512,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_8">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>ContactsSearch</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_createcontact">Adds new contact to GOBii system</h3>
+<h3 id="_createcontact">POST /contacts</h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /gobii/v1/contacts</pre>
@@ -1322,7 +1533,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_8">Description</h4>
 <div class="paragraph">
-<p>Adds new contact.</p>
+<p>Create new contact.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1374,9 +1585,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_9">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Contacts</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getcontacts">Gets all the contacts in the GOBii system</h3>
+<h3 id="_getcontacts">GET /contacts</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/contacts</pre>
@@ -1385,7 +1606,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_9">Description</h4>
 <div class="paragraph">
-<p>Gets all contacts.</p>
+<p>List all contacts.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1412,9 +1633,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_10">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Contacts</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getcontactsbyid">Gets contacts by contact ID</h3>
+<h3 id="_getcontactsbyid">GET /contacts/{contactId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/contacts/{contactId}</pre>
@@ -1423,7 +1654,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_10">Description</h4>
 <div class="paragraph">
-<p>Gets contacts by contact id.</p>
+<p>Get contacts by Contact Id.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1478,9 +1709,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_11">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Contacts</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_replacecontact">Updates contacts by contact ID</h3>
+<h3 id="_replacecontact">PUT /contacts/{contactId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>PUT /gobii/v1/contacts/{contactId}</pre>
@@ -1489,7 +1730,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_11">Description</h4>
 <div class="paragraph">
-<p>Updates contacts for a given contact id.</p>
+<p>Update contact by contact id.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1551,9 +1792,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_12">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Contacts</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getcontactsbyemail">Gets contacts by email id</h3>
+<h3 id="_getcontactsbyemail">GET /contacts/{email}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/contacts/{email}</pre>
@@ -1562,7 +1813,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_12">Description</h4>
 <div class="paragraph">
-<p>Gets contacts by email id.</p>
+<p>Get contact by email id.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1617,9 +1868,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_13">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Contacts</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getcvsforcvgroup">Gets CV terms by CV group ID</h3>
+<h3 id="_getcvsforcvgroup">GET /cvgroups/{cvGroupId}/cvs</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/cvgroups/{cvGroupId}/cvs</pre>
@@ -1628,7 +1889,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_13">Description</h4>
 <div class="paragraph">
-<p>Retrieves all the CV terms having the specified CV group ID</p>
+<p>List CV terms in given group</p>
 </div>
 </div>
 <div class="sect3">
@@ -1683,9 +1944,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_14">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>CvGroups.cvs</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getcvgroupsbytype">Gets CV groups by CV group type ID</h3>
+<h3 id="_getcvgroupsbytype">GET /cvgroups/{cvGroupTypeId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/cvgroups/{cvGroupTypeId}</pre>
@@ -1694,7 +1965,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_14">Description</h4>
 <div class="paragraph">
-<p>Retrieves all CV groups having the specified CV group type ID</p>
+<p>Get CV group by cv group type ID</p>
 </div>
 </div>
 <div class="sect3">
@@ -1749,9 +2020,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_15">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>CvGroups</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getcvgroupdetails">Gets CV Group details given CV group name and type ID</h3>
+<h3 id="_getcvgroupdetails">Get /cvgroups/{groupName}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/cvgroups/{groupName}</pre>
@@ -1760,7 +2041,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_15">Description</h4>
 <div class="paragraph">
-<p>Retrieves the details for a given CV Group name and type ID</p>
+<p>Get CV group by name</p>
 </div>
 </div>
 <div class="sect3">
@@ -1822,9 +2103,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_16">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>CvGroups</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_createcv">/cvs</h3>
+<h3 id="_createcv">POST /cvs</h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /gobii/v1/cvs</pre>
@@ -1885,9 +2176,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_17">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>ControlledVocabularies</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getcvs">/cvs</h3>
+<h3 id="_getcvs">GET /cvs</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/cvs</pre>
@@ -1896,7 +2197,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_17">Description</h4>
 <div class="paragraph">
-<p>Gets all cvs in the system.</p>
+<p>List all cvs in the GDM.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1923,9 +2224,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_18">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>ControlledVocabularies</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getcvbyid">/cvs</h3>
+<h3 id="_getcvbyid">GET /cvs/{cvId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/cvs/{cvId}</pre>
@@ -1934,7 +2245,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_18">Description</h4>
 <div class="paragraph">
-<p>Gets cv by the id.</p>
+<p>Get cv by the id.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1989,9 +2300,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_19">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>ControlledVocabularies</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_replacecv">/cvs</h3>
+<h3 id="_replacecv">PUT /cvs/{cvId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>PUT /gobii/v1/cvs/{cvId}</pre>
@@ -2000,7 +2321,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_19">Description</h4>
 <div class="paragraph">
-<p>Updates cv&#8217;s by cvId.</p>
+<p>Update cv by cvId.</p>
 </div>
 </div>
 <div class="sect3">
@@ -2062,9 +2383,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_20">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>ControlledVocabularies</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_deletecv">/cvs</h3>
+<h3 id="_deletecv">DELETE /cvs/{cvId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>DELETE /gobii/v1/cvs/{cvId}</pre>
@@ -2073,7 +2404,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_20">Description</h4>
 <div class="paragraph">
-<p>Deletes cv by the id.</p>
+<p>Deletes cv by id.</p>
 </div>
 </div>
 <div class="sect3">
@@ -2128,9 +2459,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_21">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>ControlledVocabularies</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getcvsbygroupname">/cvs/{groupName:[a-zA-Z_]+}</h3>
+<h3 id="_getcvsbygroupname">GET /cvs/{groupName}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/cvs/{groupName}</pre>
@@ -2139,7 +2480,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_21">Description</h4>
 <div class="paragraph">
-<p>Gets cvs by the group name.</p>
+<p>List cvs by the group name.</p>
 </div>
 </div>
 <div class="sect3">
@@ -2194,9 +2535,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_22">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Cvs</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_createdataset">Creates a dataset</h3>
+<h3 id="_createdataset">POST /datasets</h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /gobii/v1/datasets</pre>
@@ -2205,7 +2556,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_22">Description</h4>
 <div class="paragraph">
-<p>Creates a new dataset in the system. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Creates a new dataset in the system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -2257,9 +2608,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_23">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Datasets</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getdatasets">Gets all the datasets</h3>
+<h3 id="_getdatasets">GET /datasets</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/datasets</pre>
@@ -2268,7 +2629,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_23">Description</h4>
 <div class="paragraph">
-<p>Retrieves all the existing datasets in the system. The list can be retrieved by page and specific page size.</p>
+<p>List all the existing datasets in the system. The list can be retrieved by page and specific page size.</p>
 </div>
 </div>
 <div class="sect3">
@@ -2337,9 +2698,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_24">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Datasets</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getdatasetstypes">Gets the defined Dataset Types in the system</h3>
+<h3 id="_getdatasetstypes">GET /datasets/types</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/datasets/types</pre>
@@ -2348,7 +2719,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_24">Description</h4>
 <div class="paragraph">
-<p>Retrieves all the defined dataset types in the system.</p>
+<p>Lists dataset types in the system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -2375,9 +2746,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_25">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Datasets.types</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getdatasetsbytypeid">Gets all the datasets with the given dataset type ID</h3>
+<h3 id="_getdatasetsbytypeid">GET /datasets/types/{id}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/datasets/types/{id}</pre>
@@ -2386,7 +2767,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_25">Description</h4>
 <div class="paragraph">
-<p>Retrieves all the Datasets having the specified type ID.</p>
+<p>Gets the Dataset type by type ID.</p>
 </div>
 </div>
 <div class="sect3">
@@ -2441,9 +2822,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_26">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Datasets.types</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getdatasetsbyid">Gets the dataset given Dataset ID</h3>
+<h3 id="_getdatasetsbyid">GET /datasets/{dataSetId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/datasets/{dataSetId}</pre>
@@ -2452,7 +2843,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_26">Description</h4>
 <div class="paragraph">
-<p>Retrieves the Dataset entity having the specified ID.</p>
+<p>Gets the Dataset entity having the specified ID.</p>
 </div>
 </div>
 <div class="sect3">
@@ -2507,9 +2898,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_27">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Datasets</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_replacedataset">Updates the Dataset by Dataset ID</h3>
+<h3 id="_replacedataset">PUT /datasets/{dataSetId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>PUT /gobii/v1/datasets/{dataSetId}</pre>
@@ -2518,7 +2919,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_27">Description</h4>
 <div class="paragraph">
-<p>Updates the Dataset entity having the specified datasetId. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Updates the Dataset entity having the specified datasetId.</p>
 </div>
 </div>
 <div class="sect3">
@@ -2580,9 +2981,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_28">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Datasets</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getanalysesfordataset">Gets all the analysis for the given Dataset ID</h3>
+<h3 id="_getanalysesfordataset">GET /datasets/{dataSetId}/analyses</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/datasets/{dataSetId}/analyses</pre>
@@ -2591,7 +3002,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_28">Description</h4>
 <div class="paragraph">
-<p>Retrieves all the analysis for the given datasetId</p>
+<p>Lists all the analysis in a dataset identified by dataset id.</p>
 </div>
 </div>
 <div class="sect3">
@@ -2646,9 +3057,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_29">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Datasets.analyses</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getjobdetailsbydatasetid">Gets the job details for the given Dataset ID</h3>
+<h3 id="_getjobdetailsbydatasetid">GET /datasets/{datasetId}/jobs</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/datasets/{datasetId}/jobs</pre>
@@ -2657,7 +3078,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_29">Description</h4>
 <div class="paragraph">
-<p>Retrieves the information for active job for a given datasetId</p>
+<p>List information for active job for a given datasetId</p>
 </div>
 </div>
 <div class="sect3">
@@ -2712,9 +3133,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_30">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Datasets.jobs</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_createdisplay">Creates a display entity</h3>
+<h3 id="_createdisplay">POST /displays</h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /gobii/v1/displays</pre>
@@ -2723,7 +3154,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_30">Description</h4>
 <div class="paragraph">
-<p>Creates a display entity with the given information. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Creates displays in GDM.</p>
 </div>
 </div>
 <div class="sect3">
@@ -2775,9 +3206,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_31">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Displays</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getdisplays">Gets all the displays</h3>
+<h3 id="_getdisplays">GET /displays</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/displays</pre>
@@ -2786,7 +3227,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_31">Description</h4>
 <div class="paragraph">
-<p>Retrieves a list of all the Display entities</p>
+<p>Lists all Displays in GDM</p>
 </div>
 </div>
 <div class="sect3">
@@ -2813,9 +3254,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_32">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Displays</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getdisplaybyid">Gets display by Display ID</h3>
+<h3 id="_getdisplaybyid">GET /displays/{displayId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/displays/{displayId}</pre>
@@ -2824,7 +3275,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_32">Description</h4>
 <div class="paragraph">
-<p>Retrieves the Display entity having the specified ID</p>
+<p>Get the Display by display Id</p>
 </div>
 </div>
 <div class="sect3">
@@ -2879,9 +3330,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_33">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Displays</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_replacedisplay">Updates display by Display ID</h3>
+<h3 id="_replacedisplay">PUT /displays/{displayId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>PUT /gobii/v1/displays/{displayId}</pre>
@@ -2890,7 +3351,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_33">Description</h4>
 <div class="paragraph">
-<p>Updates the Display entity having the specified displayId. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Updates the Display entity having the specified displayId.</p>
 </div>
 </div>
 <div class="sect3">
@@ -2952,9 +3413,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_34">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Displays</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getallentitystats">Gets all the entities</h3>
+<h3 id="_getallentitystats">GET /entities</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/entities</pre>
@@ -2963,7 +3434,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_34">Description</h4>
 <div class="paragraph">
-<p>Retrieves all the existing entities in the system.</p>
+<p>Lists all the existing entities in the system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -2990,9 +3461,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_35">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Entities</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getentitycountofchildren">Gets the total count of the children for the given Entity</h3>
+<h3 id="_getentitycountofchildren">Gets /entities/{entityNameParent}/{parentId}/{entityNameChild}/count</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/entities/{entityNameParent}/{parentId}/{entityNameChild}/count</pre>
@@ -3070,9 +3551,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_36">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Entities.parent.child.count</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getentitycount">Gets the total entity count for the given Entity Name</h3>
+<h3 id="_getentitycount">GET /entities/{entityName}/count</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/entities/{entityName}/count</pre>
@@ -3081,7 +3572,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_36">Description</h4>
 <div class="paragraph">
-<p>Retrieves the total Entity count for the given entityName</p>
+<p>Gets the total Entity count for the given entityName</p>
 </div>
 </div>
 <div class="sect3">
@@ -3136,9 +3627,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_37">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Entities.count</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getentitylastmodified">Gets the last modified entity for the given Entity Name</h3>
+<h3 id="_getentitylastmodified">GET /entities/{entityName}/lastmodified</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/entities/{entityName}/lastmodified</pre>
@@ -3147,7 +3648,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_37">Description</h4>
 <div class="paragraph">
-<p>Retrieves last modified Entity for the given entityName</p>
+<p>Gets last modified Entity for the given entityName</p>
 </div>
 </div>
 <div class="sect3">
@@ -3202,9 +3703,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_38">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Entities.lastModified</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_createexperiment">Creates an experiment</h3>
+<h3 id="_createexperiment">POST /experiments</h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /gobii/v1/experiments</pre>
@@ -3213,7 +3724,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_38">Description</h4>
 <div class="paragraph">
-<p>Creates a new experiment in the system. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Creates a new experiment in the system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -3265,9 +3776,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_39">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Experiments</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getexperiments">Gets all the experiments</h3>
+<h3 id="_getexperiments">GET /experiments</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/experiments</pre>
@@ -3276,7 +3797,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_39">Description</h4>
 <div class="paragraph">
-<p>Retrieves all the existing experiments in the system.</p>
+<p>List all the existing experiments in the system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -3303,9 +3824,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_40">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Experiments</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getexperimentsbyid">Gets the experiment given Experiment ID</h3>
+<h3 id="_getexperimentsbyid">GET /experiments/{experimentId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/experiments/{experimentId}</pre>
@@ -3314,7 +3845,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_40">Description</h4>
 <div class="paragraph">
-<p>Retrieves the Experiment entity having the specified ID.</p>
+<p>Gets the Experiment entity having the specified ID.</p>
 </div>
 </div>
 <div class="sect3">
@@ -3369,9 +3900,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_41">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Experiments</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_replaceexperiment">Updates the Experiment by Experiement ID</h3>
+<h3 id="_replaceexperiment">PUT /experiments/{experimentId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>PUT /gobii/v1/experiments/{experimentId}</pre>
@@ -3380,7 +3921,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_41">Description</h4>
 <div class="paragraph">
-<p>Updates the Experiment entity having the specified experimentId. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Updates the Experiment entity having the specified experimentId.</p>
 </div>
 </div>
 <div class="sect3">
@@ -3442,9 +3983,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_42">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Experiments</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getprotocolbyexperimentid">Gets all the Protocols by Experiment ID</h3>
+<h3 id="_getprotocolbyexperimentid">GET /experiments/{experimentId}/protocols</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/experiments/{experimentId}/protocols</pre>
@@ -3508,9 +4059,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_43">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Experiments.protocols</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getfilepreviewbysearch">Gets file preview for the specified directory name</h3>
+<h3 id="_getfilepreviewbysearch">GET /files/loader/{directoryName}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/files/loader/{directoryName}</pre>
@@ -3519,7 +4080,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_43">Description</h4>
 <div class="paragraph">
-<p>Retrieves file preview for the specified directory name</p>
+<p>Gets file preview for the specified directory name</p>
 </div>
 </div>
 <div class="sect3">
@@ -3581,9 +4142,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_44">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Files.loader</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_createloaderfiledirectory">Creates a Directory to be used for loading</h3>
+<h3 id="_createloaderfiledirectory">PUT /files/loader/{directoryName}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>PUT /gobii/v1/files/loader/{directoryName}</pre>
@@ -3592,7 +4163,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_44">Description</h4>
 <div class="paragraph">
-<p>Creates a directory in the system that will be used for storing the data files for loading</p>
+<p>Updates a directory in the system that will be used for storing the data files for loading</p>
 </div>
 </div>
 <div class="sect3">
@@ -3654,9 +4225,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_45">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Files.loader</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_uploadfile">Upload file</h3>
+<h3 id="_uploadfile">POST /files/{destinationType}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /gobii/v1/files/{destinationType}</pre>
@@ -3734,9 +4315,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_46">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Files</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_deletefile">Delete file</h3>
+<h3 id="_deletefile">DELETE /files/{destinationType}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>DELETE /gobii/v1/files/{destinationType}</pre>
@@ -3817,9 +4408,19 @@ __</p></td>
 </ul>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_tags_47">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Files</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_uploadjobfile">Upload file for Job</h3>
+<h3 id="_uploadjobfile">POST /files/{gobiiJobId}/{destinationType}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /gobii/v1/files/{gobiiJobId}/{destinationType}</pre>
@@ -3904,9 +4505,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_48">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Files.jobs</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_downloadjobfile">Download file for specified Job</h3>
+<h3 id="_downloadjobfile">GET /files/{gobiiJobId}/{destinationType}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/files/{gobiiJobId}/{destinationType}</pre>
@@ -3984,9 +4595,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_49">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Files.jobs</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_createextractorinstruction">Creates instruction file for extracting data</h3>
+<h3 id="_createextractorinstruction">POST /instructions/extractor</h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /gobii/v1/instructions/extractor</pre>
@@ -4047,9 +4668,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_50">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Instructions.extractor</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getextractorinstructionstatus">Gets the extract job status by Job name</h3>
+<h3 id="_getextractorinstructionstatus">GET /instructions/extractor/jobs/{jobName}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/instructions/extractor/jobs/{jobName}</pre>
@@ -4113,9 +4744,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_51">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Instructions.extractor.jobs</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getextractorinstruction">Gets the extract instruction information given file name</h3>
+<h3 id="_getextractorinstruction">GET /instructions/extractor/{instructionFileName}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/instructions/extractor/{instructionFileName}</pre>
@@ -4179,9 +4820,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_52">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Instructions.extractor</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_createloaderinstruction">Creates instruction file for loading data</h3>
+<h3 id="_createloaderinstruction">POST /instructions/loader</h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /gobii/v1/instructions/loader</pre>
@@ -4242,9 +4893,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_53">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Instructions.loader</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getloaderinstructionstatus">Gets the loading job status by Job name</h3>
+<h3 id="_getloaderinstructionstatus">GET /instructions/loader/jobs/{jobName}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/instructions/loader/jobs/{jobName}</pre>
@@ -4253,7 +4914,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_53">Description</h4>
 <div class="paragraph">
-<p>Retrieves the loading job status along with other job details having the specified Job Name.</p>
+<p>Gets the loading job status along with other job details having the specified Job Name.</p>
 </div>
 </div>
 <div class="sect3">
@@ -4308,9 +4969,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_54">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Instructions.loader.jobs</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getloaderinstruction">Gets the loading instruction information given file name</h3>
+<h3 id="_getloaderinstruction">GET /instructions/loader/{instructionFileName}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/instructions/loader/{instructionFileName}</pre>
@@ -4319,7 +4990,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_54">Description</h4>
 <div class="paragraph">
-<p>Retrieves the loader instruction file entity having the specified instruction file name.</p>
+<p>Gets the loader instruction file entity having the specified instruction file name.</p>
 </div>
 </div>
 <div class="sect3">
@@ -4374,9 +5045,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_55">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Instructions.loader</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_createjob">Creates a job</h3>
+<h3 id="_createjob">POST /jobs</h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /gobii/v1/jobs</pre>
@@ -4385,7 +5066,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_55">Description</h4>
 <div class="paragraph">
-<p>Creates a new job in the system. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Creates a new job in the system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -4437,9 +5118,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_56">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Jobs</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getstatus">Gets all the jobs</h3>
+<h3 id="_getstatus">GET /jobs</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/jobs</pre>
@@ -4448,7 +5139,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_56">Description</h4>
 <div class="paragraph">
-<p>Retrieves all the existing jobs in the system.</p>
+<p>Lists all the existing jobs in the system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -4475,9 +5166,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_57">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Jobs</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_submitdnasamplesbyjobname">Created DNA samples for a given Job</h3>
+<h3 id="_submitdnasamplesbyjobname">POST /jobs/dnasamples/{jobName}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /gobii/v1/jobs/dnasamples/{jobName}</pre>
@@ -4486,7 +5187,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_57">Description</h4>
 <div class="paragraph">
-<p>Creates DNA samples for a given Job having the specified name in the system. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Creates DNA samples for a given Job having the specified name in the system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -4548,9 +5249,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_58">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Jobs.dnasamples</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getstatusbyid">Gets the job given Job Name</h3>
+<h3 id="_getstatusbyid">GET /jobs/{jobName}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/jobs/{jobName}</pre>
@@ -4559,7 +5270,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_58">Description</h4>
 <div class="paragraph">
-<p>Retrieves the Job entity having the specified name.</p>
+<p>Gets the Job entity having the specified name.</p>
 </div>
 </div>
 <div class="sect3">
@@ -4614,9 +5325,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_59">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Jobs</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_replacestatus">Updates the Job by Job Name</h3>
+<h3 id="_replacestatus">PUT /jobs/{jobName}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>PUT /gobii/v1/jobs/{jobName}</pre>
@@ -4625,7 +5346,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_59">Description</h4>
 <div class="paragraph">
-<p>Updates the Job entity having the specified jobName. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Updates the Job entity having the specified jobName.</p>
 </div>
 </div>
 <div class="sect3">
@@ -4687,9 +5408,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_60">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Jobs</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_createmanifest">Creates manifest entity</h3>
+<h3 id="_createmanifest">POST /manifests</h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /gobii/v1/manifests</pre>
@@ -4698,7 +5429,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_60">Description</h4>
 <div class="paragraph">
-<p>Creates a Manifest entity for GOBii system. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Creates a Manifest entity for GOBii system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -4750,9 +5481,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_61">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Manifests</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getmanifests">Gets all the Manifests</h3>
+<h3 id="_getmanifests">GET /manifests</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/manifests</pre>
@@ -4761,7 +5502,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_61">Description</h4>
 <div class="paragraph">
-<p>Retrieves an unfiltered list of all Manifest entities.</p>
+<p>Lists an unfiltered list of all Manifest entities.</p>
 </div>
 </div>
 <div class="sect3">
@@ -4788,9 +5529,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_62">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Manifests</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getmanifestbyid">Gets the manifest given Manifest ID</h3>
+<h3 id="_getmanifestbyid">GET /manifests/{manifestId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/manifests/{manifestId}</pre>
@@ -4799,7 +5550,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_62">Description</h4>
 <div class="paragraph">
-<p>Retrieves the Manifest entity having the specified ID.</p>
+<p>Gets the Manifest entity having the specified ID.</p>
 </div>
 </div>
 <div class="sect3">
@@ -4854,9 +5605,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_63">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Manifests</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_replacemanifest">Updates manifest by Manifest ID</h3>
+<h3 id="_replacemanifest">PUT /manifests/{manifestId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>PUT /gobii/v1/manifests/{manifestId}</pre>
@@ -4865,7 +5626,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_63">Description</h4>
 <div class="paragraph">
-<p>Updates the Manifest entity having the specified manifestId. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Updates the Manifest entity having the specified manifestId.</p>
 </div>
 </div>
 <div class="sect3">
@@ -4927,9 +5688,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_64">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Manifests</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getmaps">Gets all the Mapsets</h3>
+<h3 id="_getmaps">GET /maps</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/maps</pre>
@@ -4938,7 +5709,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_64">Description</h4>
 <div class="paragraph">
-<p>Retrieves all the existing Mapsets in the system.</p>
+<p>Lists all the existing Mapsets in the system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -4965,9 +5736,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_65">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Maps</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_createmapset">Creates a mapset</h3>
+<h3 id="_createmapset">POST /mapsets</h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /gobii/v1/mapsets</pre>
@@ -4976,7 +5757,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_65">Description</h4>
 <div class="paragraph">
-<p>Creates a new mapset in the system. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Creates a new mapset in the system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -5028,9 +5809,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_66">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Mapsets</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getmapsets">Gets all the mapsets</h3>
+<h3 id="_getmapsets">GET /mapsets</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/mapsets</pre>
@@ -5039,7 +5830,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_66">Description</h4>
 <div class="paragraph">
-<p>Retrieves all the existing mapsets in the system.</p>
+<p>List all the existing mapsets in the system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -5066,9 +5857,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_67">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Mapsets</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getmapsetbyid">Gets the mapset given Mapset ID</h3>
+<h3 id="_getmapsetbyid">GET /mapsets/{mapsetId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/mapsets/{mapsetId}</pre>
@@ -5077,7 +5878,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_67">Description</h4>
 <div class="paragraph">
-<p>Retrieves the Mapset entity having the specified ID.</p>
+<p>Gets the Mapset entity having the specified ID.</p>
 </div>
 </div>
 <div class="sect3">
@@ -5132,9 +5933,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_68">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Mapsets</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_replacemapset">Updates the Mapset by Mapset ID</h3>
+<h3 id="_replacemapset">PUT /mapsets/{mapsetId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>PUT /gobii/v1/mapsets/{mapsetId}</pre>
@@ -5143,7 +5954,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_68">Description</h4>
 <div class="paragraph">
-<p>Updates the Mapset entity having the specified mapsetId. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Updates the Mapset entity having the specified mapsetId.</p>
 </div>
 </div>
 <div class="sect3">
@@ -5205,9 +6016,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_69">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Mapsets</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getmarkerbyname">Marker search</h3>
+<h3 id="_getmarkerbyname">GET /marker-search</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/marker-search</pre>
@@ -5216,7 +6037,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_69">Description</h4>
 <div class="paragraph">
-<p>Gets Marker by searching by name</p>
+<p>List Marker search results.</p>
 </div>
 </div>
 <div class="sect3">
@@ -5271,9 +6092,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_70">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>MarkerSearch</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_createmarkergroup">Creates a Marker Group</h3>
+<h3 id="_createmarkergroup">POST /markergroups</h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /gobii/v1/markergroups</pre>
@@ -5282,7 +6113,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_70">Description</h4>
 <div class="paragraph">
-<p>Creates a new marker group in the system. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Creates a new marker group in the system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -5334,9 +6165,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_71">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>MarkerGroups</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getmarkergroups">Gets all the marker groups</h3>
+<h3 id="_getmarkergroups">GET /markergroups</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/markergroups</pre>
@@ -5345,7 +6186,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_71">Description</h4>
 <div class="paragraph">
-<p>Retrieves all the existing marker groups in the system.</p>
+<p>Lists all the existing marker groups in the system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -5372,9 +6213,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_72">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>MarkerGroups</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getmarkergroupbyid">Gets the marker group given Marker Group ID</h3>
+<h3 id="_getmarkergroupbyid">GET /markergroups/{markerGroupId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/markergroups/{markerGroupId}</pre>
@@ -5438,9 +6289,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_73">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>MarkerGroups</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_replacemarkergroup">Updates the Marker Group by Marker Group ID</h3>
+<h3 id="_replacemarkergroup">PUT /markergroups/{markerGroupId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>PUT /gobii/v1/markergroups/{markerGroupId}</pre>
@@ -5449,7 +6310,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_73">Description</h4>
 <div class="paragraph">
-<p>Updates the Marker Group entity having the specified markerGroupId. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Updates the Marker Group entity having the specified markerGroupId.</p>
 </div>
 </div>
 <div class="sect3">
@@ -5511,9 +6372,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_74">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>MarkerGroups</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_createmarker">Creates a marker</h3>
+<h3 id="_createmarker">POST /markers</h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /gobii/v1/markers</pre>
@@ -5522,7 +6393,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_74">Description</h4>
 <div class="paragraph">
-<p>Creates a new marker in the system. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Creates a new marker in the system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -5574,9 +6445,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_75">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Markers</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getmarkers">Gets all the markers</h3>
+<h3 id="_getmarkers">GET /markers</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/markers</pre>
@@ -5585,7 +6466,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_75">Description</h4>
 <div class="paragraph">
-<p>Retrieves all the existing markers in the system.</p>
+<p>Lists all the existing markers in the system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -5612,9 +6493,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_76">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Markers</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getmarkerbyid">Gets the marker given Marker ID</h3>
+<h3 id="_getmarkerbyid">GET /markers/{markerId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/markers/{markerId}</pre>
@@ -5678,9 +6569,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_77">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Markers</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_replacemarker">Updates the Marker by Marker ID</h3>
+<h3 id="_replacemarker">PUT /markers/{markerId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>PUT /gobii/v1/markers/{markerId}</pre>
@@ -5689,7 +6590,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_77">Description</h4>
 <div class="paragraph">
-<p>Updates the Marker entity having the specified markerId. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Updates the Marker entity having the specified markerId.</p>
 </div>
 </div>
 <div class="sect3">
@@ -5751,9 +6652,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_78">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Markers</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getnamesbynamelist">Gets a list of name/ID combination for given Entity and a name list</h3>
+<h3 id="_getnamesbynamelist">POST /names/{entity}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /gobii/v1/names/{entity}</pre>
@@ -5838,9 +6749,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_79">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Names</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getnames">Gets a list of name/ID combination for given Entity</h3>
+<h3 id="_getnames">GET /names/{entity}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/names/{entity}</pre>
@@ -5849,7 +6770,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_79">Description</h4>
 <div class="paragraph">
-<p>Retrieves a list of name/ID combination for a given entity. For the list of entities supported see class GobiiEntityNameType.List can further be filtered out by specifying the filter type and value.For the list of filter types supported see class GobiiFilterType.Example use case: entity = CV; filterType = NAMES_BY_TYPE_NAME; filterValue = statusResult will be a list of CV terms having status as the cv group</p>
+<p>List of name/ID combination for a given entity. For the list of entities supported see class GobiiEntityNameType.List can further be filtered out by specifying the filter type and value.For the list of filter types supported see class GobiiFilterType.Example use case: entity = CV; filterType = NAMES_BY_TYPE_NAME; filterValue = statusResult will be a list of CV terms having status as the cv group</p>
 </div>
 </div>
 <div class="sect3">
@@ -5918,9 +6839,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_80">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Names</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_createorganization">Creates a organization</h3>
+<h3 id="_createorganization">POST /organizations</h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /gobii/v1/organizations</pre>
@@ -5929,7 +6860,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_80">Description</h4>
 <div class="paragraph">
-<p>Creates a new organization in the system. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Creates a new organization in the system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -5981,9 +6912,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_81">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Organizations</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getorganizations">Gets all the organizations</h3>
+<h3 id="_getorganizations">GET /organizations</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/organizations</pre>
@@ -5992,7 +6933,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_81">Description</h4>
 <div class="paragraph">
-<p>Retrieves all the existing organizations in the system.</p>
+<p>List all the existing organizations in the system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -6019,9 +6960,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_82">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Organizations</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getorganizationsbyid">Gets the organization given Organization ID</h3>
+<h3 id="_getorganizationsbyid">GET /organizations/{organizationId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/organizations/{organizationId}</pre>
@@ -6085,9 +7036,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_83">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Organizations</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_replaceorganization">Updates the Organization by Organization ID</h3>
+<h3 id="_replaceorganization">PUT /organizations/{organizationId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>PUT /gobii/v1/organizations/{organizationId}</pre>
@@ -6096,7 +7057,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_83">Description</h4>
 <div class="paragraph">
-<p>Updates the Organization entity having the specified organizationId. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Updates the Organization entity having the specified organizationId.</p>
 </div>
 </div>
 <div class="sect3">
@@ -6158,9 +7119,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_84">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Organizations</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_createplatform">Creates a Platform</h3>
+<h3 id="_createplatform">POST /platforms</h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /gobii/v1/platforms</pre>
@@ -6169,7 +7140,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_84">Description</h4>
 <div class="paragraph">
-<p>Creates a new Platform in the system. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Creates a new Platform in the system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -6221,9 +7192,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_85">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Platforms</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getplatforms">Gets all the platforms</h3>
+<h3 id="_getplatforms">GET /platforms</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/platforms</pre>
@@ -6232,7 +7213,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_85">Description</h4>
 <div class="paragraph">
-<p>Retrieves all the existing platforms in the system.</p>
+<p>List all the existing platforms in the system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -6259,9 +7240,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_86">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Platforms</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getplatformdetailsbyvendorprotocolid">Gets the platform details given Vendor Protocol ID</h3>
+<h3 id="_getplatformdetailsbyvendorprotocolid">GET /platforms/protocols/{vendorProtocolId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/platforms/protocols/{vendorProtocolId}</pre>
@@ -6270,7 +7261,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_86">Description</h4>
 <div class="paragraph">
-<p>Retrieves the Platform entity having the specified Vendor Protocol ID.</p>
+<p>Gets the Platform entity having the specified Vendor Protocol ID.</p>
 </div>
 </div>
 <div class="sect3">
@@ -6325,9 +7316,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_87">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Platform.protocols</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getplatformsbyid">Gets the platform given Platform ID</h3>
+<h3 id="_getplatformsbyid">GET /platforms/{platformId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/platforms/{platformId}</pre>
@@ -6391,9 +7392,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_88">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Platforms</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_replaceplatform">Updates the Platform by Platform ID</h3>
+<h3 id="_replaceplatform">PUT /platforms/{platformId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>PUT /gobii/v1/platforms/{platformId}</pre>
@@ -6402,7 +7413,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_88">Description</h4>
 <div class="paragraph">
-<p>Updates the Platform entity having the specified platformId. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Updates the Platform entity having the specified platformId.</p>
 </div>
 </div>
 <div class="sect3">
@@ -6464,9 +7475,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_89">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Platforms</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_createproject">Creates a project</h3>
+<h3 id="_createproject">GET /projects</h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /gobii/v1/projects</pre>
@@ -6475,7 +7496,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_89">Description</h4>
 <div class="paragraph">
-<p>Creates a new project in the system. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Creates a new project in the system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -6527,9 +7548,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_90">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Projects</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getprojects">Gets all the projects</h3>
+<h3 id="_getprojects">GET /projects</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/projects</pre>
@@ -6538,7 +7569,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_90">Description</h4>
 <div class="paragraph">
-<p>Retrieves all the existing projects in the system.</p>
+<p>List all the existing projects in the system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -6565,9 +7596,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_91">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Projects</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getprojectsbyid">Gets the projects given Project ID</h3>
+<h3 id="_getprojectsbyid">GET /projects/{projectId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/projects/{projectId}</pre>
@@ -6631,9 +7672,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_92">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Projects</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_replaceproject">Updates the Project by Project ID</h3>
+<h3 id="_replaceproject">PUT /projects/{projectId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>PUT /gobii/v1/projects/{projectId}</pre>
@@ -6642,7 +7693,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_92">Description</h4>
 <div class="paragraph">
-<p>Updates the Project entity having the specified projectId. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Updates the Project entity having the specified projectId.</p>
 </div>
 </div>
 <div class="sect3">
@@ -6704,9 +7755,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_93">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Projects</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_createprotocol">Creates a Protocol</h3>
+<h3 id="_createprotocol">POST /protocols</h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /gobii/v1/protocols</pre>
@@ -6715,7 +7776,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_93">Description</h4>
 <div class="paragraph">
-<p>Creates a new Protocol in the system. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Creates a new Protocol in the system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -6767,9 +7828,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_94">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Protocols</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getprotocols">Gets all the protocols</h3>
+<h3 id="_getprotocols">GET /protocols</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/protocols</pre>
@@ -6778,7 +7849,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_94">Description</h4>
 <div class="paragraph">
-<p>Retrieves all the existing protocols in the system.</p>
+<p>List all the existing protocols in the system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -6805,9 +7876,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_95">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Protocols</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getprotocol">Gets the protocol given Protocol ID</h3>
+<h3 id="_getprotocol">GET /protocols/{protocolId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/protocols/{protocolId}</pre>
@@ -6871,9 +7952,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_96">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Protocols</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_replaceprotocol">Updates the Protocol by Protocol ID</h3>
+<h3 id="_replaceprotocol">PUT /protocols/{protocolId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>PUT /gobii/v1/protocols/{protocolId}</pre>
@@ -6882,7 +7973,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_96">Description</h4>
 <div class="paragraph">
-<p>Updates the Protocol entity having the specified protocolId. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Updates the Protocol entity having the specified protocolId.</p>
 </div>
 </div>
 <div class="sect3">
@@ -6944,9 +8035,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_97">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Protocols</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_addvendortoprotocol">Creates a Vendor Protocol record for given Protocol ID</h3>
+<h3 id="_addvendortoprotocol">POST /protocols/{protocolId}/vendors</h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /gobii/v1/protocols/{protocolId}/vendors</pre>
@@ -6955,7 +8056,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_97">Description</h4>
 <div class="paragraph">
-<p>Creates a new Vendor Protocol in the system for specified Protocol ID. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Creates a new Vendor Protocol in the system for specified Protocol ID.</p>
 </div>
 </div>
 <div class="sect3">
@@ -7017,9 +8118,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_98">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Protocols.vendor</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getvendorsforprotocol">Gets all the Vendor Protocols given Protocol ID</h3>
+<h3 id="_getvendorsforprotocol">GET /protocols/{protocolId}/vendors</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/protocols/{protocolId}/vendors</pre>
@@ -7028,7 +8139,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_98">Description</h4>
 <div class="paragraph">
-<p>Retrieves all the vendor protocols given protocolId in the system.</p>
+<p>List all the vendor protocols given protocolId in the system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -7083,9 +8194,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_99">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Protocols.vendor</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_updateorreplacevendorprotocol">Updates the Vendor Protocol by Protocol ID</h3>
+<h3 id="_updateorreplacevendorprotocol">PUT /protocols/{protocolId}/vendors</h3>
 <div class="literalblock">
 <div class="content">
 <pre>PUT /gobii/v1/protocols/{protocolId}/vendors</pre>
@@ -7094,7 +8215,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_99">Description</h4>
 <div class="paragraph">
-<p>Updates the Vendor Protocol entity having the specified protocolId. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Updates the Vendor Protocol entity having the specified protocolId.</p>
 </div>
 </div>
 <div class="sect3">
@@ -7156,9 +8277,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_100">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Protocols.vendor</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_createreference">Creates a reference</h3>
+<h3 id="_createreference">POST /references</h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /gobii/v1/references</pre>
@@ -7167,7 +8298,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_100">Description</h4>
 <div class="paragraph">
-<p>Creates a new reference in the system. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Creates a new reference in the system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -7219,9 +8350,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_101">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>References</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getreferences">Gets all the references</h3>
+<h3 id="_getreferences">GET /references</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/references</pre>
@@ -7230,7 +8371,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_101">Description</h4>
 <div class="paragraph">
-<p>Retrieves all the existing references in the system.</p>
+<p>Lists all the existing references in the system.</p>
 </div>
 </div>
 <div class="sect3">
@@ -7257,9 +8398,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_102">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>References</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_getreferencebyid">Gets the reference given Reference ID</h3>
+<h3 id="_getreferencebyid">GET /references/{referenceId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /gobii/v1/references/{referenceId}</pre>
@@ -7268,7 +8419,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_102">Description</h4>
 <div class="paragraph">
-<p>Retrieves the Reference entity having the specified ID.</p>
+<p>Gets the Reference entity having the specified ID.</p>
 </div>
 </div>
 <div class="sect3">
@@ -7323,9 +8474,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_103">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>References</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_replacereference">Updates the Reference by Reference ID</h3>
+<h3 id="_replacereference">PUT /references/{referenceId}</h3>
 <div class="literalblock">
 <div class="content">
 <pre>PUT /gobii/v1/references/{referenceId}</pre>
@@ -7334,7 +8495,7 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_103">Description</h4>
 <div class="paragraph">
-<p>Updates the Reference entity having the specified referenceId. Consult the <a href="#_requestresponsestructure">Request/Response Section</a> before attempting to use this call.</p>
+<p>Updates the Reference entity having the specified referenceId.</p>
 </div>
 </div>
 <div class="sect3">
@@ -7396,9 +8557,19 @@ __</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_tags_104">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>References</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_updaterestprofile">Gets REST profiles of GDM system</h3>
+<h3 id="_updaterestprofile">/restprofiles/</h3>
 <div class="literalblock">
 <div class="content">
 <pre>PUT /gobii/v1/restprofiles</pre>
@@ -7407,7 +8578,8 @@ __</p></td>
 <div class="sect3">
 <h4 id="_description_104">Description</h4>
 <div class="paragraph">
-<p>When the Header of the payload envelope for a resource contains maxGet, maxPost, and maxPut values, this resource provides a means to update the max for a given rest resource ID and for a given HTTP verb. The values are transient in the sense that they will be confined only to a specific web service deployment. They are stored in the web service configurationdocument</p>
+<p>Update REST profiles
+When the Header of the payload envelope for a resource contains maxGet, maxPost, and maxPut values, this resource provides a means to update the max for a given rest resource ID and for a given HTTP verb. The values are transient in the sense that they will be confined only to a specific web service deployment. They are stored in the web service configurationdocument</p>
 </div>
 </div>
 <div class="sect3">
@@ -7458,6 +8630,16 @@ __</p></td>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="sect3">
+<h4 id="_tags_105">Tags</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>RestProfiles</p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 </div>
@@ -12070,7 +13252,7 @@ __</p></td>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-02-26 09:47:09 EST
+Last updated 2019-02-28 09:43:41 EST
 </div>
 </div>
 </body>

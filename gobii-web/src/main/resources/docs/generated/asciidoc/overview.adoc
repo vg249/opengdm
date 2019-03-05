@@ -1,9 +1,9 @@
-= GOBii API
+= Genomic Data Management (GDM)
 
 
 [[_overview]]
 == Overview
-The GOBii web service API provides a comprehensive set of RESTful methods for accomplishing the following core tasks in the GOBii Genomic Data Management (GDM) system. This manual explains the GOBii web architecture and its web service operations.
+The GDM web service API provides a comprehensive set of RESTful methods for accomplishing the following core tasks in the GOBii Genomic Data Management (GDM) system. This manual explains the GDM web architecture and its web service operations.
 
 
 === Version information
@@ -23,6 +23,54 @@ __Terms of service__ : null
 __Host__ : localhost:8081
 __BasePath__ : /api
 __Schemes__ : HTTP
+
+
+=== Tags
+
+* Analyses
+* Authentication
+* ConfigSettings
+* Contacts
+* ContactsSearch
+* ControlledVocabularies
+* CvGroups
+* CvGroups.cvs
+* Cvs
+* Datasets
+* Datasets.analyses
+* Datasets.jobs
+* Datasets.types
+* Displays
+* Entities
+* Entities.count
+* Entities.lastModified
+* Entities.parent.child.count
+* Experiments
+* Experiments.protocols
+* Files
+* Files.jobs
+* Files.loader
+* Instructions.extractor
+* Instructions.extractor.jobs
+* Instructions.loader
+* Instructions.loader.jobs
+* Jobs
+* Jobs.dnasamples
+* Manifests
+* Maps
+* Mapsets
+* MarkerGroups
+* MarkerSearch
+* Markers
+* Names
+* Organizations
+* Platform.protocols
+* Platforms
+* Projects
+* Protocols
+* Protocols.vendor
+* References
+* RestProfiles
 
 
 
