@@ -19,8 +19,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class GobiiAdlTest {
 
@@ -47,31 +52,23 @@ public class GobiiAdlTest {
     @Test
     public void testADLBatchProcessing() throws Exception {
 
-        if (backendSupoorted) {
 
-            ADLEncapsulator adlEncapsulator = new ADLEncapsulator();
-            String configUtilCommandlineStem = testExecConfig.getConfigUtilCommandlineStem();
+        System.out.print("====== BEGIN GOBII ADL RUN");
 
-            // EXAMPLE java -jar E:\gobii\1623-03\gobiiproject\gobii-process\target
-            String[] split = configUtilCommandlineStem.split(" ");
-            adlEncapsulator.setAdlJarPath(split[2] + "/gobiiadl.jar");
-            adlEncapsulator.setInputHost(testExecConfig.getInitialConfigUrl());
-            adlEncapsulator.setInputUser(testExecConfig.getLdapUserForUnitTest());
-            adlEncapsulator.setInputPassword(testExecConfig.getLdapPasswordForUnitTest());
-            adlEncapsulator.setInputTimeout(testExecConfig.getAsynchOpTimeoutMinutes());
+        long startTime = System.currentTimeMillis();
 
-            // copy to temp folder
-            String tempDirName = "adlTest-" + UUID.randomUUID().toString();
-            String tempDirString = testExecConfig.getTestFileDownloadDirectory() + "/" + tempDirName;
-            File tempDir = new File(tempDirString);
+        ADLEncapsulator adlEncapsulator = new ADLEncapsulator();
+        File tempDir = adlEncapsulator.setUpAdlTest(testExecConfig);
 
-            tempDir.mkdir();
+        Assert.assertNotNull(adlEncapsulator.getErrorMsg(), tempDir);
 
-            // check if include_scenarios.txt exists
-            File scenarioFile = new File("src/test/resources/gobiiAdl/include_scenarios.txt");
-            File fileFromRepo = new File("src/test/resources/gobiiAdl");
+        // check if include_scenarios.txt exists
+        File scenarioFile = new File("src/test/resources/gobiiAdl/include_scenarios.txt");
 
-            adlEncapsulator.copyFilesToLocalDir(fileFromRepo, tempDir);
+        String scenariosRunTxt = "Scenarios run: ";
+        Integer scenarioCount = 0;
+
+        if (scenarioFile.exists() && !scenarioFile.isDirectory()) {
 
             Scanner sc = new Scanner(scenarioFile);
 
@@ -79,21 +76,56 @@ public class GobiiAdlTest {
 
                 String scenarioName = sc.nextLine();
 
+                File fileFromRepo = new File("src/test/resources/gobiiAdl/" + scenarioName);
+
                 File newScenarioDir = new File(tempDir.getAbsoluteFile() + "/" + scenarioName);
                 newScenarioDir.mkdir();
 
                 adlEncapsulator.copyFilesToLocalDir(fileFromRepo, newScenarioDir);
 
-                System.out.print(scenarioName);
+                scenarioCount++;
+
+                scenariosRunTxt += "\n -- " + scenarioName;
             }
+
+
+        } else {
+
+            File fileFromRepo = new File("src/test/resources/gobiiAdl");
 
             adlEncapsulator.copyFilesToLocalDir(fileFromRepo, tempDir);
 
+            if (fileFromRepo.exists() && fileFromRepo.isDirectory() && fileFromRepo.listFiles(File::isDirectory).length > 0) {
 
-            adlEncapsulator.setInputDirectory(tempDir.getAbsolutePath());
+                scenarioCount = fileFromRepo.listFiles(File::isDirectory).length;
 
-        } else {
-            LOGGER.error("Backend support is not provided in this context: system-critical unit tests will not be run");
+                for (File currentFile : fileFromRepo.listFiles(File::isDirectory)) {
+
+                    scenariosRunTxt += "\n -- " + currentFile.getName();
+
+                }
+
+            } else {
+                scenariosRunTxt = "\nNo scenarios ran.";
+            }
+
         }
+
+
+        adlEncapsulator.setInputDirectory(tempDir.getAbsolutePath());
+
+        boolean isADLSuccessful = adlEncapsulator.executeBatchGobiiADL();
+
+        Assert.assertTrue(adlEncapsulator.getErrorMsg(), isADLSuccessful);
+
+        long totalRunTime = System.currentTimeMillis() - startTime;
+        long totalRunTimeMins = (totalRunTime / 1000) / 60;
+        long totalRunTimeSecs = (totalRunTime / 1000) % 60;
+
+        System.out.print("\nTotal scenarios: " + scenarioCount);
+        System.out.print("\nTotal time for all scenarios: " + totalRunTimeMins + " minutes and " + totalRunTimeSecs + " seconds.");
+        System.out.print("\n" + scenariosRunTxt);
+        System.out.print("\n====== END GOBII ADL RUN");
+
     }
 }

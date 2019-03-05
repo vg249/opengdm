@@ -20,6 +20,7 @@ import org.gobiiproject.gobiimodel.types.ServerType;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiimodel.utils.error.ErrorMessageInterpreter;
 //import com.sun.jna.Library;
 //import com.sun.jna.Native;
 
@@ -221,25 +222,13 @@ public class HelperFunctions {
 
         Process p = initProcecess(execArray, outputFile, errorFile, inputFile, null);
 
+        if(p == null){
+            ErrorLogger.logError(executedProcName,"Process did not execute correctly - no data returned");
+            return false;
+        }
         if (p.exitValue() != 0) {
-            if (executedProcName.equals("rm")) { //TODO: Temporary removal of 'RM' errors as 'ERROR' type
-                ErrorLogger.logDebug(executedProcName, "Unable to rm " + execArray[1]);
-                return false;
-            }
-            if (executedProcName.contains("gobii_ifl.py")) {
-                String textToReturn = "";
-                try {
-                    BufferedReader br = new BufferedReader(new FileReader(errorFile));
-                    while (br.ready()) {
-                        textToReturn += br.readLine() + "\n";
-                    }
-                } catch (Exception e) {
-                    //meh
-                }
-                ErrorLogger.logError(executedProcName, textToReturn, errorFile);
-            } else {
-                ErrorLogger.logError(executedProcName, "Exit code " + p.exitValue(), errorFile);
-            }
+            String message = ErrorMessageInterpreter.getErrorMessage(executedProcName,p.exitValue(),errorFile);
+            ErrorLogger.logError(executedProcName, message, errorFile);
             return false;
         }
         return true;

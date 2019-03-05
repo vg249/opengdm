@@ -1,12 +1,15 @@
 package org.gobiiproject.gobiiclient.gobii.Helpers;
 
 import org.apache.commons.io.FileUtils;
+import org.gobiiproject.gobiimodel.config.TestExecConfig;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 public class ADLEncapsulator {
@@ -109,6 +112,52 @@ public class ADLEncapsulator {
         servercommand += INPUT_SCENARIO + SPACE + getInputScenario() + SPACE;
         return servercommand;
     }
+
+
+    public File setUpAdlTest(TestExecConfig testExecConfig) throws Exception {
+
+        if (TestUtils.isBackEndSupported()) {
+
+            String configUtilCommandlineStem = testExecConfig.getConfigUtilCommandlineStem();
+
+            String[] split = configUtilCommandlineStem.split(" ");
+
+            if (split.length >= 3) {
+
+                this.setAdlJarPath(split[2] + "gobiiadl.jar");
+                this.setInputHost(testExecConfig.getInitialConfigUrl());
+                this.setInputUser(testExecConfig.getLdapUserForUnitTest());
+                this.setInputPassword(testExecConfig.getLdapPasswordForUnitTest());
+                this.setInputTimeout(testExecConfig.getAsynchOpTimeoutMinutes());
+
+                // copy to temp folder
+
+                String tempDirName = "adlTest-" + UUID.randomUUID();
+                String tempDirString = testExecConfig.getTestFileDownloadDirectory() + "/" + tempDirName;
+
+                File tempDir = new File(tempDirString);
+
+                tempDir.mkdir();
+
+                return tempDir;
+
+            } else {
+
+                setErrorMsg("Error in getting the path to ADL");
+
+                return null;
+
+            }
+
+        } else {
+
+            setErrorMsg("Backend support is not provided in this context: system-critical unit tests will not be run");
+
+            return null;
+        }
+
+    }
+
 
     public boolean executeBatchGobiiADL() throws Exception{
 

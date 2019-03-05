@@ -33,7 +33,13 @@ export class ViewIdGeneratorService {
     }
 
     public makeMarkerSampleListModeRadioButtonId(typeLabel:string): string {
-        return TypeControl[TypeControl.MARKER_SAMPLE_LIST_MODE_RADIO_BUTTON] + "_" + typeLabel.toUpperCase().replace(" ","_");
+
+        let label:string = "unknown";
+        if( typeLabel ) {
+            label = typeLabel.toUpperCase().replace(" ","_");
+        }
+
+        return TypeControl[TypeControl.MARKER_SAMPLE_LIST_MODE_RADIO_BUTTON] + "_" + label;
     }
 
 }

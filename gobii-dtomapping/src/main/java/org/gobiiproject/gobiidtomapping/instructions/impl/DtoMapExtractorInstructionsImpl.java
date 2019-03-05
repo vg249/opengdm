@@ -193,7 +193,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                                     "The specified extract type is "
                                             + currentGobiiDataSetExtract.getGobiiExtractFilterType()
                                             + ". Please provide at least one of the following: " +
-                                            "Principle Investigator, Project, Sample list, or sample file.");
+                                            "Principal Investigator, Project, Sample list, or sample file.");
 
 
                         }
@@ -240,9 +240,9 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                             extractorInstructionFilesDTO.getInstructionFileName());
 
                     if (currentExtractorInstruction.getDataSetExtracts().size() > 1) {
-                        extractorFileDestinationLocation += "/" + idx.toString();
+                        Integer dataSetIndexSegment = idx + 1;
+                        extractorFileDestinationLocation += "/" + dataSetIndexSegment.toString();
                     }
-
 
                     if (!instructionFileAccess.doesPathExist(extractorFileDestinationLocation)) {
 

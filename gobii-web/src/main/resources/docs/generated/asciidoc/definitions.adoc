@@ -1,0 +1,333 @@
+
+[[_definitions]]
+== Definitions
+
+[[_analysisdto]]
+=== AnalysisDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**algorithm** +
+__|string
+|**allowedProcessTypes** +
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**analysisDescription** +
+__|string
+|**analysisId** +
+__|integer (int32)
+|**analysisName** +
+__|string
+|**anlaysisTypeId** +
+__|integer (int32)
+|**createdBy** +
+__|integer (int32)
+|**createdDate** +
+__|string (date-time)
+|**entityNameType** +
+__|enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION, PLATFORM, MANIFEST, MAPSET, MARKER_GROUP, EXPERIMENT, REFERENCE, ROLE, DISPLAY, MARKER, PROTOCOL, VENDOR_PROTOCOL, DNASAMPLE, LINKAGE_GROUP, DNARUN, GERMPLASM, JOB)
+|**id** +
+__|integer (int32)
+|**modifiedBy** +
+__|integer (int32)
+|**modifiedDate** +
+__|string (date-time)
+|**parameters** +
+__|< <<_entitypropertydto,EntityPropertyDTO>> > array
+|**program** +
+__|string
+|**programVersion** +
+__|string
+|**referenceId** +
+__|integer (int32)
+|**sourceName** +
+__|string
+|**sourceUri** +
+__|string
+|**sourceVersion** +
+__|string
+|**statusId** +
+__|integer (int32)
+|**timeExecuted** +
+__|string (date-time)
+|===
+
+
+[[_configsettingsdto]]
+=== ConfigSettingsDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**allowedProcessTypes** +
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**id** +
+__|integer (int32)
+|**maxUploadSizeMbytes** +
+__|integer (int32)
+|**serverCapabilities** +
+__|< string, boolean > map
+|**serverConfigs** +
+__|< string, <<_serverconfigitem,ServerConfigItem>> > map
+|===
+
+
+[[_entitypropertydto]]
+=== EntityPropertyDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**entityIdId** +
+__|integer (int32)
+|**propertyId** +
+__|integer (int32)
+|**propertyName** +
+__|string
+|**propertyValue** +
+__|string
+|===
+
+
+[[_header]]
+=== Header
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**cropType** +
+__|string
+|**dtoHeaderAuth** +
+__|<<_headerauth,HeaderAuth>>
+|**gobiiProcessType** +
+__|enum (CREATE, READ, UPDATE, DELETE, NONE)
+|**gobiiVersion** +
+__|string
+|**maxGet** +
+__|integer (int32)
+|**maxPost** +
+__|integer (int32)
+|**maxPut** +
+__|integer (int32)
+|**pagination** +
+__|<<_pagination,Pagination>>
+|**status** +
+__|<<_status,Status>>
+|===
+
+
+[[_headerauth]]
+=== HeaderAuth
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**gobiiCropType** +
+__|string
+|**password** +
+__|string
+|**token** +
+__|string
+|**userName** +
+__|string
+|===
+
+
+[[_headerstatusmessage]]
+=== HeaderStatusMessage
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**gobiiStatusLevel** +
+__|enum (ERROR, VALIDATION, WARNING, INFO, OK)
+|**gobiiValidationStatusType** +
+__|enum (NONE, UNKNOWN, VALIDATION_COMPOUND_UNIQUE, VALIDATION_NOT_UNIQUE, NONEXISTENT_FK_ENTITY, BAD_REQUEST, MISSING_REQUIRED_VALUE, ENTITY_DOES_NOT_EXIST, ENTITY_ALREADY_EXISTS, UNKNOWN_ENUM_VALUE, RESOURCE_LIMIT)
+|**message** +
+__|string
+|===
+
+
+[[_link]]
+=== Link
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**description** +
+__|string
+|**href** +
+__|string
+|**methods** +
+__|< enum (GET, POST, PUT, PATCH, DELETE, OPTIONS) > array
+|===
+
+
+[[_linkcollection]]
+=== LinkCollection
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**exploreLinksPerDataItem** +
+__|< < <<_link,Link>> > array > array
+|**linksPerDataItem** +
+__|< <<_link,Link>> > array
+|===
+
+
+[[_pagination]]
+=== Pagination
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**currentPage** +
+__|integer (int32)
+|**pageSize** +
+__|integer (int32)
+|**pagedQueryId** +
+__|string
+|**queryTime** +
+__|string (date-time)
+|**totalPages** +
+__|integer (int32)
+|===
+
+
+[[_payloadanalysisdto]]
+=== PayloadAnalysisDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< <<_analysisdto,AnalysisDTO>> > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_payloadconfigsettingsdto]]
+=== PayloadConfigSettingsDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< <<_configsettingsdto,ConfigSettingsDTO>> > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_payloadenvelopeanalysisdto]]
+=== PayloadEnvelopeAnalysisDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloadanalysisdto,PayloadAnalysisDTO>>
+|===
+
+
+[[_payloadenvelopeconfigsettingsdto]]
+=== PayloadEnvelopeConfigSettingsDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloadconfigsettingsdto,PayloadConfigSettingsDTO>>
+|===
+
+
+[[_payloadenveloperestprofiledto]]
+=== PayloadEnvelopeRestProfileDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloadrestprofiledto,PayloadRestProfileDTO>>
+|===
+
+
+[[_payloadrestprofiledto]]
+=== PayloadRestProfileDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< <<_restprofiledto,RestProfileDTO>> > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_restprofiledto]]
+=== RestProfileDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**allowedProcessTypes** +
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**id** +
+__|integer (int32)
+|**max** +
+__|integer (int32)
+|**restMethodType** +
+__|enum (GET, POST, PUT, PATCH, DELETE, OPTIONS)
+|**restResourceId** +
+__|enum (GOBII_AUTH, GOBII_PING, GOBII_PROJECTS, GOBII_NAME_ID_LIST_DEPRECATED, GOBII_NAMES, GOBII_FILE_LOAD, GOBII_FILE_LOAD_INSTRUCTIONS, GOBII_FILE_EXTRACTOR_INSTRUCTIONS, GOBII_FILE_EXTRACTOR_JOBS, GOBII_FILE_LOADER_JOBS, GOBII_DISPLAY, GOBII_CV, GOBII_CVGROUP, GOBII_CONTACTS, GOBII_CONTACT_SEARCH, GOBII_ORGANIZATION_SEARCH, GOBII_REFERENCE, GOBII_EXPERIMENTS, GOBII_DATASETS, GOBII_DATASETTYPES, GOBII_ANALYSIS, GOBII_MARKERGROUP, GOBII_MANIFEST, GOBII_ORGANIZATION, GOBII_PLATFORM, GOBII_MAPSET, GOBII_CONFIGSETTINGS, GOBII_ROLES, GOBII_MARKERS, GOBII_MARKER_SEARCH, GOBII_CALLS, GOBII_GERMPLASM, GOBII_OBSERVATION_VARIABLES, GOBII_PROTOCOL, GOBII_VENDORS, GOBII_FILES, GOBII_JOB, GOBII_ENTITIES, GOBII_COUNT, GOBII_LAST_MODIFIED, GOBII_VERTICES, GOBII_VALUES, GOBII_REST_PROFILES, GOBII_DNASAMPLES, GOBII_DNARUN, GOBII_LINKAGEGROUP, GOBII_JOB_DNASAMPLE, BRAPI_ALLELE_MATRIX_SEARCH, BRAPI_ALLELE_MATRIX_SEARCH_STATUS, BRAPI_ALLELE_MATRICES, KDC_START, KDC_STATUS, KDC_DOWNLOAD, KDC_PURGE, BRAPI_LOGIN, BRAPI_STUDIES_SEARCH, BRAPI_STUDIES, BRAPI_CALLS)
+|**templateParameter** +
+__|string
+|===
+
+
+[[_serverconfigitem]]
+=== ServerConfigItem
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**confidentialityNotice** +
+__|string
+|**contextRoot** +
+__|string
+|**domain** +
+__|string
+|**fileLocations** +
+__|< string, string > map
+|**gobiiCropType** +
+__|string
+|**port** +
+__|integer (int32)
+|===
+
+
+[[_status]]
+=== Status
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|**statusMessages** +
+__||< <<_headerstatusmessage,HeaderStatusMessage>> > array
+|**statusMessagesByCode** +
+__||< string, string > map
+|**succeeded** +
+__|**Default** : `false`|boolean
+|===
+
+
+

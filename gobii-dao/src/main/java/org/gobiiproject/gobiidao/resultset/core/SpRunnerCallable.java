@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
 
 /**
  * Created by Phil on 4/18/2016.
@@ -31,6 +32,11 @@ public class SpRunnerCallable implements Work {
 
     Logger LOGGER = LoggerFactory.getLogger(SpRunnerCallable.class);
 
+    public SpRunnerCallable() {}
+
+    public SpRunnerCallable(EntityManager entityManager) {
+        this.em = entityManager;
+    }
 
     @PersistenceContext
     protected EntityManager em;
@@ -97,6 +103,9 @@ public class SpRunnerCallable implements Work {
     @Override
     public void execute(Connection connection) throws SQLException, GobiiDaoException {
 
+//        System.out.println("===================: " + spDef.getCallString());
+//        System.out.println("Nu def object? " + System.identityHashCode(spDef));
+//        System.out.println("Nu this? " + System.identityHashCode(this));
 
         CallableStatement callableStatement = connection.prepareCall(spDef.getCallString());
 

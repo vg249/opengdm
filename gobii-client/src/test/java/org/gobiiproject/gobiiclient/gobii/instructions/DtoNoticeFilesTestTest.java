@@ -13,10 +13,7 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiimodel.config.ServerConfigItem;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -36,7 +33,7 @@ public class DtoNoticeFilesTestTest {
     }
 
 
-    @Test
+    @Ignore
     public void testGetFileFromServer() throws Exception {
 
 
@@ -111,7 +108,7 @@ public class DtoNoticeFilesTestTest {
 
     }
 
-    @Test
+    @Ignore
     public void testGetConfidentialityNotice() throws Exception {
         //*************************************************************
         // ****************** Remove the file if it's already there

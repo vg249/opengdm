@@ -1,0 +1,28 @@
+= GOBii API
+
+
+[[_overview]]
+== Overview
+The GOBii web service API provides a comprehensive set of RESTful methods for accomplishing the following core tasks in the GOBii Genomic Data Management (GDM) system. This manual explains the GOBii web architecture and its web service operations.
+
+
+=== Version information
+[%hardbreaks]
+__Version__ : 1.0
+
+
+=== License information
+[%hardbreaks]
+__License__ : Apache 2.0
+__License URL__ : http://www.apache.org/licenses/LICENSE-2.0.html
+__Terms of service__ : null
+
+
+=== URI scheme
+[%hardbreaks]
+__Host__ : localhost:8081
+__BasePath__ : /api
+__Schemes__ : HTTP
+
+
+
