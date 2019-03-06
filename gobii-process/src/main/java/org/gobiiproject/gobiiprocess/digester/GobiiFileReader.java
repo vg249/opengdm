@@ -375,14 +375,15 @@ public class GobiiFileReader {
         List<Path> pathList =
                 Files.list(Paths.get(directory))
                         .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
-        if (pathList.size() < 1) {
-            success = false;
-            //TODO: Mail content need to indicate it failed
-        }
         ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
         for (ValidationError status : fileErrors) {
-            if (status.status.equalsIgnoreCase(ValidationConstants.FAILURE)) {
-                success = false;
+            if (status.status.equalsIgnoreCase(ValidationConstants.FAILURE)) success = false;
+            if(status.status.equalsIgnoreCase(ValidationConstants.SUCCESS)){
+                pm.addValidateTableElement(status.fileName,status.status);
+            }
+            else{
+                for (int i = 0; i <= status.failures.size(); i++)
+                    pm.addValidateTableElement(status.fileName, status.status, status.failures.get(i).reason, status.failures.get(i).columnName, status.failures.get(i).values);
             }
         }
         if (success && ErrorLogger.success()) {
