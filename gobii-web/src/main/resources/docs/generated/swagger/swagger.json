@@ -78,9 +78,9 @@
   }, {
     "name" : "MarkerGroups"
   }, {
-    "name" : "MarkerSearch"
-  }, {
     "name" : "Markers"
+  }, {
+    "name" : "MarkerSearch"
   }, {
     "name" : "Names"
   }, {
@@ -102,6 +102,27 @@
   } ],
   "schemes" : [ "http" ],
   "paths" : {
+    "/gobii/v1/Pings the Gobii System" : {
+      "post" : {
+        "operationId" : "getPingResponse",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/PayloadEnvelopePingDTO"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/PayloadEnvelopePingDTO"
+            }
+          }
+        }
+      }
+    },
     "/gobii/v1/analyses" : {
       "get" : {
         "tags" : [ "Analyses" ],
@@ -228,21 +249,21 @@
         "responses" : {
           "200" : {
             "description" : "OK",
-            "schema" : {
-              "type" : "string"
-            },
             "headers" : {
               "X-Auth-Token " : {
                 "type" : "string",
                 "description" : "API key to authenticate GDM api calls"
               }
+            },
+            "schema" : {
+              "type" : "string"
             }
           }
         },
         "x-summary" : "authenticate"
       }
     },
-    "/gobii/v1/configsettings" : {
+    "/gobii/v1/configsettings/" : {
       "get" : {
         "tags" : [ "ConfigSettings" ],
         "summary" : "GET /configsettings",
@@ -2784,6 +2805,11 @@
     }
   },
   "securityDefinitions" : {
+    "apiKeyAuth" : {
+      "type" : "apiKey",
+      "name" : "apiKeyAuth",
+      "in" : "header"
+    },
     "basicAuth" : {
       "type" : "basic"
     }
@@ -3254,8 +3280,7 @@
           "format" : "date-time"
         },
         "includeDetailsList" : {
-          "type" : "boolean",
-          "default" : false
+          "type" : "boolean"
         },
         "displayId" : {
           "type" : "integer",
@@ -3505,63 +3530,6 @@
         }
       }
     },
-    "File" : {
-      "type" : "object",
-      "properties" : {
-        "path" : {
-          "type" : "string"
-        },
-        "name" : {
-          "type" : "string"
-        },
-        "parent" : {
-          "type" : "string"
-        },
-        "absolute" : {
-          "type" : "boolean",
-          "default" : false
-        },
-        "canonicalPath" : {
-          "type" : "string"
-        },
-        "parentFile" : {
-          "$ref" : "#/definitions/File"
-        },
-        "absolutePath" : {
-          "type" : "string"
-        },
-        "absoluteFile" : {
-          "$ref" : "#/definitions/File"
-        },
-        "canonicalFile" : {
-          "$ref" : "#/definitions/File"
-        },
-        "directory" : {
-          "type" : "boolean",
-          "default" : false
-        },
-        "file" : {
-          "type" : "boolean",
-          "default" : false
-        },
-        "hidden" : {
-          "type" : "boolean",
-          "default" : false
-        },
-        "totalSpace" : {
-          "type" : "integer",
-          "format" : "int64"
-        },
-        "freeSpace" : {
-          "type" : "integer",
-          "format" : "int64"
-        },
-        "usableSpace" : {
-          "type" : "integer",
-          "format" : "int64"
-        }
-      }
-    },
     "GobiiDataSetExtract" : {
       "type" : "object",
       "properties" : {
@@ -3570,8 +3538,7 @@
           "enum" : [ "HAPMAP", "FLAPJACK", "GENERIC", "VCF", "META_DATA" ]
         },
         "accolate" : {
-          "type" : "boolean",
-          "default" : false
+          "type" : "boolean"
         },
         "gobiiJobStatus" : {
           "type" : "string",
@@ -3630,7 +3597,7 @@
         "extractedFiles" : {
           "type" : "array",
           "items" : {
-            "$ref" : "#/definitions/File"
+            "type" : "file"
           }
         },
         "logMessage" : {
@@ -3665,8 +3632,7 @@
           "type" : "string"
         },
         "qcCheck" : {
-          "type" : "boolean",
-          "default" : false
+          "type" : "boolean"
         }
       }
     },
@@ -3687,12 +3653,10 @@
           "enum" : [ "HAPMAP", "FLAPJACK", "GENERIC", "VCF", "META_DATA" ]
         },
         "requireDirectoriesToExist" : {
-          "type" : "boolean",
-          "default" : false
+          "type" : "boolean"
         },
         "createSource" : {
-          "type" : "boolean",
-          "default" : false
+          "type" : "boolean"
         }
       }
     },
@@ -3733,8 +3697,7 @@
           "type" : "string"
         },
         "subcolumn" : {
-          "type" : "boolean",
-          "default" : false
+          "type" : "boolean"
         },
         "subcolumnDelimiter" : {
           "type" : "string"
@@ -3805,8 +3768,7 @@
           "type" : "string"
         },
         "qcCheck" : {
-          "type" : "boolean",
-          "default" : false
+          "type" : "boolean"
         },
         "project" : {
           "$ref" : "#/definitions/PropNameId"
@@ -3910,16 +3872,14 @@
           "type" : "string"
         },
         "open" : {
-          "type" : "boolean",
-          "default" : false
-        },
-        "readable" : {
-          "type" : "boolean",
-          "default" : false
+          "type" : "boolean"
         },
         "uri" : {
           "type" : "string",
           "format" : "uri"
+        },
+        "readable" : {
+          "type" : "boolean"
         },
         "filename" : {
           "type" : "string"
@@ -3929,7 +3889,7 @@
           "format" : "url"
         },
         "file" : {
-          "$ref" : "#/definitions/File"
+          "type" : "file"
         }
       }
     },
@@ -4349,8 +4309,7 @@
           "enum" : [ "CREATE", "READ", "UPDATE", "DELETE", "NONE" ]
         },
         "markerExists" : {
-          "type" : "boolean",
-          "default" : false
+          "type" : "boolean"
         },
         "markerId" : {
           "type" : "integer",
@@ -4494,6 +4453,20 @@
         }
       }
     },
+    "Payload" : {
+      "type" : "object",
+      "properties" : {
+        "linkCollection" : {
+          "$ref" : "#/definitions/LinkCollection"
+        },
+        "data" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object"
+          }
+        }
+      }
+    },
     "PayloadAnalysisDTO" : {
       "type" : "object",
       "properties" : {
@@ -4617,6 +4590,17 @@
           "items" : {
             "$ref" : "#/definitions/EntityStatsDTO"
           }
+        }
+      }
+    },
+    "PayloadEnvelope" : {
+      "type" : "object",
+      "properties" : {
+        "payload" : {
+          "$ref" : "#/definitions/PayloadObject"
+        },
+        "header" : {
+          "$ref" : "#/definitions/Header"
         }
       }
     },
@@ -4840,6 +4824,17 @@
         }
       }
     },
+    "PayloadEnvelopePingDTO" : {
+      "type" : "object",
+      "properties" : {
+        "payload" : {
+          "$ref" : "#/definitions/PayloadPingDTO"
+        },
+        "header" : {
+          "$ref" : "#/definitions/Header"
+        }
+      }
+    },
     "PayloadEnvelopePlatformDTO" : {
       "type" : "object",
       "properties" : {
@@ -5035,6 +5030,20 @@
         }
       }
     },
+    "PayloadObject" : {
+      "type" : "object",
+      "properties" : {
+        "linkCollection" : {
+          "$ref" : "#/definitions/LinkCollection"
+        },
+        "data" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object"
+          }
+        }
+      }
+    },
     "PayloadOrganizationDTO" : {
       "type" : "object",
       "properties" : {
@@ -5045,6 +5054,20 @@
           "type" : "array",
           "items" : {
             "$ref" : "#/definitions/OrganizationDTO"
+          }
+        }
+      }
+    },
+    "PayloadPingDTO" : {
+      "type" : "object",
+      "properties" : {
+        "linkCollection" : {
+          "$ref" : "#/definitions/LinkCollection"
+        },
+        "data" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/PingDTO"
           }
         }
       }
@@ -5116,6 +5139,35 @@
           "items" : {
             "$ref" : "#/definitions/RestProfileDTO"
           }
+        }
+      }
+    },
+    "PingDTO" : {
+      "type" : "object",
+      "properties" : {
+        "allowedProcessTypes" : {
+          "type" : "array",
+          "uniqueItems" : true,
+          "items" : {
+            "type" : "string",
+            "enum" : [ "CREATE", "READ", "UPDATE", "DELETE", "NONE" ]
+          }
+        },
+        "pingResponses" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "dbMetaData" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "id" : {
+          "type" : "integer",
+          "format" : "int32"
         }
       }
     },
@@ -5452,8 +5504,7 @@
       "type" : "object",
       "properties" : {
         "succeeded" : {
-          "type" : "boolean",
-          "default" : false
+          "type" : "boolean"
         },
         "statusMessages" : {
           "type" : "array",
@@ -5504,12 +5555,10 @@
           "format" : "float"
         },
         "removeIndels" : {
-          "type" : "boolean",
-          "default" : false
+          "type" : "boolean"
         },
         "toIupac" : {
-          "type" : "boolean",
-          "default" : false
+          "type" : "boolean"
         }
       }
     },

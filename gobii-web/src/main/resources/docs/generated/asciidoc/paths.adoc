@@ -2,6 +2,28 @@
 [[_paths]]
 == Paths
 
+[[_getpingresponse]]
+=== POST /gobii/v1/Pings the Gobii System
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^4"]
+|===
+|Type|Name|Schema
+|**Body**|**body** +
+__|<<_payloadenvelopepingdto,PayloadEnvelopePingDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopepingdto,PayloadEnvelopePingDTO>>
+|===
+
+
 [[_createanalysis]]
 === POST /analyses
 ....
@@ -178,7 +200,7 @@ __||string
 [[_getconfigsettings]]
 === GET /configsettings
 ....
-GET /gobii/v1/configsettings
+GET /gobii/v1/configsettings/
 ....
 
 

@@ -1,7 +1,12 @@
 {
-  "api_key": {
+  "basicAuth": {
+    "type": "basic",
+    "name": "basicAuth"
+  },
+
+  "apiKeyAuth": {
     "type": "apiKey",
-    "name": "api_key",
+    "name": "apiKeyAuth",
     "in": "header"
   }
 }

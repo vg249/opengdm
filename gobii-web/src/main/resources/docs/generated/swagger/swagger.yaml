@@ -46,8 +46,8 @@ tags:
 - name: "Maps"
 - name: "Mapsets"
 - name: "MarkerGroups"
-- name: "MarkerSearch"
 - name: "Markers"
+- name: "MarkerSearch"
 - name: "Names"
 - name: "Organizations"
 - name: "Platform.protocols"
@@ -60,6 +60,20 @@ tags:
 schemes:
 - "http"
 paths:
+  /gobii/v1/Pings the Gobii System:
+    post:
+      operationId: "getPingResponse"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/PayloadEnvelopePingDTO"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/PayloadEnvelopePingDTO"
   /gobii/v1/analyses:
     get:
       tags:
@@ -167,14 +181,14 @@ paths:
       responses:
         200:
           description: "OK"
-          schema:
-            type: "string"
           headers:
             'X-Auth-Token ':
               type: "string"
               description: "API key to authenticate GDM api calls"
+          schema:
+            type: "string"
       x-summary: "authenticate"
-  /gobii/v1/configsettings:
+  /gobii/v1/configsettings/:
     get:
       tags:
       - "ConfigSettings"
@@ -2250,6 +2264,10 @@ paths:
             $ref: "#/definitions/PayloadEnvelopeRestProfileDTO"
       x-summary: "update"
 securityDefinitions:
+  apiKeyAuth:
+    type: "apiKey"
+    name: "apiKeyAuth"
+    in: "header"
   basicAuth:
     type: "basic"
 definitions:
@@ -2695,7 +2713,6 @@ definitions:
         format: "date-time"
       includeDetailsList:
         type: "boolean"
-        default: false
       displayId:
         type: "integer"
         format: "int32"
@@ -2941,46 +2958,6 @@ definitions:
       id:
         type: "integer"
         format: "int32"
-  File:
-    type: "object"
-    properties:
-      path:
-        type: "string"
-      name:
-        type: "string"
-      parent:
-        type: "string"
-      absolute:
-        type: "boolean"
-        default: false
-      canonicalPath:
-        type: "string"
-      parentFile:
-        $ref: "#/definitions/File"
-      absolutePath:
-        type: "string"
-      absoluteFile:
-        $ref: "#/definitions/File"
-      canonicalFile:
-        $ref: "#/definitions/File"
-      directory:
-        type: "boolean"
-        default: false
-      file:
-        type: "boolean"
-        default: false
-      hidden:
-        type: "boolean"
-        default: false
-      totalSpace:
-        type: "integer"
-        format: "int64"
-      freeSpace:
-        type: "integer"
-        format: "int64"
-      usableSpace:
-        type: "integer"
-        format: "int64"
   GobiiDataSetExtract:
     type: "object"
     properties:
@@ -2994,7 +2971,6 @@ definitions:
         - "META_DATA"
       accolate:
         type: "boolean"
-        default: false
       gobiiJobStatus:
         type: "string"
         enum:
@@ -3056,7 +3032,7 @@ definitions:
       extractedFiles:
         type: "array"
         items:
-          $ref: "#/definitions/File"
+          type: "file"
       logMessage:
         type: "string"
   GobiiExtractorInstruction:
@@ -3080,7 +3056,6 @@ definitions:
         type: "string"
       qcCheck:
         type: "boolean"
-        default: false
   GobiiFile:
     type: "object"
     properties:
@@ -3100,10 +3075,8 @@ definitions:
         - "META_DATA"
       requireDirectoriesToExist:
         type: "boolean"
-        default: false
       createSource:
         type: "boolean"
-        default: false
   GobiiFileColumn:
     type: "object"
     properties:
@@ -3143,7 +3116,6 @@ definitions:
         type: "string"
       subcolumn:
         type: "boolean"
-        default: false
       subcolumnDelimiter:
         type: "string"
       dataSetType:
@@ -3220,7 +3192,6 @@ definitions:
         type: "string"
       qcCheck:
         type: "boolean"
-        default: false
       project:
         $ref: "#/definitions/PropNameId"
       platform:
@@ -3312,20 +3283,18 @@ definitions:
         type: "string"
       open:
         type: "boolean"
-        default: false
-      readable:
-        type: "boolean"
-        default: false
       uri:
         type: "string"
         format: "uri"
+      readable:
+        type: "boolean"
       filename:
         type: "string"
       url:
         type: "string"
         format: "url"
       file:
-        $ref: "#/definitions/File"
+        type: "file"
   JobDTO:
     type: "object"
     properties:
@@ -3740,7 +3709,6 @@ definitions:
         - "NONE"
       markerExists:
         type: "boolean"
-        default: false
       markerId:
         type: "integer"
         format: "int32"
@@ -3923,6 +3891,15 @@ definitions:
       currentPage:
         type: "integer"
         format: "int32"
+  Payload:
+    type: "object"
+    properties:
+      linkCollection:
+        $ref: "#/definitions/LinkCollection"
+      data:
+        type: "array"
+        items:
+          type: "object"
   PayloadAnalysisDTO:
     type: "object"
     properties:
@@ -4004,6 +3981,13 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/EntityStatsDTO"
+  PayloadEnvelope:
+    type: "object"
+    properties:
+      payload:
+        $ref: "#/definitions/PayloadObject"
+      header:
+        $ref: "#/definitions/Header"
   PayloadEnvelopeAnalysisDTO:
     type: "object"
     properties:
@@ -4144,6 +4128,13 @@ definitions:
         $ref: "#/definitions/PayloadOrganizationDTO"
       header:
         $ref: "#/definitions/Header"
+  PayloadEnvelopePingDTO:
+    type: "object"
+    properties:
+      payload:
+        $ref: "#/definitions/PayloadPingDTO"
+      header:
+        $ref: "#/definitions/Header"
   PayloadEnvelopePlatformDTO:
     type: "object"
     properties:
@@ -4269,6 +4260,15 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/NameIdDTO"
+  PayloadObject:
+    type: "object"
+    properties:
+      linkCollection:
+        $ref: "#/definitions/LinkCollection"
+      data:
+        type: "array"
+        items:
+          type: "object"
   PayloadOrganizationDTO:
     type: "object"
     properties:
@@ -4278,6 +4278,15 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/OrganizationDTO"
+  PayloadPingDTO:
+    type: "object"
+    properties:
+      linkCollection:
+        $ref: "#/definitions/LinkCollection"
+      data:
+        type: "array"
+        items:
+          $ref: "#/definitions/PingDTO"
   PayloadPlatformDTO:
     type: "object"
     properties:
@@ -4323,6 +4332,31 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/RestProfileDTO"
+  PingDTO:
+    type: "object"
+    properties:
+      allowedProcessTypes:
+        type: "array"
+        uniqueItems: true
+        items:
+          type: "string"
+          enum:
+          - "CREATE"
+          - "READ"
+          - "UPDATE"
+          - "DELETE"
+          - "NONE"
+      pingResponses:
+        type: "array"
+        items:
+          type: "string"
+      dbMetaData:
+        type: "array"
+        items:
+          type: "string"
+      id:
+        type: "integer"
+        format: "int32"
   PlatformDTO:
     type: "object"
     properties:
@@ -4747,7 +4781,6 @@ definitions:
     properties:
       succeeded:
         type: "boolean"
-        default: false
       statusMessages:
         type: "array"
         items:
@@ -4783,10 +4816,8 @@ definitions:
         format: "float"
       removeIndels:
         type: "boolean"
-        default: false
       toIupac:
         type: "boolean"
-        default: false
   VendorProtocolDTO:
     type: "object"
     properties:

@@ -259,37 +259,37 @@ __|integer (int32)
 [[_displaydto]]
 === DisplayDTO
 
-[options="header", cols=".^3,.^11,.^4"]
+[options="header", cols=".^3,.^4"]
 |===
-|Name|Description|Schema
+|Name|Schema
 |**allowedProcessTypes** +
-__||< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
 |**columnName** +
-__||string
+__|string
 |**createdBy** +
-__||integer (int32)
+__|integer (int32)
 |**createdDate** +
-__||string (date-time)
+__|string (date-time)
 |**displayId** +
-__||integer (int32)
+__|integer (int32)
 |**displayName** +
-__||string
+__|string
 |**displayRank** +
-__||integer (int32)
+__|integer (int32)
 |**entityNameType** +
-__||enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION, PLATFORM, MANIFEST, MAPSET, MARKER_GROUP, EXPERIMENT, REFERENCE, ROLE, DISPLAY, MARKER, PROTOCOL, VENDOR_PROTOCOL, DNASAMPLE, LINKAGE_GROUP, DNARUN, GERMPLASM, JOB)
+__|enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION, PLATFORM, MANIFEST, MAPSET, MARKER_GROUP, EXPERIMENT, REFERENCE, ROLE, DISPLAY, MARKER, PROTOCOL, VENDOR_PROTOCOL, DNASAMPLE, LINKAGE_GROUP, DNARUN, GERMPLASM, JOB)
 |**id** +
-__||integer (int32)
+__|integer (int32)
 |**includeDetailsList** +
-__|**Default** : `false`|boolean
+__|boolean
 |**modifiedBy** +
-__||integer (int32)
+__|integer (int32)
 |**modifiedDate** +
-__||string (date-time)
+__|string (date-time)
 |**tableName** +
-__||string
+__|string
 |**tableNamesWithColDisplay** +
-__||< string, < <<_tablecoldisplay,TableColDisplay>> > array > map
+__|< string, < <<_tablecoldisplay,TableColDisplay>> > array > map
 |===
 
 
@@ -430,213 +430,174 @@ __|string
 |===
 
 
-[[_file]]
-=== File
-
-[options="header", cols=".^3,.^11,.^4"]
-|===
-|Name|Description|Schema
-|**absolute** +
-__|**Default** : `false`|boolean
-|**absoluteFile** +
-__||<<_file,File>>
-|**absolutePath** +
-__||string
-|**canonicalFile** +
-__||<<_file,File>>
-|**canonicalPath** +
-__||string
-|**directory** +
-__|**Default** : `false`|boolean
-|**file** +
-__|**Default** : `false`|boolean
-|**freeSpace** +
-__||integer (int64)
-|**hidden** +
-__|**Default** : `false`|boolean
-|**name** +
-__||string
-|**parent** +
-__||string
-|**parentFile** +
-__||<<_file,File>>
-|**path** +
-__||string
-|**totalSpace** +
-__||integer (int64)
-|**usableSpace** +
-__||integer (int64)
-|===
-
-
 [[_gobiidatasetextract]]
 === GobiiDataSetExtract
 
-[options="header", cols=".^3,.^11,.^4"]
+[options="header", cols=".^3,.^4"]
 |===
-|Name|Description|Schema
+|Name|Schema
 |**accolate** +
-__|**Default** : `false`|boolean
+__|boolean
 |**dataSet** +
-__||<<_propnameid,PropNameId>>
+__|<<_propnameid,PropNameId>>
 |**extractDestinationDirectory** +
-__||string
+__|string
 |**extractedFiles** +
-__||< <<_file,File>> > array
+__|< file > array
 |**gobiiDatasetType** +
-__||<<_propnameid,PropNameId>>
+__|<<_propnameid,PropNameId>>
 |**gobiiExtractFilterType** +
-__||enum (UNKNOWN, WHOLE_DATASET, BY_MARKER, BY_SAMPLE)
+__|enum (UNKNOWN, WHOLE_DATASET, BY_MARKER, BY_SAMPLE)
 |**gobiiFileType** +
-__||enum (HAPMAP, FLAPJACK, GENERIC, VCF, META_DATA)
+__|enum (HAPMAP, FLAPJACK, GENERIC, VCF, META_DATA)
 |**gobiiJobStatus** +
-__||enum (CV_PROGRESSSTATUS_PENDING, CV_PROGRESSSTATUS_INPROGRESS, CV_PROGRESSSTATUS_COMPLETED, CV_PROGRESSSTATUS_FAILED, CV_PROGRESSSTATUS_VALIDATION, CV_PROGRESSSTATUS_DIGEST, CV_PROGRESSSTATUS_TRANSFORMATION, CV_PROGRESSSTATUS_METADATALOAD, CV_PROGRESSSTATUS_MATRIXLOAD, CV_PROGRESSSTATUS_ABORTED, CV_PROGRESSSTATUS_METADATAEXTRACT, CV_PROGRESSSTATUS_FINALASSEMBLY, CV_PROGRESSSTATUS_QCPROCESSING, CV_PROGRESSSTATUS_NOSTATUS)
+__|enum (CV_PROGRESSSTATUS_PENDING, CV_PROGRESSSTATUS_INPROGRESS, CV_PROGRESSSTATUS_COMPLETED, CV_PROGRESSSTATUS_FAILED, CV_PROGRESSSTATUS_VALIDATION, CV_PROGRESSSTATUS_DIGEST, CV_PROGRESSSTATUS_TRANSFORMATION, CV_PROGRESSSTATUS_METADATALOAD, CV_PROGRESSSTATUS_MATRIXLOAD, CV_PROGRESSSTATUS_ABORTED, CV_PROGRESSSTATUS_METADATAEXTRACT, CV_PROGRESSSTATUS_FINALASSEMBLY, CV_PROGRESSSTATUS_QCPROCESSING, CV_PROGRESSSTATUS_NOSTATUS)
 |**gobiiSampleListType** +
-__||enum (GERMPLASM_NAME, EXTERNAL_CODE, DNA_SAMPLE)
+__|enum (GERMPLASM_NAME, EXTERNAL_CODE, DNA_SAMPLE)
 |**listFileName** +
-__||string
+__|string
 |**logMessage** +
-__||string
+__|string
 |**markerGroups** +
-__||< <<_propnameid,PropNameId>> > array
+__|< <<_propnameid,PropNameId>> > array
 |**markerList** +
-__||< string > array
+__|< string > array
 |**platforms** +
-__||< <<_propnameid,PropNameId>> > array
+__|< <<_propnameid,PropNameId>> > array
 |**principleInvestigator** +
-__||<<_propnameid,PropNameId>>
+__|<<_propnameid,PropNameId>>
 |**project** +
-__||<<_propnameid,PropNameId>>
+__|<<_propnameid,PropNameId>>
 |**sampleList** +
-__||< string > array
+__|< string > array
 |===
 
 
 [[_gobiiextractorinstruction]]
 === GobiiExtractorInstruction
 
-[options="header", cols=".^3,.^11,.^4"]
+[options="header", cols=".^3,.^4"]
 |===
-|Name|Description|Schema
+|Name|Schema
 |**contactEmail** +
-__||string
+__|string
 |**contactId** +
-__||integer (int32)
+__|integer (int32)
 |**dataSetExtracts** +
-__||< <<_gobiidatasetextract,GobiiDataSetExtract>> > array
+__|< <<_gobiidatasetextract,GobiiDataSetExtract>> > array
 |**gobiiCropType** +
-__||string
+__|string
 |**mapsetIds** +
-__||< integer (int32) > array
+__|< integer (int32) > array
 |**qcCheck** +
-__|**Default** : `false`|boolean
+__|boolean
 |===
 
 
 [[_gobiifile]]
 === GobiiFile
 
-[options="header", cols=".^3,.^11,.^4"]
+[options="header", cols=".^3,.^4"]
 |===
-|Name|Description|Schema
+|Name|Schema
 |**createSource** +
-__|**Default** : `false`|boolean
+__|boolean
 |**delimiter** +
-__||string
+__|string
 |**destination** +
-__||string
+__|string
 |**gobiiFileType** +
-__||enum (HAPMAP, FLAPJACK, GENERIC, VCF, META_DATA)
+__|enum (HAPMAP, FLAPJACK, GENERIC, VCF, META_DATA)
 |**requireDirectoriesToExist** +
-__|**Default** : `false`|boolean
+__|boolean
 |**source** +
-__||string
+__|string
 |===
 
 
 [[_gobiifilecolumn]]
 === GobiiFileColumn
 
-[options="header", cols=".^3,.^11,.^4"]
+[options="header", cols=".^3,.^4"]
 |===
-|Name|Description|Schema
+|Name|Schema
 |**constantValue** +
-__||string
+__|string
 |**dataSetOrientationType** +
-__||enum (SAMPLE_FAST, MARKER_FAST)
+__|enum (SAMPLE_FAST, MARKER_FAST)
 |**dataSetType** +
-__||enum (NUCLEOTIDE_2_LETTER, IUPAC, SSR_ALLELE_SIZE, DOMINANT_NON_NUCLEOTIDE, CO_DOMINANT_NON_NUCLEOTIDE, VCF)
+__|enum (NUCLEOTIDE_2_LETTER, IUPAC, SSR_ALLELE_SIZE, DOMINANT_NON_NUCLEOTIDE, CO_DOMINANT_NON_NUCLEOTIDE, VCF)
 |**filterFrom** +
-__||string
+__|string
 |**filterTo** +
-__||string
+__|string
 |**findText** +
-__||string
+__|string
 |**getcCoord** +
-__||integer (int32)
+__|integer (int32)
 |**getrCoord** +
-__||integer (int32)
+__|integer (int32)
 |**gobiiColumnType** +
-__||enum (CSV_COLUMN, CSV_ROW, CSV_BOTH, VCF_SAMPLE, VCF_MARKER, VCF_VARIANT, VCF_METADATA, VCF_INFO, CONSTANT, AUTOINCREMENT, VCF_MARKER_POS)
+__|enum (CSV_COLUMN, CSV_ROW, CSV_BOTH, VCF_SAMPLE, VCF_MARKER, VCF_VARIANT, VCF_METADATA, VCF_INFO, CONSTANT, AUTOINCREMENT, VCF_MARKER_POS)
 |**index** +
-__||string
+__|string
 |**metaDataId** +
-__||string
+__|string
 |**name** +
-__||string
+__|string
 |**replaceText** +
-__||string
+__|string
 |**subcolumn** +
-__|**Default** : `false`|boolean
+__|boolean
 |**subcolumnDelimiter** +
-__||string
+__|string
 |===
 
 
 [[_gobiiloaderinstruction]]
 === GobiiLoaderInstruction
 
-[options="header", cols=".^3,.^11,.^4"]
+[options="header", cols=".^3,.^4"]
 |===
-|Name|Description|Schema
+|Name|Schema
 |**columnsByTableName** +
-__||< string, < <<_gobiifilecolumn,GobiiFileColumn>> > array > map
+__|< string, < <<_gobiifilecolumn,GobiiFileColumn>> > array > map
 |**contactEmail** +
-__||string
+__|string
 |**contactId** +
-__||integer (int32)
+__|integer (int32)
 |**dataSet** +
-__||<<_propnameid,PropNameId>>
+__|<<_propnameid,PropNameId>>
 |**dataSetId** +
-__||integer (int32)
+__|integer (int32)
 |**datasetType** +
-__||<<_propnameid,PropNameId>>
+__|<<_propnameid,PropNameId>>
 |**experiment** +
-__||<<_propnameid,PropNameId>>
+__|<<_propnameid,PropNameId>>
 |**gobiiCropType** +
-__||string
+__|string
 |**gobiiFile** +
-__||<<_gobiifile,GobiiFile>>
+__|<<_gobiifile,GobiiFile>>
 |**gobiiFileColumns** +
-__||< <<_gobiifilecolumn,GobiiFileColumn>> > array
+__|< <<_gobiifilecolumn,GobiiFileColumn>> > array
 |**gobiiJobStatus** +
-__||enum (CV_PROGRESSSTATUS_PENDING, CV_PROGRESSSTATUS_INPROGRESS, CV_PROGRESSSTATUS_COMPLETED, CV_PROGRESSSTATUS_FAILED, CV_PROGRESSSTATUS_VALIDATION, CV_PROGRESSSTATUS_DIGEST, CV_PROGRESSSTATUS_TRANSFORMATION, CV_PROGRESSSTATUS_METADATALOAD, CV_PROGRESSSTATUS_MATRIXLOAD, CV_PROGRESSSTATUS_ABORTED, CV_PROGRESSSTATUS_METADATAEXTRACT, CV_PROGRESSSTATUS_FINALASSEMBLY, CV_PROGRESSSTATUS_QCPROCESSING, CV_PROGRESSSTATUS_NOSTATUS)
+__|enum (CV_PROGRESSSTATUS_PENDING, CV_PROGRESSSTATUS_INPROGRESS, CV_PROGRESSSTATUS_COMPLETED, CV_PROGRESSSTATUS_FAILED, CV_PROGRESSSTATUS_VALIDATION, CV_PROGRESSSTATUS_DIGEST, CV_PROGRESSSTATUS_TRANSFORMATION, CV_PROGRESSSTATUS_METADATALOAD, CV_PROGRESSSTATUS_MATRIXLOAD, CV_PROGRESSSTATUS_ABORTED, CV_PROGRESSSTATUS_METADATAEXTRACT, CV_PROGRESSSTATUS_FINALASSEMBLY, CV_PROGRESSSTATUS_QCPROCESSING, CV_PROGRESSSTATUS_NOSTATUS)
 |**jobPayloadType** +
-__||enum (CV_PAYLOADTYPE_SAMPLES, CV_PAYLOADTYPE_MARKERS, CV_PAYLOADTYPE_MATRIX, CV_PAYLOADTYPE_MARKERSAMPLES, CV_PAYLOADTYPE_ALLMETA)
+__|enum (CV_PAYLOADTYPE_SAMPLES, CV_PAYLOADTYPE_MARKERS, CV_PAYLOADTYPE_MATRIX, CV_PAYLOADTYPE_MARKERSAMPLES, CV_PAYLOADTYPE_ALLMETA)
 |**logMessage** +
-__||string
+__|string
 |**mapset** +
-__||<<_propnameid,PropNameId>>
+__|<<_propnameid,PropNameId>>
 |**platform** +
-__||<<_propnameid,PropNameId>>
+__|<<_propnameid,PropNameId>>
 |**project** +
-__||<<_propnameid,PropNameId>>
+__|<<_propnameid,PropNameId>>
 |**qcCheck** +
-__|**Default** : `false`|boolean
+__|boolean
 |**table** +
-__||string
+__|string
 |**vcfParameters** +
-__||<<_vcfparameters,VcfParameters>>
+__|<<_vcfparameters,VcfParameters>>
 |===
 
 
@@ -707,25 +668,25 @@ __Type__ : object
 [[_inputstreamresource]]
 === InputStreamResource
 
-[options="header", cols=".^3,.^11,.^4"]
+[options="header", cols=".^3,.^4"]
 |===
-|Name|Description|Schema
+|Name|Schema
 |**description** +
-__||string
+__|string
 |**file** +
-__||<<_file,File>>
+__|file
 |**filename** +
-__||string
+__|string
 |**inputStream** +
-__||<<_inputstream,InputStream>>
+__|<<_inputstream,InputStream>>
 |**open** +
-__|**Default** : `false`|boolean
+__|boolean
 |**readable** +
-__|**Default** : `false`|boolean
+__|boolean
 |**uri** +
-__||string (uri)
+__|string (uri)
 |**url** +
-__||string (url)
+__|string (url)
 |===
 
 
@@ -975,23 +936,23 @@ __|integer (int32)
 [[_markergroupmarkerdto]]
 === MarkerGroupMarkerDTO
 
-[options="header", cols=".^3,.^11,.^4"]
+[options="header", cols=".^3,.^4"]
 |===
-|Name|Description|Schema
+|Name|Schema
 |**favorableAllele** +
-__||string
+__|string
 |**gobiiProcessType** +
-__||enum (CREATE, READ, UPDATE, DELETE, NONE)
+__|enum (CREATE, READ, UPDATE, DELETE, NONE)
 |**markerExists** +
-__|**Default** : `false`|boolean
+__|boolean
 |**markerId** +
-__||integer (int32)
+__|integer (int32)
 |**markerName** +
-__||string
+__|string
 |**platformId** +
-__||integer (int32)
+__|integer (int32)
 |**platformName** +
-__||string
+__|string
 |===
 
 
@@ -1071,6 +1032,19 @@ __|string
 __|string (date-time)
 |**totalPages** +
 __|integer (int32)
+|===
+
+
+[[_payload]]
+=== Payload
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< object > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
 |===
 
 
@@ -1188,6 +1162,19 @@ __|<<_linkcollection,LinkCollection>>
 __|< <<_entitystatsdto,EntityStatsDTO>> > array
 |**linkCollection** +
 __|<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_payloadenvelope]]
+=== PayloadEnvelope
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloadobject,PayloadObject>>
 |===
 
 
@@ -1451,6 +1438,19 @@ __|<<_payloadorganizationdto,PayloadOrganizationDTO>>
 |===
 
 
+[[_payloadenvelopepingdto]]
+=== PayloadEnvelopePingDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**header** +
+__|<<_header,Header>>
+|**payload** +
+__|<<_payloadpingdto,PayloadPingDTO>>
+|===
+
+
 [[_payloadenvelopeplatformdto]]
 === PayloadEnvelopePlatformDTO
 
@@ -1646,6 +1646,19 @@ __|<<_linkcollection,LinkCollection>>
 |===
 
 
+[[_payloadobject]]
+=== PayloadObject
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< object > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
 [[_payloadorganizationdto]]
 === PayloadOrganizationDTO
 
@@ -1654,6 +1667,19 @@ __|<<_linkcollection,LinkCollection>>
 |Name|Schema
 |**data** +
 __|< <<_organizationdto,OrganizationDTO>> > array
+|**linkCollection** +
+__|<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_payloadpingdto]]
+=== PayloadPingDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**data** +
+__|< <<_pingdto,PingDTO>> > array
 |**linkCollection** +
 __|<<_linkcollection,LinkCollection>>
 |===
@@ -1721,6 +1747,23 @@ __|<<_linkcollection,LinkCollection>>
 __|< <<_restprofiledto,RestProfileDTO>> > array
 |**linkCollection** +
 __|<<_linkcollection,LinkCollection>>
+|===
+
+
+[[_pingdto]]
+=== PingDTO
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**allowedProcessTypes** +
+__|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
+|**dbMetaData** +
+__|< string > array
+|**id** +
+__|integer (int32)
+|**pingResponses** +
+__|< string > array
 |===
 
 
@@ -1930,15 +1973,15 @@ __|integer (int32)
 [[_status]]
 === Status
 
-[options="header", cols=".^3,.^11,.^4"]
+[options="header", cols=".^3,.^4"]
 |===
-|Name|Description|Schema
+|Name|Schema
 |**statusMessages** +
-__||< <<_headerstatusmessage,HeaderStatusMessage>> > array
+__|< <<_headerstatusmessage,HeaderStatusMessage>> > array
 |**statusMessagesByCode** +
-__||< string, string > map
+__|< string, string > map
 |**succeeded** +
-__|**Default** : `false`|boolean
+__|boolean
 |===
 
 
@@ -1962,19 +2005,19 @@ __|integer (int32)
 [[_vcfparameters]]
 === VcfParameters
 
-[options="header", cols=".^3,.^11,.^4"]
+[options="header", cols=".^3,.^4"]
 |===
-|Name|Description|Schema
+|Name|Schema
 |**maf** +
-__||number (float)
+__|number (float)
 |**minDp** +
-__||number (float)
+__|number (float)
 |**minQ** +
-__||number (float)
+__|number (float)
 |**removeIndels** +
-__|**Default** : `false`|boolean
+__|boolean
 |**toIupac** +
-__|**Default** : `false`|boolean
+__|boolean
 |===
 
 

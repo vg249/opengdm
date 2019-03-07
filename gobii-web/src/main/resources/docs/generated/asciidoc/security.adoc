@@ -8,4 +8,12 @@
 __Type__ : basic
 
 
+[[_apikeyauth]]
+=== apiKeyAuth
+[%hardbreaks]
+__Type__ : apiKey
+__Name__ : apiKeyAuth
+__In__ : HEADER
+
+
 
