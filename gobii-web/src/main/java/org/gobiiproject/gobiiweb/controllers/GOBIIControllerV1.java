@@ -173,7 +173,16 @@ public class GOBIIControllerV1 {
     @Autowired
     private EntityStatsService entityStatsService = null;
 
-    @RequestMapping(value = "Pings the Gobii System", method = RequestMethod.POST)
+    @ApiOperation(value="ping",
+            notes = "Pings the GDB Web server.",
+            tags = {"Ping"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Ping")
+            })
+    }
+    )
+    @RequestMapping(value = "/ping", method = RequestMethod.POST)
     @ResponseBody
     public PayloadEnvelope<PingDTO> getPingResponse(@RequestBody PayloadEnvelope<PingDTO> pingDTOPayloadEnvelope) {
 
@@ -209,7 +218,7 @@ public class GOBIIControllerV1 {
 
 
     @ApiOperation(
-            value = "POST /auth",
+            value = "authenticate",
             notes = "The user credentials are specified in the request headers X-Username and X-Password; " +
                     "the response and the response headers include the token in the X-Auth-Token header. " +
                     "X-Auth-Token header and value obtained from /auth call will be used as an API-key " +
@@ -217,7 +226,7 @@ public class GOBIIControllerV1 {
             tags = {"Authentication"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="authenticate")
+                            @ExtensionProperty(name="summary", value="Authentication")
                     })
             }
     )
@@ -267,14 +276,14 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /configsettings",
+            value = "List all configuration settings.",
             notes = "List all configuration settings.\n+" +
                     "Provides generic configuration information about the GOBii instances in " +
                     "a given deployment. This call does not require authentication",
             tags = {"ConfigSettings"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="list")
+                    @ExtensionProperty(name="summary", value="ConfigSettings")
             })
     }
     )
@@ -379,12 +388,21 @@ public class GOBIIControllerV1 {
     // *************************** ANALYSIS METHODS
     // *********************************************
     @ApiOperation(
-            value = "POST /analyses",
+            value = "Create a new analyses.",
             notes = "Create analysis entity for GDM system.",
             tags = {"Analyses"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="create")
+                    @ExtensionProperty(name="summary", value="Analyses"),
+                    @ExtensionProperty(
+                            name="tag-description",
+                            value="Analyses describe the different algorithms " +
+                                    "that were applied to the genotyping or " +
+                                    "sequence data to produce the final dataset being loaded. " +
+                                    "Each analysis is grouped into an analysis type. " +
+                                    "The analysis types are: calling (variant calling), " +
+                                    "cleaning, and imputation. " +
+                                    "Additional analysis types can be added in Controlled Vocabularies")
             })}
     )
     @RequestMapping(value = "/analyses", method = RequestMethod.POST)
@@ -428,12 +446,12 @@ public class GOBIIControllerV1 {
 
 
     @ApiOperation(
-            value = "PUT /analyses/{analysisId}",
+            value = "Update the analyses by analysesId",
             notes = "Updates the Analysis entity having the specified analysisId.",
             tags = {"Analyses"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="update")
+                    @ExtensionProperty(name="summary", value="Analyses : analysesId")
             })}
     )
     @RequestMapping(value = "/analyses/{analysisId:[\\d]+}", method = RequestMethod.PUT)
@@ -477,12 +495,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /analyses",
+            value = "List all analyses",
             notes = "List of all Analysis entities.",
             tags = {"Analyses"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="list")
+                    @ExtensionProperty(name="summary", value="Analyses")
             })}
     )
     @RequestMapping(value = "/analyses", method = RequestMethod.GET)
@@ -519,12 +537,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /analyses/{analysisId}",
+            value = "Get an analyses by analysesId",
             notes = "Get analyses by analyses Id.",
             tags = {"Analyses"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="get")
+                    @ExtensionProperty(name="summary", value="Analyses : analysesId")
             })}
     )
     @RequestMapping(value = "/analyses/{analysisId:[\\d]+}", method = RequestMethod.GET)
@@ -569,12 +587,12 @@ public class GOBIIControllerV1 {
     // *************************** CONTACT METHODS
     // *********************************************
     @ApiOperation(
-            value = "POST /contacts",
+            value = "Create a new contact",
             notes = "Create new contact.",
             tags = {"Contacts"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="create")
+                            @ExtensionProperty(name="summary", value="Contacts")
                     })
             }
     )
@@ -617,12 +635,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "PUT /contacts/{contactId}",
+            value = "Update a contact by contactId",
             notes = "Update contact by contact id.",
             tags = {"Contacts"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="update")
+                    @ExtensionProperty(name="summary", value="Contacts : contactId")
             })
     }
     )
@@ -670,12 +688,12 @@ public class GOBIIControllerV1 {
 
 
     @ApiOperation(
-            value = "GET /contacts/{contactId}",
+            value = "Get a contact by contact id",
             notes = "Get contacts by Contact Id.",
             tags = {"Contacts"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="get")
+                    @ExtensionProperty(name="summary", value="Contacts : contactId")
             })}
     )
     @RequestMapping(value = "/contacts/{contactId:[\\d]+}", method = RequestMethod.GET)
@@ -722,12 +740,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /contacts",
+            value = "List all contacts",
             notes = "List all contacts.",
             tags = {"Contacts"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="list")
+                    @ExtensionProperty(name="summary", value="Contacts")
             })}
     )
     @RequestMapping(value = "/contacts", method = RequestMethod.GET)
@@ -770,12 +788,12 @@ public class GOBIIControllerV1 {
     // In other words, the email address is telling the server that you're asking for some other format
     // So for email based searches, you'll have to use the request parameter version
     @ApiOperation(
-            value = "GET /contacts/{email}",
+            value = "Get contact by email id",
             notes = "Get contact by email id.",
             tags = {"Contacts"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="getByEmailId")
+                    @ExtensionProperty(name="summary", value="Contacts : emailId")
             })}
     )
     @RequestMapping(value = "/contacts/{email:[a-zA-Z-]+@[a-zA-Z-]+.[a-zA-Z-]+}",
@@ -816,12 +834,12 @@ public class GOBIIControllerV1 {
     // Example: http://localhost:8282/gobii-dev/gobii/v1/contact-search?email=foo&lastName=bar&firstName=snot
     // all parameters must be present, but they don't all neeed a value
     @ApiOperation(
-            value = "GET /contacts-search",
+            value = "List all contacts from Contacts search",
             notes = "List contacts for emailid, lastname, firstname, username.",
-            tags = {"ContactsSearch"},
+            tags = {"Contacts"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="list")
+                    @ExtensionProperty(name="summary", value="ContactSearch")
             })}
     )
     @RequestMapping(
@@ -881,12 +899,12 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** CV METHODS
     // *********************************************
-    @ApiOperation(value = "POST /cvs",
+    @ApiOperation(value = "Create a new Controlled Vocabulary",
             notes = "Creates new cv's.",
             tags = {"ControlledVocabularies"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="create")
+                    @ExtensionProperty(name="summary", value="Cvs")
             })}
     )
     @RequestMapping(value = "/cvs", method = RequestMethod.POST)
@@ -929,12 +947,12 @@ public class GOBIIControllerV1 {
     }
 
 
-    @ApiOperation(value = "PUT /cvs/{cvId}",
+    @ApiOperation(value = "Update a CV by cvId",
             notes = "Update cv by cvId.",
             tags = {"ControlledVocabularies"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="update")
+                    @ExtensionProperty(name="summary", value="Cvs : cvId")
             })}
     )
     @RequestMapping(value = "/cvs/{cvId:[\\d]+}", method = RequestMethod.PUT)
@@ -976,12 +994,12 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
-    @ApiOperation(value = "GET /cvs",
+    @ApiOperation(value = "List all CVs",
             notes = "List all cvs in the GDM.",
             tags = {"ControlledVocabularies"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="list")
+                    @ExtensionProperty(name="summary", value="Cvs")
             })}
     )
     @RequestMapping(value = "/cvs", method = RequestMethod.GET)
@@ -1017,12 +1035,12 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
-    @ApiOperation(value = "GET /cvs/{cvId}",
+    @ApiOperation(value = "Get a CV by cvId",
             notes = "Get cv by the id.",
             tags = {"ControlledVocabularies"},
             extensions = {
                 @Extension(properties = {
-                       @ExtensionProperty(name="summary", value="get")
+                       @ExtensionProperty(name="summary", value="Cvs : cvId")
                 })
             }
     )
@@ -1063,12 +1081,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "DELETE /cvs/{cvId}",
+            value = "Delete a CV by cvId",
             notes = "Deletes cv by id.",
             tags = {"ControlledVocabularies"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="delete")
+                    @ExtensionProperty(name="summary", value="Cvs : cvId")
             })}
     )
     @RequestMapping(value = "/cvs/{cvId:[\\d]+}", method = RequestMethod.DELETE)
@@ -1114,13 +1132,13 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /cvs/{groupName}",
+            value = "List all CVs in a given groupName",
             notes = "List cvs by the group name.",
             nickname = "getCvsByGroupName",
-            tags = {"Cvs"},
+            tags = {"ControlledVocabularies"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="listCvsByGroupName")
+                    @ExtensionProperty(name="summary", value="Cvs : groupName")
             })}
     )
     @RequestMapping(value = "/cvs/{groupName:[a-zA-Z_]+}", method = RequestMethod.GET)
@@ -1163,12 +1181,12 @@ public class GOBIIControllerV1 {
     // *************************** CVGROUP METHODS
     // *********************************************
     @ApiOperation(
-            value = "GET /cvgroups/{cvGroupId}/cvs",
-            notes = "List CV terms in given group",
-            tags = {"CvGroups.cvs"},
+            value = "list",
+            notes = "List CV terms in CV group with cvGroupId",
+            tags = {"ControlledVocabularies"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="list")
+                    @ExtensionProperty(name="summary", value="CvGroups.cvs")
             })}
     )
     @RequestMapping(value = "/cvgroups/{cvGroupId}/cvs", method = RequestMethod.GET)
@@ -1213,12 +1231,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /cvgroups/{cvGroupTypeId}",
+            value = "Get a CV group by cvGroupTypeId",
             notes = "Get CV group by cv group type ID",
-            tags = {"CvGroups"},
+            tags = {"ControlledVocabularies"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="get")
+                    @ExtensionProperty(name="summary", value="CvGroups : cvGroupTypeId")
             })}
     )
     @RequestMapping(value = "/cvgroups/{cvGroupTypeId:[\\d]+}", method = RequestMethod.GET)
@@ -1273,12 +1291,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "Get /cvgroups/{groupName}",
+            value = "Get a CV group by groupName",
             notes = "Get CV group by name",
-            tags = {"CvGroups"},
+            tags = {"ControlledVocabularies"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="getByGroupName")
+                    @ExtensionProperty(name="summary", value="CvGroups : groupName")
             })}
     )
     @RequestMapping(value = "/cvgroups/{groupName:[a-zA-Z_]+}", method = RequestMethod.GET)
@@ -1327,12 +1345,12 @@ public class GOBIIControllerV1 {
     // *************************** DATASET METHODS
     // *********************************************
     @ApiOperation(
-            value = "POST /datasets",
+            value = "Create a new dataset",
             notes = "Creates a new dataset in the system.",
             tags = {"Datasets"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="create")
+                    @ExtensionProperty(name="summary", value="Datasets")
             })}
     )
     @RequestMapping(value = "/datasets", method = RequestMethod.POST)
@@ -1376,12 +1394,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "PUT /datasets/{dataSetId}",
+            value = "Update/Replace a dataset by datasetId",
             notes = "Updates the Dataset entity having the specified datasetId.",
             tags = {"Datasets"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="update")
+                    @ExtensionProperty(name="summary", value="Datasets : dataSetId")
             })}
     )
     @RequestMapping(value = "/datasets/{dataSetId:[\\d]+}", method = RequestMethod.PUT)
@@ -1428,13 +1446,13 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /datasets",
+            value = "List all datasets",
             notes = "List all the existing datasets in the system. "+
                     "The list can be retrieved by page and specific page size.",
             tags = {"Datasets"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="list")
+                    @ExtensionProperty(name="summary", value="Datasets")
             })}
     )
     @RequestMapping(value = "/datasets", method = RequestMethod.GET)
@@ -1492,12 +1510,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /datasets/{dataSetId}",
+            value = "Get dataset by datasetId",
             notes = "Gets the Dataset entity having the specified ID.",
             tags = {"Datasets"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="get")
+                            @ExtensionProperty(name="summary", value="Datasets : dataSetId")
                     })}
     )
     @RequestMapping(value = "/datasets/{dataSetId:[\\d]+}", method = RequestMethod.GET)
@@ -1537,12 +1555,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /datasets/{dataSetId}/analyses",
+            value = "List all analyses in a dataset with given datasetId",
             notes = "Lists all the analysis in a dataset identified by dataset id.",
-            tags = {"Datasets.analyses"},
+            tags = {"Datasets"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="list")
+                    @ExtensionProperty(name="summary", value="Datasets.analyses")
             })}
     )
     @RequestMapping(value = "/datasets/{dataSetId:[\\d]+}/analyses", method = RequestMethod.GET)
@@ -1582,12 +1600,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /datasets/types",
+            value = "List of types of datasets",
             notes = "Lists dataset types in the system.",
-            tags = {"Datasets.types"},
+            tags = {"Datasets"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="list")
+                    @ExtensionProperty(name="summary", value="Datasets.types")
             })}
     )
     @RequestMapping(value = "/datasets/types", method = RequestMethod.GET)
@@ -1629,12 +1647,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /datasets/types/{id}",
+            value = "Get datasets by type id",
             notes = "Gets the Dataset type by type ID.",
-            tags = {"Datasets.types"},
+            tags = {"Datasets"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="get")
+                    @ExtensionProperty(name="summary", value="Datasets.types : id")
             })}
     )
     @RequestMapping(value = "/datasets/types/{id}", method = RequestMethod.GET)
@@ -1680,12 +1698,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /datasets/{datasetId}/jobs",
+            value = "List all jobs for a dataset with datasetId",
             notes = "List information for active job for a given datasetId",
-            tags = {"Datasets.jobs"},
+            tags = {"Datasets"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="list")
+                    @ExtensionProperty(name="summary", value="Datasets.jobs")
             })}
     )
     @RequestMapping(value = "/datasets/{datasetId}/jobs", method = RequestMethod.GET)
@@ -1729,12 +1747,12 @@ public class GOBIIControllerV1 {
     // *************************** DISPLAY METHODS
     // *********************************************
     @ApiOperation(
-            value = "POST /displays",
+            value = "Create a new display",
             notes = "Creates displays in GDM.",
             tags = {"Displays"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="create")
+                    @ExtensionProperty(name="summary", value="Displays")
             })}
     )
     @RequestMapping(value = "/displays", method = RequestMethod.POST)
@@ -1778,12 +1796,12 @@ public class GOBIIControllerV1 {
 
 
     @ApiOperation(
-            value = "PUT /displays/{displayId}",
+            value = "Update a display with displayId",
             notes = "Updates the Display entity having the specified displayId.",
             tags = {"Displays"},
             extensions = {
                 @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="update")
+                    @ExtensionProperty(name="summary", value="Displays : displayId")
                 })
             }
     )
@@ -1828,12 +1846,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /displays",
+            value = "List all displays",
             notes = "Lists all Displays in GDM",
             tags = {"Displays"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="list")
+                    @ExtensionProperty(name="summary", value="Displays")
             })
     }
     )
@@ -1871,12 +1889,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /displays/{displayId}",
+            value = "Get a display by displayId",
             notes = "Get the Display by display Id",
             tags = {"Displays"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="get")
+                    @ExtensionProperty(name="summary", value="Displays : displayId")
             })}
     )
     @RequestMapping(value = "/displays/{displayId:[\\d]+}", method = RequestMethod.GET)
@@ -1921,12 +1939,12 @@ public class GOBIIControllerV1 {
     // *********************************************
 
     @ApiOperation(
-            value = "POST /instructions/loader",
+            value = "Create loader instruction file",
             notes = "Creates loader instruction file and then submits a new Job.",
-            tags = {"Instructions.loader"},
+            tags = {"Instructions"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="create")
+                            @ExtensionProperty(name="summary", value="Loader")
                     })}
     )
     @RequestMapping(value = "/instructions/loader", method = RequestMethod.POST)
@@ -1971,12 +1989,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /instructions/loader/{instructionFileName}",
+            value = "Get a loader instruction file",
             notes = "Gets the loader instruction file entity having the specified instruction file name.",
-            tags = {"Instructions.loader"},
+            tags = {"Instructions"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="get")
+                            @ExtensionProperty(name="summary", value="Loader : instructionFileName")
                     })}
     )
     @RequestMapping(value = "/instructions/loader/{instructionFileName}", method = RequestMethod.GET)
@@ -2018,12 +2036,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /instructions/loader/jobs/{jobName}",
+            value = "Get loader job status by job name",
             notes = "Gets the loading job status along with other job details having the specified Job Name.",
-            tags = {"Instructions.loader.jobs"},
+            tags = {"Instructions"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="get")
+                            @ExtensionProperty(name="summary", value="Loader.jobs : jobName")
                     })}
     )
     @RequestMapping(value = "/instructions/loader/jobs/{jobName}", method = RequestMethod.GET)
@@ -2069,12 +2087,12 @@ public class GOBIIControllerV1 {
     // *********************************************
 
     @ApiOperation(
-            value = "POST /instructions/extractor",
+            value = "Create an extractor instruction file",
             notes = "Creates extractor instruction file and then submits a new Job.",
-            tags = {"Instructions.extractor"},
+            tags = {"Instructions"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="create")
+                            @ExtensionProperty(name="summary", value="Extractor")
                     })}
     )
     @RequestMapping(value = "/instructions/extractor", method = RequestMethod.POST)
@@ -2120,12 +2138,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /instructions/extractor/{instructionFileName}",
+            value = "Download an extractor instructor file",
             notes = "Retrieves the extractor instruction file entity having the specified instruction file name.",
-            tags = {"Instructions.extractor"},
+            tags = {"Instructions"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="get")
+                            @ExtensionProperty(name="summary", value="extractor : instructionFileName")
                     })}
     )
     @RequestMapping(value = "/instructions/extractor/{instructionFileName}", method = RequestMethod.GET)
@@ -2167,12 +2185,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /instructions/extractor/jobs/{jobName}",
+            value = "Get extractor job status by jobName",
             notes = "Retrieves the extract job status along with other job details having the specified Job Name.",
-            tags = {"Instructions.extractor.jobs"},
+            tags = {"Instructions"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="get")
+                            @ExtensionProperty(name="summary", value="Extractor.jobs : jobName")
                     })}
     )
     @RequestMapping(value = "/instructions/extractor/jobs/{jobName}", method = RequestMethod.GET)
@@ -2217,12 +2235,12 @@ public class GOBIIControllerV1 {
     // *************************** MANIFEST METHODS
     // *********************************************
     @ApiOperation(
-            value = "POST /manifests",
+            value = "Create a manifest",
             notes = "Creates a Manifest entity for GOBii system.",
             tags = {"Manifests"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="create")
+                            @ExtensionProperty(name="summary", value="Manifests")
                     })}
     )
     @RequestMapping(value = "/manifests", method = RequestMethod.POST)
@@ -2265,12 +2283,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "PUT /manifests/{manifestId}",
+            value = "Update a manifest",
             notes = "Updates the Manifest entity having the specified manifestId.",
             tags = {"Manifests"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="update")
+                            @ExtensionProperty(name="summary", value="Manifests : manifestId")
                     })}
     )
     @RequestMapping(value = "/manifests/{manifestId:[\\d]+}", method = RequestMethod.PUT)
@@ -2314,12 +2332,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /manifests",
+            value = "List all manifests",
             notes = "Lists an unfiltered list of all Manifest entities.",
             tags = {"Manifests"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="list")
+                            @ExtensionProperty(name="summary", value="Manifests")
                     })}
     )
     @RequestMapping(value = "/manifests", method = RequestMethod.GET)
@@ -2356,12 +2374,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /manifests/{manifestId}",
+            value = "Get manifests by manifestId",
             notes = "Gets the Manifest entity having the specified ID.",
             tags = {"Manifests"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="get")
+                            @ExtensionProperty(name="summary", value="Manifests : manifestId")
                     })}
     )
     @RequestMapping(value = "/manifests/{manifestId:[\\d]+}", method = RequestMethod.GET)
@@ -2405,12 +2423,12 @@ public class GOBIIControllerV1 {
     // *************************** MARKER METHODS
     // *********************************************
     @ApiOperation(
-            value = "POST /markers",
+            value = "Create a new marker",
             notes = "Creates a new marker in the system.",
             tags = {"Markers"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="create")
+                            @ExtensionProperty(name="summary", value="Markers")
                     })
             }
     )
@@ -2455,12 +2473,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "PUT /markers/{markerId}",
+            value = "Update a marker by markerId",
             notes = "Updates the Marker entity having the specified markerId.",
             tags = {"Markers"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="update")
+                            @ExtensionProperty(name="summary", value="Markers : markerId")
                     })
             }
     )
@@ -2508,13 +2526,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /markers",
+            value = "List all markers",
             notes = "Lists all the existing markers in the system.",
             tags = {"Markers"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="list")
-                    })
+                            @ExtensionProperty(name="summary", value="Markers")                    })
             }
     )
     @RequestMapping(value = "/markers", method = RequestMethod.GET)
@@ -2553,12 +2570,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /markers/{markerId}",
+            value = "Get a marker by markerId",
             notes = "Retrieves the Marker entity having the specified ID.",
             tags = {"Markers"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="get")
+                            @ExtensionProperty(name="summary", value="Markers : markerId")
                     })
             }
     )
@@ -2600,12 +2617,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /marker-search",
+            value = "List all markers from markers search",
             notes = "List Marker search results.",
-            tags = {"MarkerSearch"},
+            tags = {"Markers"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="list")
+                            @ExtensionProperty(name="summary", value="MarkerSearch")
                     })
             }
     )
@@ -2653,7 +2670,7 @@ public class GOBIIControllerV1 {
     // *********************************************
 
     @ApiOperation(
-            value = "GET /names/{entity}",
+            value = "List all NameIds",
             notes = "List of name/ID combination for a given entity. " +
                     "For the list of entities supported see class GobiiEntityNameType." +
                     "List can further be filtered out by specifying the filter type and value." +
@@ -2663,7 +2680,7 @@ public class GOBIIControllerV1 {
             tags = {"Names"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="list")
+                            @ExtensionProperty(name="summary", value="Names : entity")
                     })
             }
     )
@@ -2795,7 +2812,7 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "POST /names/{entity}",
+            value = "Create a new NameID",
             notes = "Retrieves a list of name/ID combination for a given entity and name list. " +
                     "For the list of entities supported see class GobiiEntityNameType." +
                     "This is service is specifically implemented for these filter types: " +
@@ -2808,7 +2825,7 @@ public class GOBIIControllerV1 {
             tags = {"Names"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="get")
+                            @ExtensionProperty(name="summary", value="Names : entity")
                     })
             }
     )
@@ -2963,12 +2980,12 @@ public class GOBIIControllerV1 {
     // *************************** ORGANIZATION METHODS
     // *********************************************
     @ApiOperation(
-            value = "POST /organizations",
+            value = "Create a new organization",
             notes = "Creates a new organization in the system.",
             tags = {"Organizations"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="create")
+                            @ExtensionProperty(name="summary", value="Organizations")
                     })
             }
     )
@@ -3012,12 +3029,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "PUT /organizations/{organizationId}",
+            value = "Update an organization by organizationId",
             notes = "Updates the Organization entity having the specified organizationId.",
             tags = {"Organizations"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="update")
+                            @ExtensionProperty(name="summary", value="Organizations : organizationId")
                     })
             }
     )
@@ -3065,12 +3082,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /organizations",
+            value = "List all organizations",
             notes = "List all the existing organizations in the system.",
             tags = {"Organizations"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="list")
+                            @ExtensionProperty(name="summary", value="Organizations")
                     })
             }
     )
@@ -3110,12 +3127,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /organizations/{organizationId}",
+            value = "Get organization by organizationId",
             notes = "Retrieves the Organization entity having the specified ID.",
             tags = {"Organizations"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="get")
+                            @ExtensionProperty(name="summary", value="Organizations : organizationId")
                     })
             }
     )
@@ -3168,12 +3185,12 @@ public class GOBIIControllerV1 {
      * Also note that the resource name /maps is correct but does not match
      * what is being used in ResourceBuilder on the client side*/
     @ApiOperation(
-            value = "GET /maps",
+            value = "List all mapsets",
             notes = "Lists all the existing Mapsets in the system.",
             tags = {"Maps"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="list")
+                            @ExtensionProperty(name="summary", value="Maps")
                     })
             }
     )
@@ -3215,12 +3232,12 @@ public class GOBIIControllerV1 {
     // *************************** PLATFORM METHODS
     // *********************************************
     @ApiOperation(
-            value = "POST /platforms",
+            value = "Create a new platform",
             notes = "Creates a new Platform in the system.",
             tags = {"Platforms"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="create")
+                            @ExtensionProperty(name="summary", value="Platforms")
                     })
             }
     )
@@ -3265,12 +3282,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "PUT /platforms/{platformId}",
+            value = "Update a platform by platformId",
             notes = "Updates the Platform entity having the specified platformId.",
             tags = {"Platforms"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="update")
+                            @ExtensionProperty(name="summary", value="Platforms : platformId")
                     })
             }
     )
@@ -3318,12 +3335,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /platforms",
+            value = "List all platforms",
             notes = "List all the existing platforms in the system.",
             tags = {"Platforms"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="list")
+                            @ExtensionProperty(name="summary", value="Platforms")
                     })
             }
     )
@@ -3363,12 +3380,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /platforms/{platformId}",
+            value = "Get a platform by platformId",
             notes = "Retrieves the Platform entity having the specified ID.",
             tags = {"Platforms"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="get")
+                            @ExtensionProperty(name="summary", value="Platforms : platformId")
                     })
             }
     )
@@ -3413,10 +3430,10 @@ public class GOBIIControllerV1 {
     @ApiOperation(
             value = "GET /platforms/protocols/{vendorProtocolId}",
             notes = "Gets the Platform entity having the specified Vendor Protocol ID.",
-            tags = {"Platform.protocols"},
+            tags = {"Platforms"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="get")
+                            @ExtensionProperty(name="summary", value="Protocols : vendorProtocolId")
                     })
             }
     )
@@ -3463,12 +3480,12 @@ public class GOBIIControllerV1 {
     // *************************** PROJECT METHODS
     // *********************************************
     @ApiOperation(
-            value = "GET /projects",
+            value = "Create a new project",
             notes = "Creates a new project in the system.",
             tags = {"Projects"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="create")
+                            @ExtensionProperty(name="summary", value="Projects")
                     })
             }
     )
@@ -3513,12 +3530,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "PUT /projects/{projectId}",
+            value = "Update a project by projectId",
             notes = "Updates the Project entity having the specified projectId.",
             tags = {"Projects"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="update")
+                    @ExtensionProperty(name="summary", value="Projects : projectId")
             })}
     )
     @RequestMapping(value = "/projects/{projectId:[\\d]+}", method = RequestMethod.PUT)
@@ -3565,12 +3582,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /projects",
+            value = "List all projects",
             notes = "List all the existing projects in the system.",
             tags = {"Projects"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="list")
+                            @ExtensionProperty(name="summary", value="Projects")
                     })}
     )
     @RequestMapping(value = "/projects", method = RequestMethod.GET)
@@ -3609,12 +3626,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /projects/{projectId}",
+            value = "Get a project by projectId",
             notes = "Retrieves the Project entity having the specified ID.",
             tags = {"Projects"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="get")
+                            @ExtensionProperty(name="summary", value="Projects : projectId")
                     })}
     )
     @RequestMapping(value = "/projects/{projectId:[\\d]+}", method = RequestMethod.GET)
@@ -3659,12 +3676,12 @@ public class GOBIIControllerV1 {
     // *************************** EXPERIMENT METHODS
     // *********************************************
     @ApiOperation(
-            value = "POST /experiments",
+            value = "Create a new experiment",
             notes = "Creates a new experiment in the system.",
             tags = {"Experiments"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="create")
+                            @ExtensionProperty(name="summary", value="Experiments")
                     })}
     )
     @RequestMapping(value = "/experiments", method = RequestMethod.POST)
@@ -3707,12 +3724,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "PUT /experiments/{experimentId}",
+            value = "Update an experiment by experimentId",
             notes = "Updates the Experiment entity having the specified experimentId.",
             tags = {"Experiments"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="update")
+                            @ExtensionProperty(name="summary", value="Experiments : experimentId")
                     })}
     )
     @RequestMapping(value = "/experiments/{experimentId:[\\d]+}", method = RequestMethod.PUT)
@@ -3760,12 +3777,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /experiments",
+            value = "List all experiments",
             notes = "List all the existing experiments in the system.",
             tags = {"Experiments"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="list")
+                            @ExtensionProperty(name="summary", value="Experiments")
                     })}
     )
     @RequestMapping(value = "/experiments", method = RequestMethod.GET)
@@ -3804,12 +3821,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /experiments/{experimentId}",
+            value = "Get a experiment by experimentId",
             notes = "Gets the Experiment entity having the specified ID.",
             tags = {"Experiments"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="get")
+                            @ExtensionProperty(name="summary", value="Experiments : experimentId")
                     })}
     )
     @RequestMapping(value = "/experiments/{experimentId:[\\d]+}", method = RequestMethod.GET)
@@ -3853,12 +3870,12 @@ public class GOBIIControllerV1 {
     // *************************** PROTOCOL METHODS
     // *********************************************
     @ApiOperation(
-            value = "POST /protocols",
+            value = "Create a new protocol",
             notes = "Creates a new Protocol in the system.",
             tags = {"Protocols"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="create")
+                            @ExtensionProperty(name="summary", value="Protocols")
                     })}
     )
     @RequestMapping(value = "/protocols", method = RequestMethod.POST)
@@ -3900,12 +3917,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "PUT /protocols/{protocolId}",
+            value = "Update a protocol by protocolId",
             notes = "Updates the Protocol entity having the specified protocolId.",
             tags = {"Protocols"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="update")
+                            @ExtensionProperty(name="summary", value="Protocols : protocolId")
                     })}
     )
     @RequestMapping(value = "/protocols/{protocolId:[\\d]+}", method = RequestMethod.PUT)
@@ -3949,13 +3966,13 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /protocols/{protocolId}",
+            value = "Get a protocol by protocolId",
             notes = "Retrieves the Protocol entity having the specified ID.",
             nickname = "getProtocol",
             tags = {"Protocols"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="get")
+                            @ExtensionProperty(name="summary", value="Protocols : protocolId")
                     })}
     )
     @RequestMapping(value = "/protocols/{protocolId:[\\d]+}", method = RequestMethod.GET)
@@ -3997,12 +4014,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /protocols",
+            value = "List all protocols",
             notes = "List all the existing protocols in the system.",
             tags = {"Protocols"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="list")
+                            @ExtensionProperty(name="summary", value="Protocols")
                     })}
     )
     @RequestMapping(value = "/protocols", method = RequestMethod.GET)
@@ -4040,12 +4057,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "POST /protocols/{protocolId}/vendors",
+            value = "Create new vendors for a given protocolId",
             notes = "Creates a new Vendor Protocol in the system for specified Protocol ID.",
             tags = {"Protocols.vendor"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="create")
+                            @ExtensionProperty(name="summary", value="Protocols.vendors")
                     })}
     )
     @RequestMapping(value = "/protocols/{protocolId:[\\d]+}/vendors", method = RequestMethod.POST)
@@ -4091,12 +4108,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "PUT /protocols/{protocolId}/vendors",
+            value = "Update vendors for a given protocolId",
             notes = "Updates the Vendor Protocol entity having the specified protocolId.",
-            tags = {"Protocols.vendor"},
+            tags = {"Protocols"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="update")
+                            @ExtensionProperty(name="summary", value="Protocols.vendors")
                     })}
     )
     @RequestMapping(value = "/protocols/{protocolId:[\\d]+}/vendors", method = RequestMethod.PUT)
@@ -4141,12 +4158,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /protocols/{protocolId}/vendors",
+            value = "List all vendors for a given protocolId",
             notes = "List all the vendor protocols given protocolId in the system.",
-            tags = {"Protocols.vendor"},
+            tags = {"Protocols"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="list")
+                            @ExtensionProperty(name="summary", value="Protocols.vendors")
                     })}
     )
     @RequestMapping(value = "/protocols/{protocolId:[\\d]+}/vendors", method = RequestMethod.GET)
@@ -4195,12 +4212,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /experiments/{experimentId}/protocols",
+            value = "List all protocols for a given experimentId",
             notes = "Retrieves all the protocols having the specified experimentId in the system.",
-            tags = {"Experiments.protocols"},
+            tags = {"Experiments"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="list")
+                            @ExtensionProperty(name="summary", value="Experiments.protocols")
                     })}
     )
     @RequestMapping(value = "/experiments/{experimentId:[\\d]+}/protocols", method = RequestMethod.GET)
@@ -4244,12 +4261,12 @@ public class GOBIIControllerV1 {
     // *********************************************
 
     @ApiOperation(
-            value = "PUT /files/loader/{directoryName}",
+            value = "Add a loader file to given directory",
             notes = "Updates a directory in the system that will be used for storing the data files for loading",
-            tags = {"Files.loader"},
+            tags = {"Files"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="update")
+                            @ExtensionProperty(name="summary", value="Loader : directoryName")
                     })}
     )
     @RequestMapping(value = "/files/loader/{directoryName}", method = RequestMethod.PUT)
@@ -4293,12 +4310,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /files/loader/{directoryName}",
+            value = "List of loader files in a given directory",
             notes = "Gets file preview for the specified directory name",
-            tags = {"Files.loader"},
+            tags = {"Files"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="get")
+                            @ExtensionProperty(name="summary", value="Loader : directoryName")
                     })}
     )
     @RequestMapping(value = "/files/loader/{directoryName}",
@@ -4347,12 +4364,12 @@ public class GOBIIControllerV1 {
     // *********************************************
 
     @ApiOperation(
-            value = "POST /mapsets",
+            value = "Create a new Mapset",
             notes = "Creates a new mapset in the system.",
-            tags = {"Mapsets"},
+            tags = {"Maps"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="create")
+                            @ExtensionProperty(name="summary", value="Mapsets")
                     })}
     )
     @RequestMapping(value = "/mapsets", method = RequestMethod.POST)
@@ -4395,12 +4412,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "PUT /mapsets/{mapsetId}",
+            value = "Update a mapset by mapsetId",
             notes = "Updates the Mapset entity having the specified mapsetId.",
-            tags = {"Mapsets"},
+            tags = {"Maps"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="update")
+                            @ExtensionProperty(name="summary", value="Mapsets : mapsetId")
                     })}
     )
     @RequestMapping(value = "/mapsets/{mapsetId:[\\d]+}", method = RequestMethod.PUT)
@@ -4444,12 +4461,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /mapsets",
+            value = "List all mapsets",
             notes = "List all the existing mapsets in the system.",
-            tags = {"Mapsets"},
+            tags = {"Maps"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="list")
+                            @ExtensionProperty(name="summary", value="Mapsets")
                     })}
     )
     @RequestMapping(value = "/mapsets", method = RequestMethod.GET)
@@ -4486,12 +4503,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /mapsets/{mapsetId}",
+            value = "Get mapsets by mapsetId",
             notes = "Gets the Mapset entity having the specified ID.",
-            tags = {"Mapsets"},
+            tags = {"Maps"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="get")
+                            @ExtensionProperty(name="summary", value="Mapsets : mapsetId")
                     })}
     )
     @RequestMapping(value = "/mapsets/{mapsetId:[\\d]+}", method = RequestMethod.GET)
@@ -4535,12 +4552,12 @@ public class GOBIIControllerV1 {
     // *************************** MARKERGROUP METHODS
     // *********************************************
     @ApiOperation(
-            value = "POST /markergroups",
+            value = "Create a new Marker group",
             notes = "Creates a new marker group in the system.",
-            tags = {"MarkerGroups"},
+            tags = {"Markers"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="create")
+                            @ExtensionProperty(name="summary", value="MarkerGroups")
                     })}
     )
     @RequestMapping(value = "/markergroups", method = RequestMethod.POST)
@@ -4583,12 +4600,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "PUT /markergroups/{markerGroupId}",
+            value = "Update a marker by markergroupId",
             notes = "Updates the Marker Group entity having the specified markerGroupId.",
-            tags = {"MarkerGroups"},
+            tags = {"Markers"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="update")
+                            @ExtensionProperty(name="summary", value="MarkerGroups : markerGroupId")
                     })}
     )
     @RequestMapping(value = "/markergroups/{markerGroupId:[\\d]+}", method = RequestMethod.PUT)
@@ -4632,12 +4649,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /markergroups",
+            value = "List all markergroups",
             notes = "Lists all the existing marker groups in the system.",
-            tags = {"MarkerGroups"},
+            tags = {"Markers"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="list")
+                            @ExtensionProperty(name="summary", value="MarkerGroups")
                     })}
     )
     @RequestMapping(value = "/markergroups", method = RequestMethod.GET)
@@ -4674,12 +4691,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /markergroups/{markerGroupId}",
+            value = "Gets all markers in a given markergroup",
             notes = "Retrieves the Marker Group entity having the specified ID.",
-            tags = {"MarkerGroups"},
+            tags = {"Markers"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="get")
+                            @ExtensionProperty(name="summary", value="MarkerGroups : markerGroupId")
                     })}
     )
     @RequestMapping(value = "/markergroups/{markerGroupId:[\\d]+}", method = RequestMethod.GET)
@@ -4723,12 +4740,12 @@ public class GOBIIControllerV1 {
     // *************************** REFERENCE METHODS
     // *********************************************
     @ApiOperation(
-            value = "POST /references",
+            value = "Create a new reference",
             notes = "Creates a new reference in the system.",
             tags = {"References"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="create")
+                            @ExtensionProperty(name="summary", value="References")
                     })}
     )
     @RequestMapping(value = "/references", method = RequestMethod.POST)
@@ -4771,12 +4788,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "PUT /references/{referenceId}",
+            value = "Update a reference by referenceId",
             notes = "Updates the Reference entity having the specified referenceId.",
             tags = {"References"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="update")
+                            @ExtensionProperty(name="summary", value="References : referenceId")
                     })}
     )
     @RequestMapping(value = "/references/{referenceId:[\\d]+}", method = RequestMethod.PUT)
@@ -4820,12 +4837,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /references",
+            value = "List all references",
             notes = "Lists all the existing references in the system.",
             tags = {"References"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="list")
+                            @ExtensionProperty(name="summary", value="References")
                     })}
     )
     @RequestMapping(value = "/references", method = RequestMethod.GET)
@@ -4867,7 +4884,7 @@ public class GOBIIControllerV1 {
             tags = {"References"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="get")
+                            @ExtensionProperty(name="summary", value="References : referenceId")
                     })}
     )
     @RequestMapping(value = "/references/{referenceId:[\\d]+}", method = RequestMethod.GET)
@@ -4923,12 +4940,12 @@ public class GOBIIControllerV1 {
      */
 
     @ApiOperation(
-            value = "POST /files/{destinationType}",
+            value = "Upload a file to given destination",
             notes = "Uploads an arbitrary file to the specified destination",
             tags = {"Files"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="upload")
+                            @ExtensionProperty(name="summary", value="Files : destinationType")
                     })}
     )
     //OpenAPI specification uses "string" as datatype for file, but the swagger automatically
@@ -5011,12 +5028,12 @@ public class GOBIIControllerV1 {
      */
 
     @ApiOperation(
-            value = "DELETE /files/{destinationType}",
+            value = "Detele a file by destination type",
             notes = "Deletes an arbitrary file from the specified destination",
             tags = {"Files"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="delete")
+                            @ExtensionProperty(name="summary", value="Files : destinationType")
                     })}
     )
     @RequestMapping(value = "/files/{destinationType}",
@@ -5075,12 +5092,12 @@ public class GOBIIControllerV1 {
      */
 
     @ApiOperation(
-            value = "POST /files/{gobiiJobId}/{destinationType}",
+            value = "Upload a file for a given job and destination type",
             notes = "Uploads the specified file for a specific job to the specified directory",
-            tags = {"Files.jobs"},
+            tags = {"Files"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="upload")
+                            @ExtensionProperty(name="summary", value="Jobs : destinationType")
                     })}
     )
     @RequestMapping(value = "/files/{gobiiJobId}/{destinationType}",
@@ -5155,12 +5172,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /files/{gobiiJobId}/{destinationType}",
+            value = "Download a job file from a given destination type",
             notes = "Downloads the specified file for a specific job from the specified directory",
-            tags = {"Files.jobs"},
+            tags = {"Files"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="download")
+                            @ExtensionProperty(name="summary", value="Jobs : destinationType")
                     })}
     )
     @RequestMapping(value = "/files/{gobiiJobId}/{destinationType}",
@@ -5206,12 +5223,12 @@ public class GOBIIControllerV1 {
 
     /*** JOB METHODS ***/
     @ApiOperation(
-            value = "POST /jobs",
+            value = "Create a new job",
             notes = "Creates a new job in the system.",
             tags = {"Jobs"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="create")
+                            @ExtensionProperty(name="summary", value="Jobs")
                     })}
     )
     @RequestMapping(value = "/jobs", method = RequestMethod.POST)
@@ -5256,12 +5273,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /jobs",
+            value = "List all jobs",
             notes = "Lists all the existing jobs in the system.",
             tags = {"Jobs"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="list")
+                            @ExtensionProperty(name="summary", value="Jobs")
                     })}
     )
     @RequestMapping(value = "/jobs", method = RequestMethod.GET)
@@ -5298,12 +5315,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "PUT /jobs/{jobName}",
+            value = "Update a job by jobName",
             notes = "Updates the Job entity having the specified jobName.",
             tags = {"Jobs"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="update")
+                            @ExtensionProperty(name="summary", value="Jobs : jobName")
                     })}
     )
     @RequestMapping(value = "/jobs/{jobName}", method = RequestMethod.PUT)
@@ -5349,12 +5366,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /jobs/{jobName}",
+            value = "Get job details by job name",
             notes = "Gets the Job entity having the specified name.",
             tags = {"Jobs"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="get")
+                            @ExtensionProperty(name="summary", value="Jobs : jobName")
                     })}
     )
     @RequestMapping(value = "/jobs/{jobName}", method = RequestMethod.GET)
@@ -5395,12 +5412,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "POST /jobs/dnasamples/{jobName}",
+            value = "Create DNA samples for a given job",
             notes = "Creates DNA samples for a given Job having the specified name in the system.",
-            tags = {"Jobs.dnasamples"},
+            tags = {"Jobs"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="create")
+                            @ExtensionProperty(name="summary", value="DnaSamples : jobName")
                     })}
     )
     @RequestMapping(value = "/jobs/dnasamples/{jobName}", method = RequestMethod.POST)
@@ -5451,12 +5468,12 @@ public class GOBIIControllerV1 {
     // *************************** ENTITY STATS METHODS
     // *********************************************
     @ApiOperation(
-            value = "GET /entities",
+            value = "List all entities",
             notes = "Lists all the existing entities in the system.",
             tags = {"Entities"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="list")
+                            @ExtensionProperty(name="summary", value="Entities")
                     })}
     )
     @RequestMapping(value = "/entities", method = RequestMethod.GET)
@@ -5496,12 +5513,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /entities/{entityName}/lastmodified",
+            value = "Get last modified date of an entity",
             notes = "Gets last modified Entity for the given entityName",
-            tags = {"Entities.lastModified"},
+            tags = {"Entities"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="get")
+                            @ExtensionProperty(name="summary", value="Entities.lastModified")
                     })}
     )
     @RequestMapping(value = "/entities/{entityName}/lastmodified", method = RequestMethod.GET)
@@ -5546,12 +5563,12 @@ public class GOBIIControllerV1 {
     }
 
     @ApiOperation(
-            value = "GET /entities/{entityName}/count",
+            value = "Get count for a given entity",
             notes = "Gets the total Entity count for the given entityName",
-            tags = {"Entities.count"},
+            tags = {"Entities"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="get")
+                            @ExtensionProperty(name="summary", value="Entities.count")
                     })}
     )
     @RequestMapping(value = "/entities/{entityName}/count", method = RequestMethod.GET)
@@ -5597,12 +5614,12 @@ public class GOBIIControllerV1 {
 
 
     @ApiOperation(
-            value = "Gets /entities/{entityNameParent}/{parentId}/{entityNameChild}/count",
+            value = "Get entity count for a given entity child",
             notes = "Retrieves the total count of the children for the given entity",
-            tags = {"Entities.parent.child.count"},
+            tags = {"Entities"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="get")
+                            @ExtensionProperty(name="summary", value="Child.count")
                     })}
     )
     @RequestMapping(value = "/entities/{entityNameParent}/{parentId}/{entityNameChild}/count", method = RequestMethod.GET)

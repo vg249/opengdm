@@ -17,40 +17,20 @@ tags:
 - name: "Authentication"
 - name: "ConfigSettings"
 - name: "Contacts"
-- name: "ContactsSearch"
 - name: "ControlledVocabularies"
-- name: "CvGroups"
-- name: "CvGroups.cvs"
-- name: "Cvs"
 - name: "Datasets"
-- name: "Datasets.analyses"
-- name: "Datasets.jobs"
-- name: "Datasets.types"
 - name: "Displays"
 - name: "Entities"
-- name: "Entities.count"
-- name: "Entities.lastModified"
-- name: "Entities.parent.child.count"
 - name: "Experiments"
-- name: "Experiments.protocols"
 - name: "Files"
-- name: "Files.jobs"
-- name: "Files.loader"
-- name: "Instructions.extractor"
-- name: "Instructions.extractor.jobs"
-- name: "Instructions.loader"
-- name: "Instructions.loader.jobs"
+- name: "Instructions"
 - name: "Jobs"
-- name: "Jobs.dnasamples"
 - name: "Manifests"
 - name: "Maps"
-- name: "Mapsets"
-- name: "MarkerGroups"
 - name: "Markers"
-- name: "MarkerSearch"
 - name: "Names"
 - name: "Organizations"
-- name: "Platform.protocols"
+- name: "Ping"
 - name: "Platforms"
 - name: "Projects"
 - name: "Protocols"
@@ -60,25 +40,11 @@ tags:
 schemes:
 - "http"
 paths:
-  /gobii/v1/Pings the Gobii System:
-    post:
-      operationId: "getPingResponse"
-      parameters:
-      - in: "body"
-        name: "body"
-        required: false
-        schema:
-          $ref: "#/definitions/PayloadEnvelopePingDTO"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/PayloadEnvelopePingDTO"
   /gobii/v1/analyses:
     get:
       tags:
       - "Analyses"
-      summary: "GET /analyses"
+      summary: "List all analyses"
       description: "List of all Analysis entities."
       operationId: "getAnalyses"
       parameters: []
@@ -87,11 +53,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeAnalysisDTO"
-      x-summary: "list"
+      x-summary: "Analyses"
     post:
       tags:
       - "Analyses"
-      summary: "POST /analyses"
+      summary: "Create a new analyses."
       description: "Create analysis entity for GDM system."
       operationId: "createAnalysis"
       parameters:
@@ -105,12 +71,17 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeAnalysisDTO"
-      x-summary: "create"
+      x-tag-description: "Analyses describe the different algorithms that were applied\
+        \ to the genotyping or sequence data to produce the final dataset being loaded.\
+        \ Each analysis is grouped into an analysis type. The analysis types are:\
+        \ calling (variant calling), cleaning, and imputation. Additional analysis\
+        \ types can be added in Controlled Vocabularies"
+      x-summary: "Analyses"
   /gobii/v1/analyses/{analysisId}:
     get:
       tags:
       - "Analyses"
-      summary: "GET /analyses/{analysisId}"
+      summary: "Get an analyses by analysesId"
       description: "Get analyses by analyses Id."
       operationId: "getAnalysisById"
       parameters:
@@ -126,11 +97,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeAnalysisDTO"
-      x-summary: "get"
+      x-summary: "Analyses : analysesId"
     put:
       tags:
       - "Analyses"
-      summary: "PUT /analyses/{analysisId}"
+      summary: "Update the analyses by analysesId"
       description: "Updates the Analysis entity having the specified analysisId."
       operationId: "replaceAnalysis"
       parameters:
@@ -151,12 +122,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeAnalysisDTO"
-      x-summary: "update"
+      x-summary: "Analyses : analysesId"
   /gobii/v1/auth:
     post:
       tags:
       - "Authentication"
-      summary: "POST /auth"
+      summary: "authenticate"
       description: "The user credentials are specified in the request headers X-Username\
         \ and X-Password; the response and the response headers include the token\
         \ in the X-Auth-Token header. X-Auth-Token header and value obtained from\
@@ -187,12 +158,12 @@ paths:
               description: "API key to authenticate GDM api calls"
           schema:
             type: "string"
-      x-summary: "authenticate"
+      x-summary: "Authentication"
   /gobii/v1/configsettings/:
     get:
       tags:
       - "ConfigSettings"
-      summary: "GET /configsettings"
+      summary: "List all configuration settings."
       description: "List all configuration settings.\n+Provides generic configuration\
         \ information about the GOBii instances in a given deployment. This call does\
         \ not require authentication"
@@ -203,12 +174,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeConfigSettingsDTO"
-      x-summary: "list"
+      x-summary: "ConfigSettings"
   /gobii/v1/contact-search:
     get:
       tags:
-      - "ContactsSearch"
-      summary: "GET /contacts-search"
+      - "Contacts"
+      summary: "List all contacts from Contacts search"
       description: "List contacts for emailid, lastname, firstname, username."
       operationId: "getContactsBySearch"
       parameters:
@@ -237,12 +208,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeContactDTO"
-      x-summary: "list"
+      x-summary: "ContactSearch"
   /gobii/v1/contacts:
     get:
       tags:
       - "Contacts"
-      summary: "GET /contacts"
+      summary: "List all contacts"
       description: "List all contacts."
       operationId: "getContacts"
       parameters: []
@@ -251,11 +222,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeContactDTO"
-      x-summary: "list"
+      x-summary: "Contacts"
     post:
       tags:
       - "Contacts"
-      summary: "POST /contacts"
+      summary: "Create a new contact"
       description: "Create new contact."
       operationId: "createContact"
       parameters:
@@ -269,12 +240,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeContactDTO"
-      x-summary: "create"
+      x-summary: "Contacts"
   /gobii/v1/contacts/{contactId}:
     get:
       tags:
       - "Contacts"
-      summary: "GET /contacts/{contactId}"
+      summary: "Get a contact by contact id"
       description: "Get contacts by Contact Id."
       operationId: "getContactsById"
       parameters:
@@ -290,11 +261,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeContactDTO"
-      x-summary: "get"
+      x-summary: "Contacts : contactId"
     put:
       tags:
       - "Contacts"
-      summary: "PUT /contacts/{contactId}"
+      summary: "Update a contact by contactId"
       description: "Update contact by contact id."
       operationId: "replaceContact"
       parameters:
@@ -315,12 +286,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeContactDTO"
-      x-summary: "update"
+      x-summary: "Contacts : contactId"
   /gobii/v1/contacts/{email}:
     get:
       tags:
       - "Contacts"
-      summary: "GET /contacts/{email}"
+      summary: "Get contact by email id"
       description: "Get contact by email id."
       operationId: "getContactsByEmail"
       parameters:
@@ -335,13 +306,13 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeContactDTO"
-      x-summary: "getByEmailId"
+      x-summary: "Contacts : emailId"
   /gobii/v1/cvgroups/{cvGroupId}/cvs:
     get:
       tags:
-      - "CvGroups.cvs"
-      summary: "GET /cvgroups/{cvGroupId}/cvs"
-      description: "List CV terms in given group"
+      - "ControlledVocabularies"
+      summary: "list"
+      description: "List CV terms in CV group with cvGroupId"
       operationId: "getCvsForCvGroup"
       parameters:
       - name: "cvGroupId"
@@ -355,12 +326,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeCvDTO"
-      x-summary: "list"
+      x-summary: "CvGroups.cvs"
   /gobii/v1/cvgroups/{cvGroupTypeId}:
     get:
       tags:
-      - "CvGroups"
-      summary: "GET /cvgroups/{cvGroupTypeId}"
+      - "ControlledVocabularies"
+      summary: "Get a CV group by cvGroupTypeId"
       description: "Get CV group by cv group type ID"
       operationId: "getCvGroupsByType"
       parameters:
@@ -376,12 +347,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeCvGroupDTO"
-      x-summary: "get"
+      x-summary: "CvGroups : cvGroupTypeId"
   /gobii/v1/cvgroups/{groupName}:
     get:
       tags:
-      - "CvGroups"
-      summary: "Get /cvgroups/{groupName}"
+      - "ControlledVocabularies"
+      summary: "Get a CV group by groupName"
       description: "Get CV group by name"
       operationId: "getCvGroupDetails"
       parameters:
@@ -401,12 +372,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeCvGroupDTO"
-      x-summary: "getByGroupName"
+      x-summary: "CvGroups : groupName"
   /gobii/v1/cvs:
     get:
       tags:
       - "ControlledVocabularies"
-      summary: "GET /cvs"
+      summary: "List all CVs"
       description: "List all cvs in the GDM."
       operationId: "getCvs"
       parameters: []
@@ -415,11 +386,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeCvDTO"
-      x-summary: "list"
+      x-summary: "Cvs"
     post:
       tags:
       - "ControlledVocabularies"
-      summary: "POST /cvs"
+      summary: "Create a new Controlled Vocabulary"
       description: "Creates new cv's."
       operationId: "createCv"
       parameters:
@@ -433,12 +404,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeCvDTO"
-      x-summary: "create"
+      x-summary: "Cvs"
   /gobii/v1/cvs/{cvId}:
     get:
       tags:
       - "ControlledVocabularies"
-      summary: "GET /cvs/{cvId}"
+      summary: "Get a CV by cvId"
       description: "Get cv by the id."
       operationId: "getCvById"
       parameters:
@@ -454,11 +425,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeCvDTO"
-      x-summary: "get"
+      x-summary: "Cvs : cvId"
     put:
       tags:
       - "ControlledVocabularies"
-      summary: "PUT /cvs/{cvId}"
+      summary: "Update a CV by cvId"
       description: "Update cv by cvId."
       operationId: "replaceCv"
       parameters:
@@ -479,11 +450,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeCvDTO"
-      x-summary: "update"
+      x-summary: "Cvs : cvId"
     delete:
       tags:
       - "ControlledVocabularies"
-      summary: "DELETE /cvs/{cvId}"
+      summary: "Delete a CV by cvId"
       description: "Deletes cv by id."
       operationId: "deleteCv"
       parameters:
@@ -499,12 +470,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeCvDTO"
-      x-summary: "delete"
+      x-summary: "Cvs : cvId"
   /gobii/v1/cvs/{groupName}:
     get:
       tags:
-      - "Cvs"
-      summary: "GET /cvs/{groupName}"
+      - "ControlledVocabularies"
+      summary: "List all CVs in a given groupName"
       description: "List cvs by the group name."
       operationId: "getCvsByGroupName"
       parameters:
@@ -519,12 +490,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeCvDTO"
-      x-summary: "listCvsByGroupName"
+      x-summary: "Cvs : groupName"
   /gobii/v1/datasets:
     get:
       tags:
       - "Datasets"
-      summary: "GET /datasets"
+      summary: "List all datasets"
       description: "List all the existing datasets in the system. The list can be\
         \ retrieved by page and specific page size."
       operationId: "getDataSets"
@@ -550,11 +521,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeDataSetDTO"
-      x-summary: "list"
+      x-summary: "Datasets"
     post:
       tags:
       - "Datasets"
-      summary: "POST /datasets"
+      summary: "Create a new dataset"
       description: "Creates a new dataset in the system."
       operationId: "createDataSet"
       parameters:
@@ -568,12 +539,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeDataSetDTO"
-      x-summary: "create"
+      x-summary: "Datasets"
   /gobii/v1/datasets/types:
     get:
       tags:
-      - "Datasets.types"
-      summary: "GET /datasets/types"
+      - "Datasets"
+      summary: "List of types of datasets"
       description: "Lists dataset types in the system."
       operationId: "getDataSetsTypes"
       parameters: []
@@ -582,12 +553,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeNameIdDTO"
-      x-summary: "list"
+      x-summary: "Datasets.types"
   /gobii/v1/datasets/types/{id}:
     get:
       tags:
-      - "Datasets.types"
-      summary: "GET /datasets/types/{id}"
+      - "Datasets"
+      summary: "Get datasets by type id"
       description: "Gets the Dataset type by type ID."
       operationId: "getDataSetsByTypeId"
       parameters:
@@ -602,12 +573,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeDataSetDTO"
-      x-summary: "get"
+      x-summary: "Datasets.types : id"
   /gobii/v1/datasets/{dataSetId}:
     get:
       tags:
       - "Datasets"
-      summary: "GET /datasets/{dataSetId}"
+      summary: "Get dataset by datasetId"
       description: "Gets the Dataset entity having the specified ID."
       operationId: "getDataSetsById"
       parameters:
@@ -623,11 +594,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeDataSetDTO"
-      x-summary: "get"
+      x-summary: "Datasets : dataSetId"
     put:
       tags:
       - "Datasets"
-      summary: "PUT /datasets/{dataSetId}"
+      summary: "Update/Replace a dataset by datasetId"
       description: "Updates the Dataset entity having the specified datasetId."
       operationId: "replaceDataSet"
       parameters:
@@ -648,12 +619,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeDataSetDTO"
-      x-summary: "update"
+      x-summary: "Datasets : dataSetId"
   /gobii/v1/datasets/{dataSetId}/analyses:
     get:
       tags:
-      - "Datasets.analyses"
-      summary: "GET /datasets/{dataSetId}/analyses"
+      - "Datasets"
+      summary: "List all analyses in a dataset with given datasetId"
       description: "Lists all the analysis in a dataset identified by dataset id."
       operationId: "getAnalysesForDataset"
       parameters:
@@ -669,12 +640,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeAnalysisDTO"
-      x-summary: "list"
+      x-summary: "Datasets.analyses"
   /gobii/v1/datasets/{datasetId}/jobs:
     get:
       tags:
-      - "Datasets.jobs"
-      summary: "GET /datasets/{datasetId}/jobs"
+      - "Datasets"
+      summary: "List all jobs for a dataset with datasetId"
       description: "List information for active job for a given datasetId"
       operationId: "getJobDetailsByDatasetId"
       parameters:
@@ -688,12 +659,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeJobDTO"
-      x-summary: "list"
+      x-summary: "Datasets.jobs"
   /gobii/v1/displays:
     get:
       tags:
       - "Displays"
-      summary: "GET /displays"
+      summary: "List all displays"
       description: "Lists all Displays in GDM"
       operationId: "getDisplays"
       parameters: []
@@ -702,11 +673,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeDisplayDTO"
-      x-summary: "list"
+      x-summary: "Displays"
     post:
       tags:
       - "Displays"
-      summary: "POST /displays"
+      summary: "Create a new display"
       description: "Creates displays in GDM."
       operationId: "createDisplay"
       parameters:
@@ -720,12 +691,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeDisplayDTO"
-      x-summary: "create"
+      x-summary: "Displays"
   /gobii/v1/displays/{displayId}:
     get:
       tags:
       - "Displays"
-      summary: "GET /displays/{displayId}"
+      summary: "Get a display by displayId"
       description: "Get the Display by display Id"
       operationId: "getDisplayById"
       parameters:
@@ -741,11 +712,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeDisplayDTO"
-      x-summary: "get"
+      x-summary: "Displays : displayId"
     put:
       tags:
       - "Displays"
-      summary: "PUT /displays/{displayId}"
+      summary: "Update a display with displayId"
       description: "Updates the Display entity having the specified displayId."
       operationId: "replaceDisplay"
       parameters:
@@ -766,12 +737,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeDisplayDTO"
-      x-summary: "update"
+      x-summary: "Displays : displayId"
   /gobii/v1/entities:
     get:
       tags:
       - "Entities"
-      summary: "GET /entities"
+      summary: "List all entities"
       description: "Lists all the existing entities in the system."
       operationId: "getAllEntityStats"
       parameters: []
@@ -780,12 +751,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeEntityStatsDTO"
-      x-summary: "list"
+      x-summary: "Entities"
   /gobii/v1/entities/{entityNameParent}/{parentId}/{entityNameChild}/count:
     get:
       tags:
-      - "Entities.parent.child.count"
-      summary: "Gets /entities/{entityNameParent}/{parentId}/{entityNameChild}/count"
+      - "Entities"
+      summary: "Get entity count for a given entity child"
       description: "Retrieves the total count of the children for the given entity"
       operationId: "getEntityCountOfChildren"
       parameters:
@@ -810,12 +781,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeEntityStatsDTO"
-      x-summary: "get"
+      x-summary: "Child.count"
   /gobii/v1/entities/{entityName}/count:
     get:
       tags:
-      - "Entities.count"
-      summary: "GET /entities/{entityName}/count"
+      - "Entities"
+      summary: "Get count for a given entity"
       description: "Gets the total Entity count for the given entityName"
       operationId: "getEntityCount"
       parameters:
@@ -829,12 +800,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeEntityStatsDTO"
-      x-summary: "get"
+      x-summary: "Entities.count"
   /gobii/v1/entities/{entityName}/lastmodified:
     get:
       tags:
-      - "Entities.lastModified"
-      summary: "GET /entities/{entityName}/lastmodified"
+      - "Entities"
+      summary: "Get last modified date of an entity"
       description: "Gets last modified Entity for the given entityName"
       operationId: "getEntityLastModified"
       parameters:
@@ -848,12 +819,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeEntityStatsDTO"
-      x-summary: "get"
+      x-summary: "Entities.lastModified"
   /gobii/v1/experiments:
     get:
       tags:
       - "Experiments"
-      summary: "GET /experiments"
+      summary: "List all experiments"
       description: "List all the existing experiments in the system."
       operationId: "getExperiments"
       parameters: []
@@ -862,11 +833,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeExperimentDTO"
-      x-summary: "list"
+      x-summary: "Experiments"
     post:
       tags:
       - "Experiments"
-      summary: "POST /experiments"
+      summary: "Create a new experiment"
       description: "Creates a new experiment in the system."
       operationId: "createExperiment"
       parameters:
@@ -880,12 +851,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeExperimentDTO"
-      x-summary: "create"
+      x-summary: "Experiments"
   /gobii/v1/experiments/{experimentId}:
     get:
       tags:
       - "Experiments"
-      summary: "GET /experiments/{experimentId}"
+      summary: "Get a experiment by experimentId"
       description: "Gets the Experiment entity having the specified ID."
       operationId: "getExperimentsById"
       parameters:
@@ -901,11 +872,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeExperimentDTO"
-      x-summary: "get"
+      x-summary: "Experiments : experimentId"
     put:
       tags:
       - "Experiments"
-      summary: "PUT /experiments/{experimentId}"
+      summary: "Update an experiment by experimentId"
       description: "Updates the Experiment entity having the specified experimentId."
       operationId: "replaceExperiment"
       parameters:
@@ -926,12 +897,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeExperimentDTO"
-      x-summary: "update"
+      x-summary: "Experiments : experimentId"
   /gobii/v1/experiments/{experimentId}/protocols:
     get:
       tags:
-      - "Experiments.protocols"
-      summary: "GET /experiments/{experimentId}/protocols"
+      - "Experiments"
+      summary: "List all protocols for a given experimentId"
       description: "Retrieves all the protocols having the specified experimentId\
         \ in the system."
       operationId: "getProtocolByExperimentId"
@@ -948,12 +919,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeProtocolDTO"
-      x-summary: "list"
+      x-summary: "Experiments.protocols"
   /gobii/v1/files/loader/{directoryName}:
     get:
       tags:
-      - "Files.loader"
-      summary: "GET /files/loader/{directoryName}"
+      - "Files"
+      summary: "List of loader files in a given directory"
       description: "Gets file preview for the specified directory name"
       operationId: "getFilePreviewBySearch"
       parameters:
@@ -972,11 +943,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeLoaderFilePreviewDTO"
-      x-summary: "get"
+      x-summary: "Loader : directoryName"
     put:
       tags:
-      - "Files.loader"
-      summary: "PUT /files/loader/{directoryName}"
+      - "Files"
+      summary: "Add a loader file to given directory"
       description: "Updates a directory in the system that will be used for storing\
         \ the data files for loading"
       operationId: "createLoaderFileDirectory"
@@ -996,12 +967,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeLoaderFilePreviewDTO"
-      x-summary: "update"
+      x-summary: "Loader : directoryName"
   /gobii/v1/files/{destinationType}:
     post:
       tags:
       - "Files"
-      summary: "POST /files/{destinationType}"
+      summary: "Upload a file to given destination"
       description: "Uploads an arbitrary file to the specified destination"
       operationId: "uploadFile"
       parameters:
@@ -1025,11 +996,11 @@ paths:
           description: "successful operation"
           schema:
             type: "string"
-      x-summary: "upload"
+      x-summary: "Files : destinationType"
     delete:
       tags:
       - "Files"
-      summary: "DELETE /files/{destinationType}"
+      summary: "Detele a file by destination type"
       description: "Deletes an arbitrary file from the specified destination"
       operationId: "deleteFile"
       produces:
@@ -1050,12 +1021,12 @@ paths:
           description: "successful operation"
           schema:
             type: "string"
-      x-summary: "delete"
+      x-summary: "Files : destinationType"
   /gobii/v1/files/{gobiiJobId}/{destinationType}:
     get:
       tags:
-      - "Files.jobs"
-      summary: "GET /files/{gobiiJobId}/{destinationType}"
+      - "Files"
+      summary: "Download a job file from a given destination type"
       description: "Downloads the specified file for a specific job from the specified\
         \ directory"
       operationId: "downloadJobFile"
@@ -1080,11 +1051,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/InputStreamResource"
-      x-summary: "download"
+      x-summary: "Jobs : destinationType"
     post:
       tags:
-      - "Files.jobs"
-      summary: "POST /files/{gobiiJobId}/{destinationType}"
+      - "Files"
+      summary: "Upload a file for a given job and destination type"
       description: "Uploads the specified file for a specific job to the specified\
         \ directory"
       operationId: "uploadJobFile"
@@ -1114,12 +1085,12 @@ paths:
           description: "successful operation"
           schema:
             type: "string"
-      x-summary: "upload"
+      x-summary: "Jobs : destinationType"
   /gobii/v1/instructions/extractor:
     post:
       tags:
-      - "Instructions.extractor"
-      summary: "POST /instructions/extractor"
+      - "Instructions"
+      summary: "Create an extractor instruction file"
       description: "Creates extractor instruction file and then submits a new Job."
       operationId: "createExtractorInstruction"
       parameters:
@@ -1133,12 +1104,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeExtractorInstructionFilesDTO"
-      x-summary: "create"
+      x-summary: "Extractor"
   /gobii/v1/instructions/extractor/jobs/{jobName}:
     get:
       tags:
-      - "Instructions.extractor.jobs"
-      summary: "GET /instructions/extractor/jobs/{jobName}"
+      - "Instructions"
+      summary: "Get extractor job status by jobName"
       description: "Retrieves the extract job status along with other job details\
         \ having the specified Job Name."
       operationId: "getExtractorInstructionStatus"
@@ -1153,12 +1124,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeJobDTO"
-      x-summary: "get"
+      x-summary: "Extractor.jobs : jobName"
   /gobii/v1/instructions/extractor/{instructionFileName}:
     get:
       tags:
-      - "Instructions.extractor"
-      summary: "GET /instructions/extractor/{instructionFileName}"
+      - "Instructions"
+      summary: "Download an extractor instructor file"
       description: "Retrieves the extractor instruction file entity having the specified\
         \ instruction file name."
       operationId: "getExtractorInstruction"
@@ -1173,12 +1144,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeExtractorInstructionFilesDTO"
-      x-summary: "get"
+      x-summary: "extractor : instructionFileName"
   /gobii/v1/instructions/loader:
     post:
       tags:
-      - "Instructions.loader"
-      summary: "POST /instructions/loader"
+      - "Instructions"
+      summary: "Create loader instruction file"
       description: "Creates loader instruction file and then submits a new Job."
       operationId: "createLoaderInstruction"
       parameters:
@@ -1192,12 +1163,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeLoaderInstructionFilesDTO"
-      x-summary: "create"
+      x-summary: "Loader"
   /gobii/v1/instructions/loader/jobs/{jobName}:
     get:
       tags:
-      - "Instructions.loader.jobs"
-      summary: "GET /instructions/loader/jobs/{jobName}"
+      - "Instructions"
+      summary: "Get loader job status by job name"
       description: "Gets the loading job status along with other job details having\
         \ the specified Job Name."
       operationId: "getLoaderInstructionStatus"
@@ -1212,12 +1183,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeJobDTO"
-      x-summary: "get"
+      x-summary: "Loader.jobs : jobName"
   /gobii/v1/instructions/loader/{instructionFileName}:
     get:
       tags:
-      - "Instructions.loader"
-      summary: "GET /instructions/loader/{instructionFileName}"
+      - "Instructions"
+      summary: "Get a loader instruction file"
       description: "Gets the loader instruction file entity having the specified instruction\
         \ file name."
       operationId: "getLoaderInstruction"
@@ -1232,12 +1203,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeLoaderInstructionFilesDTO"
-      x-summary: "get"
+      x-summary: "Loader : instructionFileName"
   /gobii/v1/jobs:
     get:
       tags:
       - "Jobs"
-      summary: "GET /jobs"
+      summary: "List all jobs"
       description: "Lists all the existing jobs in the system."
       operationId: "getStatus"
       parameters: []
@@ -1246,11 +1217,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeJobDTO"
-      x-summary: "list"
+      x-summary: "Jobs"
     post:
       tags:
       - "Jobs"
-      summary: "POST /jobs"
+      summary: "Create a new job"
       description: "Creates a new job in the system."
       operationId: "createJob"
       parameters:
@@ -1264,12 +1235,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeJobDTO"
-      x-summary: "create"
+      x-summary: "Jobs"
   /gobii/v1/jobs/dnasamples/{jobName}:
     post:
       tags:
-      - "Jobs.dnasamples"
-      summary: "POST /jobs/dnasamples/{jobName}"
+      - "Jobs"
+      summary: "Create DNA samples for a given job"
       description: "Creates DNA samples for a given Job having the specified name\
         \ in the system."
       operationId: "submitDnaSamplesByJobName"
@@ -1289,12 +1260,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeJobDTO"
-      x-summary: "create"
+      x-summary: "DnaSamples : jobName"
   /gobii/v1/jobs/{jobName}:
     get:
       tags:
       - "Jobs"
-      summary: "GET /jobs/{jobName}"
+      summary: "Get job details by job name"
       description: "Gets the Job entity having the specified name."
       operationId: "getStatusById"
       parameters:
@@ -1308,11 +1279,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeJobDTO"
-      x-summary: "get"
+      x-summary: "Jobs : jobName"
     put:
       tags:
       - "Jobs"
-      summary: "PUT /jobs/{jobName}"
+      summary: "Update a job by jobName"
       description: "Updates the Job entity having the specified jobName."
       operationId: "replaceStatus"
       parameters:
@@ -1331,12 +1302,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeJobDTO"
-      x-summary: "update"
+      x-summary: "Jobs : jobName"
   /gobii/v1/manifests:
     get:
       tags:
       - "Manifests"
-      summary: "GET /manifests"
+      summary: "List all manifests"
       description: "Lists an unfiltered list of all Manifest entities."
       operationId: "getManifests"
       parameters: []
@@ -1345,11 +1316,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeManifestDTO"
-      x-summary: "list"
+      x-summary: "Manifests"
     post:
       tags:
       - "Manifests"
-      summary: "POST /manifests"
+      summary: "Create a manifest"
       description: "Creates a Manifest entity for GOBii system."
       operationId: "createManifest"
       parameters:
@@ -1363,12 +1334,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeManifestDTO"
-      x-summary: "create"
+      x-summary: "Manifests"
   /gobii/v1/manifests/{manifestId}:
     get:
       tags:
       - "Manifests"
-      summary: "GET /manifests/{manifestId}"
+      summary: "Get manifests by manifestId"
       description: "Gets the Manifest entity having the specified ID."
       operationId: "getManifestById"
       parameters:
@@ -1384,11 +1355,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeManifestDTO"
-      x-summary: "get"
+      x-summary: "Manifests : manifestId"
     put:
       tags:
       - "Manifests"
-      summary: "PUT /manifests/{manifestId}"
+      summary: "Update a manifest"
       description: "Updates the Manifest entity having the specified manifestId."
       operationId: "replaceManifest"
       parameters:
@@ -1409,12 +1380,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeManifestDTO"
-      x-summary: "update"
+      x-summary: "Manifests : manifestId"
   /gobii/v1/maps:
     get:
       tags:
       - "Maps"
-      summary: "GET /maps"
+      summary: "List all mapsets"
       description: "Lists all the existing Mapsets in the system."
       operationId: "getMaps"
       parameters: []
@@ -1423,12 +1394,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeMapsetDTO"
-      x-summary: "list"
+      x-summary: "Maps"
   /gobii/v1/mapsets:
     get:
       tags:
-      - "Mapsets"
-      summary: "GET /mapsets"
+      - "Maps"
+      summary: "List all mapsets"
       description: "List all the existing mapsets in the system."
       operationId: "getMapsets"
       parameters: []
@@ -1437,11 +1408,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeMapsetDTO"
-      x-summary: "list"
+      x-summary: "Mapsets"
     post:
       tags:
-      - "Mapsets"
-      summary: "POST /mapsets"
+      - "Maps"
+      summary: "Create a new Mapset"
       description: "Creates a new mapset in the system."
       operationId: "createMapset"
       parameters:
@@ -1455,12 +1426,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeMapsetDTO"
-      x-summary: "create"
+      x-summary: "Mapsets"
   /gobii/v1/mapsets/{mapsetId}:
     get:
       tags:
-      - "Mapsets"
-      summary: "GET /mapsets/{mapsetId}"
+      - "Maps"
+      summary: "Get mapsets by mapsetId"
       description: "Gets the Mapset entity having the specified ID."
       operationId: "getMapsetById"
       parameters:
@@ -1476,11 +1447,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeMapsetDTO"
-      x-summary: "get"
+      x-summary: "Mapsets : mapsetId"
     put:
       tags:
-      - "Mapsets"
-      summary: "PUT /mapsets/{mapsetId}"
+      - "Maps"
+      summary: "Update a mapset by mapsetId"
       description: "Updates the Mapset entity having the specified mapsetId."
       operationId: "replaceMapset"
       parameters:
@@ -1501,12 +1472,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeMapsetDTO"
-      x-summary: "update"
+      x-summary: "Mapsets : mapsetId"
   /gobii/v1/marker-search:
     get:
       tags:
-      - "MarkerSearch"
-      summary: "GET /marker-search"
+      - "Markers"
+      summary: "List all markers from markers search"
       description: "List Marker search results."
       operationId: "getMarkerByName"
       parameters:
@@ -1520,12 +1491,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeMarkerDTO"
-      x-summary: "list"
+      x-summary: "MarkerSearch"
   /gobii/v1/markergroups:
     get:
       tags:
-      - "MarkerGroups"
-      summary: "GET /markergroups"
+      - "Markers"
+      summary: "List all markergroups"
       description: "Lists all the existing marker groups in the system."
       operationId: "getMarkerGroups"
       parameters: []
@@ -1534,11 +1505,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeMarkerGroupDTO"
-      x-summary: "list"
+      x-summary: "MarkerGroups"
     post:
       tags:
-      - "MarkerGroups"
-      summary: "POST /markergroups"
+      - "Markers"
+      summary: "Create a new Marker group"
       description: "Creates a new marker group in the system."
       operationId: "createMarkerGroup"
       parameters:
@@ -1552,12 +1523,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeMarkerGroupDTO"
-      x-summary: "create"
+      x-summary: "MarkerGroups"
   /gobii/v1/markergroups/{markerGroupId}:
     get:
       tags:
-      - "MarkerGroups"
-      summary: "GET /markergroups/{markerGroupId}"
+      - "Markers"
+      summary: "Gets all markers in a given markergroup"
       description: "Retrieves the Marker Group entity having the specified ID."
       operationId: "getMarkerGroupById"
       parameters:
@@ -1573,11 +1544,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeMarkerGroupDTO"
-      x-summary: "get"
+      x-summary: "MarkerGroups : markerGroupId"
     put:
       tags:
-      - "MarkerGroups"
-      summary: "PUT /markergroups/{markerGroupId}"
+      - "Markers"
+      summary: "Update a marker by markergroupId"
       description: "Updates the Marker Group entity having the specified markerGroupId."
       operationId: "replaceMarkerGroup"
       parameters:
@@ -1598,12 +1569,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeMarkerGroupDTO"
-      x-summary: "update"
+      x-summary: "MarkerGroups : markerGroupId"
   /gobii/v1/markers:
     get:
       tags:
       - "Markers"
-      summary: "GET /markers"
+      summary: "List all markers"
       description: "Lists all the existing markers in the system."
       operationId: "getMarkers"
       parameters: []
@@ -1612,11 +1583,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeMarkerDTO"
-      x-summary: "list"
+      x-summary: "Markers"
     post:
       tags:
       - "Markers"
-      summary: "POST /markers"
+      summary: "Create a new marker"
       description: "Creates a new marker in the system."
       operationId: "createMarker"
       parameters:
@@ -1630,12 +1601,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeMarkerDTO"
-      x-summary: "create"
+      x-summary: "Markers"
   /gobii/v1/markers/{markerId}:
     get:
       tags:
       - "Markers"
-      summary: "GET /markers/{markerId}"
+      summary: "Get a marker by markerId"
       description: "Retrieves the Marker entity having the specified ID."
       operationId: "getMarkerById"
       parameters:
@@ -1651,11 +1622,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeMarkerDTO"
-      x-summary: "get"
+      x-summary: "Markers : markerId"
     put:
       tags:
       - "Markers"
-      summary: "PUT /markers/{markerId}"
+      summary: "Update a marker by markerId"
       description: "Updates the Marker entity having the specified markerId."
       operationId: "replaceMarker"
       parameters:
@@ -1676,12 +1647,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeMarkerDTO"
-      x-summary: "update"
+      x-summary: "Markers : markerId"
   /gobii/v1/names/{entity}:
     get:
       tags:
       - "Names"
-      summary: "GET /names/{entity}"
+      summary: "List all NameIds"
       description: "List of name/ID combination for a given entity. For the list of\
         \ entities supported see class GobiiEntityNameType.List can further be filtered\
         \ out by specifying the filter type and value.For the list of filter types\
@@ -1710,11 +1681,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeNameIdDTO"
-      x-summary: "list"
+      x-summary: "Names : entity"
     post:
       tags:
       - "Names"
-      summary: "POST /names/{entity}"
+      summary: "Create a new NameID"
       description: "Retrieves a list of name/ID combination for a given entity and\
         \ name list. For the list of entities supported see class GobiiEntityNameType.This\
         \ is service is specifically implemented for these filter types: NAMES_BY_NAME_LIST\
@@ -1754,12 +1725,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeNameIdDTO"
-      x-summary: "get"
+      x-summary: "Names : entity"
   /gobii/v1/organizations:
     get:
       tags:
       - "Organizations"
-      summary: "GET /organizations"
+      summary: "List all organizations"
       description: "List all the existing organizations in the system."
       operationId: "getOrganizations"
       parameters: []
@@ -1768,11 +1739,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeOrganizationDTO"
-      x-summary: "list"
+      x-summary: "Organizations"
     post:
       tags:
       - "Organizations"
-      summary: "POST /organizations"
+      summary: "Create a new organization"
       description: "Creates a new organization in the system."
       operationId: "createOrganization"
       parameters:
@@ -1786,12 +1757,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeOrganizationDTO"
-      x-summary: "create"
+      x-summary: "Organizations"
   /gobii/v1/organizations/{organizationId}:
     get:
       tags:
       - "Organizations"
-      summary: "GET /organizations/{organizationId}"
+      summary: "Get organization by organizationId"
       description: "Retrieves the Organization entity having the specified ID."
       operationId: "getOrganizationsById"
       parameters:
@@ -1807,11 +1778,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeOrganizationDTO"
-      x-summary: "get"
+      x-summary: "Organizations : organizationId"
     put:
       tags:
       - "Organizations"
-      summary: "PUT /organizations/{organizationId}"
+      summary: "Update an organization by organizationId"
       description: "Updates the Organization entity having the specified organizationId."
       operationId: "replaceOrganization"
       parameters:
@@ -1832,12 +1803,31 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeOrganizationDTO"
-      x-summary: "update"
+      x-summary: "Organizations : organizationId"
+  /gobii/v1/ping:
+    post:
+      tags:
+      - "Ping"
+      summary: "ping"
+      description: "Pings the GDB Web server."
+      operationId: "getPingResponse"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/PayloadEnvelopePingDTO"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/PayloadEnvelopePingDTO"
+      x-summary: "Ping"
   /gobii/v1/platforms:
     get:
       tags:
       - "Platforms"
-      summary: "GET /platforms"
+      summary: "List all platforms"
       description: "List all the existing platforms in the system."
       operationId: "getPlatforms"
       parameters: []
@@ -1846,11 +1836,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopePlatformDTO"
-      x-summary: "list"
+      x-summary: "Platforms"
     post:
       tags:
       - "Platforms"
-      summary: "POST /platforms"
+      summary: "Create a new platform"
       description: "Creates a new Platform in the system."
       operationId: "createPlatform"
       parameters:
@@ -1864,11 +1854,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopePlatformDTO"
-      x-summary: "create"
+      x-summary: "Platforms"
   /gobii/v1/platforms/protocols/{vendorProtocolId}:
     get:
       tags:
-      - "Platform.protocols"
+      - "Platforms"
       summary: "GET /platforms/protocols/{vendorProtocolId}"
       description: "Gets the Platform entity having the specified Vendor Protocol\
         \ ID."
@@ -1886,12 +1876,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopePlatformDTO"
-      x-summary: "get"
+      x-summary: "Protocols : vendorProtocolId"
   /gobii/v1/platforms/{platformId}:
     get:
       tags:
       - "Platforms"
-      summary: "GET /platforms/{platformId}"
+      summary: "Get a platform by platformId"
       description: "Retrieves the Platform entity having the specified ID."
       operationId: "getPlatformsById"
       parameters:
@@ -1907,11 +1897,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopePlatformDTO"
-      x-summary: "get"
+      x-summary: "Platforms : platformId"
     put:
       tags:
       - "Platforms"
-      summary: "PUT /platforms/{platformId}"
+      summary: "Update a platform by platformId"
       description: "Updates the Platform entity having the specified platformId."
       operationId: "replacePlatform"
       parameters:
@@ -1932,12 +1922,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopePlatformDTO"
-      x-summary: "update"
+      x-summary: "Platforms : platformId"
   /gobii/v1/projects:
     get:
       tags:
       - "Projects"
-      summary: "GET /projects"
+      summary: "List all projects"
       description: "List all the existing projects in the system."
       operationId: "getProjects"
       parameters: []
@@ -1946,11 +1936,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeProjectDTO"
-      x-summary: "list"
+      x-summary: "Projects"
     post:
       tags:
       - "Projects"
-      summary: "GET /projects"
+      summary: "Create a new project"
       description: "Creates a new project in the system."
       operationId: "createProject"
       parameters:
@@ -1964,12 +1954,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeProjectDTO"
-      x-summary: "create"
+      x-summary: "Projects"
   /gobii/v1/projects/{projectId}:
     get:
       tags:
       - "Projects"
-      summary: "GET /projects/{projectId}"
+      summary: "Get a project by projectId"
       description: "Retrieves the Project entity having the specified ID."
       operationId: "getProjectsById"
       parameters:
@@ -1985,11 +1975,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeProjectDTO"
-      x-summary: "get"
+      x-summary: "Projects : projectId"
     put:
       tags:
       - "Projects"
-      summary: "PUT /projects/{projectId}"
+      summary: "Update a project by projectId"
       description: "Updates the Project entity having the specified projectId."
       operationId: "replaceProject"
       parameters:
@@ -2010,12 +2000,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeProjectDTO"
-      x-summary: "update"
+      x-summary: "Projects : projectId"
   /gobii/v1/protocols:
     get:
       tags:
       - "Protocols"
-      summary: "GET /protocols"
+      summary: "List all protocols"
       description: "List all the existing protocols in the system."
       operationId: "getProtocols"
       parameters: []
@@ -2024,11 +2014,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeProtocolDTO"
-      x-summary: "list"
+      x-summary: "Protocols"
     post:
       tags:
       - "Protocols"
-      summary: "POST /protocols"
+      summary: "Create a new protocol"
       description: "Creates a new Protocol in the system."
       operationId: "createProtocol"
       parameters:
@@ -2042,12 +2032,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeProtocolDTO"
-      x-summary: "create"
+      x-summary: "Protocols"
   /gobii/v1/protocols/{protocolId}:
     get:
       tags:
       - "Protocols"
-      summary: "GET /protocols/{protocolId}"
+      summary: "Get a protocol by protocolId"
       description: "Retrieves the Protocol entity having the specified ID."
       operationId: "getProtocol"
       parameters:
@@ -2063,11 +2053,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeProtocolDTO"
-      x-summary: "get"
+      x-summary: "Protocols : protocolId"
     put:
       tags:
       - "Protocols"
-      summary: "PUT /protocols/{protocolId}"
+      summary: "Update a protocol by protocolId"
       description: "Updates the Protocol entity having the specified protocolId."
       operationId: "replaceProtocol"
       parameters:
@@ -2088,12 +2078,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeProtocolDTO"
-      x-summary: "update"
+      x-summary: "Protocols : protocolId"
   /gobii/v1/protocols/{protocolId}/vendors:
     get:
       tags:
-      - "Protocols.vendor"
-      summary: "GET /protocols/{protocolId}/vendors"
+      - "Protocols"
+      summary: "List all vendors for a given protocolId"
       description: "List all the vendor protocols given protocolId in the system."
       operationId: "getVendorsForProtocol"
       parameters:
@@ -2109,11 +2099,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeOrganizationDTO"
-      x-summary: "list"
+      x-summary: "Protocols.vendors"
     post:
       tags:
       - "Protocols.vendor"
-      summary: "POST /protocols/{protocolId}/vendors"
+      summary: "Create new vendors for a given protocolId"
       description: "Creates a new Vendor Protocol in the system for specified Protocol\
         \ ID."
       operationId: "addVendorToProtocol"
@@ -2135,11 +2125,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeOrganizationDTO"
-      x-summary: "create"
+      x-summary: "Protocols.vendors"
     put:
       tags:
-      - "Protocols.vendor"
-      summary: "PUT /protocols/{protocolId}/vendors"
+      - "Protocols"
+      summary: "Update vendors for a given protocolId"
       description: "Updates the Vendor Protocol entity having the specified protocolId."
       operationId: "updateOrReplaceVendorProtocol"
       parameters:
@@ -2160,12 +2150,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeOrganizationDTO"
-      x-summary: "update"
+      x-summary: "Protocols.vendors"
   /gobii/v1/references:
     get:
       tags:
       - "References"
-      summary: "GET /references"
+      summary: "List all references"
       description: "Lists all the existing references in the system."
       operationId: "getReferences"
       parameters: []
@@ -2174,11 +2164,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeReferenceDTO"
-      x-summary: "list"
+      x-summary: "References"
     post:
       tags:
       - "References"
-      summary: "POST /references"
+      summary: "Create a new reference"
       description: "Creates a new reference in the system."
       operationId: "createReference"
       parameters:
@@ -2192,7 +2182,7 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeReferenceDTO"
-      x-summary: "create"
+      x-summary: "References"
   /gobii/v1/references/{referenceId}:
     get:
       tags:
@@ -2213,11 +2203,11 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeReferenceDTO"
-      x-summary: "get"
+      x-summary: "References : referenceId"
     put:
       tags:
       - "References"
-      summary: "PUT /references/{referenceId}"
+      summary: "Update a reference by referenceId"
       description: "Updates the Reference entity having the specified referenceId."
       operationId: "replaceReference"
       parameters:
@@ -2238,7 +2228,7 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeReferenceDTO"
-      x-summary: "update"
+      x-summary: "References : referenceId"
   /gobii/v1/restprofiles:
     put:
       tags:
@@ -3283,11 +3273,11 @@ definitions:
         type: "string"
       open:
         type: "boolean"
+      readable:
+        type: "boolean"
       uri:
         type: "string"
         format: "uri"
-      readable:
-        type: "boolean"
       filename:
         type: "string"
       url:

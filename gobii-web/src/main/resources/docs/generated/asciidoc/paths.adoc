@@ -2,30 +2,8 @@
 [[_paths]]
 == Paths
 
-[[_getpingresponse]]
-=== POST /gobii/v1/Pings the Gobii System
-
-==== Parameters
-
-[options="header", cols=".^2,.^3,.^4"]
-|===
-|Type|Name|Schema
-|**Body**|**body** +
-__|<<_payloadenvelopepingdto,PayloadEnvelopePingDTO>>
-|===
-
-
-==== Responses
-
-[options="header", cols=".^2,.^14,.^4"]
-|===
-|HTTP Code|Description|Schema
-|**200**|successful operation|<<_payloadenvelopepingdto,PayloadEnvelopePingDTO>>
-|===
-
-
 [[_createanalysis]]
-=== POST /analyses
+=== Create a new analyses.
 ....
 POST /gobii/v1/analyses
 ....
@@ -60,7 +38,7 @@ __|<<_payloadenvelopeanalysisdto,PayloadEnvelopeAnalysisDTO>>
 
 
 [[_getanalyses]]
-=== GET /analyses
+=== List all analyses
 ....
 GET /gobii/v1/analyses
 ....
@@ -85,7 +63,7 @@ List of all Analysis entities.
 
 
 [[_getanalysisbyid]]
-=== GET /analyses/{analysisId}
+=== Get an analyses by analysesId
 ....
 GET /gobii/v1/analyses/{analysisId}
 ....
@@ -120,7 +98,7 @@ __|ID of Analysis to be extracted.|integer (int32)
 
 
 [[_replaceanalysis]]
-=== PUT /analyses/{analysisId}
+=== Update the analyses by analysesId
 ....
 PUT /gobii/v1/analyses/{analysisId}
 ....
@@ -157,7 +135,7 @@ __||<<_payloadenvelopeanalysisdto,PayloadEnvelopeAnalysisDTO>>
 
 
 [[_authenticate]]
-=== POST /auth
+=== authenticate
 ....
 POST /gobii/v1/auth
 ....
@@ -198,7 +176,7 @@ __||string
 
 
 [[_getconfigsettings]]
-=== GET /configsettings
+=== List all configuration settings.
 ....
 GET /gobii/v1/configsettings/
 ....
@@ -224,7 +202,7 @@ List all configuration settings.
 
 
 [[_getcontactsbysearch]]
-=== GET /contacts-search
+=== List all contacts from Contacts search
 ....
 GET /gobii/v1/contact-search
 ....
@@ -261,11 +239,11 @@ __|contact's user name|string
 
 ==== Tags
 
-* ContactsSearch
+* Contacts
 
 
 [[_createcontact]]
-=== POST /contacts
+=== Create a new contact
 ....
 POST /gobii/v1/contacts
 ....
@@ -300,7 +278,7 @@ __|<<_payloadenvelopecontactdto,PayloadEnvelopeContactDTO>>
 
 
 [[_getcontacts]]
-=== GET /contacts
+=== List all contacts
 ....
 GET /gobii/v1/contacts
 ....
@@ -325,7 +303,7 @@ List all contacts.
 
 
 [[_getcontactsbyid]]
-=== GET /contacts/{contactId}
+=== Get a contact by contact id
 ....
 GET /gobii/v1/contacts/{contactId}
 ....
@@ -360,7 +338,7 @@ __|ID of contacts to be extracted.|integer (int32)
 
 
 [[_replacecontact]]
-=== PUT /contacts/{contactId}
+=== Update a contact by contactId
 ....
 PUT /gobii/v1/contacts/{contactId}
 ....
@@ -397,7 +375,7 @@ __||<<_payloadenvelopecontactdto,PayloadEnvelopeContactDTO>>
 
 
 [[_getcontactsbyemail]]
-=== GET /contacts/{email}
+=== Get contact by email id
 ....
 GET /gobii/v1/contacts/{email}
 ....
@@ -432,14 +410,14 @@ __|email id of contacts to be extracted.|string
 
 
 [[_getcvsforcvgroup]]
-=== GET /cvgroups/{cvGroupId}/cvs
+=== list
 ....
 GET /gobii/v1/cvgroups/{cvGroupId}/cvs
 ....
 
 
 ==== Description
-List CV terms in given group
+List CV terms in CV group with cvGroupId
 
 
 ==== Parameters
@@ -463,11 +441,11 @@ __|ID of the CV group.|integer (int32)
 
 ==== Tags
 
-* CvGroups.cvs
+* ControlledVocabularies
 
 
 [[_getcvgroupsbytype]]
-=== GET /cvgroups/{cvGroupTypeId}
+=== Get a CV group by cvGroupTypeId
 ....
 GET /gobii/v1/cvgroups/{cvGroupTypeId}
 ....
@@ -498,11 +476,11 @@ __|ID of the cv group type|integer (int32)
 
 ==== Tags
 
-* CvGroups
+* ControlledVocabularies
 
 
 [[_getcvgroupdetails]]
-=== Get /cvgroups/{groupName}
+=== Get a CV group by groupName
 ....
 GET /gobii/v1/cvgroups/{groupName}
 ....
@@ -535,11 +513,11 @@ __||integer (int32)
 
 ==== Tags
 
-* CvGroups
+* ControlledVocabularies
 
 
 [[_createcv]]
-=== POST /cvs
+=== Create a new Controlled Vocabulary
 ....
 POST /gobii/v1/cvs
 ....
@@ -574,7 +552,7 @@ __|<<_payloadenvelopecvdto,PayloadEnvelopeCvDTO>>
 
 
 [[_getcvs]]
-=== GET /cvs
+=== List all CVs
 ....
 GET /gobii/v1/cvs
 ....
@@ -599,7 +577,7 @@ List all cvs in the GDM.
 
 
 [[_getcvbyid]]
-=== GET /cvs/{cvId}
+=== Get a CV by cvId
 ....
 GET /gobii/v1/cvs/{cvId}
 ....
@@ -634,7 +612,7 @@ __|ID of the CV to be extracted|integer (int32)
 
 
 [[_replacecv]]
-=== PUT /cvs/{cvId}
+=== Update a CV by cvId
 ....
 PUT /gobii/v1/cvs/{cvId}
 ....
@@ -671,7 +649,7 @@ __||<<_payloadenvelopecvdto,PayloadEnvelopeCvDTO>>
 
 
 [[_deletecv]]
-=== DELETE /cvs/{cvId}
+=== Delete a CV by cvId
 ....
 DELETE /gobii/v1/cvs/{cvId}
 ....
@@ -706,7 +684,7 @@ __|ID of cv to be deleted|integer (int32)
 
 
 [[_getcvsbygroupname]]
-=== GET /cvs/{groupName}
+=== List all CVs in a given groupName
 ....
 GET /gobii/v1/cvs/{groupName}
 ....
@@ -737,11 +715,11 @@ __|name of cv group to be extracted|string
 
 ==== Tags
 
-* Cvs
+* ControlledVocabularies
 
 
 [[_createdataset]]
-=== POST /datasets
+=== Create a new dataset
 ....
 POST /gobii/v1/datasets
 ....
@@ -776,7 +754,7 @@ __|<<_payloadenvelopedatasetdto,PayloadEnvelopeDataSetDTO>>
 
 
 [[_getdatasets]]
-=== GET /datasets
+=== List all datasets
 ....
 GET /gobii/v1/datasets
 ....
@@ -815,7 +793,7 @@ __||string
 
 
 [[_getdatasetstypes]]
-=== GET /datasets/types
+=== List of types of datasets
 ....
 GET /gobii/v1/datasets/types
 ....
@@ -836,11 +814,11 @@ Lists dataset types in the system.
 
 ==== Tags
 
-* Datasets.types
+* Datasets
 
 
 [[_getdatasetsbytypeid]]
-=== GET /datasets/types/{id}
+=== Get datasets by type id
 ....
 GET /gobii/v1/datasets/types/{id}
 ....
@@ -871,11 +849,11 @@ __|ID of the dataset type|integer (int32)
 
 ==== Tags
 
-* Datasets.types
+* Datasets
 
 
 [[_getdatasetsbyid]]
-=== GET /datasets/{dataSetId}
+=== Get dataset by datasetId
 ....
 GET /gobii/v1/datasets/{dataSetId}
 ....
@@ -910,7 +888,7 @@ __|ID of the Dataset to be extracted|integer (int32)
 
 
 [[_replacedataset]]
-=== PUT /datasets/{dataSetId}
+=== Update/Replace a dataset by datasetId
 ....
 PUT /gobii/v1/datasets/{dataSetId}
 ....
@@ -947,7 +925,7 @@ __||<<_payloadenvelopedatasetdto,PayloadEnvelopeDataSetDTO>>
 
 
 [[_getanalysesfordataset]]
-=== GET /datasets/{dataSetId}/analyses
+=== List all analyses in a dataset with given datasetId
 ....
 GET /gobii/v1/datasets/{dataSetId}/analyses
 ....
@@ -978,11 +956,11 @@ __|ID of the dataset|integer (int32)
 
 ==== Tags
 
-* Datasets.analyses
+* Datasets
 
 
 [[_getjobdetailsbydatasetid]]
-=== GET /datasets/{datasetId}/jobs
+=== List all jobs for a dataset with datasetId
 ....
 GET /gobii/v1/datasets/{datasetId}/jobs
 ....
@@ -1013,11 +991,11 @@ __|ID of the dataset|string
 
 ==== Tags
 
-* Datasets.jobs
+* Datasets
 
 
 [[_createdisplay]]
-=== POST /displays
+=== Create a new display
 ....
 POST /gobii/v1/displays
 ....
@@ -1052,7 +1030,7 @@ __|<<_payloadenvelopedisplaydto,PayloadEnvelopeDisplayDTO>>
 
 
 [[_getdisplays]]
-=== GET /displays
+=== List all displays
 ....
 GET /gobii/v1/displays
 ....
@@ -1077,7 +1055,7 @@ Lists all Displays in GDM
 
 
 [[_getdisplaybyid]]
-=== GET /displays/{displayId}
+=== Get a display by displayId
 ....
 GET /gobii/v1/displays/{displayId}
 ....
@@ -1112,7 +1090,7 @@ __|ID of the Display to be extracted|integer (int32)
 
 
 [[_replacedisplay]]
-=== PUT /displays/{displayId}
+=== Update a display with displayId
 ....
 PUT /gobii/v1/displays/{displayId}
 ....
@@ -1149,7 +1127,7 @@ __||<<_payloadenvelopedisplaydto,PayloadEnvelopeDisplayDTO>>
 
 
 [[_getallentitystats]]
-=== GET /entities
+=== List all entities
 ....
 GET /gobii/v1/entities
 ....
@@ -1174,7 +1152,7 @@ Lists all the existing entities in the system.
 
 
 [[_getentitycountofchildren]]
-=== Gets /entities/{entityNameParent}/{parentId}/{entityNameChild}/count
+=== Get entity count for a given entity child
 ....
 GET /gobii/v1/entities/{entityNameParent}/{parentId}/{entityNameChild}/count
 ....
@@ -1209,11 +1187,11 @@ __|ID of the parent entity|integer (int32)
 
 ==== Tags
 
-* Entities.parent.child.count
+* Entities
 
 
 [[_getentitycount]]
-=== GET /entities/{entityName}/count
+=== Get count for a given entity
 ....
 GET /gobii/v1/entities/{entityName}/count
 ....
@@ -1244,11 +1222,11 @@ __|Name of the Entity|string
 
 ==== Tags
 
-* Entities.count
+* Entities
 
 
 [[_getentitylastmodified]]
-=== GET /entities/{entityName}/lastmodified
+=== Get last modified date of an entity
 ....
 GET /gobii/v1/entities/{entityName}/lastmodified
 ....
@@ -1279,11 +1257,11 @@ __|Name of the Entity|string
 
 ==== Tags
 
-* Entities.lastModified
+* Entities
 
 
 [[_createexperiment]]
-=== POST /experiments
+=== Create a new experiment
 ....
 POST /gobii/v1/experiments
 ....
@@ -1318,7 +1296,7 @@ __|<<_payloadenvelopeexperimentdto,PayloadEnvelopeExperimentDTO>>
 
 
 [[_getexperiments]]
-=== GET /experiments
+=== List all experiments
 ....
 GET /gobii/v1/experiments
 ....
@@ -1343,7 +1321,7 @@ List all the existing experiments in the system.
 
 
 [[_getexperimentsbyid]]
-=== GET /experiments/{experimentId}
+=== Get a experiment by experimentId
 ....
 GET /gobii/v1/experiments/{experimentId}
 ....
@@ -1378,7 +1356,7 @@ __|ID of the Experiment to be updated|integer (int32)
 
 
 [[_replaceexperiment]]
-=== PUT /experiments/{experimentId}
+=== Update an experiment by experimentId
 ....
 PUT /gobii/v1/experiments/{experimentId}
 ....
@@ -1415,7 +1393,7 @@ __||<<_payloadenvelopeexperimentdto,PayloadEnvelopeExperimentDTO>>
 
 
 [[_getprotocolbyexperimentid]]
-=== GET /experiments/{experimentId}/protocols
+=== List all protocols for a given experimentId
 ....
 GET /gobii/v1/experiments/{experimentId}/protocols
 ....
@@ -1446,11 +1424,11 @@ __|ID of the Experiment|integer (int32)
 
 ==== Tags
 
-* Experiments.protocols
+* Experiments
 
 
 [[_getfilepreviewbysearch]]
-=== GET /files/loader/{directoryName}
+=== List of loader files in a given directory
 ....
 GET /gobii/v1/files/loader/{directoryName}
 ....
@@ -1483,11 +1461,11 @@ __|Format/Extension of the file|string
 
 ==== Tags
 
-* Files.loader
+* Files
 
 
 [[_createloaderfiledirectory]]
-=== PUT /files/loader/{directoryName}
+=== Add a loader file to given directory
 ....
 PUT /gobii/v1/files/loader/{directoryName}
 ....
@@ -1520,11 +1498,11 @@ __||<<_payloadenvelopeloaderfilepreviewdto,PayloadEnvelopeLoaderFilePreviewDTO>>
 
 ==== Tags
 
-* Files.loader
+* Files
 
 
 [[_uploadfile]]
-=== POST /files/{destinationType}
+=== Upload a file to given destination
 ....
 POST /gobii/v1/files/{destinationType}
 ....
@@ -1563,7 +1541,7 @@ __|Name of the file to be uploaded|string
 
 
 [[_deletefile]]
-=== DELETE /files/{destinationType}
+=== Detele a file by destination type
 ....
 DELETE /gobii/v1/files/{destinationType}
 ....
@@ -1605,7 +1583,7 @@ __|Name of the file to be deleted|string
 
 
 [[_uploadjobfile]]
-=== POST /files/{gobiiJobId}/{destinationType}
+=== Upload a file for a given job and destination type
 ....
 POST /gobii/v1/files/{gobiiJobId}/{destinationType}
 ....
@@ -1642,11 +1620,11 @@ __|Name of the file|string
 
 ==== Tags
 
-* Files.jobs
+* Files
 
 
 [[_downloadjobfile]]
-=== GET /files/{gobiiJobId}/{destinationType}
+=== Download a job file from a given destination type
 ....
 GET /gobii/v1/files/{gobiiJobId}/{destinationType}
 ....
@@ -1681,11 +1659,11 @@ __|Name of the file to be downloaded|string
 
 ==== Tags
 
-* Files.jobs
+* Files
 
 
 [[_createextractorinstruction]]
-=== POST /instructions/extractor
+=== Create an extractor instruction file
 ....
 POST /gobii/v1/instructions/extractor
 ....
@@ -1716,11 +1694,11 @@ __|<<_payloadenvelopeextractorinstructionfilesdto,PayloadEnvelopeExtractorInstru
 
 ==== Tags
 
-* Instructions.extractor
+* Instructions
 
 
 [[_getextractorinstructionstatus]]
-=== GET /instructions/extractor/jobs/{jobName}
+=== Get extractor job status by jobName
 ....
 GET /gobii/v1/instructions/extractor/jobs/{jobName}
 ....
@@ -1751,11 +1729,11 @@ __|Name of the job|string
 
 ==== Tags
 
-* Instructions.extractor.jobs
+* Instructions
 
 
 [[_getextractorinstruction]]
-=== GET /instructions/extractor/{instructionFileName}
+=== Download an extractor instructor file
 ....
 GET /gobii/v1/instructions/extractor/{instructionFileName}
 ....
@@ -1786,11 +1764,11 @@ __|Name of the instruction file to be retrieved|string
 
 ==== Tags
 
-* Instructions.extractor
+* Instructions
 
 
 [[_createloaderinstruction]]
-=== POST /instructions/loader
+=== Create loader instruction file
 ....
 POST /gobii/v1/instructions/loader
 ....
@@ -1821,11 +1799,11 @@ __|<<_payloadenvelopeloaderinstructionfilesdto,PayloadEnvelopeLoaderInstructionF
 
 ==== Tags
 
-* Instructions.loader
+* Instructions
 
 
 [[_getloaderinstructionstatus]]
-=== GET /instructions/loader/jobs/{jobName}
+=== Get loader job status by job name
 ....
 GET /gobii/v1/instructions/loader/jobs/{jobName}
 ....
@@ -1856,11 +1834,11 @@ __|Name of the job|string
 
 ==== Tags
 
-* Instructions.loader.jobs
+* Instructions
 
 
 [[_getloaderinstruction]]
-=== GET /instructions/loader/{instructionFileName}
+=== Get a loader instruction file
 ....
 GET /gobii/v1/instructions/loader/{instructionFileName}
 ....
@@ -1891,11 +1869,11 @@ __|Name of the instruction file to be retrieved.|string
 
 ==== Tags
 
-* Instructions.loader
+* Instructions
 
 
 [[_createjob]]
-=== POST /jobs
+=== Create a new job
 ....
 POST /gobii/v1/jobs
 ....
@@ -1930,7 +1908,7 @@ __|<<_payloadenvelopejobdto,PayloadEnvelopeJobDTO>>
 
 
 [[_getstatus]]
-=== GET /jobs
+=== List all jobs
 ....
 GET /gobii/v1/jobs
 ....
@@ -1955,7 +1933,7 @@ Lists all the existing jobs in the system.
 
 
 [[_submitdnasamplesbyjobname]]
-=== POST /jobs/dnasamples/{jobName}
+=== Create DNA samples for a given job
 ....
 POST /gobii/v1/jobs/dnasamples/{jobName}
 ....
@@ -1988,11 +1966,11 @@ __||<<_payloadenvelopednasampledto,PayloadEnvelopeDnaSampleDTO>>
 
 ==== Tags
 
-* Jobs.dnasamples
+* Jobs
 
 
 [[_getstatusbyid]]
-=== GET /jobs/{jobName}
+=== Get job details by job name
 ....
 GET /gobii/v1/jobs/{jobName}
 ....
@@ -2027,7 +2005,7 @@ __|Name of the Job to be extracted|string
 
 
 [[_replacestatus]]
-=== PUT /jobs/{jobName}
+=== Update a job by jobName
 ....
 PUT /gobii/v1/jobs/{jobName}
 ....
@@ -2064,7 +2042,7 @@ __||<<_payloadenvelopejobdto,PayloadEnvelopeJobDTO>>
 
 
 [[_createmanifest]]
-=== POST /manifests
+=== Create a manifest
 ....
 POST /gobii/v1/manifests
 ....
@@ -2099,7 +2077,7 @@ __|<<_payloadenvelopemanifestdto,PayloadEnvelopeManifestDTO>>
 
 
 [[_getmanifests]]
-=== GET /manifests
+=== List all manifests
 ....
 GET /gobii/v1/manifests
 ....
@@ -2124,7 +2102,7 @@ Lists an unfiltered list of all Manifest entities.
 
 
 [[_getmanifestbyid]]
-=== GET /manifests/{manifestId}
+=== Get manifests by manifestId
 ....
 GET /gobii/v1/manifests/{manifestId}
 ....
@@ -2159,7 +2137,7 @@ __|ID of the Manifest to be retrieved|integer (int32)
 
 
 [[_replacemanifest]]
-=== PUT /manifests/{manifestId}
+=== Update a manifest
 ....
 PUT /gobii/v1/manifests/{manifestId}
 ....
@@ -2196,7 +2174,7 @@ __||<<_payloadenvelopemanifestdto,PayloadEnvelopeManifestDTO>>
 
 
 [[_getmaps]]
-=== GET /maps
+=== List all mapsets
 ....
 GET /gobii/v1/maps
 ....
@@ -2221,7 +2199,7 @@ Lists all the existing Mapsets in the system.
 
 
 [[_createmapset]]
-=== POST /mapsets
+=== Create a new Mapset
 ....
 POST /gobii/v1/mapsets
 ....
@@ -2252,11 +2230,11 @@ __|<<_payloadenvelopemapsetdto,PayloadEnvelopeMapsetDTO>>
 
 ==== Tags
 
-* Mapsets
+* Maps
 
 
 [[_getmapsets]]
-=== GET /mapsets
+=== List all mapsets
 ....
 GET /gobii/v1/mapsets
 ....
@@ -2277,11 +2255,11 @@ List all the existing mapsets in the system.
 
 ==== Tags
 
-* Mapsets
+* Maps
 
 
 [[_getmapsetbyid]]
-=== GET /mapsets/{mapsetId}
+=== Get mapsets by mapsetId
 ....
 GET /gobii/v1/mapsets/{mapsetId}
 ....
@@ -2312,11 +2290,11 @@ __|ID of the Mapset to be extracted|integer (int32)
 
 ==== Tags
 
-* Mapsets
+* Maps
 
 
 [[_replacemapset]]
-=== PUT /mapsets/{mapsetId}
+=== Update a mapset by mapsetId
 ....
 PUT /gobii/v1/mapsets/{mapsetId}
 ....
@@ -2349,11 +2327,11 @@ __||<<_payloadenvelopemapsetdto,PayloadEnvelopeMapsetDTO>>
 
 ==== Tags
 
-* Mapsets
+* Maps
 
 
 [[_getmarkerbyname]]
-=== GET /marker-search
+=== List all markers from markers search
 ....
 GET /gobii/v1/marker-search
 ....
@@ -2384,11 +2362,11 @@ __|Name of the marker|string
 
 ==== Tags
 
-* MarkerSearch
+* Markers
 
 
 [[_createmarkergroup]]
-=== POST /markergroups
+=== Create a new Marker group
 ....
 POST /gobii/v1/markergroups
 ....
@@ -2419,11 +2397,11 @@ __|<<_payloadenvelopemarkergroupdto,PayloadEnvelopeMarkerGroupDTO>>
 
 ==== Tags
 
-* MarkerGroups
+* Markers
 
 
 [[_getmarkergroups]]
-=== GET /markergroups
+=== List all markergroups
 ....
 GET /gobii/v1/markergroups
 ....
@@ -2444,11 +2422,11 @@ Lists all the existing marker groups in the system.
 
 ==== Tags
 
-* MarkerGroups
+* Markers
 
 
 [[_getmarkergroupbyid]]
-=== GET /markergroups/{markerGroupId}
+=== Gets all markers in a given markergroup
 ....
 GET /gobii/v1/markergroups/{markerGroupId}
 ....
@@ -2479,11 +2457,11 @@ __|ID of the marker group to be updated|integer (int32)
 
 ==== Tags
 
-* MarkerGroups
+* Markers
 
 
 [[_replacemarkergroup]]
-=== PUT /markergroups/{markerGroupId}
+=== Update a marker by markergroupId
 ....
 PUT /gobii/v1/markergroups/{markerGroupId}
 ....
@@ -2516,11 +2494,11 @@ __||<<_payloadenvelopemarkergroupdto,PayloadEnvelopeMarkerGroupDTO>>
 
 ==== Tags
 
-* MarkerGroups
+* Markers
 
 
 [[_createmarker]]
-=== POST /markers
+=== Create a new marker
 ....
 POST /gobii/v1/markers
 ....
@@ -2555,7 +2533,7 @@ __|<<_payloadenvelopemarkerdto,PayloadEnvelopeMarkerDTO>>
 
 
 [[_getmarkers]]
-=== GET /markers
+=== List all markers
 ....
 GET /gobii/v1/markers
 ....
@@ -2580,7 +2558,7 @@ Lists all the existing markers in the system.
 
 
 [[_getmarkerbyid]]
-=== GET /markers/{markerId}
+=== Get a marker by markerId
 ....
 GET /gobii/v1/markers/{markerId}
 ....
@@ -2615,7 +2593,7 @@ __|ID of the Marker to be extracted|integer (int32)
 
 
 [[_replacemarker]]
-=== PUT /markers/{markerId}
+=== Update a marker by markerId
 ....
 PUT /gobii/v1/markers/{markerId}
 ....
@@ -2652,7 +2630,7 @@ __||<<_payloadenvelopemarkerdto,PayloadEnvelopeMarkerDTO>>
 
 
 [[_getnamesbynamelist]]
-=== POST /names/{entity}
+=== Create a new NameID
 ....
 POST /gobii/v1/names/{entity}
 ....
@@ -2693,7 +2671,7 @@ __||<<_payloadenvelopenameiddto,PayloadEnvelopeNameIdDTO>>
 
 
 [[_getnames]]
-=== GET /names/{entity}
+=== List all NameIds
 ....
 GET /gobii/v1/names/{entity}
 ....
@@ -2732,7 +2710,7 @@ __|The value for the filter type|string
 
 
 [[_createorganization]]
-=== POST /organizations
+=== Create a new organization
 ....
 POST /gobii/v1/organizations
 ....
@@ -2767,7 +2745,7 @@ __|<<_payloadenvelopeorganizationdto,PayloadEnvelopeOrganizationDTO>>
 
 
 [[_getorganizations]]
-=== GET /organizations
+=== List all organizations
 ....
 GET /gobii/v1/organizations
 ....
@@ -2792,7 +2770,7 @@ List all the existing organizations in the system.
 
 
 [[_getorganizationsbyid]]
-=== GET /organizations/{organizationId}
+=== Get organization by organizationId
 ....
 GET /gobii/v1/organizations/{organizationId}
 ....
@@ -2827,7 +2805,7 @@ __|ID of the Organization to be extracted|integer (int32)
 
 
 [[_replaceorganization]]
-=== PUT /organizations/{organizationId}
+=== Update an organization by organizationId
 ....
 PUT /gobii/v1/organizations/{organizationId}
 ....
@@ -2863,8 +2841,43 @@ __||<<_payloadenvelopeorganizationdto,PayloadEnvelopeOrganizationDTO>>
 * Organizations
 
 
+[[_getpingresponse]]
+=== ping
+....
+POST /gobii/v1/ping
+....
+
+
+==== Description
+Pings the GDB Web server.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^4"]
+|===
+|Type|Name|Schema
+|**Body**|**body** +
+__|<<_payloadenvelopepingdto,PayloadEnvelopePingDTO>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|successful operation|<<_payloadenvelopepingdto,PayloadEnvelopePingDTO>>
+|===
+
+
+==== Tags
+
+* Ping
+
+
 [[_createplatform]]
-=== POST /platforms
+=== Create a new platform
 ....
 POST /gobii/v1/platforms
 ....
@@ -2899,7 +2912,7 @@ __|<<_payloadenvelopeplatformdto,PayloadEnvelopePlatformDTO>>
 
 
 [[_getplatforms]]
-=== GET /platforms
+=== List all platforms
 ....
 GET /gobii/v1/platforms
 ....
@@ -2955,11 +2968,11 @@ __|ID of the vendor protocol|integer (int32)
 
 ==== Tags
 
-* Platform.protocols
+* Platforms
 
 
 [[_getplatformsbyid]]
-=== GET /platforms/{platformId}
+=== Get a platform by platformId
 ....
 GET /gobii/v1/platforms/{platformId}
 ....
@@ -2994,7 +3007,7 @@ __|ID of the Platform to be extracted|integer (int32)
 
 
 [[_replaceplatform]]
-=== PUT /platforms/{platformId}
+=== Update a platform by platformId
 ....
 PUT /gobii/v1/platforms/{platformId}
 ....
@@ -3031,7 +3044,7 @@ __||<<_payloadenvelopeplatformdto,PayloadEnvelopePlatformDTO>>
 
 
 [[_createproject]]
-=== GET /projects
+=== Create a new project
 ....
 POST /gobii/v1/projects
 ....
@@ -3066,7 +3079,7 @@ __|<<_payloadenvelopeprojectdto,PayloadEnvelopeProjectDTO>>
 
 
 [[_getprojects]]
-=== GET /projects
+=== List all projects
 ....
 GET /gobii/v1/projects
 ....
@@ -3091,7 +3104,7 @@ List all the existing projects in the system.
 
 
 [[_getprojectsbyid]]
-=== GET /projects/{projectId}
+=== Get a project by projectId
 ....
 GET /gobii/v1/projects/{projectId}
 ....
@@ -3126,7 +3139,7 @@ __|ID of the Project to be extracted|integer (int32)
 
 
 [[_replaceproject]]
-=== PUT /projects/{projectId}
+=== Update a project by projectId
 ....
 PUT /gobii/v1/projects/{projectId}
 ....
@@ -3163,7 +3176,7 @@ __||<<_payloadenvelopeprojectdto,PayloadEnvelopeProjectDTO>>
 
 
 [[_createprotocol]]
-=== POST /protocols
+=== Create a new protocol
 ....
 POST /gobii/v1/protocols
 ....
@@ -3198,7 +3211,7 @@ __|<<_payloadenvelopeprotocoldto,PayloadEnvelopeProtocolDTO>>
 
 
 [[_getprotocols]]
-=== GET /protocols
+=== List all protocols
 ....
 GET /gobii/v1/protocols
 ....
@@ -3223,7 +3236,7 @@ List all the existing protocols in the system.
 
 
 [[_getprotocol]]
-=== GET /protocols/{protocolId}
+=== Get a protocol by protocolId
 ....
 GET /gobii/v1/protocols/{protocolId}
 ....
@@ -3258,7 +3271,7 @@ __|ID of the Protocol to be extracted|integer (int32)
 
 
 [[_replaceprotocol]]
-=== PUT /protocols/{protocolId}
+=== Update a protocol by protocolId
 ....
 PUT /gobii/v1/protocols/{protocolId}
 ....
@@ -3295,7 +3308,7 @@ __||<<_payloadenvelopeprotocoldto,PayloadEnvelopeProtocolDTO>>
 
 
 [[_addvendortoprotocol]]
-=== POST /protocols/{protocolId}/vendors
+=== Create new vendors for a given protocolId
 ....
 POST /gobii/v1/protocols/{protocolId}/vendors
 ....
@@ -3332,7 +3345,7 @@ __||<<_payloadenvelopeorganizationdto,PayloadEnvelopeOrganizationDTO>>
 
 
 [[_getvendorsforprotocol]]
-=== GET /protocols/{protocolId}/vendors
+=== List all vendors for a given protocolId
 ....
 GET /gobii/v1/protocols/{protocolId}/vendors
 ....
@@ -3363,11 +3376,11 @@ __|ID of the Protocol ID|integer (int32)
 
 ==== Tags
 
-* Protocols.vendor
+* Protocols
 
 
 [[_updateorreplacevendorprotocol]]
-=== PUT /protocols/{protocolId}/vendors
+=== Update vendors for a given protocolId
 ....
 PUT /gobii/v1/protocols/{protocolId}/vendors
 ....
@@ -3400,11 +3413,11 @@ __||<<_payloadenvelopeorganizationdto,PayloadEnvelopeOrganizationDTO>>
 
 ==== Tags
 
-* Protocols.vendor
+* Protocols
 
 
 [[_createreference]]
-=== POST /references
+=== Create a new reference
 ....
 POST /gobii/v1/references
 ....
@@ -3439,7 +3452,7 @@ __|<<_payloadenvelopereferencedto,PayloadEnvelopeReferenceDTO>>
 
 
 [[_getreferences]]
-=== GET /references
+=== List all references
 ....
 GET /gobii/v1/references
 ....
@@ -3499,7 +3512,7 @@ __|ID of the Reference to be extracted|integer (int32)
 
 
 [[_replacereference]]
-=== PUT /references/{referenceId}
+=== Update a reference by referenceId
 ....
 PUT /gobii/v1/references/{referenceId}
 ....
