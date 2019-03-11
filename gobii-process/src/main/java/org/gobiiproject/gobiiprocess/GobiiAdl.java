@@ -62,6 +62,8 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.jar.JarFile;
@@ -1347,6 +1349,15 @@ public class GobiiAdl {
 
         newDataSetDTO.setCreatedBy(1);
         newDataSetDTO.setModifiedBy(1);
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        String newDate = dateFormat.format(date);
+
+        Date createdDate = new SimpleDateFormat("yyyy-MM-dd").parse(newDate);
+
+        newDataSetDTO.setCreatedDate(createdDate);
+
         setFKeyDbPKeyForNewEntity(fkeys, DataSetDTO.class, newDataSetDTO, parentElement, dbPkeysurrogateValue, document, xPath);
         System.out.println("Calling the web service...\n");
 
