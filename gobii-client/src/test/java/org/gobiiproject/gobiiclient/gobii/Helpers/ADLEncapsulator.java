@@ -23,8 +23,11 @@ public class ADLEncapsulator {
     private static final String JAVA_COMMAND = "java -jar";
     private static final String OUTPUT_FILE_NAME = "output.txt";
     private static final String ERROR_FILE_NAME = "error.txt";
+    private static final String INPUT_EXTRACT = "-no_extract";
+    private static final String INPUT_FILE_COMPARATOR = "-fc";
 
-    private String inputHost, inputUser, inputPassword, inputScenario, inputDirectory, adlJarPath, errorMsg;
+    private String inputHost, inputUser, inputPassword, inputScenario, inputDirectory, adlJarPath, errorMsg, inputExtract;
+    private String inputFileComparator = null;
     private Integer inputTimeout;
 
     private String getInputHost() {
@@ -91,6 +94,22 @@ public class ADLEncapsulator {
         this.errorMsg = errorMsg;
     }
 
+    private String getInputExtract() {
+        return inputExtract;
+    }
+
+    public void setInputExtract(String inputExtract) {
+        this.inputExtract = inputExtract;
+    }
+
+    private String getInputFileComparator() {
+        return inputFileComparator;
+    }
+
+    public void setInputFileComparator(String inputFileComparator) {
+        this.inputFileComparator = inputFileComparator;
+    }
+
     private String getBasicCommand() {
         String servercommand = JAVA_COMMAND + SPACE;
         servercommand += getAdlJarPath() + SPACE;
@@ -98,6 +117,13 @@ public class ADLEncapsulator {
         servercommand += INPUT_USER + SPACE + getInputUser() + SPACE;
         servercommand += INPUT_PASSWORD + SPACE + getInputPassword() + SPACE;
         servercommand += INPUT_TIMEOUT + SPACE + getInputTimeout() + SPACE;
+
+        if (getInputFileComparator() != null) {
+
+            servercommand += INPUT_FILE_COMPARATOR + SPACE + getInputFileComparator() + SPACE;
+
+        }
+
         return servercommand;
     }
 

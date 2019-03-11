@@ -39,6 +39,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstructio
 import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderFilePreviewDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.types.*;
+import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.InstructionFileAccess;
 import org.gobiiproject.gobiimodel.utils.InstructionFileValidator;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
@@ -63,6 +64,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.jar.JarFile;
 
 /**
  * Created by VCalaminos on 2/21/2017.
@@ -78,6 +80,8 @@ public class GobiiAdl {
     private static File parentDirectoryPath;
     private static boolean batchMode = true;
     private static boolean doExtract = true;
+    private static String fileComparatorPath = null;
+    private static String pathToMatrixFile = null;
 
     private static String INPUT_HOST = "h";
     private static String INPUT_USER = "u";
@@ -86,6 +90,7 @@ public class GobiiAdl {
     private static String INPUT_SCENARIO = "s";
     private static String INPUT_DIRECTORY = "d";
     private static String INPUT_EXTRACT = "no_extract";
+    private static String INPUT_FILECOMPARATOR = "fc";
     private static String NAME_COMMAND = "GobiiAdl";
 
     private static List<GobiiDataSetExtract> dataSetExtractReturnList = null;
@@ -1646,47 +1651,77 @@ public class GobiiAdl {
     }
 
 
-    private static void compareExtractedFiles(String localPathName, File[] extractedFiles) throws Exception {
+    private static void compareExtractedFiles(String localPathName, File scenarioFolder, String jobName) throws Exception {
 
-        System.out.println("\nComparing extracted files by ADL with extracted files from extractor UI...\n");
+        // check if file comparator tool exists
 
-        for (File currentFile : extractedFiles) {
+        File fileComparatorJar = new File(fileComparatorPath);
 
-            String fileName = currentFile.getName();
+        if (!fileComparatorJar.exists()) {
+            processError("File Comparator tool does not exist. Skipping comparison of files", GobiiStatusLevel.WARNING);
+        } else {
 
-            if (fileName.endsWith(".log") || fileName.endsWith(".XML") || fileName.equals("summary.file")) {
-                //skip
-                continue;
+
+            System.out.println("\nComparing output matrix by ADL with input dataset:\n");
+
+            // check if hapmap file exists
+            File hapmapExtractFile = new File(localPathName + "/Dataset.hmp.txt");
+            File flapjackExtractFile = new File(localPathName + "/Dataset.genotype");
+            File extractFile = null;
+
+            if (!hapmapExtractFile.exists() && !flapjackExtractFile.exists()) {
+                processError("Output matrix file does not exist.", GobiiStatusLevel.WARNING);
+            } else {
+
+                if (hapmapExtractFile.exists()) {
+                    extractFile = hapmapExtractFile;
+                } else {
+                    extractFile = flapjackExtractFile;
+                }
+
+                File dataInputFile = new File(pathToMatrixFile);
+
+                if (!dataInputFile.exists()){
+                    processError("Input Data file does not exist.", GobiiStatusLevel.WARNING);
+                } else {
+
+                    // create comparison output directory
+                    File outputDir = new File(scenarioFolder.getAbsoluteFile() + "/File_Comparator_Results/");
+                    if (!outputDir.exists() || !outputDir.isDirectory()) {
+                        outputDir.mkdir();
+                    }
+
+                    String outputFileName = outputDir.getAbsoluteFile() +"/" +jobName+"-";
+
+                    String command = "java -jar " + fileComparatorJar.getAbsoluteFile() + " -i " + dataInputFile.getAbsoluteFile() + " -t " + extractFile.getAbsoluteFile() + " -o " + outputFileName;
+
+                    boolean successful = HelperFunctions.tryExec(command, "output.txt", "error.txt");
+
+                    File outputFile = new File(outputFileName+"output.txt");
+                    if (outputFile.exists()) {
+
+                        BufferedReader reader = new BufferedReader(new FileReader(outputFileName+"output.txt"));
+                        int lines = 0;
+                        Boolean comparePassed = true;
+                        while (reader.readLine() != null) {
+
+                            if (lines > 1) {
+                                comparePassed = false;
+                                break;
+                            }
+
+                            lines++;
+                        }
+                        reader.close();
+                        String message = (comparePassed) ? "PASSED" : "FAILED";
+                        System.out.print(message);
+                    }
+
+                }
+
             }
-
-            File localFile = new File(localPathName + "/" + fileName);
-
-            if (!localFile.exists()) {
-                processError("\nFile: " + fileName + " does not exist in the local files.", GobiiStatusLevel.WARNING);
-                continue;
-            }
-
-            if (localFile.isDirectory()) {
-                processError("\nFile: " + fileName + " is a directory.", GobiiStatusLevel.WARNING);
-                continue;
-            }
-
-            boolean isFileEqual = FileUtils.contentEquals(currentFile, localFile);
-
-            if (!isFileEqual) {
-
-                processError("\nExtracted file: " + fileName +" from ADL and extractor UI are not equal.", GobiiStatusLevel.WARNING);
-                continue;
-
-            }
-
-            System.out.println("\nExtracted file: " + fileName + " from ADL and extractor UI are equal");
-
 
         }
-
-
-
     }
 
 
@@ -1914,6 +1949,9 @@ public class GobiiAdl {
                 writeSourcePath = false;
                 processError("Data file " + sourcePath + " for scenario " + scenarioName + " not found.", GobiiStatusLevel.ERROR);
             }
+
+            // save matrix file path
+            pathToMatrixFile =  sourcePath;
 
             String fileExpr = "//Scenario[Name='" + scenarioName + "']/Files/Instruction";
             XPathExpression xPathExpressionFiles = xPath.compile(fileExpr);
@@ -2534,7 +2572,7 @@ public class GobiiAdl {
 
                 if (dataFileDir.exists() && dataFileDir.isDirectory() && dataFileDir.listFiles().length > 0) {
 
-                    compareExtractedFiles(localPathName, extractedFiles);
+                    compareExtractedFiles(localPathName, subDirectory, jobName);
 
                 }
 
@@ -2626,6 +2664,7 @@ public class GobiiAdl {
         setOption(options, INPUT_SCENARIO, true, "Specifies the path of one subdirectory under the main directory. When specified, tool is run in single-scenario mode", "scenario");
         setOption(options, INPUT_DIRECTORY, true, "Specifies the path to the directory where the files are in", "directory");
         setOption(options, INPUT_EXTRACT, false, "If specified, ADL won't do an extract", "extract");
+        setOption(options, INPUT_FILECOMPARATOR, true, "Specifies the path to GDMFileProject.jar", "file comparator");
 
         // parse the commandline
         CommandLineParser parser = new DefaultParser();
@@ -2677,11 +2716,17 @@ public class GobiiAdl {
         timeoutInMillis = TimeUnit.MINUTES.toMillis(timeout);
 
         if (commandLine.hasOption(INPUT_EXTRACT)) {
-
             doExtract = false;
-
         }
 
+        if (commandLine.hasOption(INPUT_FILECOMPARATOR)) {
+
+            fileComparatorPath = commandLine.getOptionValue(INPUT_FILECOMPARATOR);
+        }
+
+        if (fileComparatorPath == null) {
+            fileComparatorPath = "GDMFileProject.jar";
+        }
 
         String directory;
         File parentDirectory = null;
