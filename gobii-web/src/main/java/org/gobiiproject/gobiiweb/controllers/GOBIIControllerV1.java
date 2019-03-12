@@ -592,7 +592,13 @@ public class GOBIIControllerV1 {
             tags = {"Contacts"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Contacts")
+                            @ExtensionProperty(name="summary", value="Contacts"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="A contact is a person who can be assigned different roles " +
+                                            "according to their system access. " +
+                                            "For example, curators can submit and extract all projects and update CV terms."
+                            )
                     })
             }
     )
@@ -904,7 +910,15 @@ public class GOBIIControllerV1 {
             tags = {"ControlledVocabularies"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="Cvs")
+                    @ExtensionProperty(name="summary", value="Cvs"),
+                    @ExtensionProperty(
+                            name="tag-description",
+                            value="Edit property fields and type fields in the Controlled Vocabulary tables. " +
+                                    "Property fields are identified by the suffix '_prop.' " +
+                                    "These are additional, user-defined fields associated with database tables. " +
+                                    "Type fields are identified by the suffix '_type.' " +
+                                    "These control the entries being loaded to a field and require an exact match. "
+                    )
             })}
     )
     @RequestMapping(value = "/cvs", method = RequestMethod.POST)
@@ -1350,7 +1364,12 @@ public class GOBIIControllerV1 {
             tags = {"Datasets"},
             extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name="summary", value="Datasets")
+                    @ExtensionProperty(name="summary", value="Datasets"),
+                    @ExtensionProperty(
+                            name="tag-description",
+                            value="In a Dataset, you can define the suite of analyses" +
+                                    " applied to the data to generate the dataset"
+                    )
             })}
     )
     @RequestMapping(value = "/datasets", method = RequestMethod.POST)
@@ -2240,7 +2259,13 @@ public class GOBIIControllerV1 {
             tags = {"Manifests"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Manifests")
+                            @ExtensionProperty(name="summary", value="Manifests"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="A fixed set of markers that run in a single reaction. " +
+                                            "Use the manifest to extract data by the manifest name, " +
+                                            "rather than listing the markers contained in the manifest."
+                            )
                     })}
     )
     @RequestMapping(value = "/manifests", method = RequestMethod.POST)
@@ -2428,7 +2453,12 @@ public class GOBIIControllerV1 {
             tags = {"Markers"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Markers")
+                            @ExtensionProperty(name="summary", value="Markers"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="A Marker Group defines a group of markers, " +
+                                            "the marker platform, and any optional favorable alleles for each marker."
+                            )
                     })
             }
     )
@@ -2985,7 +3015,15 @@ public class GOBIIControllerV1 {
             tags = {"Organizations"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Organizations")
+                            @ExtensionProperty(name="summary", value="Organizations"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="Organization is a company or institute. " +
+                                            "Organization may be associated with a contact " +
+                                            "in the Define Contacts page. An organization can " +
+                                            "also describe a vendor and be associated with a " +
+                                            "protocol to create a vendor-protocol in the Define Protocols page."
+                            )
                     })
             }
     )
@@ -3190,7 +3228,14 @@ public class GOBIIControllerV1 {
             tags = {"Maps"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Maps")
+                            @ExtensionProperty(name="summary", value="Maps"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="A mapset describes distances between " +
+                                            "markers and their association to linkage " +
+                                            "groups or chromosomes. A marker can belong to, " +
+                                            "or be mapped to, one or multiple mapsets."
+                            )
                     })
             }
     )
@@ -3237,7 +3282,22 @@ public class GOBIIControllerV1 {
             tags = {"Platforms"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Platforms")
+                            @ExtensionProperty(name="summary", value="Platforms"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="The platform describes the general chemistry used to generate marker genotyping data. " +
+                                            "Examples of platforms are KASP, Illumina, etc. All markers must be associated with a platform.\n" +
+                                            "There are several considerations for defining platforms.\n" +
+                                            "1. Consistency of data generated: the expectation is that within each platform, the genotyping data " +
+                                            "generated by a marker name should give consistent results to allow for future composite scores by marker. " +
+                                            "A marker that generates data using different chemistry or separation methods would likely give different results " +
+                                            "and should be placed in separate platforms (or given a different marker name).\n" +
+                                            "2. Avoiding unnecessary duplication of marker names:  if five different sequencing methods each " +
+                                            "produce the same or overlapping marker names that give equivalent genotyping scores, they should " +
+                                            "all be placed under a single platform. For example, \"Sequencing,\" and the five methods described using protocols. \n" +
+                                            "3. Extract requirements: one of the primary extracts will be by   platform, and so consider how the " +
+                                            "user will want to extract data."
+                            )
                     })
             }
     )
@@ -3485,7 +3545,13 @@ public class GOBIIControllerV1 {
             tags = {"Projects"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Projects")
+                            @ExtensionProperty(name="summary", value="Projects"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="A project consists of a group of samples that are, " +
+                                            "or will be, genotyped. A project belongs to a Principal Investigator (PI), " +
+                                            "also called a PI contact. "
+                            )
                     })
             }
     )
@@ -3681,7 +3747,12 @@ public class GOBIIControllerV1 {
             tags = {"Experiments"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Experiments")
+                            @ExtensionProperty(name="summary", value="Experiments"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="An experiment defines the protocol and vendor" +
+                                            " used to generate the genotyping data. More than one experiment can belong to a project."
+                            )
                     })}
     )
     @RequestMapping(value = "/experiments", method = RequestMethod.POST)
@@ -3875,7 +3946,19 @@ public class GOBIIControllerV1 {
             tags = {"Protocols"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Protocols")
+                            @ExtensionProperty(name="summary", value="Protocols"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="Protocols are grouped within platforms. " +
+                                            "Protocol defines the specific method that " +
+                                            "is used to generate the genotyping data for a " +
+                                            "set of markers within a platform. There could be" +
+                                            " minor differences in the genotyping data generated " +
+                                            "by different protocols within the same platform, but the " +
+                                            "data should not be substantially different for the " +
+                                            "same marker for the same marker. Examples of protocols " +
+                                            "are different enzymes used to generate GbS data within a sequencing platform."
+                            )
                     })}
     )
     @RequestMapping(value = "/protocols", method = RequestMethod.POST)
@@ -4062,7 +4145,13 @@ public class GOBIIControllerV1 {
             tags = {"Protocols.vendor"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Protocols.vendors")
+                            @ExtensionProperty(name="summary", value="Protocols.vendors"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="Selection of a vendor allows for a unique combination of the vendor" +
+                                            " and protocol to be defined. Vendor names are generated in Define | Organization. " +
+                                            "For additional information, refer to Organizations."
+                            )
                     })}
     )
     @RequestMapping(value = "/protocols/{protocolId:[\\d]+}/vendors", method = RequestMethod.POST)
@@ -4369,7 +4458,14 @@ public class GOBIIControllerV1 {
             tags = {"Maps"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="Mapsets")
+                            @ExtensionProperty(name="summary", value="Mapsets"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="A mapset describes distances between " +
+                                            "markers and their association to linkage " +
+                                            "groups or chromosomes. A marker can belong to, " +
+                                            "or be mapped to, one or multiple mapsets."
+                            )
                     })}
     )
     @RequestMapping(value = "/mapsets", method = RequestMethod.POST)
@@ -4745,7 +4841,12 @@ public class GOBIIControllerV1 {
             tags = {"References"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="References")
+                            @ExtensionProperty(name="summary", value="References"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="The authoritative genome reference and " +
+                                            "associated linked files for a physical mapset."
+                            )
                     })}
     )
     @RequestMapping(value = "/references", method = RequestMethod.POST)
