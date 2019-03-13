@@ -2143,7 +2143,7 @@ public class GOBIIControllerV1 {
             tags = {"Instructions"},
             extensions = {
                     @Extension(properties = {
-                            @ExtensionProperty(name="summary", value="extractor : instructionFileName")
+                            @ExtensionProperty(name="summary", value="Extractor : instructionFileName")
                     })}
     )
     @RequestMapping(value = "/instructions/extractor/{instructionFileName}", method = RequestMethod.GET)
