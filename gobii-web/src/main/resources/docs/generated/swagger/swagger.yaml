@@ -1144,7 +1144,7 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/PayloadEnvelopeExtractorInstructionFilesDTO"
-      x-summary: "extractor : instructionFileName"
+      x-summary: "Extractor : instructionFileName"
   /gobii/v1/instructions/loader:
     post:
       tags:
@@ -4340,13 +4340,13 @@ definitions:
         type: "array"
         items:
           type: "string"
+      id:
+        type: "integer"
+        format: "int32"
       dbMetaData:
         type: "array"
         items:
           type: "string"
-      id:
-        type: "integer"
-        format: "int32"
   PlatformDTO:
     type: "object"
     properties:

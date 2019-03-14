@@ -1413,7 +1413,7 @@
             }
           }
         },
-        "x-summary" : "extractor : instructionFileName"
+        "x-summary" : "Extractor : instructionFileName"
       }
     },
     "/gobii/v1/instructions/loader" : {
@@ -5124,15 +5124,15 @@
             "type" : "string"
           }
         },
+        "id" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
         "dbMetaData" : {
           "type" : "array",
           "items" : {
             "type" : "string"
           }
-        },
-        "id" : {
-          "type" : "integer",
-          "format" : "int32"
         }
       }
     },
