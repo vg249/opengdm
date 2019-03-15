@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
+import org.gobiiproject.gobiiprocess.digester.LoaderGlobalConfigs;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
 
@@ -53,6 +54,9 @@ class Validator {
         List<Failure> failureList = new ArrayList<>();
         List<String[]> inputFile = new ArrayList<>();
         if (!ValidationUtil.readFileIntoMemory(fileName, inputFile, failureList)) return failureList;
+        if(!LoaderGlobalConfigs.getValidation()) {//Validation is disabled
+            return failureList;//Stop processing here with no non-load related failures
+        }
         // Copying of the list to avoid possible deletion of original data
         List<String[]> input = new ArrayList<>(inputFile);
         failureList.addAll(validateRequiredColumns(fileName, validationUnit.getConditions(), input));

@@ -53,7 +53,7 @@ public class MatrixValidation {
         return true;
     }
 
-    public boolean validate(int rowNo, int rowOffset, List<String> inputRowList, List<String> outputRowList, boolean isVCF) {
+    public boolean validate(int rowNo, int rowOffset, List<String> inputRowList, List<String> outputRowList, boolean isVCF, boolean skipValidation ) {
         if (noOfElements == 0) noOfElements = inputRowList.size();
         else if (noOfElements != inputRowList.size()) {
             matrixErrorUtil.setError("Exception in processing matrix file. Irregular size matrix. Expected: " + noOfElements + " actual: " + inputRowList.size());
@@ -126,6 +126,9 @@ public class MatrixValidation {
             }
         }
 
+        if(skipValidation){
+            return true;
+        }
         /*
          * VALIDATION.
          * Validates each element is a valid value or not based on the datasetType.
