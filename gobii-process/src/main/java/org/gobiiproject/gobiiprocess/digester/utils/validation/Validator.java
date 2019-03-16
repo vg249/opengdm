@@ -120,7 +120,7 @@ class Validator {
     }
 
     /**
-     * Parses the validation rules and gives the rules which are required and not unique
+     * Parses the validation rules and gives the rules which are optional and not null
      *
      * @param fileName   name of file
      * @param conditions conditions
@@ -138,6 +138,15 @@ class Validator {
         if (requiredFields.size() > 0) {
             try {
                 validateColumns(fileName, requiredFields, inputFile, failureList);
+                List<Integer> columnNotFoundErrors = new ArrayList<>();
+                for (int i = 0; i < failureList.size(); i++) {
+                    if (failureList.get(i).reason.equalsIgnoreCase(FailureTypes.COLUMN_NOT_FOUND)) {
+                        columnNotFoundErrors.add(i);
+                    }
+                }
+                for (int i = columnNotFoundErrors.size() - 1; i < 0; i--) {
+                    failureList.remove(columnNotFoundErrors.get(i));
+                }
             } catch (MaximumErrorsValidationException e) {
                 //Don't do any thing. This implies that particular error list is full.
             }
