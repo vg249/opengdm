@@ -520,8 +520,8 @@
                             </locations>
                             <outputFormats>json,yaml</outputFormats>
                             <schemes>http</schemes>
-                            <host>localhost:8081</host>
-                            <basePath>/api</basePath>
+                            <host>cbsugobiixvm11.biohpc.cornell.edu:8081</host>
+                            <basePath>/gobii-dev</basePath>
                             <!-- content of description file overrides the <description>
                                 element of the <info> tag below. This ends up as the
                                  Overview section in the HTML/PDF -->
@@ -554,7 +554,7 @@
                                     <type>basic</type>
                                 </securityDefinition>
                                 <securityDefinition>
-                                    <name>apiKeyAuth</name>
+                                    <name>X-Auth-Token</name>
                                     <type>apiKey</type>
                                     <in>header</in>
                                 </securityDefinition>
