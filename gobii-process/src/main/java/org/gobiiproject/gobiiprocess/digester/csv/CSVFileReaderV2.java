@@ -107,7 +107,7 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
     private static boolean isMatrixInstruction(GobiiLoaderInstruction inst){
         return inst.getGobiiFileColumns().get(0).getGobiiColumnType().equals(GobiiColumnType.CSV_BOTH);
     }
-    
+
     /**
      * Reads the input file specified by the loader instruction and creates a
      * digest file based on the instruction.
@@ -123,10 +123,11 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
         try (BufferedWriter tempFileBufferedWriter = new BufferedWriter(new FileWriter(outputFileName))) {
 
             File file = new File(loaderInstruction.getGobiiFile().getSource());
+            File outputFile = new File(HelperFunctions.getDestinationFile(loaderInstruction));
             if (file.isDirectory()) {
-                listFilesFromFolder(file, tempFileBufferedWriter, loaderInstruction);
+                listFilesFromFolder(file, tempFileBufferedWriter, loaderInstruction, outputFile);
             } else {
-                writeToOutputFile(file, tempFileBufferedWriter, loaderInstruction);
+                writeToOutputFile(file, tempFileBufferedWriter, loaderInstruction, outputFile);
             }
         } catch (FileNotFoundException e) {
             ErrorLogger.logError("CSVReader", "Unexpected Missing File", e);
@@ -145,7 +146,7 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
      * @param loaderInstruction      Loader instruction
      */
     private void listFilesFromFolder(File folder, BufferedWriter tempFileBufferedWriter,
-                                     GobiiLoaderInstruction loaderInstruction) {
+                                     GobiiLoaderInstruction loaderInstruction, File outputFile) {
         if (folder == null) {
             ErrorLogger.logWarning("CSVFileReader", "Read from null folder");
             return;
@@ -154,7 +155,7 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
             // Sub folders are ignored
             if (file.isFile() & !file.getName().contains("digest")) {
                 try {
-                    writeToOutputFile(file, tempFileBufferedWriter, loaderInstruction);
+                    writeToOutputFile(file, tempFileBufferedWriter, loaderInstruction, outputFile);
                 } catch (IOException e) {
                     ErrorLogger.logError("CSVReader", "Failure to write digest files", e);
                 }
@@ -173,14 +174,14 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
      * @throws IOException when the requisite file is missing or cannot be read
      */
     private void writeToOutputFile(File file, BufferedWriter tempFileBufferedWriter,
-                                   GobiiLoaderInstruction loaderInstruction) throws IOException {
+                                   GobiiLoaderInstruction loaderInstruction, File outputFile) throws IOException {
 
         if (processedInstruction.hasCSV_ROW()) {
             processCSV_ROW(file, tempFileBufferedWriter, loaderInstruction);
         } else if (processedInstruction.hasCSV_COL()) {
             processCSV_COL(file, tempFileBufferedWriter, loaderInstruction);
         } else if (processedInstruction.hasCSV_BOTH()) {
-            processCSV_BOTH(file, tempFileBufferedWriter, loaderInstruction);
+            processCSV_BOTH(file, tempFileBufferedWriter, loaderInstruction, outputFile);
         }
     }
 
@@ -263,7 +264,7 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
      */
 
     private void processCSV_BOTH(File file, BufferedWriter tempFileBufferedWriter,
-                                 GobiiLoaderInstruction loaderInstruction) throws IOException {
+                                 GobiiLoaderInstruction loaderInstruction, File outputFile) throws IOException {
         boolean skipValidation = !LoaderGlobalConfigs.getValidation();
 
         GobiiFileColumn csv_BothColumn = null;
@@ -276,7 +277,7 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
         // For matrix file there is no need of writing first line. Setting it to false for consistency
         processedInstruction.setFirstLine(false);
         String missingFile = loaderScriptPath + "/etc/missingIndicators.txt";
-        String parentDirectory = file.getParentFile().getAbsolutePath();
+        String parentDirectory = outputFile.getParentFile().getAbsolutePath();
         String markerFile = parentDirectory + "/digest.marker";
         MatrixValidation matrixValidation = new MatrixValidation(loaderInstruction.getDatasetType().getName(), missingFile, markerFile);
         if (matrixValidation.setUp()) {
