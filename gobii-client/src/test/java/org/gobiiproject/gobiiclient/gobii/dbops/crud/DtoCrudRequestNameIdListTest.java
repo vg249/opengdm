@@ -550,72 +550,156 @@ public class DtoCrudRequestNameIdListTest {
     }
 
     /**
-     * This test is ignored since right now we don't have a separate web service to create dna samples that can be used for this test.
-     **/
+     *  Get project ID loaded by ADL
+     *
+     * @return Integer project ID
+     */
 
-    @Ignore
-    public void testGetDnaSampleNamesByList() throws Exception {
+    private Integer getProjectId() throws Exception {
 
-        // get project ID for loaded dna samples by ADL
-        if( TestUtils.isBackEndSupported()) {
+        Integer projectId = null;
 
-            String projectName = "sim_dominant_proj_01";
-            Integer projectId = null;
+        String projectName = "sim_dominant_proj_01";
 
-            RestUri restUriProject = GobiiClientContext.getInstance(null, false).getUriFactory().resourceColl(RestResourceId.GOBII_PROJECTS);
-            GobiiEnvelopeRestResource<ProjectDTO, ProjectDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriProject);
-            PayloadEnvelope<ProjectDTO> resultEnvelope = gobiiEnvelopeRestResource
-                    .get(ProjectDTO.class);
+        RestUri restUriProject = GobiiClientContext.getInstance(null, false).getUriFactory().resourceColl(RestResourceId.GOBII_PROJECTS);
+        GobiiEnvelopeRestResource<ProjectDTO, ProjectDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriProject);
+        PayloadEnvelope<ProjectDTO> resultEnvelope = gobiiEnvelopeRestResource
+                .get(ProjectDTO.class);
 
-            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
-            List<ProjectDTO> projectDTOList = resultEnvelope.getPayload().getData();
-            Assert.assertNotNull(projectDTOList);
-            Assert.assertTrue(projectDTOList.size() > 0);
-            Assert.assertNotNull(projectDTOList.get(0).getProjectName());
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        List<ProjectDTO> projectDTOList = resultEnvelope.getPayload().getData();
+        Assert.assertNotNull(projectDTOList);
+        Assert.assertTrue(projectDTOList.size() > 0);
+        Assert.assertNotNull(projectDTOList.get(0).getProjectName());
 
-            for (ProjectDTO projectDTO : projectDTOList) {
+        for (ProjectDTO projectDTO : projectDTOList) {
 
-                if (projectDTO.getProjectName().equals(projectName)) {
+            if (projectDTO.getProjectName().equals(projectName)) {
 
-                    projectId = projectDTO.getProjectId();
-                    break;
-                }
+                projectId = projectDTO.getProjectId();
+                break;
 
             }
 
-            Assert.assertNotNull("Project Id not found for project name: " + projectName, projectId);
+        }
 
-            GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.DNASAMPLE;
 
-            String[] dnasampleNamesExisting = new String[]{"dnasamplename_Deb_FQ_dom_1", "dnasamplename_Deb_FQ_dom_2", "dnasamplename_Deb_FQ_dom_3", "dnasamplename_Deb_FQ_dom_4"};
+        Assert.assertNotNull("Project Id not found for project name: " + projectName, projectId);
 
-            List<NameIdDTO> nameIdDTOList = new ArrayList<>();
 
-            String[] dnasampleNamesAbsent = new String[]{"notdnasample1", "notdnasample2", "notdnasample3"};
+        return projectId;
+    }
 
-            for (String dnaSampleName : dnasampleNamesAbsent) {
 
-                NameIdDTO nameIdDTO = new NameIdDTO();
-                nameIdDTO.setName(dnaSampleName);
+    private List<NameIdDTO> getDnaSampleNamesDTOList (String[] dnaSampleNamesExisting, String[] dnaSampleNamesAbsent, boolean addNum) {
 
-                nameIdDTOList.add(nameIdDTO);
+        List<NameIdDTO> nameIdDTOList = new ArrayList<>();
+
+        String paramName = "dnaSampleNum";
+        for (String dnaSampleName : dnaSampleNamesAbsent) {
+
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName(dnaSampleName);
+
+            if (addNum) {
+
+                DnaSampleDTO dnaSampleDTO = new DnaSampleDTO();
+                dnaSampleDTO.setDnaSampleNum(1);
+
+                nameIdDTO.getParameters().put(paramName, dnaSampleDTO.getDnaSampleNum());
             }
 
-            Integer dnaSampleNum = 1;
+            nameIdDTOList.add(nameIdDTO);
+        }
 
-            for (String dnaSampleName : dnasampleNamesExisting) {
+        Integer dnaSampleNum = 1;
 
-                NameIdDTO nameIdDTO = new NameIdDTO();
-                nameIdDTO.setName(dnaSampleName);
+        for (String dnaSampleName : dnaSampleNamesExisting) {
+
+            NameIdDTO nameIdDTO = new NameIdDTO();
+            nameIdDTO.setName(dnaSampleName);
+
+            if (addNum) {
 
                 DnaSampleDTO dnaSampleDTO = new DnaSampleDTO();
                 dnaSampleDTO.setDnaSampleNum(dnaSampleNum++);
 
-                nameIdDTO.setQueryObject(dnaSampleDTO);
+                nameIdDTO.getParameters().put(paramName, dnaSampleDTO.getDnaSampleNum());
 
-                nameIdDTOList.add(nameIdDTO);
             }
 
+            nameIdDTOList.add(nameIdDTO);
+        }
+
+
+        return nameIdDTOList;
+    }
+
+
+    @Test
+    public void testGetDnaSampleNamesByList() throws Exception {
+
+        // get project ID for loaded dna samples by ADL
+
+        if ( TestUtils.isBackEndSupported()) {
+
+            Integer projectId = getProjectId();
+
+            GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.DNASAMPLE;
+
+            String[] dnasampleNamesExisting = new String[]{"dnasamplename_Deb_FQ_dom_1", "dnasamplename_Deb_FQ_dom_2", "dnasamplename_Deb_FQ_dom_3", "dnasamplename_Deb_FQ_dom_4"};
+            String[] dnasampleNamesAbsent = new String[]{"notdnasample1", "notdnasample2", "notdnasample3"};
+
+            List<NameIdDTO> nameIdDTOList = getDnaSampleNamesDTOList(dnasampleNamesExisting, dnasampleNamesAbsent, false);
+
+            /**
+             * Test get DNA Sample Names by NAMES_BY_NAME_LIST
+             * */
+            GobiiFilterType gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST;
+
+            PayloadEnvelope<NameIdDTO> responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, projectId.toString());
+
+            checkNameIdListResponseAll(responsePayloadEnvelope, nameIdDTOList, dnasampleNamesAbsent);
+
+            /**
+             * Test get DNA Sample Names by NAMES_BY_NAME_LIST_RETURN_ABSENT
+             * Will return items on the list that are not found in the database
+             */
+            gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_ABSENT;
+
+            responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, projectId.toString());
+
+            checkNameIdListResponseAbsent(responsePayloadEnvelope, dnasampleNamesAbsent, dnasampleNamesExisting);
+
+
+            /**
+             * Test get DNA Sample Names by NAMES_BY_NAMES_LIST_RETURN_EXISTS
+             * Will return items on the list that are existing in the database
+             */
+            gobiiFilterType = GobiiFilterType.NAMES_BY_NAME_LIST_RETURN_EXISTS;
+
+            responsePayloadEnvelope = getNamesByNameList(nameIdDTOList, gobiiEntityNameType, gobiiFilterType, projectId.toString());
+
+            checkNameIdListResponseExists(responsePayloadEnvelope, dnasampleNamesExisting, dnasampleNamesAbsent);
+
+        }
+
+    }
+
+    @Test
+    public void testGetDnaSampleNamesByListAndNum() throws Exception {
+
+        // get project ID for loaded dna samples by ADL
+        if( TestUtils.isBackEndSupported()) {
+
+            Integer projectId = getProjectId();
+
+            GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.DNASAMPLE;
+
+            String[] dnasampleNamesExisting = new String[]{"dnasamplename_Deb_FQ_dom_1", "dnasamplename_Deb_FQ_dom_2", "dnasamplename_Deb_FQ_dom_3", "dnasamplename_Deb_FQ_dom_4"};
+            String[] dnasampleNamesAbsent = new String[]{"notdnasample1", "notdnasample2", "notdnasample3"};
+
+            List<NameIdDTO> nameIdDTOList = getDnaSampleNamesDTOList(dnasampleNamesExisting, dnasampleNamesAbsent, true);
 
             /**
              * Test get DNA Sample Names by NAMES_BY_NAME_LIST

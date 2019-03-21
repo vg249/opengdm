@@ -180,8 +180,10 @@ public class DTORestProfileTest {
     }
 
 
-    @Ignore
+    @Test
     public void changePostMaxMarkerNames() throws Exception {
+
+        (new GlobalPkColl<DtoCrudRequestMarkerTest>()).getPkVals(DtoCrudRequestMarkerTest.class, GobiiEntityNameType.MARKER, 10);
 
         PayloadEnvelope<NameIdDTO> analysisNameIdResponseEnvelopePreUpdate = DtoRequestNameIdListTest
                 .testNameRetrieval(GobiiEntityNameType.MARKER,
