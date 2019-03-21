@@ -303,9 +303,7 @@ public class GobiiFileReader {
         List<GobiiFileColumn> cols = zero.getGobiiFileColumns();
         GobiiFileColumn firstCol = cols.size() > 0 ? cols.get(0) : null;
         String firstInstructionDatasetType = getDatasetType(zero, firstCol);
-        if (isFirstInstructionVCF && !firstInstructionDatasetType.equals("NUCLEOTIDE_2_LETTER")) {
-            ErrorLogger.logError("GobiiFileReader", "Invalid Dataset Type selected for VCF file. Expected 2 Letter Nucleotide. Received " + firstInstructionDatasetType);
-        }
+
         String dst = null;
 
         for (GobiiLoaderInstruction inst : list) {
@@ -323,6 +321,11 @@ public class GobiiFileReader {
                 }
 
             }
+
+            //Moving to only check Variant Call Tablename - though UI should be consistent.
+	        if (inst.getTable().equals(VARIANT_CALL_TABNAME) && (dst!=null) && isVCF && (!dst.equals("NUCLEOTIDE_2_LETTER"))) {
+		        ErrorLogger.logError("GobiiFileReader", "Invalid Dataset Type selected for VCF file. Expected 2 Letter Nucleotide. Received " + firstInstructionDatasetType);
+	        }
             //Switch used for VCF transforms is currently a change in dataset type. See 'why is VCF a data type' GSD
             if (isVCF) {
                 dst = "VCF";

@@ -72,8 +72,14 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
         if (instructions == null) {
             ErrorLogger.logError("CSVFileReader", "No instructions passed in");
         } else {
+            GobiiLoaderInstruction matrixInstruction = null;
+
             //Create threads
             for (GobiiLoaderInstruction loaderInstruction : instructions) {
+                if (matrixInstruction == null && isMatrixInstruction(loaderInstruction)) {
+                    matrixInstruction = loaderInstruction;
+                    continue;//Skip processing until after all intermediate files
+                }
                 reader = new CSVFileReaderV2(loaderScriptPath);
                 Thread processingThread = new Thread(new ReaderThread(reader, loaderInstruction));
                 threads.add(processingThread);
@@ -88,9 +94,20 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
                     ErrorLogger.logError("CSVFileReader", "Interrupt", e);
                 }
             }
+
+            //Process matrix in main processing thread.
+            if (matrixInstruction != null) {
+                reader = new CSVFileReaderV2(loaderScriptPath);
+                new ReaderThread(reader, matrixInstruction).run();//Calls this thread from our thread
+            }
         }
     }
 
+    //Gnarly logic - if the first column asked for is a both type, this likely is the matrix file
+    private static boolean isMatrixInstruction(GobiiLoaderInstruction inst){
+        return inst.getGobiiFileColumns().get(0).getGobiiColumnType().equals(GobiiColumnType.CSV_BOTH);
+    }
+    
     /**
      * Reads the input file specified by the loader instruction and creates a
      * digest file based on the instruction.
