@@ -372,21 +372,23 @@ public class GobiiFileReader {
         String user = configuration.getLdapUserForBackendProcs();
         String password = configuration.getLdapPasswordForBackendProcs();
         String directory = dstDir.getAbsolutePath();
-        DigestFileValidator digestFileValidator = new DigestFileValidator(directory, baseConnectionString, user, password);
-        digestFileValidator.performValidation();
-        //Call validations here, update 'success' to false with any call to ErrorLogger.logError()
-        List<Path> pathList =
-                Files.list(Paths.get(directory))
-                        .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
-        if (pathList.size() < 1) {
-            success = false;
-            //TODO: Mail content need to indicate it failed
-        }
-        ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-        for (ValidationError status : fileErrors) {
-            if (status.status.equalsIgnoreCase(ValidationConstants.FAILURE)) {
-                success = false;
-            }
+        if(LoaderGlobalConfigs.getValidation()) {
+	        DigestFileValidator digestFileValidator = new DigestFileValidator(directory, baseConnectionString, user, password);
+	        digestFileValidator.performValidation();
+	        //Call validations here, update 'success' to false with any call to ErrorLogger.logError()
+	        List<Path> pathList =
+			        Files.list(Paths.get(directory))
+					        .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
+	        if (pathList.size() < 1) {
+		        success = false;
+		        //TODO: Mail content need to indicate it failed
+	        }
+	        ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
+	        for (ValidationError status : fileErrors) {
+		        if (status.status.equalsIgnoreCase(ValidationConstants.FAILURE)) {
+			        success = false;
+		        }
+	        }
         }
         if (success && ErrorLogger.success()) {
             jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_METADATALOAD.getCvName(), "Loading Metadata");
