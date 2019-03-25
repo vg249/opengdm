@@ -29,6 +29,7 @@ __Schemes__ : HTTP
 
 * Analyses
 * Authentication
+* BrAPI
 * ConfigSettings
 * Contacts
 * ControlledVocabularies
