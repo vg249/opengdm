@@ -27,6 +27,8 @@ public class ConditionUnit {
     @JsonProperty
     public List<String> uniqueColumns;
     @JsonProperty
+    public String fileShouldExist;
+    @JsonProperty
     public String fileExistenceCheck;
     @JsonProperty
     public String fileExists;
@@ -34,8 +36,15 @@ public class ConditionUnit {
     public String type;
     // Name of file or DB
     @JsonProperty
+    public List<String> fieldColumns;
+    @JsonProperty
+    public String uniqueFileCheck;
+    @JsonProperty
     public String typeName;
+    // Used in linkage_group_name, marker_name etc.  Important observation is that this foreign key is a required field. So without this value there is no point in doing the db call.
+    @JsonProperty
+    public String foreignKey;
     // Field to compare against in DB or other file
     @JsonProperty
-    public String fieldToCompare;
+    public List<String> fieldToCompare;
 }

@@ -1,0 +1,11 @@
+marker_name	alleles	chrom	pos	strand	assembly#	center	protLSID	assayLSID	panelLSID	QCcode	dnarunname1	dnarunname2	dnarunname3	dnarunname4	dnarunname5
+marker1	G	0	5518	+	NA	NA	NA	NA	NA	NA	N	N	N	N	N
+marker2	G	0	32239	+	NA	NA	NA	NA	NA	NA	N	NN	G	G	G
+marker3	G	0	32260	+	NA	NA	NA	NA	NA	NA	N	N	G	G	G
+marker4	G/A	0	32281	+	NA	NA	NA	NA	NA	NA	N	N	G	G	G
+marker5	G	0	32289	+	NA	NA	NA	NA	NA	NA	N	N	G	GS	G
+marker6	A	0	35146	+	NA	NA	NA	NA	NA	NA	N	N	A	N	N
+marker7	C	0	35161	+	NA	NA	NA	NA	NA	NA	N	N	C	N	N
+marker8	C	0	41135	+	NA	NA	NA	NA	NA	NA	N	T	N	N	C
+marker9	G	0	41152	+	NA	NA	NA	NA	NA	NA	N	N	N	N	G
+marker10	G	0	41168	+	NA	NA	NA	NA	NA	NA	N	N	N	N	G

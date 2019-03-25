@@ -1,0 +1,10 @@
+marker_name	dnarunname_2nuc__1	dnarunname_2nuc__2	dnarunname_2nuc__3	dnarunname_2nuc__4	dnarunname_2nuc__5	dnarunname_2nuc__6
+m3111	TT	TT	TT	TT	TT	TT
+m3112	TT	TT	TT	TT	TT	TT
+m3113	CC	CC	CC	CC	CC	CC
+m3114	CC	CC	CC	CC	CC	CC
+m3115	CC	CC	CC	CC	CC	CC
+m3116	TT	TT	TT	TT	TT	TT
+m3118	CC	CC	CC	CC	CC	CC
+m3119	GG	AA	AA	AA	GG	AA
+m3120	TT	CC	CC	TT	TT	CC

@@ -1,0 +1,8 @@
+	dnarunname_codom_1	dnarunname_codom_2	dnarunname_codom_3	dnarunname_codom_4	dnarunname_codom_5
+codom_m1	N	1	0	0	0
+codom_m2	2	2	2	2	2
+codom_m3	2	2	2	2	2
+codom_m4	N	1	2	2	2
+codom_m5	2	1	2	N	2
+codom_m6	2	1	2	2	2
+codom_m7	2	1	2	2	2
