@@ -1944,6 +1944,15 @@ public class GobiiAdl {
             Node jobPayloadTypeNode = currentElement.getElementsByTagName("PayloadType").item(0);
             validateNode(jobPayloadTypeNode, currentElement.getTagName(), "PayloadType");
             String jobPayloadType = jobPayloadTypeNode.getTextContent();
+
+            Node qcCheckNode = currentElement.getElementsByTagName("QcCheck").item(0);
+            boolean qcCheck = false;
+
+            if (qcCheckNode != null) {
+                String qcString = qcCheckNode.getTextContent();
+                qcCheck = (qcString.toLowerCase().equals("true"));
+            }
+
             System.out.println("Parsing scenario: " + scenarioName);
             DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
             jobId = dateFormat.format(new Date());
@@ -2040,6 +2049,14 @@ public class GobiiAdl {
                         instructionObject.addProperty("gobiiCropType", crop);
                     }
 
+                    if (instructionObject.has("qcCheck")) {
+                        if (qcCheck && k == (jsonArray.size() - 1)) {
+                            instructionObject.addProperty("qcCheck", qcCheck);
+                        } else {
+                            instructionObject.addProperty("qcCheck", false);
+                        }
+                    }
+
                     if (entityName.equals("contact")) {
                         if (instructionObject.has("contactId")) {
                             instructionObject.addProperty("contactId", currentEntityId);
@@ -2134,7 +2151,7 @@ public class GobiiAdl {
                     instructionObject.add("gobiiFileColumns", gobiiFileColumnsArr);
                     jsonArray.set(k, instructionObject);
                 }
-            } // iterate instruciton file json
+            } // iterate instruction file json
 
             // update instruction file
             System.out.println("\nWriting instruction file for " + scenarioName + "\n");
