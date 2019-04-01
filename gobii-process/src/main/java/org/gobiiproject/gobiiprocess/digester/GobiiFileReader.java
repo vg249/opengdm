@@ -118,6 +118,7 @@ public class GobiiFileReader {
 		boolean success=true;
 		Map<String,File> loaderInstructionMap = new HashMap<>();//Map of Key to filename
 		List<String> loaderInstructionList=new ArrayList<String>(); //Ordered list of loader instructions to execute, Keys to loaderInstructionMap
+		String dst=null;
 		DataSetOrientationType dso=null;
 
 		ConfigSettings configuration=null;
@@ -324,46 +325,47 @@ public class GobiiFileReader {
 
 		boolean sendQc= false;
 
-		String dst=null;//Only populated if variant table exists
+		boolean isFirstInstructionVCF=zero.getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF);
+		List<GobiiFileColumn> cols=zero.getGobiiFileColumns();
+		GobiiFileColumn firstCol=cols.size()>0?cols.get(0):null;
+		String firstInstructionDatasetType=getDatasetType(zero,firstCol);
+		if(isFirstInstructionVCF && !firstInstructionDatasetType.equals("NUCLEOTIDE_2_LETTER")){
+			ErrorLogger.logError("GobiiFileReader","Invalid Dataset Type selected for VCF file. Expected 2 Letter Nucleotide. Received " +firstInstructionDatasetType);
+		}
+
 		for (GobiiLoaderInstruction inst:list) {
 			qcCheck = inst.isQcCheck();
 
 			//Section - Matrix Post-processing
 			//Dataset is the first non-empty dataset type
+			boolean isVCF=false;
+			for (GobiiFileColumn gfc : inst.getGobiiFileColumns()) {
+				if (gfc.getDataSetType() != null) {
+					dst = getDatasetType(inst, gfc);
+					isVCF = inst.getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF);
+					if (gfc.getDataSetOrientationType() != null) dso = gfc.getDataSetOrientationType();
+					break;
+				}
+
+			}
+			//Switch used for VCF transforms is currently a change in dataset type. See 'why is VCF a data type' GSD
+			if (isVCF) {
+				dst = "VCF";
+			}
+
 
 			String fromFile = getDestinationFile(inst);
-
 			SequenceInPlaceTransform intermediateFile=new SequenceInPlaceTransform(fromFile,errorPath);
-			if (inst.getTable().equals(VARIANT_CALL_TABNAME)) {
-				GobiiFileColumn matrixCol=null;
-				for(GobiiFileColumn col:inst.getGobiiFileColumns()){
-					if(col.getGobiiColumnType().equals(GobiiColumnType.CSV_BOTH)){
-						matrixCol=col;
-						break;
-					}
-				}
-				dst=getDatasetType(inst,matrixCol);//Calculate dataset type only for Matrix.
-				boolean isVCF=inst.getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF);
-				if(isVCF && !dst.equals("NUCLEOTIDE_2_LETTER")){
-					ErrorLogger.logError("GobiiFileReader","Invalid Dataset Type selected for VCF file. Expected 2 Letter Nucleotide. Received " +dst);
-				}
-
-
+			if (dst != null && inst.getTable().equals(VARIANT_CALL_TABNAME)) {
 				jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_TRANSFORMATION.getCvName(),"Data Matrix Transformation");
 				errorPath = getLogName(inst, gobiiCropConfig, crop, "Matrix_Processing"); //Temporary Error File Name
 				boolean transformStripsHeader = false;
 				MobileTransform mainTransform=null;
 				switch (dst.toUpperCase()) {
 					case "NUCLEOTIDE_2_LETTER":
-						if(isVCF){
-							File markerFile = loaderInstructionMap.get(MARKER_TABNAME);
-							mainTransform=MobileTransform.getVCFTransform(markerFile);
-						}
-						else {
-							mainTransform = MobileTransform.getSNPTransform("python " + loaderScriptPath + "etc/SNPSepRemoval.py", loaderScriptPath + "etc/missingIndicators.txt");
-							transformStripsHeader = true;
-						}
-						break;
+						mainTransform=MobileTransform.getSNPTransform("python " + loaderScriptPath + "etc/SNPSepRemoval.py",loaderScriptPath + "etc/missingIndicators.txt");
+						transformStripsHeader = true;
+                        break;
                     case "IUPAC":
                         mainTransform = MobileTransform.getIUPACToBI(loaderScriptPath);
                         break;
