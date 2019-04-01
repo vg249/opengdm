@@ -843,7 +843,15 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
         && jobStatusFilterParams.relatedEntityFilterValue != null) {
 
         returnVal = datasetEntitiesFilteredByExperiment
-            .filter(fi => fi.getEntity().jobStatusName === jobStatusFilterParams.relatedEntityFilterValue
+            .filter(function(fi) {
+                    if(fi.getEntity().jobStatusName !== jobStatusFilterParams.relatedEntityFilterValue
+                    && fi.getEntity().jobTypeName === jobStatusFilterParams.targetEntityFilterValue) {
+                        return false;
+                    }
+                    else {
+                        return true;
+                    }
+                }
             );
     } else {
         returnVal = datasetEntitiesFilteredByExperiment;
