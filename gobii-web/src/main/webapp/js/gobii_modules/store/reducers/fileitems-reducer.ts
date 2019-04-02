@@ -838,18 +838,28 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
 
 
     let jobStatusFilterParams = filters[FilterParamNames.DATASET_LIST_STATUS];
-    if (
-        jobStatusFilterParams
-        && jobStatusFilterParams.relatedEntityFilterValue != null) {
+    if (jobStatusFilterParams
+        && jobStatusFilterParams.jobStatusFilterValues != null) {
 
         returnVal = datasetEntitiesFilteredByExperiment
             .filter(function(fi) {
-                    if(fi.getEntity().jobStatusName !== jobStatusFilterParams.relatedEntityFilterValue
-                    && fi.getEntity().jobTypeName === jobStatusFilterParams.targetEntityFilterValue) {
-                        return false;
+                    let jobTypeName:string = fi.getEntity().jobTypeName;
+                    if(jobTypeName in jobStatusFilterParams.jobStatusFilterValues) {
+                        if(jobStatusFilterParams.jobStatusFilterValues[jobTypeName] != null) {
+                            if(jobStatusFilterParams.jobStatusFilterValues[jobTypeName] ===
+                                fi.getEntity().jobStatusName) {
+                                return true;
+                            }
+                            else {
+                                return false;
+                            }
+                        }
+                        else {
+                            return true;
+                        }
                     }
                     else {
-                        return true;
+                        return false;
                     }
                 }
             );

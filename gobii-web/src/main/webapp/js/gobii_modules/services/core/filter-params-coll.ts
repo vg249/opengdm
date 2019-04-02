@@ -20,6 +20,7 @@ import {JsonToGfiDataset} from "../app/jsontogfi/json-to-gfi-dataset";
 import {DtoRequestItemGfi} from "../app/dto-request-item-gfi";
 import {DtoRequestItemGfiPaged} from "../app/dto-request-item-gfi-paged";
 import {PayloadFilter} from "../../store/actions/action-payload-filter";
+import {ExtractReadyPayloadFilter} from "../../store/actions/action-payload-filter";
 
 
 @Injectable()
@@ -276,18 +277,21 @@ export class FilterParamsColl {
                 let returnVal: fileAction.LoadFilterAction = null;
 
                 if (!payloadFilter || !payloadFilter.relatedEntityFilterValue) {
-
                     returnVal = new fileAction.LoadFilterAction(
                         {
                             filterId: FilterParamNames.DATASET_LIST_STATUS,
-                            filter: new PayloadFilter(
+                            filter: new ExtractReadyPayloadFilter(
                                 GobiiExtractFilterType.WHOLE_DATASET,
                                 cvDatasetCompoundUniqueId,
                                 null,
-                                "completed",
+                                null,
                                 null,
                                 payloadFilter.entityLasteUpdated,
-                                payloadFilter.pagination
+                                payloadFilter.pagination,
+                                {
+                                    "load": "completed",
+                                    "extract": null
+                                }
                             )
                         }
                     );
@@ -320,18 +324,21 @@ export class FilterParamsColl {
                 let returnVal: fileAction.LoadFilterAction = null;
 
                 if (!payloadFilter || !payloadFilter.relatedEntityFilterValue) {
-
                     returnVal = new fileAction.LoadFilterAction(
                         {
                             filterId: FilterParamNames.DATASET_LIST_STATUS,
-                            filter: new PayloadFilter(
+                            filter: new ExtractReadyPayloadFilter(
                                 GobiiExtractFilterType.WHOLE_DATASET,
                                 cvDatasetCompoundUniqueId,
                                 null,
-                                "completed",
+                                null,
                                 null,
                                 payloadFilter.entityLasteUpdated,
-                                payloadFilter.pagination
+                                payloadFilter.pagination,
+                                {
+                                    "load": "completed",
+                                    "extract": null
+                                }
                             )
                         }
                     );

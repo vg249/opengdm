@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_entity_1, type_extractor_filter_1, cv_filter_type_1, filter_params_1, historyAction, store_1, name_id_label_type_1, filter_type_1, file_item_param_names_1, type_extractor_item_1, fileAction, gobii_file_item_compound_id_1, dto_request_service_1, json_to_gfi_dataset_1, dto_request_item_gfi_1, dto_request_item_gfi_paged_1, action_payload_filter_1, FilterParamsColl;
+    var core_1, type_entity_1, type_extractor_filter_1, cv_filter_type_1, filter_params_1, historyAction, store_1, name_id_label_type_1, filter_type_1, file_item_param_names_1, type_extractor_item_1, fileAction, gobii_file_item_compound_id_1, dto_request_service_1, json_to_gfi_dataset_1, dto_request_item_gfi_1, dto_request_item_gfi_paged_1, action_payload_filter_1, action_payload_filter_2, FilterParamsColl;
     return {
         setters: [
             function (core_1_1) {
@@ -68,6 +68,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
             },
             function (action_payload_filter_1_1) {
                 action_payload_filter_1 = action_payload_filter_1_1;
+                action_payload_filter_2 = action_payload_filter_1_1;
             }
         ],
         execute: function () {
@@ -196,7 +197,10 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         if (!payloadFilter || !payloadFilter.relatedEntityFilterValue) {
                             returnVal = new fileAction.LoadFilterAction({
                                 filterId: file_item_param_names_1.FilterParamNames.DATASET_LIST_STATUS,
-                                filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, cvDatasetCompoundUniqueId, null, "completed", null, payloadFilter.entityLasteUpdated, payloadFilter.pagination)
+                                filter: new action_payload_filter_2.ExtractReadyPayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, cvDatasetCompoundUniqueId, null, null, null, payloadFilter.entityLasteUpdated, payloadFilter.pagination, {
+                                    "load": "completed",
+                                    "extract": null
+                                })
                             });
                         }
                         return returnVal;
@@ -214,7 +218,10 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                         if (!payloadFilter || !payloadFilter.relatedEntityFilterValue) {
                             returnVal = new fileAction.LoadFilterAction({
                                 filterId: file_item_param_names_1.FilterParamNames.DATASET_LIST_STATUS,
-                                filter: new action_payload_filter_1.PayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, cvDatasetCompoundUniqueId, null, "completed", null, payloadFilter.entityLasteUpdated, payloadFilter.pagination)
+                                filter: new action_payload_filter_2.ExtractReadyPayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, cvDatasetCompoundUniqueId, null, null, null, payloadFilter.entityLasteUpdated, payloadFilter.pagination, {
+                                    "load": "completed",
+                                    "extract": null
+                                })
                             });
                         }
                         return returnVal;

@@ -25,8 +25,9 @@ import {PagedFileItemList} from "../model/payload/paged-item-list";
 import {Pagination} from "../model/payload/pagination";
 import {Subject} from "rxjs/Subject";
 import 'rxjs/add/operator/withLatestFrom'
-import {PayloadFilter} from "../store/actions/action-payload-filter";
+import {ExtractReadyPayloadFilter, JobTypeFilters, PayloadFilter} from "../store/actions/action-payload-filter";
 import {ViewIdGeneratorService} from "../services/core/view-id-generator-service";
+import {FileItem} from "ng2-file-upload";
 
 @Component({
     selector: 'dataset-datatable',
@@ -68,7 +69,7 @@ import {ViewIdGeneratorService} from "../services/core/view-id-generator-service
                         <p-checkbox binary="true"
                                     [ngModel]="fi.getSelected()"
                                     (onChange)="handleRowChecked($event, fi)"
-                                    [hidden]="fi.getEntity().jobStatusName !== 'completed'"
+                                    [hidden]="showOnlyExtractReadyJobs(fi)"
                                     [id]="viewIdGeneratorService.makeDatasetRowCheckboxId(fi._entity.datasetName)">
                         </p-checkbox>
 
@@ -309,47 +310,47 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
     public filterToExtractReady: boolean = true;
     public disableFilterToExtractReadyCheckbox: boolean = false;
 
+    /**
+     * Event to allow only extract ready jobs to be selected.
+     * @param fi - GobiiFileItem
+     */
+    public showOnlyExtractReadyJobs(fi:GobiiFileItem) {
+        if(fi.getEntity().jobTypeName == "load" && fi.getEntity().jobStatusName == "completed") {
+            return false;
+        }
+        else if(fi.getEntity().jobTypeName == "extract") {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
 
     public handleFilterToExtractReadyChecked(event) {
 
-        /**
-         * For bug/GSD-557
-         * The Payload filter object is constructed with an assumption that
-         * a filter on a fileItemList will be on a single condition.
-         *
-         * GSD-557 introduce a scenario where a single filter can have multiple condition checked with it.
-         *
-         * For filter DATASET_LIST_STATUS items with (jobStatusName != completed and jobTypeName = load)
-         * should be filtered out.
-         *
-         * In below case, the filter value jobStatus is passed as realatedEntityFilterValue.
-         * Not able to find comments or description for
-         * targetEntityFilterValue and relatedEntityFiltervalue and also why jobStatus
-         * is passed as relatedEntityFilterValue.
-         *
-         * Decided to use the targetEntityFilterValue as a parameter to specify the secondary
-         * filter jobTypeName as it requires less code change and avoids introduction of new objects.
-         *
-         */
 
-        let filterValue: string;
-        let filterJobType: string;
+        let jobStatusFilterValues:JobTypeFilters;
+
         if (event === true) {
-
-            filterValue = "completed";
-            filterJobType = "load";
-
+            /**
+             * bug/GSD-557
+             * Select only datasets with associated jobs of type "extract" and "load".
+             * For extract jobs, status can be anything, which is defined by a null value.
+             * For load jobs, status should be "completed".
+             */
+            jobStatusFilterValues = {
+                "extract" :null,
+                "load" : "completed"
+            };
         } else {
-
-            filterValue = null;
-            filterJobType = null;
+            jobStatusFilterValues = null;
         }
 
 
         this.store.dispatch(new fileAction.LoadFilterAction(
             {
                 filterId: FilterParamNames.DATASET_LIST_STATUS,
-                filter: new PayloadFilter(
+                filter: new ExtractReadyPayloadFilter(
                     GobiiExtractFilterType.WHOLE_DATASET,
                     new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
                         EntityType.DATASET,
@@ -357,10 +358,11 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
                         CvFilterType.UNKNOWN,
                         CvFilters.get(CvFilterType.UNKNOWN)),
                     null,
-                    filterValue,
-                    filterJobType,
                     null,
-                    null
+                    null,
+                    null,
+                    null,
+                    jobStatusFilterValues
                 )
             }
         ))
