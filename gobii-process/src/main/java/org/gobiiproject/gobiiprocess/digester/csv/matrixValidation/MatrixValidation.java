@@ -126,9 +126,6 @@ public class MatrixValidation {
             }
         }
 
-        if(skipValidation){
-            return true;
-        }
         /*
          * VALIDATION.
          * Validates each element is a valid value or not based on the datasetType.
@@ -138,7 +135,12 @@ public class MatrixValidation {
                 datasetType.equalsIgnoreCase("NUCLEOTIDE_2_LETTER") || datasetType.equalsIgnoreCase("VCF")) {
             if (datasetType.equalsIgnoreCase("DOMINANT_NON_NUCLEOTIDE") || datasetType.equalsIgnoreCase("CO_DOMINANT_NON_NUCLEOTIDE") || datasetType.equalsIgnoreCase("SSR_ALLELE_SIZE"))
                 outputRowList.addAll(inputRowList);
+
+            if(skipValidation){
+                return true;
+            }
+
             return DigestMatrix.validateDatasetList(rowNo + rowOffset, outputRowList, datasetType, matrixErrorUtil);
-        } else return true;
+        } else return true; //TODO - types we don't recognize probably shouldn't be passing validation.....
     }
 }
