@@ -39,9 +39,7 @@ import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Vali
 
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
-import static org.gobiiproject.gobiimodel.utils.HelperFunctions.getDestinationFile;
-import static org.gobiiproject.gobiimodel.utils.HelperFunctions.parseInstructionFile;
-import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
+import static org.gobiiproject.gobiimodel.utils.HelperFunctions.*;
 import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.logError;
 
 /**
@@ -299,7 +297,6 @@ public class GobiiFileReader {
 
         boolean sendQc = false;
 
-        boolean isFirstInstructionVCF = zero.getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF);
         List<GobiiFileColumn> cols = zero.getGobiiFileColumns();
         GobiiFileColumn firstCol = cols.size() > 0 ? cols.get(0) : null;
         String firstInstructionDatasetType = getDatasetType(zero, firstCol);
@@ -368,10 +365,12 @@ public class GobiiFileReader {
 
 
         //Validation logic before loading any metadata
-        String baseConnectionString = getJDBCConnectionString(gobiiCropConfig);
+        String baseConnectionString = getWebserviceConnectionString(gobiiCropConfig);
         String user = configuration.getLdapUserForBackendProcs();
         String password = configuration.getLdapPasswordForBackendProcs();
         String directory = dstDir.getAbsolutePath();
+
+        //Metadata Validation
         if(LoaderGlobalConfigs.getValidation()) {
 	        DigestFileValidator digestFileValidator = new DigestFileValidator(directory, baseConnectionString, user, password);
 	        digestFileValidator.performValidation();
@@ -380,16 +379,20 @@ public class GobiiFileReader {
 			        Files.list(Paths.get(directory))
 					        .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
 	        if (pathList.size() < 1) {
-		        success = false;
-		        //TODO: Mail content need to indicate it failed
+		        //success = false;
+		        ErrorLogger.logError("Validation","Unable to find validation checks");
 	        }
 	        ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
 	        for (ValidationError status : fileErrors) {
 		        if (status.status.equalsIgnoreCase(ValidationConstants.FAILURE)) {
-			        success = false;
-		        }
+                    //success = false;
+                    ErrorLogger.logError("Validation","Validation failures");
+
+                }
 	        }
         }
+
+
         if (success && ErrorLogger.success()) {
             jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_METADATALOAD.getCvName(), "Loading Metadata");
             errorPath = getLogName(zero, gobiiCropConfig, crop, "IFLs");
@@ -750,35 +753,6 @@ public class GobiiFileReader {
     }
 
     /**
-     * Generates appropriate monetDB files from the MDE by reverse-digesting the data we just loaded.
-     * Reason - Ensures Postgres and MonetDB are in sync
-     *
-     * @param gobiiCropConfig Connection String
-     * @param markerFile      No header
-     * @param dnaRunFile      With header
-     * @param dsid            Because
-     * @param errorFile       temporary file to store error information in
-     */
-    private static void generateIdLists(GobiiCropConfig gobiiCropConfig, String markerFile, String dnaRunFile, int dsid, String errorFile) {
-        //Create files and get paths because gobii_mde must run on absolute paths, not relative ones
-        markerFile = new File(markerFile).getAbsolutePath();
-        dnaRunFile = new File(dnaRunFile).getAbsolutePath();
-        String gobiiIFL = "python " + extractorScriptPath + "postgres/gobii_mde/gobii_mde.py" + " -c " + HelperFunctions.getPostgresConnectionString(gobiiCropConfig) +
-                " -m " + markerFile + ".tmp" +
-                " -s " + dnaRunFile + ".tmp" +
-                " -d " + dsid;
-        ErrorLogger.logDebug("MonetDB", gobiiIFL);
-        tryExec(gobiiIFL, null, errorFile);
-        tryExec("cut -f1 " + markerFile + ".tmp", markerFile + ".tmp2", errorFile);
-        tryExec("tail -n +2", markerFile, errorFile, markerFile + ".tmp2");
-        tryExec("cut -f1 " + dnaRunFile + ".tmp", dnaRunFile, errorFile);
-
-        rm(markerFile + ".tmp");
-        rm(markerFile + ".tmp2");
-        rm(dnaRunFile + ".tmp");
-    }
-
-    /**
      * Updates Postgresql through the webservices to update the DataSet's monetDB and HDF5File references.
      *
      * @param config         Configuration settings, used to determine connections
@@ -792,7 +766,6 @@ public class GobiiFileReader {
             // set up authentication and so forth
             // you'll need to get the current from the instruction file
             GobiiClientContext context = GobiiClientContext.getInstance(config, cropName, GobiiAutoLoginType.USER_RUN_AS);
-            //context.setCurrentCropId(cropName);
 
             if (LineUtils.isNullOrEmpty(context.getUserToken())) {
                 logError("Digester", "Unable to login with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
