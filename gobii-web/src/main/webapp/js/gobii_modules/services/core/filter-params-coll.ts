@@ -290,7 +290,6 @@ export class FilterParamsColl {
                                 payloadFilter.pagination,
                                 {
                                     "load": ["completed"],
-                                    "extract": null
                                 }
                             )
                         }
@@ -337,7 +336,6 @@ export class FilterParamsColl {
                                 payloadFilter.pagination,
                                 {
                                     "load": ["completed"],
-                                    "extract": null
                                 }
                             )
                         }

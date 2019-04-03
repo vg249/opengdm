@@ -647,17 +647,16 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                     && jobStatusFilterParams.jobStatusFilterValues != null) {
                     returnVal = datasetEntitiesFilteredByExperiment
                         .filter(function (fi) {
-                        var jobTypeName = fi.getEntity().jobTypeName;
+                        var jobTypeName = fi.getEntity().jobTypeName.trim();
                         if (jobTypeName in jobStatusFilterParams.jobStatusFilterValues
-                            && jobStatusFilterParams.jobStatusFilterValues[jobTypeName] === null) {
-                            return true;
-                        }
-                        else if (jobTypeName in jobStatusFilterParams.jobStatusFilterValues
                             && jobStatusFilterParams.jobStatusFilterValues[jobTypeName].indexOf(fi.getEntity().jobStatusName) > -1) {
                             return true;
                         }
-                        else {
+                        else if (jobTypeName === 'n/a') {
                             return false;
+                        }
+                        else {
+                            return true;
                         }
                     });
                 }

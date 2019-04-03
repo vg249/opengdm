@@ -69,7 +69,7 @@ import {FileItem} from "ng2-file-upload";
                         <p-checkbox binary="true"
                                     [ngModel]="fi.getSelected()"
                                     (onChange)="handleRowChecked($event, fi)"
-                                    [hidden]="showOnlyExtractReadyJobs(fi)"
+                                    [hidden]="hideNonExtractReadyJobs(fi)"
                                     [id]="viewIdGeneratorService.makeDatasetRowCheckboxId(fi._entity.datasetName)">
                         </p-checkbox>
 
@@ -314,15 +314,16 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
      * Event to allow only extract ready jobs to be selected.
      * @param fi - GobiiFileItem
      */
-    public showOnlyExtractReadyJobs(fi:GobiiFileItem) {
-        if(fi.getEntity().jobTypeName == "load" && fi.getEntity().jobStatusName == "completed") {
+    public hideNonExtractReadyJobs(fi:GobiiFileItem) {
+        let jobTypeName:string = fi.getEntity().jobTypeName;
+        if(jobTypeName == "load" && fi.getEntity().jobStatusName == "completed") {
             return false;
         }
-        else if(fi.getEntity().jobTypeName == "extract") {
-            return false;
+        else if(jobTypeName == "n/a") {
+            return true;
         }
         else {
-            return true;
+            return false;
         }
     }
 
@@ -334,12 +335,10 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
         if (event === true) {
             /**
              * bug/GSD-557
-             * Load only datasets with associated jobs of type "extract" and "load".
-             * For extract jobs, status can be anything, which is defined by a null value.
+             * Load only if datasets with associated jobs of type "load" has listed status.
              * For load jobs, status should be "completed".
              */
             jobStatusFilterValues = {
-                "extract" :null,
                 "load" : ["completed"]
             };
         } else {
