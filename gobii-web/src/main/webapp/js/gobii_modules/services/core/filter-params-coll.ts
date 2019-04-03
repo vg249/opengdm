@@ -289,7 +289,7 @@ export class FilterParamsColl {
                                 payloadFilter.entityLasteUpdated,
                                 payloadFilter.pagination,
                                 {
-                                    "load": "completed",
+                                    "load": ["completed"],
                                     "extract": null
                                 }
                             )
@@ -336,7 +336,7 @@ export class FilterParamsColl {
                                 payloadFilter.entityLasteUpdated,
                                 payloadFilter.pagination,
                                 {
-                                    "load": "completed",
+                                    "load": ["completed"],
                                     "extract": null
                                 }
                             )

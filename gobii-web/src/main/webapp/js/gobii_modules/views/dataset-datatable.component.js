@@ -139,7 +139,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/
                          */
                         jobStatusFilterValues = {
                             "extract": null,
-                            "load": "completed"
+                            "load": ["completed"]
                         };
                     }
                     else {

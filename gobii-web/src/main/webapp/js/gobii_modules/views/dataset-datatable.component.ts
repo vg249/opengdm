@@ -340,7 +340,7 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
              */
             jobStatusFilterValues = {
                 "extract" :null,
-                "load" : "completed"
+                "load" : ["completed"]
             };
         } else {
             jobStatusFilterValues = null;

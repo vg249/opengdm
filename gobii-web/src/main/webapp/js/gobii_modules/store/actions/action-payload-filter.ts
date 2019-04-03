@@ -33,7 +33,7 @@ export class PayloadFilter {
  * Interface for JobType:JobStatus key-value pair.
  * Added to define jobStatusFilterValues parameter in
  * class ExtractReadyPayloadFilter.
- * @typedef {Object.<string, string|null>}
+ * @typedef {Object.<string, Array<string>|null>}
  * example: {
  *     "extract" : "pending",
  *     "load" : "null",
@@ -41,7 +41,7 @@ export class PayloadFilter {
  * }
  */
 export interface JobTypeFilters {
-    [key: string]: string | null;
+    [key: string]: string[] | null;
 }
 
 

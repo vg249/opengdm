@@ -198,7 +198,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                             returnVal = new fileAction.LoadFilterAction({
                                 filterId: file_item_param_names_1.FilterParamNames.DATASET_LIST_STATUS,
                                 filter: new action_payload_filter_2.ExtractReadyPayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, cvDatasetCompoundUniqueId, null, null, null, payloadFilter.entityLasteUpdated, payloadFilter.pagination, {
-                                    "load": "completed",
+                                    "load": ["completed"],
                                     "extract": null
                                 })
                             });
@@ -219,7 +219,7 @@ System.register(["@angular/core", "../../model/type-entity", "../../model/type-e
                             returnVal = new fileAction.LoadFilterAction({
                                 filterId: file_item_param_names_1.FilterParamNames.DATASET_LIST_STATUS,
                                 filter: new action_payload_filter_2.ExtractReadyPayloadFilter(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, cvDatasetCompoundUniqueId, null, null, null, payloadFilter.entityLasteUpdated, payloadFilter.pagination, {
-                                    "load": "completed",
+                                    "load": ["completed"],
                                     "extract": null
                                 })
                             });
