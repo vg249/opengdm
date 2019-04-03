@@ -648,9 +648,13 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                     returnVal = datasetEntitiesFilteredByExperiment
                         .filter(function (fi) {
                         var jobTypeName = fi.getEntity().jobTypeName.trim();
-                        if (jobTypeName in jobStatusFilterParams.jobStatusFilterValues
-                            && jobStatusFilterParams.jobStatusFilterValues[jobTypeName].indexOf(fi.getEntity().jobStatusName) > -1) {
-                            return true;
+                        if (jobTypeName in jobStatusFilterParams.jobStatusFilterValues) {
+                            if (jobStatusFilterParams.jobStatusFilterValues[jobTypeName].indexOf(fi.getEntity().jobStatusName) > -1) {
+                                return true;
+                            }
+                            else {
+                                return false;
+                            }
                         }
                         else if (jobTypeName === 'n/a') {
                             return false;

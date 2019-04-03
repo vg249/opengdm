@@ -119,8 +119,13 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/
                  */
                 DatasetDatatableComponent.prototype.hideNonExtractReadyJobs = function (fi) {
                     var jobTypeName = fi.getEntity().jobTypeName;
-                    if (jobTypeName == "load" && fi.getEntity().jobStatusName == "completed") {
-                        return false;
+                    if (jobTypeName == "load") {
+                        if (fi.getEntity().jobStatusName === "completed") {
+                            return false;
+                        }
+                        else {
+                            return true;
+                        }
                     }
                     else if (jobTypeName == "n/a") {
                         return true;
