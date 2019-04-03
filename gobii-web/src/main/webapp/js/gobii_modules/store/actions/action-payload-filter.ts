@@ -36,12 +36,11 @@ export class PayloadFilter {
  * @typedef {Object.<string, Array<string>|null>}
  * example: {
  *     "extract" : "pending",
- *     "load" : "null",
  *     ...
  * }
  */
 export interface JobTypeFilters {
-    [key: string]: string[] | null;
+    [key: string]: string[];
 }
 
 
