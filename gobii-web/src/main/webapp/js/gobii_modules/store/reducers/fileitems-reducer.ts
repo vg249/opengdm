@@ -847,7 +847,7 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
                     if(jobTypeName in jobStatusFilterParams.jobStatusFilterValues)
                     {
                        if(jobStatusFilterParams.jobStatusFilterValues[
-                           jobTypeName].indexOf(fi.getEntity().jobStatusName) > -1){
+                           jobTypeName].indexOf(fi.getEntity().jobStatusName.trim()) > -1){
                            return true;
                        }
                        else {

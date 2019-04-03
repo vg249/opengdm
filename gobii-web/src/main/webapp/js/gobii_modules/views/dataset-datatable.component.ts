@@ -315,9 +315,9 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
      * @param fi - GobiiFileItem
      */
     public hideNonExtractReadyJobs(fi:GobiiFileItem) {
-        let jobTypeName:string = fi.getEntity().jobTypeName;
-        if(jobTypeName == "load") {
-            if(fi.getEntity().jobStatusName === "completed") {
+        let jobTypeName:string = fi.getEntity().jobTypeName.trim();
+        if(jobTypeName === "load") {
+            if(fi.getEntity().jobStatusName.trim() === "completed") {
                 return false;
             }
             else {

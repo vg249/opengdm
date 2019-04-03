@@ -118,9 +118,9 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/
                  * @param fi - GobiiFileItem
                  */
                 DatasetDatatableComponent.prototype.hideNonExtractReadyJobs = function (fi) {
-                    var jobTypeName = fi.getEntity().jobTypeName;
-                    if (jobTypeName == "load") {
-                        if (fi.getEntity().jobStatusName === "completed") {
+                    var jobTypeName = fi.getEntity().jobTypeName.trim();
+                    if (jobTypeName === "load") {
+                        if (fi.getEntity().jobStatusName.trim() === "completed") {
                             return false;
                         }
                         else {

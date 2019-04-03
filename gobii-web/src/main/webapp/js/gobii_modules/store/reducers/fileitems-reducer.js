@@ -649,7 +649,7 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                         .filter(function (fi) {
                         var jobTypeName = fi.getEntity().jobTypeName.trim();
                         if (jobTypeName in jobStatusFilterParams.jobStatusFilterValues) {
-                            if (jobStatusFilterParams.jobStatusFilterValues[jobTypeName].indexOf(fi.getEntity().jobStatusName) > -1) {
+                            if (jobStatusFilterParams.jobStatusFilterValues[jobTypeName].indexOf(fi.getEntity().jobStatusName.trim()) > -1) {
                                 return true;
                             }
                             else {
