@@ -33,13 +33,15 @@ export class PayloadFilter {
  * Interface for JobType:JobStatus key-value pair.
  * Added to define jobStatusFilterValues parameter in
  * class ExtractReadyPayloadFilter.
+ * @typedef {Object.<string, string|null>}
  * example: {
  *     "extract" : "pending",
+ *     "load" : "null",
  *     ...
  * }
  */
 export interface JobTypeFilters {
-    [key: string] :string;
+    [key: string]: string | null;
 }
 
 
@@ -52,10 +54,6 @@ export interface JobTypeFilters {
  * For Extract ready filter, two jobTypes with different values needs to
  * checked.
  * @param jobStatusFilterValues
- * example: {
- *     "extract" : "pending",
- *     ...
- * }
  */
 
 export class ExtractReadyPayloadFilter extends PayloadFilter{

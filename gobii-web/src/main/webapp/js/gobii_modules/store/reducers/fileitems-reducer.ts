@@ -845,7 +845,10 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
             .filter(function(fi) {
                     let jobTypeName:string = fi.getEntity().jobTypeName;
                     if(jobTypeName in jobStatusFilterParams.jobStatusFilterValues) {
-                        if(jobStatusFilterParams.jobStatusFilterValues[jobTypeName] != null) {
+                        if(jobStatusFilterParams.jobStatusFilterValues[jobTypeName] === null) {
+                            return true;
+                        }
+                        else {
                             if(jobStatusFilterParams.jobStatusFilterValues[jobTypeName] ===
                                 fi.getEntity().jobStatusName) {
                                 return true;
@@ -853,9 +856,6 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
                             else {
                                 return false;
                             }
-                        }
-                        else {
-                            return true;
                         }
                     }
                     else {

@@ -39,10 +39,6 @@ System.register([], function (exports_1, context_1) {
              * For Extract ready filter, two jobTypes with different values needs to
              * checked.
              * @param jobStatusFilterValues
-             * example: {
-             *     "extract" : "pending",
-             *     ...
-             * }
              */
             ExtractReadyPayloadFilter = (function (_super) {
                 __extends(ExtractReadyPayloadFilter, _super);

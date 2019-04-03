@@ -649,7 +649,10 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                         .filter(function (fi) {
                         var jobTypeName = fi.getEntity().jobTypeName;
                         if (jobTypeName in jobStatusFilterParams.jobStatusFilterValues) {
-                            if (jobStatusFilterParams.jobStatusFilterValues[jobTypeName] != null) {
+                            if (jobStatusFilterParams.jobStatusFilterValues[jobTypeName] === null) {
+                                return true;
+                            }
+                            else {
                                 if (jobStatusFilterParams.jobStatusFilterValues[jobTypeName] ===
                                     fi.getEntity().jobStatusName) {
                                     return true;
@@ -657,9 +660,6 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                                 else {
                                     return false;
                                 }
-                            }
-                            else {
-                                return true;
                             }
                         }
                         else {

@@ -133,7 +133,7 @@ System.register(["@angular/core", "@ngrx/store", "../store/reducers", "../store/
                     if (event === true) {
                         /**
                          * bug/GSD-557
-                         * Select only datasets with associated jobs of type "extract" and "load".
+                         * Load only datasets with associated jobs of type "extract" and "load".
                          * For extract jobs, status can be anything, which is defined by a null value.
                          * For load jobs, status should be "completed".
                          */
