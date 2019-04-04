@@ -60,8 +60,11 @@ export class JsonToGfiDataset implements JsonToGfi {
             jsonItem.loaderFirstName);
 
         let piContactRelation: GobiiFileItemEntityRelation = GobiiFileItemEntityRelation
-            .fromGobiiFileItemCompoundId(this._filterParamsColl.getFilter(FilterParamNames.CONTACT_PI_FILTER_OPTIONAL,
-                GobiiExtractFilterType.WHOLE_DATASET).getTargetEtityUniqueId())
+            .fromGobiiFileItemCompoundId(
+                this._filterParamsColl.getFilter(
+                    FilterParamNames.CONTACT_PI_FILTER_OPTIONAL,
+                    GobiiExtractFilterType.WHOLE_DATASET
+            ).getTargetEtityUniqueId())
             .setRelatedEntityId(dataset.piContactId != null ? dataset.piContactId.toString() : null);
 
         let projectRelation: GobiiFileItemEntityRelation = GobiiFileItemEntityRelation
