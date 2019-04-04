@@ -69,7 +69,9 @@ import {FileItem} from "ng2-file-upload";
                         <p-checkbox binary="true"
                                     [ngModel]="fi.getSelected()"
                                     (onChange)="handleRowChecked($event, fi)"
-                                    [hidden]="hideNonExtractReadyJobs(fi)"
+                                    [hidden]="hideNonExtractReadyJobs(fi, {
+                                        'load' : ['completed']
+                                    })"
                                     [id]="viewIdGeneratorService.makeDatasetRowCheckboxId(fi._entity.datasetName)">
                         </p-checkbox>
 
@@ -314,22 +316,8 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
      * Event to allow only extract ready jobs to be selected.
      * @param fi - GobiiFileItem
      */
-    public hideNonExtractReadyJobs(fi:GobiiFileItem) {
-        let jobTypeName:string = fi.getEntity().jobTypeName.trim();
-        if(jobTypeName === "load") {
-            if(fi.getEntity().jobStatusName.trim() === "completed") {
-                return false;
-            }
-            else {
-                return true;
-            }
-        }
-        else if(jobTypeName == "n/a") {
-            return true;
-        }
-        else {
-            return false;
-        }
+    public hideNonExtractReadyJobs(fi:GobiiFileItem, jobStatusFilterValues:JobTypeFilters) {
+        return !ExtractReadyPayloadFilter.isExtractReady(fi, jobStatusFilterValues);
     }
 
     public handleFilterToExtractReadyChecked(event) {

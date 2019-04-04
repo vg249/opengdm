@@ -54,6 +54,35 @@ System.register([], function (exports_1, context_1) {
                     _this.jobStatusFilterValues = jobStatusFilterValues;
                     return _this;
                 }
+                /**
+                 * Checks whether the passed datasetItem is extract ready or not for this Instance.
+                 * @param fi - datasetItem
+                 */
+                ExtractReadyPayloadFilter.prototype.checkExtractReady = function (fi) {
+                    return ExtractReadyPayloadFilter.isExtractReady(fi, this.jobStatusFilterValues);
+                };
+                /**
+                 * Checks whether the datasetItem is extract ready or not using the given job status filter values.
+                 * @param fi - datasetItem
+                 * @param filterValues - job status filter values.
+                 */
+                ExtractReadyPayloadFilter.isExtractReady = function (fi, filterValues) {
+                    var jobTypeName = fi.getEntity().jobTypeName.trim();
+                    if (jobTypeName in filterValues) {
+                        if (filterValues[jobTypeName].indexOf(fi.getEntity().jobStatusName.trim()) > -1) {
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
+                    }
+                    else if (jobTypeName === 'n/a') {
+                        return false;
+                    }
+                    else {
+                        return true;
+                    }
+                };
                 return ExtractReadyPayloadFilter;
             }(PayloadFilter));
             exports_1("ExtractReadyPayloadFilter", ExtractReadyPayloadFilter);

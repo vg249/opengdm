@@ -2,6 +2,7 @@ import {GobiiFileItemCompoundId} from "../../model/gobii-file-item-compound-id";
 import {Pagination} from "../../model/payload/pagination";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 import {Payload} from "../../model/payload/payload";
+import {GobiiFileItem} from "../../model/gobii-file-item";
 
 export class PayloadFilter {
     constructor(public gobiiExtractFilterType: GobiiExtractFilterType,
@@ -56,6 +57,7 @@ export interface JobTypeFilters {
  */
 
 export class ExtractReadyPayloadFilter extends PayloadFilter{
+
     constructor(public gobiiExtractFilterType: GobiiExtractFilterType,
         public targetEntityUniqueId:GobiiFileItemCompoundId,
         public relatedEntityUniqueId:GobiiFileItemCompoundId,
@@ -71,6 +73,40 @@ export class ExtractReadyPayloadFilter extends PayloadFilter{
             pagination
         );
 
+    }
+
+    /**
+     * Checks whether the passed datasetItem is extract ready or not for this Instance.
+     * @param fi - datasetItem
+     */
+    public checkExtractReady(fi:GobiiFileItem) {
+        return ExtractReadyPayloadFilter.isExtractReady(
+            fi, this.jobStatusFilterValues);
+    }
+
+    /**
+     * Checks whether the datasetItem is extract ready or not using the given job status filter values.
+     * @param fi - datasetItem
+     * @param filterValues - job status filter values.
+     */
+    static isExtractReady(fi:GobiiFileItem, filterValues:JobTypeFilters) {
+        let jobTypeName:string = fi.getEntity().jobTypeName.trim();
+        if(jobTypeName in filterValues)
+        {
+            if(filterValues[jobTypeName].indexOf(
+                fi.getEntity().jobStatusName.trim()) > -1){
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else if(jobTypeName === 'n/a') {
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 }
 

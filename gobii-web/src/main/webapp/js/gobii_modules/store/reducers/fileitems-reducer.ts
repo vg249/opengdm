@@ -840,28 +840,10 @@ export const getDatasetEntities = createSelector(getFileItems, getFilters, (file
     let jobStatusFilterParams = filters[FilterParamNames.DATASET_LIST_STATUS];
     if (jobStatusFilterParams
         && jobStatusFilterParams.jobStatusFilterValues != null) {
-
         returnVal = datasetEntitiesFilteredByExperiment
             .filter(function(fi) {
-                    let jobTypeName:string = fi.getEntity().jobTypeName.trim();
-                    if(jobTypeName in jobStatusFilterParams.jobStatusFilterValues)
-                    {
-                       if(jobStatusFilterParams.jobStatusFilterValues[
-                           jobTypeName].indexOf(fi.getEntity().jobStatusName.trim()) > -1){
-                           return true;
-                       }
-                       else {
-                           return false;
-                       }
-                    }
-                    else if(jobTypeName === 'n/a') {
-                        return false;
-                    }
-                    else {
-                        return true;
-                    }
-                }
-            );
+                return jobStatusFilterParams.checkExtractReady(fi);
+            });
     } else {
         returnVal = datasetEntitiesFilteredByExperiment;
     }
