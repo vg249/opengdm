@@ -45,7 +45,7 @@ public class GetLinks {
         String host = config.getGlobalServer(ServerType.OWN_CLOUD).getHost();
         String port = config.getGlobalServer(ServerType.OWN_CLOUD).getPort().toString();
         String contextPath = config.getGlobalServer(ServerType.OWN_CLOUD).getContextPath();
-        String urlPath = "http://" + host + (port.equals("") ? "" : ":"+port) + "/owncloud/ocs/v1.php/apps/files_sharing/api/v1/shares";
+        String urlPath = "http://" + host + (port.equals("") ? "" : ":"+port) + "/ocs/v1.php/apps/files_sharing/api/v1/shares";
         String path = "path=" + filePath.replace("/data/gobii_bundle/crops/", "/" + contextPath) + "&shareType=3&permissions=1";
         String liveLink;
         URL url = new URL(urlPath);

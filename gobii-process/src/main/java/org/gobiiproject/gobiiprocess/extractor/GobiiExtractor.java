@@ -537,8 +537,7 @@ public class GobiiExtractor {
 				            case FLAPJACK:
 					            String genoOutFile = extractDir + "Dataset.genotype";
 					            String mapOutFile = extractDir + "Dataset.map";
-					            pm.addPath("FlapJack Genotype file", new File(genoOutFile).getAbsolutePath(), configuration);
-					            pm.addPath("FlapJack Map file", new File(mapOutFile).getAbsolutePath(), configuration);
+
 					            //Always regenerate requests - may have different parameters
 					            boolean extended = HelperFunctions.checkFileExistence(extendedMarkerFile);
 					            success &= FlapjackTransformer.generateMapFile(extended ? extendedMarkerFile : markerFile, sampleFile, chrLengthFile, tempFolder, mapOutFile, errorFile, extended);
@@ -547,15 +546,17 @@ public class GobiiExtractor {
 					            }
 					            ErrorLogger.logDebug("GobiiExtractor", "Executing FlapJack Genotype file Generation");
 					            success &= FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, tempFolder, genoOutFile, errorFile);
+					            pm.addPath("FlapJack Genotype file", new File(genoOutFile).getAbsolutePath(), configuration);
+					            pm.addPath("FlapJack Map file", new File(mapOutFile).getAbsolutePath(), configuration);
 					            getCounts(success, pm, markerFile, sampleFile);
 					            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Extract Completed 8uccessfully");
 					            break;
 				            case HAPMAP:
 					            String hapmapOutFile = extractDir + "Dataset.hmp.txt";
-					            pm.addPath("Hapmap file", new File(hapmapOutFile).getAbsolutePath(),configuration);
 					            HapmapTransformer hapmapTransformer = new HapmapTransformer();
 					            ErrorLogger.logDebug("GobiiExtractor", "Executing Hapmap Generation");
 					            success &= hapmapTransformer.generateFile(markerFile, sampleFile, extendedMarkerFile, genoFile, hapmapOutFile, errorFile);
+					            pm.addPath("Hapmap file", new File(hapmapOutFile).getAbsolutePath(), configuration);
 					            getCounts(success, pm, markerFile, sampleFile);
 					            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Extract Completed 8uccessfully");
 					            break;
