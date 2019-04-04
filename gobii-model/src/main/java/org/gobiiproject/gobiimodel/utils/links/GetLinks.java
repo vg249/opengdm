@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiimodel.utils.links;
 
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.types.GobiiServerType;
+import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 
 import java.io.DataInputStream;
@@ -40,11 +40,11 @@ public class GetLinks {
             filePath.replace("inprogress", "done");
         }
 
-        String username = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getUserName();
-        String password = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getPassword();
-        String host = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getHost();
-        String port = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getPort().toString();
-        String contextPath = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getContextPath();
+        String username = config.getGlobalServer(ServerType.OWN_CLOUD).getUserName();
+        String password = config.getGlobalServer(ServerType.OWN_CLOUD).getPassword();
+        String host = config.getGlobalServer(ServerType.OWN_CLOUD).getHost();
+        String port = config.getGlobalServer(ServerType.OWN_CLOUD).getPort().toString();
+        String contextPath = config.getGlobalServer(ServerType.OWN_CLOUD).getContextPath();
         String urlPath = "http://" + host + (port.equals("") ? "" : ":"+port) + "/owncloud/ocs/v1.php/apps/files_sharing/api/v1/shares";
         String path = "path=" + filePath.replace("/data/gobii_bundle/crops/", "/" + contextPath) + "&shareType=3&permissions=1";
         String liveLink;
@@ -79,9 +79,9 @@ public class GetLinks {
     }
 
     public static String getOwncloudURL(String filePath, ConfigSettings config) throws Exception {
-        String host = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getHost();
-        String port = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getPort().toString();
-        String contextPath = config.getGlobalServer(GobiiServerType.OWN_CLOUD).getContextPath();
+        String host = config.getGlobalServer(ServerType.OWN_CLOUD).getHost();
+        String port = config.getGlobalServer(ServerType.OWN_CLOUD).getPort().toString();
+        String contextPath = config.getGlobalServer(ServerType.OWN_CLOUD).getContextPath();
         filePath = filePath.replace("/data/gobii_bundle/crops/", "/" + contextPath);
         if(!filePath.endsWith("/")){
             int start = filePath.lastIndexOf("/");

@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.gobiiproject</groupId>
         <artifactId>parent</artifactId>
-        <version>GOBII Server 2.0_2018-12-21</version>
+        <version>GP1-2262_OwnCloud_2019-04-04</version>
     </parent>
 
     <groupId>org.gobiiproject</groupId>

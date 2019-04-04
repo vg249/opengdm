@@ -3,7 +3,7 @@ package org.gobiiproject.gobiimodel.utils.email;
 
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
-import org.gobiiproject.gobiimodel.types.GobiiServerType;
+import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
@@ -178,7 +178,7 @@ public class ProcessMessage extends MailMessage {
     public ProcessMessage addPath(String type,String path, boolean alwaysShow, ConfigSettings config) throws Exception {
 
         String pathLine = path;
-        if(config.getGlobalServer(GobiiServerType.OWN_CLOUD).isActive()){
+        if(config.getGlobalServer(ServerType.OWN_CLOUD).isActive()){
             if(path.endsWith("/")){
                 pathLine = path + "\n" + GetLinks.getOwncloudURL(path, config);
             }
