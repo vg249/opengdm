@@ -1794,7 +1794,8 @@ public class GobiiAdl {
                 } else {
                     String instructionFileName = payload.getData().get(0).getInstructionFileName();
                     System.out.println("Request " + instructionFileName + " submitted.");
-                    returnVal = checkJobStatusLoad(instructionFileName);
+                    Integer datasetId = loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0).getDataSetId();
+                    returnVal = checkJobStatusLoad(instructionFileName, datasetId);
                 }
             } catch (Exception err) {
                 processError("Error submitting instruction file: " + err.getMessage(), GobiiStatusLevel.ERROR);
@@ -1804,7 +1805,7 @@ public class GobiiAdl {
         return returnVal;
     }
 
-    private static boolean checkJobStatusLoad(String instructionFileName) throws Exception {
+    private static boolean checkJobStatusLoad(String instructionFileName, Integer datasetId) throws Exception {
 
         boolean returnVal = false;
 
@@ -1829,19 +1830,44 @@ public class GobiiAdl {
             List<LoaderInstructionFilesDTO> data = loaderInstructionFilesDTOPayloadEnvelope.getPayload().getData();
             GobiiLoaderInstruction gobiiLoaderInstruction = data.get(0).getGobiiLoaderInstructions().get(0);
 
-            if (!currentStatus.equals(gobiiLoaderInstruction.getGobiiJobStatus().getCvName())) {
-                currentStatus = gobiiLoaderInstruction.getGobiiJobStatus().getCvName();
+            String newStatus = gobiiLoaderInstruction.getGobiiJobStatus().getCvName();
+
+            if (newStatus.equalsIgnoreCase("qc_processing")) {
+
+                if (!currentStatus.equals(newStatus)) {
+                    currentStatus = newStatus;
+                    System.out.println("\nJob " + instructionFileName + " current status: " + currentStatus + " at " + dateFormat.format(new Date()));
+                }
+
+                // get dataset
+
+                RestUri datasetGetUri = GobiiClientContext.getInstance(null, false)
+                        .getUriFactory()
+                        .resourceByUriIdParam(RestResourceId.GOBII_DATASETS);
+                datasetGetUri.setParamValue("id", datasetId.toString());
+                GobiiEnvelopeRestResource<DataSetDTO,DataSetDTO> gobiiEnvelopeRestResourceForDatasetGet = new GobiiEnvelopeRestResource<>(datasetGetUri);
+                PayloadEnvelope<DataSetDTO> resultEnvelopeForDatasetGet = gobiiEnvelopeRestResourceForDatasetGet.get(DataSetDTO.class);
+                checkStatus(resultEnvelopeForDatasetGet);
+
+                DataSetDTO dataSetDTOGetResponse = resultEnvelopeForDatasetGet.getPayload().getData().get(0);
+
+                newStatus = dataSetDTOGetResponse.getJobStatusName();
+            }
+
+            if (!currentStatus.equals(newStatus)) {
+                currentStatus = newStatus;
                 System.out.println("\nJob " + instructionFileName + " current status: " + currentStatus + " at " + dateFormat.format(new Date()));
             }
 
-            if (gobiiLoaderInstruction.getGobiiJobStatus().getCvName().equalsIgnoreCase("failed") ||
-                    gobiiLoaderInstruction.getGobiiJobStatus().getCvName().equalsIgnoreCase("aborted")) {
+
+            if (newStatus.equalsIgnoreCase("failed") ||
+                    newStatus.equalsIgnoreCase("aborted")) {
 
                 System.out.println("\nJob " + instructionFileName + " failed. \n" + gobiiLoaderInstruction.getLogMessage());
                 returnVal = false;
                 statusDetermined = true;
 
-            } else if (gobiiLoaderInstruction.getGobiiJobStatus().getCvName().equalsIgnoreCase("completed")) {
+            } else if (newStatus.equalsIgnoreCase("completed")) {
                 returnVal = true;
                 statusDetermined = true;
             }
