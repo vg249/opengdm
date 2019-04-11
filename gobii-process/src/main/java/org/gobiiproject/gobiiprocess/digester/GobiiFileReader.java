@@ -449,8 +449,8 @@ public class GobiiFileReader {
             if (success && ErrorLogger.success()) {
                 ErrorLogger.logInfo("Digester", "Successful Data Upload");
                 if (sendQc) {
-                    sendQCExtract(configuration, crop);
                     jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING.getCvName(), "Processing QC Job");
+                    sendQCExtract(configuration, crop);
                 } else {
                     jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Successful Data Load");
                 }
