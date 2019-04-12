@@ -348,6 +348,7 @@ public class HelperFunctions {
                 + webserviceConfig.getPort()
                 + "/"
                 + webserviceConfig.getContextPath(false);
+        ret=ret.replaceAll("//","/");//Replace all instances of double forward quotes with single instances - Issue seen in S2 test environment
         return ret;
     }
 
