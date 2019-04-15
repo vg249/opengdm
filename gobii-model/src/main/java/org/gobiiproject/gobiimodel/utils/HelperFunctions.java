@@ -346,9 +346,8 @@ public class HelperFunctions {
                 + webserviceConfig.getHost()
                 + ":"
                 + webserviceConfig.getPort()
-                + "/"
-                + webserviceConfig.getContextPath(false);
-        ret=ret.replaceAll("//","/");//Replace all instances of double forward quotes with single instances - Issue seen in S2 test environment
+                + ("/"
+                + webserviceConfig.getContextPath(false)).replaceAll("//","/");//Replace a second / if it exists in the context path
         return ret;
     }
 

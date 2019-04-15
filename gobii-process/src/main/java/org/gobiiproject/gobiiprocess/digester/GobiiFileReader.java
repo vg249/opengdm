@@ -14,6 +14,7 @@ import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
+import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.config.*;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.*;
@@ -201,6 +202,7 @@ public class GobiiFileReader {
 
         jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION.getCvName(), "Beginning Validation");
         // Instruction file Validation
+        JobPayloadType jpt = zero.getJobPayloadType();//TODO - This is the job payload type
         InstructionFileValidator instructionFileValidator = new InstructionFileValidator(list);
         instructionFileValidator.processInstructionFile();
         String validationStatus = instructionFileValidator.validateMarkerUpload();
@@ -366,6 +368,22 @@ public class GobiiFileReader {
 
         //Validation logic before loading any metadata
         String baseConnectionString = getWebserviceConnectionString(gobiiCropConfig);
+
+        GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, crop, GobiiAutoLoginType.USER_RUN_AS);
+        if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
+            ErrorLogger.logError("Digester", "Unable to log in with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
+            return;
+        }
+        String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
+
+        GobiiUriFactory guf = new GobiiUriFactory(currentCropContextRoot);
+        guf.resourceColl(RestResourceId.GOBII_CALLS);
+        System.out.println("Connection String: " + baseConnectionString);
+        System.out.println("UriFactory Call Resource:"+ guf.resourceColl(RestResourceId.GOBII_CALLS).getResource());
+        System.out.println("UriFactory Call UrlComplete:"+ guf.resourceColl(RestResourceId.GOBII_CALLS).makeUrlComplete());
+        System.out.println("UriFactory Call Path" + guf.resourceColl(RestResourceId.GOBII_CALLS).makeUrlPath());
+
+
         String user = configuration.getLdapUserForBackendProcs();
         String password = configuration.getLdapPasswordForBackendProcs();
         String directory = dstDir.getAbsolutePath();
