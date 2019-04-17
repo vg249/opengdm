@@ -378,16 +378,6 @@ public class GobiiFileReader {
 
         GobiiUriFactory guf = new GobiiUriFactory(currentCropContextRoot);
         guf.resourceColl(RestResourceId.GOBII_CALLS);
-        System.out.println("Connection String: " + baseConnectionString);
-        try {
-            System.out.println("UriFactory Call Resource:" + guf.resourceColl(RestResourceId.GOBII_CALLS).getResource());
-        }catch(Exception e){}//Nope
-        try{
-            System.out.println("UriFactory Call UrlComplete:"+ guf.resourceColl(RestResourceId.GOBII_CALLS).makeUrlComplete());
-        }catch(Exception e){}//Nope
-        try {
-            System.out.println("UriFactory Call Path" + guf.resourceColl(RestResourceId.GOBII_CALLS).makeUrlPath());
-        }catch(Exception e){}//Nope
 
         String user = configuration.getLdapUserForBackendProcs();
         String password = configuration.getLdapPasswordForBackendProcs();
