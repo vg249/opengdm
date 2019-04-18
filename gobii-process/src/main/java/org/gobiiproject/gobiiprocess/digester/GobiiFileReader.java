@@ -329,9 +329,7 @@ public class GobiiFileReader {
 		List<GobiiFileColumn> cols=zero.getGobiiFileColumns();
 		GobiiFileColumn firstCol=cols.size()>0?cols.get(0):null;
 		String firstInstructionDatasetType=getDatasetType(zero,firstCol);
-		if(isFirstInstructionVCF && !firstInstructionDatasetType.equals("NUCLEOTIDE_2_LETTER")){
-			ErrorLogger.logError("GobiiFileReader","Invalid Dataset Type selected for VCF file. Expected 2 Letter Nucleotide. Received " +firstInstructionDatasetType);
-		}
+
 
 		for (GobiiLoaderInstruction inst:list) {
 			qcCheck = inst.isQcCheck();
