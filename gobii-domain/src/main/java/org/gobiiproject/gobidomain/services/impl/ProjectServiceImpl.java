@@ -93,7 +93,6 @@ public class ProjectServiceImpl implements ProjectService {
 
         returnVal = dtoMapProject.create(projectDTO);
 
-        // When we have roles and permissions, this will be set programmatically
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
