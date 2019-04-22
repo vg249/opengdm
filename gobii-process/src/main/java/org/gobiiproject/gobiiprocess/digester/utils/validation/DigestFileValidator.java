@@ -176,7 +176,7 @@ public class DigestFileValidator {
                 validationRules = new ObjectMapper().readValue(rules, ValidationRules.class);
             } else {
                 validationRules = new ObjectMapper()
-                        .readValue(getClass().getClassLoader().getResourceAsStream("validationConfig.json"), ValidationRules.class);
+                        .readValue(DigestFileValidator.class.getResourceAsStream("/validationConfig.json"), ValidationRules.class);
             }
             validations = validationRules.getValidations();
         } catch (IOException e) {
