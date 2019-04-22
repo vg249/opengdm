@@ -78,6 +78,7 @@ public class DigestFileValidator {
                     List<ValidationError> validationErrorList = new ArrayList<>();
                     validationErrorList.add(validationError);
                     writer.write(validationErrorList);
+                    ErrorLogger.logError("DigestFileValidator",e);
                 }
             } else {
                 validationError.status = ValidationConstants.FAILURE;
@@ -181,12 +182,12 @@ public class DigestFileValidator {
         } catch (IOException e) {
             validationFailed(writer, rulesFile, "Exception in reading rules file.\n" + e.getMessage());
             writer.close();
-            System.exit(1);
+            throw e;
         }
         if (validations.size() == 0) {
             validationFailed(writer, rulesFile, "No validations defined.");
             writer.close();
-            System.exit(0);
+            throw new IOException("No validations defined.");
         }
         validateRules(validations, writer);
         return validations;
@@ -216,7 +217,6 @@ public class DigestFileValidator {
         }
         if (validationFailed) {
             writer.close();
-            System.exit(1);
         }
     }
 
