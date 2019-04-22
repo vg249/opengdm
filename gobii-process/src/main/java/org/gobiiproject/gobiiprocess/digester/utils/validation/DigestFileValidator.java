@@ -173,9 +173,10 @@ public class DigestFileValidator {
             if (rulesFile != null) {
                 File rules = new File(rulesFile);
                 validationRules = new ObjectMapper().readValue(rules, ValidationRules.class);
-            } else
+            } else {
                 validationRules = new ObjectMapper()
                         .readValue(getClass().getClassLoader().getResourceAsStream("validationConfig.json"), ValidationRules.class);
+            }
             validations = validationRules.getValidations();
         } catch (IOException e) {
             validationFailed(writer, rulesFile, "Exception in reading rules file.\n" + e.getMessage());
