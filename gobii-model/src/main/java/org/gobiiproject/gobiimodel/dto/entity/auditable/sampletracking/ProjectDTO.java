@@ -11,13 +11,13 @@ import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@JsonPropertyOrder({"id", "name", "piContactId", "description"})
 @JsonIgnoreProperties(ignoreUnknown = true, value={
         "allowedProcessTypes", "entityNameType",
-        "getPropertiesAsString"
+        "properties"
 })
 public class ProjectDTO extends DTOBaseAuditable {
 
@@ -27,9 +27,8 @@ public class ProjectDTO extends DTOBaseAuditable {
     private Integer status;
     private String code;
     private String description;
+    private String selfLink;
     private JsonNode properties;
-    private String genotypingPurpose;
-
 
     public ProjectDTO() {
         super(GobiiEntityNameType.PROJECT);
@@ -98,22 +97,45 @@ public class ProjectDTO extends DTOBaseAuditable {
     }
 
     @GobiiEntityParam(paramName = "projectProperties")
-    public String getPropertiesAsString() {
-        return this.properties.toString();
-    }
-
     public JsonNode getProperties() {
         return this.properties;
     }
 
-    @GobiiEntityColumn(columnName = "props")
+    @GobiiEntityColumn(columnName = "mapped_properties")
     public void setProperties(JsonNode properties) {
         this.properties = properties;
     }
 
     public String getGenotypingPurpose() {
         if(this.properties.has("genotyping_purpose")) {
-            return this.properties.get("genotyping_purpose").toString();
+            return this.properties.get("genotyping_purpose").asText();
+        }
+        else {
+            return null;
+        }
+    }
+
+    public String getStudyName() {
+        if(this.properties.has("study_name")) {
+            return this.properties.get("study_name").asText();
+        }
+        else {
+            return null;
+        }
+    }
+
+    public String getDivision() {
+        if(this.properties.has("division")) {
+            return this.properties.get("division").asText();
+        }
+        else {
+            return null;
+        }
+    }
+
+    public String getDateSampled() {
+        if(this.properties.has("date_sampled")) {
+            return this.properties.get("date_sampled").asText();
         }
         else {
             return null;

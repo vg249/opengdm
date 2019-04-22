@@ -1,10 +1,15 @@
 package org.gobiiproject.gobiimodel.dto.base;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
+import org.gobiiproject.gobiimodel.utils.customserializers.UtcDateSerializer;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * All Dto classes for tables that have the created_date, modified_date, created_by,
@@ -24,8 +29,11 @@ public abstract class DTOBaseAuditable extends DTOBase {
     }
 
     private Integer createdBy = null;
+
+    @JsonSerialize(using=UtcDateSerializer.class)
     private Date createdDate = null;
     private Integer modifiedBy = null;
+    @JsonSerialize(using=UtcDateSerializer.class)
     private Date modifiedDate = null;
 
     public GobiiEntityNameType getEntityNameType() {
@@ -49,7 +57,6 @@ public abstract class DTOBaseAuditable extends DTOBase {
 
     @GobiiEntityColumn(columnName = "created_date")
     public void setCreatedDate(Date createdDate) {
-
         this.createdDate = createdDate;
     }
 
@@ -72,7 +79,5 @@ public abstract class DTOBaseAuditable extends DTOBase {
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
-
-
 
 }

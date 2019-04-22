@@ -97,7 +97,13 @@ public class ResultColumnApplicator {
 
                         } else if(currentColumnType.equals(JsonNode.class)) {
                             ObjectMapper mapper = new ObjectMapper();
-                            JsonNode jsonNode = mapper.readTree(resultSet.getString(currentColumnName));
+                            JsonNode jsonNode;
+                            if(resultSet.getString(currentColumnName) != null) {
+                                jsonNode = mapper.readTree(resultSet.getString(currentColumnName));
+                            }
+                            else {
+                                jsonNode = mapper.createObjectNode();
+                            }
                             currentMethod.invoke(dtoInstance, jsonNode);
                         } else {
                             throw new SQLException("Unsupported param type for method " + currentMethod.getName() + ", parameter " + currentParameterName + ": " + currentColumnType);

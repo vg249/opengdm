@@ -431,6 +431,8 @@
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementPlatformByList"/>
     <bean id="listStatementProjectAll"
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementProjectAll"/>
+    <bean id="listStatementProjectAllWithProperties"
+          class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.sampletracking.ListStatementProjectAll"/>
     <bean id="listStatementProtocolAll"
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementProtocolAll"/>
     <bean id="listStatementCvsByGroup"
@@ -738,7 +740,7 @@
                         <constructor-arg ref="storedProcExec"/>
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ProjectDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
-                        <constructor-arg ref="listStatementProjectAll"/>
+                        <constructor-arg ref="listStatementProjectAllWithProperties"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>
