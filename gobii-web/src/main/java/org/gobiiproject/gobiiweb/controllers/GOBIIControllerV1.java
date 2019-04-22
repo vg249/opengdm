@@ -118,7 +118,7 @@ public class GOBIIControllerV1 {
     private PingService pingService = null;
 
     @Autowired
-    private ProjectService projectService = null;
+    private ProjectService<ProjectDTO> projectService = null;
 
     @Autowired
     private ContactService contactService = null;
@@ -4013,7 +4013,6 @@ public class GOBIIControllerV1 {
      * Uplaod an arbitary file to the specified destination
      * @param destinationType
      * @param fileName
-     * @param file
      * @param request
      * @param response
      * @return

@@ -25,7 +25,7 @@ public class SampleTrackingController {
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(SampleTrackingController.class);
 
     @Autowired
-    private ProjectService projectService = null;
+    private ProjectService<ProjectDTO> sampleTrackingProjectService = null;
 
     @RequestMapping(value="/projects", method= RequestMethod.GET)
     public @ResponseBody ResponseEntity listProjects(
@@ -33,8 +33,8 @@ public class SampleTrackingController {
             HttpServletResponse response
     ) {
         try {
-            //List<ProjectDTO> projectDTOs = projectService.getProjects();
-            return ResponseEntity.ok("");
+            List<ProjectDTO> projectDTOs = sampleTrackingProjectService.getProjects();
+            return ResponseEntity.ok(projectDTOs);
         }
         catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error");
@@ -48,6 +48,7 @@ public class SampleTrackingController {
             HttpServletResponse response) {
         try {
             //projectService.createProject(newProject);
+            sampleTrackingProjectService.createProject(newProject);
             return ResponseEntity.ok(newProject);
         }
         catch(Exception e) {

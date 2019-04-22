@@ -151,6 +151,7 @@ public class RsProjectDaoImpl implements RsProjectDao {
 
         }
 
+
         return returnVal;
 
     } // createProject

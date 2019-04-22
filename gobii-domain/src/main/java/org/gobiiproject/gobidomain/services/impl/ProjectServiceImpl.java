@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Created by Phil on 4/6/2016.
  */
-public class ProjectServiceImpl implements ProjectService {
+public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
 
 
     Logger LOGGER = LoggerFactory.getLogger(ProjectServiceImpl.class);
