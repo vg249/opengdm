@@ -144,7 +144,7 @@ class Validator {
                         columnNotFoundErrors.add(i);
                     }
                 }
-                for (int i = columnNotFoundErrors.size() - 1; i < 0; i--) {
+                for (int i = columnNotFoundErrors.size() - 1; i > 0; i--) {
                     failureList.remove(columnNotFoundErrors.get(i));
                 }
             } catch (MaximumErrorsValidationException e) {
