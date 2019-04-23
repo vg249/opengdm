@@ -5,6 +5,8 @@ package org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.JsonObject;
 import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
@@ -16,8 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true, value={
-        "allowedProcessTypes", "entityNameType",
-        "properties"
+        "allowedProcessTypes", "entityNameType", "properties"
 })
 public class ProjectDTO extends DTOBaseAuditable {
 
@@ -27,8 +28,7 @@ public class ProjectDTO extends DTOBaseAuditable {
     private Integer status;
     private String code;
     private String description;
-    private String selfLink;
-    private JsonNode properties;
+    private Map<String, Object> properties = new HashMap<>();
 
     public ProjectDTO() {
         super(GobiiEntityNameType.PROJECT);
@@ -97,48 +97,45 @@ public class ProjectDTO extends DTOBaseAuditable {
     }
 
     @GobiiEntityParam(paramName = "projectProperties")
-    public JsonNode getProperties() {
+    public Map<String, Object> getProperties() {
         return this.properties;
     }
 
     @GobiiEntityColumn(columnName = "mapped_properties")
-    public void setProperties(JsonNode properties) {
+    public void setProperties(Map<String, Object> properties) {
         this.properties = properties;
     }
 
-    public String getGenotypingPurpose() {
-        if(this.properties.has("genotyping_purpose")) {
-            return this.properties.get("genotyping_purpose").asText();
-        }
-        else {
-            return null;
-        }
+    public Object getGenotypingPurpose() {
+        return this.properties.getOrDefault("genotyping_purpose", null);
     }
 
-    public String getStudyName() {
-        if(this.properties.has("study_name")) {
-            return this.properties.get("study_name").asText();
-        }
-        else {
-            return null;
-        }
+    public Object getStudyName() {
+        return this.properties.getOrDefault("study_name", null);
     }
 
-    public String getDivision() {
-        if(this.properties.has("division")) {
-            return this.properties.get("division").asText();
-        }
-        else {
-            return null;
-        }
+    public Object getDivision() {
+        return this.properties.getOrDefault("division", null);
     }
 
-    public String getDateSampled() {
-        if(this.properties.has("date_sampled")) {
-            return this.properties.get("date_sampled").asText();
-        }
-        else {
-            return null;
-        }
+    public Object getDateSampled() {
+        return this.properties.getOrDefault("date_sampled", null);
     }
+
+    public void setGenotypingPurpose(String genotypingPurpose) {
+        this.properties.put("genotyping_purpose", genotypingPurpose);
+    }
+
+    public void setStudyName(String studyName) {
+        this.properties.put("study_name", studyName);
+    }
+
+    public void setDivision(String division) {
+        this.properties.put("division", division);
+    }
+
+    public void setDateSampled(String dateSampled) {
+        this.properties.put("date_sampled", dateSampled);
+    }
+
 }

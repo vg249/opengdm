@@ -4,6 +4,8 @@ import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobiidtomapping.entity.auditable.sampletracking.DtoMapProject;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ProjectDTO;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +50,20 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
     @Override
     public ProjectDTO getProjectById(Integer projectId)
     throws GobiiDomainException {
-        ProjectDTO returnVal = null;
+
+        ProjectDTO returnVal;
+        try {
+            returnVal = dtoMapSampleTrackingProject.get(projectId);
+
+            if (null == returnVal) {
+                throw new GobiiDomainException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                        "Project not found for given id.");
+            }
+        } catch (Exception e) {
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+        }
         return returnVal;
     }
 

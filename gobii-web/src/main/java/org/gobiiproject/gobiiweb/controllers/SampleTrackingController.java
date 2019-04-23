@@ -1,9 +1,15 @@
 package org.gobiiproject.gobiiweb.controllers;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import org.apache.http.HttpRequest;
 import org.gobiiproject.gobidomain.services.ProjectService;
+import org.gobiiproject.gobiiapimodel.payload.sampletracking.ListPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ProjectDTO;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -14,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.client.ResponseProcessingException;
 import java.security.Principal;
 import java.util.List;
 
@@ -33,8 +40,33 @@ public class SampleTrackingController {
             HttpServletResponse response
     ) {
         try {
-            List<ProjectDTO> projectDTOs = sampleTrackingProjectService.getProjects();
-            return ResponseEntity.ok(projectDTOs);
+            List<ProjectDTO> projectsList = sampleTrackingProjectService.getProjects();
+            ListPayload<ProjectDTO> payload = new ListPayload<ProjectDTO>();
+            payload.setData(projectsList);
+            return ResponseEntity.ok(payload);
+        }
+        catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error");
+        }
+    }
+
+    @RequestMapping(value="/projects/{projectId:[\\d]+}")
+    public @ResponseBody ResponseEntity getProjectById(
+            @PathVariable Integer projectId,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        try {
+            ProjectDTO project = sampleTrackingProjectService.getProjectById(projectId);
+            return ResponseEntity.ok(project);
+        }
+        catch (GobiiException gobiiE) {
+           if(gobiiE.getGobiiValidationStatusType() == GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST) {
+               return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gobiiE.getMessage());
+           }
+           else {
+               return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gobiiE.getMessage());
+           }
         }
         catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error");
@@ -47,7 +79,6 @@ public class SampleTrackingController {
             HttpServletRequest request,
             HttpServletResponse response) {
         try {
-            //projectService.createProject(newProject);
             sampleTrackingProjectService.createProject(newProject);
             return ResponseEntity.ok(newProject);
         }

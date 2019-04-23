@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import jdk.internal.org.objectweb.asm.TypeReference;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.slf4j.Logger;
@@ -95,16 +96,13 @@ public class ResultColumnApplicator {
 
                             currentMethod.invoke(dtoInstance, intList);
 
-                        } else if(currentColumnType.equals(JsonNode.class)) {
+                        } else if(currentColumnType.equals(Map.class)) {
                             ObjectMapper mapper = new ObjectMapper();
-                            JsonNode jsonNode;
+                            Map<String, Object> map = new HashMap<>();
                             if(resultSet.getString(currentColumnName) != null) {
-                                jsonNode = mapper.readTree(resultSet.getString(currentColumnName));
+                                map = mapper.readValue(resultSet.getString(currentColumnName), HashMap.class);
                             }
-                            else {
-                                jsonNode = mapper.createObjectNode();
-                            }
-                            currentMethod.invoke(dtoInstance, jsonNode);
+                            currentMethod.invoke(dtoInstance, map);
                         } else {
                             throw new SQLException("Unsupported param type for method " + currentMethod.getName() + ", parameter " + currentParameterName + ": " + currentColumnType);
                         }

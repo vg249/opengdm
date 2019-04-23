@@ -61,30 +61,25 @@ public class DtoMapProjectImpl implements DtoMapProject {
         ProjectDTO returnVal = new ProjectDTO();
 
         try {
-
             ResultSet resultSet = rsProjectDao.getProjectDetailsForProjectId(projectId);
-
-            boolean retrievedOneRecord = false;
-            while (resultSet.next()) {
-
-                if (true == retrievedOneRecord) {
-                    throw (new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
-                            GobiiValidationStatusType.VALIDATION_NOT_UNIQUE,
-                            "There are more than one project records for project id: " + projectId));
-                }
-
-
-                retrievedOneRecord = true;
-
+            if(resultSet.next()) {
                 ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
-
+                if(resultSet.next()) {
+                    throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                            GobiiValidationStatusType.VALIDATION_NOT_UNIQUE,
+                            "Multiple resource found. Violation of Unique Id constraint." +
+                                    "Need to be resolved with Data Administrator");
+                }
             }
-
+            else {
+                throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                        "Resource Not Found");
+            }
         } catch (Exception e) {
-            LOGGER.error("Gobii Maping Error", e);
+            LOGGER.error("Gobii Mapping Error", e);
             throw new GobiiDtoMappingException(e);
         }
-
 
         return returnVal;
     }
