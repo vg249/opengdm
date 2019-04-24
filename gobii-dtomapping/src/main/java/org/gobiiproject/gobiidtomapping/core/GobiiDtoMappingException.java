@@ -1,7 +1,8 @@
 package org.gobiiproject.gobiidtomapping.core;
 
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 
 
 /**
@@ -23,4 +24,5 @@ public class GobiiDtoMappingException extends GobiiException {
                                     String message) {
         super(gobiiStatusLevel, gobiiValidationStatusType,message);
     }
+
 }

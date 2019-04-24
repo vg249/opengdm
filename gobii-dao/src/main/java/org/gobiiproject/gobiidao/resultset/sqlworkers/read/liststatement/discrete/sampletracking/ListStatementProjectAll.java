@@ -29,7 +29,7 @@ public class ListStatementProjectAll implements ListStatement {
                 "FROM(SELECT project.project_id, project.props, jsonb_object_keys(props)::int as props_keys " +
                 "FROM project) AS p " +
                 "INNER JOIN cv AS cv ON (cv.cv_id = p.props_keys) GROUP BY 1) AS project_prop " +
-                "ON (project.project_id = project_prop.project_id) ORDER BY LOWER(project.name)";
+                "USING(project_id) ORDER BY LOWER(project.name)";
 
         PreparedStatement returnVal = dbConnection.prepareStatement(sql);
 

@@ -9,6 +9,7 @@ import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.auditable.sampletracking.DtoMapProject;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIdListImpl;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.entity.children.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -28,7 +29,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
     Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdListImpl.class);
 
     @Autowired
-    private RsProjectDao rsProjectDao;
+    private RsProjectDao rsSampleTrackingProjectDao;
 
     @Autowired
     private DtoListQueryColl dtoListSampleTrackingQueryColl;
@@ -50,10 +51,6 @@ public class DtoMapProjectImpl implements DtoMapProject {
         return returnVal;
     }
 
-    public Map<String, String> getProjectCvIdNameMap() throws GobiiDtoMappingException{
-        Map<String, String> returnVal = new HashMap<String, String>();
-        return returnVal;
-    }
 
     public ProjectDTO get(Integer projectId) throws GobiiDtoMappingException {
 
@@ -61,22 +58,30 @@ public class DtoMapProjectImpl implements DtoMapProject {
         ProjectDTO returnVal = new ProjectDTO();
 
         try {
-            ResultSet resultSet = rsProjectDao.getProjectDetailsForProjectId(projectId);
+            ResultSet resultSet = rsSampleTrackingProjectDao.getProjectDetailsForProjectId(projectId);
             if(resultSet.next()) {
                 ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
                 if(resultSet.next()) {
                     throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.VALIDATION_NOT_UNIQUE,
                             "Multiple resource found. Violation of Unique Id constraint." +
-                                    "Need to be resolved with Data Administrator");
+                                    " Please contact your Data Administrator to resolve this.");
                 }
             }
             else {
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                        "Resource Not Found");
+                        "Project not found for given id.");
             }
-        } catch (Exception e) {
+        }
+        catch (GobiiException gE) {
+            LOGGER.error("Gobii Mapping Error", gE);
+            throw new GobiiDtoMappingException(
+                    gE.getGobiiStatusLevel(),
+                    gE.getGobiiValidationStatusType(),
+                    gE.getMessage());
+        }
+        catch (Exception e) {
             LOGGER.error("Gobii Mapping Error", e);
             throw new GobiiDtoMappingException(e);
         }
@@ -94,7 +99,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
         Map<String, Object> parameters = ParamExtractor.makeParamVals(projectDTO);
 
-        Integer projectId = rsProjectDao.createProject(parameters);
+        Integer projectId = rsSampleTrackingProjectDao.createProject(parameters);
         returnVal.setId(projectId);
 
         return returnVal;
@@ -110,7 +115,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
             Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
             parameters.put("projectId", projectId);
-            rsProjectDao.updateProject(parameters);
+            rsSampleTrackingProjectDao.updateProject(parameters);
 
 
         } catch (Exception e) {
@@ -129,7 +134,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
         try {
 
-            ResultSet resultSet = rsProjectDao.getProjectsForLoadedDatasets();
+            ResultSet resultSet = rsSampleTrackingProjectDao.getProjectsForLoadedDatasets();
             while (resultSet.next()) {
                 ProjectDTO currentProjectDTO = new ProjectDTO();
                 ResultColumnApplicator.applyColumnValues(resultSet, currentProjectDTO);
@@ -138,10 +143,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
         } catch (SQLException e) {
             LOGGER.error("Gobii Mapping error", e);
         }
-
-
         return  returnVal;
-
     }
 
 

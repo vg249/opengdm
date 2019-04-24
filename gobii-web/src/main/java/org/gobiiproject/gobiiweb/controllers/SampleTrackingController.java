@@ -64,6 +64,9 @@ public class SampleTrackingController {
            if(gobiiE.getGobiiValidationStatusType() == GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST) {
                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gobiiE.getMessage());
            }
+           else if(gobiiE.getGobiiValidationStatusType() == GobiiValidationStatusType.ENTITY_ALREADY_EXISTS) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(gobiiE.getMessage());
+           }
            else {
                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gobiiE.getMessage());
            }

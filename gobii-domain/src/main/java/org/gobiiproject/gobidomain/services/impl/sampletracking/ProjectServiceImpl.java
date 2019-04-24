@@ -2,7 +2,9 @@ package org.gobiiproject.gobidomain.services.impl.sampletracking;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ProjectService;
+import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.auditable.sampletracking.DtoMapProject;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ProjectDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -60,7 +62,16 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
                         GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
                         "Project not found for given id.");
             }
-        } catch (Exception e) {
+        }
+        catch (GobiiException gE) {
+            LOGGER.error(gE.getMessage(), gE.getMessage());
+            throw new GobiiDomainException(
+                    gE.getGobiiStatusLevel(),
+                    gE.getGobiiValidationStatusType(),
+                    gE.getMessage()
+            );
+        }
+        catch (Exception e) {
             LOGGER.error("Gobii service error", e);
             throw new GobiiDomainException(e);
         }

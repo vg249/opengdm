@@ -379,6 +379,9 @@
     <bean id="rsProjectDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsProjectDaoImpl"/>
 
+    <bean id="rsSampleTrackingProjectDao"
+          class="org.gobiiproject.gobiidao.resultset.access.impl.sampletracking.RsProjectDaoImpl"/>
+
 
     <!-- **** Manifests Beans *************************************** -->
     <bean id="rsManifestDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsManifestDaoImpl"/>
