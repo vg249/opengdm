@@ -383,6 +383,7 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
     selectDataset(event, dataSeItem: GobiiFileItem, datasetOverlayPanel: OverlayPanel) {
 
         let datasetId: number = dataSeItem.getEntity().id;
+
         let filterParams: FilterParams = this.filterParamsColl.getFilter(FilterParamNames.DATASET_BY_DATASET_ID, GobiiExtractFilterType.WHOLE_DATASET);
 
         let dtoRequestItemGfi: DtoRequestItemGfi = new DtoRequestItemGfi(filterParams,
