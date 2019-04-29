@@ -397,21 +397,15 @@ public class GobiiFileReader {
 	        }
 	        ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
 	        for (ValidationError status : fileErrors) {
-		        if (status.status.equalsIgnoreCase(ValidationConstants.FAILURE)) {
+                if (status.status.equalsIgnoreCase(ValidationConstants.FAILURE)) {
                     //success = false;
-                    ErrorLogger.logError("Validation","Validation failures");
-
+                    ErrorLogger.logError("Validation", "Validation failures");
+                    for (int i = 0; i <= status.failures.size(); i++)
+                        pm.addValidateTableElement(status.fileName, status.status, status.failures.get(i).reason, status.failures.get(i).columnName, status.failures.get(i).values);
                 }
-        }
-        ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-        for (ValidationError status : fileErrors) {
-            if (status.status.equalsIgnoreCase(ValidationConstants.FAILURE)) success = false;
-            if(status.status.equalsIgnoreCase(ValidationConstants.SUCCESS)){
-                pm.addValidateTableElement(status.fileName,status.status);
-            }
-            else{
-                for (int i = 0; i <= status.failures.size(); i++)
-                    pm.addValidateTableElement(status.fileName, status.status, status.failures.get(i).reason, status.failures.get(i).columnName, status.failures.get(i).values);
+                if(status.status.equalsIgnoreCase(ValidationConstants.SUCCESS)){
+                    pm.addValidateTableElement(status.fileName,status.status);
+                }
             }
         }
         if (success && ErrorLogger.success()) {
