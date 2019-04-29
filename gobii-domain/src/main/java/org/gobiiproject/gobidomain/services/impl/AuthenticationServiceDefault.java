@@ -8,8 +8,6 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobidomain.security.TokenInfo;
 import org.gobiiproject.gobidomain.security.TokenManager;
 import org.gobiiproject.gobidomain.services.AuthenticationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,8 +27,6 @@ public class AuthenticationServiceDefault implements AuthenticationService {
 
 	@Autowired
 	private ApplicationContext applicationContext;
-
-	Logger LOGGER = LoggerFactory.getLogger(AuthenticationServiceDefault.class);
 
 	private final AuthenticationManager authenticationManager;
 	private final TokenManager tokenManager;
@@ -65,14 +61,14 @@ public class AuthenticationServiceDefault implements AuthenticationService {
 				return newToken;
 			}
 		} catch (AuthenticationException e) {
-
-			LOGGER.error(e.toString());
+			System.out.println(" *** AuthenticationServiceImpl.authenticate - FAILED: " + e.toString());
 		}
 		return null;
 	}
 
 	@Override
 	public boolean checkToken(String token) {
+		System.out.println(" *** AuthenticationServiceImpl.checkToken");
 
 		UserDetails userDetails = tokenManager.getUserDetails(token);
 		if (userDetails == null) {
