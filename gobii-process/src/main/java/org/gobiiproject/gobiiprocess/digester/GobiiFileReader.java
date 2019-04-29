@@ -402,10 +402,18 @@ public class GobiiFileReader {
                     ErrorLogger.logError("Validation","Validation failures");
 
                 }
-	        }
         }
-
-
+        ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
+        for (ValidationError status : fileErrors) {
+            if (status.status.equalsIgnoreCase(ValidationConstants.FAILURE)) success = false;
+            if(status.status.equalsIgnoreCase(ValidationConstants.SUCCESS)){
+                pm.addValidateTableElement(status.fileName,status.status);
+            }
+            else{
+                for (int i = 0; i <= status.failures.size(); i++)
+                    pm.addValidateTableElement(status.fileName, status.status, status.failures.get(i).reason, status.failures.get(i).columnName, status.failures.get(i).values);
+            }
+        }
         if (success && ErrorLogger.success()) {
             jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_METADATALOAD.getCvName(), "Loading Metadata");
             errorPath = getLogName(zero, gobiiCropConfig, crop, "IFLs");
