@@ -139,7 +139,7 @@ public class GOBIIControllerV1 {
     private OrganizationService organizationService = null;
 
     @Autowired
-    private ExperimentService experimentService = null;
+    private ExperimentService<ExperimentDTO> experimentService = null;
 
     @Autowired
     private NameIdListService nameIdListService = null;

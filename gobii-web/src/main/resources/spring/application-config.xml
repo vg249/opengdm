@@ -303,8 +303,11 @@
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsExperimentDaoImpl"/>
     <bean id="dtoMapExperiment"
           class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapExperimentImpl"/>
+    <bean id="dtoMapSampleTrackingExperiment" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.sampletracking.DtoMapExperimentImpl"/>
     <bean id="ExperimentService"
           class="org.gobiiproject.gobidomain.services.impl.ExperimentServiceImpl"/>
+    <bean id="sampleTrackingExperimentService"
+          class="org.gobiiproject.gobidomain.services.impl.sampletracking.ExperimentServiceImpl"/>
 
 
     <!-- **** Analysis Beans *************************************** -->
@@ -744,6 +747,16 @@
                         <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ProjectDTO"/>
                         <constructor-arg ref="pageFramesTrackingCache"/>
                         <constructor-arg ref="listStatementProjectAllWithProperties"/>
+                        <constructor-arg name="listStatementPaged"><null/></constructor-arg>
+                    </bean>
+                </entry>
+                <!-- EXPERIMENT -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_EXPERIMENT_ALL}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg value="org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ExperimentDTO"/>
+                        <constructor-arg ref="pageFramesTrackingCache"/>
+                        <constructor-arg ref="listStatementExperimentAll"/>
                         <constructor-arg name="listStatementPaged"><null/></constructor-arg>
                     </bean>
                 </entry>
