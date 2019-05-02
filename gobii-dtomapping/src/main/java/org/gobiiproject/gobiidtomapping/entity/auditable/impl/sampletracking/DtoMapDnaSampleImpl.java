@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiidtomapping.entity.auditable.impl.sampletracking;
 
-import org.gobiiproject.gobiidao.resultset.access.RsDnaSampleDao;
 import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
@@ -21,8 +20,8 @@ public class DtoMapDnaSampleImpl implements DtoMapDnaSample{
 
     Logger LOGGER = LoggerFactory.getLogger(DtoMapDnaSampleImpl.class);
 
-    @Autowired
-    private RsDnaSampleDao rsSampleTrackingDnaSampleDao;
+    //@Autowired
+    //private RsDnaSampleDao rsSampleTrackingDnaSampleDao;
 
     @Autowired
     private DtoListQueryColl dtoListSampleTrackingQueryColl;

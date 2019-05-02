@@ -2,6 +2,7 @@ package org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.gobiiproject.gobiimodel.dto.base.DTOBaseAuditable;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
@@ -17,15 +18,17 @@ import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DnaSampleDTO extends DTOBaseAuditable{
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private int id;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Integer projectId;
+    private String sampleUuid;
     private String name;
     private String code;
     private String plateName;
     private String num;
     private String wellRow;
     private String wellCol;
-    private Integer projectId;
-    private String sampleUuid;
 
     public DnaSampleDTO() { super(GobiiEntityNameType.DNASAMPLE); }
 

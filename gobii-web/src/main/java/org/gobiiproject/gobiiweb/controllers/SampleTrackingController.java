@@ -15,6 +15,7 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.DnaSampleDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.ProjectSamplesDTO;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -55,7 +56,7 @@ public class SampleTrackingController {
             List<ProjectDTO> projectsList = sampleTrackingProjectService.getProjects();
             ListPayload<ProjectDTO> payload = new ListPayload<ProjectDTO>();
             payload.setData(projectsList);
-            return ResponseEntity.ok(payload);
+            return ResponseEntity.status(HttpStatus.CREATED).body(payload);
         }
         catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error");
@@ -95,7 +96,7 @@ public class SampleTrackingController {
             HttpServletResponse response) {
         try {
             ProjectDTO createdProject = sampleTrackingProjectService.createProject(newProject);
-            return ResponseEntity.ok(createdProject);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
         }
         catch (GobiiException gobiiE) {
            if(gobiiE.getGobiiValidationStatusType() == GobiiValidationStatusType.ENTITY_ALREADY_EXISTS) {
@@ -174,17 +175,16 @@ public class SampleTrackingController {
         }
     }
 
-    @RequestMapping(value = "/samples", method=RequestMethod.POST)
+    @RequestMapping(value = "/projects/{projectId:[//d]+]}/samples", method=RequestMethod.POST)
     public @ResponseBody ResponseEntity createSamples(
-        @RequestBody List<DnaSampleDTO> dnaSampleDTOList,
+        @RequestBody List<ProjectSamplesDTO> newProjectSamples,
         @PathVariable Integer projectId,
         HttpServletRequest request,
-        HttpServletResponse response){
+        HttpServletResponse response) {
 
         try {
-
-            List<DnaSampleDTO> createdSamples = sampleTrackingDnaSampleService.createSamples(dnaSampleDTOList);
-            return ResponseEntity.ok(createdSamples);
+            //List<DnaSampleDTO> createdSamples = .createSamples(newProjectSamples);
+            return ResponseEntity.ok(newProjectSamples);
 
         } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error");
