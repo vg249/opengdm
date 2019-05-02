@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import org.apache.http.HttpRequest;
 import org.gobiiproject.gobidomain.services.ExperimentService;
 import org.gobiiproject.gobidomain.services.ProjectService;
+import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.ListPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -136,7 +137,35 @@ public class SampleTrackingController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+    }
 
+    @RequestMapping(value = "/experiments/{experimentId:[\\d]+}", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity getExperimentById(
+            @PathVariable Integer experimentId,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+
+        try {
+
+            ExperimentDTO experimentDTO = sampleTrackingExperimentService.getExperimentById(experimentId);
+            return ResponseEntity.ok(experimentDTO);
+
+        }
+        catch (GobiiException gobiiE) {
+            if(gobiiE.getGobiiValidationStatusType() == GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gobiiE.getMessage());
+            }
+            else if(gobiiE.getGobiiValidationStatusType() == GobiiValidationStatusType.ENTITY_ALREADY_EXISTS) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(gobiiE.getMessage());
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gobiiE.getMessage());
+            }
+        }
+        catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error");
+        }
     }
 
 }

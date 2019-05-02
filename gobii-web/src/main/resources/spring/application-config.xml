@@ -301,6 +301,8 @@
     <!-- **** Experiments Beans *************************************** -->
     <bean id="rsExperimentDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsExperimentDaoImpl"/>
+    <bean id="rsSampleTrackingExperimentDao"
+          class="org.gobiiproject.gobiidao.resultset.access.impl.sampletracking.RsExperimentDaoImpl"/>
     <bean id="dtoMapExperiment"
           class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapExperimentImpl"/>
     <bean id="dtoMapSampleTrackingExperiment" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.sampletracking.DtoMapExperimentImpl"/>
