@@ -2,10 +2,7 @@
 package org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -25,6 +22,7 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProjectDTO extends DTOBaseAuditable {
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private int id;
     private Integer piContactId;
     private String name;
@@ -45,7 +43,6 @@ public class ProjectDTO extends DTOBaseAuditable {
 
     @Override
     @GobiiEntityColumn(columnName = "project_id")
-    @JsonIgnore
     public void setId(Integer id) {
         this.id = id;
     }

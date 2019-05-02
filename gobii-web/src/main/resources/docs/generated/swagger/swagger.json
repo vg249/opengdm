@@ -1,7 +1,7 @@
 {
   "swagger" : "2.0",
   "info" : {
-    "description" : "The GOBii web service API provides a comprehensive set of RESTful methods for accomplishing the following core tasks in the GOBii Genomic Data Management (GDM) system. This manual explains the GOBii web architecture and its web service operations.\r\n\r\n",
+    "description" : "The GOBii web service API provides a comprehensive set of RESTful methods for accomplishing the following core tasks in the GOBii Genomic Data Management (GDM) system. This manual explains the GOBii web architecture and its web service operations.\n\n",
     "version" : "1.0",
     "title" : "GOBii API",
     "license" : {
@@ -163,17 +163,9 @@
           "type" : "string",
           "enum" : [ "UNKNOWN", "ANALYSIS", "CONTACT", "DATASET", "CV", "CVGROUP", "PROJECT", "ORGANIZATION", "PLATFORM", "MANIFEST", "MAPSET", "MARKER_GROUP", "EXPERIMENT", "REFERENCE", "ROLE", "DISPLAY", "MARKER", "PROTOCOL", "VENDOR_PROTOCOL", "DNASAMPLE", "LINKAGE_GROUP", "DNARUN", "GERMPLASM", "JOB" ]
         },
-        "createdBy" : {
-          "type" : "integer",
-          "format" : "int32"
-        },
         "createdDate" : {
           "type" : "string",
           "format" : "date-time"
-        },
-        "modifiedBy" : {
-          "type" : "integer",
-          "format" : "int32"
         },
         "modifiedDate" : {
           "type" : "string",
