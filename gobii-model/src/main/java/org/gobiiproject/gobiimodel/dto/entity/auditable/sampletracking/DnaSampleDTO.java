@@ -24,7 +24,6 @@ public class DnaSampleDTO extends DTOBaseAuditable{
     private String num;
     private String wellRow;
     private String wellCol;
-    private String well;
     private Integer projectId;
     private String sampleUuid;
 
@@ -85,11 +84,5 @@ public class DnaSampleDTO extends DTOBaseAuditable{
 
     @GobiiEntityColumn(columnName = "sample_uuid")
     public void setSampleUuid(String sampleUuid) { this.sampleUuid = sampleUuid; }
-
-    @GobiiEntityParam(paramName = "well")
-    public String getWell() { return this.well; }
-
-    @GobiiEntityColumn(columnName = "well")
-    public void setWell(String well) { this.well = well; }
 
 }
