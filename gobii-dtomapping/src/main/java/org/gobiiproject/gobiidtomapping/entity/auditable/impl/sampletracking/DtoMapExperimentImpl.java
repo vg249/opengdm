@@ -2,16 +2,21 @@ package org.gobiiproject.gobiidtomapping.entity.auditable.impl.sampletracking;
 
 import org.gobiiproject.gobiidao.resultset.access.RsExperimentDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
+import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.auditable.sampletracking.DtoMapExperiment;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIdListImpl;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ExperimentDTO;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +32,7 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
     private DtoListQueryColl dtoListSampleTrackingQueryColl;
 
     @Autowired
-    private RsExperimentDao rsExperimentDao;
+    private RsExperimentDao rsSampleTrackingExperimentDao;
 
     @Override
     public List<ExperimentDTO> getList() throws GobiiDtoMappingException {
@@ -54,6 +59,35 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
 
         ExperimentDTO returnVal = new ExperimentDTO();
 
+        try {
+            ResultSet resultSet = rsSampleTrackingExperimentDao.getExperimentDetailsForExperimentId(experimentId);
+            if(resultSet.next()) {
+                ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
+                if(resultSet.next()) {
+                    throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                            GobiiValidationStatusType.VALIDATION_NOT_UNIQUE,
+                            "Multiple resource found. Violation of Unique Id constraint." +
+                                    " Please contact your Data Administrator to resolve this.");
+                }
+            }
+            else {
+                throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                        "Experiment not found for given id.");
+            }
+        }
+        catch (GobiiException gE) {
+            LOGGER.error("Gobii Mapping Error", gE);
+            throw new GobiiDtoMappingException(
+                    gE.getGobiiStatusLevel(),
+                    gE.getGobiiValidationStatusType(),
+                    gE.getMessage());
+        }
+        catch (Exception e) {
+            LOGGER.error("Gobii Mapping Error", e);
+            throw new GobiiDtoMappingException(e);
+        }
+
         return returnVal;
     }
 
@@ -63,7 +97,7 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
         ExperimentDTO returnVal = experimentDTO;
 
         Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
-        Integer experimentId = rsExperimentDao.createExperiment(parameters);
+        Integer experimentId = rsSampleTrackingExperimentDao.createExperiment(parameters);
         returnVal.setId(experimentId);
 
         return returnVal;
