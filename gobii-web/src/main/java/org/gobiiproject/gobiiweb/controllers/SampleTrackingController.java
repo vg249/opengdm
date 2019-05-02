@@ -4,10 +4,12 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import org.apache.http.HttpRequest;
+import org.gobiiproject.gobidomain.services.ExperimentService;
 import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.ListPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ProjectDTO;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,9 @@ public class SampleTrackingController {
 
     @Autowired
     private ProjectService<ProjectDTO> sampleTrackingProjectService = null;
+
+    @Autowired
+    private ExperimentService<ExperimentDTO> sampleTrackingExperimentService = null;
 
     @RequestMapping(value="/projects", method= RequestMethod.GET)
     public @ResponseBody ResponseEntity listProjects(
@@ -98,4 +103,40 @@ public class SampleTrackingController {
                     "Server Error");
         }
     }
+
+    @RequestMapping(value="/experiments", method=RequestMethod.GET)
+    public @ResponseBody ResponseEntity listExperiments(
+            HttpServletRequest request,
+            HttpServletResponse response) {
+
+        try {
+
+            List<ExperimentDTO> experimentsList = sampleTrackingExperimentService.getExperiments();
+            ListPayload<ExperimentDTO> payload = new ListPayload<ExperimentDTO>();
+            payload.setData(experimentsList);
+
+            return ResponseEntity.ok(payload);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error");
+        }
+    }
+
+    @RequestMapping(value="/experiments", method=RequestMethod.POST)
+    public @ResponseBody ResponseEntity createExperiment(
+            @RequestBody ExperimentDTO newExperiment,
+            HttpServletRequest request,
+            HttpServletResponse response){
+
+        try {
+
+            sampleTrackingExperimentService.createExperiment(newExperiment);
+            return ResponseEntity.ok(newExperiment);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+
+    }
+
 }

@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Created by Angel on 4/19/2016.
  */
-public class ExperimentServiceImpl implements ExperimentService {
+public class ExperimentServiceImpl implements ExperimentService<ExperimentDTO> {
 
 
     Logger LOGGER = LoggerFactory.getLogger(ExperimentServiceImpl.class);
