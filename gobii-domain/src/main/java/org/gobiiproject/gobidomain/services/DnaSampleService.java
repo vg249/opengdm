@@ -9,6 +9,6 @@ import java.util.List;
  */
 public interface DnaSampleService<T> {
 
-    List<T> createSamples(List<T> sampleListDTO, Integer projectId) throws GobiiDomainException;
+    List<T> createSamples(List<T> sampleListDTO) throws GobiiDomainException;
 
 }

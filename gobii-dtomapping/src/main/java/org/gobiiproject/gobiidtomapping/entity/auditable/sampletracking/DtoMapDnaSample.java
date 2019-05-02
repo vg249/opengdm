@@ -11,6 +11,6 @@ import java.util.List;
  */
 public interface DtoMapDnaSample extends DtoMap<DnaSampleDTO> {
 
-    List<DnaSampleDTO> createSamples(List<DnaSampleDTO> dnaSampleDTOList, Integer projectId) throws GobiiDtoMappingException;
+    List<DnaSampleDTO> createSamples(List<DnaSampleDTO> dnaSampleDTOList) throws GobiiDtoMappingException;
 
 }
