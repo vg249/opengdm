@@ -1,5 +1,7 @@
 package org.gobiiproject.gobiimodel.dto.base;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
@@ -46,6 +48,7 @@ public abstract class DTOBaseAuditable extends DTOBase {
     }
 
     @GobiiEntityColumn(columnName = "created_by")
+    @JsonIgnore
     public void setCreatedBy(Integer createdBy) {
         this.createdBy = createdBy;
     }
@@ -56,6 +59,7 @@ public abstract class DTOBaseAuditable extends DTOBase {
     }
 
     @GobiiEntityColumn(columnName = "created_date")
+    @JsonIgnore
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
@@ -66,6 +70,7 @@ public abstract class DTOBaseAuditable extends DTOBase {
     }
 
     @GobiiEntityColumn(columnName = "modified_by")
+    @JsonIgnore
     public void setModifiedBy(Integer modifiedBy) {
         this.modifiedBy = modifiedBy;
     }
@@ -76,6 +81,7 @@ public abstract class DTOBaseAuditable extends DTOBase {
     }
 
     @GobiiEntityColumn(columnName = "modified_date")
+    @JsonIgnore
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
     }

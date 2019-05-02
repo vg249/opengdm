@@ -88,8 +88,16 @@ public class SampleTrackingController {
             HttpServletRequest request,
             HttpServletResponse response) {
         try {
-            sampleTrackingProjectService.createProject(newProject);
-            return ResponseEntity.ok(newProject);
+            ProjectDTO createdProject = sampleTrackingProjectService.createProject(newProject);
+            return ResponseEntity.ok(createdProject);
+        }
+        catch (GobiiException gobiiE) {
+           if(gobiiE.getGobiiValidationStatusType() == GobiiValidationStatusType.ENTITY_ALREADY_EXISTS) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(gobiiE.getMessage());
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gobiiE.getMessage());
+            }
         }
         catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
