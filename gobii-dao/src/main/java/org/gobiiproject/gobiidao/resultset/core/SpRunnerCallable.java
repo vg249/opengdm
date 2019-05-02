@@ -2,6 +2,8 @@ package org.gobiiproject.gobiidao.resultset.core;
 
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.hibernate.Session;
 import org.hibernate.exception.SQLGrammarException;
 import org.hibernate.jdbc.Work;
@@ -9,11 +11,7 @@ import org.hibernate.jdbc.Work;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.lang.reflect.Type;
-import java.sql.Array;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Types;
+import java.sql.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -156,7 +154,8 @@ public class SpRunnerCallable implements Work {
                     throw new SQLException("Unsupported param type: " + Type.class.toString());
                 }
 
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 String message = "Error executing stored procedure " + spDef.getCallString() + " with " +
                         "Param Name: " + currentParamName + "; " +
                         "Param Value: " + currentParamValue + "; " +

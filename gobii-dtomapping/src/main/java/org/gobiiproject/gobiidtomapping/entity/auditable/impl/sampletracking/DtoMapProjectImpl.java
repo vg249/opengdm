@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,8 +65,10 @@ public class DtoMapProjectImpl implements DtoMapProject {
                 if(resultSet.next()) {
                     throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.VALIDATION_NOT_UNIQUE,
-                            "Multiple resource found. Violation of Unique Id constraint." +
-                                    " Please contact your Data Administrator to resolve this.");
+                            "Multiple resources found. Violation of Unique Project Id constraint." +
+                                    " Please contact your Data Administrator to resolve this. " +
+                                    "Recommending against changing underlying database schemas " +
+                                    "without consulting GOBii Team");
                 }
             }
             else {
@@ -75,7 +78,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
             }
         }
         catch (GobiiException gE) {
-            LOGGER.error("Gobii Mapping Error", gE);
+            LOGGER.error(gE.getMessage(), gE);
             throw new GobiiDtoMappingException(
                     gE.getGobiiStatusLevel(),
                     gE.getGobiiValidationStatusType(),
@@ -93,16 +96,27 @@ public class DtoMapProjectImpl implements DtoMapProject {
     @Override
     public ProjectDTO create(ProjectDTO projectDTO) throws GobiiDtoMappingException {
 
-        ProjectDTO returnVal = projectDTO;
+        try {
+            ProjectDTO returnVal = projectDTO;
 
+            Map<String, Object> parameters = ParamExtractor.makeParamVals(projectDTO);
 
+            Integer projectId = rsSampleTrackingProjectDao.createProject(parameters);
+            returnVal.setId(projectId);
 
-        Map<String, Object> parameters = ParamExtractor.makeParamVals(projectDTO);
-
-        Integer projectId = rsSampleTrackingProjectDao.createProject(parameters);
-        returnVal.setId(projectId);
-
-        return returnVal;
+            return returnVal;
+        }
+        catch (GobiiException gE) {
+            LOGGER.error(gE.getMessage(), gE);
+            throw new GobiiDtoMappingException(
+                    gE.getGobiiStatusLevel(),
+                    gE.getGobiiValidationStatusType(),
+                    gE.getMessage());
+        }
+        catch (Exception e) {
+            LOGGER.error("Gobii Mapping Error", e);
+            throw new GobiiDtoMappingException(e);
+        }
     }
 
 

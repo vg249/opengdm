@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +25,28 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
 
     @Override
     public ProjectDTO createProject(ProjectDTO newProject) throws GobiiDomainException {
-        return newProject;
+
+        ProjectDTO returnVal;
+        try {
+            newProject.setCreatedDate(new Date(new java.util.Date().getTime()));
+            newProject.setCreatedBy(1);
+            newProject.setModifiedBy(1);
+            returnVal = dtoMapSampleTrackingProject.create(newProject);
+        }
+        catch(GobiiException gE) {
+            LOGGER.error(gE.getMessage(), gE.getMessage());
+            throw new GobiiDomainException(
+                    gE.getGobiiStatusLevel(),
+                    gE.getGobiiValidationStatusType(),
+                    gE.getMessage()
+            );
+        }
+        catch (Exception e) {
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+        }
+
+        return returnVal;
     }
 
     @Override
@@ -55,6 +77,7 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
 
         ProjectDTO returnVal;
         try {
+
             returnVal = dtoMapSampleTrackingProject.get(projectId);
 
             if (null == returnVal) {
@@ -62,6 +85,7 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
                         GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
                         "Project not found for given id.");
             }
+            return returnVal;
         }
         catch (GobiiException gE) {
             LOGGER.error(gE.getMessage(), gE.getMessage());
@@ -75,7 +99,6 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
             LOGGER.error("Gobii service error", e);
             throw new GobiiDomainException(e);
         }
-        return returnVal;
     }
 
     @Override

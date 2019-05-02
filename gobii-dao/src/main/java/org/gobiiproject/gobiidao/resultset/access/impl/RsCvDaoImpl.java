@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -179,6 +180,7 @@ public class RsCvDaoImpl implements RsCvDao {
             throw (new GobiiDaoException(e.getSQLException()));
         }
 
+
         return returnVal;
     }
 
@@ -195,6 +197,7 @@ public class RsCvDaoImpl implements RsCvDao {
             LOGGER.error("Error creating cv with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
         }
+
     }
 
 
@@ -210,5 +213,6 @@ public class RsCvDaoImpl implements RsCvDao {
             LOGGER.error("Error creating cv with SQL ", e.getSQL());
             throw (new GobiiDaoException(e.getSQLException()));
         }
+
     }
 } // RsProjectDaoImpl

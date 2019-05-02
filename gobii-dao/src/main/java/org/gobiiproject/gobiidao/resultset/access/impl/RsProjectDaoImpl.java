@@ -8,6 +8,8 @@ import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProject;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProjectProperties;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdProject;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.*;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.hibernate.exception.SQLGrammarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.*;
 
 /**
@@ -144,7 +148,15 @@ public class RsProjectDaoImpl implements RsProjectDao {
             spRunnerCallable.run(new SpInsProject(), parameters);
             returnVal = spRunnerCallable.getResult();
 
-        } catch (SQLGrammarException e) {
+        }
+        //catch (SQLIntegrityConstraintViolationException sE) {
+        //    throw (new GobiiDaoException(
+        //            GobiiStatusLevel.ERROR,
+        //            GobiiValidationStatusType.ENTITY_ALREADY_EXISTS,
+        //            "Project Name for given piContactId already exists")
+        //    );
+        //}
+        catch (SQLGrammarException e) {
 
             LOGGER.error("Error creating project with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));

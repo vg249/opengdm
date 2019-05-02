@@ -716,10 +716,10 @@ public class GOBIIControllerV1 {
             params = {"email", "lastName", "firstName", "userName"},
             method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<ContactDTO> getContactsBySearch(@RequestParam("email") String email,
-                                                           @RequestParam("lastName") String lastName,
-                                                           @RequestParam("firstName") String firstName,
-                                                           @RequestParam("userName") String userName,
+    public PayloadEnvelope<ContactDTO> getContactsBySearch(@RequestParam(value = "email", required = false) String email,
+                                                           @RequestParam(value = "lastName", required = false) String lastName,
+                                                           @RequestParam(value = "firstName", required = false) String firstName,
+                                                           @RequestParam(value = "userName", required = false) String userName,
                                                            HttpServletRequest request,
                                                            HttpServletResponse response) {
 

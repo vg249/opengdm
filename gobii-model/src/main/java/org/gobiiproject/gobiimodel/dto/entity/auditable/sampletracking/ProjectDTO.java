@@ -2,6 +2,7 @@
 package org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -19,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true, value={
-        "allowedProcessTypes", "entityNameType", "properties"
+        "allowedProcessTypes", "entityNameType"
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProjectDTO extends DTOBaseAuditable {
@@ -44,6 +45,7 @@ public class ProjectDTO extends DTOBaseAuditable {
 
     @Override
     @GobiiEntityColumn(columnName = "project_id")
+    @JsonIgnore
     public void setId(Integer id) {
         this.id = id;
     }
@@ -98,7 +100,6 @@ public class ProjectDTO extends DTOBaseAuditable {
         this.description = description;
     }
 
-    @GobiiEntityParam(paramName = "projectProperties")
     public Map<String, Object> getProperties() {
         return this.properties;
     }
@@ -106,38 +107,6 @@ public class ProjectDTO extends DTOBaseAuditable {
     @GobiiEntityColumn(columnName = "mapped_properties")
     public void setProperties(Map<String, Object> properties) {
         this.properties = properties;
-    }
-
-    public Object getGenotypingPurpose() {
-        return this.properties.getOrDefault("genotyping_purpose", null);
-    }
-
-    public Object getStudyName() {
-        return this.properties.getOrDefault("study_name", null);
-    }
-
-    public Object getDivision() {
-        return this.properties.getOrDefault("division", null);
-    }
-
-    public Object getDateSampled() {
-        return this.properties.getOrDefault("date_sampled", null);
-    }
-
-    public void setGenotypingPurpose(String genotypingPurpose) {
-        this.properties.put("genotyping_purpose", genotypingPurpose);
-    }
-
-    public void setStudyName(String studyName) {
-        this.properties.put("study_name", studyName);
-    }
-
-    public void setDivision(String division) {
-        this.properties.put("division", division);
-    }
-
-    public void setDateSampled(String dateSampled) {
-        this.properties.put("date_sampled", dateSampled);
     }
 
 }
