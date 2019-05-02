@@ -4,12 +4,15 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import org.apache.http.HttpRequest;
+import org.gobiiproject.gobidomain.services.DnaSampleService;
 import org.gobiiproject.gobidomain.services.ExperimentService;
 import org.gobiiproject.gobidomain.services.ProjectService;
+import org.gobiiproject.gobidomain.services.impl.sampletracking.DnaSampleServiceImpl;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.ListPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.DnaSampleDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ProjectDTO;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -39,6 +42,9 @@ public class SampleTrackingController {
 
     @Autowired
     private ExperimentService<ExperimentDTO> sampleTrackingExperimentService = null;
+
+    @Autowired
+    private DnaSampleService<DnaSampleDTO> sampleTrackingDnaSampleService = null;
 
     @RequestMapping(value="/projects", method= RequestMethod.GET)
     public @ResponseBody ResponseEntity listProjects(
@@ -166,6 +172,24 @@ public class SampleTrackingController {
         catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error");
         }
+    }
+
+    @RequestMapping(value = "/samples", method=RequestMethod.POST)
+    public @ResponseBody ResponseEntity createSamples(
+        @RequestBody List<DnaSampleDTO> dnaSampleDTOList,
+        @PathVariable Integer projectId,
+        HttpServletRequest request,
+        HttpServletResponse response){
+
+        try {
+
+            List<DnaSampleDTO> createdSamples = sampleTrackingDnaSampleService.createSamples(dnaSampleDTOList);
+            return ResponseEntity.ok(createdSamples);
+
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error");
+        }
+
     }
 
 }
