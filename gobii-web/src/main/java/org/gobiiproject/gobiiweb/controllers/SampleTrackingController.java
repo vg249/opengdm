@@ -175,15 +175,16 @@ public class SampleTrackingController {
         }
     }
 
-    @RequestMapping(value = "/projects/{projectId:[//d]+]}/samples", method=RequestMethod.POST)
+    @RequestMapping(value = "/projects/{projectId:[\\d]+}/samples", method=RequestMethod.POST)
     public @ResponseBody ResponseEntity createSamples(
-        @RequestBody List<ProjectSamplesDTO> newProjectSamples,
+        @RequestBody ProjectSamplesDTO newProjectSamples,
         @PathVariable Integer projectId,
         HttpServletRequest request,
         HttpServletResponse response) {
 
         try {
-            //List<DnaSampleDTO> createdSamples = .createSamples(newProjectSamples);
+            //ProjectSamplesDTO createdProjectSamples = .createSamples(newProjectSamples);
+            newProjectSamples.setProjectId(projectId);
             return ResponseEntity.ok(newProjectSamples);
 
         } catch(Exception e) {
