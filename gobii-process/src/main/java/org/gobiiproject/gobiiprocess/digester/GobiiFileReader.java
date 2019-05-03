@@ -400,7 +400,7 @@ public class GobiiFileReader {
                 if (status.status.equalsIgnoreCase(ValidationConstants.FAILURE)) {
                     //success = false;
                     ErrorLogger.logError("Validation", "Validation failures");
-                    for (int i = 0; i <= status.failures.size(); i++)
+                    for (int i = 0; i < status.failures.size(); i++)
                         pm.addValidateTableElement(status.fileName, status.status, status.failures.get(i).reason, status.failures.get(i).columnName, status.failures.get(i).values);
                 }
                 if(status.status.equalsIgnoreCase(ValidationConstants.SUCCESS)){
