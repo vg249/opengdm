@@ -1,6 +1,7 @@
 package org.gobiiproject.gobidomain.services;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.ProjectSamplesDTO;
 
 import java.util.List;
 
@@ -9,6 +10,6 @@ import java.util.List;
  */
 public interface DnaSampleService<T> {
 
-    List<T> createSamples(List<T> sampleListDTO) throws GobiiDomainException;
+    ProjectSamplesDTO createSamples(List<T> sampleListDTO) throws GobiiDomainException;
 
 }
