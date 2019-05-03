@@ -14,7 +14,9 @@ import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.DnaSampleDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ExperimentDTO;
+import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.GermplasmDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.GermplasmListDTO;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -28,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.client.ResponseProcessingException;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Scope(value="request")
@@ -192,4 +195,58 @@ public class SampleTrackingController {
 
     }
 
+    @RequestMapping(value = "/germplasm", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity createGermplasm(
+            @RequestBody GermplasmListDTO germplasmListDTO,
+            HttpServletRequest request,
+            HttpServletResponse response) {
+        try {
+
+            // temporary only
+            int idCount = 0;
+            for (GermplasmDTO germplasmDTO: germplasmListDTO.getGermplasms()) {
+                germplasmDTO.setId(idCount++);
+
+            }
+
+            return ResponseEntity.ok(germplasmListDTO);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error");
+        }
+
+    }
+
+    @RequestMapping(value = "/germplasm", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity listGermplasms(
+            HttpServletRequest request,
+            HttpServletResponse response) {
+        try {
+
+            List<GermplasmDTO> germplasmDTOList = new ArrayList<>();
+
+            return ResponseEntity.ok(germplasmDTOList);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error");
+        }
+
+    }
+
+    @RequestMapping(value = "/germplasm/{germplasmId:[\\d]+}", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity listGermplasms(
+            @PathVariable Integer germplasmId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
+        try {
+
+            GermplasmDTO germplasmDTO = new GermplasmDTO();
+
+            return ResponseEntity.ok(germplasmDTO);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error");
+        }
+
+    }
 }

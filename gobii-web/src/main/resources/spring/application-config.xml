@@ -301,8 +301,6 @@
     <!-- **** Experiments Beans *************************************** -->
     <bean id="rsExperimentDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsExperimentDaoImpl"/>
-    <bean id="rsSampleTrackingExperimentDao"
-          class="org.gobiiproject.gobiidao.resultset.access.impl.sampletracking.RsExperimentDaoImpl"/>
     <bean id="dtoMapExperiment"
           class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapExperimentImpl"/>
     <bean id="dtoMapSampleTrackingExperiment" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.sampletracking.DtoMapExperimentImpl"/>
@@ -424,8 +422,6 @@
     <!-- *** DNA Sample Beans *********************************** -->
     <bean id="sampleTrackingDnaSampleService" class="org.gobiiproject.gobidomain.services.impl.sampletracking.DnaSampleServiceImpl"/>
     <bean id="dtoMapSampleTrackingDnaSample" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.sampletracking.DtoMapDnaSampleImpl"/>
-    <bean id="rsSampleTrackingDnaSampleDao" class="org.gobiiproject.gobiidao.resultset.access.impl.sampletracking.RsDnaSampleDaoImpl"/>
-
 
     <!-- **** ListStatement queries *************************************** -->
     <bean id="listStatementContactAll"
