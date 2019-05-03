@@ -18,24 +18,19 @@ public class DnaSampleServiceImpl {
 
     Logger LOGGER = LoggerFactory.getLogger(DnaSampleServiceImpl.class);
 
-    //@Autowired
-    //private DtoMapDnaSample dtoMapSampleTrackingDnaSample = null;
-
     public ProjectSamplesDTO createSamples(ProjectSamplesDTO projectSamplesDTO)  throws GobiiDomainException {
 
         ProjectSamplesDTO returnVal = null;
 
         try {
 
-            //returnVal = dtoMapSampleTrackingDnaSample.createSamples(projectSamplesDTO);
             return projectSamplesDTO;
 
         } catch (Exception e) {
+
             LOGGER.error("Gobii service error", e);
             throw new GobiiDomainException(e);
+
         }
-
     }
-
-
 }

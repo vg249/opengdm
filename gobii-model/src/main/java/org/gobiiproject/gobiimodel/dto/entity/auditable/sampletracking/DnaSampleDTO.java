@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -21,7 +22,8 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DnaSampleDTO extends DTOBaseAuditable{
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    //@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @JsonIgnore
     private int id;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Integer projectId;

@@ -47,8 +47,8 @@ public class SampleTrackingController {
     @Autowired
     private ExperimentService<ExperimentDTO> sampleTrackingExperimentService = null;
 
-    @Autowired
-    private DnaSampleService<DnaSampleDTO> sampleTrackingDnaSampleService = null;
+    //@Autowired
+    //private DnaSampleService<DnaSampleDTO> sampleTrackingDnaSampleService = null;
 
     @RequestMapping(value="/projects", method= RequestMethod.GET)
     public @ResponseBody ResponseEntity listProjects(
