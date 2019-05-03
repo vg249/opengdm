@@ -8,6 +8,9 @@ import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by VCalaminos on 5/2/2019.
  */
@@ -29,6 +32,7 @@ public class DnaSampleDTO extends DTOBaseAuditable{
     private String num;
     private String wellRow;
     private String wellCol;
+    private Map<String, Object> properties = new HashMap<>();
 
     public DnaSampleDTO() { super(GobiiEntityNameType.DNASAMPLE); }
 
@@ -88,4 +92,11 @@ public class DnaSampleDTO extends DTOBaseAuditable{
     @GobiiEntityColumn(columnName = "sample_uuid")
     public void setSampleUuid(String sampleUuid) { this.sampleUuid = sampleUuid; }
 
+    public Map<String, Object> getProperties() {
+        return this.properties;
+    }
+
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties;
+    }
 }

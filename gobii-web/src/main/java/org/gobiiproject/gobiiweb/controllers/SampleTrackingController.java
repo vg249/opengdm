@@ -188,7 +188,7 @@ public class SampleTrackingController {
         try {
             //ProjectSamplesDTO createdProjectSamples = .createSamples(newProjectSamples);
             newProjectSamples.setProjectId(projectId);
-            return ResponseEntity.ok(newProjectSamples);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newProjectSamples);
 
         } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error");
