@@ -28,8 +28,8 @@ public class CreateStatementDnaSamples implements ListStatement {
 
         List<DnaSampleDTO> sampleArray = (ArrayList) sqlParamVals.get("sampleList");
 
-        ParameterizedSql parameterizedSql =
-                new ParameterizedSql("");
+        //ParameterizedSql parameterizedSql =
+                //new ParameterizedSql("");
 
         PreparedStatement returnVal = null;
 

@@ -20,15 +20,11 @@ __|integer (int32)
 __|string
 |**anlaysisTypeId** +
 __|integer (int32)
-|**createdBy** +
-__|integer (int32)
 |**createdDate** +
 __|string (date-time)
 |**entityNameType** +
 __|enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION, PLATFORM, MANIFEST, MAPSET, MARKER_GROUP, EXPERIMENT, REFERENCE, ROLE, DISPLAY, MARKER, PROTOCOL, VENDOR_PROTOCOL, DNASAMPLE, LINKAGE_GROUP, DNARUN, GERMPLASM, JOB)
 |**id** +
-__|integer (int32)
-|**modifiedBy** +
 __|integer (int32)
 |**modifiedDate** +
 __|string (date-time)

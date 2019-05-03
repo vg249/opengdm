@@ -32,7 +32,7 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
     private DtoListQueryColl dtoListSampleTrackingQueryColl;
 
     @Autowired
-    private RsExperimentDao rsSampleTrackingExperimentDao;
+    private RsExperimentDao rsExperimentDao;
 
     @Override
     public List<ExperimentDTO> getList() throws GobiiDtoMappingException {
@@ -60,7 +60,7 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
         ExperimentDTO returnVal = new ExperimentDTO();
 
         try {
-            ResultSet resultSet = rsSampleTrackingExperimentDao.getExperimentDetailsForExperimentId(experimentId);
+            ResultSet resultSet = rsExperimentDao.getExperimentDetailsForExperimentId(experimentId);
             if(resultSet.next()) {
                 ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
                 if(resultSet.next()) {
@@ -97,7 +97,7 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
         ExperimentDTO returnVal = experimentDTO;
 
         Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
-        Integer experimentId = rsSampleTrackingExperimentDao.createExperiment(parameters);
+        Integer experimentId = rsExperimentDao.createExperiment(parameters);
         returnVal.setId(experimentId);
 
         return returnVal;

@@ -28,6 +28,8 @@ public class ExperimentServiceImpl implements ExperimentService<ExperimentDTO> {
     public ExperimentDTO createExperiment(ExperimentDTO experimentDTO) throws GobiiDomainException {
         ExperimentDTO returnVal;
 
+        experimentDTO.setCreatedBy(1);
+        experimentDTO.setModifiedBy(1);
         returnVal = dtoMapSampleTrackingExperiment.create(experimentDTO);
 
         return returnVal;

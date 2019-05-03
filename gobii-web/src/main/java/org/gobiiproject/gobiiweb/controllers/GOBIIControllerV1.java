@@ -231,7 +231,7 @@ public class GOBIIControllerV1 {
                     "requests. The token value is also supplied in the dtoHeaderAuth object.")
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
     @ResponseBody
-    public String authenticate(@RequestBody String noContentExpected,
+    public String authenticate(@RequestBody(required = false) String noContentExpected,
                                HttpServletRequest request,
                                HttpServletResponse response) {
 
