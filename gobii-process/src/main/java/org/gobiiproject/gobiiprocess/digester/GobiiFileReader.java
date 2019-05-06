@@ -384,6 +384,7 @@ public class GobiiFileReader {
         String directory = dstDir.getAbsolutePath();
 
         //Metadata Validation
+        boolean reportedValidationFailures = false;
         if(LoaderGlobalConfigs.getValidation()) {
 	        DigestFileValidator digestFileValidator = new DigestFileValidator(directory, baseConnectionString,user, password);
 	        digestFileValidator.performValidation();
@@ -392,14 +393,15 @@ public class GobiiFileReader {
 			        Files.list(Paths.get(directory))
 					        .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
 	        if (pathList.size() < 1) {
-		        //success = false;
 		        ErrorLogger.logError("Validation","Unable to find validation checks");
 	        }
 	        ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
 	        for (ValidationError status : fileErrors) {
                 if (status.status.equalsIgnoreCase(ValidationConstants.FAILURE)) {
-                    //success = false;
-                    ErrorLogger.logError("Validation", "Validation failures");
+                     if(!reportedValidationFailures){//Lets only add this to the error log once
+                        ErrorLogger.logError("Validation", "Validation failures");
+                        reportedValidationFailures=true;
+                    }
                     for (int i = 0; i < status.failures.size(); i++)
                         pm.addValidateTableElement(status.fileName, status.status, status.failures.get(i).reason, status.failures.get(i).columnName, status.failures.get(i).values);
                 }
