@@ -1,6 +1,7 @@
 package org.gobiiproject.gobidomain.services.impl.sampletracking;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
+import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.auditable.sampletracking.DtoMapProject;
@@ -11,6 +12,7 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -23,14 +25,19 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
     @Autowired
     private DtoMapProject dtoMapSampleTrackingProject = null;
 
+    @Autowired
+    private ContactService contactService;
+
     @Override
     public ProjectDTO createProject(ProjectDTO newProject) throws GobiiDomainException {
 
         ProjectDTO returnVal;
         try {
             newProject.setCreatedDate(new Date(new java.util.Date().getTime()));
-            newProject.setCreatedBy(1);
-            newProject.setModifiedBy(1);
+            String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+            Integer contactId = this.contactService.getContactByUserName(userName).getContactId();
+            newProject.setCreatedBy(contactId);
+            newProject.setModifiedBy(contactId);
             returnVal = dtoMapSampleTrackingProject.create(newProject);
         }
         catch(GobiiException gE) {

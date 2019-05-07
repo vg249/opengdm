@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import org.apache.http.HttpRequest;
+import org.gobiiproject.gobidomain.security.impl.UserContext;
 import org.gobiiproject.gobidomain.services.DnaSampleService;
 import org.gobiiproject.gobidomain.services.ExperimentService;
 import org.gobiiproject.gobidomain.services.ProjectService;
@@ -66,7 +67,7 @@ public class SampleTrackingController {
         }
     }
 
-    @RequestMapping(value="/projects/{projectId:[\\d]+}")
+    @RequestMapping(value="/projects/{projectId:[\\d]+}", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getProjectById(
             @PathVariable Integer projectId,
             HttpServletRequest request,
@@ -77,15 +78,7 @@ public class SampleTrackingController {
             return ResponseEntity.ok(project);
         }
         catch (GobiiException gobiiE) {
-           if(gobiiE.getGobiiValidationStatusType() == GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST) {
-               return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gobiiE.getMessage());
-           }
-           else if(gobiiE.getGobiiValidationStatusType() == GobiiValidationStatusType.ENTITY_ALREADY_EXISTS) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(gobiiE.getMessage());
-           }
-           else {
-               return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gobiiE.getMessage());
-           }
+            throw gobiiE;
         }
         catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error");
@@ -102,12 +95,7 @@ public class SampleTrackingController {
             return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
         }
         catch (GobiiException gobiiE) {
-           if(gobiiE.getGobiiValidationStatusType() == GobiiValidationStatusType.ENTITY_ALREADY_EXISTS) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(gobiiE.getMessage());
-            }
-            else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gobiiE.getMessage());
-            }
+            throw gobiiE;
         }
         catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
@@ -163,15 +151,7 @@ public class SampleTrackingController {
 
         }
         catch (GobiiException gobiiE) {
-            if(gobiiE.getGobiiValidationStatusType() == GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gobiiE.getMessage());
-            }
-            else if(gobiiE.getGobiiValidationStatusType() == GobiiValidationStatusType.ENTITY_ALREADY_EXISTS) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(gobiiE.getMessage());
-            }
-            else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gobiiE.getMessage());
-            }
+            throw gobiiE;
         }
         catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error");
