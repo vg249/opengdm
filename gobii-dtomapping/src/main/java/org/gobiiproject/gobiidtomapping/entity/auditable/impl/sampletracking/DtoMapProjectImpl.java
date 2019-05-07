@@ -146,17 +146,6 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
         List<ProjectDTO> returnVal = new ArrayList<>();
 
-        try {
-
-            ResultSet resultSet = rsSampleTrackingProjectDao.getProjectsForLoadedDatasets();
-            while (resultSet.next()) {
-                ProjectDTO currentProjectDTO = new ProjectDTO();
-                ResultColumnApplicator.applyColumnValues(resultSet, currentProjectDTO);
-                returnVal.add(currentProjectDTO);
-            }
-        } catch (SQLException e) {
-            LOGGER.error("Gobii Mapping error", e);
-        }
         return  returnVal;
     }
 

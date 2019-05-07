@@ -10,6 +10,7 @@ import org.gobiiproject.gobidomain.services.ExperimentService;
 import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobidomain.services.impl.sampletracking.DnaSampleServiceImpl;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
+import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.ListPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -75,7 +76,8 @@ public class SampleTrackingController {
     ) {
         try {
             ProjectDTO project = sampleTrackingProjectService.getProjectById(projectId);
-            return ResponseEntity.ok(project);
+            BrApiMasterPayload<ProjectDTO> payload = new BrApiMasterPayload<>(project);
+            return ResponseEntity.ok(payload);
         }
         catch (GobiiException gobiiE) {
             throw gobiiE;

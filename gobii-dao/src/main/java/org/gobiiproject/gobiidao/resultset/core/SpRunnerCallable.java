@@ -99,55 +99,7 @@ public class SpRunnerCallable implements Work {
 
     } // run()
 
-    public void runSp(SpDef spDef, Map<String, Object> paramVals) throws SQLIntegrityConstraintViolationException, SQLGrammarException {
-        try {
-            this.spDef = spDef;
-            this.paramVals = paramVals;
 
-            // first do validation checking
-            List<SpParamDef> paramDefs = spDef.getSpParamDefs();
-            for (int idx = 0; idx < paramDefs.size(); idx++) {
-
-                SpParamDef currentParamDef = paramDefs.get(idx);
-                String currentParamName = currentParamDef.getParamName();
-
-                if (paramVals.containsKey(currentParamName)) {
-
-                    Object currentParamVal = paramVals.get(currentParamName);
-                    if (null == currentParamVal && !currentParamDef.isNullable()) {
-                        throw new GobiiDaoException("Parameter is not allowed to be null : " + currentParamName);
-                    } else if (null != currentParamVal && !currentParamVal.getClass().equals(currentParamDef.getParamType())) {
-                        throw new GobiiDaoException("Parameter " + currentParamName + " should be of type " + currentParamDef.getParamType() + "; ");
-                    } else {
-                        if (null != currentParamVal) {
-                            currentParamDef.setCurrentValue(currentParamVal);
-                        } else {
-                            currentParamDef.setCurrentValue(currentParamDef.getDefaultValue());
-                        }
-                    }
-
-                } else {
-
-                    String message = "There is no value param entry for parameter " + currentParamName + ";";
-                    LOGGER.error(message);
-                    throw new GobiiDaoException(message);
-                }
-
-            } // iterate param defs
-
-            Session session = (Session) em.getDelegate();
-            session.doWork(this);
-
-
-        }
-        finally {
-            this.spDef = null;
-            this.paramVals = null;
-        }
-
-
-
-    }
 
     @Override
     public void execute(Connection connection) throws SQLException, GobiiDaoException {

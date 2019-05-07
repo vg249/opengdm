@@ -10,6 +10,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+/**
+ * Helper class for Jackson Json serializer for Date objects.
+ */
 public class UtcDateSerializer extends StdSerializer<Date> {
 
     private SimpleDateFormat formatter = new SimpleDateFormat(

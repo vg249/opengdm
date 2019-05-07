@@ -12,9 +12,9 @@ public class GlobalControllerExceptionHandler {
 
     @ExceptionHandler(GobiiException.class)
     public ResponseEntity GobiiExceptionHandler(GobiiException gEx) {
-        HttpStatus errorStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         ErrorPayload errorPayload = new ErrorPayload();
         errorPayload.setError(gEx.getMessage());
+        HttpStatus errorStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         switch (gEx.getGobiiValidationStatusType()) {
             case ENTITY_DOES_NOT_EXIST: {
                 errorStatus = HttpStatus.NOT_FOUND;
@@ -22,6 +22,7 @@ public class GlobalControllerExceptionHandler {
             }
             case ENTITY_ALREADY_EXISTS: {
                 errorStatus = HttpStatus.CONFLICT;
+                break;
             }
         }
         return ResponseEntity.status(errorStatus).body(errorPayload);
