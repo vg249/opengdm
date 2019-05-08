@@ -72,7 +72,6 @@
           "required": "yes",
           "uniqueColumns": [
             "name",
-            "external_code",
             "num"
           ]
         },
