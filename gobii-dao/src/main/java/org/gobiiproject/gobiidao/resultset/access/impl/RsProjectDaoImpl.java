@@ -145,36 +145,35 @@ public class RsProjectDaoImpl implements RsProjectDao {
         Integer returnVal = null;
 
         try {
-
             spRunnerCallable.run(new SpInsProject(), parameters);
             returnVal = spRunnerCallable.getResult();
-
         }
         catch (ConstraintViolationException constraintViolation) {
+
             String errorMsg;
-            //Postgresql error code for Unique Constraint Violation is 23505
-            if(constraintViolation.getSQLException().getErrorCode() == 23505) {
+            GobiiValidationStatusType statusType;
+            // Postgresql error code for Unique Constraint Violation is 23505
+            if(constraintViolation.getSQLException() != null &&
+                    constraintViolation.getSQLException().getErrorCode() == 23505) {
+                statusType = GobiiValidationStatusType.ENTITY_ALREADY_EXISTS;
                 errorMsg = "Project already exists";
             }
             else {
-                errorMsg = constraintViolation.getSQLException().getMessage();
+                statusType = GobiiValidationStatusType.BAD_REQUEST;
+                errorMsg = constraintViolation.getMessage();
             }
             throw (new GobiiDaoException(
                     GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.ENTITY_ALREADY_EXISTS,
+                    statusType,
                     errorMsg)
             );
+
         }
         catch (SQLGrammarException e) {
-
             LOGGER.error("Error creating project with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
-
         }
-
-
         return returnVal;
-
     } // createProject
 
     @Transactional(propagation = Propagation.REQUIRED)

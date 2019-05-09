@@ -24,6 +24,9 @@ public class GlobalControllerExceptionHandler {
                 errorStatus = HttpStatus.CONFLICT;
                 break;
             }
+            case BAD_REQUEST: {
+                errorStatus = HttpStatus.BAD_REQUEST;
+            }
         }
         return ResponseEntity.status(errorStatus).body(errorPayload);
     }
