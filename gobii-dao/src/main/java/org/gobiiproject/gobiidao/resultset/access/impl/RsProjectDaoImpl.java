@@ -10,6 +10,7 @@ import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdProject;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.sp.*;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.exception.SQLGrammarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -149,13 +150,21 @@ public class RsProjectDaoImpl implements RsProjectDao {
             returnVal = spRunnerCallable.getResult();
 
         }
-        //catch (SQLIntegrityConstraintViolationException sE) {
-        //    throw (new GobiiDaoException(
-        //            GobiiStatusLevel.ERROR,
-        //            GobiiValidationStatusType.ENTITY_ALREADY_EXISTS,
-        //            "Project Name for given piContactId already exists")
-        //    );
-        //}
+        catch (ConstraintViolationException constraintViolation) {
+            String errorMsg;
+            //Postgresql error code for Unique Constraint Violation is 23505
+            if(constraintViolation.getSQLException().getErrorCode() == 23505) {
+                errorMsg = "Project already exists";
+            }
+            else {
+                errorMsg = constraintViolation.getSQLException().getMessage();
+            }
+            throw (new GobiiDaoException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.ENTITY_ALREADY_EXISTS,
+                    errorMsg)
+            );
+        }
         catch (SQLGrammarException e) {
 
             LOGGER.error("Error creating project with SQL " + e.getSQL(), e.getSQLException());

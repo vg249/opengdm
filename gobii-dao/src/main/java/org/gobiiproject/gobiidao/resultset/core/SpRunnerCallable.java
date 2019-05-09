@@ -5,6 +5,7 @@ import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.hibernate.Session;
+import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.exception.SQLGrammarException;
 import org.hibernate.hql.internal.ast.SqlASTFactory;
 import org.hibernate.jdbc.Work;
