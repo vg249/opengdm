@@ -35,6 +35,7 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
         try {
             newProject.setCreatedDate(new Date(new java.util.Date().getTime()));
             String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+            //User logged in for current context.
             Integer contactId = this.contactService.getContactByUserName(userName).getContactId();
             newProject.setCreatedBy(contactId);
             newProject.setModifiedBy(contactId);

@@ -97,14 +97,17 @@ public class DtoMapProjectImpl implements DtoMapProject {
     public ProjectDTO create(ProjectDTO projectDTO) throws GobiiDtoMappingException {
 
         try {
+
             ProjectDTO returnVal = projectDTO;
 
             Map<String, Object> parameters = ParamExtractor.makeParamVals(projectDTO);
 
             Integer projectId = rsSampleTrackingProjectDao.createProject(parameters);
+
             returnVal.setId(projectId);
 
             return returnVal;
+
         }
         catch (GobiiException gE) {
             LOGGER.error(gE.getMessage(), gE);

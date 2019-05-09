@@ -17,34 +17,42 @@ import java.util.HashMap;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true, value={
-        "allowedProcessTypes", "entityNameType"
+        "id", "allowedProcessTypes", "entityNameType"
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProjectDTO extends DTOBaseAuditable {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private int id;
+    private int projectId;
     private Integer piContactId;
-    private String name;
-    private Integer status;
-    private String code;
-    private String description;
-    private Map<String, Object> properties = new HashMap<>();
+    private String projectName;
+    private Integer projectStatus;
+    private String projectCode;
+    private String projectDescription;
+    private Map<String, Object> projectProperties = new HashMap<>();
 
     public ProjectDTO() {
         super(GobiiEntityNameType.PROJECT);
     }
 
     @Override
-    @GobiiEntityParam(paramName = "projectId")
     public Integer getId() {
-        return this.id;
+        return this.projectId;
     }
 
     @Override
-    @GobiiEntityColumn(columnName = "project_id")
     public void setId(Integer id) {
-        this.id = id;
+        this.projectId = id;
+    }
+
+    @GobiiEntityParam(paramName = "projectId")
+    public Integer getProjectId() {
+        return this.projectId;
+    }
+
+    @GobiiEntityColumn(columnName = "project_id")
+    public void setProjectId(Integer id) {
+        this.projectId = id;
     }
 
     @GobiiEntityParam(paramName = "piContact")
@@ -58,52 +66,52 @@ public class ProjectDTO extends DTOBaseAuditable {
     }
 
     @GobiiEntityParam(paramName = "projectName")
-    public String getName() {
-        return this.name;
+    public String getProjectName() {
+        return this.projectName;
     }
 
     @GobiiEntityColumn(columnName = "name")
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String projectName) {
+        this.projectName = projectName;
     }
 
     @GobiiEntityParam(paramName = "projectStatus")
-    public Integer getStatus() {
-        return this.status;
+    public Integer getProjectStatus() {
+        return this.projectStatus;
     }
 
     @GobiiEntityColumn(columnName = "status")
-    public void setStatus(Integer status) {
-        this.status = status;
+    public void setProjectStatus(Integer status) {
+        this.projectStatus = status;
     }
 
     @GobiiEntityParam(paramName = "projectCode")
-    public String getCode() {
-        return this.code;
+    public String getProjectCode() {
+        return this.projectCode;
     }
 
     @GobiiEntityColumn(columnName = "code")
-    public void setCode(String code) {
-        this.code = code;
+    public void setProjectCode(String code) {
+        this.projectCode = code;
     }
 
     @GobiiEntityParam(paramName = "projectDescription")
-    public String getDescription() {
-        return this.description;
+    public String getProjectDescription() {
+        return this.projectDescription;
     }
 
     @GobiiEntityColumn(columnName = "description")
-    public void setDescription(String description) {
-        this.description = description;
+    public void setProjectDescription(String description) {
+        this.projectDescription = description;
     }
 
-    public Map<String, Object> getProperties() {
-        return this.properties;
+    public Map<String, Object> getProjectProperties() {
+        return this.projectProperties;
     }
 
     @GobiiEntityColumn(columnName = "mapped_properties")
-    public void setProperties(Map<String, Object> properties) {
-        this.properties = properties;
+    public void setProjectProperties(Map<String, Object> properties) {
+        this.projectProperties = properties;
     }
 
 }
