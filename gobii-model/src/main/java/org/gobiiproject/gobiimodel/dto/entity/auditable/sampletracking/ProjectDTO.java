@@ -29,7 +29,7 @@ public class ProjectDTO extends DTOBaseAuditable {
     private Integer projectStatus;
     private String projectCode;
     private String projectDescription;
-    private Map<String, Object> projectProperties = new HashMap<>();
+    private Map<String, String> projectProperties = new HashMap<>();
 
     public ProjectDTO() {
         super(GobiiEntityNameType.PROJECT);
@@ -105,12 +105,12 @@ public class ProjectDTO extends DTOBaseAuditable {
         this.projectDescription = description;
     }
 
-    public Map<String, Object> getProjectProperties() {
+    public Map<String, String> getProjectProperties() {
         return this.projectProperties;
     }
 
     @GobiiEntityColumn(columnName = "mapped_properties")
-    public void setProjectProperties(Map<String, Object> properties) {
+    public void setProjectProperties(Map<String, String> properties) {
         this.projectProperties = properties;
     }
 

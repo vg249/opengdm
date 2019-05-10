@@ -87,22 +87,23 @@ public class SampleTrackingController {
         }
     }
 
+    /**
+     * Endpoint to create new project.
+     * @param newProject - New project to be created.
+     *                   Json request body automatically deserialized to ProjectDTO.
+     * @param request - Http request for creating project
+     * @param response - Response with HTTP status code and Brapi payload as response body.
+     * @return
+     */
     @RequestMapping(value="/projects", method=RequestMethod.POST)
     public @ResponseBody ResponseEntity createProject(
             @RequestBody ProjectDTO newProject,
             HttpServletRequest request,
-            HttpServletResponse response) {
-        try {
-            ProjectDTO createdProject = sampleTrackingProjectService.createProject(newProject);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
-        }
-        catch (GobiiException gobiiE) {
-            throw gobiiE;
-        }
-        catch(Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    "Server Error");
-        }
+            HttpServletResponse response) throws GobiiException, Exception {
+
+        ProjectDTO createdProject = sampleTrackingProjectService.createProject(newProject);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
     }
 
     @RequestMapping(value="/experiments", method=RequestMethod.GET)

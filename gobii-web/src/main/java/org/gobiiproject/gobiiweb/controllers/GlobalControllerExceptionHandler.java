@@ -1,9 +1,14 @@
 package org.gobiiproject.gobiiweb.controllers;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
+import org.apache.commons.lang.UnhandledException;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.ErrorPayload;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -11,13 +16,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
  * Handles the exceptions thrown in all the Controllers
  * in this project and returns appropriate HTTP response.
  */
-@ControllerAdvice
+@ControllerAdvice(assignableTypes={SampleTrackingController.class})
 public class GlobalControllerExceptionHandler {
+
+    Logger LOGGER = LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);
 
     /**
      * Handles Gobii exceptions.
      * Based on the ValidationStatusType in GobiiException, handler returns HTTP response
      * with appropriate HTTP status code and error message.
+     *
      * @param gEx - GobiiException thrown by the controller.
      * @return ResponseEntity - Http Response with HTTP status code and body defined.
      */
@@ -40,6 +48,39 @@ public class GlobalControllerExceptionHandler {
                 break;
             }
         }
+        LOGGER.error(gEx.getMessage());
         return ResponseEntity.status(errorStatus).body(errorPayload);
     }
+
+    /**
+     * Handles exceptions from request body not meeting the API endpoint json specifications.
+     * This handler exclusively serves json request body exceptions.
+     *
+     * @param httpEx - Exception with json request body.
+     * @return ResponseEntity with Http Status code and Error payload with appropriate error message.
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity NotReadableRequestBodyException(HttpMessageNotReadableException httpEx) {
+        JsonMappingException jmEx = (JsonMappingException) httpEx.getCause();
+        ErrorPayload errorPayload = new ErrorPayload();
+        errorPayload.setError("Request does not comply to the Input specification. " +
+                "Please refer to API document to make sure request body complies to API specification");
+        LOGGER.error(jmEx.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorPayload);
+    }
+
+    /**
+     * Handles all the other exceptions not handled by the other handlers.
+     *
+     * @param e - exception object.
+     * @return ResponseEntity with Internal server error as status code and Server error as message
+     */
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity GeneralExceptionHandler(Exception e) {
+        ErrorPayload errorPayload = new ErrorPayload();
+        errorPayload.setError("Server Error");
+        LOGGER.error(e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorPayload);
+    }
+
 }

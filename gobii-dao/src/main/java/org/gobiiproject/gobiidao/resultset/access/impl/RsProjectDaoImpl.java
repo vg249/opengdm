@@ -19,8 +19,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.*;
 
 /**
@@ -151,15 +149,18 @@ public class RsProjectDaoImpl implements RsProjectDao {
         catch (ConstraintViolationException constraintViolation) {
 
             String errorMsg;
-            GobiiValidationStatusType statusType;
+            GobiiValidationStatusType statusType = GobiiValidationStatusType.BAD_REQUEST;
             // Postgresql error code for Unique Constraint Violation is 23505
-            if(constraintViolation.getSQLException() != null &&
-                    constraintViolation.getSQLException().getErrorCode() == 23505) {
-                statusType = GobiiValidationStatusType.ENTITY_ALREADY_EXISTS;
-                errorMsg = "Project already exists";
+            if(constraintViolation.getSQLException() != null) {
+                if(constraintViolation.getSQLException().getSQLState().equals("23505")) {
+                    statusType = GobiiValidationStatusType.ENTITY_ALREADY_EXISTS;
+                    errorMsg = "Project already exists";
+                }
+                else {
+                    errorMsg = "Bad request";
+                }
             }
             else {
-                statusType = GobiiValidationStatusType.BAD_REQUEST;
                 errorMsg = constraintViolation.getMessage();
             }
             throw (new GobiiDaoException(
@@ -167,7 +168,6 @@ public class RsProjectDaoImpl implements RsProjectDao {
                     statusType,
                     errorMsg)
             );
-
         }
         catch (SQLGrammarException e) {
             LOGGER.error("Error creating project with SQL " + e.getSQL(), e.getSQLException());

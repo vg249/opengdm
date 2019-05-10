@@ -6,6 +6,7 @@ import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
+import org.gobiiproject.gobiidtomapping.core.EntityProperties;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.auditable.sampletracking.DtoMapProject;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapNameIdListImpl;
@@ -99,13 +100,10 @@ public class DtoMapProjectImpl implements DtoMapProject {
         try {
 
             ProjectDTO returnVal = projectDTO;
-
             Map<String, Object> parameters = ParamExtractor.makeParamVals(projectDTO);
-
             Integer projectId = rsSampleTrackingProjectDao.createProject(parameters);
-
+            upsertProjectProperties(projectId, projectDTO.getProjectProperties());
             returnVal.setId(projectId);
-
             return returnVal;
 
         }
@@ -120,6 +118,22 @@ public class DtoMapProjectImpl implements DtoMapProject {
             LOGGER.error("Gobii Mapping Error", e);
             throw new GobiiDtoMappingException(e);
         }
+    }
+
+    private void upsertProjectProperties(
+            Integer projectId,
+            Map<String, String> projectProperties) throws GobiiDaoException {
+
+        for (Map.Entry<String, String> currentProperty : projectProperties.entrySet()) {
+            EntityPropertyDTO entityProperty = new EntityPropertyDTO(
+                    null, null,
+                    currentProperty.getKey(), currentProperty.getValue());
+            Map<String, Object> spParamsParameters =
+                    EntityProperties.propertiesToParams(projectId, entityProperty);
+
+            Integer propertyId = rsSampleTrackingProjectDao.createUpdateProjectProperty(spParamsParameters);
+        }
+
     }
 
 
