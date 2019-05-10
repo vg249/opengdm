@@ -1,7 +1,6 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
-import org.apache.commons.lang.UnhandledException;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.ErrorPayload;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.slf4j.Logger;
@@ -12,11 +11,12 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+
 /**
  * Handles the exceptions thrown in all the Controllers
  * in this project and returns appropriate HTTP response.
  */
-@ControllerAdvice(assignableTypes={SampleTrackingController.class})
+@ControllerAdvice
 public class GlobalControllerExceptionHandler {
 
     Logger LOGGER = LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);
@@ -47,13 +47,16 @@ public class GlobalControllerExceptionHandler {
                 errorStatus = HttpStatus.BAD_REQUEST;
                 break;
             }
+            default: {
+               errorStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            }
         }
         LOGGER.error(gEx.getMessage());
         return ResponseEntity.status(errorStatus).body(errorPayload);
     }
 
     /**
-     * Handles exceptions from request body not meeting the API endpoint json specifications.
+     * Handles exceptions from request body not meeting the API endpoint specifications.
      * This handler exclusively serves json request body exceptions.
      *
      * @param httpEx - Exception with json request body.

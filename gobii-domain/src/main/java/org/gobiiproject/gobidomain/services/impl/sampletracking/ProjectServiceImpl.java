@@ -33,13 +33,16 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
 
         ProjectDTO returnVal;
         try {
+
             newProject.setCreatedDate(new Date(new java.util.Date().getTime()));
+            //Gets the User logged in for current context.
             String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-            //User logged in for current context.
+            //Gets the contactId of the logged in user.
             Integer contactId = this.contactService.getContactByUserName(userName).getContactId();
             newProject.setCreatedBy(contactId);
             newProject.setModifiedBy(contactId);
             returnVal = dtoMapSampleTrackingProject.create(newProject);
+
         }
         catch(GobiiException gE) {
             LOGGER.error(gE.getMessage(), gE.getMessage());

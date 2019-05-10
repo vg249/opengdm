@@ -20,6 +20,7 @@ import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.Germplasm
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.GermplasmListDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.ProjectSamplesDTO;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -89,6 +90,7 @@ public class SampleTrackingController {
 
     /**
      * Endpoint to create new project.
+     * Exceptions are handled in GlobalControllerExceptionHandler.
      * @param newProject - New project to be created.
      *                   Json request body automatically deserialized to ProjectDTO.
      * @param request - Http request for creating project
@@ -96,13 +98,9 @@ public class SampleTrackingController {
      * @return
      */
     @RequestMapping(value="/projects", method=RequestMethod.POST)
-    public @ResponseBody ResponseEntity createProject(
-            @RequestBody ProjectDTO newProject,
-            HttpServletRequest request,
-            HttpServletResponse response) throws GobiiException, Exception {
+    public @ResponseBody ResponseEntity createProject(@RequestBody ProjectDTO newProject) {
 
         ProjectDTO createdProject = sampleTrackingProjectService.createProject(newProject);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
     }
 
@@ -233,4 +231,5 @@ public class SampleTrackingController {
         }
 
     }
+
 }

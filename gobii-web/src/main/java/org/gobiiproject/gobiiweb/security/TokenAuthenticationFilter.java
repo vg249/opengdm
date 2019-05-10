@@ -5,11 +5,13 @@
 // ************************************************************************
 package org.gobiiproject.gobiiweb.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobidomain.security.TokenInfo;
 import org.gobiiproject.gobidomain.services.AuthenticationService;
 
 
 import org.gobiiproject.gobidomain.services.ContactService;
+import org.gobiiproject.gobiiapimodel.payload.sampletracking.ErrorPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiibrapi.calls.login.BrapiRequestLogin;
 import org.gobiiproject.gobiibrapi.core.common.BrapiRequestReader;
@@ -72,7 +74,8 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
         HttpServletResponse httpResponse = null;
 
         try {
-            AuthenticationRequestWrapper authenticationRequestWrapper = new AuthenticationRequestWrapper((HttpServletRequest) request);
+            AuthenticationRequestWrapper authenticationRequestWrapper =
+                    new AuthenticationRequestWrapper((HttpServletRequest) request);
 
             httpResponse = (HttpServletResponse) response;
 
@@ -165,7 +168,10 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
 
                         if (this.contactService.getContactByUserName(userName).getContactId() > 0) {
 
-                            this.addHeadersToValidRequest(httpResponse, userName, gobiiCropType, tokenInfo.getToken());
+                            this.addHeadersToValidRequest(
+                                    httpResponse, userName,
+                                    gobiiCropType, tokenInfo.getToken()
+                            );
                             chain.doFilter(authenticationRequestWrapper, response);
 
                         } else {
@@ -177,20 +183,36 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
                                     + "; a contact record must have username = "
                                     + userName;
 
-                            ControllerUtils.writeRawResponse(httpResponse, HttpServletResponse.SC_FORBIDDEN, message);
+                            ErrorPayload errorPayload = new ErrorPayload();
+                            errorPayload.setError(message);
+                            ObjectMapper objMapper = new ObjectMapper();
+                            String errorBody = objMapper.writeValueAsString(errorPayload);
+
+                            ControllerUtils.writeRawResponse(httpResponse, HttpServletResponse.SC_FORBIDDEN, errorBody);
 
                             LOGGER.error(message);
                         }
 
                     } else {
-                        httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                        ErrorPayload errorPayload = new ErrorPayload();
+                        errorPayload.setError("The request has not been applied because it lacks " +
+                                "valid authentication credentials for the target resource.");
+                        ObjectMapper objMapper = new ObjectMapper();
+                        String errorBody = objMapper.writeValueAsString(errorPayload);
+                        ControllerUtils.writeRawResponse(httpResponse, HttpServletResponse.SC_UNAUTHORIZED, errorBody);
                     } // if-else the user authenticated
                 }
 
             } else {
 
-                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-                LOGGER.error("Unable to proceed with authentication: no crop type could be derived from the request url");
+                ErrorPayload errorPayload = new ErrorPayload();
+                errorPayload.setError("Unable to proceed with authentication: " +
+                        "no crop type could be derived from the request url");
+                ObjectMapper objMapper = new ObjectMapper();
+                String errorBody = objMapper.writeValueAsString(errorPayload);
+                ControllerUtils.writeRawResponse(httpResponse, HttpServletResponse.SC_UNAUTHORIZED, errorBody);
+                LOGGER.error("Unable to proceed with authentication: " +
+                        "no crop type could be derived from the request url");
 
             } // if-else crop type could not be found
 
@@ -200,7 +222,7 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
             LOGGER.error("Error in authentication filter", e);
 
             if (httpResponse != null) {
-                httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Server Error");
             }
         }
 
