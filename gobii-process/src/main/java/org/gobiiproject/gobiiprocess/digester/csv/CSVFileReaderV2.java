@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
+
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
@@ -18,6 +19,7 @@ import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.digester.LoaderGlobalConfigs;
 import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.MatrixValidation;
+import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.ValidationResult;
 
 /**
  * CSV-Specific File Loader class, used by
@@ -36,7 +38,7 @@ import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.MatrixValidat
  * @date 3/23/2017
  */
 
-public class CSVFileReaderV2 implements CSVFileReaderInterface {
+public class CSVFileReaderV2 extends CSVFileReaderInterface {
 
     private static final String NEWLINE = "\n";
     private static final String TAB = "\t";
@@ -181,7 +183,9 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
         } else if (processedInstruction.hasCSV_COL()) {
             processCSV_COL(file, tempFileBufferedWriter, loaderInstruction);
         } else if (processedInstruction.hasCSV_BOTH()) {
-            processCSV_BOTH(file, tempFileBufferedWriter, loaderInstruction, outputFile);
+            RowColPair<Integer> matrixSize=processCSV_BOTH(file, tempFileBufferedWriter, loaderInstruction, outputFile);
+            CSVFileReaderInterface.lastMatrixSizeRowCol=matrixSize;//Terrible hack to pass back to main thread the size of the file if it's a matrix file. There should be at most
+            //One of these. It sucks, but passing it up the object chain doesn't make sense, as it goes through several layers of indirection.
         }
     }
 
@@ -260,11 +264,15 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
      * @param file                   Input file to read from.
      * @param tempFileBufferedWriter Output file writer.
      * @param loaderInstruction      Loader instruction.
+     * #returns Pair of row, column counts as integers
+     *
      * @throws IOException Exception in I/O operations
      */
 
-    private void processCSV_BOTH(File file, BufferedWriter tempFileBufferedWriter,
+    private RowColPair<Integer> processCSV_BOTH(File file, BufferedWriter tempFileBufferedWriter,
                                  GobiiLoaderInstruction loaderInstruction, File outputFile) throws IOException {
+        Integer totalCols=null;
+        Integer totalRows=null;
         boolean skipValidation = !LoaderGlobalConfigs.getValidation();
 
         GobiiFileColumn csv_BothColumn = null;
@@ -292,17 +300,21 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
                         inputRowList = new ArrayList<>(Arrays.asList(fileRow.split(delimiter)));
                         outputRowList = new ArrayList<>();
                         getRow(inputRowList, csv_BothColumn);
-                        if (matrixValidation.validate(rowNo, csv_BothColumn.getrCoord(), inputRowList, outputRowList, isVCF, skipValidation))
+                        ValidationResult validationResult=matrixValidation.validate(rowNo, csv_BothColumn.getrCoord(), inputRowList, outputRowList, isVCF, skipValidation);
+                        if (validationResult.success) {
                             writeOutputLine(tempFileBufferedWriter, outputRowList);
+                            totalCols=validationResult.numRows;
+                        }
                         else {
                             if (matrixValidation.stopProcessing()) {
                                 tempFileBufferedWriter.flush();
                                 tempFileBufferedWriter.close();
                                 FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(loaderInstruction));
-                                return;
+                                return new RowColPair<Integer>(totalCols,rowNo);
                             }
                         }
                     }
+                    totalRows=rowNo-csv_BothColumn.getrCoord();
                     rowNo++;
                 }
             }
@@ -312,6 +324,7 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
             tempFileBufferedWriter.close();
             FileSystemInterface.rmIfExist(HelperFunctions.getDestinationFile(loaderInstruction));
         }
+        return new RowColPair<Integer>(totalRows,totalCols);
     }
 
     /**
@@ -529,5 +542,14 @@ class ReaderThread implements Runnable {
         } catch (Exception e) {
             ErrorLogger.logError("ReaderThread", "Error processing file read", e);
         }
+    }
+}
+
+class RowColPair<I>{
+    public I row;
+    public I col;
+    RowColPair(I row, I col){
+        this.row=row;
+        this.col=col;
     }
 }

@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
+import org.gobiiproject.gobiiprocess.digester.GobiiFileReader;
 import org.gobiiproject.gobiiprocess.digester.LoaderGlobalConfigs;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
@@ -67,6 +68,8 @@ class Validator {
         failureList.addAll(validateUniqueColumnList(fileName, validationUnit));
         failureList.addAll(validateFileShouldExist(fileName, validationUnit));
         failureList.addAll(validateColumnDBandFile(fileName, validationUnit));
+        failureList.addAll(validateMatrixSizeColumns(fileName,validationUnit.getConditions()));
+
         return failureList;
     }
 
@@ -116,6 +119,55 @@ class Validator {
                 //Don't do any thing. This implies that particular error list is full.
             }
         }
+        return failureList;
+    }
+
+    /**
+     * Parses the validation rules and gives the rules which are matrix length requirements
+     *
+     * @param fileName      name of file
+     * @param conditions    conditions
+     */
+    private List<Failure> validateMatrixSizeColumns(String fileName, List<ConditionUnit> conditions) {
+        List<Failure> failureList = new ArrayList<>();
+
+        Boolean isMarkerFast= GobiiFileReader.isMarkerFast;//AUTHORS NOTE- this check will never run in stand-alone mode
+        if(isMarkerFast==null)return failureList;
+        List<String> requiredMatrixMarkerSizeColumns = new ArrayList<>();
+        List<String> requiredMatrixSampleSizeColumns = new ArrayList<>();
+        for (ConditionUnit condition : conditions){
+            if (condition.checkMatrixSize != null && condition.checkMatrixSize.equalsIgnoreCase("marker")) {
+                if (!requiredMatrixMarkerSizeColumns.contains(condition.columnName)) {
+                    requiredMatrixMarkerSizeColumns.add(condition.columnName);
+                }
+            }
+
+            if (condition.checkMatrixSize != null && condition.checkMatrixSize.equalsIgnoreCase("dnarun")) {
+                if (!requiredMatrixSampleSizeColumns.contains(condition.columnName)) {
+                    requiredMatrixSampleSizeColumns.add(condition.columnName);
+                }
+            }
+        }
+
+
+        if (requiredMatrixMarkerSizeColumns.size() > 0) {
+            try {
+                List<String> matrixCols = getFileColumns(fileName, requiredMatrixMarkerSizeColumns, failureList);
+                verifyEqualMatrixSizeMarker(failureList, matrixCols, isMarkerFast);
+            } catch (MaximumErrorsValidationException e) {
+                //Don't do any thing. This implies that particular error list is full.
+            }
+        }
+
+        if (requiredMatrixSampleSizeColumns.size() > 0) {
+            try {
+                List<String> matrixCols = getFileColumns(fileName, requiredMatrixMarkerSizeColumns, failureList);
+                verifyEqualMatrixSizeDnarun(failureList, matrixCols, isMarkerFast);
+            } catch (MaximumErrorsValidationException e) {
+                //Don't do any thing. This implies that particular error list is full.
+            }
+        }
+
         return failureList;
     }
 

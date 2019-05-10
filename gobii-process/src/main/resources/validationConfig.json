@@ -401,15 +401,18 @@
         },
         {
           "columnName": "dataset_id",
-          "required": "yes"
+          "required": "yes",
+          "checkMatrixSize": "dnarun"
         },
         {
           "columnName": "dnarun_idx",
-          "required": "yes"
+          "required": "yes",
+          "checkMatrixSize": "dnarun"
         },
         {
           "columnName": "dnarun_name",
           "required": "yes",
+          "checkMatrixSize": "dnarun",
           "fileExistenceCheck": "digest.dnarun",
           "fileExists": "no",
           "type": "DB",
@@ -426,20 +429,24 @@
       "conditions": [
         {
           "columnName": "platform_id",
-          "required": "yes"
+          "required": "yes",
+          "checkMatrixSize": "marker"
         },
         {
           "columnName": "dataset_id",
-          "required": "yes"
+          "required": "yes",
+          "checkMatrixSize": "marker"
         },
         {
           "columnName": "marker_idx",
-          "required": "yes"
+          "required": "yes",
+          "checkMatrixSize": "marker"
         },
         {
           "columnName": "marker_name",
           "required": "yes",
-          "fileExistenceCheck": "digest.marker ",
+          "checkMatrixSize": "marker",
+          "fileExistenceCheck": "digest.marker",
           "fileExists": "no",
           "type": "DB",
           "typeName": "marker",

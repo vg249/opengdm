@@ -71,6 +71,9 @@ public class GobiiFileReader {
     private static GobiiUriFactory gobiiUriFactory;
     private static GobiiExtractorInstruction qcExtractInstruction = null;
 
+    //Trinary - was this load marker fast(true), sample fast(false), or unknown/not applicable(null)
+    public static Boolean isMarkerFast=null;
+
     /**
      * Main class of Digester Jar file. Uses command line parameters to determine instruction file, and runs whole program.
      *
@@ -340,6 +343,9 @@ public class GobiiFileReader {
                     //Rotate to marker fast before loading it - all data is marker fast in the system
                     File transposeDir = new File(new File(fromFile).getParentFile(), "transpose");
                     intermediateFile.transform(MobileTransform.getTransposeMatrix(transposeDir.getPath()));
+                    isMarkerFast=false;
+                }else{
+                    isMarkerFast=true;
                 }
             }
             jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_TRANSFORMATION.getCvName(), "Metadata Transformation");
