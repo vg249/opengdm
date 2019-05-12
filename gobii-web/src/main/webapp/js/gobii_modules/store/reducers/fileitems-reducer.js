@@ -644,9 +644,11 @@ System.register(["reselect", "../../model/gobii-file-item", "../actions/fileitem
                     .map(function (fi) { return fi; });
                 var jobStatusFilterParams = filters[file_item_param_names_1.FilterParamNames.DATASET_LIST_STATUS];
                 if (jobStatusFilterParams
-                    && jobStatusFilterParams.relatedEntityFilterValue != null) {
+                    && jobStatusFilterParams.jobStatusFilterValues != null) {
                     returnVal = datasetEntitiesFilteredByExperiment
-                        .filter(function (fi) { return fi.getEntity().jobStatusName === jobStatusFilterParams.relatedEntityFilterValue; });
+                        .filter(function (fi) {
+                        return jobStatusFilterParams.checkExtractReady(fi);
+                    });
                 }
                 else {
                     returnVal = datasetEntitiesFilteredByExperiment;

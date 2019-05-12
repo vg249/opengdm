@@ -89,7 +89,7 @@ public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
         PayloadEnvelope<MarkerDTO> resultEnvelope =
                 dtoDtoRestRequestUtils.getResponseEnvelopeForEntityId(nonExistentId.toString());
 
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        Assert.assertFalse(resultEnvelope.getHeader().getStatus().getStatusMessages().toString(),TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         Assert.assertNotNull(resultEnvelope.getPayload());
         Assert.assertNotNull(resultEnvelope.getPayload().getData());
         Assert.assertTrue(resultEnvelope.getPayload().getData().size() == 0 );

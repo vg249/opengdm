@@ -8,8 +8,10 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.types.DataSetType;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -24,137 +26,122 @@ import org.junit.rules.TemporaryFolder;
  */
 public class CSVFileReaderV2Test {
 
-	private static String tempFolderLocation, resourceDestFolderLocation;
+    private static String tempFolderLocation, resourceDestFolderLocation, loaderScriptPath;
 
-	@ClassRule
-	public static TemporaryFolder tempFolder = new TemporaryFolder();
+    @ClassRule
+    public static TemporaryFolder tempFolder = new TemporaryFolder();
 
-	@BeforeClass
-	public static void setUp() throws IOException {
-		File srcFolder;
-		srcFolder = tempFolder.newFolder("src");
-		tempFolder.newFolder("dest");
-		tempFolderLocation = tempFolder.getRoot().getPath();
-		File resourceDest = new File("src/test/resources");
-		resourceDestFolderLocation = resourceDest.getAbsolutePath();
-		File resourceSource = new File("src/test/resources/input.txt");
-		File dest= new File(srcFolder.getAbsolutePath()+"\\input.txt"); 
-		Files.copy(resourceSource.toPath(), dest.toPath());
-	}
+    @BeforeClass
+    public static void setUp() throws IOException {
+        File srcFolder;
+        srcFolder = tempFolder.newFolder("src");
+        tempFolder.newFolder("dest");
+        tempFolderLocation = tempFolder.getRoot().getPath();
+        File resourceDest = new File("src/test/resources");
+        resourceDestFolderLocation = resourceDest.getAbsolutePath();
+        loaderScriptPath = new File("src/test/resources/loaderScriptPath").getAbsolutePath();
+        File resourceSource = new File("src/test/resources/input.txt");
+        File dest = new File(srcFolder.getAbsolutePath() + "\\input.txt");
+        Files.copy(resourceSource.toPath(), dest.toPath());
+    }
 
-	/**
-	 * According to JUnit no exception is thrown when temp folder is not
-	 * deleted. This method ensures that temp folder is always deleted.
-	 */
-	@AfterClass
-	public static void checkAndCleanTempFile() {
-		Util.deleteDirectory(new File(tempFolderLocation));
-	}
+    /**
+     * According to JUnit no exception is thrown when temp folder is not
+     * deleted. This method ensures that temp folder is always deleted.
+     */
+    @AfterClass
+    public static void checkAndCleanTempFile() {
+        Util.deleteDirectory(new File(tempFolderLocation));
+    }
 
-	/**
-	 * Test case for multiple_CSV_ROW
-	 * 
-	 * @throws IOException
-	 * @throws InterruptedException
-	 */
-	@Test
-	public void testMultipleCSV_ROW() throws IOException, InterruptedException {
+    /**
+     * Test case for multiple_CSV_ROW
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     */
 
-		String table = "multipleCSV_ROW";
-		GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
-		Util.createAndSetGobiiFile(instruction, tempFolderLocation);
-		instruction.setTable(table);
-		List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
-		gobiiColumns.add(Util.createGobiiConstantColumn(Integer.toString(0)));
-		gobiiColumns.add(Util.createGobiiAutoIncrementColumn());
-		gobiiColumns.add(Util.createGobiiCSV_ROW(0, 0));
-		gobiiColumns.add(Util.createGobiiCSV_ROW(1, 0));
-		instruction.setGobiiFileColumns(gobiiColumns);
+    @Test
+    public void testMultipleCSV_ROW() throws IOException {
 
-		CSVFileReaderV2 csvReader = new CSVFileReaderV2();
-		csvReader.processCSV(instruction);
+        String table = "multipleCSV_ROW";
+        GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
+        Util.createAndSetGobiiFile(instruction, tempFolderLocation);
+        instruction.setTable(table);
+        List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
+        gobiiColumns.add(Util.createGobiiConstantColumn(Integer.toString(0)));
+        gobiiColumns.add(Util.createGobiiAutoIncrementColumn());
+        gobiiColumns.add(Util.createGobiiCSV_ROW(0, 0));
+        gobiiColumns.add(Util.createGobiiCSV_ROW(1, 0));
+        instruction.setGobiiFileColumns(gobiiColumns);
 
-		Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
-	}
+        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
+        csvReader.processCSV(instruction);
 
-	@Test
-	public void testMultipleCSV_COL() throws IOException, InterruptedException {
-		String table = "multipleCSV_COL";
-		GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
-		Util.createAndSetGobiiFile(instruction, tempFolderLocation);
-		instruction.setTable(table);
-		List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
-		gobiiColumns.add(Util.createGobiiConstantColumn(Integer.toString(0)));
-		gobiiColumns.add(Util.createGobiiAutoIncrementColumn());
-		gobiiColumns.add(Util.createGobiiCSV_COL(0, 0));
-		gobiiColumns.add(Util.createGobiiCSV_COL(0, 1));
-		instruction.setGobiiFileColumns(gobiiColumns);
+        Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
+    }
 
-		CSVFileReaderV2 csvReader = new CSVFileReaderV2();
-		csvReader.processCSV(instruction);
+    @Test
+    public void testMultipleCSV_COL() throws IOException {
+        String table = "multipleCSV_COL";
+        GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
+        Util.createAndSetGobiiFile(instruction, tempFolderLocation);
+        instruction.setTable(table);
+        List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
+        gobiiColumns.add(Util.createGobiiConstantColumn(Integer.toString(0)));
+        gobiiColumns.add(Util.createGobiiAutoIncrementColumn());
+        gobiiColumns.add(Util.createGobiiCSV_COL(0, 0));
+        gobiiColumns.add(Util.createGobiiCSV_COL(0, 1));
+        instruction.setGobiiFileColumns(gobiiColumns);
 
-		Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
-	}
+        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
+        csvReader.processCSV(instruction);
 
-	@Test
-	public void testCSV_BOTH() throws IOException, InterruptedException {
-		String table = "multipleCSV_BOTH";
-		GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
-		Util.createAndSetGobiiFile(instruction, tempFolderLocation);
-		instruction.setTable(table);
-		List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
-		gobiiColumns.add(Util.createGobiiCSV_BOTH(0, 0));
-		instruction.setGobiiFileColumns(gobiiColumns);
+        Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
+    }
 
-		CSVFileReaderV2 csvReader = new CSVFileReaderV2();
-		csvReader.processCSV(instruction);
+    @Test
+    public void testSubColumn() throws IOException {
+        String table = "CSVSubColumn";
+        GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
+        Util.createAndSetGobiiFile(instruction, tempFolderLocation);
+        instruction.setTable(table);
+        List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
+        gobiiColumns.add(Util.createGobiiConstantColumn(Integer.toString(0)));
+        gobiiColumns.add(Util.createGobiiAutoIncrementColumn());
+        gobiiColumns.add(Util.createGobiiCSV_SUB(0, 0));
+        instruction.setGobiiFileColumns(gobiiColumns);
 
-		Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
-	}
+        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
+        csvReader.processCSV(instruction);
 
-	@Test
-	public void testSubColumn() throws InterruptedException, IOException {
-		String table = "CSVSubColumn";
-		GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
-		Util.createAndSetGobiiFile(instruction, tempFolderLocation);
-		instruction.setTable(table);
-		List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
-		gobiiColumns.add(Util.createGobiiConstantColumn(Integer.toString(0)));
-		gobiiColumns.add(Util.createGobiiAutoIncrementColumn());
-		gobiiColumns.add(Util.createGobiiCSV_SUB(0, 0));
-		instruction.setGobiiFileColumns(gobiiColumns);
+        Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
+    }
 
-		CSVFileReaderV2 csvReader = new CSVFileReaderV2();
-		csvReader.processCSV(instruction);
+    @Test
+    public void testMultipleFilesCSV_ROW() throws IOException {
+        String table = "multiFileCSV_ROW";
+        File file2 = new File(tempFolderLocation + "\\src" + "\\file2.txt");
+        String data[] = {"marker_name	dnarunname_dom_1	dnarunname_dom_2	dnarunname_dom_3	dnarunname_dom_4",
+                "dommarker1	1	0	1	1"};
+        BufferedWriter srcFileWriter = new BufferedWriter(new FileWriter(file2));
+        srcFileWriter.write(data[0] + "\n");
+        srcFileWriter.write(data[1] + "\n");
+        srcFileWriter.close();
 
-		Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
-	}
+        GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
+        Util.createAndSetGobiiFile(instruction, tempFolderLocation);
+        instruction.setTable(table);
+        List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
+        gobiiColumns.add(Util.createGobiiConstantColumn(Integer.toString(0)));
+        gobiiColumns.add(Util.createGobiiAutoIncrementColumn());
+        gobiiColumns.add(Util.createGobiiCSV_ROW(0, 0));
+        instruction.setGobiiFileColumns(gobiiColumns);
 
-	@Test
-	public void testMultipleFilesCSV_ROW() throws IOException, InterruptedException {
-		String table = "multiFileCSV_ROW";
-		File file2 = new File(tempFolderLocation + "\\src" + "\\file2.txt");
-		String data[] = { "marker_name	dnarunname_dom_1	dnarunname_dom_2	dnarunname_dom_3	dnarunname_dom_4",
-						  "dommarker1	1	0	1	1" };
-		BufferedWriter srcFileWriter = new BufferedWriter(new FileWriter(file2));
-		srcFileWriter.write(data[0] + "\n");
-		srcFileWriter.write(data[1] + "\n");
-		srcFileWriter.close();
+        CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
+        csvReader.processCSV(instruction);
 
-		GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
-		Util.createAndSetGobiiFile(instruction, tempFolderLocation);
-		instruction.setTable(table);
-		List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
-		gobiiColumns.add(Util.createGobiiConstantColumn(Integer.toString(0)));
-		gobiiColumns.add(Util.createGobiiAutoIncrementColumn());
-		gobiiColumns.add(Util.createGobiiCSV_ROW(0, 0));
-		instruction.setGobiiFileColumns(gobiiColumns);
-
-		CSVFileReaderV2 csvReader = new CSVFileReaderV2();
-		csvReader.processCSV(instruction);
-
-		Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
-		file2.delete();
-	}
-
+        Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
+        file2.delete();
+    }
 }

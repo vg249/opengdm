@@ -193,7 +193,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                                     "The specified extract type is "
                                             + currentGobiiDataSetExtract.getGobiiExtractFilterType()
                                             + ". Please provide at least one of the following: " +
-                                            "Principle Investigator, Project, Sample list, or sample file.");
+                                            "Principal Investigator, Project, Sample list, or sample file.");
 
 
                         }
@@ -448,7 +448,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
     } // getStatus()
 
     /**
-     * Sets the status for a list of gobii extractor instructions
+     * Sets the status for a list of gdm extractor instructions
      *
      * @param gobiiExtractorInstructionList list of extractor instructions
      * @param logMessage content of the log file
@@ -469,7 +469,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
 
     /**
-     * Returns a list of gobii extractor instruction(technically 1). Sets the job status for the data-sets under inspection
+     * Returns a list of gdm extractor instruction(technically 1). Sets the job status for the data-sets under inspection
      *
      * @param instructionFileFqpn Instruction file path
      * @param jobProgressStatus   job progress status.

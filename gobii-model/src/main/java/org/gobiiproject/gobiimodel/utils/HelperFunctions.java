@@ -293,14 +293,6 @@ public class HelperFunctions {
     }
 
     public static String getJdbcConnectionString(ServerConfig postGresConfig) {
-
-//        String contextPath = postGresConfig.getContextPath();
-//        Integer idxOfFinalFwdSlash = contextPath.lastIndexOf('/');
-//        if (idxOfFinalFwdSlash > -1) {
-//            contextPath = contextPath.substring(0, idxOfFinalFwdSlash);
-//        }
-//
-
         String ret = "jdbc:postgresql://"
                 + postGresConfig.getHost()
                 + ":"
@@ -339,6 +331,23 @@ public class HelperFunctions {
                 + postGresConfig.getPort()
                 + "/"
                 + postGresConfig.getContextPath(false);
+        return ret;
+    }
+
+
+    /***
+     * Returns a valid webservice connection string
+     * @param config the config object for the crop
+     * @return The connection string
+     */
+    public static String getWebserviceConnectionString(GobiiCropConfig config) {
+        ServerConfig webserviceConfig = config.getServer(ServerType.GOBII_WEB);
+        String ret = "http://"
+                + webserviceConfig.getHost()
+                + ":"
+                + webserviceConfig.getPort()
+                + "/"
+                + webserviceConfig.getContextPath(false);
         return ret;
     }
 

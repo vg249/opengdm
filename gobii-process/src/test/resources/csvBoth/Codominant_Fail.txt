@@ -1,0 +1,8 @@
+	dnarunname_codom_1	dnarunname_codom_2	dnarunname_codom_3	dnarunname_codom_4	dnarunname_codom_5
+codom_m1	N	1q	08	09	03
+codom_m2	25	26	23	23	24
+codom_m3	52	62	62	25	24
+codom_m4	4N	51	62	52	24
+codom_m5	21	1	2	N	2
+codom_m6	2	1	2	2	2
+codom_m7	2	1	2	2	2

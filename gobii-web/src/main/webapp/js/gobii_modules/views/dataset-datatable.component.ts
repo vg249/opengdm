@@ -25,8 +25,9 @@ import {PagedFileItemList} from "../model/payload/paged-item-list";
 import {Pagination} from "../model/payload/pagination";
 import {Subject} from "rxjs/Subject";
 import 'rxjs/add/operator/withLatestFrom'
-import {PayloadFilter} from "../store/actions/action-payload-filter";
+import {ExtractReadyPayloadFilter, JobTypeFilters, PayloadFilter} from "../store/actions/action-payload-filter";
 import {ViewIdGeneratorService} from "../services/core/view-id-generator-service";
+import {FileItem} from "ng2-file-upload";
 
 @Component({
     selector: 'dataset-datatable',
@@ -68,7 +69,9 @@ import {ViewIdGeneratorService} from "../services/core/view-id-generator-service
                         <p-checkbox binary="true"
                                     [ngModel]="fi.getSelected()"
                                     (onChange)="handleRowChecked($event, fi)"
-                                    [hidden]="fi.getEntity().jobStatusName !== 'completed'"
+                                    [hidden]="hideNonExtractReadyJobs(fi, {
+                                        'load' : ['completed']
+                                    })"
                                     [id]="viewIdGeneratorService.makeDatasetRowCheckboxId(fi._entity.datasetName)">
                         </p-checkbox>
 
@@ -146,7 +149,7 @@ import {ViewIdGeneratorService} from "../services/core/view-id-generator-service
                         <!--<table class="table table-striped table-hover table-bordered">-->
                         <tbody>
                         <tr>
-                            <td><b>Principle Investigator</b></td>
+                            <td><b>Principal Investigator</b></td>
                             <td>
                                 {{ selectedDatasetDetailEntity ? selectedDatasetDetailEntity.piLastName + ", " + selectedDatasetDetailEntity.piFirstName : null}}
                             </td>
@@ -309,22 +312,37 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
     public filterToExtractReady: boolean = true;
     public disableFilterToExtractReadyCheckbox: boolean = false;
 
+    /**
+     * Event to allow only extract ready jobs to be selected.
+     * @param fi - GobiiFileItem
+     */
+    public hideNonExtractReadyJobs(fi:GobiiFileItem, jobStatusFilterValues:JobTypeFilters) {
+        return !ExtractReadyPayloadFilter.isExtractReady(fi, jobStatusFilterValues);
+    }
 
     public handleFilterToExtractReadyChecked(event) {
 
 
-        let filterValue: string;
-        if (event === true) {
+        let jobStatusFilterValues:JobTypeFilters;
 
-            filterValue = "completed";
+        if (event === true) {
+            /**
+             * bug/GSD-557
+             * Load only if datasets with associated jobs of type "load" has listed status.
+             * For load jobs, status should be "completed".
+             */
+            jobStatusFilterValues = {
+                "load" : ["completed"]
+            };
         } else {
-            filterValue = null;
+            jobStatusFilterValues = null;
         }
+
 
         this.store.dispatch(new fileAction.LoadFilterAction(
             {
                 filterId: FilterParamNames.DATASET_LIST_STATUS,
-                filter: new PayloadFilter(
+                filter: new ExtractReadyPayloadFilter(
                     GobiiExtractFilterType.WHOLE_DATASET,
                     new GobiiFileItemCompoundId(ExtractorItemType.ENTITY,
                         EntityType.DATASET,
@@ -332,10 +350,11 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
                         CvFilterType.UNKNOWN,
                         CvFilters.get(CvFilterType.UNKNOWN)),
                     null,
-                    filterValue,
                     null,
                     null,
-                    null
+                    null,
+                    null,
+                    jobStatusFilterValues
                 )
             }
         ))
@@ -364,6 +383,7 @@ export class DatasetDatatableComponent implements OnInit, OnChanges {
     selectDataset(event, dataSeItem: GobiiFileItem, datasetOverlayPanel: OverlayPanel) {
 
         let datasetId: number = dataSeItem.getEntity().id;
+
         let filterParams: FilterParams = this.filterParamsColl.getFilter(FilterParamNames.DATASET_BY_DATASET_ID, GobiiExtractFilterType.WHOLE_DATASET);
 
         let dtoRequestItemGfi: DtoRequestItemGfi = new DtoRequestItemGfi(filterParams,
