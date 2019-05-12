@@ -2568,6 +2568,117 @@ paths:
           schema:
             $ref: "#/definitions/PayloadEnvelopeRestProfileDTO"
       x-summary: "update"
+  /sample-tracking/v1/experiments:
+    get:
+      operationId: "listExperiments"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    post:
+      operationId: "createExperiment"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/ExperimentDTO"
+      responses:
+        default:
+          description: "successful operation"
+  /sample-tracking/v1/experiments/{experimentId}:
+    get:
+      operationId: "getExperimentById"
+      parameters:
+      - name: "experimentId"
+        in: "path"
+        required: true
+        type: "integer"
+        pattern: "[\\d]+"
+        format: "int32"
+      responses:
+        default:
+          description: "successful operation"
+  /sample-tracking/v1/germplasm:
+    get:
+      operationId: "listGermplasms"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    post:
+      operationId: "createGermplasm"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/GermplasmListDTO"
+      responses:
+        default:
+          description: "successful operation"
+  /sample-tracking/v1/germplasm/{germplasmId}:
+    get:
+      operationId: "listGermplasms"
+      parameters:
+      - name: "germplasmId"
+        in: "path"
+        required: true
+        type: "integer"
+        pattern: "[\\d]+"
+        format: "int32"
+      responses:
+        default:
+          description: "successful operation"
+  /sample-tracking/v1/projects:
+    get:
+      operationId: "listProjects"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    post:
+      operationId: "createProject"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/ProjectDTO"
+      responses:
+        default:
+          description: "successful operation"
+  /sample-tracking/v1/projects/{projectId}:
+    get:
+      operationId: "getProjectById"
+      parameters:
+      - name: "projectId"
+        in: "path"
+        required: true
+        type: "integer"
+        pattern: "[\\d]+"
+        format: "int32"
+      responses:
+        default:
+          description: "successful operation"
+  /sample-tracking/v1/projects/{projectId}/samples:
+    post:
+      operationId: "createSamples"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/ProjectSamplesDTO"
+      - name: "projectId"
+        in: "path"
+        required: true
+        type: "integer"
+        pattern: "[\\d]+"
+        format: "int32"
+      responses:
+        default:
+          description: "successful operation"
 securityDefinitions:
   X-Auth-Token:
     type: "apiKey"
@@ -3263,6 +3374,30 @@ definitions:
       id:
         type: "integer"
         format: "int32"
+  GermplasmDTO:
+    type: "object"
+    properties:
+      createdBy:
+        type: "integer"
+        format: "int32"
+      createdDate:
+        type: "string"
+        format: "date-time"
+      modifiedBy:
+        type: "integer"
+        format: "int32"
+      modifiedDate:
+        type: "string"
+        format: "date-time"
+      id:
+        type: "integer"
+        format: "int32"
+      name:
+        type: "string"
+      externalCode:
+        type: "string"
+  GermplasmListDTO:
+    type: "object"
   GobiiDataSetExtract:
     type: "object"
     properties:
@@ -3590,16 +3725,16 @@ definitions:
         type: "boolean"
       readable:
         type: "boolean"
-      uri:
-        type: "string"
-        format: "uri"
-      filename:
-        type: "string"
       url:
         type: "string"
         format: "url"
       file:
         type: "file"
+      uri:
+        type: "string"
+        format: "uri"
+      filename:
+        type: "string"
   JobDTO:
     type: "object"
     properties:
@@ -4818,6 +4953,13 @@ definitions:
       id:
         type: "integer"
         format: "int32"
+  ProjectSamplesDTO:
+    type: "object"
+    properties:
+      projectId:
+        type: "integer"
+        format: "int32"
+        readOnly: true
   PropNameId:
     type: "object"
     properties:

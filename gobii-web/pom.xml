@@ -516,7 +516,7 @@
                         <apiSource>
                             <springmvc>true</springmvc>
                             <locations>
-                                org.gobiiproject.gobiiweb.controllers
+                                <location>org.gobiiproject.gobiiweb.controllers</location>
                             </locations>
                             <outputFormats>json,yaml</outputFormats>
                             <schemes>http</schemes>
