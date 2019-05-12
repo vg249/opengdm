@@ -244,8 +244,7 @@ public class GOBIIControllerV1 {
     })
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
     @ResponseBody
-    public String authenticate(@RequestBody String noContentExpected,
-                               HttpServletRequest request,
+    public String authenticate(HttpServletRequest request,
                                HttpServletResponse response) {
 
         String returnVal = null;
