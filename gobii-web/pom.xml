@@ -519,7 +519,7 @@
                                 <location>org.gobiiproject.gobiiweb.controllers</location>
                             </locations>
                             <outputFormats>json,yaml</outputFormats>
-                            <schemes>http</schemes>
+                            <schemes><schema>http</schema></schemes>
                             <host>cbsugobiixvm11.biohpc.cornell.edu:8081</host>
                             <basePath>/gobii-dev</basePath>
                             <!-- content of description file overrides the <description>
