@@ -161,7 +161,7 @@ class Validator {
 
         if (requiredMatrixSampleSizeColumns.size() > 0) {
             try {
-                List<String> matrixCols = getFileColumns(fileName, requiredMatrixMarkerSizeColumns, failureList);
+                List<String> matrixCols = getFileColumns(fileName, requiredMatrixSampleSizeColumns, failureList);
                 verifyEqualMatrixSizeDnarun(failureList, matrixCols, isMarkerFast);
             } catch (MaximumErrorsValidationException e) {
                 //Don't do any thing. This implies that particular error list is full.
