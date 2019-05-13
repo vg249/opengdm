@@ -162,9 +162,15 @@ definitions:
         - "DNARUN"
         - "GERMPLASM"
         - "JOB"
+      createdBy:
+        type: "integer"
+        format: "int32"
       createdDate:
         type: "string"
         format: "date-time"
+      modifiedBy:
+        type: "integer"
+        format: "int32"
       modifiedDate:
         type: "string"
         format: "date-time"

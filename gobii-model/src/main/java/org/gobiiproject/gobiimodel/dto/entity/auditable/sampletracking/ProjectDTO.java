@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@JsonIgnoreProperties(ignoreUnknown = true, value={
+@JsonIgnoreProperties(value={
         "id", "allowedProcessTypes", "entityNameType"
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)

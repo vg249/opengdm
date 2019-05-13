@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiweb.controllers;
 
+import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobidomain.services.ExperimentService;
 import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +39,8 @@ public class SampleTrackingController {
 
     //@Autowired
     //private DnaSampleService<DnaSampleDTO> sampleTrackingDnaSampleService = null;
+    @Autowired
+    private ContactService contactService;
 
     @RequestMapping(value="/projects", method= RequestMethod.GET)
     public @ResponseBody ResponseEntity listProjects(
@@ -78,13 +82,18 @@ public class SampleTrackingController {
      * Exceptions are handled in GlobalControllerExceptionHandler.
      * @param newProject - New project to be created.
      *                   Json request body automatically deserialized to ProjectDTO.
-     * @param request - Http request for creating project
-     * @param response - Response with HTTP status code and Brapi payload as response body.
-     * @return
+     * @return ResponseEntity with http status code respective of successful creation or failure.
+     * Response body contains created resource.
      */
     @RequestMapping(value="/projects", method=RequestMethod.POST)
     public @ResponseBody ResponseEntity createProject(@RequestBody ProjectDTO newProject) {
 
+        //Gets the User logged in for current context.
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+        //Gets the contactId of the logged in user.
+        Integer contactId = this.contactService.getContactByUserName(userName).getContactId();
+        newProject.setCreatedBy(contactId);
+        newProject.setModifiedBy(contactId);
         ProjectDTO createdProject = sampleTrackingProjectService.createProject(newProject);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
     }

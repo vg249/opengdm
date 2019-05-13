@@ -25,8 +25,6 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
     @Autowired
     private DtoMapProject dtoMapSampleTrackingProject = null;
 
-    @Autowired
-    private ContactService contactService;
 
     @Override
     public ProjectDTO createProject(ProjectDTO newProject) throws GobiiDomainException {
@@ -35,12 +33,6 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
         try {
 
             newProject.setCreatedDate(new Date(new java.util.Date().getTime()));
-            //Gets the User logged in for current context.
-            String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-            //Gets the contactId of the logged in user.
-            Integer contactId = this.contactService.getContactByUserName(userName).getContactId();
-            newProject.setCreatedBy(contactId);
-            newProject.setModifiedBy(contactId);
             returnVal = dtoMapSampleTrackingProject.create(newProject);
 
         }
