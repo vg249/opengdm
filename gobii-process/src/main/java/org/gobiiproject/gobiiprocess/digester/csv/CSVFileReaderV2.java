@@ -314,8 +314,8 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
                             }
                         }
                     }
-                    totalRows=rowNo-csv_BothColumn.getrCoord();
                     rowNo++;
+                    totalRows=rowNo-csv_BothColumn.getrCoord();
                 }
             }
         }

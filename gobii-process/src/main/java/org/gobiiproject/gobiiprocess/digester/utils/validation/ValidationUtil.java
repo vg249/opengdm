@@ -355,7 +355,7 @@ class ValidationUtil {
         if(matrixSize==null)return true;
         int size = matrixSize;
             if (column.size() != size) {
-                createFailure(FailureTypes.INVALID_COLUMN_MATRIX_SIZE, new ArrayList<>(), failureList);
+                createFailure(FailureTypes.INVALID_COLUMN_MATRIX_SIZE + " ("+column.size() + " " + size + ")", new ArrayList<>(), failureList);
                 return false;
             }
         return true;
