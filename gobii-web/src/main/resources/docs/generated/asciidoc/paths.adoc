@@ -489,11 +489,13 @@ Create analysis entity for GDM system.
 
 ==== Parameters
 
-[options="header", cols=".^2,.^3,.^4"]
+[options="header", cols=".^2,.^3,.^9,.^4"]
 |===
-|Type|Name|Schema
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Body**|**body** +
-__|<<_payloadenvelopeanalysisdto,PayloadEnvelopeAnalysisDTO>>
+__||<<_payloadenvelopeanalysisdto,PayloadEnvelopeAnalysisDTO>>
 |===
 
 
@@ -520,6 +522,16 @@ GET /gobii/v1/analyses
 
 ==== Description
 List of all Analysis entities.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
+|===
 
 
 ==== Responses
@@ -552,6 +564,8 @@ Get analyses by analyses Id.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**analysisId** +
 __|ID of Analysis to be extracted.|integer (int32)
 |===
@@ -587,6 +601,8 @@ Updates the Analysis entity having the specified analysisId.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**analysisId** +
 __|ID of Analysis to be updated|integer (int32)
 |**Body**|**body** +
@@ -628,8 +644,6 @@ The user credentials are specified in the request headers X-Username and X-Passw
 __|User password|string
 |**Header**|**X-Username** +
 __|User Identifier|string
-|**Body**|**body** +
-__||string
 |===
 
 
@@ -659,6 +673,16 @@ GET /gobii/v1/configsettings/
 ==== Description
 List all configuration settings.
 +Provides generic configuration information about the GOBii instances in a given deployment. This call does not require authentication
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
+|===
 
 
 ==== Responses
@@ -691,6 +715,8 @@ List contacts for emailid, lastname, firstname, username.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Query**|**email** +
 __|contact's email|string
 |**Query**|**firstName** +
@@ -729,11 +755,13 @@ Create new contact.
 
 ==== Parameters
 
-[options="header", cols=".^2,.^3,.^4"]
+[options="header", cols=".^2,.^3,.^9,.^4"]
 |===
-|Type|Name|Schema
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Body**|**body** +
-__|<<_payloadenvelopecontactdto,PayloadEnvelopeContactDTO>>
+__||<<_payloadenvelopecontactdto,PayloadEnvelopeContactDTO>>
 |===
 
 
@@ -760,6 +788,16 @@ GET /gobii/v1/contacts
 
 ==== Description
 List all contacts.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
+|===
 
 
 ==== Responses
@@ -792,6 +830,8 @@ Get contacts by Contact Id.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**contactId** +
 __|ID of contacts to be extracted.|integer (int32)
 |===
@@ -827,6 +867,8 @@ Update contact by contact id.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**contactId** +
 __|ID of contacts to be updated.|integer (int32)
 |**Body**|**body** +
@@ -864,6 +906,8 @@ Get contact by email id.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**email** +
 __|email id of contacts to be extracted.|string
 |===
@@ -899,6 +943,8 @@ List CV terms in CV group with cvGroupId
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**cvGroupId** +
 __|ID of the CV group.|integer (int32)
 |===
@@ -934,6 +980,8 @@ Get CV group by cv group type ID
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**cvGroupTypeId** +
 __|ID of the cv group type|integer (int32)
 |===
@@ -969,6 +1017,8 @@ Get CV group by name
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**groupName** +
 __|name of the cv group to be extracted|string
 |**Query**|**cvGroupTypeId** +
@@ -1003,11 +1053,13 @@ Creates new cv's.
 
 ==== Parameters
 
-[options="header", cols=".^2,.^3,.^4"]
+[options="header", cols=".^2,.^3,.^9,.^4"]
 |===
-|Type|Name|Schema
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Body**|**body** +
-__|<<_payloadenvelopecvdto,PayloadEnvelopeCvDTO>>
+__||<<_payloadenvelopecvdto,PayloadEnvelopeCvDTO>>
 |===
 
 
@@ -1034,6 +1086,16 @@ GET /gobii/v1/cvs
 
 ==== Description
 List all cvs in the GDM.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
+|===
 
 
 ==== Responses
@@ -1066,6 +1128,8 @@ Get cv by the id.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**cvId** +
 __|ID of the CV to be extracted|integer (int32)
 |===
@@ -1101,6 +1165,8 @@ Update cv by cvId.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**cvId** +
 __|ID of the CV to be updated|integer (int32)
 |**Body**|**body** +
@@ -1138,6 +1204,8 @@ Deletes cv by id.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**cvId** +
 __|ID of cv to be deleted|integer (int32)
 |===
@@ -1173,6 +1241,8 @@ List cvs by the group name.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**groupName** +
 __|name of cv group to be extracted|string
 |===
@@ -1205,11 +1275,13 @@ Creates a new dataset in the system.
 
 ==== Parameters
 
-[options="header", cols=".^2,.^3,.^4"]
+[options="header", cols=".^2,.^3,.^9,.^4"]
 |===
-|Type|Name|Schema
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Body**|**body** +
-__|<<_payloadenvelopedatasetdto,PayloadEnvelopeDataSetDTO>>
+__||<<_payloadenvelopedatasetdto,PayloadEnvelopeDataSetDTO>>
 |===
 
 
@@ -1243,6 +1315,8 @@ List all the existing datasets in the system. The list can be retrieved by page 
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Query**|**pageNo** +
 __|Retrieve the specified page by number|integer (int32)
 |**Query**|**pageSize** +
@@ -1277,6 +1351,16 @@ GET /gobii/v1/datasets/types
 Lists dataset types in the system.
 
 
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
+|===
+
+
 ==== Responses
 
 [options="header", cols=".^2,.^14,.^4"]
@@ -1307,6 +1391,8 @@ Gets the Dataset type by type ID.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**id** +
 __|ID of the dataset type|integer (int32)
 |===
@@ -1342,6 +1428,8 @@ Gets the Dataset entity having the specified ID.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**dataSetId** +
 __|ID of the Dataset to be extracted|integer (int32)
 |===
@@ -1377,6 +1465,8 @@ Updates the Dataset entity having the specified datasetId.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**dataSetId** +
 __|ID of the Dataset to be updated|integer (int32)
 |**Body**|**body** +
@@ -1414,6 +1504,8 @@ Lists all the analysis in a dataset identified by dataset id.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**dataSetId** +
 __|ID of the dataset|integer (int32)
 |===
@@ -1449,6 +1541,8 @@ List information for active job for a given datasetId
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**datasetId** +
 __|ID of the dataset|string
 |===
@@ -1481,11 +1575,13 @@ Creates displays in GDM.
 
 ==== Parameters
 
-[options="header", cols=".^2,.^3,.^4"]
+[options="header", cols=".^2,.^3,.^9,.^4"]
 |===
-|Type|Name|Schema
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Body**|**body** +
-__|<<_payloadenvelopedisplaydto,PayloadEnvelopeDisplayDTO>>
+__||<<_payloadenvelopedisplaydto,PayloadEnvelopeDisplayDTO>>
 |===
 
 
@@ -1512,6 +1608,16 @@ GET /gobii/v1/displays
 
 ==== Description
 Lists all Displays in GDM
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
+|===
 
 
 ==== Responses
@@ -1544,6 +1650,8 @@ Get the Display by display Id
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**displayId** +
 __|ID of the Display to be extracted|integer (int32)
 |===
@@ -1579,6 +1687,8 @@ Updates the Display entity having the specified displayId.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**displayId** +
 __|ID of the Display to be updated|integer (int32)
 |**Body**|**body** +
@@ -1611,6 +1721,16 @@ GET /gobii/v1/entities
 Lists all the existing entities in the system.
 
 
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
+|===
+
+
 ==== Responses
 
 [options="header", cols=".^2,.^14,.^4"]
@@ -1641,6 +1761,8 @@ Retrieves the total count of the children for the given entity
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**entityNameChild** +
 __|Name of the child entity|string
 |**Path**|**entityNameParent** +
@@ -1680,6 +1802,8 @@ Gets the total Entity count for the given entityName
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**entityName** +
 __|Name of the Entity|string
 |===
@@ -1715,6 +1839,8 @@ Gets last modified Entity for the given entityName
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**entityName** +
 __|Name of the Entity|string
 |===
@@ -1747,11 +1873,13 @@ Creates a new experiment in the system.
 
 ==== Parameters
 
-[options="header", cols=".^2,.^3,.^4"]
+[options="header", cols=".^2,.^3,.^9,.^4"]
 |===
-|Type|Name|Schema
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Body**|**body** +
-__|<<_payloadenvelopeexperimentdto,PayloadEnvelopeExperimentDTO>>
+__||<<_payloadenvelopeexperimentdto,PayloadEnvelopeExperimentDTO>>
 |===
 
 
@@ -1778,6 +1906,16 @@ GET /gobii/v1/experiments
 
 ==== Description
 List all the existing experiments in the system.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
+|===
 
 
 ==== Responses
@@ -1810,6 +1948,8 @@ Gets the Experiment entity having the specified ID.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**experimentId** +
 __|ID of the Experiment to be updated|integer (int32)
 |===
@@ -1845,6 +1985,8 @@ Updates the Experiment entity having the specified experimentId.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**experimentId** +
 __|ID of the Experiment to be updated|integer (int32)
 |**Body**|**body** +
@@ -1882,6 +2024,8 @@ Retrieves all the protocols having the specified experimentId in the system.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**experimentId** +
 __|ID of the Experiment|integer (int32)
 |===
@@ -1917,6 +2061,8 @@ Gets file preview for the specified directory name
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**directoryName** +
 __|Name of the directory|string
 |**Query**|**fileFormat** +
@@ -1954,6 +2100,8 @@ Updates a directory in the system that will be used for storing the data files f
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**directoryName** +
 __|Name of the directory/folder|string
 |**Body**|**body** +
@@ -1991,6 +2139,8 @@ Uploads an arbitrary file to the specified destination
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**destinationType** +
 __|Destination type where the file will be uploaded to|string
 |**Query**|**file** +
@@ -2030,6 +2180,8 @@ Deletes an arbitrary file from the specified destination
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**destinationType** +
 __|Destination type where the file will be delete from|string
 |**Query**|**fileName** +
@@ -2072,6 +2224,8 @@ Uploads the specified file for a specific job to the specified directory
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**destinationType** +
 __|Destination type where the file will be uploaded to|string
 |**Path**|**gobiiJobId** +
@@ -2113,6 +2267,8 @@ Downloads the specified file for a specific job from the specified directory
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**destinationType** +
 __|Destination type where the file will be downloaded from|string
 |**Path**|**gobiiJobId** +
@@ -2149,11 +2305,13 @@ Creates extractor instruction file and then submits a new Job.
 
 ==== Parameters
 
-[options="header", cols=".^2,.^3,.^4"]
+[options="header", cols=".^2,.^3,.^9,.^4"]
 |===
-|Type|Name|Schema
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Body**|**body** +
-__|<<_payloadenvelopeextractorinstructionfilesdto,PayloadEnvelopeExtractorInstructionFilesDTO>>
+__||<<_payloadenvelopeextractorinstructionfilesdto,PayloadEnvelopeExtractorInstructionFilesDTO>>
 |===
 
 
@@ -2187,6 +2345,8 @@ Retrieves the extract job status along with other job details having the specifi
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**jobName** +
 __|Name of the job|string
 |===
@@ -2222,6 +2382,8 @@ Retrieves the extractor instruction file entity having the specified instruction
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**instructionFileName** +
 __|Name of the instruction file to be retrieved|string
 |===
@@ -2254,11 +2416,13 @@ Creates loader instruction file and then submits a new Job.
 
 ==== Parameters
 
-[options="header", cols=".^2,.^3,.^4"]
+[options="header", cols=".^2,.^3,.^9,.^4"]
 |===
-|Type|Name|Schema
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Body**|**body** +
-__|<<_payloadenvelopeloaderinstructionfilesdto,PayloadEnvelopeLoaderInstructionFilesDTO>>
+__||<<_payloadenvelopeloaderinstructionfilesdto,PayloadEnvelopeLoaderInstructionFilesDTO>>
 |===
 
 
@@ -2292,6 +2456,8 @@ Gets the loading job status along with other job details having the specified Jo
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**jobName** +
 __|Name of the job|string
 |===
@@ -2327,6 +2493,8 @@ Gets the loader instruction file entity having the specified instruction file na
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**instructionFileName** +
 __|Name of the instruction file to be retrieved.|string
 |===
@@ -2359,11 +2527,13 @@ Creates a new job in the system.
 
 ==== Parameters
 
-[options="header", cols=".^2,.^3,.^4"]
+[options="header", cols=".^2,.^3,.^9,.^4"]
 |===
-|Type|Name|Schema
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Body**|**body** +
-__|<<_payloadenvelopejobdto,PayloadEnvelopeJobDTO>>
+__||<<_payloadenvelopejobdto,PayloadEnvelopeJobDTO>>
 |===
 
 
@@ -2390,6 +2560,16 @@ GET /gobii/v1/jobs
 
 ==== Description
 Lists all the existing jobs in the system.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
+|===
 
 
 ==== Responses
@@ -2422,6 +2602,8 @@ Creates DNA samples for a given Job having the specified name in the system.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**jobName** +
 __|Name of the Job that the DNA samples will be added to|string
 |**Body**|**body** +
@@ -2459,6 +2641,8 @@ Gets the Job entity having the specified name.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**jobName** +
 __|Name of the Job to be extracted|string
 |===
@@ -2494,6 +2678,8 @@ Updates the Job entity having the specified jobName.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**jobName** +
 __|Name of the Job to be updated|string
 |**Body**|**body** +
@@ -2528,11 +2714,13 @@ Creates a Manifest entity for GOBii system.
 
 ==== Parameters
 
-[options="header", cols=".^2,.^3,.^4"]
+[options="header", cols=".^2,.^3,.^9,.^4"]
 |===
-|Type|Name|Schema
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Body**|**body** +
-__|<<_payloadenvelopemanifestdto,PayloadEnvelopeManifestDTO>>
+__||<<_payloadenvelopemanifestdto,PayloadEnvelopeManifestDTO>>
 |===
 
 
@@ -2559,6 +2747,16 @@ GET /gobii/v1/manifests
 
 ==== Description
 Lists an unfiltered list of all Manifest entities.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
+|===
 
 
 ==== Responses
@@ -2591,6 +2789,8 @@ Gets the Manifest entity having the specified ID.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**manifestId** +
 __|ID of the Manifest to be retrieved|integer (int32)
 |===
@@ -2626,6 +2826,8 @@ Updates the Manifest entity having the specified manifestId.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**manifestId** +
 __|ID of the Manifest to be updated|integer (int32)
 |**Body**|**body** +
@@ -2658,6 +2860,16 @@ GET /gobii/v1/maps
 Lists all the existing Mapsets in the system.
 
 
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
+|===
+
+
 ==== Responses
 
 [options="header", cols=".^2,.^14,.^4"]
@@ -2685,11 +2897,13 @@ Creates a new mapset in the system.
 
 ==== Parameters
 
-[options="header", cols=".^2,.^3,.^4"]
+[options="header", cols=".^2,.^3,.^9,.^4"]
 |===
-|Type|Name|Schema
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Body**|**body** +
-__|<<_payloadenvelopemapsetdto,PayloadEnvelopeMapsetDTO>>
+__||<<_payloadenvelopemapsetdto,PayloadEnvelopeMapsetDTO>>
 |===
 
 
@@ -2716,6 +2930,16 @@ GET /gobii/v1/mapsets
 
 ==== Description
 List all the existing mapsets in the system.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
+|===
 
 
 ==== Responses
@@ -2748,6 +2972,8 @@ Gets the Mapset entity having the specified ID.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**mapsetId** +
 __|ID of the Mapset to be extracted|integer (int32)
 |===
@@ -2783,6 +3009,8 @@ Updates the Mapset entity having the specified mapsetId.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**mapsetId** +
 __|ID of the Mapset to be updated|integer (int32)
 |**Body**|**body** +
@@ -2820,6 +3048,8 @@ List Marker search results.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Query**|**name** +
 __|Name of the marker|string
 |===
@@ -2852,11 +3082,13 @@ Creates a new marker group in the system.
 
 ==== Parameters
 
-[options="header", cols=".^2,.^3,.^4"]
+[options="header", cols=".^2,.^3,.^9,.^4"]
 |===
-|Type|Name|Schema
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Body**|**body** +
-__|<<_payloadenvelopemarkergroupdto,PayloadEnvelopeMarkerGroupDTO>>
+__||<<_payloadenvelopemarkergroupdto,PayloadEnvelopeMarkerGroupDTO>>
 |===
 
 
@@ -2883,6 +3115,16 @@ GET /gobii/v1/markergroups
 
 ==== Description
 Lists all the existing marker groups in the system.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
+|===
 
 
 ==== Responses
@@ -2915,6 +3157,8 @@ Retrieves the Marker Group entity having the specified ID.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**markerGroupId** +
 __|ID of the marker group to be updated|integer (int32)
 |===
@@ -2950,6 +3194,8 @@ Updates the Marker Group entity having the specified markerGroupId.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**markerGroupId** +
 __|ID of the Marker Group to be updated|integer (int32)
 |**Body**|**body** +
@@ -2984,11 +3230,13 @@ Creates a new marker in the system.
 
 ==== Parameters
 
-[options="header", cols=".^2,.^3,.^4"]
+[options="header", cols=".^2,.^3,.^9,.^4"]
 |===
-|Type|Name|Schema
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Body**|**body** +
-__|<<_payloadenvelopemarkerdto,PayloadEnvelopeMarkerDTO>>
+__||<<_payloadenvelopemarkerdto,PayloadEnvelopeMarkerDTO>>
 |===
 
 
@@ -3015,6 +3263,16 @@ GET /gobii/v1/markers
 
 ==== Description
 Lists all the existing markers in the system.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
+|===
 
 
 ==== Responses
@@ -3047,6 +3305,8 @@ Retrieves the Marker entity having the specified ID.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**markerId** +
 __|ID of the Marker to be extracted|integer (int32)
 |===
@@ -3082,6 +3342,8 @@ Updates the Marker entity having the specified markerId.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**markerId** +
 __|ID of the Marker to be updated|integer (int32)
 |**Body**|**body** +
@@ -3119,6 +3381,8 @@ Retrieves a list of name/ID combination for a given entity and name list. For th
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**entity** +
 __|The entity to be retrieved|string
 |**Query**|**filterType** +
@@ -3160,6 +3424,8 @@ List of name/ID combination for a given entity. For the list of entities support
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**entity** +
 __|The entity to be retrieved|string
 |**Query**|**filterType** +
@@ -3196,11 +3462,13 @@ Creates a new organization in the system.
 
 ==== Parameters
 
-[options="header", cols=".^2,.^3,.^4"]
+[options="header", cols=".^2,.^3,.^9,.^4"]
 |===
-|Type|Name|Schema
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Body**|**body** +
-__|<<_payloadenvelopeorganizationdto,PayloadEnvelopeOrganizationDTO>>
+__||<<_payloadenvelopeorganizationdto,PayloadEnvelopeOrganizationDTO>>
 |===
 
 
@@ -3227,6 +3495,16 @@ GET /gobii/v1/organizations
 
 ==== Description
 List all the existing organizations in the system.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
+|===
 
 
 ==== Responses
@@ -3259,6 +3537,8 @@ Retrieves the Organization entity having the specified ID.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**organizationId** +
 __|ID of the Organization to be extracted|integer (int32)
 |===
@@ -3294,6 +3574,8 @@ Updates the Organization entity having the specified organizationId.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**organizationId** +
 __|ID of the Organization to be updated|integer (int32)
 |**Body**|**body** +
@@ -3363,11 +3645,13 @@ Creates a new Platform in the system.
 
 ==== Parameters
 
-[options="header", cols=".^2,.^3,.^4"]
+[options="header", cols=".^2,.^3,.^9,.^4"]
 |===
-|Type|Name|Schema
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Body**|**body** +
-__|<<_payloadenvelopeplatformdto,PayloadEnvelopePlatformDTO>>
+__||<<_payloadenvelopeplatformdto,PayloadEnvelopePlatformDTO>>
 |===
 
 
@@ -3394,6 +3678,16 @@ GET /gobii/v1/platforms
 
 ==== Description
 List all the existing platforms in the system.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
+|===
 
 
 ==== Responses
@@ -3426,6 +3720,8 @@ Gets the Platform entity having the specified Vendor Protocol ID.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**vendorProtocolId** +
 __|ID of the vendor protocol|integer (int32)
 |===
@@ -3461,6 +3757,8 @@ Retrieves the Platform entity having the specified ID.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**platformId** +
 __|ID of the Platform to be extracted|integer (int32)
 |===
@@ -3496,6 +3794,8 @@ Updates the Platform entity having the specified platformId.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**platformId** +
 __|ID of the Platform to be updated|integer (int32)
 |**Body**|**body** +
@@ -3530,11 +3830,13 @@ Creates a new project in the system.
 
 ==== Parameters
 
-[options="header", cols=".^2,.^3,.^4"]
+[options="header", cols=".^2,.^3,.^9,.^4"]
 |===
-|Type|Name|Schema
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Body**|**body** +
-__|<<_payloadenvelopeprojectdto,PayloadEnvelopeProjectDTO>>
+__||<<_payloadenvelopeprojectdto,PayloadEnvelopeProjectDTO>>
 |===
 
 
@@ -3561,6 +3863,16 @@ GET /gobii/v1/projects
 
 ==== Description
 List all the existing projects in the system.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
+|===
 
 
 ==== Responses
@@ -3593,6 +3905,8 @@ Retrieves the Project entity having the specified ID.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**projectId** +
 __|ID of the Project to be extracted|integer (int32)
 |===
@@ -3628,6 +3942,8 @@ Updates the Project entity having the specified projectId.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**projectId** +
 __|ID of the Project to be updated|integer (int32)
 |**Body**|**body** +
@@ -3662,11 +3978,13 @@ Creates a new Protocol in the system.
 
 ==== Parameters
 
-[options="header", cols=".^2,.^3,.^4"]
+[options="header", cols=".^2,.^3,.^9,.^4"]
 |===
-|Type|Name|Schema
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Body**|**body** +
-__|<<_payloadenvelopeprotocoldto,PayloadEnvelopeProtocolDTO>>
+__||<<_payloadenvelopeprotocoldto,PayloadEnvelopeProtocolDTO>>
 |===
 
 
@@ -3693,6 +4011,16 @@ GET /gobii/v1/protocols
 
 ==== Description
 List all the existing protocols in the system.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
+|===
 
 
 ==== Responses
@@ -3725,6 +4053,8 @@ Retrieves the Protocol entity having the specified ID.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**protocolId** +
 __|ID of the Protocol to be extracted|integer (int32)
 |===
@@ -3760,6 +4090,8 @@ Updates the Protocol entity having the specified protocolId.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**protocolId** +
 __|ID of the Protocol to be updated|integer (int32)
 |**Body**|**body** +
@@ -3797,6 +4129,8 @@ Creates a new Vendor Protocol in the system for specified Protocol ID.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**protocolId** +
 __|ID of the Protocol|integer (int32)
 |**Body**|**body** +
@@ -3834,6 +4168,8 @@ List all the vendor protocols given protocolId in the system.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**protocolId** +
 __|ID of the Protocol ID|integer (int32)
 |===
@@ -3869,6 +4205,8 @@ Updates the Vendor Protocol entity having the specified protocolId.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**protocolId** +
 __|ID of the Protocol|integer (int32)
 |**Body**|**body** +
@@ -3903,11 +4241,13 @@ Creates a new reference in the system.
 
 ==== Parameters
 
-[options="header", cols=".^2,.^3,.^4"]
+[options="header", cols=".^2,.^3,.^9,.^4"]
 |===
-|Type|Name|Schema
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Body**|**body** +
-__|<<_payloadenvelopereferencedto,PayloadEnvelopeReferenceDTO>>
+__||<<_payloadenvelopereferencedto,PayloadEnvelopeReferenceDTO>>
 |===
 
 
@@ -3934,6 +4274,16 @@ GET /gobii/v1/references
 
 ==== Description
 Lists all the existing references in the system.
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
+|===
 
 
 ==== Responses
@@ -3966,6 +4316,8 @@ Gets the Reference entity having the specified ID.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**referenceId** +
 __|ID of the Reference to be extracted|integer (int32)
 |===
@@ -4001,6 +4353,8 @@ Updates the Reference entity having the specified referenceId.
 [options="header", cols=".^2,.^3,.^9,.^4"]
 |===
 |Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Path**|**referenceId** +
 __|ID of the Reference to be updated|integer (int32)
 |**Body**|**body** +
@@ -4036,11 +4390,13 @@ When the Header of the payload envelope for a resource contains maxGet, maxPost,
 
 ==== Parameters
 
-[options="header", cols=".^2,.^3,.^4"]
+[options="header", cols=".^2,.^3,.^9,.^4"]
 |===
-|Type|Name|Schema
+|Type|Name|Description|Schema
+|**Header**|**X-Auth-Token** +
+__|Authentication Token|string
 |**Body**|**body** +
-__|<<_payloadenveloperestprofiledto,PayloadEnvelopeRestProfileDTO>>
+__||<<_payloadenveloperestprofiledto,PayloadEnvelopeRestProfileDTO>>
 |===
 
 
@@ -4056,198 +4412,6 @@ __|<<_payloadenveloperestprofiledto,PayloadEnvelopeRestProfileDTO>>
 ==== Tags
 
 * RestProfiles
-
-
-[[_createexperiment]]
-=== POST /sample-tracking/v1/experiments
-
-==== Parameters
-
-[options="header", cols=".^2,.^3,.^4"]
-|===
-|Type|Name|Schema
-|**Body**|**body** +
-__|<<_experimentdto,ExperimentDTO>>
-|===
-
-
-==== Responses
-
-[options="header", cols=".^2,.^14,.^4"]
-|===
-|HTTP Code|Description|Schema
-|**default**|successful operation|No Content
-|===
-
-
-[[_listexperiments]]
-=== GET /sample-tracking/v1/experiments
-
-==== Responses
-
-[options="header", cols=".^2,.^14,.^4"]
-|===
-|HTTP Code|Description|Schema
-|**default**|successful operation|No Content
-|===
-
-
-[[_getexperimentbyid]]
-=== GET /sample-tracking/v1/experiments/{experimentId}
-
-==== Parameters
-
-[options="header", cols=".^2,.^3,.^4"]
-|===
-|Type|Name|Schema
-|**Path**|**experimentId** +
-__|integer (int32)
-|===
-
-
-==== Responses
-
-[options="header", cols=".^2,.^14,.^4"]
-|===
-|HTTP Code|Description|Schema
-|**default**|successful operation|No Content
-|===
-
-
-[[_creategermplasm]]
-=== POST /sample-tracking/v1/germplasm
-
-==== Parameters
-
-[options="header", cols=".^2,.^3,.^4"]
-|===
-|Type|Name|Schema
-|**Body**|**body** +
-__|<<_germplasmlistdto,GermplasmListDTO>>
-|===
-
-
-==== Responses
-
-[options="header", cols=".^2,.^14,.^4"]
-|===
-|HTTP Code|Description|Schema
-|**default**|successful operation|No Content
-|===
-
-
-[[_listgermplasms]]
-=== GET /sample-tracking/v1/germplasm
-
-==== Responses
-
-[options="header", cols=".^2,.^14,.^4"]
-|===
-|HTTP Code|Description|Schema
-|**default**|successful operation|No Content
-|===
-
-
-[[_listgermplasms]]
-=== GET /sample-tracking/v1/germplasm/{germplasmId}
-
-==== Parameters
-
-[options="header", cols=".^2,.^3,.^4"]
-|===
-|Type|Name|Schema
-|**Path**|**germplasmId** +
-__|integer (int32)
-|===
-
-
-==== Responses
-
-[options="header", cols=".^2,.^14,.^4"]
-|===
-|HTTP Code|Description|Schema
-|**default**|successful operation|No Content
-|===
-
-
-[[_createproject]]
-=== POST /sample-tracking/v1/projects
-
-==== Parameters
-
-[options="header", cols=".^2,.^3,.^4"]
-|===
-|Type|Name|Schema
-|**Body**|**body** +
-__|<<_projectdto,ProjectDTO>>
-|===
-
-
-==== Responses
-
-[options="header", cols=".^2,.^14,.^4"]
-|===
-|HTTP Code|Description|Schema
-|**default**|successful operation|No Content
-|===
-
-
-[[_listprojects]]
-=== GET /sample-tracking/v1/projects
-
-==== Responses
-
-[options="header", cols=".^2,.^14,.^4"]
-|===
-|HTTP Code|Description|Schema
-|**default**|successful operation|No Content
-|===
-
-
-[[_getprojectbyid]]
-=== GET /sample-tracking/v1/projects/{projectId}
-
-==== Parameters
-
-[options="header", cols=".^2,.^3,.^4"]
-|===
-|Type|Name|Schema
-|**Path**|**projectId** +
-__|integer (int32)
-|===
-
-
-==== Responses
-
-[options="header", cols=".^2,.^14,.^4"]
-|===
-|HTTP Code|Description|Schema
-|**default**|successful operation|No Content
-|===
-
-
-[[_createsamples]]
-=== POST /sample-tracking/v1/projects/{projectId}/samples
-
-==== Parameters
-
-[options="header", cols=".^2,.^3,.^4"]
-|===
-|Type|Name|Schema
-|**Path**|**projectId** +
-__|integer (int32)
-|**Body**|**body** +
-__|<<_projectsamplesdto,ProjectSamplesDTO>>
-|===
-
-
-==== Responses
-
-[options="header", cols=".^2,.^14,.^4"]
-|===
-|HTTP Code|Description|Schema
-|**default**|successful operation|No Content
-|===
 
 
 

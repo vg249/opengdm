@@ -430,34 +430,6 @@ __|string
 |===
 
 
-[[_germplasmdto]]
-=== GermplasmDTO
-
-[options="header", cols=".^3,.^4"]
-|===
-|Name|Schema
-|**createdBy** +
-__|integer (int32)
-|**createdDate** +
-__|string (date-time)
-|**externalCode** +
-__|string
-|**id** +
-__|integer (int32)
-|**modifiedBy** +
-__|integer (int32)
-|**modifiedDate** +
-__|string (date-time)
-|**name** +
-__|string
-|===
-
-
-[[_germplasmlistdto]]
-=== GermplasmListDTO
-__Type__ : object
-
-
 [[_gobiidatasetextract]]
 === GobiiDataSetExtract
 
@@ -1868,18 +1840,6 @@ __|string
 __|integer (int32)
 |**properties** +
 __|< <<_entitypropertydto,EntityPropertyDTO>> > array
-|===
-
-
-[[_projectsamplesdto]]
-=== ProjectSamplesDTO
-
-[options="header", cols=".^3,.^4"]
-|===
-|Name|Schema
-|**projectId** +
-__ +
-__read-only__|integer (int32)
 |===
 
 
