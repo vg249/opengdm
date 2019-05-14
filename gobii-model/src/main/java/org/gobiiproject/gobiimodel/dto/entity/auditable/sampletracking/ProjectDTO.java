@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@JsonIgnoreProperties(value={
+@JsonIgnoreProperties(ignoreUnknown = true, value={
         "id", "allowedProcessTypes", "entityNameType"
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -71,7 +71,7 @@ public class ProjectDTO extends DTOBaseAuditable {
     }
 
     @GobiiEntityColumn(columnName = "name")
-    public void setName(String projectName) {
+    public void setProjectName(String projectName) {
         this.projectName = projectName;
     }
 

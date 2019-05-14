@@ -88,12 +88,6 @@ public class SampleTrackingController {
     @RequestMapping(value="/projects", method=RequestMethod.POST)
     public @ResponseBody ResponseEntity createProject(@RequestBody ProjectDTO newProject) {
 
-        //Gets the User logged in for current context.
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        //Gets the contactId of the logged in user.
-        Integer contactId = this.contactService.getContactByUserName(userName).getContactId();
-        newProject.setCreatedBy(contactId);
-        newProject.setModifiedBy(contactId);
         ProjectDTO createdProject = sampleTrackingProjectService.createProject(newProject);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
     }
