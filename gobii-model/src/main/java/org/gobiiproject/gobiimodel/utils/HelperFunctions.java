@@ -346,8 +346,8 @@ public class HelperFunctions {
                 + webserviceConfig.getHost()
                 + ":"
                 + webserviceConfig.getPort()
-                + "/"
-                + webserviceConfig.getContextPath(false);
+                + ("/"
+                + webserviceConfig.getContextPath(false)).replaceAll("//","/");//Replace a second / if it exists in the context path
         return ret;
     }
 

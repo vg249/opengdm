@@ -47,4 +47,8 @@ public class ConditionUnit {
     // Field to compare against in DB or other file
     @JsonProperty
     public List<String> fieldToCompare;
+
+    // Field to compare a column's file size to the matrix size
+    @JsonProperty
+    public String checkMatrixSize;
 }
