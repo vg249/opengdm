@@ -44,37 +44,19 @@ public class SampleTrackingController {
 
     @RequestMapping(value="/projects", method= RequestMethod.GET)
     public @ResponseBody ResponseEntity listProjects(
-            HttpServletRequest request,
-            HttpServletResponse response
     ) {
-        try {
             List<ProjectDTO> projectsList = sampleTrackingProjectService.getProjects();
-            ListPayload<ProjectDTO> payload = new ListPayload<ProjectDTO>();
-            payload.setData(projectsList);
-            return ResponseEntity.status(HttpStatus.CREATED).body(payload);
-        }
-        catch(Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error");
-        }
+            BrApiMasterPayload<List<ProjectDTO>> payload = new BrApiMasterPayload<>(projectsList);
+            return ResponseEntity.ok(payload);
     }
 
     @RequestMapping(value="/projects/{projectId:[\\d]+}", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getProjectById(
-            @PathVariable Integer projectId,
-            HttpServletRequest request,
-            HttpServletResponse response
+            @PathVariable Integer projectId
     ) {
-        try {
             ProjectDTO project = sampleTrackingProjectService.getProjectById(projectId);
             BrApiMasterPayload<ProjectDTO> payload = new BrApiMasterPayload<>(project);
             return ResponseEntity.ok(payload);
-        }
-        catch (GobiiException gobiiE) {
-            throw gobiiE;
-        }
-        catch(Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error");
-        }
     }
 
     /**
