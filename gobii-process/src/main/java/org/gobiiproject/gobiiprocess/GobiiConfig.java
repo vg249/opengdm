@@ -105,6 +105,7 @@ public class GobiiConfig {
 
     private static String SVR_KDC = "ksvr";
     private static String SVO_OWNC = "ownc";
+    private static String SVR_OWNC_ERR = "ocERR";
     private static String SVR_KDC_RESOURCE_START = "krscSTA";
     private static String SVR_KDC_RESOURCE_STATUS = "krscSTT";
     private static String SVR_KDC_RESOURCE_DOWNLOAD = "krscDLD";
@@ -626,6 +627,7 @@ public class GobiiConfig {
             String svrHost;
             Integer port;
             String contextPath;
+            String errorContextPath;
             String userName;
             String password;
             String resourceQCStart;
@@ -729,6 +731,14 @@ public class GobiiConfig {
                     configSettings.getGlobalServer(ServerType.KDC).setMaxStatusCheckMins(statusWaitThresholdMinutes);
                 }
 
+            }
+            if(serverType.equals(ServerType.OWN_CLOUD)){
+                if(commandLine.hasOption(SVR_OWNC_ERR)){
+                    String errorPath = commandLine.getOptionValue(SVR_OWNC_ERR)
+                    argsSet.add(SVR_OWNC_ERR);
+                    valsSet.add(errorPath);
+                    configSettings.getGlobalServer(ServerType.OWN_CLOUD).setErrorContextPath(errorPath);
+                }
             }
 
 
