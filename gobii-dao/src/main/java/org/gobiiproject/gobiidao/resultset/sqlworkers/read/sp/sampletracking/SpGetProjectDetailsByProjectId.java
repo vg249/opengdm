@@ -26,7 +26,7 @@ public class SpGetProjectDetailsByProjectId implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String sql = "SELECT project.*, project_prop.properties AS mapped_properties " +
+        String sql = "SELECT project.*, project_prop.properties AS system_properties " +
                 "FROM project LEFT OUTER JOIN (" +
                 "SELECT p.project_id AS project_id, " +
                 "json_object(array_agg(cv.term::text), array_agg(p.props->>p.props_keys::text)) AS properties " +

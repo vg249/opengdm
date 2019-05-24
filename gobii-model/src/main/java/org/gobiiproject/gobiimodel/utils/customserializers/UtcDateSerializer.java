@@ -12,6 +12,8 @@ import java.util.TimeZone;
 
 /**
  * Helper class for Jackson Json serializer for Date objects.
+ * Serializes Date String as following yyyy-MM-dd'T'hh:mm:ss.
+ * Sets time zone as UTC.
  */
 public class UtcDateSerializer extends StdSerializer<Date> {
 

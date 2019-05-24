@@ -87,7 +87,6 @@ public class SampleTrackingController {
      */
     @RequestMapping(value="/projects", method=RequestMethod.POST)
     public @ResponseBody ResponseEntity createProject(@RequestBody ProjectDTO newProject) {
-
         ProjectDTO createdProject = sampleTrackingProjectService.createProject(newProject);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
     }
