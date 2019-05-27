@@ -5,6 +5,7 @@ package org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.JsonObject;
@@ -40,6 +41,7 @@ public class ProjectDTO extends DTOBaseAuditable {
     private String genotypingPurpose;
 
     //@JsonSerialize(using= UtcDateSerializer.class)
+    @JsonDeserialize()
     private String dateSampled;
 
     //Additional Properties
