@@ -43,7 +43,15 @@ public class DtoMapProjectImpl implements DtoMapProject {
             if(returnVal == null) {
                 return new ArrayList<>();
             }
-        } catch (Exception e) {
+        }
+        catch (GobiiException gE) {
+            LOGGER.error(gE.getMessage(), gE);
+            throw new GobiiDtoMappingException(
+                    gE.getGobiiStatusLevel(),
+                    gE.getGobiiValidationStatusType(),
+                    gE.getMessage());
+        }
+        catch (Exception e) {
             LOGGER.error("Gobii Maping Error", e);
             throw new GobiiDtoMappingException(e);
         }

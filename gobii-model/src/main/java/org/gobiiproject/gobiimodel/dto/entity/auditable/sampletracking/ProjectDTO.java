@@ -39,7 +39,7 @@ public class ProjectDTO extends DTOBaseAuditable {
     private String studyName;
     private String genotypingPurpose;
 
-    @JsonSerialize(using= UtcDateSerializer.class)
+    //@JsonSerialize(using= UtcDateSerializer.class)
     private String dateSampled;
 
     //Additional Properties

@@ -64,6 +64,14 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
         try {
             returnVal = dtoMapSampleTrackingProject.getList();
         }
+        catch (GobiiException gE) {
+            LOGGER.error(gE.getMessage(), gE.getMessage());
+            throw new GobiiDomainException(
+                    gE.getGobiiStatusLevel(),
+                    gE.getGobiiValidationStatusType(),
+                    gE.getMessage()
+            );
+        }
         catch(Exception e) {
             LOGGER.error("Gobii service error", e);
             throw new GobiiDomainException(e);

@@ -42,8 +42,10 @@ public class SampleTrackingController {
     @Autowired
     private ContactService contactService;
 
+
     @RequestMapping(value="/projects", method= RequestMethod.GET)
-    public @ResponseBody ResponseEntity listProjects(
+    @ResponseBody
+    public ResponseEntity listProjects(
     ) {
             List<ProjectDTO> projectsList = sampleTrackingProjectService.getProjects();
             BrApiMasterPayload<List<ProjectDTO>> payload = new BrApiMasterPayload<>(projectsList);
