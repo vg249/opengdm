@@ -15,9 +15,11 @@ import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.utils.customserializers.UtcDateSerializer;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 @JsonIgnoreProperties(ignoreUnknown = true, value={
         "id", "allowedProcessTypes", "entityNameType",
@@ -41,16 +43,16 @@ public class ProjectDTO extends DTOBaseAuditable {
     private String genotypingPurpose;
 
     //@JsonSerialize(using= UtcDateSerializer.class)
-    @JsonDeserialize()
     private String dateSampled;
 
     //Additional Properties
     private Map<String, String> additionalProperties = new HashMap<>();
 
-
+    private SimpleDateFormat dateStringFormatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss z");
 
     public ProjectDTO() {
         super(GobiiEntityNameType.PROJECT);
+        dateStringFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     @Override
@@ -157,10 +159,12 @@ public class ProjectDTO extends DTOBaseAuditable {
    }
 
    public String getDateSampled() {
-        return this.systemProperties.getOrDefault("date_sampled", null);
+        String dateSampled = this.systemProperties.getOrDefault("date_sampled", null);
+        return dateStringFormatter.format(dateSampled);
     }
 
    public void setDateSampled(String dateSampled) {
+        String formattedDateString = dateStringFormatter.format(dateSampled);
         this.systemProperties.put("date_sampled", dateSampled);
    }
 
