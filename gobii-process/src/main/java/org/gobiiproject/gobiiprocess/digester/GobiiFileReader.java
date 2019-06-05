@@ -402,6 +402,12 @@ public class GobiiFileReader {
 		        ErrorLogger.logError("Validation","Unable to find validation checks");
 	        }
 	        ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
+	        boolean hasAnyFailedStatuses=false;
+	        for(ValidationError status : fileErrors){
+	            if(status.status.equalsIgnoreCase(ValidationConstants.FAILURE)){
+	                hasAnyFailedStatuses=true;
+                }
+            }
 	        for (ValidationError status : fileErrors) {
                 if (status.status.equalsIgnoreCase(ValidationConstants.FAILURE)) {
                      if(!reportedValidationFailures){//Lets only add this to the error log once
@@ -412,7 +418,10 @@ public class GobiiFileReader {
                         pm.addValidateTableElement(status.fileName, status.status, status.failures.get(i).reason, status.failures.get(i).columnName, status.failures.get(i).values);
                 }
                 if(status.status.equalsIgnoreCase(ValidationConstants.SUCCESS)){
-                    pm.addValidateTableElement(status.fileName,status.status);
+                    //If any failed statii(statuses) exist, we should have this table, otherwise it should not exist
+                    if(hasAnyFailedStatuses) {
+                        pm.addValidateTableElement(status.fileName, status.status);
+                    }
                 }
             }
         }
