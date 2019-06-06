@@ -139,7 +139,7 @@ public class GobiiFileReader {
         }
 
         //Error logs go to a file based on crop (for human readability) and
-        pm.addPath("Instruction File", new File(instructionFile).getAbsolutePath(), true);
+        pm.addPath("Instruction File", new File(instructionFile).getAbsolutePath(), true, configuration);
         ErrorLogger.logInfo("Digester", "Beginning read of " + instructionFile);
         List<GobiiLoaderInstruction> list = parseInstructionFile(instructionFile);
         if (list == null || list.isEmpty()) {
@@ -516,7 +516,7 @@ public class GobiiFileReader {
             GobiiFileType loadType = zero.getGobiiFile().getGobiiFileType();
             String loadTypeName = "";//No load type name if default
             if (loadType != GobiiFileType.GENERIC) loadTypeName = loadType.name();
-            pm.addPath("Error Log", logFile);
+            pm.addPath("Error Log", logFile, configuration);
             pm.setBody(jobName, loadTypeName, SimpleTimer.stop("FileRead"), ErrorLogger.getFirstErrorReason(), ErrorLogger.success(), ErrorLogger.getAllErrorStringsHTML());
             mailInterface.send(pm);
         } catch (Exception e) {

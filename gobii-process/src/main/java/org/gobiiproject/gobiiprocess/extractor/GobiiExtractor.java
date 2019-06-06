@@ -476,14 +476,14 @@ public class GobiiExtractor {
 			            pm.addCriteria("Mapset List", String.join("<BR>", inst.getMapsetIds().toString())); //This should never happen
 		            }
 
-		            pm.addPath("Instruction File", new File(instructionFile).getAbsolutePath(), true);
+		            pm.addPath("Instruction File", new File(instructionFile).getAbsolutePath(), true, configuration);
 		            pm.addFolderPath("Output Directory", extractDir);
-		            pm.addPath("Error Log", logFile, true);
-		            pm.addPath("Summary File", new File(projectFile).getAbsolutePath());
-		            pm.addPath("Sample File", new File(sampleFile).getAbsolutePath());
-		            pm.addPath("Marker File", new File(markerFile).getAbsolutePath());
+		            pm.addPath("Error Log", logFile, true, configuration);
+		            pm.addPath("Summary File", new File(projectFile).getAbsolutePath(), configuration);
+		            pm.addPath("Sample File", new File(sampleFile).getAbsolutePath(), configuration);
+		            pm.addPath("Marker File", new File(markerFile).getAbsolutePath(), configuration);
 		            if (checkFileExistence(mapsetFile)) {
-			            pm.addPath("Mapset File", new File(mapsetFile).getAbsolutePath());
+			            pm.addPath("Mapset File", new File(mapsetFile).getAbsolutePath(), configuration);
 		            }
 
 		            esw.writeToFile(new File(extractSummaryFile));
@@ -537,8 +537,7 @@ public class GobiiExtractor {
 				            case FLAPJACK:
 					            String genoOutFile = extractDir + "Dataset.genotype";
 					            String mapOutFile = extractDir + "Dataset.map";
-					            pm.addPath("FlapJack Genotype file", new File(genoOutFile).getAbsolutePath());
-					            pm.addPath("FlapJack Map file", new File(mapOutFile).getAbsolutePath());
+
 					            //Always regenerate requests - may have different parameters
 					            boolean extended = HelperFunctions.checkFileExistence(extendedMarkerFile);
 					            success &= FlapjackTransformer.generateMapFile(extended ? extendedMarkerFile : markerFile, sampleFile, chrLengthFile, tempFolder, mapOutFile, errorFile, extended);
@@ -547,15 +546,17 @@ public class GobiiExtractor {
 					            }
 					            ErrorLogger.logDebug("GobiiExtractor", "Executing FlapJack Genotype file Generation");
 					            success &= FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, tempFolder, genoOutFile, errorFile);
+					            pm.addPath("FlapJack Genotype file", new File(genoOutFile).getAbsolutePath(), configuration);
+					            pm.addPath("FlapJack Map file", new File(mapOutFile).getAbsolutePath(), configuration);
 					            getCounts(success, pm, markerFile, sampleFile);
 					            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Extract Completed 8uccessfully");
 					            break;
 				            case HAPMAP:
 					            String hapmapOutFile = extractDir + "Dataset.hmp.txt";
-					            pm.addPath("Hapmap file", new File(hapmapOutFile).getAbsolutePath());
 					            HapmapTransformer hapmapTransformer = new HapmapTransformer();
 					            ErrorLogger.logDebug("GobiiExtractor", "Executing Hapmap Generation");
 					            success &= hapmapTransformer.generateFile(markerFile, sampleFile, extendedMarkerFile, genoFile, hapmapOutFile, errorFile);
+					            pm.addPath("Hapmap file", new File(hapmapOutFile).getAbsolutePath(), configuration);
 					            getCounts(success, pm, markerFile, sampleFile);
 					            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Extract Completed 8uccessfully");
 					            break;
@@ -771,7 +772,7 @@ public class GobiiExtractor {
                     qcStartPm.setSubject("new QC Job #" + qcJobID);
                     qcStartPm.addIdentifier("QC Job Identifier", "", String.valueOf(qcJobID));
                     qcStartPm.addIdentifier("Dataset Identifier", datasetName, String.valueOf(datasetId));
-                    qcStartPm.addPath("Output Extraction/QC Directory", extractDir);
+                    qcStartPm.addPath("Output Extraction/QC Directory", extractDir, configSettings);
                     qcStartPm.setBody("new QC Job #" + qcJobID, "QC", 0, "", true, "");
                     //mailInterface.send(qcStartPm);
                     RestUri restUriGetQCJobStatus = new RestUri("/",
@@ -863,7 +864,7 @@ public class GobiiExtractor {
                                             ErrorLogger.logInfo("QC", "The qcDownload http method was successful with "
                                                     + httpMethodResult.getFileName());
                                             if (httpMethodResult.getFileName() != null) {
-                                                qcStatusPm.addPath(key, httpMethodResult.getFileName());
+                                                qcStatusPm.addPath(key, httpMethodResult.getFileName(), configSettings);
 
                                                 if (key.equals("stdout.txt") || key.equals("stderr.txt")) {
 
