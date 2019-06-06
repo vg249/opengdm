@@ -734,7 +734,7 @@ public class GobiiConfig {
             }
             if(serverType.equals(ServerType.OWN_CLOUD)){
                 if(commandLine.hasOption(SVR_OWNC_ERR)){
-                    String errorPath = commandLine.getOptionValue(SVR_OWNC_ERR)
+                    String errorPath = commandLine.getOptionValue(SVR_OWNC_ERR);
                     argsSet.add(SVR_OWNC_ERR);
                     valsSet.add(errorPath);
                     configSettings.getGlobalServer(ServerType.OWN_CLOUD).setErrorContextPath(errorPath);
