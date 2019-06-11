@@ -207,7 +207,7 @@ public class ServerConfig {
     }
 
 
-    @ElementMap(required = false)
+    @ElementMap(required = false, key="ID",entry="RestResource",attribute=true,inline=true)
     EnumMap<RestResourceId, RestResourceProfile> resourceProfilesByRestRequestId = new EnumMap<>(RestResourceId.class);
 
     @Element(required = false)
