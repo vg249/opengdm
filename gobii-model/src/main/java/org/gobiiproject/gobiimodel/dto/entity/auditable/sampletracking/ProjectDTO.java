@@ -41,8 +41,6 @@ public class ProjectDTO extends DTOBaseAuditable {
     private String division;
     private String studyName;
     private String genotypingPurpose;
-
-    //@JsonSerialize(using= UtcDateSerializer.class)
     private String dateSampled;
 
     //Additional Properties
@@ -159,12 +157,10 @@ public class ProjectDTO extends DTOBaseAuditable {
    }
 
    public String getDateSampled() {
-        String dateSampled = this.systemProperties.getOrDefault("date_sampled", null);
-        return dateStringFormatter.format(dateSampled);
+        return this.systemProperties.getOrDefault("date_sampled", null);
     }
 
    public void setDateSampled(String dateSampled) {
-        String formattedDateString = dateStringFormatter.format(dateSampled);
         this.systemProperties.put("date_sampled", dateSampled);
    }
 

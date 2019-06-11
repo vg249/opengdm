@@ -59,7 +59,14 @@
           class="org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable"/>
 
 
+    <!-- **** Contact Beans *************************************** -->
+    <bean id="dtoMapContact" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapContactImpl"/>
+    <bean id="contactService" class="org.gobiiproject.gobidomain.services.impl.ContactServiceImpl"/>
 
+    <bean id="rsContact"
+          class="org.gobiiproject.gobiidao.resultset.access.impl.RsContactDaoImpl"/>
+    <bean id="rsProject"
+          class="org.gobiiproject.gobiidao.resultset.access.impl.RsProjectDaoImpl"/>
 
     <!-- **** Projects Beans *************************************** -->
     <bean id="rsProjectDao"
