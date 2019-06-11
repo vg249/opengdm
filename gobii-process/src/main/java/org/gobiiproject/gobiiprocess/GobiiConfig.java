@@ -283,6 +283,7 @@ public class GobiiConfig {
 
             setOption(options, SVR_KDC, false, "KDC server to add or modify; must be accompanied by a server options and KDC options", "KDC Server options");
             setOption(options, SVO_OWNC, false, "ownCloud configuration to add or modify a server options", "ownCloud");
+            setOption(options, SVR_OWNC_ERR,true,"Error log context path for OwnCloud server.","owncloud error");
             setOption(options, SVR_KDC_RESOURCE_START, true, "KDC qcStart resource path", "qcStart resource");
             setOption(options, SVR_KDC_RESOURCE_STATUS, true, "KDC qcStatus resource path", "qcStatus resource");
             setOption(options, SVR_KDC_RESOURCE_DOWNLOAD, true, "KDC qcDownload resource path", "qcDownload resource");
