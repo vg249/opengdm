@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +42,7 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
             newProject.setCreatedBy(contactId);
 
             //Setting created date
-            newProject.setCreatedDate(new Date(new java.util.Date().getTime()));
+            newProject.setCreatedDate(new Date(new Date().getTime()));
 
             //Project status is set as 1 which corresponds to new
             //Can be moved to stored procedure.
