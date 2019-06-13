@@ -13,9 +13,6 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by Phil on 8/16/2016.
- */
 
 @Configuration
 public class ConfigSupplement {
@@ -23,13 +20,18 @@ public class ConfigSupplement {
     private static GobiiCropConfig testExecConfig = null;
 
     private static String CONFIG_FILE_LOCATION_PROP = "cfgFqpn";
+    private static String TEST_CROP_PROP = "cropType";
 
-    @Bean(name="dataSourceMulti")
-    public DataSourceSelector dataSourceMulti() throws Exception {
-
-        DataSourceSelector returnVal = new DataSourceSelector();
+    /**
+     * Gets the environment variables for gobii-web.xml location and test crop type.
+     * Reads the test configurations and sets the testExecConfig.
+     * @throws Exception
+     */
+    public void readTestConfig() throws Exception{
 
         String configFileLocation = System.getProperty(CONFIG_FILE_LOCATION_PROP);
+
+        String testCropType = System.getProperty(TEST_CROP_PROP);
 
         if (configFileLocation == null) {
             String message = "The the environment does not define the FQPN of " +
@@ -37,29 +39,57 @@ public class ConfigSupplement {
             throw new Exception(message);
         }
 
+        if(testCropType == null) {
+            String message = "The the environment does not define cropType " +
+                    "in environment variable: " + TEST_CROP_PROP;
+            throw new Exception(message);
+        }
+
         ConfigSettings configSettings = new ConfigSettings(configFileLocation);
 
+        ConfigSupplement.testExecConfig = configSettings.getCropConfig(testCropType);
+
+    }
+
+
+    /**
+     * Dependency Injection Bean for the testing DataSource.
+     * Postgres database connection configuration will be read from the gobii-web.xml file
+     * from the location given as environment variable cfgFqpn.
+     * Test crop type will also be read from environment variable cropType.
+     * @return Implementation of AbstractRoutingDatasource abstract class for database connection lookup.
+     * @throws Exception
+     */
+    @Bean(name="dataSourceMulti")
+    public DataSourceSelector dataSourceMulti() throws Exception {
+
+        DataSourceSelector returnVal = new DataSourceSelector();
+
+        readTestConfig();
+
+        GobiiCropConfig currentGobiiCropConfig = ConfigSupplement.testExecConfig;
+
+        returnVal.setTestGobiiCropType(currentGobiiCropConfig.getGobiiCropType());
+
         Map<Object,Object> targetDataSources = new HashMap<>();
-        for (GobiiCropConfig currentGobiiCropConfig : configSettings.getActiveCropConfigs()) {
 
-            ServerConfig currentPostGresConfig = currentGobiiCropConfig.getServer(ServerType.GOBII_PGSQL);
-            DriverManagerDataSource currentDataSource = new DriverManagerDataSource();
+        ServerConfig currentPostGresConfig = currentGobiiCropConfig.getServer(ServerType.GOBII_PGSQL);
 
-            currentDataSource.setDriverClassName("org.postgresql.Driver");
+        DriverManagerDataSource currentDataSource = new DriverManagerDataSource();
 
-            String url = HelperFunctions.getJdbcConnectionString(currentPostGresConfig);
-            currentDataSource.setUrl(url);
-            currentDataSource.setUsername(currentPostGresConfig.getUserName());
-            currentDataSource.setPassword(currentPostGresConfig.getPassword());
+        currentDataSource.setDriverClassName("org.postgresql.Driver");
 
-            targetDataSources.put(currentGobiiCropConfig.getGobiiCropType(),currentDataSource);
+        String url = HelperFunctions.getJdbcConnectionString(currentPostGresConfig);
 
-        } // iterate crop configs
+        currentDataSource.setUrl(url);
+        currentDataSource.setUsername(currentPostGresConfig.getUserName());
+        currentDataSource.setPassword(currentPostGresConfig.getPassword());
+
+        targetDataSources.put(currentGobiiCropConfig.getGobiiCropType(),currentDataSource);
 
         returnVal.setTargetDataSources(targetDataSources);
 
         return returnVal;
-
     }
 
 

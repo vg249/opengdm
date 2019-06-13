@@ -1017,7 +1017,9 @@
     </bean>
 
     <bean id="currentRequest" class="java.lang.ThreadLocal"/>
-    <bean id="currentRequestFilter" class="org.gobiiproject.gobiiweb.spring.OncePerRequestCaptureThreadLocal">
+
+    <bean id="currentRequestFilter"
+          class="org.gobiiproject.gobiiweb.spring.OncePerRequestCaptureThreadLocal">
         <property name="currentRequest" ref="currentRequest"/>
     </bean>
 
