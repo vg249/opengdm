@@ -44,12 +44,12 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
             //Setting created date
             newProject.setCreatedDate(new Date(new Date().getTime()));
 
-            //Project status is set as 1 which corresponds to new
-            //Can be moved to stored procedure.
+            // Project status is set as 1 which corresponds to new project
+            // Can be moved to stored procedure.
+            // TODO: Should be moved inside Stored Procedure.
             newProject.setProjectStatus(1);
 
             returnVal = dtoMapSampleTrackingProject.create(newProject);
-
 
         }
         catch(GobiiException gE) {

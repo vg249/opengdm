@@ -6,6 +6,7 @@ import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.config.TestExecConfig;
 import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -17,10 +18,12 @@ import java.util.Map;
 @Configuration
 public class ConfigSupplement {
 
-    private static GobiiCropConfig testExecConfig = null;
+    private static ConfigSettings testConfig;
 
     private static String CONFIG_FILE_LOCATION_PROP = "cfgFqpn";
     private static String TEST_CROP_PROP = "cropType";
+
+
 
     /**
      * Gets the environment variables for gobii-web.xml location and test crop type.
@@ -45,12 +48,11 @@ public class ConfigSupplement {
             throw new Exception(message);
         }
 
-        ConfigSettings configSettings = new ConfigSettings(configFileLocation);
+        testConfig = new ConfigSettings(configFileLocation);
 
-        ConfigSupplement.testExecConfig = configSettings.getCropConfig(testCropType);
+        testConfig.setCurrentGobiiCropType(testCropType);
 
     }
-
 
     /**
      * Dependency Injection Bean for the testing DataSource.
@@ -67,7 +69,7 @@ public class ConfigSupplement {
 
         readTestConfig();
 
-        GobiiCropConfig currentGobiiCropConfig = ConfigSupplement.testExecConfig;
+        GobiiCropConfig currentGobiiCropConfig = testConfig.getCurrentCropConfig();
 
         returnVal.setTestGobiiCropType(currentGobiiCropConfig.getGobiiCropType());
 

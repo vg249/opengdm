@@ -22,6 +22,7 @@ public class ProjectServiceImplTest {
     @Autowired
     private ProjectService<ProjectDTO> sampleTrackingProjectService = null;
 
+
     @BeforeClass
     public static void setUpClass() throws Exception {
         UserContextLoader userContextLoader = new UserContextLoader();
@@ -35,11 +36,11 @@ public class ProjectServiceImplTest {
      */
     @Test
     public void createProjectWithJustRequiredFields() {
-            ProjectDTO newProject = new ProjectDTO();
-            newProject.setPiContactId(1);
-            newProject.setProjectName(UUID.randomUUID().toString());
-            ProjectDTO createdProject = sampleTrackingProjectService.createProject(newProject);
-            assertTrue(createdProject.getProjectId() > 0);
+        ProjectDTO newProject = new ProjectDTO();
+        newProject.setPiContactId(1);
+        newProject.setProjectName(UUID.randomUUID().toString());
+        ProjectDTO createdProject = sampleTrackingProjectService.createProject(newProject);
+        assertTrue(createdProject.getProjectId() > 0);
     }
 
     @Test
@@ -50,7 +51,9 @@ public class ProjectServiceImplTest {
         newProject.setDivision("test division");
         newProject.setGenotypingPurpose("test purpose");
         newProject.setProjectCode("test code");
+        newProject.setStudyName("test studyname");
         newProject.setDateSampled("01/02/2019");
+        newProject.setProjectDescription("test description");
         ProjectDTO createdProject = sampleTrackingProjectService.createProject(newProject);
         assertTrue(createdProject.getProjectId() > 0);
     }
