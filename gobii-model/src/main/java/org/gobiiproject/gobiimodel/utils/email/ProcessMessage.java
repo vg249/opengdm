@@ -226,7 +226,7 @@ public class ProcessMessage extends MailMessage {
                 }
 
             } catch(ConnectException e){
-                ErrorLogger.logWarning("Unable to connect to OwnCloud Server to obtain live links. Defaulting to only generating file system links",e);
+                ErrorLogger.logWarning("ProcessMessage","Unable to connect to OwnCloud Server to obtain live links. Defaulting to only generating file system links",e);
                 //Note - if catch is caught - no modification was made above to pathLine - thus below block will work as if OWN_CLOUD.isActive() returned false
             }
         }
