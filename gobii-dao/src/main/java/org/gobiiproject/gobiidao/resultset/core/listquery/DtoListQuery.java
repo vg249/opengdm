@@ -30,11 +30,11 @@ public class DtoListQuery<T> {
 
     Logger LOGGER = LoggerFactory.getLogger(DtoListQuery.class);
 
-    private ListStatement listStatement;
-    private ListStatementPaged listStatementPaged;
-    private Class<T> dtoType;
-    private StoredProcExec storedProcExec;
-    private PageFramesTrackingCache pageFramesTrackingCache;
+    protected ListStatement listStatement;
+    protected ListStatementPaged listStatementPaged;
+    protected Class<T> dtoType;
+    protected StoredProcExec storedProcExec;
+    protected PageFramesTrackingCache pageFramesTrackingCache;
 
 
     public DtoListQuery(StoredProcExec storedProcExec,
@@ -51,7 +51,7 @@ public class DtoListQuery<T> {
     }
 
 
-    private List<T> makeDtoListFromResultSet(ResultSet resultSet) throws IllegalArgumentException,
+    protected List<T> makeDtoListFromResultSet(ResultSet resultSet) throws IllegalArgumentException,
             InstantiationException,
             SQLException {
 
@@ -116,7 +116,8 @@ public class DtoListQuery<T> {
      * @throws GobiiException
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    public PagedList<T> getDtoListPaged(Integer pageSize, Integer pageNo, String pgQueryIdFromUser) throws GobiiException {
+    public PagedList<T> getDtoListPaged(Integer pageSize, Integer pageNo,
+                                        String pgQueryIdFromUser) throws GobiiException {
 
         PagedList<T> returnVal;
 
@@ -124,7 +125,8 @@ public class DtoListQuery<T> {
 
             // ideally, all query types will have a paged implementation
             if (listStatementPaged == null) {
-                throw new GobiiException("There is no paged query support for query " + listStatement.getListSqlId().name());
+                throw new GobiiException(
+                        "There is no paged query support for query " + listStatement.getListSqlId().name());
             }
 
             String pgQueryId;
@@ -137,7 +139,8 @@ public class DtoListQuery<T> {
             // in theory an existing id might have gotten nuked if the server were restarted
             PageFrameState pageFrameState = this.pageFramesTrackingCache.getPageFrames(pgQueryId);
 
-            ResultSetFromSqlPaged resultSetFromSqlPaged = new ResultSetFromSqlPaged(listStatementPaged, pageSize, pageNo, pageFrameState);
+            ResultSetFromSqlPaged resultSetFromSqlPaged = new ResultSetFromSqlPaged(
+                    listStatementPaged, pageSize, pageNo, pageFrameState);
             this.storedProcExec.doWithConnection(resultSetFromSqlPaged);
             ResultSet resultSet = resultSetFromSqlPaged.getResultSet();
             List<T> dtoList = this.makeDtoListFromResultSet(resultSet);
@@ -159,7 +162,8 @@ public class DtoListQuery<T> {
             );
 
         } catch (SQLGrammarException e) {
-            String message = "Error retrieving dto list " + this.listStatementPaged.getListSqlId().name() + " with SQL " + e.getSQL();
+            String message = "Error retrieving dto list " +
+                    this.listStatementPaged.getListSqlId().name() + " with SQL " + e.getSQL();
             LOGGER.error(message, e.getSQLException());
             throw (new GobiiDaoException(message, e.getSQLException()));
 

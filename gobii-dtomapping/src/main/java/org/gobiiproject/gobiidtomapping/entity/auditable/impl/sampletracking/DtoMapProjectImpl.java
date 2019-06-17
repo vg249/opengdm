@@ -38,18 +38,24 @@ public class DtoMapProjectImpl implements DtoMapProject {
     public List<ProjectDTO> getList() throws GobiiDtoMappingException {
         List<ProjectDTO> returnVal;
         try {
+
             returnVal = (List<ProjectDTO>) dtoListSampleTrackingQueryColl.getList(
                     ListSqlId.QUERY_ID_PROJECT_ALL);
+
             if(returnVal == null) {
                 return new ArrayList<>();
             }
+
         }
         catch (GobiiException gE) {
+
             LOGGER.error(gE.getMessage(), gE);
+
             throw new GobiiDtoMappingException(
                     gE.getGobiiStatusLevel(),
                     gE.getGobiiValidationStatusType(),
                     gE.getMessage());
+
         }
         catch (Exception e) {
             LOGGER.error("Gobii Maping Error", e);
@@ -95,6 +101,12 @@ public class DtoMapProjectImpl implements DtoMapProject {
             throw new GobiiDtoMappingException(e);
         }
 
+        return returnVal;
+    }
+
+    public ProjectDTO get(String projectName) throws GobiiDtoMappingException {
+
+        ProjectDTO returnVal = new ProjectDTO();
         return returnVal;
     }
 
