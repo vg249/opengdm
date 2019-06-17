@@ -121,7 +121,7 @@ public class GetLinks {
             filePath = filePath.substring(0, start);
         }
         System.out.println(filePath);
-        String liveURL = "http://" + host + (port.equals("") ? "" : (":" + port)) +  "/owncloud/index.php/apps/files/?dir=" + filePath;
+        String liveURL = "http://" + host + (port.equals("") ? "" : (":" + port)) +  "/apps/files/?dir=" + filePath;
         return liveURL;
     }
 }
