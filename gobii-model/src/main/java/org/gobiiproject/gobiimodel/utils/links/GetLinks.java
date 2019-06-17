@@ -82,11 +82,12 @@ public class GetLinks {
                 resultBuf.append((char) c);
             }
             input.close();
-            if (getTAG(resultBuf.toString(), "status").equals("ok")) {
+            String tag = getTAG(resultBuf.toString(), "status");
+            if (tag.equals("ok")) {
                 liveLink = getTAG(resultBuf.toString(), "url") + "/download";
             } else {
                 liveLink = "";
-            ErrorLogger.logWarning("OWNCLOUD", "API request failed due to improper configurations");
+            ErrorLogger.logWarning("OWNCLOUD", "API request failed due to improper configurations, with status " + tag);
             }
         }
         catch(ConnectException e){
