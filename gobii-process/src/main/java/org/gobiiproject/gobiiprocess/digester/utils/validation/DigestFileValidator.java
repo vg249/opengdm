@@ -78,6 +78,7 @@ public class DigestFileValidator {
                     List<ValidationError> validationErrorList = new ArrayList<>();
                     validationErrorList.add(validationError);
                     writer.write(validationErrorList);
+                    ErrorLogger.logError("DigestFileValidator",e);
                 }
             } else {
                 validationError.status = ValidationConstants.FAILURE;
@@ -97,7 +98,7 @@ public class DigestFileValidator {
      *
      * @param validations validations
      */
-    private List<ValidationError> doValidations(List<ValidationUnit> validations) throws Exception {
+    private List<ValidationError> doValidations(List<ValidationUnit> validations) {
         List<ValidationError> validationErrorList = new ArrayList<>();
         for (ValidationUnit validation : validations) {
             ValidationError validationError = new ValidationError();
@@ -173,19 +174,20 @@ public class DigestFileValidator {
             if (rulesFile != null) {
                 File rules = new File(rulesFile);
                 validationRules = new ObjectMapper().readValue(rules, ValidationRules.class);
-            } else
+            } else {
                 validationRules = new ObjectMapper()
-                        .readValue(getClass().getClassLoader().getResourceAsStream("validationConfig.json"), ValidationRules.class);
+                        .readValue(DigestFileValidator.class.getResourceAsStream("/validationConfig.json"), ValidationRules.class);
+            }
             validations = validationRules.getValidations();
         } catch (IOException e) {
             validationFailed(writer, rulesFile, "Exception in reading rules file.\n" + e.getMessage());
             writer.close();
-            System.exit(1);
+            throw e;
         }
         if (validations.size() == 0) {
             validationFailed(writer, rulesFile, "No validations defined.");
             writer.close();
-            System.exit(0);
+            throw new IOException("No validations defined.");
         }
         validateRules(validations, writer);
         return validations;
@@ -215,7 +217,6 @@ public class DigestFileValidator {
         }
         if (validationFailed) {
             writer.close();
-            System.exit(1);
         }
     }
 

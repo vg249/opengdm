@@ -40,6 +40,7 @@ public class MatrixValidation {
         iupacMatrixToBi = new IUPACmatrixToBi();
     }
 
+
     public boolean setUp() {
         List<String> missingFileElements = new ArrayList<>();
         try (Stream<String> stream = Files.lines(Paths.get(missingFile))) {
@@ -53,12 +54,15 @@ public class MatrixValidation {
         return true;
     }
 
-    public boolean validate(int rowNo, int rowOffset, List<String> inputRowList, List<String> outputRowList, boolean isVCF, boolean skipValidation ) {
+    public ValidationResult validate(int rowNo, int rowOffset, List<String> inputRowList, List<String> outputRowList, boolean isVCF, boolean skipValidation ) {
+        ValidationResult ret = new ValidationResult(false,0);
         if (noOfElements == 0) noOfElements = inputRowList.size();
         else if (noOfElements != inputRowList.size()) {
             matrixErrorUtil.setError("Exception in processing matrix file. Irregular size matrix. Expected: " + noOfElements + " actual: " + inputRowList.size());
-            return false;
+            return ret.success(false);
         }
+
+        ret.numRows=noOfElements;
 
         /*
          *   IUPAC conversion
@@ -69,7 +73,7 @@ public class MatrixValidation {
          * */
         if (datasetType.equalsIgnoreCase("IUPAC"))
             if (!iupacMatrixToBi.process(rowNo + rowOffset, inputRowList, outputRowList, matrixErrorUtil)) {
-                return false;
+                return ret.success(false);
             }
 
         /*
@@ -81,7 +85,7 @@ public class MatrixValidation {
          * */
         if (datasetType.equalsIgnoreCase("NUCLEOTIDE_2_LETTER") && !isVCF)
             if (!snpSepRemoval.process(rowNo + rowOffset, inputRowList, outputRowList, matrixErrorUtil)) {
-                return false;
+                return ret.success(false);
             }
 
         if (isVCF) {
@@ -100,7 +104,7 @@ public class MatrixValidation {
                         }
                         if (refPos == -1 || altPos == -1) {
                             matrixErrorUtil.setError("Exception in processing matrix file. Marker file does not contain ref and alt columns.");
-                            return false;
+                            return ret.success(false);
                         }
                         lineNo++;
                     }// As data in the vcf file starts from line with is not zero(generally 10). rowNo will be offset by this amount(10). So we substract offset from rowNo for comparison.
@@ -111,7 +115,7 @@ public class MatrixValidation {
                         if (!VCFTransformer.transformVCFLine(newLine, rowNo, inputRowList, outputRowList, matrixErrorUtil)) {
                             //note, outputRowList here is now a two letter file, which needs to be validated
                             matrixErrorUtil.setError("Exception in processing matrix file. Failed in VCF Transformer.");
-                            return false;
+                            return ret.success(false);
                         }
                         lineNo++;
                     } else lineNo++;
@@ -119,10 +123,10 @@ public class MatrixValidation {
 
             } catch (FileNotFoundException e) {
                 matrixErrorUtil.setError("Could not find marker file");
-                return false;
+                return ret.success(false);
             } catch (IOException e) {
                 matrixErrorUtil.setError("Could not read marker file" + e.getMessage());
-                return false;
+                return ret.success(false);
             }
         }
 
@@ -137,10 +141,13 @@ public class MatrixValidation {
                 outputRowList.addAll(inputRowList);
 
             if(skipValidation){
-                return true;
+                return ret.success(true);
             }
 
-            return DigestMatrix.validateDatasetList(rowNo + rowOffset, outputRowList, datasetType, matrixErrorUtil);
-        } else return true; //TODO - types we don't recognize probably shouldn't be passing validation.....
+            boolean datasetValidationStatus=DigestMatrix.validateDatasetList(rowNo + rowOffset, outputRowList, datasetType, matrixErrorUtil);
+            return ret.success(datasetValidationStatus);
+        } else return ret.success(false);
     }
 }
+
+

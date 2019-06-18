@@ -14,6 +14,7 @@ import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
+import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import org.gobiiproject.gobiimodel.config.*;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.*;
@@ -69,6 +70,9 @@ public class GobiiFileReader {
     private static String propertiesFile;
     private static GobiiUriFactory gobiiUriFactory;
     private static GobiiExtractorInstruction qcExtractInstruction = null;
+
+    //Trinary - was this load marker fast(true), sample fast(false), or unknown/not applicable(null)
+    public static Boolean isMarkerFast=null;
 
     /**
      * Main class of Digester Jar file. Uses command line parameters to determine instruction file, and runs whole program.
@@ -201,6 +205,7 @@ public class GobiiFileReader {
 
         jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION.getCvName(), "Beginning Validation");
         // Instruction file Validation
+        JobPayloadType jpt = zero.getJobPayloadType();//TODO - This is the job payload type
         InstructionFileValidator instructionFileValidator = new InstructionFileValidator(list);
         instructionFileValidator.processInstructionFile();
         String validationStatus = instructionFileValidator.validateMarkerUpload();
@@ -338,6 +343,9 @@ public class GobiiFileReader {
                     //Rotate to marker fast before loading it - all data is marker fast in the system
                     File transposeDir = new File(new File(fromFile).getParentFile(), "transpose");
                     intermediateFile.transform(MobileTransform.getTransposeMatrix(transposeDir.getPath()));
+                    isMarkerFast=false;
+                }else{
+                    isMarkerFast=true;
                 }
             }
             jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_TRANSFORMATION.getCvName(), "Metadata Transformation");
@@ -366,33 +374,57 @@ public class GobiiFileReader {
 
         //Validation logic before loading any metadata
         String baseConnectionString = getWebserviceConnectionString(gobiiCropConfig);
+
+        GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, crop, GobiiAutoLoginType.USER_RUN_AS);
+        if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
+            ErrorLogger.logError("Digester", "Unable to log in with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
+            return;
+        }
+        String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
+
+        GobiiUriFactory guf = new GobiiUriFactory(currentCropContextRoot);
+        guf.resourceColl(RestResourceId.GOBII_CALLS);
+
         String user = configuration.getLdapUserForBackendProcs();
         String password = configuration.getLdapPasswordForBackendProcs();
         String directory = dstDir.getAbsolutePath();
 
         //Metadata Validation
+        boolean reportedValidationFailures = false;
         if(LoaderGlobalConfigs.getValidation()) {
-	        DigestFileValidator digestFileValidator = new DigestFileValidator(directory, baseConnectionString, user, password);
+	        DigestFileValidator digestFileValidator = new DigestFileValidator(directory, baseConnectionString,user, password);
 	        digestFileValidator.performValidation();
 	        //Call validations here, update 'success' to false with any call to ErrorLogger.logError()
 	        List<Path> pathList =
 			        Files.list(Paths.get(directory))
 					        .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
 	        if (pathList.size() < 1) {
-		        //success = false;
 		        ErrorLogger.logError("Validation","Unable to find validation checks");
 	        }
 	        ValidationError[] fileErrors = new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class);
-	        for (ValidationError status : fileErrors) {
-		        if (status.status.equalsIgnoreCase(ValidationConstants.FAILURE)) {
-                    //success = false;
-                    ErrorLogger.logError("Validation","Validation failures");
-
+	        boolean hasAnyFailedStatuses=false;
+	        for(ValidationError status : fileErrors){
+	            if(status.status.equalsIgnoreCase(ValidationConstants.FAILURE)){
+	                hasAnyFailedStatuses=true;
                 }
-	        }
+            }
+	        for (ValidationError status : fileErrors) {
+                if (status.status.equalsIgnoreCase(ValidationConstants.FAILURE)) {
+                     if(!reportedValidationFailures){//Lets only add this to the error log once
+                        ErrorLogger.logError("Validation", "Validation failures");
+                        reportedValidationFailures=true;
+                    }
+                    for (int i = 0; i < status.failures.size(); i++)
+                        pm.addValidateTableElement(status.fileName, status.status, status.failures.get(i).reason, status.failures.get(i).columnName, status.failures.get(i).values);
+                }
+                if(status.status.equalsIgnoreCase(ValidationConstants.SUCCESS)){
+                    //If any failed statii(statuses) exist, we should have this table, otherwise it should not exist
+                    if(hasAnyFailedStatuses) {
+                        pm.addValidateTableElement(status.fileName, status.status);
+                    }
+                }
+            }
         }
-
-
         if (success && ErrorLogger.success()) {
             jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_METADATALOAD.getCvName(), "Loading Metadata");
             errorPath = getLogName(zero, gobiiCropConfig, crop, "IFLs");

@@ -7,7 +7,7 @@ public class LoaderGlobalConfigs extends ProcessGlobalConfigs{
     private LoaderGlobalConfigs(){}
     private static boolean singleThreadFileRead=false;
     private static boolean deleteIntermediateFiles=false;
-    private static boolean enableValidation=false;//TODO- make true to enable validation by default
+    private static boolean enableValidation=true;//TODO- make true to enable validation by default
 
     /**
      * Adds options to an Options object which will be read in 'setFromFlags'.

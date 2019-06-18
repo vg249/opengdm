@@ -582,7 +582,9 @@ public class GobiiExtractor {
 		            rmIfExist(extendedMarkerFile);
 		            rmIfExist(samplePosFile);
 		            rmIfExist(extractDir + "mdeOut");//remove mde output file
+		            
 		            rmIfExist(extractDir + "position.file");
+		            rmIfExist(extractDir + "position.list");
 
 		            if (extract.getListFileName() != null) {
 			            File listFile = new File(extract.getListFileName());

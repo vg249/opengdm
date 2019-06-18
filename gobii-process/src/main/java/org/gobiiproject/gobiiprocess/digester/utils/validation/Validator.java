@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
+import org.gobiiproject.gobiiprocess.digester.GobiiFileReader;
 import org.gobiiproject.gobiiprocess.digester.LoaderGlobalConfigs;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
@@ -67,6 +68,8 @@ class Validator {
         failureList.addAll(validateUniqueColumnList(fileName, validationUnit));
         failureList.addAll(validateFileShouldExist(fileName, validationUnit));
         failureList.addAll(validateColumnDBandFile(fileName, validationUnit));
+        failureList.addAll(validateMatrixSizeColumns(fileName,validationUnit.getConditions()));
+
         return failureList;
     }
 
@@ -120,6 +123,55 @@ class Validator {
     }
 
     /**
+     * Parses the validation rules and gives the rules which are matrix length requirements
+     *
+     * @param fileName      name of file
+     * @param conditions    conditions
+     */
+    private List<Failure> validateMatrixSizeColumns(String fileName, List<ConditionUnit> conditions) {
+        List<Failure> failureList = new ArrayList<>();
+
+        Boolean isMarkerFast= GobiiFileReader.isMarkerFast;//AUTHORS NOTE- this check will never run in stand-alone mode
+        if(isMarkerFast==null)return failureList;
+        List<String> requiredMatrixMarkerSizeColumns = new ArrayList<>();
+        List<String> requiredMatrixSampleSizeColumns = new ArrayList<>();
+        for (ConditionUnit condition : conditions){
+            if (condition.checkMatrixSize != null && condition.checkMatrixSize.equalsIgnoreCase("marker")) {
+                if (!requiredMatrixMarkerSizeColumns.contains(condition.columnName)) {
+                    requiredMatrixMarkerSizeColumns.add(condition.columnName);
+                }
+            }
+
+            if (condition.checkMatrixSize != null && condition.checkMatrixSize.equalsIgnoreCase("dnarun")) {
+                if (!requiredMatrixSampleSizeColumns.contains(condition.columnName)) {
+                    requiredMatrixSampleSizeColumns.add(condition.columnName);
+                }
+            }
+        }
+
+
+        if (requiredMatrixMarkerSizeColumns.size() > 0) {
+            try {
+                List<String> matrixCols = getFileColumns(fileName, requiredMatrixMarkerSizeColumns, failureList);
+                verifyEqualMatrixSizeMarker(failureList, matrixCols, isMarkerFast);
+            } catch (MaximumErrorsValidationException e) {
+                //Don't do any thing. This implies that particular error list is full.
+            }
+        }
+
+        if (requiredMatrixSampleSizeColumns.size() > 0) {
+            try {
+                List<String> matrixCols = getFileColumns(fileName, requiredMatrixSampleSizeColumns, failureList);
+                verifyEqualMatrixSizeDnarun(failureList, matrixCols, isMarkerFast);
+            } catch (MaximumErrorsValidationException e) {
+                //Don't do any thing. This implies that particular error list is full.
+            }
+        }
+
+        return failureList;
+    }
+
+    /**
      * Parses the validation rules and gives the rules which are optional and not null
      *
      * @param fileName   name of file
@@ -138,20 +190,13 @@ class Validator {
         if (requiredFields.size() > 0) {
             try {
                 validateColumns(fileName, requiredFields, inputFile, failureList);
-                List<Integer> columnNotFoundErrors = new ArrayList<>();
-                for (int i = 0; i < failureList.size(); i++) {
-                    if (failureList.get(i).reason.equalsIgnoreCase(FailureTypes.COLUMN_NOT_FOUND)) {
-                        columnNotFoundErrors.add(i);
-                    }
-                }
-                for (int i = columnNotFoundErrors.size() - 1; i < 0; i--) {
-                    failureList.remove(columnNotFoundErrors.get(i));
-                }
             } catch (MaximumErrorsValidationException e) {
-                //Don't do any thing. This implies that particular error list is full.
+                //This exception is used for control purposes. It it thrown to exit the column validation cycle.
+                //Don't do anything. This implies that particular error list is full.
             }
-        } else {
-            failureList = new ArrayList<>();
+
+            //Remove column not found errors
+            failureList.removeIf(f -> f.reason.equalsIgnoreCase(FailureTypes.COLUMN_NOT_FOUND));
         }
         return failureList;
     }
