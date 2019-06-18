@@ -99,7 +99,7 @@ public class GetLinks {
             ErrorLogger.logWarning("OWNCLOUD", "API request failed due to improper configurations",e);
         }
 
-        return liveLink.replace("http://","URL:");
+        return liveLink;
     }
 
     public static String getOwncloudURL(String filePath, ConfigSettings config) throws Exception {
