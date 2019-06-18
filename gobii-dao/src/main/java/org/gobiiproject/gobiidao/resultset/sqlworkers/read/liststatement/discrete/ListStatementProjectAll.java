@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.Map;
 
 import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY_ID_DATASET_ALL;
+import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY_ID_PROJECT_ALL;
 
 /**
 
@@ -18,7 +19,7 @@ public class ListStatementProjectAll implements ListStatement {
 
     @Override
     public ListSqlId getListSqlId() {
-        return QUERY_ID_DATASET_ALL;
+        return QUERY_ID_PROJECT_ALL;
     }
 
     @Override

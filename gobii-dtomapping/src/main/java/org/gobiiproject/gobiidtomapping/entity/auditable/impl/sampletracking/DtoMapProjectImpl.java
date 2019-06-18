@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,8 +40,11 @@ public class DtoMapProjectImpl implements DtoMapProject {
         List<ProjectDTO> returnVal;
         try {
 
+            Map<String, Object> sqlParams = new HashMap<>();
+            sqlParams.put("pageToken", 20);
+            sqlParams.put("pageSize", 10);
             returnVal = (List<ProjectDTO>) dtoListSampleTrackingQueryColl.getList(
-                    ListSqlId.QUERY_ID_PROJECT_ALL);
+                    ListSqlId.QUERY_ID_PROJECT_ALL, null, sqlParams);
 
             if(returnVal == null) {
                 return new ArrayList<>();
