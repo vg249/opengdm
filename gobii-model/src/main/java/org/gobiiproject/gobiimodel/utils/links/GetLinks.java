@@ -55,10 +55,10 @@ public class GetLinks {
         String path;
         if (filePath.contains("/logs/")) {
             relativeContext = alternateContextPath;
-            path = "path=" + filePath.replace("/data/gobii_bundle/logs/", "/" + relativeContext+"/") + "&shareType=3&permissions=1";
+            path = "path=" + filePath.replace("/data/gobii_bundle/logs/", "/" + relativeContext) + "&shareType=3&permissions=1";
 
         } else {
-            path = "path=" + filePath.replace("/data/gobii_bundle/crops/", "/" + relativeContext+"/") + "&shareType=3&permissions=1";
+            path = "path=" + filePath.replace("/data/gobii_bundle/crops/", "/" + relativeContext) + "&shareType=3&permissions=1";
         }
         String liveLink;
         try {
@@ -109,11 +109,11 @@ public class GetLinks {
         String contextPath = ocConf.getContextPath();
         String alternativeContextPath = ocConf.getErrorContextPath();
         if(filePath.contains("/logs/")){
-            filePath = filePath.replace("/data/gobii_bundle/logs/", "/" + alternativeContextPath+"/");
+            filePath = filePath.replace("/data/gobii_bundle/logs/", "/" + alternativeContextPath);
 
         }
         else {
-            filePath = filePath.replace("/data/gobii_bundle/crops/", "/" + contextPath+"/");
+            filePath = filePath.replace("/data/gobii_bundle/crops/", "/" + contextPath);
         }
 
         if(!filePath.endsWith("/")){
