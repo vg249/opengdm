@@ -65,7 +65,7 @@ public class GobiiAdlTest {
         // check if include_scenarios.txt exists
         File scenarioFile = new File("src/test/resources/gobiiAdl/include_scenarios.txt");
 
-        String scenariosRunTxt = "Scenarios run: ";
+        String scenariosRunTxt = "Scenarios ran: ";
         Integer scenarioCount = 0;
 
         if (scenarioFile.exists() && !scenarioFile.isDirectory()) {
@@ -83,9 +83,6 @@ public class GobiiAdlTest {
 
                 adlEncapsulator.copyFilesToLocalDir(fileFromRepo, newScenarioDir);
 
-                scenarioCount++;
-
-                scenariosRunTxt += "\n -- " + scenarioName;
             }
 
 
@@ -95,34 +92,41 @@ public class GobiiAdlTest {
 
             adlEncapsulator.copyFilesToLocalDir(fileFromRepo, tempDir);
 
-            if (fileFromRepo.exists() && fileFromRepo.isDirectory() && fileFromRepo.listFiles(File::isDirectory).length > 0) {
+        }
 
-                scenarioCount = fileFromRepo.listFiles(File::isDirectory).length;
+        /**
+         * DISABLE FILE COMPARATOR FOR NOW
 
-                for (File currentFile : fileFromRepo.listFiles(File::isDirectory)) {
+            // get path to GDMFileProject.jar
 
-                    scenariosRunTxt += "\n -- " + currentFile.getName();
+            File fileComparator = new File("/gobii-process/src/main/resources/gobiiadl/GDMFileProject.jar");
 
-                }
+            adlEncapsulator.setInputFileComparator(fileComparator.getAbsolutePath());
 
-            } else {
-                scenariosRunTxt = "\nNo scenarios ran.";
+         */
+
+        if (tempDir.exists() && tempDir.isDirectory() && tempDir.listFiles().length > 0) {
+
+            scenarioCount = tempDir.listFiles().length;
+
+            for (File currentFile : tempDir.listFiles()) {
+
+                System.out.print("\nLoading Scenario: " + currentFile.getName());
+                System.out.print("\n");
+
+                scenariosRunTxt += "\n -- " + currentFile.getName();
+
+                adlEncapsulator.setInputScenario(currentFile.getAbsolutePath());
+                boolean isLoadSuccessful = adlEncapsulator.executeSingleScenarioGobiiADL();
+
+                Assert.assertTrue(adlEncapsulator.getErrorMsg(), isLoadSuccessful);
+
+                System.out.print("Finished loading scenario.\n");
+
             }
 
         }
 
-
-        // get path to GDMFileProject.jar
-
-        File fileComparator = new File("/gobii-process/src/main/resources/gobiiadl/GDMFileProject.jar");
-
-        adlEncapsulator.setInputFileComparator(fileComparator.getAbsolutePath());
-
-        adlEncapsulator.setInputDirectory(tempDir.getAbsolutePath());
-
-        boolean isADLSuccessful = adlEncapsulator.executeBatchGobiiADL();
-
-        Assert.assertTrue(adlEncapsulator.getErrorMsg(), isADLSuccessful);
 
         long totalRunTime = System.currentTimeMillis() - startTime;
         long totalRunTimeMins = (totalRunTime / 1000) / 60;

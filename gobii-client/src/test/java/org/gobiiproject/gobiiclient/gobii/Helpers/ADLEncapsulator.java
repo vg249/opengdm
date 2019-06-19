@@ -200,33 +200,56 @@ public class ADLEncapsulator {
 
         if (!returnVal) {
 
-            String message = "gobiiadl failed but there was no output error file reported";
-            File errorFile = new File(errorFileName);
-            if( errorFile.exists()) {
-                message = FileUtils.readFileToString(errorFile);
-            } else {
-                File outputFile = new File(getClass().getClassLoader().getResource(outputFileName).getFile());
-                if( outputFile.exists()) {
-                    message = FileUtils.readFileToString(errorFile);
-                }
-            }
+            reportErrorMessage(errorFileName, outputFileName);
 
-            setErrorMsg(message);
-
-//            final String[] msg = new String[0];
-//            try (Stream<String> stream = Files.lines(Paths.get(getInputDirectory() + ERROR_FILE_NAME))) {
-//                stream.forEach(s -> msg[0] += s + SPACE);
-//            } catch (IOException e) {
-//                setErrorMsg(e.getMessage());
-//            }
-//
-//            setErrorMsg(msg[0]);
         }
 
         return returnVal;
 
     } // func()
 
+
+    public boolean executeSingleScenarioGobiiADL() throws Exception {
+
+        if (getAdlJarPath() == null || getInputHost() == null || getInputUser() == null || getInputPassword() == null || getInputTimeout() == null || getInputScenario() == null) {
+            setErrorMsg("Please set all the input parameters and try again.");
+        }
+
+        String outputFileName = getInputScenario() + "/" + OUTPUT_FILE_NAME;
+        String errorFileName = getInputScenario() + "/" + ERROR_FILE_NAME;
+
+        boolean returnVal = HelperFunctions.tryExec(getScenarioAdlCommand(),
+                outputFileName,
+                errorFileName);
+
+        if (!returnVal) {
+
+            reportErrorMessage(errorFileName, outputFileName);
+
+        }
+
+
+        return returnVal;
+
+    }
+
+    public void reportErrorMessage(String errorFileName, String outputFileName) throws Exception {
+
+        String message = "gobiiadl failed but there was no output error file reported";
+        File errorFile = new File(errorFileName);
+        if( errorFile.exists()) {
+            message = FileUtils.readFileToString(errorFile);
+        } else {
+            File outputFile = new File(getClass().getClassLoader().getResource(outputFileName).getFile());
+            if( outputFile.exists()) {
+                message = FileUtils.readFileToString(errorFile);
+            }
+        }
+
+        setErrorMsg(message);
+
+
+    }
 
     public void copyFilesToLocalDir(File sourceDir, File destinationDir) throws Exception {
 
