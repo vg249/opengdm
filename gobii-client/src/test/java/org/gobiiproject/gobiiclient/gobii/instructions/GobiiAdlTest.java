@@ -65,7 +65,7 @@ public class GobiiAdlTest {
         // check if include_scenarios.txt exists
         File scenarioFile = new File("src/test/resources/gobiiAdl/include_scenarios.txt");
 
-        String scenariosRunTxt = "Scenarios run: ";
+        String scenariosRunTxt = "Scenarios ran: ";
         Integer scenarioCount = 0;
 
         if (scenarioFile.exists() && !scenarioFile.isDirectory()) {
@@ -83,9 +83,6 @@ public class GobiiAdlTest {
 
                 adlEncapsulator.copyFilesToLocalDir(fileFromRepo, newScenarioDir);
 
-                scenarioCount++;
-
-                scenariosRunTxt += "\n -- " + scenarioName;
             }
 
 
@@ -94,20 +91,6 @@ public class GobiiAdlTest {
             File fileFromRepo = new File("src/test/resources/gobiiAdl");
 
             adlEncapsulator.copyFilesToLocalDir(fileFromRepo, tempDir);
-
-            if (fileFromRepo.exists() && fileFromRepo.isDirectory() && fileFromRepo.listFiles(File::isDirectory).length > 0) {
-
-                scenarioCount = fileFromRepo.listFiles(File::isDirectory).length;
-
-                for (File currentFile : fileFromRepo.listFiles(File::isDirectory)) {
-
-                    scenariosRunTxt += "\n -- " + currentFile.getName();
-
-                }
-
-            } else {
-                scenariosRunTxt = "\nNo scenarios ran.";
-            }
 
         }
 
@@ -122,11 +105,28 @@ public class GobiiAdlTest {
 
          */
 
-        adlEncapsulator.setInputDirectory(tempDir.getAbsolutePath());
+        if (tempDir.exists() && tempDir.isDirectory() && tempDir.listFiles().length > 0) {
 
-        boolean isADLSuccessful = adlEncapsulator.executeBatchGobiiADL();
+            scenarioCount = tempDir.listFiles().length;
 
-        Assert.assertTrue(adlEncapsulator.getErrorMsg(), isADLSuccessful);
+            for (File currentFile : tempDir.listFiles()) {
+
+                System.out.print("\nLoading Scenario: " + currentFile.getName());
+                System.out.print("\n");
+
+                scenariosRunTxt += "\n -- " + currentFile.getName();
+
+                adlEncapsulator.setInputScenario(currentFile.getAbsolutePath());
+                boolean isLoadSuccessful = adlEncapsulator.executeSingleScenarioGobiiADL();
+
+                Assert.assertTrue(adlEncapsulator.getErrorMsg(), isLoadSuccessful);
+
+                System.out.print("Finished loading scenario.\n");
+
+            }
+
+        }
+
 
         long totalRunTime = System.currentTimeMillis() - startTime;
         long totalRunTimeMins = (totalRunTime / 1000) / 60;
