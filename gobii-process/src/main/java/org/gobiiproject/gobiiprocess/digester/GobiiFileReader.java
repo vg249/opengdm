@@ -31,14 +31,13 @@ import org.gobiiproject.gobiimodel.utils.*;
 import org.gobiiproject.gobiimodel.utils.email.*;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.HDF5Interface;
-import org.gobiiproject.gobiiprocess.JobStatus;
+import org.gobiiproject.gobiiprocess.JobStateUpdater;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.*;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderV2;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationConstants;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
 
-import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.*;
 import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.logError;
@@ -157,9 +156,9 @@ public class GobiiFileReader {
         //Job Id is the 'name' part of the job file  /asd/de/name.json
         String filename = new File(instructionFile).getName();
         String jobFileName = filename.substring(0, filename.lastIndexOf('.'));
-        JobStatus jobStatus = null;
+        JobStateUpdater jobStateUpdater = null;
         try {
-            jobStatus = new JobStatus(configuration, crop, jobFileName);
+            jobStateUpdater = new JobStateUpdater(configuration, crop, jobFileName);
         } catch (Exception e) {
             ErrorLogger.logError("GobiiFileReader", "Error Checking Status", e);
         }
@@ -171,7 +170,7 @@ public class GobiiFileReader {
         pm.addIdentifier("Mapset", zero.getMapset());
         pm.addIdentifier("Dataset Type", zero.getDatasetType());
 
-        jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS, "Beginning Digest");
+        jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS, "Beginning Digest");
         String dstFilePath = getDestinationFile(zero);//Intermediate 'file'
         File dstDir = new File(dstFilePath);
         if (!dstDir.isDirectory()) { //Note: if dstDir is a non-existant
@@ -203,7 +202,7 @@ public class GobiiFileReader {
         String errorPath = getLogName(zero, gobiiCropConfig, crop);
 
 
-        jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION, "Beginning Validation");
+        jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION, "Beginning Validation");
         // Instruction file Validation
         JobPayloadType jpt = zero.getJobPayloadType();//TODO - This is the job payload type
         InstructionFileValidator instructionFileValidator = new InstructionFileValidator(list);
@@ -249,7 +248,7 @@ public class GobiiFileReader {
 //			qcExtractInstruction = createQCExtractInstruction(zero, crop);
 //		}
 
-        jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_DIGEST, "Beginning file digest");
+        jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_DIGEST, "Beginning file digest");
         //Pre-processing - make sure all files exist, find the cannonical dataset id
         for (GobiiLoaderInstruction inst : list) {
             if (inst == null) {
@@ -297,7 +296,7 @@ public class GobiiFileReader {
         }
 
         //Database Validation
-        jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION, "Database Validation");
+        jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION, "Database Validation");
         databaseValidation(loaderInstructionMap, zero, gobiiCropConfig);
 
         boolean sendQc = false;
@@ -348,7 +347,7 @@ public class GobiiFileReader {
                     isMarkerFast=true;
                 }
             }
-            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_TRANSFORMATION, "Metadata Transformation");
+            jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_TRANSFORMATION, "Metadata Transformation");
             String instructionName = inst.getTable();
             loaderInstructionMap.put(instructionName, new File(getDestinationFile(inst)));
             loaderInstructionList.add(instructionName);//TODO Hack - for ordering
@@ -426,7 +425,7 @@ public class GobiiFileReader {
             }
         }
         if (success && ErrorLogger.success()) {
-            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_METADATALOAD, "Loading Metadata");
+            jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_METADATALOAD, "Loading Metadata");
             errorPath = getLogName(zero, gobiiCropConfig, crop, "IFLs");
             String pathToIFL = loaderScriptPath + "postgres/gobii_ifl/gobii_ifl.py";
             String connectionString = " -c " + HelperFunctions.getPostgresConnectionString(gobiiCropConfig);
@@ -473,7 +472,7 @@ public class GobiiFileReader {
                 logError("Digester", "Data Set ID is null for variant call");
             }
             if ((variantFile != null) && dataSetId != null) { //Create an HDF5 and a Monet
-                jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD, "Matrix Upload");
+                jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD, "Matrix Upload");
                 boolean HDF5Success = HDF5Interface.createHDF5FromDataset(pm, dst, configuration, dataSetId, crop, errorPath, variantFilename, variantFile);
                 rmIfExist(variantFile.getPath());
                 success &= HDF5Success;
@@ -481,21 +480,21 @@ public class GobiiFileReader {
             if (success && ErrorLogger.success()) {
                 ErrorLogger.logInfo("Digester", "Successful Data Upload");
                 if (sendQc) {
-                    jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING, "Processing QC Job");
+                    jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING, "Processing QC Job");
                     sendQCExtract(configuration, crop);
                 } else {
-                    jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED, "Successful Data Load");
+                    jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED, "Successful Data Load");
                 }
 
             } else { //endIf(success)
                 ErrorLogger.logWarning("Digester", "Unsuccessful Upload");
                 sendQc = false;//Files failed = bad.
-                jobStatus.setError("Unsuccessfully Uploaded Files");
+                jobStateUpdater.setError("Unsuccessfully Uploaded Files");
             }
         }//endif Digest section
         else {
             ErrorLogger.logWarning("Digester", "Aborted - Unsuccessfully Generated Files");
-            jobStatus.setError("Unsuccessfully Generated Files - No Data Upload");
+            jobStateUpdater.setError("Unsuccessfully Generated Files - No Data Upload");
         }
 
         //Send Email
@@ -817,7 +816,7 @@ public class GobiiFileReader {
             DataSetDTO dataSetResponse;
             if (!resultEnvelope.getHeader().getStatus().isSucceeded()) {
                 System.out.println();
-                logError("Digester", "Data set response response errors");
+                logError("Digester", "Data doUpdate response response errors");
                 for (HeaderStatusMessage currentStatusMesage : resultEnvelope.getHeader().getStatus().getStatusMessages()) {
                     logError("HeaderError", currentStatusMesage.getMessage());
                 }
@@ -836,7 +835,7 @@ public class GobiiFileReader {
             //dataSetResponse = dtoProcessor.process(dataSetResponse);
             // if you didn't succeed, do not pass go, but do log errors to your log file
             if (!resultEnvelope.getHeader().getStatus().isSucceeded()) {
-                logError("Digester", "Data set response response errors");
+                logError("Digester", "Data doUpdate response response errors");
                 for (HeaderStatusMessage currentStatusMesage : resultEnvelope.getHeader().getStatus().getStatusMessages()) {
                     logError("HeaderError", currentStatusMesage.getMessage());
                 }

@@ -36,7 +36,7 @@ import org.gobiiproject.gobiimodel.utils.email.MailInterface;
 import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.HDF5Interface;
-import org.gobiiproject.gobiiprocess.JobStatus;
+import org.gobiiproject.gobiiprocess.JobStateUpdater;
 import org.gobiiproject.gobiiprocess.digester.utils.ExtractSummaryWriter;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
 import org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformer;
@@ -163,13 +163,13 @@ public class GobiiExtractor {
 	    //Job Id is the 'name' part of the job file  /asd/de/name.json
         String filename = new File(instructionFile).getName();
         String jobFileName = filename.substring(0, filename.lastIndexOf('.'));
-        JobStatus jobStatus = null;
+        JobStateUpdater jobStatus = null;
         try {
-            jobStatus = new JobStatus(configuration, firstCrop, jobFileName);
+            jobStatus = new JobStateUpdater(configuration, firstCrop, jobFileName);
         } catch (Exception e) {
             ErrorLogger.logError("GobiiFileReader", "Error Checking Status", e);
         }
-        jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS, "Beginning Extract");
+        jobStatus.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS, "Beginning Extract");
 
         for (GobiiExtractorInstruction inst : list) {
         	String crop = inst.getGobiiCropType();
@@ -207,7 +207,7 @@ public class GobiiExtractor {
 	            } else {
 		            mapId = mapIds.get(0);
 	            }
-	            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_METADATAEXTRACT, "Extracting Metadata");
+	            jobStatus.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_METADATAEXTRACT, "Extracting Metadata");
 	            for (GobiiDataSetExtract extract : inst.getDataSetExtracts()) {
 		            String jobReadableIdentifier = getJobReadableIdentifier(crop, extract);
 		            String jobUser = inst.getContactEmail();
@@ -493,7 +493,7 @@ public class GobiiExtractor {
 		            String tempFolder = extractDir;
 		            String genoFile = null;
 		            if (!extract.getGobiiFileType().equals(GobiiFileType.META_DATA)) {
-			            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_FINALASSEMBLY, "Assembling Output Matrix");
+			            jobStatus.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_FINALASSEMBLY, "Assembling Output Matrix");
 			            boolean markerFast = (fileType == GobiiFileType.HAPMAP);
 			            try {
 				            switch (filterType) {
@@ -531,7 +531,7 @@ public class GobiiExtractor {
 		            }
 
 
-		            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_FINALASSEMBLY, "Assembling Output Files");
+		            jobStatus.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_FINALASSEMBLY, "Assembling Output Files");
 		            if (checkFileExistence(genoFile) || (fileType == GobiiFileType.META_DATA)) {
 			            switch (fileType) {
 				            case FLAPJACK:
@@ -548,7 +548,7 @@ public class GobiiExtractor {
 					            ErrorLogger.logDebug("GobiiExtractor", "Executing FlapJack Genotype file Generation");
 					            success &= FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, tempFolder, genoOutFile, errorFile);
 					            getCounts(success, pm, markerFile, sampleFile);
-					            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED, "Extract Completed 8uccessfully");
+					            jobStatus.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED, "Extract Completed 8uccessfully");
 					            break;
 				            case HAPMAP:
 					            String hapmapOutFile = extractDir + "Dataset.hmp.txt";
@@ -557,10 +557,10 @@ public class GobiiExtractor {
 					            ErrorLogger.logDebug("GobiiExtractor", "Executing Hapmap Generation");
 					            success &= hapmapTransformer.generateFile(markerFile, sampleFile, extendedMarkerFile, genoFile, hapmapOutFile, errorFile);
 					            getCounts(success, pm, markerFile, sampleFile);
-					            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED, "Extract Completed 8uccessfully");
+					            jobStatus.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED, "Extract Completed 8uccessfully");
 					            break;
 				            case META_DATA:
-					            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED, "Successful Data Extract");
+					            jobStatus.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED, "Successful Data Extract");
 					            break;
 				            default:
 					            ErrorLogger.logError("Extractor", "Unknown Extract Type " + extract.getGobiiFileType());
@@ -582,7 +582,7 @@ public class GobiiExtractor {
 		            rmIfExist(extendedMarkerFile);
 		            rmIfExist(samplePosFile);
 		            rmIfExist(extractDir + "mdeOut");//remove mde output file
-		            
+
 		            rmIfExist(extractDir + "position.file");
 		            rmIfExist(extractDir + "position.list");
 
@@ -599,9 +599,9 @@ public class GobiiExtractor {
 			            if (overallSuccess) {//QC - Subsection #1 of 1
 				            ErrorLogger.logInfo("Extractor", "qcCheck detected");
 				            ErrorLogger.logInfo("Extractor", "Entering into the QC Subsection #1 of 1...");
-				            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING, "Processing QC Job");
+				            jobStatus.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING, "Processing QC Job");
 				            performQC(configuration, inst, crop, datasetName, datasetId, extractDir, mailInterface, extractType);
-				            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED, "QC Job Complete");
+				            jobStatus.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED, "QC Job Complete");
 			            }
 		            }
 	            if (pm.getBody() == null) { //Make sure the PM body is set before we send it
@@ -635,7 +635,7 @@ public class GobiiExtractor {
 	 * @param contactEmail place for email to be sent
 	 * @param e exception to pull a stack trace from
 	 */
-	private static void handleCriticalException(ConfigSettings configuration, JobStatus jobStatus, String contactEmail, Exception e) {
+	private static void handleCriticalException(ConfigSettings configuration, JobStateUpdater jobStatus, String contactEmail, Exception e) {
 		ErrorLogger.logError("GobiiExtractor", "Uncaught fatal error found in program.", e);
 		HelperFunctions.sendEmail("Hi.\n\n" +
 
