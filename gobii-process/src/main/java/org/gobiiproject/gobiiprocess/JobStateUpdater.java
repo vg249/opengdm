@@ -79,7 +79,7 @@ public class JobStateUpdater {
 			restUri.setParamValue(param, jobName);
 		} catch (Exception e) {
     		// Theres no real reason an exception should be thrown here
-			logError("Digester", String.format("Unexcpected error when generated log error. Perhaps the param name changed? " +
+			logError("Digester", String.format("Unexpected error when generated log error. Perhaps the param name changed? " +
 					                                  "Was 'id', now is %s", param, e));
 		}
 
