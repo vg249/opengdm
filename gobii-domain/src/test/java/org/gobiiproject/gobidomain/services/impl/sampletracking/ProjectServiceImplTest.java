@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.List;
 import java.util.UUID;
 
 import static junit.framework.TestCase.assertFalse;
@@ -116,6 +117,53 @@ public class ProjectServiceImplTest {
 
             assertFalse(newProject.getProjectId() > 0);
         }
+    }
+
+    /**
+     * Asserts whether service is able to get the project information given the ID of a newly created Project.
+     * If the returned project ID is null or not equal to the given ID, the test will fail. Otherwise, it will be successful.
+     */
+    @Test
+    public void getProjectWithExistingId() {
+
+        ProjectDTO newProject = new ProjectDTO();
+        newProject.setPiContactId(1);
+        newProject.setProjectName(UUID.randomUUID().toString());
+        newProject = sampleTrackingProjectService.createProject(newProject);
+        assertTrue(newProject.getProjectId() > 0);
+
+        // get the ID of the newly created Project
+        Integer projectId = newProject.getProjectId();
+
+        ProjectDTO projectDTO = sampleTrackingProjectService.getProjectById(projectId);
+
+        assertTrue(projectDTO.getProjectId() > 0);
+        assertTrue(projectDTO.getProjectId().equals(newProject.getProjectId()));
+
+    }
+
+    /**
+     * Asserts failure to get project information with invalid project ID.
+     * Asserts whether the exception thrown is GobiiException for Entity does not exists.
+     */
+    @Test
+    public void getProjectWithNonExistingId() {
+
+        ProjectDTO projectDTO = new ProjectDTO();
+
+        try {
+            // non-existing ID
+            Integer projectId = 0;
+
+            projectDTO = sampleTrackingProjectService.getProjectById(projectId);
+
+        } catch (GobiiException gE) {
+
+            assertTrue(gE.getGobiiValidationStatusType() == GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST);
+
+            assertFalse(projectDTO.getProjectId() > 0);
+        }
+
     }
 
 }
