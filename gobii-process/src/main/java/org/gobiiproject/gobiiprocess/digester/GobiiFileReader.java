@@ -171,7 +171,7 @@ public class GobiiFileReader {
         pm.addIdentifier("Mapset", zero.getMapset());
         pm.addIdentifier("Dataset Type", zero.getDatasetType());
 
-        jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS.getCvName(), "Beginning Digest");
+        jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS, "Beginning Digest");
         String dstFilePath = getDestinationFile(zero);//Intermediate 'file'
         File dstDir = new File(dstFilePath);
         if (!dstDir.isDirectory()) { //Note: if dstDir is a non-existant
@@ -203,7 +203,7 @@ public class GobiiFileReader {
         String errorPath = getLogName(zero, gobiiCropConfig, crop);
 
 
-        jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION.getCvName(), "Beginning Validation");
+        jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION, "Beginning Validation");
         // Instruction file Validation
         JobPayloadType jpt = zero.getJobPayloadType();//TODO - This is the job payload type
         InstructionFileValidator instructionFileValidator = new InstructionFileValidator(list);
@@ -249,7 +249,7 @@ public class GobiiFileReader {
 //			qcExtractInstruction = createQCExtractInstruction(zero, crop);
 //		}
 
-        jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_DIGEST.getCvName(), "Beginning file digest");
+        jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_DIGEST, "Beginning file digest");
         //Pre-processing - make sure all files exist, find the cannonical dataset id
         for (GobiiLoaderInstruction inst : list) {
             if (inst == null) {
@@ -297,7 +297,7 @@ public class GobiiFileReader {
         }
 
         //Database Validation
-        jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION.getCvName(), "Database Validation");
+        jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION, "Database Validation");
         databaseValidation(loaderInstructionMap, zero, gobiiCropConfig);
 
         boolean sendQc = false;
@@ -348,7 +348,7 @@ public class GobiiFileReader {
                     isMarkerFast=true;
                 }
             }
-            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_TRANSFORMATION.getCvName(), "Metadata Transformation");
+            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_TRANSFORMATION, "Metadata Transformation");
             String instructionName = inst.getTable();
             loaderInstructionMap.put(instructionName, new File(getDestinationFile(inst)));
             loaderInstructionList.add(instructionName);//TODO Hack - for ordering
@@ -426,7 +426,7 @@ public class GobiiFileReader {
             }
         }
         if (success && ErrorLogger.success()) {
-            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_METADATALOAD.getCvName(), "Loading Metadata");
+            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_METADATALOAD, "Loading Metadata");
             errorPath = getLogName(zero, gobiiCropConfig, crop, "IFLs");
             String pathToIFL = loaderScriptPath + "postgres/gobii_ifl/gobii_ifl.py";
             String connectionString = " -c " + HelperFunctions.getPostgresConnectionString(gobiiCropConfig);
@@ -473,7 +473,7 @@ public class GobiiFileReader {
                 logError("Digester", "Data Set ID is null for variant call");
             }
             if ((variantFile != null) && dataSetId != null) { //Create an HDF5 and a Monet
-                jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD.getCvName(), "Matrix Upload");
+                jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD, "Matrix Upload");
                 boolean HDF5Success = HDF5Interface.createHDF5FromDataset(pm, dst, configuration, dataSetId, crop, errorPath, variantFilename, variantFile);
                 rmIfExist(variantFile.getPath());
                 success &= HDF5Success;
@@ -481,10 +481,10 @@ public class GobiiFileReader {
             if (success && ErrorLogger.success()) {
                 ErrorLogger.logInfo("Digester", "Successful Data Upload");
                 if (sendQc) {
-                    jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING.getCvName(), "Processing QC Job");
+                    jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING, "Processing QC Job");
                     sendQCExtract(configuration, crop);
                 } else {
-                    jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Successful Data Load");
+                    jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED, "Successful Data Load");
                 }
 
             } else { //endIf(success)

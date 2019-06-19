@@ -169,7 +169,7 @@ public class GobiiExtractor {
         } catch (Exception e) {
             ErrorLogger.logError("GobiiFileReader", "Error Checking Status", e);
         }
-        jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS.getCvName(), "Beginning Extract");
+        jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS, "Beginning Extract");
 
         for (GobiiExtractorInstruction inst : list) {
         	String crop = inst.getGobiiCropType();
@@ -207,7 +207,7 @@ public class GobiiExtractor {
 	            } else {
 		            mapId = mapIds.get(0);
 	            }
-	            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_METADATAEXTRACT.getCvName(), "Extracting Metadata");
+	            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_METADATAEXTRACT, "Extracting Metadata");
 	            for (GobiiDataSetExtract extract : inst.getDataSetExtracts()) {
 		            String jobReadableIdentifier = getJobReadableIdentifier(crop, extract);
 		            String jobUser = inst.getContactEmail();
@@ -493,7 +493,7 @@ public class GobiiExtractor {
 		            String tempFolder = extractDir;
 		            String genoFile = null;
 		            if (!extract.getGobiiFileType().equals(GobiiFileType.META_DATA)) {
-			            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_FINALASSEMBLY.getCvName(), "Assembling Output Matrix");
+			            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_FINALASSEMBLY, "Assembling Output Matrix");
 			            boolean markerFast = (fileType == GobiiFileType.HAPMAP);
 			            try {
 				            switch (filterType) {
@@ -531,7 +531,7 @@ public class GobiiExtractor {
 		            }
 
 
-		            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_FINALASSEMBLY.getCvName(), "Assembling Output Files");
+		            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_FINALASSEMBLY, "Assembling Output Files");
 		            if (checkFileExistence(genoFile) || (fileType == GobiiFileType.META_DATA)) {
 			            switch (fileType) {
 				            case FLAPJACK:
@@ -548,7 +548,7 @@ public class GobiiExtractor {
 					            ErrorLogger.logDebug("GobiiExtractor", "Executing FlapJack Genotype file Generation");
 					            success &= FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, tempFolder, genoOutFile, errorFile);
 					            getCounts(success, pm, markerFile, sampleFile);
-					            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Extract Completed 8uccessfully");
+					            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED, "Extract Completed 8uccessfully");
 					            break;
 				            case HAPMAP:
 					            String hapmapOutFile = extractDir + "Dataset.hmp.txt";
@@ -557,10 +557,10 @@ public class GobiiExtractor {
 					            ErrorLogger.logDebug("GobiiExtractor", "Executing Hapmap Generation");
 					            success &= hapmapTransformer.generateFile(markerFile, sampleFile, extendedMarkerFile, genoFile, hapmapOutFile, errorFile);
 					            getCounts(success, pm, markerFile, sampleFile);
-					            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Extract Completed 8uccessfully");
+					            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED, "Extract Completed 8uccessfully");
 					            break;
 				            case META_DATA:
-					            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Successful Data Extract");
+					            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED, "Successful Data Extract");
 					            break;
 				            default:
 					            ErrorLogger.logError("Extractor", "Unknown Extract Type " + extract.getGobiiFileType());
@@ -599,9 +599,9 @@ public class GobiiExtractor {
 			            if (overallSuccess) {//QC - Subsection #1 of 1
 				            ErrorLogger.logInfo("Extractor", "qcCheck detected");
 				            ErrorLogger.logInfo("Extractor", "Entering into the QC Subsection #1 of 1...");
-				            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING.getCvName(), "Processing QC Job");
+				            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING, "Processing QC Job");
 				            performQC(configuration, inst, crop, datasetName, datasetId, extractDir, mailInterface, extractType);
-				            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "QC Job Complete");
+				            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED, "QC Job Complete");
 			            }
 		            }
 	            if (pm.getBody() == null) { //Make sure the PM body is set before we send it

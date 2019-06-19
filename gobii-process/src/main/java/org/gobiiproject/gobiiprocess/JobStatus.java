@@ -38,20 +38,21 @@ public class JobStatus {
 	/**List of valid statuses. Update as appropriate. Stops 'random argument' assignment, even though Progress Status
 	 * has been stringly typed.
 	 */
-	private static Set<String> acceptedStatuses=new HashSet<>(Arrays.asList(
-			JobProgressStatusType.CV_PROGRESSSTATUS_ABORTED.getCvName(),
-			JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(),
-			JobProgressStatusType.CV_PROGRESSSTATUS_DIGEST.getCvName(),
-			JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS.getCvName(),
-			JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD.getCvName(),
-			JobProgressStatusType.CV_PROGRESSSTATUS_METADATALOAD.getCvName(),
-			JobProgressStatusType.CV_PROGRESSSTATUS_TRANSFORMATION.getCvName(),
-			JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION.getCvName(),
-			JobProgressStatusType.CV_PROGRESSSTATUS_FAILED.getCvName(),
-			JobProgressStatusType.CV_PROGRESSSTATUS_METADATAEXTRACT.getCvName(),
-			JobProgressStatusType.CV_PROGRESSSTATUS_FINALASSEMBLY.getCvName(),
-			JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING.getCvName()
+	private static Set<JobProgressStatusType> acceptedStatuses=new HashSet<>(Arrays.asList(
+			JobProgressStatusType.CV_PROGRESSSTATUS_ABORTED,
+			JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED,
+			JobProgressStatusType.CV_PROGRESSSTATUS_DIGEST,
+			JobProgressStatusType.CV_PROGRESSSTATUS_INPROGRESS,
+			JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD,
+			JobProgressStatusType.CV_PROGRESSSTATUS_METADATALOAD,
+			JobProgressStatusType.CV_PROGRESSSTATUS_TRANSFORMATION,
+			JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION,
+			JobProgressStatusType.CV_PROGRESSSTATUS_FAILED,
+			JobProgressStatusType.CV_PROGRESSSTATUS_METADATAEXTRACT,
+			JobProgressStatusType.CV_PROGRESSSTATUS_FINALASSEMBLY,
+			JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING
 	));
+
     public JobStatus(ConfigSettings config, String cropName, String jobName) throws Exception {
 		this.jobName=jobName;
 		// set up authentication and so forth
@@ -60,9 +61,12 @@ public class JobStatus {
 		uriFactory = context.getUriFactory();
     }
 
-    public void set(String status,String message){
+    public void set(JobProgressStatusType status,String message){
     	if(status==null || !acceptedStatuses.contains(status)){
-    		ErrorLogger.logError("JobStatus","Invalid status passed to set: "+status+"\nMessage: "+message,new Exception());//passing a new exception throws a stack trace in there
+    		ErrorLogger.logError(
+    				"JobStatus",
+					String.format("Invalid status passed to set: %s\nMessage: %s", status.getCvName(), message),
+					new Exception());//passing a new exception throws a stack trace in there
 		}
             try{
                 RestUri restUri=uriFactory
@@ -90,7 +94,7 @@ public class JobStatus {
 
 
 				dataSetResponse.setMessage(message);
-				dataSetResponse.setStatus(status);
+				dataSetResponse.setStatus(status.getCvName());
 
 				resultEnvelope = gobiiEnvelopeRestResource
 						.put(JobDTO.class, new PayloadEnvelope<>(dataSetResponse, GobiiProcessType.UPDATE));
@@ -121,6 +125,6 @@ public class JobStatus {
             errorMessage="Status: " + lastStatus.getStatus()+" - " + lastStatus.getMessage() + " | \n";
         }
         errorMessage += message + " : " + ErrorLogger.getFirstErrorReason();
-        set(JobProgressStatusType.CV_PROGRESSSTATUS_FAILED.getCvName(),errorMessage);
+        set(JobProgressStatusType.CV_PROGRESSSTATUS_FAILED,errorMessage);
     }
 }
