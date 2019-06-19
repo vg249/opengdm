@@ -8,4 +8,12 @@
 __Type__ : basic
 
 
+[[_x-auth-token]]
+=== X-Auth-Token
+[%hardbreaks]
+__Type__ : apiKey
+__Name__ : X-Auth-Token
+__In__ : HEADER
+
+
 

@@ -14,8 +14,9 @@ public class FailureTypes {
     public static final String COLUMN_VALUE_NOT_FOUND = "Column value not found";
     public static final String VALUE_MISMATCH = "Column value mismatch";
     public static final String INVALID_COLUMN_SIZE = "Invalid column size";
+    public static final String INVALID_COLUMN_MATRIX_SIZE = "Row length does not match matrix size";
     public static final String NOT_UNIQUE = "Not unique";
-    public static final String CORRUPTED_FILE = "Corrupted file";
+    public static final String CORRUPTED_FILE = "File Length Mismatch";
     public static final String NULL_VALUE = "NULL VALUE";
     public static final String DUPLICATE_FOUND = "Duplicate Found";
     public static final String UNDEFINED_CV = "Undefined CV term";

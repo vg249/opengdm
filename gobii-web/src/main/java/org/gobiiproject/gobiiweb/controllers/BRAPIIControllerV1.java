@@ -7,6 +7,7 @@ package org.gobiiproject.gobiiweb.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import io.swagger.annotations.*;
 import org.gobiiproject.gobidomain.services.PingService;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCalls;
@@ -121,6 +122,7 @@ import java.util.Optional;
  */
 @Scope(value = "request")
 @Controller
+@Api()
 @RequestMapping(GobiiControllerType.SERVICE_PATH_BRAPI)
 public class BRAPIIControllerV1 {
 
@@ -153,6 +155,21 @@ public class BRAPIIControllerV1 {
     @RequestMapping(value = "/calls",
             method = RequestMethod.GET,
             produces = "application/json")
+    @ApiOperation(
+            value = "List all calls.",
+            notes = "List all calls",
+            tags = {"BrAPI"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Calls"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value= "BrAPI is standards api calls. Below section list all" +
+                                            " the BrAPI calls supported by GDM."
+                            )
+                    })
+            }
+    )
     @ResponseBody
     public String getCalls(
             HttpServletRequest request,
@@ -194,6 +211,16 @@ public class BRAPIIControllerV1 {
     @RequestMapping(value = "/token",
             method = RequestMethod.POST,
             produces = "application/json")
+    @ApiOperation(
+            value = "List all tokens.",
+            notes = "List all tokens",
+            tags = {"BrAPI"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Tokens"),
+                    })
+            }
+    )
     @ResponseBody
     public String postLogin(@RequestBody String loginRequestBody,
                             HttpServletRequest request,
@@ -245,6 +272,16 @@ public class BRAPIIControllerV1 {
     @RequestMapping(value = "/studies-search",
             method = RequestMethod.POST,
             produces = "application/json")
+    @ApiOperation(
+            value = "Search the studies.",
+            notes = "Search studies.",
+            tags = {"BrAPI"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="StudiesSearch"),
+                    })
+            }
+    )
     @ResponseBody
     public String getStudies(@RequestBody String studiesRequestBody,
                              HttpServletRequest request,
@@ -315,9 +352,20 @@ public class BRAPIIControllerV1 {
             method = RequestMethod.GET,
 //            params = {"pageSize", "page"},
             produces = "application/json")
+    @ApiOperation(
+            value = "Get germplasm by study db id.",
+            notes = "Get germplasm by study db id.",
+            tags = {"BrAPI"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Germplasm : studyDbId"),
+                    })
+            }
+    )
     @ResponseBody
     public String getGermplasmByDbId(HttpServletRequest request,
                                      HttpServletResponse response,
+                                     @ApiParam(value = "Study DB Id", required = true)
                                      @PathVariable Integer studyDbId
 //            ,
 //                               @RequestParam(value = "pageSize",required = false) Integer pageSize,
@@ -368,9 +416,20 @@ public class BRAPIIControllerV1 {
             method = RequestMethod.GET,
 //            params = {"pageSize", "page"},
             produces = "application/json")
+    @ApiOperation(
+            value = "List all observation variables for given study db id",
+            notes = "List all observation variables for given study db id",
+            tags = {"BrAPI"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Studies.observationVariables"),
+                    })
+            }
+    )
     @ResponseBody
     public String getObservationVariables(HttpServletRequest request,
                                           HttpServletResponse response,
+                                          @ApiParam(value = "Study DB Id", required = true)
                                           @PathVariable Integer studyDbId) throws Exception {
 
         BrapiResponseEnvelopeMasterDetail<BrapiResponseObservationVariablesMaster> responseEnvelope
@@ -412,8 +471,19 @@ public class BRAPIIControllerV1 {
     @RequestMapping(value = "/allelematrices",
             method = RequestMethod.GET,
             produces = "application/json")
+    @ApiOperation(
+            value = "Get Allele Matrices",
+            notes = "Get allele matrices by given study db id",
+            tags = {"BrAPI"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="AlleleMatrices"),
+                    })
+            }
+    )
     @ResponseBody
-    public String getAlleleMatrices(@RequestParam("studyDbId") Optional<String> studyDbIdd,
+    public String getAlleleMatrices(@ApiParam(value = "Study DB Id", required = false)
+                                    @RequestParam("studyDbId") Optional<String> studyDbIdd,
                                     HttpServletRequest request,
                                     HttpServletResponse response) throws Exception {
 
@@ -453,13 +523,57 @@ public class BRAPIIControllerV1 {
     }
 
     @RequestMapping(value = "/allelematrix-search",
-            method = {RequestMethod.GET, RequestMethod.POST},
+            method = {RequestMethod.GET},
             produces = "application/json")
+    @ApiOperation(
+            value = "Search Allele Matrix",
+            notes = "Search allele matrix using marker profiles",
+            tags = {"BrAPI"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="AlleleMatrixSearch"),
+                    })
+            }
+    )
     @ResponseBody
-    public String getAlleleMatrix(@RequestParam("matrixDbId") Optional<String> matrixDbId,
+    public String getAlleleMatrix(@ApiParam(value = "Matrix DB Id", required = false)
+                                  @RequestParam("matrixDbId") Optional<String> matrixDbId,
+                                  @ApiParam(value = "Marker Profile Id", required = false)
                                   @RequestParam("markerprofileDbId") Optional<String> markerprofileDbId,
                                   HttpServletRequest request,
                                   HttpServletResponse response) throws Exception {
+        return this.alleleMatrix(matrixDbId, markerprofileDbId, request, response);
+
+    }
+
+    @RequestMapping(value = "/allelematrix-search",
+            method = {RequestMethod.POST},
+            produces = "application/json")
+    @ApiOperation(
+            value = "Search Allele Matrix",
+            notes = "Search allele matrix using marker profiles",
+            tags = {"BrAPI"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="AlleleMatrixSearch"),
+                    })
+            }
+    )
+    @ResponseBody
+    public String postAlleleMatrix(@ApiParam(value = "Matrix DB Id", required = false)
+                                  @RequestParam("matrixDbId") Optional<String> matrixDbId,
+                                  @ApiParam(value = "Marker Profile Id", required = false)
+                                  @RequestParam("markerprofileDbId") Optional<String> markerprofileDbId,
+                                  HttpServletRequest request,
+                                  HttpServletResponse response) throws Exception {
+        return this.alleleMatrix(matrixDbId, markerprofileDbId, request, response);
+
+    }
+
+    public String alleleMatrix(Optional<String> matrixDbId,
+                               Optional<String> markerprofileDbId,
+                               HttpServletRequest request,
+                               HttpServletResponse response) throws Exception {
 
         String returnVal = null;
 
@@ -500,11 +614,23 @@ public class BRAPIIControllerV1 {
         return returnVal;
     }
 
+
     @RequestMapping(value = "/allelematrix-search/status/{jobId}",
             method = RequestMethod.GET,
             produces = "application/json")
+    @ApiOperation(
+            value = "Get Allele Matrix Job status",
+            notes = "Get allele matrix Job status",
+            tags = {"BrAPI"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="AlleleMatrix.status : jobId"),
+                    })
+            }
+    )
     @ResponseBody
-    public String getAlleleMatrixStatus(@PathVariable("jobId") String jobId,
+    public String getAlleleMatrixStatus(@ApiParam(value = "Job Id", required = true)
+                                        @PathVariable("jobId") String jobId,
                                         HttpServletRequest request,
                                         HttpServletResponse response) throws Exception {
 
@@ -552,8 +678,19 @@ public class BRAPIIControllerV1 {
     @RequestMapping(value = "/files",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ApiOperation(
+            value = "List all files",
+            notes = "List all the files in a given path.",
+            tags = {"BrAPI"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Files"),
+                    })
+            }
+    )
     @ResponseBody
-    public void getFile(@RequestParam("fqpn") String fqpn,
+    public void getFile(@ApiParam(value = "Fully qualified path name", required = true)
+                        @RequestParam("fqpn") String fqpn,
                         HttpServletRequest request,
                         HttpServletResponse response) throws Exception {
 
@@ -572,12 +709,50 @@ public class BRAPIIControllerV1 {
 
 
     @RequestMapping(value = "/markerprofiles",
-            method = {RequestMethod.GET, RequestMethod.POST},
+            method = {RequestMethod.GET},
             produces = "application/json")
+    @ApiOperation(
+            value = "List all Marker Profiles",
+            notes = "List all Marker Profiles in given germplasm db..",
+            tags = {"BrAPI"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="MarkerProfiles"),
+                    })
+            }
+    )
     @ResponseBody
-    public String getMarkerProfile(@RequestParam("germplasmDbId") String germplasmDbId,
+    public String getMarkerProfile(@ApiParam(value = "Germplasm DB Id", required = true)
+                                   @RequestParam("germplasmDbId") String germplasmDbId,
                                    HttpServletRequest request,
                                    HttpServletResponse response) throws Exception {
+        return this.markerProfile(germplasmDbId, request, response);
+    }
+
+    @RequestMapping(value = "/markerprofiles",
+            method = {RequestMethod.POST},
+            produces = "application/json")
+    @ApiOperation(
+            value = "List all Marker Profiles",
+            notes = "List all Marker Profiles in given germplasm db..",
+            tags = {"BrAPI"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="MarkerProfiles"),
+                    })
+            }
+    )
+    @ResponseBody
+    public String postMarkerProfile(@ApiParam(value = "Germplasm DB Id", required = true)
+                                    @RequestParam("germplasmDbId") String germplasmDbId,
+                                    HttpServletRequest request,
+                                    HttpServletResponse response) throws Exception {
+        return this.markerProfile(germplasmDbId, request, response);
+    }
+
+    public String markerProfile(String germplasmDbId,
+                                HttpServletRequest request,
+                                HttpServletResponse response) throws Exception {
 
         BrapiResponseEnvelopeMasterDetail<BrapiResponseMarkerProfilesMaster> brapiResponseEnvelope
                 = new BrapiResponseEnvelopeMasterDetail<>();
@@ -606,6 +781,5 @@ public class BRAPIIControllerV1 {
 
         return returnVal;
     }
-
 
 }// BRAPIController

@@ -3,6 +3,7 @@ package org.gobiiproject.gobiiprocess.digester.utils.validation;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiiprocess.digester.DigesterFileExtensions;
+import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderInterface;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.Failure;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.FailureTypes;
 
@@ -40,6 +41,13 @@ class ValidationUtil {
                         createFailure(FailureTypes.NULL_VALUE, Collections.singletonList(headers.get(colNo)), failureList);
                     }
     }
+
+    static void validateMatrixSizeMarkerColumns(String fileName, List<String> columns, List<String[]> inputFileList, List<Failure> failureList, boolean markerFast) throws MaximumErrorsValidationException {
+        if (columns.size() == 0) return;
+        List<String> headers = Arrays.asList(inputFileList.get(0).clone());
+        verifyEqualMatrixSizeMarker(failureList,getFileColumns(fileName,columns,failureList),markerFast);
+
+        }
 
     /**
      * Validates required unique columns are present and are not null or empty.
@@ -248,7 +256,7 @@ class ValidationUtil {
      * @return list
      * @throws MaximumErrorsValidationException maximum error exception
      */
-    private static List<String> getFileColumns(String filepath, List<String> columns, List<Failure> failureList) throws MaximumErrorsValidationException {
+    static List<String> getFileColumns(String filepath, List<String> columns, List<Failure> failureList) throws MaximumErrorsValidationException {
         List<List<String>> fileColumns = new ArrayList<>();
         for (String column : columns) {
             List<String> fileColumn = getFileColumn(filepath, column, failureList);
@@ -335,6 +343,33 @@ class ValidationUtil {
             }
         return true;
     }
+
+    /**
+     * Verifies all the columns are of equal size to the matrix
+     *
+     * @param failureList failure list
+     * @param column file columns
+     * @return status
+     */
+    private static boolean verifyEqualMatrixSizeColumn(List<Failure> failureList, List<String> column,Integer matrixSize) throws MaximumErrorsValidationException {
+        if(matrixSize==null)return true;
+        int size = matrixSize;
+            if (column.size() != size) {
+                createFailure(FailureTypes.INVALID_COLUMN_MATRIX_SIZE + " ("+column.size() + " " + size + ")", new ArrayList<>(), failureList);
+                return false;
+            }
+        return true;
+    }
+
+     static boolean verifyEqualMatrixSizeDnarun(List<Failure> failureList, List<String> fileColumns,boolean markerFast) throws MaximumErrorsValidationException {
+        return verifyEqualMatrixSizeMarker(failureList,fileColumns,!markerFast);
+    }
+     static boolean verifyEqualMatrixSizeMarker(List<Failure> failureList, List<String> fileColumns,boolean markerFast) throws MaximumErrorsValidationException{
+        Integer size = markerFast?CSVFileReaderInterface.getLastMatrixRowSize():CSVFileReaderInterface.getLastMatrixColSize();
+        return verifyEqualMatrixSizeColumn(failureList,fileColumns,size);
+    }
+
+
 
     static void validateDataBasecalls(String fileName, ConditionUnit condition, List<Failure> failureList) {
         try {
