@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiweb.controllers;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobidomain.services.ExperimentService;
 import org.gobiiproject.gobidomain.services.ProjectService;
@@ -18,9 +19,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,6 +77,36 @@ public class SampleTrackingController {
     public @ResponseBody ResponseEntity createProject(@RequestBody ProjectDTO newProject) {
         ProjectDTO createdProject = sampleTrackingProjectService.createProject(newProject);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
+    }
+
+
+    @RequestMapping(value="testStreaming", method=RequestMethod.GET)
+    public ResponseEntity<StreamingResponseBody> testStreaming() {
+        StreamingResponseBody responseBody = new StreamingResponseBody() {
+            @Override
+            public void writeTo (OutputStream out) throws IOException {
+
+                List<String> genotypes = new ArrayList<>();
+                genotypes.add("AA");
+                genotypes.add("GG");
+                genotypes.add("TT");
+                genotypes.add("GT");
+
+                for (int i = 0; i < 1000; i++) {
+
+                    out.write((genotypes.get(i%4) + "\t")
+                            .getBytes());
+                    out.flush();
+                    try {
+                        Thread.sleep(5);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        };
+        return new ResponseEntity(responseBody, HttpStatus.OK);
     }
 
     @RequestMapping(value="/experiments", method=RequestMethod.GET)
