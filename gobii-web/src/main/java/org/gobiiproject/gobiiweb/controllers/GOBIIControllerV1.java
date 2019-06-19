@@ -6,19 +6,7 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Contact;
-import io.swagger.annotations.ExternalDocs;
-import io.swagger.annotations.Info;
-import io.swagger.annotations.License;
-import io.swagger.annotations.SwaggerDefinition;
-import io.swagger.annotations.Tag;
+import io.swagger.annotations.*;
 import org.apache.commons.lang.math.NumberUtils;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.*;
@@ -81,13 +69,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -96,6 +78,7 @@ import java.io.FileInputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Path;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -106,10 +89,11 @@ import java.util.Optional;
 /**
  * Created by MrPhil on 7/6/2015.
  */
+
 @Scope(value = "request")
 @RestController
 @RequestMapping(GobiiControllerType.SERVICE_PATH_GOBII)
-@Api
+@Api()
 public class GOBIIControllerV1 {
 
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(GOBIIControllerV1.class);
@@ -189,6 +173,15 @@ public class GOBIIControllerV1 {
     @Autowired
     private EntityStatsService entityStatsService = null;
 
+    @ApiOperation(value="ping",
+            notes = "Pings the GDB Web server.",
+            tags = {"Ping"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Ping")
+            })
+    }
+    )
     @RequestMapping(value = "/ping", method = RequestMethod.POST)
     @ResponseBody
     public PayloadEnvelope<PingDTO> getPingResponse(@RequestBody PayloadEnvelope<PingDTO> pingDTOPayloadEnvelope) {
@@ -223,16 +216,35 @@ public class GOBIIControllerV1 {
 
     }//getPingResponse()
 
-    @ApiOperation(value = "/auth",
+
+    @ApiOperation(
+            value = "authenticate",
             notes = "The user credentials are specified in the request headers X-Username and X-Password; " +
                     "the response and the response headers include the token in the X-Auth-Token header. " +
-                    "this header and value be " +
-                    "included in the request headers for subsequent " +
-                    "requests. The token value is also supplied in the dtoHeaderAuth object.")
+                    "X-Auth-Token header and value obtained from /auth call will be used as an API-key " +
+                    "for the rest of the GDM calls.",
+            tags = {"Authentication"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Authentication")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Username", value="User Identifier", required=true,
+                    paramType = "header", dataType = "string"),
+            @ApiImplicitParam(name="X-Password", value="User password", required=true,
+                    paramType = "header", dataType = "string"),
+    })
+    @ApiResponses(value={
+            @ApiResponse(code=200, message = "OK", responseHeaders=@ResponseHeader(
+                    name="X-Auth-Token ", description = "API key to authenticate GDM api calls",
+                    response = String.class
+            ))
+    })
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
     @ResponseBody
-    public String authenticate(@RequestBody String noContentExpected,
-                               HttpServletRequest request,
+    public String authenticate(HttpServletRequest request,
                                HttpServletResponse response) {
 
         String returnVal = null;
@@ -262,10 +274,23 @@ public class GOBIIControllerV1 {
 
     }
 
-    @ApiOperation(value = "/configsettings",
-            notes = "Provides generic configuration information about the GOBii instances in " +
-                    "a given deployment. This call does not require authentication")
-    @RequestMapping(value = "/configsettings", method = RequestMethod.GET)
+    @ApiOperation(
+            value = "List all configuration settings.",
+            notes = "List all configuration settings.\n+" +
+                    "Provides generic configuration information about the GOBii instances in " +
+                    "a given deployment. This call does not require authentication",
+            tags = {"ConfigSettings"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="ConfigSettings")
+            })
+    }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
+    @RequestMapping(value = "/configsettings/", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ConfigSettingsDTO> getConfigSettings(
             HttpServletRequest request,
@@ -308,18 +333,31 @@ public class GOBIIControllerV1 {
     }
 
 
-    @ApiOperation(value = "/restprofiles",
-            notes = "When the Header of the payload envelope for a resource contains " +
+    @ApiOperation(
+            value = "/restprofiles/",
+            notes = "Update REST profiles\n" +
+                    "When the Header of the payload envelope for a resource contains " +
                     "maxGet, maxPost, and maxPut values, this resource provides a means " +
                     "to update the max for a given rest resource ID and for a given HTTP verb. " +
                     "The values are transient in the sense that they will be confined only to a " +
                     "specific web service deployment. They are stored in the web service configuration" +
-                    "document")
+                    "document",
+            tags = {"RestProfiles"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="update")
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/restprofiles", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<RestProfileDTO> updateRestProfile(@RequestBody PayloadEnvelope<RestProfileDTO> payloadEnvelope,
-                                                             HttpServletRequest request,
-                                                             HttpServletResponse response) {
+    public PayloadEnvelope<RestProfileDTO> updateRestProfile(
+            @RequestBody PayloadEnvelope<RestProfileDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<RestProfileDTO> returnVal = new PayloadEnvelope<>();
 
@@ -356,13 +394,35 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** ANALYSIS METHODS
     // *********************************************
-    @ApiOperation(value = "/analyses",
-            notes = "Creates an analysis entity. $RequestResponseStructure$")
+    @ApiOperation(
+            value = "Create a new analyses.",
+            notes = "Create analysis entity for GDM system.",
+            tags = {"Analyses"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Analyses"),
+                    @ExtensionProperty(
+                            name="tag-description",
+                            value="Analyses describe the different algorithms " +
+                                    "that were applied to the genotyping or " +
+                                    "sequence data to produce the final dataset being loaded. " +
+                                    "Each analysis is grouped into an analysis type. " +
+                                    "The analysis types are: calling (variant calling), " +
+                                    "cleaning, and imputation. " +
+                                    "Additional analysis types can be added in Controlled Vocabularies")
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/analyses", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<AnalysisDTO> createAnalysis(@ApiParam(required = true) @RequestBody PayloadEnvelope<AnalysisDTO> analysisPostEnvelope,
-                                                       HttpServletRequest request,
-                                                       HttpServletResponse response) {
+    public PayloadEnvelope<AnalysisDTO> createAnalysis(
+            @ApiParam(required = true) @RequestBody PayloadEnvelope<AnalysisDTO> analysisPostEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
 
         PayloadEnvelope<AnalysisDTO> returnVal = new PayloadEnvelope<>();
 
@@ -396,15 +456,27 @@ public class GOBIIControllerV1 {
     }
 
 
-    @ApiOperation(value = "/analyses",
-            notes = "Updates the Analysis entity having the specified analysisId. $RequestResponseStructure$")
+    @ApiOperation(
+            value = "Update the analyses by analysesId",
+            notes = "Updates the Analysis entity having the specified analysisId.",
+            tags = {"Analyses"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Analyses : analysesId")
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/analyses/{analysisId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<AnalysisDTO> replaceAnalysis(@RequestBody PayloadEnvelope<AnalysisDTO> payloadEnvelope,
-                                                        @ApiParam(value = "ID of Analysis to be updated", required = true)
-                                                        @PathVariable("analysisId") Integer analysisId,
-                                                        HttpServletRequest request,
-                                                        HttpServletResponse response) {
+    public PayloadEnvelope<AnalysisDTO> replaceAnalysis(
+            @RequestBody PayloadEnvelope<AnalysisDTO> payloadEnvelope,
+            @ApiParam(value = "ID of Analysis to be updated", required = true)
+            @PathVariable("analysisId") Integer analysisId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<AnalysisDTO> returnVal = new PayloadEnvelope<>();
 
@@ -437,8 +509,19 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
-    @ApiOperation(value = "/analyses",
-            notes = "Retrieves an unfiltered list of all Analysis entities. $RequestResponseStructure$")
+    @ApiOperation(
+            value = "List all analyses",
+            notes = "List of all Analysis entities.",
+            tags = {"Analyses"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Analyses")
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/analyses", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<AnalysisDTO> getAnalyses(HttpServletRequest request,
@@ -472,18 +555,26 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Get an analyses by analysesId",
+            notes = "Get analyses by analyses Id.",
+            tags = {"Analyses"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Analyses : analysesId")
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/analyses/{analysisId:[\\d]+}", method = RequestMethod.GET)
-//    @ApiOperation(value = "/analyses",
-//            notes = "Retrieves the Analysis entity having the specified ID. $RequestResponseStructure$")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "analysisId", value = "Analysis ID", required = true, dataType = "integer", paramType = "path"),
-////            @ApiImplicitParam(name = "email", value = "User's email", required = false, dataType = "string", paramType = "query"),
-////            @ApiImplicitParam(name = "id", value = "User ID", required = true, dataType = "long", paramType = "query")
-//    })
     @ResponseBody
-    public PayloadEnvelope<AnalysisDTO> getAnalysisById(@PathVariable Integer analysisId,
-                                                        HttpServletRequest request,
-                                                        HttpServletResponse response) {
+    public PayloadEnvelope<AnalysisDTO> getAnalysisById(
+            @ApiParam(value = "ID of Analysis to be extracted.", required = true)
+            @PathVariable("analysisId") Integer analysisId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<AnalysisDTO> returnVal = new PayloadEnvelope<>();
 
@@ -518,6 +609,26 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** CONTACT METHODS
     // *********************************************
+    @ApiOperation(
+            value = "Create a new contact",
+            notes = "Create new contact.",
+            tags = {"Contacts"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Contacts"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="A contact is a person who can be assigned different roles " +
+                                            "according to their system access. " +
+                                            "For example, curators can submit and extract all projects and update CV terms."
+                            )
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/contacts", method = RequestMethod.POST)
     @ResponseBody
     public PayloadEnvelope<ContactDTO> createContact(@RequestBody PayloadEnvelope<ContactDTO> payloadEnvelope,
@@ -556,12 +667,28 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Update a contact by contactId",
+            notes = "Update contact by contact id.",
+            tags = {"Contacts"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Contacts : contactId")
+            })
+    }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/contacts/{contactId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<ContactDTO> replaceContact(@RequestBody PayloadEnvelope<ContactDTO> payloadEnvelope,
-                                                      @PathVariable Integer contactId,
-                                                      HttpServletRequest request,
-                                                      HttpServletResponse response) {
+    public PayloadEnvelope<ContactDTO> replaceContact(
+            @RequestBody PayloadEnvelope<ContactDTO> payloadEnvelope,
+            @ApiParam(value = "ID of contacts to be updated.", required = true)
+            @PathVariable("contactId") Integer contactId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
 
@@ -597,11 +724,26 @@ public class GOBIIControllerV1 {
     }
 
 
+    @ApiOperation(
+            value = "Get a contact by contact id",
+            notes = "Get contacts by Contact Id.",
+            tags = {"Contacts"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Contacts : contactId")
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/contacts/{contactId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<ContactDTO> getContactsById(@PathVariable Integer contactId,
-                                                       HttpServletRequest request,
-                                                       HttpServletResponse response) {
+    public PayloadEnvelope<ContactDTO> getContactsById(
+            @ApiParam(value = "ID of contacts to be extracted.", required = true)
+            @PathVariable("contactId") Integer contactId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -638,6 +780,19 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "List all contacts",
+            notes = "List all contacts.",
+            tags = {"Contacts"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Contacts")
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/contacts", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ContactDTO> getContacts(HttpServletRequest request,
@@ -677,12 +832,27 @@ public class GOBIIControllerV1 {
     // capable of generating responses with characteristics not acceptable according to the request "accept" headers."
     // In other words, the email address is telling the server that you're asking for some other format
     // So for email based searches, you'll have to use the request parameter version
+    @ApiOperation(
+            value = "Get contact by email id",
+            notes = "Get contact by email id.",
+            tags = {"Contacts"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Contacts : emailId")
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/contacts/{email:[a-zA-Z-]+@[a-zA-Z-]+.[a-zA-Z-]+}",
             method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<ContactDTO> getContactsByEmail(@PathVariable String email,
-                                                          HttpServletRequest request,
-                                                          HttpServletResponse response) {
+    public PayloadEnvelope<ContactDTO> getContactsByEmail(
+            @ApiParam(value = "email id of contacts to be extracted.", required = true)
+            @PathVariable("email") String email,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -712,16 +882,31 @@ public class GOBIIControllerV1 {
 
     // Example: http://localhost:8282/gobii-dev/gobii/v1/contact-search?email=foo&lastName=bar&firstName=snot
     // all parameters must be present, but they don't all neeed a value
-    @RequestMapping(value = "/contact-search",
+    @ApiOperation(
+            value = "List all contacts from Contacts search",
+            notes = "List contacts for emailid, lastname, firstname, username.",
+            tags = {"Contacts"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="ContactSearch")
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
+    @RequestMapping(
+            value = "/contact-search",
             params = {"email", "lastName", "firstName", "userName"},
             method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<ContactDTO> getContactsBySearch(@RequestParam("email") String email,
-                                                           @RequestParam("lastName") String lastName,
-                                                           @RequestParam("firstName") String firstName,
-                                                           @RequestParam("userName") String userName,
-                                                           HttpServletRequest request,
-                                                           HttpServletResponse response) {
+    public PayloadEnvelope<ContactDTO> getContactsBySearch(
+            @ApiParam(value = "contact's email", required = true) @RequestParam("email") String email,
+            @ApiParam(value = "contact's last name", required = true) @RequestParam("lastName") String lastName,
+            @ApiParam(value = "contact's first name", required = true) @RequestParam("firstName") String firstName,
+            @ApiParam(value = "contact's user name", required = true) @RequestParam("userName") String userName,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -767,11 +952,33 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** CV METHODS
     // *********************************************
+    @ApiOperation(value = "Create a new Controlled Vocabulary",
+            notes = "Creates new cv's.",
+            tags = {"ControlledVocabularies"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Cvs"),
+                    @ExtensionProperty(
+                            name="tag-description",
+                            value="Edit property fields and type fields in the Controlled Vocabulary tables. " +
+                                    "Property fields are identified by the suffix '_prop.' " +
+                                    "These are additional, user-defined fields associated with database tables. " +
+                                    "Type fields are identified by the suffix '_type.' " +
+                                    "These control the entries being loaded to a field and require an exact match. "
+                    )
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/cvs", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<CvDTO> createCv(@RequestBody PayloadEnvelope<CvDTO> payloadEnvelope,
-                                           HttpServletRequest request,
-                                           HttpServletResponse response) {
+    public PayloadEnvelope<CvDTO> createCv(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<CvDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<CvDTO> returnVal = new PayloadEnvelope<>();
 
@@ -805,10 +1012,23 @@ public class GOBIIControllerV1 {
     }
 
 
+    @ApiOperation(value = "Update a CV by cvId",
+            notes = "Update cv by cvId.",
+            tags = {"ControlledVocabularies"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Cvs : cvId")
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/cvs/{cvId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
     public PayloadEnvelope<CvDTO> replaceCv(@RequestBody PayloadEnvelope<CvDTO> payloadEnvelope,
-                                            @PathVariable Integer cvId,
+                                            @ApiParam(value="ID of the CV to be updated", required = true)
+                                            @PathVariable("cvId") Integer cvId,
                                             HttpServletRequest request,
                                             HttpServletResponse response) {
 
@@ -843,6 +1063,18 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(value = "List all CVs",
+            notes = "List all cvs in the GDM.",
+            tags = {"ControlledVocabularies"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Cvs")
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/cvs", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<CvDTO> getCvs(HttpServletRequest request,
@@ -876,11 +1108,25 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(value = "Get a CV by cvId",
+            notes = "Get cv by the id.",
+            tags = {"ControlledVocabularies"},
+            extensions = {
+                @Extension(properties = {
+                       @ExtensionProperty(name="summary", value="Cvs : cvId")
+                })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/cvs/{cvId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<CvDTO> getCvById(@PathVariable Integer cvId,
-                                            HttpServletRequest request,
-                                            HttpServletResponse response) {
+    public PayloadEnvelope<CvDTO> getCvById(
+            @ApiParam(value = "ID of the CV to be extracted") @PathVariable("cvId") Integer cvId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<CvDTO> returnVal = new PayloadEnvelope<>();
 
@@ -911,11 +1157,25 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Delete a CV by cvId",
+            notes = "Deletes cv by id.",
+            tags = {"ControlledVocabularies"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Cvs : cvId")
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/cvs/{cvId:[\\d]+}", method = RequestMethod.DELETE)
     @ResponseBody
-    public PayloadEnvelope<CvDTO> deleteCv(@PathVariable Integer cvId,
-                                           HttpServletRequest request,
-                                           HttpServletResponse response) {
+    public PayloadEnvelope<CvDTO> deleteCv(
+            @ApiParam(value="ID of cv to be deleted", required = true) @PathVariable("cvId") Integer cvId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<CvDTO> returnVal = new PayloadEnvelope<>();
 
@@ -952,11 +1212,26 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "List all CVs in a given groupName",
+            notes = "List cvs by the group name.",
+            nickname = "getCvsByGroupName",
+            tags = {"ControlledVocabularies"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Cvs : groupName")
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/cvs/{groupName:[a-zA-Z_]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<CvDTO> getCvById(@PathVariable("groupName") String groupName,
-                                            HttpServletRequest request,
-                                            HttpServletResponse response) {
+    public PayloadEnvelope<CvDTO> getCvById(
+            @ApiParam(value="name of cv group to be extracted") @PathVariable("groupName") String groupName,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<CvDTO> returnVal = new PayloadEnvelope<>();
 
@@ -990,11 +1265,26 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** CVGROUP METHODS
     // *********************************************
+    @ApiOperation(
+            value = "list",
+            notes = "List CV terms in CV group with cvGroupId",
+            tags = {"ControlledVocabularies"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="CvGroups.cvs")
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/cvgroups/{cvGroupId}/cvs", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<CvDTO> getCvsForCvGroup(@PathVariable Integer cvGroupId,
-                                                   HttpServletRequest request,
-                                                   HttpServletResponse response) {
+    public PayloadEnvelope<CvDTO> getCvsForCvGroup(
+            @ApiParam(value = "ID of the CV group.", required = true)
+            @PathVariable("cvGroupId") Integer cvGroupId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<CvDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1029,11 +1319,26 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Get a CV group by cvGroupTypeId",
+            notes = "Get CV group by cv group type ID",
+            tags = {"ControlledVocabularies"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="CvGroups : cvGroupTypeId")
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/cvgroups/{cvGroupTypeId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<CvGroupDTO> getCvGroupsByType(@PathVariable Integer cvGroupTypeId,
-                                                         HttpServletRequest request,
-                                                         HttpServletResponse response) {
+    public PayloadEnvelope<CvGroupDTO> getCvGroupsByType(
+            @ApiParam(value = "ID of the cv group type", required = true)
+            @PathVariable("cvGroupTypeId") Integer cvGroupTypeId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<CvGroupDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1078,12 +1383,27 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Get a CV group by groupName",
+            notes = "Get CV group by name",
+            tags = {"ControlledVocabularies"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="CvGroups : groupName")
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/cvgroups/{groupName:[a-zA-Z_]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<CvGroupDTO> getCvGroupDetails(@PathVariable("groupName") String groupName,
-                                                         @RequestParam(value = "cvGroupTypeId") Integer cvGroupTypeId,
-                                                         HttpServletRequest request,
-                                                         HttpServletResponse response) {
+    public PayloadEnvelope<CvGroupDTO> getCvGroupDetails(
+            @ApiParam(value = "name of the cv group to be extracted")
+            @PathVariable("groupName") String groupName,
+            @RequestParam(value = "cvGroupTypeId") Integer cvGroupTypeId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<CvGroupDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1121,11 +1441,31 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** DATASET METHODS
     // *********************************************
+    @ApiOperation(
+            value = "Create a new dataset",
+            notes = "Creates a new dataset in the system.",
+            tags = {"Datasets"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Datasets"),
+                    @ExtensionProperty(
+                            name="tag-description",
+                            value="In a Dataset, you can define the suite of analyses" +
+                                    " applied to the data to generate the dataset"
+                    )
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/datasets", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<DataSetDTO> createDataSet(@RequestBody PayloadEnvelope<DataSetDTO> payloadEnvelope,
-                                                     HttpServletRequest request,
-                                                     HttpServletResponse response) {
+    public PayloadEnvelope<DataSetDTO> createDataSet(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<DataSetDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<DataSetDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1159,12 +1499,27 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Update/Replace a dataset by datasetId",
+            notes = "Updates the Dataset entity having the specified datasetId.",
+            tags = {"Datasets"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Datasets : dataSetId")
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/datasets/{dataSetId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<DataSetDTO> replaceDataSet(@RequestBody PayloadEnvelope<DataSetDTO> payloadEnvelope,
-                                                      @PathVariable Integer dataSetId,
-                                                      HttpServletRequest request,
-                                                      HttpServletResponse response) {
+    public PayloadEnvelope<DataSetDTO> replaceDataSet(
+            @RequestBody PayloadEnvelope<DataSetDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Dataset to be updated", required = true)
+            @PathVariable("dataSetId") Integer dataSetId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<DataSetDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1200,14 +1555,30 @@ public class GOBIIControllerV1 {
 
     }
 
-
+    @ApiOperation(
+            value = "List all datasets",
+            notes = "List all the existing datasets in the system. "+
+                    "The list can be retrieved by page and specific page size.",
+            tags = {"Datasets"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Datasets")
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/datasets", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<DataSetDTO> getDataSets(HttpServletRequest request,
-                                                   HttpServletResponse response,
-                                                   @RequestParam("pageSize") Optional<Integer> pageSize,
-                                                   @RequestParam("pageNo") Optional<Integer> pageNo,
-                                                   @RequestParam("queryId") Optional<String> queryId) {
+    public PayloadEnvelope<DataSetDTO> getDataSets(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @ApiParam(value = "Specify the custom page size")
+            @RequestParam("pageSize") Optional<Integer> pageSize,
+            @ApiParam(value = "Retrieve the specified page by number", required = false)
+            @RequestParam("pageNo") Optional<Integer> pageNo,
+            @RequestParam("queryId") Optional<String> queryId) {
 
         PayloadEnvelope<DataSetDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1252,11 +1623,26 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Get dataset by datasetId",
+            notes = "Gets the Dataset entity having the specified ID.",
+            tags = {"Datasets"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Datasets : dataSetId")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/datasets/{dataSetId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<DataSetDTO> getDataSetsById(@PathVariable Integer dataSetId,
-                                                       HttpServletRequest request,
-                                                       HttpServletResponse response) {
+    public PayloadEnvelope<DataSetDTO> getDataSetsById(
+            @ApiParam(value = "ID of the Dataset to be extracted", required = true)
+            @PathVariable("dataSetId") Integer dataSetId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<DataSetDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1286,11 +1672,26 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "List all analyses in a dataset with given datasetId",
+            notes = "Lists all the analysis in a dataset identified by dataset id.",
+            tags = {"Datasets"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Datasets.analyses")
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/datasets/{dataSetId:[\\d]+}/analyses", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<AnalysisDTO> getAnalysesForDataset(@PathVariable Integer dataSetId,
-                                                              HttpServletRequest request,
-                                                              HttpServletResponse response) {
+    public PayloadEnvelope<AnalysisDTO> getAnalysesForDataset(
+            @ApiParam(value = "ID of the dataset", required = true)
+            @PathVariable("dataSetId") Integer dataSetId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<AnalysisDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1320,6 +1721,19 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "List of types of datasets",
+            notes = "Lists dataset types in the system.",
+            tags = {"Datasets"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Datasets.types")
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/datasets/types", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<NameIdDTO> getDataSetsTypes(HttpServletRequest request,
@@ -1358,12 +1772,26 @@ public class GOBIIControllerV1 {
 
     }
 
-
+    @ApiOperation(
+            value = "Get datasets by type id",
+            notes = "Gets the Dataset type by type ID.",
+            tags = {"Datasets"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Datasets.types : id")
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/datasets/types/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<DataSetDTO> getDataSetsByTypeId(@PathVariable Integer id,
-                                                           HttpServletRequest request,
-                                                           HttpServletResponse response) {
+    public PayloadEnvelope<DataSetDTO> getDataSetsByTypeId(
+            @ApiParam(value = "ID of the dataset type", required = true)
+            @PathVariable("id") Integer id,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<DataSetDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1399,11 +1827,26 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "List all jobs for a dataset with datasetId",
+            notes = "List information for active job for a given datasetId",
+            tags = {"Datasets"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Datasets.jobs")
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/datasets/{datasetId}/jobs", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<JobDTO> getJobDetailsByDatasetId(@PathVariable("datasetId") String datasetId,
-                                                            HttpServletRequest request,
-                                                            HttpServletResponse response) {
+    public PayloadEnvelope<JobDTO> getJobDetailsByDatasetId(
+            @ApiParam(value = "ID of the dataset", required = true)
+            @PathVariable("datasetId") String datasetId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1437,11 +1880,26 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** DISPLAY METHODS
     // *********************************************
+    @ApiOperation(
+            value = "Create a new display",
+            notes = "Creates displays in GDM.",
+            tags = {"Displays"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Displays")
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/displays", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<DisplayDTO> createDisplay(@RequestBody PayloadEnvelope<DisplayDTO> payloadEnvelope,
-                                                     HttpServletRequest request,
-                                                     HttpServletResponse response) {
+    public PayloadEnvelope<DisplayDTO> createDisplay(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<DisplayDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<DisplayDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1475,12 +1933,28 @@ public class GOBIIControllerV1 {
     }
 
 
+    @ApiOperation(
+            value = "Update a display with displayId",
+            notes = "Updates the Display entity having the specified displayId.",
+            tags = {"Displays"},
+            extensions = {
+                @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Displays : displayId")
+                })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/displays/{displayId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<DisplayDTO> replaceDisplay(@RequestBody PayloadEnvelope<DisplayDTO> payloadEnvelope,
-                                                      @PathVariable Integer displayId,
-                                                      HttpServletRequest request,
-                                                      HttpServletResponse response) {
+    public PayloadEnvelope<DisplayDTO> replaceDisplay(
+            @RequestBody PayloadEnvelope<DisplayDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Display to be updated", required = true)
+            @PathVariable("displayId") Integer displayId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<DisplayDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1513,6 +1987,20 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "List all displays",
+            notes = "Lists all Displays in GDM",
+            tags = {"Displays"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Displays")
+            })
+    }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/displays", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<DisplayDTO> getDisplays(HttpServletRequest request,
@@ -1546,11 +2034,26 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Get a display by displayId",
+            notes = "Get the Display by display Id",
+            tags = {"Displays"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Displays : displayId")
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/displays/{displayId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<DisplayDTO> getDisplayById(@PathVariable Integer displayId,
-                                                      HttpServletRequest request,
-                                                      HttpServletResponse response) {
+    public PayloadEnvelope<DisplayDTO> getDisplayById(
+            @ApiParam(value = "ID of the Display to be extracted", required = true)
+            @PathVariable("displayId") Integer displayId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<DisplayDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1585,11 +2088,26 @@ public class GOBIIControllerV1 {
     // *************************** LOADER INSTRUCTION METHODS
     // *********************************************
 
+    @ApiOperation(
+            value = "Create loader instruction file",
+            notes = "Creates loader instruction file and then submits a new Job.",
+            tags = {"Instructions"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Loader")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/instructions/loader", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<LoaderInstructionFilesDTO> createLoaderInstruction(@RequestBody PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope,
-                                                                              HttpServletRequest request,
-                                                                              HttpServletResponse response) {
+    public PayloadEnvelope<LoaderInstructionFilesDTO> createLoaderInstruction(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<LoaderInstructionFilesDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1624,11 +2142,26 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Get a loader instruction file",
+            notes = "Gets the loader instruction file entity having the specified instruction file name.",
+            tags = {"Instructions"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Loader : instructionFileName")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/instructions/loader/{instructionFileName}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<LoaderInstructionFilesDTO> getLoaderInstruction(@PathVariable("instructionFileName") String instructionFileName,
-                                                                           HttpServletRequest request,
-                                                                           HttpServletResponse response) {
+    public PayloadEnvelope<LoaderInstructionFilesDTO> getLoaderInstruction(
+            @ApiParam(value = "Name of the instruction file to be retrieved.", required = true)
+            @PathVariable("instructionFileName") String instructionFileName,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<LoaderInstructionFilesDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1660,11 +2193,26 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Get loader job status by job name",
+            notes = "Gets the loading job status along with other job details having the specified Job Name.",
+            tags = {"Instructions"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Loader.jobs : jobName")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/instructions/loader/jobs/{jobName}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<JobDTO> getLoaderInstructionStatus(@PathVariable("jobName") String jobName,
-                                                              HttpServletRequest request,
-                                                              HttpServletResponse response) {
+    public PayloadEnvelope<JobDTO> getLoaderInstructionStatus(
+            @ApiParam(value = "Name of the job", required =  true)
+            @PathVariable("jobName") String jobName,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1700,11 +2248,26 @@ public class GOBIIControllerV1 {
     // *************************** EXTRACTOR INSTRUCTION METHODS
     // *********************************************
 
+    @ApiOperation(
+            value = "Create an extractor instruction file",
+            notes = "Creates extractor instruction file and then submits a new Job.",
+            tags = {"Instructions"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Extractor")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/instructions/extractor", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<ExtractorInstructionFilesDTO> createExtractorInstruction(@RequestBody PayloadEnvelope<ExtractorInstructionFilesDTO> payloadEnvelope,
-                                                                                    HttpServletRequest request,
-                                                                                    HttpServletResponse response) {
+    public PayloadEnvelope<ExtractorInstructionFilesDTO> createExtractorInstruction(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<ExtractorInstructionFilesDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ExtractorInstructionFilesDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1740,12 +2303,26 @@ public class GOBIIControllerV1 {
 
     }
 
-
+    @ApiOperation(
+            value = "Download an extractor instructor file",
+            notes = "Retrieves the extractor instruction file entity having the specified instruction file name.",
+            tags = {"Instructions"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Extractor : instructionFileName")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/instructions/extractor/{instructionFileName}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<ExtractorInstructionFilesDTO> getExtractorInstruction(@PathVariable("instructionFileName") String instructionFileName,
-                                                                                 HttpServletRequest request,
-                                                                                 HttpServletResponse response) {
+    public PayloadEnvelope<ExtractorInstructionFilesDTO> getExtractorInstruction(
+            @ApiParam(value = "Name of the instruction file to be retrieved", required = true)
+            @PathVariable("instructionFileName") String instructionFileName,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ExtractorInstructionFilesDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1777,11 +2354,26 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Get extractor job status by jobName",
+            notes = "Retrieves the extract job status along with other job details having the specified Job Name.",
+            tags = {"Instructions"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Extractor.jobs : jobName")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/instructions/extractor/jobs/{jobName}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<JobDTO> getExtractorInstructionStatus(@PathVariable("jobName") String jobName,
-                                                                 HttpServletRequest request,
-                                                                 HttpServletResponse response) {
+    public PayloadEnvelope<JobDTO> getExtractorInstructionStatus(
+            @ApiParam(value = "Name of the job", required = true)
+            @PathVariable("jobName") String jobName,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1816,11 +2408,32 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** MANIFEST METHODS
     // *********************************************
+    @ApiOperation(
+            value = "Create a manifest",
+            notes = "Creates a Manifest entity for GOBii system.",
+            tags = {"Manifests"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Manifests"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="A fixed set of markers that run in a single reaction. " +
+                                            "Use the manifest to extract data by the manifest name, " +
+                                            "rather than listing the markers contained in the manifest."
+                            )
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/manifests", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<ManifestDTO> createManifest(@RequestBody PayloadEnvelope<ManifestDTO> payloadEnvelope,
-                                                       HttpServletRequest request,
-                                                       HttpServletResponse response) {
+    public PayloadEnvelope<ManifestDTO> createManifest(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<ManifestDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ManifestDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1853,12 +2466,27 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Update a manifest",
+            notes = "Updates the Manifest entity having the specified manifestId.",
+            tags = {"Manifests"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Manifests : manifestId")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/manifests/{manifestId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<ManifestDTO> replaceManifest(@RequestBody PayloadEnvelope<ManifestDTO> payloadEnvelope,
-                                                        @PathVariable Integer manifestId,
-                                                        HttpServletRequest request,
-                                                        HttpServletResponse response) {
+    public PayloadEnvelope<ManifestDTO> replaceManifest(
+            @RequestBody PayloadEnvelope<ManifestDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Manifest to be updated", required = true)
+            @PathVariable("manifestId") Integer manifestId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ManifestDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1891,7 +2519,19 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
-
+    @ApiOperation(
+            value = "List all manifests",
+            notes = "Lists an unfiltered list of all Manifest entities.",
+            tags = {"Manifests"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Manifests")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/manifests", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ManifestDTO> getManifests(HttpServletRequest request,
@@ -1925,11 +2565,26 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Get manifests by manifestId",
+            notes = "Gets the Manifest entity having the specified ID.",
+            tags = {"Manifests"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Manifests : manifestId")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/manifests/{manifestId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<ManifestDTO> getManifestById(@PathVariable Integer manifestId,
-                                                        HttpServletRequest request,
-                                                        HttpServletResponse response) {
+    public PayloadEnvelope<ManifestDTO> getManifestById(
+            @ApiParam(value = "ID of the Manifest to be retrieved", required = true)
+            @PathVariable("manifestId") Integer manifestId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ManifestDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1963,11 +2618,32 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** MARKER METHODS
     // *********************************************
+    @ApiOperation(
+            value = "Create a new marker",
+            notes = "Creates a new marker in the system.",
+            tags = {"Markers"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Markers"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="A Marker Group defines a group of markers, " +
+                                            "the marker platform, and any optional favorable alleles for each marker."
+                            )
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/markers", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<MarkerDTO> createMarker(@RequestBody PayloadEnvelope<MarkerDTO> payloadEnvelope,
-                                                   HttpServletRequest request,
-                                                   HttpServletResponse response) {
+    public PayloadEnvelope<MarkerDTO> createMarker(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<MarkerDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<MarkerDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -2001,12 +2677,28 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Update a marker by markerId",
+            notes = "Updates the Marker entity having the specified markerId.",
+            tags = {"Markers"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Markers : markerId")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/markers/{markerId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<MarkerDTO> replaceMarker(@RequestBody PayloadEnvelope<MarkerDTO> payloadEnvelope,
-                                                    @PathVariable Integer markerId,
-                                                    HttpServletRequest request,
-                                                    HttpServletResponse response) {
+    public PayloadEnvelope<MarkerDTO> replaceMarker(
+            @RequestBody PayloadEnvelope<MarkerDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Marker to be updated", required = true)
+            @PathVariable("markerId") Integer markerId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<MarkerDTO> returnVal = new PayloadEnvelope<>();
 
@@ -2042,7 +2734,19 @@ public class GOBIIControllerV1 {
 
     }
 
-
+    @ApiOperation(
+            value = "List all markers",
+            notes = "Lists all the existing markers in the system.",
+            tags = {"Markers"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Markers")                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/markers", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<MarkerDTO> getMarkers(HttpServletRequest request,
@@ -2078,11 +2782,27 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Get a marker by markerId",
+            notes = "Retrieves the Marker entity having the specified ID.",
+            tags = {"Markers"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Markers : markerId")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/markers/{markerId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<MarkerDTO> getMarkerById(@PathVariable Integer markerId,
-                                                    HttpServletRequest request,
-                                                    HttpServletResponse response) {
+    public PayloadEnvelope<MarkerDTO> getMarkerById(
+            @ApiParam(value = "ID of the Marker to be extracted", required = true)
+            @PathVariable("markerId") Integer markerId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<MarkerDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -2113,13 +2833,29 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "List all markers from markers search",
+            notes = "List Marker search results.",
+            tags = {"Markers"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="MarkerSearch")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/marker-search",
             params = {"name"},
             method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<MarkerDTO> getMarkerByName(@RequestParam("name") String name,
-                                                      HttpServletRequest request,
-                                                      HttpServletResponse response) {
+    public PayloadEnvelope<MarkerDTO> getMarkerByName(
+            @ApiParam(value = "Name of the marker", required = true)
+            @RequestParam("name") String name,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<MarkerDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -2153,14 +2889,38 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** NameIDList
     // *********************************************
+
+    @ApiOperation(
+            value = "List all NameIds",
+            notes = "List of name/ID combination for a given entity. " +
+                    "For the list of entities supported see class GobiiEntityNameType." +
+                    "List can further be filtered out by specifying the filter type and value." +
+                    "For the list of filter types supported see class GobiiFilterType." +
+                    "Example use case: entity = CV; filterType = NAMES_BY_TYPE_NAME; filterValue = status" +
+                    "Result will be a list of CV terms having status as the cv group",
+            tags = {"Names"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Names : entity")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/names/{entity}",
             method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<NameIdDTO> getNames(@PathVariable("entity") String entity,
-                                               @RequestParam(value = "filterType", required = false) String filterType,
-                                               @RequestParam(value = "filterValue", required = false) String filterValue,
-                                               HttpServletRequest request,
-                                               HttpServletResponse response) {
+    public PayloadEnvelope<NameIdDTO> getNames(
+            @ApiParam(value = "The entity to be retrieved", required = true)
+            @PathVariable("entity") String entity,
+            @ApiParam(value = "The filter type for the name list")
+            @RequestParam(value = "filterType", required = false) String filterType,
+            @ApiParam(value = "The value for the filter type")
+            @RequestParam(value = "filterValue", required = false) String filterValue,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<NameIdDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -2276,15 +3036,42 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Create a new NameID",
+            notes = "Retrieves a list of name/ID combination for a given entity and name list. " +
+                    "For the list of entities supported see class GobiiEntityNameType." +
+                    "This is service is specifically implemented for these filter types: " +
+                    "NAMES_BY_NAME_LIST - given a list of names, return the same list with the corresponding ID in the database. If name doesn't exist, ID will be 0." +
+                    "NAMES_BY_NAME_LIST_RETURN_EXISTS - given a list of names, return the list of names with ID that exists in the database." +
+                    "NAMES_BY_NAME_LIST_RETURN_ABSENT - given a list of names, return the list of names that doesn't exist in the database with 0 as the ID" +
+                    "Filter value varies per entity. This can be cv group name, project ID, platform ID, etc." +
+                    "Example use case: entity = CV; filterType = NAMES_BY_NAME_LIST; filterValue = germplasm_type" +
+                    "Result will be a list of CV terms with ID having germplasm_type as the cv group",
+            tags = {"Names"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Names : entity")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/names/{entity}",
             method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<NameIdDTO> getNamesByNameList(@RequestBody PayloadEnvelope<NameIdDTO> payloadEnvelope,
-                                                         @PathVariable("entity") String entity,
-                                                         @RequestParam(value = "filterType", required = false) String filterType,
-                                                         @RequestParam(value = "filterValue", required = false) String filterValue,
-                                                         HttpServletRequest request,
-                                                         HttpServletResponse response) {
+    public PayloadEnvelope<NameIdDTO> getNamesByNameList(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<NameIdDTO> payloadEnvelope,
+            @ApiParam(value = "The entity to be retrieved", required = true)
+            @PathVariable("entity") String entity,
+            @ApiParam(value = "The filter type for the name list")
+            @RequestParam(value = "filterType", required = false) String filterType,
+            @ApiParam(value = "The value for the filter type")
+            @RequestParam(value = "filterValue", required = false) String filterValue,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<NameIdDTO> returnVal = new PayloadEnvelope<>();
 
@@ -2421,12 +3208,35 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** ORGANIZATION METHODS
     // *********************************************
-
+    @ApiOperation(
+            value = "Create a new organization",
+            notes = "Creates a new organization in the system.",
+            tags = {"Organizations"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Organizations"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="Organization is a company or institute. " +
+                                            "Organization may be associated with a contact " +
+                                            "in the Define Contacts page. An organization can " +
+                                            "also describe a vendor and be associated with a " +
+                                            "protocol to create a vendor-protocol in the Define Protocols page."
+                            )
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/organizations", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<OrganizationDTO> createOrganization(@RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
-                                                               HttpServletRequest request,
-                                                               HttpServletResponse response) {
+    public PayloadEnvelope<OrganizationDTO> createOrganization(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -2459,12 +3269,28 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Update an organization by organizationId",
+            notes = "Updates the Organization entity having the specified organizationId.",
+            tags = {"Organizations"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Organizations : organizationId")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/organizations/{organizationId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<OrganizationDTO> replaceOrganization(@RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
-                                                                @PathVariable Integer organizationId,
-                                                                HttpServletRequest request,
-                                                                HttpServletResponse response) {
+    public PayloadEnvelope<OrganizationDTO> replaceOrganization(
+            @RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Organization to be updated", required = true)
+            @PathVariable("organizationId") Integer organizationId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
 
@@ -2500,7 +3326,20 @@ public class GOBIIControllerV1 {
 
     }
 
-
+    @ApiOperation(
+            value = "List all organizations",
+            notes = "List all the existing organizations in the system.",
+            tags = {"Organizations"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Organizations")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/organizations", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<OrganizationDTO> getOrganizations(HttpServletRequest request,
@@ -2536,11 +3375,27 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Get organization by organizationId",
+            notes = "Retrieves the Organization entity having the specified ID.",
+            tags = {"Organizations"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Organizations : organizationId")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/organizations/{organizationId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<OrganizationDTO> getOrganizationsById(@PathVariable Integer organizationId,
-                                                                 HttpServletRequest request,
-                                                                 HttpServletResponse response) {
+    public PayloadEnvelope<OrganizationDTO> getOrganizationsById(
+            @ApiParam(value = "ID of the Organization to be extracted", required = true)
+            @PathVariable("organizationId") Integer organizationId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -2582,6 +3437,27 @@ public class GOBIIControllerV1 {
      * not been modified. This funcitonality will have to be built out later.
      * Also note that the resource name /maps is correct but does not match
      * what is being used in ResourceBuilder on the client side*/
+    @ApiOperation(
+            value = "List all mapsets",
+            notes = "Lists all the existing Mapsets in the system.",
+            tags = {"Maps"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Maps"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="A mapset describes distances between " +
+                                            "markers and their association to linkage " +
+                                            "groups or chromosomes. A marker can belong to, " +
+                                            "or be mapped to, one or multiple mapsets."
+                            )
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/maps", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<MapsetDTO> getMaps(HttpServletRequest request,
@@ -2619,12 +3495,42 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** PLATFORM METHODS
     // *********************************************
-
+    @ApiOperation(
+            value = "Create a new platform",
+            notes = "Creates a new Platform in the system.",
+            tags = {"Platforms"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Platforms"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="The platform describes the general chemistry used to generate marker genotyping data. " +
+                                            "Examples of platforms are KASP, Illumina, etc. All markers must be associated with a platform.\n" +
+                                            "There are several considerations for defining platforms.\n" +
+                                            "1. Consistency of data generated: the expectation is that within each platform, the genotyping data " +
+                                            "generated by a marker name should give consistent results to allow for future composite scores by marker. " +
+                                            "A marker that generates data using different chemistry or separation methods would likely give different results " +
+                                            "and should be placed in separate platforms (or given a different marker name).\n" +
+                                            "2. Avoiding unnecessary duplication of marker names:  if five different sequencing methods each " +
+                                            "produce the same or overlapping marker names that give equivalent genotyping scores, they should " +
+                                            "all be placed under a single platform. For example, \"Sequencing,\" and the five methods described using protocols. \n" +
+                                            "3. Extract requirements: one of the primary extracts will be by   platform, and so consider how the " +
+                                            "user will want to extract data."
+                            )
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/platforms", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<PlatformDTO> createPlatform(@RequestBody PayloadEnvelope<PlatformDTO> payloadEnvelope,
-                                                       HttpServletRequest request,
-                                                       HttpServletResponse response) {
+    public PayloadEnvelope<PlatformDTO> createPlatform(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<PlatformDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<PlatformDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -2658,12 +3564,28 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Update a platform by platformId",
+            notes = "Updates the Platform entity having the specified platformId.",
+            tags = {"Platforms"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Platforms : platformId")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/platforms/{platformId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<PlatformDTO> replacePlatform(@RequestBody PayloadEnvelope<PlatformDTO> payloadEnvelope,
-                                                        @PathVariable Integer platformId,
-                                                        HttpServletRequest request,
-                                                        HttpServletResponse response) {
+    public PayloadEnvelope<PlatformDTO> replacePlatform(
+            @RequestBody PayloadEnvelope<PlatformDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Platform to be updated", required = true)
+            @PathVariable("platformId") Integer platformId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<PlatformDTO> returnVal = new PayloadEnvelope<>();
 
@@ -2699,7 +3621,20 @@ public class GOBIIControllerV1 {
 
     }
 
-
+    @ApiOperation(
+            value = "List all platforms",
+            notes = "List all the existing platforms in the system.",
+            tags = {"Platforms"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Platforms")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/platforms", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<PlatformDTO> getPlatforms(HttpServletRequest request,
@@ -2735,11 +3670,27 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Get a platform by platformId",
+            notes = "Retrieves the Platform entity having the specified ID.",
+            tags = {"Platforms"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Platforms : platformId")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/platforms/{platformId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<PlatformDTO> getPlatformsById(@PathVariable Integer platformId,
-                                                         HttpServletRequest request,
-                                                         HttpServletResponse response) {
+    public PayloadEnvelope<PlatformDTO> getPlatformsById(
+            @ApiParam(value = "ID of the Platform to be extracted", required = true)
+            @PathVariable("platformId") Integer platformId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<PlatformDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -2771,11 +3722,27 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "GET /platforms/protocols/{vendorProtocolId}",
+            notes = "Gets the Platform entity having the specified Vendor Protocol ID.",
+            tags = {"Platforms"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Protocols : vendorProtocolId")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/platforms/protocols/{vendorProtocolId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<PlatformDTO> getPlatformDetailsByVendorProtocolId(@PathVariable Integer vendorProtocolId,
-                                                                             HttpServletRequest request,
-                                                                             HttpServletResponse response) {
+    public PayloadEnvelope<PlatformDTO> getPlatformDetailsByVendorProtocolId(
+            @ApiParam(value = "ID of the vendor protocol", required = true)
+            @PathVariable("vendorProtocolId") Integer vendorProtocolId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<PlatformDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -2811,11 +3778,33 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** PROJECT METHODS
     // *********************************************
+    @ApiOperation(
+            value = "Create a new project",
+            notes = "Creates a new project in the system.",
+            tags = {"Projects"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Projects"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="A project consists of a group of samples that are, " +
+                                            "or will be, genotyped. A project belongs to a Principal Investigator (PI), " +
+                                            "also called a PI contact. "
+                            )
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/projects", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<ProjectDTO> createProject(@RequestBody PayloadEnvelope<ProjectDTO> payloadEnvelope,
-                                                     HttpServletRequest request,
-                                                     HttpServletResponse response) {
+    public PayloadEnvelope<ProjectDTO> createProject(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<ProjectDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ProjectDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -2849,12 +3838,27 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Update a project by projectId",
+            notes = "Updates the Project entity having the specified projectId.",
+            tags = {"Projects"},
+            extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name="summary", value="Projects : projectId")
+            })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/projects/{projectId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<ProjectDTO> replaceProject(@RequestBody PayloadEnvelope<ProjectDTO> payloadEnvelope,
-                                                      @PathVariable Integer projectId,
-                                                      HttpServletRequest request,
-                                                      HttpServletResponse response) {
+    public PayloadEnvelope<ProjectDTO> replaceProject(
+            @RequestBody PayloadEnvelope<ProjectDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Project to be updated", required = true)
+            @PathVariable("projectId") Integer projectId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ProjectDTO> returnVal = new PayloadEnvelope<>();
 
@@ -2890,7 +3894,19 @@ public class GOBIIControllerV1 {
 
     }
 
-
+    @ApiOperation(
+            value = "List all projects",
+            notes = "List all the existing projects in the system.",
+            tags = {"Projects"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Projects")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/projects", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ProjectDTO> getProjects(HttpServletRequest request,
@@ -2926,11 +3942,26 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Get a project by projectId",
+            notes = "Retrieves the Project entity having the specified ID.",
+            tags = {"Projects"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Projects : projectId")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/projects/{projectId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<ProjectDTO> getProjectsById(@PathVariable Integer projectId,
-                                                       HttpServletRequest request,
-                                                       HttpServletResponse response) {
+    public PayloadEnvelope<ProjectDTO> getProjectsById(
+            @ApiParam(value = "ID of the Project to be extracted", required = true)
+            @PathVariable("projectId") Integer projectId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ProjectDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -2965,11 +3996,31 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** EXPERIMENT METHODS
     // *********************************************
+    @ApiOperation(
+            value = "Create a new experiment",
+            notes = "Creates a new experiment in the system.",
+            tags = {"Experiments"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Experiments"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="An experiment defines the protocol and vendor" +
+                                            " used to generate the genotyping data. More than one experiment can belong to a project."
+                            )
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/experiments", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<ExperimentDTO> createExperiment(@RequestBody PayloadEnvelope<ExperimentDTO> payloadEnvelope,
-                                                           HttpServletRequest request,
-                                                           HttpServletResponse response) {
+    public PayloadEnvelope<ExperimentDTO> createExperiment(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<ExperimentDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ExperimentDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -3002,12 +4053,27 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Update an experiment by experimentId",
+            notes = "Updates the Experiment entity having the specified experimentId.",
+            tags = {"Experiments"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Experiments : experimentId")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/experiments/{experimentId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<ExperimentDTO> replaceExperiment(@RequestBody PayloadEnvelope<ExperimentDTO> payloadEnvelope,
-                                                            @PathVariable Integer experimentId,
-                                                            HttpServletRequest request,
-                                                            HttpServletResponse response) {
+    public PayloadEnvelope<ExperimentDTO> replaceExperiment(
+            @RequestBody PayloadEnvelope<ExperimentDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Experiment to be updated", required = true)
+            @PathVariable("experimentId") Integer experimentId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ExperimentDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3044,7 +4110,19 @@ public class GOBIIControllerV1 {
 
     }
 
-
+    @ApiOperation(
+            value = "List all experiments",
+            notes = "List all the existing experiments in the system.",
+            tags = {"Experiments"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Experiments")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/experiments", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ExperimentDTO> getExperiments(HttpServletRequest request,
@@ -3080,11 +4158,26 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Get a experiment by experimentId",
+            notes = "Gets the Experiment entity having the specified ID.",
+            tags = {"Experiments"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Experiments : experimentId")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/experiments/{experimentId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<ExperimentDTO> getExperimentsById(@PathVariable Integer experimentId,
-                                                             HttpServletRequest request,
-                                                             HttpServletResponse response) {
+    public PayloadEnvelope<ExperimentDTO> getExperimentsById(
+            @ApiParam(value = "ID of the Experiment to be updated", required = true)
+            @PathVariable("experimentId") Integer experimentId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ExperimentDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -3118,11 +4211,38 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** PROTOCOL METHODS
     // *********************************************
+    @ApiOperation(
+            value = "Create a new protocol",
+            notes = "Creates a new Protocol in the system.",
+            tags = {"Protocols"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Protocols"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="Protocols are grouped within platforms. " +
+                                            "Protocol defines the specific method that " +
+                                            "is used to generate the genotyping data for a " +
+                                            "set of markers within a platform. There could be" +
+                                            " minor differences in the genotyping data generated " +
+                                            "by different protocols within the same platform, but the " +
+                                            "data should not be substantially different for the " +
+                                            "same marker for the same marker. Examples of protocols " +
+                                            "are different enzymes used to generate GbS data within a sequencing platform."
+                            )
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/protocols", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<ProtocolDTO> createProtocol(@RequestBody PayloadEnvelope<ProtocolDTO> payloadEnvelope,
-                                                       HttpServletRequest request,
-                                                       HttpServletResponse response) {
+    public PayloadEnvelope<ProtocolDTO> createProtocol(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<ProtocolDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ProtocolDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -3154,12 +4274,27 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Update a protocol by protocolId",
+            notes = "Updates the Protocol entity having the specified protocolId.",
+            tags = {"Protocols"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Protocols : protocolId")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/protocols/{protocolId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<ProtocolDTO> replaceProtocol(@RequestBody PayloadEnvelope<ProtocolDTO> payloadEnvelope,
-                                                        @PathVariable Integer protocolId,
-                                                        HttpServletRequest request,
-                                                        HttpServletResponse response) {
+    public PayloadEnvelope<ProtocolDTO> replaceProtocol(
+            @RequestBody PayloadEnvelope<ProtocolDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Protocol to be updated", required = true)
+            @PathVariable("protocolId") Integer protocolId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ProtocolDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3192,11 +4327,27 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Get a protocol by protocolId",
+            notes = "Retrieves the Protocol entity having the specified ID.",
+            nickname = "getProtocol",
+            tags = {"Protocols"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Protocols : protocolId")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/protocols/{protocolId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<ProtocolDTO> replaceProtocol(@PathVariable Integer protocolId,
-                                                        HttpServletRequest request,
-                                                        HttpServletResponse response) {
+    public PayloadEnvelope<ProtocolDTO> replaceProtocol(
+            @ApiParam(value = "ID of the Protocol to be extracted", required = true)
+            @PathVariable("protocolId") Integer protocolId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ProtocolDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3228,6 +4379,19 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "List all protocols",
+            notes = "List all the existing protocols in the system.",
+            tags = {"Protocols"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Protocols")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/protocols", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ProtocolDTO> getProtocols(HttpServletRequest request,
@@ -3262,12 +4426,34 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Create new vendors for a given protocolId",
+            notes = "Creates a new Vendor Protocol in the system for specified Protocol ID.",
+            tags = {"Protocols.vendor"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Protocols.vendors"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="Selection of a vendor allows for a unique combination of the vendor" +
+                                            " and protocol to be defined. Vendor names are generated in Define | Organization. " +
+                                            "For additional information, refer to Organizations."
+                            )
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/protocols/{protocolId:[\\d]+}/vendors", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<OrganizationDTO> addVendorToProtocol(@RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
-                                                                @PathVariable Integer protocolId,
-                                                                HttpServletRequest request,
-                                                                HttpServletResponse response) {
+    public PayloadEnvelope<OrganizationDTO> addVendorToProtocol(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Protocol")
+            @PathVariable("protocolId") Integer protocolId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3301,12 +4487,27 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Update vendors for a given protocolId",
+            notes = "Updates the Vendor Protocol entity having the specified protocolId.",
+            tags = {"Protocols"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Protocols.vendors")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/protocols/{protocolId:[\\d]+}/vendors", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<OrganizationDTO> updateOrReplaceVendorProtocol(@RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
-                                                                          @PathVariable Integer protocolId,
-                                                                          HttpServletRequest request,
-                                                                          HttpServletResponse response) {
+    public PayloadEnvelope<OrganizationDTO> updateOrReplaceVendorProtocol(
+            @RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Protocol", required = true)
+            @PathVariable("protocolId") Integer protocolId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3340,11 +4541,26 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "List all vendors for a given protocolId",
+            notes = "List all the vendor protocols given protocolId in the system.",
+            tags = {"Protocols"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Protocols.vendors")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/protocols/{protocolId:[\\d]+}/vendors", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<OrganizationDTO> getVendorsForProtocol(@PathVariable Integer protocolId,
-                                                                  HttpServletRequest request,
-                                                                  HttpServletResponse response) {
+    public PayloadEnvelope<OrganizationDTO> getVendorsForProtocol(
+            @ApiParam(value = "ID of the Protocol ID", required = true)
+            @PathVariable("protocolId") Integer protocolId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3383,11 +4599,26 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "List all protocols for a given experimentId",
+            notes = "Retrieves all the protocols having the specified experimentId in the system.",
+            tags = {"Experiments"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Experiments.protocols")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/experiments/{experimentId:[\\d]+}/protocols", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<ProtocolDTO> getProtocolByExperimentId(@PathVariable Integer experimentId,
-                                                                  HttpServletRequest request,
-                                                                  HttpServletResponse response) {
+    public PayloadEnvelope<ProtocolDTO> getProtocolByExperimentId(
+            @ApiParam(value = "ID of the Experiment", required = true)
+            @PathVariable("experimentId") Integer experimentId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ProtocolDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -3421,13 +4652,27 @@ public class GOBIIControllerV1 {
     // *************************** FILE PREVIEW METHODS
     // *********************************************
 
-
+    @ApiOperation(
+            value = "Add a loader file to given directory",
+            notes = "Updates a directory in the system that will be used for storing the data files for loading",
+            tags = {"Files"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Loader : directoryName")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/files/loader/{directoryName}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<LoaderFilePreviewDTO> createLoaderFileDirectory(@PathVariable("directoryName") String directoryName,
-                                                                           @RequestBody PayloadEnvelope<LoaderFilePreviewDTO> payloadEnvelope,
-                                                                           HttpServletRequest request,
-                                                                           HttpServletResponse response) {
+    public PayloadEnvelope<LoaderFilePreviewDTO> createLoaderFileDirectory(
+            @ApiParam(value = "Name of the directory/folder", required = true)
+            @PathVariable("directoryName") String directoryName,
+            @RequestBody PayloadEnvelope<LoaderFilePreviewDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<LoaderFilePreviewDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -3460,14 +4705,30 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "List of loader files in a given directory",
+            notes = "Gets file preview for the specified directory name",
+            tags = {"Files"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Loader : directoryName")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/files/loader/{directoryName}",
             params = {"fileFormat"},
             method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<LoaderFilePreviewDTO> getFilePreviewBySearch(@PathVariable("directoryName") String directoryName,
-                                                                        @RequestParam(value = "fileFormat", required = false) String fileFormat,
-                                                                        HttpServletRequest request,
-                                                                        HttpServletResponse response) {
+    public PayloadEnvelope<LoaderFilePreviewDTO> getFilePreviewBySearch(
+            @ApiParam(value = "Name of the directory", required = true)
+            @PathVariable("directoryName") String directoryName,
+            @ApiParam(value = "Format/Extension of the file")
+            @RequestParam(value = "fileFormat", required = false) String fileFormat,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<LoaderFilePreviewDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -3502,11 +4763,33 @@ public class GOBIIControllerV1 {
     // *************************** MAPSET METHODS
     // *********************************************
 
+    @ApiOperation(
+            value = "Create a new Mapset",
+            notes = "Creates a new mapset in the system.",
+            tags = {"Maps"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Mapsets"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="A mapset describes distances between " +
+                                            "markers and their association to linkage " +
+                                            "groups or chromosomes. A marker can belong to, " +
+                                            "or be mapped to, one or multiple mapsets."
+                            )
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/mapsets", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<MapsetDTO> createMapset(@RequestBody PayloadEnvelope<MapsetDTO> payloadEnvelope,
-                                                   HttpServletRequest request,
-                                                   HttpServletResponse response) {
+    public PayloadEnvelope<MapsetDTO> createMapset(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<MapsetDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<MapsetDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3539,12 +4822,27 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Update a mapset by mapsetId",
+            notes = "Updates the Mapset entity having the specified mapsetId.",
+            tags = {"Maps"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Mapsets : mapsetId")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/mapsets/{mapsetId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<MapsetDTO> replaceMapset(@RequestBody PayloadEnvelope<MapsetDTO> payloadEnvelope,
-                                                    @PathVariable Integer mapsetId,
-                                                    HttpServletRequest request,
-                                                    HttpServletResponse response) {
+    public PayloadEnvelope<MapsetDTO> replaceMapset(
+            @RequestBody PayloadEnvelope<MapsetDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Mapset to be updated", required = true)
+            @PathVariable("mapsetId") Integer mapsetId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<MapsetDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3577,6 +4875,19 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "List all mapsets",
+            notes = "List all the existing mapsets in the system.",
+            tags = {"Maps"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Mapsets")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/mapsets", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<MapsetDTO> getMapsets(HttpServletRequest request,
@@ -3610,11 +4921,26 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Get mapsets by mapsetId",
+            notes = "Gets the Mapset entity having the specified ID.",
+            tags = {"Maps"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Mapsets : mapsetId")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/mapsets/{mapsetId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<MapsetDTO> getMapsetById(@PathVariable Integer mapsetId,
-                                                    HttpServletRequest request,
-                                                    HttpServletResponse response) {
+    public PayloadEnvelope<MapsetDTO> getMapsetById(
+            @ApiParam(value = "ID of the Mapset to be extracted", required = true)
+            @PathVariable("mapsetId") Integer mapsetId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<MapsetDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3648,12 +4974,26 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** MARKERGROUP METHODS
     // *********************************************
-
+    @ApiOperation(
+            value = "Create a new Marker group",
+            notes = "Creates a new marker group in the system.",
+            tags = {"Markers"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="MarkerGroups")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/markergroups", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<MarkerGroupDTO> createMarkerGroup(@RequestBody PayloadEnvelope<MarkerGroupDTO> payloadEnvelope,
-                                                             HttpServletRequest request,
-                                                             HttpServletResponse response) {
+    public PayloadEnvelope<MarkerGroupDTO> createMarkerGroup(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<MarkerGroupDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<MarkerGroupDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3686,12 +5026,27 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Update a marker by markergroupId",
+            notes = "Updates the Marker Group entity having the specified markerGroupId.",
+            tags = {"Markers"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="MarkerGroups : markerGroupId")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/markergroups/{markerGroupId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<MarkerGroupDTO> replaceMarkerGroup(@RequestBody PayloadEnvelope<MarkerGroupDTO> payloadEnvelope,
-                                                              @PathVariable Integer markerGroupId,
-                                                              HttpServletRequest request,
-                                                              HttpServletResponse response) {
+    public PayloadEnvelope<MarkerGroupDTO> replaceMarkerGroup(
+            @RequestBody PayloadEnvelope<MarkerGroupDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Marker Group to be updated", required = true)
+            @PathVariable("markerGroupId") Integer markerGroupId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<MarkerGroupDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3724,6 +5079,19 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "List all markergroups",
+            notes = "Lists all the existing marker groups in the system.",
+            tags = {"Markers"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="MarkerGroups")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/markergroups", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<MarkerGroupDTO> getMarkerGroups(HttpServletRequest request,
@@ -3757,11 +5125,26 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Gets all markers in a given markergroup",
+            notes = "Retrieves the Marker Group entity having the specified ID.",
+            tags = {"Markers"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="MarkerGroups : markerGroupId")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/markergroups/{markerGroupId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<MarkerGroupDTO> getMarkerGroupById(@PathVariable Integer markerGroupId,
-                                                              HttpServletRequest request,
-                                                              HttpServletResponse response) {
+    public PayloadEnvelope<MarkerGroupDTO> getMarkerGroupById(
+            @ApiParam(value = "ID of the marker group to be updated", required = true)
+            @PathVariable("markerGroupId") Integer markerGroupId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<MarkerGroupDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3795,12 +5178,31 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** REFERENCE METHODS
     // *********************************************
-
+    @ApiOperation(
+            value = "Create a new reference",
+            notes = "Creates a new reference in the system.",
+            tags = {"References"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="References"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="The authoritative genome reference and " +
+                                            "associated linked files for a physical mapset."
+                            )
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/references", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<ReferenceDTO> createReference(@RequestBody PayloadEnvelope<ReferenceDTO> payloadEnvelope,
-                                                         HttpServletRequest request,
-                                                         HttpServletResponse response) {
+    public PayloadEnvelope<ReferenceDTO> createReference(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<ReferenceDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ReferenceDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3833,12 +5235,27 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Update a reference by referenceId",
+            notes = "Updates the Reference entity having the specified referenceId.",
+            tags = {"References"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="References : referenceId")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/references/{referenceId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<ReferenceDTO> replaceReference(@RequestBody PayloadEnvelope<ReferenceDTO> payloadEnvelope,
-                                                          @PathVariable Integer referenceId,
-                                                          HttpServletRequest request,
-                                                          HttpServletResponse response) {
+    public PayloadEnvelope<ReferenceDTO> replaceReference(
+            @RequestBody PayloadEnvelope<ReferenceDTO> payloadEnvelope,
+            @ApiParam(value = "ID of the Reference to be updated", required = true)
+            @PathVariable("referenceId") Integer referenceId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ReferenceDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3871,6 +5288,19 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "List all references",
+            notes = "Lists all the existing references in the system.",
+            tags = {"References"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="References")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/references", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ReferenceDTO> getReferences(HttpServletRequest request,
@@ -3904,11 +5334,26 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "GET /references/{referenceId}",
+            notes = "Gets the Reference entity having the specified ID.",
+            tags = {"References"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="References : referenceId")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/references/{referenceId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<ReferenceDTO> getReferenceById(@PathVariable Integer referenceId,
-                                                          HttpServletRequest request,
-                                                          HttpServletResponse response) {
+    public PayloadEnvelope<ReferenceDTO> getReferenceById(
+            @ApiParam(value = "ID of the Reference to be extracted", required = true)
+            @PathVariable("referenceId") Integer referenceId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<ReferenceDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3953,15 +5398,39 @@ public class GOBIIControllerV1 {
      * @return
      * @throws Exception
      */
+
+    @ApiOperation(
+            value = "Upload a file to given destination",
+            notes = "Uploads an arbitrary file to the specified destination",
+            tags = {"Files"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Files : destinationType")
+                    })}
+    )
+    //OpenAPI specification uses "string" as datatype for file, but the swagger automatically
+    //adds "ref" as datatype for file parameter. So, an Implicit parameter is added and the original
+    //parameter is made hidden.
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="file", value="The file to be uploaded",
+                    required = true, dataType = "string",
+                    paramType = "query"),
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/files/{destinationType}",
             method = RequestMethod.POST)
     public
     @ResponseBody
-    String uploadFile(@PathVariable("destinationType") String destinationType,
-                      @RequestParam("fileName") String fileName,
-                      @RequestParam("file") MultipartFile file,
-                      HttpServletRequest request,
-                      HttpServletResponse response) throws Exception {
+    String uploadFile(
+            @ApiParam(value = "Destination type where the file will be uploaded to", required = true)
+            @PathVariable("destinationType") String destinationType,
+            @ApiParam(value = "Name of the file to be uploaded", required = true)
+            @RequestParam("fileName") String fileName,
+            @ApiParam(value = "dummy", required = false, hidden = true)
+            @RequestParam("file") MultipartFile file,
+            HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
 
         //String fileName= file.getName();
 
@@ -4010,7 +5479,7 @@ public class GOBIIControllerV1 {
     }
 
     /***
-     * Uplaod an arbitary file to the specified destination
+     * Delete an arbitary file to the specified destination
      * @param destinationType
      * @param fileName
      * @param file
@@ -4019,16 +5488,33 @@ public class GOBIIControllerV1 {
      * @return
      * @throws Exception
      */
+
+    @ApiOperation(
+            value = "Detele a file by destination type",
+            notes = "Deletes an arbitrary file from the specified destination",
+            tags = {"Files"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Files : destinationType")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/files/{destinationType}",
             method = RequestMethod.DELETE
             , produces = MediaType.TEXT_PLAIN_VALUE
     )
     public
     @ResponseBody
-    String deleteFile(@PathVariable("destinationType") String destinationType,
-                      @RequestParam("fileName") String fileName,
-                      HttpServletRequest request,
-                      HttpServletResponse response) throws Exception {
+    String deleteFile(
+            @ApiParam(value = "Destination type where the file will be delete from", required = true)
+            @PathVariable("destinationType") String destinationType,
+            @ApiParam(value = "Name of the file to be deleted", required = true)
+            @RequestParam("fileName") String fileName,
+            HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
 
         //String fileName= file.getName();
 
@@ -4070,17 +5556,42 @@ public class GOBIIControllerV1 {
      * @return
      * @throws Exception
      */
+
+    @ApiOperation(
+            value = "Upload a file for a given job and destination type",
+            notes = "Uploads the specified file for a specific job to the specified directory",
+            tags = {"Files"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Jobs : destinationType")
+                    })}
+    )
     @RequestMapping(value = "/files/{gobiiJobId}/{destinationType}",
-            params = {"fileName"},
+            params = {"fileName", "file"},
             method = RequestMethod.POST)
+    //OpenAPI specification uses "string" as datatype for file, but the swagger automatically
+    //adds "ref" as datatype for file parameter. So, an Implicit parameter is added and the original
+    //parameter is made hidden.
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+            @ApiImplicitParam(name="file", value="The file to be uploaded",
+                    required = true, dataType = "string",
+                    paramType = "query")
+    })
     public
     @ResponseBody
-    String uploadJobFile(@PathVariable("gobiiJobId") String gobiiJobId,
-                         @PathVariable("destinationType") String destinationType,
-                         @RequestParam("fileName") String fileName,
-                         @RequestParam("file") MultipartFile file,
-                         HttpServletRequest request,
-                         HttpServletResponse response) throws Exception {
+    String uploadJobFile(
+            @ApiParam(value = "ID of the Job that the file will be associated to", required = true)
+            @PathVariable("gobiiJobId") String gobiiJobId,
+            @ApiParam(value = "Destination type where the file will be uploaded to", required = true)
+            @PathVariable("destinationType") String destinationType,
+            @ApiParam(value = "Name of the file", required = true)
+            @RequestParam("fileName") String fileName,
+            @ApiParam(value="dummy", hidden = true, required = false)
+            @RequestParam("file") MultipartFile file,
+            HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
 
         String name = file.getName();
 
@@ -4128,13 +5639,30 @@ public class GOBIIControllerV1 {
         return "";
     }
 
+    @ApiOperation(
+            value = "Download a job file from a given destination type",
+            notes = "Downloads the specified file for a specific job from the specified directory",
+            tags = {"Files"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Jobs : destinationType")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/files/{gobiiJobId}/{destinationType}",
             method = RequestMethod.GET)
-    public ResponseEntity<InputStreamResource> downloadJobFile(@PathVariable("gobiiJobId") String gobiiJobId,
-                                                               @PathVariable("destinationType") String destinationType,
-                                                               @RequestParam("fileName") String fileName,
-                                                               HttpServletRequest request,
-                                                               HttpServletResponse response) throws Exception {
+    public ResponseEntity<InputStreamResource> downloadJobFile(
+            @ApiParam(value = "ID of the Job", required = true)
+            @PathVariable("gobiiJobId") String gobiiJobId,
+            @ApiParam(value = "Destination type where the file will be downloaded from", required = true)
+            @PathVariable("destinationType") String destinationType,
+            @ApiParam(value = "Name of the file to be downloaded", required = true)
+            @RequestParam("fileName") String fileName,
+            HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
 
         ResponseEntity<InputStreamResource> returnVal = null;
         try {
@@ -4166,12 +5694,26 @@ public class GOBIIControllerV1 {
 
 
     /*** JOB METHODS ***/
-
+    @ApiOperation(
+            value = "Create a new job",
+            notes = "Creates a new job in the system.",
+            tags = {"Jobs"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Jobs")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/jobs", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<JobDTO> createJob(@RequestBody PayloadEnvelope<JobDTO> payloadEnvelope,
-                                             HttpServletRequest request,
-                                             HttpServletResponse response) {
+    public PayloadEnvelope<JobDTO> createJob(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<JobDTO> payloadEnvelope,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -4206,7 +5748,19 @@ public class GOBIIControllerV1 {
 
     }
 
-
+    @ApiOperation(
+            value = "List all jobs",
+            notes = "Lists all the existing jobs in the system.",
+            tags = {"Jobs"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Jobs")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/jobs", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<JobDTO> getStatus(HttpServletRequest request,
@@ -4240,12 +5794,27 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Update a job by jobName",
+            notes = "Updates the Job entity having the specified jobName.",
+            tags = {"Jobs"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Jobs : jobName")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/jobs/{jobName}", method = RequestMethod.PUT)
     @ResponseBody
-    public PayloadEnvelope<JobDTO> replaceStatus(@RequestBody PayloadEnvelope<JobDTO> payloadEnvelope,
-                                                 @PathVariable("jobName") String jobName,
-                                                 HttpServletRequest request,
-                                                 HttpServletResponse response) {
+    public PayloadEnvelope<JobDTO> replaceStatus(
+            @RequestBody PayloadEnvelope<JobDTO> payloadEnvelope,
+            @ApiParam(value = "Name of the Job to be updated", required = true)
+            @PathVariable("jobName") String jobName,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
 
@@ -4280,11 +5849,26 @@ public class GOBIIControllerV1 {
 
     }
 
+    @ApiOperation(
+            value = "Get job details by job name",
+            notes = "Gets the Job entity having the specified name.",
+            tags = {"Jobs"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Jobs : jobName")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/jobs/{jobName}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<JobDTO> getStatusById(@PathVariable("jobName") String jobName,
-                                                 HttpServletRequest request,
-                                                 HttpServletResponse response) {
+    public PayloadEnvelope<JobDTO> getStatusById(
+            @ApiParam(value = "Name of the Job to be extracted", required = true)
+            @PathVariable("jobName") String jobName,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -4315,13 +5899,28 @@ public class GOBIIControllerV1 {
 
     }
 
-
+    @ApiOperation(
+            value = "Create DNA samples for a given job",
+            notes = "Creates DNA samples for a given Job having the specified name in the system.",
+            tags = {"Jobs"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="DnaSamples : jobName")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/jobs/dnasamples/{jobName}", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<JobDTO> submitDnaSamplesByJobName(@RequestBody PayloadEnvelope<DnaSampleDTO> payloadEnvelope,
-                                                             @PathVariable("jobName") String jobName,
-                                                             HttpServletRequest request,
-                                                             HttpServletResponse response) {
+    public PayloadEnvelope<JobDTO> submitDnaSamplesByJobName(
+            @ApiParam(required = true)
+            @RequestBody PayloadEnvelope<DnaSampleDTO> payloadEnvelope,
+            @ApiParam(value = "Name of the Job that the DNA samples will be added to", required = true)
+            @PathVariable("jobName") String jobName,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<JobDTO> returnVal = new PayloadEnvelope<>();
 
@@ -4360,6 +5959,19 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** ENTITY STATS METHODS
     // *********************************************
+    @ApiOperation(
+            value = "List all entities",
+            notes = "Lists all the existing entities in the system.",
+            tags = {"Entities"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Entities")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/entities", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<EntityStatsDTO> getAllEntityStats(HttpServletRequest request,
@@ -4396,12 +6008,26 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
-
+    @ApiOperation(
+            value = "Get last modified date of an entity",
+            notes = "Gets last modified Entity for the given entityName",
+            tags = {"Entities"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Entities.lastModified")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/entities/{entityName}/lastmodified", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<EntityStatsDTO> getEntityLastModified(@PathVariable String entityName,
-                                                                 HttpServletRequest request,
-                                                                 HttpServletResponse response) {
+    public PayloadEnvelope<EntityStatsDTO> getEntityLastModified(
+            @ApiParam(value = "Name of the Entity", required = true)
+            @PathVariable("entityName") String entityName,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<EntityStatsDTO> returnVal = new PayloadEnvelope<>();
 
@@ -4436,11 +6062,26 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    @ApiOperation(
+            value = "Get count for a given entity",
+            notes = "Gets the total Entity count for the given entityName",
+            tags = {"Entities"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Entities.count")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/entities/{entityName}/count", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<EntityStatsDTO> getEntityCount(@PathVariable String entityName,
-                                                          HttpServletRequest request,
-                                                          HttpServletResponse response) {
+    public PayloadEnvelope<EntityStatsDTO> getEntityCount(
+            @ApiParam(value = "Name of the Entity", required = true)
+            @PathVariable("entityName") String entityName,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<EntityStatsDTO> returnVal = new PayloadEnvelope<>();
 
@@ -4476,13 +6117,30 @@ public class GOBIIControllerV1 {
     }
 
 
+    @ApiOperation(
+            value = "Get entity count for a given entity child",
+            notes = "Retrieves the total count of the children for the given entity",
+            tags = {"Entities"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Child.count")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value = "/entities/{entityNameParent}/{parentId}/{entityNameChild}/count", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<EntityStatsDTO> getEntityCountOfChildren(@PathVariable String entityNameParent,
-                                                                    @PathVariable Integer parentId,
-                                                                    @PathVariable String entityNameChild,
-                                                                    HttpServletRequest request,
-                                                                    HttpServletResponse response) {
+    public PayloadEnvelope<EntityStatsDTO> getEntityCountOfChildren(
+            @ApiParam(value = "Name of the parent entity", required = true)
+            @PathVariable("entityNameParent") String entityNameParent,
+            @ApiParam(value = "ID of the parent entity", required = true)
+            @PathVariable("parentId") Integer parentId,
+            @ApiParam(value = "Name of the child entity", required = true)
+            @PathVariable("entityNameChild") String entityNameChild,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         PayloadEnvelope<EntityStatsDTO> returnVal = new PayloadEnvelope<>();
 

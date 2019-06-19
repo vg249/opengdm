@@ -1,0 +1,12 @@
+{
+  "basicAuth": {
+    "type": "basic",
+    "name": "basicAuth"
+  },
+
+  "apiKeyAuth": {
+    "type": "apiKey",
+    "name": "apiKeyAuth",
+    "in": "header"
+  }
+}

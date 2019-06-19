@@ -283,7 +283,16 @@
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-jaxrs2</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-jaxrs2-servlet-initializer</artifactId>
+            <version>2.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -501,24 +510,24 @@
             <plugin>
                 <groupId>com.github.kongchen</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
-                <version>3.1.3</version>
+                <version>3.1.8</version>
                 <configuration>
                     <apiSources>
                         <apiSource>
                             <springmvc>true</springmvc>
                             <locations>
-                                org.gobiiproject.gobiiweb.controllers
+                                <location>org.gobiiproject.gobiiweb.controllers</location>
                             </locations>
                             <outputFormats>json,yaml</outputFormats>
-                            <schemes>http, https</schemes>
-                            <host>localhost:8081</host>
-                            <basePath>/api</basePath>
+                            <schemes><schema>http</schema></schemes>
+                            <host>cbsugobiixvm11.biohpc.cornell.edu:8081</host>
+                            <basePath>/gobii-dev</basePath>
                             <!-- content of description file overrides the <description>
                                 element of the <info> tag below. This ends up as the
                                  Overview section in the HTML/PDF -->
                             <descriptionFile>${doc-location-source}/overview.txt</descriptionFile>
                             <info>
-                                <title>GOBii API</title>
+                                <title>Genomic Data Management (GDM)</title>
                                 <version>1.0</version>
                                 <!-- use markdown here because I'm using markdown for output,
                                 if you need to use html or other markup language, you need to use your target language,
@@ -544,9 +553,14 @@
                                     <name>basicAuth</name>
                                     <type>basic</type>
                                 </securityDefinition>
-                                <!--<securityDefinition>-->
-                                <!--<json>/securityDefinition.json</json>-->
-                                <!--</securityDefinition>-->
+                                <securityDefinition>
+                                    <name>X-Auth-Token</name>
+                                    <type>apiKey</type>
+                                    <in>header</in>
+                                </securityDefinition>
+                                <!--<securityDefinition>
+                                    <jsonPath>${doc-location-source}/securityDefinition.json</jsonPath>
+                                </securityDefinition>-->
                             </securityDefinitions>
                             <!-- Support classpath or file absolute path here.
                             1) classpath e.g: "classpath:/markdown.hbs", "classpath:/templates/hello.html"
