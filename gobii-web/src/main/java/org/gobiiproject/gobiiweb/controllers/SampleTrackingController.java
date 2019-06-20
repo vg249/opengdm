@@ -79,36 +79,6 @@ public class SampleTrackingController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
     }
 
-
-    @RequestMapping(value="testStreaming", method=RequestMethod.GET)
-    public ResponseEntity<StreamingResponseBody> testStreaming() {
-        StreamingResponseBody responseBody = new StreamingResponseBody() {
-            @Override
-            public void writeTo (OutputStream out) throws IOException {
-
-                List<String> genotypes = new ArrayList<>();
-                genotypes.add("AA");
-                genotypes.add("GG");
-                genotypes.add("TT");
-                genotypes.add("GT");
-
-                for (int i = 0; i < 1000; i++) {
-
-                    out.write((genotypes.get(i%4) + "\t")
-                            .getBytes());
-                    out.flush();
-                    try {
-                        Thread.sleep(5);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            }
-        };
-        return new ResponseEntity(responseBody, HttpStatus.OK);
-    }
-
     @RequestMapping(value="/experiments", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity listExperiments(
             HttpServletRequest request,

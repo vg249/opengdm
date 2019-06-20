@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiidao.resultset.core.listquery;
 
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.hibernate.jdbc.Work;
 
 import java.sql.Connection;
@@ -39,12 +40,11 @@ public class ResultSetFromSql implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        PreparedStatement preparedStatement = listStatement.makePreparedStatement(dbConnection,
-                this.jdbcParameters,
-                this.sqlParameters);
+            PreparedStatement preparedStatement = listStatement.makePreparedStatement(dbConnection,
+                    this.jdbcParameters,
+                    this.sqlParameters);
 
-        this.resultSet = preparedStatement.executeQuery();
-
+            this.resultSet = preparedStatement.executeQuery();
 
     } // execute()
 }

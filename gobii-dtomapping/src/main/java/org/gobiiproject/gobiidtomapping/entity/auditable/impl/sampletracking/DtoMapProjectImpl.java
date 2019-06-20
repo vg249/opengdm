@@ -40,11 +40,8 @@ public class DtoMapProjectImpl implements DtoMapProject {
         List<ProjectDTO> returnVal;
         try {
 
-            Map<String, Object> sqlParams = new HashMap<>();
-            sqlParams.put("pageToken", 20);
-            sqlParams.put("pageSize", 10);
             returnVal = (List<ProjectDTO>) dtoListSampleTrackingQueryColl.getList(
-                    ListSqlId.QUERY_ID_PROJECT_ALL, null, sqlParams);
+                    ListSqlId.QUERY_ID_PROJECT_ALL, null, null);
 
             if(returnVal == null) {
                 return new ArrayList<>();

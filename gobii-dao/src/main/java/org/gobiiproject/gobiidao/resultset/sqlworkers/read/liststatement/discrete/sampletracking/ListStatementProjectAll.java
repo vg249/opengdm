@@ -3,8 +3,11 @@ package org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discre
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListStatement;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.dto.rest.RestResourceMethodLimit;
+import org.gobiiproject.gobiimodel.dto.rest.RestResourceProfile;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.types.RestMethodType;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,30 +24,48 @@ public class ListStatementProjectAll implements ListStatement {
     }
 
     @Override
-    public PreparedStatement makePreparedStatement(Connection dbConnection, Map<String, Object> jdbcParamVals,
+    public PreparedStatement makePreparedStatement(Connection dbConnection,
+                                                   Map<String, Object> jdbcParamVals,
                                                    Map<String, Object> sqlParamVals)
-            throws SQLException {
+            throws SQLException, GobiiException {
 
         String pageCondition = "";
+        Integer pageSize = 0;
+
+        if(sqlParamVals == null) {
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.BAD_REQUEST,
+                    "Invalid query parameters.");
+        }
+
+        if(sqlParamVals.getOrDefault("pageSize", 0) instanceof Integer) {
+            pageSize = (Integer) sqlParamVals.getOrDefault("pageSize", 0);
+            if (pageSize < 1) {
+                throw new GobiiException(
+                        GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.BAD_REQUEST,
+                        "Invalid Page Size");
+            }
+        }
+        else {
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.BAD_REQUEST,
+                    "Invalid Page Size");
+        }
 
         if(sqlParamVals.getOrDefault("pageToken", 0) instanceof Integer) {
             if ((Integer) sqlParamVals.getOrDefault("pageToken", 0) > 0) {
                 pageCondition = " WHERE project_id > ?";
+            }
+            else {
+                pageCondition = "";
             }
         }
         else {
             throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
                     "Invalid Page Token");
-        }
-
-        if(sqlParamVals.getOrDefault("pageToken", 0) instanceof Integer) {
-            if ((Integer) sqlParamVals.getOrDefault("pageToken", 0) > 0) {
-                pageCondition = " WHERE project_id > ?";
-            }
-        }
-        else {
-            throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
-                    "Invalid Page Size");
         }
 
 
@@ -62,6 +83,9 @@ public class ListStatementProjectAll implements ListStatement {
         PreparedStatement returnVal = dbConnection.prepareStatement(sql);
 
         returnVal.setInt(1, (Integer) sqlParamVals.get("pageToken"));
+        returnVal.setInt(2, pageSize);
+        returnVal.setInt(3, (Integer) sqlParamVals.get("pageToken"));
+        returnVal.setInt(4, pageSize);
 
         return returnVal;
     }

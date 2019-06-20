@@ -84,7 +84,8 @@ public class DtoListQuery<T> {
             ResultSet resultSet = dtoListFromSql.getResultSet();
             returnVal = this.makeDtoListFromResultSet(resultSet);
 
-        } catch (SQLGrammarException e) {
+        }
+        catch (SQLGrammarException e) {
             String message = "Error retrieving dto list " + this.listStatement.getListSqlId().name() + " with SQL " + e.getSQL();
             LOGGER.error(message, e.getSQLException());
             throw (new GobiiDaoException(message, e.getSQLException()));
@@ -186,7 +187,8 @@ public class DtoListQuery<T> {
 
         try {
 
-            ResultSetFromSql resultSetFromSql = new ResultSetFromSql(listStatement, jdbcParameters, sqlParameters);
+            ResultSetFromSql resultSetFromSql = new ResultSetFromSql(
+                    listStatement, jdbcParameters, sqlParameters);
             this.storedProcExec.doWithConnection(resultSetFromSql);
             returnVal = resultSetFromSql.getResultSet();
 
