@@ -34,48 +34,52 @@ public class GetLinks {
      * @return
      * @throws Exception
      */
-    public static String getLink(String filePath, ConfigSettings config) throws Exception {
+    public static String getLink(String filePath, ConfigSettings config, boolean publicUrl) throws Exception {
 
         if(filePath.contains("ïnprogress")){
             filePath.replace("inprogress", "done");
         }
-
+        String liveLink;
         String username = config.getGlobalServer(ServerType.OWN_CLOUD).getUserName();
         String password = config.getGlobalServer(ServerType.OWN_CLOUD).getPassword();
         String host = config.getGlobalServer(ServerType.OWN_CLOUD).getHost();
         String port = config.getGlobalServer(ServerType.OWN_CLOUD).getPort().toString();
         String contextPath = config.getGlobalServer(ServerType.OWN_CLOUD).getContextPath();
-        String urlPath = "http://" + host + (port.equals("") ? "" : ":"+port) + "/ocs/v1.php/apps/files_sharing/api/v1/shares";
-        String path = "path=" + filePath.replace("/data/gobii_bundle/crops/", "/" + contextPath) + "&shareType=3&permissions=1";
-        String liveLink;
-        URL url = new URL(urlPath);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        String userpass = username + ":" + password;
-        String basicAuth = "Basic " + new String(Base64.getEncoder().encode(userpass.getBytes()));
-        connection.setRequestProperty ("Authorization", basicAuth);
-        connection.setRequestMethod("POST");
-        connection.setInstanceFollowRedirects(true);
-        connection.setRequestProperty("Content-length",
-        String.valueOf(path.length()));
-        connection.setDoOutput(true);
-        DataOutputStream output = new DataOutputStream(connection.getOutputStream());
-        output.writeBytes(path);
-        output.close();
-        DataInputStream input = new DataInputStream(connection.getInputStream());
-        int c;
-        StringBuilder resultBuf = new StringBuilder();
-        while ((c = input.read()) != -1) {
-            resultBuf.append((char) c);
-        }
-        input.close();
-        if(getTAG(resultBuf.toString(),"status").equals("ok")){
-            liveLink = getTAG(resultBuf.toString(),"url") + "/download";
+        if(publicUrl) {
+            String urlPath = "http://" + host + (port.equals("") ? "" : ":" + port) + "/ocs/v1.php/apps/files_sharing/api/v1/shares";
+            String path = "path=" + filePath.replace("/data/gobii_bundle/crops/", "/" + contextPath) + "&shareType=3&permissions=1";
+
+            URL url = new URL(urlPath);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            String userpass = username + ":" + password;
+            String basicAuth = "Basic " + new String(Base64.getEncoder().encode(userpass.getBytes()));
+            connection.setRequestProperty("Authorization", basicAuth);
+            connection.setRequestMethod("POST");
+            connection.setInstanceFollowRedirects(true);
+            connection.setRequestProperty("Content-length",
+                    String.valueOf(path.length()));
+            connection.setDoOutput(true);
+            DataOutputStream output = new DataOutputStream(connection.getOutputStream());
+            output.writeBytes(path);
+            output.close();
+            DataInputStream input = new DataInputStream(connection.getInputStream());
+            int c;
+            StringBuilder resultBuf = new StringBuilder();
+            while ((c = input.read()) != -1) {
+                resultBuf.append((char) c);
+            }
+            input.close();
+            if (getTAG(resultBuf.toString(), "status").equals("ok")) {
+                liveLink = getTAG(resultBuf.toString(), "url") + "/download";
+            } else {
+                liveLink = "";
+//            ErrorLogger.logError("OWNCLOUD", "API request failed due to improper configurations");
+            }
         }
         else{
-            liveLink = "";
-//            ErrorLogger.logError("OWNCLOUD", "API request failed due to improper configurations");
+            liveLink = "http://" + host + (port.equals("") ? "" : ":" + port) + "/remote.php/webdav/" + filePath.replace("/data/gobii_bundle/crops/", "/" + contextPath);
         }
-        return liveLink.replace("http://","URL:");
+        return liveLink;
     }
 
     public static String getOwncloudURL(String filePath, ConfigSettings config) throws Exception {
@@ -88,7 +92,7 @@ public class GetLinks {
             filePath = filePath.substring(0, start);
         }
         System.out.println(filePath);
-        String liveURL = "http://" + host + (port.equals("") ? "" : (":" + port)) +  "/owncloud/index.php/apps/files/?dir=" + filePath;
+        String liveURL = "http://" + host + (port.equals("") ? "" : (":" + port)) +  "/apps/files/?dir=" + filePath;
         return liveURL;
     }
 }

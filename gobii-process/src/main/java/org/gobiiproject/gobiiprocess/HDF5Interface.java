@@ -44,7 +44,7 @@ public class HDF5Interface {
         //HDF-5
         //Usage: %s <datasize> <input file> <output HDF5 file
         String loadHDF5= getPathToHDF5() +"loadHDF5";
-        dm.addPath("matrix directory", pathToHDF5Files, configuration);
+        dm.addPath("matrix directory", pathToHDF5Files, configuration, false);
         String HDF5File= getFileLoc(dataSetId);
         int size=8;
         switch(dst.toUpperCase()){

@@ -164,8 +164,9 @@ public class ProcessMessage extends MailMessage {
         return this;
     }
 
-    public ProcessMessage addFolderPath(String type,String path) {
-        paths.add(new HTMLTableEntity(type,path,""));
+    public ProcessMessage addFolderPath(String type, String path, ConfigSettings config) throws Exception {
+        String pathLine = path + "\n" + "<hr>" + "\n" + GetLinks.getOwncloudURL(path, config);
+        paths.add(new HTMLTableEntity(type,pathLine,""));
         return this;
     }
         /**
@@ -175,22 +176,22 @@ public class ProcessMessage extends MailMessage {
          * #param alwaysShow to always show the path, even if no object is there
          * @return this object
          */
-    public ProcessMessage addPath(String type,String path, boolean alwaysShow, ConfigSettings config) throws Exception {
+    public ProcessMessage addPath(String type,String path, boolean alwaysShow, ConfigSettings config, boolean publicUrl) throws Exception {
 
         String pathLine = path;
         if(config.getGlobalServer(ServerType.OWN_CLOUD).isActive()){
             if(path.endsWith("/")){
-                pathLine = path + "\n" + GetLinks.getOwncloudURL(path, config);
+                pathLine = path + "\n" + "<hr>" + "\n" + GetLinks.getOwncloudURL(path, config);
             }
             else{
-                pathLine = path + "\n" + GetLinks.getLink(path, config);
+                pathLine = path + "\n" + "<hr>" + "\n" + GetLinks.getLink(path, config, publicUrl);
             }
         }
     	if(new File(path).length() > 1){
-    		paths.add(new HTMLTableEntity(type, escapeHTML(pathLine), HelperFunctions.sizeToReadable(new File(path).length())));
+    		paths.add(new HTMLTableEntity(type, pathLine, HelperFunctions.sizeToReadable(new File(path).length())));
     	}
     	else if(alwaysShow){
-    	    paths.add(new HTMLTableEntity(type,escapeHTML(pathLine),""));
+    	    paths.add(new HTMLTableEntity(type,pathLine,""));
         }
         return this;
     }
@@ -201,8 +202,8 @@ public class ProcessMessage extends MailMessage {
      * @param path filepath
      * @return
      */
-    public ProcessMessage addPath(String type, String path, ConfigSettings config) throws Exception {
-        return addPath(type,path,false,config);
+    public ProcessMessage addPath(String type, String path, ConfigSettings config, boolean publicUrl) throws Exception {
+        return addPath(type,path,false,config, publicUrl);
     }
 
     
@@ -280,9 +281,9 @@ public class ProcessMessage extends MailMessage {
     }
 
     public String escapeHTML(String strToHTML){
-        if(strToHTML.contains("http")){
-            strToHTML.replace("http","URL");
-        }
+//        if(strToHTML.contains("http")){
+//            strToHTML.replace("http","URL");
+//        }
         return StringEscapeUtils.escapeHtml(strToHTML);
     }
 }

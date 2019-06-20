@@ -476,14 +476,22 @@ public class GobiiExtractor {
 			            pm.addCriteria("Mapset List", String.join("<BR>", inst.getMapsetIds().toString())); //This should never happen
 		            }
 
-		            pm.addPath("Instruction File", new File(instructionFile).getAbsolutePath(), true, configuration);
-		            pm.addFolderPath("Output Directory", extractDir);
-		            pm.addPath("Error Log", logFile, true, configuration);
-		            pm.addPath("Summary File", new File(projectFile).getAbsolutePath(), configuration);
-		            pm.addPath("Sample File", new File(sampleFile).getAbsolutePath(), configuration);
-		            pm.addPath("Marker File", new File(markerFile).getAbsolutePath(), configuration);
+		            pm.addPath("Instruction File", new File(instructionFile).getAbsolutePath(), true, configuration, false);
+		            pm.addFolderPath("Output Directory", extractDir, configuration);
+		            pm.addPath("Error Log", logFile, true, configuration, false);
+		            pm.addPath("Summary File", new File(projectFile).getAbsolutePath(), configuration, false);
+		            pm.addPath("Sample File", new File(sampleFile).getAbsolutePath(), configuration, false);
+		            pm.addPath("Marker File", new File(markerFile).getAbsolutePath(), configuration, false);
+
+//					pm.addPath("Instruction File", new File(instructionFile).getAbsolutePath(), true, configuration, false);
+//					pm.addFolderPath("Output Directory", extractDir, configuration);
+//					pm.addPath("Error Log", logFile, true, configuration, false);
+//					pm.addPath("Summary File", extractDir, configuration, false);
+//					pm.addPath("Sample File", extractDir, configuration ,false);
+//					pm.addPath("Marker File", extractDir, configuration, false);
 		            if (checkFileExistence(mapsetFile)) {
-			            pm.addPath("Mapset File", new File(mapsetFile).getAbsolutePath(), configuration);
+			            pm.addPath("Mapset File", extractDir, configuration, false);
+//						pm.addPath("Mapset File", new File(mapsetFile).getAbsolutePath(), configuration);
 		            }
 
 		            esw.writeToFile(new File(extractSummaryFile));
@@ -546,8 +554,8 @@ public class GobiiExtractor {
 					            }
 					            ErrorLogger.logDebug("GobiiExtractor", "Executing FlapJack Genotype file Generation");
 					            success &= FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, tempFolder, genoOutFile, errorFile);
-					            pm.addPath("FlapJack Genotype file", new File(genoOutFile).getAbsolutePath(), configuration);
-					            pm.addPath("FlapJack Map file", new File(mapOutFile).getAbsolutePath(), configuration);
+					            pm.addPath("FlapJack Genotype file", new File(genoOutFile).getAbsolutePath(), configuration, true);
+					            pm.addPath("FlapJack Map file", new File(mapOutFile).getAbsolutePath(), configuration, true);
 					            getCounts(success, pm, markerFile, sampleFile);
 					            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Extract Completed 8uccessfully");
 					            break;
@@ -556,7 +564,7 @@ public class GobiiExtractor {
 					            HapmapTransformer hapmapTransformer = new HapmapTransformer();
 					            ErrorLogger.logDebug("GobiiExtractor", "Executing Hapmap Generation");
 					            success &= hapmapTransformer.generateFile(markerFile, sampleFile, extendedMarkerFile, genoFile, hapmapOutFile, errorFile);
-					            pm.addPath("Hapmap file", new File(hapmapOutFile).getAbsolutePath(), configuration);
+					            pm.addPath("Hapmap file", new File(hapmapOutFile).getAbsolutePath(), configuration, true);
 					            getCounts(success, pm, markerFile, sampleFile);
 					            jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED.getCvName(), "Extract Completed 8uccessfully");
 					            break;
@@ -614,7 +622,7 @@ public class GobiiExtractor {
             }
         }
         try {
-	        HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(firstCrop, GobiiFileProcessDir.EXTRACTOR_DONE));
+	        String instructionFilePath = HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(firstCrop, GobiiFileProcessDir.EXTRACTOR_DONE));
         }
         catch(Exception e){
 	        handleCriticalException(configuration, jobStatus, firstContactEmail, e);
@@ -770,7 +778,7 @@ public class GobiiExtractor {
                     qcStartPm.setSubject("new QC Job #" + qcJobID);
                     qcStartPm.addIdentifier("QC Job Identifier", "", String.valueOf(qcJobID));
                     qcStartPm.addIdentifier("Dataset Identifier", datasetName, String.valueOf(datasetId));
-                    qcStartPm.addPath("Output Extraction/QC Directory", extractDir, configSettings);
+                    qcStartPm.addPath("Output Extraction/QC Directory", extractDir, configSettings, false);
                     qcStartPm.setBody("new QC Job #" + qcJobID, "QC", 0, "", true, "");
                     //mailInterface.send(qcStartPm);
                     RestUri restUriGetQCJobStatus = new RestUri("/",
@@ -862,7 +870,7 @@ public class GobiiExtractor {
                                             ErrorLogger.logInfo("QC", "The qcDownload http method was successful with "
                                                     + httpMethodResult.getFileName());
                                             if (httpMethodResult.getFileName() != null) {
-                                                qcStatusPm.addPath(key, httpMethodResult.getFileName(), configSettings);
+                                                qcStatusPm.addPath(key, httpMethodResult.getFileName(), configSettings, false);
 
                                                 if (key.equals("stdout.txt") || key.equals("stderr.txt")) {
 
