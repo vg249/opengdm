@@ -37,11 +37,31 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
     @Override
     public List<ProjectDTO> getList() throws GobiiDtoMappingException {
-        List<ProjectDTO> returnVal;
+        List<ProjectDTO> returnVal = this.getList(null, null);
+        return returnVal;
+    }
+
+    @Override
+    public List<ProjectDTO> getList(Integer pageToken,
+                                    Integer pageSize) throws GobiiDtoMappingException {
+        List<ProjectDTO> returnVal = null;
         try {
 
+            Map<String, Object> sqlParams = new HashMap<>();
+
+            if(pageToken != null) {
+                sqlParams.put("pageToken", pageToken);
+            }
+
+            if(pageSize != null) {
+                sqlParams.put("pageSize", pageSize);
+            }
+
             returnVal = (List<ProjectDTO>) dtoListSampleTrackingQueryColl.getList(
-                    ListSqlId.QUERY_ID_PROJECT_ALL, null, null);
+                    ListSqlId.QUERY_ID_PROJECT_ALL,
+                    null,
+                    sqlParams
+            );
 
             if(returnVal == null) {
                 return new ArrayList<>();
@@ -80,8 +100,8 @@ public class DtoMapProjectImpl implements DtoMapProject {
                             GobiiValidationStatusType.VALIDATION_NOT_UNIQUE,
                             "Multiple resources found. Violation of Unique Project Id constraint." +
                                     " Please contact your Data Administrator to resolve this. " +
-                                    "Recommending against changing underlying database schemas " +
-                                    "without consulting GOBii Team");
+                                    "Changing underlying database schemas and constraints " +
+                                    "without consulting GOBii Team is not recommended.");
                 }
             }
             else {

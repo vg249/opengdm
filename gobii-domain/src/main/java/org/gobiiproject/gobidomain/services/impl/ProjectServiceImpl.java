@@ -57,6 +57,12 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
     }
 
     @Override
+    public List<ProjectDTO> getProjects(Integer pageToken, Integer pageSize) throws GobiiDomainException {
+        List<ProjectDTO> returnVal = null;
+        return returnVal;
+    }
+
+    @Override
     public ProjectDTO getProjectById(Integer projectId) throws GobiiDomainException {
 
         ProjectDTO returnVal;

@@ -11,5 +11,6 @@ public interface DtoMapProject extends DtoMap<ProjectDTO> {
     ProjectDTO replace(Integer projectId, ProjectDTO projectDTO) throws GobiiDtoMappingException;
     ProjectDTO get(Integer projectId) throws GobiiDtoMappingException;
     List<ProjectDTO> getList() throws GobiiDtoMappingException;
+    List<ProjectDTO> getList(Integer pageToken, Integer pageSize) throws GobiiDtoMappingException;
     List<ProjectDTO> getProjectsForLoadedDatasets() throws GobiiDtoMappingException;
 }

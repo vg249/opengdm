@@ -4,15 +4,21 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobidomain.services.ExperimentService;
 import org.gobiiproject.gobidomain.services.ProjectService;
+import org.gobiiproject.gobidomain.services.impl.sampletracking.ProjectServiceImpl;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.ListPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.GermplasmDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.GermplasmListDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.ProjectSamplesDTO;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.types.RestMethodType;
+import org.gobiiproject.gobiiweb.automation.RestResourceLimits;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -50,10 +56,42 @@ public class SampleTrackingController {
     @RequestMapping(value="/projects", method= RequestMethod.GET)
     @ResponseBody
     public ResponseEntity listProjects(
+            @RequestParam(value = "pageToken", required = false) String pageTokenParam,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize
     ) {
-            List<ProjectDTO> projectsList = sampleTrackingProjectService.getProjects();
+        try {
+
+
+            Integer pageToken = null;
+
+            if(pageTokenParam != null) {
+                pageToken = Integer.parseInt(pageTokenParam);
+            }
+
+
+            Integer maxPageSize = RestResourceLimits.getResourceLimit(
+                    RestResourceId.GOBII_PROJECTS,
+                    RestMethodType.GET);
+
+            if(pageSize == null || pageSize > maxPageSize) {
+                pageSize = maxPageSize;
+            }
+
+            List<ProjectDTO> projectsList = sampleTrackingProjectService.getProjects(pageToken, pageSize);
+
             BrApiMasterPayload<List<ProjectDTO>> payload = new BrApiMasterPayload<>(projectsList);
+
             return ResponseEntity.ok(payload);
+        }
+        catch(GobiiException gE) {
+            throw gE;
+        }
+        catch(Exception e) {
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    "Internal Server Error");
+        }
     }
 
     @RequestMapping(value="/projects/{projectId:[\\d]+}", method=RequestMethod.GET)

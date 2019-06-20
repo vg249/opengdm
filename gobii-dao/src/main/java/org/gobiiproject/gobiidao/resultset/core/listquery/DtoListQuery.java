@@ -90,9 +90,12 @@ public class DtoListQuery<T> {
             LOGGER.error(message, e.getSQLException());
             throw (new GobiiDaoException(message, e.getSQLException()));
 
-        } catch (Exception e) {
-
-
+        }
+        catch (GobiiException gE) {
+            LOGGER.error(gE.getMessage(), gE);
+            throw gE;
+        }
+        catch (Exception e) {
             String message = "Error retrieving dto list " + this.listStatement.getListSqlId().name();
             LOGGER.error(message, e);
             throw (new GobiiDaoException(message, e));

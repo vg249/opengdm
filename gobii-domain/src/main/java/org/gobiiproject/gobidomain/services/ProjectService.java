@@ -20,5 +20,6 @@ public interface ProjectService<T> {
     List<T> getProjects() throws GobiiDomainException;
     T getProjectById(Integer projectId) throws GobiiDomainException;
     List<T> getProjectsForLoadedDatasets() throws GobiiDomainException;
-    
+    List<T> getProjects(Integer pageToken, Integer pageSize) throws GobiiDomainException;
+
 }

@@ -6,7 +6,9 @@ import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.auditable.sampletracking.DtoMapProject;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.rest.RestResourceProfile;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
@@ -75,18 +77,30 @@ public class ProjectServiceImpl implements ProjectService<ProjectDTO> {
     }
 
     @Override
-    public List<ProjectDTO> getProjects() throws GobiiDomainException{
+    public List<ProjectDTO> getProjects() throws GobiiDomainException {
+
+        List<ProjectDTO> returnVal = null;
+
+        return returnVal;
+    }
+
+    public List<ProjectDTO> getProjects(Integer pageToken, Integer pageSize) {
         List<ProjectDTO> returnVal;
         try {
-            returnVal = dtoMapSampleTrackingProject.getList();
+
+            returnVal = dtoMapSampleTrackingProject.getList(pageToken, pageSize);
+
         }
         catch (GobiiException gE) {
+
             LOGGER.error(gE.getMessage(), gE.getMessage());
+
             throw new GobiiDomainException(
                     gE.getGobiiStatusLevel(),
                     gE.getGobiiValidationStatusType(),
                     gE.getMessage()
             );
+
         }
         catch(Exception e) {
             LOGGER.error("Gobii service error", e);

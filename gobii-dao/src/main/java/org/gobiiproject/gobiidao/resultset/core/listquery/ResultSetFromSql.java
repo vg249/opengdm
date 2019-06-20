@@ -38,7 +38,7 @@ public class ResultSetFromSql implements Work {
     }
 
     @Override
-    public void execute(Connection dbConnection) throws SQLException {
+    public void execute(Connection dbConnection) throws SQLException, GobiiException {
 
             PreparedStatement preparedStatement = listStatement.makePreparedStatement(dbConnection,
                     this.jdbcParameters,
