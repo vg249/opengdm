@@ -291,7 +291,7 @@ public class GOBIIControllerV1 {
             @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
                     paramType = "header", dataType = "string"),
     })
-    @RequestMapping(value = "/configsettings/", method = RequestMethod.GET)
+    @RequestMapping(value = "/configsettings", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ConfigSettingsDTO> getConfigSettings(
             HttpServletRequest request,
@@ -5566,7 +5566,7 @@ public class GOBIIControllerV1 {
                     })}
     )
     @RequestMapping(value = "/files/{gobiiJobId}/{destinationType}",
-            params = {"fileName", "file"},
+            params = {"fileName"},
             method = RequestMethod.POST)
     //OpenAPI specification uses "string" as datatype for file, but the swagger automatically
     //adds "ref" as datatype for file parameter. So, an Implicit parameter is added and the original
