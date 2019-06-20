@@ -290,7 +290,7 @@ public class GOBIIControllerV1 {
             @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
                     paramType = "header", dataType = "string"),
     })
-    @RequestMapping(value = "/configsettings/", method = RequestMethod.GET)
+    @RequestMapping(value = "/configsettings", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ConfigSettingsDTO> getConfigSettings(
             HttpServletRequest request,
