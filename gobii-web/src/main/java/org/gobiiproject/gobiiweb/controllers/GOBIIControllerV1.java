@@ -5567,7 +5567,7 @@ public class GOBIIControllerV1 {
                     })}
     )
     @RequestMapping(value = "/files/{gobiiJobId}/{destinationType}",
-            params = {"fileName", "file"},
+            params = {"fileName"},
             method = RequestMethod.POST)
     //OpenAPI specification uses "string" as datatype for file, but the swagger automatically
     //adds "ref" as datatype for file parameter. So, an Implicit parameter is added and the original
