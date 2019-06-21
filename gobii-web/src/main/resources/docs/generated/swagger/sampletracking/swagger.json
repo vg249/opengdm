@@ -1,0 +1,151 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "The GDM web service API provides a comprehensive set of RESTful methods for accomplishing the following core tasks in the GOBii Genomic Data Management (GDM) system. This manual explains the GDM web architecture and its web service operations.\n\n",
+    "version" : "1.0",
+    "title" : "GDM Sample Tracking",
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host" : "cbsugobiixvm11.biohpc.cornell.edu:8081",
+  "basePath" : "/gobii-dev/sample-tracking",
+  "tags" : [ {
+    "name" : "Projects"
+  } ],
+  "schemes" : [ "http" ],
+  "paths" : {
+    "/sample-tracking/v1/projects" : {
+      "get" : {
+        "tags" : [ "Projects" ],
+        "summary" : "List all projects",
+        "description" : "List of all Projects.",
+        "operationId" : "listProjects",
+        "parameters" : [ {
+          "name" : "pageToken",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "pageSize",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "X-Auth-Token",
+          "in" : "header",
+          "description" : "Authentication Token",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        },
+        "x-summary" : "Projects"
+      },
+      "post" : {
+        "operationId" : "createProject",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/ProjectDTO"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/sample-tracking/v1/projects/{projectId}" : {
+      "get" : {
+        "operationId" : "getProjectById",
+        "parameters" : [ {
+          "name" : "projectId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "pattern" : "[\\d]+",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions" : {
+    "X-Auth-Token" : {
+      "type" : "apiKey",
+      "name" : "X-Auth-Token",
+      "in" : "header"
+    },
+    "basicAuth" : {
+      "type" : "basic"
+    }
+  },
+  "definitions" : {
+    "ProjectDTO" : {
+      "type" : "object",
+      "properties" : {
+        "createdBy" : {
+          "type" : "integer",
+          "format" : "int32",
+          "readOnly" : true
+        },
+        "createdDate" : {
+          "type" : "string",
+          "format" : "date-time",
+          "readOnly" : true
+        },
+        "modifiedBy" : {
+          "type" : "integer",
+          "format" : "int32",
+          "readOnly" : true
+        },
+        "modifiedDate" : {
+          "type" : "string",
+          "format" : "date-time",
+          "readOnly" : true
+        },
+        "projectId" : {
+          "type" : "integer",
+          "format" : "int32",
+          "readOnly" : true
+        },
+        "piContactId" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "projectName" : {
+          "type" : "string"
+        },
+        "projectStatus" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "projectCode" : {
+          "type" : "string"
+        },
+        "projectDescription" : {
+          "type" : "string"
+        },
+        "properties" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "type" : "string"
+          }
+        }
+      }
+    }
+  }
+}
