@@ -133,14 +133,31 @@ public class SampleTrackingController {
     }
 
     /**
-     * Endpoint to get project by project Id.
-     * Exceptions are handled in GlobalControllerExceptionHandler.
+     * Endpoint for getting a specific project with the given project ID
      *
-     * @param projectId - project Id, an Unique value to identify every project.
-     * @return Brapi response of a single Project queried by given project id.
+     * @param projectId ID of the requested project
+     * @return ResponseEntity with http status code specifying if retrieval of the project is successful.
+     * Response body contains the requested Project information
      */
+
+    @ApiOperation(
+            value = "Get a project by projectId",
+            notes = "Retrieves the Project entity having the specified ID.",
+            tags = {"Projects"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Projects : projectId")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required = true,
+            paramType = "header", dataType = "string"),
+    })
+
     @RequestMapping(value="/projects/{projectId:[\\d]+}", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getProjectById(
+            @ApiParam(value = "ID of the Project to be extracted", required = true)
             @PathVariable Integer projectId
     ) {
             ProjectDTO project = sampleTrackingProjectService.getProjectById(projectId);
@@ -156,8 +173,32 @@ public class SampleTrackingController {
      * @return ResponseEntity with http status code respective of successful creation or failure.
      * Response body contains created resource if project creation is successful.
      */
+
+    @ApiOperation(
+            value = "Creates a new project",
+            notes = "Creates a new project in the system.",
+            tags = {"Projects"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Projects"),
+                            @ExtensionProperty(
+                                    name="tag-description",
+                                    value="A project consists of a group of samples that are, " +
+                                            "or will be, genotyped. A project belings to a Principal Investigator (PI), " +
+                                            "also called a PI contact. "
+                            )
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required = true,
+                paramType = "header", dataType = "string")
+    })
+
     @RequestMapping(value="/projects", method=RequestMethod.POST)
-    public @ResponseBody ResponseEntity createProject(@RequestBody ProjectDTO newProject) {
+    public @ResponseBody ResponseEntity createProject(
+            @ApiParam(required = true)
+            @RequestBody ProjectDTO newProject) {
         ProjectDTO createdProject = sampleTrackingProjectService.createProject(newProject);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
     }
