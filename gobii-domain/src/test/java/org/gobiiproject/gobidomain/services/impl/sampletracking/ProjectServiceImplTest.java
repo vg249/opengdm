@@ -55,11 +55,11 @@ public class ProjectServiceImplTest {
         ProjectDTO newProject = new ProjectDTO();
         newProject.setPiContactId(1);
         newProject.setProjectName(UUID.randomUUID().toString());
-        newProject.setDivision("test division");
-        newProject.setGenotypingPurpose("test purpose");
+        newProject.getProperties().put("division", "test division");
+        newProject.getProperties().put("genotyping_purpose", "test purpose");
+        newProject.getProperties().put("study_name","test studyname");
+        newProject.getProperties().put("date_sampled", "01/02/2019");
         newProject.setProjectCode("test code");
-        newProject.setStudyName("test studyname");
-        newProject.setDateSampled("01/02/2019");
         newProject.setProjectDescription("test description");
         ProjectDTO createdProject = sampleTrackingProjectService.createProject(newProject);
         assertTrue(createdProject.getProjectId() > 0);

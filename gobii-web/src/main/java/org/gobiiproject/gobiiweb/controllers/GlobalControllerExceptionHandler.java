@@ -8,8 +8,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 
 /**
@@ -84,6 +86,22 @@ public class GlobalControllerExceptionHandler {
         errorPayload.setError("Server Error");
         LOGGER.error(e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorPayload);
+    }
+
+    /**
+     * Handles exceptions when the Request Parameters and Path Variables
+     * are of type different than the expected.
+     * For example, String argument is passed to a pageNumber argument when Integer is expected.
+     *
+     * @param e - exception object.
+     * @return ResponseEntity with "Bad Request" as status code and as message
+     */
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity InvalidParameterTypeExceptionHandler(MethodArgumentTypeMismatchException e) {
+        ErrorPayload errorPayload = new ErrorPayload();
+        errorPayload.setError("Invalid Request Arguments");
+        LOGGER.error(e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorPayload);
     }
 
 }

@@ -8,6 +8,7 @@ import org.gobiiproject.gobidomain.services.impl.sampletracking.ProjectServiceIm
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.ListPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
+import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ExperimentDTO;
@@ -61,13 +62,19 @@ public class SampleTrackingController {
     ) {
         try {
 
-
             Integer pageToken = null;
 
             if(pageTokenParam != null) {
-                pageToken = Integer.parseInt(pageTokenParam);
+                try {
+                    pageToken = Integer.parseInt(pageTokenParam);
+                }
+                catch(Exception e) {
+                    throw new GobiiException(
+                            GobiiStatusLevel.ERROR,
+                            GobiiValidationStatusType.BAD_REQUEST,
+                            "Invalid Page Token");
+                }
             }
-
 
             Integer maxPageSize = RestResourceLimits.getResourceLimit(
                     RestResourceId.GOBII_PROJECTS,
@@ -81,7 +88,17 @@ public class SampleTrackingController {
 
             BrApiMasterPayload<List<ProjectDTO>> payload = new BrApiMasterPayload<>(projectsList);
 
+
+            if(projectsList.size() > 0 ) {
+                payload.getMetaData().getPagination().setPageSize(projectsList.size());
+                if(projectsList.size() >= pageSize) {
+                    payload.getMetaData().getPagination().setNextPageToken(
+                            projectsList.get(projectsList.size() - 1).getProjectId().toString());
+                }
+            }
+
             return ResponseEntity.ok(payload);
+
         }
         catch(GobiiException gE) {
             throw gE;
@@ -142,10 +159,8 @@ public class SampleTrackingController {
             HttpServletResponse response){
 
         try {
-
             sampleTrackingExperimentService.createExperiment(newExperiment);
             return ResponseEntity.ok(newExperiment);
-
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -159,10 +174,8 @@ public class SampleTrackingController {
     ) {
 
         try {
-
             ExperimentDTO experimentDTO = sampleTrackingExperimentService.getExperimentById(experimentId);
             return ResponseEntity.ok(experimentDTO);
-
         }
         catch (GobiiException gobiiE) {
             throw gobiiE;

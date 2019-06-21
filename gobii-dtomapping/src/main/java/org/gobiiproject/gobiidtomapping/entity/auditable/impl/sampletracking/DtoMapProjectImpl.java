@@ -140,7 +140,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
             ProjectDTO returnVal = projectDTO;
             Map<String, Object> parameters = ParamExtractor.makeParamVals(projectDTO);
             Integer projectId = rsSampleTrackingProjectDao.createProject(parameters);
-            upsertProjectProperties(projectId, projectDTO.getSystemProperties());
+            upsertProjectProperties(projectId, projectDTO.getProperties());
             returnVal.setId(projectId);
             return returnVal;
 

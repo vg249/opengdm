@@ -9,6 +9,7 @@ public class BrApiPagination {
     private Integer pageSize;
     private Integer totalPages;
     private Integer currentPage;
+    private String nextPageToken;
 
     public Integer getTotalCount() {
         return this.totalCount;
@@ -40,5 +41,13 @@ public class BrApiPagination {
 
     public void setCurrentPage(Integer currentPage) {
         this.currentPage = currentPage;
+    }
+
+    public String getNextPageToken() {
+        return this.nextPageToken;
+    }
+
+    public void setNextPageToken(String nextPageToken) {
+        this.nextPageToken = nextPageToken;
     }
 }
