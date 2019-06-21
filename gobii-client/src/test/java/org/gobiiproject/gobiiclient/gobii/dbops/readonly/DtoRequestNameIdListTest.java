@@ -10,19 +10,13 @@ import org.gobiiproject.gobiiapimodel.hateos.Link;
 import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
+import org.gobiiproject.gobiiclient.gobii.dbops.crud.*;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
-import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestContactTest;
-import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestDataSetTest;
-import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestMapsetTest;
-import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestProjectTest;
-import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestProtocolTest;
-import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestReferenceTest;
-import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestVendorProtocolTest;
 import org.gobiiproject.gobiimodel.dto.entity.children.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.PlatformDTO;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.ProtocolDTO;
@@ -419,8 +413,11 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetDataSetNamesByExperimentId() throws Exception {
 
+        // get existing experimentID
 
-        testNameRetrieval(GobiiEntityNameType.DATASET, GobiiFilterType.NAMES_BY_TYPEID, "1");
+        Integer experimentId = (new GlobalPkColl<DtoCrudRequestExperimentTest>().getAPkVal(DtoCrudRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENT));
+
+        testNameRetrieval(GobiiEntityNameType.DATASET, GobiiFilterType.NAMES_BY_TYPEID, experimentId.toString());
 
     }
 

@@ -236,39 +236,49 @@ public class DtoCrudRequestProtocolTest implements DtoCrudRequestTest{
 
 
         //get ProtocolDetails By ExperimentId
-        RestUri restUriProtocolsForGetDetailsByExperimentId = GobiiClientContext.getInstance(null, false)
-                .getUriFactory()
-                .resourceByUriIdParam(RestResourceId.GOBII_EXPERIMENTS)
-                .setParamValue("id", "1")
-                .appendSegment(RestResourceId.GOBII_PROTOCOL);
 
-        GobiiEnvelopeRestResource<ProtocolDTO,ProtocolDTO> restResourceProtocolForGetDetailsByExperimentId = new GobiiEnvelopeRestResource<>(restUriProtocolsForGetDetailsByExperimentId);
-        PayloadEnvelope<ProtocolDTO> resultEnvelopeForGetDetailsByExperimentId = restResourceProtocolForGetDetailsByExperimentId
-                .get(ProtocolDTO.class);
+        // get existing experimentID
 
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetDetailsByExperimentId.getHeader()));
-        List<ProtocolDTO> protocolDTOByExperimentId = resultEnvelopeForGetDetailsByExperimentId.getPayload().getData();
-        Assert.assertNotNull(protocolDTOByExperimentId);
-        Assert.assertTrue(protocolDTOByExperimentId.size() > 0);
-        Assert.assertNotNull(protocolDTOByExperimentId.get(0).getName());
+        Integer experimentId = (new GlobalPkColl<DtoCrudRequestExperimentTest>().getAPkVal(DtoCrudRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENT));
 
-        LinkCollection linkCollectionForProtocol = resultEnvelopeForGetDetailsByExperimentId.getPayload().getLinkCollection();
-        Assert.assertTrue(linkCollectionForProtocol.getLinksPerDataItem().size() == 1);
+        if (experimentId > 0) {
+
+            RestUri restUriProtocolsForGetDetailsByExperimentId = GobiiClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .resourceByUriIdParam(RestResourceId.GOBII_EXPERIMENTS)
+                    .setParamValue("id", experimentId.toString())
+                    .appendSegment(RestResourceId.GOBII_PROTOCOL);
+
+            GobiiEnvelopeRestResource<ProtocolDTO, ProtocolDTO> restResourceProtocolForGetDetailsByExperimentId = new GobiiEnvelopeRestResource<>(restUriProtocolsForGetDetailsByExperimentId);
+            PayloadEnvelope<ProtocolDTO> resultEnvelopeForGetDetailsByExperimentId = restResourceProtocolForGetDetailsByExperimentId
+                    .get(ProtocolDTO.class);
+
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetDetailsByExperimentId.getHeader()));
+            List<ProtocolDTO> protocolDTOByExperimentId = resultEnvelopeForGetDetailsByExperimentId.getPayload().getData();
+            Assert.assertNotNull(protocolDTOByExperimentId);
+            Assert.assertTrue(protocolDTOByExperimentId.size() > 0);
+            Assert.assertNotNull(protocolDTOByExperimentId.get(0).getName());
+
+            LinkCollection linkCollectionForProtocol = resultEnvelopeForGetDetailsByExperimentId.getPayload().getLinkCollection();
+            Assert.assertTrue(linkCollectionForProtocol.getLinksPerDataItem().size() == 1);
 
 
-        Link currentLink = linkCollectionForProtocol.getLinksPerDataItem().get(0);
+            Link currentLink = linkCollectionForProtocol.getLinksPerDataItem().get(0);
 
-        RestUri restUriProtocolForGetById = GobiiClientContext.getInstance(null, false)
-                .getUriFactory()
-                .RestUriFromUri(currentLink.getHref());
-        GobiiEnvelopeRestResource<ProtocolDTO,ProtocolDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriProtocolForGetById);
-        PayloadEnvelope<ProtocolDTO> resultEnvelopeForGetByID = gobiiEnvelopeRestResourceForGetById
-                .get(ProtocolDTO.class);
-        Assert.assertNotNull(resultEnvelopeForGetByID);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
-        ProtocolDTO protocolDTOFromLink = resultEnvelopeForGetByID.getPayload().getData().get(0);
-        Assert.assertTrue(protocolDTOFromLink.getName().equals(protocolDTOByExperimentId.get(0).getName()));
-        Assert.assertTrue(protocolDTOFromLink.getProtocolId().equals(protocolDTOByExperimentId.get(0).getProtocolId()));
+            RestUri restUriProtocolForGetById = GobiiClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .RestUriFromUri(currentLink.getHref());
+            GobiiEnvelopeRestResource<ProtocolDTO, ProtocolDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriProtocolForGetById);
+            PayloadEnvelope<ProtocolDTO> resultEnvelopeForGetByID = gobiiEnvelopeRestResourceForGetById
+                    .get(ProtocolDTO.class);
+            Assert.assertNotNull(resultEnvelopeForGetByID);
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
+            ProtocolDTO protocolDTOFromLink = resultEnvelopeForGetByID.getPayload().getData().get(0);
+            Assert.assertTrue(protocolDTOFromLink.getName().equals(protocolDTOByExperimentId.get(0).getName()));
+            Assert.assertTrue(protocolDTOFromLink.getProtocolId().equals(protocolDTOByExperimentId.get(0).getProtocolId()));
+        } else {
+            System.out.print("No available experiment ID to use for testing");
+        }
     }
 
 }

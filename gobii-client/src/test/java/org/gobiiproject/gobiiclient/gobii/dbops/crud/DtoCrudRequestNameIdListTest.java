@@ -58,7 +58,10 @@ public class DtoCrudRequestNameIdListTest {
         adlEncapsulator.copyFilesToLocalDir(fileFromRepo, tempDir);
 
         adlEncapsulator.setInputDirectory(tempDir.getAbsolutePath());
-        Assert.assertTrue(adlEncapsulator.getErrorMsg(), adlEncapsulator.executeBatchGobiiADL());
+
+        boolean isLoadSuccessful = adlEncapsulator.executeBatchGobiiADL();
+
+        Assert.assertTrue(adlEncapsulator.getErrorMsg(), isLoadSuccessful);
 
     }
 
