@@ -21,17 +21,21 @@ __|string
 |**anlaysisTypeId** +
 __|integer (int32)
 |**createdBy** +
-__|integer (int32)
+__ +
+__read-only__|integer (int32)
 |**createdDate** +
-__|string (date-time)
+__ +
+__read-only__|string (date-time)
 |**entityNameType** +
 __|enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION, PLATFORM, MANIFEST, MAPSET, MARKER_GROUP, EXPERIMENT, REFERENCE, ROLE, DISPLAY, MARKER, PROTOCOL, VENDOR_PROTOCOL, DNASAMPLE, LINKAGE_GROUP, DNARUN, GERMPLASM, JOB)
 |**id** +
 __|integer (int32)
 |**modifiedBy** +
-__|integer (int32)
+__ +
+__read-only__|integer (int32)
 |**modifiedDate** +
-__|string (date-time)
+__ +
+__read-only__|string (date-time)
 |**parameters** +
 __|< <<_entitypropertydto,EntityPropertyDTO>> > array
 |**program** +
@@ -85,9 +89,11 @@ __|string
 |**contactId** +
 __|integer (int32)
 |**createdBy** +
-__|integer (int32)
+__ +
+__read-only__|integer (int32)
 |**createdDate** +
-__|string (date-time)
+__ +
+__read-only__|string (date-time)
 |**email** +
 __|string
 |**entityNameType** +
@@ -99,9 +105,11 @@ __|integer (int32)
 |**lastName** +
 __|string
 |**modifiedBy** +
-__|integer (int32)
+__ +
+__read-only__|integer (int32)
 |**modifiedDate** +
-__|string (date-time)
+__ +
+__read-only__|string (date-time)
 |**organizationId** +
 __|integer (int32)
 |**roles** +
@@ -267,9 +275,11 @@ __|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
 |**columnName** +
 __|string
 |**createdBy** +
-__|integer (int32)
+__ +
+__read-only__|integer (int32)
 |**createdDate** +
-__|string (date-time)
+__ +
+__read-only__|string (date-time)
 |**displayId** +
 __|integer (int32)
 |**displayName** +
@@ -283,9 +293,11 @@ __|integer (int32)
 |**includeDetailsList** +
 __|boolean
 |**modifiedBy** +
-__|integer (int32)
+__ +
+__read-only__|integer (int32)
 |**modifiedDate** +
-__|string (date-time)
+__ +
+__read-only__|string (date-time)
 |**tableName** +
 __|string
 |**tableNamesWithColDisplay** +
@@ -379,9 +391,11 @@ __|string (date-time)
 |**allowedProcessTypes** +
 __|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
 |**createdBy** +
-__|integer (int32)
+__ +
+__read-only__|integer (int32)
 |**createdDate** +
-__|string (date-time)
+__ +
+__read-only__|string (date-time)
 |**datasets** +
 __|< <<_datasetdto,DataSetDTO>> > array
 |**entityNameType** +
@@ -399,9 +413,11 @@ __|integer (int32)
 |**manifestId** +
 __|integer (int32)
 |**modifiedBy** +
-__|integer (int32)
+__ +
+__read-only__|integer (int32)
 |**modifiedDate** +
-__|string (date-time)
+__ +
+__read-only__|string (date-time)
 |**projectId** +
 __|integer (int32)
 |**statusId** +
@@ -798,9 +814,11 @@ __|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
 |**code** +
 __|string
 |**createdBy** +
-__|integer (int32)
+__ +
+__read-only__|integer (int32)
 |**createdDate** +
-__|string (date-time)
+__ +
+__read-only__|string (date-time)
 |**entityNameType** +
 __|enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION, PLATFORM, MANIFEST, MAPSET, MARKER_GROUP, EXPERIMENT, REFERENCE, ROLE, DISPLAY, MARKER, PROTOCOL, VENDOR_PROTOCOL, DNASAMPLE, LINKAGE_GROUP, DNARUN, GERMPLASM, JOB)
 |**filePath** +
@@ -810,9 +828,11 @@ __|integer (int32)
 |**manifestId** +
 __|integer (int32)
 |**modifiedBy** +
-__|integer (int32)
+__ +
+__read-only__|integer (int32)
 |**modifiedDate** +
-__|string (date-time)
+__ +
+__read-only__|string (date-time)
 |**name** +
 __|string
 |===
@@ -829,9 +849,11 @@ __|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
 |**code** +
 __|string
 |**createdBy** +
-__|integer (int32)
+__ +
+__read-only__|integer (int32)
 |**createdDate** +
-__|string (date-time)
+__ +
+__read-only__|string (date-time)
 |**description** +
 __|string
 |**entityNameType** +
@@ -843,9 +865,11 @@ __|integer (int32)
 |**mapsetId** +
 __|integer (int32)
 |**modifiedBy** +
-__|integer (int32)
+__ +
+__read-only__|integer (int32)
 |**modifiedDate** +
-__|string (date-time)
+__ +
+__read-only__|string (date-time)
 |**name** +
 __|string
 |**properties** +
@@ -907,9 +931,11 @@ __|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
 |**code** +
 __|string
 |**createdBy** +
-__|integer (int32)
+__ +
+__read-only__|integer (int32)
 |**createdDate** +
-__|string (date-time)
+__ +
+__read-only__|string (date-time)
 |**entityNameType** +
 __|enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION, PLATFORM, MANIFEST, MAPSET, MARKER_GROUP, EXPERIMENT, REFERENCE, ROLE, DISPLAY, MARKER, PROTOCOL, VENDOR_PROTOCOL, DNASAMPLE, LINKAGE_GROUP, DNARUN, GERMPLASM, JOB)
 |**germplasmGroup** +
@@ -923,9 +949,11 @@ __|< string, < string > array > map
 |**markers** +
 __|< <<_markergroupmarkerdto,MarkerGroupMarkerDTO>> > array
 |**modifiedBy** +
-__|integer (int32)
+__ +
+__read-only__|integer (int32)
 |**modifiedDate** +
-__|string (date-time)
+__ +
+__read-only__|string (date-time)
 |**name** +
 __|string
 |**statusId** +
@@ -992,17 +1020,21 @@ __|string
 |**allowedProcessTypes** +
 __|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
 |**createdBy** +
-__|integer (int32)
+__ +
+__read-only__|integer (int32)
 |**createdDate** +
-__|string (date-time)
+__ +
+__read-only__|string (date-time)
 |**entityNameType** +
 __|enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION, PLATFORM, MANIFEST, MAPSET, MARKER_GROUP, EXPERIMENT, REFERENCE, ROLE, DISPLAY, MARKER, PROTOCOL, VENDOR_PROTOCOL, DNASAMPLE, LINKAGE_GROUP, DNARUN, GERMPLASM, JOB)
 |**id** +
 __|integer (int32)
 |**modifiedBy** +
-__|integer (int32)
+__ +
+__read-only__|integer (int32)
 |**modifiedDate** +
-__|string (date-time)
+__ +
+__read-only__|string (date-time)
 |**name** +
 __|string
 |**organizationId** +
@@ -1813,17 +1845,21 @@ __|integer (int32)
 |**allowedProcessTypes** +
 __|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
 |**createdBy** +
-__|integer (int32)
+__ +
+__read-only__|integer (int32)
 |**createdDate** +
-__|string (date-time)
+__ +
+__read-only__|string (date-time)
 |**entityNameType** +
 __|enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION, PLATFORM, MANIFEST, MAPSET, MARKER_GROUP, EXPERIMENT, REFERENCE, ROLE, DISPLAY, MARKER, PROTOCOL, VENDOR_PROTOCOL, DNASAMPLE, LINKAGE_GROUP, DNARUN, GERMPLASM, JOB)
 |**id** +
 __|integer (int32)
 |**modifiedBy** +
-__|integer (int32)
+__ +
+__read-only__|integer (int32)
 |**modifiedDate** +
-__|string (date-time)
+__ +
+__read-only__|string (date-time)
 |**piContact** +
 __|integer (int32)
 |**principleInvestigators** +
@@ -1865,9 +1901,11 @@ __|string
 |**allowedProcessTypes** +
 __|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
 |**createdBy** +
-__|integer (int32)
+__ +
+__read-only__|integer (int32)
 |**createdDate** +
-__|string (date-time)
+__ +
+__read-only__|string (date-time)
 |**description** +
 __|string
 |**entityNameType** +
@@ -1875,9 +1913,11 @@ __|enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION
 |**id** +
 __|integer (int32)
 |**modifiedBy** +
-__|integer (int32)
+__ +
+__read-only__|integer (int32)
 |**modifiedDate** +
-__|string (date-time)
+__ +
+__read-only__|string (date-time)
 |**name** +
 __|string
 |**platformId** +
@@ -1904,9 +1944,11 @@ __|< <<_vendorprotocoldto,VendorProtocolDTO>> > array
 |**allowedProcessTypes** +
 __|< enum (CREATE, READ, UPDATE, DELETE, NONE) > array
 |**createdBy** +
-__|integer (int32)
+__ +
+__read-only__|integer (int32)
 |**createdDate** +
-__|string (date-time)
+__ +
+__read-only__|string (date-time)
 |**entityNameType** +
 __|enum (UNKNOWN, ANALYSIS, CONTACT, DATASET, CV, CVGROUP, PROJECT, ORGANIZATION, PLATFORM, MANIFEST, MAPSET, MARKER_GROUP, EXPERIMENT, REFERENCE, ROLE, DISPLAY, MARKER, PROTOCOL, VENDOR_PROTOCOL, DNASAMPLE, LINKAGE_GROUP, DNARUN, GERMPLASM, JOB)
 |**filePath** +
@@ -1916,9 +1958,11 @@ __|integer (int32)
 |**link** +
 __|string
 |**modifiedBy** +
-__|integer (int32)
+__ +
+__read-only__|integer (int32)
 |**modifiedDate** +
-__|string (date-time)
+__ +
+__read-only__|string (date-time)
 |**name** +
 __|string
 |**referenceId** +

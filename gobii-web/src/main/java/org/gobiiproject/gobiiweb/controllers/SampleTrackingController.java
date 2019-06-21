@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
+import io.swagger.annotations.*;
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobidomain.services.ExperimentService;
 import org.gobiiproject.gobidomain.services.ProjectService;
@@ -53,7 +54,27 @@ public class SampleTrackingController {
     @Autowired
     private ContactService contactService;
 
-
+    /**
+     * Lists the projects by page size and page token.
+     *
+     * @param pageTokenParam - String page token.
+     * @param pageSize - Page Size set by the user. If page size is more than maximum allowed
+     *                 page size, then the response will have maximum page size.
+     * @return Brapi response with list of projects.
+     */
+    @ApiOperation(
+            value = "List all projects",
+            notes = "List of all Projects.",
+            tags = {"Projects"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Projects")
+                    })}
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string"),
+    })
     @RequestMapping(value="/projects", method= RequestMethod.GET)
     @ResponseBody
     public ResponseEntity listProjects(
@@ -111,6 +132,13 @@ public class SampleTrackingController {
         }
     }
 
+    /**
+     * Endpoint to get project by project Id.
+     * Exceptions are handled in GlobalControllerExceptionHandler.
+     *
+     * @param projectId - project Id, an Unique value to identify every project.
+     * @return Brapi response of a single Project queried by given project id.
+     */
     @RequestMapping(value="/projects/{projectId:[\\d]+}", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getProjectById(
             @PathVariable Integer projectId
@@ -126,7 +154,7 @@ public class SampleTrackingController {
      * @param newProject - New project to be created.
      *                   Json request body automatically deserialized to ProjectDTO.
      * @return ResponseEntity with http status code respective of successful creation or failure.
-     * Response body contains created resource.
+     * Response body contains created resource if project creation is successful.
      */
     @RequestMapping(value="/projects", method=RequestMethod.POST)
     public @ResponseBody ResponseEntity createProject(@RequestBody ProjectDTO newProject) {
@@ -134,17 +162,16 @@ public class SampleTrackingController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
     }
 
+    @ApiOperation(value="List Experiments", hidden = true)
     @RequestMapping(value="/experiments", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity listExperiments(
             HttpServletRequest request,
             HttpServletResponse response) {
 
         try {
-
             List<ExperimentDTO> experimentsList = sampleTrackingExperimentService.getExperiments();
             ListPayload<ExperimentDTO> payload = new ListPayload<ExperimentDTO>();
             payload.setData(experimentsList);
-
             return ResponseEntity.ok(payload);
 
         } catch (Exception e) {
@@ -152,6 +179,7 @@ public class SampleTrackingController {
         }
     }
 
+    @ApiOperation(value="List Experiments", hidden = true)
     @RequestMapping(value="/experiments", method=RequestMethod.POST)
     public @ResponseBody ResponseEntity createExperiment(
             @RequestBody ExperimentDTO newExperiment,
@@ -166,6 +194,7 @@ public class SampleTrackingController {
         }
     }
 
+    @ApiOperation(value="List Experiments", hidden = true)
     @RequestMapping(value = "/experiments/{experimentId:[\\d]+}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity getExperimentById(
             @PathVariable Integer experimentId,
@@ -185,6 +214,7 @@ public class SampleTrackingController {
         }
     }
 
+    @ApiOperation(value="List Experiments", hidden = true)
     @RequestMapping(value = "/projects/{projectId:[\\d]+}/samples", method=RequestMethod.POST)
     public @ResponseBody ResponseEntity createSamples(
         @RequestBody ProjectSamplesDTO newProjectSamples,
@@ -203,6 +233,7 @@ public class SampleTrackingController {
 
     }
 
+    @ApiOperation(value="List Experiments", hidden = true)
     @RequestMapping(value = "/germplasm", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity createGermplasm(
             @RequestBody GermplasmListDTO germplasmListDTO,
@@ -225,6 +256,7 @@ public class SampleTrackingController {
 
     }
 
+    @ApiOperation(value="List Experiments", hidden = true)
     @RequestMapping(value = "/germplasm", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity listGermplasms(
             HttpServletRequest request,
@@ -241,6 +273,7 @@ public class SampleTrackingController {
 
     }
 
+    @ApiOperation(value="List Experiments", hidden = true)
     @RequestMapping(value = "/germplasm/{germplasmId:[\\d]+}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity listGermplasms(
             @PathVariable Integer germplasmId,

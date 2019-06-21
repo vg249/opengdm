@@ -644,6 +644,8 @@ The user credentials are specified in the request headers X-Username and X-Passw
 __|User password|string
 |**Header**|**X-Username** +
 __|User Identifier|string
+|**Body**|**body** +
+__||string
 |===
 
 
@@ -666,7 +668,7 @@ __|User Identifier|string
 [[_getconfigsettings]]
 === List all configuration settings.
 ....
-GET /gobii/v1/configsettings/
+GET /gobii/v1/configsettings
 ....
 
 
@@ -718,13 +720,13 @@ List contacts for emailid, lastname, firstname, username.
 |**Header**|**X-Auth-Token** +
 __|Authentication Token|string
 |**Query**|**email** +
-__|contact's email|string
+__||string
 |**Query**|**firstName** +
-__|contact's first name|string
+__||string
 |**Query**|**lastName** +
-__|contact's last name|string
+__||string
 |**Query**|**userName** +
-__|contact's user name|string
+__||string
 |===
 
 

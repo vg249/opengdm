@@ -2355,6 +2355,13 @@ __</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">User Identifier</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Body</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>body</strong><br>
+__</p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -2399,7 +2406,7 @@ __</p></td>
 <h3 id="_getconfigsettings">List all configuration settings.</h3>
 <div class="literalblock">
 <div class="content">
-<pre>GET /gobii/v1/configsettings/</pre>
+<pre>GET /gobii/v1/configsettings</pre>
 </div>
 </div>
 <div class="sect3">
@@ -2514,28 +2521,28 @@ __</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Query</strong></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>email</strong><br>
 __</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">contact&#8217;s email</p></td>
+<td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Query</strong></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>firstName</strong><br>
 __</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">contact&#8217;s first name</p></td>
+<td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Query</strong></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>lastName</strong><br>
 __</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">contact&#8217;s last name</p></td>
+<td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Query</strong></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>userName</strong><br>
 __</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">contact&#8217;s user name</p></td>
+<td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 </tbody>
@@ -10909,12 +10916,14 @@ __</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>createdBy</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>createdDate</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
 </tr>
 <tr>
@@ -10929,12 +10938,14 @@ __</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>modifiedBy</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>modifiedDate</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
 </tr>
 <tr>
@@ -11058,12 +11069,14 @@ __</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>createdBy</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>createdDate</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
 </tr>
 <tr>
@@ -11093,12 +11106,14 @@ __</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>modifiedBy</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>modifiedDate</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
 </tr>
 <tr>
@@ -11491,12 +11506,14 @@ __</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>createdBy</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>createdDate</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
 </tr>
 <tr>
@@ -11531,12 +11548,14 @@ __</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>modifiedBy</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>modifiedDate</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
 </tr>
 <tr>
@@ -11749,12 +11768,14 @@ __</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>createdBy</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>createdDate</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
 </tr>
 <tr>
@@ -11799,12 +11820,14 @@ __</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>modifiedBy</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>modifiedDate</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
 </tr>
 <tr>
@@ -12702,12 +12725,14 @@ __</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>createdBy</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>createdDate</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
 </tr>
 <tr>
@@ -12732,12 +12757,14 @@ __</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>modifiedBy</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>modifiedDate</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
 </tr>
 <tr>
@@ -12774,12 +12801,14 @@ __</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>createdBy</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>createdDate</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
 </tr>
 <tr>
@@ -12809,12 +12838,14 @@ __</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>modifiedBy</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>modifiedDate</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
 </tr>
 <tr>
@@ -12958,12 +12989,14 @@ __</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>createdBy</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>createdDate</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
 </tr>
 <tr>
@@ -12998,12 +13031,14 @@ __</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>modifiedBy</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>modifiedDate</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
 </tr>
 <tr>
@@ -13154,12 +13189,14 @@ __</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>createdBy</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>createdDate</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
 </tr>
 <tr>
@@ -13174,12 +13211,14 @@ __</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>modifiedBy</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>modifiedDate</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
 </tr>
 <tr>
@@ -14882,12 +14921,14 @@ __</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>createdBy</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>createdDate</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
 </tr>
 <tr>
@@ -14902,12 +14943,14 @@ __</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>modifiedBy</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>modifiedDate</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
 </tr>
 <tr>
@@ -15001,12 +15044,14 @@ __</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>createdBy</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>createdDate</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
 </tr>
 <tr>
@@ -15026,12 +15071,14 @@ __</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>modifiedBy</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>modifiedDate</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
 </tr>
 <tr>
@@ -15093,12 +15140,14 @@ __</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>createdBy</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>createdDate</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
 </tr>
 <tr>
@@ -15123,12 +15172,14 @@ __</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>modifiedBy</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int32)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>modifiedDate</strong><br>
-__</p></td>
+<em><br>
+</em>read-only__</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
 </tr>
 <tr>
@@ -15411,7 +15462,7 @@ __</p></td>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-05-12 17:56:42 EDT
+Last updated 2019-06-20 16:13:24 EDT
 </div>
 </div>
 </body>

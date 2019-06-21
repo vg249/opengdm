@@ -516,33 +516,17 @@
                         <apiSource>
                             <springmvc>true</springmvc>
                             <locations>
-                                <location>org.gobiiproject.gobiiweb.controllers</location>
+                                <location>org.gobiiproject.gobiiweb.controllers.GOBIIControllerV1</location>
+                                <location>org.gobiiproject.gobiiweb.controllers.BRAPIIControllerV1</location>
                             </locations>
                             <outputFormats>json,yaml</outputFormats>
                             <schemes><schema>http</schema></schemes>
                             <host>cbsugobiixvm11.biohpc.cornell.edu:8081</host>
                             <basePath>/gobii-dev</basePath>
-                            <!-- content of description file overrides the <description>
-                                element of the <info> tag below. This ends up as the
-                                 Overview section in the HTML/PDF -->
                             <descriptionFile>${doc-location-source}/overview.txt</descriptionFile>
                             <info>
                                 <title>Genomic Data Management (GDM)</title>
                                 <version>1.0</version>
-                                <!-- use markdown here because I'm using markdown for output,
-                                if you need to use html or other markup language, you need to use your target language,
-                                 and note escape your description for xml -->
-                                <!--<description>-->
-                                    <!--GOBii API-->
-                                <!--</description>-->
-                                <!--<termsOfService>-->
-                                <!--http://www.github.com/kongchen/swagger-maven-plugin-->
-                                <!--</termsOfService>-->
-                                <!--<contact>-->
-                                <!--<email>kongchen@gmail.com</email>-->
-                                <!--<name>Kong Chen</name>-->
-                                <!--<url>http://kongch.com</url>-->
-                                <!--</contact>-->
                                 <license>
                                     <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
                                     <name>Apache 2.0</name>
@@ -558,36 +542,41 @@
                                     <type>apiKey</type>
                                     <in>header</in>
                                 </securityDefinition>
-                                <!--<securityDefinition>
-                                    <jsonPath>${doc-location-source}/securityDefinition.json</jsonPath>
-                                </securityDefinition>-->
                             </securityDefinitions>
-                            <!-- Support classpath or file absolute path here.
-                            1) classpath e.g: "classpath:/markdown.hbs", "classpath:/templates/hello.html"
-                            2) file e.g: "${basedir}/src/main/resources/markdown.hbs",
-                                "${basedir}/src/main/resources/template/hello.html" -->
                             <swaggerDirectory>${doc-location-generated}/swagger</swaggerDirectory>
-                            <!--<swaggerDirectory>${basedir}/generated/swagger-ui</swaggerDirectory>-->
-                            <!--<templatePath>${basedir}/src/test/resources/strapdown.html.hbs</templatePath>-->
-                            <!--<outputPath>${basedir}/generated/document.html</outputPath>-->
-                            <!--<swaggerApiReader>com.wordnik.swagger.jaxrs.reader.DefaultJaxrsApiReader</swaggerApiReader>-->
-                            <!--<attachSwaggerArtifact>true</attachSwaggerArtifact>-->
-                            <!--<modelConverters>io.swagger.validator.BeanValidator</modelConverters>-->
-                            <!--<swaggerExtensions>-->
-                            <!--<swaggerExtension>com.example.VendorExtension</swaggerExtension>-->
-                            <!--</swaggerExtensions>-->
-                            <!--<enabledObjectMapperFeatures>-->
-                            <!--<feature>com.fasterxml.jackson.databind.SerializationFeature.WRITE_ENUMS_USING_TO_STRING</feature>-->
-                            <!--<feature>com.fasterxml.jackson.core.JsonParser$Feature.ALLOW_NUMERIC_LEADING_ZEROS</feature>-->
-                            <!--</enabledObjectMapperFeatures>-->
-                            <!--<disabledObjectMapperFeatures>-->
-                            <!--<feature>com.fasterxml.jackson.databind.SerializationFeature.FAIL_ON_EMPTY_BEANS</feature>-->
-                            <!--</disabledObjectMapperFeatures>-->
-                            <!--<operationIdFormat>{{className}}_{{methodName}}_{{httpMethod}}</operationIdFormat>-->
-                            <!--<externalDocs>-->
-                            <!--<description>Example external docs</description>-->
-                            <!--<url>https://example.com/docs</url>-->
-                            <!--</externalDocs>-->
+                        </apiSource>
+                        <apiSource>
+                            <springmvc>true</springmvc>
+                            <locations>
+                                <location>
+                                    org.gobiiproject.gobiiweb.controllers.SampleTrackingController
+                                </location>
+                            </locations>
+                            <outputFormats>json,yaml</outputFormats>
+                            <schemes><schema>http</schema></schemes>
+                            <host>cbsugobiixvm11.biohpc.cornell.edu:8081</host>
+                            <basePath>/gobii-dev/sample-tracking</basePath>
+                            <descriptionFile>${doc-location-source}/overview.txt</descriptionFile>
+                            <info>
+                                <title>GDM Sample Tracking</title>
+                                <version>1.0</version>
+                                <license>
+                                    <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+                                    <name>Apache 2.0</name>
+                                </license>
+                            </info>
+                            <securityDefinitions>
+                                <securityDefinition>
+                                    <name>basicAuth</name>
+                                    <type>basic</type>
+                                </securityDefinition>
+                                <securityDefinition>
+                                    <name>X-Auth-Token</name>
+                                    <type>apiKey</type>
+                                    <in>header</in>
+                                </securityDefinition>
+                            </securityDefinitions>
+                            <swaggerDirectory>${doc-location-generated}/swagger/sampletracking</swaggerDirectory>
                         </apiSource>
                     </apiSources>
                 </configuration>
