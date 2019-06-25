@@ -2583,10 +2583,7 @@ public class GobiiAdl {
 
                 if (dataFileDir.exists() && dataFileDir.isDirectory() && dataFileDir.listFiles().length > 0) {
 
-                    /**
-                     * DISABLE FILE COMPARATOR
-                     * compareExtractedFiles(localPathName, subDirectory, jobName);
-                     */
+                     compareExtractedFiles(localPathName, subDirectory, jobName);
 
                 }
 
