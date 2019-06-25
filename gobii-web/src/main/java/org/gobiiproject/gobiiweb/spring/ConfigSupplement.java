@@ -25,6 +25,8 @@ public class ConfigSupplement {
     @Autowired
     private ThreadLocal<HttpServletRequest> currentRequest;
 
+    private static String CONFIG_FILE_LOCATION_PROP = "cfgFqpn";
+
 
     @Bean(name="dataSourceMulti")
     public DataSourceSelector dataSourceMulti() throws Exception {
@@ -32,7 +34,9 @@ public class ConfigSupplement {
         DataSourceSelector returnVal = new DataSourceSelector();
         returnVal.setCurrentRequest(currentRequest);
 
-        ConfigSettings configSettings = new ConfigSettings();
+        String configFileLocation = System.getProperty(CONFIG_FILE_LOCATION_PROP);
+
+        ConfigSettings configSettings = new ConfigSettings(configFileLocation);
         Map<Object,Object> targetDataSources = new HashMap<>();
         for (GobiiCropConfig currentGobiiCropConfig : configSettings.getActiveCropConfigs()) {
 

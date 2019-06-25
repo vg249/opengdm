@@ -994,7 +994,6 @@
         <property name="jpaProperties">
             <props>
                 <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL9Dialect</prop>
-                <!--<prop key="hibernate.connection.isolation">4</prop>-->
             </props>
         </property>
     </bean>
