@@ -2733,17 +2733,14 @@ public class GobiiAdl {
             doExtract = false;
         }
 
-        /**
-         * DISABLE FILE COMPARATOR
-            if (commandLine.hasOption(INPUT_FILECOMPARATOR)) {
+        if (commandLine.hasOption(INPUT_FILECOMPARATOR)) {
 
-                fileComparatorPath = commandLine.getOptionValue(INPUT_FILECOMPARATOR);
-            }
+            fileComparatorPath = commandLine.getOptionValue(INPUT_FILECOMPARATOR);
+        }
 
-            if (fileComparatorPath == null) {
-                fileComparatorPath = "GDMFileProject.jar";
-            }
-         */
+        if (fileComparatorPath == null) {
+            fileComparatorPath = "GDMFileProject.jar";
+        }
 
         String directory;
         File parentDirectory = null;
