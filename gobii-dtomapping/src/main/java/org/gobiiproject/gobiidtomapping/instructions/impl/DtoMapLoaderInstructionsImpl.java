@@ -137,7 +137,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
             );
 
 
-            if (primaryLoaderInstruction.getJobPayloadType() == null) {
+            if (loaderInstructionFilesDTO.getMetadata().getJobPayloadType() == null) {
                 throw new Exception("The primary instruction does not have a payload type");
             }
 
@@ -150,11 +150,11 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 //                        loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(currentFileIdx);
 
 
-            if (LineUtils.isNullOrEmpty(primaryLoaderInstruction.getGobiiCropType())) {
-                primaryLoaderInstruction.setGobiiCropType(cropType);
+            if (LineUtils.isNullOrEmpty(loaderInstructionFilesDTO.getMetadata().getGobiiCropType())) {
+                loaderInstructionFilesDTO.getMetadata().setGobiiCropType(cropType);
             }
 
-            GobiiFile currentGobiiFile = primaryLoaderInstruction.getGobiiFile();
+            GobiiFile currentGobiiFile = loaderInstructionFilesDTO.getMetadata().getGobiiFile();
 
             // check that we have all required values
             if (LineUtils.isNullOrEmpty(currentGobiiFile.getSource())) {
@@ -196,21 +196,21 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
             //validate loader instruction
 
             // check if the dataset is referenced by the specified experiment
-            if (primaryLoaderInstruction.getDataSet().getId() != null) {
+            if (loaderInstructionFilesDTO.getMetadata().getDataSet().getId() != null) {
 
-                DataSetDTO dataSetDTO = dtoMapDataSet.get(primaryLoaderInstruction.getDataSet().getId());
+                DataSetDTO dataSetDTO = dtoMapDataSet.get(loaderInstructionFilesDTO.getMetadata().getDataSet().getId());
 
                 // check if the experiment is referenced by the specified project
-                if (primaryLoaderInstruction.getExperiment().getId() != null) {
+                if (loaderInstructionFilesDTO.getMetadata().getExperiment().getId() != null) {
 
-                    if (!dataSetDTO.getExperimentId().equals(primaryLoaderInstruction.getExperiment().getId())) {
+                    if (!dataSetDTO.getExperimentId().equals(loaderInstructionFilesDTO.getMetadata().getExperiment().getId())) {
 
                         throw new GobiiDtoMappingException("The specified experiment in the dataset is incorrect");
                     }
 
-                    ExperimentDTO experimentDTO = dtoMapExperiment.get(primaryLoaderInstruction.getExperiment().getId());
+                    ExperimentDTO experimentDTO = dtoMapExperiment.get(loaderInstructionFilesDTO.getMetadata().getExperiment().getId());
 
-                    if (!experimentDTO.getProjectId().equals(primaryLoaderInstruction.getProject().getId())) {
+                    if (!experimentDTO.getProjectId().equals(loaderInstructionFilesDTO.getMetadata().getProject().getId())) {
 
                         throw new GobiiDtoMappingException("The specified project in the experiment is incorrect");
 
@@ -219,9 +219,9 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                 }
 
                 // check if the datatype is referenced by the dataset
-                if (primaryLoaderInstruction.getDatasetType().getId() != null) {
+                if (loaderInstructionFilesDTO.getMetadata().getDatasetType().getId() != null) {
 
-                    if (!dataSetDTO.getDatatypeId().equals(primaryLoaderInstruction.getDatasetType().getId())) {
+                    if (!dataSetDTO.getDatatypeId().equals(loaderInstructionFilesDTO.getMetadata().getDatasetType().getId())) {
 
                         throw new GobiiDtoMappingException("The specified data type in the dataset is incorrect");
 
@@ -232,9 +232,9 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
             }
 
 
-            if (primaryLoaderInstruction.getPlatform().getId() != null && primaryLoaderInstruction.getExperiment().getId() != null) {
+            if (loaderInstructionFilesDTO.getMetadata().getPlatform().getId() != null && loaderInstructionFilesDTO.getMetadata().getExperiment().getId() != null) {
 
-                ExperimentDTO experimentDTO = dtoMapExperiment.get(primaryLoaderInstruction.getExperiment().getId());
+                ExperimentDTO experimentDTO = dtoMapExperiment.get(loaderInstructionFilesDTO.getMetadata().getExperiment().getId());
 
                 if (experimentDTO.getVendorProtocolId() != null) {
 
@@ -246,7 +246,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
                         if (protocolDTO.getPlatformId() != null) {
 
-                            Integer loaderPlatformId = primaryLoaderInstruction.getPlatform().getId();
+                            Integer loaderPlatformId = loaderInstructionFilesDTO.getMetadata().getPlatform().getId();
 
                             if (!loaderPlatformId.equals(protocolDTO.getPlatformId())) {
 
@@ -291,24 +291,17 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
 
             // NOW CREATE THE JOB RECORD *********************************************************
-            Integer dataSetId = null;
-            if (JobPayloadType.CV_PAYLOADTYPE_MATRIX.equals(primaryLoaderInstruction.getJobPayloadType())) {
-                if (primaryLoaderInstruction.getDataSetId() != null) {
-                    dataSetId = primaryLoaderInstruction.getDataSetId();
-                } else {
-                    if (primaryLoaderInstruction.getDataSet() != null && primaryLoaderInstruction.getDataSet().getId() != null) {
-                        dataSetId = primaryLoaderInstruction.getDataSetId();
-                    }
-                }
+            if (JobPayloadType.CV_PAYLOADTYPE_MATRIX.equals(loaderInstructionFilesDTO.getMetadata().getJobPayloadType())) {
 
-                if (dataSetId == null || dataSetId <= 0) {
+                if (loaderInstructionFilesDTO.getMetadata().getDataSet().getId() == null
+                        || loaderInstructionFilesDTO.getMetadata().getDataSet().getId() <= 0) {
                     throw new GobiiException("The specified job has payload type MATRIX, but no dataset ID: " + loaderInstructionFilesDTO.getInstructionFileName());
                 }
 
             }
 
 
-            Integer contactId = primaryLoaderInstruction.getContactId();
+            Integer contactId = loaderInstructionFilesDTO.getMetadata().getContactId();
 
             if (contactId != null || contactId > 0) {
 
@@ -320,11 +313,11 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                     JobDTO jobDTONew = new JobDTO();
 
                     jobDTONew.setJobName(loaderInstructionFilesDTO.getInstructionFileName());
-                    jobDTONew.getDatasetIds().add(dataSetId);
+                    jobDTONew.getDatasetIds().add(loaderInstructionFilesDTO.getMetadata().getDataSet().getId());
                     jobDTONew.setSubmittedBy(contactId);
                     jobDTONew.setMessage("Instruction file written by web services");
                     jobDTONew.setStatus(JobProgressStatusType.CV_PROGRESSSTATUS_PENDING.getCvName());
-                    jobDTONew.setPayloadType(primaryLoaderInstruction.getJobPayloadType().getCvName());
+                    jobDTONew.setPayloadType(loaderInstructionFilesDTO.getMetadata().getJobPayloadType().getCvName());
                     jobDTONew.setType(JobType.CV_JOBTYPE_LOAD.getCvName());
                     jobDTONew.setSubmittedDate(new Date());
 

@@ -68,48 +68,6 @@ public class HelperFunctions {
     }
 
 
-
-
-    /*
-     *	Prints file to know that the job is done.
-     *	File contains table <tab> output file
-     *	@param path of the instruction file
-     *	@author v.calaminos
-     */
-
-    public static void printDoneFile(String filePath) throws IOException {
-        FileWriter writer = new FileWriter(filePath + ".load", false);
-        boolean first = true;
-        List<GobiiLoaderInstruction> list = parseInstructionFile(filePath);
-        if (list == null) {
-            writer.close();
-            return;
-        }
-        for (GobiiLoaderInstruction inst : list) {
-            if (inst == null) break;
-            if (!first) writer.write("\r\n");
-            first = false;
-            GobiiFile fileParams = inst.getGobiiFile();
-            writer.write(inst.getTable());
-            writer.write("\t");
-            writer.write(getDestinationFile(inst));
-        }
-        writer.close();
-    }
-
-    public static String[] getDoneFileAsArray(String instructionFilePath) {
-        List<GobiiLoaderInstruction> list = parseInstructionFile(instructionFilePath);
-        if (list == null || list.isEmpty()) return null;
-        String[] args = new String[list.size()];
-        int i = 0;
-        for (GobiiLoaderInstruction inst : list) {
-            if (inst == null) break;
-            args[i++] = inst.getTable() + "\t" + getDestinationFile(inst);
-        }
-        return args;
-    }
-
-
     public static void main(String[] args) throws IOException {
         System.out.println("Tests filter");
         System.out.println(filter("banana", "a", "a", null, null));
@@ -117,17 +75,17 @@ public class HelperFunctions {
         System.out.println(filter("banana", null, "n", "a", null));
     }
 
-    public static List<GobiiLoaderInstruction> parseInstructionFile(String filename) {
+    public static GobiiLoaderProcedure parseInstructionFile(String filename) {
         ObjectMapper objectMapper = new ObjectMapper();
-        GobiiLoaderInstruction[] file = null;
+        GobiiLoaderProcedure file = null;
 
         try {
-            file = objectMapper.readValue(new FileInputStream(filename), GobiiLoaderInstruction[].class);
+            file = objectMapper.readValue(new FileInputStream(filename), GobiiLoaderProcedure.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (file == null) return null;
-        return Arrays.asList(file);
+
+        return file;
     }
 
 
@@ -263,12 +221,12 @@ public class HelperFunctions {
     }
 
     //For a folder destination, returns /digest.<tablename>
-    public static String getDestinationFile(GobiiLoaderInstruction instruction) {
-        String destination = instruction.getGobiiFile().getDestination();
+    public static String getDestinationFile(GobiiLoaderMetadata metadata, GobiiLoaderInstruction instruction) {
+        String destination = metadata.getGobiiFile().getDestination();
         char last = destination.charAt(destination.length() - 1);
         if (last == '\\' || last == '/') {
             return destination + "digest." + instruction.getTable();
-        } else return destination + "/" + "digest." + instruction.getTable();
+        } else return destination + "/" + "digest." +  instruction.getTable();
     }
 
     /***

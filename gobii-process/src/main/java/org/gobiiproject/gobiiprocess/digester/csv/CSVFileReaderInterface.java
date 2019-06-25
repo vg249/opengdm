@@ -3,6 +3,7 @@ package org.gobiiproject.gobiiprocess.digester.csv;
 import org.apache.commons.lang3.tuple.Pair;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderMetadata;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -20,7 +21,7 @@ public abstract class CSVFileReaderInterface {
      * @throws IOException If an unexpected filesystem error occurs
      * @throws InterruptedException If interrupted (Signals, etc)
      */
-    abstract void processCSV(GobiiLoaderInstruction loaderInstruction) throws IOException, InterruptedException;
+    abstract void processCSV(GobiiLoaderMetadata metadata, GobiiLoaderInstruction loaderInstruction) throws IOException, InterruptedException;
 
     public static Integer getLastMatrixRowSize(){return lastMatrixSizeRowCol.row;}
     public static Integer getLastMatrixColSize(){return lastMatrixSizeRowCol.col;}

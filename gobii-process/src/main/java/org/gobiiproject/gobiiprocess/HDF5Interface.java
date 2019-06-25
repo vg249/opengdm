@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiiprocess;
 
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.email.DigesterMessage;
@@ -31,30 +32,28 @@ public class HDF5Interface {
     /**
      * Creates an HDF5 for a dataset given an existing file path. Will return false if the process fails (generally due to *nix OS failures) which also will set the error state to false.
      * @param dm Email message object - for direct writing
-     * @param dst DataSetType (obviously)
      * @param configuration configurations - for reading if a configruation is set correctly
-     * @param dataSetId ID of dataset to create
-     * @param crop crop to create the dataset for
+     * @param procedure
      * @param errorPath Place to store temporary files in case of needing temporary files
      * @param variantFilename Name of the dataset (Only used to set the postgres name [probably a bug)
      * @param variantFile Location of the file to use for creating the dataset
      * @return if the process succeeded
      */
-    public static boolean createHDF5FromDataset(ProcessMessage dm, String dst, ConfigSettings configuration, Integer dataSetId, String crop, String errorPath, String variantFilename, File variantFile) {
+    public static boolean createHDF5FromDataset(ProcessMessage dm, ConfigSettings configuration, GobiiLoaderProcedure procedure, String errorPath, String variantFilename, File variantFile) {
         //HDF-5
         //Usage: %s <datasize> <input file> <output HDF5 file
         String loadHDF5= getPathToHDF5() +"loadHDF5";
         dm.addPath("matrix directory", pathToHDF5Files);
-        String HDF5File= getFileLoc(dataSetId);
+        String HDF5File= getFileLoc(procedure.getMetadata().getDataSet().getId());
         int size=8;
-        switch(dst.toUpperCase()){
+        switch(procedure.getMetadata().getDatasetType().getName().toUpperCase()){
             case "NUCLEOTIDE_2_LETTER": case "IUPAC":case "VCF":
                 size=2;break;
             case "SSR_ALLELE_SIZE":size=8;break;
             case "CO_DOMINANT_NON_NUCLEOTIDE":
             case "DOMINANT_NON_NUCLEOTIDE":size=1;break;
             default:
-                logError("Digester","Unknown type "+dst.toString());return false;
+                logError("Digester","Unknown type "+procedure.getMetadata().getDatasetType().getName()); return false;
         }
         ErrorLogger.logInfo("Digester","Running HDF5 Loader. HDF5 Generating at "+HDF5File);
         boolean success=HelperFunctions.tryExec(loadHDF5+" "+size+" "+variantFile.getPath()+" "+HDF5File,null,errorPath);
@@ -63,7 +62,7 @@ public class HDF5Interface {
             rmIfExist(HDF5File);
             return false;
         }
-        GobiiFileReader.updateValues(configuration, crop, dataSetId,variantFilename, HDF5File);
+        GobiiFileReader.updateValues(configuration, procedure.getMetadata().getGobiiCropType(), procedure.getMetadata().getDataSet().getId(),variantFilename, HDF5File); // this is spaghetti, should be moved
         return true;
     }
 

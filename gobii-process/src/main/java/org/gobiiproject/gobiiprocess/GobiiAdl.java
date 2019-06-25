@@ -1773,13 +1773,13 @@ public class GobiiAdl {
         } else {
             try {
                 if (jobPayloadType.equals(JobPayloadType.CV_PAYLOADTYPE_MARKERS.getCvName())) {
-                    loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0).setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MARKERS);
+                    loaderInstructionFilesDTO.getMetadata().setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MARKERS);
                 } else if (jobPayloadType.equals(JobPayloadType.CV_PAYLOADTYPE_SAMPLES.getCvName())) {
-                    loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0).setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_SAMPLES);
+                    loaderInstructionFilesDTO.getMetadata().setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_SAMPLES);
                 } else if (jobPayloadType.equals(JobPayloadType.CV_PAYLOADTYPE_MATRIX.getCvName())) {
-                    loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0).setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX);
+                    loaderInstructionFilesDTO.getMetadata().setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX);
                 } else {
-                    loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0).setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX);
+                    loaderInstructionFilesDTO.getMetadata().setJobPayloadType(JobPayloadType.CV_PAYLOADTYPE_MATRIX);
                 }
                 PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTO, GobiiProcessType.CREATE);
                 GobiiEnvelopeRestResource<LoaderInstructionFilesDTO,LoaderInstructionFilesDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)

@@ -3,6 +3,7 @@ package org.gobiiproject.gobiiprocess.digester.csv;
 import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderMetadata;
 import org.gobiiproject.gobiimodel.types.DataSetType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.junit.AfterClass;
@@ -54,17 +55,19 @@ public class CSVFileReader_CSV_BOTHV2Test {
 
         String table = "CSV_BOTH_Dominant";
         GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
-        Util.createAndSetGobiiFile(instruction, tempFolderLocation);
-        instruction.getGobiiFile().setSource(tempFolderLocation + "/dominant");
 
         instruction.setTable(table);
         List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
         gobiiColumns.add(Util.createGobiiCSV_BOTH(1, 1, DataSetType.DOMINANT_NON_NUCLEOTIDE));
         instruction.setGobiiFileColumns(gobiiColumns);
-        instruction.setDatasetType(new PropNameId(99, "DOMINANT_NON_NUCLEOTIDE"));
+
+        GobiiLoaderMetadata metadata = new GobiiLoaderMetadata();
+        Util.createAndSetGobiiFile(metadata, tempFolderLocation);
+        metadata.getGobiiFile().setSource(tempFolderLocation + "/dominant");
+        metadata.setDatasetType(new PropNameId(99, "DOMINANT_NON_NUCLEOTIDE"));
 
         CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(instruction);
+        csvReader.processCSV(metadata, instruction);
 
         Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
         Util.deleteDirectory(srcFolder);
@@ -86,17 +89,19 @@ public class CSVFileReader_CSV_BOTHV2Test {
 
         String table = "CSV_BOTH_Dominant";
         GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
-        Util.createAndSetGobiiFile(instruction, tempFolderLocation);
-        instruction.getGobiiFile().setSource(tempFolderLocation + "/dominant");
 
         instruction.setTable(table);
         List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
         gobiiColumns.add(Util.createGobiiCSV_BOTH(1, 1, DataSetType.DOMINANT_NON_NUCLEOTIDE));
         instruction.setGobiiFileColumns(gobiiColumns);
-        instruction.setDatasetType(new PropNameId(99, "DOMINANT_NON_NUCLEOTIDE"));
+
+        GobiiLoaderMetadata metadata = new GobiiLoaderMetadata();
+        Util.createAndSetGobiiFile(metadata, tempFolderLocation);
+        metadata.getGobiiFile().setSource(tempFolderLocation + "/dominant");
+        metadata.setDatasetType(new PropNameId(99, "DOMINANT_NON_NUCLEOTIDE"));
 
         CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(instruction);
+        csvReader.processCSV(metadata, instruction);
 
         Util.checkFileAbsence(table, tempFolderLocation);
         Util.deleteDirectory(srcFolder);
@@ -119,17 +124,19 @@ public class CSVFileReader_CSV_BOTHV2Test {
 
         String table = "CSV_BOTH_CoDominant";
         GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
-        Util.createAndSetGobiiFile(instruction, tempFolderLocation);
-        instruction.getGobiiFile().setSource(tempFolderLocation + "/Codominant");
 
         instruction.setTable(table);
         List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
         gobiiColumns.add(Util.createGobiiCSV_BOTH(1, 1, DataSetType.CO_DOMINANT_NON_NUCLEOTIDE));
         instruction.setGobiiFileColumns(gobiiColumns);
-        instruction.setDatasetType(new PropNameId(100, "CO_DOMINANT_NON_NUCLEOTIDE"));
+
+        GobiiLoaderMetadata metadata = new GobiiLoaderMetadata();
+        Util.createAndSetGobiiFile(metadata, tempFolderLocation);
+        metadata.setDatasetType(new PropNameId(100, "CO_DOMINANT_NON_NUCLEOTIDE"));
+        metadata.getGobiiFile().setSource(tempFolderLocation + "/Codominant");
 
         CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(instruction);
+        csvReader.processCSV(metadata, instruction);
 
         Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
         Util.deleteDirectory(srcFolder);
@@ -152,17 +159,19 @@ public class CSVFileReader_CSV_BOTHV2Test {
 
         String table = "CSV_BOTH_CoDominant";
         GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
-        Util.createAndSetGobiiFile(instruction, tempFolderLocation);
-        instruction.getGobiiFile().setSource(tempFolderLocation + "/Codominant");
 
         instruction.setTable(table);
         List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
         gobiiColumns.add(Util.createGobiiCSV_BOTH(1, 1, DataSetType.CO_DOMINANT_NON_NUCLEOTIDE));
         instruction.setGobiiFileColumns(gobiiColumns);
-        instruction.setDatasetType(new PropNameId(100, "CO_DOMINANT_NON_NUCLEOTIDE"));
+
+        GobiiLoaderMetadata metadata = new GobiiLoaderMetadata();
+        Util.createAndSetGobiiFile(metadata, tempFolderLocation);
+        metadata.getGobiiFile().setSource(tempFolderLocation + "/Codominant");
+        metadata.setDatasetType(new PropNameId(100, "CO_DOMINANT_NON_NUCLEOTIDE"));
 
         CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(instruction);
+        csvReader.processCSV(metadata, instruction);
 
         Util.checkFileAbsence(table, tempFolderLocation);
         Util.deleteDirectory(srcFolder);
@@ -185,17 +194,19 @@ public class CSVFileReader_CSV_BOTHV2Test {
 
         String table = "CSV_BOTH_IUPAC";
         GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
-        Util.createAndSetGobiiFile(instruction, tempFolderLocation);
-        instruction.getGobiiFile().setSource(tempFolderLocation + "/IUPAC");
 
         instruction.setTable(table);
         List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
         gobiiColumns.add(Util.createGobiiCSV_BOTH(1, 11, DataSetType.IUPAC));
         instruction.setGobiiFileColumns(gobiiColumns);
-        instruction.setDatasetType(new PropNameId(98, "IUPAC"));
+
+        GobiiLoaderMetadata metadata = new GobiiLoaderMetadata();
+        Util.createAndSetGobiiFile(metadata, tempFolderLocation);
+        metadata.getGobiiFile().setSource(tempFolderLocation + "/IUPAC");
+        metadata.setDatasetType(new PropNameId(98, "IUPAC"));
 
         CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(instruction);
+        csvReader.processCSV(metadata, instruction);
 
         Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
         Util.deleteDirectory(srcFolder);
@@ -218,17 +229,19 @@ public class CSVFileReader_CSV_BOTHV2Test {
 
         String table = "CSV_BOTH_IUPAC";
         GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
-        Util.createAndSetGobiiFile(instruction, tempFolderLocation);
-        instruction.getGobiiFile().setSource(tempFolderLocation + "/IUPAC");
 
         instruction.setTable(table);
         List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
         gobiiColumns.add(Util.createGobiiCSV_BOTH(1, 11, DataSetType.IUPAC));
         instruction.setGobiiFileColumns(gobiiColumns);
-        instruction.setDatasetType(new PropNameId(98, "IUPAC"));
+
+        GobiiLoaderMetadata metadata = new GobiiLoaderMetadata();
+        Util.createAndSetGobiiFile(metadata, tempFolderLocation);
+        metadata.getGobiiFile().setSource(tempFolderLocation + "/IUPAC");
+        metadata.setDatasetType(new PropNameId(98, "IUPAC"));
 
         CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(instruction);
+        csvReader.processCSV(metadata, instruction);
 
         Util.checkFileAbsence(table, tempFolderLocation);
         Util.deleteDirectory(srcFolder);
@@ -251,17 +264,19 @@ public class CSVFileReader_CSV_BOTHV2Test {
 
         String table = "CSV_BOTH_NUCLEOTIDE_2_LETTER";
         GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
-        Util.createAndSetGobiiFile(instruction, tempFolderLocation);
-        instruction.getGobiiFile().setSource(tempFolderLocation + "/NUCLEOTIDE_2_LETTER");
 
         instruction.setTable(table);
         List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
         gobiiColumns.add(Util.createGobiiCSV_BOTH(1, 1, DataSetType.NUCLEOTIDE_2_LETTER));
         instruction.setGobiiFileColumns(gobiiColumns);
-        instruction.setDatasetType(new PropNameId(97, "NUCLEOTIDE_2_LETTER"));
+
+        GobiiLoaderMetadata metadata = new GobiiLoaderMetadata();
+        Util.createAndSetGobiiFile(metadata, tempFolderLocation);
+        metadata.getGobiiFile().setSource(tempFolderLocation + "/NUCLEOTIDE_2_LETTER");
+        metadata.setDatasetType(new PropNameId(97, "NUCLEOTIDE_2_LETTER"));
 
         CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(instruction);
+        csvReader.processCSV(metadata, instruction);
 
         Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
         Util.deleteDirectory(srcFolder);
@@ -284,17 +299,19 @@ public class CSVFileReader_CSV_BOTHV2Test {
 
         String table = "CSV_BOTH_NUCLEOTIDE_2_LETTER";
         GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
-        Util.createAndSetGobiiFile(instruction, tempFolderLocation);
-        instruction.getGobiiFile().setSource(tempFolderLocation + "/NUCLEOTIDE_2_LETTER");
 
         instruction.setTable(table);
         List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
         gobiiColumns.add(Util.createGobiiCSV_BOTH(1, 1, DataSetType.NUCLEOTIDE_2_LETTER));
         instruction.setGobiiFileColumns(gobiiColumns);
-        instruction.setDatasetType(new PropNameId(97, "NUCLEOTIDE_2_LETTER"));
+
+        GobiiLoaderMetadata metadata = new GobiiLoaderMetadata();
+        Util.createAndSetGobiiFile(metadata, tempFolderLocation);
+        metadata.getGobiiFile().setSource(tempFolderLocation + "/NUCLEOTIDE_2_LETTER");
+        metadata.setDatasetType(new PropNameId(97, "NUCLEOTIDE_2_LETTER"));
 
         CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(instruction);
+        csvReader.processCSV(metadata, instruction);
 
         Util.checkFileAbsence(table, tempFolderLocation);
         Util.deleteDirectory(srcFolder);
@@ -317,17 +334,19 @@ public class CSVFileReader_CSV_BOTHV2Test {
 
         String table = "CSV_BOTH_SSR_ALLELE";
         GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
-        Util.createAndSetGobiiFile(instruction, tempFolderLocation);
-        instruction.getGobiiFile().setSource(tempFolderLocation + "/SSR_ALLELE");
 
         instruction.setTable(table);
         List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
         gobiiColumns.add(Util.createGobiiCSV_BOTH(1, 1, DataSetType.SSR_ALLELE_SIZE));
         instruction.setGobiiFileColumns(gobiiColumns);
-        instruction.setDatasetType(new PropNameId(101, "SSR_ALLELE_SIZE"));
+
+        GobiiLoaderMetadata metadata = new GobiiLoaderMetadata();
+        Util.createAndSetGobiiFile(metadata, tempFolderLocation);
+        metadata.getGobiiFile().setSource(tempFolderLocation + "/SSR_ALLELE");
+        metadata.setDatasetType(new PropNameId(101, "SSR_ALLELE_SIZE"));
 
         CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(instruction);
+        csvReader.processCSV(metadata, instruction);
 
         Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
         Util.deleteDirectory(srcFolder);
@@ -350,17 +369,19 @@ public class CSVFileReader_CSV_BOTHV2Test {
 
         String table = "CSV_BOTH_SSR_ALLELE";
         GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
-        Util.createAndSetGobiiFile(instruction, tempFolderLocation);
-        instruction.getGobiiFile().setSource(tempFolderLocation + "/SSR_ALLELE");
 
         instruction.setTable(table);
         List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
         gobiiColumns.add(Util.createGobiiCSV_BOTH(1, 1, DataSetType.SSR_ALLELE_SIZE));
         instruction.setGobiiFileColumns(gobiiColumns);
-        instruction.setDatasetType(new PropNameId(101, "SSR_ALLELE_SIZE"));
+
+        GobiiLoaderMetadata metadata = new GobiiLoaderMetadata();
+        Util.createAndSetGobiiFile(metadata, tempFolderLocation);
+        metadata.getGobiiFile().setSource(tempFolderLocation + "/SSR_ALLELE");
+        metadata.setDatasetType(new PropNameId(101, "SSR_ALLELE_SIZE"));
 
         CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(instruction);
+        csvReader.processCSV(metadata, instruction);
 
         Util.checkFileAbsence(table, tempFolderLocation);
         Util.deleteDirectory(srcFolder);
@@ -387,18 +408,22 @@ public class CSVFileReader_CSV_BOTHV2Test {
 
         String table = "CSV_BOTH_VCF";
         GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
-        Util.createAndSetGobiiFile(instruction, tempFolderLocation);
-        instruction.getGobiiFile().setSource(tempFolderLocation + "/VCF");
-        instruction.getGobiiFile().setGobiiFileType(GobiiFileType.VCF);
-        instruction.getGobiiFile().setDelimiter("\t");
+
         instruction.setTable(table);
         List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
         gobiiColumns.add(Util.createGobiiCSV_BOTH(10, 9, DataSetType.NUCLEOTIDE_2_LETTER));
         instruction.setGobiiFileColumns(gobiiColumns);
-        instruction.setDatasetType(new PropNameId(97, "NUCLEOTIDE_2_LETTER"));
+
+        GobiiLoaderMetadata metadata = new GobiiLoaderMetadata();
+        Util.createAndSetGobiiFile(metadata, tempFolderLocation);
+        metadata.getGobiiFile().setSource(tempFolderLocation + "/VCF");
+        metadata.getGobiiFile().setGobiiFileType(GobiiFileType.VCF);
+        metadata.getGobiiFile().setDelimiter("\t");
+        metadata.setDatasetType(new PropNameId(97, "NUCLEOTIDE_2_LETTER"));
+
 
         CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(instruction);
+        csvReader.processCSV(metadata, instruction);
 
         Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
         Util.deleteDirectory(srcFolder);
@@ -425,18 +450,22 @@ public class CSVFileReader_CSV_BOTHV2Test {
 
         String table = "CSV_BOTH_VCF";
         GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
-        Util.createAndSetGobiiFile(instruction, tempFolderLocation);
-        instruction.getGobiiFile().setSource(tempFolderLocation + "/VCF");
-        instruction.getGobiiFile().setGobiiFileType(GobiiFileType.VCF);
-        instruction.getGobiiFile().setDelimiter("\t");
+
         instruction.setTable(table);
         List<GobiiFileColumn> gobiiColumns = new ArrayList<>();
         gobiiColumns.add(Util.createGobiiCSV_BOTH(10, 9, DataSetType.NUCLEOTIDE_2_LETTER));
         instruction.setGobiiFileColumns(gobiiColumns);
-        instruction.setDatasetType(new PropNameId(97, "NUCLEOTIDE_2_LETTER"));
+
+        GobiiLoaderMetadata metadata = new GobiiLoaderMetadata();
+        Util.createAndSetGobiiFile(metadata, tempFolderLocation);
+        metadata.getGobiiFile().setSource(tempFolderLocation + "/VCF");
+        metadata.getGobiiFile().setGobiiFileType(GobiiFileType.VCF);
+        metadata.getGobiiFile().setDelimiter("\t");
+        metadata.setDatasetType(new PropNameId(97, "NUCLEOTIDE_2_LETTER"));
+
 
         CSVFileReaderV2 csvReader = new CSVFileReaderV2(loaderScriptPath);
-        csvReader.processCSV(instruction);
+        csvReader.processCSV(metadata, instruction);
 
         Util.checkFileAbsence(table, tempFolderLocation);
         Util.deleteDirectory(srcFolder);

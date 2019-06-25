@@ -10,6 +10,7 @@ import java.io.IOException;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFile;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderMetadata;
 import org.gobiiproject.gobiimodel.types.DataSetOrientationType;
 import org.gobiiproject.gobiimodel.types.DataSetType;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
@@ -62,8 +63,6 @@ class Util {
         fileColumn.setName("csvRow");
         fileColumn.setSubcolumn(true);
         fileColumn.setSubcolumnDelimiter("_");
-        fileColumn.setDataSetType(DataSetType.IUPAC);
-        fileColumn.setDataSetOrientationType(DataSetOrientationType.MARKER_FAST);
         return fileColumn;
 
     }
@@ -83,8 +82,6 @@ class Util {
         fileColumn.setCCoord(cCoord);
         fileColumn.setName("csvBoth");
         fileColumn.setSubcolumn(false);
-        fileColumn.setDataSetType(dataSetType);
-        fileColumn.setDataSetOrientationType(DataSetOrientationType.MARKER_FAST);
         return fileColumn;
 
     }
@@ -101,8 +98,6 @@ class Util {
         fileColumn.setGobiiColumnType(GobiiColumnType.AUTOINCREMENT);
         fileColumn.setName("AutoIncrement");
         fileColumn.setSubcolumn(false);
-        fileColumn.setDataSetType(DataSetType.IUPAC);
-        fileColumn.setDataSetOrientationType(DataSetOrientationType.MARKER_FAST);
         return fileColumn;
 
     }
@@ -123,8 +118,6 @@ class Util {
         fileColumn.setCCoord(cCoord);
         fileColumn.setName("csvRow");
         fileColumn.setSubcolumn(false);
-        fileColumn.setDataSetType(DataSetType.IUPAC);
-        fileColumn.setDataSetOrientationType(DataSetOrientationType.MARKER_FAST);
         return fileColumn;
     }
 
@@ -144,8 +137,6 @@ class Util {
         fileColumn.setCCoord(cCoord);
         fileColumn.setName("csvCol");
         fileColumn.setSubcolumn(false);
-        fileColumn.setDataSetType(DataSetType.IUPAC);
-        fileColumn.setDataSetOrientationType(DataSetOrientationType.MARKER_FAST);
         return fileColumn;
     }
 
@@ -163,8 +154,6 @@ class Util {
         fileColumn.setName("constantName");
         fileColumn.setConstantValue(constantValue);
         fileColumn.setSubcolumn(false);
-        fileColumn.setDataSetType(DataSetType.IUPAC);
-        fileColumn.setDataSetOrientationType(DataSetOrientationType.MARKER_FAST);
         return fileColumn;
     }
 
@@ -174,7 +163,7 @@ class Util {
      * {@code org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFile.java}
      */
     @VisibleForTesting
-    static void createAndSetGobiiFile(GobiiLoaderInstruction instruction, String tempFolderLocation) {
+    static void createAndSetGobiiFile(GobiiLoaderMetadata metadata, String tempFolderLocation) {
         GobiiFile gobiiFile = new GobiiFile();
         gobiiFile.setSource(tempFolderLocation + "/src");
         gobiiFile.setDestination(tempFolderLocation + "/dest");
@@ -182,7 +171,7 @@ class Util {
         gobiiFile.setGobiiFileType(GobiiFileType.GENERIC);
         gobiiFile.setCreateSource(false);
         gobiiFile.setRequireDirectoriesToExist(false);
-        instruction.setGobiiFile(gobiiFile);
+        metadata.setGobiiFile(gobiiFile);
     }
 
     /**
