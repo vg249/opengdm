@@ -426,6 +426,11 @@
     <bean id="dtoMapSampleTrackingDnaSample"
           class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.sampletracking.DtoMapDnaSampleImpl"/>
 
+    <!-- *** DNA RUN Beans ************************************* -->
+    <bean id="dnaRunService" class="org.gobiiproject.gobidomain.services.impl.DnaRunServiceImpl"/>
+    <bean id="dtoMapDnaRun" class="org.gobiiproject.gobiidtomapping.entity.noaudit.impl.DtoMapDnaRunImpl"/>
+    <bean id="rsDnaRunDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsDnaRunDaoImpl"/>
+
     <!-- **** ListStatement queries *************************************** -->
     <bean id="listStatementContactAll"
           class="org.gobiiproject.gobiidao.resultset.sqlworkers.read.liststatement.discrete.ListStatementContactAll"/>

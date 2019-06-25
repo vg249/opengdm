@@ -8,7 +8,9 @@ package org.gobiiproject.gobiiweb.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.annotations.*;
+import org.gobiiproject.gobidomain.services.DnaRunService;
 import org.gobiiproject.gobidomain.services.PingService;
+import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCalls;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseMapCalls;
@@ -34,11 +36,13 @@ import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelope;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMaster;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMasterDetail;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.DnaRunDTO;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -145,6 +149,9 @@ public class BRAPIIControllerV1 {
 
     @Autowired
     private BrapiResponseMapAlleleMatrices brapiResponseMapAlleleMatrices = null;
+
+    @Autowired
+    private DnaRunService dnaRunService = null;
 
     private ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
@@ -781,5 +788,18 @@ public class BRAPIIControllerV1 {
 
         return returnVal;
     }
+
+
+    @RequestMapping(value="/callsets/{callSetDbId:[\\d]+}", method=RequestMethod.GET)
+    public @ResponseBody ResponseEntity getCallSetsByCallSetDbId(
+            @ApiParam(value = "ID of the callset to be extracted", required = true)
+            @PathVariable("callSetDbId") Integer callSetDbId
+    ) {
+
+        DnaRunDTO dnaRunDTO = dnaRunService.getDnaRunById(callSetDbId);
+        BrApiMasterPayload<DnaRunDTO> payload = new BrApiMasterPayload<>(dnaRunDTO);
+        return ResponseEntity.ok(payload);
+    }
+
 
 }// BRAPIController
