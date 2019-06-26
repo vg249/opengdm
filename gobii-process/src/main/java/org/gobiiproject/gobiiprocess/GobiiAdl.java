@@ -2583,10 +2583,7 @@ public class GobiiAdl {
 
                 if (dataFileDir.exists() && dataFileDir.isDirectory() && dataFileDir.listFiles().length > 0) {
 
-                    /**
-                     * DISABLE FILE COMPARATOR
-                     * compareExtractedFiles(localPathName, subDirectory, jobName);
-                     */
+                     compareExtractedFiles(localPathName, subDirectory, jobName);
 
                 }
 
@@ -2733,17 +2730,14 @@ public class GobiiAdl {
             doExtract = false;
         }
 
-        /**
-         * DISABLE FILE COMPARATOR
-            if (commandLine.hasOption(INPUT_FILECOMPARATOR)) {
+        if (commandLine.hasOption(INPUT_FILECOMPARATOR)) {
 
-                fileComparatorPath = commandLine.getOptionValue(INPUT_FILECOMPARATOR);
-            }
+            fileComparatorPath = commandLine.getOptionValue(INPUT_FILECOMPARATOR);
+        }
 
-            if (fileComparatorPath == null) {
-                fileComparatorPath = "GDMFileProject.jar";
-            }
-         */
+        if (fileComparatorPath == null) {
+            fileComparatorPath = "GDMFileProject.jar";
+        }
 
         String directory;
         File parentDirectory = null;
