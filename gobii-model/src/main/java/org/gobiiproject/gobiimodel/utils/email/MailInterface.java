@@ -1,10 +1,9 @@
 package org.gobiiproject.gobiimodel.utils.email;
 
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.security.Decrypter;
+import org.gobiiproject.gobiimodel.utils.Messenger;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 
-import java.util.Map;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
@@ -21,7 +20,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart; 
 
-public class MailInterface {
+public class MailInterface implements Messenger {
 	
 	private String host;
 	private String port;

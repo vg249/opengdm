@@ -53,6 +53,9 @@ import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.logError;
  * @author jdl232 Josh L.S.
  */
 public class GobiiLoader {
+
+    private static Messenger messenger;
+
     private static String rootDir = "../";
     private static String loaderScriptPath;
     private static String extractorScriptPath;
@@ -221,8 +224,6 @@ public class GobiiLoader {
         } catch (Exception e1) {
             e1.printStackTrace();
         }
-
-        MailInterface mailInterface = new MailInterface(configuration);
 
         if (args.length == 0 || "".equals(args[0])) {
             Scanner s = new Scanner(System.in);
@@ -546,31 +547,11 @@ public class GobiiLoader {
         }
 
         //Send Email
-        finalizeProcessing(generateMessage(state), configuration, mailInterface, state.getInstructionFile(), state.getProcedure());
+        messenger = new MailInterface(configuration);
+        messenger.send(generateMessage(state));
 
+        HelperFunctions.completeInstruction(state.getInstructionFile(), configuration.getProcessingPath(state.getProcedure().getMetadata().getGobiiCropType(), GobiiFileProcessDir.LOADER_DONE));
 
-    }
-
-    /**
-     * Finalize processing step
-     * *Include log files
-     * *Send Email
-     * *update status
-     *
-     * @param pm
-     * @param configuration
-     * @param mailInterface
-     * @param instructionFile
-     * @param procedure
-     * @throws Exception
-     */
-    private static void finalizeProcessing(ProcessMessage pm, ConfigSettings configuration, MailInterface mailInterface, String instructionFile, GobiiLoaderProcedure procedure) throws Exception {
-        try {
-            mailInterface.send(pm);
-        } catch (Exception e) {
-            ErrorLogger.logError("MailInterface", "Error Sending Mail", e);
-        }
-        HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(procedure.getMetadata().getGobiiCropType(), GobiiFileProcessDir.LOADER_DONE));
     }
 
     private static void databaseValidation(Map<String, File> loaderInstructionMap, GobiiLoaderMetadata meta, GobiiCropConfig gobiiCropConfig) {
