@@ -80,9 +80,14 @@ public class GobiiLoader {
         HDF5Interface.setPathToHDF5Files(config.getHdf5FilesPath());
     }
 
-    public void run() throws Exception {
+    public void run(GobiiLoaderProcedure procedure) throws Exception {
         GobiiLoaderState state = new GobiiLoaderState();
 
+        state.setProcedure(procedure);
+        if (CollectionUtils.isEmpty(state.getProcedure().getInstructions())) {
+            logError("Digester", "No instruction for file " + config.getInstructionFile());
+            return;
+        }
 
         HDF5Interface.setPathToHDF5(config.getLoaderScriptPath() + "hdf5/bin/");
 
@@ -104,14 +109,6 @@ public class GobiiLoader {
 
         //Error logs go to a file based on crop (for human readability) and
         ErrorLogger.logInfo("Digester", "Beginning read of " + config.getInstructionFile());
-
-
-        state.setProcedure(parseInstructionFile(config.getInstructionFile()));
-
-        if (CollectionUtils.isEmpty(state.getProcedure().getInstructions())) {
-            logError("Digester", "No instruction for file " + config.getInstructionFile());
-            return;
-        }
 
 
         if (state.getProcedure().getMetadata().getGobiiCropType() == null)
@@ -521,7 +518,7 @@ public class GobiiLoader {
      */
     public static void main(String[] args) throws Exception {
 
-        GobiiLoaderConfig.GobiiLoaderConfigBuilder config = GobiiLoaderConfig.builder();
+        GobiiLoaderConfig.GobiiLoaderConfigBuilder configBuilder = GobiiLoaderConfig.builder();
 
         //Section - Setup
         Options o = new Options()
@@ -541,19 +538,19 @@ public class GobiiLoader {
             } else {
                 rootDir = "../";
             }
-            if (cli.hasOption("verbose")) config.verbose(true);
-            if (cli.hasOption("errLog")) config.errorLog(cli.getOptionValue("errLog"));
+            if (cli.hasOption("verbose")) configBuilder.verbose(true);
+            if (cli.hasOption("errLog")) configBuilder.errorLog(cli.getOptionValue("errLog"));
             if (cli.hasOption("config") && cli.getOptionValue("config") != null) {
-                config.propertiesFile(cli.getOptionValue("config"));
+                configBuilder.propertiesFile(cli.getOptionValue("config"));
             } else {
-                config.propertiesFile(rootDir + "config/gobii-web.xml");
+                configBuilder.propertiesFile(rootDir + "config/gobii-web.xml");
             }
-            if (cli.hasOption("hdfFiles")) config.hdf5FilesPath(cli.getOptionValue("hdfFiles"));
+            if (cli.hasOption("hdfFiles")) configBuilder.hdf5FilesPath(cli.getOptionValue("hdfFiles"));
             LoaderGlobalConfigs.setFromFlags(cli);
             args = cli.getArgs();//Remaining args passed through
 
-            config.extractorScriptPath(rootDir + "extractors/");
-            config.loaderScriptPath(rootDir + "loaders/");
+            configBuilder.extractorScriptPath(rootDir + "extractors/");
+            configBuilder.loaderScriptPath(rootDir + "loaders/");
 
 
         } catch (org.apache.commons.cli.ParseException exp) {
@@ -565,13 +562,18 @@ public class GobiiLoader {
         if (args.length == 0 || "".equals(args[0])) {
             Scanner s = new Scanner(System.in);
             System.out.println("Enter Loader Instruction File Location:");
-            config.instructionFile(s.nextLine());
+            configBuilder.instructionFile(s.nextLine());
         } else {
-            config.instructionFile(args[0]);
+            configBuilder.instructionFile(args[0]);
         }
 
-        GobiiLoader loader = new GobiiLoader(config.build());
-        loader.run();
+
+        GobiiLoaderConfig config = configBuilder.build();
+
+        GobiiLoader loader = new GobiiLoader(config);
+
+        GobiiLoaderProcedure procedure = parseInstructionFile(config.getInstructionFile());
+        loader.run(procedure);
     }
 
     private static void databaseValidation(Map<String, File> loaderInstructionMap, GobiiLoaderMetadata meta, GobiiCropConfig gobiiCropConfig) {
