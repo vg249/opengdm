@@ -20,11 +20,9 @@ public class InstructionFileValidator {
 
     private static String statusMessage = null;
 
-    private List<GobiiLoaderInstruction> instructionList;
     private HashMap<TableEntryKey, TableEntryValue> instructionMap = new HashMap<>();
 
-    public InstructionFileValidator(List<GobiiLoaderInstruction> instructionList) {
-        this.instructionList = instructionList;
+    public InstructionFileValidator() {
         statusMessage = null;
     }
 
@@ -35,7 +33,7 @@ public class InstructionFileValidator {
      * Key: hash(table, gobiiFileColumn_NAME) if column is of AutoIncrement or Constant we dont make an entry.
      * Value: Object with required fields. Currently rCoord and cCoord.
      */
-    public void processInstructionFile() {
+    public void processInstructionFile(List<GobiiLoaderInstruction> instructionList) {
 
         // Care about CSV_ROW, CSV_COL, CSV_BOTH only
         // Add more types as they are supported by GOBII.

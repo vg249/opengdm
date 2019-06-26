@@ -27,9 +27,8 @@ public class MailInterface implements Messenger {
 	private String user;
 	private String password;
 	private String protocol;
-	
-	
-	public MailInterface(ConfigSettings config){
+
+	public MailInterface(ConfigSettings config) {
 		host = config.getEmailSvrDomain();
 		port = config.getEmailServerPort().toString();
 		user = config.getEmailSvrUser();
@@ -59,6 +58,7 @@ public class MailInterface implements Messenger {
 
 	
 	public void send(MailMessage message) throws Exception{
+
 		if(message.getUser()==null || message.getUser().equals(""))return;
 		
 		String username = this.getUser();
@@ -76,8 +76,6 @@ public class MailInterface implements Messenger {
 		props.setProperty("mail.port", this.getPort());
 		props.setProperty("mail.user", username);
 		props.setProperty("mail.password", password);
-		
-
 
 		Session mailSession = Session.getInstance(props,
 				new javax.mail.Authenticator(){

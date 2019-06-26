@@ -56,6 +56,7 @@ import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.logError;
 public class GobiiLoader {
 
     private static Messenger messenger;
+    private static InstructionFileValidator instructionFileValidator = new InstructionFileValidator();
 
     private static String rootDir = "../";
     private static String loaderScriptPath;
@@ -234,6 +235,8 @@ public class GobiiLoader {
             state.setInstructionFile(args[0]);
         }
 
+        messenger = new MailInterface(configuration); // These configurations should be injected
+
         //Error logs go to a file based on crop (for human readability) and
         ErrorLogger.logInfo("Digester", "Beginning read of " + state.getInstructionFile());
 
@@ -294,23 +297,23 @@ public class GobiiLoader {
 
 
         jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION, "Beginning Validation");
+
         // Instruction file Validation
-        JobPayloadType jpt = state.getProcedure().getMetadata().getJobPayloadType();//TODO - This is the job payload type
-        InstructionFileValidator instructionFileValidator = new InstructionFileValidator(state.getProcedure().getInstructions());
-        instructionFileValidator.processInstructionFile();
-        String validationStatus = instructionFileValidator.validateMarkerUpload();
-        if (validationStatus != null) {
-            ErrorLogger.logError("Marker validation failed.", validationStatus);
+        instructionFileValidator.processInstructionFile(state.getProcedure().getInstructions());
+
+        String markerValidation = instructionFileValidator.validateMarkerUpload();
+        if (markerValidation != null) {
+            ErrorLogger.logError("Marker validation failed.", markerValidation);
         }
 
-        validationStatus = instructionFileValidator.validateSampleUpload();
-        if (validationStatus != null) {
-            ErrorLogger.logError("Sample validation failed.", validationStatus);
+        String sampleValidation = instructionFileValidator.validateSampleUpload();
+        if (sampleValidation != null) {
+            ErrorLogger.logError("Sample validation failed.", sampleValidation);
         }
 
-        validationStatus = instructionFileValidator.validate();
-        if (validationStatus != null) {
-            ErrorLogger.logError("Validation failed.", validationStatus);
+        String totalValidation = instructionFileValidator.validate();
+        if (totalValidation != null) {
+            ErrorLogger.logError("Validation failed.", totalValidation);
         }
 
 
@@ -544,7 +547,6 @@ public class GobiiLoader {
         }
 
         //Send Email
-        messenger = new MailInterface(configuration);
         messenger.send(generateMessage(state));
 
         HelperFunctions.completeInstruction(state.getInstructionFile(), configuration.getProcessingPath(state.getProcedure().getMetadata().getGobiiCropType(), GobiiFileProcessDir.LOADER_DONE));

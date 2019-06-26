@@ -73,6 +73,8 @@ import java.util.jar.JarFile;
  */
 public class GobiiAdl {
 
+    private static InstructionFileValidator instructionFileValidator = new InstructionFileValidator();
+
     private static ServerConfigItem serverConfigItem;
     private static String crop = null;
     private static long timeoutInMillis;
@@ -1765,8 +1767,7 @@ public class GobiiAdl {
 
         boolean returnVal = false;
 
-        InstructionFileValidator instructionFileValidator = new InstructionFileValidator(loaderInstructionFilesDTO.getGobiiLoaderInstructions());
-        instructionFileValidator.processInstructionFile();
+        instructionFileValidator.processInstructionFile(loaderInstructionFilesDTO.getGobiiLoaderInstructions());
         String validationStatus = instructionFileValidator.validate();
         if (validationStatus != null) {
             processError("Instruction file validation failed. " + validationStatus, GobiiStatusLevel.ERROR);

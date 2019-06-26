@@ -148,8 +148,8 @@ public class InstructionFileValidationSampleUploadTest {
 		for(int i= 0; i < params.length; i= i+4){
 			instructionList.add(InstructionFileValidationUtil.createInstruction(params[i+0], params[i+1], Integer.parseInt(params[i+2]), Integer.parseInt(params[i+3])));
 		}
-		InstructionFileValidator instructionFileValidator = new InstructionFileValidator(instructionList);
-		instructionFileValidator.processInstructionFile();
+		InstructionFileValidator instructionFileValidator = new InstructionFileValidator();
+		instructionFileValidator.processInstructionFile(instructionList);
 		return instructionFileValidator.validateSampleUpload();
 	}
 }
