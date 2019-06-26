@@ -16,8 +16,6 @@ public class GobiiLoaderState {
 
 	private String jobName;
 
-	private String instructionFile;
-
 	private ValidationError[] fileErrors;
 
 	private Map<String, TableStats> tableStats = new HashMap<>();
