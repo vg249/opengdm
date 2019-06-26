@@ -84,8 +84,8 @@ public class GobiiLoader {
         GobiiLoaderState state = new GobiiLoaderState();
 
         state.setProcedure(procedure);
-        if (CollectionUtils.isEmpty(state.getProcedure().getInstructions())) {
-            logError("Digester", "No instruction for file " + config.getInstructionFile());
+
+        if (validateProcedure(config, state) == null) {
             return;
         }
 
@@ -104,15 +104,11 @@ public class GobiiLoader {
             e1.printStackTrace();
         }
 
-
         messenger = new MailInterface(configuration); // These configurations should be injected
 
         //Error logs go to a file based on crop (for human readability) and
         ErrorLogger.logInfo("Digester", "Beginning read of " + config.getInstructionFile());
 
-
-        if (state.getProcedure().getMetadata().getGobiiCropType() == null)
-            state.getProcedure().getMetadata().setGobiiCropType(divineCrop(config.getInstructionFile()));
 
         //Job Id is the 'name' part of the job file  /asd/de/name.json
         String filename = new File(config.getInstructionFile()).getName();
@@ -157,27 +153,7 @@ public class GobiiLoader {
 
         String errorPath = getLogName(state.getProcedure(), gobiiCropConfig,  state.getProcedure().getMetadata().getGobiiCropType());
 
-
         jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION, "Beginning Validation");
-
-        // Instruction file Validation
-        instructionFileValidator.processInstructionFile(state.getProcedure().getInstructions());
-
-        String markerValidation = instructionFileValidator.validateMarkerUpload();
-        if (markerValidation != null) {
-            ErrorLogger.logError("Marker validation failed.", markerValidation);
-        }
-
-        String sampleValidation = instructionFileValidator.validateSampleUpload();
-        if (sampleValidation != null) {
-            ErrorLogger.logError("Sample validation failed.", sampleValidation);
-        }
-
-        String totalValidation = instructionFileValidator.validate();
-        if (totalValidation != null) {
-            ErrorLogger.logError("Validation failed.", totalValidation);
-        }
-
 
         //TODO: HACK - Job's name is
         state.setJobName(getJobReadableIdentifier(state.getProcedure()));
@@ -203,21 +179,8 @@ public class GobiiLoader {
 //			qcExtractInstruction = createQCExtractInstruction(zero, crop);
 //		}
 
-        if (state.getProcedure().getMetadata().getGobiiFile() == null) {
-            logError("Digester", "Instruction " + config.getInstructionFile() + " has bad 'file' column");
-        } else if (state.getProcedure().getMetadata().getGobiiFile().getGobiiFileType() == null) {
-            logError("Digester", "Instruction " + config.getInstructionFile() + " has missing file format");
-        }
-
 
         jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_DIGEST, "Beginning file digest");
-        //Pre-processing - make sure all files exist, find the cannonical dataset id
-        for (GobiiLoaderInstruction inst : state.getProcedure().getInstructions()) {
-            if (inst == null) {
-                logError("Digester", "Missing or malformed instruction in " + config.getInstructionFile());
-                continue;
-            }
-        }
 
         //Section - Processing
         ErrorLogger.logTrace("Digester", "Beginning List Processing");
@@ -239,19 +202,10 @@ public class GobiiLoader {
 
         for (GobiiLoaderInstruction inst : state.getProcedure().getInstructions()) {
 
-            //Moving to only check Variant Call Tablename - though UI should be consistent.
-            if (inst.getTable().equals(VARIANT_CALL_TABNAME)
-                    && (state.getProcedure().getMetadata().getDatasetType()!=null)
-                    && state.getProcedure().getMetadata().getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF)
-                    && (! "NUCLEOTIDE_2_LETTER".equals(state.getProcedure().getMetadata().getDatasetType().getName()))) {
-                ErrorLogger.logError("GobiiLoader", "Invalid Dataset Type selected for VCF file. Expected 2 Letter Nucleotide. Received " + state.getProcedure().getMetadata().getDatasetType());
-            }
-
             //Switch used for VCF transforms is currently a change in dataset type. See 'why is VCF a data type' GSD
             if (state.getProcedure().getMetadata().getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF)) {
                 state.getProcedure().getMetadata().getDatasetType().setName("VCF");
             }
-
 
             String fromFile = getDestinationFile(state.getProcedure().getMetadata(), inst);
             SequenceInPlaceTransform intermediateFile = new SequenceInPlaceTransform(fromFile, errorPath);
@@ -413,6 +367,57 @@ public class GobiiLoader {
 
         HelperFunctions.completeInstruction(config.getInstructionFile(), configuration.getProcessingPath(state.getProcedure().getMetadata().getGobiiCropType(), GobiiFileProcessDir.LOADER_DONE));
 
+    }
+
+    public static GobiiLoaderState validateProcedure(GobiiLoaderConfig config, GobiiLoaderState state) {
+
+        if (state.getProcedure().getMetadata().getGobiiCropType() == null)
+            state.getProcedure().getMetadata().setGobiiCropType(divineCrop(config.getInstructionFile()));
+
+        if (CollectionUtils.isEmpty(state.getProcedure().getInstructions())) {
+            logError("Digester", "No instruction for file " + config.getInstructionFile());
+            return null;
+        }
+
+        // Instruction file Validation
+        instructionFileValidator.processInstructionFile(state.getProcedure().getInstructions());
+
+        String markerValidation = instructionFileValidator.validateMarkerUpload();
+        if (markerValidation != null) {
+            ErrorLogger.logError("Marker validation failed.", markerValidation);
+        }
+
+        String sampleValidation = instructionFileValidator.validateSampleUpload();
+        if (sampleValidation != null) {
+            ErrorLogger.logError("Sample validation failed.", sampleValidation);
+        }
+
+        String totalValidation = instructionFileValidator.validate();
+        if (totalValidation != null) {
+            ErrorLogger.logError("Validation failed.", totalValidation);
+        }
+
+        if (state.getProcedure().getMetadata().getGobiiFile() == null) {
+            logError("Digester", "Instruction " + config.getInstructionFile() + " has bad 'file' column");
+        } else if (state.getProcedure().getMetadata().getGobiiFile().getGobiiFileType() == null) {
+            logError("Digester", "Instruction " + config.getInstructionFile() + " has missing file format");
+        }
+
+
+        //Pre-processing - make sure all files exist, find the cannonical dataset id
+        for (GobiiLoaderInstruction inst : state.getProcedure().getInstructions()) {
+            if (inst == null) {
+                logError("Digester", "Missing or malformed instruction in " + config.getInstructionFile());
+            } else if (inst.getTable().equals(VARIANT_CALL_TABNAME)
+                        && (state.getProcedure().getMetadata().getDatasetType()!=null)
+                        && state.getProcedure().getMetadata().getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF)
+                        && (! "NUCLEOTIDE_2_LETTER".equals(state.getProcedure().getMetadata().getDatasetType().getName()))) {
+
+                ErrorLogger.logError("GobiiLoader", "Invalid Dataset Type selected for VCF file. Expected 2 Letter Nucleotide. Received " + state.getProcedure().getMetadata().getDatasetType());
+            }
+        }
+
+        return state;
     }
 
     public static ProcessMessage addValidationError(ProcessMessage pm, ValidationError status) {
