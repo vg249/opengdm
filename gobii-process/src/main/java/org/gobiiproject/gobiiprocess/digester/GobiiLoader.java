@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Sets;
 import org.apache.commons.cli.*;
 import org.gobiiproject.gobiiapimodel.payload.Header;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
@@ -356,17 +357,13 @@ public class GobiiLoader {
         //Section - Processing
         ErrorLogger.logTrace("Digester", "Beginning List Processing");
         success = true;
-        switch (state.getProcedure().getMetadata().getGobiiFile().getGobiiFileType()) { //All instructions should have the same file type, all file types go through CSVFileReader(V2)
-            case HAPMAP:
-                //INTENTIONAL FALLTHROUGH
-            case VCF:
-                //INTENTIONAL FALLTHROUGH
-            case GENERIC:
-                CSVFileReaderV2.parseInstructionFile(state.getProcedure(), loaderScriptPath);
-                break;
-            default:
-                System.err.println("Unable to deal with file type " + state.getProcedure().getMetadata().getGobiiFile().getGobiiFileType());
-                break;
+
+        if (Sets.newHashSet(GobiiFileType.HAPMAP, GobiiFileType.VCF, GobiiFileType.GENERIC)
+                .contains(state.getProcedure().getMetadata().getGobiiFile().getGobiiFileType())) {
+
+            CSVFileReaderV2.parseInstructionFile(state.getProcedure(), loaderScriptPath);
+        } else {
+            System.err.println("Unable to deal with file type " + state.getProcedure().getMetadata().getGobiiFile().getGobiiFileType());
         }
 
         //Database Validation
