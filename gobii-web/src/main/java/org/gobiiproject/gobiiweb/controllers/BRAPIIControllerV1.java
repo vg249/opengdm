@@ -36,9 +36,14 @@ import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelope;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMaster;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMasterDetail;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DnaRunDTO;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.types.RestMethodType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
+import org.gobiiproject.gobiiweb.automation.RestResourceLimits;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
@@ -789,6 +794,61 @@ public class BRAPIIControllerV1 {
         return returnVal;
     }
 
+    @RequestMapping(value="/callsets", method=RequestMethod.GET)
+    public @ResponseBody ResponseEntity getCallSets(
+            @RequestParam(value = "pageToken", required = false) String pageTokenParam,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize
+    ) {
+        try {
+
+            Integer pageToken = null;
+
+            if (pageTokenParam != null) {
+                try {
+                    pageToken = Integer.parseInt(pageTokenParam);
+                }
+                catch(Exception e) {
+                    throw new GobiiException(
+                            GobiiStatusLevel.ERROR,
+                            GobiiValidationStatusType.BAD_REQUEST,
+                            "Invalid Page Token");
+                }
+            }
+
+            Integer maxPageSize = RestResourceLimits.getResourceLimit(
+                    RestResourceId.GOBII_DNARUN,
+                    RestMethodType.GET
+            );
+
+            if (pageSize == null || pageSize > maxPageSize) {
+                pageSize = maxPageSize;
+            }
+
+            List<DnaRunDTO> dnaRunList = dnaRunService.getDnaRuns(pageToken, pageSize);
+
+            BrApiMasterPayload<List<DnaRunDTO>> payload = new BrApiMasterPayload<>(dnaRunList);
+
+            if (dnaRunList.size() > 0) {
+                payload.getMetaData().getPagination().setPageSize(dnaRunList.size());
+                if(dnaRunList.size() >= pageSize) {
+                    payload.getMetaData().getPagination().setNextPageToken(
+                            dnaRunList.get(dnaRunList.size() - 1).getCallSetDbId().toString()
+                    );
+                }
+            }
+
+            return ResponseEntity.ok(payload);
+        }
+        catch (GobiiException gE) {
+            throw gE;
+        }
+        catch (Exception e) {
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.UNKNOWN,
+                    "Internal Server Error" + e.getMessage());
+        }
+    }
 
     @RequestMapping(value="/callsets/{callSetDbId:[\\d]+}", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getCallSetsByCallSetDbId(
@@ -800,6 +860,5 @@ public class BRAPIIControllerV1 {
         BrApiMasterPayload<DnaRunDTO> payload = new BrApiMasterPayload<>(dnaRunDTO);
         return ResponseEntity.ok(payload);
     }
-
 
 }// BRAPIController

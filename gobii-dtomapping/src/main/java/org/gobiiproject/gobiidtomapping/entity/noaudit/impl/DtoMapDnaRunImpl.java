@@ -2,6 +2,8 @@ package org.gobiiproject.gobiidtomapping.entity.noaudit.impl;
 
 import org.gobiiproject.gobiidao.resultset.access.impl.RsDnaRunDaoImpl;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
+import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
+import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapDnaRun;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -15,8 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Array;
 import java.sql.ResultSet;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by VCalaminos on 6/25/2019.
@@ -27,6 +28,9 @@ public class DtoMapDnaRunImpl implements DtoMapDnaRun {
 
     @Autowired
     private RsDnaRunDaoImpl rsDnaRunDao;
+
+    @Autowired
+    private DtoListQueryColl dtoListQueryColl;
 
     @Transactional
     @Override
@@ -65,6 +69,50 @@ public class DtoMapDnaRunImpl implements DtoMapDnaRun {
         }
         catch (Exception e) {
             LOGGER.error("Gobii Mapping error", e);
+            throw new GobiiDtoMappingException(e);
+        }
+
+        return returnVal;
+    }
+
+    @Override
+    public List<DnaRunDTO> getList(Integer pageToken, Integer pageSize) throws GobiiDtoMappingException {
+
+        List<DnaRunDTO> returnVal;
+        try {
+
+            Map<String, Object> sqlParams = new HashMap<>();
+
+            if (pageToken != null) {
+                sqlParams.put("pageToken", pageToken);
+            }
+
+            if (pageSize != null) {
+                sqlParams.put("pageSize", pageSize);
+            }
+
+            returnVal = (List<DnaRunDTO>) dtoListQueryColl.getList(
+                    ListSqlId.QUERY_ID_DNARUN_ALL,
+                    null,
+                    sqlParams
+            );
+
+            if (returnVal == null) {
+                return new ArrayList<>();
+            }
+
+        }
+        catch (GobiiException gE) {
+
+            LOGGER.error(gE.getMessage(), gE);
+
+            throw new GobiiDtoMappingException(
+                    gE.getGobiiStatusLevel(),
+                    gE.getGobiiValidationStatusType(),
+                    gE.getMessage());
+        }
+        catch (Exception e) {
+            LOGGER.error("Gobii Mapping Error", e);
             throw new GobiiDtoMappingException(e);
         }
 
