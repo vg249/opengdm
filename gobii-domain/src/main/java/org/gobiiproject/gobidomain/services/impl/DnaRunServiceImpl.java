@@ -26,6 +26,7 @@ public class DnaRunServiceImpl implements DnaRunService {
 
         DnaRunDTO returnVal;
 
+
         try {
 
             returnVal = dtoMapDnaRun.get(dnaRunId);

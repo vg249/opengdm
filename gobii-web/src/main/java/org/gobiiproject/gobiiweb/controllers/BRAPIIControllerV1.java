@@ -37,6 +37,8 @@ import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMaste
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMasterDetail;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DnaRunDTO;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -792,14 +794,44 @@ public class BRAPIIControllerV1 {
 
     @RequestMapping(value="/callsets/{callSetDbId:[\\d]+}", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getCallSetsByCallSetDbId(
-            @ApiParam(value = "ID of the callset to be extracted", required = true)
-            @PathVariable("callSetDbId") Integer callSetDbId
-    ) {
+            @PathVariable("callSetDbId") String callSetDbId) {
 
-        DnaRunDTO dnaRunDTO = dnaRunService.getDnaRunById(callSetDbId);
+        Integer callSetDbIdInt;
+
+        try {
+            callSetDbIdInt = Integer.parseInt(callSetDbId);
+        }
+        catch(Exception e) {
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                    "Entity does not exist");
+        }
+
+        DnaRunDTO dnaRunDTO = dnaRunService.getDnaRunById(callSetDbIdInt);
         BrApiMasterPayload<DnaRunDTO> payload = new BrApiMasterPayload<>(dnaRunDTO);
         return ResponseEntity.ok(payload);
     }
+
+
+    @RequestMapping(value="/callsets/{callSetDbId:[\\d]+}/calls", method=RequestMethod.GET)
+    public @ResponseBody ResponseEntity getCallsByCallset(@PathVariable("callSetDbId") String callSetDbId ) {
+
+        Integer callSetDbIdInt;
+
+        try {
+            callSetDbIdInt = Integer.parseInt(callSetDbId);
+        }
+        catch(Exception e) {
+            throw new GobiiException(
+                    GobiiStatusLevel.ERROR,
+                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                    "Entity does not exist");
+        }
+        return ResponseEntity.ok("");
+    }
+
+
 
 
 }// BRAPIController

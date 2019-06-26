@@ -26,6 +26,7 @@
             <artifactId>gobii-model</artifactId>
         </dependency>
 
+
         <!-- Spring and Transactions -->
         <dependency>
             <groupId>org.springframework</groupId>

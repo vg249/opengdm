@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiweb.spring;
 
+import org.gobiiproject.gobiidao.hdf5.HDF5Interface;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
@@ -33,6 +34,8 @@ public class ConfigSupplement {
         returnVal.setCurrentRequest(currentRequest);
 
         ConfigSettings configSettings = new ConfigSettings();
+
+
         Map<Object,Object> targetDataSources = new HashMap<>();
         for (GobiiCropConfig currentGobiiCropConfig : configSettings.getActiveCropConfigs()) {
 

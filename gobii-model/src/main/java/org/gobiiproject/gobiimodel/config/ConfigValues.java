@@ -165,6 +165,9 @@ class ConfigValues {
     private String fileSysCropsParent = "crops/";
 
     @Element(required = false)
+    private String hdf5RelativePath = "extractors/hdf5/bin";
+
+    @Element(required = false)
     private String fileSystemLog;
 
     @Element(required = false)
@@ -383,6 +386,14 @@ class ConfigValues {
 
     public void setEmailSvrType(String emailSvrType) {
         this.emailSvrType = emailSvrType;
+    }
+
+    public String getHdf5RelativePath() {
+        return hdf5RelativePath;
+    }
+
+    public void setHdf5RelativePath(String hdf5RelativePath) {
+        this.hdf5RelativePath = hdf5RelativePath;
     }
 
     public String getEmailSvrDomain() {
