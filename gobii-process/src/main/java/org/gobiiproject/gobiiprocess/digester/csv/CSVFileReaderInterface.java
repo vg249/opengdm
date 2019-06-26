@@ -1,12 +1,9 @@
 package org.gobiiproject.gobiiprocess.digester.csv;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderMetadata;
+import org.gobiiproject.gobiiprocess.digester.GobiiLoader;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
 /**
@@ -16,7 +13,7 @@ public abstract class CSVFileReaderInterface {
     public static RowColPair<Integer> lastMatrixSizeRowCol = null;
     /**
      * Reads the input file specified by the loader instruction and creates a digest file based on the instruction. For more detailed discussions on the resulting digest file's format
-     * see either the documentation of the IFLs or {@link org.gobiiproject.gobiiprocess.digester.GobiiFileReader} documentation.
+     * see either the documentation of the IFLs or {@link GobiiLoader} documentation.
      * @param loaderInstruction Singular instruction, specifying input and output directories
      * @throws IOException If an unexpected filesystem error occurs
      * @throws InterruptedException If interrupted (Signals, etc)

@@ -19,13 +19,14 @@ import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiiprocess.digester.GobiiLoader;
 import org.gobiiproject.gobiiprocess.digester.LoaderGlobalConfigs;
 import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.MatrixValidation;
 import org.gobiiproject.gobiiprocess.digester.csv.matrixValidation.ValidationResult;
 
 /**
  * CSV-Specific File Loader class, used by
- * {@link org.gobiiproject.gobiiprocess.digester.GobiiFileReader} Contains
+ * {@link GobiiLoader} Contains
  * methods specific to reading of single-character separated text files, such as
  * .csv, tab-delimited, and pipe-separated values. This class is used, when none
  * of GobiiColumnType in GobiiLoaderInstruction

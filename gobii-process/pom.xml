@@ -94,6 +94,13 @@
             <artifactId>guava</artifactId>
         </dependency>
 
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.8</version>
+            <scope>provided</scope>
+        </dependency>
 
     </dependencies>
 
@@ -183,7 +190,7 @@
                             <finalName>Digester</finalName>
                             <archive>
                                 <manifest>
-                                    <mainClass>org.gobiiproject.gobiiprocess.digester.GobiiFileReader</mainClass>
+                                    <mainClass>org.gobiiproject.gobiiprocess.digester.GobiiLoader</mainClass>
                                 </manifest>
                             </archive>
                         </configuration>

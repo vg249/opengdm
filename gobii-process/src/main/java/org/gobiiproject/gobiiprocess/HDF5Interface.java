@@ -4,10 +4,9 @@ import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
-import org.gobiiproject.gobiimodel.utils.email.DigesterMessage;
 import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
-import org.gobiiproject.gobiiprocess.digester.GobiiFileReader;
+import org.gobiiproject.gobiiprocess.digester.GobiiLoader;
 
 import java.io.*;
 import java.util.Arrays;
@@ -30,8 +29,7 @@ public class HDF5Interface {
     //Paths
 
     /**
-     * Creates an HDF5 for a dataset given an existing file path. Will return false if the process fails (generally due to *nix OS failures) which also will set the error state to false.
-     * @param dm Email message object - for direct writing
+     * Creates an HDF5 for a dataset given an existing file path. Will return false if the process fails (generally due to *nix OS failures) which also will set the error state to false
      * @param configuration configurations - for reading if a configruation is set correctly
      * @param procedure
      * @param errorPath Place to store temporary files in case of needing temporary files
@@ -39,11 +37,10 @@ public class HDF5Interface {
      * @param variantFile Location of the file to use for creating the dataset
      * @return if the process succeeded
      */
-    public static boolean createHDF5FromDataset(ProcessMessage dm, ConfigSettings configuration, GobiiLoaderProcedure procedure, String errorPath, String variantFilename, File variantFile) {
+    public static boolean createHDF5FromDataset(ConfigSettings configuration, GobiiLoaderProcedure procedure, String errorPath, String variantFilename, File variantFile) {
         //HDF-5
         //Usage: %s <datasize> <input file> <output HDF5 file
         String loadHDF5= getPathToHDF5() +"loadHDF5";
-        dm.addPath("matrix directory", pathToHDF5Files);
         String HDF5File= getFileLoc(procedure.getMetadata().getDataSet().getId());
         int size=8;
         switch(procedure.getMetadata().getDatasetType().getName().toUpperCase()){
@@ -58,11 +55,11 @@ public class HDF5Interface {
         ErrorLogger.logInfo("Digester","Running HDF5 Loader. HDF5 Generating at "+HDF5File);
         boolean success=HelperFunctions.tryExec(loadHDF5+" "+size+" "+variantFile.getPath()+" "+HDF5File,null,errorPath);
         if(!success){
-            //TODO - if not successful - remove HDF5 file, do not update GobiiFileReader's state
+            //TODO - if not successful - remove HDF5 file, do not update GobiiLoader's state
             rmIfExist(HDF5File);
             return false;
         }
-        GobiiFileReader.updateValues(configuration, procedure.getMetadata().getGobiiCropType(), procedure.getMetadata().getDataSet().getId(),variantFilename, HDF5File); // this is spaghetti, should be moved
+        GobiiLoader.updateValues(configuration, procedure.getMetadata().getGobiiCropType(), procedure.getMetadata().getDataSet().getId(),variantFilename, HDF5File); // this is spaghetti, should be moved
         return true;
     }
 
