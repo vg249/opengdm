@@ -11,10 +11,12 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Array;
 import java.sql.ResultSet;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by VCalaminos on 6/25/2019.
@@ -26,6 +28,8 @@ public class DtoMapDnaRunImpl implements DtoMapDnaRun {
     @Autowired
     private RsDnaRunDaoImpl rsDnaRunDao;
 
+    @Transactional
+    @Override
     public DnaRunDTO get(Integer dnaRunId) throws GobiiDtoMappingException {
 
         DnaRunDTO returnVal = new DnaRunDTO();
@@ -34,10 +38,7 @@ public class DtoMapDnaRunImpl implements DtoMapDnaRun {
             ResultSet resultSet = rsDnaRunDao.getDnaRunForDnaRunId(dnaRunId);
             if (resultSet.next()) {
 
-                returnVal.setCallSetDbId(resultSet.getInt("dnarun_id"));
-                returnVal.setCallSetName(resultSet.getString("name"));
-                returnVal.setSampleDbId(resultSet.getInt("dnasample_id"));
-                returnVal.setDnaRunCode(resultSet.getString("code"));
+                ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
 
                 if (resultSet.next()) {
                     throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
