@@ -860,10 +860,6 @@ public class GobiiLoader {
         }
     }
 
-    private static String getJDBCConnectionString(GobiiCropConfig config) {
-        return HelperFunctions.getJdbcConnectionString(config);
-    }
-
     /**
      * Given a string key, determine if the table is one-to-one with relation to the input file size.
      * If not, several metrics become meaningless.
