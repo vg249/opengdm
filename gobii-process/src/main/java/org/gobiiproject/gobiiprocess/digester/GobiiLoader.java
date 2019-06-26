@@ -58,9 +58,6 @@ public class GobiiLoader {
     private static Messenger messenger;
     private static InstructionFileValidator instructionFileValidator = new InstructionFileValidator();
 
-    private static String rootDir = "../";
-    private static String loaderScriptPath;
-    private static String extractorScriptPath;
     private static final String VARIANT_CALL_TABNAME = "matrix";
     private static final String LINKAGE_GROUP_TABNAME = "linkage_group";
     private static final String GERMPLASM_PROP_TABNAME = "germplasm_prop";
@@ -69,9 +66,6 @@ public class GobiiLoader {
     private static final String DS_MARKER_TABNAME = "dataset_marker";
     private static final String DS_SAMPLE_TABNAME = "dataset_dnarun";
     private static final String SAMPLE_TABNAME = "dnarun";
-    private static boolean verbose;
-    private static String errorLogOverride;
-    private static String propertiesFile;
     private static GobiiUriFactory gobiiUriFactory;
     private static GobiiExtractorInstruction qcExtractInstruction = null;
 
@@ -90,11 +84,7 @@ public class GobiiLoader {
         GobiiLoaderState state = new GobiiLoaderState();
 
 
-        extractorScriptPath = rootDir + "extractors/";
-        loaderScriptPath = rootDir + "loaders/";
-        HDF5Interface.setPathToHDF5(loaderScriptPath + "hdf5/bin/");
-
-        if (propertiesFile == null) propertiesFile = rootDir + "config/gobii-web.xml";
+        HDF5Interface.setPathToHDF5(config.getLoaderScriptPath() + "hdf5/bin/");
 
         boolean success = true;
         Map<String, File> loaderInstructionMap = new HashMap<>();//Map of Key to filename
@@ -102,8 +92,8 @@ public class GobiiLoader {
 
         ConfigSettings configuration = null;
         try {
-            configuration = new ConfigSettings(propertiesFile);
-            ErrorLogger.logDebug("Config file path", "Opened config settings at " + propertiesFile);
+            configuration = new ConfigSettings(config.getPropertiesFile());
+            ErrorLogger.logDebug("Config file path", "Opened config settings at " + config.getPropertiesFile());
 
         } catch (Exception e1) {
             e1.printStackTrace();
@@ -148,7 +138,7 @@ public class GobiiLoader {
         }
 
 
-        Path cropPath = Paths.get(rootDir + "crops/" + state.getProcedure().getMetadata().getGobiiCropType().toLowerCase());
+        Path cropPath = Paths.get(config.getRootDir() + "crops/" + state.getProcedure().getMetadata().getGobiiCropType().toLowerCase());
         if (!(Files.exists(cropPath) &&
                 Files.isDirectory(cropPath))) {
             logError("Digester", "Unknown Crop Type: " + state.getProcedure().getMetadata().getGobiiCropType());
@@ -239,7 +229,7 @@ public class GobiiLoader {
         if (Sets.newHashSet(GobiiFileType.HAPMAP, GobiiFileType.VCF, GobiiFileType.GENERIC)
                 .contains(state.getProcedure().getMetadata().getGobiiFile().getGobiiFileType())) {
 
-            CSVFileReaderV2.parseInstructionFile(state.getProcedure(), loaderScriptPath);
+            CSVFileReaderV2.parseInstructionFile(state.getProcedure(), config.getLoaderScriptPath());
         } else {
             System.err.println("Unable to deal with file type " + state.getProcedure().getMetadata().getGobiiFile().getGobiiFileType());
         }
@@ -288,7 +278,7 @@ public class GobiiLoader {
             loaderInstructionMap.put(instructionName, new File(getDestinationFile(state.getProcedure().getMetadata(), inst)));
             loaderInstructionList.add(instructionName);//TODO Hack - for ordering
             if (LINKAGE_GROUP_TABNAME.equals(instructionName) || GERMPLASM_TABNAME.equals(instructionName) || GERMPLASM_PROP_TABNAME.equals(instructionName)) {
-                success &= HelperFunctions.tryExec(loaderScriptPath + "LGduplicates.py -i " + getDestinationFile(state.getProcedure().getMetadata(), inst));
+                success &= HelperFunctions.tryExec(config.getLoaderScriptPath() + "LGduplicates.py -i " + getDestinationFile(state.getProcedure().getMetadata(), inst));
             }
             if (MARKER_TABNAME.equals(instructionName)) {//Convert 'alts' into a jsonb array
                 intermediateFile.transform(MobileTransform.PGArray);
@@ -351,7 +341,7 @@ public class GobiiLoader {
         if (success && ErrorLogger.success()) {
             jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_METADATALOAD, "Loading Metadata");
             errorPath = getLogName(state.getProcedure(), gobiiCropConfig, "IFLs");
-            String pathToIFL = loaderScriptPath + "postgres/gobii_ifl/gobii_ifl.py";
+            String pathToIFL = config.getLoaderScriptPath() + "postgres/gobii_ifl/gobii_ifl.py";
             String connectionString = " -c " + HelperFunctions.getPostgresConnectionString(gobiiCropConfig);
 
             //Load PostgreSQL
@@ -363,7 +353,7 @@ public class GobiiLoader {
 
                     ErrorLogger.logInfo("Digester", "Running IFL: " + pathToIFL + " <conntection string> " + inputFile + outputFile);
                     //Lines affected returned by method call - THIS IS NOW IGNORED
-                    HelperFunctions.tryExec(pathToIFL + connectionString + inputFile + outputFile + " -l", verbose ? directory + "/iflOut" : null, errorPath);
+                    HelperFunctions.tryExec(pathToIFL + connectionString + inputFile + outputFile + " -l", config.isVerbose() ? directory + "/iflOut" : null, errorPath);
 
                     calculateTableStats(state, loaderInstructionMap, new File(state.getProcedure().getMetadata().getGobiiFile().getDestination()), key);
 
@@ -544,13 +534,27 @@ public class GobiiLoader {
         CommandLineParser parser = new DefaultParser();
         try {
             CommandLine cli = parser.parse(o, args);
-            if (cli.hasOption("rootDir")) config.rootDir(cli.getOptionValue("rootDir"));
+
+            String rootDir;
+            if (cli.hasOption("rootDir")) {
+                rootDir = cli.getOptionValue("rootDir");
+            } else {
+                rootDir = "../";
+            }
             if (cli.hasOption("verbose")) config.verbose(true);
             if (cli.hasOption("errLog")) config.errorLog(cli.getOptionValue("errLog"));
-            if (cli.hasOption("config")) config.propertiesFile(cli.getOptionValue("config"));
+            if (cli.hasOption("config") && cli.getOptionValue("config") != null) {
+                config.propertiesFile(cli.getOptionValue("config"));
+            } else {
+                config.propertiesFile(rootDir + "config/gobii-web.xml");
+            }
             if (cli.hasOption("hdfFiles")) config.hdf5FilesPath(cli.getOptionValue("hdfFiles"));
             LoaderGlobalConfigs.setFromFlags(cli);
             args = cli.getArgs();//Remaining args passed through
+
+            config.extractorScriptPath(rootDir + "extractors/");
+            config.loaderScriptPath(rootDir + "loaders/");
+
 
         } catch (org.apache.commons.cli.ParseException exp) {
             new HelpFormatter().printHelp("java -jar Digester.jar ", "Also accepts input file directly after arguments\n" +

@@ -15,4 +15,7 @@ public class GobiiLoaderConfig {
 	private String propertiesFile;
 
 	private String hdf5FilesPath;
+
+	private String extractorScriptPath;
+	private String loaderScriptPath;
 }
