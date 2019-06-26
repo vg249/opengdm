@@ -11,6 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by VCalaminos on 6/25/2019.
  */
@@ -53,6 +56,34 @@ public class DnaRunServiceImpl implements DnaRunService {
             throw new GobiiDomainException(e);
         }
 
+    }
+
+    @Override
+    public List<DnaRunDTO> getDnaRuns(Integer pageToken, Integer pageSize) throws GobiiDomainException {
+
+        List<DnaRunDTO> returnVal;
+
+        try {
+
+            returnVal = dtoMapDnaRun.getList(pageToken, pageSize);
+
+        }
+        catch (GobiiException gE) {
+
+            LOGGER.error(gE.getMessage(), gE.getMessage());
+
+            throw new GobiiDomainException(
+                    gE.getGobiiStatusLevel(),
+                    gE.getGobiiValidationStatusType(),
+                    gE.getMessage()
+            );
+        }
+        catch (Exception e) {
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+        }
+
+        return returnVal;
     }
 
 }

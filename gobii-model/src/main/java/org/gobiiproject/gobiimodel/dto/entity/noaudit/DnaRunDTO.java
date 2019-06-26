@@ -22,7 +22,7 @@ public class DnaRunDTO extends DTOBase{
     private Integer sampleDbId;
     private String callSetName;
     private String dnaRunCode;
-    private List<Integer> datasetIds = new ArrayList<>();
+    private List<Integer> variantSetIds = new ArrayList<>();
 
     @Override
     public Integer getId() { return this.callSetDbId; }
@@ -60,10 +60,10 @@ public class DnaRunDTO extends DTOBase{
     @GobiiEntityColumn(columnName = "code")
     public void setDnaRunCode(String dnaRunCode) { this.dnaRunCode = dnaRunCode; }
 
-    @GobiiEntityParam(paramName = "datasetIds")
-    public List<Integer> getDatasetIds() { return this.datasetIds; }
+    @GobiiEntityParam(paramName = "variantSetIds")
+    public List<Integer> getVariantSetIds() { return this.variantSetIds; }
 
     @GobiiEntityColumn(columnName = "dataset_ids")
-    public void setDatasetIds(List<Integer> datasetIds) { this.datasetIds = datasetIds; }
+    public void setVariantSetIds(List<Integer> variantSetIds) { this.variantSetIds = variantSetIds; }
 
 }

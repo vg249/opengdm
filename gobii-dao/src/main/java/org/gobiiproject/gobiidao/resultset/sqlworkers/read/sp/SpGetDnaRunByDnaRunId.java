@@ -28,7 +28,7 @@ public class SpGetDnaRunByDnaRunId implements Work {
                     "dr.dnarun_id,\n" +
                     "dr.experiment_id,\n" +
                     "dr.dnasample_id,\n" +
-                    "--array_agg(datasetids) as dataset_ids,\n" +
+                    "array_agg(datasetids) as dataset_ids,\n" +
                     "dr.name,\n" +
                     "dr.code\n" +
                 "FROM\n" +
