@@ -5,11 +5,9 @@ import io.swagger.annotations.*;
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobidomain.services.ExperimentService;
 import org.gobiiproject.gobidomain.services.ProjectService;
-import org.gobiiproject.gobidomain.services.impl.sampletracking.ProjectServiceImpl;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.ListPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
-import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.entity.auditable.sampletracking.ExperimentDTO;
@@ -25,14 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -154,7 +148,6 @@ public class SampleTrackingController {
             @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required = true,
             paramType = "header", dataType = "string"),
     })
-
     @RequestMapping(value="/projects/{projectId:[\\d]+}", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getProjectById(
             @ApiParam(value = "ID of the Project to be extracted", required = true)

@@ -19,8 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 public class CropRequestAnalyzer {
 
     private static Logger LOGGER = LoggerFactory.getLogger(CropRequestAnalyzer.class);
-    private static ConfigSettings CONFIG_SETTINGS = new ConfigSettings();
-
+    private static String CONFIG_FILE_LOCATION_PROP = "cfgFqpn";
+    private static ConfigSettings CONFIG_SETTINGS;
 
     /***
      * Given a uri (for example, /gobii-maize/gobii/v1/contacts):
@@ -38,6 +38,11 @@ public class CropRequestAnalyzer {
         if (null != httpRequest) {
 
             String requestUrl = httpRequest.getRequestURI();
+
+            if(CONFIG_SETTINGS == null) {
+                String configFileLocation = System.getProperty(CONFIG_FILE_LOCATION_PROP);
+                CONFIG_SETTINGS = new ConfigSettings(configFileLocation);
+            }
 
             for (int idx = 0;
                  (idx < CONFIG_SETTINGS.getActiveCropConfigs().size()) && (returnVal == null);
@@ -110,6 +115,11 @@ public class CropRequestAnalyzer {
         HttpServletRequest httpRequest = null;
 
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+
+        if(CONFIG_SETTINGS == null) {
+            String configFileLocation = System.getProperty(CONFIG_FILE_LOCATION_PROP);
+            CONFIG_SETTINGS = new ConfigSettings(configFileLocation);
+        }
 
         if (null != requestAttributes && requestAttributes instanceof ServletRequestAttributes) {
             httpRequest = ((ServletRequestAttributes) requestAttributes).getRequest();
