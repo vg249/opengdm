@@ -18,7 +18,7 @@ import java.util.List;
 public class DnaRunDTO extends DTOBase{
 
     private int callSetDbId;
-    private Integer experimentId;
+    private Integer studyDbId;
     private Integer sampleDbId;
     private String callSetName;
     private String dnaRunCode;
@@ -40,11 +40,11 @@ public class DnaRunDTO extends DTOBase{
     @GobiiEntityColumn(columnName = "dnarun_id")
     public void setCallSetDbId(Integer id) { this.callSetDbId = id; }
 
-    @GobiiEntityParam(paramName = "experimentId")
-    public Integer getExperimentId() { return this.experimentId; }
+    @GobiiEntityParam(paramName = "studyDbId")
+    public Integer getStudyDbId() { return this.studyDbId; }
 
     @GobiiEntityColumn(columnName = "experiment_id")
-    public void setExperimentId(Integer experimentId) { this.experimentId = experimentId; }
+    public void setStudyDbId(Integer studyDbId) { this.studyDbId = studyDbId; }
 
     @GobiiEntityParam(paramName = "sampleDbId")
     public Integer getSampleDbId() { return this.sampleDbId; }

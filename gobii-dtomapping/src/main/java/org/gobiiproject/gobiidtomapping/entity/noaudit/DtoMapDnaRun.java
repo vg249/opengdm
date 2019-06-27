@@ -11,6 +11,6 @@ import java.util.List;
 public interface DtoMapDnaRun {
 
     DnaRunDTO get(Integer dnaRunId) throws GobiiDtoMappingException;
-    List<DnaRunDTO> getList(Integer pageToken, Integer pageSize) throws GobiiDtoMappingException;
+    List<DnaRunDTO> getList(Integer pageToken, Integer pageSize, DnaRunDTO dnaRunDTOFilter) throws GobiiDtoMappingException;
 
 }

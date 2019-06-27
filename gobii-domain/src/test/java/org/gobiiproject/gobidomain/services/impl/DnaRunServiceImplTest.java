@@ -43,7 +43,7 @@ public class DnaRunServiceImplTest {
 
         List<DnaRunDTO> dnaRunDTOList;
 
-        dnaRunDTOList = dnaRunService.getDnaRuns(null, null);
+        dnaRunDTOList = dnaRunService.getDnaRuns(null, null, null);
 
         if (dnaRunDTOList.size() <= 0) {
             throw new AssumptionViolatedException("There are no available dna runs in the database");
@@ -61,7 +61,7 @@ public class DnaRunServiceImplTest {
 
         Integer pageSize = 1;
 
-        dnaRunDTOList = dnaRunService.getDnaRuns(null, pageSize);
+        dnaRunDTOList = dnaRunService.getDnaRuns(null, pageSize, null);
 
         if (dnaRunDTOList.size() <= 0) {
             throw new AssumptionViolatedException("There are no available dna runs in the database");
@@ -76,7 +76,7 @@ public class DnaRunServiceImplTest {
 
         DnaRunDTO dnaRunDTO = null;
 
-        List<DnaRunDTO> dnaRunDTOList = dnaRunService.getDnaRuns(null, null);
+        List<DnaRunDTO> dnaRunDTOList = dnaRunService.getDnaRuns(null, null, null);
 
         if (dnaRunDTOList.size() <= 0) {
             throw new AssumptionViolatedException("There are no available dna runs in the database");

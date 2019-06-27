@@ -9,6 +9,7 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY_ID_DNARUN_ALL;
@@ -27,11 +28,14 @@ public class ListStatementDnaRunAll implements ListStatement {
     public PreparedStatement makePreparedStatement(Connection dbConnection,
                                                    Map<String, Object> jdbcParamVals,
                                                    Map<String, Object> sqlParamVals)
-            throws SQLException, GobiiException {
+            throws SQLException, GobiiException{
 
         String pageCondition = "";
         String pageSizeCondition = "";
+        String filterCondition = "";
         Integer pageSize = 0;
+        HashMap<String, Integer> filterConditionIndexArr = new HashMap<>();
+        Integer parameterIndex=1;
 
         if(sqlParamVals != null) {
             if (sqlParamVals.containsKey("pageSize")
@@ -64,6 +68,40 @@ public class ListStatementDnaRunAll implements ListStatement {
                 throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
                         "Invalid Page Token");
             }
+
+            if (!pageCondition.isEmpty()) {
+                parameterIndex = 2;
+            }
+
+            if (sqlParamVals.containsKey("callSetName")) {
+                filterCondition += "and dnarun.name=?\n";
+                filterConditionIndexArr.put("callSetName", parameterIndex);
+                parameterIndex++;
+            }
+
+            if (sqlParamVals.containsKey("variantSetDbId")) {
+                filterCondition += "and jsonb_exists(dnarun.dataset_dnarun_idx,?::text)\n";
+                filterConditionIndexArr.put("variantSetDbId", parameterIndex);
+                parameterIndex++;
+            }
+
+            if (sqlParamVals.containsKey("sampleDbId")) {
+                filterCondition += "and dnarun.dnasample_id=?\n";
+                filterConditionIndexArr.put("sampleDbId", parameterIndex);
+                parameterIndex++;
+            }
+
+            if (sqlParamVals.containsKey("germplasmDbId")) {
+                filterCondition += "and g.germplasm_id=?\n";
+                filterConditionIndexArr.put("germplasmDbId", parameterIndex);
+                parameterIndex++;
+            }
+
+            if (sqlParamVals.containsKey("studyDbId")) {
+                filterCondition += "and dnarun.experiment_id=?\n";
+                filterConditionIndexArr.put("studyDbId", parameterIndex);
+                parameterIndex++;
+            }
         }
 
         String sql = "with dnarun as (\n" +
@@ -73,7 +111,8 @@ public class ListStatementDnaRunAll implements ListStatement {
                 "dr.dnasample_id,\n" +
                 "array_agg(datasetids) as dataset_ids,\n" +
                 "dr.name,\n" +
-                "dr.code\n" +
+                "dr.code,\n" +
+                "dr.dataset_dnarun_idx\n" +
                 "FROM\n" +
                 "(\n" +
                 "   SELECT\n" +
@@ -82,12 +121,13 @@ public class ListStatementDnaRunAll implements ListStatement {
                         "dr.dnasample_id,\n" +
                         "dr.name,\n" +
                         "dr.code,\n" +
-                        "jsonb_object_keys(dr.dataset_dnarun_idx)::integer as datasetids\n" +
+                        "jsonb_object_keys(dr.dataset_dnarun_idx)::integer as datasetids,\n" +
+                        "dr.dataset_dnarun_idx\n" +
                     "FROM\n" +
                         "dnarun dr\n" +
                     pageCondition +
                 ") as dr\n" +
-                "GROUP BY dr.dnarun_id, dr.experiment_id, dr.dnasample_id, dr.name, dr.code)\n" +
+                "GROUP BY dr.dnarun_id, dr.experiment_id, dr.dnasample_id, dr.name, dr.code, dr.dataset_dnarun_idx)\n" +
                 "SELECT\n" +
                 "   dnarun.*,\n" +
                 "   s.name as sample_name,\n" +
@@ -99,19 +139,25 @@ public class ListStatementDnaRunAll implements ListStatement {
                 "WHERE\n" +
                 "   dnarun.dnasample_id = s.dnasample_id\n" +
                 "   and g.germplasm_id = s.germplasm_id\n" +
+                filterCondition +
                 pageSizeCondition;
 
         PreparedStatement returnVal = dbConnection.prepareStatement(sql);
 
-        if(!pageCondition.isEmpty() && !pageSizeCondition.isEmpty()) {
-            returnVal.setInt(1, (Integer) sqlParamVals.get("pageToken"));
-            returnVal.setInt(2, pageSize);
-        }
-        else if(!pageCondition.isEmpty()) {
+        if (!pageCondition.isEmpty()) {
             returnVal.setInt(1, (Integer) sqlParamVals.get("pageToken"));
         }
-        else if(!pageSizeCondition.isEmpty()) {
-            returnVal.setInt(1, pageSize);
+
+        for (Map.Entry<String, Integer> filter : filterConditionIndexArr.entrySet()) {
+            if (filter.getKey().equals("callSetName")) {
+                returnVal.setString(filter.getValue(), (String) sqlParamVals.get(filter.getKey()));
+            } else {
+                returnVal.setInt(filter.getValue(), (Integer) sqlParamVals.get(filter.getKey()));
+            }
+        }
+
+        if(!pageSizeCondition.isEmpty()) {
+            returnVal.setInt(parameterIndex, pageSize);
         }
 
         return returnVal;
