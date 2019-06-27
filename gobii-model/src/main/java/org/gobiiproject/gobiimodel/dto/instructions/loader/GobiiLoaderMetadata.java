@@ -14,7 +14,7 @@ public class GobiiLoaderMetadata {
     private PropNameId platform = new PropNameId();
     private PropNameId dataSet = new PropNameId();
     private PropNameId datasetType = new PropNameId();
-    private PropNameId Experiment = new PropNameId();
+    private PropNameId experiment = new PropNameId();
     private PropNameId mapset = new PropNameId();
 
     private String gobiiCropType;
