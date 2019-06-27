@@ -38,6 +38,8 @@ import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderV2;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.DigestFileValidator;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationConstants;
 import org.gobiiproject.gobiiprocess.digester.utils.validation.errorMessage.ValidationError;
+import org.gobiiproject.gobiiprocess.qc.QcExecutor;
+import org.gobiiproject.gobiiprocess.qc.QcWebExecutor;
 import org.springframework.util.CollectionUtils;
 
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
@@ -66,13 +68,13 @@ public class GobiiLoader {
     private static final String DS_MARKER_TABNAME = "dataset_marker";
     private static final String DS_SAMPLE_TABNAME = "dataset_dnarun";
     private static final String SAMPLE_TABNAME = "dnarun";
-    private static GobiiUriFactory gobiiUriFactory;
-    private static GobiiExtractorInstruction qcExtractInstruction = null;
 
     //Trinary - was this load marker fast(true), sample fast(false), or unknown/not applicable(null)
     public static Boolean isMarkerFast=null;
 
     private GobiiLoaderConfig config;
+
+    private QcExecutor qcExecutor = new QcWebExecutor();
 
     public GobiiLoader(GobiiLoaderConfig config) {
         this.config = config;
@@ -242,8 +244,8 @@ public class GobiiLoader {
             //DONE WITH TRANSFORMS
 
             if (state.getProcedure().getMetadata().isQcCheck()) {//QC - Subsection #2 of 3
-                qcExtractInstruction = createQCExtractInstruction(state.getProcedure().getMetadata());
-                setQCExtractPaths(state.getProcedure(), configuration, state.getProcedure().getMetadata().getGobiiCropType(), config.getInstructionFile());
+                qcExecutor.createQCExtractInstruction(state.getProcedure().getMetadata());
+                qcExecutor.setQCExtractPaths(state.getProcedure(), configuration, state.getProcedure().getMetadata().getGobiiCropType(), config.getInstructionFile());
                 sendQc = success;
             }
 
@@ -323,7 +325,7 @@ public class GobiiLoader {
                         ErrorLogger.logInfo("Digester", "Successful Data Upload");
                         if (sendQc) {
                             jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING, "Processing QC Job");
-                            sendQCExtract(configuration, state.getProcedure().getMetadata().getGobiiCropType());
+                            qcExecutor.sendQCExtract(configuration, state.getProcedure().getMetadata().getGobiiCropType());
                         } else {
                             jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED, "Successful Data Load");
                         }
@@ -618,77 +620,6 @@ public class GobiiLoader {
             querier.checkGermplasmSpeciesExistence(loaderInstructionMap.get(GERMPLASM_TABNAME));
         }
         querier.close();
-    }
-
-    private static GobiiExtractorInstruction createQCExtractInstruction(GobiiLoaderMetadata meta) {
-        GobiiExtractorInstruction gobiiExtractorInstruction;
-        ErrorLogger.logInfo("Digester", "qcCheck detected");
-        ErrorLogger.logInfo("Digester", "Entering into the QC Subsection #1 of 3...");
-        gobiiExtractorInstruction = new GobiiExtractorInstruction();
-        gobiiExtractorInstruction.setContactEmail(meta.getContactEmail());
-        gobiiExtractorInstruction.setContactId(meta.getContactId());
-        gobiiExtractorInstruction.setGobiiCropType(meta.getGobiiCropType());
-        gobiiExtractorInstruction.getMapsetIds().add(meta.getMapset().getId());
-        gobiiExtractorInstruction.setQcCheck(true);
-        ErrorLogger.logInfo("Digester", "Done with the QC Subsection #1 of 3!");
-        return gobiiExtractorInstruction;
-    }
-
-    private static void setQCExtractPaths(GobiiLoaderProcedure proc, ConfigSettings configuration, String crop, String instructionFile) throws Exception {
-        ErrorLogger.logInfo("Digester", "Entering into the QC Subsection #2 of 3...");
-        GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
-        gobiiDataSetExtract.setAccolate(false);  // It is unused/unsupported at the moment
-        gobiiDataSetExtract.setDataSet(proc.getMetadata().getDataSet());
-        gobiiDataSetExtract.setGobiiDatasetType(proc.getMetadata().getDatasetType());
-
-        // According to Liz, the Gobii extract filter type is always "WHOLE_DATASET" for any QC job
-        gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
-        gobiiDataSetExtract.setGobiiFileType(GobiiFileType.HAPMAP);
-        // It is going to be set by the Gobii web services
-        gobiiDataSetExtract.setGobiiJobStatus(null);
-        qcExtractInstruction.getDataSetExtracts().add(gobiiDataSetExtract);
-        ErrorLogger.logInfo("Digester", "Done with the QC Subsection #2 of 3!");
-    }
-
-    private static void sendQCExtract(ConfigSettings configuration, String crop) throws Exception {
-        ErrorLogger.logInfo("Digester", "Entering into the QC Subsection #3 of 3...");
-        ExtractorInstructionFilesDTO extractorInstructionFilesDTOToSend = new ExtractorInstructionFilesDTO();
-        extractorInstructionFilesDTOToSend.getGobiiExtractorInstructions().add(qcExtractInstruction);
-        extractorInstructionFilesDTOToSend.setInstructionFileName("extractor_" + DateUtils.makeDateIdString());
-        GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, crop, GobiiAutoLoginType.USER_RUN_AS);
-        if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
-            ErrorLogger.logError("Digester", "Unable to log in with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
-            return;
-        }
-        String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
-        gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
-        PayloadEnvelope<ExtractorInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(extractorInstructionFilesDTOToSend, GobiiProcessType.CREATE);
-        GobiiEnvelopeRestResource<ExtractorInstructionFilesDTO, ExtractorInstructionFilesDTO> gobiiEnvelopeRestResourceForPost = new GobiiEnvelopeRestResource<>(gobiiUriFactory
-                .resourceColl(RestResourceId.GOBII_FILE_EXTRACTOR_INSTRUCTIONS));
-        PayloadEnvelope<ExtractorInstructionFilesDTO> extractorInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResourceForPost.post(ExtractorInstructionFilesDTO.class,
-                payloadEnvelope);
-
-        if (extractorInstructionFileDTOResponseEnvelope != null) {
-
-            Header header = extractorInstructionFileDTOResponseEnvelope.getHeader();
-            if (header.getStatus().isSucceeded()) {
-                ErrorLogger.logInfo("Digester", "Extractor Request Sent");
-
-            } else {
-
-                String messages = extractorInstructionFileDTOResponseEnvelope.getHeader().getStatus().messages();
-
-                for (HeaderStatusMessage currentStatusMesage : header.getStatus().getStatusMessages()) {
-                    messages += (currentStatusMesage.getMessage()) + "; ";
-                }
-
-                ErrorLogger.logError("Digester", "Error sending extract request: " + messages);
-
-            }
-        } else {
-            ErrorLogger.logInfo("Digester", "Error Sending Extractor Request");
-        }
-        ErrorLogger.logInfo("Digester", "Done with the QC Subsection #3 of 3!");
     }
 
     /**
