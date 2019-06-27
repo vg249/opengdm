@@ -85,6 +85,9 @@ public class GobiiLoader {
 
         state.setProcedure(procedure);
 
+        if (state.getProcedure().getMetadata().getGobiiCropType() == null)
+            state.getProcedure().getMetadata().setGobiiCropType(divineCrop(config.getInstructionFile()));
+
         if (validateProcedure(config, state) == null) {
             return;
         }
@@ -369,9 +372,6 @@ public class GobiiLoader {
     }
 
     public static GobiiLoaderState validateProcedure(GobiiLoaderConfig config, GobiiLoaderState state) {
-
-        if (state.getProcedure().getMetadata().getGobiiCropType() == null)
-            state.getProcedure().getMetadata().setGobiiCropType(divineCrop(config.getInstructionFile()));
 
         if (CollectionUtils.isEmpty(state.getProcedure().getInstructions())) {
             logError("Digester", "No instruction for file " + config.getInstructionFile());
