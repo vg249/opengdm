@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit.impl;
 
-import org.gobiiproject.gobiidao.resultset.access.impl.RsDnaRunDaoImpl;
+import org.gobiiproject.gobiidao.resultset.access.RsDnaRunDao;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
@@ -27,7 +27,7 @@ public class DtoMapDnaRunImpl implements DtoMapDnaRun {
     Logger LOGGER = LoggerFactory.getLogger(DtoMapDnaRunImpl.class);
 
     @Autowired
-    private RsDnaRunDaoImpl rsDnaRunDao;
+    private RsDnaRunDao rsDnaRunDao;
 
     @Autowired
     private DtoListQueryColl dtoListQueryColl;
@@ -76,7 +76,7 @@ public class DtoMapDnaRunImpl implements DtoMapDnaRun {
     }
 
     @Override
-    public List<DnaRunDTO> getList(Integer pageToken, Integer pageSize) throws GobiiDtoMappingException {
+    public List<DnaRunDTO> getList(Integer pageToken, Integer pageSize, DnaRunDTO dnaRunDTOFilter) throws GobiiDtoMappingException {
 
         List<DnaRunDTO> returnVal;
         try {
@@ -89,6 +89,29 @@ public class DtoMapDnaRunImpl implements DtoMapDnaRun {
 
             if (pageSize != null) {
                 sqlParams.put("pageSize", pageSize);
+            }
+
+            if (dnaRunDTOFilter != null) {
+
+                if (dnaRunDTOFilter.getCallSetName() != null) {
+                    sqlParams.put("callSetName", dnaRunDTOFilter.getCallSetName());
+                }
+
+                if (dnaRunDTOFilter.getVariantSetIds().size() > 0) {
+                    sqlParams.put("variantSetDbId", dnaRunDTOFilter.getVariantSetIds().get(0));
+                }
+
+                if (dnaRunDTOFilter.getSampleDbId() != null) {
+                    sqlParams.put("sampleDbId", dnaRunDTOFilter.getSampleDbId());
+                }
+
+                if (dnaRunDTOFilter.getGermplasmDbId() != null) {
+                    sqlParams.put("germplasmDbId", dnaRunDTOFilter.getGermplasmDbId());
+                }
+
+                if (dnaRunDTOFilter.getStudyDbId() != null) {
+                    sqlParams.put("studyDbId", dnaRunDTOFilter.getStudyDbId());
+                }
             }
 
             returnVal = (List<DnaRunDTO>) dtoListQueryColl.getList(

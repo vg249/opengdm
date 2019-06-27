@@ -26,9 +26,6 @@ public class RsDnaRunDaoImpl implements RsDnaRunDao {
     @Autowired
     private StoredProcExec storedProcExec = null;
 
-    @Autowired
-    private SpRunnerCallable spRunnerCallable;
-
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public ResultSet getDnaRunForDnaRunId(Integer dnaRunId) throws GobiiDaoException {

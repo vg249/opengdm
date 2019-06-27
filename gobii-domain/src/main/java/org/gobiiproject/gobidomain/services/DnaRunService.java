@@ -12,6 +12,6 @@ import java.util.List;
 public interface DnaRunService {
 
     DnaRunDTO getDnaRunById(Integer dnaRunId) throws GobiiDomainException;
-    List<DnaRunDTO> getDnaRuns(Integer pageToken, Integer pageSize) throws GobiiDaoException;
+    List<DnaRunDTO> getDnaRuns(Integer pageToken, Integer pageSize, DnaRunDTO dnaRunDTOFilter) throws GobiiDaoException;
 
 }
