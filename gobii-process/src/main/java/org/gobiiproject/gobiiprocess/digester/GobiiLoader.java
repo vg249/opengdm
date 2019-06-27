@@ -74,12 +74,14 @@ public class GobiiLoader {
 
     private GobiiLoaderConfig config;
 
+
     private QcExecutor qcExecutor = new QcWebExecutor();
 
     public GobiiLoader(GobiiLoaderConfig config) {
         this.config = config;
 
         HDF5Interface.setPathToHDF5Files(config.getHdf5FilesPath());
+        HDF5Interface.setPathToHDF5(config.getLoaderScriptPath() + "hdf5/bin/");
     }
 
     public void run(GobiiLoaderProcedure procedure) throws Exception {
@@ -94,7 +96,6 @@ public class GobiiLoader {
             return;
         }
 
-        HDF5Interface.setPathToHDF5(config.getLoaderScriptPath() + "hdf5/bin/");
 
         boolean success = true;
         Map<String, File> loaderInstructionMap = new LinkedHashMap<>();//Map of Key to filename
