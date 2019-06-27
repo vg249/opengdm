@@ -133,12 +133,12 @@ public class GobiiLoader {
         }
 
 
-        Path cropPath = Paths.get(config.getRootDir() + "crops/" + state.getProcedure().getMetadata().getGobiiCropType().toLowerCase());
-        if (!(Files.exists(cropPath) &&
-                Files.isDirectory(cropPath))) {
+        Path cropPath = cropPath(config, state);
+        if (cropPath == null) {
             logError("Digester", "Unknown Crop Type: " + state.getProcedure().getMetadata().getGobiiCropType());
             return;
         }
+
         GobiiCropConfig gobiiCropConfig;
         try {
             gobiiCropConfig = configuration.getCropConfig(state.getProcedure().getMetadata().getGobiiCropType());
@@ -344,6 +344,16 @@ public class GobiiLoader {
 
         HelperFunctions.completeInstruction(config.getInstructionFile(), configuration.getProcessingPath(state.getProcedure().getMetadata().getGobiiCropType(), GobiiFileProcessDir.LOADER_DONE));
 
+    }
+
+    public static Path cropPath(GobiiLoaderConfig config, GobiiLoaderState state) {
+        Path cropPath = Paths.get(config.getRootDir() + "crops/" + state.getProcedure().getMetadata().getGobiiCropType().toLowerCase());
+        if (!(Files.exists(cropPath) &&
+                Files.isDirectory(cropPath))) {
+            return null;
+        }
+
+        return cropPath;
     }
 
     public static GobiiLoaderState validateMetadata(GobiiLoaderState state, GobiiCropConfig gobiiCropConfig, ConfigSettings configuration) throws Exception {
