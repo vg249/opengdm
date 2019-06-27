@@ -250,9 +250,6 @@ public class GobiiLoader {
         }
 
 
-        //Validation logic before loading any metadata
-        String baseConnectionString = getWebserviceConnectionString(gobiiCropConfig);
-
         GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, state.getProcedure().getMetadata().getGobiiCropType(), GobiiAutoLoginType.USER_RUN_AS);
         if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
             ErrorLogger.logError("Digester", "Unable to log in with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
@@ -263,39 +260,16 @@ public class GobiiLoader {
         GobiiUriFactory guf = new GobiiUriFactory(currentCropContextRoot);
         guf.resourceColl(RestResourceId.GOBII_CALLS);
 
-        String user = configuration.getLdapUserForBackendProcs();
-        String password = configuration.getLdapPasswordForBackendProcs();
-        String directory = new File(state.getProcedure().getMetadata().getGobiiFile().getDestination()).getAbsolutePath();
+        validateMetadata(state, gobiiCropConfig, configuration);
 
-        //Metadata Validation
-        boolean reportedValidationFailures = false;
-        if(LoaderGlobalConfigs.getValidation()) {
-            DigestFileValidator digestFileValidator = new DigestFileValidator(directory, baseConnectionString,user, password);
-            digestFileValidator.performValidation();
-            //Call validations here, update 'success' to false with any call to ErrorLogger.logError()
-            List<Path> pathList =
-                    Files.list(Paths.get(directory))
-                            .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
-            if (pathList.size() < 1) {
-                ErrorLogger.logError("Validation","Unable to find validation checks");
-            }
-            state.setFileErrors(new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class));
-
-            for (ValidationError status : state.getFileErrors()) {
-                if (status.status.equalsIgnoreCase(ValidationConstants.FAILURE)) {
-                    if(!reportedValidationFailures){//Lets only add this to the error log once
-                        ErrorLogger.logError("Validation", "Validation failures");
-                        reportedValidationFailures=true;
-                    }
-                }
-            }
-        }
 
         if (success && ErrorLogger.success()) {
             jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_METADATALOAD, "Loading Metadata");
             errorPath = getLogName(state.getProcedure(), "IFLs");
             String pathToIFL = config.getLoaderScriptPath() + "postgres/gobii_ifl/gobii_ifl.py";
             String connectionString = " -c " + HelperFunctions.getPostgresConnectionString(gobiiCropConfig);
+
+            String directory = new File(state.getProcedure().getMetadata().getGobiiFile().getDestination()).getAbsolutePath();
 
             //Load PostgreSQL
             boolean loadedData = false;
@@ -370,6 +344,39 @@ public class GobiiLoader {
         HelperFunctions.completeInstruction(config.getInstructionFile(), configuration.getProcessingPath(state.getProcedure().getMetadata().getGobiiCropType(), GobiiFileProcessDir.LOADER_DONE));
 
     }
+
+    public static GobiiLoaderState validateMetadata(GobiiLoaderState state, GobiiCropConfig gobiiCropConfig, ConfigSettings configuration) throws Exception {
+
+        //Validation logic before loading any metadata
+        String baseConnectionString = getWebserviceConnectionString(gobiiCropConfig);
+        String user = configuration.getLdapUserForBackendProcs();
+        String password = configuration.getLdapPasswordForBackendProcs();
+        String directory = new File(state.getProcedure().getMetadata().getGobiiFile().getDestination()).getAbsolutePath();
+
+        //Metadata Validation
+        boolean reportedValidationFailures = false;
+        if(LoaderGlobalConfigs.getValidation()) {
+            DigestFileValidator digestFileValidator = new DigestFileValidator(directory, baseConnectionString, user, password);
+            digestFileValidator.performValidation();
+            //Call validations here, update 'success' to false with any call to ErrorLogger.logError()
+            List<Path> pathList =
+                    Files.list(Paths.get(directory))
+                            .filter(Files::isRegularFile).filter(path -> String.valueOf(path.getFileName()).endsWith(".json")).collect(Collectors.toList());
+            if (pathList.size() < 1) {
+                ErrorLogger.logError("Validation","Unable to find validation checks");
+            }
+            state.setFileErrors(new ObjectMapper().readValue(pathList.get(0).toFile(), ValidationError[].class));
+
+            Arrays.stream(state.getFileErrors())
+                    .filter(err -> ValidationConstants.FAILURE.equalsIgnoreCase(err.status))
+                    .findFirst()
+                    .ifPresent(err -> ErrorLogger.logError("Validation", "Validation failures"));
+
+        }
+
+        return state;
+    }
+
 
     public static GobiiLoaderState validateProcedure(GobiiLoaderConfig config, GobiiLoaderState state) {
 
