@@ -313,24 +313,23 @@ public class GobiiLoader {
                 logError("Digester", "Data Set ID is null for variant call");
             }
             if ((variantFile != null) && state.getProcedure().getMetadata().getDataSet().getId() != null) { //Create an HDF5 and a Monet
+
                 jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD, "Matrix Upload");
                 boolean HDF5Success = HDF5Interface.createHDF5FromDataset(configuration, state.getProcedure(), errorPath, variantFilename, variantFile);
                 rmIfExist(variantFile.getPath());
-                success &= HDF5Success;
-            }
-            if (success && ErrorLogger.success()) {
-                ErrorLogger.logInfo("Digester", "Successful Data Upload");
-                if (sendQc) {
-                    jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING, "Processing QC Job");
-                    sendQCExtract(configuration, state.getProcedure().getMetadata().getGobiiCropType());
-                } else {
-                    jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED, "Successful Data Load");
-                }
 
-            } else { //endIf(success)
-                ErrorLogger.logWarning("Digester", "Unsuccessful Upload");
-                sendQc = false;//Files failed = bad.
-                jobStateUpdater.setError("Unsuccessfully Uploaded Files");
+                if (HDF5Success) {
+                    ErrorLogger.logInfo("Digester", "Successful Data Upload");
+                    if (sendQc) {
+                        jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING, "Processing QC Job");
+                        sendQCExtract(configuration, state.getProcedure().getMetadata().getGobiiCropType());
+                    } else {
+                        jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED, "Successful Data Load");
+                    }
+                } else {
+                    ErrorLogger.logWarning("Digester", "Unsuccessful Upload");
+                    jobStateUpdater.setError("Unsuccessfully Uploaded Files");
+                }
             }
         }//endif Digest section
         else {
