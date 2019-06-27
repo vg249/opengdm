@@ -51,6 +51,8 @@
           class="org.gobiiproject.gobidomain.services.impl.ProjectServiceImpl"/>
     <bean id="sampleTrackingProjectService"
           class="org.gobiiproject.gobidomain.services.impl.sampletracking.ProjectServiceImpl"/>
+    <bean id="dnaRunService"
+          class="org.gobiiproject.gobidomain.services.impl.DnaRunServiceImpl"/>
 
     <!-- **** Helper Beans *************************************** -->
     <bean id="storedProcExec" class="org.gobiiproject.gobiidao.resultset.core.StoredProcExec"/>
