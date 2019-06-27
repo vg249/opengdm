@@ -92,8 +92,7 @@ public class GobiiLoader {
         HDF5Interface.setPathToHDF5(config.getLoaderScriptPath() + "hdf5/bin/");
 
         boolean success = true;
-        Map<String, File> loaderInstructionMap = new HashMap<>();//Map of Key to filename
-        List<String> loaderInstructionList = new ArrayList<>(); //Ordered list of loader instructions to execute, Keys to loaderInstructionMap
+        Map<String, File> loaderInstructionMap = new LinkedHashMap<>();//Map of Key to filename
 
         ConfigSettings configuration = null;
         try {
@@ -227,7 +226,7 @@ public class GobiiLoader {
             jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_TRANSFORMATION, "Metadata Transformation");
             String instructionName = inst.getTable();
             loaderInstructionMap.put(instructionName, new File(getDestinationFile(state.getProcedure().getMetadata(), inst)));
-            loaderInstructionList.add(instructionName);//TODO Hack - for ordering
+
             if (LINKAGE_GROUP_TABNAME.equals(instructionName) || GERMPLASM_TABNAME.equals(instructionName) || GERMPLASM_PROP_TABNAME.equals(instructionName)) {
                 success &= HelperFunctions.tryExec(config.getLoaderScriptPath() + "LGduplicates.py -i " + getDestinationFile(state.getProcedure().getMetadata(), inst));
             }
@@ -297,7 +296,7 @@ public class GobiiLoader {
 
             //Load PostgreSQL
             boolean loadedData = false;
-            for (String key : loaderInstructionList) {
+            for (String key : loaderInstructionMap.keySet()) {
                 if (!VARIANT_CALL_TABNAME.equals(key)) {
                     String inputFile = " -i " + loaderInstructionMap.get(key);
                     String outputFile = " -o " + directory + "/"; //Output here is temporary files, needs terminal /
