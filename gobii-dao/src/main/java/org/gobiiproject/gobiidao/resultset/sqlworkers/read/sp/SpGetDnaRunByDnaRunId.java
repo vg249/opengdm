@@ -24,7 +24,8 @@ public class SpGetDnaRunByDnaRunId implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String sql = "SELECT\n" +
+        String sql = "with dnarun as(\n" +
+                "SELECT\n" +
                     "dr.dnarun_id,\n" +
                     "dr.experiment_id,\n" +
                     "dr.dnasample_id,\n" +
@@ -44,7 +45,18 @@ public class SpGetDnaRunByDnaRunId implements Work {
                         "dnarun dr\n" +
                     "WHERE dr.dnarun_id=?\n" +
                 ") as dr\n" +
-                "GROUP BY dr.dnarun_id, dr.experiment_id, dr.dnasample_id, dr.name, dr.code";
+                "GROUP BY dr.dnarun_id, dr.experiment_id, dr.dnasample_id, dr.name, dr.code)\n" +
+                "SELECT\n" +
+                "   dnarun.*,\n" +
+                "   s.name as sample_name,\n" +
+                "   g.germplasm_id as germplasm_id,\n" +
+                "   g.name as germplasm_name,\n" +
+                "   g.external_code as germplasm_external_code\n" +
+                "FROM\n" +
+                    "dnarun, dnasample s, germplasm g\n" +
+                "WHERE\n" +
+                    "dnarun.dnasample_id = s.dnasample_id\n" +
+                    "and g.germplasm_id = s.germplasm_id";
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
         Integer dnaRunId = (Integer) parameters.get("dnaRunId");
