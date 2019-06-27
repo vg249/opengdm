@@ -309,26 +309,28 @@ public class GobiiLoader {
             String variantFilename = "DS" + state.getProcedure().getMetadata().getDataSet().getId();
             File variantFile = loaderInstructionMap.get(VARIANT_CALL_TABNAME);
 
-            if (variantFile != null && state.getProcedure().getMetadata().getDataSet().getId() == null) {
-                logError("Digester", "Data Set ID is null for variant call");
-            }
-            if ((variantFile != null) && state.getProcedure().getMetadata().getDataSet().getId() != null) { //Create an HDF5 and a Monet
 
-                jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD, "Matrix Upload");
-                boolean HDF5Success = HDF5Interface.createHDF5FromDataset(configuration, state.getProcedure(), errorPath, variantFilename, variantFile);
-                rmIfExist(variantFile.getPath());
+            if (variantFile != null) {
+                if (state.getProcedure().getMetadata().getDataSet().getId() == null) {
+                    logError("Digester", "Data Set ID is null for variant call");
+                } else { //Create an HDF5 and a Monet
 
-                if (HDF5Success) {
-                    ErrorLogger.logInfo("Digester", "Successful Data Upload");
-                    if (sendQc) {
-                        jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING, "Processing QC Job");
-                        sendQCExtract(configuration, state.getProcedure().getMetadata().getGobiiCropType());
+                    jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD, "Matrix Upload");
+                    boolean HDF5Success = HDF5Interface.createHDF5FromDataset(configuration, state.getProcedure(), errorPath, variantFilename, variantFile);
+                    rmIfExist(variantFile.getPath());
+
+                    if (HDF5Success) {
+                        ErrorLogger.logInfo("Digester", "Successful Data Upload");
+                        if (sendQc) {
+                            jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_QCPROCESSING, "Processing QC Job");
+                            sendQCExtract(configuration, state.getProcedure().getMetadata().getGobiiCropType());
+                        } else {
+                            jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED, "Successful Data Load");
+                        }
                     } else {
-                        jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_COMPLETED, "Successful Data Load");
+                        ErrorLogger.logWarning("Digester", "Unsuccessful Upload");
+                        jobStateUpdater.setError("Unsuccessfully Uploaded Files");
                     }
-                } else {
-                    ErrorLogger.logWarning("Digester", "Unsuccessful Upload");
-                    jobStateUpdater.setError("Unsuccessfully Uploaded Files");
                 }
             }
         }//endif Digest section
