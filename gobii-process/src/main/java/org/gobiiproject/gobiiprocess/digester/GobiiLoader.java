@@ -150,7 +150,7 @@ public class GobiiLoader {
         if (HDF5Interface.getPathToHDF5Files() == null)
             HDF5Interface.setPathToHDF5Files(cropPath.toString() + "/hdf5/");
 
-        String errorPath = getLogName(state.getProcedure(), gobiiCropConfig,  state.getProcedure().getMetadata().getGobiiCropType());
+        String errorPath = getLogName(state.getProcedure(), state.getProcedure().getMetadata().getGobiiCropType());
 
         jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION, "Beginning Validation");
 
@@ -208,7 +208,7 @@ public class GobiiLoader {
 
             String fromFile = getDestinationFile(state.getProcedure().getMetadata(), inst);
             SequenceInPlaceTransform intermediateFile = new SequenceInPlaceTransform(fromFile, errorPath);
-            errorPath = getLogName(state.getProcedure(), gobiiCropConfig, "Matrix_Processing"); //Temporary Error File Name
+            errorPath = getLogName(state.getProcedure(), "Matrix_Processing"); //Temporary Error File Name
 
             if (state.getProcedure().getMetadata().getDatasetType().getName() != null
                     && inst.getTable().equals(VARIANT_CALL_TABNAME)) {
@@ -290,7 +290,7 @@ public class GobiiLoader {
 
         if (success && ErrorLogger.success()) {
             jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_METADATALOAD, "Loading Metadata");
-            errorPath = getLogName(state.getProcedure(), gobiiCropConfig, "IFLs");
+            errorPath = getLogName(state.getProcedure(), "IFLs");
             String pathToIFL = config.getLoaderScriptPath() + "postgres/gobii_ifl/gobii_ifl.py";
             String connectionString = " -c " + HelperFunctions.getPostgresConnectionString(gobiiCropConfig);
 
@@ -328,7 +328,7 @@ public class GobiiLoader {
                 ErrorLogger.logError("FileReader", "No new data was uploaded.");
             }
             //Load Monet/HDF5
-            errorPath = getLogName(state.getProcedure(), gobiiCropConfig, "Matrix_Upload");
+            errorPath = getLogName(state.getProcedure(), "Matrix_Upload");
             String variantFilename = "DS" + state.getProcedure().getMetadata().getDataSet().getId();
             File variantFile = loaderInstructionMap.get(VARIANT_CALL_TABNAME);
 
@@ -770,10 +770,9 @@ public class GobiiLoader {
      * <p>
      * Currently works by placing logs in the intermediate file directory.
      *
-     * @param config Crop configuration
      * @return The logfile location for this process
      */
-    private static String getLogName(GobiiLoaderProcedure procedure, GobiiCropConfig config) {
+    private static String getLogName(GobiiLoaderProcedure procedure) {
         String destination = procedure.getMetadata().getGobiiFile().getDestination();
         String table = procedure.getInstructions().get(0).getTable();
         return destination + "/" + procedure.getMetadata().getGobiiCropType() + "_Table-" + table + ".log";
@@ -784,10 +783,9 @@ public class GobiiLoader {
      * <p>
      * Currently works by placing logs in the intermediate file directory.
      *
-     * @param config Crop configuration
      * @return The logfile location for this process
      */
-    private static String getLogName(GobiiLoaderProcedure procedure, GobiiCropConfig config, String process) {
+    private static String getLogName(GobiiLoaderProcedure procedure, String process) {
         String destination = procedure.getMetadata().getGobiiFile().getDestination();
         return destination + "/" + procedure.getMetadata().getGobiiCropType() + "_Process-" + process + ".log";
     }
