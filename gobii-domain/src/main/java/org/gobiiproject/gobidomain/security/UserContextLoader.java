@@ -25,6 +25,13 @@ public class UserContextLoader implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
 
+    public UserContextLoader(){
+        this.applicationContext = new ClassPathXmlApplicationContext("classpath:/spring/application-config.xml");
+    }
+
+    public UserContextLoader(String classPath) {
+        this.applicationContext = new ClassPathXmlApplicationContext(classPath);
+    }
 
 
     @Override
@@ -42,8 +49,6 @@ public class UserContextLoader implements ApplicationContextAware {
 
     //Test comment
     public void loadUser(String userName) {
-
-        verifyContext();
 
 //        InMemoryUserDetailsManager userDetailsService = applicationContext.getBean(InMemoryUserDetailsManager.class);
 //        UserDetails userDetails = userDetailsService.loadUserByUsername(userName);

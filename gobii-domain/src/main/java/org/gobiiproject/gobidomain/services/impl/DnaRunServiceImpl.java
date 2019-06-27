@@ -59,13 +59,13 @@ public class DnaRunServiceImpl implements DnaRunService {
     }
 
     @Override
-    public List<DnaRunDTO> getDnaRuns(Integer pageToken, Integer pageSize) throws GobiiDomainException {
+    public List<DnaRunDTO> getDnaRuns(Integer pageToken, Integer pageSize, DnaRunDTO dnaRunDTOFilter) throws GobiiDomainException {
 
         List<DnaRunDTO> returnVal;
 
         try {
 
-            returnVal = dtoMapDnaRun.getList(pageToken, pageSize);
+            returnVal = dtoMapDnaRun.getList(pageToken, pageSize, dnaRunDTOFilter);
 
         }
         catch (GobiiException gE) {

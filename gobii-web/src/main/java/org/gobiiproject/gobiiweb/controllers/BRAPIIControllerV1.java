@@ -63,6 +63,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -800,10 +801,38 @@ public class BRAPIIControllerV1 {
         return returnVal;
     }
 
+    /**
+     * Lists the dnaruns/callsets by page size and page token
+     *
+     * @param pageTokenParam String page token
+     * @param pageSize - Page size set by the user. If page size is more than maximum allowed
+     *                 page size, then the response will have maximum page size
+     * @return Brapi response with list of dna runs/call sets
+     */
+    @ApiOperation(
+            value = "List all callsets",
+            notes = "List of all Callsets.",
+            tags = {"Callsets"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Callsets")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                paramType = "header", dataType = "string")
+    })
+
     @RequestMapping(value="/callsets", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getCallSets(
             @RequestParam(value = "pageToken", required = false) String pageTokenParam,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "callSetName", required = false) String callSetName,
+            @RequestParam(value = "variantSetDbId", required = false) String variantSetDbId,
+            @RequestParam(value = "sampleDbId", required = false) String sampleDbId,
+            @RequestParam(value = "germplasmDbId", required = false) String germplasmDbId,
+            @RequestParam(value = "studyDbId", required = false) String studyDbId
     ) {
         try {
 
@@ -821,6 +850,30 @@ public class BRAPIIControllerV1 {
                 }
             }
 
+            DnaRunDTO dnaRunDTOFilter = new DnaRunDTO();
+
+            if (callSetName != null) {
+                dnaRunDTOFilter.setCallSetName(callSetName);
+            }
+
+            if (variantSetDbId != null) {
+                List<Integer> variantDbArr = new ArrayList<>();
+                variantDbArr.add(Integer.parseInt(variantSetDbId));
+                dnaRunDTOFilter.setVariantSetIds(variantDbArr);
+            }
+
+            if (sampleDbId != null) {
+                dnaRunDTOFilter.setSampleDbId(Integer.parseInt(sampleDbId));
+            }
+
+            if (germplasmDbId != null) {
+                dnaRunDTOFilter.setGermplasmDbId(Integer.parseInt(germplasmDbId));
+            }
+
+            if (studyDbId != null) {
+                dnaRunDTOFilter.setStudyDbId(Integer.parseInt(studyDbId));
+            }
+
             Integer maxPageSize = RestResourceLimits.getResourceLimit(
                     RestResourceId.GOBII_DNARUN,
                     RestMethodType.GET
@@ -835,7 +888,7 @@ public class BRAPIIControllerV1 {
                 pageSize = maxPageSize;
             }
 
-            List<DnaRunDTO> dnaRunList = dnaRunService.getDnaRuns(pageToken, pageSize);
+            List<DnaRunDTO> dnaRunList = dnaRunService.getDnaRuns(pageToken, pageSize, dnaRunDTOFilter);
 
             BrApiMasterPayload<List<DnaRunDTO>> payload = new BrApiMasterPayload<>(dnaRunList);
 
@@ -869,6 +922,10 @@ public class BRAPIIControllerV1 {
 
         try {
             callSetDbIdInt = Integer.parseInt(callSetDbId);
+
+            DnaRunDTO dnaRunDTO = dnaRunService.getDnaRunById(callSetDbIdInt);
+            BrApiMasterPayload<DnaRunDTO> payload = new BrApiMasterPayload<>(dnaRunDTO);
+            return ResponseEntity.ok(payload);
         }
         catch(Exception e) {
             throw new GobiiException(
@@ -877,9 +934,6 @@ public class BRAPIIControllerV1 {
                     "Entity does not exist");
         }
 
-        DnaRunDTO dnaRunDTO = dnaRunService.getDnaRunById(callSetDbIdInt);
-        BrApiMasterPayload<DnaRunDTO> payload = new BrApiMasterPayload<>(dnaRunDTO);
-        return ResponseEntity.ok(payload);
     }
 
 

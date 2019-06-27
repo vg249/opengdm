@@ -20,11 +20,15 @@ import java.util.List;
 public class DnaRunDTO extends DTOBase{
 
     private int callSetDbId;
-    private Integer experimentId;
+    private Integer studyDbId;
     private Integer sampleDbId;
     private String callSetName;
     private String dnaRunCode;
     private List<Integer> variantSetIds = new ArrayList<>();
+    private Integer germplasmDbId;
+    private String germplasmName;
+    private String germplasmExternalCode;
+    private String sampleName;
 
     @Override
     public Integer getId() { return this.callSetDbId; }
@@ -38,11 +42,11 @@ public class DnaRunDTO extends DTOBase{
     @GobiiEntityColumn(columnName = "dnarun_id")
     public void setCallSetDbId(Integer id) { this.callSetDbId = id; }
 
-    @GobiiEntityParam(paramName = "experimentId")
-    public Integer getExperimentId() { return this.experimentId; }
+    @GobiiEntityParam(paramName = "studyDbId")
+    public Integer getStudyDbId() { return this.studyDbId; }
 
     @GobiiEntityColumn(columnName = "experiment_id")
-    public void setExperimentId(Integer experimentId) { this.experimentId = experimentId; }
+    public void setStudyDbId(Integer studyDbId) { this.studyDbId = studyDbId; }
 
     @GobiiEntityParam(paramName = "sampleDbId")
     public Integer getSampleDbId() { return this.sampleDbId; }
@@ -67,5 +71,29 @@ public class DnaRunDTO extends DTOBase{
 
     @GobiiEntityColumn(columnName = "dataset_ids")
     public void setVariantSetIds(List<Integer> variantSetIds) { this.variantSetIds = variantSetIds; }
+
+    @GobiiEntityParam(paramName = "germplasmDbId")
+    public Integer getGermplasmDbId() { return this.germplasmDbId; }
+
+    @GobiiEntityColumn(columnName = "germplasm_id")
+    public void setGermplasmDbId(Integer germplasmDbId) { this.germplasmDbId = germplasmDbId; }
+
+    @GobiiEntityParam(paramName = "germplasmName")
+    public String getGermplasmName() { return this.germplasmName; }
+
+    @GobiiEntityColumn(columnName = "germplasm_name")
+    public void setGermplasmName(String germplasmName) { this.germplasmName = germplasmName; }
+
+    @GobiiEntityParam(paramName = "germplasmExternalCode")
+    public String getGermplasmExternalCode() { return this.germplasmExternalCode; }
+
+    @GobiiEntityColumn(columnName = "germplasm_external_code")
+    public void setGermplasmExternalCode(String germplasmExternalCode) { this.germplasmExternalCode = germplasmExternalCode; }
+
+    @GobiiEntityParam(paramName = "sampleName")
+    public String getSampleName() { return this.sampleName; }
+
+    @GobiiEntityColumn(columnName = "sample_name")
+    public void setSampleName(String sampleName) { this.sampleName = sampleName; }
 
 }
