@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiidtomapping.entity.noaudit.impl;
 
-import org.gobiiproject.gobiidao.resultset.access.impl.RsDnaRunDaoImpl;
+import org.gobiiproject.gobiidao.resultset.access.RsDnaRunDao;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
@@ -27,7 +27,7 @@ public class DtoMapDnaRunImpl implements DtoMapDnaRun {
     Logger LOGGER = LoggerFactory.getLogger(DtoMapDnaRunImpl.class);
 
     @Autowired
-    private RsDnaRunDaoImpl rsDnaRunDao;
+    private RsDnaRunDao rsDnaRunDao;
 
     @Autowired
     private DtoListQueryColl dtoListQueryColl;

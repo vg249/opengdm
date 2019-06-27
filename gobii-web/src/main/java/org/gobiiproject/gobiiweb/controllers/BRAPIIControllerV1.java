@@ -794,6 +794,29 @@ public class BRAPIIControllerV1 {
         return returnVal;
     }
 
+    /**
+     * Lists the dnaruns/callsets by page size and page token
+     *
+     * @param pageTokenParam String page token
+     * @param pageSize - Page size set by the user. If page size is more than maximum allowed
+     *                 page size, then the response will have maximum page size
+     * @return Brapi response with list of dna runs/call sets
+     */
+    @ApiOperation(
+            value = "List all callsets",
+            notes = "List of all Callsets.",
+            tags = {"Callsets"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Callsets")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
+                paramType = "header", dataType = "string")
+    })
+
     @RequestMapping(value="/callsets", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getCallSets(
             @RequestParam(value = "pageToken", required = false) String pageTokenParam,
