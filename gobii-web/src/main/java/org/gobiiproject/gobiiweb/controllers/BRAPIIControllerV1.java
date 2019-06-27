@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.annotations.*;
 import org.gobiiproject.gobidomain.services.DnaRunService;
+import org.gobiiproject.gobidomain.services.GenotypeCallsService;
 import org.gobiiproject.gobidomain.services.PingService;
 import org.gobiiproject.gobiiapimodel.payload.sampletracking.BrApiMasterPayload;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
@@ -38,6 +39,7 @@ import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMaste
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.RestResourceId;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.DnaRunDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.types.RestMethodType;
@@ -64,6 +66,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 
 /**
@@ -157,6 +160,9 @@ public class BRAPIIControllerV1 {
 
     @Autowired
     private DnaRunService dnaRunService = null;
+
+    @Autowired
+    private GenotypeCallsService genotypeCallsService = null;
 
     private ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
@@ -820,6 +826,11 @@ public class BRAPIIControllerV1 {
                     RestMethodType.GET
             );
 
+            if(maxPageSize == null) {
+                //As per brapi initial standards
+                maxPageSize = 1000;
+            }
+
             if (pageSize == null || pageSize > maxPageSize) {
                 pageSize = maxPageSize;
             }
@@ -872,21 +883,87 @@ public class BRAPIIControllerV1 {
     }
 
 
+    /**
+     * Returns the list of genotypes calls in a given DNA run id.
+     * It fetches calls in all the datasets where the dnarun_id is present.
+     * The calls is paged.
+     *
+     * @param callSetDbId - DNA run Id.
+     * @param pageSize - Size of the page to fetched.
+     * @param pageTokenParam - Page token to fetch the page. User will get the pageToken
+     *                       from the nextPageToken parameter in the previous response.
+     *
+     * @return BrApi Response entity with list of genotypes calls for given dnarun id.
+     * TODO: Add page number parameter to comply BrApi standards.
+     */
     @RequestMapping(value="/callsets/{callSetDbId:[\\d]+}/calls", method=RequestMethod.GET)
-    public @ResponseBody ResponseEntity getCallsByCallset(@PathVariable("callSetDbId") String callSetDbId ) {
+    public @ResponseBody ResponseEntity getCallsByCallset(
+            @PathVariable("callSetDbId") String callSetDbId,
+            @RequestParam(value = "pageToken", required = false) String pageTokenParam,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize) throws Exception {
 
         Integer callSetDbIdInt;
+        Integer pageToken = null;
 
         try {
-            callSetDbIdInt = Integer.parseInt(callSetDbId);
+            try {
+                callSetDbIdInt = Integer.parseInt(callSetDbId);
+            } catch (Exception e) {
+                throw new GobiiException(
+                        GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                        "Entity does not exist");
+            }
+
+            if (pageTokenParam != null) {
+                try {
+                    pageToken = Integer.parseInt(pageTokenParam);
+                } catch (Exception e) {
+                    throw new GobiiException(
+                            GobiiStatusLevel.ERROR,
+                            GobiiValidationStatusType.BAD_REQUEST,
+                            "Invalid request parameters");
+                }
+            }
+
+            Integer maxPageSize = RestResourceLimits.getResourceLimit(
+                    RestResourceId.GOBII_GENOTYPE_CALLS,
+                    RestMethodType.GET);
+
+            if(maxPageSize == null) {
+                //As per brapi initial standards
+                maxPageSize = 1000;
+            }
+
+            if (pageSize == null || pageSize > maxPageSize) {
+                pageSize = maxPageSize;
+            }
+
+            List<GenotypeCallsDTO> genotypeCallsList = genotypeCallsService.getGenotypeCallsByDnarunId(
+                    callSetDbIdInt, pageToken, pageSize);
+
+            BrApiMasterPayload<List<GenotypeCallsDTO>> payload = new BrApiMasterPayload<>(genotypeCallsList);
+
+            if (genotypeCallsList.size() > 0) {
+                payload.getMetaData().getPagination().setPageSize(genotypeCallsList.size());
+                if (genotypeCallsList.size() >= pageSize) {
+                    payload.getMetaData().getPagination().setNextPageToken(
+                            genotypeCallsList.get(genotypeCallsList.size() - 1).getVariantDbId().toString()
+                    );
+                }
+            }
+
+            return ResponseEntity.ok(payload);
         }
-        catch(Exception e) {
+        catch (GobiiException gE) {
+            throw gE;
+        }
+        catch (Exception e) {
             throw new GobiiException(
                     GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                    "Entity does not exist");
+                    GobiiValidationStatusType.UNKNOWN,
+                    "Internal Server Error" + e.getMessage());
         }
-        return ResponseEntity.ok("");
     }
 
 

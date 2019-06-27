@@ -33,12 +33,14 @@ public class RsProjectDaoImpl extends org.gobiiproject.gobiidao.resultset.access
         ResultSet returnVal;
 
         try {
+
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("projectId", projectId);
             SpGetProjectDetailsByProjectId spGetProjectDetailsByProjectId = (
                     new SpGetProjectDetailsByProjectId(parameters));
             storedProcExec.doWithConnection(spGetProjectDetailsByProjectId);
             returnVal = spGetProjectDetailsByProjectId.getResultSet();
+
         } catch (SQLGrammarException e) {
 
             LOGGER.error("Error retrieving project details", e.getSQL(), e.getSQLException());

@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiimodel.dto.entity.noaudit;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.gobiiproject.gobiimodel.dto.base.DTOBase;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
@@ -15,6 +16,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true, value={
         "id", "allowedProcessTypes", "entityNameType"
 })
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DnaRunDTO extends DTOBase{
 
     private int callSetDbId;

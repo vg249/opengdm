@@ -36,7 +36,7 @@ public class UserContextLoader implements ApplicationContextAware {
     //bean thingy (like whenyou you use @ContextConfiguraiton in unit testing)
     private void verifyContext() {
         if (null == applicationContext) {
-            applicationContext = new ClassPathXmlApplicationContext("classpath:/spring/application-config.xml");
+            applicationContext = new ClassPathXmlApplicationContext("classpath:/spring/test-config.xml");
         }
     }//verifyContext()
 

@@ -67,7 +67,8 @@ public enum RestResourceId {
     BRAPI_LOGIN("token", ServerType.BRAPI),
     BRAPI_STUDIES_SEARCH("studies-search", ServerType.BRAPI),
     BRAPI_STUDIES("studies", ServerType.BRAPI),
-    BRAPI_CALLS("calls", ServerType.BRAPI);
+    BRAPI_CALLS("calls", ServerType.BRAPI),
+    GOBII_GENOTYPE_CALLS("genotypecalls", ServerType.GOBII_WEB);
 
 
     private String requestPath;
