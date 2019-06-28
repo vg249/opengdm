@@ -47,9 +47,14 @@
           class="org.gobiiproject.gobiidao.entity.access.impl.mock.UserDaoImpl"/>
 
     <bean id="dtoMapProject" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.DtoMapProjectImpl"/>
-    <bean id="dtoMapSampleTrackingProject" class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.sampletracking.DtoMapProjectImpl"/>
+
+    <bean id="dtoMapSampleTrackingProject"
+          class="org.gobiiproject.gobiidtomapping.entity.auditable.impl.sampletracking.DtoMapProjectImpl"/>
+
+
     <bean id="projectService"
           class="org.gobiiproject.gobidomain.services.impl.ProjectServiceImpl"/>
+
     <bean id="sampleTrackingProjectService"
           class="org.gobiiproject.gobidomain.services.impl.sampletracking.ProjectServiceImpl"/>
 
