@@ -11,14 +11,14 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Map;
 
-import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY_ID_DNARUN_ALL;
-import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY_ID_GENOTYPE_CALLS_BY_DNARUN_ID;
+import static org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId.QUERY_ID_GENOTYPE_CALLS_MARKER_METADATA;
 
-public class ListStatementGenotypeCallsByDnarunId implements ListStatement {
+
+public class ListStatementGenotypeCallsMarkerMetaData implements ListStatement {
 
     @Override
     public ListSqlId getListSqlId() {
-        return QUERY_ID_GENOTYPE_CALLS_BY_DNARUN_ID;
+        return QUERY_ID_GENOTYPE_CALLS_MARKER_METADATA ;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class ListStatementGenotypeCallsByDnarunId implements ListStatement {
 
         if(sqlParamVals != null) {
 
-            if((!sqlParamVals.containsKey("dnarunId")) || sqlParamVals.get("dnarunId") == null) {
+            if((!sqlParamVals.containsKey("datasetId")) || sqlParamVals.get("datasetId") == null) {
                 throw new GobiiException(
                         GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.BAD_REQUEST,
@@ -64,42 +64,35 @@ public class ListStatementGenotypeCallsByDnarunId implements ListStatement {
             if (sqlParamVals.containsKey("pageToken")
                     && sqlParamVals.get("pageToken") instanceof Integer) {
                 if ((Integer) sqlParamVals.getOrDefault("pageToken", 0) > 0) {
-                    pageCondition = " WHERE marker_id > ?";
+                    pageCondition = " AND marker_id > ?";
                 } else {
-                    pageCondition = "";
+                    pageCondition = " AND marker_id > 0";
                 }
             } else if(sqlParamVals.containsKey("pageToken")) {
-                throw new GobiiException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.BAD_REQUEST,
-                        "Invalid Page Token");
+                pageCondition = " AND marker_id > 0";
             }
         }
 
-        String sql = "SELECT dnarun_dset.dset_id AS dataset_id, marker.marker_id, " +
-                "dnarun_dset.dnarun_id, marker.name AS marker_name, " +
-                "dnarun_dset.name AS dnarun_name, " +
-                "marker.dataset_marker_idx->>dnarun_dset.dset_id::text as hdf5_marker_idx, " +
-                "dnarun_dset.hdf5_dnarun_idx FROM (" +
-                "SELECT dnarun.dnarun_id, dnarun.name, dnarun_dset_id.dset_id dset_id, " +
-                "dnarun.dataset_dnarun_idx->>dset_id::text AS hdf5_dnarun_idx " +
-                "FROM dnarun INNER JOIN (" +
-                "SELECT dnarun_id, jsonb_object_keys(dataset_dnarun_idx)::int as dset_id " +
-                "FROM dnarun WHERE dnarun_id = ?) dnarun_dset_id USING(dnarun_id)) dnarun_dset " +
-                "INNER JOIN marker ON(marker.dataset_marker_idx ?? dnarun_dset.dset_id::text) " +
+        String sql = "SELECT marker.marker_id AS marker_id, " +
+                "marker.name AS marker_name, " +
+                "marker.dataset_marker_idx->>?::text as hdf5_marker_idx " +
+                "FROM marker WHERE marker.dataset_marker_idx ?? ?::text " +
                 pageCondition + " ORDER BY marker.marker_id "+pageSizeCondition;
 
         PreparedStatement returnVal = dbConnection.prepareStatement(sql);
 
-        returnVal.setInt(1, (Integer) sqlParamVals.get("dnarunId"));
+        returnVal.setInt(1, (Integer) sqlParamVals.get("datasetId"));
+        returnVal.setInt(2, (Integer) sqlParamVals.get("datasetId"));
 
         if(!pageCondition.isEmpty() && !pageSizeCondition.isEmpty()) {
-            returnVal.setInt(2, (Integer) sqlParamVals.get("pageToken"));
-            returnVal.setInt(3, pageSize);
+            returnVal.setInt(3, (Integer) sqlParamVals.get("pageToken"));
+            returnVal.setInt(4, pageSize);
         }
         else if(!pageCondition.isEmpty()) {
-            returnVal.setInt(2, (Integer) sqlParamVals.get("pageToken"));
+            returnVal.setInt(3, (Integer) sqlParamVals.get("pageToken"));
         }
         else if(!pageSizeCondition.isEmpty()) {
-            returnVal.setInt(2, pageSize);
+            returnVal.setInt(3, pageSize);
         }
 
         return returnVal;

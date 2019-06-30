@@ -51,6 +51,8 @@ public class GlobalControllerExceptionHandler {
             }
             default: {
                errorStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+               errorPayload.setError("Invalid request or a server error." +
+                       "Please check the request arguments.");
             }
         }
         LOGGER.error(gEx.getMessage());
@@ -100,6 +102,14 @@ public class GlobalControllerExceptionHandler {
     public ResponseEntity InvalidParameterTypeExceptionHandler(MethodArgumentTypeMismatchException e) {
         ErrorPayload errorPayload = new ErrorPayload();
         errorPayload.setError("Invalid Request Arguments");
+        LOGGER.error(e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorPayload);
+    }
+
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity NullPointerExceptionHandler(NullPointerException e) {
+        ErrorPayload errorPayload = new ErrorPayload();
+        errorPayload.setError("Resource not found");
         LOGGER.error(e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorPayload);
     }

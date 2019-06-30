@@ -2,11 +2,14 @@ package org.gobiiproject.gobidomain.services.impl;
 
 import jdk.nashorn.internal.runtime.Context;
 import org.gobiiproject.gobidomain.GobiiDomainException;
+import org.gobiiproject.gobidomain.services.DnaRunService;
 import org.gobiiproject.gobidomain.services.GenotypeCallsService;
 import org.gobiiproject.gobiidao.hdf5.HDF5Interface;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapGenotypeCalls;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.DnaRunDTO;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsMarkerMetadataDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Array;
+import java.util.*;
 
 public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
@@ -26,6 +27,8 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
     @Autowired
     private DtoMapGenotypeCalls dtoMapGenotypeCalls = null;
 
+    @Autowired
+    private DnaRunService dnarunService = null;
 
     @Override
     public List<GenotypeCallsDTO> getGenotypeCallsByDnarunId(
@@ -33,37 +36,68 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
             Integer pageToken,
             Integer pageSize) {
 
-        List<GenotypeCallsDTO> returnVal = null;
+        List<GenotypeCallsDTO> returnVal = new ArrayList<>();
+
+        DnaRunDTO dnarun = null;
 
         try {
 
-            returnVal = dtoMapGenotypeCalls.getListByDnarunId(
-                    dnarunId, pageToken, pageSize);
+            dnarun = dnarunService.getDnaRunById(dnarunId);
+
+            List<Integer> dnarunDatasets = dnarun.getVariantSetIds();
+
+            Collections.sort(dnarunDatasets);
 
             Map<String, ArrayList<String>> markerHdf5IndexMap= new HashMap<>();
 
             Map<String, ArrayList<String>> sampleHdf5IndexMap = new HashMap<>();
 
-            sampleHdf5IndexMap.put("112", new ArrayList<>());
 
-            sampleHdf5IndexMap.get("112").add("7");
+            sampleHdf5IndexMap.put(dnarun.getVariantSetIds().get(0).toString(),
+                    new ArrayList<>());
 
-            for(GenotypeCallsDTO genotypeCall : returnVal) {
-                if(markerHdf5IndexMap.containsKey(
-                        genotypeCall.getVariantSetDbId().toString())) {
-                    markerHdf5IndexMap.get(
-                            genotypeCall.getVariantSetDbId().toString()).add(
-                            genotypeCall.getHdf5MarkerIdx());
+            sampleHdf5IndexMap.get(
+                    dnarun.getVariantSetIds().get(0).toString()).add(
+                    dnarun.getDatasetDnarunIndex().get(
+                            dnarun.getVariantSetIds().get(0).toString()).toString());
+
+            List<GenotypeCallsMarkerMetadataDTO> genotypeMarkerMetadata = new ArrayList<>();
+
+            Integer lastDataset = null;
+
+            for(Integer datasetId : dnarunDatasets) {
+                genotypeMarkerMetadata = dtoMapGenotypeCalls.getMarkerMetaDataList(datasetId,
+                        pageToken, pageSize);
+                for(GenotypeCallsMarkerMetadataDTO marker : genotypeMarkerMetadata) {
+                    GenotypeCallsDTO genotypeCall = new GenotypeCallsDTO();
+                    genotypeCall.setCallSetDbId(dnarun.getCallSetDbId());
+                    genotypeCall.setCallSetName(dnarun.getCallSetName());
+                    genotypeCall.setVariantDbId(marker.getMarkerId());
+                    genotypeCall.setVariantName(marker.getMarkerName());
+                    genotypeCall.setVariantSetDbId(datasetId);
+                    if(markerHdf5IndexMap.containsKey(
+                            datasetId.toString())) {
+                        markerHdf5IndexMap.get(
+                                datasetId.toString()).add(
+                                marker.getHdf5MarkerIdx());
+                    }
+                    else {
+                        markerHdf5IndexMap.put(
+                                datasetId.toString(),
+                                new ArrayList<>());
+                        markerHdf5IndexMap.get(
+                                datasetId.toString()).add(
+                                marker.getHdf5MarkerIdx());
+                    }
+                    returnVal.add(genotypeCall);
                 }
-                else {
-                    markerHdf5IndexMap.put(
-                            genotypeCall.getVariantSetDbId().toString(),
-                            new ArrayList<>());
-                    markerHdf5IndexMap.get(
-                            genotypeCall.getVariantSetDbId().toString()).add(
-                                    genotypeCall.getHdf5MarkerIdx());
+                if(genotypeMarkerMetadata.size() == pageSize) {
+                    lastDataset = datasetId;
+                    break;
                 }
             }
+
+
 
             HDF5Interface.setPathToHDF5Files("/storage/local_test/gobii_bundle/crops/arbitrary-id-0/hdf5/");
 

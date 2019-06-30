@@ -52,6 +52,7 @@ public class ResultColumnApplicator {
                         currentParameterName = currentMethod.getParameters()[0].getName();
 
 
+
                         Object currentColumnValue = resultSet.getObject(currentColumnName);
                         if (currentColumnType.equals(String.class)) {
 

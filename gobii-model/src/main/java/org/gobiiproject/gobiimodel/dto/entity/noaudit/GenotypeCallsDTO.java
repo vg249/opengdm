@@ -10,7 +10,7 @@ import java.util.Map;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true, value={
-        "id", "allowedProcessTypes"
+        "id", "allowedProcessTypes", "hdf5MarkerIndex", "hdf5SampleIndex"
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GenotypeCallsDTO extends DTOBase{

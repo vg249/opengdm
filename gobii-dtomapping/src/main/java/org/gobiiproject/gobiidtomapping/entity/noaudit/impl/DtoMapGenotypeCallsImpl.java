@@ -6,6 +6,7 @@ import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.noaudit.DtoMapGenotypeCalls;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsDTO;
+import org.gobiiproject.gobiimodel.dto.entity.noaudit.GenotypeCallsMarkerMetadataDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
@@ -26,27 +27,28 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
 
 
     @Override
-    public List<GenotypeCallsDTO> getListByDnarunId(Integer dnarunId,
-                                                    Integer pageToken,
-                                                    Integer pageSize) throws GobiiDtoMappingException {
+    public List<GenotypeCallsMarkerMetadataDTO> getMarkerMetaDataList(
+            Integer datasetId,
+            Integer pageToken,
+            Integer pageSize) throws GobiiDtoMappingException {
 
-        List<GenotypeCallsDTO> returnVal;
+        List<GenotypeCallsMarkerMetadataDTO> returnVal;
 
         try {
 
             Map<String, Object> sqlParams = new HashMap<>();
 
-            if(dnarunId != null) {
-                sqlParams.put("dnarunId", dnarunId);
+            if(datasetId != null) {
+                sqlParams.put("datasetId", datasetId);
             }
             else {
 
-                LOGGER.error("dnarunId is null");
+                LOGGER.error("datasetId is null");
 
                 throw new GobiiDtoMappingException(
                         GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.BAD_REQUEST,
-                        "Invalid Dnarun Id");
+                        "Invalid Dataset Id");
             }
 
             if (pageToken != null) {
@@ -58,9 +60,8 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
             }
 
 
-
-            returnVal = (List<GenotypeCallsDTO>) dtoListQueryColl.getList(
-                    ListSqlId.QUERY_ID_GENOTYPE_CALLS_BY_DNARUN_ID,
+            returnVal = (List<GenotypeCallsMarkerMetadataDTO>) dtoListQueryColl.getList(
+                    ListSqlId.QUERY_ID_GENOTYPE_CALLS_MARKER_METADATA,
                     null,
                     sqlParams
             );
