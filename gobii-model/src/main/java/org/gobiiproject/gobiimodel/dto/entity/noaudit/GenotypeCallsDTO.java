@@ -41,6 +41,11 @@ public class GenotypeCallsDTO extends DTOBase{
     @Override
     public void setId(Integer id) { this.callSetDbId = null; }
 
+    public Integer getVariantSetDbId() { return this.variantSetDbId; }
+
+    @GobiiEntityColumn(columnName = "dataset_id")
+    public void setVariantSetDbId(Integer variantSetDbId) { this.variantSetDbId = variantSetDbId; }
+
     public Integer getCallSetDbId() { return this.callSetDbId; }
 
     @GobiiEntityColumn(columnName = "dnarun_id")

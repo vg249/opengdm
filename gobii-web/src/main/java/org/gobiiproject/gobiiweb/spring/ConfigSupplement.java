@@ -38,6 +38,9 @@ public class ConfigSupplement {
         String configFileLocation = System.getProperty(CONFIG_FILE_LOCATION_PROP);
 
         ConfigSettings configSettings = new ConfigSettings(configFileLocation);
+
+        HDF5Interface.setPathToHDF5(configSettings.getHdf5RelativePath());
+
         Map<Object,Object> targetDataSources = new HashMap<>();
         for (GobiiCropConfig currentGobiiCropConfig : configSettings.getActiveCropConfigs()) {
 
