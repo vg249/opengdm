@@ -7,14 +7,17 @@ import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.entity.annotations.GobiiEntityParam;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by VCalaminos on 6/25/2019.
  */
 
 @JsonIgnoreProperties(ignoreUnknown = true, value={
-        "id", "allowedProcessTypes", "entityNameType"
+        "id", "allowedProcessTypes", "entityNameType",
+        "datasetDnarunIndex"
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DnaRunDTO extends DTOBase{
@@ -29,6 +32,7 @@ public class DnaRunDTO extends DTOBase{
     private String germplasmName;
     private String germplasmExternalCode;
     private String sampleName;
+    private Map<String, Object> datasetDnarunIndex;
 
     @Override
     public Integer getId() { return this.callSetDbId; }
@@ -95,5 +99,14 @@ public class DnaRunDTO extends DTOBase{
 
     @GobiiEntityColumn(columnName = "sample_name")
     public void setSampleName(String sampleName) { this.sampleName = sampleName; }
+
+    @GobiiEntityColumn(columnName = "dataset_dnarun_idx")
+    public void setDatasetDnarunIndex(Map<String, Object> datasetDnarunIndex) {
+        this.datasetDnarunIndex = datasetDnarunIndex;
+    }
+
+    public Map<String, Object> getDatasetDnarunIndex() {
+        return this.datasetDnarunIndex;
+    }
 
 }

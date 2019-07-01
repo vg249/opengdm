@@ -10,7 +10,7 @@ import java.util.Map;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true, value={
-        "id", "allowedProcessTypes"
+        "id", "allowedProcessTypes", "hdf5MarkerIndex", "hdf5SampleIndex"
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GenotypeCallsDTO extends DTOBase{
@@ -40,6 +40,11 @@ public class GenotypeCallsDTO extends DTOBase{
 
     @Override
     public void setId(Integer id) { this.callSetDbId = null; }
+
+    public Integer getVariantSetDbId() { return this.variantSetDbId; }
+
+    @GobiiEntityColumn(columnName = "dataset_id")
+    public void setVariantSetDbId(Integer variantSetDbId) { this.variantSetDbId = variantSetDbId; }
 
     public Integer getCallSetDbId() { return this.callSetDbId; }
 

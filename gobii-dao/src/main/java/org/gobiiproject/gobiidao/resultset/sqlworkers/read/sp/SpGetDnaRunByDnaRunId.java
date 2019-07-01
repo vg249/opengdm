@@ -31,7 +31,8 @@ public class SpGetDnaRunByDnaRunId implements Work {
                     "dr.dnasample_id,\n" +
                     "array_agg(datasetids) as dataset_ids,\n" +
                     "dr.name,\n" +
-                    "dr.code\n" +
+                    "dr.code\n," +
+                    "dr.dataset_dnarun_idx\n" +
                 "FROM\n" +
                 "(\n" +
                     "SELECT\n" +
@@ -40,12 +41,13 @@ public class SpGetDnaRunByDnaRunId implements Work {
                         "dr.dnasample_id,\n" +
                         "dr.name,\n" +
                         "dr.code,\n" +
-                        "jsonb_object_keys(dr.dataset_dnarun_idx)::integer as datasetids\n" +
+                        "jsonb_object_keys(dr.dataset_dnarun_idx)::integer as datasetids\n," +
+                        "dr.dataset_dnarun_idx\n" +
                     "FROM\n" +
                         "dnarun dr\n" +
                     "WHERE dr.dnarun_id=?\n" +
                 ") as dr\n" +
-                "GROUP BY dr.dnarun_id, dr.experiment_id, dr.dnasample_id, dr.name, dr.code)\n" +
+                "GROUP BY dr.dnarun_id, dr.experiment_id, dr.dnasample_id, dr.name, dr.code, dr.dataset_dnarun_idx)\n" +
                 "SELECT\n" +
                 "   dnarun.*,\n" +
                 "   s.name as sample_name,\n" +

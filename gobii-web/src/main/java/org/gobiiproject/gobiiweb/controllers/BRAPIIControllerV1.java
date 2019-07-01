@@ -971,7 +971,7 @@ public class BRAPIIControllerV1 {
      *
      * @param callSetDbId - DNA run Id.
      * @param pageSize - Size of the page to fetched.
-     * @param pageTokenParam - Page token to fetch the page. User will get the pageToken
+     * @param pageToken - Page token to fetch the page. User will get the pageToken
      *                       from the nextPageToken parameter in the previous response.
      *
      * @return BrApi Response entity with list of genotypes calls for given dnarun id.
@@ -980,11 +980,10 @@ public class BRAPIIControllerV1 {
     @RequestMapping(value="/callsets/{callSetDbId:[\\d]+}/calls", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getCallsByCallset(
             @PathVariable("callSetDbId") String callSetDbId,
-            @RequestParam(value = "pageToken", required = false) String pageTokenParam,
+            @RequestParam(value = "pageToken", required = false) String pageToken,
             @RequestParam(value = "pageSize", required = false) Integer pageSize) throws Exception {
 
         Integer callSetDbIdInt;
-        Integer pageToken = null;
 
         try {
             try {
@@ -994,17 +993,6 @@ public class BRAPIIControllerV1 {
                         GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
                         "Entity does not exist");
-            }
-
-            if (pageTokenParam != null) {
-                try {
-                    pageToken = Integer.parseInt(pageTokenParam);
-                } catch (Exception e) {
-                    throw new GobiiException(
-                            GobiiStatusLevel.ERROR,
-                            GobiiValidationStatusType.BAD_REQUEST,
-                            "Invalid request parameters");
-                }
             }
 
             Integer maxPageSize = RestResourceLimits.getResourceLimit(
