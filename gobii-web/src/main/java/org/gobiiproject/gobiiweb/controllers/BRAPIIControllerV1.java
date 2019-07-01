@@ -188,7 +188,8 @@ public class BRAPIIControllerV1 {
                                             " the BrAPI calls supported by GDM."
                             )
                     })
-            }
+            },
+            hidden = true
     )
     @ResponseBody
     public String getCalls(
@@ -301,7 +302,8 @@ public class BRAPIIControllerV1 {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="StudiesSearch"),
                     })
-            }
+            },
+            hidden = true
     )
     @ResponseBody
     public String getStudies(@RequestBody String studiesRequestBody,
@@ -381,7 +383,8 @@ public class BRAPIIControllerV1 {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="Germplasm : studyDbId"),
                     })
-            }
+            },
+            hidden = true
     )
     @ResponseBody
     public String getGermplasmByDbId(HttpServletRequest request,
@@ -445,7 +448,8 @@ public class BRAPIIControllerV1 {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="Studies.observationVariables"),
                     })
-            }
+            },
+            hidden = true
     )
     @ResponseBody
     public String getObservationVariables(HttpServletRequest request,
@@ -500,7 +504,8 @@ public class BRAPIIControllerV1 {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="AlleleMatrices"),
                     })
-            }
+            },
+            hidden = true
     )
     @ResponseBody
     public String getAlleleMatrices(@ApiParam(value = "Study DB Id", required = false)
@@ -554,7 +559,8 @@ public class BRAPIIControllerV1 {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="AlleleMatrixSearch"),
                     })
-            }
+            },
+            hidden = true
     )
     @ResponseBody
     public String getAlleleMatrix(@ApiParam(value = "Matrix DB Id", required = false)
@@ -578,7 +584,8 @@ public class BRAPIIControllerV1 {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="AlleleMatrixSearch"),
                     })
-            }
+            },
+            hidden = true
     )
     @ResponseBody
     public String postAlleleMatrix(@ApiParam(value = "Matrix DB Id", required = false)
@@ -647,7 +654,8 @@ public class BRAPIIControllerV1 {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="AlleleMatrix.status : jobId"),
                     })
-            }
+            },
+            hidden = true
     )
     @ResponseBody
     public String getAlleleMatrixStatus(@ApiParam(value = "Job Id", required = true)
@@ -707,7 +715,8 @@ public class BRAPIIControllerV1 {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="Files"),
                     })
-            }
+            },
+            hidden = true
     )
     @ResponseBody
     public void getFile(@ApiParam(value = "Fully qualified path name", required = true)
@@ -740,7 +749,8 @@ public class BRAPIIControllerV1 {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="MarkerProfiles"),
                     })
-            }
+            },
+            hidden = true
     )
     @ResponseBody
     public String getMarkerProfile(@ApiParam(value = "Germplasm DB Id", required = true)
@@ -761,7 +771,8 @@ public class BRAPIIControllerV1 {
                     @Extension(properties = {
                             @ExtensionProperty(name="summary", value="MarkerProfiles"),
                     })
-            }
+            },
+            hidden = true
     )
     @ResponseBody
     public String postMarkerProfile(@ApiParam(value = "Germplasm DB Id", required = true)
@@ -825,7 +836,6 @@ public class BRAPIIControllerV1 {
             @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required=true,
                 paramType = "header", dataType = "string")
     })
-
     @RequestMapping(value="/callsets", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getCallSets(
             @RequestParam(value = "pageToken", required = false) String pageTokenParam,
@@ -923,7 +933,6 @@ public class BRAPIIControllerV1 {
      * @return ResponseEntity with http status code specifying if retrieval of the callset is successful.
      * Response body contains the requested callset information
      */
-
     @ApiOperation(
             value = "Get a callset by callsetId",
             notes = "Retrieves the Callset entity having the specified ID",
@@ -939,7 +948,6 @@ public class BRAPIIControllerV1 {
             @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required = true,
             paramType = "header", dataType = "string"),
     })
-
     @RequestMapping(value="/callsets/{callSetDbId:[\\d]+}", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getCallSetsByCallSetDbId(
             @ApiParam(value = "ID of the Callset to be extracted", required = true)
@@ -977,15 +985,41 @@ public class BRAPIIControllerV1 {
      * @return BrApi Response entity with list of genotypes calls for given dnarun id.
      * TODO: Add page number parameter to comply BrApi standards.
      */
+    @ApiOperation(
+            value = "List all genotype calls",
+            notes = "List of all the genotype calls in a given Dna run identified by Dna run Id",
+            tags = {"Callsets"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Calls")
+                    })
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name="X-Auth-Token", value="Authentication Token", required=true,
+                    paramType = "header", dataType = "string")
+    })
     @RequestMapping(value="/callsets/{callSetDbId:[\\d]+}/calls", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getCallsByCallset(
-            @PathVariable("callSetDbId") String callSetDbId,
+            @ApiParam(value = "Id for dna run to be fetched")
+            @PathVariable(value="callSetDbId") String callSetDbId,
+            @ApiParam(value = "Page Token to fetch a page. " +
+                    "nextPageToken form previous page's meta data should be used." +
+                    "If pageNumber is specified pageToken will be ignored. " +
+                    "pageToken can be used to sequentially get pages faster. " +
+                    "When an invalid pageToken is given the page will start from beginning.")
             @RequestParam(value = "pageToken", required = false) String pageToken,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize) throws Exception {
+            @ApiParam(value = "Size of the page to be fetched. Default is 1000. Maximum page size is 1000")
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            HttpServletRequest request) throws Exception {
 
         Integer callSetDbIdInt;
 
         try {
+
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
             try {
                 callSetDbIdInt = Integer.parseInt(callSetDbId);
             } catch (Exception e) {

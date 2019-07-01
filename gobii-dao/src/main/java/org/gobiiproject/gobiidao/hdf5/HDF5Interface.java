@@ -1,6 +1,9 @@
 package org.gobiiproject.gobiidao.hdf5;
 
+import com.sun.xml.internal.ws.api.policy.PolicyResolver;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
+import org.gobiiproject.gobiimodel.types.GobiiColumnType;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
@@ -89,7 +92,6 @@ public class HDF5Interface {
 
         StringBuilder genoFileString=new StringBuilder();
 
-
         try{
             for(String datasetId : datasetMarkerMap.keySet()) {
 
@@ -150,9 +152,11 @@ public class HDF5Interface {
         else{
             tryExec("cat" + genotypePartFileIdentifier, genoFile, errorFile);
         }
+
         for(String tempGenoFile:genotypePartFileIdentifier.split(" ")) {
             rmIfExist(tempGenoFile);
         }
+
         return genoFile;
     }
 
