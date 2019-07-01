@@ -517,7 +517,6 @@
                             <springmvc>true</springmvc>
                             <locations>
                                 <location>org.gobiiproject.gobiiweb.controllers.GOBIIControllerV1</location>
-                                <location>org.gobiiproject.gobiiweb.controllers.BRAPIIControllerV1</location>
                             </locations>
                             <outputFormats>json,yaml</outputFormats>
                             <schemes><schema>http</schema></schemes>
@@ -577,6 +576,39 @@
                                 </securityDefinition>
                             </securityDefinitions>
                             <swaggerDirectory>${doc-location-generated}/swagger/sampletracking</swaggerDirectory>
+                        </apiSource>
+                        <apiSource>
+                            <springmvc>true</springmvc>
+                            <locations>
+                                <location>
+                                    org.gobiiproject.gobiiweb.controllers.BRAPIIControllerV1
+                                </location>
+                            </locations>
+                            <outputFormats>json,yaml</outputFormats>
+                            <schemes><schema>http</schema></schemes>
+                            <host>cbsugobiixvm11.biohpc.cornell.edu:8081</host>
+                            <basePath>/gobii-dev/brapi</basePath>
+                            <descriptionFile>${doc-location-source}/overview.txt</descriptionFile>
+                            <info>
+                                <title>GDM BrAPI</title>
+                                <version>1.0</version>
+                                <license>
+                                    <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+                                    <name>Apache 2.0</name>
+                                </license>
+                            </info>
+                            <securityDefinitions>
+                                <securityDefinition>
+                                    <name>basicAuth</name>
+                                    <type>basic</type>
+                                </securityDefinition>
+                                <securityDefinition>
+                                    <name>X-Auth-Token</name>
+                                    <type>apiKey</type>
+                                    <in>header</in>
+                                </securityDefinition>
+                            </securityDefinitions>
+                            <swaggerDirectory>${doc-location-generated}/swagger/brapi</swaggerDirectory>
                         </apiSource>
                     </apiSources>
                 </configuration>

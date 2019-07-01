@@ -8,6 +8,7 @@ package org.gobiiproject.gobiiweb.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.extensions.Extensions;
 import org.gobiiproject.gobidomain.services.DnaRunService;
 import org.gobiiproject.gobidomain.services.GenotypeCallsService;
 import org.gobiiproject.gobidomain.services.PingService;
@@ -232,6 +233,7 @@ public class BRAPIIControllerV1 {
             produces = "application/json")
     @ApiOperation(
             value = "List all tokens.",
+            hidden = true,
             notes = "List all tokens",
             tags = {"BrAPI"},
             extensions = {
@@ -914,8 +916,33 @@ public class BRAPIIControllerV1 {
         }
     }
 
+    /**
+     * Endpoint for getting a specific callset with a given callSetDbId
+     *
+     * @param callSetDbId ID of the requested callset
+     * @return ResponseEntity with http status code specifying if retrieval of the callset is successful.
+     * Response body contains the requested callset information
+     */
+
+    @ApiOperation(
+            value = "Get a callset by callsetId",
+            notes = "Retrieves the Callset entity having the specified ID",
+            tags = {"Callsets"},
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name="summary", value="Callsets : callSetDbId")
+                    })
+            }
+
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-Auth-Token", value="Authentication Token", required = true,
+            paramType = "header", dataType = "string"),
+    })
+
     @RequestMapping(value="/callsets/{callSetDbId:[\\d]+}", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getCallSetsByCallSetDbId(
+            @ApiParam(value = "ID of the Callset to be extracted", required = true)
             @PathVariable("callSetDbId") String callSetDbId) {
 
         Integer callSetDbIdInt;
