@@ -301,7 +301,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
             Integer contactId = loaderInstructionFilesDTO.getMetadata().getContactId();
 
-            if (contactId != null || contactId > 0) {
+            if (contactId != null && contactId > 0) {
 
 
                 //check for duplicate job name and provide meaningful error message
