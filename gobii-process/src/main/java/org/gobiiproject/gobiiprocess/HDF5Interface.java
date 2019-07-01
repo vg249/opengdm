@@ -4,7 +4,6 @@ import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderProcedure;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
-import org.gobiiproject.gobiimodel.utils.email.DigesterMessage;
 import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.digester.GobiiFileReader;
@@ -44,7 +43,7 @@ public class HDF5Interface {
         //Usage: %s <datasize> <input file> <output HDF5 file
         String loadHDF5= getPathToHDF5() +"loadHDF5";
         dm.addPath("matrix directory", pathToHDF5Files);
-        String HDF5File= getFileLoc(procedure.getMetadata().getDataSet().getId());
+        String HDF5File= getFileLoc(procedure.getMetadata().getDataset().getId());
         int size=8;
         switch(procedure.getMetadata().getDatasetType().getName().toUpperCase()){
             case "NUCLEOTIDE_2_LETTER": case "IUPAC":case "VCF":
@@ -62,7 +61,7 @@ public class HDF5Interface {
             rmIfExist(HDF5File);
             return false;
         }
-        GobiiFileReader.updateValues(configuration, procedure.getMetadata().getGobiiCropType(), procedure.getMetadata().getDataSet().getId(),variantFilename, HDF5File); // this is spaghetti, should be moved
+        GobiiFileReader.updateValues(configuration, procedure.getMetadata().getGobiiCropType(), procedure.getMetadata().getDataset().getId(),variantFilename, HDF5File); // this is spaghetti, should be moved
         return true;
     }
 

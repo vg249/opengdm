@@ -166,7 +166,7 @@ public class GobiiFileReader {
         pm.addIdentifier("Project", procedure.getMetadata().getProject());
         pm.addIdentifier("Platform", procedure.getMetadata().getPlatform());
         pm.addIdentifier("Experiment", procedure.getMetadata().getExperiment());
-        pm.addIdentifier("Dataset", procedure.getMetadata().getDataSet());
+        pm.addIdentifier("Dataset", procedure.getMetadata().getDataset());
         pm.addIdentifier("Mapset", procedure.getMetadata().getMapset());
         pm.addIdentifier("Dataset Type", procedure.getMetadata().getDatasetType());
 
@@ -436,13 +436,13 @@ public class GobiiFileReader {
             }
             //Load Monet/HDF5
             errorPath = getLogName(procedure, gobiiCropConfig, "Matrix_Upload");
-            String variantFilename = "DS" + procedure.getMetadata().getDataSet().getId();
+            String variantFilename = "DS" + procedure.getMetadata().getDataset().getId();
             File variantFile = loaderInstructionMap.get(VARIANT_CALL_TABNAME);
 
-            if (variantFile != null && procedure.getMetadata().getDataSet().getId() == null) {
+            if (variantFile != null && procedure.getMetadata().getDataset().getId() == null) {
                 logError("Digester", "Data Set ID is null for variant call");
             }
-            if ((variantFile != null) && procedure.getMetadata().getDataSet().getId() != null) { //Create an HDF5 and a Monet
+            if ((variantFile != null) && procedure.getMetadata().getDataset().getId() != null) { //Create an HDF5 and a Monet
                 jobStateUpdater.doUpdate(JobProgressStatusType.CV_PROGRESSSTATUS_MATRIXLOAD, "Matrix Upload");
                 boolean HDF5Success = HDF5Interface.createHDF5FromDataset(pm, configuration, procedure, errorPath, variantFilename, variantFile);
                 rmIfExist(variantFile.getPath());
@@ -543,7 +543,7 @@ public class GobiiFileReader {
         ErrorLogger.logInfo("Digester", "Entering into the QC Subsection #2 of 3...");
         GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
         gobiiDataSetExtract.setAccolate(false);  // It is unused/unsupported at the moment
-        gobiiDataSetExtract.setDataSet(proc.getMetadata().getDataSet());
+        gobiiDataSetExtract.setDataSet(proc.getMetadata().getDataset());
         gobiiDataSetExtract.setGobiiDatasetType(proc.getMetadata().getDatasetType());
 
         // According to Liz, the Gobii extract filter type is always "WHOLE_DATASET" for any QC job

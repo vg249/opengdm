@@ -2,8 +2,6 @@ package org.gobiiproject.gobiidtomapping.instructions.impl;
 
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
-import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.utils.InstructionFileAccess;
 import org.gobiiproject.gobiidtomapping.core.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.entity.auditable.DtoMapDataSet;
@@ -196,9 +194,9 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
             //validate loader instruction
 
             // check if the dataset is referenced by the specified experiment
-            if (loaderInstructionFilesDTO.getMetadata().getDataSet().getId() != null) {
+            if (loaderInstructionFilesDTO.getMetadata().getDataset().getId() != null) {
 
-                DataSetDTO dataSetDTO = dtoMapDataSet.get(loaderInstructionFilesDTO.getMetadata().getDataSet().getId());
+                DataSetDTO dataSetDTO = dtoMapDataSet.get(loaderInstructionFilesDTO.getMetadata().getDataset().getId());
 
                 // check if the experiment is referenced by the specified project
                 if (loaderInstructionFilesDTO.getMetadata().getExperiment().getId() != null) {
@@ -293,8 +291,8 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
             // NOW CREATE THE JOB RECORD *********************************************************
             if (JobPayloadType.CV_PAYLOADTYPE_MATRIX.equals(loaderInstructionFilesDTO.getMetadata().getJobPayloadType())) {
 
-                if (loaderInstructionFilesDTO.getMetadata().getDataSet().getId() == null
-                        || loaderInstructionFilesDTO.getMetadata().getDataSet().getId() <= 0) {
+                if (loaderInstructionFilesDTO.getMetadata().getDataset().getId() == null
+                        || loaderInstructionFilesDTO.getMetadata().getDataset().getId() <= 0) {
                     throw new GobiiException("The specified job has payload type MATRIX, but no dataset ID: " + loaderInstructionFilesDTO.getInstructionFileName());
                 }
 
@@ -313,7 +311,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                     JobDTO jobDTONew = new JobDTO();
 
                     jobDTONew.setJobName(loaderInstructionFilesDTO.getInstructionFileName());
-                    jobDTONew.getDatasetIds().add(loaderInstructionFilesDTO.getMetadata().getDataSet().getId());
+                    jobDTONew.getDatasetIds().add(loaderInstructionFilesDTO.getMetadata().getDataset().getId());
                     jobDTONew.setSubmittedBy(contactId);
                     jobDTONew.setMessage("Instruction file written by web services");
                     jobDTONew.setStatus(JobProgressStatusType.CV_PROGRESSSTATUS_PENDING.getCvName());
