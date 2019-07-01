@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.gobiiproject.gobiimodel.cvnames.JobPayloadType;
 import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
-import org.gobiiproject.gobiimodel.types.DataSetOrientationType;
+import org.gobiiproject.gobiimodel.types.DatasetOrientationType;
 
 @Data
 @Accessors(chain = true)
@@ -29,5 +29,5 @@ public class GobiiLoaderMetadata {
 
     private Integer contactId;
 
-    private DataSetOrientationType dataSetOrientationType;
+    private DatasetOrientationType datasetOrientationType;
 }

@@ -308,7 +308,7 @@ public class GobiiFileReader {
             if (procedure.getMetadata().getDatasetType().getName() != null
                     && inst.getTable().equals(VARIANT_CALL_TABNAME)) {
 
-                if (DataSetOrientationType.SAMPLE_FAST.equals(procedure.getMetadata().getDataSetOrientationType())) {
+                if (DatasetOrientationType.SAMPLE_FAST.equals(procedure.getMetadata().getDatasetOrientationType())) {
                     //Rotate to marker fast before loading it - all data is marker fast in the system
                     File transposeDir = new File(new File(fromFile).getParentFile(), "transpose");
                     intermediateFile.transform(MobileTransform.getTransposeMatrix(transposeDir.getPath()));
