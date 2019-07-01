@@ -117,24 +117,6 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
             GobiiLoaderInstruction primaryLoaderInstruction = loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(0);
 
 
-            for (GobiiLoaderInstruction currentInstruction : loaderInstructionFilesDTO
-                    .getGobiiLoaderInstructions()) {
-
-                if (StringUtils.isNotEmpty(currentInstruction.getTable())) {
-                    primaryLoaderInstruction.getColumnsByTableName().put(currentInstruction.getTable(), currentInstruction.getGobiiFileColumns());
-                }
-            }
-
-
-            primaryLoaderInstruction.setColumnsByTableName(
-                    loaderInstructionFilesDTO
-                            .getGobiiLoaderInstructions()
-                            .stream()
-                            .filter(gfi -> StringUtils.isNotEmpty(gfi.getTable()))
-                            .collect(Collectors.toMap(GobiiLoaderInstruction::getTable, GobiiLoaderInstruction::getGobiiFileColumns))
-            );
-
-
             if (loaderInstructionFilesDTO.getMetadata().getJobPayloadType() == null) {
                 throw new Exception("The primary instruction does not have a payload type");
             }

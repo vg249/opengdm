@@ -5,9 +5,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.gobiiproject.gobiimodel.cvnames.JobProgressStatusType;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * A loader instruction containing all the details nessisary to create a digest file.
@@ -18,9 +16,6 @@ import java.util.Map;
 @Accessors(chain = true)
 public class GobiiLoaderInstruction {
 
-    //Tables collection
-    //linked hash map preserves the insertion order
-    Map<String,List<GobiiFileColumn>> columnsByTableName = new LinkedHashMap<>();
 
     //Name of this table. Used as filename for loading, and to determine what database table it goes to.
     private String table = null;
