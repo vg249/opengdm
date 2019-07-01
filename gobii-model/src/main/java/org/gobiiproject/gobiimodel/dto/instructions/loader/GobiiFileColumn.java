@@ -20,10 +20,6 @@ public class GobiiFileColumn {
     private String filterFrom = null;
     //String to end substring of entry at
     private String filterTo = null;
-    //String to find all instances of and replace with replate-text
-    private String findText = null;
-    //Text to replace all matches with
-    private String replaceText = null;
     //Constant value used for "CONSTANT" type
     private String constantValue = null;
     //Name of other digest file to dereference to determine the value of this entry (Unused)
@@ -134,24 +130,6 @@ public class GobiiFileColumn {
 
     public GobiiFileColumn setSubcolumnDelimiter(String subcolumnDelimiter) {
         this.subcolumnDelimiter = subcolumnDelimiter;
-        return this;
-    }
-
-    public String getFindText() {
-        return findText;
-    }
-
-    public GobiiFileColumn setFindText(String findText) {
-        this.findText = findText;
-        return this;
-    }
-
-    public String getReplaceText() {
-        return replaceText;
-    }
-
-    public GobiiFileColumn setReplaceText(String replaceText) {
-        this.replaceText = replaceText;
         return this;
     }
 }

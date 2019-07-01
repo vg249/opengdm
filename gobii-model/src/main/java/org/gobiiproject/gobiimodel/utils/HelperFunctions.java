@@ -40,7 +40,7 @@ public class HelperFunctions {
      * @param to   last match in substring is end of filtered string
      * @return filtered string, from the character after the end of from to the character before the beginning of to
      */
-    public static String filter(String in, String from, String to, String find, String replace) {
+    public static String filter(String in, String from, String to) {
         if (in == null) return null;
         String result = "";
         if (from == null) from = "";
@@ -59,21 +59,10 @@ public class HelperFunctions {
         }
         result = in.substring(startIndex, endIndex);
 
-        if (find != null && replace != null) {
-            result = result.replaceAll(find, replace);
-        }
-
         return result;
         //Too clever by a half- if from and too are null, returns substring(0,-1);
     }
 
-
-    public static void main(String[] args) throws IOException {
-        System.out.println("Tests filter");
-        System.out.println(filter("banana", "a", "a", null, null));
-        System.out.println(filter("banana", "b", "", "a", "denden"));
-        System.out.println(filter("banana", null, "n", "a", null));
-    }
 
     public static GobiiLoaderProcedure parseInstructionFile(String filename) {
         ObjectMapper objectMapper = new ObjectMapper();

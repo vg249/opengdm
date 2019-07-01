@@ -478,8 +478,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
         int colNo = 0;
         for (GobiiFileColumn column : processedInstruction.getColumnList()) {
             if (column.getGobiiColumnType().equals(GobiiColumnType.CSV_COLUMN)) {
-                rowList.set(colNo, HelperFunctions.filter(rowList.get(colNo), column.getFilterFrom(), column.getFilterTo(),
-                        column.getFindText(), column.getReplaceText()));
+                rowList.set(colNo, HelperFunctions.filter(rowList.get(colNo), column.getFilterFrom(), column.getFilterTo()));
                 colNo++;
             }
         }
@@ -507,8 +506,7 @@ public class CSVFileReaderV2 extends CSVFileReaderInterface {
     private void getRow(List<String> rowList, GobiiFileColumn column) {
         int colNo = 0;
         for (String element : rowList) {
-            rowList.set(colNo, HelperFunctions.filter(element, column.getFilterFrom(), column.getFilterTo(),
-                    column.getFindText(), column.getReplaceText()));
+            rowList.set(colNo, HelperFunctions.filter(element, column.getFilterFrom(), column.getFilterTo()));
             colNo++;
         }
         for (int cCoord = 0; cCoord < column.getcCoord(); cCoord++) {
