@@ -29,7 +29,7 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
     @Override
     public List<GenotypeCallsMarkerMetadataDTO> getMarkerMetaDataList(
             Integer datasetId,
-            Integer pageToken,
+            Integer markerId,
             Integer pageSize) throws GobiiDtoMappingException {
 
         List<GenotypeCallsMarkerMetadataDTO> returnVal;
@@ -51,8 +51,8 @@ public class DtoMapGenotypeCallsImpl implements DtoMapGenotypeCalls {
                         "Invalid Dataset Id");
             }
 
-            if (pageToken != null) {
-                sqlParams.put("pageToken", pageToken);
+            if (markerId != null) {
+                sqlParams.put("markerId", markerId);
             }
 
             if (pageSize != null) {

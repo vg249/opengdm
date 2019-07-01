@@ -9,7 +9,7 @@ public interface GenotypeCallsService {
 
     List<GenotypeCallsDTO> getGenotypeCallsByDnarunId(
             Integer dnarunId,
-            Integer pageToken,
+            String pageToken,
             Integer pageSize) throws GobiiDomainException;
 
 }

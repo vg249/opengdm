@@ -39,7 +39,7 @@ public class ListStatementGenotypeCallsMarkerMetaData implements ListStatement {
                 throw new GobiiException(
                         GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.BAD_REQUEST,
-                        "Required query parameter Dnarun Id missing.");
+                        "Required query parameter Dataset Id missing.");
             }
 
             if (sqlParamVals.containsKey("pageSize")
@@ -61,38 +61,30 @@ public class ListStatementGenotypeCallsMarkerMetaData implements ListStatement {
                         "Invalid Page Size");
             }
 
-            if (sqlParamVals.containsKey("pageToken")
-                    && sqlParamVals.get("pageToken") instanceof Integer) {
-                if ((Integer) sqlParamVals.getOrDefault("pageToken", 0) > 0) {
-                    pageCondition = " AND marker_id > ?";
-                } else {
-                    pageCondition = " AND marker_id > 0";
-                }
-            } else if(sqlParamVals.containsKey("pageToken")) {
-                pageCondition = " AND marker_id > 0";
-            }
         }
 
         String sql = "SELECT marker.marker_id AS marker_id, " +
                 "marker.name AS marker_name, " +
                 "marker.dataset_marker_idx->>?::text as hdf5_marker_idx " +
                 "FROM marker WHERE marker.dataset_marker_idx ?? ?::text " +
-                pageCondition + " ORDER BY marker.marker_id "+pageSizeCondition;
+                "AND marker_id > ? ORDER BY marker.marker_id "+pageSizeCondition;
 
         PreparedStatement returnVal = dbConnection.prepareStatement(sql);
 
         returnVal.setInt(1, (Integer) sqlParamVals.get("datasetId"));
         returnVal.setInt(2, (Integer) sqlParamVals.get("datasetId"));
 
-        if(!pageCondition.isEmpty() && !pageSizeCondition.isEmpty()) {
-            returnVal.setInt(3, (Integer) sqlParamVals.get("pageToken"));
+        if (sqlParamVals.containsKey("markerIdLimit") &&
+                (Integer) sqlParamVals.getOrDefault("markerIdLimit", 0) > 0) {
+            returnVal.setInt(3, (Integer) sqlParamVals.get("markerIdLimit"));
+        }
+        else {
+            returnVal.setInt(3, 0);
+        }
+
+
+        if(!pageSizeCondition.isEmpty()) {
             returnVal.setInt(4, pageSize);
-        }
-        else if(!pageCondition.isEmpty()) {
-            returnVal.setInt(3, (Integer) sqlParamVals.get("pageToken"));
-        }
-        else if(!pageSizeCondition.isEmpty()) {
-            returnVal.setInt(3, pageSize);
         }
 
         return returnVal;
