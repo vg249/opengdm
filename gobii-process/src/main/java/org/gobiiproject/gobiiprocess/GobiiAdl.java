@@ -2571,8 +2571,6 @@ public class GobiiAdl {
 
                 File extractedFilesDir = new File(localPathName);
 
-                System.out.println("\nlocal path name: " +localPathName);
-
                 if (extractedFilesDir.exists() && extractedFilesDir.isDirectory() && extractedFilesDir.listFiles().length > 0) {
 
                      compareExtractedFiles(extractedFilesDir,dataFilePath);
@@ -2642,7 +2640,7 @@ public class GobiiAdl {
         /*** Process XML file ***/
 
         System.out.println("\nProcessing XML: " + xmlFile.getName() + " for subdirectory: " + currentDir.getName());
-        boolean isLoadSuccessful = true;//processXMLLoadScenario(xmlFile, currentDir.getName());
+        boolean isLoadSuccessful = processXMLLoadScenario(xmlFile, currentDir.getName());
 
         if (isLoadSuccessful && doExtract) {
 
