@@ -192,7 +192,7 @@ public class GobiiLoader {
 
             CSVFileReaderV2.parseInstructionFile(state.getProcedure(), config.getLoaderScriptPath());
         } else {
-            System.err.println("Unable to deal with file type " + state.getProcedure().getMetadata().getGobiiFile().getGobiiFileType());
+            ErrorLogger.logWarning("Digester","Unable to deal with file type " + state.getProcedure().getMetadata().getGobiiFile().getGobiiFileType());
         }
 
         //Database Validation
