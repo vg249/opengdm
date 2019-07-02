@@ -368,7 +368,6 @@ public class GobiiLoader {
         String directory = new File(state.getProcedure().getMetadata().getGobiiFile().getDestination()).getAbsolutePath();
 
         //Metadata Validation
-        boolean reportedValidationFailures = false;
         if(LoaderGlobalConfigs.getValidation()) {
             DigestFileValidator digestFileValidator = new DigestFileValidator(directory, baseConnectionString, user, password);
             digestFileValidator.performValidation();
