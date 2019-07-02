@@ -36,6 +36,9 @@ public class ServerConfig {
     private String contextPath = "";
 
     @Element(required = false)
+    private String errorContextPath = "";
+
+    @Element(required = false)
     private Integer port = 0;
 
     @Element(required = false)
@@ -184,8 +187,27 @@ public class ServerConfig {
         return this;
     }
 
+    public String getErrorContextPath() {
+        return this.getErrorContextPath(true);
+    }
 
-    @ElementMap(required = false)
+    public String getErrorContextPath(boolean terminate) {
+
+        String returnVal = this.errorContextPath;
+
+        if (terminate && !LineUtils.isNullOrEmpty(returnVal)) {
+            returnVal = LineUtils.terminateDirectoryPath(returnVal);
+        }
+        return returnVal;
+    }
+
+    public ServerConfig setErrorContextPath(String contextPath) {
+        this.errorContextPath = contextPath;
+        return this;
+    }
+
+
+    @ElementMap(required = false, key="ID",entry="RestResource",attribute=true,inline=true)
     EnumMap<RestResourceId, RestResourceProfile> resourceProfilesByRestRequestId = new EnumMap<>(RestResourceId.class);
 
     @Element(required = false)

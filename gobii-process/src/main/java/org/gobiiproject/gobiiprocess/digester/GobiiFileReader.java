@@ -139,7 +139,8 @@ public class GobiiFileReader {
         }
 
         //Error logs go to a file based on crop (for human readability) and
-        pm.addPath("Instruction File", new File(instructionFile).getAbsolutePath(), true);
+//        pm.addFolderPath("Instruction File", new File(instructionFile).getAbsolutePath(), true, configuration);
+//        pm.addFolderPath("Instruction File", loaderInstructionList.getDestinationFile(), true, configuration);
         ErrorLogger.logInfo("Digester", "Beginning read of " + instructionFile);
         List<GobiiLoaderInstruction> list = parseInstructionFile(instructionFile);
         if (list == null || list.isEmpty()) {
@@ -177,8 +178,8 @@ public class GobiiFileReader {
         if (!dstDir.isDirectory()) { //Note: if dstDir is a non-existant
             dstDir = new File(dstFilePath.substring(0, dstFilePath.lastIndexOf("/")));
         }
-        pm.addFolderPath("Destination Directory", dstDir.getAbsolutePath());//Convert to directory
-        pm.addFolderPath("Input Directory", zero.getGobiiFile().getSource());
+        pm.addFolderPath("Destination Directory", dstDir.getAbsolutePath(),configuration);//Convert to directory
+        pm.addFolderPath("Input Directory", zero.getGobiiFile().getSource(), configuration);
 
         Path cropPath = Paths.get(rootDir + "crops/" + crop.toLowerCase());
         if (!(Files.exists(cropPath) &&
@@ -205,7 +206,6 @@ public class GobiiFileReader {
 
         jobStatus.set(JobProgressStatusType.CV_PROGRESSSTATUS_VALIDATION.getCvName(), "Beginning Validation");
         // Instruction file Validation
-        JobPayloadType jpt = zero.getJobPayloadType();//TODO - This is the job payload type
         InstructionFileValidator instructionFileValidator = new InstructionFileValidator(list);
         instructionFileValidator.processInstructionFile();
         String validationStatus = instructionFileValidator.validateMarkerUpload();
@@ -521,17 +521,19 @@ public class GobiiFileReader {
      * @throws Exception
      */
     private static void finalizeProcessing(ProcessMessage pm, ConfigSettings configuration, MailInterface mailInterface, String instructionFile, GobiiLoaderInstruction zero, String crop, String jobName, String logFile) throws Exception {
+        String instructionFilePath = HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
         try {
             GobiiFileType loadType = zero.getGobiiFile().getGobiiFileType();
             String loadTypeName = "";//No load type name if default
             if (loadType != GobiiFileType.GENERIC) loadTypeName = loadType.name();
-            pm.addPath("Error Log", logFile);
+            pm.addPath("Instruction File", instructionFilePath, configuration, false);
+            pm.addPath("Error Log", logFile, configuration, false);
             pm.setBody(jobName, loadTypeName, SimpleTimer.stop("FileRead"), ErrorLogger.getFirstErrorReason(), ErrorLogger.success(), ErrorLogger.getAllErrorStringsHTML());
             mailInterface.send(pm);
         } catch (Exception e) {
             ErrorLogger.logError("MailInterface", "Error Sending Mail", e);
         }
-        HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
+
     }
 
     private static void databaseValidation(Map<String, File> loaderInstructionMap, GobiiLoaderInstruction zero, GobiiCropConfig gobiiCropConfig) {

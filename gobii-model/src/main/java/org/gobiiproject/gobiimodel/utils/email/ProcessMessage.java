@@ -1,9 +1,13 @@
 package org.gobiiproject.gobiimodel.utils.email;
 
 
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.entity.children.PropNameId;
+import org.gobiiproject.gobiimodel.types.ServerType;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiimodel.utils.links.GetLinks;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -197,8 +201,9 @@ public class ProcessMessage extends MailMessage {
         return this;
     }
 
-    public ProcessMessage addFolderPath(String type,String path) {
-        paths.add(new HTMLTableEntity(type,path,""));
+    public ProcessMessage addFolderPath(String type, String path, ConfigSettings config) throws Exception {
+        String pathLine = path + "\n" + "<hr>" + "\n" + GetLinks.getOwncloudURL(path, config);
+        paths.add(new HTMLTableEntity(type,pathLine,""));
         return this;
     }
         /**
@@ -208,12 +213,22 @@ public class ProcessMessage extends MailMessage {
          * #param alwaysShow to always show the path, even if no object is there
          * @return this object
          */
-    public ProcessMessage addPath(String type,String path, boolean alwaysShow){
+    public ProcessMessage addPath(String type,String path, boolean alwaysShow, ConfigSettings config, boolean publicUrl) throws Exception {
+
+        String pathLine = path;
+        if(config.getGlobalServer(ServerType.OWN_CLOUD).isActive()){
+            if(path.endsWith("/")){
+                pathLine = path + "\n" + "<hr>" + "\n" + GetLinks.getOwncloudURL(path, config);
+            }
+            else{
+                pathLine = path + "\n" + "<hr>" + "\n" + GetLinks.getLink(path, config, publicUrl);
+            }
+        }
     	if(new File(path).length() > 1){
-    		paths.add(new HTMLTableEntity(type, escapeHTML(path), HelperFunctions.sizeToReadable(new File(path).length())));
+    		paths.add(new HTMLTableEntity(type, pathLine, HelperFunctions.sizeToReadable(new File(path).length())));
     	}
     	else if(alwaysShow){
-    	    paths.add(new HTMLTableEntity(type,escapeHTML(path),""));
+    	    paths.add(new HTMLTableEntity(type,pathLine,""));
         }
         return this;
     }
@@ -224,8 +239,8 @@ public class ProcessMessage extends MailMessage {
      * @param path filepath
      * @return
      */
-    public ProcessMessage addPath(String type, String path){
-        return addPath(type,path,false);
+    public ProcessMessage addPath(String type, String path, ConfigSettings config, boolean publicUrl) throws Exception {
+        return addPath(type,path,false,config, publicUrl);
     }
 
     
@@ -286,6 +301,21 @@ public class ProcessMessage extends MailMessage {
         if(pathsLine!=null)body.append(pathsLine+line);
         if(longError!=null)body.append(longError);
         body.append("</html>");
+        this.setBody(lastBody + body.toString());
+        return this;
+    }
+
+    public ProcessMessage addProcessPath(String lastBody, boolean active){
+        if(!paths.isEmpty()) {
+            pathsLine = HTMLTableEntity.getHTMLTable(paths, pathsLineWidth,"File Type","Path","Size");
+        }
+        String line="<br>";
+        StringBuilder body=new StringBuilder();
+        body.append("<html><head><style>table{font-family:arial,sans-serif;border-collapse:collapse;width:60%;}th{background-color:" + color + ";border:1px solid #dddddd;text-align:left;padding:8px;}td{border:1px solid #dddddd;text-align:left;padding:8px;}tr:nth-child(even){background-color:lightblue;}</style></head><body>");
+        if(pathsLine!=null)body.append(pathsLine +line);
+        if(active){
+            body.append("<font size=6 color=red><b>WARNING: Clicking links might force you to download bigger files.</b></font>" + line);
+        }
         this.setBody(lastBody + body.toString());
         return this;
     }

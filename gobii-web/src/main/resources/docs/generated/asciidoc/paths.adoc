@@ -666,7 +666,7 @@ __|User Identifier|string
 [[_getconfigsettings]]
 === List all configuration settings.
 ....
-GET /gobii/v1/configsettings/
+GET /gobii/v1/configsettings
 ....
 
 
