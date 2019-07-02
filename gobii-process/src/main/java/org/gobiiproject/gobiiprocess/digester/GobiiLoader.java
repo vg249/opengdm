@@ -57,9 +57,6 @@ import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.logError;
  */
 public class GobiiLoader {
 
-    private static Messenger messenger;
-    private static InstructionFileValidator instructionFileValidator = new InstructionFileValidator();
-
     private static final String VARIANT_CALL_TABNAME = "matrix";
     private static final String LINKAGE_GROUP_TABNAME = "linkage_group";
     private static final String GERMPLASM_PROP_TABNAME = "germplasm_prop";
@@ -71,8 +68,10 @@ public class GobiiLoader {
 
     private GobiiLoaderConfig config;
 
-
+    private Messenger messenger;
+    private InstructionFileValidator instructionFileValidator = new InstructionFileValidator();
     private QcExecutor qcExecutor = new QcWebExecutor();
+
 
     public GobiiLoader(GobiiLoaderConfig config) {
         this.config = config;
@@ -89,7 +88,7 @@ public class GobiiLoader {
         if (state.getProcedure().getMetadata().getGobiiCropType() == null)
             state.getProcedure().getMetadata().setGobiiCropType(divineCrop(config.getInstructionFile()));
 
-        if (validateProcedure(config, state) == null) {
+        if (validateProcedure(config, state, instructionFileValidator) == null) {
             return;
         }
 
@@ -388,7 +387,7 @@ public class GobiiLoader {
     }
 
 
-    public static GobiiLoaderState validateProcedure(GobiiLoaderConfig config, GobiiLoaderState state) {
+    public static GobiiLoaderState validateProcedure(GobiiLoaderConfig config, GobiiLoaderState state, InstructionFileValidator instructionFileValidator) {
 
         if (CollectionUtils.isEmpty(state.getProcedure().getInstructions())) {
             logError("Digester", "No instruction for file " + config.getInstructionFile());
