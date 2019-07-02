@@ -43,8 +43,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
      */
     @Override
     public List<GenotypeCallsDTO> getGenotypeCallsByDnarunId(
-            Integer dnarunId,
-            String pageToken,
+            Integer dnarunId, String pageToken,
             Integer pageSize) {
 
         List<GenotypeCallsDTO> returnVal = new ArrayList<>();
@@ -92,7 +91,6 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
             List<GenotypeCallsMarkerMetadataDTO> genotypeMarkerMetadata = new ArrayList<>();
 
-            Integer lastDataset;
             Integer startIndex = 0;
 
             if(startDatasetId != null) {
@@ -135,7 +133,6 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
                     returnVal.add(genotypeCall);
                 }
                 if(genotypeMarkerMetadata.size() >= pageSize) {
-                    lastDataset = datasetId;
                     break;
                 }
                 else {
@@ -152,6 +149,7 @@ public class GenotypeCallsServiceImpl implements GenotypeCallsService {
 
             FileInputStream fstream = new FileInputStream(
                     "/data/gobii_bundle/crops/arbitrary-id-0/files/markerList.genotype");
+
             BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
 
             String strLine;

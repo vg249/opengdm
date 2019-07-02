@@ -8,8 +8,7 @@ import java.util.List;
 public interface GenotypeCallsService {
 
     List<GenotypeCallsDTO> getGenotypeCallsByDnarunId(
-            Integer dnarunId,
-            String pageToken,
+            Integer dnarunId, String pageToken,
             Integer pageSize) throws GobiiDomainException;
 
 }

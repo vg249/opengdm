@@ -815,7 +815,7 @@ public class BRAPIIControllerV1 {
     }
 
     /**
-     * Lists the dnaruns/callsets by page size and page token
+     * Lists the dnaruns by page size and page token
      *
      * @param pageTokenParam String page token
      * @param pageSize - Page size set by the user. If page size is more than maximum allowed
@@ -986,7 +986,7 @@ public class BRAPIIControllerV1 {
      * TODO: Add page number parameter to comply BrApi standards.
      */
     @ApiOperation(
-            value = "List all genotype calls",
+            value = "List genotype calls",
             notes = "List of all the genotype calls in a given Dna run identified by Dna run Id",
             tags = {"Callsets"},
             extensions = {
@@ -1000,7 +1000,7 @@ public class BRAPIIControllerV1 {
                     name="X-Auth-Token", value="Authentication Token", required=true,
                     paramType = "header", dataType = "string")
     })
-    @RequestMapping(value="/callsets/{callSetDbId:[\\d]+}/calls", method=RequestMethod.GET)
+    @RequestMapping(value="/callsets/{callSetDbId}/calls", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity getCallsByCallset(
             @ApiParam(value = "Id for dna run to be fetched")
             @PathVariable(value="callSetDbId") String callSetDbId,
@@ -1018,15 +1018,13 @@ public class BRAPIIControllerV1 {
 
         try {
 
-            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-
             try {
                 callSetDbIdInt = Integer.parseInt(callSetDbId);
             } catch (Exception e) {
                 throw new GobiiException(
                         GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                        "Entity does not exist");
+                        "Invalid dna run Id");
             }
 
             Integer maxPageSize = RestResourceLimits.getResourceLimit(
@@ -1035,7 +1033,7 @@ public class BRAPIIControllerV1 {
 
             if(maxPageSize == null) {
                 //As per brapi initial standards
-                maxPageSize = 1000;
+                maxPageSize = 10000;
             }
 
             if (pageSize == null || pageSize > maxPageSize) {
@@ -1043,7 +1041,9 @@ public class BRAPIIControllerV1 {
             }
 
             List<GenotypeCallsDTO> genotypeCallsList = genotypeCallsService.getGenotypeCallsByDnarunId(
-                    callSetDbIdInt, pageToken, pageSize);
+                    callSetDbIdInt, pageToken,
+                    pageSize
+            );
 
             BrApiMasterPayload<List<GenotypeCallsDTO>> payload = new BrApiMasterPayload<>(genotypeCallsList);
 

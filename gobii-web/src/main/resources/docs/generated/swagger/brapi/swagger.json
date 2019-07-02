@@ -1,0 +1,156 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "The GDM web service API provides a comprehensive set of RESTful methods for accomplishing the following core tasks in the GOBii Genomic Data Management (GDM) system. This manual explains the GDM web architecture and its web service operations.\n\n",
+    "version" : "1.0",
+    "title" : "GDM BrAPI",
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host" : "cbsugobiixvm11.biohpc.cornell.edu:8081",
+  "basePath" : "/gobii-dev/brapi",
+  "tags" : [ {
+    "name" : "Callsets"
+  } ],
+  "schemes" : [ "http" ],
+  "paths" : {
+    "/brapi/v1/callsets" : {
+      "get" : {
+        "tags" : [ "Callsets" ],
+        "summary" : "List all callsets",
+        "description" : "List of all Callsets.",
+        "operationId" : "getCallSets",
+        "parameters" : [ {
+          "name" : "pageToken",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "pageSize",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "callSetName",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "variantSetDbId",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "sampleDbId",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "germplasmDbId",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "studyDbId",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "X-Auth-Token",
+          "in" : "header",
+          "description" : "Authentication Token",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        },
+        "x-summary" : "Callsets"
+      }
+    },
+    "/brapi/v1/callsets/{callSetDbId}" : {
+      "get" : {
+        "tags" : [ "Callsets" ],
+        "summary" : "Get a callset by callsetId",
+        "description" : "Retrieves the Callset entity having the specified ID",
+        "operationId" : "getCallSetsByCallSetDbId",
+        "parameters" : [ {
+          "name" : "callSetDbId",
+          "in" : "path",
+          "description" : "ID of the Callset to be extracted",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "[\\d]+"
+        }, {
+          "name" : "X-Auth-Token",
+          "in" : "header",
+          "description" : "Authentication Token",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        },
+        "x-summary" : "Callsets : callSetDbId"
+      }
+    },
+    "/brapi/v1/callsets/{callSetDbId}/calls" : {
+      "get" : {
+        "tags" : [ "Callsets" ],
+        "summary" : "List all genotype calls",
+        "description" : "List of all the genotype calls in a given Dna run identified by Dna run Id",
+        "operationId" : "getCallsByCallset",
+        "parameters" : [ {
+          "name" : "callSetDbId",
+          "in" : "path",
+          "description" : "Id for dna run to be fetched",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "[\\d]+"
+        }, {
+          "name" : "pageToken",
+          "in" : "query",
+          "description" : "Page Token to fetch a page. nextPageToken form previous page's meta data should be used.If pageNumber is specified pageToken will be ignored. pageToken can be used to sequentially get pages faster. When an invalid pageToken is given the page will start from beginning.",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "pageSize",
+          "in" : "query",
+          "description" : "Size of the page to be fetched. Default is 1000. Maximum page size is 1000",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "X-Auth-Token",
+          "in" : "header",
+          "description" : "Authentication Token",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        },
+        "x-summary" : "Calls"
+      }
+    }
+  },
+  "securityDefinitions" : {
+    "X-Auth-Token" : {
+      "type" : "apiKey",
+      "name" : "X-Auth-Token",
+      "in" : "header"
+    },
+    "basicAuth" : {
+      "type" : "basic"
+    }
+  }
+}

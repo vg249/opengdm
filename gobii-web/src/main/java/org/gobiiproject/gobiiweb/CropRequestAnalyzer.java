@@ -80,7 +80,8 @@ public class CropRequestAnalyzer {
 
                 } else {
 
-                    errorMessage = "The context path is repeated in the configuration; context paths must be unique: " + rawContextPath;
+                    errorMessage = "The context path is repeated in the configuration; " +
+                            "context paths must be unique: " + rawContextPath;
 
                 }
             } // iterate configurations
@@ -92,7 +93,8 @@ public class CropRequestAnalyzer {
 
             if (returnVal == null) {
 
-                errorMessage += "; the cropId corresponding to the context path of the request url could not be set: " + requestUrl;
+                errorMessage += "; the cropId corresponding to the context path of the " +
+                        "request url could not be set: " + requestUrl;
 
             }
 
