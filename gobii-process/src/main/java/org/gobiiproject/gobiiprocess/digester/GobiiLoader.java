@@ -69,9 +69,6 @@ public class GobiiLoader {
     private static final String DS_SAMPLE_TABNAME = "dataset_dnarun";
     private static final String SAMPLE_TABNAME = "dnarun";
 
-    //Trinary - was this load marker fast(true), sample fast(false), or unknown/not applicable(null)
-    public static Boolean isMarkerFast=null;
-
     private GobiiLoaderConfig config;
 
 
@@ -223,9 +220,9 @@ public class GobiiLoader {
                     //Rotate to marker fast before loading it - all data is marker fast in the system
                     File transposeDir = new File(new File(fromFile).getParentFile(), "transpose");
                     intermediateFile.transform(MobileTransform.getTransposeMatrix(transposeDir.getPath()));
-                    isMarkerFast=false;
+                    state.setIsMarkerFast(false);
                 }else{
-                    isMarkerFast=true;
+                    state.setIsMarkerFast(true);
                 }
             }
 
@@ -370,7 +367,7 @@ public class GobiiLoader {
         //Metadata Validation
         if(LoaderGlobalConfigs.getValidation()) {
             DigestFileValidator digestFileValidator = new DigestFileValidator(directory, baseConnectionString, user, password);
-            digestFileValidator.performValidation();
+            digestFileValidator.performValidation(state.getIsMarkerFast());
             //Call validations here, update 'success' to false with any call to ErrorLogger.logError()
             List<Path> pathList =
                     Files.list(Paths.get(directory))

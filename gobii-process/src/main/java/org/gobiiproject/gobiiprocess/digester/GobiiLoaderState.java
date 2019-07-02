@@ -22,6 +22,7 @@ public class GobiiLoaderState {
 
 	private String logFile;
 
+	private Boolean isMarkerFast;
 
 	@Data
 	@Accessors(chain = true)

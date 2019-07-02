@@ -53,6 +53,10 @@ public class DigestFileValidator {
     }
 
     public void performValidation() {
+        performValidation(null);
+    }
+
+    public void performValidation(Boolean isMarkerFast) {
         String validationOutput = rootDir + "/" + "ValidationResult-" + new SimpleDateFormat("hhmmss").format(new Date()) + ".json";
         /*
          * Read validation Rules
@@ -67,7 +71,7 @@ public class DigestFileValidator {
             List<Failure> failures = new ArrayList<>();
             if (loginIntoServer(url, username, password, null, failures)) {
                 try {
-                    List<ValidationError> validationErrorList = doValidations(validations);
+                    List<ValidationError> validationErrorList = doValidations(validations, isMarkerFast);
                     writer.write(validationErrorList);
                 } catch (Exception e) {
                     validationError.status = ValidationConstants.FAILURE;
@@ -98,12 +102,12 @@ public class DigestFileValidator {
      *
      * @param validations validations
      */
-    private List<ValidationError> doValidations(List<ValidationUnit> validations) {
+    private List<ValidationError> doValidations(List<ValidationUnit> validations, Boolean isMarkerFast) {
         List<ValidationError> validationErrorList = new ArrayList<>();
         for (ValidationUnit validation : validations) {
             ValidationError validationError = new ValidationError();
             validationError.fileName = FilenameUtils.getExtension(validation.getDigestFileName());
-            List<Failure> failureList = validate(validation);
+            List<Failure> failureList = validate(validation, isMarkerFast);
             if (failureList != null) {
                 if (failureList.size() > 0) {
                     validationError.status = ValidationConstants.FAILURE;
@@ -231,7 +235,7 @@ public class DigestFileValidator {
         return true;
     }
 
-    public List<Failure> validate(ValidationUnit validation) {
+    public List<Failure> validate(ValidationUnit validation, Boolean isMarkerFast) {
         trimSpaces(validation);
         List<Failure> failureList = new ArrayList<>();
         switch (FilenameUtils.getExtension(validation.getDigestFileName())) {
@@ -247,7 +251,7 @@ public class DigestFileValidator {
             case "marker_linkage_group":
             case "dataset_dnarun":
             case "dataset_marker":
-                if (!new Validator().validate(validation, rootDir, failureList)) failureList = null;
+                if (!new Validator().validate(validation, rootDir, failureList, isMarkerFast)) failureList = null;
                 break;
             default:
                 try {

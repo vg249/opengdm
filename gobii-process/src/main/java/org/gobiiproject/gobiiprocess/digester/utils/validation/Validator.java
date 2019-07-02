@@ -11,11 +11,11 @@ import java.util.*;
 import static org.gobiiproject.gobiiprocess.digester.utils.validation.ValidationUtil.*;
 
 class Validator {
-    boolean validate(ValidationUnit validationUnit, String dir, List<Failure> failureList) {
+    boolean validate(ValidationUnit validationUnit, String dir, List<Failure> failureList, Boolean isMarkerFast) {
         try {
             if (checkForSingleFileExistence(dir, validationUnit.getDigestFileName(), failureList)) {
                 String filePath = dir + "/" + validationUnit.getDigestFileName();
-                List<Failure> failures = beginValidation(filePath, validationUnit);
+                List<Failure> failures = beginValidation(filePath, validationUnit, isMarkerFast);
                 failureList.addAll(failures);
                 return true;
             } else {
@@ -51,7 +51,7 @@ class Validator {
             return true;
     }
 
-    private List<Failure> beginValidation(String fileName, ValidationUnit validationUnit) throws MaximumErrorsValidationException {
+    private List<Failure> beginValidation(String fileName, ValidationUnit validationUnit, Boolean isMarkerFast) throws MaximumErrorsValidationException {
         List<Failure> failureList = new ArrayList<>();
         List<String[]> inputFile = new ArrayList<>();
         if (!ValidationUtil.readFileIntoMemory(fileName, inputFile, failureList)) return failureList;
@@ -68,7 +68,7 @@ class Validator {
         failureList.addAll(validateUniqueColumnList(fileName, validationUnit));
         failureList.addAll(validateFileShouldExist(fileName, validationUnit));
         failureList.addAll(validateColumnDBandFile(fileName, validationUnit));
-        failureList.addAll(validateMatrixSizeColumns(fileName,validationUnit.getConditions()));
+        failureList.addAll(validateMatrixSizeColumns(fileName,validationUnit.getConditions(), isMarkerFast));
 
         return failureList;
     }
@@ -128,10 +128,9 @@ class Validator {
      * @param fileName      name of file
      * @param conditions    conditions
      */
-    private List<Failure> validateMatrixSizeColumns(String fileName, List<ConditionUnit> conditions) {
+    private List<Failure> validateMatrixSizeColumns(String fileName, List<ConditionUnit> conditions, Boolean isMarkerFast) {
         List<Failure> failureList = new ArrayList<>();
 
-        Boolean isMarkerFast= GobiiLoader.isMarkerFast;//AUTHORS NOTE- this check will never run in stand-alone mode
         if(isMarkerFast==null)return failureList;
         List<String> requiredMatrixMarkerSizeColumns = new ArrayList<>();
         List<String> requiredMatrixSampleSizeColumns = new ArrayList<>();
