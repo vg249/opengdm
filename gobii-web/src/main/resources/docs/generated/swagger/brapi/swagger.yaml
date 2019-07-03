@@ -90,7 +90,7 @@ paths:
     get:
       tags:
       - "Callsets"
-      summary: "List all genotype calls"
+      summary: "List genotype calls"
       description: "List of all the genotype calls in a given Dna run identified by\
         \ Dna run Id"
       operationId: "getCallsByCallset"
@@ -100,7 +100,6 @@ paths:
         description: "Id for dna run to be fetched"
         required: true
         type: "string"
-        pattern: "[\\d]+"
       - name: "pageToken"
         in: "query"
         description: "Page Token to fetch a page. nextPageToken form previous page's\

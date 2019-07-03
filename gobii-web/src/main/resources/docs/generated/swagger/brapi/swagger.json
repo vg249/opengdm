@@ -104,7 +104,7 @@
     "/brapi/v1/callsets/{callSetDbId}/calls" : {
       "get" : {
         "tags" : [ "Callsets" ],
-        "summary" : "List all genotype calls",
+        "summary" : "List genotype calls",
         "description" : "List of all the genotype calls in a given Dna run identified by Dna run Id",
         "operationId" : "getCallsByCallset",
         "parameters" : [ {
@@ -112,8 +112,7 @@
           "in" : "path",
           "description" : "Id for dna run to be fetched",
           "required" : true,
-          "type" : "string",
-          "pattern" : "[\\d]+"
+          "type" : "string"
         }, {
           "name" : "pageToken",
           "in" : "query",
