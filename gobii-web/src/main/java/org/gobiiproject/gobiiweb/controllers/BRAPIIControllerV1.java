@@ -913,7 +913,9 @@ public class BRAPIIControllerV1 {
                 }
             }
 
-            return ResponseEntity.ok(payload);
+            return ResponseEntity.ok().contentType(
+                    MediaType.APPLICATION_JSON).body(payload);
+
         }
         catch (GobiiException gE) {
             throw gE;
